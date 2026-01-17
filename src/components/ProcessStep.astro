@@ -1,0 +1,29 @@
+---
+interface Props {
+  number: number;
+  title: string;
+  subtitle: string;
+  description: string;
+  isActive?: boolean;
+}
+
+const { number, title, subtitle, description, isActive = false } = Astro.props;
+---
+
+<div class={`relative p-6 md:p-8 rounded-2xl border transition-all ${isActive ? 'bg-accent text-white border-accent' : 'bg-white border-gray-200 hover:border-accent/50'}`}>
+  <!-- Number Badge -->
+  <div class={`absolute -top-4 left-6 w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold ${isActive ? 'bg-white text-accent' : 'bg-accent text-white'}`}>
+    {number}
+  </div>
+
+  <!-- Content -->
+  <div class="pt-2">
+    <p class={`text-sm font-medium mb-2 ${isActive ? 'text-white/80' : 'text-accent'}`}>
+      {subtitle}
+    </p>
+    <h3 class="text-xl font-semibold mb-3">{title}</h3>
+    <p class={`leading-relaxed ${isActive ? 'text-white/90' : 'text-gray-600'}`}>
+      {description}
+    </p>
+  </div>
+</div>

@@ -1,0 +1,231 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Hero from '../components/Hero.astro';
+import CaseStudyCarousel from '../components/CaseStudyCarousel.tsx';
+import TestimonialCard from '../components/TestimonialCard.astro';
+import ServiceCard from '../components/ServiceCard.astro';
+import ProcessStep from '../components/ProcessStep.astro';
+import StatCard from '../components/StatCard.astro';
+import BlogCard from '../components/BlogCard.astro';
+import LogoMarquee from '../components/LogoMarquee.astro';
+import FAQItem from '../components/FAQItem.tsx';
+
+import { featuredCaseStudies } from '../data/caseStudies';
+import { testimonials } from '../data/testimonials';
+import { services, processSteps, stats, challenges } from '../data/services';
+import { blogPosts } from '../data/blogPosts';
+import { faqs } from '../data/faq';
+---
+
+<Layout title="Conversion-first Webflow Sites">
+  <!-- Hero Section -->
+  <Hero />
+
+  <!-- Case Studies Carousel Section -->
+  <section id="work" class="py-16 md:py-24 bg-gray-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex items-end justify-between mb-12">
+        <div>
+          <h2 class="text-3xl md:text-4xl font-bold mb-4">Our case studies</h2>
+          <p class="text-gray-600 max-w-2xl">
+            See how we've helped companies transform their digital presence and achieve measurable results.
+          </p>
+        </div>
+      </div>
+
+      <CaseStudyCarousel client:load caseStudies={featuredCaseStudies} />
+    </div>
+  </section>
+
+  <!-- Logo Marquee -->
+  <LogoMarquee />
+
+  <!-- Testimonials Section -->
+  <section class="py-16 md:py-24">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="text-center mb-12">
+        <p class="text-accent font-semibold mb-2">Only 5-Star Reviews</p>
+        <h2 class="text-3xl md:text-4xl font-bold mb-4">
+          Our customers tell the story
+        </h2>
+        <p class="text-gray-600 max-w-2xl mx-auto">
+          Our work consistently delivers impactful outcomes, and the backing of our customers reflects the impact we bring.
+        </p>
+      </div>
+
+      <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {testimonials.slice(0, 6).map((testimonial) => (
+          <TestimonialCard {...testimonial} />
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- Is Your Website Underperforming Section -->
+  <section class="py-16 md:py-24 bg-gray-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="text-center mb-12">
+        <h2 class="text-3xl md:text-4xl font-bold mb-4">
+          Is your website underperforming?
+        </h2>
+        <p class="text-gray-600 max-w-2xl mx-auto">
+          Many struggle with these common challenges down below, do they sound familiar?
+          We've helped numerous companies overcome these exact issues.
+        </p>
+      </div>
+
+      <div class="grid md:grid-cols-3 gap-6">
+        {challenges.map((challenge) => (
+          <div class="bg-white rounded-2xl border border-gray-200 p-6 md:p-8">
+            <div class="w-12 h-12 rounded-xl bg-red-100 flex items-center justify-center text-red-600 mb-6">
+              <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+              </svg>
+            </div>
+            <h3 class="text-xl font-semibold mb-3">{challenge.title}</h3>
+            <p class="text-gray-600">{challenge.description}</p>
+          </div>
+        ))}
+      </div>
+
+      <div class="text-center mt-10">
+        <a
+          href="#contact"
+          class="inline-flex items-center justify-center px-8 py-4 text-base font-semibold text-white bg-accent hover:bg-accent-hover rounded-full transition-colors"
+        >
+          Book an intro call
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Services Section -->
+  <section class="py-16 md:py-24">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="text-center mb-12">
+        <h2 class="text-3xl md:text-4xl font-bold mb-4">
+          We build Webflow websites that bring efficiency and profit
+        </h2>
+        <p class="text-gray-600 max-w-2xl mx-auto">
+          We're committed to one thing: Your ROI. Here are the verticals we specialize in to achieve this.
+        </p>
+      </div>
+
+      <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {services.map((service) => (
+          <ServiceCard {...service} />
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- Process Section -->
+  <section class="py-16 md:py-24 bg-gray-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="text-center mb-12">
+        <h2 class="text-3xl md:text-4xl font-bold mb-4">
+          The LoudFace approach
+        </h2>
+        <p class="text-gray-600 max-w-2xl mx-auto">
+          Here's our proven process
+        </p>
+      </div>
+
+      <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+        {processSteps.map((step, index) => (
+          <ProcessStep {...step} isActive={index === 0} />
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- Stats Section -->
+  <section class="py-16 md:py-24">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="text-center mb-12">
+        <h2 class="text-3xl md:text-4xl font-bold mb-4">
+          Some quick numbers
+        </h2>
+      </div>
+
+      <div class="grid md:grid-cols-3 gap-8 md:gap-12">
+        {stats.map((stat) => (
+          <StatCard {...stat} />
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- Blog Section -->
+  <section class="py-16 md:py-24 bg-gray-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="text-center mb-12">
+        <h2 class="text-3xl md:text-4xl font-bold mb-4">
+          Explore knowledge that empowers
+        </h2>
+        <p class="text-gray-600 max-w-2xl mx-auto">
+          Our blog is your go-to source for simple, practical insights and ideas. From tips and trends to expert advice, we've got everything you need to stay informed and inspired.
+        </p>
+      </div>
+
+      <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {blogPosts.map((post) => (
+          <BlogCard {...post} />
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ Section -->
+  <section class="py-16 md:py-24">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="grid lg:grid-cols-2 gap-12">
+        <div>
+          <h2 class="text-3xl md:text-4xl font-bold mb-4">
+            Frequently asked questions
+          </h2>
+          <p class="text-gray-600 mb-6">
+            Find answers to common questions about our services and processes.
+          </p>
+          <div class="bg-gray-50 rounded-2xl p-6">
+            <p class="font-semibold mb-2">Still have questions?</p>
+            <p class="text-gray-600 mb-4">We're here to help you with any inquiries.</p>
+            <a
+              href="#contact"
+              class="inline-flex items-center text-accent font-semibold hover:text-accent-hover transition-colors"
+            >
+              Book an intro call
+              <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+              </svg>
+            </a>
+          </div>
+        </div>
+
+        <div>
+          {faqs.map((faq, index) => (
+            <FAQItem client:load question={faq.question} answer={faq.answer} defaultOpen={index === 0} />
+          ))}
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Final CTA Section -->
+  <section id="contact" class="py-16 md:py-24 bg-accent text-white">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+      <h2 class="text-3xl md:text-4xl font-bold mb-4">
+        Ready to scale your site?
+      </h2>
+      <p class="text-xl text-white/80 mb-8">
+        Don't let another day pass with an underperforming website
+      </p>
+      <a
+        href="#contact"
+        class="inline-flex items-center justify-center px-8 py-4 text-base font-semibold text-accent bg-white hover:bg-gray-100 rounded-full transition-colors"
+      >
+        Book an intro call
+      </a>
+    </div>
+  </section>
+</Layout>
