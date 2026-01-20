@@ -93,7 +93,7 @@ export default {
         // Heading scale (Major Third - 1.25)
         '3xl': ['1.875rem', { lineHeight: '1.3', letterSpacing: '-0.01em' }],  // 30px
         '4xl': ['2.25rem', { lineHeight: '1.25', letterSpacing: '-0.02em' }],  // 36px
-        'hero': ['2.8125rem', { lineHeight: '1.15', letterSpacing: '-0.02em' }], // 45px - hero headline
+        'hero': ['2.25rem', { lineHeight: '1.15', letterSpacing: '-0.02em' }], // 36px - hero headline (20% smaller)
         '5xl': ['3rem', { lineHeight: '1.2', letterSpacing: '-0.02em' }],      // 48px
         '6xl': ['3.75rem', { lineHeight: '1.1', letterSpacing: '-0.02em' }],   // 60px
         '7xl': ['4.5rem', { lineHeight: '1.1', letterSpacing: '-0.02em' }],    // 72px
