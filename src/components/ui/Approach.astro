@@ -1,0 +1,167 @@
+---
+import { getApproachContent, type ProcessStep, type Stat } from '../../lib/content-utils';
+
+// Load content from JSON file (editable via /dev/editor)
+const content = getApproachContent();
+
+interface Props {
+  title?: string;
+  highlightWord?: string;
+  subtitle?: string;
+  steps?: ProcessStep[];
+  statsHeading?: string;
+  stats?: Stat[];
+}
+
+// Props can still override JSON defaults
+const {
+  title = content.title,
+  highlightWord = content.highlightWord,
+  subtitle = content.subtitle,
+  steps = content.steps,
+  statsHeading = content.statsHeading,
+  stats = content.stats
+} = Astro.props;
+
+// Split title to highlight the specified word
+function formatTitle(text: string, highlight: string) {
+  const parts = text.split(new RegExp(`(${highlight})`, 'i'));
+  return parts;
+}
+
+const titleParts = formatTitle(title, highlightWord);
+---
+
+<section class="bg-surface-800 text-surface-300 overflow-hidden">
+  <div class="py-12 sm:py-16 md:py-24 lg:py-32">
+    <div class="px-4 md:px-8 lg:px-12">
+      <div class="max-w-7xl mx-auto">
+
+        <!-- Process Slider -->
+        <div class="grid gap-8 xs:gap-16 max-w-full">
+          <!-- Header with nav -->
+          <div class="flex justify-between items-end relative">
+            <div>
+              <h2 class="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-medium text-white">
+                {titleParts.map((part) =>
+                  part.toLowerCase() === highlightWord.toLowerCase()
+                    ? <span class="text-surface-500">{part}</span>
+                    : part
+                )}
+              </h2>
+              <div class="h-4"></div>
+              <p class="text-surface-400 text-lg">{subtitle}</p>
+            </div>
+            <div class="hidden md:block">
+              <div class="flex gap-3">
+                <button
+                  class="flex items-center justify-center w-12 h-12 bg-surface-700 rounded-full text-white transition-all duration-200 hover:bg-surface-600 hover:scale-105 focus-visible:outline-2 focus-visible:outline-primary-500 focus-visible:outline-offset-2 active:scale-95 embla__prev"
+                  aria-label="Previous slide"
+                >
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M19 12H5M5 12L12 19M5 12L12 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                  </svg>
+                </button>
+                <button
+                  class="flex items-center justify-center w-12 h-12 bg-surface-700 rounded-full text-white transition-all duration-200 hover:bg-surface-600 hover:scale-105 focus-visible:outline-2 focus-visible:outline-primary-500 focus-visible:outline-offset-2 active:scale-95 embla__next"
+                  aria-label="Next slide"
+                >
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M5 12H19M19 12L12 5M19 12L12 19" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                  </svg>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Embla Carousel -->
+          <div id="growth-slider" class="embla w-full overflow-visible">
+            <div class="embla__viewport overflow-hidden">
+              <div class="embla__container flex items-start gap-4 xs:gap-10 touch-pan-y">
+                {steps.map((step) => (
+                  <div class="embla__slide flex-[0_0_100%] xs:flex-[0_0_auto] min-w-0 max-w-full xs:max-w-[28.75rem]">
+                    <div class="bg-white/5 hover:bg-white/[0.08] rounded-xl flex flex-col justify-between min-h-[17.5rem] p-6 max-w-[28.75rem] transition-colors">
+                      <div class="mb-4">
+                        <img
+                          src={step.icon}
+                          loading="lazy"
+                          width="88"
+                          height="88"
+                          alt={step.iconAlt}
+                          class="w-[88px] h-[88px]"
+                        />
+                      </div>
+                      <div>
+                        <h3 class="text-lg font-medium text-white">{step.title}</h3>
+                        <div class="h-2"></div>
+                        <p class="text-surface-400 text-sm leading-relaxed">{step.description}</p>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          <!-- Mobile nav buttons -->
+          <div class="block md:hidden">
+            <div class="flex justify-center items-end relative">
+              <div class="flex gap-3">
+                <button
+                  class="flex items-center justify-center w-12 h-12 bg-surface-700 rounded-full text-white transition-all duration-200 hover:bg-surface-600 hover:scale-105 focus-visible:outline-2 focus-visible:outline-primary-500 focus-visible:outline-offset-2 active:scale-95 embla__prev"
+                  aria-label="Previous slide"
+                >
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M19 12H5M5 12L12 19M5 12L12 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                  </svg>
+                </button>
+                <button
+                  class="flex items-center justify-center w-12 h-12 bg-surface-700 rounded-full text-white transition-all duration-200 hover:bg-surface-600 hover:scale-105 focus-visible:outline-2 focus-visible:outline-primary-500 focus-visible:outline-offset-2 active:scale-95 embla__next"
+                  aria-label="Next slide"
+                >
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M5 12H19M19 12L12 5M19 12L12 19" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                  </svg>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Divider -->
+        <div class="h-16 md:h-24"></div>
+        <div class="h-px bg-surface-700"></div>
+        <div class="h-16 md:h-24"></div>
+
+        <!-- Stats Section -->
+        <div>
+          <div class="flex items-center gap-3">
+            <span class="w-2 h-2 bg-surface-400 rounded-full" aria-hidden="true"></span>
+            <h2 class="text-lg font-medium text-white">{statsHeading}</h2>
+          </div>
+          <div class="h-8"></div>
+
+          <div class="flex flex-col lg:flex-row gap-8 lg:gap-12">
+            {stats.map((stat, index) => (
+              <>
+                <div class="flex-1 p-6 bg-white/[0.03] border border-surface-700 rounded-xl">
+                  <h3 class="text-4xl md:text-5xl font-medium text-white">{stat.value}</h3>
+                  <div class="h-2"></div>
+                  <p class="text-base font-medium text-surface-300">{stat.label}</p>
+                  <div class="h-4"></div>
+                  <p class="text-sm text-surface-500 leading-relaxed">{stat.description}</p>
+                </div>
+                {index < stats.length - 1 && (
+                  <div class="hidden lg:flex items-center py-7">
+                    <div class="w-px h-full bg-surface-700"></div>
+                  </div>
+                )}
+              </>
+            ))}
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</section>

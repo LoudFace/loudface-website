@@ -1,0 +1,316 @@
+---
+import { applyCMSConfig } from '../../lib/cms-utils';
+import { generateCMSAttributes } from '../../lib/cms-attributes';
+import { CMS_SECTIONS } from '../../lib/constants';
+import { getResultsContent, type VideoTestimonial } from '../../lib/content-utils';
+import type { CaseStudy, Client, Testimonial } from '../../lib/types';
+
+// Load content from JSON file (editable via /dev/editor)
+const content = getResultsContent();
+
+interface Props {
+  title?: string;
+  subtitle?: string;
+  videoTestimonials?: VideoTestimonial[];
+  caseStudies?: CaseStudy[];
+  testimonial?: Testimonial;
+  clients?: Map<string, Client>;
+  ctaText?: string;
+  ctaHref?: string;
+}
+
+// Props can still override JSON defaults
+const {
+  title = content.title,
+  subtitle = content.subtitle,
+  videoTestimonials = content.videoTestimonials,
+  caseStudies: rawCaseStudies = [],
+  testimonial: rawTestimonial,
+  clients = new Map(),
+  ctaText = content.ctaText,
+  ctaHref = content.ctaHref
+} = Astro.props;
+
+// Apply CMS configuration (filters, sorting) - field mapping auto-generated from schema
+const caseStudies = applyCMSConfig(rawCaseStudies, CMS_SECTIONS.RESULTS_CASE_STUDIES, 'case-studies');
+const testimonials = rawTestimonial ? applyCMSConfig([rawTestimonial], CMS_SECTIONS.RESULTS_TESTIMONIALS, 'testimonials') : [];
+const testimonial = testimonials[0];
+
+// Build reference lookups for generateCMSAttributes
+const clientsLookup = new Map(
+  Array.from(clients.entries()).map(([id, client]) => [id, { id, name: client.name }])
+);
+const referenceLookups = {
+  clients: clientsLookup,
+};
+
+// Helper to get client data
+const getClient = (clientId: string) => clients.get(clientId);
+
+// Arrow icon SVG for reuse
+const arrowIcon = `<svg width="14" height="14" viewBox="0 0 11 10" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2.91854 1.85641H8.14011L1.06819 8.92834C1.01486 8.98166 0.972567 9.04496 0.94371 9.11463C0.914853 9.1843 0.9 9.25897 0.9 9.33437C0.9 9.40978 0.914853 9.48445 0.94371 9.55412C0.972567 9.62379 1.01486 9.68709 1.06818 9.74041C1.12151 9.79373 1.18481 9.83603 1.25448 9.86488C1.32414 9.89374 1.39881 9.90859 1.47422 9.90859C1.54963 9.90859 1.6243 9.89374 1.69396 9.86488C1.76363 9.83603 1.82693 9.79373 1.88025 9.74041L8.95193 2.66873V7.91349C8.95193 8.06562 9.01236 8.21153 9.11994 8.3191C9.22752 8.42668 9.37342 8.48711 9.52555 8.48711C9.67769 8.48711 9.82359 8.42668 9.93116 8.3191C10.0387 8.21153 10.0992 8.06562 10.0992 7.91349V1.31361C10.0997 1.30337 10.1 1.29311 10.1 1.28281C10.1 1.13052 10.0395 0.984466 9.93182 0.876779C9.82413 0.769092 9.67807 0.708594 9.52578 0.708594C9.51717 0.708594 9.50858 0.708787 9.50001 0.709172H2.91854C2.7664 0.709172 2.6205 0.769607 2.51292 0.877182C2.40535 0.984757 2.34491 1.13066 2.34491 1.28279C2.34491 1.43493 2.40535 1.58083 2.51292 1.6884C2.6205 1.79598 2.7664 1.85641 2.91854 1.85641Z" fill="currentColor" stroke="white" stroke-width="0.2"></path></svg>`;
+
+// Format title with highlighted words
+function formatTitle(text: string) {
+  return text
+    .replace(/customers/g, '<span class="text-surface-400">customers</span>')
+    .replace(/results/g, '<span class="text-surface-400">results</span>');
+}
+---
+
+<section class="bg-surface-50 border-t border-surface-200 pb-8 md:pb-0">
+  <div class="py-12 md:py-16">
+    <div class="px-4 md:px-8 lg:px-12">
+      <div class="max-w-7xl mx-auto">
+        <!-- Spacer -->
+        <div class="h-6 sm:h-8 md:h-12"></div>
+
+        <!-- Header -->
+        <header class="max-w-lg md:max-w-xl mx-auto md:mx-0 text-center md:text-left">
+          <h2 class="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-medium text-surface-900 leading-tight" set:html={formatTitle(title)} />
+          <div class="h-4"></div>
+          <p class="text-surface-600 text-lg">{subtitle}</p>
+        </header>
+
+        <div class="h-6 sm:h-8 md:h-12"></div>
+
+        <!-- Bento Grid -->
+        <div
+          class="results-grid"
+          data-cms-section={CMS_SECTIONS.RESULTS_CASE_STUDIES}
+          data-cms-label="Results Case Studies"
+        >
+          <!-- Video Testimonial 1 (left, spans rows 1-3) -->
+          {videoTestimonials[0] && (
+            <div class="results-item-video-1">
+              <div class="bg-surface-900 rounded-xl overflow-hidden h-full flex flex-col">
+                <div class="aspect-video w-full flex-1 min-h-0">
+                  <iframe
+                    src={videoTestimonials[0].videoUrl}
+                    title={videoTestimonials[0].videoTitle || "Video testimonial"}
+                    allow="fullscreen"
+                    loading="lazy"
+                    class="w-full h-full border-0"
+                  ></iframe>
+                </div>
+                <div class="px-5 py-4 flex flex-col gap-1 bg-surface-900">
+                  <span class="font-bold text-white">{videoTestimonials[0].name}</span>
+                  <span class="text-white/80">{videoTestimonials[0].role}</span>
+                </div>
+              </div>
+            </div>
+          )}
+
+          <!-- Case Study 1 (right top) -->
+          {caseStudies[0] && (() => {
+            const study = caseStudies[0];
+            const client = getClient(study.client);
+            return (
+              <div
+                class="results-item-case-1"
+                {...generateCMSAttributes(study, 'case-studies', referenceLookups)}
+              >
+                <a
+                  href={`/work/${study.slug}`}
+                  class="flex flex-col bg-white border border-surface-200 rounded-xl p-6 no-underline h-full transition-all duration-200 hover:border-surface-300 hover:shadow-md focus-visible:outline-2 focus-visible:outline-primary-500 focus-visible:outline-offset-2"
+                >
+                  <div class="flex justify-between items-center">
+                    <img
+                      src={client?.['colored-logo']?.url || '/images/placeholder-logo.svg'}
+                      loading="lazy"
+                      width="83"
+                      height="26"
+                      alt={client?.name || study['project-title']}
+                      class="max-h-[26px] w-auto"
+                    />
+                    <span class="hidden sm:inline-flex items-center font-medium text-surface-900 transition-opacity hover:opacity-70">
+                      View case study
+                      <span class="ml-1" set:html={arrowIcon} />
+                    </span>
+                  </div>
+                  <div class="mt-auto pt-4">
+                    <div class="bg-surface-50 rounded-lg p-4">
+                      <h3 class="text-3xl md:text-4xl font-medium text-surface-900">
+                        {study['result-1---number'] || ''}
+                      </h3>
+                      <div class="h-2"></div>
+                      <p class="font-medium text-surface-700">{study['result-1---title'] || ''}</p>
+                      <div class="h-4"></div>
+                      <p class="text-sm text-surface-500 line-clamp-2">
+                        {study['result-1---number'] || ''}
+                      </p>
+                    </div>
+                    <span class="sm:hidden inline-flex items-center font-medium text-surface-900 mt-4 transition-opacity hover:opacity-70">
+                      View case study
+                      <span class="ml-1" set:html={arrowIcon} />
+                    </span>
+                  </div>
+                </a>
+              </div>
+            );
+          })()}
+
+          <!-- Testimonial (right middle, spans rows 2-3) -->
+          {testimonial && (
+            <div
+              class="results-item-testimonial"
+              {...generateCMSAttributes(testimonial, 'testimonials')}
+            >
+              <div class="bg-white border border-surface-200 rounded-xl p-6 h-full flex flex-col">
+                <blockquote class="flex-1 text-base leading-7 text-surface-700 line-clamp-6 [&>p]:m-0" set:html={testimonial['testimonial-body']} />
+                <div class="h-6"></div>
+                <div class="flex justify-between items-end">
+                  <div class="flex flex-col gap-1">
+                    <span class="font-bold text-surface-900">{testimonial.name}</span>
+                    <span class="text-surface-600">{testimonial.role}</span>
+                  </div>
+                  <div class="w-10 h-10 flex items-center justify-center bg-surface-900 rounded-full cursor-pointer transition-transform hover:scale-105" aria-label="View testimonial">
+                    <img src="/images/top-right-arrow.svg" loading="lazy" width="16" height="16" alt="" />
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+
+          <!-- Case Study 2 (bottom left) -->
+          {caseStudies[1] && (() => {
+            const study = caseStudies[1];
+            const client = getClient(study.client);
+            return (
+              <div
+                class="results-item-case-2"
+                {...generateCMSAttributes(study, 'case-studies', referenceLookups)}
+              >
+                <a
+                  href={`/work/${study.slug}`}
+                  class="flex flex-col bg-white border border-surface-200 rounded-xl p-6 no-underline h-full transition-all duration-200 hover:border-surface-300 hover:shadow-md focus-visible:outline-2 focus-visible:outline-primary-500 focus-visible:outline-offset-2"
+                >
+                  <div class="flex justify-between items-center">
+                    <img
+                      src={client?.['colored-logo']?.url || '/images/placeholder-logo.svg'}
+                      loading="lazy"
+                      width="83"
+                      height="26"
+                      alt={client?.name || study['project-title']}
+                      class="max-h-[26px] w-auto"
+                    />
+                    <span class="hidden sm:inline-flex items-center font-medium text-surface-900 transition-opacity hover:opacity-70">
+                      View case study
+                      <span class="ml-1" set:html={arrowIcon} />
+                    </span>
+                  </div>
+                  <div class="mt-auto pt-4">
+                    <div class="bg-surface-50 rounded-lg p-4">
+                      <h3 class="text-3xl md:text-4xl font-medium text-surface-900">
+                        {study['result-1---number'] || ''}
+                      </h3>
+                      <div class="h-2"></div>
+                      <p class="font-medium text-surface-700">{study['result-1---title'] || ''}</p>
+                      <div class="h-4"></div>
+                      <p class="text-sm text-surface-500 line-clamp-2">
+                        {study['result-1---number'] || ''}
+                      </p>
+                    </div>
+                    <span class="sm:hidden inline-flex items-center font-medium text-surface-900 mt-4 transition-opacity hover:opacity-70">
+                      View case study
+                      <span class="ml-1" set:html={arrowIcon} />
+                    </span>
+                  </div>
+                </a>
+              </div>
+            );
+          })()}
+
+          <!-- Video Testimonial 2 (bottom right) -->
+          {videoTestimonials[1] && (
+            <div class="results-item-video-2">
+              <div class="bg-surface-900 rounded-xl overflow-hidden h-full flex flex-col">
+                <div class="aspect-video w-full flex-1 min-h-0">
+                  <iframe
+                    src={videoTestimonials[1].videoUrl}
+                    title={videoTestimonials[1].videoTitle || "Video testimonial"}
+                    allow="fullscreen"
+                    loading="lazy"
+                    class="w-full h-full border-0"
+                  ></iframe>
+                </div>
+                <div class="px-5 py-4 flex flex-col gap-1 bg-surface-900">
+                  <span class="font-bold text-white">{videoTestimonials[1].name}</span>
+                  <span class="text-white/80">{videoTestimonials[1].role}</span>
+                </div>
+              </div>
+            </div>
+          )}
+
+          <!-- CTA Button (full width) -->
+          <div class="results-item-cta flex justify-center pt-6">
+            <a
+              href={ctaHref}
+              class="inline-flex items-center justify-center px-6 py-3.5 bg-surface-900 text-white font-medium rounded-lg no-underline transition-all duration-200 hover:bg-surface-800 focus-visible:outline-2 focus-visible:outline-primary-500 focus-visible:outline-offset-2 active:scale-[0.98]"
+            >
+              {ctaText}
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  /* Bento Grid Layout - asymmetric positioning requires custom CSS */
+  .results-grid {
+    display: grid;
+    gap: 1.25rem 1.5rem;
+    grid-template-columns: 1fr 0.25fr 0.25fr 1fr;
+    grid-template-rows: auto auto auto auto auto;
+  }
+
+  .results-item-video-1 {
+    grid-column: 1 / 3;
+    grid-row: 1 / 4;
+  }
+
+  .results-item-case-1 {
+    grid-column: 3 / 5;
+    grid-row: 1 / 2;
+  }
+
+  .results-item-testimonial {
+    grid-column: 3 / 5;
+    grid-row: 2 / 4;
+  }
+
+  .results-item-case-2 {
+    grid-column: 1 / 3;
+    grid-row: 4 / 5;
+  }
+
+  .results-item-video-2 {
+    grid-column: 3 / 5;
+    grid-row: 4 / 5;
+  }
+
+  .results-item-cta {
+    grid-column: 1 / 5;
+    grid-row: 5 / 6;
+  }
+
+  /* Mobile: Stack all items vertically */
+  @media (max-width: 767px) {
+    .results-grid {
+      grid-template-columns: 1fr;
+      grid-template-rows: auto;
+    }
+
+    .results-item-video-1,
+    .results-item-case-1,
+    .results-item-testimonial,
+    .results-item-case-2,
+    .results-item-video-2,
+    .results-item-cta {
+      grid-column: 1;
+      grid-row: auto;
+    }
+  }
+</style>

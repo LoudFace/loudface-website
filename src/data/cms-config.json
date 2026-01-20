@@ -1,0 +1,50 @@
+{
+  "sections": {
+    "case-study-slider": {
+      "filters": [
+        {
+          "field": "featured",
+          "operator": "equals",
+          "value": "true"
+        }
+      ],
+      "sort": null,
+      "limit": null
+    },
+    "hero-slider": {
+      "filters": [
+        {
+          "field": "featured",
+          "operator": "equals",
+          "value": "true"
+        }
+      ],
+      "sort": {
+        "field": "name",
+        "dir": "asc"
+      },
+      "limit": null
+    },
+    "knowledge-slider": {
+      "filters": [],
+      "sort": null,
+      "limit": null
+    },
+    "partners-testimonials": {
+      "filters": [
+        {
+          "field": "profile-image",
+          "operator": "is_set",
+          "value": ""
+        }
+      ],
+      "sort": null,
+      "limit": null
+    },
+    "partners-clients": {
+      "filters": [],
+      "sort": null,
+      "limit": null
+    }
+  }
+}

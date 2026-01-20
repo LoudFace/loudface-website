@@ -1,0 +1,98 @@
+---
+import { getFAQContent } from '../../lib/content-utils';
+
+// Load content from JSON file (editable via /dev/editor)
+const content = getFAQContent();
+
+interface FAQItem {
+  question: string;
+  answer: string;
+}
+
+interface Props {
+  title?: string;
+  subtitle?: string;
+  items: FAQItem[];
+  showFooter?: boolean;
+  footerTitle?: string;
+  footerText?: string;
+  footerCtaText?: string;
+}
+
+// Props can still override JSON defaults
+const {
+  title = content.title,
+  subtitle = content.subtitle,
+  items,
+  showFooter = true,
+  footerTitle = content.footerTitle,
+  footerText = content.footerText,
+  footerCtaText = content.footerCtaText
+} = Astro.props;
+---
+
+<section class="py-16 md:py-24">
+  <div class="px-4 md:px-8 lg:px-12">
+    <div class="max-w-7xl mx-auto">
+      <div class="grid grid-cols-1 lg:grid-cols-[1fr_2fr_1fr] gap-8 lg:gap-12">
+
+        <!-- Header -->
+        <div class="lg:pr-8">
+          <h2 class="text-3xl md:text-4xl font-medium text-surface-900">
+            {title.includes(' ') ? (
+              <>
+                {title.split(' ').slice(0, -1).join(' ')}{' '}
+                <span class="text-primary-600">{title.split(' ').slice(-1)}</span>
+              </>
+            ) : title}
+          </h2>
+          <p class="mt-4 text-surface-600">{subtitle}</p>
+        </div>
+
+        <!-- FAQ Items -->
+        <div class="space-y-0 divide-y divide-surface-200 border-y border-surface-200">
+          {items.map((item) => (
+            <details class="group faq-details">
+              <summary class="flex items-center justify-between gap-4 py-5 cursor-pointer list-none select-none hover:bg-surface-50 -mx-4 px-4 transition-colors focus-visible:outline-2 focus-visible:outline-primary-500 focus-visible:outline-offset-2 rounded-lg">
+                <span class="text-base md:text-lg font-medium text-surface-900 pr-4">
+                  {item.question}
+                </span>
+                <span class="flex-shrink-0 w-6 h-6 relative" aria-hidden="true">
+                  <span class="absolute top-1/2 left-0 w-6 h-0.5 bg-surface-400 -translate-y-1/2 transition-transform group-open:rotate-0"></span>
+                  <span class="absolute top-1/2 left-0 w-6 h-0.5 bg-surface-400 -translate-y-1/2 rotate-90 transition-transform group-open:rotate-0"></span>
+                </span>
+              </summary>
+              <div class="pb-5 pr-10 text-surface-600 leading-relaxed overflow-hidden animate-fade-in">
+                <p set:html={item.answer} />
+              </div>
+            </details>
+          ))}
+        </div>
+
+        <!-- Footer CTA -->
+        {showFooter && (
+          <div class="lg:pl-8 lg:text-left text-center flex flex-col justify-center">
+            <h3 class="text-xl font-bold text-surface-900">{footerTitle}</h3>
+            <p class="mt-2 text-surface-600">{footerText}</p>
+            <div class="mt-4">
+              <button type="button" data-cal-trigger class="inline-flex items-center justify-center px-6 py-3 bg-primary-600 text-white font-medium rounded-lg hover:bg-primary-700 transition-colors focus-visible:outline-2 focus-visible:outline-primary-500 focus-visible:outline-offset-2">
+                {footerCtaText}
+              </button>
+            </div>
+          </div>
+        )}
+
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  /* Remove default details marker */
+  .faq-details summary::-webkit-details-marker {
+    display: none;
+  }
+  .faq-details summary::marker {
+    display: none;
+  }
+</style>

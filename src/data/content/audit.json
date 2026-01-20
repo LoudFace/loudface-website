@@ -1,0 +1,25 @@
+{
+  "title": "Is your website",
+  "highlightText": "underperforming?",
+  "description": "Many struggle with these common challenges down below, do they sound familiar? We've helped numerous companies overcome these exact issues",
+  "challenges": [
+    {
+      "icon": "/images/low-awareness.svg",
+      "iconAlt": "Low awareness",
+      "title": "Low awareness",
+      "description": "Your brand is not visible to your target audience. You may have a website or social media presence, but it's not being discovered by your customers"
+    },
+    {
+      "icon": "/images/poor-conversion.svg",
+      "iconAlt": "Poor conversion",
+      "title": "Poor conversions",
+      "description": "Poor conversions represent missed opportunities to engage with potential customers, build relationships, and grow the business"
+    },
+    {
+      "icon": "/images/low-lifetime-value.svg",
+      "iconAlt": "Low lifetime value",
+      "title": "Low lifetime value",
+      "description": "Low Lifetime Value erodes profitability, hinders long-term growth, and reduces the return on investment in customer acquisition"
+    }
+  ]
+}

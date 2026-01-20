@@ -1,0 +1,20 @@
+{
+  "title": "Our customers tell the story, and our results back it up",
+  "subtitle": "Our work consistently delivers impactful outcomes, and the backing of our customers reflects the impact we bring",
+  "videoTestimonials": [
+    {
+      "name": "Daan Smit",
+      "role": "Founder | Brandfirm",
+      "videoUrl": "https://app.vidzflow.com/v/9Zh0vZzLtM?dq=576&ap=false&muted=false&loop=false&ctp=true&bc=%234E5FFD&controls=play-large%2Cplay%2Cprogress%2Ccurrent-time%2Cmute%2Cvolume%2Ccaptions%2Csettings%2Cfullscreen",
+      "videoTitle": "Daan Video Testimonial"
+    },
+    {
+      "name": "Sarig Reichert",
+      "role": "CPO | Dimer Health",
+      "videoUrl": "https://app.vidzflow.com/v/uE5ceSE20K?dq=720&ap=false&muted=false&loop=false&ctp=true&bv=false&piv=false&playsinline=true&bc=%234E5FFD&controls=play-large%2Cplay%2Cprogress%2Ccurrent-time%2Cmute%2Cvolume%2Csettings%2Cfullscreen",
+      "videoTitle": "Sarig Video Testimonial"
+    }
+  ],
+  "ctaText": "View all case studies",
+  "ctaHref": "/work"
+}

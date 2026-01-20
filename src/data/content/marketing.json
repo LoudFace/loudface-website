@@ -1,0 +1,39 @@
+{
+  "title": "We",
+  "titleHighlight": "build",
+  "subtitle": "Webflow websites that bring efficiency and",
+  "description": "We're committed to one thing: Your ROI. Here are the verticals we specialize in to achieve this",
+  "cards": [
+    {
+      "image": "/images/webflow-experts_1.webp",
+      "imageAlt": "Webflow Experts",
+      "title": "Webflow Experts",
+      "description": "Cutting-edge expertise that translates complex ideas into high-performing websites"
+    },
+    {
+      "image": "/images/profitable-ads_1.webp",
+      "imageAlt": "Performance Design",
+      "title": "Performance Design",
+      "description": "Designs should not purely be about looking pretty; they should contribute to meaningful KPIs"
+    },
+    {
+      "image": "/images/organic-mastery_1.webp",
+      "imageAlt": "Organic Mastery",
+      "title": "Organic Mastery",
+      "description": "We bring you attention organically, building a fanbase and not just a customer base"
+    },
+    {
+      "image": "/images/email-marketing_1.webp",
+      "imageAlt": "Loud Branding",
+      "title": "Loud Branding",
+      "description": "Your brand needs to stand out in a noisy market. We design brand identities that do exactly this"
+    },
+    {
+      "image": "/images/conversion-optimization_1.webp",
+      "imageAlt": "Conversion Optimization",
+      "title": "Conversion Optimization",
+      "description": "Every element of your site is crafted to turn visitors into customers. We've seen up to 288% increase in conversions as a result of our work"
+    }
+  ],
+  "ctaText": "Book an intro call"
+}

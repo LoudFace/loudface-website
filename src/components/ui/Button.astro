@@ -1,0 +1,97 @@
+---
+/**
+ * Reusable Button Component
+ * Supports multiple variants, sizes, and can be rendered as button or anchor
+ */
+
+interface Props {
+  variant?: 'primary' | 'secondary' | 'ghost' | 'outline';
+  size?: 'sm' | 'md' | 'lg';
+  href?: string;
+  type?: 'button' | 'submit' | 'reset';
+  class?: string;
+  disabled?: boolean;
+  fullWidth?: boolean;
+  /** For Cal.com integration */
+  calLink?: string;
+  calConfig?: string;
+  /** Aria label for icon-only buttons */
+  ariaLabel?: string;
+}
+
+const {
+  variant = 'primary',
+  size = 'md',
+  href,
+  type = 'button',
+  class: className = '',
+  disabled = false,
+  fullWidth = false,
+  calLink,
+  calConfig,
+  ariaLabel,
+} = Astro.props;
+
+// Base classes shared by all buttons
+const baseClasses = [
+  'inline-flex items-center justify-center font-medium rounded-lg',
+  'transition-colors duration-200',
+  'focus-visible:outline-2 focus-visible:outline-offset-2',
+  'disabled:opacity-50 disabled:cursor-not-allowed',
+  fullWidth ? 'w-full' : '',
+].filter(Boolean).join(' ');
+
+// Size variants
+const sizeClasses = {
+  sm: 'px-4 py-2 text-sm',
+  md: 'px-5 py-2.5 text-sm',
+  lg: 'px-6 py-3 text-base',
+};
+
+// Color variants
+const variantClasses = {
+  primary: 'bg-surface-900 text-white hover:bg-surface-800 focus-visible:outline-surface-900',
+  secondary: 'bg-primary-600 text-white hover:bg-primary-700 focus-visible:outline-primary-500',
+  ghost: 'bg-transparent text-surface-700 hover:bg-surface-100 hover:text-surface-900 focus-visible:outline-surface-500',
+  outline: 'border border-surface-200 bg-transparent text-surface-900 hover:bg-surface-100 focus-visible:outline-surface-500',
+};
+
+const classes = [
+  baseClasses,
+  sizeClasses[size],
+  variantClasses[variant],
+  className,
+].join(' ');
+
+// Cal.com attributes
+const calAttrs = calLink ? {
+  'data-cal-link': calLink,
+  'data-cal-config': calConfig || '{"layout":"month_view"}',
+} : {};
+
+// For CTA buttons that open Cal.com modal
+const isCta = calLink || className.includes('btn-cta');
+---
+
+{href ? (
+  <a
+    href={href}
+    class={classes}
+    aria-label={ariaLabel}
+    data-cal-trigger={isCta ? "" : undefined}
+    {...calAttrs}
+  >
+    <slot />
+  </a>
+) : (
+  <button
+    type={type}
+    class={classes}
+    disabled={disabled}
+    aria-label={ariaLabel}
+    data-cal-trigger={isCta ? "" : undefined}
+    {...calAttrs}
+  >
+    <slot />
+  </button>
+)}

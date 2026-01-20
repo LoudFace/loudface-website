@@ -1,0 +1,150 @@
+---
+import '../../styles/components.css';
+
+// Block this page in production - return 404
+if (import.meta.env.PROD) {
+  return new Response('Not found', { status: 404 });
+}
+---
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Content Editor</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body class="bg-surface-100 min-h-screen p-8">
+  <div class="max-w-4xl mx-auto">
+    <header class="mb-8">
+      <h1 class="text-2xl font-medium text-surface-900">Content Editor</h1>
+      <p class="text-surface-600 mt-1">Edit static text content files</p>
+      <a href="/" class="text-primary-600 text-sm mt-2 inline-block">Back to site</a>
+    </header>
+
+    <div id="editor-container" class="bg-white rounded-xl border border-surface-200 p-6">
+      <p class="text-surface-500">Loading...</p>
+    </div>
+
+    <div id="status" class="mt-4 text-sm text-surface-500"></div>
+  </div>
+
+  <script is:inline>
+    (function() {
+      var container = document.getElementById('editor-container');
+      var status = document.getElementById('status');
+
+      fetch('/api/dev/content')
+        .then(function(r) { return r.json(); })
+        .then(function(data) {
+          if (!data.files || data.files.length === 0) {
+            container.innerHTML = '<p>No content files found</p>';
+            return;
+          }
+          var html = '<div class="space-y-6">';
+          data.files.forEach(function(file) {
+            html += '<div class="border-b border-surface-100 pb-4 mb-4">';
+            html += '<h3 class="font-medium text-surface-900 mb-3">' + file.name + '.json</h3>';
+            html += '<button onclick="loadFile(\'' + file.name + '\')" class="text-sm text-primary-600">Edit</button>';
+            html += '</div>';
+          });
+          html += '</div>';
+          container.innerHTML = html;
+        })
+        .catch(function(err) {
+          container.innerHTML = '<p class="text-red-600">Error loading files</p>';
+          console.error(err);
+        });
+
+      // Escape HTML to prevent XSS
+      function escapeHtml(str) {
+        return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+      }
+
+      // Convert <br> tags to newlines for editing
+      function brToNewline(str) {
+        return str.replace(/<br\s*\/?>/gi, '\n');
+      }
+
+      // Convert newlines to <br> tags for saving (proper HTML markup)
+      function newlineToBr(str) {
+        return str.replace(/\n/g, '<br>');
+      }
+
+      // Auto-resize textarea to fit content
+      function autoResize(textarea) {
+        textarea.style.height = 'auto';
+        textarea.style.height = Math.max(textarea.scrollHeight, 42) + 'px';
+      }
+
+      // Save form data
+      function saveForm(name, originalData) {
+        var form = document.getElementById('edit-form');
+        var fd = new FormData(form);
+        var content = Object.assign({}, originalData);
+        // Convert newlines to <br> tags for proper HTML markup
+        fd.forEach(function(v, k) {
+          content[k] = typeof v === 'string' ? newlineToBr(v) : v;
+        });
+        status.textContent = 'Saving...';
+        fetch('/api/dev/content', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ file: name, content: content })
+        }).then(function(r) {
+          if (r.ok) {
+            status.innerHTML = '<span class="text-green-600">Saved! (Ctrl+S to save again)</span>';
+          } else {
+            status.innerHTML = '<span class="text-red-600">Save failed</span>';
+          }
+        });
+      }
+
+      window.loadFile = function(name) {
+        fetch('/api/dev/content?file=' + name)
+          .then(function(r) { return r.json(); })
+          .then(function(data) {
+            var html = '<h3 class="font-medium mb-4">Editing: ' + name + '.json</h3>';
+            html += '<p class="text-xs text-surface-500 mb-4">Press <kbd class="px-1.5 py-0.5 bg-surface-100 rounded text-surface-700">Ctrl+S</kbd> or <kbd class="px-1.5 py-0.5 bg-surface-100 rounded text-surface-700">⌘+S</kbd> to save. Enter adds new lines.</p>';
+            html += '<form id="edit-form" class="space-y-4">';
+            for (var key in data.content) {
+              var val = data.content[key];
+              if (typeof val === 'string') {
+                html += '<div><label class="block text-sm font-medium text-surface-700 mb-1">' + key + '</label>';
+                // Use textarea for ALL string fields (allows multi-line editing)
+                // Convert <br> to newlines for display, will convert back on save
+                html += '<textarea name="' + key + '" class="editor-textarea w-full px-3 py-2 border border-surface-300 rounded-lg resize-none overflow-hidden" rows="1">' + escapeHtml(brToNewline(val)) + '</textarea>';
+                html += '</div>';
+              }
+            }
+            html += '<div class="flex gap-2 mt-4">';
+            html += '<button type="submit" class="px-4 py-2 bg-surface-900 text-white rounded-lg">Save</button>';
+            html += '<button type="button" onclick="location.reload()" class="px-4 py-2 border border-surface-300 rounded-lg">Cancel</button>';
+            html += '</div></form>';
+            container.innerHTML = html;
+
+            // Auto-resize all textareas on load and input
+            var textareas = container.querySelectorAll('.editor-textarea');
+            textareas.forEach(function(ta) {
+              autoResize(ta);
+              ta.addEventListener('input', function() { autoResize(ta); });
+            });
+
+            // Handle form submit (button click)
+            document.getElementById('edit-form').addEventListener('submit', function(e) {
+              e.preventDefault();
+              saveForm(name, data.content);
+            });
+
+            // Keyboard shortcut: Ctrl+S or Cmd+S to save
+            document.addEventListener('keydown', function(e) {
+              if ((e.ctrlKey || e.metaKey) && e.key === 's') {
+                e.preventDefault();
+                saveForm(name, data.content);
+              }
+            });
+          });
+      };
+    })();
+  </script>
+</body>
+</html>

@@ -1,0 +1,428 @@
+---
+/**
+ * Header Navigation Component
+ * Tailwind-native replacement for Webflow navigation
+ */
+
+interface NavLink {
+  label: string;
+  href: string;
+  hidden?: boolean;
+}
+
+interface DropdownItem {
+  icon: string;
+  title: string;
+  description: string;
+  href?: string;
+}
+
+interface Dropdown {
+  label: string;
+  description: string;
+  items: DropdownItem[];
+  ctaText?: string;
+}
+
+const navLinks: NavLink[] = [
+  { label: 'Our Work', href: '/work' },
+  { label: 'About us', href: '/about' },
+];
+
+const servicesDropdown: Dropdown = {
+  label: 'Services',
+  description: 'Everything you need to design, build, and grow in Webflow.',
+  items: [
+    {
+      icon: '/images/Frame-1321316759.svg',
+      title: 'Webflow Development',
+      description: 'Scalable, AI-enhanced Webflow builds optimized for visibility and performance.',
+      href: '/services/webflow-development'
+    },
+    {
+      icon: '/images/stair-group.svg',
+      title: 'SEO/AEO',
+      description: 'Visibility strategies that future-proof your search performance.',
+      href: '/services/seo-aeo'
+    },
+    {
+      icon: '/images/Frame-1321316760.svg',
+      title: 'UX/UI Design',
+      description: 'Conversion-focused design systems built for CRO and search.',
+      href: '/services/ux-ui-design'
+    },
+    {
+      icon: '/images/Frame-1321316762-1.svg',
+      title: 'CRO',
+      description: 'Data-driven optimization that turns visitors into customers.',
+      href: '/services/cro'
+    },
+    {
+      icon: '/images/Frame-1321316761.svg',
+      title: 'Copywriting',
+      description: 'Persuasive, SEO-optimized content that connects and converts.',
+      href: '/services/copywriting'
+    }
+  ],
+  ctaText: 'Looking for a new agency partner? Get in touch'
+};
+
+const industriesDropdown: Dropdown = {
+  label: 'Industries',
+  description: 'Specialized Webflow solutions for your sector.',
+  items: [
+    {
+      icon: '/images/arcticons_app-saasu.svg',
+      title: 'SaaS',
+      description: 'High-performance Webflow sites that scale with your product.',
+      href: '/industries/saas'
+    },
+    {
+      icon: '/images/arcticons_studysmarter.svg',
+      title: 'Education',
+      description: 'Accessible, SEO-driven Webflow sites for schools and edtech platforms.',
+      href: '/industries/education'
+    },
+    {
+      icon: '/images/arcticons_shopify.svg',
+      title: 'E-commerce',
+      description: 'Conversion-first Webflow stores built for speed, performance, and measurable ROI.',
+      href: '/industries/ecommerce'
+    },
+    {
+      icon: '/images/Vector.svg',
+      title: 'Healthcare',
+      description: 'HIPAA-ready Webflow builds that communicate care and compliance.',
+      href: '/industries/healthcare'
+    }
+  ],
+  ctaText: 'Looking for a new agency partner? Get in touch'
+};
+---
+
+<header class="sticky top-0 z-50 bg-white/95 backdrop-blur-md border-b border-surface-100/80">
+  <div class="py-3.5 px-4 md:px-8 lg:px-12">
+    <div class="max-w-7xl mx-auto">
+      <div class="flex items-center justify-between gap-8">
+        <!-- Left: Logo & Navigation -->
+        <div class="flex items-center gap-10">
+          <a href="/" class="flex items-center flex-shrink-0" aria-label="LoudFace Home">
+            <img
+              src="/images/loudface.svg"
+              width="133"
+              height="26"
+              alt="LoudFace"
+              class="h-6.5 w-auto"
+            />
+          </a>
+
+          <!-- Desktop Navigation -->
+          <nav class="hidden lg:flex items-center gap-2" aria-label="Main navigation">
+            {navLinks.map((link) => (
+              <a
+                href={link.href}
+                class="nav-link flex items-center px-3 py-2 text-nav font-sans font-medium text-surface-600 hover:text-surface-900 hover:bg-surface-50 rounded-lg transition-colors"
+              >
+                {link.label}
+              </a>
+            ))}
+
+            <!-- Services Dropdown -->
+            <div class="group relative dropdown-container" data-dropdown="services">
+              <button
+                type="button"
+                class="nav-link flex items-center gap-1.5 px-3 py-2 text-nav font-sans font-medium text-surface-600 hover:text-surface-900 hover:bg-surface-50 group-[.is-open]:bg-surface-50 group-[.is-open]:text-surface-900 rounded-lg transition-colors cursor-pointer bg-transparent border-none"
+                aria-expanded="false"
+                aria-haspopup="true"
+                aria-controls="services-menu"
+              >
+                {servicesDropdown.label}
+                <svg class="dropdown-arrow w-3.5 h-3.5 transition-transform duration-300 ease-out group-[.is-open]:rotate-180" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M4 6L8 10L12 6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+              </button>
+              <div
+                id="services-menu"
+                class="dropdown-menu absolute top-full left-1/2 pt-2 w-dropdown z-50"
+                role="menu"
+              >
+                <div class="dropdown-panel bg-white rounded-2xl shadow-xl ring-1 ring-black/5 overflow-hidden">
+                  <div class="p-5">
+                    <div class="pb-3">
+                      <h4 class="text-sm font-semibold text-surface-900">{servicesDropdown.label}</h4>
+                      <p class="text-[13px] text-surface-500 mt-0.5">{servicesDropdown.description}</p>
+                    </div>
+                    <div class="h-px bg-surface-100 -mx-5 mb-3"></div>
+                    <div class="grid gap-0.5">
+                      {servicesDropdown.items.map((item) => (
+                        <a
+                          href={item.href}
+                          class="group flex items-start gap-3 p-2.5 -mx-1 rounded-xl hover:bg-surface-50 transition-colors duration-150 no-underline"
+                          role="menuitem"
+                        >
+                          <div class="flex-shrink-0 flex items-center justify-center w-9 h-9 bg-surface-100 group-hover:bg-surface-200 rounded-lg transition-colors duration-150">
+                            <img src={item.icon} alt="" width="20" height="20" loading="lazy" class="w-5 h-5" />
+                          </div>
+                          <div class="flex-1 min-w-0 pt-0.5">
+                            <span class="block text-sm font-medium text-surface-900">{item.title}</span>
+                            <span class="block text-[12px] text-surface-500 mt-0.5 leading-snug">{item.description}</span>
+                          </div>
+                        </a>
+                      ))}
+                    </div>
+                    {servicesDropdown.ctaText && (
+                      <>
+                        <div class="h-px bg-surface-100 -mx-5 mt-3 mb-3"></div>
+                        <button type="button" data-cal-trigger class="w-full text-[13px] py-2.5 px-4 rounded-lg bg-surface-900 hover:bg-surface-800 transition-colors duration-150 inline-flex items-center justify-center gap-1 font-medium border-none cursor-pointer">
+                          <span class="text-surface-400">Looking for a new agency partner?</span>
+                          <span class="text-white">Get in touch →</span>
+                        </button>
+                      </>
+                    )}
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Industries Dropdown -->
+            <div class="group relative dropdown-container" data-dropdown="industries">
+              <button
+                type="button"
+                class="nav-link flex items-center gap-1.5 px-3 py-2 text-nav font-sans font-medium text-surface-600 hover:text-surface-900 hover:bg-surface-50 group-[.is-open]:bg-surface-50 group-[.is-open]:text-surface-900 rounded-lg transition-colors cursor-pointer bg-transparent border-none"
+                aria-expanded="false"
+                aria-haspopup="true"
+                aria-controls="industries-menu"
+              >
+                {industriesDropdown.label}
+                <svg class="dropdown-arrow w-3.5 h-3.5 transition-transform duration-300 ease-out group-[.is-open]:rotate-180" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M4 6L8 10L12 6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+              </button>
+              <div
+                id="industries-menu"
+                class="dropdown-menu absolute top-full left-1/2 pt-2 w-dropdown z-50"
+                role="menu"
+              >
+                <div class="dropdown-panel bg-white rounded-2xl shadow-xl ring-1 ring-black/5 overflow-hidden">
+                  <div class="p-5">
+                    <div class="pb-3">
+                      <h4 class="text-sm font-semibold text-surface-900">{industriesDropdown.label}</h4>
+                      <p class="text-[13px] text-surface-500 mt-0.5">{industriesDropdown.description}</p>
+                    </div>
+                    <div class="h-px bg-surface-100 -mx-5 mb-3"></div>
+                    <div class="grid gap-0.5">
+                      {industriesDropdown.items.map((item) => (
+                        <a
+                          href={item.href}
+                          class="group flex items-start gap-3 p-2.5 -mx-1 rounded-xl hover:bg-surface-50 transition-colors duration-150 no-underline"
+                          role="menuitem"
+                        >
+                          <div class="flex-shrink-0 flex items-center justify-center w-9 h-9 bg-surface-100 group-hover:bg-surface-200 rounded-lg transition-colors duration-150">
+                            <img src={item.icon} alt="" width="20" height="20" loading="lazy" class="w-5 h-5" />
+                          </div>
+                          <div class="flex-1 min-w-0 pt-0.5">
+                            <span class="block text-sm font-medium text-surface-900">{item.title}</span>
+                            <span class="block text-[12px] text-surface-500 mt-0.5 leading-snug">{item.description}</span>
+                          </div>
+                        </a>
+                      ))}
+                    </div>
+                    {industriesDropdown.ctaText && (
+                      <>
+                        <div class="h-px bg-surface-100 -mx-5 mt-3 mb-3"></div>
+                        <button type="button" data-cal-trigger class="w-full text-[13px] py-2.5 px-4 rounded-lg bg-surface-900 hover:bg-surface-800 transition-colors duration-150 inline-flex items-center justify-center gap-1 font-medium border-none cursor-pointer">
+                          <span class="text-surface-400">Looking for a new agency partner?</span>
+                          <span class="text-white">Get in touch →</span>
+                        </button>
+                      </>
+                    )}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </nav>
+        </div>
+
+        <!-- Right: Status, Timezone, CTA -->
+        <div class="flex items-center gap-5">
+          <!-- Status Badge -->
+          <div class="hidden lg:flex items-center gap-2 px-3 py-1.5 bg-surface-50 rounded-full">
+            <div class="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse"></div>
+            <span class="text-2xs font-medium text-surface-600">Accepting Bookings</span>
+          </div>
+
+          <!-- Timezone -->
+          <div class="hidden xl:flex text-2xs text-surface-400 gap-1.5 tabular-nums">
+            <span id="city">City</span>
+            <span id="country"></span>
+            <span id="timezone"></span>
+            <span class="text-surface-300">·</span>
+            <span id="local-time" class="font-medium text-surface-500">TIME</span>
+          </div>
+
+          <!-- Divider -->
+          <div class="hidden lg:block w-px h-5 bg-surface-200"></div>
+
+          <!-- CTA Button -->
+          <button type="button" data-cal-trigger class="hidden lg:inline-flex items-center justify-center px-5 py-2 bg-surface-900 text-white text-sm font-sans font-medium rounded-full hover:bg-surface-800 active:scale-[0.98] transition-all duration-150 border-none cursor-pointer focus-visible:outline-2 focus-visible:outline-primary-500 focus-visible:outline-offset-2">
+            Book an intro call
+          </button>
+
+          <!-- Mobile Menu Button -->
+          <button
+            type="button"
+            class="nav-burger lg:hidden relative flex items-center justify-center w-10 h-10 -mr-1 bg-transparent border-none cursor-pointer rounded-xl hover:bg-surface-100 active:bg-surface-200 transition-colors duration-150"
+            aria-label="Toggle menu"
+            aria-expanded="false"
+            aria-controls="mobile-menu"
+          >
+            <div class="menu-icon">
+              <span class="menu-icon-bar"></span>
+              <span class="menu-icon-bar"></span>
+            </div>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Mobile Menu -->
+  <div id="mobile-menu" class="mobile-menu hidden [&.is-open]:block fixed top-15.25 inset-x-0 h-[calc(100dvh-61px)] bg-white overflow-y-auto z-40 lg:!hidden" aria-hidden="true">
+    <nav class="p-6" aria-label="Mobile navigation">
+      {navLinks.map((link) => (
+        <a href={link.href} class="block py-4 text-lg font-medium text-surface-900 no-underline border-b border-surface-100">{link.label}</a>
+      ))}
+
+      <!-- Mobile Services Accordion -->
+      <div class="group/accordion mobile-accordion border-b border-surface-100">
+        <button type="button" class="flex items-center justify-between w-full py-4 text-lg font-medium text-surface-900 bg-transparent border-none cursor-pointer text-left" aria-expanded="false">
+          <span>Services</span>
+          <svg class="w-4 h-4 transition-transform duration-200 group-[.is-open]/accordion:rotate-180" viewBox="0 0 16 16" fill="none">
+            <path d="M4 6L8 10L12 6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+        </button>
+        <div class="hidden pb-4 group-[.is-open]/accordion:block">
+          {servicesDropdown.items.map((item) => (
+            <a href={item.href} class="flex items-center gap-3 py-3 text-base text-surface-700 no-underline hover:text-surface-900">
+              <img src={item.icon} alt="" width="20" height="20" class="w-5 h-5" />
+              <span>{item.title}</span>
+            </a>
+          ))}
+        </div>
+      </div>
+
+      <!-- Mobile Industries Accordion -->
+      <div class="group/accordion mobile-accordion border-b border-surface-100">
+        <button type="button" class="flex items-center justify-between w-full py-4 text-lg font-medium text-surface-900 bg-transparent border-none cursor-pointer text-left" aria-expanded="false">
+          <span>Industries</span>
+          <svg class="w-4 h-4 transition-transform duration-200 group-[.is-open]/accordion:rotate-180" viewBox="0 0 16 16" fill="none">
+            <path d="M4 6L8 10L12 6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+        </button>
+        <div class="hidden pb-4 group-[.is-open]/accordion:block">
+          {industriesDropdown.items.map((item) => (
+            <a href={item.href} class="flex items-center gap-3 py-3 text-base text-surface-700 no-underline hover:text-surface-900">
+              <img src={item.icon} alt="" width="20" height="20" class="w-5 h-5" />
+              <span>{item.title}</span>
+            </a>
+          ))}
+        </div>
+      </div>
+
+      <div class="pt-6">
+        <button type="button" data-cal-trigger class="w-full inline-flex items-center justify-center px-5 py-2.5 bg-surface-900 text-white text-sm font-medium rounded-lg hover:bg-surface-800 transition-colors border-none cursor-pointer focus-visible:outline-2 focus-visible:outline-primary-500 focus-visible:outline-offset-2">
+          Book an intro call
+        </button>
+      </div>
+    </nav>
+  </div>
+</header>
+
+<style>
+  /* Dropdown menu transitions (requires custom CSS for translateX centering + opacity) */
+  .dropdown-menu {
+    opacity: 0;
+    visibility: hidden;
+    transform: translateX(-50%) translateY(-8px);
+    transition: opacity 200ms ease, transform 200ms ease, visibility 200ms;
+    pointer-events: none;
+  }
+
+  .dropdown-container.is-open .dropdown-menu {
+    opacity: 1;
+    visibility: visible;
+    transform: translateX(-50%) translateY(0);
+    pointer-events: auto;
+  }
+
+  /* Dropdown panel scale animation */
+  .dropdown-panel {
+    transform: scale(0.98);
+    transition: transform 200ms cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .dropdown-container.is-open .dropdown-panel {
+    transform: scale(1);
+  }
+
+  /* Modern two-bar menu icon */
+  .menu-icon {
+    position: relative;
+    width: 18px;
+    height: 12px;
+  }
+
+  .menu-icon-bar {
+    position: absolute;
+    left: 0;
+    height: 2px;
+    background-color: #171717;
+    border-radius: 2px;
+    transition: transform 0.3s ease, width 0.3s ease, top 0.3s ease, bottom 0.3s ease;
+  }
+
+  /* Default state - different widths */
+  .menu-icon-bar:first-child {
+    top: 0;
+    width: 100%;
+  }
+
+  .menu-icon-bar:last-child {
+    bottom: 0;
+    right: 0;
+    left: auto;
+    width: 60%;
+  }
+
+  /* Hover - short bar extends */
+  .nav-burger:hover .menu-icon-bar:last-child {
+    width: 100%;
+    left: 0;
+    right: auto;
+  }
+
+  /* Open state - both bars center and rotate into X */
+  .nav-burger.is-open .menu-icon-bar:first-child {
+    top: 5px;
+    transform: rotate(45deg);
+  }
+
+  .nav-burger.is-open .menu-icon-bar:last-child {
+    bottom: 5px;
+    width: 100%;
+    left: 0;
+    right: auto;
+    transform: rotate(-45deg);
+  }
+</style>
+
+<script>
+  import { initAllDropdowns } from '../../lib/dropdown';
+  import { initTimezoneDisplay } from '../../lib/timezone';
+
+  // Initialize on DOM ready
+  document.addEventListener('DOMContentLoaded', () => {
+    initAllDropdowns();
+    initTimezoneDisplay();
+  });
+</script>

@@ -1,0 +1,49 @@
+{
+  "title": "The LoudFace approach",
+  "highlightWord": "LoudFace",
+  "subtitle": "Here's our proven process",
+  "steps": [
+    {
+      "icon": "/images/Discovery.svg",
+      "iconAlt": "Discovery",
+      "title": "Comprehensive Discovery",
+      "description": "We dive deep to understand your business, goals, and audience, ensuring our strategy aligns perfectly with your needs."
+    },
+    {
+      "icon": "/images/Strategy.svg",
+      "iconAlt": "Strategy",
+      "title": "Strategic Planning",
+      "description": "We develop a data-driven plan that combines creativity and analytics, providing you with a clear roadmap to digital success."
+    },
+    {
+      "icon": "/images/Execution.svg",
+      "iconAlt": "Execution",
+      "title": "Execution",
+      "description": "Our skilled professionals brings your vision to life, creating a website that's both visually impressive and highly functional."
+    },
+    {
+      "icon": "/images/Discovery.svg",
+      "iconAlt": "Discovery",
+      "title": "Learn and Optimize",
+      "description": "Our goal is to address every concern, clarify doubts, and provide detailed information so you can feel confident and informed."
+    }
+  ],
+  "statsHeading": "Some quick numbers",
+  "stats": [
+    {
+      "value": "4+",
+      "label": "Years as a Certified Webflow Partner",
+      "description": "And 2+ years as a Webflow Enterprise partner! Our mission is to help companies adopt, and go fast with Webflow"
+    },
+    {
+      "value": "200+",
+      "label": "Projects completed",
+      "description": "This volume of work has contributed to a rare amount of experience we operate under"
+    },
+    {
+      "value": "288%",
+      "label": "Increase in conversions",
+      "description": "This is an actual number from our work with Dimer Health (Check out the case study). Our work is aimed to deliver meaningful impact for our clients. We put our focus on just that, and set that as our main objective"
+    }
+  ]
+}

@@ -11,6 +11,6 @@ export default defineConfig({
     plugins: [tailwindcss()],
   },
   security: {
-    checkOrigin: false,
+    checkOrigin: true,
   },
 });

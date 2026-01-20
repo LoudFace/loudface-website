@@ -1,0 +1,576 @@
+/**
+ * CMS Control Panel Styles
+ *
+ * Dev-only styles for the CMS filtering/sorting panel.
+ * Only loaded when import.meta.env.DEV is true.
+ */
+
+/* Section highlight on hover */
+[data-cms-section] {
+  position: relative;
+}
+
+[data-cms-section]::before {
+  content: '';
+  position: absolute;
+  inset: -4px;
+  border: 2px dashed transparent;
+  border-radius: 8px;
+  pointer-events: none;
+  transition: border-color 0.15s ease;
+  z-index: 100;
+}
+
+[data-cms-section]:hover::before,
+[data-cms-section].cms-panel-active::before {
+  border-color: #6366f1;
+}
+
+/* Section label badge - hidden by default, shown on hover */
+[data-cms-section]::after {
+  content: attr(data-cms-label);
+  position: absolute;
+  top: -4px;
+  left: 8px;
+  transform: translateY(-100%);
+  background: #6366f1;
+  color: white;
+  font-size: 11px;
+  font-weight: 500;
+  padding: 2px 8px;
+  border-radius: 4px 4px 0 0;
+  opacity: 0;
+  transition: opacity 0.15s ease;
+  pointer-events: none;
+  z-index: 101;
+  font-family: system-ui, -apple-system, sans-serif;
+}
+
+[data-cms-section]:hover::after,
+[data-cms-section].cms-panel-active::after {
+  opacity: 1;
+}
+
+/* Cogwheel settings button - appears on hover */
+/* Positioned on the LEFT side (after label) to stay visible for overflow sections */
+.cms-section-settings {
+  position: absolute;
+  top: -4px;
+  left: auto;
+  /* Use clamp to position: prefer right side, but clamp to visible viewport */
+  /* This ensures button stays visible even when section overflows */
+  right: clamp(8px, 8px, calc(100vw - 100% - 8px));
+  transform: translateY(-100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 24px;
+  background: #6366f1;
+  border: none;
+  border-radius: 4px 4px 0 0;
+  color: white;
+  cursor: pointer;
+  opacity: 0;
+  transition: opacity 0.15s ease, background 0.15s ease;
+  z-index: 102;
+  font-family: system-ui, -apple-system, sans-serif;
+}
+
+/* For sections that overflow (like sliders), position cogwheel next to label on left */
+[data-cms-section].cms-section-overflows .cms-section-settings,
+.swiper[data-cms-section] .cms-section-settings,
+[data-cms-section]:has(.swiper) .cms-section-settings {
+  right: auto;
+  left: calc(var(--cms-label-width, 120px) + 16px);
+}
+
+.cms-section-settings:hover {
+  background: #5558e3;
+}
+
+.cms-section-settings svg {
+  width: 14px;
+  height: 14px;
+}
+
+[data-cms-section]:hover .cms-section-settings,
+[data-cms-section].cms-panel-active .cms-section-settings {
+  opacity: 1;
+}
+
+/* Control Panel */
+.cms-control-panel {
+  position: fixed;
+  top: 80px;
+  right: 20px;
+  width: 320px;
+  background: #1a1a2e;
+  border: 1px solid #2d2d44;
+  border-radius: 12px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+  z-index: 10000;
+  font-family: system-ui, -apple-system, sans-serif;
+  font-size: 13px;
+  color: #e0e0e0;
+  overflow: hidden;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-10px);
+  transition: opacity 0.2s ease, visibility 0.2s ease, transform 0.2s ease;
+}
+
+.cms-control-panel.is-visible {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+
+/* Panel Header */
+.cms-panel-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 16px;
+  background: #16162a;
+  border-bottom: 1px solid #2d2d44;
+}
+
+.cms-panel-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 600;
+  color: white;
+}
+
+.cms-panel-title-icon {
+  width: 18px;
+  height: 18px;
+  color: #6366f1;
+}
+
+.cms-panel-close {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  background: transparent;
+  border: none;
+  border-radius: 4px;
+  color: #888;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+}
+
+.cms-panel-close:hover {
+  background: #2d2d44;
+  color: white;
+}
+
+/* Panel Body */
+.cms-panel-body {
+  padding: 16px;
+}
+
+/* Section label */
+.cms-panel-section {
+  margin-bottom: 16px;
+}
+
+.cms-panel-section:last-child {
+  margin-bottom: 0;
+}
+
+.cms-panel-section-label {
+  display: block;
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #888;
+  margin-bottom: 8px;
+}
+
+/* Filter/Sort controls */
+.cms-panel-control {
+  margin-bottom: 12px;
+}
+
+.cms-panel-control:last-child {
+  margin-bottom: 0;
+}
+
+.cms-panel-control-label {
+  display: block;
+  font-size: 12px;
+  color: #aaa;
+  margin-bottom: 4px;
+}
+
+.cms-panel-select {
+  width: 100%;
+  padding: 8px 12px;
+  background: #2d2d44;
+  border: 1px solid #3d3d5c;
+  border-radius: 6px;
+  color: white;
+  font-size: 13px;
+  cursor: pointer;
+  transition: border-color 0.15s, background 0.15s;
+}
+
+.cms-panel-select:hover {
+  background: #363654;
+}
+
+.cms-panel-select:focus {
+  outline: none;
+  border-color: #6366f1;
+}
+
+/* Sort row */
+.cms-panel-sort-row {
+  display: flex;
+  gap: 8px;
+}
+
+.cms-panel-sort-row .cms-panel-select {
+  flex: 1;
+}
+
+.cms-panel-sort-dir {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  background: #2d2d44;
+  border: 1px solid #3d3d5c;
+  border-radius: 6px;
+  color: #888;
+  cursor: pointer;
+  transition: border-color 0.15s, background 0.15s, color 0.15s;
+}
+
+.cms-panel-sort-dir:hover {
+  background: #363654;
+  color: white;
+}
+
+.cms-panel-sort-dir.is-desc svg {
+  transform: rotate(180deg);
+}
+
+/* Panel Footer */
+.cms-panel-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 16px;
+  background: #16162a;
+  border-top: 1px solid #2d2d44;
+}
+
+.cms-panel-count {
+  font-size: 12px;
+  color: #888;
+}
+
+.cms-panel-count strong {
+  color: #6366f1;
+}
+
+.cms-panel-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.cms-panel-btn {
+  padding: 6px 12px;
+  background: #2d2d44;
+  border: 1px solid #3d3d5c;
+  border-radius: 6px;
+  color: #e0e0e0;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s;
+}
+
+.cms-panel-btn:hover {
+  background: #363654;
+  border-color: #4d4d6c;
+}
+
+.cms-panel-btn.is-primary {
+  background: #6366f1;
+  border-color: #6366f1;
+  color: white;
+}
+
+.cms-panel-btn.is-primary:hover {
+  background: #5558e3;
+  border-color: #5558e3;
+}
+
+/* Dimmed items styling (visual preview - doesn't break layout) */
+[data-cms-item].cms-dimmed {
+  opacity: 0.25 !important;
+  filter: grayscale(100%) !important;
+  pointer-events: none;
+  transition: opacity 0.2s ease, filter 0.2s ease;
+}
+
+/* Sort order badges */
+.cms-sort-badge {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  background: #6366f1;
+  color: white;
+  font-size: 12px;
+  font-weight: 700;
+  border-radius: 50%;
+  box-shadow: 0 2px 8px rgba(99, 102, 241, 0.4);
+  font-family: system-ui, -apple-system, sans-serif;
+  pointer-events: none;
+}
+
+/* Info note in panel */
+.cms-panel-note {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  padding: 10px 12px;
+  background: rgba(99, 102, 241, 0.1);
+  border: 1px solid rgba(99, 102, 241, 0.2);
+  border-radius: 6px;
+  font-size: 11px;
+  color: #a5b4fc;
+  line-height: 1.4;
+  margin-top: 12px;
+}
+
+.cms-panel-note svg {
+  flex-shrink: 0;
+  margin-top: 1px;
+  color: #6366f1;
+}
+
+/* Apply section */
+.cms-panel-apply-section {
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid #2d2d44;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.cms-panel-apply {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  width: 100%;
+}
+
+.cms-panel-apply-hint {
+  font-size: 10px;
+  color: #666;
+  text-align: center;
+}
+
+.cms-panel-apply:disabled,
+.cms-panel-reset:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+/* Spin animation */
+@keyframes cms-spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.cms-spin {
+  animation: cms-spin 1s linear infinite;
+}
+
+/* Keyboard hint */
+.cms-panel-hint {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  padding: 8px 12px;
+  background: #1a1a2e;
+  border: 1px solid #2d2d44;
+  border-radius: 8px;
+  font-family: system-ui, -apple-system, sans-serif;
+  font-size: 12px;
+  color: #888;
+  z-index: 9999;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+
+.cms-panel-hint.is-visible {
+  opacity: 1;
+  visibility: visible;
+}
+
+.cms-panel-hint kbd {
+  display: inline-block;
+  padding: 2px 6px;
+  background: #2d2d44;
+  border-radius: 4px;
+  font-family: inherit;
+  font-weight: 600;
+  color: #6366f1;
+}
+
+/* No filters message */
+.cms-panel-empty {
+  text-align: center;
+  padding: 16px;
+  color: #666;
+  font-style: italic;
+}
+
+.cms-panel-no-filters {
+  text-align: center;
+  padding: 12px;
+  color: #666;
+  font-size: 12px;
+  font-style: italic;
+}
+
+/* Filter section header */
+.cms-panel-section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+
+.cms-panel-add-filter {
+  padding: 4px 8px;
+  background: transparent;
+  border: 1px solid #3d3d5c;
+  border-radius: 4px;
+  color: #6366f1;
+  font-size: 11px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s;
+}
+
+.cms-panel-add-filter:hover {
+  background: #2d2d44;
+  border-color: #6366f1;
+}
+
+/* Filter list container */
+.cms-panel-filters-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+/* Three-part filter row */
+.cms-panel-filter-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr 28px;
+  gap: 6px;
+  align-items: center;
+}
+
+.cms-panel-filter-field,
+.cms-panel-filter-operator,
+.cms-panel-filter-value {
+  min-width: 0;
+  padding: 6px 8px;
+  font-size: 12px;
+}
+
+.cms-panel-filter-value-placeholder {
+  /* Empty placeholder for is_set/is_not_set */
+  min-height: 32px;
+  background: #2d2d44;
+  border: 1px dashed #3d3d5c;
+  border-radius: 6px;
+  opacity: 0.4;
+}
+
+/* Filter remove button */
+.cms-panel-filter-remove {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  background: transparent;
+  border: none;
+  border-radius: 4px;
+  color: #666;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+}
+
+.cms-panel-filter-remove:hover {
+  background: #2d2d44;
+  color: #ef4444;
+}
+
+/* Text input styling */
+.cms-panel-input {
+  width: 100%;
+  padding: 6px 8px;
+  background: #2d2d44;
+  border: 1px solid #3d3d5c;
+  border-radius: 6px;
+  color: white;
+  font-size: 12px;
+  transition: border-color 0.15s, background 0.15s;
+}
+
+.cms-panel-input::placeholder {
+  color: #666;
+}
+
+.cms-panel-input:hover {
+  background: #363654;
+}
+
+.cms-panel-input:focus {
+  outline: none;
+  border-color: #6366f1;
+}
+
+/* Updated sort row with two dropdowns */
+.cms-panel-sort-row {
+  display: flex;
+  gap: 8px;
+}
+
+.cms-panel-sort-field {
+  flex: 1;
+}
+
+.cms-panel-sort-dir {
+  flex: 1.2;
+}
+
+.cms-panel-sort-dir:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Animation for reordering */
+[data-cms-item] {
+  transition: transform 0.2s ease;
+}

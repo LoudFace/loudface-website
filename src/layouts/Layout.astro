@@ -1,33 +1,172 @@
 ---
-import '../styles/global.css';
-import Header from '../components/Header.astro';
-import Footer from '../components/Footer.astro';
+// Import Tailwind component classes
+import '../styles/components.css';
 
 interface Props {
-  title: string;
+  title?: string;
   description?: string;
+  canonicalUrl?: string;
 }
 
-const { title, description = 'Conversion-first Webflow sites with SEO/AEO that scales your traffic. A strategic Enterprise-grade Webflow partner.' } = Astro.props;
+const {
+  title = "Webflow Development, SEO/AEO & Design Agency | LoudFace",
+  description = "Transform your website into a growth engine. Industry-leading Webflow development, SEO/AEO & design delivering measurable ROI and sustainable business growth.",
+  canonicalUrl = "https://www.loudface.co/"
+} = Astro.props;
 ---
-
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="description" content={description} />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
-    <title>{title} | LoudFace</title>
-  </head>
-  <body class="bg-white text-black antialiased">
-    <Header />
-    <main>
-      <slot />
-    </main>
-    <Footer />
-  </body>
+<head>
+  <meta charset="utf-8">
+  <title>{title}</title>
+  <meta name="description" content={description}>
+  <meta name="robots" content="index, follow">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#0a0a0a">
+
+  <!-- Canonical URL -->
+  <link rel="canonical" href={canonicalUrl}>
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="website">
+  <meta property="og:url" content={canonicalUrl}>
+  <meta property="og:title" content={title}>
+  <meta property="og:description" content={description}>
+  <meta property="og:image" content="https://www.loudface.co/images/og-image.jpg">
+  <meta property="og:locale" content="en_US">
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:site" content="@loudface">
+  <meta name="twitter:title" content={title}>
+  <meta name="twitter:description" content={description}>
+  <meta name="twitter:image" content="https://www.loudface.co/images/og-image.jpg">
+
+  <!-- Preconnect hints for performance -->
+  <link rel="dns-prefetch" href="https://app.cal.com">
+
+
+
+  <!-- Favicon -->
+  <link href="/images/favicon.png" rel="shortcut icon" type="image/x-icon">
+  <link href="/images/webclip.png" rel="apple-touch-icon">
+
+  <!-- Structured Data - WebSite -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    "name": "LoudFace",
+    "url": "https://www.loudface.co/"
+  }
+  </script>
+
+  <!-- Structured Data - Organization -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    "name": "LoudFace",
+    "url": "https://www.loudface.co",
+    "logo": "https://www.loudface.co/images/loudface.svg",
+    "description": "Industry-leading Webflow development, SEO/AEO & design agency delivering measurable ROI and sustainable business growth.",
+    "address": {
+      "@type": "PostalAddress",
+      "addressLocality": "Dubai",
+      "addressCountry": "AE"
+    },
+    "sameAs": [
+      "https://www.instagram.com/loudface.co",
+      "https://www.linkedin.com/company/loudface",
+      "https://dribbble.com/loudface",
+      "https://webflow.com/@loudface"
+    ]
+  }
+  </script>
+</head>
+<body>
+  <!-- Skip link for keyboard accessibility -->
+  <a href="#main-content" class="sr-only skip-link">Skip to main content</a>
+
+  <slot />
+
+
+  <!-- Cal.com booking modal handler -->
+  <script is:inline>
+    document.addEventListener('click', function(e) {
+      // Check if clicked on .btn-cta, [data-cal-trigger], or a link to #book-modal
+      const isBtnCta = e.target.classList.contains('btn-cta') || e.target.closest('.btn-cta');
+      const isCalTrigger = e.target.hasAttribute('data-cal-trigger') || e.target.closest('[data-cal-trigger]');
+      const isBookLink = e.target.getAttribute('href') === '#book-modal' ||
+          e.target.closest('[href="#book-modal"]');
+
+      if (isBtnCta || isCalTrigger || isBookLink) {
+        e.preventDefault();
+        e.stopPropagation();
+        // Open Cal.com popup modal
+        if (typeof Cal !== 'undefined') {
+          Cal("modal", {
+            calLink: "arnelbukva/loudface-intro-call",
+            config: { layout: "month_view" }
+          });
+        }
+      }
+    });
+  </script>
+
+  <!-- Embla Carousel initialization -->
+  <script type="module">
+    import { initAllCarousels } from '/src/lib/carousel.ts';
+    document.addEventListener('DOMContentLoaded', initAllCarousels);
+  </script>
+
+  {/* Development Tools - Only loaded in dev mode */}
+  {import.meta.env.DEV && (
+    <>
+      {/* CMS Control Panel - Press C to toggle, hover CMS sections to configure */}
+      <link rel="stylesheet" href="/src/styles/dev-panel.css" />
+      <script type="module">
+        import '/src/lib/dev/cms-panel-init.ts';
+      </script>
+
+      {/* Element Picker - Press P to toggle, click to copy selector */}
+      <script type="module">
+        import { finder } from 'https://esm.sh/@medv/finder';
+        import { ElementPicker } from 'https://esm.sh/pick-dom-element';
+
+        const picker = new ElementPicker({ style: { borderColor: '#0ea5e9' } });
+        let isActive = false;
+
+        document.addEventListener('keydown', (e) => {
+          if (e.key === 'p' && !e.metaKey && !e.ctrlKey) {
+            if (isActive) {
+              picker.stop();
+              isActive = false;
+            } else {
+              picker.start({
+                onClick: (el) => {
+                  picker.stop();
+                  isActive = false;
+                  const selector = finder(el, {
+                    root: document.body,
+                    idName: () => true,
+                    className: () => true,
+                    tagName: () => false,
+                    attr: () => false,
+                    seedMinLength: 3,
+                    optimizedMinLength: 3,
+                    threshold: 1000
+                  });
+                  navigator.clipboard.writeText(selector);
+                  console.log('Copied selector:', selector);
+                }
+              });
+              isActive = true;
+            }
+          }
+        });
+      </script>
+    </>
+  )}
+</body>
 </html>

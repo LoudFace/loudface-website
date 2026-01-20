@@ -1,0 +1,186 @@
+---
+import { applyCMSConfig } from '../../lib/cms-utils';
+import { generateCMSAttributes } from '../../lib/cms-attributes';
+import { CMS_SECTIONS } from '../../lib/constants';
+import { getPartnersContent } from '../../lib/content-utils';
+import type { Testimonial, Client } from '../../lib/types';
+
+// Load content from JSON file (editable via /dev/editor)
+const content = getPartnersContent();
+
+interface Props {
+  testimonials: Testimonial[];
+  clients: Client[];
+  starCount?: number;
+  starRatingPrefix?: string;
+  starRatingSuffix?: string;
+  tagline?: string;
+}
+
+// Props can still override JSON defaults
+const {
+  testimonials: rawTestimonials,
+  clients: rawClients,
+  starCount = 5,
+  starRatingPrefix = content.starRatingPrefix,
+  starRatingSuffix = content.starRatingSuffix,
+  tagline = content.tagline
+} = Astro.props;
+
+// Apply CMS configuration for testimonials (field mapping auto-generated from schema)
+const testimonials = applyCMSConfig(rawTestimonials, CMS_SECTIONS.PARTNERS_TESTIMONIALS, 'testimonials');
+
+// Filter clients that should be showcased, then apply CMS config
+const filteredClients = rawClients.filter(c => c['showcase-logo']);
+const showcaseClients = applyCMSConfig(filteredClients, CMS_SECTIONS.PARTNERS_CLIENTS, 'clients');
+---
+
+<section class="overflow-visible relative z-10">
+  <div class="pt-12 md:pt-16 lg:pt-20">
+    <div class="px-4 md:px-8 lg:px-12">
+      <div class="max-w-7xl mx-auto">
+
+        <!-- Star Rating -->
+        <div class="flex items-center justify-center gap-2">
+          <span class="font-bold text-surface-900">{starRatingPrefix}</span>
+          <div class="flex items-center gap-0.5">
+            {Array.from({ length: starCount }).map(() => (
+              <img
+                src="/images/star-icon.svg"
+                loading="lazy"
+                width="14"
+                height="14"
+                alt=""
+                class="w-3.5 h-3.5"
+              />
+            ))}
+          </div>
+          <span class="font-bold text-surface-900">{starRatingSuffix}</span>
+        </div>
+
+        <div class="h-4"></div>
+
+        <!-- Testimonial Headshots -->
+        {testimonials.length > 0 && (
+          <div
+            class="flex flex-wrap justify-center gap-2 relative z-20"
+            data-cms-section={CMS_SECTIONS.PARTNERS_TESTIMONIALS}
+            data-cms-label="Testimonials"
+          >
+            {testimonials.map((testimonial) => (
+              <div
+                class="headshot-item relative z-20"
+                {...generateCMSAttributes(testimonial, 'testimonials')}
+              >
+                <div class="headshot-trigger relative cursor-pointer z-20">
+                  <img
+                    src={testimonial['profile-image']?.url || '/images/placeholder-avatar.svg'}
+                    loading="lazy"
+                    width="40"
+                    height="40"
+                    alt={testimonial.name}
+                    class="w-10 h-10 rounded-full object-cover border-2 border-white shadow-sm transition-all duration-200 hover:scale-110 hover:shadow-lg"
+                  />
+                  <div class="testimonial-tooltip">
+                    <div class="text-sm leading-relaxed text-surface-700 [&>p]:m-0" set:html={testimonial['testimonial-body']} />
+                    <div class="h-px bg-surface-200 my-3"></div>
+                    <div class="flex flex-col gap-0.5">
+                      <div class="font-bold text-sm text-surface-900">{testimonial.name}</div>
+                      <div class="text-xs text-surface-500">{testimonial.role}</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+
+        <!-- Tagline -->
+        <div class="h-4"></div>
+        <p class="text-center text-surface-600">{tagline}</p>
+
+        <div class="h-8"></div>
+
+        <!-- Client Logos -->
+        {showcaseClients.length > 0 && (
+          <div
+            class="flex flex-wrap justify-center items-center gap-4 sm:gap-6 md:gap-x-12 md:gap-y-8"
+            data-cms-section={CMS_SECTIONS.PARTNERS_CLIENTS}
+            data-cms-label="Client Logos"
+          >
+            {showcaseClients.map((client) => (
+              <div
+                class="logo-item flex items-center justify-center"
+                {...generateCMSAttributes(client, 'clients')}
+              >
+                <img
+                  src={client['colored-logo']?.url || '/images/placeholder-logo.svg'}
+                  loading="lazy"
+                  width="100"
+                  height="45"
+                  alt={client.name}
+                  class="max-w-[100px] max-h-[45px] w-auto h-auto object-contain grayscale opacity-60 transition-all duration-200 hover:grayscale-0 hover:opacity-100"
+                />
+              </div>
+            ))}
+          </div>
+        )}
+
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  /* Testimonial Tooltip - requires custom CSS for positioning and arrow */
+  .testimonial-tooltip {
+    position: absolute;
+    bottom: calc(100% + 0.75rem);
+    left: 50%;
+    transform: translateX(-50%) translateY(0.5rem);
+    width: 280px;
+    background-color: white;
+    border-radius: 0.75rem;
+    padding: 1rem;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.2s, transform 0.2s, visibility 0.2s;
+    z-index: 100;
+    pointer-events: none;
+  }
+
+  .testimonial-tooltip::after {
+    content: '';
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    border: 8px solid transparent;
+    border-top-color: white;
+  }
+
+  .headshot-trigger:hover .testimonial-tooltip {
+    opacity: 1;
+    visibility: visible;
+    transform: translateX(-50%) translateY(0);
+    pointer-events: auto;
+  }
+
+  /* Mobile tooltip repositioning */
+  @media (max-width: 767px) {
+    .testimonial-tooltip {
+      width: 240px;
+      left: 0;
+      transform: translateX(-20%) translateY(0.5rem);
+    }
+
+    .headshot-trigger:hover .testimonial-tooltip {
+      transform: translateX(-20%) translateY(0);
+    }
+
+    .testimonial-tooltip::after {
+      left: 30%;
+    }
+  }
+</style>

@@ -1,231 +1,252 @@
 ---
 import Layout from '../layouts/Layout.astro';
-import Hero from '../components/Hero.astro';
-import CaseStudyCarousel from '../components/CaseStudyCarousel.tsx';
-import TestimonialCard from '../components/TestimonialCard.astro';
-import ServiceCard from '../components/ServiceCard.astro';
-import ProcessStep from '../components/ProcessStep.astro';
-import StatCard from '../components/StatCard.astro';
-import BlogCard from '../components/BlogCard.astro';
-import LogoMarquee from '../components/LogoMarquee.astro';
-import FAQItem from '../components/FAQItem.tsx';
+import FAQ from '../components/ui/FAQ.astro';
+import Knowledge from '../components/ui/Knowledge.astro';
+import Approach from '../components/ui/Approach.astro';
+import Results from '../components/ui/Results.astro';
+import Audit from '../components/ui/Audit.astro';
+import CaseStudySlider from '../components/ui/CaseStudySlider.astro';
+import Hero from '../components/ui/Hero.astro';
+import Partners from '../components/ui/Partners.astro';
+import Marketing from '../components/ui/Marketing.astro';
+import CTA from '../components/ui/CTA.astro';
+import Footer from '../components/ui/Footer.astro';
+import Header from '../components/ui/Header.astro';
+import { COLLECTION_IDS } from '../lib/constants';
+import { getCached, setCache } from '../lib/cms-cache';
+import type { CaseStudy, Industry, Client, Testimonial, BlogPost, Category, TeamMember } from '../lib/types';
 
-import { featuredCaseStudies } from '../data/caseStudies';
-import { testimonials } from '../data/testimonials';
-import { services, processSteps, stats, challenges } from '../data/services';
-import { blogPosts } from '../data/blogPosts';
-import { faqs } from '../data/faq';
+// FAQ Data
+const faqItems = [
+  {
+    question: "What services do you offer?",
+    answer: "We specialize in SEO/AEO, Webflow development, and design services. We focus on strategic partnerships where we own the strategic decisions, and the execution of the work."
+  },
+  {
+    question: "Who do you work with?",
+    answer: "We primarily partner with SaaS brands, as our speciality lies in SaaS. However, we work with a wide range of industries, as long as we believe we can contribute in a meaningful capacity."
+  },
+  {
+    question: "Why do you specialize in Webflow?",
+    answer: "Webflow has enabled our team to work at light-speed and deliver what would take weeks, in days. We value the native SEO/AEO features of Webflow which cuts time and enables better results for our clients."
+  },
+  {
+    question: "Where is LoudFace based?",
+    answer: "LoudFace was founded in Sweden. Today, our HQ is based in Dubai, UAE, and we have office in San Francisco, USA. We work primarily with the US market."
+  },
+  {
+    question: "How do I get started?",
+    answer: "Start with an intro call!<br><br>This is an easy way to get introduced and for both of us to figure out if we're a good fit."
+  },
+  {
+    question: "What is your pricing?",
+    answer: "We work primarily with monthly retainers. This allows for flexible scopes and clear expectations.<br><br>Feel free to book an intro call to hear about our engagement models."
+  }
+];
+
+// CMS Data Fetching
+const accessToken = (Astro.locals as any).runtime?.env?.WEBFLOW_SITE_API_TOKEN
+  || import.meta.env.WEBFLOW_SITE_API_TOKEN;
+
+let caseStudies: CaseStudy[] = [];
+let clients: Map<string, Client> = new Map();
+let allClients: Client[] = []; // Array for logo display
+let testimonials: Map<string, Testimonial> = new Map(); // Keyed by case-study ID
+let allTestimonials: Testimonial[] = []; // Array for headshot display
+let blogPosts: BlogPost[] = [];
+let categories: Map<string, Category> = new Map();
+let teamMembers: Map<string, TeamMember> = new Map();
+let industries: Map<string, Industry> = new Map();
+
+// Helper to fetch collection with caching (dev only)
+async function fetchCollection<T>(collectionKey: string): Promise<{ items: T[] } | null> {
+  const collectionId = COLLECTION_IDS[collectionKey as keyof typeof COLLECTION_IDS];
+  if (!collectionId) return null;
+
+  // Check cache first (only works in dev)
+  const cached = getCached<{ items: T[] }>(collectionId);
+  if (cached) {
+    return cached;
+  }
+
+  // Fetch from API
+  const res = await fetch(`https://api.webflow.com/v2/collections/${collectionId}/items`, {
+    headers: { 'Authorization': `Bearer ${accessToken}` },
+  });
+
+  if (!res.ok) return null;
+
+  const data = await res.json();
+  // Cache the response (only works in dev)
+  setCache(collectionId, data);
+  return data;
+}
+
+if (accessToken) {
+  try {
+    // Fetch all CMS collections in parallel (with caching in dev)
+    const [caseStudiesData, clientsData, testimonialsData, blogData, categoriesData, teamMembersData, industriesData] = await Promise.all([
+      fetchCollection<any>('case-studies'),
+      fetchCollection<any>('clients'),
+      fetchCollection<any>('testimonials'),
+      fetchCollection<any>('blog'),
+      fetchCollection<any>('categories'),
+      fetchCollection<any>('team-members'),
+      fetchCollection<any>('industries'),
+    ]);
+
+    // Build clients lookup map and array
+    if (clientsData?.items) {
+      clientsData.items.forEach((item: any) => {
+        if (!item.isDraft && !item.isArchived) {
+          const client = { id: item.id, ...item.fieldData };
+          clients.set(item.id, client);
+          allClients.push(client);
+        }
+      });
+    }
+
+    // Normalize case studies and filter published only
+    if (caseStudiesData?.items) {
+      caseStudies = caseStudiesData.items
+        .filter((item: any) => !item.isDraft && !item.isArchived)
+        .map((item: any) => ({ id: item.id, ...item.fieldData }));
+    }
+
+    // Build testimonials lookup map and array
+    if (testimonialsData?.items) {
+      testimonialsData.items.forEach((item: any) => {
+        if (!item.isDraft && !item.isArchived) {
+          const testimonial = { id: item.id, ...item.fieldData };
+          allTestimonials.push(testimonial);
+          // Also index by case-study ID for case study cards
+          if (item.fieldData['case-study']) {
+            testimonials.set(item.fieldData['case-study'], testimonial);
+          }
+        }
+      });
+    }
+
+    // Build categories lookup map
+    if (categoriesData?.items) {
+      categoriesData.items.forEach((item: any) => {
+        if (!item.isDraft && !item.isArchived) {
+          const category = { id: item.id, ...item.fieldData };
+          categories.set(item.id, category);
+        }
+      });
+    }
+
+    // Build team members lookup map (for blog author resolution)
+    if (teamMembersData?.items) {
+      teamMembersData.items.forEach((item: any) => {
+        if (!item.isDraft && !item.isArchived) {
+          const member = { id: item.id, ...item.fieldData };
+          teamMembers.set(item.id, member);
+        }
+      });
+    }
+
+    // Build industries lookup map
+    if (industriesData?.items) {
+      industriesData.items.forEach((item: any) => {
+        if (!item.isDraft && !item.isArchived) {
+          const industry = { id: item.id, ...item.fieldData };
+          industries.set(item.id, industry);
+        }
+      });
+    }
+
+    // Build blog posts array (sorted by published date, newest first)
+    if (blogData?.items) {
+      blogPosts = blogData.items
+        .filter((item: any) => !item.isDraft && !item.isArchived)
+        .map((item: any) => ({ id: item.id, ...item.fieldData }))
+        .sort((a: BlogPost, b: BlogPost) => {
+          const dateA = new Date(a['published-date'] || 0).getTime();
+          const dateB = new Date(b['published-date'] || 0).getTime();
+          return dateB - dateA;
+        });
+    }
+  } catch {
+    // CMS fetch failed - page will render with empty data
+  }
+}
+
+// Helper to get client data by reference ID
+const getClient = (clientId: string) => clients.get(clientId);
+
+// Helper to get testimonial by case study ID
+const getTestimonial = (caseStudyId: string) => testimonials.get(caseStudyId);
+
+// Helper to get category by reference ID
+const getCategory = (categoryId: string) => categories.get(categoryId);
+
+// Helper to get author (team member) by reference ID
+const getAuthor = (authorId: string) => teamMembers.get(authorId);
 ---
+<Layout>
+  <div class="page-wrapper">
+    <!-- Header Navigation -->
+    <Header />
+    <!-- Cal.com popup embed script -->
+    <script type="text/javascript" is:inline>
+      (function (C, A, L) { let p = function (a, ar) { a.q.push(ar); }; let d = C.document; C.Cal = C.Cal || function () { let cal = C.Cal; let ar = arguments; if (!cal.loaded) { cal.ns = {}; cal.q = cal.q || []; d.head.appendChild(d.createElement("script")).src = A; cal.loaded = true; } if (ar[0] === L) { const api = function () { p(api, arguments); }; const namespace = ar[1]; api.q = api.q || []; if(typeof namespace === "string"){cal.ns[namespace] = cal.ns[namespace] || api;p(cal.ns[namespace], ar);p(cal, ["initNamespace", namespace]);} else p(cal, ar); return;} p(cal, ar); }; })(window, "https://app.cal.com/embed/embed.js", "init");
+      Cal("init", {origin:"https://app.cal.com"});
+      Cal("ui", {"hideEventTypeDetails":false,"layout":"month_view"});
+    </script>
+    <main id="main-content" class="main-wrapper">
+      <!-- Hero Section -->
+      <Hero caseStudies={caseStudies} clients={clients} industries={industries} />
 
-<Layout title="Conversion-first Webflow Sites">
-  <!-- Hero Section -->
-  <Hero />
-
-  <!-- Case Studies Carousel Section -->
-  <section id="work" class="py-16 md:py-24 bg-gray-50">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div class="flex items-end justify-between mb-12">
-        <div>
-          <h2 class="text-3xl md:text-4xl font-bold mb-4">Our case studies</h2>
-          <p class="text-gray-600 max-w-2xl">
-            See how we've helped companies transform their digital presence and achieve measurable results.
-          </p>
-        </div>
-      </div>
-
-      <CaseStudyCarousel client:load caseStudies={featuredCaseStudies} />
-    </div>
-  </section>
-
-  <!-- Logo Marquee -->
-  <LogoMarquee />
-
-  <!-- Testimonials Section -->
-  <section class="py-16 md:py-24">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div class="text-center mb-12">
-        <p class="text-accent font-semibold mb-2">Only 5-Star Reviews</p>
-        <h2 class="text-3xl md:text-4xl font-bold mb-4">
-          Our customers tell the story
-        </h2>
-        <p class="text-gray-600 max-w-2xl mx-auto">
-          Our work consistently delivers impactful outcomes, and the backing of our customers reflects the impact we bring.
-        </p>
-      </div>
-
-      <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {testimonials.slice(0, 6).map((testimonial) => (
-          <TestimonialCard {...testimonial} />
-        ))}
-      </div>
-    </div>
-  </section>
-
-  <!-- Is Your Website Underperforming Section -->
-  <section class="py-16 md:py-24 bg-gray-50">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div class="text-center mb-12">
-        <h2 class="text-3xl md:text-4xl font-bold mb-4">
-          Is your website underperforming?
-        </h2>
-        <p class="text-gray-600 max-w-2xl mx-auto">
-          Many struggle with these common challenges down below, do they sound familiar?
-          We've helped numerous companies overcome these exact issues.
-        </p>
-      </div>
-
-      <div class="grid md:grid-cols-3 gap-6">
-        {challenges.map((challenge) => (
-          <div class="bg-white rounded-2xl border border-gray-200 p-6 md:p-8">
-            <div class="w-12 h-12 rounded-xl bg-red-100 flex items-center justify-center text-red-600 mb-6">
-              <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
-              </svg>
-            </div>
-            <h3 class="text-xl font-semibold mb-3">{challenge.title}</h3>
-            <p class="text-gray-600">{challenge.description}</p>
-          </div>
-        ))}
-      </div>
-
-      <div class="text-center mt-10">
-        <a
-          href="#contact"
-          class="inline-flex items-center justify-center px-8 py-4 text-base font-semibold text-white bg-accent hover:bg-accent-hover rounded-full transition-colors"
-        >
-          Book an intro call
-        </a>
-      </div>
-    </div>
-  </section>
-
-  <!-- Services Section -->
-  <section class="py-16 md:py-24">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div class="text-center mb-12">
-        <h2 class="text-3xl md:text-4xl font-bold mb-4">
-          We build Webflow websites that bring efficiency and profit
-        </h2>
-        <p class="text-gray-600 max-w-2xl mx-auto">
-          We're committed to one thing: Your ROI. Here are the verticals we specialize in to achieve this.
-        </p>
-      </div>
-
-      <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {services.map((service) => (
-          <ServiceCard {...service} />
-        ))}
-      </div>
-    </div>
-  </section>
-
-  <!-- Process Section -->
-  <section class="py-16 md:py-24 bg-gray-50">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div class="text-center mb-12">
-        <h2 class="text-3xl md:text-4xl font-bold mb-4">
-          The LoudFace approach
-        </h2>
-        <p class="text-gray-600 max-w-2xl mx-auto">
-          Here's our proven process
-        </p>
-      </div>
-
-      <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-        {processSteps.map((step, index) => (
-          <ProcessStep {...step} isActive={index === 0} />
-        ))}
-      </div>
-    </div>
-  </section>
-
-  <!-- Stats Section -->
-  <section class="py-16 md:py-24">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div class="text-center mb-12">
-        <h2 class="text-3xl md:text-4xl font-bold mb-4">
-          Some quick numbers
-        </h2>
-      </div>
-
-      <div class="grid md:grid-cols-3 gap-8 md:gap-12">
-        {stats.map((stat) => (
-          <StatCard {...stat} />
-        ))}
-      </div>
-    </div>
-  </section>
-
-  <!-- Blog Section -->
-  <section class="py-16 md:py-24 bg-gray-50">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div class="text-center mb-12">
-        <h2 class="text-3xl md:text-4xl font-bold mb-4">
-          Explore knowledge that empowers
-        </h2>
-        <p class="text-gray-600 max-w-2xl mx-auto">
-          Our blog is your go-to source for simple, practical insights and ideas. From tips and trends to expert advice, we've got everything you need to stay informed and inspired.
-        </p>
-      </div>
-
-      <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {blogPosts.map((post) => (
-          <BlogCard {...post} />
-        ))}
-      </div>
-    </div>
-  </section>
-
-  <!-- FAQ Section -->
-  <section class="py-16 md:py-24">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div class="grid lg:grid-cols-2 gap-12">
-        <div>
-          <h2 class="text-3xl md:text-4xl font-bold mb-4">
-            Frequently asked questions
-          </h2>
-          <p class="text-gray-600 mb-6">
-            Find answers to common questions about our services and processes.
-          </p>
-          <div class="bg-gray-50 rounded-2xl p-6">
-            <p class="font-semibold mb-2">Still have questions?</p>
-            <p class="text-gray-600 mb-4">We're here to help you with any inquiries.</p>
-            <a
-              href="#contact"
-              class="inline-flex items-center text-accent font-semibold hover:text-accent-hover transition-colors"
-            >
-              Book an intro call
-              <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
-              </svg>
-            </a>
-          </div>
-        </div>
-
-        <div>
-          {faqs.map((faq, index) => (
-            <FAQItem client:load question={faq.question} answer={faq.answer} defaultOpen={index === 0} />
-          ))}
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- Final CTA Section -->
-  <section id="contact" class="py-16 md:py-24 bg-accent text-white">
-    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-      <h2 class="text-3xl md:text-4xl font-bold mb-4">
-        Ready to scale your site?
-      </h2>
-      <p class="text-xl text-white/80 mb-8">
-        Don't let another day pass with an underperforming website
-      </p>
-      <a
-        href="#contact"
-        class="inline-flex items-center justify-center px-8 py-4 text-base font-semibold text-accent bg-white hover:bg-gray-100 rounded-full transition-colors"
-      >
-        Book an intro call
-      </a>
-    </div>
-  </section>
+      <!-- Partners Section -->
+      <Partners testimonials={allTestimonials} clients={allClients} />
+      <!-- Case Study Slider Section -->
+      <CaseStudySlider
+        caseStudies={caseStudies}
+        clients={clients}
+        industries={industries}
+        testimonials={testimonials}
+      />
+      <!-- Audit Section -->
+      <Audit />
+      <!-- Results Section (Bento Grid) -->
+      <Results
+        caseStudies={caseStudies.slice(0, 2)}
+        testimonial={allTestimonials[0]}
+        clients={clients}
+      />
+      <!-- Marketing Section -->
+      <Marketing />
+      <!-- Approach Section (Process + Stats) -->
+      <Approach />
+      <!-- Knowledge/Blog Section -->
+      <Knowledge
+        posts={blogPosts}
+        categories={Array.from(categories.values())}
+        authors={Array.from(teamMembers.values())}
+      />
+      <!-- FAQ Section -->
+      <FAQ items={faqItems} />
+      <!-- CTA Section -->
+      <CTA />
+    </main>
+    <!-- Footer -->
+    <Footer caseStudies={caseStudies} blogPosts={blogPosts} />
+    <!-- Webflow Enterprise Partner Badge -->
+    <a
+      href="https://webflow.com/@loudface"
+      target="_blank"
+      rel="noopener noreferrer"
+      class="fixed bottom-6 right-6 z-50 transition-opacity hover:opacity-80"
+      aria-label="Webflow Enterprise Partner"
+    >
+      <img
+        loading="lazy"
+        src="/images/Enterprise-Blue-Badge.webp"
+        alt="Webflow Enterprise Partner Badge"
+        class="w-24 h-auto drop-shadow-lg"
+      />
+    </a>
+  </div>
 </Layout>

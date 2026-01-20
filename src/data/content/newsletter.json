@@ -1,0 +1,8 @@
+{
+  "placeholder": "Enter your email...",
+  "buttonText": "Subscribe",
+  "loadingText": "Submitting...",
+  "successMessage": "Thank you! Your submission has been received!",
+  "errorMessage": "Oops! Something went wrong while submitting the form.",
+  "networkErrorMessage": "Network error. Please try again."
+}
