@@ -44,7 +44,7 @@ const titleParts = formatTitle(title, highlightWord);
           <!-- Header with nav -->
           <div class="flex justify-between items-end relative">
             <div>
-              <h2 class="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-medium text-white">
+              <h2 class="text-3xl sm:text-4xl md:text-5xl font-medium text-white">
                 {titleParts.map((part) =>
                   part.toLowerCase() === highlightWord.toLowerCase()
                     ? <span class="text-surface-500">{part}</span>
