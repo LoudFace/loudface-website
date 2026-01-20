@@ -1,5 +1,6 @@
 ---
 import { getApproachContent, type ProcessStep, type Stat } from '../../lib/content-utils';
+import { asset } from '../../lib/assets';
 
 // Load content from JSON file (editable via /dev/editor)
 const content = getApproachContent();
@@ -83,7 +84,7 @@ const titleParts = formatTitle(title, highlightWord);
                     <div class="bg-white/5 hover:bg-white/[0.08] rounded-xl flex flex-col justify-between min-h-[17.5rem] p-6 max-w-[28.75rem] transition-colors">
                       <div class="mb-4">
                         <img
-                          src={step.icon}
+                          src={asset(step.icon)}
                           loading="lazy"
                           width="88"
                           height="88"
