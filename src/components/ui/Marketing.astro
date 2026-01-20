@@ -1,6 +1,7 @@
 ---
 import { getMarketingContent, type MarketingCard } from '../../lib/content-utils';
 import { asset } from '../../lib/assets';
+import Button from './Button.astro';
 
 // Load content from JSON file (editable via /dev/editor)
 const content = getMarketingContent();
@@ -71,9 +72,9 @@ const {
 
         <!-- CTA Button -->
         <div class="text-center">
-          <button type="button" data-cal-trigger class="inline-flex items-center justify-center px-6 py-3 bg-surface-900 text-white font-medium rounded-lg hover:bg-surface-800 transition-colors focus-visible:outline-2 focus-visible:outline-primary-500 focus-visible:outline-offset-2">
+          <Button variant="primary" size="lg" calLink="arnelbukva/loudface-intro-call">
             {ctaText}
-          </button>
+          </Button>
         </div>
 
       </div>

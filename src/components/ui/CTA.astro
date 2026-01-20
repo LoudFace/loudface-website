@@ -1,5 +1,6 @@
 ---
 import { getCTAContent } from '../../lib/content-utils';
+import Button from './Button.astro';
 
 // Load content from JSON file (editable via /dev/editor)
 const content = getCTAContent();
@@ -38,17 +39,17 @@ const subtitleClass = variant === 'dark' ? 'text-surface-300' : 'text-surface-60
         </p>
 
         <div class="mt-10">
-          <a
-            href="#"
-            data-cal-link="loudface/intro"
-            data-cal-config='{"layout":"month_view"}'
-            class="inline-flex items-center justify-center px-8 py-4 bg-surface-900 text-white font-medium rounded-full no-underline transition-all duration-200 hover:bg-surface-800 hover:-translate-y-0.5 focus-visible:outline-2 focus-visible:outline-primary-500 focus-visible:outline-offset-2"
+          <Button
+            variant="primary"
+            size="lg"
+            calLink="arnelbukva/loudface-intro-call"
+            class="px-8 py-4 rounded-full hover:-translate-y-0.5"
           >
             {ctaText}
             <svg class="ml-2 w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3" />
             </svg>
-          </a>
+          </Button>
         </div>
 
       </div>

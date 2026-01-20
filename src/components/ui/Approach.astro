@@ -1,6 +1,7 @@
 ---
 import { getApproachContent, type ProcessStep, type Stat } from '../../lib/content-utils';
 import { asset } from '../../lib/assets';
+import CarouselNav from './CarouselNav.astro';
 
 // Load content from JSON file (editable via /dev/editor)
 const content = getApproachContent();
@@ -54,24 +55,7 @@ const titleParts = formatTitle(title, highlightWord);
               <p class="text-surface-400 text-lg">{subtitle}</p>
             </div>
             <div class="hidden md:block">
-              <div class="flex gap-3">
-                <button
-                  class="flex items-center justify-center w-12 h-12 bg-surface-700 rounded-full text-white transition-all duration-200 hover:bg-surface-600 hover:scale-105 focus-visible:outline-2 focus-visible:outline-primary-500 focus-visible:outline-offset-2 active:scale-95 embla__prev"
-                  aria-label="Previous slide"
-                >
-                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M19 12H5M5 12L12 19M5 12L12 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                  </svg>
-                </button>
-                <button
-                  class="flex items-center justify-center w-12 h-12 bg-surface-700 rounded-full text-white transition-all duration-200 hover:bg-surface-600 hover:scale-105 focus-visible:outline-2 focus-visible:outline-primary-500 focus-visible:outline-offset-2 active:scale-95 embla__next"
-                  aria-label="Next slide"
-                >
-                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M5 12H19M19 12L12 5M19 12L12 19" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                  </svg>
-                </button>
-              </div>
+              <CarouselNav variant="dark" class="gap-3" />
             </div>
           </div>
 
@@ -107,24 +91,7 @@ const titleParts = formatTitle(title, highlightWord);
           <!-- Mobile nav buttons -->
           <div class="block md:hidden">
             <div class="flex justify-center items-end relative">
-              <div class="flex gap-3">
-                <button
-                  class="flex items-center justify-center w-12 h-12 bg-surface-700 rounded-full text-white transition-all duration-200 hover:bg-surface-600 hover:scale-105 focus-visible:outline-2 focus-visible:outline-primary-500 focus-visible:outline-offset-2 active:scale-95 embla__prev"
-                  aria-label="Previous slide"
-                >
-                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M19 12H5M5 12L12 19M5 12L12 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                  </svg>
-                </button>
-                <button
-                  class="flex items-center justify-center w-12 h-12 bg-surface-700 rounded-full text-white transition-all duration-200 hover:bg-surface-600 hover:scale-105 focus-visible:outline-2 focus-visible:outline-primary-500 focus-visible:outline-offset-2 active:scale-95 embla__next"
-                  aria-label="Next slide"
-                >
-                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M5 12H19M19 12L12 5M19 12L12 19" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                  </svg>
-                </button>
-              </div>
+              <CarouselNav variant="dark" class="gap-3" />
             </div>
           </div>
         </div>

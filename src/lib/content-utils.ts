@@ -20,6 +20,7 @@ import resultsContent from '../data/content/results.json';
 import auditContent from '../data/content/audit.json';
 import caseStudySliderContent from '../data/content/case-study-slider.json';
 import newsletterContent from '../data/content/newsletter.json';
+import faqItemsContent from '../data/content/faq-items.json';
 
 // Type definitions for content files
 export interface CTAContent {
@@ -140,6 +141,15 @@ export interface NewsletterContent {
   networkErrorMessage: string;
 }
 
+export interface FAQItem {
+  question: string;
+  answer: string;
+}
+
+export interface FAQItemsContent {
+  items: FAQItem[];
+}
+
 // Content registry - maps file names to their content
 const contentRegistry: Record<string, unknown> = {
   'cta': ctaContent,
@@ -153,6 +163,7 @@ const contentRegistry: Record<string, unknown> = {
   'audit': auditContent,
   'case-study-slider': caseStudySliderContent,
   'newsletter': newsletterContent,
+  'faq-items': faqItemsContent,
 };
 
 /**
@@ -239,6 +250,13 @@ export function getCaseStudySliderContent(): CaseStudySliderContent {
  */
 export function getNewsletterContent(): NewsletterContent {
   return newsletterContent as NewsletterContent;
+}
+
+/**
+ * Get FAQ items content
+ */
+export function getFAQItemsContent(): FAQItemsContent {
+  return faqItemsContent as FAQItemsContent;
 }
 
 /**

@@ -47,20 +47,9 @@ const referenceLookups = { clients };
 </section>
 ```
 
-## Collection IDs Reference
+## Collection IDs
 
-| Collection | ID | API Route |
-|------------|-----|-----------|
-| Blog | `67b46d898180d5b8499f87e8` | `/api/cms/blog` |
-| Case Studies | `67bcc512271a06e2e0acc70d` | `/api/cms/case-studies` |
-| Testimonials | `67bd0c6f1a9fdd9770be5469` | `/api/cms/testimonials` |
-| Clients | `67c6f017e3221db91323ff13` | `/api/cms/clients` |
-| Blog FAQ | `67bd3732a35ec40d3038b40a` | `/api/cms/blog-faq` |
-| Team Members | `68d819d1810ef43a5ef97da4` | `/api/cms/team-members` |
-| Technologies | `67be3e735523f789035b6c56` | `/api/cms/technologies` |
-| Categories | `67b46e2d70ec96bfb7787071` | `/api/cms/categories` |
-| Industries | `67bd0a772117f7c7227e7b4d` | `/api/cms/industries` |
-| Service Categories | `67bcfb9cdb20a1832e2799c3` | `/api/cms/service-categories` |
+See `CLAUDE.md` → "CMS Collection IDs Reference" for the full table of collection IDs and API routes.
 
 ## Checklist
 

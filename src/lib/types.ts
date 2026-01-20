@@ -25,7 +25,7 @@ export interface WebflowImage {
 
 /**
  * Case Study CMS item
- * Comprehensive interface covering all fields used across components
+ * Complete interface covering all fields from cms-schemas.json
  */
 export interface CaseStudy {
   id: string;
@@ -34,78 +34,103 @@ export interface CaseStudy {
   'project-title': string;
   'paragraph-summary'?: string;
   'main-project-image-thumbnail'?: WebflowImage;
+  'client-logo'?: WebflowImage;
+  'client-logo-inversed'?: WebflowImage;
   'client-color': string;
+  'secondary-client-color'?: string;
+  'company-size'?: string;
+  country?: string;
   'result-1---number': string;
   'result-1---title': string;
-  client: string; // Reference ID to clients collection
+  'result-2---number'?: string;
+  'result-2---title'?: string;
+  'result-3---number'?: string;
+  'result-3---title'?: string;
   featured?: boolean;
+  client: string; // Reference ID to clients collection
   industry?: string; // Reference ID to industries collection
-  country?: string;
-  [key: string]: unknown; // Allow additional fields from schema
+  industries?: string[]; // Multi-reference to industries collection
+  testimonial?: string; // Reference ID to testimonials collection
+  technologies?: string[]; // Multi-reference to technologies collection
+  'services-provided'?: string[]; // Multi-reference to service-categories collection
 }
 
 /**
  * Client CMS item
+ * Complete interface covering all fields from cms-schemas.json
  */
 export interface Client {
   id: string;
   name: string;
   slug: string;
-  'colored-logo': WebflowImage;
-  'showcase-logo': boolean;
+  'showcase-logo'?: boolean;
+  'colored-logo'?: WebflowImage;
+  'light-logo'?: WebflowImage;
+  'dark-logo'?: WebflowImage;
 }
 
 /**
  * Testimonial CMS item
+ * Complete interface covering all fields from cms-schemas.json
  */
 export interface Testimonial {
   id: string;
   name: string;
-  role: string;
-  'testimonial-body': string;
-  'profile-image': WebflowImage;
-  'case-study': string | null; // Reference to case study
+  slug: string;
+  role?: string;
+  'testimonial-body'?: string; // Rich text content
+  'profile-image'?: WebflowImage;
+  'case-study'?: string; // Reference ID to case-studies collection
+  client?: string; // Reference ID to clients collection
 }
 
 /**
  * Blog Post CMS item
+ * Complete interface covering all fields from cms-schemas.json
  */
 export interface BlogPost {
   id: string;
   name: string;
   slug: string;
-  excerpt: string;
-  thumbnail: WebflowImage;
-  author: string; // Reference ID
-  category: string; // Reference ID
-  'published-date': string;
+  'meta-title'?: string;
+  'meta-description'?: string;
+  thumbnail?: WebflowImage;
+  excerpt?: string;
+  'time-to-read'?: string;
+  featured?: boolean;
+  'published-date'?: string;
+  author?: string; // Reference ID to team-members collection
+  category?: string; // Reference ID to categories collection (main category)
+  categories?: string[]; // Multi-reference to categories collection
 }
 
 /**
  * Category CMS item
+ * Complete interface covering all fields from cms-schemas.json
  */
 export interface Category {
   id: string;
   name: string;
   slug: string;
+  color?: string; // Color field
 }
 
 /**
  * Team Member CMS item
+ * Complete interface covering all fields from cms-schemas.json
  */
 export interface TeamMember {
   id: string;
   name: string;
   slug: string;
-  role?: string;
-  bio?: string;
-  image?: WebflowImage;
-  'profile-image'?: WebflowImage;
-  [key: string]: unknown; // Allow additional fields from schema
+  'profile-picture'?: WebflowImage;
+  'bio-summary'?: string;
+  'job-title'?: string;
 }
 
 /**
  * Technology CMS item
+ * Complete interface covering all fields from cms-schemas.json
  */
 export interface Technology {
   id: string;
@@ -116,20 +141,34 @@ export interface Technology {
 
 /**
  * Industry CMS item
+ * Complete interface covering all fields from cms-schemas.json
  */
 export interface Industry {
+  id: string;
+  name: string;
+  slug: string;
+  'radio-filter---checked-attribute'?: string;
+}
+
+/**
+ * Service Category CMS item
+ * Complete interface covering all fields from cms-schemas.json
+ */
+export interface ServiceCategory {
   id: string;
   name: string;
   slug: string;
 }
 
 /**
- * Service Category CMS item
+ * Blog FAQ CMS item
+ * Complete interface covering all fields from cms-schemas.json
  */
-export interface ServiceCategory {
+export interface BlogFAQ {
   id: string;
   name: string;
   slug: string;
+  'blog-post'?: string; // Reference ID to blog collection
 }
 
 /**

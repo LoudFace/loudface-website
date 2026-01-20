@@ -218,7 +218,30 @@ All sections follow this structure:
 
 ## Carousel Components
 
-For carousels using Embla, keep the Embla-specific CSS in a scoped `<style>` block:
+For carousels using Embla, use the `CarouselNav` component for navigation:
+
+```astro
+---
+import CarouselNav from './CarouselNav.astro';
+---
+
+<!-- Light variant (default) - for light backgrounds -->
+<CarouselNav variant="light" />
+
+<!-- Dark variant - for dark backgrounds -->
+<CarouselNav variant="dark" />
+
+<!-- With custom gap -->
+<CarouselNav variant="dark" class="gap-3" />
+```
+
+**CarouselNav variants:**
+- `light` - `bg-surface-100 text-surface-700` (use on light backgrounds)
+- `dark` - `bg-surface-700 text-white` (use on dark backgrounds like Approach section)
+
+**Important:** The buttons have classes `embla__prev` and `embla__next` which are used by the carousel initialization script in `src/lib/carousel.ts`.
+
+For Embla-specific CSS, keep it in a scoped `<style>` block:
 
 ```astro
 <style>
@@ -346,7 +369,7 @@ This keeps the JSON clean with proper HTML markup - no CSS workarounds needed.
 ### Existing Content Files
 
 See `src/data/content/` for examples. Current files:
-- `cta.json`, `hero.json`, `faq.json`, `approach.json`
+- `cta.json`, `hero.json`, `faq.json`, `faq-items.json`, `approach.json`
 - `marketing.json`, `partners.json`, `knowledge.json`
 - `results.json`, `audit.json`, `case-study-slider.json`, `newsletter.json`
 

@@ -109,6 +109,50 @@ const accessToken = (locals as any).runtime?.env?.WEBFLOW_SITE_API_TOKEN
 | `src/lib/content-utils.ts` | Content getter utilities |
 | `astro.config.mjs` | Astro configuration |
 | `src/lib/assets.ts` | Static asset URL utility |
+| `src/lib/cms-data.ts` | Consolidated CMS data fetching |
+| `src/lib/api-utils.ts` | API response utilities |
+| `src/lib/icons.ts` | Shared icon definitions |
+| `src/lib/types.ts` | CMS type definitions |
+
+## Component Inventory
+
+### CMS-Driven Components
+
+Components that display data from Webflow CMS collections.
+
+| Component | CMS Collection | Section ID |
+|-----------|----------------|------------|
+| Hero | case-studies, clients, industries | `HERO_SLIDER` |
+| Partners | testimonials, clients | `PARTNERS_TESTIMONIALS`, `PARTNERS_CLIENTS` |
+| CaseStudySlider | case-studies, clients, industries, testimonials | `CASE_STUDY_SLIDER` |
+| Results | case-studies, testimonials, clients | `RESULTS_CASE_STUDIES`, `RESULTS_TESTIMONIALS` |
+| Knowledge | blog, categories, team-members | `KNOWLEDGE_SLIDER` |
+| Footer | case-studies, blog | `FOOTER_CASE_STUDIES`, `FOOTER_BLOG_POSTS` |
+
+### Static Content Components
+
+Components that use JSON content layer (editable via `/dev/editor`).
+
+| Component | Content File |
+|-----------|--------------|
+| Hero | `hero.json` |
+| Marketing | `marketing.json` |
+| Approach | `approach.json` |
+| Audit | `audit.json` |
+| CTA | `cta.json` |
+| FAQ | `faq.json`, `faq-items.json` |
+| Knowledge | `knowledge.json` |
+| Results | `results.json` |
+| Partners | `partners.json` |
+| CaseStudySlider | `case-study-slider.json` |
+| Newsletter | `newsletter.json` |
+
+### Reusable UI Components
+
+| Component | Purpose |
+|-----------|---------|
+| Button | Standardized CTA buttons with Cal.com integration |
+| CarouselNav | Prev/next navigation for Embla carousels (light/dark variants) |
 
 ## Static Assets (CRITICAL for Webflow Cloud)
 
@@ -171,7 +215,19 @@ const content = getAuditContent();
 
 ### Why This Is Needed
 
-Astro's `base` config only affects routing and JS imports. It does **NOT** automatically rewrite hardcoded HTML paths. The `asset()` utility bridges this gap.
+**Webflow Cloud Architecture:** When you deploy a custom code app (like Astro) alongside a Webflow-designed site, Webflow Cloud mounts your app at `/customsite` to avoid URL conflicts with Webflow's own pages. This means:
+
+- Your Webflow pages: `www.example.com/`, `www.example.com/about`
+- Your Astro app: `www.example.com/customsite/`, `www.example.com/customsite/work`
+- Your static assets: `www.example.com/customsite/images/logo.svg`
+
+**The Problem:** Astro's `base` config (set to `/customsite`) only affects:
+- Route generation (`/work` → `/customsite/work`)
+- JS/CSS imports via build tools
+
+It does **NOT** rewrite hardcoded HTML paths like `<img src="/images/logo.svg">`. These will 404 because the browser requests `/images/logo.svg` instead of `/customsite/images/logo.svg`.
+
+**The Solution:** The `asset()` utility reads `import.meta.env.BASE_URL` and prefixes paths at runtime, bridging this gap.
 
 ## Cal.com Integration
 
@@ -360,7 +416,7 @@ The site has a JSON-based content editor at `/dev/editor` (dev-only) for editing
 | Text with possible line breaks | `set:html={content.field}` |
 | Single-line text (buttons, labels) | `{content.field}` |
 
-See `.claude/rules/component-patterns.md` for detailed patterns.
+See `.claude/reference/content-editor-details.md` for content files inventory and detailed examples.
 
 ## CMS Control Panel Development Rules (MUST FOLLOW)
 
@@ -466,67 +522,6 @@ When creating/modifying CMS components:
 - [ ] Build reference lookups for any reference fields you want to display names for
 
 **No manual registration needed!** Sections are auto-discovered from `data-cms-section` attributes.
-
-## Content Editor (Dev-Only)
-
-The site has a form-based content editor at `/dev/editor` for editing static text content in components. This is **separate from the CMS Control Panel** - it handles hardcoded component defaults, not Webflow CMS data.
-
-### How It Works
-
-1. **JSON Content Files**: Static text is stored in `src/data/content/*.json`
-2. **Components Import**: Components use `getXContent()` functions to import defaults
-3. **Editor UI**: Form at `/dev/editor` reads/writes these JSON files
-4. **Hot Reload**: Vite reloads automatically when JSON files change
-
-### Content Files
-
-| File | Component | Fields |
-|------|-----------|--------|
-| `cta.json` | CTA.astro | title, subtitle, ctaText |
-| `hero.json` | Hero.astro | headline, description, ctaText, aiLinks |
-| `faq.json` | FAQ.astro | title, subtitle, footerTitle, footerText, footerCtaText |
-| `approach.json` | Approach.astro | title, highlightWord, subtitle, steps[], statsHeading, stats[] |
-| `marketing.json` | Marketing.astro | title, titleHighlight, subtitle, description, cards[], ctaText |
-| `partners.json` | Partners.astro | starRatingPrefix, starRatingSuffix, tagline |
-| `knowledge.json` | Knowledge.astro | title, highlightWord, description, readTime |
-| `results.json` | Results.astro | title, subtitle, videoTestimonials[], ctaText, ctaHref |
-| `audit.json` | Audit.astro | title, highlightText, description, challenges[] |
-| `case-study-slider.json` | CaseStudySlider.astro | title, ctaText |
-| `newsletter.json` | NewsletterForm.astro | placeholder, buttonText, loadingText, successMessage, errorMessage, networkErrorMessage |
-
-All files are located in `src/data/content/`.
-
-### File Reference
-
-| File | Purpose |
-|------|---------|
-| `src/lib/content-utils.ts` | Content getters and type definitions |
-| `src/pages/api/dev/content.ts` | Dev-only API for reading/writing content |
-| `src/pages/dev/editor.astro` | Form-based editor UI |
-
-### Adding New Editable Content
-
-1. Create JSON file in `src/data/content/`
-2. Add import to `src/lib/content-utils.ts`
-3. Add type interface and getter function
-4. Update component to import defaults from JSON:
-
-```typescript
-// Before (hardcoded)
-const { title = "Ready to scale?" } = Astro.props;
-
-// After (JSON defaults)
-import { getCTAContent } from '../../lib/content-utils';
-const content = getCTAContent();
-const { title = content.title } = Astro.props;
-```
-
-### Dev-Only Guards
-
-All content editor features are blocked in production:
-- `/dev/editor` returns 404
-- `/api/dev/content` returns 403
-- Uses `import.meta.env.PROD` checks
 
 ## Notes
 

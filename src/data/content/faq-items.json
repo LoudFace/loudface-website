@@ -1,0 +1,28 @@
+{
+  "items": [
+    {
+      "question": "What services do you offer?",
+      "answer": "We specialize in SEO/AEO, Webflow development, and design services. We focus on strategic partnerships where we own the strategic decisions, and the execution of the work."
+    },
+    {
+      "question": "Who do you work with?",
+      "answer": "We primarily partner with SaaS brands, as our speciality lies in SaaS. However, we work with a wide range of industries, as long as we believe we can contribute in a meaningful capacity."
+    },
+    {
+      "question": "Why do you specialize in Webflow?",
+      "answer": "Webflow has enabled our team to work at light-speed and deliver what would take weeks, in days. We value the native SEO/AEO features of Webflow which cuts time and enables better results for our clients."
+    },
+    {
+      "question": "Where is LoudFace based?",
+      "answer": "LoudFace was founded in Sweden. Today, our HQ is based in Dubai, UAE, and we have office in San Francisco, USA. We work primarily with the US market."
+    },
+    {
+      "question": "How do I get started?",
+      "answer": "Start with an intro call!<br><br>This is an easy way to get introduced and for both of us to figure out if we're a good fit."
+    },
+    {
+      "question": "What is your pricing?",
+      "answer": "We work primarily with monthly retainers. This allows for flexible scopes and clear expectations.<br><br>Feel free to book an intro call to hear about our engagement models."
+    }
+  ]
+}
