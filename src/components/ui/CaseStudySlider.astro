@@ -442,6 +442,24 @@ function getContrastColors(hexColor: string | undefined): {
 </section>
 
 <style>
+  /* Edge fade effect - smooth transition as cards enter/exit */
+  #case-study-slider .embla__viewport {
+    mask-image: linear-gradient(
+      to right,
+      transparent,
+      black 3%,
+      black 97%,
+      transparent
+    );
+    -webkit-mask-image: linear-gradient(
+      to right,
+      transparent,
+      black 3%,
+      black 97%,
+      transparent
+    );
+  }
+
   /* Embla container - required for carousel functionality */
   .embla__container {
     gap: 1rem;
