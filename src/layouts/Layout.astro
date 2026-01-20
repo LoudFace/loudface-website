@@ -114,9 +114,9 @@ const {
     });
   </script>
 
-  <!-- Embla Carousel initialization -->
-  <script type="module">
-    import { initAllCarousels } from '/src/lib/carousel.ts';
+  <!-- Embla Carousel initialization (bundled by Astro) -->
+  <script>
+    import { initAllCarousels } from '../lib/carousel';
     document.addEventListener('DOMContentLoaded', initAllCarousels);
   </script>
 
