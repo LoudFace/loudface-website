@@ -26,20 +26,31 @@ Use the Webflow MCP tools for **read operations** and **quick queries**:
 - `get_collection_item` - Get a specific item
 - `list_pages` - List site pages
 
-### When to Use Webflow CLI (Terminal Commands)
-Use the Webflow CLI for **deployment** and **CI/CD operations**:
+### Deployment (Git-Based)
+
+Webflow Cloud automatically deploys when you push to `main` on GitHub. No CLI deployment command exists.
+
 ```bash
-# Deploy to Webflow Cloud
-webflow cloud deploy
+# Build first to verify no errors
+npm run build
 
-# Deploy with verbose output (for debugging)
-webflow cloud deploy --verbose
+# Push to trigger deployment
+git push origin main
+```
 
+### When to Use Webflow CLI (Terminal Commands)
+
+The Webflow CLI is used for **project setup and authentication**, not deployment:
+
+```bash
 # Check authentication status
 webflow auth status
 
 # Re-authenticate if needed
 webflow auth logout && webflow auth login
+
+# Initialize/link a project (one-time setup)
+webflow cloud init
 ```
 
 ### When to Use Direct API Calls (Code)
@@ -97,6 +108,105 @@ const accessToken = (locals as any).runtime?.env?.WEBFLOW_SITE_API_TOKEN
 | `src/data/content/*.json` | Static text content files |
 | `src/lib/content-utils.ts` | Content getter utilities |
 | `astro.config.mjs` | Astro configuration |
+| `src/lib/assets.ts` | Static asset URL utility |
+
+## Static Assets (CRITICAL for Webflow Cloud)
+
+Webflow Cloud mounts the Astro app at `/customsite`. This means **all static asset paths must be prefixed** or they will 404 in production.
+
+### The `asset()` Utility
+
+**ALWAYS use the `asset()` function for static image paths:**
+
+```astro
+---
+import { asset } from '../../lib/assets';
+---
+
+<!-- CORRECT - uses asset() -->
+<img src={asset('/images/logo.svg')} alt="Logo" />
+
+<!-- WRONG - will 404 in production -->
+<img src="/images/logo.svg" alt="Logo" />
+```
+
+### When to Use `asset()`
+
+| Scenario | Use `asset()`? |
+|----------|----------------|
+| Hardcoded image paths in templates | ✅ Yes |
+| Image paths from JSON content files | ✅ Yes |
+| Image URLs from Webflow CMS (full URLs) | ❌ No |
+| External URLs (https://...) | ❌ No |
+
+### How It Works
+
+```typescript
+// src/lib/assets.ts
+export function asset(path: string): string {
+  const base = import.meta.env.BASE_URL || '/';
+  // Handles leading/trailing slashes
+  return `${base}${path}`;
+}
+```
+
+- **Development:** Returns `/images/logo.svg` (no prefix)
+- **Production:** Returns `/customsite/images/logo.svg` (with prefix)
+
+### JSON Content with Images
+
+When loading image paths from JSON content files, apply `asset()` at render time:
+
+```astro
+---
+import { getAuditContent } from '../../lib/content-utils';
+import { asset } from '../../lib/assets';
+const content = getAuditContent();
+---
+
+{content.challenges.map((item) => (
+  <img src={asset(item.icon)} alt={item.title} />
+))}
+```
+
+### Why This Is Needed
+
+Astro's `base` config only affects routing and JS imports. It does **NOT** automatically rewrite hardcoded HTML paths. The `asset()` utility bridges this gap.
+
+## Cal.com Integration
+
+The site uses Cal.com for booking calls. The embed is configured in `Layout.astro`.
+
+### How It Works
+
+1. **Cal.com SDK** is loaded in `<head>` (Layout.astro)
+2. **Click handler** listens for `.btn-cta`, `[data-cal-trigger]`, or `#book-modal` links
+3. **Modal opens** via `Cal("modal", { calLink: "..." })`
+
+### Configuration
+
+```javascript
+// In Layout.astro
+Cal("modal", {
+  calLink: "arnelbukva/loudface-intro-call",  // Change this to your Cal.com link
+  config: { layout: "month_view" }
+});
+```
+
+### Triggering the Booking Modal
+
+Any of these will open the Cal.com booking modal:
+
+```html
+<!-- Class-based trigger -->
+<button class="btn-cta">Book a call</button>
+
+<!-- Attribute-based trigger -->
+<a data-cal-trigger href="#">Schedule meeting</a>
+
+<!-- Hash link trigger -->
+<a href="#book-modal">Book now</a>
+```
 
 ## CSS Architecture
 
@@ -179,13 +289,20 @@ curl http://localhost:4321/api/cms/case-studies/[slug]
 ```
 
 ### Deploying Changes
+
+Webflow Cloud automatically deploys when you push to the `main` branch on GitHub.
+
 ```bash
 # Build first to catch errors
 npm run build
 
-# Deploy to Webflow Cloud
-webflow cloud deploy
+# Commit and push to trigger deployment
+git add .
+git commit -m "Your commit message"
+git push origin main
 ```
+
+Webflow will automatically detect the push and deploy the site. There is no `webflow cloud deploy` CLI command.
 
 ## Webflow MCP Usage Examples
 

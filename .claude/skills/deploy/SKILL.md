@@ -1,6 +1,6 @@
 # Deploy to Webflow Cloud
 
-Deploy the LoudFace website to Webflow Cloud hosting.
+Deploy the LoudFace website to Webflow Cloud hosting via GitHub.
 
 ## Pre-flight Checklist
 
@@ -14,11 +14,15 @@ Before deploying, verify:
 2. **No TypeScript errors**
    - Check console output for type errors
 
-3. **Environment variables**
+3. **Static assets use `asset()` function**
+   - All hardcoded image paths must use `asset('/images/...')`
+   - See CLAUDE.md "Static Assets" section
+
+4. **Environment variables**
    - Local: `.env` file with `WEBFLOW_SITE_API_TOKEN`
    - Production: Auto-injected by Webflow Cloud
 
-4. **CMS API routes working**
+5. **CMS API routes working**
    ```bash
    # Start dev server and test
    curl http://localhost:4321/api/cms/case-studies
@@ -31,50 +35,61 @@ Before deploying, verify:
 npm run build
 ```
 
-### 2. Check authentication
+### 2. Commit your changes
 ```bash
-webflow auth status
+git add .
+git commit -m "Your descriptive commit message"
 ```
 
-If not authenticated:
+### 3. Push to GitHub (triggers automatic deployment)
 ```bash
-webflow auth login
+git push origin main
 ```
 
-### 3. Deploy to Webflow Cloud
-```bash
-webflow cloud deploy
-```
+Webflow Cloud is connected to the GitHub repository and automatically deploys when changes are pushed to `main`.
 
-For verbose output (debugging):
-```bash
-webflow cloud deploy --verbose
-```
+**Note:** There is no `webflow cloud deploy` CLI command. Deployment is git-based only.
 
 ## Post-Deploy Verification
 
-1. Visit the live site
-2. Test CMS-driven pages load correctly
-3. Check dynamic routes (`/work/[slug]`)
-4. Verify images and assets load
+1. Wait 1-2 minutes for Webflow to complete the build
+2. Visit the live site (www.loudface.co)
+3. Test CMS-driven pages load correctly
+4. Check dynamic routes (`/work/[slug]`)
+5. Verify images and assets load (check browser console for 404s)
+6. Test Cal.com booking modal opens
 
 ## Troubleshooting
 
-### Authentication Issues
-```bash
-webflow auth logout
-webflow auth login
+### Static Assets 404 in Production
+
+If images show locally but 404 in production:
+
+1. Check if the image path uses `asset()` function
+2. Verify the file exists in `public/images/`
+3. For JSON content images, apply `asset()` at render time
+
+```astro
+<!-- Wrong -->
+<img src="/images/icon.svg" />
+
+<!-- Correct -->
+<img src={asset('/images/icon.svg')} />
 ```
 
-### Build Failures
-- Check `astro.config.mjs` for correct adapter
-- Verify `output: 'server'` is set
-- Check Cloudflare adapter is installed
-
 ### CMS Data Not Loading
+
 - Verify collection IDs in CLAUDE.md
 - Check API token permissions in Webflow dashboard
 - Test API routes locally first
+- Check Webflow Cloud environment variables are set
+
+### Build Failures
+
+- Check `astro.config.mjs` for correct adapter
+- Verify `output: 'server'` is set
+- Check Cloudflare adapter is installed
+- Run `npm run build` locally to see errors
 
 ## Rollback
 

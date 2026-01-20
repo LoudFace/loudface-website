@@ -10,6 +10,7 @@ Every UI component follows this structure:
 import { applyCMSConfig } from '../../lib/cms-utils';
 import { generateCMSAttributes } from '../../lib/cms-attributes';
 import { CMS_SECTIONS } from '../../lib/constants';
+import { asset } from '../../lib/assets';  // For static image paths
 
 // 2. Type imports (always from centralized types.ts)
 import type { CaseStudy, Client, Testimonial } from '../../lib/types';
@@ -56,6 +57,50 @@ Available types in `types.ts`:
 - `Technology` - Technology items
 - `ServiceCategory` - Service category items
 - `WebflowImage` - Image field structure
+
+## Static Images (CRITICAL)
+
+**ALWAYS use `asset()` for hardcoded image paths.** This is required for Webflow Cloud deployment.
+
+```astro
+---
+import { asset } from '../../lib/assets';
+---
+
+<!-- CORRECT - uses asset() -->
+<img src={asset('/images/logo.svg')} alt="Logo" />
+<img src={asset('/images/icon.svg')} class="w-6 h-6" />
+
+<!-- WRONG - will 404 in production -->
+<img src="/images/logo.svg" alt="Logo" />
+```
+
+### When to Use `asset()`
+
+| Image Source | Use `asset()`? |
+|--------------|----------------|
+| Hardcoded paths (`/images/...`) | ✅ Yes |
+| JSON content paths | ✅ Yes |
+| Webflow CMS URLs (full https://...) | ❌ No |
+| External URLs | ❌ No |
+
+### JSON Content Images
+
+When image paths come from JSON content files, apply `asset()` at render time:
+
+```astro
+{content.items.map((item) => (
+  <img src={asset(item.icon)} alt={item.title} />
+))}
+```
+
+### Fallback Images
+
+For CMS images with fallbacks, use `asset()` only for the fallback:
+
+```astro
+<img src={item['profile-image']?.url || asset('/images/placeholder-avatar.svg')} />
+```
 
 ## CMS Section IDs
 
@@ -310,8 +355,10 @@ See `src/data/content/` for examples. Current files:
 1. Create file in `src/components/ui/`
 2. Import types from `../../lib/types`
 3. Import `CMS_SECTIONS` if using CMS data
-4. Define only `Props` interface locally
-5. Follow section container pattern
-6. Use styling tokens from `styling.md`
-7. Add `data-cms-section` for CMS Control Panel support
-8. **For static text:** Use JSON content layer (see above)
+4. **Import `asset` from `../../lib/assets` if using static images**
+5. Define only `Props` interface locally
+6. Follow section container pattern
+7. Use styling tokens from `styling.md`
+8. Add `data-cms-section` for CMS Control Panel support
+9. **For static text:** Use JSON content layer (see above)
+10. **For static images:** Use `asset('/images/...')` for all hardcoded paths
