@@ -64,13 +64,13 @@ const showcaseClients = applyCMSConfig(filteredClients, CMS_SECTIONS.PARTNERS_CL
         <!-- Testimonial Headshots -->
         {testimonials.length > 0 && (
           <div
-            class="flex flex-wrap justify-center gap-2 relative z-20"
+            class="flex flex-wrap justify-center relative z-20"
             data-cms-section={CMS_SECTIONS.PARTNERS_TESTIMONIALS}
             data-cms-label="Testimonials"
           >
             {testimonials.map((testimonial) => (
               <div
-                class="headshot-item relative z-20"
+                class="headshot-item relative z-20 -ml-2 first:ml-0"
                 {...generateCMSAttributes(testimonial, 'testimonials')}
               >
                 <div class="headshot-trigger relative cursor-pointer z-20">
