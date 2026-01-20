@@ -3,6 +3,7 @@ import NewsletterForm from './NewsletterForm.astro';
 import { applyCMSConfig } from '../../lib/cms-utils';
 import { generateCMSAttributes } from '../../lib/cms-attributes';
 import { CMS_SECTIONS } from '../../lib/constants';
+import { asset } from '../../lib/assets';
 import type { CaseStudy, BlogPost } from '../../lib/types';
 
 interface Props {
@@ -106,7 +107,7 @@ const currentYear = new Date().getFullYear();
             <div class="max-w-xs lg:max-w-none">
               <a href="/" class="inline-block">
                 <img
-                  src="/images/loudface-inversed.svg"
+                  src={asset('/images/loudface-inversed.svg')}
                   loading="lazy"
                   width="133"
                   height="26"

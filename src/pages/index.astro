@@ -14,6 +14,7 @@ import Footer from '../components/ui/Footer.astro';
 import Header from '../components/ui/Header.astro';
 import { COLLECTION_IDS } from '../lib/constants';
 import { getCached, setCache } from '../lib/cms-cache';
+import { asset } from '../lib/assets';
 import type { CaseStudy, Industry, Client, Testimonial, BlogPost, Category, TeamMember } from '../lib/types';
 
 // FAQ Data
@@ -243,7 +244,7 @@ const getAuthor = (authorId: string) => teamMembers.get(authorId);
     >
       <img
         loading="lazy"
-        src="/images/Enterprise-Blue-Badge.webp"
+        src={asset('/images/Enterprise-Blue-Badge.webp')}
         alt="Webflow Enterprise Partner Badge"
         class="w-24 h-auto drop-shadow-lg"
       />

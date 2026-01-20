@@ -1,6 +1,7 @@
 ---
 // Import Tailwind component classes
 import '../styles/components.css';
+import { asset } from '../lib/assets';
 
 interface Props {
   title?: string;
@@ -48,8 +49,8 @@ const {
 
 
   <!-- Favicon -->
-  <link href="/images/favicon.png" rel="shortcut icon" type="image/x-icon">
-  <link href="/images/webclip.png" rel="apple-touch-icon">
+  <link href={asset('/images/favicon.png')} rel="shortcut icon" type="image/x-icon">
+  <link href={asset('/images/webclip.png')} rel="apple-touch-icon">
 
   <!-- Structured Data - WebSite -->
   <script type="application/ld+json">

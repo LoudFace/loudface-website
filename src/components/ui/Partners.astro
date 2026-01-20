@@ -2,6 +2,7 @@
 import { applyCMSConfig } from '../../lib/cms-utils';
 import { generateCMSAttributes } from '../../lib/cms-attributes';
 import { CMS_SECTIONS } from '../../lib/constants';
+import { asset } from '../../lib/assets';
 import { getPartnersContent } from '../../lib/content-utils';
 import type { Testimonial, Client } from '../../lib/types';
 
@@ -46,7 +47,7 @@ const showcaseClients = applyCMSConfig(filteredClients, CMS_SECTIONS.PARTNERS_CL
           <div class="flex items-center gap-0.5">
             {Array.from({ length: starCount }).map(() => (
               <img
-                src="/images/star-icon.svg"
+                src={asset('/images/star-icon.svg')}
                 loading="lazy"
                 width="14"
                 height="14"
@@ -74,7 +75,7 @@ const showcaseClients = applyCMSConfig(filteredClients, CMS_SECTIONS.PARTNERS_CL
               >
                 <div class="headshot-trigger relative cursor-pointer z-20">
                   <img
-                    src={testimonial['profile-image']?.url || '/images/placeholder-avatar.svg'}
+                    src={testimonial['profile-image']?.url || asset('/images/placeholder-avatar.svg')}
                     loading="lazy"
                     width="40"
                     height="40"
@@ -114,7 +115,7 @@ const showcaseClients = applyCMSConfig(filteredClients, CMS_SECTIONS.PARTNERS_CL
                 {...generateCMSAttributes(client, 'clients')}
               >
                 <img
-                  src={client['colored-logo']?.url || '/images/placeholder-logo.svg'}
+                  src={client['colored-logo']?.url || asset('/images/placeholder-logo.svg')}
                   loading="lazy"
                   width="100"
                   height="45"

@@ -2,6 +2,7 @@
 import { applyCMSConfig } from '../../lib/cms-utils';
 import { generateCMSAttributes } from '../../lib/cms-attributes';
 import { CMS_SECTIONS } from '../../lib/constants';
+import { asset } from '../../lib/assets';
 import { getResultsContent, type VideoTestimonial } from '../../lib/content-utils';
 import type { CaseStudy, Client, Testimonial } from '../../lib/types';
 
@@ -116,7 +117,7 @@ function formatTitle(text: string) {
                 >
                   <div class="flex justify-between items-center">
                     <img
-                      src={client?.['colored-logo']?.url || '/images/placeholder-logo.svg'}
+                      src={client?.['colored-logo']?.url || asset('/images/placeholder-logo.svg')}
                       loading="lazy"
                       width="83"
                       height="26"
@@ -165,7 +166,7 @@ function formatTitle(text: string) {
                     <span class="text-surface-600">{testimonial.role}</span>
                   </div>
                   <div class="w-10 h-10 flex items-center justify-center bg-surface-900 rounded-full cursor-pointer transition-transform hover:scale-105" aria-label="View testimonial">
-                    <img src="/images/top-right-arrow.svg" loading="lazy" width="16" height="16" alt="" />
+                    <img src={asset('/images/top-right-arrow.svg')} loading="lazy" width="16" height="16" alt="" />
                   </div>
                 </div>
               </div>
@@ -187,7 +188,7 @@ function formatTitle(text: string) {
                 >
                   <div class="flex justify-between items-center">
                     <img
-                      src={client?.['colored-logo']?.url || '/images/placeholder-logo.svg'}
+                      src={client?.['colored-logo']?.url || asset('/images/placeholder-logo.svg')}
                       loading="lazy"
                       width="83"
                       height="26"
