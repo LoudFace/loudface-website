@@ -1,7 +1,5 @@
 ---
-import { applyCMSConfig } from '../../lib/cms-utils';
-import { generateCMSAttributes } from '../../lib/cms-attributes';
-import { CMS_SECTIONS } from '../../lib/constants';
+import { createCMS } from '../../lib/cms';
 import type { CaseStudy, Client, Industry } from '../../lib/types';
 import { getHeroContent } from '../../lib/content-utils';
 import { AI_PLATFORM_ICONS, AI_PLATFORM_LINKS } from '../../lib/icons';
@@ -30,8 +28,13 @@ const {
   industries = new Map()
 } = Astro.props;
 
-const caseStudies = applyCMSConfig(rawCaseStudies, CMS_SECTIONS.HERO_SLIDER, 'case-studies');
+// Create CMS helper - auto-generates section IDs
+const cms = createCMS('Hero');
 
+// Apply CMS configuration (filters, sorting)
+const slider = cms.section(rawCaseStudies as (CaseStudy & { id: string })[], 'case-studies', 'Hero Case Studies');
+
+// Build reference lookups for displaying names
 const referenceLookups = {
   clients: clients,
   industries: industries,
@@ -84,21 +87,22 @@ const aiLinks = content.aiLinks.map(link => ({
 
         <!-- Right: Scrolling Case Studies - Hidden on mobile -->
         <div
-          class="hidden md:block relative h-96 lg:h-full overflow-hidden lg:rounded-r-2xl"
-          data-cms-section={CMS_SECTIONS.HERO_SLIDER}
-          data-cms-label="Hero Case Studies"
+          class="hidden md:block relative h-96 lg:h-full"
+          {...slider.attrs}
         >
-          <!-- Scrolling Columns Container -->
-          <div class="absolute inset-0 flex gap-4 p-4" data-cms-container>
+          <!-- Inner wrapper with overflow hidden (keeps cogwheel visible) -->
+          <div class="absolute inset-0 overflow-hidden lg:rounded-r-2xl">
+            <!-- Scrolling Columns Container -->
+            <div class="absolute inset-0 flex gap-4 p-4" data-cms-container>
             <!-- Column 1: Scroll Down -->
             <div class="flex-1 flex flex-col gap-4 animate-scroll-down hover:animation-paused">
-              {caseStudies.map((study) => {
+              {slider.items.map((study) => {
                 const client = getClient(study.client);
                 return (
                   <a
                     href={`/work/${study.slug}`}
                     class="flex-shrink-0 flex flex-col bg-white rounded-xl overflow-hidden border border-surface-200 hover:opacity-85 transition-opacity focus-visible:outline-2 focus-visible:outline-primary-500 focus-visible:outline-offset-2"
-                    {...generateCMSAttributes(study, 'case-studies', referenceLookups)}
+                    {...cms.item(study, 'case-studies', referenceLookups)}
                   >
                     <div class="flex justify-between items-center p-4 gap-2">
                       <div class="flex-1 min-w-0">
@@ -136,7 +140,7 @@ const aiLinks = content.aiLinks.map(link => ({
                 );
               })}
               <!-- Duplicate for seamless loop -->
-              {caseStudies.map((study) => {
+              {slider.items.map((study) => {
                 const client = getClient(study.client);
                 return (
                   <a href={`/work/${study.slug}`} class="flex-shrink-0 flex flex-col bg-white rounded-xl overflow-hidden border border-surface-200 hover:opacity-85 transition-opacity" tabindex="-1" aria-hidden="true">
@@ -167,7 +171,7 @@ const aiLinks = content.aiLinks.map(link => ({
 
             <!-- Column 2: Scroll Up (hidden below xl) -->
             <div class="hidden xl:flex flex-1 flex-col gap-4 animate-scroll-up hover:animation-paused">
-              {[...caseStudies].reverse().map((study) => {
+              {[...slider.items].reverse().map((study) => {
                 const client = getClient(study.client);
                 return (
                   <a href={`/work/${study.slug}`} class="flex-shrink-0 flex flex-col bg-white rounded-xl overflow-hidden border border-surface-200 hover:opacity-85 transition-opacity focus-visible:outline-2 focus-visible:outline-primary-500 focus-visible:outline-offset-2">
@@ -195,7 +199,7 @@ const aiLinks = content.aiLinks.map(link => ({
                 );
               })}
               <!-- Duplicate for seamless loop -->
-              {[...caseStudies].reverse().map((study) => {
+              {[...slider.items].reverse().map((study) => {
                 const client = getClient(study.client);
                 return (
                   <a href={`/work/${study.slug}`} class="flex-shrink-0 flex flex-col bg-white rounded-xl overflow-hidden border border-surface-200 hover:opacity-85 transition-opacity" tabindex="-1" aria-hidden="true">
@@ -223,6 +227,7 @@ const aiLinks = content.aiLinks.map(link => ({
                 );
               })}
             </div>
+          </div>
           </div>
         </div>
 

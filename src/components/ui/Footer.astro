@@ -1,8 +1,6 @@
 ---
 import NewsletterForm from './NewsletterForm.astro';
-import { applyCMSConfig } from '../../lib/cms-utils';
-import { generateCMSAttributes } from '../../lib/cms-attributes';
-import { CMS_SECTIONS } from '../../lib/constants';
+import { createCMS } from '../../lib/cms';
 import { asset } from '../../lib/assets';
 import { getAIPlatformsWithIcons, getSocialLinksWithIcons } from '../../lib/icons';
 import type { CaseStudy, BlogPost } from '../../lib/types';
@@ -14,9 +12,12 @@ interface Props {
 
 const { caseStudies: rawCaseStudies = [], blogPosts: rawBlogPosts = [] } = Astro.props;
 
-// Apply CMS configuration (filters, sorting) - field mapping auto-generated from schema
-const caseStudies = applyCMSConfig(rawCaseStudies, CMS_SECTIONS.FOOTER_CASE_STUDIES, 'case-studies');
-const blogPosts = applyCMSConfig(rawBlogPosts, CMS_SECTIONS.FOOTER_BLOG_POSTS, 'blog');
+// Create CMS helper - auto-generates section IDs
+const cms = createCMS('Footer');
+
+// Apply CMS configuration (filters, sorting)
+const caseStudySection = cms.section(rawCaseStudies as (CaseStudy & { id: string })[], 'case-studies', 'Footer Case Studies');
+const blogSection = cms.section(rawBlogPosts as (BlogPost & { id: string })[], 'blog', 'Footer Blog Posts');
 
 // Navigation data
 const companyLinks = [
@@ -83,7 +84,7 @@ const currentYear = new Date().getFullYear();
             </div>
 
             <!-- Navigation Columns -->
-            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-8">
+            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-8 gap-y-10">
               <!-- Company -->
               <div class="flex flex-col gap-3">
                 <h3 class="text-sm font-semibold text-white mb-1">Company</h3>
@@ -133,21 +134,21 @@ const currentYear = new Date().getFullYear();
               </div>
 
               <!-- Case Studies -->
-              {caseStudies.length > 0 && (
+              {caseStudySection.items.length > 0 && (
                 <div
-                  class="flex flex-col gap-3"
-                  data-cms-section={CMS_SECTIONS.FOOTER_CASE_STUDIES}
-                  data-cms-label="Footer Case Studies"
+                  class="flex flex-col gap-3 lg:col-span-2"
+                  {...caseStudySection.attrs}
                 >
                   <h3 class="text-sm font-semibold text-white mb-1">Case Studies</h3>
                   <nav aria-label="Case studies links">
                     <ul class="flex flex-col gap-2 list-none m-0 p-0" data-cms-container>
-                    {caseStudies.slice(0, 5).map(study => (
+                    {caseStudySection.items.slice(0, 5).map(study => (
                       <li>
                         <a
                           href={`/work/${study.slug}`}
-                          class="text-sm text-surface-400 hover:text-white transition-colors"
-                          {...generateCMSAttributes(study, 'case-studies')}
+                          class="block text-sm text-surface-400 hover:text-white transition-colors truncate"
+                          title={study['project-title'] || study.name}
+                          {...cms.item(study, 'case-studies')}
                         >
                           {study['project-title'] || study.name}
                         </a>
@@ -159,21 +160,21 @@ const currentYear = new Date().getFullYear();
               )}
 
               <!-- Articles -->
-              {blogPosts.length > 0 && (
+              {blogSection.items.length > 0 && (
                 <div
-                  class="flex flex-col gap-3"
-                  data-cms-section={CMS_SECTIONS.FOOTER_BLOG_POSTS}
-                  data-cms-label="Footer Blog Posts"
+                  class="flex flex-col gap-3 lg:col-span-2"
+                  {...blogSection.attrs}
                 >
                   <h3 class="text-sm font-semibold text-white mb-1">Articles</h3>
                   <nav aria-label="Blog articles links">
                     <ul class="flex flex-col gap-2 list-none m-0 p-0" data-cms-container>
-                      {blogPosts.slice(0, 5).map(post => (
+                      {blogSection.items.slice(0, 5).map(post => (
                         <li>
                           <a
                             href={`/blog/${post.slug}`}
-                            class="text-sm text-surface-400 hover:text-white transition-colors"
-                            {...generateCMSAttributes(post, 'blog')}
+                            class="block text-sm text-surface-400 hover:text-white transition-colors truncate"
+                            title={post.name}
+                            {...cms.item(post, 'blog')}
                           >
                             {post.name}
                           </a>

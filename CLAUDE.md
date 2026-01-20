@@ -431,70 +431,86 @@ The site has a schema-driven CMS Control Panel that enables visual filtering/sor
 
 **`cms-schemas.json` is auto-generated on build via `npm run prebuild`.** Never edit this file manually. If Webflow collection fields change, run `npm run generate:schemas` to update.
 
-### MANDATORY: Rendering CMS Items
+### MANDATORY: Using the `createCMS()` Helper
 
-When rendering any CMS collection items, you **MUST** use the `generateCMSAttributes()` function to add data attributes. This enables the CMS Control Panel to filter/sort items visually.
+When rendering any CMS collection items, you **MUST** use the `createCMS()` helper from `src/lib/cms.ts`. This helper:
+- Auto-generates stable section IDs (no manual constants needed)
+- Applies server-side filter/sort config
+- Generates required data attributes for the CMS Control Panel
 
 ```astro
 ---
-import { generateCMSAttributes } from '../lib/cms-attributes';
-import { applyCMSConfig } from '../lib/cms-utils';
+import { createCMS } from '../../lib/cms';
+import type { CaseStudy, Client } from '../../lib/types';
 
-// Fetch CMS items
-const rawItems = await fetchCaseStudies();
+// Create CMS helper - auto-generates section IDs
+const cms = createCMS('MyComponent');
 
-// Apply server-side filter/sort config (field mapping auto-generated from schema)
-const items = applyCMSConfig(rawItems, 'section-id', 'collection-name');
+// For multi-item sections (sliders, grids)
+const slider = cms.section(rawCaseStudies as (CaseStudy & { id: string })[], 'case-studies', 'Case Studies');
+
+// For single-item sections (featured slots)
+const featuredSlot = cms.slot(rawCaseStudies as (CaseStudy & { id: string })[], 'case-studies', 'Featured Item');
 
 // Build reference lookups for displaying reference field names
 const clients = new Map(clientsList.map(c => [c.id, c]));
 const referenceLookups = { clients };
 ---
 
-{items.map(item => (
-  <a
-    href={`/work/${item.slug}`}
-    class="item-class"
-    {...generateCMSAttributes(item, 'collection-name', referenceLookups)}
-  >
-    <!-- item content -->
-  </a>
-))}
-```
-
-**Key points:**
-- `applyCMSConfig(items, sectionId, collection)` - section ID for config, collection for schema lookup
-- `generateCMSAttributes(item, collection, lookups)` - ALWAYS spread onto the CMS item element
-- Reference lookups are optional but enable displaying reference names instead of IDs
-
-### AUTOMATIC: Adding New CMS Sections
-
-CMS sections are **auto-discovered from the DOM** - no manual registration needed! Just add these attributes:
-
-1. **Container**: Add `data-cms-section="unique-section-id"` to the container element
-2. **Items**: Use `generateCMSAttributes()` on each item (this adds `data-cms-collection`)
-3. **Optional label**: Add `data-cms-label="Display Name"` for a custom panel label
-
-```astro
-<section data-cms-section="my-blog-posts" data-cms-label="Blog Posts">
-  {items.map(item => (
-    <div {...generateCMSAttributes(item, 'blog', lookups)}>
-      ...
-    </div>
+<!-- Multi-item section -->
+<div {...slider.attrs}>
+  {slider.items.map(item => (
+    <a
+      href={`/work/${item.slug}`}
+      class="item-class"
+      {...cms.item(item, 'case-studies', referenceLookups)}
+    >
+      <!-- item content -->
+    </a>
   ))}
-</section>
+</div>
+
+<!-- Single-item slot -->
+{featuredSlot.item && (
+  <div {...featuredSlot.attrs}>
+    <div {...cms.item(featuredSlot.item, 'case-studies', referenceLookups)}>
+      <!-- item content -->
+    </div>
+  </div>
+)}
 ```
 
-The CMS Control Panel will:
-- Auto-detect the section from `data-cms-section`
-- Read the collection from child items' `data-cms-collection`
-- Load filter/sort options from the schema
-- Generate the label from section ID (or use `data-cms-label` if provided)
+### API Reference
+
+**`createCMS(componentName: string)`**
+Creates a CMS helper instance that auto-generates section IDs based on the component name.
+
+**`cms.section(items, collection, label?)`**
+For multi-item sections (sliders, grids). Returns `{ items: T[], sectionId: string, attrs: Record<string, string> }`.
+
+**`cms.slot(items, collection, label?)`**
+For single-item sections (featured slots). Returns `{ item: T | undefined, sectionId: string, attrs: Record<string, string> }`.
+
+**`cms.item(item, collection, lookups?)`**
+Generates data attributes for a single CMS item. Spread onto the item element.
+
+### Auto-Generated Section IDs
+
+Section IDs are automatically generated in the format: `{component-name}-{collection}-{index}`
+
+Examples:
+- `hero-case-studies-0` - First case studies section in Hero component
+- `results-case-studies-0` - First case study slot in Results
+- `results-case-studies-1` - Second case study slot in Results
+- `partners-testimonials-0` - First testimonials section in Partners
+
+The index auto-increments per collection within a component, enabling multiple independent sections of the same collection type.
 
 ### File Reference for CMS Control Panel
 
 | File | Purpose |
 |------|---------|
+| `src/lib/cms.ts` | **Main CMS helper** - use this in components |
 | `src/lib/cms-utils.ts` | Server-side filter/sort application |
 | `src/lib/cms-attributes.ts` | Generate data attributes from schema |
 | `src/lib/dev/cms-panel.ts` | Section definitions, types, operator config |
@@ -515,13 +531,14 @@ The CMS Control Panel will:
 ### Quick Reference: CMS Development Checklist
 
 When creating/modifying CMS components:
-- [ ] Use `applyCMSConfig(items, sectionId, collection)` for server-side filtering
-- [ ] Use `generateCMSAttributes(item, collection, lookups)` on each item element
-- [ ] Add `data-cms-section="section-id"` to the container
-- [ ] (Optional) Add `data-cms-label="Display Name"` for custom panel label
+- [ ] Import `createCMS` from `../../lib/cms`
+- [ ] Create CMS helper: `const cms = createCMS('ComponentName')`
+- [ ] Use `cms.section()` for multi-item sections or `cms.slot()` for single items
+- [ ] Spread `{...section.attrs}` on the container element
+- [ ] Spread `{...cms.item(item, collection, lookups)}` on each item element
 - [ ] Build reference lookups for any reference fields you want to display names for
 
-**No manual registration needed!** Sections are auto-discovered from `data-cms-section` attributes.
+**No manual section IDs needed!** Section IDs are auto-generated from the component name and collection.
 
 ## Notes
 

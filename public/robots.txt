@@ -1,0 +1,12 @@
+# robots.txt for LoudFace
+# https://www.loudface.co
+
+User-agent: *
+Allow: /
+
+# Sitemap location
+Sitemap: https://www.loudface.co/customsite/sitemap.xml
+
+# Disallow development/admin paths
+Disallow: /dev/
+Disallow: /api/

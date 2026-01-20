@@ -7,9 +7,7 @@ Every UI component follows this structure:
 ```astro
 ---
 // 1. Library imports
-import { applyCMSConfig } from '../../lib/cms-utils';
-import { generateCMSAttributes } from '../../lib/cms-attributes';
-import { CMS_SECTIONS } from '../../lib/constants';
+import { createCMS } from '../../lib/cms';
 import { asset } from '../../lib/assets';  // For static image paths
 
 // 2. Type imports (always from centralized types.ts)
@@ -24,14 +22,24 @@ interface Props {
 // 4. Props destructuring with defaults
 const { title = "Default Title", items: rawItems } = Astro.props;
 
-// 5. CMS config application
-const items = applyCMSConfig(rawItems, CMS_SECTIONS.SECTION_NAME, 'collection-name');
+// 5. Create CMS helper (auto-generates section IDs)
+const cms = createCMS('MyComponent');
 
-// 6. Reference lookups for CMS attributes
+// 6. Apply CMS configuration
+const slider = cms.section(rawItems as (CaseStudy & { id: string })[], 'case-studies', 'Case Studies');
+
+// 7. Reference lookups for CMS attributes
 const referenceLookups = { clients: clientsMap };
 ---
 
-<!-- Template -->
+<!-- Template with CMS attributes -->
+<div {...slider.attrs}>
+  {slider.items.map(item => (
+    <div {...cms.item(item, 'case-studies', referenceLookups)}>
+      <!-- item content -->
+    </div>
+  ))}
+</div>
 ```
 
 ## Type Imports
@@ -104,45 +112,49 @@ For CMS images with fallbacks, use `asset()` only for the fallback:
 
 ## CMS Section IDs
 
-**ALWAYS use constants from `src/lib/constants.ts`:**
+Section IDs are **automatically generated** by the `createCMS()` helper. No manual constants needed!
+
+The format is: `{component-name}-{collection}-{index}`
+
+Examples:
+- `hero-case-studies-0` - First case studies section in Hero
+- `results-case-studies-0` - First case study slot in Results
+- `results-case-studies-1` - Second case study slot in Results
+- `partners-testimonials-0` - First testimonials section in Partners
 
 ```typescript
-// CORRECT
-import { CMS_SECTIONS } from '../../lib/constants';
-const items = applyCMSConfig(rawItems, CMS_SECTIONS.HERO_SLIDER, 'case-studies');
-
-// WRONG - Don't use magic strings
-const items = applyCMSConfig(rawItems, 'hero-slider', 'case-studies');
+// The createCMS helper auto-generates section IDs
+const cms = createCMS('Hero');
+const slider = cms.section(items, 'case-studies', 'Hero Case Studies');
+// slider.sectionId === 'hero-case-studies-0'
 ```
-
-Available section IDs:
-- `CMS_SECTIONS.HERO_SLIDER`
-- `CMS_SECTIONS.RESULTS_CASE_STUDIES`
-- `CMS_SECTIONS.RESULTS_TESTIMONIALS`
-- `CMS_SECTIONS.CASE_STUDY_SLIDER`
-- `CMS_SECTIONS.KNOWLEDGE_SLIDER`
-- `CMS_SECTIONS.PARTNERS_TESTIMONIALS`
-- `CMS_SECTIONS.PARTNERS_CLIENTS`
-- `CMS_SECTIONS.FOOTER_CASE_STUDIES`
-- `CMS_SECTIONS.FOOTER_BLOG_POSTS`
 
 ## CMS Control Panel Integration
 
-**Container element:**
+**Container element** (automatically handled by `cms.section()` or `cms.slot()`):
 ```astro
-<div
-  data-cms-section={CMS_SECTIONS.SECTION_NAME}
-  data-cms-label="Human-Readable Label"
->
+<div {...slider.attrs}>
+  <!-- slider.attrs includes data-cms-section and data-cms-label -->
 ```
 
 **Item elements:**
 ```astro
-{items.map(item => (
-  <div {...generateCMSAttributes(item, 'collection-name', referenceLookups)}>
+{slider.items.map(item => (
+  <div {...cms.item(item, 'collection-name', referenceLookups)}>
     <!-- item content -->
   </div>
 ))}
+```
+
+**For single-item slots:**
+```astro
+{slot.item && (
+  <div {...slot.attrs}>
+    <div {...cms.item(slot.item, 'collection-name', referenceLookups)}>
+      <!-- item content -->
+    </div>
+  </div>
+)}
 ```
 
 ## Button Usage
@@ -167,14 +179,98 @@ import Button from './Button.astro';
 - Icon-only buttons with special styling
 - Header pill CTA (rounded-full)
 
-## Section Container Pattern
+## Section Layout Components
 
-All sections follow this structure:
+### SectionContainer (CRITICAL)
+
+**ALWAYS use `SectionContainer` for page sections.** This ensures consistent padding, max-width, and horizontal gutters.
+
+```astro
+---
+import SectionContainer from './SectionContainer.astro';
+---
+
+<!-- Standard section -->
+<SectionContainer>
+  <!-- content -->
+</SectionContainer>
+
+<!-- With padding variant -->
+<SectionContainer padding="lg">
+  <!-- content -->
+</SectionContainer>
+
+<!-- With custom classes -->
+<SectionContainer class="bg-surface-900" innerClass="text-white">
+  <!-- content -->
+</SectionContainer>
+```
+
+**Padding variants:**
+
+| Variant | Classes | Use For |
+|---------|---------|---------|
+| `default` | `py-16 md:py-20 lg:py-24` | Standard sections |
+| `sm` | `py-12 md:py-16` | Compact sections |
+| `lg` | `py-16 md:py-24 lg:py-32` | Hero-adjacent, feature sections |
+| `none` | (no padding) | Custom padding needs |
+
+**Props:**
+- `padding` - Padding variant (default: `'default'`)
+- `as` - HTML tag: `'section'` | `'div'` | `'article'` | `'aside'` | `'footer'` (default: `'section'`)
+- `class` - Classes for outer element
+- `innerClass` - Classes for inner max-width container
+- `id` - Section ID for anchor links
+
+### SectionHeader
+
+**Use `SectionHeader` for consistent H2 patterns** with optional highlighted word and subtitle.
+
+```astro
+---
+import SectionHeader from './SectionHeader.astro';
+---
+
+<!-- Basic -->
+<SectionHeader title="Our Services" />
+
+<!-- With highlighted word -->
+<SectionHeader title="Our Growth Process" highlightWord="Process" />
+
+<!-- With subtitle -->
+<SectionHeader
+  title="Frequently Asked Questions"
+  highlightWord="Questions"
+  subtitle="Find answers to common questions about our services."
+/>
+
+<!-- Dark background -->
+<SectionHeader title="Our Approach" variant="dark" />
+
+<!-- Centered -->
+<SectionHeader title="Meet the Team" align="center" />
+```
+
+**Props:**
+- `title` - Section title text (required)
+- `highlightWord` - Word to highlight with accent color
+- `subtitle` - Optional description below title
+- `variant` - `'light'` | `'dark'` (default: `'light'`)
+- `align` - `'left'` | `'center'` (default: `'left'`)
+- `as` - Heading level: `'h1'` | `'h2'` | `'h3'` (default: `'h2'`)
+- `class` - Additional classes for container
+
+### Manual Pattern (if not using components)
+
+Only use this when components don't fit your needs:
 
 ```astro
 <section class="py-16 md:py-20 lg:py-24">
   <div class="px-4 md:px-8 lg:px-12">
     <div class="max-w-7xl mx-auto">
+      <h2 class="text-2xl sm:text-3xl md:text-4xl font-medium text-surface-900">
+        Section Title
+      </h2>
       <!-- content -->
     </div>
   </div>
@@ -377,11 +473,12 @@ See `src/data/content/` for examples. Current files:
 
 1. Create file in `src/components/ui/`
 2. Import types from `../../lib/types`
-3. Import `CMS_SECTIONS` if using CMS data
+3. **Import `createCMS` from `../../lib/cms` if using CMS data**
 4. **Import `asset` from `../../lib/assets` if using static images**
 5. Define only `Props` interface locally
-6. Follow section container pattern
-7. Use styling tokens from `styling.md`
-8. Add `data-cms-section` for CMS Control Panel support
-9. **For static text:** Use JSON content layer (see above)
-10. **For static images:** Use `asset('/images/...')` for all hardcoded paths
+6. **Use `SectionContainer` for layout** (see Section Layout Components above)
+7. **Use `SectionHeader` for section headings** with consistent H2 typography
+8. Use styling tokens from `styling.md`
+9. **Use `cms.section()` or `cms.slot()` for CMS Control Panel support**
+10. **For static text:** Use JSON content layer (see above)
+11. **For static images:** Use `asset('/images/...')` for all hardcoded paths

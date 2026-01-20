@@ -6,11 +6,10 @@ Create Astro components that render Webflow CMS data with proper filtering and c
 
 ```astro
 ---
-// Adjust path depth based on component location
-// From src/components/ui/: use '../lib/'
-// From src/pages/: use '../lib/'
-import { generateCMSAttributes } from '../lib/cms-attributes';
-import { applyCMSConfig } from '../lib/cms-utils';
+// From src/components/ui/: use '../../lib/'
+import { createCMS } from '../../lib/cms';
+import { asset } from '../../lib/assets';  // For static image paths
+import type { CaseStudy, Client } from '../../lib/types';
 ---
 ```
 
@@ -18,34 +17,66 @@ import { applyCMSConfig } from '../lib/cms-utils';
 
 ```astro
 ---
-// 1. Fetch CMS items
-const response = await fetch(`${Astro.url.origin}/api/cms/[collection-name]`);
-const rawItems = await response.json();
+import { createCMS } from '../../lib/cms';
+import { asset } from '../../lib/assets';
+import type { CaseStudy, Client } from '../../lib/types';
 
-// 2. Apply server-side filter/sort config
-const items = applyCMSConfig(rawItems, 'section-id', 'collection-name');
+interface Props {
+  caseStudies: CaseStudy[];
+  clients?: Map<string, Client>;
+}
 
-// 3. Build reference lookups (if needed for reference fields)
-const clientsResponse = await fetch(`${Astro.url.origin}/api/cms/clients`);
-const clientsList = await clientsResponse.json();
-const clients = new Map(clientsList.map(c => [c.id, c]));
+const { caseStudies: rawCaseStudies, clients = new Map() } = Astro.props;
+
+// Create CMS helper - auto-generates section IDs
+const cms = createCMS('MyComponent');
+
+// For multi-item sections (sliders, grids)
+const slider = cms.section(rawCaseStudies as (CaseStudy & { id: string })[], 'case-studies', 'Case Studies');
+
+// For single-item sections (featured slots)
+// const featured = cms.slot(rawCaseStudies as (CaseStudy & { id: string })[], 'case-studies', 'Featured Item');
+
+// Build reference lookups for displaying names
 const referenceLookups = { clients };
 ---
 
-<section data-cms-section="unique-section-id" data-cms-label="Display Name">
-  {items.map(item => (
-    <a
-      href={`/[route]/${item.slug}`}
-      class="item-class"
-      {...generateCMSAttributes(item, 'collection-name', referenceLookups)}
-    >
-      <!-- Item content -->
-      <h3>{item.name}</h3>
-      <p>{item.fieldData.description}</p>
-    </a>
-  ))}
+<!-- Multi-item section -->
+<section>
+  <div {...slider.attrs}>
+    {slider.items.map(item => (
+      <a
+        href={`/work/${item.slug}`}
+        class="item-class"
+        {...cms.item(item, 'case-studies', referenceLookups)}
+      >
+        <h3>{item.name}</h3>
+        <img src={item['main-project-image-thumbnail']?.url || asset('/images/placeholder.webp')} alt={item.name} />
+      </a>
+    ))}
+  </div>
 </section>
 ```
+
+## API Reference
+
+**`createCMS(componentName: string)`**
+Creates a CMS helper instance. Section IDs are auto-generated as `{component-name}-{collection}-{index}`.
+
+**`cms.section(items, collection, label?)`**
+For multi-item sections (sliders, grids). Returns:
+```typescript
+{ items: T[], sectionId: string, attrs: Record<string, string> }
+```
+
+**`cms.slot(items, collection, label?)`**
+For single-item sections (featured slots). Returns:
+```typescript
+{ item: T | undefined, sectionId: string, attrs: Record<string, string> }
+```
+
+**`cms.item(item, collection, lookups?)`**
+Generates data attributes for a single CMS item. Spread onto the item element.
 
 ## Collection IDs
 
@@ -55,11 +86,13 @@ See `CLAUDE.md` → "CMS Collection IDs Reference" for the full table of collect
 
 When creating a CMS component:
 
-- [ ] Use `applyCMSConfig(items, sectionId, collection)` for server-side filtering
-- [ ] Use `generateCMSAttributes(item, collection, lookups)` on each item element
-- [ ] Add `data-cms-section="section-id"` to the container
-- [ ] Add `data-cms-label="Display Name"` for custom panel label (optional)
+- [ ] Import `createCMS` from `../../lib/cms`
+- [ ] Create CMS helper: `const cms = createCMS('ComponentName')`
+- [ ] Use `cms.section()` for multi-item sections or `cms.slot()` for single items
+- [ ] Spread `{...section.attrs}` on the container element
+- [ ] Spread `{...cms.item(item, collection, lookups)}` on each item element
 - [ ] Build reference lookups for any reference fields
+- [ ] Use `asset()` for fallback image paths
 
 ## Field Access Patterns
 
@@ -69,16 +102,17 @@ item.name
 item.slug
 item.id
 
-// Nested field data
-item.fieldData.description
-item.fieldData['custom-field']
+// Kebab-case fields
+item['project-title']
+item['result-1---number']
 
 // Reference fields (need lookup)
-const clientName = clients.get(item.fieldData.client)?.name;
+const client = clients.get(item.client);
+const clientName = client?.name;
 
-// Image fields
-item.fieldData.thumbnail?.url
-item.fieldData.thumbnail?.alt
+// Image fields with fallback
+item.thumbnail?.url || asset('/images/placeholder.webp')
+item['profile-image']?.url || asset('/images/placeholder-avatar.svg')
 ```
 
 ## Empty State Handling
@@ -86,14 +120,36 @@ item.fieldData.thumbnail?.alt
 Always handle empty collections:
 
 ```astro
-{items.length > 0 ? (
-  items.map(item => (
-    <div {...generateCMSAttributes(item, 'collection', lookups)}>
-      {/* content */}
-    </div>
-  ))
+{slider.items.length > 0 ? (
+  <div {...slider.attrs}>
+    {slider.items.map(item => (
+      <div {...cms.item(item, 'collection', lookups)}>
+        {/* content */}
+      </div>
+    ))}
+  </div>
 ) : (
   <p class="text-surface-500 text-center py-12">No items found.</p>
+)}
+```
+
+## Single-Item Slots
+
+For independently configurable single items (e.g., featured case study):
+
+```astro
+---
+// Multiple slots from the same collection - each independently configurable
+const slot1 = cms.slot(rawCaseStudies as (CaseStudy & { id: string })[], 'case-studies', 'Featured 1');
+const slot2 = cms.slot(rawCaseStudies as (CaseStudy & { id: string })[], 'case-studies', 'Featured 2');
+---
+
+{slot1.item && (
+  <div {...slot1.attrs}>
+    <div {...cms.item(slot1.item, 'case-studies', referenceLookups)}>
+      <h3>{slot1.item.name}</h3>
+    </div>
+  </div>
 )}
 ```
 
@@ -114,6 +170,7 @@ For static text in components (section titles, button labels, descriptions), use
 
 ```astro
 ---
+import { createCMS } from '../../lib/cms';
 import { getMySectionContent } from '../../lib/content-utils';
 const content = getMySectionContent();
 

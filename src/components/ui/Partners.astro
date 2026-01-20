@@ -1,7 +1,5 @@
 ---
-import { applyCMSConfig } from '../../lib/cms-utils';
-import { generateCMSAttributes } from '../../lib/cms-attributes';
-import { CMS_SECTIONS } from '../../lib/constants';
+import { createCMS } from '../../lib/cms';
 import { asset } from '../../lib/assets';
 import { getPartnersContent } from '../../lib/content-utils';
 import type { Testimonial, Client } from '../../lib/types';
@@ -28,12 +26,15 @@ const {
   tagline = content.tagline
 } = Astro.props;
 
-// Apply CMS configuration for testimonials (field mapping auto-generated from schema)
-const testimonials = applyCMSConfig(rawTestimonials, CMS_SECTIONS.PARTNERS_TESTIMONIALS, 'testimonials');
+// Create CMS helper - auto-generates section IDs
+const cms = createCMS('Partners');
+
+// Apply CMS configuration for testimonials
+const testimonialSection = cms.section(rawTestimonials as (Testimonial & { id: string })[], 'testimonials', 'Testimonials');
 
 // Filter clients that should be showcased, then apply CMS config
 const filteredClients = rawClients.filter(c => c['showcase-logo']);
-const showcaseClients = applyCMSConfig(filteredClients, CMS_SECTIONS.PARTNERS_CLIENTS, 'clients');
+const clientSection = cms.section(filteredClients as (Client & { id: string })[], 'clients', 'Client Logos');
 ---
 
 <section class="overflow-visible relative z-10">
@@ -62,16 +63,15 @@ const showcaseClients = applyCMSConfig(filteredClients, CMS_SECTIONS.PARTNERS_CL
         <div class="h-4"></div>
 
         <!-- Testimonial Headshots -->
-        {testimonials.length > 0 && (
+        {testimonialSection.items.length > 0 && (
           <div
             class="flex flex-wrap justify-center relative z-20"
-            data-cms-section={CMS_SECTIONS.PARTNERS_TESTIMONIALS}
-            data-cms-label="Testimonials"
+            {...testimonialSection.attrs}
           >
-            {testimonials.map((testimonial) => (
+            {testimonialSection.items.map((testimonial) => (
               <div
                 class="headshot-item relative z-20 -ml-2 first:ml-0"
-                {...generateCMSAttributes(testimonial, 'testimonials')}
+                {...cms.item(testimonial, 'testimonials')}
               >
                 <div class="headshot-trigger relative cursor-pointer z-20">
                   <img
@@ -98,21 +98,20 @@ const showcaseClients = applyCMSConfig(filteredClients, CMS_SECTIONS.PARTNERS_CL
 
         <!-- Tagline -->
         <div class="h-4"></div>
-        <p class="text-center text-surface-600">{tagline}</p>
+        <p class="text-center text-surface-600 text-lg">{tagline}</p>
 
         <div class="h-8"></div>
 
         <!-- Client Logos -->
-        {showcaseClients.length > 0 && (
+        {clientSection.items.length > 0 && (
           <div
             class="flex flex-wrap justify-center items-center gap-4 sm:gap-6 md:gap-x-12 md:gap-y-8"
-            data-cms-section={CMS_SECTIONS.PARTNERS_CLIENTS}
-            data-cms-label="Client Logos"
+            {...clientSection.attrs}
           >
-            {showcaseClients.map((client) => (
+            {clientSection.items.map((client) => (
               <div
                 class="logo-item flex items-center justify-center"
-                {...generateCMSAttributes(client, 'clients')}
+                {...cms.item(client, 'clients')}
               >
                 <img
                   src={client['colored-logo']?.url || asset('/images/placeholder-logo.svg')}

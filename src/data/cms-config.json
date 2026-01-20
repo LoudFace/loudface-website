@@ -1,6 +1,6 @@
 {
   "sections": {
-    "case-study-slider": {
+    "case-study-slider-case-studies-0": {
       "filters": [
         {
           "field": "featured",
@@ -11,7 +11,7 @@
       "sort": null,
       "limit": null
     },
-    "hero-slider": {
+    "hero-case-studies-0": {
       "filters": [
         {
           "field": "featured",
@@ -25,12 +25,12 @@
       },
       "limit": null
     },
-    "knowledge-slider": {
+    "knowledge-blog-0": {
       "filters": [],
       "sort": null,
       "limit": null
     },
-    "partners-testimonials": {
+    "partners-testimonials-0": {
       "filters": [
         {
           "field": "profile-image",
@@ -41,7 +41,7 @@
       "sort": null,
       "limit": null
     },
-    "partners-clients": {
+    "partners-clients-0": {
       "filters": [],
       "sort": null,
       "limit": null

@@ -1,0 +1,294 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import SectionContainer from '../../components/ui/SectionContainer.astro';
+import { COLLECTION_IDS } from '../../lib/constants';
+import { asset } from '../../lib/assets';
+import type { BlogPost, Category, TeamMember } from '../../lib/types';
+
+// SSR - fetch CMS data at request time
+export const prerender = false;
+
+const { slug } = Astro.params;
+
+// Support both Webflow Cloud runtime and local .env
+const accessToken = (Astro.locals as any).runtime?.env?.WEBFLOW_SITE_API_TOKEN
+  || import.meta.env.WEBFLOW_SITE_API_TOKEN;
+
+let post: (BlogPost & { 'post-body'?: string }) | null = null;
+let category: Category | null = null;
+let author: TeamMember | null = null;
+let error: string | null = null;
+
+if (accessToken) {
+  try {
+    // Fetch blog posts
+    const postsRes = await fetch(
+      `https://api.webflow.com/v2/collections/${COLLECTION_IDS['blog']}/items`,
+      { headers: { 'Authorization': `Bearer ${accessToken}` } }
+    );
+
+    if (postsRes.ok) {
+      const postsData = await postsRes.json();
+      const item = postsData.items?.find((i: any) => i.fieldData?.slug === slug);
+
+      if (item) {
+        post = { id: item.id, ...item.fieldData, createdOn: item.createdOn, lastUpdated: item.lastUpdated };
+
+        // Fetch category and author in parallel if they exist
+        const fetches: Promise<Response>[] = [];
+        const fetchTypes: string[] = [];
+
+        if (post.category) {
+          fetches.push(fetch(
+            `https://api.webflow.com/v2/collections/${COLLECTION_IDS['categories']}/items/${post.category}`,
+            { headers: { 'Authorization': `Bearer ${accessToken}` } }
+          ));
+          fetchTypes.push('category');
+        }
+
+        if (post.author) {
+          fetches.push(fetch(
+            `https://api.webflow.com/v2/collections/${COLLECTION_IDS['team-members']}/items/${post.author}`,
+            { headers: { 'Authorization': `Bearer ${accessToken}` } }
+          ));
+          fetchTypes.push('author');
+        }
+
+        const results = await Promise.all(fetches);
+
+        for (let i = 0; i < results.length; i++) {
+          if (results[i].ok) {
+            const data = await results[i].json();
+            if (fetchTypes[i] === 'category') {
+              category = { id: data.id, ...data.fieldData };
+            } else if (fetchTypes[i] === 'author') {
+              author = { id: data.id, ...data.fieldData };
+            }
+          }
+        }
+      }
+    } else {
+      error = `API error: ${postsRes.status}`;
+    }
+  } catch (e) {
+    error = 'Failed to fetch blog post';
+    console.error('Blog post fetch error:', e);
+  }
+} else {
+  error = 'CMS not configured';
+}
+
+// Redirect to 404 if post not found
+if (!post && !error) {
+  return Astro.redirect('/404');
+}
+
+// Page metadata
+const title = post?.['meta-title'] || post?.name ? `${post?.['meta-title'] || post?.name} | LoudFace` : 'Blog | LoudFace';
+const description = post?.['meta-description'] || post?.excerpt || 'Read our latest blog post';
+const canonicalUrl = `https://www.loudface.co/blog/${slug}`;
+const publishedDate = post?.['published-date'] || (post as any)?.createdOn;
+const modifiedDate = (post as any)?.lastUpdated || publishedDate;
+
+// Structured Data - BreadcrumbList
+const breadcrumbSchema = post ? {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "Home",
+      "item": "https://www.loudface.co/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "Blog",
+      "item": "https://www.loudface.co/blog"
+    },
+    {
+      "@type": "ListItem",
+      "position": 3,
+      "name": post.name
+    }
+  ]
+} : null;
+
+// Structured Data - BlogPosting
+const articleSchema = post ? {
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": post.name,
+  "description": description,
+  "image": post.thumbnail?.url || "https://www.loudface.co/images/og-image.jpg",
+  "author": author ? {
+    "@type": "Person",
+    "name": author.name,
+    "jobTitle": author['job-title'] || undefined,
+    "image": author['profile-picture']?.url || undefined
+  } : {
+    "@type": "Organization",
+    "name": "LoudFace",
+    "url": "https://www.loudface.co"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "LoudFace",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://www.loudface.co/images/loudface.svg"
+    }
+  },
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": canonicalUrl
+  },
+  "datePublished": publishedDate ? new Date(publishedDate).toISOString() : new Date().toISOString(),
+  "dateModified": modifiedDate ? new Date(modifiedDate).toISOString() : new Date().toISOString(),
+  ...(category ? { "articleSection": category.name } : {}),
+  ...(post['time-to-read'] ? { "timeRequired": `PT${post['time-to-read'].replace(/[^0-9]/g, '')}M` } : {})
+} : null;
+
+// Helper function
+function formatDate(dateStr: string | undefined): string {
+  if (!dateStr) return '';
+  return new Date(dateStr).toLocaleDateString('en-US', {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric'
+  });
+}
+---
+
+<Layout title={title} description={description} canonicalUrl={canonicalUrl}>
+  {/* Structured Data */}
+  {breadcrumbSchema && (
+    <script type="application/ld+json" set:html={JSON.stringify(breadcrumbSchema)} slot="head" />
+  )}
+  {articleSchema && (
+    <script type="application/ld+json" set:html={JSON.stringify(articleSchema)} slot="head" />
+  )}
+
+  <main id="main-content">
+    {error ? (
+      <SectionContainer>
+        <div class="text-center py-16">
+          <h1 class="text-4xl md:text-5xl font-medium text-surface-900">Error</h1>
+          <p class="mt-4 text-lg text-surface-600">{error}</p>
+        </div>
+      </SectionContainer>
+    ) : post ? (
+      <article>
+        {/* Hero Section */}
+        <SectionContainer padding="lg">
+          <div class="max-w-3xl mx-auto">
+            {/* Breadcrumb */}
+            <nav class="mb-8" aria-label="Breadcrumb">
+              <ol class="flex items-center gap-2 text-sm text-surface-500">
+                <li><a href="/" class="hover:text-surface-900 transition-colors">Home</a></li>
+                <li aria-hidden="true">/</li>
+                <li><a href="/blog" class="hover:text-surface-900 transition-colors">Blog</a></li>
+                <li aria-hidden="true">/</li>
+                <li class="text-surface-900 truncate max-w-48">{post.name}</li>
+              </ol>
+            </nav>
+
+            {/* Category & Read Time */}
+            <div class="flex items-center gap-4 mb-4">
+              {category && (
+                <span class="text-primary-600 font-medium">{category.name}</span>
+              )}
+              {post['time-to-read'] && (
+                <span class="text-surface-500">{post['time-to-read']}</span>
+              )}
+            </div>
+
+            {/* Title */}
+            <h1 class="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-medium text-surface-900 leading-tight">
+              {post.name}
+            </h1>
+
+            {/* Excerpt */}
+            {post.excerpt && (
+              <p class="mt-6 text-lg text-surface-600 leading-relaxed">
+                {post.excerpt}
+              </p>
+            )}
+
+            {/* Author & Date */}
+            <div class="flex items-center gap-4 mt-8 pt-8 border-t border-surface-200">
+              {author?.['profile-picture']?.url && (
+                <img
+                  src={author['profile-picture'].url}
+                  alt={author.name}
+                  class="w-12 h-12 rounded-full object-cover"
+                  loading="eager"
+                />
+              )}
+              <div>
+                {author && (
+                  <p class="font-medium text-surface-900">{author.name}</p>
+                )}
+                {author?.['job-title'] && (
+                  <p class="text-sm text-surface-500">{author['job-title']}</p>
+                )}
+                {post['published-date'] && (
+                  <p class="text-sm text-surface-500 mt-1">{formatDate(post['published-date'])}</p>
+                )}
+              </div>
+            </div>
+          </div>
+        </SectionContainer>
+
+        {/* Featured Image */}
+        {post.thumbnail?.url && (
+          <div class="px-4 md:px-8 lg:px-12">
+            <div class="max-w-5xl mx-auto">
+              <div class="rounded-2xl overflow-hidden">
+                <img
+                  src={post.thumbnail.url}
+                  alt={post.thumbnail.alt || post.name}
+                  class="w-full h-auto"
+                  loading="eager"
+                  fetchpriority="high"
+                />
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Post Body */}
+        {post['post-body'] && (
+          <SectionContainer>
+            <div class="max-w-3xl mx-auto">
+              <div
+                class="prose prose-lg max-w-none
+                  prose-headings:font-medium prose-headings:text-surface-900
+                  prose-p:text-surface-600 prose-p:leading-relaxed
+                  prose-a:text-primary-600 prose-a:no-underline hover:prose-a:underline
+                  prose-strong:text-surface-900
+                  prose-ul:text-surface-600 prose-ol:text-surface-600
+                  prose-blockquote:border-primary-500 prose-blockquote:text-surface-700
+                  prose-img:rounded-xl"
+                set:html={post['post-body']}
+              />
+            </div>
+          </SectionContainer>
+        )}
+
+        {/* Back to Blog */}
+        <SectionContainer padding="sm">
+          <div class="max-w-3xl mx-auto text-center">
+            <a
+              href="/blog"
+              class="inline-flex items-center justify-center px-6 py-3 border border-surface-200 text-surface-900 font-medium rounded-lg hover:bg-surface-100 transition-colors focus-visible:outline-2 focus-visible:outline-primary-500 focus-visible:outline-offset-2"
+            >
+              ← Back to Blog
+            </a>
+          </div>
+        </SectionContainer>
+      </article>
+    ) : null}
+  </main>
+</Layout>

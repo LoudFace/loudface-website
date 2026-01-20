@@ -1,0 +1,208 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import SectionContainer from '../../components/ui/SectionContainer.astro';
+import SectionHeader from '../../components/ui/SectionHeader.astro';
+import { COLLECTION_IDS } from '../../lib/constants';
+import { asset } from '../../lib/assets';
+import type { BlogPost, Category, TeamMember } from '../../lib/types';
+
+// SSR - fetch CMS data at request time
+export const prerender = false;
+
+// Support both Webflow Cloud runtime and local .env
+const accessToken = (Astro.locals as any).runtime?.env?.WEBFLOW_SITE_API_TOKEN
+  || import.meta.env.WEBFLOW_SITE_API_TOKEN;
+
+let posts: BlogPost[] = [];
+let categories = new Map<string, Category>();
+let authors = new Map<string, TeamMember>();
+let error: string | null = null;
+
+if (accessToken) {
+  try {
+    // Fetch blog posts, categories, and team members in parallel
+    const [postsRes, categoriesRes, teamRes] = await Promise.all([
+      fetch(`https://api.webflow.com/v2/collections/${COLLECTION_IDS['blog']}/items`, {
+        headers: { 'Authorization': `Bearer ${accessToken}` }
+      }),
+      fetch(`https://api.webflow.com/v2/collections/${COLLECTION_IDS['categories']}/items`, {
+        headers: { 'Authorization': `Bearer ${accessToken}` }
+      }),
+      fetch(`https://api.webflow.com/v2/collections/${COLLECTION_IDS['team-members']}/items`, {
+        headers: { 'Authorization': `Bearer ${accessToken}` }
+      })
+    ]);
+
+    if (postsRes.ok) {
+      const postsData = await postsRes.json();
+      posts = postsData.items?.map((item: any) => ({
+        id: item.id,
+        ...item.fieldData
+      })) || [];
+
+      // Sort by published date (newest first)
+      posts.sort((a, b) => {
+        const dateA = new Date(a['published-date'] || 0);
+        const dateB = new Date(b['published-date'] || 0);
+        return dateB.getTime() - dateA.getTime();
+      });
+    }
+
+    if (categoriesRes.ok) {
+      const categoriesData = await categoriesRes.json();
+      categoriesData.items?.forEach((item: any) => {
+        categories.set(item.id, { id: item.id, ...item.fieldData });
+      });
+    }
+
+    if (teamRes.ok) {
+      const teamData = await teamRes.json();
+      teamData.items?.forEach((item: any) => {
+        authors.set(item.id, { id: item.id, ...item.fieldData });
+      });
+    }
+  } catch (e) {
+    error = 'Failed to fetch blog posts';
+    console.error('Blog fetch error:', e);
+  }
+} else {
+  error = 'CMS not configured';
+}
+
+// Page metadata
+const title = "Blog | LoudFace";
+const description = "Insights, guides, and case studies on Webflow development, SEO, and digital growth strategies from the LoudFace team.";
+const canonicalUrl = "https://www.loudface.co/blog";
+
+// Helper functions
+function getCategory(categoryId: string | undefined): Category | undefined {
+  if (!categoryId) return undefined;
+  return categories.get(categoryId);
+}
+
+function getAuthor(authorId: string | undefined): TeamMember | undefined {
+  if (!authorId) return undefined;
+  return authors.get(authorId);
+}
+
+function formatDate(dateStr: string | undefined): string {
+  if (!dateStr) return '';
+  return new Date(dateStr).toLocaleDateString('en-US', {
+    year: 'numeric',
+    month: 'short',
+    day: 'numeric'
+  });
+}
+---
+
+<Layout title={title} description={description} canonicalUrl={canonicalUrl}>
+  <main id="main-content">
+    <SectionContainer padding="lg">
+      <SectionHeader
+        title="Our Blog"
+        highlightWord="Blog"
+        subtitle="Insights, guides, and case studies on Webflow development, SEO, and digital growth strategies."
+      />
+
+      {error ? (
+        <div class="text-center py-16">
+          <p class="text-surface-600">{error}</p>
+        </div>
+      ) : posts.length === 0 ? (
+        <div class="text-center py-16">
+          <p class="text-surface-600">No blog posts yet. Check back soon!</p>
+        </div>
+      ) : (
+        <div class="mt-12 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          {posts.map((post) => {
+            const category = getCategory(post.category);
+            const author = getAuthor(post.author);
+
+            return (
+              <a
+                href={`/blog/${post.slug}`}
+                class="group flex flex-col bg-white rounded-xl border border-surface-200 overflow-hidden hover:border-surface-300 hover:shadow-md transition-all duration-200 focus-visible:outline-2 focus-visible:outline-primary-500 focus-visible:outline-offset-4"
+              >
+                {/* Thumbnail */}
+                <div class="aspect-[16/10] overflow-hidden bg-surface-100">
+                  {post.thumbnail?.url ? (
+                    <img
+                      src={post.thumbnail.url}
+                      alt={post.thumbnail.alt || post.name}
+                      loading="lazy"
+                      class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                    />
+                  ) : (
+                    <div class="w-full h-full flex items-center justify-center">
+                      <span class="text-surface-400">No image</span>
+                    </div>
+                  )}
+                </div>
+
+                {/* Content */}
+                <div class="flex flex-col flex-1 p-6">
+                  {/* Category & Read Time */}
+                  <div class="flex items-center gap-3 text-sm mb-3">
+                    {category && (
+                      <span class="text-primary-600 font-medium">{category.name}</span>
+                    )}
+                    {post['time-to-read'] && (
+                      <span class="text-surface-500">{post['time-to-read']}</span>
+                    )}
+                  </div>
+
+                  {/* Title */}
+                  <h2 class="text-lg font-medium text-surface-900 group-hover:text-primary-600 transition-colors line-clamp-2">
+                    {post.name}
+                  </h2>
+
+                  {/* Excerpt */}
+                  {post.excerpt && (
+                    <p class="mt-2 text-surface-600 text-sm line-clamp-3 flex-1">
+                      {post.excerpt}
+                    </p>
+                  )}
+
+                  {/* Author & Date */}
+                  <div class="flex items-center gap-3 mt-4 pt-4 border-t border-surface-100">
+                    {author?.['profile-picture']?.url && (
+                      <img
+                        src={author['profile-picture'].url}
+                        alt={author.name}
+                        class="w-8 h-8 rounded-full object-cover"
+                        loading="lazy"
+                      />
+                    )}
+                    <div class="flex-1 min-w-0">
+                      {author && (
+                        <p class="text-sm font-medium text-surface-900 truncate">{author.name}</p>
+                      )}
+                      {post['published-date'] && (
+                        <p class="text-xs text-surface-500">{formatDate(post['published-date'])}</p>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              </a>
+            );
+          })}
+        </div>
+      )}
+    </SectionContainer>
+  </main>
+</Layout>
+
+<style>
+  .line-clamp-2 {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+  .line-clamp-3 {
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+</style>

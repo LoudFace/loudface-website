@@ -1,7 +1,5 @@
 ---
-import { applyCMSConfig } from '../../lib/cms-utils';
-import { generateCMSAttributes } from '../../lib/cms-attributes';
-import { CMS_SECTIONS } from '../../lib/constants';
+import { createCMS } from '../../lib/cms';
 import { getCaseStudySliderContent } from '../../lib/content-utils';
 import { asset } from '../../lib/assets';
 import Button from './Button.astro';
@@ -30,10 +28,13 @@ const {
   ctaText = content.ctaText
 } = Astro.props;
 
-// Apply CMS configuration (filters, sorting) - field mapping auto-generated from schema
-const caseStudies = applyCMSConfig(rawCaseStudies, CMS_SECTIONS.CASE_STUDY_SLIDER, 'case-studies');
+// Create CMS helper - auto-generates section IDs
+const cms = createCMS('CaseStudySlider');
 
-// Build reference lookups for generateCMSAttributes
+// Apply CMS configuration (filters, sorting)
+const slider = cms.section(rawCaseStudies as (CaseStudy & { id: string })[], 'case-studies', 'Case Studies');
+
+// Build reference lookups for displaying names
 const referenceLookups = {
   clients: clients,
   industries: industries,
@@ -299,16 +300,15 @@ function getContrastColors(hexColor: string | undefined): {
           </div>
 
           <!-- Embla Carousel -->
-          <div
-            id="case-study-slider"
-            class="embla w-full max-w-full overflow-hidden"
-            data-cms-section={CMS_SECTIONS.CASE_STUDY_SLIDER}
-            data-cms-label="Case Study Slider"
-          >
-            {caseStudies.length > 0 ? (
-              <div class="embla__viewport overflow-hidden">
+          <div {...slider.attrs}>
+            <div
+              id="case-study-slider"
+              class="embla w-full max-w-full overflow-hidden"
+            >
+              {slider.items.length > 0 ? (
+                <div class="embla__viewport overflow-hidden">
                 <div class="embla__container flex items-start gap-10 md:gap-10 touch-pan-y" data-cms-container>
-                  {caseStudies.map((study) => {
+                  {slider.items.map((study) => {
                     const client = getClient(study.client);
                     const testimonial = getTestimonial(study.id);
                     const { textColor, mode, overlayColor } = getContrastColors(study['client-color']);
@@ -318,7 +318,7 @@ function getContrastColors(hexColor: string | undefined): {
                     return (
                       <div
                         class="embla__slide flex-[0_0_100%] md:flex-[0_0_auto] min-w-0 max-w-full md:max-w-[46.25rem]"
-                        {...generateCMSAttributes(study, 'case-studies', referenceLookups)}
+                        {...cms.item(study, 'case-studies', referenceLookups)}
                       >
                         <div
                           class={`case-card flex flex-col md:flex-row gap-6 rounded-lg p-6 relative transition-opacity duration-250 hover:opacity-85`}
@@ -418,6 +418,7 @@ function getContrastColors(hexColor: string | undefined): {
                 <p>No case studies found.</p>
               </div>
             )}
+            </div>
           </div>
 
           <!-- Mobile nav buttons -->

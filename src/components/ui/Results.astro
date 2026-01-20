@@ -1,7 +1,5 @@
 ---
-import { applyCMSConfig } from '../../lib/cms-utils';
-import { generateCMSAttributes } from '../../lib/cms-attributes';
-import { CMS_SECTIONS } from '../../lib/constants';
+import { createCMS } from '../../lib/cms';
 import { asset } from '../../lib/assets';
 import { getResultsContent, type VideoTestimonial } from '../../lib/content-utils';
 import Button from './Button.astro';
@@ -33,17 +31,21 @@ const {
   ctaHref = content.ctaHref
 } = Astro.props;
 
-// Apply CMS configuration (filters, sorting) - field mapping auto-generated from schema
-const caseStudies = applyCMSConfig(rawCaseStudies, CMS_SECTIONS.RESULTS_CASE_STUDIES, 'case-studies');
-const testimonials = rawTestimonial ? applyCMSConfig([rawTestimonial], CMS_SECTIONS.RESULTS_TESTIMONIALS, 'testimonials') : [];
-const testimonial = testimonials[0];
+// Create CMS helper - auto-generates section IDs
+const cms = createCMS('Results');
 
-// Build reference lookups for generateCMSAttributes
-const clientsLookup = new Map(
-  Array.from(clients.entries()).map(([id, client]) => [id, { id, name: client.name }])
-);
+// Each slot is independently configurable via the CMS control panel
+const slot1 = cms.slot(rawCaseStudies as (CaseStudy & { id: string })[], 'case-studies', 'Case Study 1');
+const slot2 = cms.slot(rawCaseStudies as (CaseStudy & { id: string })[], 'case-studies', 'Case Study 2');
+const testimonialSlot = rawTestimonial
+  ? cms.slot([rawTestimonial] as (Testimonial & { id: string })[], 'testimonials', 'Testimonial')
+  : { item: undefined, attrs: {} };
+
+// Build reference lookups for displaying client names
 const referenceLookups = {
-  clients: clientsLookup,
+  clients: new Map(
+    Array.from(clients.entries()).map(([id, client]) => [id, { id, name: client.name }])
+  ),
 };
 
 // Helper to get client data
@@ -76,176 +78,173 @@ function formatTitle(text: string) {
 
         <div class="h-6 sm:h-8 md:h-12"></div>
 
-        <!-- Bento Grid -->
-        <div
-          class="results-grid"
-          data-cms-section={CMS_SECTIONS.RESULTS_CASE_STUDIES}
-          data-cms-label="Results Case Studies"
-        >
-          <!-- Video Testimonial 1 (left, spans rows 1-3) -->
-          {videoTestimonials[0] && (
-            <div class="results-item-video-1">
-              <div class="bg-surface-900 rounded-xl overflow-hidden h-full flex flex-col">
-                <div class="aspect-video w-full flex-1 min-h-0">
-                  <iframe
-                    src={videoTestimonials[0].videoUrl}
-                    title={videoTestimonials[0].videoTitle || "Video testimonial"}
-                    allow="fullscreen"
-                    loading="lazy"
-                    class="w-full h-full border-0"
-                  ></iframe>
-                </div>
-                <div class="px-5 py-4 flex flex-col gap-1 bg-surface-900">
-                  <span class="font-bold text-white">{videoTestimonials[0].name}</span>
-                  <span class="text-white/80">{videoTestimonials[0].role}</span>
-                </div>
-              </div>
-            </div>
-          )}
-
-          <!-- Case Study 1 (right top) -->
-          {caseStudies[0] && (() => {
-            const study = caseStudies[0];
-            const client = getClient(study.client);
-            return (
-              <div
-                class="results-item-case-1"
-                {...generateCMSAttributes(study, 'case-studies', referenceLookups)}
-              >
-                <a
-                  href={`/work/${study.slug}`}
-                  class="flex flex-col bg-white border border-surface-200 rounded-xl p-6 no-underline h-full transition-all duration-200 hover:border-surface-300 hover:shadow-md focus-visible:outline-2 focus-visible:outline-primary-500 focus-visible:outline-offset-2"
-                >
-                  <div class="flex justify-between items-center">
-                    <img
-                      src={client?.['colored-logo']?.url || asset('/images/placeholder-logo.svg')}
+        <!-- Bento Grid - Two column masonry layout -->
+        <div class="results-grid">
+          <!-- Left Column -->
+          <div class="results-col-left flex flex-col gap-5">
+            <!-- Video Testimonial 1 (static, not CMS) -->
+            {videoTestimonials[0] && (
+              <div>
+                <div class="bg-surface-900 rounded-xl overflow-hidden">
+                  <div class="aspect-video w-full">
+                    <iframe
+                      src={videoTestimonials[0].videoUrl}
+                      title={videoTestimonials[0].videoTitle || "Video testimonial"}
+                      allow="fullscreen"
                       loading="lazy"
-                      width="83"
-                      height="26"
-                      alt={client?.name || study['project-title']}
-                      class="max-h-[26px] w-auto"
-                    />
-                    <span class="hidden sm:inline-flex items-center font-medium text-surface-900 transition-opacity hover:opacity-70">
-                      View case study
-                      <span class="ml-1" set:html={arrowIcon} />
-                    </span>
+                      class="w-full h-full border-0"
+                    ></iframe>
                   </div>
-                  <div class="mt-auto pt-4">
-                    <div class="bg-surface-50 rounded-lg p-4">
-                      <h3 class="text-3xl md:text-4xl font-medium text-surface-900">
-                        {study['result-1---number'] || ''}
-                      </h3>
-                      <div class="h-2"></div>
-                      <p class="font-medium text-surface-700">{study['result-1---title'] || ''}</p>
-                      <div class="h-4"></div>
-                      <p class="text-sm text-surface-500 line-clamp-2">
-                        {study['result-1---number'] || ''}
-                      </p>
-                    </div>
-                    <span class="sm:hidden inline-flex items-center font-medium text-surface-900 mt-4 transition-opacity hover:opacity-70">
-                      View case study
-                      <span class="ml-1" set:html={arrowIcon} />
-                    </span>
-                  </div>
-                </a>
-              </div>
-            );
-          })()}
-
-          <!-- Testimonial (right middle, spans rows 2-3) -->
-          {testimonial && (
-            <div
-              class="results-item-testimonial"
-              {...generateCMSAttributes(testimonial, 'testimonials')}
-            >
-              <div class="bg-white border border-surface-200 rounded-xl p-6 h-full flex flex-col">
-                <blockquote class="flex-1 text-base leading-7 text-surface-700 line-clamp-6 [&>p]:m-0" set:html={testimonial['testimonial-body']} />
-                <div class="h-6"></div>
-                <div class="flex justify-between items-end">
-                  <div class="flex flex-col gap-1">
-                    <span class="font-bold text-surface-900">{testimonial.name}</span>
-                    <span class="text-surface-600">{testimonial.role}</span>
-                  </div>
-                  <div class="w-10 h-10 flex items-center justify-center bg-surface-900 rounded-full cursor-pointer transition-transform hover:scale-105" aria-label="View testimonial">
-                    <img src={asset('/images/top-right-arrow.svg')} loading="lazy" width="16" height="16" alt="" />
+                  <div class="px-5 py-4 flex flex-col gap-1">
+                    <span class="font-bold text-white">{videoTestimonials[0].name}</span>
+                    <span class="text-white/80">{videoTestimonials[0].role}</span>
                   </div>
                 </div>
               </div>
-            </div>
-          )}
+            )}
 
-          <!-- Case Study 2 (bottom left) -->
-          {caseStudies[1] && (() => {
-            const study = caseStudies[1];
-            const client = getClient(study.client);
-            return (
-              <div
-                class="results-item-case-2"
-                {...generateCMSAttributes(study, 'case-studies', referenceLookups)}
-              >
-                <a
-                  href={`/work/${study.slug}`}
-                  class="flex flex-col bg-white border border-surface-200 rounded-xl p-6 no-underline h-full transition-all duration-200 hover:border-surface-300 hover:shadow-md focus-visible:outline-2 focus-visible:outline-primary-500 focus-visible:outline-offset-2"
-                >
-                  <div class="flex justify-between items-center">
-                    <img
-                      src={client?.['colored-logo']?.url || asset('/images/placeholder-logo.svg')}
+            <!-- Case Study 2 - independently configurable -->
+            {slot2.item && (() => {
+              const client = getClient(slot2.item.client);
+              return (
+                <div {...slot2.attrs}>
+                  <div {...cms.item(slot2.item as CaseStudy & { id: string }, 'case-studies', referenceLookups)}>
+                    <a
+                      href={`/work/${slot2.item.slug}`}
+                      class="flex flex-col bg-white border border-surface-200 rounded-xl p-6 no-underline h-full transition-all duration-200 hover:border-surface-300 hover:shadow-md focus-visible:outline-2 focus-visible:outline-primary-500 focus-visible:outline-offset-2"
+                    >
+                      <div class="flex justify-between items-center">
+                        <img
+                          src={client?.['colored-logo']?.url || asset('/images/placeholder-logo.svg')}
+                          loading="lazy"
+                          width="83"
+                          height="26"
+                          alt={client?.name || slot2.item['project-title']}
+                          class="max-h-[26px] w-auto"
+                        />
+                        <span class="hidden sm:inline-flex items-center font-medium text-surface-900 transition-opacity hover:opacity-70">
+                          View case study
+                          <span class="ml-1" set:html={arrowIcon} />
+                        </span>
+                      </div>
+                      <div class="mt-auto pt-4">
+                        <div class="bg-surface-50 rounded-lg p-4">
+                          <h3 class="text-3xl md:text-4xl font-medium text-surface-900">
+                            {slot2.item['result-1---number'] || ''}
+                          </h3>
+                          <div class="h-2"></div>
+                          <p class="font-medium text-surface-700">{slot2.item['result-1---title'] || ''}</p>
+                          <div class="h-4"></div>
+                          <p class="text-sm text-surface-500 line-clamp-2">
+                            {slot2.item['result-1---number'] || ''}
+                          </p>
+                        </div>
+                        <span class="sm:hidden inline-flex items-center font-medium text-surface-900 mt-4 transition-opacity hover:opacity-70">
+                          View case study
+                          <span class="ml-1" set:html={arrowIcon} />
+                        </span>
+                      </div>
+                    </a>
+                  </div>
+                </div>
+              );
+            })()}
+          </div>
+
+          <!-- Right Column -->
+          <div class="results-col-right flex flex-col gap-5">
+            <!-- Case Study 1 - independently configurable -->
+            {slot1.item && (() => {
+              const client = getClient(slot1.item.client);
+              return (
+                <div {...slot1.attrs}>
+                  <div {...cms.item(slot1.item as CaseStudy & { id: string }, 'case-studies', referenceLookups)}>
+                    <a
+                      href={`/work/${slot1.item.slug}`}
+                      class="flex flex-col bg-white border border-surface-200 rounded-xl p-6 no-underline h-full transition-all duration-200 hover:border-surface-300 hover:shadow-md focus-visible:outline-2 focus-visible:outline-primary-500 focus-visible:outline-offset-2"
+                    >
+                      <div class="flex justify-between items-center">
+                        <img
+                          src={client?.['colored-logo']?.url || asset('/images/placeholder-logo.svg')}
+                          loading="lazy"
+                          width="83"
+                          height="26"
+                          alt={client?.name || slot1.item['project-title']}
+                          class="max-h-[26px] w-auto"
+                        />
+                        <span class="hidden sm:inline-flex items-center font-medium text-surface-900 transition-opacity hover:opacity-70">
+                          View case study
+                          <span class="ml-1" set:html={arrowIcon} />
+                        </span>
+                      </div>
+                      <div class="mt-auto pt-4">
+                        <div class="bg-surface-50 rounded-lg p-4">
+                          <h3 class="text-3xl md:text-4xl font-medium text-surface-900">
+                            {slot1.item['result-1---number'] || ''}
+                          </h3>
+                          <div class="h-2"></div>
+                          <p class="font-medium text-surface-700">{slot1.item['result-1---title'] || ''}</p>
+                          <div class="h-4"></div>
+                          <p class="text-sm text-surface-500 line-clamp-2">
+                            {slot1.item['result-1---number'] || ''}
+                          </p>
+                        </div>
+                        <span class="sm:hidden inline-flex items-center font-medium text-surface-900 mt-4 transition-opacity hover:opacity-70">
+                          View case study
+                          <span class="ml-1" set:html={arrowIcon} />
+                        </span>
+                      </div>
+                    </a>
+                  </div>
+                </div>
+              );
+            })()}
+
+            <!-- Testimonial - independently configurable -->
+            {testimonialSlot.item && (
+              <div {...testimonialSlot.attrs}>
+                <div {...cms.item(testimonialSlot.item as Testimonial & { id: string }, 'testimonials')}>
+                  <div class="bg-white border border-surface-200 rounded-xl p-6 flex flex-col">
+                    <blockquote class="text-base leading-7 text-surface-700 line-clamp-6 [&>p]:m-0" set:html={testimonialSlot.item['testimonial-body']} />
+                    <div class="h-6"></div>
+                    <div class="flex justify-between items-end">
+                      <div class="flex flex-col gap-1">
+                        <span class="font-bold text-surface-900">{testimonialSlot.item.name}</span>
+                        <span class="text-surface-600">{testimonialSlot.item.role}</span>
+                      </div>
+                      <div class="w-10 h-10 flex items-center justify-center bg-surface-900 rounded-full cursor-pointer transition-transform hover:scale-105" aria-label="View testimonial">
+                        <img src={asset('/images/top-right-arrow.svg')} loading="lazy" width="16" height="16" alt="" />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            <!-- Video Testimonial 2 (static, not CMS) -->
+            {videoTestimonials[1] && (
+              <div>
+                <div class="bg-surface-900 rounded-xl overflow-hidden">
+                  <div class="aspect-video w-full">
+                    <iframe
+                      src={videoTestimonials[1].videoUrl}
+                      title={videoTestimonials[1].videoTitle || "Video testimonial"}
+                      allow="fullscreen"
                       loading="lazy"
-                      width="83"
-                      height="26"
-                      alt={client?.name || study['project-title']}
-                      class="max-h-[26px] w-auto"
-                    />
-                    <span class="hidden sm:inline-flex items-center font-medium text-surface-900 transition-opacity hover:opacity-70">
-                      View case study
-                      <span class="ml-1" set:html={arrowIcon} />
-                    </span>
+                      class="w-full h-full border-0"
+                    ></iframe>
                   </div>
-                  <div class="mt-auto pt-4">
-                    <div class="bg-surface-50 rounded-lg p-4">
-                      <h3 class="text-3xl md:text-4xl font-medium text-surface-900">
-                        {study['result-1---number'] || ''}
-                      </h3>
-                      <div class="h-2"></div>
-                      <p class="font-medium text-surface-700">{study['result-1---title'] || ''}</p>
-                      <div class="h-4"></div>
-                      <p class="text-sm text-surface-500 line-clamp-2">
-                        {study['result-1---number'] || ''}
-                      </p>
-                    </div>
-                    <span class="sm:hidden inline-flex items-center font-medium text-surface-900 mt-4 transition-opacity hover:opacity-70">
-                      View case study
-                      <span class="ml-1" set:html={arrowIcon} />
-                    </span>
+                  <div class="px-5 py-4 flex flex-col gap-1">
+                    <span class="font-bold text-white">{videoTestimonials[1].name}</span>
+                    <span class="text-white/80">{videoTestimonials[1].role}</span>
                   </div>
-                </a>
-              </div>
-            );
-          })()}
-
-          <!-- Video Testimonial 2 (bottom right) -->
-          {videoTestimonials[1] && (
-            <div class="results-item-video-2">
-              <div class="bg-surface-900 rounded-xl overflow-hidden h-full flex flex-col">
-                <div class="aspect-video w-full flex-1 min-h-0">
-                  <iframe
-                    src={videoTestimonials[1].videoUrl}
-                    title={videoTestimonials[1].videoTitle || "Video testimonial"}
-                    allow="fullscreen"
-                    loading="lazy"
-                    class="w-full h-full border-0"
-                  ></iframe>
-                </div>
-                <div class="px-5 py-4 flex flex-col gap-1 bg-surface-900">
-                  <span class="font-bold text-white">{videoTestimonials[1].name}</span>
-                  <span class="text-white/80">{videoTestimonials[1].role}</span>
                 </div>
               </div>
-            </div>
-          )}
+            )}
+          </div>
 
           <!-- CTA Button (full width) -->
-          <div class="results-item-cta flex justify-center pt-6">
+          <div class="results-cta flex justify-center pt-6">
             <Button variant="primary" size="lg" href={ctaHref}>
               {ctaText}
             </Button>
@@ -257,59 +256,31 @@ function formatTitle(text: string) {
 </section>
 
 <style>
-  /* Bento Grid Layout - asymmetric positioning requires custom CSS */
+  /* Two-column masonry layout */
   .results-grid {
     display: grid;
     gap: 1.25rem 1.5rem;
-    grid-template-columns: 1fr 0.25fr 0.25fr 1fr;
-    grid-template-rows: auto auto auto auto auto;
+    grid-template-columns: 1fr 1fr;
+    align-items: start;
   }
 
-  .results-item-video-1 {
-    grid-column: 1 / 3;
-    grid-row: 1 / 4;
+  .results-col-left,
+  .results-col-right {
+    /* Columns use flexbox for natural stacking */
   }
 
-  .results-item-case-1 {
-    grid-column: 3 / 5;
-    grid-row: 1 / 2;
-  }
-
-  .results-item-testimonial {
-    grid-column: 3 / 5;
-    grid-row: 2 / 4;
-  }
-
-  .results-item-case-2 {
-    grid-column: 1 / 3;
-    grid-row: 4 / 5;
-  }
-
-  .results-item-video-2 {
-    grid-column: 3 / 5;
-    grid-row: 4 / 5;
-  }
-
-  .results-item-cta {
-    grid-column: 1 / 5;
-    grid-row: 5 / 6;
+  .results-cta {
+    grid-column: 1 / -1;
   }
 
   /* Mobile: Stack all items vertically */
   @media (max-width: 767px) {
     .results-grid {
       grid-template-columns: 1fr;
-      grid-template-rows: auto;
     }
 
-    .results-item-video-1,
-    .results-item-case-1,
-    .results-item-testimonial,
-    .results-item-case-2,
-    .results-item-video-2,
-    .results-item-cta {
+    .results-cta {
       grid-column: 1;
-      grid-row: auto;
     }
   }
 </style>

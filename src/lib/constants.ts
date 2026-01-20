@@ -18,35 +18,6 @@ export const COLLECTION_IDS = {
 export type CollectionName = keyof typeof COLLECTION_IDS;
 
 /**
- * CMS Section IDs for Control Panel
- * Used in applyCMSConfig() and data-cms-section attributes
- */
-export const CMS_SECTIONS = {
-  // Hero component
-  HERO_SLIDER: 'hero-slider',
-
-  // Results component
-  RESULTS_CASE_STUDIES: 'results-case-studies',
-  RESULTS_TESTIMONIALS: 'results-testimonials',
-
-  // Case Study Slider component
-  CASE_STUDY_SLIDER: 'case-study-slider',
-
-  // Knowledge component
-  KNOWLEDGE_SLIDER: 'knowledge-slider',
-
-  // Partners component
-  PARTNERS_TESTIMONIALS: 'partners-testimonials',
-  PARTNERS_CLIENTS: 'partners-clients',
-
-  // Footer component
-  FOOTER_CASE_STUDIES: 'footer-case-studies',
-  FOOTER_BLOG_POSTS: 'footer-blog-posts',
-} as const;
-
-export type CMSSectionId = typeof CMS_SECTIONS[keyof typeof CMS_SECTIONS];
-
-/**
  * Get collection ID by name with type safety
  */
 export function getCollectionId(name: CollectionName): string {
