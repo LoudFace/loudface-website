@@ -2,6 +2,7 @@
 import { createCMS } from '../../lib/cms';
 import { getCaseStudySliderContent } from '../../lib/content-utils';
 import { asset } from '../../lib/assets';
+import { cardImage, optimizeImage } from '../../lib/image-utils';
 import Button from './Button.astro';
 import CarouselNav from './CarouselNav.astro';
 import type { CaseStudy, Client, Industry, Testimonial } from '../../lib/types';
@@ -334,7 +335,7 @@ function getContrastColors(hexColor: string | undefined): {
                           <!-- Thumbnail -->
                           <div class="flex-none w-full md:w-[280px] max-h-[300px] md:max-h-[400px] rounded-md overflow-hidden">
                             <img
-                              src={study['main-project-image-thumbnail']?.url || asset('/images/placeholder.webp')}
+                              src={cardImage(study['main-project-image-thumbnail']?.url) || asset('/images/placeholder.webp')}
                               alt={study['main-project-image-thumbnail']?.alt || study['project-title']}
                               width="600"
                               height="841"
@@ -387,7 +388,7 @@ function getContrastColors(hexColor: string | undefined): {
                                   <div class="[&>img]:max-h-5 [&>img]:w-auto">
                                     {client?.['colored-logo']?.url ? (
                                       <img
-                                        src={client['colored-logo'].url}
+                                        src={optimizeImage(client['colored-logo'].url, 100)}
                                         alt={client.name || 'Client logo'}
                                         width="94"
                                         height="20"

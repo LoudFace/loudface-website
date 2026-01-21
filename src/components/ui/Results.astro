@@ -1,6 +1,7 @@
 ---
 import { createCMS } from '../../lib/cms';
 import { asset } from '../../lib/assets';
+import { optimizeImage } from '../../lib/image-utils';
 import { getResultsContent, type VideoTestimonial } from '../../lib/content-utils';
 import Button from './Button.astro';
 import type { CaseStudy, Client, Testimonial } from '../../lib/types';
@@ -115,7 +116,7 @@ function formatTitle(text: string) {
                     >
                       <div class="flex justify-between items-center">
                         <img
-                          src={client?.['colored-logo']?.url || asset('/images/placeholder-logo.svg')}
+                          src={optimizeImage(client?.['colored-logo']?.url, 80) || asset('/images/placeholder-logo.svg')}
                           loading="lazy"
                           width="83"
                           height="26"
@@ -165,7 +166,7 @@ function formatTitle(text: string) {
                     >
                       <div class="flex justify-between items-center">
                         <img
-                          src={client?.['colored-logo']?.url || asset('/images/placeholder-logo.svg')}
+                          src={optimizeImage(client?.['colored-logo']?.url, 80) || asset('/images/placeholder-logo.svg')}
                           loading="lazy"
                           width="83"
                           height="26"

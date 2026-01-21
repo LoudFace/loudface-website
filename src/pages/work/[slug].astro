@@ -17,6 +17,7 @@ import SectionContainer from '../../components/ui/SectionContainer.astro';
 import Button from '../../components/ui/Button.astro';
 import { fetchHomepageData, getAccessToken, getEmptyHomepageData } from '../../lib/cms-data';
 import { asset } from '../../lib/assets';
+import { heroImage, avatarImage, thumbnailImage, optimizeImage } from '../../lib/image-utils';
 import type {
   CaseStudy,
   Client,
@@ -186,7 +187,7 @@ const articleSchema = {
 
             {client?.['light-logo']?.url && (
               <img
-                src={client['light-logo'].url}
+                src={optimizeImage(client['light-logo'].url, 120)}
                 alt={client.name}
                 class="h-6 mb-4 opacity-80"
               />
@@ -239,20 +240,26 @@ const articleSchema = {
       </section>
 
       <!-- Hero Image -->
-      {study['main-project-image-thumbnail']?.url && (
-        <div class="bg-white pt-12 md:pt-16">
-          <div class="px-4 md:px-8 lg:px-12">
-            <div class="max-w-5xl mx-auto">
-              <img
-                src={study['main-project-image-thumbnail'].url}
-                alt={study['main-project-image-thumbnail'].alt || projectTitle}
-                class="w-full rounded-xl shadow-lg"
-                loading="eager"
-              />
+      {study['main-project-image-thumbnail']?.url && (() => {
+        const hero = heroImage(study['main-project-image-thumbnail'].url);
+        return (
+          <div class="bg-white pt-12 md:pt-16">
+            <div class="px-4 md:px-8 lg:px-12">
+              <div class="max-w-5xl mx-auto">
+                <img
+                  src={hero.src}
+                  srcset={hero.srcset}
+                  sizes="(max-width: 768px) 100vw, (max-width: 1200px) 80vw, 1000px"
+                  alt={study['main-project-image-thumbnail'].alt || projectTitle}
+                  class="w-full rounded-xl shadow-lg"
+                  loading="eager"
+                  fetchpriority="high"
+                />
+              </div>
             </div>
           </div>
-        </div>
-      )}
+        );
+      })()}
 
       <!-- Main Content -->
       <SectionContainer class="bg-white" padding="sm">
@@ -403,7 +410,7 @@ const articleSchema = {
               <div class="mt-6 flex items-center justify-center gap-3">
                 {testimonial['profile-image']?.url && (
                   <img
-                    src={testimonial['profile-image'].url}
+                    src={avatarImage(testimonial['profile-image'].url)}
                     alt={testimonial.name}
                     class="w-10 h-10 rounded-full object-cover"
                   />
@@ -443,7 +450,7 @@ const articleSchema = {
                   <div class="h-1" style={`background: ${relatedColor};`} />
                   <div class="aspect-[16/10] overflow-hidden">
                     <img
-                      src={related['main-project-image-thumbnail']?.url || asset('/images/placeholder.webp')}
+                      src={thumbnailImage(related['main-project-image-thumbnail']?.url) || asset('/images/placeholder.webp')}
                       alt={related['project-title'] || related.name}
                       class="w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-300"
                       loading="lazy"

@@ -44,7 +44,14 @@ const {
   <meta name="twitter:image" content="https://www.loudface.co/images/og-image.jpg">
 
   <!-- Preconnect hints for performance -->
+  <link rel="preconnect" href="https://assets-global.website-files.com" crossorigin>
+  <link rel="preconnect" href="https://uploads-ssl.webflow.com" crossorigin>
   <link rel="dns-prefetch" href="https://app.cal.com">
+
+  <!-- Preload critical fonts -->
+  <link rel="preload" href={asset('/fonts/Satoshi-Regular.woff2')} as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href={asset('/fonts/Satoshi-Medium.woff2')} as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href={asset('/fonts/NeueMontreal-Medium.woff2')} as="font" type="font/woff2" crossorigin>
 
   <!-- Cal.com embed script -->
   <script is:inline>

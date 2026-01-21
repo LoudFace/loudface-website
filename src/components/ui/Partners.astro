@@ -1,6 +1,7 @@
 ---
 import { createCMS } from '../../lib/cms';
 import { asset } from '../../lib/assets';
+import { avatarImage, logoImage } from '../../lib/image-utils';
 import { getPartnersContent } from '../../lib/content-utils';
 import type { Testimonial, Client } from '../../lib/types';
 
@@ -75,7 +76,7 @@ const clientSection = cms.section(filteredClients as (Client & { id: string })[]
               >
                 <div class="headshot-trigger relative cursor-pointer z-20">
                   <img
-                    src={testimonial['profile-image']?.url || asset('/images/placeholder-avatar.svg')}
+                    src={avatarImage(testimonial['profile-image']?.url) || asset('/images/placeholder-avatar.svg')}
                     loading="lazy"
                     width="40"
                     height="40"
@@ -114,7 +115,7 @@ const clientSection = cms.section(filteredClients as (Client & { id: string })[]
                 {...cms.item(client, 'clients')}
               >
                 <img
-                  src={client['colored-logo']?.url || asset('/images/placeholder-logo.svg')}
+                  src={logoImage(client['colored-logo']?.url) || asset('/images/placeholder-logo.svg')}
                   loading="lazy"
                   width="100"
                   height="45"

@@ -1,6 +1,7 @@
 ---
 import { createCMS } from '../../lib/cms';
 import { asset } from '../../lib/assets';
+import { thumbnailImage } from '../../lib/image-utils';
 import { getKnowledgeContent } from '../../lib/content-utils';
 import SectionContainer from './SectionContainer.astro';
 import SectionHeader from './SectionHeader.astro';
@@ -97,7 +98,7 @@ function getAuthor(authorId: string | undefined): Author | undefined {
                   <a href={`/blog/${post.slug}`} class="flex flex-col gap-4 max-w-full xs:max-w-[26.25rem] no-underline transition-opacity duration-250 hover:opacity-75 focus-visible:outline-2 focus-visible:outline-primary-500 focus-visible:outline-offset-4 rounded-lg">
                     <div class="aspect-video w-full max-h-[50vh] overflow-hidden rounded-lg">
                       <img
-                        src={post.thumbnail?.url || asset('/images/placeholder.webp')}
+                        src={thumbnailImage(post.thumbnail?.url) || asset('/images/placeholder.webp')}
                         loading="lazy"
                         width="420"
                         height="240"

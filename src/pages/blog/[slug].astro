@@ -17,6 +17,7 @@ import SectionContainer from '../../components/ui/SectionContainer.astro';
 import { COLLECTION_IDS } from '../../lib/constants';
 import { fetchHomepageData, getAccessToken, getEmptyHomepageData } from '../../lib/cms-data';
 import type { BlogPost, Category, TeamMember } from '../../lib/types';
+import { avatarImage, heroImage, thumbnailImage, ImageSizes, optimizeImage } from '../../lib/image-utils';
 
 // SSR - fetch CMS data at request time
 export const prerender = false;
@@ -296,7 +297,7 @@ const linkedinShareUrl = `https://www.linkedin.com/sharing/share-offsite/?url=${
               <div class="flex items-center gap-4 mt-8 pt-8 border-t border-surface-200">
                 {author?.['profile-picture']?.url && (
                   <img
-                    src={author['profile-picture'].url}
+                    src={optimizeImage(author['profile-picture'].url, ImageSizes.avatarLarge)}
                     alt={author.name}
                     class="w-14 h-14 rounded-full object-cover ring-2 ring-surface-100"
                     loading="eager"
@@ -323,21 +324,26 @@ const linkedinShareUrl = `https://www.linkedin.com/sharing/share-offsite/?url=${
           </SectionContainer>
 
           <!-- Hero Image -->
-          {post.thumbnail?.url && (
-            <div class="px-4 md:px-8 lg:px-12 mb-12 lg:mb-16">
-              <div class="max-w-5xl mx-auto">
-                <div class="rounded-2xl overflow-hidden shadow-lg">
-                  <img
-                    src={post.thumbnail.url}
-                    alt={post.thumbnail.alt || post.name}
-                    class="w-full h-auto"
-                    loading="eager"
-                    fetchpriority="high"
-                  />
+          {post.thumbnail?.url && (() => {
+            const hero = heroImage(post.thumbnail.url);
+            return (
+              <div class="px-4 md:px-8 lg:px-12 mb-12 lg:mb-16">
+                <div class="max-w-5xl mx-auto">
+                  <div class="rounded-2xl overflow-hidden shadow-lg">
+                    <img
+                      src={hero.src}
+                      srcset={hero.srcset}
+                      sizes="(max-width: 768px) 100vw, (max-width: 1200px) 80vw, 1000px"
+                      alt={post.thumbnail.alt || post.name}
+                      class="w-full h-auto"
+                      loading="eager"
+                      fetchpriority="high"
+                    />
+                  </div>
                 </div>
               </div>
-            </div>
-          )}
+            );
+          })()}
 
           <!-- Content + Sidebar -->
           <SectionContainer padding="none">
@@ -464,7 +470,7 @@ const linkedinShareUrl = `https://www.linkedin.com/sharing/share-offsite/?url=${
                 <div class="bg-surface-50 rounded-2xl p-8 md:p-10 flex flex-col sm:flex-row gap-6">
                   {author['profile-picture']?.url && (
                     <img
-                      src={author['profile-picture'].url}
+                      src={optimizeImage(author['profile-picture'].url, 200)}
                       alt={author.name}
                       class="w-20 h-20 sm:w-24 sm:h-24 rounded-full object-cover flex-shrink-0"
                       loading="lazy"
@@ -505,7 +511,7 @@ const linkedinShareUrl = `https://www.linkedin.com/sharing/share-offsite/?url=${
                         <div class="aspect-[16/10] overflow-hidden bg-surface-100">
                           {relatedPost.thumbnail?.url ? (
                             <img
-                              src={relatedPost.thumbnail.url}
+                              src={thumbnailImage(relatedPost.thumbnail.url)}
                               alt={relatedPost.thumbnail.alt || relatedPost.name}
                               class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
                               loading="lazy"
