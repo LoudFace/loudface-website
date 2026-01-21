@@ -9,10 +9,16 @@ interface Props {
   canonicalUrl?: string;
 }
 
+// Generate canonical URL from current path if not provided
+// Remove /customsite prefix (mount point) to get the clean canonical path
+const currentPath = Astro.url.pathname;
+const cleanPath = currentPath.replace(/^\/customsite/, '') || '/';
+const defaultCanonical = `https://www.loudface.co${cleanPath}`;
+
 const {
   title = "Webflow Development, SEO/AEO & Design Agency | LoudFace",
   description = "Transform your website into a growth engine. Industry-leading Webflow development, SEO/AEO & design delivering measurable ROI and sustainable business growth.",
-  canonicalUrl = "https://www.loudface.co/"
+  canonicalUrl = defaultCanonical
 } = Astro.props;
 ---
 <!DOCTYPE html>
