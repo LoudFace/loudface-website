@@ -19,15 +19,16 @@ function isWebflowCdnUrl(url: string): boolean {
 }
 
 /**
- * Optimize a Webflow CDN image URL by adding resize parameters
+ * Optimize a Webflow CDN image URL by adding resize and format parameters
  *
  * @param url - Original image URL
  * @param width - Target width in pixels
  * @param quality - Image quality (1-100), default 80
+ * @param format - Output format ('webp' | 'auto' | 'original'), default 'webp'
  * @returns Optimized URL with resize parameters
  *
  * @example
- * // Resize to 100px width
+ * // Resize to 100px width with WebP
  * optimizeImage(url, 100)
  *
  * // Resize with custom quality
@@ -36,7 +37,8 @@ function isWebflowCdnUrl(url: string): boolean {
 export function optimizeImage(
   url: string | undefined,
   width: number,
-  quality: number = 80
+  quality: number = 80,
+  format: 'webp' | 'auto' | 'original' = 'webp'
 ): string | undefined {
   if (!url) return undefined;
 
@@ -50,6 +52,15 @@ export function optimizeImage(
   params.set('w', String(width));
   params.set('q', String(quality));
 
+  // Add format conversion for better compression
+  // WebP provides 25-35% better compression than JPEG/PNG
+  if (format === 'webp') {
+    params.set('format', 'webp');
+  } else if (format === 'auto') {
+    params.set('format', 'auto');
+  }
+  // 'original' keeps the original format
+
   // Check if URL already has query params
   const separator = url.includes('?') ? '&' : '?';
   return `${url}${separator}${params.toString()}`;
@@ -61,24 +72,26 @@ export function optimizeImage(
  * @param url - Original image URL
  * @param sizes - Array of widths for srcset
  * @param quality - Image quality
+ * @param format - Output format
  * @returns srcset string for use in img element
  *
  * @example
  * // Generate srcset for responsive hero image
  * generateSrcset(url, [400, 800, 1200])
- * // Returns: "url?w=400 400w, url?w=800 800w, url?w=1200 1200w"
+ * // Returns: "url?w=400&format=webp 400w, url?w=800&format=webp 800w, ..."
  */
 export function generateSrcset(
   url: string | undefined,
   sizes: number[],
-  quality: number = 80
+  quality: number = 80,
+  format: 'webp' | 'auto' | 'original' = 'webp'
 ): string | undefined {
   if (!url || !isWebflowCdnUrl(url)) {
     return undefined;
   }
 
   return sizes
-    .map(width => `${optimizeImage(url, width, quality)} ${width}w`)
+    .map(width => `${optimizeImage(url, width, quality, format)} ${width}w`)
     .join(', ');
 }
 
