@@ -1,31 +1,32 @@
 /**
  * Image Optimization Utilities
  *
- * Optimizes Webflow CDN images by adding resize parameters.
- * Webflow CDN supports URL parameters for on-the-fly image transformations:
- * - ?w=X or ?width=X - resize width (maintains aspect ratio)
- * - ?h=Y or ?height=Y - resize height
- * - ?q=X or ?quality=X - compression quality (1-100)
+ * Uses weserv.nl (images.weserv.nl) as a free image proxy/CDN for real-time
+ * image transformations. Webflow CDN does NOT support URL-based transformations,
+ * so we route images through weserv.nl which actually resizes and converts them.
  *
- * This dramatically reduces image payload since Webflow stores full-resolution
- * originals but can serve optimized versions on demand.
+ * weserv.nl features:
+ * - Free, open-source image proxy
+ * - Real resizing and format conversion
+ * - Global CDN with caching
+ * - WebP/AVIF output support
  */
 
 /**
- * Check if a URL is from Webflow CDN
+ * Check if a URL should be optimized (remote URLs only)
  */
-function isWebflowCdnUrl(url: string): boolean {
-  return url.includes('website-files.com') || url.includes('webflow.com');
+function isRemoteUrl(url: string): boolean {
+  return url.startsWith('http://') || url.startsWith('https://');
 }
 
 /**
- * Optimize a Webflow CDN image URL by adding resize and format parameters
+ * Optimize an image URL using weserv.nl image proxy
  *
  * @param url - Original image URL
  * @param width - Target width in pixels
  * @param quality - Image quality (1-100), default 80
  * @param format - Output format ('webp' | 'auto' | 'original'), default 'webp'
- * @returns Optimized URL with resize parameters
+ * @returns Optimized URL through weserv.nl proxy
  *
  * @example
  * // Resize to 100px width with WebP
@@ -42,28 +43,28 @@ export function optimizeImage(
 ): string | undefined {
   if (!url) return undefined;
 
-  // Only transform Webflow CDN URLs
-  if (!isWebflowCdnUrl(url)) {
+  // Only transform remote URLs
+  if (!isRemoteUrl(url)) {
     return url;
   }
 
-  // Build query parameters
+  // Build weserv.nl URL
+  // Docs: https://images.weserv.nl/docs/
   const params = new URLSearchParams();
+  params.set('url', url);
   params.set('w', String(width));
   params.set('q', String(quality));
 
-  // Add format conversion for better compression
-  // WebP provides 25-35% better compression than JPEG/PNG
+  // Add format conversion
   if (format === 'webp') {
-    params.set('format', 'webp');
+    params.set('output', 'webp');
   } else if (format === 'auto') {
-    params.set('format', 'auto');
+    // weserv.nl auto-negotiates format based on Accept header
+    params.set('output', 'webp'); // Default to webp for best compression
   }
-  // 'original' keeps the original format
+  // 'original' omits output param, keeps original format
 
-  // Check if URL already has query params
-  const separator = url.includes('?') ? '&' : '?';
-  return `${url}${separator}${params.toString()}`;
+  return `https://images.weserv.nl/?${params.toString()}`;
 }
 
 /**
@@ -78,7 +79,7 @@ export function optimizeImage(
  * @example
  * // Generate srcset for responsive hero image
  * generateSrcset(url, [400, 800, 1200])
- * // Returns: "url?w=400&format=webp 400w, url?w=800&format=webp 800w, ..."
+ * // Returns: "https://images.weserv.nl/?url=...&w=400 400w, ..."
  */
 export function generateSrcset(
   url: string | undefined,
@@ -86,7 +87,7 @@ export function generateSrcset(
   quality: number = 80,
   format: 'webp' | 'auto' | 'original' = 'webp'
 ): string | undefined {
-  if (!url || !isWebflowCdnUrl(url)) {
+  if (!url || !isRemoteUrl(url)) {
     return undefined;
   }
 
