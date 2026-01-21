@@ -5,6 +5,14 @@
  */
 import { asset } from '../../lib/assets';
 
+// Helper to prefix internal routes with base URL (for Webflow Cloud /customsite mount)
+const base = import.meta.env.BASE_URL || '/';
+const route = (path: string) => {
+  const normalizedBase = base.endsWith('/') ? base.slice(0, -1) : base;
+  const normalizedPath = path.startsWith('/') ? path : `/${path}`;
+  return `${normalizedBase}${normalizedPath}`;
+};
+
 interface NavLink {
   label: string;
   href: string;
@@ -26,8 +34,8 @@ interface Dropdown {
 }
 
 const navLinks: NavLink[] = [
-  { label: 'Our Work', href: '/work' },
-  { label: 'About us', href: '/about' },
+  { label: 'Our Work', href: route('/work') },
+  { label: 'About us', href: route('/about') },
 ];
 
 const servicesDropdown: Dropdown = {
@@ -38,31 +46,31 @@ const servicesDropdown: Dropdown = {
       icon: asset('/images/Frame-1321316759.svg'),
       title: 'Webflow Development',
       description: 'Scalable, AI-enhanced Webflow builds optimized for visibility and performance.',
-      href: '/services/webflow-development'
+      href: route('/services/webflow-development')
     },
     {
       icon: asset('/images/stair-group.svg'),
       title: 'SEO/AEO',
       description: 'Visibility strategies that future-proof your search performance.',
-      href: '/services/seo-aeo'
+      href: route('/services/seo-aeo')
     },
     {
       icon: asset('/images/Frame-1321316760.svg'),
       title: 'UX/UI Design',
       description: 'Conversion-focused design systems built for CRO and search.',
-      href: '/services/ux-ui-design'
+      href: route('/services/ux-ui-design')
     },
     {
       icon: asset('/images/Frame-1321316762-1.svg'),
       title: 'CRO',
       description: 'Data-driven optimization that turns visitors into customers.',
-      href: '/services/cro'
+      href: route('/services/cro')
     },
     {
       icon: asset('/images/Frame-1321316761.svg'),
       title: 'Copywriting',
       description: 'Persuasive, SEO-optimized content that connects and converts.',
-      href: '/services/copywriting'
+      href: route('/services/copywriting')
     }
   ],
   ctaText: 'Looking for a new agency partner? Get in touch'
@@ -76,25 +84,25 @@ const industriesDropdown: Dropdown = {
       icon: asset('/images/arcticons_app-saasu.svg'),
       title: 'SaaS',
       description: 'High-performance Webflow sites that scale with your product.',
-      href: '/industries/saas'
+      href: route('/industries/saas')
     },
     {
       icon: asset('/images/arcticons_studysmarter.svg'),
       title: 'Education',
       description: 'Accessible, SEO-driven Webflow sites for schools and edtech platforms.',
-      href: '/industries/education'
+      href: route('/industries/education')
     },
     {
       icon: asset('/images/arcticons_shopify.svg'),
       title: 'E-commerce',
       description: 'Conversion-first Webflow stores built for speed, performance, and measurable ROI.',
-      href: '/industries/ecommerce'
+      href: route('/industries/ecommerce')
     },
     {
       icon: asset('/images/Vector.svg'),
       title: 'Healthcare',
       description: 'HIPAA-ready Webflow builds that communicate care and compliance.',
-      href: '/industries/healthcare'
+      href: route('/industries/healthcare')
     }
   ],
   ctaText: 'Looking for a new agency partner? Get in touch'
@@ -107,7 +115,7 @@ const industriesDropdown: Dropdown = {
       <div class="flex items-center justify-between gap-8">
         <!-- Left: Logo & Navigation -->
         <div class="flex items-center gap-10">
-          <a href="/" class="flex items-center flex-shrink-0" aria-label="LoudFace Home">
+          <a href={route('/')} class="flex items-center flex-shrink-0" aria-label="LoudFace Home">
             <img
               src={asset('/images/loudface.svg')}
               width="133"

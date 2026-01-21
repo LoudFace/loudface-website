@@ -33,6 +33,7 @@ export interface CaseStudy {
   name: string;
   'project-title': string;
   'paragraph-summary'?: string;
+  'main-body'?: string; // Rich text content
   'main-project-image-thumbnail'?: WebflowImage;
   'client-logo'?: WebflowImage;
   'client-logo-inversed'?: WebflowImage;
@@ -40,6 +41,8 @@ export interface CaseStudy {
   'secondary-client-color'?: string;
   'company-size'?: string;
   country?: string;
+  'website-link'?: string;
+  'visit-the-website'?: string;
   'result-1---number': string;
   'result-1---title': string;
   'result-2---number'?: string;
@@ -96,6 +99,7 @@ export interface BlogPost {
   'meta-description'?: string;
   thumbnail?: WebflowImage;
   excerpt?: string;
+  content?: string; // Rich text content (main body)
   'time-to-read'?: string;
   featured?: boolean;
   'published-date'?: string;

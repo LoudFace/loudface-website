@@ -1,0 +1,375 @@
+---
+/**
+ * About Us Page
+ *
+ * Visual migration from Webflow design using Astro/Tailwind framework.
+ * Sections:
+ * - Hero with CTA
+ * - Counter stats (grey background)
+ * - Our Journey (2-column with image)
+ * - Team grid with CMS integration + CTA card
+ * - Awards (full-width border effect)
+ * - FAQ
+ * - Final CTA
+ */
+import Layout from '../layouts/Layout.astro';
+import Header from '../components/ui/Header.astro';
+import Footer from '../components/ui/Footer.astro';
+import SectionContainer from '../components/ui/SectionContainer.astro';
+import SectionHeader from '../components/ui/SectionHeader.astro';
+import Button from '../components/ui/Button.astro';
+import { getAboutContent } from '../lib/content-utils';
+import { asset } from '../lib/assets';
+import { fetchHomepageData, getAccessToken, getEmptyHomepageData } from '../lib/cms-data';
+import { createCMS } from '../lib/cms';
+import type { TeamMember, Client } from '../lib/types';
+
+// Load content from JSON
+const content = getAboutContent();
+
+// Fetch CMS data for footer and team members
+const accessToken = getAccessToken(Astro.locals);
+const cmsData = accessToken
+  ? await fetchHomepageData(accessToken)
+  : getEmptyHomepageData();
+
+const { caseStudies, blogPosts, teamMembers: cmsTeamMembers, allClients } = cmsData;
+
+// Create CMS helper for Control Panel integration
+const cms = createCMS('About');
+
+// Create CMS section for client logos
+const clientLogosSection = cms.section(
+  allClients.filter(c => c['colored-logo']?.url) as (Client & { id: string })[],
+  'clients',
+  'Client Logos'
+);
+
+// Create CMS section for team members
+const rawTeamMembers = cmsTeamMembers && cmsTeamMembers.size > 0
+  ? Array.from(cmsTeamMembers.values())
+  : [];
+const teamMembersSection = cms.section(
+  rawTeamMembers as (TeamMember & { id: string })[],
+  'team-members',
+  'Team Members'
+);
+
+// Page metadata
+const title = "About Us | LoudFace - Meet Our Team";
+const description = "Learn about LoudFace, our mission, and the passionate team behind your next successful web project. Webflow Enterprise Partners with 7+ years of experience.";
+const canonicalUrl = "https://www.loudface.co/about";
+
+// Organization schema for SEO
+const organizationSchema = {
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  "name": "LoudFace",
+  "url": "https://www.loudface.co",
+  "description": description,
+  "foundingDate": "2017",
+  "numberOfEmployees": {
+    "@type": "QuantitativeValue",
+    "minValue": 6
+  }
+};
+
+// Helper to highlight words in headline
+function highlightWords(text: string, words: string[]): string {
+  let result = text;
+  words.forEach(word => {
+    result = result.replace(new RegExp(`\\b${word}\\b`, 'gi'), `<span class="text-primary-600">${word}</span>`);
+  });
+  return result;
+}
+---
+
+<Layout title={title} description={description} canonicalUrl={canonicalUrl}>
+  <script type="application/ld+json" set:html={JSON.stringify(organizationSchema)} slot="head" />
+
+  <div class="page-wrapper">
+    <Header />
+
+    <main id="main-content" class="main-wrapper">
+      <!-- Hero Section -->
+      <SectionContainer padding="lg">
+        <div class="max-w-3xl mx-auto text-center">
+          <!-- Badge with icon -->
+          <div class="inline-flex items-center gap-2 px-4 py-2 bg-surface-100 border border-surface-200 rounded-full mb-6">
+            <img
+              src={asset(content.hero.badgeIcon)}
+              alt=""
+              class="w-6 h-6"
+              loading="eager"
+            />
+            <span class="text-sm font-medium text-surface-900">{content.hero.badge}</span>
+          </div>
+
+          <!-- Headline with highlighted words -->
+          <h1
+            class="text-2xl sm:text-3xl md:text-4xl lg:text-hero font-medium text-surface-900"
+            set:html={highlightWords(content.hero.headline, content.hero.highlightWords)}
+          />
+
+          <!-- Description -->
+          <p class="mt-6 text-lg text-surface-600">
+            {content.hero.description}
+          </p>
+
+          <!-- CTA -->
+          <div class="mt-8">
+            <Button variant="primary" size="lg" calLink="arnelbukva/loudface-intro-call">
+              {content.hero.ctaText}
+            </Button>
+          </div>
+        </div>
+      </SectionContainer>
+
+      <!-- Counter Section (Dark Purple Background) -->
+      <section class="bg-[#231421] text-[#c8e0f7]">
+        <div class="py-16 md:py-20 lg:py-24">
+          <div class="px-4 md:px-8 lg:px-12">
+            <div class="max-w-7xl mx-auto">
+              <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-[1.875rem]">
+                {content.counter.stats.map((stat) => (
+                  <div class="border border-[#cadbd9]/30 rounded-lg p-8">
+                    <span class="text-4xl md:text-5xl font-medium text-white/60">{stat.number}</span>
+                    <h3 class="mt-2 text-sm font-medium text-[#c8e0f7]">{stat.label}</h3>
+                    <p class="mt-6 text-[#c8e0f7]/70 text-sm leading-relaxed">{stat.description}</p>
+                  </div>
+                ))}
+                <!-- Award badge card -->
+                <div class="bg-[#382235] rounded-lg p-8 flex items-center justify-center">
+                  <img
+                    src={asset(content.counter.awardBadge)}
+                    alt="10+ Best Website Creator 2024"
+                    class="max-w-full max-h-[22.5rem]"
+                    loading="lazy"
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Journey Section -->
+      <SectionContainer padding="lg">
+        <div>
+          <!-- Bullet subheading -->
+          <div class="flex items-center gap-2 mb-4">
+            <div class="w-2 h-2 rounded-full bg-surface-400"></div>
+            <span class="text-lg font-medium text-surface-900">{content.journey.badge}</span>
+          </div>
+
+          <!-- Headline -->
+          <h2 class="text-2xl sm:text-3xl md:text-4xl font-medium text-surface-900 max-w-lg">
+            {content.journey.headline}
+          </h2>
+
+          <!-- Description -->
+          <p class="mt-6 text-surface-600 leading-relaxed">
+            {content.journey.description}
+          </p>
+        </div>
+      </SectionContainer>
+
+      <!-- Team Section -->
+      <SectionContainer>
+        <!-- Header with CTA aligned right -->
+        <div class="flex flex-col lg:flex-row lg:justify-between lg:items-end gap-6 mb-12">
+          <div>
+            <!-- Bullet subheading -->
+            <div class="flex items-center gap-2 mb-4">
+              <div class="w-2 h-2 rounded-full bg-surface-400"></div>
+              <span class="text-lg font-medium text-surface-900">{content.team.badge}</span>
+            </div>
+            <SectionHeader
+              title={content.team.title}
+              highlightWord={content.team.highlightWord}
+              subtitle={content.team.subtitle}
+            />
+          </div>
+          <div class="flex-shrink-0">
+            <Button variant="primary" size="lg" calLink="arnelbukva/loudface-intro-call">
+              Book an intro call
+            </Button>
+          </div>
+        </div>
+
+        <!-- Team grid (CMS-powered) -->
+        {teamMembersSection.items.length > 0 && (
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6" {...teamMembersSection.attrs}>
+            {teamMembersSection.items.map((member, index) => (
+              <div {...cms.item(member, 'team-members')}>
+                <div class="aspect-[300/280] bg-surface-100 rounded-xl overflow-hidden">
+                  {member['profile-picture']?.url ? (
+                    <img
+                      src={member['profile-picture'].url}
+                      alt={member.name}
+                      class="w-full h-full object-cover"
+                      loading={index < 3 ? 'eager' : 'lazy'}
+                    />
+                  ) : (
+                    <div class="w-full h-full flex items-center justify-center">
+                      <svg class="w-20 h-20 text-surface-300" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+                      </svg>
+                    </div>
+                  )}
+                </div>
+                <h3 class="mt-4 text-xl font-bold text-surface-900">{member.name}</h3>
+                <p class="mt-1 text-surface-600">{member['job-title'] || ''}</p>
+                {member['bio-summary'] && (
+                  <p class="mt-3 text-surface-600 text-sm leading-relaxed">{member['bio-summary']}</p>
+                )}
+              </div>
+            ))}
+          </div>
+        )}
+
+        <!-- Accepting new clients CTA card -->
+        <div class="mt-12 bg-surface-100 border border-surface-200 rounded-xl p-10 lg:p-12">
+          <div class="flex items-center gap-2 mb-4">
+            <img src={asset('/images/green-circle.svg')} alt="" class="w-3 h-3" />
+            <span class="text-sm font-medium text-surface-900">{content.team.ctaCard.indicator}</span>
+          </div>
+          <h3 class="text-xl font-bold text-surface-900">{content.team.ctaCard.headline}</h3>
+          <p class="mt-2 text-surface-600 max-w-2xl">{content.team.ctaCard.description}</p>
+          <div class="mt-6">
+            <Button variant="primary" size="lg" calLink="arnelbukva/loudface-intro-call">
+              {content.team.ctaCard.ctaText}
+            </Button>
+          </div>
+
+          {/* Client logos grid */}
+          {clientLogosSection.items.length > 0 && (
+            <div class="mt-10 pt-8 border-t border-surface-200" {...clientLogosSection.attrs}>
+              <div class="flex flex-wrap items-center gap-6">
+                {clientLogosSection.items.map((client) => (
+                  <div
+                    class="w-20 h-8 flex items-center justify-center"
+                    {...cms.item(client, 'clients')}
+                  >
+                    <img
+                      src={client['colored-logo']?.url}
+                      alt={client.name}
+                      class="max-w-full max-h-full object-contain"
+                      loading="lazy"
+                    />
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
+      </SectionContainer>
+
+      <!-- Awards Section -->
+      <SectionContainer padding="lg">
+        <!-- Header -->
+        <div class="flex items-center gap-2 mb-4">
+          <div class="w-2 h-2 rounded-full bg-surface-400"></div>
+          <span class="text-lg font-medium text-surface-900">{content.awards.badge}</span>
+        </div>
+        <h2 class="text-2xl sm:text-3xl md:text-4xl font-medium text-surface-900">
+          {content.awards.title}
+        </h2>
+        <p class="mt-4 text-surface-600 max-w-2xl">
+          {content.awards.description}
+        </p>
+        <div class="mt-8">
+          <Button variant="primary" size="lg" calLink="arnelbukva/loudface-intro-call">
+            {content.awards.ctaText}
+          </Button>
+        </div>
+      </SectionContainer>
+
+      <!-- Full-width award cards -->
+      <div class="border-t border-b border-surface-200">
+        <div class="grid grid-cols-1 lg:grid-cols-3 divide-y lg:divide-y-0 lg:divide-x divide-surface-200">
+          {content.awards.items.map((award) => (
+            <div class="p-10 lg:p-16">
+              <img
+                src={asset(award.icon)}
+                alt=""
+                class="w-16 h-16 mb-8"
+                loading="lazy"
+              />
+              <h4 class="text-xl font-bold text-surface-900">{award.title}</h4>
+              <p class="mt-2 text-surface-600">{award.description}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <!-- FAQ Section -->
+      <SectionContainer>
+        <SectionHeader
+          title={content.faq.title}
+          highlightWord={content.faq.highlightWord}
+        />
+
+        <div class="mt-8 max-w-3xl">
+          <div class="divide-y divide-surface-200 border-y border-surface-200">
+            {content.faq.items.map((item) => (
+              <details class="group faq-details">
+                <summary class="flex items-center justify-between gap-4 py-5 cursor-pointer list-none select-none hover:bg-surface-50 -mx-4 px-4 transition-colors focus-visible:outline-2 focus-visible:outline-primary-500 focus-visible:outline-offset-2 rounded-lg">
+                  <span class="text-base md:text-lg font-medium text-surface-900 pr-4">
+                    {item.question}
+                  </span>
+                  <span class="flex-shrink-0 w-6 h-6 relative" aria-hidden="true">
+                    <span class="absolute top-1/2 left-0 w-6 h-0.5 bg-surface-400 -translate-y-1/2 transition-transform group-open:rotate-0"></span>
+                    <span class="absolute top-1/2 left-0 w-6 h-0.5 bg-surface-400 -translate-y-1/2 rotate-90 transition-transform group-open:rotate-0"></span>
+                  </span>
+                </summary>
+                <div class="pb-5 pr-10 text-surface-600 leading-relaxed overflow-hidden animate-fade-in">
+                  <p>{item.answer}</p>
+                </div>
+              </details>
+            ))}
+          </div>
+
+          <!-- Footer CTA -->
+          <div class="mt-8">
+            <p class="text-surface-600">{content.faq.footerText}</p>
+            <div class="mt-4">
+              <Button variant="primary" size="lg" calLink="arnelbukva/loudface-intro-call">
+                {content.faq.footerCtaText}
+              </Button>
+            </div>
+          </div>
+        </div>
+      </SectionContainer>
+
+      <!-- Final CTA Section -->
+      <SectionContainer padding="lg" class="bg-surface-50">
+        <div class="max-w-2xl mx-auto text-center">
+          <h2 class="text-2xl sm:text-3xl md:text-4xl font-medium text-surface-900">
+            {content.finalCta.title}
+          </h2>
+          <p class="mt-6 text-lg text-surface-600">
+            {content.finalCta.description}
+          </p>
+          <div class="mt-10">
+            <Button variant="primary" size="lg" calLink="arnelbukva/loudface-intro-call">
+              {content.finalCta.ctaText}
+            </Button>
+          </div>
+        </div>
+      </SectionContainer>
+    </main>
+
+    <Footer caseStudies={caseStudies} blogPosts={blogPosts} />
+  </div>
+</Layout>
+
+<style>
+  /* Remove default details marker */
+  .faq-details summary::-webkit-details-marker {
+    display: none;
+  }
+  .faq-details summary::marker {
+    display: none;
+  }
+</style>

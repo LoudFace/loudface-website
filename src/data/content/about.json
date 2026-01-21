@@ -1,0 +1,108 @@
+{
+  "hero": {
+    "badge": "A team that was built to help your team",
+    "badgeIcon": "/images/handshake-emoji.webp",
+    "headline": "Building better ways to marketing products and services",
+    "highlightWords": ["better", "services"],
+    "description": "We're driving towards a new way of doing B2B services - one that starts with tangible results",
+    "ctaText": "Book an intro call"
+  },
+  "counter": {
+    "stats": [
+      {
+        "number": "6+",
+        "label": "Team Members",
+        "description": "Our team of developers, designers and marketers has continued to grow YoY, with each member bringing a unique set of skills and experiences to the table."
+      },
+      {
+        "number": "100+",
+        "label": "Ambitious Companies Served",
+        "description": "We've been fortunate enough to work alongside some of the most ambitious companies, all different in industry, but all with a desire to grow and succeed."
+      },
+      {
+        "number": "7+",
+        "label": "Years Young",
+        "description": "We've been around for some time as the first adopters of Webflow, and have since grown to become one of the leading Webflow agencies in the industry."
+      }
+    ],
+    "awardBadge": "/images/10-best-website-creator-2024.svg"
+  },
+  "journey": {
+    "badge": "Our journey",
+    "headline": "Marketing agency on search for leverages in helping our clients grow",
+    "description": "Founded with a passion for design and numbers, LoudFace has become a leader in Webflow, and design-first marketing agencies. With a team of experienced professionals, we've helped hundreds of businesses achieve their online goals. From small startups to large enterprises, we've worked with a diverse range of clients, each with unique challenges and opportunities.",
+    "image": "/images/our-journey_1.webp"
+  },
+  "team": {
+    "badge": "Our team",
+    "title": "Expert team committed to your growth",
+    "highlightWord": "committed",
+    "subtitle": "People hellbent on making your business win the online game",
+    "ctaCard": {
+      "indicator": "Accepting new clients",
+      "headline": "Ready to work with leading experts?",
+      "description": "At LoudFace, we take pride in our industry-leading team of Webflow developers, SEO specialists, and conversion rate optimization experts. If you want to work with the best, let's talk.",
+      "ctaText": "Book an intro call"
+    }
+  },
+  "awards": {
+    "badge": "Our achievements",
+    "title": "Accreditations & awards",
+    "description": "We love working with growing companies that want to grow substantially over the next couple of years. We've picked up a few awards along the way.",
+    "ctaText": "Get in touch",
+    "items": [
+      {
+        "icon": "/images/webflow.svg",
+        "title": "Webflow Enterprise Partner",
+        "description": "We aim to empower businesses with design and Webflow website development services. Webflow's recognition of our work is a testament to our commitment to excellence."
+      },
+      {
+        "icon": "/images/Awwwards.svg",
+        "title": "Awwwards Honorable Nominee",
+        "description": "Being recognized by Awwwards is a testament to our design-first approach. We consistently build and design websites that are not only functional but also aesthetically pleasing."
+      },
+      {
+        "icon": "/images/Trustpilot.svg",
+        "title": "Trustpilot Top-Rated Agency",
+        "description": "Our clients' satisfaction is our top priority. By maintaining a stellar rating on Trustpilot, we demonstrate our commitment to delivering exceptional service and results."
+      }
+    ]
+  },
+  "faq": {
+    "title": "Frequently asked questions",
+    "highlightWord": "questions",
+    "items": [
+      {
+        "question": "What services do you offer?",
+        "answer": "We specialize in full-service digital marketing, with a focus on Webflow development, SEO, and conversion rate optimization. Our expertise includes custom website design and development, comprehensive SEO strategies, landing page optimization, and ongoing marketing consultation."
+      },
+      {
+        "question": "Who do you work with?",
+        "answer": "We primarily work with B2B companies looking to improve their digital presence and conversion rates. Our clients range from funded startups to established enterprises across various industries including SaaS, professional services, and technology."
+      },
+      {
+        "question": "Why do you specialize in Webflow?",
+        "answer": "Webflow offers the perfect balance of design flexibility and development efficiency. It allows us to create custom, high-performance websites without the limitations of traditional CMS platforms, while still giving clients the ability to manage their content easily."
+      },
+      {
+        "question": "Where is LoudFace based?",
+        "answer": "We're a fully remote team with members across different time zones. This allows us to work efficiently with clients globally while maintaining excellent communication and project delivery."
+      },
+      {
+        "question": "How do I get started?",
+        "answer": "The best way to get started is to book an intro call with our team. During this call, we'll discuss your goals, current challenges, and how we might be able to help. There's no obligation - it's simply a conversation to see if we're a good fit."
+      },
+      {
+        "question": "What is your pricing?",
+        "answer": "Our pricing varies based on project scope and requirements. We offer both project-based and retainer arrangements. During our initial call, we'll discuss your needs and provide a custom quote tailored to your specific goals and budget."
+      }
+    ],
+    "footerText": "Still have questions?",
+    "footerCtaText": "Book an intro call"
+  },
+  "finalCta": {
+    "title": "Ready to scale your site?",
+    "description": "Don't let another day pass with an underperforming website. Let's build something that actually moves the needle for your business.",
+    "ctaText": "Book an intro call"
+  }
+}

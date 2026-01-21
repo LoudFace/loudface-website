@@ -15,6 +15,8 @@ import type {
   Category,
   TeamMember,
   Industry,
+  Technology,
+  ServiceCategory,
 } from './types';
 
 /**
@@ -30,6 +32,8 @@ export interface HomepageData {
   categories: Map<string, Category>;
   teamMembers: Map<string, TeamMember>;
   industries: Map<string, Industry>;
+  technologies: Map<string, Technology>;
+  serviceCategories: Map<string, ServiceCategory>;
 }
 
 /**
@@ -46,6 +50,8 @@ export function getEmptyHomepageData(): HomepageData {
     categories: new Map(),
     teamMembers: new Map(),
     industries: new Map(),
+    technologies: new Map(),
+    serviceCategories: new Map(),
   };
 }
 
@@ -116,6 +122,8 @@ export async function fetchHomepageData(
       categoriesData,
       teamMembersData,
       industriesData,
+      technologiesData,
+      serviceCategoriesData,
     ] = await Promise.all([
       fetchCollection<any>('case-studies', accessToken),
       fetchCollection<any>('clients', accessToken),
@@ -124,6 +132,8 @@ export async function fetchHomepageData(
       fetchCollection<any>('categories', accessToken),
       fetchCollection<any>('team-members', accessToken),
       fetchCollection<any>('industries', accessToken),
+      fetchCollection<any>('technologies', accessToken),
+      fetchCollection<any>('service-categories', accessToken),
     ]);
 
     // Build clients lookup map and array
@@ -184,6 +194,26 @@ export async function fetchHomepageData(
         if (isPublished(item)) {
           const industry = normalizeItem<Industry>(item);
           data.industries.set(item.id, industry);
+        }
+      });
+    }
+
+    // Build technologies lookup map
+    if (technologiesData?.items) {
+      technologiesData.items.forEach((item: any) => {
+        if (isPublished(item)) {
+          const technology = normalizeItem<Technology>(item);
+          data.technologies.set(item.id, technology);
+        }
+      });
+    }
+
+    // Build service categories lookup map
+    if (serviceCategoriesData?.items) {
+      serviceCategoriesData.items.forEach((item: any) => {
+        if (isPublished(item)) {
+          const serviceCategory = normalizeItem<ServiceCategory>(item);
+          data.serviceCategories.set(item.id, serviceCategory);
         }
       });
     }

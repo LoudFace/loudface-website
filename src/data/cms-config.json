@@ -45,6 +45,22 @@
       "filters": [],
       "sort": null,
       "limit": null
+    },
+    "work-page-case-studies-0": {
+      "filters": [
+        {
+          "field": "main-project-image-thumbnail",
+          "operator": "is_set",
+          "value": ""
+        }
+      ],
+      "sort": null,
+      "limit": null
+    },
+    "about-clients-0": {
+      "filters": [],
+      "sort": null,
+      "limit": null
     }
   }
 }

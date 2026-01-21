@@ -1,9 +1,18 @@
 ---
+/**
+ * Blog Gallery Page
+ *
+ * Creative bento-style grid layout with:
+ * - Featured post (dark inverted card, spans 2x2)
+ * - Regular posts in asymmetric grid
+ * - Hover animations (lift, shadow, accent border)
+ */
 import Layout from '../../layouts/Layout.astro';
+import Header from '../../components/ui/Header.astro';
+import Footer from '../../components/ui/Footer.astro';
 import SectionContainer from '../../components/ui/SectionContainer.astro';
-import SectionHeader from '../../components/ui/SectionHeader.astro';
 import { COLLECTION_IDS } from '../../lib/constants';
-import { asset } from '../../lib/assets';
+import { fetchHomepageData, getAccessToken, getEmptyHomepageData } from '../../lib/cms-data';
 import type { BlogPost, Category, TeamMember } from '../../lib/types';
 
 // SSR - fetch CMS data at request time
@@ -69,9 +78,23 @@ if (accessToken) {
   error = 'CMS not configured';
 }
 
+// Separate featured post (first/newest) from rest
+const [featuredPost, ...regularPosts] = posts;
+
+// Base URL for internal links (ensure trailing slash)
+const rawBase = import.meta.env.BASE_URL || '/';
+const baseUrl = rawBase.endsWith('/') ? rawBase : `${rawBase}/`;
+
+// Fetch additional data for footer
+const footerAccessToken = getAccessToken(Astro.locals);
+const footerData = footerAccessToken
+  ? await fetchHomepageData(footerAccessToken)
+  : getEmptyHomepageData();
+const { caseStudies, blogPosts: footerBlogPosts } = footerData;
+
 // Page metadata
-const title = "Blog | LoudFace";
-const description = "Insights, guides, and case studies on Webflow development, SEO, and digital growth strategies from the LoudFace team.";
+const title = "Insights & Resources | LoudFace Blog";
+const description = "Guides, case studies, and strategies on Webflow development, SEO, and digital growth from the LoudFace team.";
 const canonicalUrl = "https://www.loudface.co/blog";
 
 // Helper functions
@@ -96,41 +119,120 @@ function formatDate(dateStr: string | undefined): string {
 ---
 
 <Layout title={title} description={description} canonicalUrl={canonicalUrl}>
-  <main id="main-content">
+  <div class="page-wrapper">
+    <Header />
+    <main id="main-content" class="main-wrapper">
+    <!-- Hero Header -->
     <SectionContainer padding="lg">
-      <SectionHeader
-        title="Our Blog"
-        highlightWord="Blog"
-        subtitle="Insights, guides, and case studies on Webflow development, SEO, and digital growth strategies."
-      />
+      <div class="max-w-4xl">
+        <h1 class="text-2xl sm:text-3xl md:text-4xl lg:text-hero font-medium text-surface-900">
+          <span class="text-primary-600">Insights</span> & Resources
+        </h1>
+        <p class="mt-6 text-lg text-surface-600 max-w-2xl">
+          Guides, case studies, and strategies on Webflow development, SEO, and digital growth.
+        </p>
+      </div>
+    </SectionContainer>
 
-      {error ? (
+    {error ? (
+      <SectionContainer>
         <div class="text-center py-16">
           <p class="text-surface-600">{error}</p>
         </div>
-      ) : posts.length === 0 ? (
+      </SectionContainer>
+    ) : posts.length === 0 ? (
+      <SectionContainer>
         <div class="text-center py-16">
           <p class="text-surface-600">No blog posts yet. Check back soon!</p>
         </div>
-      ) : (
-        <div class="mt-12 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {posts.map((post) => {
+      </SectionContainer>
+    ) : (
+      <!-- Bento Grid -->
+      <SectionContainer>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+
+          <!-- Featured Post (dark inverted card, spans 2x2) -->
+          {featuredPost && (() => {
+            const featuredCategory = getCategory(featuredPost.category);
+            const featuredAuthor = getAuthor(featuredPost.author);
+            return (
+              <a
+                href={`${baseUrl}blog/${featuredPost.slug}`}
+                class="blog-card featured group md:col-span-2 min-h-[280px] lg:min-h-[320px] focus-visible:outline-2 focus-visible:outline-primary-500 focus-visible:outline-offset-4 rounded-xl"
+              >
+                {/* Full background image with gradient overlay */}
+                <div class="absolute inset-0 rounded-xl overflow-hidden">
+                  {featuredPost.thumbnail?.url ? (
+                    <img
+                      src={featuredPost.thumbnail.url}
+                      alt={featuredPost.thumbnail.alt || featuredPost.name}
+                      class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                      loading="eager"
+                    />
+                  ) : (
+                    <div class="w-full h-full bg-surface-800" />
+                  )}
+                  <div class="absolute inset-0 bg-gradient-to-t from-surface-900 via-surface-900/70 to-surface-900/20" />
+                </div>
+
+                {/* Content positioned at bottom */}
+                <div class="relative mt-auto p-8 lg:p-10">
+                  {featuredCategory && (
+                    <span class="inline-block px-3 py-1 text-xs font-medium uppercase tracking-wide bg-primary-600 text-white rounded-full mb-4">
+                      {featuredCategory.name}
+                    </span>
+                  )}
+                  <h2 class="text-2xl md:text-3xl font-medium text-white leading-tight">
+                    {featuredPost.name}
+                  </h2>
+                  {featuredPost.excerpt && (
+                    <p class="mt-3 text-white/80 line-clamp-2 max-w-xl">
+                      {featuredPost.excerpt}
+                    </p>
+                  )}
+
+                  {/* Author + Date */}
+                  <div class="flex items-center gap-3 mt-6">
+                    {featuredAuthor?.['profile-picture']?.url && (
+                      <img
+                        src={featuredAuthor['profile-picture'].url}
+                        alt={featuredAuthor.name}
+                        class="w-10 h-10 rounded-full object-cover ring-2 ring-white/20"
+                        loading="lazy"
+                      />
+                    )}
+                    <div>
+                      {featuredAuthor && (
+                        <p class="text-sm font-medium text-white">{featuredAuthor.name}</p>
+                      )}
+                      {featuredPost['published-date'] && (
+                        <p class="text-xs text-white/60">{formatDate(featuredPost['published-date'])}</p>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              </a>
+            );
+          })()}
+
+          <!-- Regular Posts -->
+          {regularPosts.map((post, index) => {
             const category = getCategory(post.category);
             const author = getAuthor(post.author);
 
             return (
               <a
-                href={`/blog/${post.slug}`}
-                class="group flex flex-col bg-white rounded-xl border border-surface-200 overflow-hidden hover:border-surface-300 hover:shadow-md transition-all duration-200 focus-visible:outline-2 focus-visible:outline-primary-500 focus-visible:outline-offset-4"
+                href={`${baseUrl}blog/${post.slug}`}
+                class="blog-card group focus-visible:outline-2 focus-visible:outline-primary-500 focus-visible:outline-offset-4 rounded-xl"
               >
                 {/* Thumbnail */}
-                <div class="aspect-[16/10] overflow-hidden bg-surface-100">
+                <div class="aspect-[16/10] overflow-hidden bg-surface-100 rounded-t-xl">
                   {post.thumbnail?.url ? (
                     <img
                       src={post.thumbnail.url}
                       alt={post.thumbnail.alt || post.name}
-                      loading="lazy"
-                      class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                      class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+                      loading={index < 4 ? 'eager' : 'lazy'}
                     />
                   ) : (
                     <div class="w-full h-full flex items-center justify-center">
@@ -140,21 +242,26 @@ function formatDate(dateStr: string | undefined): string {
                 </div>
 
                 {/* Content */}
-                <div class="flex flex-col flex-1 p-6">
-                  {/* Category & Read Time */}
-                  <div class="flex items-center gap-3 text-sm mb-3">
+                <div class="p-6 flex flex-col flex-1">
+                  {/* Category + Read Time */}
+                  <div class="flex items-center gap-2 text-xs text-surface-500 mb-3">
                     {category && (
-                      <span class="text-primary-600 font-medium">{category.name}</span>
+                      <span class="font-medium text-primary-600 uppercase tracking-wide">
+                        {category.name}
+                      </span>
+                    )}
+                    {category && post['time-to-read'] && (
+                      <span>·</span>
                     )}
                     {post['time-to-read'] && (
-                      <span class="text-surface-500">{post['time-to-read']}</span>
+                      <span>{post['time-to-read']}</span>
                     )}
                   </div>
 
                   {/* Title */}
-                  <h2 class="text-lg font-medium text-surface-900 group-hover:text-primary-600 transition-colors line-clamp-2">
+                  <h3 class="text-lg font-medium text-surface-900 group-hover:text-primary-600 transition-colors line-clamp-2">
                     {post.name}
-                  </h2>
+                  </h3>
 
                   {/* Excerpt */}
                   {post.excerpt && (
@@ -163,7 +270,7 @@ function formatDate(dateStr: string | undefined): string {
                     </p>
                   )}
 
-                  {/* Author & Date */}
+                  {/* Author + Date */}
                   <div class="flex items-center gap-3 mt-4 pt-4 border-t border-surface-100">
                     {author?.['profile-picture']?.url && (
                       <img
@@ -187,12 +294,15 @@ function formatDate(dateStr: string | undefined): string {
             );
           })}
         </div>
-      )}
-    </SectionContainer>
-  </main>
+      </SectionContainer>
+    )}
+    </main>
+    <Footer caseStudies={caseStudies} blogPosts={footerBlogPosts} />
+  </div>
 </Layout>
 
 <style>
+  /* Line clamp utilities */
   .line-clamp-2 {
     display: -webkit-box;
     -webkit-line-clamp: 2;
@@ -204,5 +314,53 @@ function formatDate(dateStr: string | undefined): string {
     -webkit-line-clamp: 3;
     -webkit-box-orient: vertical;
     overflow: hidden;
+  }
+
+  /* Blog card base styles */
+  .blog-card {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    background: white;
+    border: 1px solid rgb(var(--color-surface-200));
+    border-radius: 0.75rem;
+    overflow: hidden;
+    transition: all 0.3s ease;
+  }
+
+  .blog-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+    border-color: rgb(var(--color-surface-300));
+  }
+
+  /* Accent border on hover (regular cards only) */
+  .blog-card:not(.featured)::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 4px;
+    background: rgb(var(--color-primary-500));
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    z-index: 10;
+    border-radius: 0.75rem 0 0 0.75rem;
+  }
+
+  .blog-card:not(.featured):hover::before {
+    opacity: 1;
+  }
+
+  /* Featured card: dark inverted style */
+  .blog-card.featured {
+    background: rgb(var(--color-surface-900));
+    border-color: rgb(var(--color-surface-800));
+  }
+
+  .blog-card.featured:hover {
+    border-color: rgb(var(--color-primary-500));
+    box-shadow: 0 25px 50px -12px rgb(0 0 0 / 0.25);
   }
 </style>

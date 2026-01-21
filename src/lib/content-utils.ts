@@ -21,6 +21,8 @@ import auditContent from '../data/content/audit.json';
 import caseStudySliderContent from '../data/content/case-study-slider.json';
 import newsletterContent from '../data/content/newsletter.json';
 import faqItemsContent from '../data/content/faq-items.json';
+import workContent from '../data/content/work.json';
+import aboutContent from '../data/content/about.json';
 
 // Type definitions for content files
 export interface CTAContent {
@@ -150,6 +152,108 @@ export interface FAQItemsContent {
   items: FAQItem[];
 }
 
+export interface WorkStat {
+  number: string;
+  label: string;
+}
+
+export interface WorkContent {
+  headline: string;
+  highlightWord: string;
+  description: string;
+  stats: WorkStat[];
+  galleryTitle: string;
+  galleryHighlightWord: string;
+  gallerySubtitle: string;
+  viewProjectText: string;
+  backToTopText: string;
+}
+
+export interface AboutHero {
+  badge: string;
+  badgeIcon: string;
+  headline: string;
+  highlightWords: string[];
+  description: string;
+  ctaText: string;
+}
+
+export interface AboutCounterStat {
+  number: string;
+  label: string;
+  description: string;
+}
+
+export interface AboutCounter {
+  stats: AboutCounterStat[];
+  awardBadge: string;
+}
+
+export interface AboutJourney {
+  badge: string;
+  headline: string;
+  description: string;
+  image: string;
+}
+
+export interface AboutTeamCtaCard {
+  indicator: string;
+  headline: string;
+  description: string;
+  ctaText: string;
+}
+
+export interface AboutTeam {
+  badge: string;
+  title: string;
+  highlightWord: string;
+  subtitle: string;
+  ctaCard: AboutTeamCtaCard;
+}
+
+export interface AboutAwardItem {
+  icon: string;
+  title: string;
+  description: string;
+}
+
+export interface AboutAwards {
+  badge: string;
+  title: string;
+  description: string;
+  ctaText: string;
+  items: AboutAwardItem[];
+}
+
+export interface AboutFaqItem {
+  question: string;
+  answer: string;
+}
+
+export interface AboutFaq {
+  title: string;
+  highlightWord: string;
+  items: AboutFaqItem[];
+  footerText: string;
+  footerCtaText: string;
+}
+
+export interface AboutFinalCta {
+  title: string;
+  description: string;
+  ctaText: string;
+}
+
+export interface AboutContent {
+  hero: AboutHero;
+  counter: AboutCounter;
+  journey: AboutJourney;
+  team: AboutTeam;
+  awards: AboutAwards;
+  faq: AboutFaq;
+  finalCta: AboutFinalCta;
+}
+
 // Content registry - maps file names to their content
 const contentRegistry: Record<string, unknown> = {
   'cta': ctaContent,
@@ -164,6 +268,8 @@ const contentRegistry: Record<string, unknown> = {
   'case-study-slider': caseStudySliderContent,
   'newsletter': newsletterContent,
   'faq-items': faqItemsContent,
+  'work': workContent,
+  'about': aboutContent,
 };
 
 /**
@@ -257,6 +363,20 @@ export function getNewsletterContent(): NewsletterContent {
  */
 export function getFAQItemsContent(): FAQItemsContent {
   return faqItemsContent as FAQItemsContent;
+}
+
+/**
+ * Get Work page content
+ */
+export function getWorkContent(): WorkContent {
+  return workContent as WorkContent;
+}
+
+/**
+ * Get About page content
+ */
+export function getAboutContent(): AboutContent {
+  return aboutContent as AboutContent;
 }
 
 /**

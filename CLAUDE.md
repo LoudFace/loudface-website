@@ -229,6 +229,61 @@ It does **NOT** rewrite hardcoded HTML paths like `<img src="/images/logo.svg">`
 
 **The Solution:** The `asset()` utility reads `import.meta.env.BASE_URL` and prefixes paths at runtime, bridging this gap.
 
+## Internal Route Links (CRITICAL for Webflow Cloud)
+
+Just like static assets, **internal navigation links must also be prefixed** with the base URL or they will 404.
+
+### The `route()` Helper
+
+Use a `route()` helper in components with internal links:
+
+```astro
+---
+// Helper to prefix internal routes with base URL
+const base = import.meta.env.BASE_URL || '/';
+const route = (path: string) => {
+  const normalizedBase = base.endsWith('/') ? base.slice(0, -1) : base;
+  const normalizedPath = path.startsWith('/') ? path : `/${path}`;
+  return `${normalizedBase}${normalizedPath}`;
+};
+---
+
+<!-- CORRECT - uses route() -->
+<a href={route('/work')}>Our Work</a>
+<a href={route('/about')}>About Us</a>
+
+<!-- WRONG - will 404 in production -->
+<a href="/work">Our Work</a>
+```
+
+### When to Use `route()`
+
+| Scenario | Use `route()`? |
+|----------|----------------|
+| Hardcoded internal links (`href="/work"`) | ✅ Yes |
+| Links from JSON content files | ✅ Yes |
+| External URLs (https://...) | ❌ No |
+| Anchor links (`href="#section"`) | ❌ No |
+| Dynamic slugs (already use base) | ❌ No (Astro handles these) |
+
+### Key Components Using `route()`
+
+- `Header.astro` - All nav links, logo home link, dropdown menu links
+- Any component with hardcoded internal navigation
+
+### Note on Astro's `base` Config
+
+Astro's `base: '/customsite'` in `astro.config.mjs` automatically handles:
+- Generated page routes (dynamic `[slug]` pages)
+- `Astro.url` and `Astro.site`
+- Asset imports via Vite
+
+It does **NOT** handle:
+- Hardcoded `href="/path"` attributes in HTML
+- Links defined in component frontmatter arrays
+
+This is why both `asset()` and `route()` are needed for this Webflow Cloud setup.
+
 ## Cal.com Integration
 
 The site uses Cal.com for booking calls. The embed is configured in `Layout.astro`.

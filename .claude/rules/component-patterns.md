@@ -110,6 +110,42 @@ For CMS images with fallbacks, use `asset()` only for the fallback:
 <img src={item['profile-image']?.url || asset('/images/placeholder-avatar.svg')} />
 ```
 
+## Internal Route Links (CRITICAL)
+
+**ALWAYS use a `route()` helper for hardcoded internal links.** This is required for Webflow Cloud deployment.
+
+```astro
+---
+// Helper to prefix internal routes with base URL
+const base = import.meta.env.BASE_URL || '/';
+const route = (path: string) => {
+  const normalizedBase = base.endsWith('/') ? base.slice(0, -1) : base;
+  const normalizedPath = path.startsWith('/') ? path : `/${path}`;
+  return `${normalizedBase}${normalizedPath}`;
+};
+---
+
+<!-- CORRECT - uses route() -->
+<a href={route('/work')}>Our Work</a>
+
+<!-- WRONG - will 404 in production -->
+<a href="/work">Our Work</a>
+```
+
+### When to Use `route()`
+
+| Link Type | Use `route()`? |
+|-----------|----------------|
+| Hardcoded internal links (`href="/work"`) | ✅ Yes |
+| Links from JSON content files | ✅ Yes |
+| External URLs (https://...) | ❌ No |
+| Anchor links (`href="#section"`) | ❌ No |
+| Dynamic slugs in templates | ❌ No (Astro handles these) |
+
+### Example: Header.astro
+
+See `Header.astro` for a complete example of the `route()` helper pattern used for navigation links.
+
 ## CMS Section IDs
 
 Section IDs are **automatically generated** by the `createCMS()` helper. No manual constants needed!
@@ -475,10 +511,12 @@ See `src/data/content/` for examples. Current files:
 2. Import types from `../../lib/types`
 3. **Import `createCMS` from `../../lib/cms` if using CMS data**
 4. **Import `asset` from `../../lib/assets` if using static images**
-5. Define only `Props` interface locally
-6. **Use `SectionContainer` for layout** (see Section Layout Components above)
-7. **Use `SectionHeader` for section headings** with consistent H2 typography
-8. Use styling tokens from `styling.md`
-9. **Use `cms.section()` or `cms.slot()` for CMS Control Panel support**
-10. **For static text:** Use JSON content layer (see above)
-11. **For static images:** Use `asset('/images/...')` for all hardcoded paths
+5. **Add `route()` helper if using internal links** (see Internal Route Links above)
+6. Define only `Props` interface locally
+7. **Use `SectionContainer` for layout** (see Section Layout Components above)
+8. **Use `SectionHeader` for section headings** with consistent H2 typography
+9. Use styling tokens from `styling.md`
+10. **Use `cms.section()` or `cms.slot()` for CMS Control Panel support**
+11. **For static text:** Use JSON content layer (see above)
+12. **For static images:** Use `asset('/images/...')` for all hardcoded paths
+13. **For internal links:** Use `route('/path')` for all hardcoded hrefs
