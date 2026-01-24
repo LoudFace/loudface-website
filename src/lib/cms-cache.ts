@@ -2,7 +2,7 @@
  * CMS Data Cache for Development
  *
  * Caches Webflow API responses locally to speed up development.
- * Uses globalThis to persist cache across Vite module reloads.
+ * Uses globalThis to persist cache across module reloads.
  *
  * In production, this is bypassed entirely.
  */
@@ -10,8 +10,8 @@
 // Cache duration: 5 minutes in dev (adjust as needed)
 const CACHE_TTL_MS = 5 * 60 * 1000;
 
-// Use globalThis to persist cache across module reloads in Vite dev server
-const CACHE_KEY = '__webflow_cms_cache__';
+// Use globalThis to persist cache across module reloads in dev server
+const CACHE_KEY = "__webflow_cms_cache__";
 
 interface CacheEntry {
   data: unknown;
@@ -19,17 +19,23 @@ interface CacheEntry {
 }
 
 function getCache(): Map<string, CacheEntry> {
-  if (!(globalThis as any)[CACHE_KEY]) {
-    (globalThis as any)[CACHE_KEY] = new Map<string, CacheEntry>();
+  if (!(globalThis as Record<string, unknown>)[CACHE_KEY]) {
+    (globalThis as Record<string, unknown>)[CACHE_KEY] = new Map<
+      string,
+      CacheEntry
+    >();
   }
-  return (globalThis as any)[CACHE_KEY];
+  return (globalThis as Record<string, unknown>)[CACHE_KEY] as Map<
+    string,
+    CacheEntry
+  >;
 }
 
 /**
  * Check if we're in development mode
  */
 function isDev(): boolean {
-  return import.meta.env.DEV;
+  return process.env.NODE_ENV === "development";
 }
 
 /**
@@ -82,7 +88,7 @@ export function setCache<T>(collectionId: string, data: T): void {
  */
 export function clearCache(): void {
   getCache().clear();
-  console.log('[CMS Cache] CLEARED');
+  console.log("[CMS Cache] CLEARED");
 }
 
 /**
@@ -103,10 +109,12 @@ export async function fetchWithCache<T>(
   const response = await fetch(url, options);
 
   if (!response.ok) {
-    throw new Error(`API request failed: ${response.status} ${response.statusText}`);
+    throw new Error(
+      `API request failed: ${response.status} ${response.statusText}`
+    );
   }
 
-  const data = await response.json() as T;
+  const data = (await response.json()) as T;
 
   // Cache the response (dev only)
   setCache(collectionId, data);

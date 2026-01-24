@@ -9,20 +9,20 @@
  */
 
 // Content file imports - add new content files here as they're created
-import ctaContent from '../data/content/cta.json';
-import heroContent from '../data/content/hero.json';
-import faqContent from '../data/content/faq.json';
-import approachContent from '../data/content/approach.json';
-import marketingContent from '../data/content/marketing.json';
-import partnersContent from '../data/content/partners.json';
-import knowledgeContent from '../data/content/knowledge.json';
-import resultsContent from '../data/content/results.json';
-import auditContent from '../data/content/audit.json';
-import caseStudySliderContent from '../data/content/case-study-slider.json';
-import newsletterContent from '../data/content/newsletter.json';
-import faqItemsContent from '../data/content/faq-items.json';
-import workContent from '../data/content/work.json';
-import aboutContent from '../data/content/about.json';
+import ctaContent from "@/data/content/cta.json";
+import heroContent from "@/data/content/hero.json";
+import faqContent from "@/data/content/faq.json";
+import approachContent from "@/data/content/approach.json";
+import marketingContent from "@/data/content/marketing.json";
+import partnersContent from "@/data/content/partners.json";
+import knowledgeContent from "@/data/content/knowledge.json";
+import resultsContent from "@/data/content/results.json";
+import auditContent from "@/data/content/audit.json";
+import caseStudySliderContent from "@/data/content/case-study-slider.json";
+import newsletterContent from "@/data/content/newsletter.json";
+import faqItemsContent from "@/data/content/faq-items.json";
+import workContent from "@/data/content/work.json";
+import aboutContent from "@/data/content/about.json";
 
 // Type definitions for content files
 export interface CTAContent {
@@ -256,20 +256,20 @@ export interface AboutContent {
 
 // Content registry - maps file names to their content
 const contentRegistry: Record<string, unknown> = {
-  'cta': ctaContent,
-  'hero': heroContent,
-  'faq': faqContent,
-  'approach': approachContent,
-  'marketing': marketingContent,
-  'partners': partnersContent,
-  'knowledge': knowledgeContent,
-  'results': resultsContent,
-  'audit': auditContent,
-  'case-study-slider': caseStudySliderContent,
-  'newsletter': newsletterContent,
-  'faq-items': faqItemsContent,
-  'work': workContent,
-  'about': aboutContent,
+  cta: ctaContent,
+  hero: heroContent,
+  faq: faqContent,
+  approach: approachContent,
+  marketing: marketingContent,
+  partners: partnersContent,
+  knowledge: knowledgeContent,
+  results: resultsContent,
+  audit: auditContent,
+  "case-study-slider": caseStudySliderContent,
+  newsletter: newsletterContent,
+  "faq-items": faqItemsContent,
+  work: workContent,
+  about: aboutContent,
 };
 
 /**
@@ -397,16 +397,16 @@ export function hasContent(name: string): boolean {
 
 /**
  * Convert newlines to <br> tags for HTML rendering
- * Use with Astro's set:html directive: <p set:html={nl2br(text)} />
+ * Use with dangerouslySetInnerHTML: <p dangerouslySetInnerHTML={{ __html: nl2br(text) }} />
  * @param text - Text that may contain newlines
  * @returns HTML string with <br> tags
  */
 export function nl2br(text: string): string {
-  if (!text) return '';
+  if (!text) return "";
   // Escape HTML entities first, then convert newlines
   return text
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/\n/g, '<br>');
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/\n/g, "<br>");
 }

@@ -16,7 +16,7 @@
  * Check if a URL should be optimized (remote URLs only)
  */
 function isRemoteUrl(url: string): boolean {
-  return url.startsWith('http://') || url.startsWith('https://');
+  return url.startsWith("http://") || url.startsWith("https://");
 }
 
 /**
@@ -39,7 +39,7 @@ export function optimizeImage(
   url: string | undefined,
   width: number,
   quality: number = 65,
-  format: 'webp' | 'auto' | 'original' = 'webp'
+  format: "webp" | "auto" | "original" = "webp"
 ): string | undefined {
   if (!url) return undefined;
 
@@ -51,16 +51,16 @@ export function optimizeImage(
   // Build weserv.nl URL
   // Docs: https://images.weserv.nl/docs/
   const params = new URLSearchParams();
-  params.set('url', url);
-  params.set('w', String(width));
-  params.set('q', String(quality));
+  params.set("url", url);
+  params.set("w", String(width));
+  params.set("q", String(quality));
 
   // Add format conversion
-  if (format === 'webp') {
-    params.set('output', 'webp');
-  } else if (format === 'auto') {
+  if (format === "webp") {
+    params.set("output", "webp");
+  } else if (format === "auto") {
     // weserv.nl auto-negotiates format based on Accept header
-    params.set('output', 'webp'); // Default to webp for best compression
+    params.set("output", "webp"); // Default to webp for best compression
   }
   // 'original' omits output param, keeps original format
 
@@ -85,15 +85,15 @@ export function generateSrcset(
   url: string | undefined,
   sizes: number[],
   quality: number = 65,
-  format: 'webp' | 'auto' | 'original' = 'webp'
+  format: "webp" | "auto" | "original" = "webp"
 ): string | undefined {
   if (!url || !isRemoteUrl(url)) {
     return undefined;
   }
 
   return sizes
-    .map(width => `${optimizeImage(url, width, quality, format)} ${width}w`)
-    .join(', ');
+    .map((width) => `${optimizeImage(url, width, quality, format)} ${width}w`)
+    .join(", ");
 }
 
 /**

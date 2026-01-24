@@ -1,0 +1,858 @@
+/**
+ * Global Styles for LoudFace Next.js
+ *
+ * This file contains:
+ * 1. Tailwind CSS import
+ * 2. Font declarations
+ * 3. CSS reset (in @layer base)
+ * 4. Accessibility patterns (in @layer components)
+ */
+
+@import "tailwindcss";
+
+/* ===========================================
+ * THEME OVERRIDES (Tailwind v4)
+ * These CSS variables override Tailwind defaults
+ * =========================================== */
+@theme {
+  /* Primary brand colors */
+  --color-primary-50: #eef2ff;
+  --color-primary-100: #e0e7ff;
+  --color-primary-200: #c7d2fe;
+  --color-primary-300: #a5b4fc;
+  --color-primary-400: #818cf8;
+  --color-primary-500: #6366f1;
+  --color-primary-600: #4f46e5;
+  --color-primary-700: #4338ca;
+  --color-primary-800: #3730a3;
+  --color-primary-900: #312e81;
+  --color-primary-950: #1e1b4b;
+
+  /* Surface (neutral) colors */
+  --color-surface-50: #fafafa;
+  --color-surface-100: #f5f5f5;
+  --color-surface-200: #e5e5e5;
+  --color-surface-300: #d4d4d4;
+  --color-surface-400: #a3a3a3;
+  --color-surface-500: #737373;
+  --color-surface-600: #525252;
+  --color-surface-700: #404040;
+  --color-surface-800: #262626;
+  --color-surface-900: #22302e;
+  --color-surface-950: #0a0a0a;
+
+  /* Semantic colors */
+  --color-success: #22c55e;
+  --color-success-light: #dcfce7;
+  --color-success-dark: #166534;
+  --color-warning: #f59e0b;
+  --color-warning-light: #fef3c7;
+  --color-warning-dark: #92400e;
+  --color-error: #ef4444;
+  --color-error-light: #fee2e2;
+  --color-error-dark: #991b1b;
+  --color-info: #3b82f6;
+  --color-info-light: #dbeafe;
+  --color-info-dark: #1e40af;
+
+  /* Font families */
+  --font-sans: "Satoshi", system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-heading: "Neue Montreal", system-ui, sans-serif;
+  --font-mono: "Geist Mono", ui-monospace, SFMono-Regular, monospace;
+}
+
+/* ===========================================
+ * FONT DECLARATIONS
+ * =========================================== */
+@font-face {
+  font-family: Satoshi;
+  src:
+    url("/fonts/Satoshi-Bold.woff2") format("woff2"),
+    url("/fonts/Satoshi-Bold.woff") format("woff");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: Satoshi;
+  src:
+    url("/fonts/Satoshi-Medium.woff2") format("woff2"),
+    url("/fonts/Satoshi-Medium.woff") format("woff");
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: Satoshi;
+  src:
+    url("/fonts/Satoshi-Regular.woff2") format("woff2"),
+    url("/fonts/Satoshi-Regular.woff") format("woff");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: Satoshi;
+  src:
+    url("/fonts/Satoshi-MediumItalic.woff2") format("woff2"),
+    url("/fonts/Satoshi-MediumItalic.woff") format("woff");
+  font-weight: 500;
+  font-style: italic;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: Neue Montreal;
+  src:
+    url("/fonts/NeueMontreal-Medium.woff2") format("woff2"),
+    url("/fonts/NeueMontreal-Medium.woff") format("woff");
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: Neue Montreal;
+  src:
+    url("/fonts/NeueMontreal-Bold.woff2") format("woff2"),
+    url("/fonts/NeueMontreal-Bold.woff") format("woff");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: Neue Montreal;
+  src:
+    url("/fonts/NeueMontreal-Regular.woff2") format("woff2"),
+    url("/fonts/NeueMontreal-Regular.woff") format("woff");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: Geist Mono;
+  src: url("/fonts/GeistMono-Regular.woff") format("woff");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: Geist Mono;
+  src: url("/fonts/GeistMono-Medium.woff") format("woff");
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: Geist Mono;
+  src: url("/fonts/GeistMono-SemiBold.woff") format("woff");
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: Geist Mono;
+  src: url("/fonts/GeistMono-Bold.woff") format("woff");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: Geist Mono;
+  src: url("/fonts/GeistMono-Light.woff") format("woff");
+  font-weight: 300;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* ===========================================
+ * CSS BASE LAYER
+ * Reset and global defaults
+ * =========================================== */
+@layer base {
+  /* Box sizing reset */
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+  }
+
+  /* Document defaults */
+  html {
+    line-height: 1.5;
+    -webkit-text-size-adjust: 100%;
+    scroll-behavior: smooth;
+  }
+
+  /* Body typography */
+  body {
+    font-family: Satoshi, system-ui, sans-serif;
+    line-height: inherit;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    background-color: #fafafa; /* surface-50 */
+    color: #171717; /* surface-900 */
+  }
+
+  /* Media elements */
+  img,
+  picture,
+  video,
+  canvas,
+  svg {
+    display: block;
+    max-width: 100%;
+  }
+
+  /* Form elements inherit font */
+  input,
+  button,
+  textarea,
+  select {
+    font: inherit;
+  }
+
+  /* Text wrapping */
+  p,
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    overflow-wrap: break-word;
+  }
+
+  /* Headings use display font */
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: "Neue Montreal", system-ui, sans-serif;
+    font-weight: 500;
+  }
+
+  /* Link reset */
+  a {
+    color: inherit;
+    text-decoration: inherit;
+  }
+
+  /* Button reset */
+  button {
+    background: transparent;
+    border: none;
+    cursor: pointer;
+  }
+
+  /* List reset */
+  ul,
+  ol {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  /* Table reset */
+  table {
+    border-collapse: collapse;
+    border-spacing: 0;
+  }
+
+  /* Input font-size >= 16px to prevent iOS zoom */
+  input,
+  textarea,
+  select {
+    font-size: 16px;
+  }
+
+  /* Touch-action for interactive elements */
+  button,
+  a,
+  [role="button"] {
+    touch-action: manipulation;
+  }
+
+  /* Visible focus rings (WCAG 2.4.7) */
+  *:focus-visible {
+    outline: 2px solid #6366f1; /* primary-500 */
+    outline-offset: 2px;
+  }
+
+  /* Safe area insets for notched devices */
+  .page-wrapper {
+    padding-left: env(safe-area-inset-left);
+    padding-right: env(safe-area-inset-right);
+  }
+
+  header {
+    padding-top: env(safe-area-inset-top);
+    padding-left: env(safe-area-inset-left);
+    padding-right: env(safe-area-inset-right);
+  }
+
+  footer {
+    padding-bottom: env(safe-area-inset-bottom);
+    padding-left: env(safe-area-inset-left);
+    padding-right: env(safe-area-inset-right);
+  }
+}
+
+/* ===========================================
+ * COMPONENT LAYER
+ * Reusable component classes
+ * =========================================== */
+@layer components {
+  /* Page wrapper - prevents horizontal overflow */
+  .page-wrapper {
+    overflow-x: hidden;
+  }
+
+  /* Screen reader only - for accessibility */
+  .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+  }
+
+  /* Skip link - visible on focus */
+  .skip-link {
+    position: absolute;
+    left: -9999px;
+    z-index: 9999;
+    padding: 1rem 2rem;
+    background: #6366f1; /* primary-500 */
+    color: white;
+    text-decoration: none;
+    font-weight: 600;
+  }
+
+  .skip-link:focus {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: auto;
+    height: auto;
+    clip: auto;
+    white-space: normal;
+  }
+
+  /* Prose styles for rich text content */
+  .prose {
+    max-width: 65ch;
+  }
+
+  .prose p {
+    margin-bottom: 1.25em;
+  }
+
+  .prose h2,
+  .prose h3,
+  .prose h4 {
+    margin-top: 1.5em;
+    margin-bottom: 0.75em;
+    font-family: "Neue Montreal", system-ui, sans-serif;
+    font-weight: 500;
+  }
+
+  .prose ul,
+  .prose ol {
+    margin-bottom: 1.25em;
+    padding-left: 1.5em;
+  }
+
+  .prose ul {
+    list-style-type: disc;
+  }
+
+  .prose ol {
+    list-style-type: decimal;
+  }
+
+  .prose li {
+    margin-bottom: 0.5em;
+  }
+
+  .prose a {
+    color: #4f46e5; /* primary-600 */
+    text-decoration: underline;
+  }
+
+  .prose a:hover {
+    color: #4338ca; /* primary-700 */
+  }
+
+  .prose-lg {
+    font-size: 1.125rem;
+    line-height: 1.75;
+  }
+}
+
+/* ===========================================
+ * KEYFRAME ANIMATIONS
+ * =========================================== */
+
+/* Hero scrolling animations */
+@keyframes scroll-down {
+  0% {
+    transform: translateY(0);
+  }
+  100% {
+    transform: translateY(-50%);
+  }
+}
+
+@keyframes scroll-up {
+  0% {
+    transform: translateY(-50%);
+  }
+  100% {
+    transform: translateY(0);
+  }
+}
+
+.animate-scroll-down {
+  animation: scroll-down 30s linear infinite;
+}
+
+.animate-scroll-up {
+  animation: scroll-up 30s linear infinite;
+}
+
+/* Respect reduced motion preference */
+@media (prefers-reduced-motion: reduce) {
+  .animate-scroll-down,
+  .animate-scroll-up {
+    animation: none;
+  }
+}
+
+/* Marquee animation for client logos */
+@keyframes marquee {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+.animate-marquee {
+  animation: marquee 30s linear infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-marquee {
+    animation: none;
+  }
+}
+
+/* ===========================================
+ * COMPONENT-SPECIFIC STYLES
+ * Styles that can't be expressed as Tailwind utilities
+ * =========================================== */
+
+/* Partners Section - Testimonial Tooltips */
+.testimonial-tooltip {
+  position: absolute;
+  bottom: calc(100% + 0.75rem);
+  left: 50%;
+  transform: translateX(-50%) translateY(0.5rem);
+  width: 280px;
+  background-color: white;
+  border-radius: 0.75rem;
+  padding: 1rem;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+  opacity: 0;
+  visibility: hidden;
+  transition:
+    opacity 0.2s,
+    transform 0.2s,
+    visibility 0.2s;
+  z-index: 100;
+  pointer-events: none;
+}
+
+.testimonial-tooltip::after {
+  content: "";
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  border: 8px solid transparent;
+  border-top-color: white;
+}
+
+.testimonial-headshot:hover .testimonial-tooltip,
+.testimonial-headshot:focus-within .testimonial-tooltip {
+  opacity: 1;
+  visibility: visible;
+  transform: translateX(-50%) translateY(0);
+}
+
+/* Audit Section - Full-width Overflow */
+.audit-overflow-wrapper {
+  margin-left: calc(-50vw + 50%);
+  margin-right: calc(-50vw + 50%);
+  padding-left: calc(50vw - 50%);
+  padding-right: calc(50vw - 50%);
+}
+
+@media (max-width: 767px) {
+  .audit-overflow-wrapper {
+    margin-left: -1rem;
+    margin-right: -1rem;
+    padding-left: 0;
+    padding-right: 0;
+  }
+}
+
+/* FAQ Section - Details/Summary Markers */
+.faq-details summary::-webkit-details-marker {
+  display: none;
+}
+
+.faq-details summary::marker {
+  display: none;
+}
+
+/* Embla Carousel Base Styles */
+.embla {
+  overflow: hidden;
+}
+
+.embla__viewport {
+  overflow: hidden;
+}
+
+.embla__container {
+  display: flex;
+}
+
+.embla__slide {
+  flex: 0 0 auto;
+  min-width: 0;
+}
+
+/* ===========================================
+ * CASE STUDY PROSE STYLES
+ * Typography for case study content
+ * =========================================== */
+
+.case-study-prose {
+  font-family: Satoshi, system-ui, sans-serif;
+  font-size: 1.125rem;
+  line-height: 1.75;
+  color: #525252;
+}
+
+.case-study-prose p {
+  margin-bottom: 1.5rem;
+}
+
+/* H2 - Left accent border with gradient */
+.case-study-prose h2 {
+  position: relative;
+  padding: 1rem 0 1rem 1.25rem;
+  margin-top: 3rem;
+  margin-bottom: 1.5rem;
+  font-family: "Neue Montreal", system-ui, sans-serif;
+  font-weight: 500;
+  font-size: 1.5rem;
+  color: #171717;
+  border-left: 3px solid #6366f1;
+  background: linear-gradient(to right, #fafafa 0%, transparent 70%);
+}
+
+.case-study-prose h2:first-child {
+  margin-top: 0;
+}
+
+/* H3 - Dot accent marker */
+.case-study-prose h3 {
+  position: relative;
+  padding-left: 1rem;
+  margin-top: 2.5rem;
+  margin-bottom: 1rem;
+  font-family: "Neue Montreal", system-ui, sans-serif;
+  font-weight: 500;
+  font-size: 1.25rem;
+  color: #262626;
+}
+
+.case-study-prose h3::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #a5a5a5;
+}
+
+/* Links - Animated gradient underline */
+.case-study-prose a {
+  color: #4f46e5;
+  text-decoration: none;
+  background-image: linear-gradient(to right, #6366f1, #4f46e5);
+  background-size: 0% 2px;
+  background-position: 0 100%;
+  background-repeat: no-repeat;
+  transition: background-size 0.2s ease-out, color 0.2s ease-out;
+}
+
+.case-study-prose a:hover {
+  color: #4338ca;
+  background-size: 100% 2px;
+}
+
+/* Unordered lists - Primary bullets */
+.case-study-prose ul {
+  padding-left: 0;
+  margin-bottom: 1.5rem;
+  list-style: none;
+}
+
+.case-study-prose li {
+  position: relative;
+  padding-left: 1.5rem;
+  margin-bottom: 0.75rem;
+}
+
+.case-study-prose ul > li::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0.625rem;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #6366f1;
+}
+
+/* Ordered lists - Monospace numbers */
+.case-study-prose ol {
+  padding-left: 0;
+  margin-bottom: 1.5rem;
+  list-style: none;
+  counter-reset: item;
+}
+
+.case-study-prose ol > li {
+  padding-left: 2rem;
+  counter-increment: item;
+}
+
+.case-study-prose ol > li::before {
+  content: counter(item) ".";
+  position: absolute;
+  left: 0;
+  font-family: "Geist Mono", monospace;
+  font-weight: 500;
+  font-size: 0.875rem;
+  color: #6366f1;
+}
+
+/* Blockquotes - Card style */
+.case-study-prose blockquote {
+  position: relative;
+  margin: 2.5rem 0;
+  padding: 1.5rem 2rem;
+  background: #fafafa;
+  border-radius: 0.75rem;
+  border-left: 4px solid #6366f1;
+}
+
+.case-study-prose blockquote p {
+  margin: 0;
+}
+
+/* Strong text */
+.case-study-prose strong {
+  font-weight: 600;
+  color: #171717;
+}
+
+/* Images */
+.case-study-prose img {
+  border-radius: 0.75rem;
+  margin: 2rem 0;
+}
+
+/* Figures */
+.case-study-prose figure {
+  margin: 2.5rem 0;
+}
+
+.case-study-prose figcaption {
+  margin-top: 0.75rem;
+  font-size: 0.875rem;
+  color: #737373;
+  text-align: center;
+}
+
+/* Horizontal rules */
+.case-study-prose hr {
+  border: none;
+  height: 1px;
+  background: linear-gradient(to right, transparent, #e5e5e5, transparent);
+  margin: 3rem 0;
+}
+
+/* Inline code */
+.case-study-prose code {
+  font-family: "Geist Mono", monospace;
+  font-size: 0.875em;
+  padding: 0.2em 0.4em;
+  background: #f5f5f5;
+  border-radius: 0.25rem;
+  color: #4f46e5;
+}
+
+/* Scroll offset for fixed header */
+.case-study-prose [id] {
+  scroll-margin-top: 6rem;
+}
+
+/* TOC link truncation for long headings */
+.toc-link {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  line-height: 1.4;
+}
+
+/* Blog Prose - Inherits from case study prose with some overrides */
+.blog-prose {
+  font-family: Satoshi, system-ui, sans-serif;
+  font-size: 1.125rem;
+  line-height: 1.75;
+  color: #525252;
+}
+
+.blog-prose p {
+  margin-bottom: 1.5rem;
+}
+
+.blog-prose h2 {
+  position: relative;
+  padding: 1rem 0 1rem 1.25rem;
+  margin-top: 3rem;
+  margin-bottom: 1.5rem;
+  font-family: "Neue Montreal", system-ui, sans-serif;
+  font-weight: 500;
+  font-size: 1.5rem;
+  color: #171717;
+  border-left: 3px solid #6366f1;
+  background: linear-gradient(to right, #fafafa 0%, transparent 70%);
+}
+
+.blog-prose h2:first-child {
+  margin-top: 0;
+}
+
+.blog-prose h3 {
+  position: relative;
+  padding-left: 1rem;
+  margin-top: 2.5rem;
+  margin-bottom: 1rem;
+  font-family: "Neue Montreal", system-ui, sans-serif;
+  font-weight: 500;
+  font-size: 1.25rem;
+  color: #262626;
+}
+
+.blog-prose h3::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #a5a5a5;
+}
+
+.blog-prose a {
+  color: #4f46e5;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.blog-prose a:hover {
+  color: #4338ca;
+}
+
+.blog-prose ul,
+.blog-prose ol {
+  margin-bottom: 1.5rem;
+  padding-left: 1.5rem;
+}
+
+.blog-prose ul {
+  list-style-type: disc;
+}
+
+.blog-prose ol {
+  list-style-type: decimal;
+}
+
+.blog-prose li {
+  margin-bottom: 0.5rem;
+}
+
+.blog-prose blockquote {
+  margin: 2rem 0;
+  padding: 1.5rem 2rem;
+  background: #fafafa;
+  border-radius: 0.75rem;
+  border-left: 4px solid #6366f1;
+}
+
+.blog-prose blockquote p {
+  margin: 0;
+}
+
+.blog-prose strong {
+  font-weight: 600;
+  color: #171717;
+}
+
+.blog-prose img {
+  border-radius: 0.75rem;
+  margin: 2rem 0;
+}
+
+.blog-prose code {
+  font-family: "Geist Mono", monospace;
+  font-size: 0.875em;
+  padding: 0.2em 0.4em;
+  background: #f5f5f5;
+  border-radius: 0.25rem;
+  color: #4f46e5;
+}
+
+.blog-prose [id] {
+  scroll-margin-top: 6rem;
+}

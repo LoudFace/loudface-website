@@ -1,0 +1,180 @@
+import type { Metadata } from "next";
+import Script from "next/script";
+import "./globals.css";
+import { CalHandler } from "@/components/CalHandler";
+import { Header } from "@/components/Header";
+import { Footer } from "@/components/Footer";
+import { fetchHomepageData } from "@/lib/cms-data";
+
+export const metadata: Metadata = {
+  title: {
+    default: "Webflow Development, SEO/AEO & Design Agency | LoudFace",
+    template: "%s | LoudFace",
+  },
+  description:
+    "Transform your website into a growth engine. Industry-leading Webflow development, SEO/AEO & design delivering measurable ROI and sustainable business growth.",
+  metadataBase: new URL("https://www.loudface.co"),
+  robots: {
+    index: true,
+    follow: true,
+  },
+  openGraph: {
+    type: "website",
+    locale: "en_US",
+    url: "https://www.loudface.co",
+    siteName: "LoudFace",
+    title: "Webflow Development, SEO/AEO & Design Agency | LoudFace",
+    description:
+      "Transform your website into a growth engine. Industry-leading Webflow development, SEO/AEO & design delivering measurable ROI and sustainable business growth.",
+    images: [
+      {
+        url: "/images/og-image.jpg",
+        width: 1200,
+        height: 630,
+        alt: "LoudFace - Webflow Development Agency",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    site: "@loudface",
+    title: "Webflow Development, SEO/AEO & Design Agency | LoudFace",
+    description:
+      "Transform your website into a growth engine. Industry-leading Webflow development, SEO/AEO & design delivering measurable ROI and sustainable business growth.",
+    images: ["/images/og-image.jpg"],
+  },
+  icons: {
+    icon: "/images/favicon.png",
+    apple: "/images/webclip.png",
+  },
+  other: {
+    "theme-color": "#0a0a0a",
+  },
+};
+
+// Structured data for WebSite
+const websiteSchema = {
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  name: "LoudFace",
+  url: "https://www.loudface.co/",
+};
+
+// Structured data for Organization
+const organizationSchema = {
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  name: "LoudFace",
+  url: "https://www.loudface.co",
+  logo: "https://www.loudface.co/images/loudface.svg",
+  description:
+    "Industry-leading Webflow development, SEO/AEO & design agency delivering measurable ROI and sustainable business growth.",
+  address: {
+    "@type": "PostalAddress",
+    addressLocality: "Dubai",
+    addressCountry: "AE",
+  },
+  sameAs: [
+    "https://www.instagram.com/loudface.co",
+    "https://www.linkedin.com/company/loudface",
+    "https://dribbble.com/loudface",
+    "https://webflow.com/@loudface",
+  ],
+};
+
+export default async function RootLayout({
+  children,
+}: Readonly<{
+  children: React.ReactNode;
+}>) {
+  // Fetch CMS data for Footer
+  const accessToken = process.env.WEBFLOW_SITE_API_TOKEN || '';
+  let caseStudies: Awaited<ReturnType<typeof fetchHomepageData>>['caseStudies'] = [];
+  let blogPosts: Awaited<ReturnType<typeof fetchHomepageData>>['blogPosts'] = [];
+
+  try {
+    const data = await fetchHomepageData(accessToken);
+    caseStudies = data.caseStudies;
+    blogPosts = data.blogPosts;
+  } catch (error) {
+    console.error('Failed to fetch CMS data for footer:', error);
+  }
+
+  return (
+    <html lang="en">
+      <head>
+        {/* Preconnect hints for performance */}
+        <link rel="preconnect" href="https://images.weserv.nl" crossOrigin="" />
+        <link
+          rel="preconnect"
+          href="https://assets-global.website-files.com"
+          crossOrigin=""
+        />
+        <link
+          rel="preconnect"
+          href="https://uploads-ssl.webflow.com"
+          crossOrigin=""
+        />
+        <link rel="dns-prefetch" href="https://app.cal.com" />
+
+        {/* Preload critical fonts */}
+        <link
+          rel="preload"
+          href="/fonts/Satoshi-Regular.woff2"
+          as="font"
+          type="font/woff2"
+          crossOrigin=""
+        />
+        <link
+          rel="preload"
+          href="/fonts/Satoshi-Medium.woff2"
+          as="font"
+          type="font/woff2"
+          crossOrigin=""
+        />
+        <link
+          rel="preload"
+          href="/fonts/NeueMontreal-Medium.woff2"
+          as="font"
+          type="font/woff2"
+          crossOrigin=""
+        />
+
+        {/* Structured Data */}
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteSchema) }}
+        />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify(organizationSchema),
+          }}
+        />
+      </head>
+      <body className="font-sans antialiased">
+        {/* Skip link for keyboard accessibility */}
+        <a href="#main-content" className="skip-link">
+          Skip to main content
+        </a>
+
+        <Header />
+
+        <main id="main-content">{children}</main>
+
+        <Footer caseStudies={caseStudies} blogPosts={blogPosts} />
+
+        {/* Cal.com embed script */}
+        <Script id="cal-embed" strategy="afterInteractive">
+          {`
+            (function (C, A, L) { let p = function (a, ar) { a.q.push(ar); }; let d = C.document; C.Cal = C.Cal || function () { let cal = C.Cal; let ar = arguments; if (!cal.loaded) { cal.ns = {}; cal.q = cal.q || []; d.head.appendChild(d.createElement("script")).src = A; cal.loaded = true; } if (ar[0] === L) { const api = function () { p(api, arguments); }; const namespace = ar[1]; api.q = api.q || []; if(typeof namespace === "string"){cal.ns[namespace] = cal.ns[namespace] || api;p(cal.ns[namespace], ar);p(cal, ["initNamespace", namespace]);} else p(cal, ar); return;} p(cal, ar); }; })(window, "https://app.cal.com/embed/embed.js", "init");
+            Cal("init", {origin:"https://app.cal.com"});
+          `}
+        </Script>
+
+        {/* Cal.com booking modal handler */}
+        <CalHandler />
+      </body>
+    </html>
+  );
+}

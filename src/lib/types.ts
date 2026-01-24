@@ -31,31 +31,31 @@ export interface CaseStudy {
   id: string;
   slug: string;
   name: string;
-  'project-title': string;
-  'paragraph-summary'?: string;
-  'main-body'?: string; // Rich text content
-  'main-project-image-thumbnail'?: WebflowImage;
-  'client-logo'?: WebflowImage;
-  'client-logo-inversed'?: WebflowImage;
-  'client-color': string;
-  'secondary-client-color'?: string;
-  'company-size'?: string;
+  "project-title": string;
+  "paragraph-summary"?: string;
+  "main-body"?: string; // Rich text content
+  "main-project-image-thumbnail"?: WebflowImage;
+  "client-logo"?: WebflowImage;
+  "client-logo-inversed"?: WebflowImage;
+  "client-color": string;
+  "secondary-client-color"?: string;
+  "company-size"?: string;
   country?: string;
-  'website-link'?: string;
-  'visit-the-website'?: string;
-  'result-1---number': string;
-  'result-1---title': string;
-  'result-2---number'?: string;
-  'result-2---title'?: string;
-  'result-3---number'?: string;
-  'result-3---title'?: string;
+  "website-link"?: string;
+  "visit-the-website"?: string;
+  "result-1---number": string;
+  "result-1---title": string;
+  "result-2---number"?: string;
+  "result-2---title"?: string;
+  "result-3---number"?: string;
+  "result-3---title"?: string;
   featured?: boolean;
   client: string; // Reference ID to clients collection
   industry?: string; // Reference ID to industries collection
   industries?: string[]; // Multi-reference to industries collection
   testimonial?: string; // Reference ID to testimonials collection
   technologies?: string[]; // Multi-reference to technologies collection
-  'services-provided'?: string[]; // Multi-reference to service-categories collection
+  "services-provided"?: string[]; // Multi-reference to service-categories collection
 }
 
 /**
@@ -66,10 +66,10 @@ export interface Client {
   id: string;
   name: string;
   slug: string;
-  'showcase-logo'?: boolean;
-  'colored-logo'?: WebflowImage;
-  'light-logo'?: WebflowImage;
-  'dark-logo'?: WebflowImage;
+  "showcase-logo"?: boolean;
+  "colored-logo"?: WebflowImage;
+  "light-logo"?: WebflowImage;
+  "dark-logo"?: WebflowImage;
 }
 
 /**
@@ -81,9 +81,9 @@ export interface Testimonial {
   name: string;
   slug: string;
   role?: string;
-  'testimonial-body'?: string; // Rich text content
-  'profile-image'?: WebflowImage;
-  'case-study'?: string; // Reference ID to case-studies collection
+  "testimonial-body"?: string; // Rich text content
+  "profile-image"?: WebflowImage;
+  "case-study"?: string; // Reference ID to case-studies collection
   client?: string; // Reference ID to clients collection
 }
 
@@ -95,14 +95,14 @@ export interface BlogPost {
   id: string;
   name: string;
   slug: string;
-  'meta-title'?: string;
-  'meta-description'?: string;
+  "meta-title"?: string;
+  "meta-description"?: string;
   thumbnail?: WebflowImage;
   excerpt?: string;
   content?: string; // Rich text content (main body)
-  'time-to-read'?: string;
+  "time-to-read"?: string;
   featured?: boolean;
-  'published-date'?: string;
+  "published-date"?: string;
   author?: string; // Reference ID to team-members collection
   category?: string; // Reference ID to categories collection (main category)
   categories?: string[]; // Multi-reference to categories collection
@@ -127,9 +127,9 @@ export interface TeamMember {
   id: string;
   name: string;
   slug: string;
-  'profile-picture'?: WebflowImage;
-  'bio-summary'?: string;
-  'job-title'?: string;
+  "profile-picture"?: WebflowImage;
+  "bio-summary"?: string;
+  "job-title"?: string;
 }
 
 /**
@@ -151,7 +151,7 @@ export interface Industry {
   id: string;
   name: string;
   slug: string;
-  'radio-filter---checked-attribute'?: string;
+  "radio-filter---checked-attribute"?: string;
 }
 
 /**
@@ -172,7 +172,7 @@ export interface BlogFAQ {
   id: string;
   name: string;
   slug: string;
-  'blog-post'?: string; // Reference ID to blog collection
+  "blog-post"?: string; // Reference ID to blog collection
 }
 
 /**
@@ -190,4 +190,4 @@ export interface WebflowCollectionResponse<T = WebflowItem> {
 /**
  * Helper type to normalize Webflow item (merge id with fieldData)
  */
-export type NormalizedItem<T> = Omit<T, 'fieldData'> & T;
+export type NormalizedItem<T> = Omit<T, "fieldData"> & T;

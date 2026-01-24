@@ -15,10 +15,13 @@
  * Works in both development (no prefix) and production (with /customsite prefix).
  */
 export function asset(path: string): string {
-  const base = import.meta.env.BASE_URL || '/';
+  // In production (Webflow Cloud), add /customsite prefix
+  // In development, no prefix needed
+  const isProduction = process.env.NODE_ENV === "production";
+  const base = isProduction ? "/customsite" : "";
   // Remove trailing slash from base and leading slash from path to avoid double slashes
-  const cleanBase = base.endsWith('/') ? base.slice(0, -1) : base;
-  const cleanPath = path.startsWith('/') ? path : `/${path}`;
+  const cleanBase = base.endsWith("/") ? base.slice(0, -1) : base;
+  const cleanPath = path.startsWith("/") ? path : `/${path}`;
   return `${cleanBase}${cleanPath}`;
 }
 

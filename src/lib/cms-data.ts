@@ -5,8 +5,8 @@
  * Handles caching, normalization, and reference lookups.
  */
 
-import { COLLECTION_IDS } from './constants';
-import { getCached, setCache } from './cms-cache';
+import { COLLECTION_IDS } from "./constants";
+import { getCached, setCache } from "./cms-cache";
 import type {
   CaseStudy,
   Client,
@@ -17,7 +17,7 @@ import type {
   Industry,
   Technology,
   ServiceCategory,
-} from './types';
+} from "./types";
 
 /**
  * Homepage data structure containing all CMS collections
@@ -71,11 +71,12 @@ export async function fetchCollection<T>(
     return cached;
   }
 
-  // Fetch from API
+  // Fetch from API with Next.js caching
   const res = await fetch(
     `https://api.webflow.com/v2/collections/${collectionId}/items`,
     {
       headers: { Authorization: `Bearer ${accessToken}` },
+      next: { revalidate: 60 }, // Revalidate every 60 seconds
     }
   );
 
@@ -90,14 +91,17 @@ export async function fetchCollection<T>(
 /**
  * Normalize a CMS item by merging fieldData into the root object
  */
-function normalizeItem<T>(item: any): T {
-  return { id: item.id, ...item.fieldData } as T;
+function normalizeItem<T>(item: Record<string, unknown>): T {
+  return {
+    id: item.id,
+    ...(item.fieldData as Record<string, unknown>),
+  } as T;
 }
 
 /**
  * Filter out draft and archived items
  */
-function isPublished(item: any): boolean {
+function isPublished(item: Record<string, unknown>): boolean {
   return !item.isDraft && !item.isArchived;
 }
 
@@ -125,23 +129,26 @@ export async function fetchHomepageData(
       technologiesData,
       serviceCategoriesData,
     ] = await Promise.all([
-      fetchCollection<any>('case-studies', accessToken),
-      fetchCollection<any>('clients', accessToken),
-      fetchCollection<any>('testimonials', accessToken),
-      fetchCollection<any>('blog', accessToken),
-      fetchCollection<any>('categories', accessToken),
-      fetchCollection<any>('team-members', accessToken),
-      fetchCollection<any>('industries', accessToken),
-      fetchCollection<any>('technologies', accessToken),
-      fetchCollection<any>('service-categories', accessToken),
+      fetchCollection<Record<string, unknown>>("case-studies", accessToken),
+      fetchCollection<Record<string, unknown>>("clients", accessToken),
+      fetchCollection<Record<string, unknown>>("testimonials", accessToken),
+      fetchCollection<Record<string, unknown>>("blog", accessToken),
+      fetchCollection<Record<string, unknown>>("categories", accessToken),
+      fetchCollection<Record<string, unknown>>("team-members", accessToken),
+      fetchCollection<Record<string, unknown>>("industries", accessToken),
+      fetchCollection<Record<string, unknown>>("technologies", accessToken),
+      fetchCollection<Record<string, unknown>>(
+        "service-categories",
+        accessToken
+      ),
     ]);
 
     // Build clients lookup map and array
     if (clientsData?.items) {
-      clientsData.items.forEach((item: any) => {
+      clientsData.items.forEach((item) => {
         if (isPublished(item)) {
           const client = normalizeItem<Client>(item);
-          data.clients.set(item.id, client);
+          data.clients.set(item.id as string, client);
           data.allClients.push(client);
         }
       });
@@ -151,18 +158,22 @@ export async function fetchHomepageData(
     if (caseStudiesData?.items) {
       data.caseStudies = caseStudiesData.items
         .filter(isPublished)
-        .map((item: any) => normalizeItem<CaseStudy>(item));
+        .map((item) => normalizeItem<CaseStudy>(item));
     }
 
     // Build testimonials lookup map and array
     if (testimonialsData?.items) {
-      testimonialsData.items.forEach((item: any) => {
+      testimonialsData.items.forEach((item) => {
         if (isPublished(item)) {
           const testimonial = normalizeItem<Testimonial>(item);
           data.allTestimonials.push(testimonial);
           // Also index by case-study ID for case study cards
-          if (item.fieldData['case-study']) {
-            data.testimonials.set(item.fieldData['case-study'], testimonial);
+          const fieldData = item.fieldData as Record<string, unknown>;
+          if (fieldData["case-study"]) {
+            data.testimonials.set(
+              fieldData["case-study"] as string,
+              testimonial
+            );
           }
         }
       });
@@ -170,50 +181,50 @@ export async function fetchHomepageData(
 
     // Build categories lookup map
     if (categoriesData?.items) {
-      categoriesData.items.forEach((item: any) => {
+      categoriesData.items.forEach((item) => {
         if (isPublished(item)) {
           const category = normalizeItem<Category>(item);
-          data.categories.set(item.id, category);
+          data.categories.set(item.id as string, category);
         }
       });
     }
 
     // Build team members lookup map
     if (teamMembersData?.items) {
-      teamMembersData.items.forEach((item: any) => {
+      teamMembersData.items.forEach((item) => {
         if (isPublished(item)) {
           const member = normalizeItem<TeamMember>(item);
-          data.teamMembers.set(item.id, member);
+          data.teamMembers.set(item.id as string, member);
         }
       });
     }
 
     // Build industries lookup map
     if (industriesData?.items) {
-      industriesData.items.forEach((item: any) => {
+      industriesData.items.forEach((item) => {
         if (isPublished(item)) {
           const industry = normalizeItem<Industry>(item);
-          data.industries.set(item.id, industry);
+          data.industries.set(item.id as string, industry);
         }
       });
     }
 
     // Build technologies lookup map
     if (technologiesData?.items) {
-      technologiesData.items.forEach((item: any) => {
+      technologiesData.items.forEach((item) => {
         if (isPublished(item)) {
           const technology = normalizeItem<Technology>(item);
-          data.technologies.set(item.id, technology);
+          data.technologies.set(item.id as string, technology);
         }
       });
     }
 
     // Build service categories lookup map
     if (serviceCategoriesData?.items) {
-      serviceCategoriesData.items.forEach((item: any) => {
+      serviceCategoriesData.items.forEach((item) => {
         if (isPublished(item)) {
           const serviceCategory = normalizeItem<ServiceCategory>(item);
-          data.serviceCategories.set(item.id, serviceCategory);
+          data.serviceCategories.set(item.id as string, serviceCategory);
         }
       });
     }
@@ -222,15 +233,15 @@ export async function fetchHomepageData(
     if (blogData?.items) {
       data.blogPosts = blogData.items
         .filter(isPublished)
-        .map((item: any) => normalizeItem<BlogPost>(item))
+        .map((item) => normalizeItem<BlogPost>(item))
         .sort((a: BlogPost, b: BlogPost) => {
-          const dateA = new Date(a['published-date'] || 0).getTime();
-          const dateB = new Date(b['published-date'] || 0).getTime();
+          const dateA = new Date(a["published-date"] || 0).getTime();
+          const dateB = new Date(b["published-date"] || 0).getTime();
           return dateB - dateA;
         });
     }
   } catch (error) {
-    console.error('[CMS] Homepage data fetch failed:', error);
+    console.error("[CMS] Homepage data fetch failed:", error);
     // Return empty data - page will render with fallback content
   }
 
@@ -238,11 +249,8 @@ export async function fetchHomepageData(
 }
 
 /**
- * Get access token from Astro locals or environment
+ * Get access token from environment
  */
-export function getAccessToken(locals: any): string | undefined {
-  return (
-    locals?.runtime?.env?.WEBFLOW_SITE_API_TOKEN ||
-    import.meta.env.WEBFLOW_SITE_API_TOKEN
-  );
+export function getAccessToken(): string | undefined {
+  return process.env.WEBFLOW_SITE_API_TOKEN;
 }
