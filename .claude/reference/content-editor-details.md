@@ -6,17 +6,17 @@ Detailed documentation for the JSON-based content editor system. This file is lo
 
 | File | Component | Fields |
 |------|-----------|--------|
-| `cta.json` | CTA.astro | title, subtitle, ctaText |
-| `hero.json` | Hero.astro | headline, description, ctaText, aiLinks |
-| `faq.json` | FAQ.astro | title, subtitle, footerTitle, footerText, footerCtaText |
-| `approach.json` | Approach.astro | title, highlightWord, subtitle, steps[], statsHeading, stats[] |
-| `marketing.json` | Marketing.astro | title, titleHighlight, subtitle, description, cards[], ctaText |
-| `partners.json` | Partners.astro | starRatingPrefix, starRatingSuffix, tagline |
-| `knowledge.json` | Knowledge.astro | title, highlightWord, description, readTime |
-| `results.json` | Results.astro | title, subtitle, videoTestimonials[], ctaText, ctaHref |
-| `audit.json` | Audit.astro | title, highlightText, description, challenges[] |
-| `case-study-slider.json` | CaseStudySlider.astro | title, ctaText |
-| `newsletter.json` | NewsletterForm.astro | placeholder, buttonText, loadingText, successMessage, errorMessage, networkErrorMessage |
+| `cta.json` | CTA.tsx | title, subtitle, ctaText |
+| `hero.json` | Hero.tsx | headline, description, ctaText, aiLinks |
+| `faq.json` | FAQ.tsx | title, subtitle, footerTitle, footerText, footerCtaText |
+| `approach.json` | Approach.tsx | title, highlightWord, subtitle, steps[], statsHeading, stats[] |
+| `marketing.json` | Marketing.tsx | title, titleHighlight, subtitle, description, cards[], ctaText |
+| `partners.json` | Partners.tsx | starRatingPrefix, starRatingSuffix, tagline |
+| `knowledge.json` | Knowledge.tsx | title, highlightWord, description, readTime |
+| `results.json` | Results.tsx | title, subtitle, videoTestimonials[], ctaText, ctaHref |
+| `audit.json` | Audit.tsx | title, highlightText, description, challenges[] |
+| `case-study-slider.json` | CaseStudySlider.tsx | title, ctaText |
+| `newsletter.json` | NewsletterForm.tsx | placeholder, buttonText, loadingText, successMessage, errorMessage, networkErrorMessage |
 
 All files located in `src/data/content/`.
 
@@ -60,21 +60,24 @@ export function getMySectionContent(): MySectionContent {
 
 ### 3. Use in component
 
-```astro
----
-import { getMySectionContent } from '../../lib/content-utils';
-const content = getMySectionContent();
-const { title = content.title } = Astro.props;
----
+```tsx
+import { getMySectionContent } from '@/lib/content-utils';
 
-<h2 set:html={title} />
+export function MySection({ title }: { title?: string }) {
+  const content = getMySectionContent();
+  const displayTitle = title ?? content.title;
+
+  return (
+    <h2 dangerouslySetInnerHTML={{ __html: displayTitle }} />
+  );
+}
 ```
 
 ## Rendering Rules
 
 | Content Type | Syntax | When to Use |
 |--------------|--------|-------------|
-| May have line breaks | `set:html={content.field}` | Headlines, descriptions |
+| May have line breaks | `dangerouslySetInnerHTML={{ __html: content.field }}` | Headlines, descriptions |
 | Single-line only | `{content.field}` | Button text, labels |
 
 ## File Reference
@@ -82,12 +85,12 @@ const { title = content.title } = Astro.props;
 | File | Purpose |
 |------|---------|
 | `src/lib/content-utils.ts` | Getters and types |
-| `src/pages/api/dev/content.ts` | Save API (dev-only) |
-| `src/pages/dev/editor.astro` | Editor UI |
+| `src/app/api/dev/content/route.ts` | Save API (dev-only) |
+| `src/app/dev/editor/page.tsx` | Editor UI |
 | `src/data/content/*.json` | Content storage |
 
 ## Dev-Only Guards
 
-All editor features blocked in production via `import.meta.env.PROD` checks:
-- `/dev/editor` → 404
-- `/api/dev/content` → 403
+All editor features blocked in production via `process.env.NODE_ENV` checks:
+- `/dev/editor` → 404 in production
+- `/api/dev/content` → 403 in production

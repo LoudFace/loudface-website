@@ -89,63 +89,78 @@ Use the Grep tool to find SEO issues:
 
 | Check | Pattern | Glob |
 |-------|---------|------|
-| Missing meta description | `<meta name="description"` | `*.astro` |
-| H1 tags | `<h1` | `*.astro` |
-| Missing alt text | `<img[^>]*(?!alt=)` | `*.astro` |
-| Empty hrefs | `href=""` or `href="#"` | `*.astro` |
-| Hardcoded image paths | `src="/images` (without asset) | `*.astro` |
-| JSON-LD schemas | `application/ld\+json` | `*.astro` |
+| Missing meta description | `<meta name="description"` | `*.tsx` |
+| H1 tags | `<h1` | `*.tsx` |
+| Missing alt text | `<img[^>]*(?!alt=)` | `*.tsx` |
+| Empty hrefs | `href=""` or `href="#"` | `*.tsx` |
+| Hardcoded image paths | `src="/images` (without asset) | `*.tsx` |
+| JSON-LD schemas | `application/ld\+json` | `*.tsx` |
 
 ## Schema Implementation
 
 When implementing structured data, use these patterns:
 
 ### FAQ Schema (for FAQ sections)
-```astro
-<script type="application/ld+json" set:html={JSON.stringify({
-  "@context": "https://schema.org",
-  "@type": "FAQPage",
-  "mainEntity": faqItems.map(item => ({
-    "@type": "Question",
-    "name": item.question,
-    "acceptedAnswer": {
-      "@type": "Answer",
-      "text": item.answer
-    }
-  }))
-})} />
+```tsx
+<script
+  type="application/ld+json"
+  dangerouslySetInnerHTML={{
+    __html: JSON.stringify({
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      "mainEntity": faqItems.map(item => ({
+        "@type": "Question",
+        "name": item.question,
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": item.answer
+        }
+      }))
+    })
+  }}
+/>
 ```
 
 ### BreadcrumbList Schema (for nested pages)
-```astro
-<script type="application/ld+json" set:html={JSON.stringify({
-  "@context": "https://schema.org",
-  "@type": "BreadcrumbList",
-  "itemListElement": [
-    { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://www.loudface.co/" },
-    { "@type": "ListItem", "position": 2, "name": "Work", "item": "https://www.loudface.co/work" },
-    { "@type": "ListItem", "position": 3, "name": caseStudy.name }
-  ]
-})} />
+```tsx
+<script
+  type="application/ld+json"
+  dangerouslySetInnerHTML={{
+    __html: JSON.stringify({
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://www.loudface.co/" },
+        { "@type": "ListItem", "position": 2, "name": "Work", "item": "https://www.loudface.co/work" },
+        { "@type": "ListItem", "position": 3, "name": caseStudy.name }
+      ]
+    })
+  }}
+/>
 ```
 
 ### Article Schema (for case studies/blog)
-```astro
-<script type="application/ld+json" set:html={JSON.stringify({
-  "@context": "https://schema.org",
-  "@type": "Article",
-  "headline": title,
-  "description": description,
-  "image": ogImage,
-  "author": { "@type": "Organization", "name": "LoudFace" },
-  "publisher": {
-    "@type": "Organization",
-    "name": "LoudFace",
-    "logo": { "@type": "ImageObject", "url": "https://www.loudface.co/images/loudface.svg" }
-  },
-  "datePublished": publishDate,
-  "dateModified": modifiedDate
-})} />
+```tsx
+<script
+  type="application/ld+json"
+  dangerouslySetInnerHTML={{
+    __html: JSON.stringify({
+      "@context": "https://schema.org",
+      "@type": "Article",
+      "headline": title,
+      "description": description,
+      "image": ogImage,
+      "author": { "@type": "Organization", "name": "LoudFace" },
+      "publisher": {
+        "@type": "Organization",
+        "name": "LoudFace",
+        "logo": { "@type": "ImageObject", "url": "https://www.loudface.co/images/loudface.svg" }
+      },
+      "datePublished": publishDate,
+      "dateModified": modifiedDate
+    })
+  }}
+/>
 ```
 
 ## LoudFace-Specific Context
@@ -153,20 +168,21 @@ When implementing structured data, use these patterns:
 ### Site Structure
 - Homepage: `/`
 - Case studies: `/work/[slug]`
+- Blog: `/blog/[slug]`
 - Design system: `/design-system`
 - API routes: `/api/cms/[collection]`
 
 ### Key Files
-- Layout: `src/layouts/Layout.astro` (global meta, schemas)
-- Homepage: `src/pages/index.astro`
-- Case studies: `src/pages/work/[slug].astro`
+- Layout: `src/app/layout.tsx` (global meta, schemas)
+- Homepage: `src/app/page.tsx`
+- Case studies: `src/app/work/[slug]/page.tsx`
 
-### Existing Schemas (in Layout.astro)
+### Existing Schemas (in layout.tsx)
 - WebSite schema
 - Organization schema
 
 ### Missing Infrastructure (to implement)
-- sitemap.xml (via @astrojs/sitemap)
+- sitemap.xml (via Next.js sitemap.ts)
 - robots.txt
 - FAQ schema
 - Article/BreadcrumbList schemas for case studies
@@ -187,7 +203,7 @@ Useful patterns for common tasks:
 
 ```bash
 # Check for pages missing meta descriptions
-grep -r "description=" src/pages/
+grep -r "description=" src/app/
 
 # Find all H1 tags
 grep -r "<h1" src/

@@ -1,6 +1,6 @@
 # Deploy Command
 
-Build and deploy the LoudFace website to Webflow Cloud.
+Build and deploy the LoudFace Next.js website to Webflow Cloud.
 
 ## Instructions
 
@@ -21,11 +21,25 @@ Build and deploy the LoudFace website to Webflow Cloud.
    ```
 
 4. **Verify deployment** by:
-   - Waiting 1-2 minutes for Webflow to build
+   - Waiting 2-5 minutes for Webflow Cloud to build
    - Checking the live site (www.loudface.co)
    - Verifying images load (no 404s in console)
    - Testing the Cal.com booking modal
+   - Testing dynamic routes (`/work/[slug]`)
 
 **Note:** Deployment is git-based. There is no `webflow cloud deploy` CLI command.
+
+## Required Configuration Files
+
+These files MUST exist for Webflow Cloud deployment:
+
+| File | Purpose |
+|------|---------|
+| `webflow.json` | Framework detection (`{"cloud":{"framework":"nextjs"}}`) |
+| `open-next.config.ts` | OpenNext Cloudflare adapter config |
+| `wrangler.jsonc` | Cloudflare Workers config |
+| `@opennextjs/cloudflare` | Must be in devDependencies |
+
+## Troubleshooting
 
 For detailed deployment workflow with troubleshooting, reference the deploy skill at `.claude/skills/deploy/SKILL.md`.

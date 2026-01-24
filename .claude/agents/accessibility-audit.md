@@ -97,13 +97,13 @@ Use the **Grep tool** (not bash grep) to search for issues:
 
 | Check | Pattern | Path | Glob |
 |-------|---------|------|------|
-| Missing alt attributes | `<img` then verify `alt=` | `src/components` | `*.astro` |
-| Missing labels | `<input` without nearby `<label` | `src` | `*.astro` |
-| outline:none usage | `outline: none` or `outline:none` | `src/styles` | `*.css` |
-| Missing aria-label | `<button` without `aria-label` | `src/components` | `*.astro` |
-| Empty href | `href=""` or `href="#"` | `src` | `*.astro` |
+| Missing alt attributes | `<img` then verify `alt=` | `src/components` | `*.tsx` |
+| Missing labels | `<input` without nearby `<label` | `src` | `*.tsx` |
+| outline:none usage | `outline: none` or `outline:none` | `src/app` | `*.css` |
+| Missing aria-label | `<button` without `aria-label` | `src/components` | `*.tsx` |
+| Empty href | `href=""` or `href="#"` | `src` | `*.tsx` |
 
 **Example Grep tool usage:**
 ```
-Grep pattern="<img" glob="*.astro" path="src/components"
+Grep pattern="<img" glob="*.tsx" path="src/components"
 ```

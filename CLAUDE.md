@@ -1,11 +1,83 @@
 # LoudFace Website - Claude Code Instructions
 
 ## Project Overview
-This is the LoudFace agency website built with Astro + Webflow Cloud integration. The site uses:
-- **Framework**: Astro with SSR (`output: 'server'`)
-- **Adapter**: `@astrojs/cloudflare` for Webflow Cloud deployment
+
+This is the LoudFace agency website built with **Next.js 16.1** + Webflow Cloud integration. The site uses:
+- **Framework**: Next.js 16.1 with App Router
+- **Runtime**: Edge runtime via OpenNext Cloudflare adapter
 - **CMS**: Webflow CMS (via API v2)
-- **Styling**: Tailwind CSS with custom component classes
+- **Styling**: Tailwind CSS v4 with custom `@theme` block
+
+## Webflow Cloud Deployment (CRITICAL)
+
+### Required Configuration Files
+
+Webflow Cloud requires these files for Next.js deployment:
+
+| File | Purpose |
+|------|---------|
+| `webflow.json` | Framework detection (`{"cloud":{"framework":"nextjs"}}`) |
+| `open-next.config.ts` | OpenNext Cloudflare adapter configuration |
+| `wrangler.jsonc` | Cloudflare Workers configuration |
+| `next.config.ts` | Next.js config with conditional basePath |
+
+**NEVER delete these files** - they are required for Webflow Cloud deployment.
+
+### webflow.json (Required)
+
+```json
+{
+  "cloud": {
+    "framework": "nextjs"
+  }
+}
+```
+
+### open-next.config.ts (Required)
+
+```typescript
+import { defineCloudflareConfig } from "@opennextjs/cloudflare";
+
+export default defineCloudflareConfig({});
+```
+
+### wrangler.jsonc (Required)
+
+```jsonc
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "main": ".open-next/worker.js",
+  "name": "loudface-website",
+  "compatibility_date": "2024-12-30",
+  "compatibility_flags": ["nodejs_compat"],
+  "assets": {
+    "directory": ".open-next/assets",
+    "binding": "ASSETS"
+  }
+}
+```
+
+### Required Dependencies
+
+```bash
+npm install --save-dev @opennextjs/cloudflare
+```
+
+The `@opennextjs/cloudflare` package MUST be in devDependencies for Webflow Cloud to build.
+
+### Deployment Process
+
+Webflow Cloud automatically deploys when you push to `main` on GitHub:
+
+```bash
+# Build first to verify no errors
+npm run build
+
+# Push to trigger deployment
+git push origin main
+```
+
+**Note:** There is no CLI deployment command. Deployment is git-based only.
 
 ## Webflow Tooling Decision Matrix
 
@@ -26,18 +98,6 @@ Use the Webflow MCP tools for **read operations** and **quick queries**:
 - `get_collection_item` - Get a specific item
 - `list_pages` - List site pages
 
-### Deployment (Git-Based)
-
-Webflow Cloud automatically deploys when you push to `main` on GitHub. No CLI deployment command exists.
-
-```bash
-# Build first to verify no errors
-npm run build
-
-# Push to trigger deployment
-git push origin main
-```
-
 ### When to Use Webflow CLI (Terminal Commands)
 
 The Webflow CLI is used for **project setup and authentication**, not deployment:
@@ -54,10 +114,103 @@ webflow cloud init
 ```
 
 ### When to Use Direct API Calls (Code)
-Use direct Webflow API v2 calls in the Astro codebase for:
-- Runtime data fetching (SSR pages)
+Use direct Webflow API v2 calls in the Next.js codebase for:
+- Runtime data fetching (Server Components)
 - API routes that serve CMS data
 - Any data needed at request time
+
+## Base Path Configuration (CRITICAL)
+
+Webflow Cloud mounts the Next.js app at `/customsite`. This requires special handling.
+
+### next.config.ts
+
+```typescript
+import type { NextConfig } from "next";
+
+const isProduction = process.env.NODE_ENV === "production";
+
+const nextConfig: NextConfig = {
+  // Only apply basePath in production
+  ...(isProduction && {
+    basePath: "/customsite",
+    assetPrefix: "/customsite",
+  }),
+  output: "standalone",
+  images: {
+    remotePatterns: [
+      { protocol: "https", hostname: "assets-global.website-files.com" },
+      { protocol: "https", hostname: "images.weserv.nl" },
+    ],
+  },
+};
+
+export default nextConfig;
+```
+
+**IMPORTANT:** The `basePath` must be conditional (`isProduction`) so development works without the prefix.
+
+### The `asset()` Utility
+
+For static image paths, use the `asset()` function from `src/lib/assets.ts`:
+
+```tsx
+import { asset } from '@/lib/assets';
+
+// CORRECT - uses asset()
+<img src={asset('/images/logo.svg')} alt="Logo" />
+
+// WRONG - will 404 in production
+<img src="/images/logo.svg" alt="Logo" />
+```
+
+The `asset()` function automatically adds `/customsite` prefix in production.
+
+### When to Use `asset()`
+
+| Scenario | Use `asset()`? |
+|----------|----------------|
+| Hardcoded image paths (`/images/...`) | ✅ Yes |
+| Image paths from JSON content files | ✅ Yes |
+| Image URLs from Webflow CMS (full URLs) | ❌ No |
+| External URLs (https://...) | ❌ No |
+
+### Internal Links
+
+Next.js `<Link>` component automatically handles basePath. Use it for all internal navigation:
+
+```tsx
+import Link from 'next/link';
+
+// CORRECT - Link handles basePath automatically
+<Link href="/work">Our Work</Link>
+
+// WRONG for internal links - use Link instead
+<a href="/work">Our Work</a>
+```
+
+## Key Files
+
+| File | Purpose |
+|------|---------|
+| `src/app/layout.tsx` | Root layout with Header/Footer |
+| `src/app/page.tsx` | Homepage |
+| `src/app/work/[slug]/page.tsx` | Dynamic case study pages |
+| `src/app/blog/[slug]/page.tsx` | Dynamic blog post pages |
+| `src/app/api/cms/[collection]/route.ts` | CMS collection API |
+| `src/app/api/cms/[collection]/[slug]/route.ts` | Single item API |
+| `src/app/globals.css` | Global styles with Tailwind @theme |
+| `src/lib/cms-data.ts` | Consolidated CMS data fetching |
+| `src/lib/assets.ts` | Static asset URL utility |
+| `src/lib/types.ts` | CMS type definitions |
+| `src/lib/constants.ts` | Collection IDs and helpers |
+| `src/lib/content-utils.ts` | Static content getters |
+| `src/data/content/*.json` | Static text content files |
+| `next.config.ts` | Next.js configuration |
+| `tailwind.config.ts` | Tailwind configuration |
+| `webflow.json` | Webflow Cloud framework config |
+| `open-next.config.ts` | OpenNext adapter config |
+| `wrangler.jsonc` | Cloudflare Workers config |
 
 ## CMS Collection IDs Reference
 
@@ -77,331 +230,212 @@ Use direct Webflow API v2 calls in the Astro codebase for:
 ## Environment Variables
 
 ### Local Development (`.env`)
+
 ```env
 WEBFLOW_SITE_API_TOKEN=<your-site-token>
 WEBFLOW_SITE_ID=loudface
+NEXT_PUBLIC_BASE_PATH=
 ```
 
 ### Webflow Cloud Production
+
 These are automatically available at runtime:
 - `WEBFLOW_SITE_ID` - Auto-injected
 - `WEBFLOW_SITE_API_TOKEN` - Auto-injected
 
 Access pattern in code:
+
 ```typescript
-// Works in both local and production
-const accessToken = (locals as any).runtime?.env?.WEBFLOW_SITE_API_TOKEN
-  || import.meta.env.WEBFLOW_SITE_API_TOKEN;
+const accessToken = process.env.WEBFLOW_SITE_API_TOKEN;
 ```
 
-## Key Files
+## Component Architecture
 
-| File | Purpose |
-|------|---------|
-| `src/layouts/Layout.astro` | Main layout with Tailwind CSS |
-| `src/pages/index.astro` | Homepage |
-| `src/pages/work/[slug].astro` | Dynamic case study pages |
-| `src/pages/api/cms/[collection].ts` | CMS collection API |
-| `src/pages/api/cms/[collection]/[slug].ts` | Single item API |
-| `src/pages/design-system.astro` | Design system reference page |
-| `src/pages/dev/editor.astro` | Content editor (dev-only) |
-| `src/data/content/*.json` | Static text content files |
-| `src/lib/content-utils.ts` | Content getter utilities |
-| `astro.config.mjs` | Astro configuration |
-| `src/lib/assets.ts` | Static asset URL utility |
-| `src/lib/cms-data.ts` | Consolidated CMS data fetching |
-| `src/lib/api-utils.ts` | API response utilities |
-| `src/lib/icons.ts` | Shared icon definitions |
-| `src/lib/types.ts` | CMS type definitions |
+### Directory Structure
+
+```
+src/
+├── app/                    # Next.js App Router pages
+│   ├── layout.tsx         # Root layout
+│   ├── page.tsx           # Homepage
+│   ├── globals.css        # Global styles + Tailwind @theme
+│   ├── work/[slug]/       # Case study pages
+│   ├── blog/[slug]/       # Blog post pages
+│   └── api/               # API routes
+├── components/
+│   ├── Header.tsx         # Site header (Client Component)
+│   ├── Footer.tsx         # Site footer
+│   ├── sections/          # Page section components
+│   │   ├── Hero.tsx
+│   │   ├── Partners.tsx
+│   │   ├── CaseStudySlider.tsx
+│   │   └── ...
+│   └── ui/                # Reusable UI components
+│       ├── Button.tsx
+│       ├── SectionContainer.tsx
+│       └── ...
+├── hooks/
+│   └── useCarousel.ts     # Embla carousel hook
+├── lib/
+│   ├── cms-data.ts        # CMS data fetching
+│   ├── assets.ts          # Asset URL utility
+│   ├── types.ts           # TypeScript types
+│   └── constants.ts       # Collection IDs
+└── data/
+    └── content/           # JSON content files
+```
+
+### Server vs Client Components
+
+| Component Type | Directive | Use For |
+|---------------|-----------|---------|
+| Server Component | (default) | Data fetching, static rendering |
+| Client Component | `'use client'` | Interactivity, hooks, browser APIs |
+
+**Client Components in this project:**
+- `Header.tsx` - Mobile menu toggle, dropdowns
+- `NewsletterForm.tsx` - Form state
+- `CalHandler.tsx` - Cal.com modal
+- Carousel wrappers using `useCarousel` hook
 
 ## Component Inventory
 
-### CMS-Driven Components
+### Section Components (src/components/sections/)
 
-Components that display data from Webflow CMS collections.
+| Component | CMS Collections Used |
+|-----------|---------------------|
+| Hero | case-studies, clients |
+| Partners | testimonials, clients |
+| CaseStudySlider | case-studies, clients |
+| Results | case-studies, testimonials |
+| Knowledge | blog, categories, team-members |
+| Marketing | (static content) |
+| Approach | (static content) |
+| Audit | (static content) |
+| FAQ | (static content) |
+| CTA | (static content) |
 
-| Component | CMS Collection | Section ID |
-|-----------|----------------|------------|
-| Hero | case-studies, clients, industries | `HERO_SLIDER` |
-| Partners | testimonials, clients | `PARTNERS_TESTIMONIALS`, `PARTNERS_CLIENTS` |
-| CaseStudySlider | case-studies, clients, industries, testimonials | `CASE_STUDY_SLIDER` |
-| Results | case-studies, testimonials, clients | `RESULTS_CASE_STUDIES`, `RESULTS_TESTIMONIALS` |
-| Knowledge | blog, categories, team-members | `KNOWLEDGE_SLIDER` |
-| Footer | case-studies, blog | `FOOTER_CASE_STUDIES`, `FOOTER_BLOG_POSTS` |
-
-### Static Content Components
-
-Components that use JSON content layer (editable via `/dev/editor`).
-
-| Component | Content File |
-|-----------|--------------|
-| Hero | `hero.json` |
-| Marketing | `marketing.json` |
-| Approach | `approach.json` |
-| Audit | `audit.json` |
-| CTA | `cta.json` |
-| FAQ | `faq.json`, `faq-items.json` |
-| Knowledge | `knowledge.json` |
-| Results | `results.json` |
-| Partners | `partners.json` |
-| CaseStudySlider | `case-study-slider.json` |
-| Newsletter | `newsletter.json` |
-
-### Reusable UI Components
+### UI Components (src/components/ui/)
 
 | Component | Purpose |
 |-----------|---------|
-| Button | Standardized CTA buttons with Cal.com integration |
-| CarouselNav | Prev/next navigation for Embla carousels (light/dark variants) |
+| Button | Standardized CTA buttons |
+| CarouselNav | Prev/next navigation for Embla carousels |
+| SectionContainer | Consistent section padding/max-width |
+| SectionHeader | Section H2 with optional highlight |
 
-## Static Assets (CRITICAL for Webflow Cloud)
+## Tailwind CSS v4 Configuration (CRITICAL)
 
-Webflow Cloud mounts the Astro app at `/customsite`. This means **all static asset paths must be prefixed** or they will 404 in production.
+### Using `@theme` Block
 
-### The `asset()` Utility
+Tailwind v4 with PostCSS plugin requires custom colors in a `@theme` block inside `globals.css`:
 
-**ALWAYS use the `asset()` function for static image paths:**
+```css
+@import "tailwindcss";
 
-```astro
----
-import { asset } from '../../lib/assets';
----
+@theme {
+  --color-primary-500: #6366f1;
+  --color-surface-900: #22302e;
+  /* ... all custom colors ... */
 
-<!-- CORRECT - uses asset() -->
-<img src={asset('/images/logo.svg')} alt="Logo" />
-
-<!-- WRONG - will 404 in production -->
-<img src="/images/logo.svg" alt="Logo" />
-```
-
-### When to Use `asset()`
-
-| Scenario | Use `asset()`? |
-|----------|----------------|
-| Hardcoded image paths in templates | ✅ Yes |
-| Image paths from JSON content files | ✅ Yes |
-| Image URLs from Webflow CMS (full URLs) | ❌ No |
-| External URLs (https://...) | ❌ No |
-
-### How It Works
-
-```typescript
-// src/lib/assets.ts
-export function asset(path: string): string {
-  const base = import.meta.env.BASE_URL || '/';
-  // Handles leading/trailing slashes
-  return `${base}${path}`;
+  --font-sans: "Satoshi", system-ui, sans-serif;
+  --font-heading: "Neue Montreal", system-ui, sans-serif;
 }
 ```
 
-- **Development:** Returns `/images/logo.svg` (no prefix)
-- **Production:** Returns `/customsite/images/logo.svg` (with prefix)
+**IMPORTANT:** Do NOT use `@config` directive with Tailwind v4 PostCSS plugin - it doesn't work reliably. Use `@theme` blocks with CSS variables instead.
 
-### JSON Content with Images
+### Available Color Tokens
 
-When loading image paths from JSON content files, apply `asset()` at render time:
+| Token | Use For |
+|-------|---------|
+| `primary-*` | Brand colors (50-950) |
+| `surface-*` | Neutral/background colors (50-950) |
+| `success/warning/error/info` | Semantic status colors |
 
-```astro
----
-import { getAuditContent } from '../../lib/content-utils';
-import { asset } from '../../lib/assets';
-const content = getAuditContent();
----
-
-{content.challenges.map((item) => (
-  <img src={asset(item.icon)} alt={item.title} />
-))}
-```
-
-### Why This Is Needed
-
-**Webflow Cloud Architecture:** When you deploy a custom code app (like Astro) alongside a Webflow-designed site, Webflow Cloud mounts your app at `/customsite` to avoid URL conflicts with Webflow's own pages. This means:
-
-- Your Webflow pages: `www.example.com/`, `www.example.com/about`
-- Your Astro app: `www.example.com/customsite/`, `www.example.com/customsite/work`
-- Your static assets: `www.example.com/customsite/images/logo.svg`
-
-**The Problem:** Astro's `base` config (set to `/customsite`) only affects:
-- Route generation (`/work` → `/customsite/work`)
-- JS/CSS imports via build tools
-
-It does **NOT** rewrite hardcoded HTML paths like `<img src="/images/logo.svg">`. These will 404 because the browser requests `/images/logo.svg` instead of `/customsite/images/logo.svg`.
-
-**The Solution:** The `asset()` utility reads `import.meta.env.BASE_URL` and prefixes paths at runtime, bridging this gap.
-
-## Internal Route Links (CRITICAL for Webflow Cloud)
-
-Just like static assets, **internal navigation links must also be prefixed** with the base URL or they will 404.
-
-### The `route()` Helper
-
-Use a `route()` helper in components with internal links:
-
-```astro
----
-// Helper to prefix internal routes with base URL
-const base = import.meta.env.BASE_URL || '/';
-const route = (path: string) => {
-  const normalizedBase = base.endsWith('/') ? base.slice(0, -1) : base;
-  const normalizedPath = path.startsWith('/') ? path : `/${path}`;
-  return `${normalizedBase}${normalizedPath}`;
-};
----
-
-<!-- CORRECT - uses route() -->
-<a href={route('/work')}>Our Work</a>
-<a href={route('/about')}>About Us</a>
-
-<!-- WRONG - will 404 in production -->
-<a href="/work">Our Work</a>
-```
-
-### When to Use `route()`
-
-| Scenario | Use `route()`? |
-|----------|----------------|
-| Hardcoded internal links (`href="/work"`) | ✅ Yes |
-| Links from JSON content files | ✅ Yes |
-| External URLs (https://...) | ❌ No |
-| Anchor links (`href="#section"`) | ❌ No |
-| Dynamic slugs (already use base) | ❌ No (Astro handles these) |
-
-### Key Components Using `route()`
-
-- `Header.astro` - All nav links, logo home link, dropdown menu links
-- Any component with hardcoded internal navigation
-
-### Note on Astro's `base` Config
-
-Astro's `base: '/customsite'` in `astro.config.mjs` automatically handles:
-- Generated page routes (dynamic `[slug]` pages)
-- `Astro.url` and `Astro.site`
-- Asset imports via Vite
-
-It does **NOT** handle:
-- Hardcoded `href="/path"` attributes in HTML
-- Links defined in component frontmatter arrays
-
-This is why both `asset()` and `route()` are needed for this Webflow Cloud setup.
-
-## Cal.com Integration
-
-The site uses Cal.com for booking calls. The embed is configured in `Layout.astro`.
-
-### How It Works
-
-1. **Cal.com SDK** is loaded in `<head>` (Layout.astro)
-2. **Click handler** listens for `.btn-cta`, `[data-cal-trigger]`, or `#book-modal` links
-3. **Modal opens** via `Cal("modal", { calLink: "..." })`
-
-### Configuration
-
-```javascript
-// In Layout.astro
-Cal("modal", {
-  calLink: "arnelbukva/loudface-intro-call",  // Change this to your Cal.com link
-  config: { layout: "month_view" }
-});
-```
-
-### Triggering the Booking Modal
-
-Any of these will open the Cal.com booking modal:
-
-```html
-<!-- Class-based trigger -->
-<button class="btn-cta">Book a call</button>
-
-<!-- Attribute-based trigger -->
-<a data-cal-trigger href="#">Schedule meeting</a>
-
-<!-- Hash link trigger -->
-<a href="#book-modal">Book now</a>
-```
-
-## CSS Architecture
-
-### Tailwind-Native Styling
-- All styling via Tailwind utility classes in templates
-- Custom components defined in `src/styles/components.css` using `@apply`
-- No external CSS dependencies
+**Never use:** `gray-*`, `indigo-*`, or other default Tailwind colors.
 
 ### Current Fonts
+
 - **Satoshi** - Body text (400, 500, 700 weights)
 - **Neue Montreal** - Headings (500 weight)
 - **Geist Mono** - Code/monospace
 
 Font files location: `public/fonts/`
 
-### Tailwind Configuration
+## Cal.com Integration
 
-**CRITICAL: Tailwind v4 with `@config` directive**
+The site uses Cal.com for booking calls. Configuration is in `CalHandler.tsx`:
 
-This project uses Tailwind v4 with the Vite plugin (`@tailwindcss/vite`). Unlike Tailwind v3, the custom theme in `tailwind.config.mjs` is **not automatically loaded**. The CSS file MUST include the `@config` directive:
-
-```css
-@import "tailwindcss";
-@config "../../tailwind.config.mjs";  /* Required for custom colors/theme */
+```tsx
+Cal("modal", {
+  calLink: "arnelbukva/loudface-intro-call",
+  config: { layout: "month_view" }
+});
 ```
 
-Without this directive, custom colors like `bg-surface-900` and `text-primary-500` will not work, causing invisible text and missing styles.
+Triggering the booking modal:
 
-**Config file:** `tailwind.config.mjs`
-- Modern color system (primary, surface, semantic)
-- Custom font families configured
-- 8px base grid spacing system
-- Custom animations (fade, slide, marquee)
-
-### Design System Reference
-
-Before creating UI components, read `src/pages/design-system.astro` for approved patterns.
-See `.claude/rules/styling.md` for token mappings.
+```html
+<button className="btn-cta">Book a call</button>
+<a data-cal-trigger href="#">Schedule meeting</a>
+<a href="#book-modal">Book now</a>
+```
 
 ## API Response Format
 
 The CMS API routes normalize Webflow v2 response format:
+
 ```typescript
 // Input from Webflow v2 API
-{
-  items: [{
-    id: "...",
-    fieldData: { slug: "...", name: "...", ... }
-  }]
-}
+{ items: [{ id: "...", fieldData: { slug: "...", name: "..." } }] }
 
 // Output from our API (normalized)
-{
-  id: "...",
-  slug: "...",
-  name: "...",
-  fieldData: { ... }, // Still available if needed
-  ...
-}
+{ id: "...", slug: "...", name: "...", fieldData: { ... } }
 ```
 
 ## Common Tasks
 
-### Adding a New Dynamic Page for a Collection
-1. Create `src/pages/[collection-name]/[slug].astro`
-2. Set `export const prerender = false;` for SSR
-3. Fetch data using the collection ID from the table above
-4. Use `item.fieldData.slug` to match URL slug
+### Adding a New Dynamic Page
+
+1. Create `src/app/[collection-name]/[slug]/page.tsx`
+2. Use `generateMetadata` for SEO
+3. Fetch data using `fetchHomepageData()` from `src/lib/cms-data.ts`
+
+```tsx
+import { fetchHomepageData } from '@/lib/cms-data';
+import { notFound } from 'next/navigation';
+
+export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params;
+  // ... return metadata
+}
+
+export default async function Page({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params;
+  const data = await fetchHomepageData(process.env.WEBFLOW_SITE_API_TOKEN!);
+  const item = data.items.find(i => i.slug === slug);
+  if (!item) notFound();
+  return <div>...</div>;
+}
+```
+
+**Note:** In Next.js 16, `params` is a Promise and must be awaited.
 
 ### Testing CMS Locally
+
 ```bash
 # Start dev server
 npm run dev
 
 # Test collection endpoint
-curl http://localhost:4321/api/cms/case-studies
+curl http://localhost:3005/api/cms/case-studies
 
 # Test single item
-curl http://localhost:4321/api/cms/case-studies/[slug]
+curl http://localhost:3005/api/cms/case-studies/[slug]
 ```
 
 ### Deploying Changes
-
-Webflow Cloud automatically deploys when you push to the `main` branch on GitHub.
 
 ```bash
 # Build first to catch errors
@@ -413,7 +447,7 @@ git commit -m "Your commit message"
 git push origin main
 ```
 
-Webflow will automatically detect the push and deploy the site. There is no `webflow cloud deploy` CLI command.
+Webflow Cloud will automatically detect the push and deploy.
 
 ## Webflow MCP Usage Examples
 
@@ -428,177 +462,43 @@ Use Webflow MCP: list_collection_items for collection 67bcc512271a06e2e0acc70d
 Use Webflow MCP: get_collection for collection 67bcc512271a06e2e0acc70d
 ```
 
-## Content Editor (Static Text)
+## Static Content (JSON Layer)
 
-The site has a JSON-based content editor at `/dev/editor` (dev-only) for editing static text in components.
+Static text content is stored in `src/data/content/*.json` and accessed via `src/lib/content-utils.ts`:
 
-**This is SEPARATE from Webflow CMS** - use this for hardcoded component defaults (headlines, CTAs, descriptions), not for Webflow CMS items.
+```tsx
+import { getHeroContent } from '@/lib/content-utils';
 
-### How It Works
-
-1. **JSON files** in `src/data/content/` store static text
-2. **Components** import content via `src/lib/content-utils.ts` getters
-3. **Editor** at `/dev/editor` provides a form UI to edit JSON files
-4. **Line breaks**: Editor converts Enter → `<br>` tags automatically
-
-### Creating New Editable Content
-
-1. Create `src/data/content/my-section.json`:
-   ```json
-   { "title": "My Title", "description": "My description" }
-   ```
-
-2. Register in `src/lib/content-utils.ts`:
-   - Import the JSON file
-   - Add type interface
-   - Add to `contentRegistry`
-   - Create getter function
-
-3. Use in component:
-   ```astro
-   ---
-   import { getMySectionContent } from '../../lib/content-utils';
-   const content = getMySectionContent();
-   const { title = content.title } = Astro.props;
-   ---
-   <h2 set:html={title} />
-   ```
-
-### Rendering Content
-
-| Field Type | Rendering |
-|------------|-----------|
-| Text with possible line breaks | `set:html={content.field}` |
-| Single-line text (buttons, labels) | `{content.field}` |
-
-See `.claude/reference/content-editor-details.md` for content files inventory and detailed examples.
-
-## CMS Control Panel Development Rules (MUST FOLLOW)
-
-The site has a schema-driven CMS Control Panel that enables visual filtering/sorting of CMS items in dev mode. **These rules are MANDATORY when working with CMS components.**
-
-### Schema Files (Auto-Generated - DO NOT EDIT)
-
-| File | Purpose |
-|------|---------|
-| `src/data/cms-schemas.json` | Auto-generated Webflow collection schemas |
-| `src/data/cms-config.json` | User-configured filter/sort settings |
-
-**`cms-schemas.json` is auto-generated on build via `npm run prebuild`.** Never edit this file manually. If Webflow collection fields change, run `npm run generate:schemas` to update.
-
-### MANDATORY: Using the `createCMS()` Helper
-
-When rendering any CMS collection items, you **MUST** use the `createCMS()` helper from `src/lib/cms.ts`. This helper:
-- Auto-generates stable section IDs (no manual constants needed)
-- Applies server-side filter/sort config
-- Generates required data attributes for the CMS Control Panel
-
-```astro
----
-import { createCMS } from '../../lib/cms';
-import type { CaseStudy, Client } from '../../lib/types';
-
-// Create CMS helper - auto-generates section IDs
-const cms = createCMS('MyComponent');
-
-// For multi-item sections (sliders, grids)
-const slider = cms.section(rawCaseStudies as (CaseStudy & { id: string })[], 'case-studies', 'Case Studies');
-
-// For single-item sections (featured slots)
-const featuredSlot = cms.slot(rawCaseStudies as (CaseStudy & { id: string })[], 'case-studies', 'Featured Item');
-
-// Build reference lookups for displaying reference field names
-const clients = new Map(clientsList.map(c => [c.id, c]));
-const referenceLookups = { clients };
----
-
-<!-- Multi-item section -->
-<div {...slider.attrs}>
-  {slider.items.map(item => (
-    <a
-      href={`/work/${item.slug}`}
-      class="item-class"
-      {...cms.item(item, 'case-studies', referenceLookups)}
-    >
-      <!-- item content -->
-    </a>
-  ))}
-</div>
-
-<!-- Single-item slot -->
-{featuredSlot.item && (
-  <div {...featuredSlot.attrs}>
-    <div {...cms.item(featuredSlot.item, 'case-studies', referenceLookups)}>
-      <!-- item content -->
-    </div>
-  </div>
-)}
+const content = getHeroContent();
+// content.headline, content.description, etc.
 ```
 
-### API Reference
+Available content files:
+- `hero.json`, `cta.json`, `faq.json`, `faq-items.json`
+- `approach.json`, `marketing.json`, `partners.json`, `knowledge.json`
+- `results.json`, `audit.json`, `case-study-slider.json`, `newsletter.json`
+- `work.json`, `about.json`
 
-**`createCMS(componentName: string)`**
-Creates a CMS helper instance that auto-generates section IDs based on the component name.
+### Rendering Content with HTML
 
-**`cms.section(items, collection, label?)`**
-For multi-item sections (sliders, grids). Returns `{ items: T[], sectionId: string, attrs: Record<string, string> }`.
+For text that may contain `<br>` tags, use `dangerouslySetInnerHTML`:
 
-**`cms.slot(items, collection, label?)`**
-For single-item sections (featured slots). Returns `{ item: T | undefined, sectionId: string, attrs: Record<string, string> }`.
+```tsx
+<h1 dangerouslySetInnerHTML={{ __html: content.headline }} />
+```
 
-**`cms.item(item, collection, lookups?)`**
-Generates data attributes for a single CMS item. Spread onto the item element.
+For single-line text (button labels), use regular interpolation:
 
-### Auto-Generated Section IDs
-
-Section IDs are automatically generated in the format: `{component-name}-{collection}-{index}`
-
-Examples:
-- `hero-case-studies-0` - First case studies section in Hero component
-- `results-case-studies-0` - First case study slot in Results
-- `results-case-studies-1` - Second case study slot in Results
-- `partners-testimonials-0` - First testimonials section in Partners
-
-The index auto-increments per collection within a component, enabling multiple independent sections of the same collection type.
-
-### File Reference for CMS Control Panel
-
-| File | Purpose |
-|------|---------|
-| `src/lib/cms.ts` | **Main CMS helper** - use this in components |
-| `src/lib/cms-utils.ts` | Server-side filter/sort application |
-| `src/lib/cms-attributes.ts` | Generate data attributes from schema |
-| `src/lib/dev/cms-panel.ts` | Section definitions, types, operator config |
-| `src/lib/dev/cms-panel-init.ts` | Panel UI initialization (client-side) |
-| `src/styles/dev-panel.css` | Panel styling |
-| `scripts/generate-cms-schemas.ts` | Schema generation from Webflow API |
-
-### Filter Operators by Field Type
-
-| Field Type | Available Operators |
-|------------|---------------------|
-| `text` | equals, not_equals |
-| `reference` | equals, not_equals, is_set, is_not_set |
-| `image` | is_set, is_not_set |
-| `boolean` | equals |
-| `date` | equals, not_equals, is_set, is_not_set |
-
-### Quick Reference: CMS Development Checklist
-
-When creating/modifying CMS components:
-- [ ] Import `createCMS` from `../../lib/cms`
-- [ ] Create CMS helper: `const cms = createCMS('ComponentName')`
-- [ ] Use `cms.section()` for multi-item sections or `cms.slot()` for single items
-- [ ] Spread `{...section.attrs}` on the container element
-- [ ] Spread `{...cms.item(item, collection, lookups)}` on each item element
-- [ ] Build reference lookups for any reference fields you want to display names for
-
-**No manual section IDs needed!** Section IDs are auto-generated from the component name and collection.
+```tsx
+<button>{content.ctaText}</button>
+```
 
 ## Notes
 
-- Always use Webflow API v2 (`/v2/collections/...`) - v1 returns errors
+- Always use Webflow API v2 (`/v2/collections/...`)
 - Field data is nested in `fieldData` object in v2 responses
-- The API routes normalize this for easier template access
 - Build must pass before deploying: `npm run build`
-- CMS schemas auto-regenerate on build - add new collections to `scripts/generate-cms-schemas.ts` COLLECTION_IDS
+- Dev server runs on port 3005: `npm run dev`
+- Use `Link` from `next/link` for internal navigation
+- Use `asset()` from `@/lib/assets` for static image paths
+- In Next.js 16, dynamic route `params` is a Promise - must await it

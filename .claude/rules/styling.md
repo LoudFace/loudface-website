@@ -42,16 +42,16 @@ For dark backgrounds, use `text-white` instead of `text-surface-900`.
 
 **Use the `SectionContainer` component** for all page sections. This ensures consistent padding and max-width.
 
-```astro
-import SectionContainer from './SectionContainer.astro';
+```tsx
+import { SectionContainer } from '@/components/ui';
 
 <SectionContainer>
-  <!-- content -->
+  {/* content */}
 </SectionContainer>
 
-<!-- With padding variant -->
+{/* With padding variant */}
 <SectionContainer padding="lg">
-  <!-- content -->
+  {/* content */}
 </SectionContainer>
 ```
 
@@ -66,11 +66,11 @@ import SectionContainer from './SectionContainer.astro';
 
 ### Manual Section Pattern (if not using component)
 
-```astro
-<section class="py-16 md:py-20 lg:py-24">
-  <div class="px-4 md:px-8 lg:px-12">
-    <div class="max-w-7xl mx-auto">
-      <!-- content -->
+```tsx
+<section className="py-16 md:py-20 lg:py-24">
+  <div className="px-4 md:px-8 lg:px-12">
+    <div className="max-w-7xl mx-auto">
+      {/* content */}
     </div>
   </div>
 </section>

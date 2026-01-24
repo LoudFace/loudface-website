@@ -74,16 +74,16 @@ Use the **Grep tool** (not bash grep) to search for issues:
 
 | Check | Pattern | Path | Glob |
 |-------|---------|------|------|
-| Images without width | `<img` then verify `width=` | `src` | `*.astro` |
-| Images without lazy | `<img` then verify `loading=` | `src` | `*.astro` |
-| transition: all | `transition: all` or `transition:all` | `src/styles` | `*.css` |
-| Inline scripts | `<script>` | `src` | `*.astro` |
-| Missing preconnect | Check `<head>` for `rel="preconnect"` | `src/layouts` | `*.astro` |
+| Images without width | `<img` then verify `width=` | `src` | `*.tsx` |
+| Images without lazy | `<img` then verify `loading=` | `src` | `*.tsx` |
+| transition: all | `transition-all` | `src` | `*.tsx` |
+| Inline scripts | `<script>` | `src` | `*.tsx` |
+| Missing preconnect | Check `<head>` for `rel="preconnect"` | `src/app` | `layout.tsx` |
 
 **Example Grep tool usage:**
 ```
-Grep pattern="<img" glob="*.astro" path="src/components"
-Grep pattern="transition: all" glob="*.css" path="src/styles"
+Grep pattern="<img" glob="*.tsx" path="src/components"
+Grep pattern="transition-all" glob="*.tsx" path="src"
 ```
 
 ## Output Format
@@ -116,22 +116,22 @@ Grep pattern="transition: all" glob="*.css" path="src/styles"
 ## Common Fixes
 
 ### Hero Image Preload
-```html
-<link rel="preload" as="image" href="/images/hero.webp" fetchpriority="high">
+```tsx
+<link rel="preload" as="image" href="/images/hero.webp" fetchPriority="high" />
 ```
 
 ### Font Preload
-```html
-<link rel="preload" as="font" type="font/woff2" href="/fonts/satoshi.woff2" crossorigin>
+```tsx
+<link rel="preload" as="font" type="font/woff2" href="/fonts/satoshi.woff2" crossOrigin="anonymous" />
 ```
 
 ### Preconnect
-```html
-<link rel="preconnect" href="https://cdn.example.com">
-<link rel="dns-prefetch" href="https://cdn.example.com">
+```tsx
+<link rel="preconnect" href="https://cdn.example.com" />
+<link rel="dns-prefetch" href="https://cdn.example.com" />
 ```
 
 ### Image Dimensions
-```html
-<img src="..." alt="..." width="800" height="600" loading="lazy">
+```tsx
+<img src="..." alt="..." width={800} height={600} loading="lazy" />
 ```

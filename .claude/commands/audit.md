@@ -31,3 +31,15 @@ Run a comprehensive accessibility and performance audit on the LoudFace website.
 5. **Update QA-REPORT.md** with results
 
 Use the Grep tool (not bash grep) to search for patterns. Reference the accessibility-audit and performance-audit agents in `.claude/agents/` for detailed checklists.
+
+## File Patterns
+
+When searching for issues, use these patterns:
+
+| Check | Pattern | Glob |
+|-------|---------|------|
+| Missing alt attributes | `<img` then verify `alt=` | `*.tsx` |
+| Missing labels | `<input` without nearby `<label` | `*.tsx` |
+| Hardcoded image paths | `src="/images` (should use `asset()`) | `*.tsx` |
+| Missing focus-visible | `focus:` (should be `focus-visible:`) | `*.tsx`, `*.css` |
+| transition: all | `transition-all` or `transition: all` | `*.tsx`, `*.css` |

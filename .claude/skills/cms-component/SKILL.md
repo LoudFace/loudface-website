@@ -1,84 +1,109 @@
 # CMS Component Creation
 
-Create Astro components that render Webflow CMS data with proper filtering and control panel support.
+Create React components that render Webflow CMS data with proper typing and patterns for Next.js.
 
 ## Required Imports
 
-```astro
----
-// From src/components/ui/: use '../../lib/'
-import { createCMS } from '../../lib/cms';
-import { asset } from '../../lib/assets';  // For static image paths
-import type { CaseStudy, Client } from '../../lib/types';
----
+```tsx
+// For Server Components (default)
+import { asset } from '@/lib/assets';  // For static image paths
+import type { CaseStudy, Client } from '@/lib/types';
+
+// For Client Components (only when needed)
+'use client';
+import { useState, useEffect } from 'react';
 ```
 
-## Component Template
+## Server Component Template (Default)
 
-```astro
----
-import { createCMS } from '../../lib/cms';
-import { asset } from '../../lib/assets';
-import type { CaseStudy, Client } from '../../lib/types';
+```tsx
+// src/components/sections/MySection.tsx
+import { asset } from '@/lib/assets';
+import type { CaseStudy, Client } from '@/lib/types';
+import { SectionContainer, SectionHeader } from '@/components/ui';
 
-interface Props {
+interface MySectionProps {
   caseStudies: CaseStudy[];
-  clients?: Map<string, Client>;
+  clients: Client[];
 }
 
-const { caseStudies: rawCaseStudies, clients = new Map() } = Astro.props;
+export function MySection({ caseStudies, clients }: MySectionProps) {
+  // Build lookup maps for references
+  const clientsMap = new Map(clients.map(c => [c.id, c]));
 
-// Create CMS helper - auto-generates section IDs
-const cms = createCMS('MyComponent');
+  return (
+    <SectionContainer>
+      <SectionHeader title="Case Studies" />
+      <div className="grid gap-6">
+        {caseStudies.map(item => (
+          <a
+            key={item.id}
+            href={`/work/${item.slug}`}
+            className="block hover:opacity-75 transition-opacity"
+          >
+            <h3>{item.name}</h3>
+            <img
+              src={item['main-project-image-thumbnail']?.url || asset('/images/placeholder.webp')}
+              alt={item.name}
+            />
+          </a>
+        ))}
+      </div>
+    </SectionContainer>
+  );
+}
+```
 
-// For multi-item sections (sliders, grids)
-const slider = cms.section(rawCaseStudies as (CaseStudy & { id: string })[], 'case-studies', 'Case Studies');
+## Client Component Template
 
-// For single-item sections (featured slots)
-// const featured = cms.slot(rawCaseStudies as (CaseStudy & { id: string })[], 'case-studies', 'Featured Item');
+```tsx
+// src/components/MyCarousel.tsx
+'use client';
 
-// Build reference lookups for displaying names
-const referenceLookups = { clients };
----
+import { useCarousel } from '@/hooks/useCarousel';
+import { CarouselNav } from '@/components/ui';
+import type { CaseStudy } from '@/lib/types';
 
-<!-- Multi-item section -->
-<section>
-  <div {...slider.attrs}>
-    {slider.items.map(item => (
-      <a
-        href={`/work/${item.slug}`}
-        class="item-class"
-        {...cms.item(item, 'case-studies', referenceLookups)}
-      >
-        <h3>{item.name}</h3>
-        <img src={item['main-project-image-thumbnail']?.url || asset('/images/placeholder.webp')} alt={item.name} />
-      </a>
-    ))}
-  </div>
-</section>
+interface MyCarouselProps {
+  items: CaseStudy[];
+}
+
+export function MyCarousel({ items }: MyCarouselProps) {
+  const [emblaRef, emblaApi] = useCarousel({ loop: true });
+
+  return (
+    <div>
+      <div className="embla" ref={emblaRef}>
+        <div className="embla__container">
+          {items.map(item => (
+            <div key={item.id} className="embla__slide">
+              {/* slide content */}
+            </div>
+          ))}
+        </div>
+      </div>
+      <CarouselNav emblaApi={emblaApi} variant="light" />
+    </div>
+  );
+}
 ```
 
 ## API Reference
 
-**`createCMS(componentName: string)`**
-Creates a CMS helper instance. Section IDs are auto-generated as `{component-name}-{collection}-{index}`.
+### Type Imports
 
-**`cms.section(items, collection, label?)`**
-For multi-item sections (sliders, grids). Returns:
+**ALWAYS import CMS types from `@/lib/types`:**
+
 ```typescript
-{ items: T[], sectionId: string, attrs: Record<string, string> }
+import type { CaseStudy, Client, Testimonial, BlogPost } from '@/lib/types';
 ```
 
-**`cms.slot(items, collection, label?)`**
-For single-item sections (featured slots). Returns:
-```typescript
-{ item: T | undefined, sectionId: string, attrs: Record<string, string> }
-```
+Available types:
+- `CaseStudy`, `Client`, `Testimonial`, `BlogPost`
+- `Category`, `Industry`, `TeamMember`, `Technology`
+- `ServiceCategory`, `WebflowImage`
 
-**`cms.item(item, collection, lookups?)`**
-Generates data attributes for a single CMS item. Spread onto the item element.
-
-## Collection IDs
+### Collection IDs
 
 See `CLAUDE.md` → "CMS Collection IDs Reference" for the full table of collection IDs and API routes.
 
@@ -86,17 +111,18 @@ See `CLAUDE.md` → "CMS Collection IDs Reference" for the full table of collect
 
 When creating a CMS component:
 
-- [ ] Import `createCMS` from `../../lib/cms`
-- [ ] Create CMS helper: `const cms = createCMS('ComponentName')`
-- [ ] Use `cms.section()` for multi-item sections or `cms.slot()` for single items
-- [ ] Spread `{...section.attrs}` on the container element
-- [ ] Spread `{...cms.item(item, collection, lookups)}` on each item element
-- [ ] Build reference lookups for any reference fields
+- [ ] Create as Server Component by default (no `'use client'`)
+- [ ] Import types from `@/lib/types`
 - [ ] Use `asset()` for fallback image paths
+- [ ] Use `SectionContainer` for layout
+- [ ] Use `SectionHeader` for section headings
+- [ ] Use `Link` from `next/link` for internal navigation
+- [ ] Add `'use client'` only if using hooks/state/effects
+- [ ] Add `key` prop to all mapped elements
 
 ## Field Access Patterns
 
-```javascript
+```typescript
 // Direct fields (normalized by API)
 item.name
 item.slug
@@ -107,7 +133,7 @@ item['project-title']
 item['result-1---number']
 
 // Reference fields (need lookup)
-const client = clients.get(item.client);
+const client = clientsMap.get(item.client);
 const clientName = client?.name;
 
 // Image fields with fallback
@@ -119,48 +145,26 @@ item['profile-image']?.url || asset('/images/placeholder-avatar.svg')
 
 Always handle empty collections:
 
-```astro
-{slider.items.length > 0 ? (
-  <div {...slider.attrs}>
-    {slider.items.map(item => (
-      <div {...cms.item(item, 'collection', lookups)}>
+```tsx
+{items.length > 0 ? (
+  <div className="grid gap-6">
+    {items.map(item => (
+      <div key={item.id}>
         {/* content */}
       </div>
     ))}
   </div>
 ) : (
-  <p class="text-surface-500 text-center py-12">No items found.</p>
-)}
-```
-
-## Single-Item Slots
-
-For independently configurable single items (e.g., featured case study):
-
-```astro
----
-// Multiple slots from the same collection - each independently configurable
-const slot1 = cms.slot(rawCaseStudies as (CaseStudy & { id: string })[], 'case-studies', 'Featured 1');
-const slot2 = cms.slot(rawCaseStudies as (CaseStudy & { id: string })[], 'case-studies', 'Featured 2');
----
-
-{slot1.item && (
-  <div {...slot1.attrs}>
-    <div {...cms.item(slot1.item, 'case-studies', referenceLookups)}>
-      <h3>{slot1.item.name}</h3>
-    </div>
-  </div>
+  <p className="text-surface-500 text-center py-12">No items found.</p>
 )}
 ```
 
 ## Static Text vs CMS Data
 
-| Content Type | Solution | Editable Via |
-|--------------|----------|--------------|
-| Hardcoded text (headlines, CTAs) | JSON content layer | `/dev/editor` |
-| Webflow CMS items | This skill's patterns | CMS Control Panel |
-
-For static text in components (section titles, button labels, descriptions), use the JSON content layer.
+| Content Type | Solution |
+|--------------|----------|
+| Static text (headlines, CTAs) | JSON content layer |
+| Webflow CMS items | CMS data fetching |
 
 ### Adding Static Text Support
 
@@ -168,28 +172,37 @@ For static text in components (section titles, button labels, descriptions), use
 2. **Register in** `src/lib/content-utils.ts` (import, type, getter function)
 3. **Import in component** and use as default prop values
 
-```astro
----
-import { createCMS } from '../../lib/cms';
-import { getMySectionContent } from '../../lib/content-utils';
-const content = getMySectionContent();
+```tsx
+import { getMySectionContent } from '@/lib/content-utils';
 
-const { title = content.title, description = content.description } = Astro.props;
----
+export function MySection() {
+  const content = getMySectionContent();
 
-<!-- Use set:html for text that may have line breaks -->
-<h2 set:html={title} />
-<p set:html={description} />
+  return (
+    <section>
+      {/* Use dangerouslySetInnerHTML for text that may have line breaks */}
+      <h2 dangerouslySetInnerHTML={{ __html: content.title }} />
+      <p dangerouslySetInnerHTML={{ __html: content.description }} />
 
-<!-- Use regular interpolation for single-line text (buttons, labels) -->
-<button>{content.ctaText}</button>
+      {/* Use regular interpolation for single-line text */}
+      <button>{content.ctaText}</button>
+    </section>
+  );
+}
 ```
 
-### Line Breaks
+## Server vs Client Decision
 
-The `/dev/editor` automatically converts Enter key presses to `<br>` tags:
-- **Editing**: Type normally, press Enter for line breaks
-- **JSON**: Stores proper `<br>` HTML tags
-- **Rendering**: Use `set:html={content.field}` for fields that may have line breaks
+| Need | Component Type |
+|------|----------------|
+| Data fetching | Server |
+| Static rendering | Server |
+| useState/useEffect | Client |
+| Event handlers (onClick) | Client |
+| Browser APIs | Client |
+| useCarousel hook | Client |
+| Form state | Client |
+
+**Rule:** Start with Server Component. Add `'use client'` only when needed.
 
 See `.claude/rules/component-patterns.md` for full documentation.
