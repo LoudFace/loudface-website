@@ -1,12 +1,15 @@
 /**
  * Global Styles for LoudFace Next.js
  *
- * This file contains:
- * 1. Tailwind CSS import
- * 2. Font declarations
- * 3. CSS reset (in @layer base)
- * 4. Accessibility patterns (in @layer components)
+ * CSS Cascade Layer precedence (lowest to highest):
+ *   theme < base < components < utilities
+ *
+ * All custom CSS MUST be in a @layer so Tailwind utilities can override when needed.
+ * Only @font-face and @keyframes stay unlayered (they are named definitions, not cascade rules).
  */
+
+/* Pre-declare layer order — components slots between base and utilities */
+@layer theme, base, components, utilities;
 
 @import "tailwindcss";
 
@@ -15,6 +18,9 @@
  * These CSS variables override Tailwind defaults
  * =========================================== */
 @theme {
+  /* Custom breakpoint */
+  --breakpoint-xs: 475px;
+
   /* Primary brand colors */
   --color-primary-50: #eef2ff;
   --color-primary-100: #e0e7ff;
@@ -59,10 +65,33 @@
   --font-sans: "Satoshi", system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
   --font-heading: "Neue Montreal", system-ui, sans-serif;
   --font-mono: "Geist Mono", ui-monospace, SFMono-Regular, monospace;
+
+  /* Custom font sizes (text-2xs, text-nav, text-hero) */
+  --text-2xs: 0.8125rem;
+  --text-2xs--line-height: 1.5;
+  --text-nav: 0.9375rem;
+  --text-nav--line-height: 1.5;
+  --text-hero: 2.25rem;
+  --text-hero--line-height: 1.15;
+  --text-hero--letter-spacing: -0.02em;
+
+  /* Animations */
+  --animate-fade-in: fadeIn 0.3s ease-out;
+
+  /* Component widths */
+  --width-dropdown: 34rem;
+  --max-width-content: 50rem;
+
+  /* Dark branded section palette (about page counters) */
+  --color-wine-950: #231421;
+  --color-wine-900: #382235;
+  --color-wine-text: #c8e0f7;
+  --color-wine-border: #cadbd9;
 }
 
 /* ===========================================
  * FONT DECLARATIONS
+ * (Unlayered — resource definitions, not cascade rules)
  * =========================================== */
 @font-face {
   font-family: Satoshi;
@@ -175,8 +204,8 @@
 }
 
 /* ===========================================
- * CSS BASE LAYER
- * Reset and global defaults
+ * BASE LAYER
+ * Reset, global defaults, and library defaults
  * =========================================== */
 @layer base {
   /* Box sizing reset */
@@ -199,8 +228,8 @@
     line-height: inherit;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    background-color: #fafafa; /* surface-50 */
-    color: #171717; /* surface-900 */
+    background-color: var(--color-surface-50);
+    color: var(--color-surface-950);
   }
 
   /* Media elements */
@@ -286,7 +315,7 @@
 
   /* Visible focus rings (WCAG 2.4.7) */
   *:focus-visible {
-    outline: 2px solid #6366f1; /* primary-500 */
+    outline: 2px solid var(--color-primary-500);
     outline-offset: 2px;
   }
 
@@ -307,19 +336,78 @@
     padding-left: env(safe-area-inset-left);
     padding-right: env(safe-area-inset-right);
   }
+
+  /* Embla Carousel defaults */
+  .embla {
+    overflow: hidden;
+  }
+
+  .embla__viewport {
+    overflow: hidden;
+  }
+
+  .embla__container {
+    display: flex;
+  }
+
+  .embla__slide {
+    flex: 0 0 auto;
+    min-width: 0;
+  }
+}
+
+/* ===========================================
+ * KEYFRAME DEFINITIONS
+ * (Unlayered — named animation definitions, not cascade rules)
+ * =========================================== */
+
+@keyframes fadeIn {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+@keyframes scroll-down {
+  0% {
+    transform: translateY(0);
+  }
+  100% {
+    transform: translateY(-50%);
+  }
+}
+
+@keyframes scroll-up {
+  0% {
+    transform: translateY(-50%);
+  }
+  100% {
+    transform: translateY(0);
+  }
+}
+
+@keyframes marquee {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
 }
 
 /* ===========================================
  * COMPONENT LAYER
- * Reusable component classes
+ * Reusable patterns and section-specific styles
  * =========================================== */
 @layer components {
-  /* Page wrapper - prevents horizontal overflow */
+  /* --- Accessibility & Layout --- */
+
   .page-wrapper {
     overflow-x: hidden;
   }
 
-  /* Screen reader only - for accessibility */
   .sr-only {
     position: absolute;
     width: 1px;
@@ -332,13 +420,12 @@
     border: 0;
   }
 
-  /* Skip link - visible on focus */
   .skip-link {
     position: absolute;
     left: -9999px;
     z-index: 9999;
     padding: 1rem 2rem;
-    background: #6366f1; /* primary-500 */
+    background: var(--color-primary-500);
     color: white;
     text-decoration: none;
     font-weight: 600;
@@ -354,7 +441,8 @@
     white-space: normal;
   }
 
-  /* Prose styles for rich text content */
+  /* --- Prose Base --- */
+
   .prose {
     max-width: 65ch;
   }
@@ -391,468 +479,415 @@
   }
 
   .prose a {
-    color: #4f46e5; /* primary-600 */
+    color: var(--color-primary-600);
     text-decoration: underline;
   }
 
   .prose a:hover {
-    color: #4338ca; /* primary-700 */
+    color: var(--color-primary-700);
   }
 
   .prose-lg {
     font-size: 1.125rem;
     line-height: 1.75;
   }
-}
 
-/* ===========================================
- * KEYFRAME ANIMATIONS
- * =========================================== */
+  /* --- Scroll & Marquee Animations --- */
 
-/* Hero scrolling animations */
-@keyframes scroll-down {
-  0% {
-    transform: translateY(0);
+  .animate-scroll-down {
+    animation: scroll-down 30s linear infinite;
   }
-  100% {
-    transform: translateY(-50%);
-  }
-}
 
-@keyframes scroll-up {
-  0% {
-    transform: translateY(-50%);
-  }
-  100% {
-    transform: translateY(0);
-  }
-}
-
-.animate-scroll-down {
-  animation: scroll-down 30s linear infinite;
-}
-
-.animate-scroll-up {
-  animation: scroll-up 30s linear infinite;
-}
-
-/* Respect reduced motion preference */
-@media (prefers-reduced-motion: reduce) {
-  .animate-scroll-down,
   .animate-scroll-up {
-    animation: none;
+    animation: scroll-up 30s linear infinite;
   }
-}
 
-/* Marquee animation for client logos */
-@keyframes marquee {
-  0% {
-    transform: translateX(0);
+  @media (prefers-reduced-motion: reduce) {
+    .animate-scroll-down,
+    .animate-scroll-up {
+      animation: none;
+    }
   }
-  100% {
-    transform: translateX(-50%);
-  }
-}
 
-.animate-marquee {
-  animation: marquee 30s linear infinite;
-}
-
-@media (prefers-reduced-motion: reduce) {
   .animate-marquee {
-    animation: none;
+    animation: marquee 30s linear infinite;
   }
-}
 
-/* ===========================================
- * COMPONENT-SPECIFIC STYLES
- * Styles that can't be expressed as Tailwind utilities
- * =========================================== */
+  @media (prefers-reduced-motion: reduce) {
+    .animate-marquee {
+      animation: none;
+    }
+  }
 
-/* Partners Section - Testimonial Tooltips */
-.testimonial-tooltip {
-  position: absolute;
-  bottom: calc(100% + 0.75rem);
-  left: 50%;
-  transform: translateX(-50%) translateY(0.5rem);
-  width: 280px;
-  background-color: white;
-  border-radius: 0.75rem;
-  padding: 1rem;
-  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
-  opacity: 0;
-  visibility: hidden;
-  transition:
-    opacity 0.2s,
-    transform 0.2s,
-    visibility 0.2s;
-  z-index: 100;
-  pointer-events: none;
-}
+  /* --- Partners Section — Testimonial Tooltips --- */
 
-.testimonial-tooltip::after {
-  content: "";
-  position: absolute;
-  top: 100%;
-  left: 50%;
-  transform: translateX(-50%);
-  border: 8px solid transparent;
-  border-top-color: white;
-}
+  .testimonial-tooltip {
+    position: absolute;
+    bottom: calc(100% + 0.75rem);
+    left: 50%;
+    transform: translateX(-50%) translateY(0.5rem);
+    width: 280px;
+    background-color: white;
+    border-radius: 0.75rem;
+    padding: 1rem;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+    opacity: 0;
+    visibility: hidden;
+    transition:
+      opacity 0.2s,
+      transform 0.2s,
+      visibility 0.2s;
+    z-index: 100;
+    pointer-events: none;
+  }
 
-.testimonial-headshot:hover .testimonial-tooltip,
-.testimonial-headshot:focus-within .testimonial-tooltip {
-  opacity: 1;
-  visibility: visible;
-  transform: translateX(-50%) translateY(0);
-}
+  .testimonial-tooltip::after {
+    content: "";
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    border: 8px solid transparent;
+    border-top-color: white;
+  }
 
-/* Audit Section - Full-width Overflow */
-.audit-overflow-wrapper {
-  margin-left: calc(-50vw + 50%);
-  margin-right: calc(-50vw + 50%);
-  padding-left: calc(50vw - 50%);
-  padding-right: calc(50vw - 50%);
-}
+  .testimonial-headshot:hover .testimonial-tooltip,
+  .testimonial-headshot:focus-within .testimonial-tooltip {
+    opacity: 1;
+    visibility: visible;
+    transform: translateX(-50%) translateY(0);
+  }
 
-@media (max-width: 767px) {
+  /* --- Audit Section — Full-width Overflow --- */
+
   .audit-overflow-wrapper {
-    margin-left: -1rem;
-    margin-right: -1rem;
-    padding-left: 0;
-    padding-right: 0;
+    margin-left: calc(-50vw + 50%);
+    margin-right: calc(-50vw + 50%);
+    padding-left: calc(50vw - 50%);
+    padding-right: calc(50vw - 50%);
   }
-}
 
-/* FAQ Section - Details/Summary Markers */
-.faq-details summary::-webkit-details-marker {
-  display: none;
-}
+  @media (max-width: 767px) {
+    .audit-overflow-wrapper {
+      margin-left: -1rem;
+      margin-right: -1rem;
+      padding-left: 0;
+      padding-right: 0;
+    }
+  }
 
-.faq-details summary::marker {
-  display: none;
-}
+  /* --- FAQ Section — Details/Summary Markers --- */
 
-/* Embla Carousel Base Styles */
-.embla {
-  overflow: hidden;
-}
+  .faq-details summary::-webkit-details-marker {
+    display: none;
+  }
 
-.embla__viewport {
-  overflow: hidden;
-}
+  .faq-details summary::marker {
+    display: none;
+  }
 
-.embla__container {
-  display: flex;
-}
+  /* --- Case Study Prose --- */
 
-.embla__slide {
-  flex: 0 0 auto;
-  min-width: 0;
-}
+  .case-study-prose {
+    font-family: Satoshi, system-ui, sans-serif;
+    font-size: 1.125rem;
+    line-height: 1.75;
+    color: var(--color-surface-600);
+  }
 
-/* ===========================================
- * CASE STUDY PROSE STYLES
- * Typography for case study content
- * =========================================== */
+  .case-study-prose p {
+    margin-bottom: 1.5rem;
+  }
 
-.case-study-prose {
-  font-family: Satoshi, system-ui, sans-serif;
-  font-size: 1.125rem;
-  line-height: 1.75;
-  color: #525252;
-}
+  /* H2 - Left accent border with gradient */
+  .case-study-prose h2 {
+    position: relative;
+    padding: 1rem 0 1rem 1.25rem;
+    margin-top: 3rem;
+    margin-bottom: 1.5rem;
+    font-family: "Neue Montreal", system-ui, sans-serif;
+    font-weight: 500;
+    font-size: 1.5rem;
+    color: var(--color-surface-950);
+    border-left: 3px solid var(--color-primary-500);
+    background: linear-gradient(to right, var(--color-surface-50) 0%, transparent 70%);
+  }
 
-.case-study-prose p {
-  margin-bottom: 1.5rem;
-}
+  .case-study-prose h2:first-child {
+    margin-top: 0;
+  }
 
-/* H2 - Left accent border with gradient */
-.case-study-prose h2 {
-  position: relative;
-  padding: 1rem 0 1rem 1.25rem;
-  margin-top: 3rem;
-  margin-bottom: 1.5rem;
-  font-family: "Neue Montreal", system-ui, sans-serif;
-  font-weight: 500;
-  font-size: 1.5rem;
-  color: #171717;
-  border-left: 3px solid #6366f1;
-  background: linear-gradient(to right, #fafafa 0%, transparent 70%);
-}
+  /* H3 - Dot accent marker */
+  .case-study-prose h3 {
+    position: relative;
+    padding-left: 1rem;
+    margin-top: 2.5rem;
+    margin-bottom: 1rem;
+    font-family: "Neue Montreal", system-ui, sans-serif;
+    font-weight: 500;
+    font-size: 1.25rem;
+    color: var(--color-surface-800);
+  }
 
-.case-study-prose h2:first-child {
-  margin-top: 0;
-}
+  .case-study-prose h3::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--color-surface-400);
+  }
 
-/* H3 - Dot accent marker */
-.case-study-prose h3 {
-  position: relative;
-  padding-left: 1rem;
-  margin-top: 2.5rem;
-  margin-bottom: 1rem;
-  font-family: "Neue Montreal", system-ui, sans-serif;
-  font-weight: 500;
-  font-size: 1.25rem;
-  color: #262626;
-}
+  /* Links - Animated gradient underline */
+  .case-study-prose a {
+    color: var(--color-primary-600);
+    text-decoration: none;
+    background-image: linear-gradient(to right, var(--color-primary-500), var(--color-primary-600));
+    background-size: 0% 2px;
+    background-position: 0 100%;
+    background-repeat: no-repeat;
+    transition: background-size 0.2s ease-out, color 0.2s ease-out;
+  }
 
-.case-study-prose h3::before {
-  content: "";
-  position: absolute;
-  left: 0;
-  top: 50%;
-  transform: translateY(-50%);
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background: #a5a5a5;
-}
+  .case-study-prose a:hover {
+    color: var(--color-primary-700);
+    background-size: 100% 2px;
+  }
 
-/* Links - Animated gradient underline */
-.case-study-prose a {
-  color: #4f46e5;
-  text-decoration: none;
-  background-image: linear-gradient(to right, #6366f1, #4f46e5);
-  background-size: 0% 2px;
-  background-position: 0 100%;
-  background-repeat: no-repeat;
-  transition: background-size 0.2s ease-out, color 0.2s ease-out;
-}
+  /* Unordered lists - Primary bullets */
+  .case-study-prose ul {
+    padding-left: 0;
+    margin-bottom: 1.5rem;
+    list-style: none;
+  }
 
-.case-study-prose a:hover {
-  color: #4338ca;
-  background-size: 100% 2px;
-}
+  .case-study-prose li {
+    position: relative;
+    padding-left: 1.5rem;
+    margin-bottom: 0.75rem;
+  }
 
-/* Unordered lists - Primary bullets */
-.case-study-prose ul {
-  padding-left: 0;
-  margin-bottom: 1.5rem;
-  list-style: none;
-}
+  .case-study-prose ul > li::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 0.625rem;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--color-primary-500);
+  }
 
-.case-study-prose li {
-  position: relative;
-  padding-left: 1.5rem;
-  margin-bottom: 0.75rem;
-}
+  /* Ordered lists - Monospace numbers */
+  .case-study-prose ol {
+    padding-left: 0;
+    margin-bottom: 1.5rem;
+    list-style: none;
+    counter-reset: item;
+  }
 
-.case-study-prose ul > li::before {
-  content: "";
-  position: absolute;
-  left: 0;
-  top: 0.625rem;
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background: #6366f1;
-}
+  .case-study-prose ol > li {
+    padding-left: 2rem;
+    counter-increment: item;
+  }
 
-/* Ordered lists - Monospace numbers */
-.case-study-prose ol {
-  padding-left: 0;
-  margin-bottom: 1.5rem;
-  list-style: none;
-  counter-reset: item;
-}
+  .case-study-prose ol > li::before {
+    content: counter(item) ".";
+    position: absolute;
+    left: 0;
+    font-family: "Geist Mono", monospace;
+    font-weight: 500;
+    font-size: 0.875rem;
+    color: var(--color-primary-500);
+  }
 
-.case-study-prose ol > li {
-  padding-left: 2rem;
-  counter-increment: item;
-}
+  /* Blockquotes - Card style */
+  .case-study-prose blockquote {
+    position: relative;
+    margin: 2.5rem 0;
+    padding: 1.5rem 2rem;
+    background: var(--color-surface-50);
+    border-radius: 0.75rem;
+    border-left: 4px solid var(--color-primary-500);
+  }
 
-.case-study-prose ol > li::before {
-  content: counter(item) ".";
-  position: absolute;
-  left: 0;
-  font-family: "Geist Mono", monospace;
-  font-weight: 500;
-  font-size: 0.875rem;
-  color: #6366f1;
-}
+  .case-study-prose blockquote p {
+    margin: 0;
+  }
 
-/* Blockquotes - Card style */
-.case-study-prose blockquote {
-  position: relative;
-  margin: 2.5rem 0;
-  padding: 1.5rem 2rem;
-  background: #fafafa;
-  border-radius: 0.75rem;
-  border-left: 4px solid #6366f1;
-}
+  /* Strong text */
+  .case-study-prose strong {
+    font-weight: 600;
+    color: var(--color-surface-950);
+  }
 
-.case-study-prose blockquote p {
-  margin: 0;
-}
+  /* Images */
+  .case-study-prose img {
+    border-radius: 0.75rem;
+    margin: 2rem 0;
+  }
 
-/* Strong text */
-.case-study-prose strong {
-  font-weight: 600;
-  color: #171717;
-}
+  /* Figures */
+  .case-study-prose figure {
+    margin: 2.5rem 0;
+  }
 
-/* Images */
-.case-study-prose img {
-  border-radius: 0.75rem;
-  margin: 2rem 0;
-}
+  .case-study-prose figcaption {
+    margin-top: 0.75rem;
+    font-size: 0.875rem;
+    color: var(--color-surface-500);
+    text-align: center;
+  }
 
-/* Figures */
-.case-study-prose figure {
-  margin: 2.5rem 0;
-}
+  /* Horizontal rules */
+  .case-study-prose hr {
+    border: none;
+    height: 1px;
+    background: linear-gradient(to right, transparent, var(--color-surface-200), transparent);
+    margin: 3rem 0;
+  }
 
-.case-study-prose figcaption {
-  margin-top: 0.75rem;
-  font-size: 0.875rem;
-  color: #737373;
-  text-align: center;
-}
+  /* Inline code */
+  .case-study-prose code {
+    font-family: "Geist Mono", monospace;
+    font-size: 0.875em;
+    padding: 0.2em 0.4em;
+    background: var(--color-surface-100);
+    border-radius: 0.25rem;
+    color: var(--color-primary-600);
+  }
 
-/* Horizontal rules */
-.case-study-prose hr {
-  border: none;
-  height: 1px;
-  background: linear-gradient(to right, transparent, #e5e5e5, transparent);
-  margin: 3rem 0;
-}
+  /* Scroll offset for fixed header */
+  .case-study-prose [id] {
+    scroll-margin-top: 6rem;
+  }
 
-/* Inline code */
-.case-study-prose code {
-  font-family: "Geist Mono", monospace;
-  font-size: 0.875em;
-  padding: 0.2em 0.4em;
-  background: #f5f5f5;
-  border-radius: 0.25rem;
-  color: #4f46e5;
-}
+  /* --- TOC Link --- */
 
-/* Scroll offset for fixed header */
-.case-study-prose [id] {
-  scroll-margin-top: 6rem;
-}
+  .toc-link {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    line-height: 1.4;
+  }
 
-/* TOC link truncation for long headings */
-.toc-link {
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-  line-height: 1.4;
-}
+  /* --- Blog Prose --- */
 
-/* Blog Prose - Inherits from case study prose with some overrides */
-.blog-prose {
-  font-family: Satoshi, system-ui, sans-serif;
-  font-size: 1.125rem;
-  line-height: 1.75;
-  color: #525252;
-}
+  .blog-prose {
+    font-family: Satoshi, system-ui, sans-serif;
+    font-size: 1.125rem;
+    line-height: 1.75;
+    color: var(--color-surface-600);
+  }
 
-.blog-prose p {
-  margin-bottom: 1.5rem;
-}
+  .blog-prose p {
+    margin-bottom: 1.5rem;
+  }
 
-.blog-prose h2 {
-  position: relative;
-  padding: 1rem 0 1rem 1.25rem;
-  margin-top: 3rem;
-  margin-bottom: 1.5rem;
-  font-family: "Neue Montreal", system-ui, sans-serif;
-  font-weight: 500;
-  font-size: 1.5rem;
-  color: #171717;
-  border-left: 3px solid #6366f1;
-  background: linear-gradient(to right, #fafafa 0%, transparent 70%);
-}
+  .blog-prose h2 {
+    position: relative;
+    padding: 1rem 0 1rem 1.25rem;
+    margin-top: 3rem;
+    margin-bottom: 1.5rem;
+    font-family: "Neue Montreal", system-ui, sans-serif;
+    font-weight: 500;
+    font-size: 1.5rem;
+    color: var(--color-surface-950);
+    border-left: 3px solid var(--color-primary-500);
+    background: linear-gradient(to right, var(--color-surface-50) 0%, transparent 70%);
+  }
 
-.blog-prose h2:first-child {
-  margin-top: 0;
-}
+  .blog-prose h2:first-child {
+    margin-top: 0;
+  }
 
-.blog-prose h3 {
-  position: relative;
-  padding-left: 1rem;
-  margin-top: 2.5rem;
-  margin-bottom: 1rem;
-  font-family: "Neue Montreal", system-ui, sans-serif;
-  font-weight: 500;
-  font-size: 1.25rem;
-  color: #262626;
-}
+  .blog-prose h3 {
+    position: relative;
+    padding-left: 1rem;
+    margin-top: 2.5rem;
+    margin-bottom: 1rem;
+    font-family: "Neue Montreal", system-ui, sans-serif;
+    font-weight: 500;
+    font-size: 1.25rem;
+    color: var(--color-surface-800);
+  }
 
-.blog-prose h3::before {
-  content: "";
-  position: absolute;
-  left: 0;
-  top: 50%;
-  transform: translateY(-50%);
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background: #a5a5a5;
-}
+  .blog-prose h3::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--color-surface-400);
+  }
 
-.blog-prose a {
-  color: #4f46e5;
-  text-decoration: underline;
-  text-underline-offset: 2px;
-}
+  .blog-prose a {
+    color: var(--color-primary-600);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
 
-.blog-prose a:hover {
-  color: #4338ca;
-}
+  .blog-prose a:hover {
+    color: var(--color-primary-700);
+  }
 
-.blog-prose ul,
-.blog-prose ol {
-  margin-bottom: 1.5rem;
-  padding-left: 1.5rem;
-}
+  .blog-prose ul,
+  .blog-prose ol {
+    margin-bottom: 1.5rem;
+    padding-left: 1.5rem;
+  }
 
-.blog-prose ul {
-  list-style-type: disc;
-}
+  .blog-prose ul {
+    list-style-type: disc;
+  }
 
-.blog-prose ol {
-  list-style-type: decimal;
-}
+  .blog-prose ol {
+    list-style-type: decimal;
+  }
 
-.blog-prose li {
-  margin-bottom: 0.5rem;
-}
+  .blog-prose li {
+    margin-bottom: 0.5rem;
+  }
 
-.blog-prose blockquote {
-  margin: 2rem 0;
-  padding: 1.5rem 2rem;
-  background: #fafafa;
-  border-radius: 0.75rem;
-  border-left: 4px solid #6366f1;
-}
+  .blog-prose blockquote {
+    margin: 2rem 0;
+    padding: 1.5rem 2rem;
+    background: var(--color-surface-50);
+    border-radius: 0.75rem;
+    border-left: 4px solid var(--color-primary-500);
+  }
 
-.blog-prose blockquote p {
-  margin: 0;
-}
+  .blog-prose blockquote p {
+    margin: 0;
+  }
 
-.blog-prose strong {
-  font-weight: 600;
-  color: #171717;
-}
+  .blog-prose strong {
+    font-weight: 600;
+    color: var(--color-surface-950);
+  }
 
-.blog-prose img {
-  border-radius: 0.75rem;
-  margin: 2rem 0;
-}
+  .blog-prose img {
+    border-radius: 0.75rem;
+    margin: 2rem 0;
+  }
 
-.blog-prose code {
-  font-family: "Geist Mono", monospace;
-  font-size: 0.875em;
-  padding: 0.2em 0.4em;
-  background: #f5f5f5;
-  border-radius: 0.25rem;
-  color: #4f46e5;
-}
+  .blog-prose code {
+    font-family: "Geist Mono", monospace;
+    font-size: 0.875em;
+    padding: 0.2em 0.4em;
+    background: var(--color-surface-100);
+    border-radius: 0.25rem;
+    color: var(--color-primary-600);
+  }
 
-.blog-prose [id] {
-  scroll-margin-top: 6rem;
+  .blog-prose [id] {
+    scroll-margin-top: 6rem;
+  }
 }

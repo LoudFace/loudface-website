@@ -142,7 +142,7 @@ export default async function WorkPage() {
               const client = getClient(study.client);
               const industry = getIndustry(study.industry);
               const technologies = getTechnologies(study.technologies as string[] | undefined);
-              const clientColor = study['client-color'] || '#6366f1';
+              const clientColor = study['client-color'] || 'var(--color-primary-500)';
               const secondaryColor = study['secondary-client-color'] || clientColor;
               const hasStats = study['result-1---number'] || study['result-2---number'];
 

@@ -152,10 +152,10 @@ const config: Config = {
       // Component-specific widths
       // ===========================================
       width: {
-        dropdown: "30rem", // 480px - dropdown menus
+        dropdown: "34rem", // 544px - dropdown menus
       },
       maxWidth: {
-        dropdown: "30rem", // 480px
+        dropdown: "34rem", // 544px
         content: "50rem", // 800px - content width
       },
 

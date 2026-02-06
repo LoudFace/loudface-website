@@ -155,7 +155,7 @@ export function Hero({
               <Button
                 variant="primary"
                 size="lg"
-                calLink="arnelbukva/loudface-intro-call"
+                calTrigger
                 className="mt-5"
               >
                 {finalCtaText}

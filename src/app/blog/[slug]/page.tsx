@@ -363,7 +363,7 @@ export default async function BlogPostPage({ params }: PageProps) {
               <Button
                 variant="secondary"
                 size="lg"
-                calLink="arnelbukva/loudface-intro-call"
+                calTrigger
                 className="bg-white text-surface-900 hover:bg-surface-100"
               >
                 Book a call

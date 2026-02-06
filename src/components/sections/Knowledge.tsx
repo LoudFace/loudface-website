@@ -2,11 +2,9 @@
 
 import Link from 'next/link';
 import { asset } from '@/lib/assets';
-import { thumbnailImage } from '@/lib/image-utils';
+import { optimizeImage } from '@/lib/image-utils';
 import { getKnowledgeContent } from '@/lib/content-utils';
-import { SectionContainer } from '@/components/ui/SectionContainer';
-import { SectionHeader } from '@/components/ui/SectionHeader';
-import { CarouselNav } from '@/components/ui/CarouselNav';
+import { Badge, CarouselNav, SectionContainer, SectionHeader } from '@/components/ui';
 import { useCarousel } from '@/hooks/useCarousel';
 import type { BlogPost, Category, TeamMember } from '@/lib/types';
 
@@ -90,21 +88,21 @@ export function Knowledge({
                   return (
                     <div
                       key={post.id}
-                      className="embla__slide flex-[0_0_100%] xs:flex-[0_0_auto] min-w-0 max-w-full xs:max-w-[26.25rem]"
+                      className="embla__slide flex-[0_0_100%] xs:flex-[0_0_26.25rem] min-w-0"
                     >
                       <Link
                         href={`/blog/${post.slug}`}
-                        className="flex flex-col gap-4 max-w-full xs:max-w-[26.25rem] no-underline transition-opacity duration-250 hover:opacity-75 focus-visible:outline-2 focus-visible:outline-primary-500 focus-visible:outline-offset-4 rounded-lg"
+                        className="flex flex-col gap-4 no-underline transition-opacity duration-200 hover:opacity-75 focus-visible:outline-2 focus-visible:outline-primary-500 focus-visible:outline-offset-4 rounded-lg"
                       >
-                        <div className="aspect-video w-full max-h-[50vh] overflow-hidden rounded-lg">
+                        <div className="aspect-video w-full overflow-hidden rounded-lg">
                           <img
                             src={
-                              thumbnailImage(post.thumbnail?.url) ||
+                              optimizeImage(post.thumbnail?.url, 840, 80) ||
                               asset('/images/placeholder.webp')
                             }
                             loading="lazy"
                             width="420"
-                            height="240"
+                            height="236"
                             alt={post.thumbnail?.alt || post.name}
                             className="w-full h-full object-cover transition-transform duration-300 hover:scale-[1.02]"
                           />
@@ -112,11 +110,9 @@ export function Knowledge({
                         <div className="flex flex-col">
                           <div className="flex justify-between items-center flex-wrap gap-2">
                             <div className="flex gap-4 items-center">
-                              <span className="inline-block border border-surface-200 rounded-full py-1 px-3">
-                                <span className="font-medium text-sm">
-                                  {category?.name || 'Uncategorized'}
-                                </span>
-                              </span>
+                              <Badge variant="outline">
+                                {category?.name || 'Uncategorized'}
+                              </Badge>
                               <span className="opacity-50">
                                 <span className="font-medium text-base">{finalReadTime}</span>
                               </span>

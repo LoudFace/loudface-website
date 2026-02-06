@@ -33,14 +33,14 @@ interface PageProps {
 
 // Color contrast helper
 function getContrastColor(hex: string | undefined): string {
-  if (!hex) return '#ffffff';
+  if (!hex || !hex.startsWith('#')) return 'white';
   const clean = hex.replace('#', '');
-  if (clean.length < 6) return '#ffffff';
+  if (clean.length < 6) return 'white';
   const r = parseInt(clean.slice(0, 2), 16);
   const g = parseInt(clean.slice(2, 4), 16);
   const b = parseInt(clean.slice(4, 6), 16);
   const luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
-  return luminance > 0.5 ? '#0a0a0a' : '#ffffff';
+  return luminance > 0.5 ? 'var(--color-surface-950)' : 'white';
 }
 
 // Extract TOC from main-body HTML
@@ -156,7 +156,7 @@ export default async function CaseStudyPage({ params }: PageProps) {
   const services = getServices(study['services-provided']);
   const testimonial = getTestimonial(study.id);
 
-  const clientColor = study['client-color'] || '#6366f1';
+  const clientColor = study['client-color'] || 'var(--color-primary-500)';
   const textColor = getContrastColor(clientColor);
   const websiteUrl = study['website-link'] || study['visit-the-website'];
 
@@ -477,7 +477,7 @@ export default async function CaseStudyPage({ params }: PageProps) {
           <div className="grid md:grid-cols-3 gap-6">
             {relatedStudies.map((related) => {
               const relatedClient = getClient(related.client);
-              const relatedColor = related['client-color'] || '#6366f1';
+              const relatedColor = related['client-color'] || 'var(--color-primary-500)';
 
               return (
                 <Link
@@ -523,7 +523,7 @@ export default async function CaseStudyPage({ params }: PageProps) {
               <Button
                 variant="secondary"
                 size="lg"
-                calLink="arnelbukva/loudface-intro-call"
+                calTrigger
                 className="bg-white text-surface-900 hover:bg-surface-100"
               >
                 Book a call

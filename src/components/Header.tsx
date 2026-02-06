@@ -115,6 +115,7 @@ export function Header() {
     time: "",
   });
   const dropdownRefs = useRef<Record<string, HTMLDivElement | null>>({});
+  const closeTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   // Update timezone display
   useEffect(() => {
@@ -179,6 +180,29 @@ export function Header() {
     };
   }, [mobileMenuOpen]);
 
+  // Clean up hover timeout on unmount
+  useEffect(() => {
+    return () => {
+      if (closeTimeoutRef.current) {
+        clearTimeout(closeTimeoutRef.current);
+      }
+    };
+  }, []);
+
+  const handleDropdownEnter = (name: string) => {
+    if (closeTimeoutRef.current) {
+      clearTimeout(closeTimeoutRef.current);
+      closeTimeoutRef.current = null;
+    }
+    setOpenDropdown(name);
+  };
+
+  const handleDropdownLeave = () => {
+    closeTimeoutRef.current = setTimeout(() => {
+      setOpenDropdown(null);
+    }, 150);
+  };
+
   const toggleDropdown = (name: string) => {
     setOpenDropdown(openDropdown === name ? null : name);
   };
@@ -193,6 +217,8 @@ export function Header() {
         dropdownRefs.current[name] = el;
       }}
       className={`group relative dropdown-container ${openDropdown === name ? "is-open" : ""}`}
+      onMouseEnter={() => handleDropdownEnter(name)}
+      onMouseLeave={handleDropdownLeave}
     >
       <button
         type="button"
@@ -232,17 +258,17 @@ export function Header() {
             openDropdown === name ? "scale-100" : "scale-[0.98]"
           }`}
         >
-          <div className="p-5">
-            <div className="pb-3">
+          <div className="p-6">
+            <div className="pb-4">
               <h4 className="text-sm font-semibold text-surface-900">
                 {dropdown.label}
               </h4>
-              <p className="text-[13px] text-surface-500 mt-0.5">
+              <p className="text-2xs text-surface-500 mt-1">
                 {dropdown.description}
               </p>
             </div>
-            <div className="h-px bg-surface-100 -mx-5 mb-3" />
-            <div className="grid gap-0.5">
+            <div className="h-px bg-surface-100 -mx-6 mb-4" />
+            <div className="grid gap-1">
               {dropdown.items.map((item) => (
                 <Link
                   key={item.title}
@@ -264,7 +290,7 @@ export function Header() {
                     <span className="block text-sm font-medium text-surface-900">
                       {item.title}
                     </span>
-                    <span className="block text-[12px] text-surface-500 mt-0.5 leading-snug">
+                    <span className="block text-2xs text-surface-500 mt-0.5 leading-snug">
                       {item.description}
                     </span>
                   </div>
@@ -273,11 +299,11 @@ export function Header() {
             </div>
             {dropdown.ctaText && (
               <>
-                <div className="h-px bg-surface-100 -mx-5 mt-3 mb-3" />
+                <div className="h-px bg-surface-100 -mx-6 mt-4 mb-4" />
                 <button
                   type="button"
                   data-cal-trigger
-                  className="w-full text-[13px] py-2.5 px-4 rounded-lg bg-surface-900 hover:bg-surface-800 transition-colors duration-150 inline-flex items-center justify-center gap-1 font-medium border-none cursor-pointer"
+                  className="w-full text-2xs py-2.5 px-4 rounded-lg bg-surface-900 hover:bg-surface-800 transition-colors duration-150 inline-flex items-center justify-center gap-1 font-medium border-none cursor-pointer"
                   onClick={() => setOpenDropdown(null)}
                 >
                   <span className="text-surface-400">
@@ -338,7 +364,7 @@ export function Header() {
             <div className="flex items-center gap-5">
               {/* Status Badge */}
               <div className="hidden lg:flex items-center gap-2 px-3 py-1.5 bg-surface-50 rounded-full">
-                <div className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse" />
+                <div className="w-1.5 h-1.5 bg-success rounded-full animate-pulse" />
                 <span className="text-2xs font-medium text-surface-600">
                   Accepting Bookings
                 </span>

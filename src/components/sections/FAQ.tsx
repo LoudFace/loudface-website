@@ -105,7 +105,7 @@ export function FAQ({
               <h3 className="text-xl font-bold text-surface-900">{finalFooterTitle}</h3>
               <p className="mt-2 text-surface-600">{finalFooterText}</p>
               <div className="mt-4">
-                <Button variant="primary" size="lg" calLink="arnelbukva/loudface-intro-call">
+                <Button variant="primary" size="lg" calTrigger>
                   {finalFooterCtaText}
                 </Button>
               </div>

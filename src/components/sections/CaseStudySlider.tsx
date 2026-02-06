@@ -4,8 +4,7 @@ import Link from 'next/link';
 import { getCaseStudySliderContent } from '@/lib/content-utils';
 import { asset } from '@/lib/assets';
 import { cardImage, optimizeImage } from '@/lib/image-utils';
-import { Button } from '@/components/ui/Button';
-import { CarouselNav } from '@/components/ui/CarouselNav';
+import { BulletLabel, Button, CarouselNav } from '@/components/ui';
 import { useCarousel } from '@/hooks/useCarousel';
 import type { CaseStudy, Client, Industry, Testimonial } from '@/lib/types';
 
@@ -248,10 +247,7 @@ export function CaseStudySlider({
             <div className="grid gap-6 xs:gap-10 max-w-full">
               {/* Header with nav */}
               <div className="flex justify-between items-center">
-                <div className="flex items-center gap-3">
-                  <span className="w-2 h-2 bg-surface-400 rounded-full" aria-hidden="true" />
-                  <h2 className="text-lg font-medium text-surface-900">{finalTitle}</h2>
-                </div>
+                <BulletLabel as="h2">{finalTitle}</BulletLabel>
                 <div className="hidden md:block">
                   <CarouselNav
                     variant="light"
@@ -285,7 +281,7 @@ export function CaseStudySlider({
                             className="embla__slide flex-[0_0_100%] md:flex-[0_0_auto] min-w-0 max-w-full md:max-w-[46.25rem]"
                           >
                             <div
-                              className="case-card flex flex-col md:flex-row gap-6 rounded-lg p-6 relative transition-opacity duration-250 hover:opacity-85"
+                              className="case-card flex flex-col md:flex-row gap-6 rounded-lg p-6 relative transition-opacity duration-200 hover:opacity-85"
                               style={cardStyle}
                             >
                               <Link
@@ -437,7 +433,7 @@ export function CaseStudySlider({
 
             {/* CTA Button */}
             <div className="text-center">
-              <Button variant="primary" size="lg" calLink="arnelbukva/loudface-intro-call">
+              <Button variant="primary" size="lg" calTrigger>
                 {finalCtaText}
               </Button>
             </div>
@@ -447,7 +443,7 @@ export function CaseStudySlider({
 
       <style jsx>{`
         .case-card {
-          background-color: #dd5232;
+          background-color: var(--color-surface-900);
           color: var(--card-text, inherit);
           max-width: 46.25rem;
         }

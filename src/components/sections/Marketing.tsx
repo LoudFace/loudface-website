@@ -71,7 +71,7 @@ export function Marketing({
 
       {/* CTA Button */}
       <div className="text-center">
-        <Button variant="primary" size="lg" calLink="arnelbukva/loudface-intro-call">
+        <Button variant="primary" size="lg" calTrigger>
           {finalCtaText}
         </Button>
       </div>

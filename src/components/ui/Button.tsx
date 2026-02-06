@@ -14,9 +14,8 @@ interface ButtonProps {
   className?: string;
   disabled?: boolean;
   fullWidth?: boolean;
-  /** For Cal.com integration */
-  calLink?: string;
-  calConfig?: string;
+  /** Marks this button as a Cal.com booking trigger (handled by CalHandler) */
+  calTrigger?: boolean;
   /** Aria label for icon-only buttons */
   ariaLabel?: string;
   children: ReactNode;
@@ -49,8 +48,7 @@ export function Button({
   className = '',
   disabled = false,
   fullWidth = false,
-  calLink,
-  calConfig,
+  calTrigger,
   ariaLabel,
   children,
   onClick,
@@ -68,16 +66,8 @@ export function Button({
 
   const classes = [baseClasses, sizeClasses[size], variantClasses[variant], className].join(' ');
 
-  // Cal.com attributes
-  const calAttrs = calLink
-    ? {
-        'data-cal-link': calLink,
-        'data-cal-config': calConfig || '{"layout":"month_view"}',
-      }
-    : {};
-
-  // For CTA buttons that open Cal.com modal
-  const isCta = calLink || className.includes('btn-cta');
+  // CalHandler listens for clicks on [data-cal-trigger] elements
+  const isCta = calTrigger || className.includes('btn-cta');
 
   if (href) {
     // Check if it's an external link
@@ -92,7 +82,6 @@ export function Button({
           data-cal-trigger={isCta ? '' : undefined}
           target="_blank"
           rel="noopener noreferrer"
-          {...calAttrs}
         >
           {children}
         </a>
@@ -105,7 +94,6 @@ export function Button({
         className={classes}
         aria-label={ariaLabel}
         data-cal-trigger={isCta ? '' : undefined}
-        {...calAttrs}
       >
         {children}
       </Link>
@@ -120,7 +108,6 @@ export function Button({
       aria-label={ariaLabel}
       data-cal-trigger={isCta ? '' : undefined}
       onClick={onClick}
-      {...calAttrs}
     >
       {children}
     </button>

@@ -43,7 +43,7 @@ export function CTA({
               <Button
                 variant="primary"
                 size="lg"
-                calLink="arnelbukva/loudface-intro-call"
+                calTrigger
                 className="px-8 py-4 rounded-full hover:-translate-y-0.5"
               >
                 {finalCtaText}

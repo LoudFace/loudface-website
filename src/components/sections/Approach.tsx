@@ -2,7 +2,7 @@
 
 import { getApproachContent, type ProcessStep, type Stat } from '@/lib/content-utils';
 import { asset } from '@/lib/assets';
-import { CarouselNav } from '@/components/ui/CarouselNav';
+import { BulletLabel, CarouselNav } from '@/components/ui';
 import { useCarousel } from '@/hooks/useCarousel';
 
 interface ApproachProps {
@@ -131,10 +131,7 @@ export function Approach({
 
             {/* Stats Section */}
             <div>
-              <div className="flex items-center gap-3">
-                <span className="w-2 h-2 bg-surface-400 rounded-full" aria-hidden="true" />
-                <h2 className="text-lg font-medium text-white">{finalStatsHeading}</h2>
-              </div>
+              <BulletLabel as="h2" variant="dark">{finalStatsHeading}</BulletLabel>
               <div className="h-8" />
 
               <div className="flex flex-col lg:flex-row gap-8 lg:gap-12">

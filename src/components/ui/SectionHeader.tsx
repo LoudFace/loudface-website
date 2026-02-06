@@ -1,10 +1,11 @@
 import { createElement } from 'react';
+import { BulletLabel } from './BulletLabel';
 
 /**
  * SectionHeader - Consistent section heading pattern
  *
  * Provides standardized H2 typography with optional highlighted word,
- * subtitle, and flexible alignment.
+ * subtitle, eyebrow label, and flexible alignment.
  */
 
 interface SectionHeaderProps {
@@ -14,6 +15,8 @@ interface SectionHeaderProps {
   highlightWord?: string;
   /** Optional subtitle/description below the title */
   subtitle?: string;
+  /** Optional eyebrow label rendered as a BulletLabel above the title */
+  eyebrow?: string;
   /** Color variant */
   variant?: 'light' | 'dark';
   /** Text alignment */
@@ -34,6 +37,7 @@ export function SectionHeader({
   title,
   highlightWord,
   subtitle,
+  eyebrow,
   variant = 'light',
   align = 'left',
   className = '',
@@ -51,6 +55,9 @@ export function SectionHeader({
 
   return (
     <div className={`${alignClass} ${className}`.trim()}>
+      {eyebrow && (
+        <BulletLabel variant={variant} className="mb-4">{eyebrow}</BulletLabel>
+      )}
       {createElement(
         Tag,
         {

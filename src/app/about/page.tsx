@@ -15,9 +15,7 @@ import Script from 'next/script';
 import { fetchHomepageData, getAccessToken, getEmptyHomepageData } from '@/lib/cms-data';
 import { getAboutContent } from '@/lib/content-utils';
 import { asset } from '@/lib/assets';
-import { SectionContainer } from '@/components/ui/SectionContainer';
-import { SectionHeader } from '@/components/ui/SectionHeader';
-import { Button } from '@/components/ui/Button';
+import { Badge, BulletLabel, Button, SectionContainer, SectionHeader } from '@/components/ui';
 import type { TeamMember, Client } from '@/lib/types';
 
 export const metadata: Metadata = {
@@ -81,16 +79,13 @@ export default async function AboutPage() {
       {/* Hero Section */}
       <SectionContainer padding="lg">
         <div className="max-w-3xl mx-auto text-center">
-          {/* Badge with icon */}
-          <div className="inline-flex items-center gap-2 px-4 py-2 bg-surface-100 border border-surface-200 rounded-full mb-6">
-            <img
-              src={asset(content.hero.badgeIcon)}
-              alt=""
-              className="w-6 h-6"
-              loading="eager"
-            />
-            <span className="text-sm font-medium text-surface-900">{content.hero.badge}</span>
-          </div>
+          <Badge
+            size="md"
+            icon={<img src={asset(content.hero.badgeIcon)} alt="" className="w-6 h-6" loading="eager" />}
+            className="mb-6"
+          >
+            {content.hero.badge}
+          </Badge>
 
           {/* Headline with highlighted words */}
           <h1
@@ -105,7 +100,7 @@ export default async function AboutPage() {
 
           {/* CTA */}
           <div className="mt-8">
-            <Button variant="primary" size="lg" calLink="arnelbukva/loudface-intro-call">
+            <Button variant="primary" size="lg" calTrigger>
               {content.hero.ctaText}
             </Button>
           </div>
@@ -113,20 +108,20 @@ export default async function AboutPage() {
       </SectionContainer>
 
       {/* Counter Section (Dark Purple Background) */}
-      <section className="bg-[#231421] text-[#c8e0f7]">
+      <section className="bg-wine-950 text-wine-text">
         <div className="py-16 md:py-20 lg:py-24">
           <div className="px-4 md:px-8 lg:px-12">
             <div className="max-w-7xl mx-auto">
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-[1.875rem]">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
                 {content.counter.stats.map((stat, index) => (
-                  <div key={index} className="border border-[#cadbd9]/30 rounded-lg p-8">
+                  <div key={index} className="border border-wine-border/30 rounded-lg p-8">
                     <span className="text-4xl md:text-5xl font-medium text-white/60">{stat.number}</span>
-                    <h3 className="mt-2 text-sm font-medium text-[#c8e0f7]">{stat.label}</h3>
-                    <p className="mt-6 text-[#c8e0f7]/70 text-sm leading-relaxed">{stat.description}</p>
+                    <h3 className="mt-2 text-sm font-medium text-wine-text">{stat.label}</h3>
+                    <p className="mt-6 text-wine-text/70 text-sm leading-relaxed">{stat.description}</p>
                   </div>
                 ))}
                 {/* Award badge card */}
-                <div className="bg-[#382235] rounded-lg p-8 flex items-center justify-center">
+                <div className="bg-wine-900 rounded-lg p-8 flex items-center justify-center">
                   <img
                     src={asset(content.counter.awardBadge)}
                     alt="10+ Best Website Creator 2024"
@@ -143,21 +138,12 @@ export default async function AboutPage() {
       {/* Journey Section */}
       <SectionContainer padding="lg">
         <div>
-          {/* Bullet subheading */}
-          <div className="flex items-center gap-2 mb-4">
-            <div className="w-2 h-2 rounded-full bg-surface-400"></div>
-            <span className="text-lg font-medium text-surface-900">{content.journey.badge}</span>
-          </div>
-
-          {/* Headline */}
-          <h2 className="text-2xl sm:text-3xl md:text-4xl font-medium text-surface-900 max-w-lg">
-            {content.journey.headline}
-          </h2>
-
-          {/* Description */}
-          <p className="mt-6 text-surface-600 leading-relaxed">
-            {content.journey.description}
-          </p>
+          <SectionHeader
+            eyebrow={content.journey.badge}
+            title={content.journey.headline}
+            subtitle={content.journey.description}
+            className="[&_h2]:max-w-lg"
+          />
         </div>
       </SectionContainer>
 
@@ -166,19 +152,15 @@ export default async function AboutPage() {
         {/* Header with CTA aligned right */}
         <div className="flex flex-col lg:flex-row lg:justify-between lg:items-end gap-6 mb-12">
           <div>
-            {/* Bullet subheading */}
-            <div className="flex items-center gap-2 mb-4">
-              <div className="w-2 h-2 rounded-full bg-surface-400"></div>
-              <span className="text-lg font-medium text-surface-900">{content.team.badge}</span>
-            </div>
             <SectionHeader
+              eyebrow={content.team.badge}
               title={content.team.title}
               highlightWord={content.team.highlightWord}
               subtitle={content.team.subtitle}
             />
           </div>
           <div className="flex-shrink-0">
-            <Button variant="primary" size="lg" calLink="arnelbukva/loudface-intro-call">
+            <Button variant="primary" size="lg" calTrigger>
               Book an intro call
             </Button>
           </div>
@@ -224,7 +206,7 @@ export default async function AboutPage() {
           <h3 className="text-xl font-bold text-surface-900">{content.team.ctaCard.headline}</h3>
           <p className="mt-2 text-surface-600 max-w-2xl">{content.team.ctaCard.description}</p>
           <div className="mt-6">
-            <Button variant="primary" size="lg" calLink="arnelbukva/loudface-intro-call">
+            <Button variant="primary" size="lg" calTrigger>
               {content.team.ctaCard.ctaText}
             </Button>
           </div>
@@ -254,19 +236,14 @@ export default async function AboutPage() {
 
       {/* Awards Section */}
       <SectionContainer padding="lg">
-        {/* Header */}
-        <div className="flex items-center gap-2 mb-4">
-          <div className="w-2 h-2 rounded-full bg-surface-400"></div>
-          <span className="text-lg font-medium text-surface-900">{content.awards.badge}</span>
-        </div>
-        <h2 className="text-2xl sm:text-3xl md:text-4xl font-medium text-surface-900">
-          {content.awards.title}
-        </h2>
-        <p className="mt-4 text-surface-600 max-w-2xl">
-          {content.awards.description}
-        </p>
+        <SectionHeader
+          eyebrow={content.awards.badge}
+          title={content.awards.title}
+          subtitle={content.awards.description}
+          className="[&_p]:max-w-2xl"
+        />
         <div className="mt-8">
-          <Button variant="primary" size="lg" calLink="arnelbukva/loudface-intro-call">
+          <Button variant="primary" size="lg" calTrigger>
             {content.awards.ctaText}
           </Button>
         </div>
@@ -321,7 +298,7 @@ export default async function AboutPage() {
           <div className="mt-8">
             <p className="text-surface-600">{content.faq.footerText}</p>
             <div className="mt-4">
-              <Button variant="primary" size="lg" calLink="arnelbukva/loudface-intro-call">
+              <Button variant="primary" size="lg" calTrigger>
                 {content.faq.footerCtaText}
               </Button>
             </div>
@@ -339,7 +316,7 @@ export default async function AboutPage() {
             {content.finalCta.description}
           </p>
           <div className="mt-10">
-            <Button variant="primary" size="lg" calLink="arnelbukva/loudface-intro-call">
+            <Button variant="primary" size="lg" calTrigger>
               {content.finalCta.ctaText}
             </Button>
           </div>

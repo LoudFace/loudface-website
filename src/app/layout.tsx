@@ -48,7 +48,7 @@ export const metadata: Metadata = {
     apple: "/images/webclip.png",
   },
   other: {
-    "theme-color": "#0a0a0a",
+    "theme-color": "#0a0a0a", // surface-950 — meta tags require literal values
   },
 };
 
@@ -139,6 +139,15 @@ export default async function RootLayout({
           type="font/woff2"
           crossOrigin=""
         />
+
+        {/* React Grab - dev-only context selector for coding agents */}
+        {process.env.NODE_ENV === "development" && (
+          <Script
+            src="//unpkg.com/react-grab/dist/index.global.js"
+            crossOrigin="anonymous"
+            strategy="beforeInteractive"
+          />
+        )}
 
         {/* Structured Data */}
         <script
