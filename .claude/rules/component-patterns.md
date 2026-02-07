@@ -127,12 +127,33 @@ When image paths come from JSON content files, apply `asset()` at render time:
 ))}
 ```
 
+### CMS Image Optimization
+
+For CMS images (remote Webflow URLs), use helpers from `@/lib/image-utils` for resizing and WebP conversion:
+
+```tsx
+import { thumbnailImage, logoImage, avatarImage, heroImage } from '@/lib/image-utils';
+
+// Cards/grids (800px)
+<img src={thumbnailImage(item.thumbnail?.url) || asset('/images/placeholder.webp')} />
+
+// Client logos (200px)
+<img src={logoImage(client['colored-logo']?.url)} />
+
+// Profile pictures (80px)
+<img src={avatarImage(member['profile-image']?.url)} />
+
+// Hero images (responsive srcset)
+const hero = heroImage(item['main-project-image-thumbnail']?.url);
+<img src={hero.src} srcSet={hero.srcset} sizes="..." />
+```
+
 ### Fallback Images
 
 For CMS images with fallbacks, use `asset()` only for the fallback:
 
 ```tsx
-<img src={item['profile-image']?.url || asset('/images/placeholder-avatar.svg')} />
+<img src={thumbnailImage(item.thumbnail?.url) || asset('/images/placeholder.webp')} />
 ```
 
 ## Internal Links (CRITICAL)
@@ -203,14 +224,7 @@ import { SectionContainer } from '@/components/ui';
 </SectionContainer>
 ```
 
-**Padding variants:**
-
-| Variant | Classes | Use For |
-|---------|---------|---------|
-| `default` | `py-16 md:py-20 lg:py-24` | Standard sections |
-| `sm` | `py-12 md:py-16` | Compact sections |
-| `lg` | `py-16 md:py-24 lg:py-32` | Hero-adjacent, feature sections |
-| `none` | (no padding) | Custom padding needs |
+**Padding variants:** See `styling.md` for the full table (`default`, `sm`, `lg`, `none`).
 
 ### SectionHeader
 
@@ -238,32 +252,70 @@ import { SectionHeader } from '@/components/ui';
 
 ## Card Patterns
 
-**Standard card:**
+**Use the `Card` component** for all card surfaces. Don't write raw card markup.
+
 ```tsx
-<div className="bg-white rounded-xl border border-surface-200 p-6
-  hover:border-surface-300 hover:shadow-md transition-all duration-200">
+import { Card } from '@/components/ui';
+
+{/* Light background — default */}
+<Card>
+  <h3 className="text-lg font-medium text-surface-900">Title</h3>
+  <p className="mt-2 text-surface-600">Description text</p>
+</Card>
+
+{/* Dark standalone container */}
+<Card variant="dark">
+  <h3 className="text-lg font-medium">Title</h3>
+  <p className="mt-2 text-surface-300">Description text</p>
+</Card>
+
+{/* Glass card inside a dark section */}
+<Card variant="glass">
+  <h3 className="text-lg font-medium text-white">Title</h3>
+  <p className="mt-2 text-surface-300">Description text</p>
+</Card>
+
+{/* Custom padding and no hover */}
+<Card padding="lg" hover={false} className="text-center">
+  <p>Static content</p>
+</Card>
 ```
 
-**Dark card:**
-```tsx
-<div className="bg-surface-900 rounded-xl p-6">
-```
+**Card variants:**
 
-**Glass card (dark backgrounds only):**
-```tsx
-<div className="bg-white/5 hover:bg-white/[0.08] rounded-xl p-6 transition-colors">
-```
+| Variant | Background | Border | Hover | Use On |
+|---------|------------|--------|-------|--------|
+| `default` | `bg-white` | `border-surface-200` | Border lightens + shadow | Light backgrounds |
+| `dark` | `bg-surface-900` | none | Lightens to `surface-800` | Standalone dark containers |
+| `glass` | `bg-white/5` | none | Opacity increases | Inside dark sections |
+
+**Padding:** `sm` (p-4), `md` (p-6, default), `lg` (p-8), `none`
 
 ## Link Patterns
 
-**Clickable card:**
+**Clickable card link** (card with image + content that links to a detail page):
 ```tsx
 <Link
-  href={item.url}
-  className="block transition-opacity duration-200 hover:opacity-75
-    focus-visible:outline-2 focus-visible:outline-primary-500 focus-visible:outline-offset-4 rounded-lg"
+  href={`/work/${item.slug}`}
+  className="group block bg-white rounded-xl border border-surface-200 overflow-hidden
+    transition-all duration-200 hover:border-surface-300 hover:shadow-md
+    focus-visible:outline-2 focus-visible:outline-primary-500 focus-visible:outline-offset-4"
 >
+  <div className="aspect-video overflow-hidden">
+    <img
+      src={item.thumbnail?.url || asset('/images/placeholder.webp')}
+      alt={item.name}
+      className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+    />
+  </div>
+  <div className="p-6">
+    <h3 className="font-medium text-lg text-surface-900">{item.name}</h3>
+    <p className="mt-2 text-sm text-surface-600">{item.description}</p>
+  </div>
+</Link>
 ```
+
+Use this pattern — not the `Card` component — when the entire card is a link with image cropping and group hover effects. `Card` is for non-interactive content surfaces.
 
 **Nav link:**
 ```tsx
@@ -282,7 +334,7 @@ import { useCarousel } from '@/hooks/useCarousel';
 import { CarouselNav } from '@/components/ui';
 
 export function MyCarousel({ items }) {
-  const [emblaRef, emblaApi] = useCarousel({ loop: true });
+  const { emblaRef, scrollPrev, scrollNext } = useCarousel({ loop: true });
 
   return (
     <div>
@@ -295,7 +347,7 @@ export function MyCarousel({ items }) {
           ))}
         </div>
       </div>
-      <CarouselNav emblaApi={emblaApi} variant="light" />
+      <CarouselNav variant="light" onPrevClick={scrollPrev} onNextClick={scrollNext} />
     </div>
   );
 }
@@ -345,6 +397,114 @@ export function Hero() {
   );
 }
 ```
+
+## Dark Section Recipe
+
+When building a section on a dark background, follow this complete recipe. Missing any step creates visual inconsistency.
+
+```tsx
+import { SectionContainer, SectionHeader, Card } from '@/components/ui';
+
+export function MyDarkSection() {
+  return (
+    <SectionContainer padding="lg" className="bg-surface-800 text-surface-300">
+      {/* Header uses dark variant — flips text to white + muted highlights */}
+      <SectionHeader
+        title="Section Title"
+        highlightWord="Title"
+        subtitle="Description text for this section."
+        variant="dark"
+      />
+
+      {/* Content gap */}
+      <div className="mt-8 lg:mt-12 grid grid-cols-1 md:grid-cols-3 gap-6">
+        {/* Use glass cards inside dark sections */}
+        <Card variant="glass">
+          <h3 className="text-lg font-medium text-white">Card Heading</h3>
+          <p className="mt-2">Body text inherits text-surface-300 from parent</p>
+        </Card>
+      </div>
+    </SectionContainer>
+  );
+}
+```
+
+**Checklist for dark sections:**
+
+| Element | Class | Why |
+|---------|-------|-----|
+| Container bg | `bg-surface-800` or `bg-surface-900` | Dark section background |
+| Default text | `text-surface-300` on container | Body text color (inherited) |
+| SectionHeader | `variant="dark"` | Flips to white headings, muted highlights |
+| Headings inside | `text-white` | Stand out against dark bg |
+| Muted text | `text-surface-500` | Stats labels, secondary info |
+| Cards | `Card variant="glass"` | Frosted glass effect |
+| Dividers | `bg-surface-700` | Visible but subtle borders |
+| Focus rings | `focus-visible:outline-primary-500` | Same as light (already set globally) |
+
+**Never use** `bg-surface-50`, `border-surface-200`, or `text-surface-900` inside dark sections — they belong to light contexts.
+
+## Page Template Archetype
+
+Every new page follows the same composition. This ensures structural consistency across the site.
+
+```tsx
+// src/app/my-page/page.tsx
+import type { Metadata } from 'next';
+import { SectionContainer, SectionHeader } from '@/components/ui';
+import { CTA } from '@/components/sections';
+
+export const metadata: Metadata = {
+  title: 'Page Title',  // 50-60 chars, uses template from layout (" | LoudFace")
+  description: 'Compelling meta description with primary keyword and CTA.', // 150-160 chars
+};
+
+export default async function MyPage() {
+  // 1. Data fetching at the top (CMS or JSON content)
+  // const content = getMyPageContent();
+  // const cmsData = await fetchMyData(accessToken);
+
+  return (
+    <>
+      {/* 2. Hero/intro section — one per page */}
+      <SectionContainer padding="lg">
+        <SectionHeader
+          as="h1"
+          title="Page Headline"
+          highlightWord="Headline"
+          subtitle="Supporting description."
+        />
+        {/* Hero-specific content */}
+      </SectionContainer>
+
+      {/* 3. Content sections — as many as needed */}
+      <SectionContainer>
+        <SectionHeader title="Section Title" highlightWord="Title" />
+        <div className="mt-8 lg:mt-12">
+          {/* Section content: cards grid, text, etc. */}
+        </div>
+      </SectionContainer>
+
+      {/* 4. Optional: dark section for visual contrast */}
+      <SectionContainer padding="lg" className="bg-surface-800 text-surface-300">
+        <SectionHeader title="Dark Section" variant="dark" />
+        {/* Dark section content */}
+      </SectionContainer>
+
+      {/* 5. CTA — every page ends with this */}
+      <CTA />
+    </>
+  );
+}
+```
+
+**Page composition rules:**
+1. One `h1` per page (use `SectionHeader as="h1"` for the hero heading)
+2. All subsequent section headings are `h2` (SectionHeader default)
+3. Every page ends with `<CTA />`
+4. Metadata uses the `title` template from layout — just provide the page-specific part
+5. Data fetching happens at the top of the component, not inline
+6. Content sections use `SectionContainer` — never raw `<section>` tags
 
 ## Adding New Components
 

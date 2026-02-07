@@ -177,15 +177,16 @@ When implementing structured data, use these patterns:
 - Homepage: `src/app/page.tsx`
 - Case studies: `src/app/work/[slug]/page.tsx`
 
-### Existing Schemas (in layout.tsx)
-- WebSite schema
-- Organization schema
+### Existing Infrastructure
+- WebSite schema (in layout.tsx)
+- Organization schema (in layout.tsx)
+- `src/app/sitemap.ts` (generates sitemap.xml)
+- `src/app/robots.ts` (generates robots.txt)
 
-### Missing Infrastructure (to implement)
-- sitemap.xml (via Next.js sitemap.ts)
-- robots.txt
-- FAQ schema
-- Article/BreadcrumbList schemas for case studies
+### Not Yet Implemented
+- FAQ schema on FAQ sections
+- Article/BreadcrumbList schemas for case study pages
+- BlogPosting schema for blog pages
 
 ## Collaboration Notes
 

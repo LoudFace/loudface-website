@@ -2,7 +2,7 @@ import Link from 'next/link';
 import { asset } from '@/lib/assets';
 import { optimizeImage } from '@/lib/image-utils';
 import { getResultsContent, type VideoTestimonial } from '@/lib/content-utils';
-import { Button } from '@/components/ui';
+import { Button, Card } from '@/components/ui';
 import type { CaseStudy, Client, Testimonial } from '@/lib/types';
 
 interface ResultsProps {
@@ -165,7 +165,7 @@ export function Results({
                 {/* Testimonial */}
                 {testimonial && (
                   <div>
-                    <div className="bg-white border border-surface-200 rounded-xl p-6 flex flex-col">
+                    <Card hover={false} className="flex flex-col">
                       <blockquote
                         className="text-base leading-7 text-surface-700 line-clamp-6 [&>p]:m-0"
                         dangerouslySetInnerHTML={{ __html: testimonial['testimonial-body'] || '' }}
@@ -189,7 +189,7 @@ export function Results({
                           />
                         </div>
                       </div>
-                    </div>
+                    </Card>
                   </div>
                 )}
 

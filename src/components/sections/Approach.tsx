@@ -2,7 +2,7 @@
 
 import { getApproachContent, type ProcessStep, type Stat } from '@/lib/content-utils';
 import { asset } from '@/lib/assets';
-import { BulletLabel, CarouselNav, SectionContainer, SectionHeader } from '@/components/ui';
+import { BulletLabel, Card, CarouselNav, SectionContainer, SectionHeader } from '@/components/ui';
 import { useCarousel } from '@/hooks/useCarousel';
 
 interface ApproachProps {
@@ -67,7 +67,7 @@ export function Approach({
                   key={index}
                   className="embla__slide flex-[0_0_100%] xs:flex-[0_0_auto] min-w-0 max-w-full xs:max-w-[28.75rem]"
                 >
-                  <div className="bg-white/5 hover:bg-white/[0.08] rounded-xl flex flex-col justify-between min-h-[17.5rem] p-6 max-w-[28.75rem] transition-colors">
+                  <Card variant="glass" className="flex flex-col justify-between min-h-[17.5rem] max-w-[28.75rem]">
                     <div className="mb-4">
                       <img
                         src={asset(step.icon)}
@@ -85,7 +85,7 @@ export function Approach({
                         {step.description}
                       </p>
                     </div>
-                  </div>
+                  </Card>
                 </div>
               ))}
             </div>

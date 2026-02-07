@@ -12,6 +12,44 @@ Quick reference for design tokens. For component patterns (buttons, cards, etc.)
 
 **Never use hardcoded hex values** - always use Tailwind tokens.
 
+### Special: Wine Palette (About Page)
+
+The `wine-*` tokens are a branded dark palette used for the About page counter/stats section:
+
+| Token | Value | Use For |
+|-------|-------|---------|
+| `wine-950` | `#231421` | Section background |
+| `wine-900` | `#382235` | Card/inner backgrounds |
+| `wine-text` | `#c8e0f7` | Text on wine backgrounds |
+| `wine-border` | `#cadbd9` | Borders on wine backgrounds |
+
+Only use these for dark branded sections that need a different feel from the standard `surface-800/900` dark pattern.
+
+## Text Color Hierarchy
+
+Consistent text colors across the site. Pick from this table — don't freestyle.
+
+### On Light Backgrounds (`bg-white`, `bg-surface-50`, `bg-surface-100`)
+
+| Role | Class | Use For |
+|------|-------|---------|
+| **Heading** | `text-surface-900` | H1, H2, H3, card titles, primary labels |
+| **Body** | `text-surface-600` | Paragraphs, descriptions, subtitles |
+| **Muted** | `text-surface-500` | Captions, timestamps, helper text |
+| **Subtle** | `text-surface-400` | Placeholder text, disabled states |
+| **Interactive default** | `text-surface-700` | Ghost buttons, nav controls (pre-hover state only) |
+
+### On Dark Backgrounds (`bg-surface-800`, `bg-surface-900`, `bg-surface-950`)
+
+| Role | Class | Use For |
+|------|-------|---------|
+| **Heading** | `text-white` | H1, H2, H3, card titles, stat numbers |
+| **Body** | `text-surface-300` | Paragraphs, descriptions, subtitles |
+| **Muted** | `text-surface-500` | Captions, secondary info, highlight words |
+| **Subtle** | `text-surface-400` | Placeholder text, disabled states |
+
+**Don't use** `text-surface-700` or `text-surface-800` for body text or headings on light backgrounds — they're too close to `surface-900` and muddle the hierarchy. Exception: `text-surface-700` is used in interactive controls (ghost buttons, carousel arrows) as a default state that hovers to `surface-900`.
+
 ## Typography
 
 | Element | Classes |
@@ -93,6 +131,39 @@ These values are used in specific UI contexts:
 | `gap-2.5` | Tight component spacing |
 | `mt-2.5`, `mb-2.5` | Fine-tuned vertical rhythm |
 
+## Section Inner Spacing
+
+Spacing between elements *within* a section follows predictable patterns.
+
+### SectionHeader to Content
+
+The gap between `SectionHeader` and the first content block:
+
+| Method | Classes | When to Use |
+|--------|---------|-------------|
+| Grid gap | `grid gap-8 xs:gap-16` | Section header and content are siblings in a grid |
+| Margin | `mb-8 lg:mb-12` | Section header has a bottom margin before freeform content |
+
+Pick one per section — don't mix both.
+
+### Content Grid Gaps
+
+| Context | Gap | Example |
+|---------|-----|---------|
+| Card grids | `gap-6` or `gap-8` | 2-3 column layouts of cards |
+| Carousel slides | `gap-4` to `gap-6` | Horizontal scroll carousels |
+| Tight UI elements | `gap-2` to `gap-3` | Tags, pills, inline groups |
+| Stacked text blocks | `gap-4` | Title + description pairs |
+
+### Vertical Rhythm Between Elements
+
+| Between | Spacing |
+|---------|---------|
+| Section heading → subheading | `mt-4` (built into SectionHeader) |
+| Heading → paragraph | `mt-4` |
+| Paragraph → paragraph | `mb-6` (via prose styles) |
+| Content block → CTA button | `mt-8` to `mt-12` |
+
 ## Button Shapes
 
 | Shape | Use For |
@@ -111,7 +182,22 @@ These values are used in specific UI contexts:
 | `transition-transform` | `transition-[color,background]` |
 | `duration-200` | `duration-[150ms]` |
 
-**Exception:** `transition-all` acceptable for multi-property animations (carousel nav).
+**Exception:** `transition-all` acceptable for multi-property animations (carousel nav, clickable cards with border + shadow + transform).
+
+## Motion & Animation
+
+| Effect | Classes | Use For |
+|--------|---------|---------|
+| Image zoom on hover | `group-hover:scale-105 duration-500` | Card thumbnails (via `group` on parent) |
+| Card lift on hover | `hover:-translate-y-1 duration-200` | Clickable card links only |
+| Button press | `active:scale-[0.98]` | Button component (built-in) |
+| Fade in | `animate-fade-in` (defined in @theme) | Page-level entrance |
+
+**Rules:**
+- Stick to `transform` and `opacity` for animations — they don't trigger layout reflow
+- Always respect `prefers-reduced-motion` for entrance animations: `motion-safe:animate-fade-in`
+- No scroll-triggered animations, parallax, or autoplay motion unless explicitly requested
+- Carousel autoplay is opt-in via `useCarousel({ autoplay: true })`, never default
 
 ## Shadows
 

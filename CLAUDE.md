@@ -28,7 +28,7 @@ The component system is what prevents every new session from rebuilding things t
 3. **Import from barrels only** — `import { Button, Badge, SectionContainer } from '@/components/ui'`
 4. **Update `COMPONENTS.md` after changes** — any time you add, remove, or change a component's interface
 
-See `.claude/rules/component-system.md` for the full enforcement rules and `.claude/rules/component-patterns.md` for code examples.
+See `.claude/rules/component-system.md` for the full enforcement rules and `.claude/rules/component-patterns.md` for code examples (page archetype, dark section recipe, carousel setup).
 
 ## Critical Rules (Will Break Production If Ignored)
 
@@ -66,7 +66,7 @@ export default defineCloudflareConfig({});
 }
 ```
 
-If any of these get corrupted, restore them exactly as shown above. `@opennextjs/cloudflare` must be in devDependencies.
+If any of these get corrupted, restore them exactly as shown above. `@opennextjs/cloudflare` must be in devDependencies. `next.config.ts` must have `output: "standalone"` — Cloudflare builds fail without it.
 
 ### basePath Handling
 
@@ -94,8 +94,9 @@ import { asset } from '@/lib/assets';
 
 ### Tailwind CSS v4
 
-- Custom colors/fonts are defined in a `@theme` block inside `globals.css` — do NOT use `@config` directive (it doesn't work with Tailwind v4 PostCSS plugin)
+- **No `tailwind.config.ts`** — this project uses pure Tailwind v4 CSS-native config. All tokens live in the `@theme` block inside `globals.css`. There is no JS config file.
 - Use project color tokens (`primary-*`, `surface-*`, `success`, `warning`, `error`, `info`) — never default Tailwind colors like `gray-*` or `indigo-*`
+- Follow the text color hierarchy in `.claude/rules/styling.md` — don't freestyle text colors
 - Check `globals.css` for available tokens before adding new ones
 - Never use `styled-jsx` — Tailwind only
 
@@ -104,20 +105,21 @@ import { asset } from '@/lib/assets';
 | What | Where |
 |---|---|
 | **Component registry** | **`COMPONENTS.md`** (read this first) |
-| Component enforcement rules | `.claude/rules/component-system.md` |
-| Component patterns & examples | `.claude/rules/component-patterns.md` |
+| Component rules & enforcement | `.claude/rules/component-system.md` |
+| Component patterns, page archetype, dark sections | `.claude/rules/component-patterns.md` |
+| Text color hierarchy, spacing, styling tokens | `.claude/rules/styling.md` |
+| SEO standards | `.claude/rules/seo-standards.md` |
+| Design tokens (single source) | `src/app/globals.css` (`@theme` block) |
 | UI primitives | `src/components/ui/` |
 | Page sections | `src/components/sections/` |
 | CMS collection IDs & helpers | `src/lib/constants.ts` |
-| CMS data fetching | `src/lib/cms-data.ts` |
+| CMS data fetching & normalization | `src/lib/cms-data.ts` |
 | TypeScript types | `src/lib/types.ts` |
 | Static text content | `src/data/content/*.json` |
 | Content getter functions | `src/lib/content-utils.ts` |
 | Asset URL utility | `src/lib/assets.ts` |
+| CMS image optimization (weserv.nl proxy) | `src/lib/image-utils.ts` |
 | Color contrast utilities | `src/lib/color-utils.ts` |
-| Design tokens | `src/app/globals.css` (`@theme` block) |
-| Styling rules | `.claude/rules/styling.md` |
-| SEO standards | `.claude/rules/seo-standards.md` |
 
 ## CMS Collection IDs
 
@@ -144,9 +146,10 @@ Default is Server Component. Only add `'use client'` when you need interactivity
 
 ### CMS Data
 
-- Uses Webflow API v2 — field data is nested in `fieldData` object
-- Fetch using functions in `src/lib/cms-data.ts`
-- API routes at `src/app/api/cms/[collection]/route.ts` normalize the response format
+- Uses Webflow API v2 — raw items have field data nested in a `fieldData` object
+- **Server Components**: Fetch and normalize via `src/lib/cms-data.ts` (merges `fieldData` into root, filters drafts)
+- **API routes** at `src/app/api/cms/[collection]/route.ts` are pass-through proxies — they return raw Webflow responses without normalization
+- Single-item route: `src/app/api/cms/[collection]/[slug]/route.ts`
 
 ### Static Content
 
@@ -154,7 +157,11 @@ Text content lives in JSON files under `src/data/content/`. Access via getter fu
 
 ### Cal.com Booking
 
-Booking modal triggers: `data-cal-trigger` attribute, `href="#book-modal"`, or any CTA button. Config is in `CalHandler.tsx`.
+The booking modal is opened by `CalHandler.tsx`, which intercepts clicks on:
+- `Button` component with `calTrigger` prop (preferred — sets `data-cal-trigger` automatically)
+- Elements with `data-cal-trigger` attribute
+- Links with `href="#book-modal"`
+- Elements with `.btn-cta` class
 
 ### Color Contrast
 
@@ -163,6 +170,18 @@ For dynamic backgrounds (CMS brand colors), use utilities from `src/lib/color-ut
 - `getContrastColor(bgColor)` — returns `'white'` or `'var(--color-surface-950)'` (simple)
 
 Never inline color math — always use these shared utilities.
+
+### CMS Image Optimization
+
+For CMS images (Webflow CDN URLs), use helpers from `src/lib/image-utils.ts` — they route through weserv.nl for real resizing and WebP conversion:
+- `thumbnailImage(url)` — card grids (800px)
+- `logoImage(url)` — client logos (200px)
+- `avatarImage(url)` — profile pictures (80px)
+- `heroImage(url)` — returns `{ src, srcset }` for responsive hero images
+- `caseStudyThumbnail(url)` — returns `{ src, srcset }` for case study cards
+- `optimizeImage(url, width)` — custom width
+
+Only for remote CMS URLs — local static images use `asset()` instead.
 
 ## Dev & Deploy
 

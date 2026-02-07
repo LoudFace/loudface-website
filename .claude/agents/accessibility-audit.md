@@ -1,10 +1,10 @@
 # Accessibility Audit Agent
 
-Audit pages against AGENTS.md web interface guidelines.
+Audit pages against WCAG 2.1 AA web accessibility guidelines.
 
 ## Audit Scope
 
-Check these categories from AGENTS.md:
+Check these categories:
 
 ### 1. Keyboard & Focus
 - [ ] Full keyboard navigation works (Tab, Shift+Tab, Enter, Escape)

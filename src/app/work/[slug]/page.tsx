@@ -17,7 +17,8 @@ import { fetchHomepageData, getAccessToken, getEmptyHomepageData } from '@/lib/c
 import { asset } from '@/lib/assets';
 import { heroImage, avatarImage, thumbnailImage, optimizeImage } from '@/lib/image-utils';
 import { getContrastColor } from '@/lib/color-utils';
-import { Button, SectionContainer } from '@/components/ui';
+import { SectionContainer } from '@/components/ui';
+import { CTA } from '@/components/sections';
 import type {
   CaseStudy,
   Client,
@@ -498,28 +499,12 @@ export default async function CaseStudyPage({ params }: PageProps) {
       )}
 
       {/* CTA */}
-      <section className="bg-surface-900 py-20 md:py-28">
-        <div className="px-4 md:px-8 lg:px-12">
-          <div className="max-w-2xl mx-auto text-center">
-            <h2 className="text-2xl md:text-3xl font-medium text-white">
-              Want similar results?
-            </h2>
-            <p className="mt-4 text-surface-400">
-              Let&apos;s talk about your project.
-            </p>
-            <div className="mt-8">
-              <Button
-                variant="secondary"
-                size="lg"
-                calTrigger
-                className="bg-white text-surface-900 hover:bg-surface-100"
-              >
-                Book a call
-              </Button>
-            </div>
-          </div>
-        </div>
-      </section>
+      <CTA
+        variant="dark"
+        title="Want similar results?"
+        subtitle="Let's talk about your project."
+        ctaText="Book a call"
+      />
     </>
   );
 }

@@ -114,7 +114,7 @@ Complete checklist for thorough SEO audits.
 
 ## Structured Data
 
-### Global Schemas (Layout.astro)
+### Global Schemas (src/app/layout.tsx)
 
 | Schema | Status | Notes |
 |--------|--------|-------|

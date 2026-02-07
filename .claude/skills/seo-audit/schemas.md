@@ -1,10 +1,10 @@
 # JSON-LD Schema Examples
 
-Ready-to-use structured data schemas for LoudFace website.
+Ready-to-use structured data schemas for LoudFace website (Next.js App Router).
 
-## Global Schemas (Layout.astro)
+## Global Schemas (src/app/layout.tsx)
 
-These are already implemented in Layout.astro.
+These are already implemented in the root layout.
 
 ### WebSite Schema
 
@@ -44,13 +44,11 @@ These are already implemented in Layout.astro.
 
 ## Page-Specific Schemas
 
-### FAQ Schema (for FAQ.astro)
+### FAQ Schema (for FAQ component)
 
-Add this to the FAQ component:
+Add this to the FAQ section component:
 
-```astro
----
-// In FAQ.astro frontmatter
+```tsx
 const faqSchema = {
   "@context": "https://schema.org",
   "@type": "FAQPage",
@@ -63,19 +61,20 @@ const faqSchema = {
     }
   }))
 };
----
 
-<!-- Add before closing </section> -->
-<script type="application/ld+json" set:html={JSON.stringify(faqSchema)} />
+// Add inside the component JSX
+<script
+  type="application/ld+json"
+  dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
+/>
 ```
 
 ### Article Schema (for Case Studies)
 
-Add to `src/pages/work/[slug].astro`:
+Add to `src/app/work/[slug]/page.tsx`:
 
-```astro
----
-// In frontmatter, after fetching case study data
+```tsx
+// In the page component, after fetching case study data
 const articleSchema = {
   "@context": "https://schema.org",
   "@type": "Article",
@@ -107,38 +106,28 @@ const breadcrumbSchema = {
   "@context": "https://schema.org",
   "@type": "BreadcrumbList",
   "itemListElement": [
-    {
-      "@type": "ListItem",
-      "position": 1,
-      "name": "Home",
-      "item": "https://www.loudface.co/"
-    },
-    {
-      "@type": "ListItem",
-      "position": 2,
-      "name": "Work",
-      "item": "https://www.loudface.co/work"
-    },
-    {
-      "@type": "ListItem",
-      "position": 3,
-      "name": study.name
-    }
+    { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://www.loudface.co/" },
+    { "@type": "ListItem", "position": 2, "name": "Work", "item": "https://www.loudface.co/work" },
+    { "@type": "ListItem", "position": 3, "name": study.name }
   ]
 };
----
 
-<!-- Add in <head> or before </body> -->
-<script type="application/ld+json" set:html={JSON.stringify(articleSchema)} />
-<script type="application/ld+json" set:html={JSON.stringify(breadcrumbSchema)} />
+// Add inside the component JSX
+<script
+  type="application/ld+json"
+  dangerouslySetInnerHTML={{ __html: JSON.stringify(articleSchema) }}
+/>
+<script
+  type="application/ld+json"
+  dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
+/>
 ```
 
 ### BlogPosting Schema (for Blog Posts)
 
-For future blog pages:
+For blog post pages at `src/app/blog/[slug]/page.tsx`:
 
-```astro
----
+```tsx
 const blogPostSchema = {
   "@context": "https://schema.org",
   "@type": "BlogPosting",
@@ -166,17 +155,16 @@ const blogPostSchema = {
   },
   "keywords": post.tags?.join(', ')
 };
----
 
-<script type="application/ld+json" set:html={JSON.stringify(blogPostSchema)} />
+<script
+  type="application/ld+json"
+  dangerouslySetInnerHTML={{ __html: JSON.stringify(blogPostSchema) }}
+/>
 ```
 
 ### Service Schema (Optional)
 
-For service pages:
-
-```astro
----
+```tsx
 const serviceSchema = {
   "@context": "https://schema.org",
   "@type": "Service",
@@ -187,20 +175,17 @@ const serviceSchema = {
     "name": "LoudFace",
     "url": "https://www.loudface.co"
   },
-  "areaServed": {
-    "@type": "Country",
-    "name": "United States"
-  },
+  "areaServed": { "@type": "Country", "name": "United States" },
   "serviceType": "Web Development"
 };
----
 
-<script type="application/ld+json" set:html={JSON.stringify(serviceSchema)} />
+<script
+  type="application/ld+json"
+  dangerouslySetInnerHTML={{ __html: JSON.stringify(serviceSchema) }}
+/>
 ```
 
 ### LocalBusiness Schema (Optional)
-
-If emphasizing local presence:
 
 ```json
 {
@@ -211,22 +196,12 @@ If emphasizing local presence:
   "url": "https://www.loudface.co",
   "logo": "https://www.loudface.co/images/loudface.svg",
   "image": "https://www.loudface.co/images/og-image.jpg",
-  "telephone": "+1-XXX-XXX-XXXX",
   "address": {
     "@type": "PostalAddress",
-    "streetAddress": "123 Main St",
     "addressLocality": "Los Angeles",
     "addressRegion": "CA",
-    "postalCode": "90001",
     "addressCountry": "US"
-  },
-  "geo": {
-    "@type": "GeoCoordinates",
-    "latitude": 34.0522,
-    "longitude": -118.2437
-  },
-  "openingHours": "Mo-Fr 09:00-18:00",
-  "priceRange": "$$$$"
+  }
 }
 ```
 
@@ -234,71 +209,49 @@ If emphasizing local presence:
 
 ### Testing Tools
 
-1. **Google Rich Results Test**
-   https://search.google.com/test/rich-results
-
-2. **Schema.org Validator**
-   https://validator.schema.org/
-
-3. **JSON-LD Playground**
-   https://json-ld.org/playground/
+1. **Google Rich Results Test** - https://search.google.com/test/rich-results
+2. **Schema.org Validator** - https://validator.schema.org/
+3. **JSON-LD Playground** - https://json-ld.org/playground/
 
 ### Common Errors to Avoid
 
 | Error | Solution |
 |-------|----------|
-| Invalid JSON | Use `JSON.stringify()` in Astro |
+| Invalid JSON | Use `JSON.stringify()` with `dangerouslySetInnerHTML` |
 | Missing required properties | Check schema.org docs |
 | Relative URLs | Always use absolute URLs |
 | HTML in text fields | Strip tags from CMS content |
 | Wrong date format | Use ISO 8601 format |
 
-### Validation Checklist
-
-- [ ] JSON parses without errors
-- [ ] All required properties present
-- [ ] URLs are absolute (https://...)
-- [ ] Dates in ISO 8601 format
-- [ ] No HTML in text fields
-- [ ] Image URLs resolve
-- [ ] No duplicate schemas of same type
-
 ## Implementation Pattern
 
-### Astro Best Practice
+### Next.js Best Practice
 
-```astro
----
-// Build schema in frontmatter
+```tsx
+// Build schema object in the component
 const schema = {
   "@context": "https://schema.org",
   "@type": "...",
   // ... properties
 };
----
 
-<!-- Use set:html with JSON.stringify for proper escaping -->
-<script type="application/ld+json" set:html={JSON.stringify(schema)} />
+// Use dangerouslySetInnerHTML for proper escaping
+<script
+  type="application/ld+json"
+  dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }}
+/>
 ```
 
 ### Multiple Schemas on One Page
 
-```astro
----
-const schemas = [articleSchema, breadcrumbSchema];
----
-
-{schemas.map(schema => (
-  <script type="application/ld+json" set:html={JSON.stringify(schema)} />
+```tsx
+{[articleSchema, breadcrumbSchema].map((schema, i) => (
+  <script
+    key={i}
+    type="application/ld+json"
+    dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }}
+  />
 ))}
-```
-
-### Conditional Schemas
-
-```astro
-{hasFAQ && (
-  <script type="application/ld+json" set:html={JSON.stringify(faqSchema)} />
-)}
 ```
 
 ## Quick Reference
@@ -311,4 +264,3 @@ const schemas = [articleSchema, breadcrumbSchema];
 | Service page | Service, BreadcrumbList |
 | FAQ section | FAQPage |
 | About page | Organization (already global) |
-| Contact page | LocalBusiness (optional) |

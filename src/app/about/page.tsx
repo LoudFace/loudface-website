@@ -15,7 +15,9 @@ import Script from 'next/script';
 import { fetchHomepageData, getAccessToken, getEmptyHomepageData } from '@/lib/cms-data';
 import { getAboutContent } from '@/lib/content-utils';
 import { asset } from '@/lib/assets';
+import { optimizeImage, logoImage } from '@/lib/image-utils';
 import { Badge, BulletLabel, Button, SectionContainer, SectionHeader } from '@/components/ui';
+import { CTA } from '@/components/sections';
 import type { TeamMember, Client } from '@/lib/types';
 
 export const metadata: Metadata = {
@@ -168,7 +170,7 @@ export default async function AboutPage() {
                 <div className="aspect-[300/280] bg-surface-100 rounded-xl overflow-hidden">
                   {member['profile-picture']?.url ? (
                     <img
-                      src={member['profile-picture'].url}
+                      src={optimizeImage(member['profile-picture'].url, 600)}
                       alt={member.name}
                       className="w-full h-full object-cover"
                       loading={index < 3 ? 'eager' : 'lazy'}
@@ -181,7 +183,7 @@ export default async function AboutPage() {
                     </div>
                   )}
                 </div>
-                <h3 className="mt-4 text-xl font-bold text-surface-900">{member.name}</h3>
+                <h3 className="mt-4 text-xl font-medium text-surface-900">{member.name}</h3>
                 <p className="mt-1 text-surface-600">{member['job-title'] || ''}</p>
                 {member['bio-summary'] && (
                   <p className="mt-3 text-surface-600 text-sm leading-relaxed">{member['bio-summary']}</p>
@@ -197,7 +199,7 @@ export default async function AboutPage() {
             <img src={asset('/images/green-circle.svg')} alt="" className="w-3 h-3" />
             <span className="text-sm font-medium text-surface-900">{content.team.ctaCard.indicator}</span>
           </div>
-          <h3 className="text-xl font-bold text-surface-900">{content.team.ctaCard.headline}</h3>
+          <h3 className="text-xl font-medium text-surface-900">{content.team.ctaCard.headline}</h3>
           <p className="mt-2 text-surface-600 max-w-2xl">{content.team.ctaCard.description}</p>
           <div className="mt-6">
             <Button variant="primary" size="lg" calTrigger>
@@ -215,7 +217,7 @@ export default async function AboutPage() {
                     className="w-20 h-8 flex items-center justify-center"
                   >
                     <img
-                      src={client['colored-logo']?.url}
+                      src={logoImage(client['colored-logo']?.url)}
                       alt={client.name}
                       className="max-w-full max-h-full object-contain"
                       loading="lazy"
@@ -254,7 +256,7 @@ export default async function AboutPage() {
                 className="w-16 h-16 mb-8"
                 loading="lazy"
               />
-              <h4 className="text-xl font-bold text-surface-900">{award.title}</h4>
+              <h4 className="text-xl font-medium text-surface-900">{award.title}</h4>
               <p className="mt-2 text-surface-600">{award.description}</p>
             </div>
           ))}
@@ -300,22 +302,12 @@ export default async function AboutPage() {
         </div>
       </SectionContainer>
 
-      {/* Final CTA Section */}
-      <SectionContainer padding="lg" className="bg-surface-50">
-        <div className="max-w-2xl mx-auto text-center">
-          <h2 className="text-2xl sm:text-3xl md:text-4xl font-medium text-surface-900">
-            {content.finalCta.title}
-          </h2>
-          <p className="mt-6 text-lg text-surface-600">
-            {content.finalCta.description}
-          </p>
-          <div className="mt-10">
-            <Button variant="primary" size="lg" calTrigger>
-              {content.finalCta.ctaText}
-            </Button>
-          </div>
-        </div>
-      </SectionContainer>
+      {/* Final CTA */}
+      <CTA
+        title={content.finalCta.title}
+        subtitle={content.finalCta.description}
+        ctaText={content.finalCta.ctaText}
+      />
     </>
   );
 }

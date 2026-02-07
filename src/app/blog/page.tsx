@@ -8,6 +8,7 @@ import { fetchHomepageData, getAccessToken, getEmptyHomepageData } from '@/lib/c
 import { thumbnailImage } from '@/lib/image-utils';
 import { asset } from '@/lib/assets';
 import { SectionContainer, SectionHeader } from '@/components/ui';
+import { CTA } from '@/components/sections';
 import type { Category, TeamMember } from '@/lib/types';
 
 export const metadata: Metadata = {
@@ -61,22 +62,18 @@ export default async function BlogPage() {
       />
 
       {/* Hero Section */}
-      <section className="pt-4">
-        <div className="px-4 md:px-8 lg:px-12">
-          <div className="max-w-7xl mx-auto">
-            <div className="relative border border-surface-200 bg-surface-50 rounded-2xl overflow-hidden">
-              <div className="p-8 md:p-12 lg:p-16 text-center">
-                <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-hero font-medium text-surface-900">
-                  Our <span className="text-primary-600">Blog</span>
-                </h1>
-                <p className="mt-4 text-lg text-surface-600 max-w-2xl mx-auto">
-                  Insights on Webflow development, SEO, AEO, and design best practices from our team.
-                </p>
-              </div>
-            </div>
+      <SectionContainer padding="none" className="pt-4">
+        <div className="relative border border-surface-200 bg-surface-50 rounded-2xl overflow-hidden">
+          <div className="p-8 md:p-12 lg:p-16 text-center">
+            <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-hero font-medium text-surface-900">
+              Our <span className="text-primary-600">Blog</span>
+            </h1>
+            <p className="mt-4 text-lg text-surface-600 max-w-2xl mx-auto">
+              Insights on Webflow development, SEO, AEO, and design best practices from our team.
+            </p>
           </div>
         </div>
-      </section>
+      </SectionContainer>
 
       {/* Blog Posts Grid */}
       <SectionContainer padding="lg">
@@ -149,6 +146,9 @@ export default async function BlogPage() {
           </div>
         )}
       </SectionContainer>
+
+      {/* CTA */}
+      <CTA />
     </>
   );
 }

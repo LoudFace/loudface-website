@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { getCaseStudySliderContent } from '@/lib/content-utils';
 import { asset } from '@/lib/assets';
-import { cardImage, optimizeImage } from '@/lib/image-utils';
+import { optimizeImage } from '@/lib/image-utils';
 import { getContrastColors } from '@/lib/color-utils';
 import { BulletLabel, Button, CarouselNav, SectionContainer } from '@/components/ui';
 import { useCarousel } from '@/hooks/useCarousel';
@@ -49,6 +49,9 @@ export function CaseStudySlider({
     return undefined;
   }
 
+  // Only show case studies that have testimonials
+  const filteredStudies = caseStudies.filter((study) => getTestimonial(study.id));
+
   // Arrow icon
   const arrowIcon = `<path d="M2.91854 1.85641H8.14011L1.06819 8.92834C1.01486 8.98166 0.972567 9.04496 0.94371 9.11463C0.914853 9.1843 0.9 9.25897 0.9 9.33437C0.9 9.40978 0.914853 9.48445 0.94371 9.55412C0.972567 9.62379 1.01486 9.68709 1.06818 9.74041C1.12151 9.79373 1.18481 9.83603 1.25448 9.86488C1.32414 9.89374 1.39881 9.90859 1.47422 9.90859C1.54963 9.90859 1.6243 9.89374 1.69396 9.86488C1.76363 9.83603 1.82693 9.79373 1.88025 9.74041L8.95193 2.66873V7.91349C8.95193 8.06562 9.01236 8.21153 9.11994 8.3191C9.22752 8.42668 9.37342 8.48711 9.52555 8.48711C9.67769 8.48711 9.82359 8.42668 9.93116 8.3191C10.0387 8.21153 10.0992 8.06562 10.0992 7.91349V1.31361C10.0997 1.30337 10.1 1.29311 10.1 1.28281C10.1 1.13052 10.0395 0.984466 9.93182 0.876779C9.82413 0.769092 9.67807 0.708594 9.52578 0.708594C9.51717 0.708594 9.50858 0.708787 9.50001 0.709172H2.91854C2.7664 0.709172 2.6205 0.769607 2.51292 0.877182C2.40535 0.984757 2.34491 1.13066 2.34491 1.28279C2.34491 1.43493 2.40535 1.58083 2.51292 1.6884C2.6205 1.79598 2.7664 1.85641 2.91854 1.85641Z" fill="currentColor" stroke-width="0.2"/>`;
 
@@ -69,10 +72,10 @@ export function CaseStudySlider({
 
         {/* Embla Carousel */}
         <div className="embla w-full max-w-full overflow-hidden">
-          {caseStudies.length > 0 ? (
+          {filteredStudies.length > 0 ? (
             <div className="embla__viewport overflow-hidden" ref={emblaRef}>
               <div className="embla__container flex items-start gap-4 md:gap-10 touch-pan-y">
-                {caseStudies.map((study) => {
+                {filteredStudies.map((study) => {
                   const client = getClient(study.client);
                   const testimonial = getTestimonial(study.id);
                   const { textColor, overlayColor } = getContrastColors(study['client-color']);
@@ -100,10 +103,10 @@ export function CaseStudySlider({
                         />
 
                         {/* Thumbnail */}
-                        <div className="flex-none w-full md:w-[280px] max-h-[300px] md:max-h-[400px] rounded-md overflow-hidden">
+                        <div className="flex-none w-full md:w-[280px] max-h-[400px] rounded-md overflow-hidden">
                           <img
                             src={
-                              cardImage(study['main-project-image-thumbnail']?.url) ||
+                              optimizeImage(study['main-project-image-thumbnail']?.url, 800, 100) ||
                               asset('/images/placeholder.webp')
                             }
                             alt={
@@ -113,7 +116,7 @@ export function CaseStudySlider({
                             width="600"
                             height="841"
                             loading="lazy"
-                            className="w-full h-full object-cover"
+                            className="w-full h-full object-cover object-left-top"
                           />
                         </div>
 
@@ -184,20 +187,7 @@ export function CaseStudySlider({
                               <div className="h-4" />
 
                               {/* Footer */}
-                              <div className="flex justify-between items-center">
-                                <div className="[&>img]:max-h-5 [&>img]:w-auto">
-                                  {client?.['colored-logo']?.url ? (
-                                    <img
-                                      src={optimizeImage(client['colored-logo'].url, 100)}
-                                      alt={client.name || 'Client logo'}
-                                      width="94"
-                                      height="20"
-                                      loading="lazy"
-                                    />
-                                  ) : (
-                                    <span className="font-medium">{client?.name || ''}</span>
-                                  )}
-                                </div>
+                              <div className="flex justify-end items-center">
                                 <div className="flex items-center gap-2 text-sm">
                                   <span className="font-medium">Read case study</span>
                                   <svg

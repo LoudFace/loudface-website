@@ -4,7 +4,7 @@ Quick-reference for every reusable component. **Check here before writing any ma
 
 Import all UI primitives from the barrel:
 ```tsx
-import { Badge, BulletLabel, Button, CarouselNav, SectionContainer, SectionHeader } from '@/components/ui';
+import { Badge, BulletLabel, Button, Card, CarouselNav, SectionContainer, SectionHeader } from '@/components/ui';
 ```
 
 ---
@@ -57,6 +57,8 @@ Multi-variant button that renders as `<button>`, `<Link>`, or `<a>` depending on
 | `size` | `'sm' \| 'md' \| 'lg'` | `'md'` | Padding/text size |
 | `href` | `string` | — | Makes it a link (internal = `<Link>`, external = `<a>`) |
 | `calTrigger` | `boolean` | — | Marks as Cal.com booking trigger |
+| `type` | `'button' \| 'submit' \| 'reset'` | `'button'` | HTML button type (ignored when `href` is set) |
+| `onClick` | `() => void` | — | Click handler (ignored when `href` is set) |
 | `fullWidth` | `boolean` | `false` | Stretches to fill container |
 | `disabled` | `boolean` | `false` | Disables interaction |
 | `ariaLabel` | `string` | — | Accessible label for icon-only buttons |
@@ -65,6 +67,25 @@ Multi-variant button that renders as `<button>`, `<Link>`, or `<a>` depending on
 ```tsx
 <Button variant="primary" size="lg" calTrigger>Book an intro call</Button>
 <Button variant="outline" href="/work">View case studies</Button>
+```
+
+### Card
+
+Consistent card surface for content containers. Use instead of writing raw card markup.
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `children` | `ReactNode` | required | Card content |
+| `variant` | `'default' \| 'dark' \| 'glass'` | `'default'` | `default` = white + border, `dark` = solid dark, `glass` = frosted (dark sections) |
+| `padding` | `'sm' \| 'md' \| 'lg' \| 'none'` | `'md'` | Inner padding (`sm` = p-4, `md` = p-6, `lg` = p-8) |
+| `hover` | `boolean` | `true` | Enable hover interaction styles |
+| `className` | `string` | `''` | Additional classes |
+
+```tsx
+<Card>Content on light bg</Card>
+<Card variant="dark">Content in dark container</Card>
+<Card variant="glass">Content inside dark section</Card>
+<Card padding="lg" hover={false}>Static large card</Card>
 ```
 
 ### CarouselNav
@@ -163,7 +184,7 @@ All section components are exported from `@/components/sections` (or `@/componen
 
 ```
 src/components/index.ts        → re-exports everything
-src/components/ui/index.ts     → Badge, BulletLabel, Button, CarouselNav, SectionContainer, SectionHeader
+src/components/ui/index.ts     → Badge, BulletLabel, Button, Card, CarouselNav, SectionContainer, SectionHeader
 src/components/sections/index.ts → Hero, Partners, CaseStudySlider, Audit, Results, Marketing, Approach, Knowledge, FAQ, CTA
 ```
 
@@ -178,3 +199,6 @@ src/components/sections/index.ts → Hero, Partners, CaseStudySlider, Audit, Res
 5. **Server by default** — only add `'use client'` when hooks or event handlers are needed
 6. **Use `asset()`** for all static image paths (see `@/lib/assets`)
 7. **Use `<Link>`** for all internal navigation (handles basePath)
+8. **Use `Card`** for all card surfaces — never write raw card markup with `bg-white rounded-xl border...`
+9. **Follow the page archetype** in `component-patterns.md` when creating new pages
+10. **Follow the text color hierarchy** in `styling.md` — don't freestyle text colors

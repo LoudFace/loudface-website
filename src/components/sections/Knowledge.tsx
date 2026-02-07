@@ -97,7 +97,7 @@ export function Knowledge({
                         <div className="aspect-video w-full overflow-hidden rounded-lg">
                           <img
                             src={
-                              optimizeImage(post.thumbnail?.url, 840, 80) ||
+                              optimizeImage(post.thumbnail?.url, 840) ||
                               asset('/images/placeholder.webp')
                             }
                             loading="lazy"

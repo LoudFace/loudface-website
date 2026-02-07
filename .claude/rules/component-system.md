@@ -40,6 +40,7 @@ import { Hero, Partners, CaseStudySlider } from '@/components/sections';
 |---|---|---|
 | Section wrapper with padding | `SectionContainer` | Write manual `<section>` + padding + gutters + max-width |
 | Section heading with highlight | `SectionHeader` | Rebuild title splitting logic inline |
+| Card surface (any variant) | `Card` | Write raw `bg-white rounded-xl border...` markup |
 | Dot-prefixed label | `BulletLabel` | Create a `<span>` with a dot character |
 | Category/tag pill | `Badge` | Build a custom pill with inline styles |
 | Any button or link-button | `Button` | Use raw `<button>` or `<a>` for CTAs |

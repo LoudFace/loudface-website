@@ -87,6 +87,31 @@
   --color-wine-900: #382235;
   --color-wine-text: #c8e0f7;
   --color-wine-border: #cadbd9;
+
+  /* Remove default Tailwind color palettes — forces use of project tokens.
+     If a class like text-gray-500 is used, it silently does nothing. */
+  --color-gray-*: initial;
+  --color-neutral-*: initial;
+  --color-zinc-*: initial;
+  --color-slate-*: initial;
+  --color-stone-*: initial;
+  --color-indigo-*: initial;
+  --color-blue-*: initial;
+  --color-violet-*: initial;
+  --color-purple-*: initial;
+  --color-green-*: initial;
+  --color-red-*: initial;
+  --color-yellow-*: initial;
+  --color-amber-*: initial;
+  --color-orange-*: initial;
+  --color-emerald-*: initial;
+  --color-teal-*: initial;
+  --color-cyan-*: initial;
+  --color-sky-*: initial;
+  --color-lime-*: initial;
+  --color-fuchsia-*: initial;
+  --color-pink-*: initial;
+  --color-rose-*: initial;
 }
 
 /* ===========================================

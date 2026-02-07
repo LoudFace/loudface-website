@@ -50,10 +50,10 @@ export function NewsletterForm({
       : 'bg-surface-900 text-white hover:bg-surface-800';
 
   const successClasses =
-    variant === 'dark' ? 'bg-green-800 text-white' : 'bg-green-100 text-green-800';
+    variant === 'dark' ? 'bg-success-dark text-white' : 'bg-success-light text-success-dark';
 
   const errorClasses =
-    variant === 'dark' ? 'bg-red-800/80 text-surface-100' : 'bg-red-100 text-red-800';
+    variant === 'dark' ? 'bg-error-dark text-surface-100' : 'bg-error-light text-error-dark';
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();

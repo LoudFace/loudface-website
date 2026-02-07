@@ -9,7 +9,8 @@ import { COLLECTION_IDS } from '@/lib/constants';
 import { fetchHomepageData, getAccessToken } from '@/lib/cms-data';
 import { avatarImage, heroImage, thumbnailImage } from '@/lib/image-utils';
 import { asset } from '@/lib/assets';
-import { Button, SectionContainer } from '@/components/ui';
+import { SectionContainer } from '@/components/ui';
+import { CTA } from '@/components/sections';
 import type { BlogPost, Category, TeamMember } from '@/lib/types';
 
 interface PageProps {
@@ -349,28 +350,12 @@ export default async function BlogPostPage({ params }: PageProps) {
       )}
 
       {/* CTA */}
-      <section className="bg-surface-900 py-20 md:py-28">
-        <div className="px-4 md:px-8 lg:px-12">
-          <div className="max-w-2xl mx-auto text-center">
-            <h2 className="text-2xl md:text-3xl font-medium text-white">
-              Ready to grow your business?
-            </h2>
-            <p className="mt-4 text-surface-400">
-              Let&apos;s discuss how we can help you achieve your goals.
-            </p>
-            <div className="mt-8">
-              <Button
-                variant="secondary"
-                size="lg"
-                calTrigger
-                className="bg-white text-surface-900 hover:bg-surface-100"
-              >
-                Book a call
-              </Button>
-            </div>
-          </div>
-        </div>
-      </section>
+      <CTA
+        variant="dark"
+        title="Ready to grow your business?"
+        subtitle="Let's discuss how we can help you achieve your goals."
+        ctaText="Book a call"
+      />
     </>
   );
 }

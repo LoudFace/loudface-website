@@ -17,12 +17,12 @@ Mandatory SEO requirements for all content and pages.
 - **Unique**: Every page must have a unique description
 
 ### Implementation
-```astro
----
-const title = "Case Study Title | LoudFace";
-const description = "How we helped [Client] achieve [Result]. See the full case study with metrics and approach.";
----
-<Layout title={title} description={description}>
+```tsx
+// In any page file (e.g., src/app/work/[slug]/page.tsx)
+export const metadata: Metadata = {
+  title: 'Case Study Title',  // Template appends " | LoudFace"
+  description: 'How we helped [Client] achieve [Result]. See the full case study with metrics and approach.',
+};
 ```
 
 ## Heading Structure
@@ -95,9 +95,16 @@ Every case study must include:
 - Bold or highlight key metrics
 
 ### Case Study Meta
-```astro
-const title = `${client.name} Case Study | LoudFace`;
-const description = `How we helped ${client.name} achieve ${primaryResult}. ${industry} case study with metrics.`;
+```tsx
+// In generateMetadata for dynamic case study pages
+export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
+  const { slug } = await params;
+  const caseStudy = await fetchCaseStudy(slug);
+  return {
+    title: `${caseStudy.name} Case Study`,
+    description: `How we helped ${caseStudy.name} achieve ${primaryResult}. ${industry} case study with metrics.`,
+  };
+}
 ```
 
 ## Internal Linking
@@ -150,7 +157,7 @@ const description = `How we helped ${client.name} achieve ${primaryResult}. ${in
 
 ### Required Schemas
 
-**All pages** (in Layout.astro):
+**All pages** (in `src/app/layout.tsx`):
 - `WebSite` schema
 - `Organization` schema
 
@@ -166,8 +173,8 @@ const description = `How we helped ${client.name} achieve ${primaryResult}. ${in
 - `BreadcrumbList` schema
 
 ### Schema Location
-Global schemas: `src/layouts/Layout.astro`
-Page-specific schemas: Individual page files
+Global schemas: `src/app/layout.tsx`
+Page-specific schemas: Individual `page.tsx` files via `<script type="application/ld+json">`
 
 ## Technical SEO Checklist
 

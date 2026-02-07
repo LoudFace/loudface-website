@@ -24,7 +24,7 @@ function isRemoteUrl(url: string): boolean {
  *
  * @param url - Original image URL
  * @param width - Target width in pixels
- * @param quality - Image quality (1-100), default 80
+ * @param quality - Image quality (1-100), default 100
  * @param format - Output format ('webp' | 'auto' | 'original'), default 'webp'
  * @returns Optimized URL through weserv.nl proxy
  *
@@ -38,7 +38,7 @@ function isRemoteUrl(url: string): boolean {
 export function optimizeImage(
   url: string | undefined,
   width: number,
-  quality: number = 65,
+  quality: number = 100,
   format: "webp" | "auto" | "original" = "webp"
 ): string | undefined {
   if (!url) return undefined;
@@ -84,7 +84,7 @@ export function optimizeImage(
 export function generateSrcset(
   url: string | undefined,
   sizes: number[],
-  quality: number = 65,
+  quality: number = 100,
   format: "webp" | "auto" | "original" = "webp"
 ): string | undefined {
   if (!url || !isRemoteUrl(url)) {
@@ -105,22 +105,22 @@ export const ImageSizes = {
   avatar: 80,
   avatarLarge: 120,
 
-  // Thumbnails
-  thumbnailSmall: 200,
-  thumbnail: 400,
-  thumbnailLarge: 600,
+  // Thumbnails (displayed ~350-400px, serve 800px for 2x)
+  thumbnailSmall: 400,
+  thumbnail: 800,
+  thumbnailLarge: 1000,
 
   // Logos (displayed ~100px wide, serve 200px for 2x)
   logo: 200,
   logoSmall: 120,
 
-  // Cards
-  cardImage: 600,
-  cardImageLarge: 800,
+  // Cards (displayed ~280-400px, serve 800px for 2x)
+  cardImage: 800,
+  cardImageLarge: 1200,
 
   // Hero/Feature images
-  hero: 1200,
-  heroLarge: 1600,
+  hero: 1600,
+  heroLarge: 1920,
 
   // Full width
   fullWidth: 1920,
@@ -166,7 +166,7 @@ export function heroImage(url: string | undefined): {
 } {
   return {
     src: optimizeImage(url, ImageSizes.hero),
-    srcset: generateSrcset(url, [600, 900, 1200, 1600]),
+    srcset: generateSrcset(url, [800, 1200, 1600, 1920]),
   };
 }
 
@@ -179,6 +179,6 @@ export function caseStudyThumbnail(url: string | undefined): {
 } {
   return {
     src: optimizeImage(url, ImageSizes.cardImage),
-    srcset: generateSrcset(url, [300, 450, 600, 800]),
+    srcset: generateSrcset(url, [400, 600, 800, 1200]),
   };
 }

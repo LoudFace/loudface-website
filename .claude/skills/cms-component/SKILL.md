@@ -1,138 +1,40 @@
 # CMS Component Creation
 
-Create React components that render Webflow CMS data with proper typing and patterns for Next.js.
+Create React components that render Webflow CMS data. For general component patterns (templates, carousel setup, server vs client decisions), see `.claude/rules/component-patterns.md` — it's always loaded in context.
 
-## Required Imports
+This skill covers **CMS-specific** patterns only.
 
-```tsx
-// For Server Components (default)
-import { asset } from '@/lib/assets';  // For static image paths
-import type { CaseStudy, Client } from '@/lib/types';
-
-// For Client Components (only when needed)
-'use client';
-import { useState, useEffect } from 'react';
-```
-
-## Server Component Template (Default)
+## Quick Start
 
 ```tsx
-// src/components/sections/MySection.tsx
 import { asset } from '@/lib/assets';
 import type { CaseStudy, Client } from '@/lib/types';
-import { SectionContainer, SectionHeader } from '@/components/ui';
-
-interface MySectionProps {
-  caseStudies: CaseStudy[];
-  clients: Client[];
-}
-
-export function MySection({ caseStudies, clients }: MySectionProps) {
-  // Build lookup maps for references
-  const clientsMap = new Map(clients.map(c => [c.id, c]));
-
-  return (
-    <SectionContainer>
-      <SectionHeader title="Case Studies" />
-      <div className="grid gap-6">
-        {caseStudies.map(item => (
-          <a
-            key={item.id}
-            href={`/work/${item.slug}`}
-            className="block hover:opacity-75 transition-opacity"
-          >
-            <h3>{item.name}</h3>
-            <img
-              src={item['main-project-image-thumbnail']?.url || asset('/images/placeholder.webp')}
-              alt={item.name}
-            />
-          </a>
-        ))}
-      </div>
-    </SectionContainer>
-  );
-}
+import { SectionContainer, SectionHeader, Card } from '@/components/ui';
+import Link from 'next/link';
 ```
 
-## Client Component Template
+**Always check `COMPONENTS.md` first** before writing any markup.
 
-```tsx
-// src/components/MyCarousel.tsx
-'use client';
-
-import { useCarousel } from '@/hooks/useCarousel';
-import { CarouselNav } from '@/components/ui';
-import type { CaseStudy } from '@/lib/types';
-
-interface MyCarouselProps {
-  items: CaseStudy[];
-}
-
-export function MyCarousel({ items }: MyCarouselProps) {
-  const [emblaRef, emblaApi] = useCarousel({ loop: true });
-
-  return (
-    <div>
-      <div className="embla" ref={emblaRef}>
-        <div className="embla__container">
-          {items.map(item => (
-            <div key={item.id} className="embla__slide">
-              {/* slide content */}
-            </div>
-          ))}
-        </div>
-      </div>
-      <CarouselNav emblaApi={emblaApi} variant="light" />
-    </div>
-  );
-}
-```
-
-## API Reference
-
-### Type Imports
+## CMS Type Imports
 
 **ALWAYS import CMS types from `@/lib/types`:**
 
-```typescript
-import type { CaseStudy, Client, Testimonial, BlogPost } from '@/lib/types';
-```
-
-Available types:
-- `CaseStudy`, `Client`, `Testimonial`, `BlogPost`
-- `Category`, `Industry`, `TeamMember`, `Technology`
-- `ServiceCategory`, `WebflowImage`
-
-### Collection IDs
-
-See `CLAUDE.md` → "CMS Collection IDs Reference" for the full table of collection IDs and API routes.
-
-## Checklist
-
-When creating a CMS component:
-
-- [ ] Create as Server Component by default (no `'use client'`)
-- [ ] Import types from `@/lib/types`
-- [ ] Use `asset()` for fallback image paths
-- [ ] Use `SectionContainer` for layout
-- [ ] Use `SectionHeader` for section headings
-- [ ] Use `Link` from `next/link` for internal navigation
-- [ ] Add `'use client'` only if using hooks/state/effects
-- [ ] Add `key` prop to all mapped elements
+Available types: `CaseStudy`, `Client`, `Testimonial`, `BlogPost`, `Category`, `Industry`, `TeamMember`, `Technology`, `ServiceCategory`, `WebflowImage`
 
 ## Field Access Patterns
 
 ```typescript
-// Direct fields (normalized by API)
+// Direct fields (normalized by API route)
 item.name
 item.slug
 item.id
 
-// Kebab-case fields
+// Kebab-case fields (Webflow field names)
 item['project-title']
 item['result-1---number']
 
-// Reference fields (need lookup)
+// Reference fields (need lookup map)
+const clientsMap = new Map(clients.map(c => [c.id, c]));
 const client = clientsMap.get(item.client);
 const clientName = client?.name;
 
@@ -149,9 +51,9 @@ Always handle empty collections:
 {items.length > 0 ? (
   <div className="grid gap-6">
     {items.map(item => (
-      <div key={item.id}>
+      <Card key={item.id}>
         {/* content */}
-      </div>
+      </Card>
     ))}
   </div>
 ) : (
@@ -163,8 +65,8 @@ Always handle empty collections:
 
 | Content Type | Solution |
 |--------------|----------|
-| Static text (headlines, CTAs) | JSON content layer |
-| Webflow CMS items | CMS data fetching |
+| Static text (headlines, CTAs) | JSON content layer (`src/data/content/`) |
+| Webflow CMS items | CMS data fetching (`src/lib/cms-data.ts`) |
 
 ### Adding Static Text Support
 
@@ -179,30 +81,28 @@ export function MySection() {
   const content = getMySectionContent();
 
   return (
-    <section>
-      {/* Use dangerouslySetInnerHTML for text that may have line breaks */}
+    <SectionContainer>
       <h2 dangerouslySetInnerHTML={{ __html: content.title }} />
       <p dangerouslySetInnerHTML={{ __html: content.description }} />
-
-      {/* Use regular interpolation for single-line text */}
       <button>{content.ctaText}</button>
-    </section>
+    </SectionContainer>
   );
 }
 ```
 
-## Server vs Client Decision
+## Checklist
 
-| Need | Component Type |
-|------|----------------|
-| Data fetching | Server |
-| Static rendering | Server |
-| useState/useEffect | Client |
-| Event handlers (onClick) | Client |
-| Browser APIs | Client |
-| useCarousel hook | Client |
-| Form state | Client |
+- [ ] Read `COMPONENTS.md` first — use existing components
+- [ ] Import types from `@/lib/types`
+- [ ] Use `asset()` for fallback image paths only (not CMS URLs)
+- [ ] Use `Link` from `next/link` for internal navigation
+- [ ] Handle empty collections gracefully
+- [ ] Build lookup maps for reference fields
+- [ ] Add `key` prop to all mapped elements
 
-**Rule:** Start with Server Component. Add `'use client'` only when needed.
+## References
 
-See `.claude/rules/component-patterns.md` for full documentation.
+- **Component patterns**: `.claude/rules/component-patterns.md` (templates, server vs client, carousel setup)
+- **Styling tokens**: `.claude/rules/styling.md` (colors, typography, spacing)
+- **Collection IDs**: `CLAUDE.md` → "CMS Collection IDs" table
+- **Component registry**: `COMPONENTS.md` (read before writing any markup)

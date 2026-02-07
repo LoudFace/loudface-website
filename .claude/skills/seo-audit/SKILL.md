@@ -16,8 +16,8 @@ Perform a comprehensive SEO audit of the specified target.
 ### Step 1: Determine Scope
 
 Based on the argument:
-- **Single file** (`src/pages/index.astro`): Audit that page only
-- **Directory** (`src/pages/`): Audit all pages in directory
+- **Single file** (`src/app/page.tsx`): Audit that page only
+- **Directory** (`src/app/work/`): Audit all pages in directory
 - **"site"**: Full site-wide SEO audit
 
 ### Step 2: Technical SEO Audit
@@ -66,8 +66,8 @@ For each page, check:
 
 ### Step 5: Structured Data Audit
 
-- [ ] WebSite schema present (Layout.astro)
-- [ ] Organization schema present (Layout.astro)
+- [ ] WebSite schema present (src/app/layout.tsx)
+- [ ] Organization schema present (src/app/layout.tsx)
 - [ ] Page-specific schemas where needed:
   - FAQ sections → FAQPage schema
   - Case studies → Article + BreadcrumbList schemas
@@ -87,20 +87,20 @@ For each page, check:
 Use these to find issues:
 
 ```
-# Find pages without meta descriptions
-Grep pattern="<meta name=\"description\"" glob="*.astro" path="src/pages"
+# Find pages with metadata exports
+Grep pattern="export (const metadata|async function generateMetadata)" glob="*.tsx" path="src/app"
 
 # Count H1 tags per file
-Grep pattern="<h1" glob="*.astro" path="src"
+Grep pattern="<h1" glob="*.tsx" path="src"
 
 # Find images potentially missing alt text
-Grep pattern="<img" glob="*.astro" path="src/components"
+Grep pattern="<img" glob="*.tsx" path="src/components"
 
 # Find hardcoded image paths (should use asset())
-Grep pattern="src=\"/images" glob="*.astro" path="src"
+Grep pattern="src=\"/images" glob="*.tsx" path="src"
 
 # Check for JSON-LD schemas
-Grep pattern="application/ld\\+json" glob="*.astro" path="src"
+Grep pattern="application/ld\\+json" glob="*.tsx" path="src"
 ```
 
 ## Output Format
@@ -130,7 +130,7 @@ Generate a report in this format:
 ## Critical Issues (Must Fix)
 
 ### 1. [Issue Title]
-**File**: `path/to/file.astro:line`
+**File**: `path/to/file.tsx:line`
 **Problem**: [Description]
 **Impact**: [SEO impact]
 **Fix**: [Specific fix with code example]
