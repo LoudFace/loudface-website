@@ -4,12 +4,20 @@ Quick-reference for every reusable component. **Check here before writing any ma
 
 Import all UI primitives from the barrel:
 ```tsx
-import { Badge, BulletLabel, Button, Card, CarouselNav, PixelBreakpointAnimation, ScalableGridAnimation, SectionContainer, SectionHeader } from '@/components/ui';
+import { AICitationVisual, Badge, BulletLabel, Button, Card, CarouselNav, ComponentAssemblyVisual, ConversionSplitVisual, PixelBreakpointAnimation, ScalableGridAnimation, SectionContainer, SectionHeader } from '@/components/ui';
 ```
 
 ---
 
 ## UI Primitives (`src/components/ui/`)
+
+### AICitationVisual
+
+Animated browser frame mimicking an AI engine response where the brand is highlighted as a cited source. Cycles through Perplexity, ChatGPT, and Google AI. Shows a question, skeleton response lines with a real brand citation, and source pills. Floating badges show "Cited" checkmark and citation count on completion. Client component (no props).
+
+```tsx
+<AICitationVisual />
+```
 
 ### Badge
 
@@ -101,6 +109,22 @@ Prev/next arrow buttons for Embla carousels.
 
 ```tsx
 <CarouselNav variant="light" onPrevClick={scrollPrev} onNextClick={scrollNext} />
+```
+
+### ConversionSplitVisual
+
+Animated browser frame showing an A/B split test playing out in real time. Two page variants appear side by side, metrics count up, a winner is declared, then the cycle resets with a new test scenario. Cycles through three pages: landing, pricing, and signup. Floating badges show conversion lift and tests-won count on completion. Client component (no props).
+
+```tsx
+<ConversionSplitVisual />
+```
+
+### ComponentAssemblyVisual
+
+Animated browser frame where website sections (nav, hero, cards, CTA) slide in one by one, demonstrating component-first architecture. On completion, the browser frame glows with a primary-colored border. Status text toggles between "Assembling components..." and "Ready to launch." Client component (no props).
+
+```tsx
+<ComponentAssemblyVisual />
 ```
 
 ### PixelBreakpointAnimation
@@ -200,7 +224,7 @@ All section components are exported from `@/components/sections` (or `@/componen
 
 ```
 src/components/index.ts        → re-exports everything
-src/components/ui/index.ts     → Badge, BulletLabel, Button, Card, CarouselNav, PixelBreakpointAnimation, ScalableGridAnimation, SectionContainer, SectionHeader
+src/components/ui/index.ts     → AICitationVisual, Badge, BulletLabel, Button, Card, CarouselNav, ComponentAssemblyVisual, ConversionSplitVisual, PixelBreakpointAnimation, ScalableGridAnimation, SectionContainer, SectionHeader
 src/components/sections/index.ts → Hero, Partners, CaseStudySlider, Audit, Results, Marketing, Approach, Knowledge, FAQ, CTA
 ```
 

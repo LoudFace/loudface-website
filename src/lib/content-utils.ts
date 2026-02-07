@@ -24,6 +24,8 @@ import faqItemsContent from "@/data/content/faq-items.json";
 import workContent from "@/data/content/work.json";
 import aboutContent from "@/data/content/about.json";
 import servicesWebflowContent from "@/data/content/services-webflow.json";
+import servicesSeoAeoContent from "@/data/content/services-seo-aeo.json";
+import servicesCroContent from "@/data/content/services-cro.json";
 
 // Type definitions for content files
 export interface CTAContent {
@@ -309,6 +311,93 @@ export interface ServicesWebflowContent {
   };
 }
 
+export interface ServicesSeoAeoTrack {
+  label: string;
+  title: string;
+  description: string;
+  items: string[];
+}
+
+export interface ServicesSeoAeoContent {
+  hero: {
+    eyebrow: string;
+    headline: string;
+    description: string;
+    primaryCta: string;
+    secondaryCta: string;
+  };
+  stats: { value: string; label: string }[];
+  problems: {
+    title: string;
+    highlightWord: string;
+    items: { number: string; title: string; description: string }[];
+  };
+  approach: {
+    title: string;
+    highlightWord: string;
+    intro: string;
+    steps: { number: string; title: string; description: string }[];
+  };
+  tracks: {
+    title: string;
+    highlightWord: string;
+    description: string;
+    bridge: string;
+    seo: ServicesSeoAeoTrack;
+    aeo: ServicesSeoAeoTrack;
+  };
+  capabilities: {
+    title: string;
+    highlightWord: string;
+    items: { title: string; description: string }[];
+  };
+  faq: {
+    title: string;
+    items: FAQItem[];
+  };
+  cta: {
+    title: string;
+    subtitle: string;
+    ctaText: string;
+  };
+}
+
+export interface ServicesCroContent {
+  hero: {
+    eyebrow: string;
+    headline: string;
+    description: string;
+    primaryCta: string;
+    secondaryCta: string;
+  };
+  stats: { value: string; label: string }[];
+  problems: {
+    title: string;
+    highlightWord: string;
+    items: { number: string; title: string; description: string }[];
+  };
+  approach: {
+    title: string;
+    highlightWord: string;
+    intro: string;
+    steps: { number: string; title: string; description: string }[];
+  };
+  capabilities: {
+    title: string;
+    highlightWord: string;
+    items: { title: string; description: string }[];
+  };
+  faq: {
+    title: string;
+    items: FAQItem[];
+  };
+  cta: {
+    title: string;
+    subtitle: string;
+    ctaText: string;
+  };
+}
+
 // Content registry - maps file names to their content
 const contentRegistry: Record<string, unknown> = {
   cta: ctaContent,
@@ -326,6 +415,8 @@ const contentRegistry: Record<string, unknown> = {
   work: workContent,
   about: aboutContent,
   "services-webflow": servicesWebflowContent,
+  "services-seo-aeo": servicesSeoAeoContent,
+  "services-cro": servicesCroContent,
 };
 
 /**
@@ -440,6 +531,20 @@ export function getAboutContent(): AboutContent {
  */
 export function getServicesWebflowContent(): ServicesWebflowContent {
   return servicesWebflowContent as ServicesWebflowContent;
+}
+
+/**
+ * Get Services SEO/AEO page content
+ */
+export function getServicesSeoAeoContent(): ServicesSeoAeoContent {
+  return servicesSeoAeoContent as ServicesSeoAeoContent;
+}
+
+/**
+ * Get Services CRO page content
+ */
+export function getServicesCroContent(): ServicesCroContent {
+  return servicesCroContent as ServicesCroContent;
 }
 
 /**

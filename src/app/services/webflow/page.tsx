@@ -12,7 +12,7 @@ import { getServicesWebflowContent } from '@/lib/content-utils';
 import { asset } from '@/lib/assets';
 import { getContrastColors } from '@/lib/color-utils';
 import { caseStudyThumbnail, logoImage } from '@/lib/image-utils';
-import { SectionContainer, SectionHeader, Card, Button, BulletLabel, PixelBreakpointAnimation, ScalableGridAnimation } from '@/components/ui';
+import { SectionContainer, SectionHeader, Card, Button, BulletLabel, PixelBreakpointAnimation, ScalableGridAnimation, ComponentAssemblyVisual } from '@/components/ui';
 import { FAQ, CTA } from '@/components/sections';
 import type { CaseStudy, Client, Industry } from '@/lib/types';
 
@@ -83,48 +83,9 @@ export default async function WebflowServicePage() {
             </div>
           </div>
 
-          {/* Right — Component Stack Visual */}
-          <div className="hidden lg:flex lg:col-span-5 justify-center">
-            <div className="relative w-full max-w-sm h-80">
-              {/* Card 1 — Nav component skeleton */}
-              <div className="absolute top-0 left-4 right-8 bg-white rounded-xl border border-surface-200 shadow-md p-4 rotate-[-2deg]">
-                <div className="flex items-center gap-3">
-                  <div className="w-8 h-8 rounded-lg bg-primary-100" />
-                  <div className="flex-1 space-y-1">
-                    <div className="h-2.5 w-24 bg-surface-100 rounded-full" />
-                  </div>
-                  <div className="flex gap-2">
-                    <div className="h-2 w-10 bg-surface-100 rounded-full" />
-                    <div className="h-2 w-10 bg-surface-100 rounded-full" />
-                    <div className="h-2 w-10 bg-surface-100 rounded-full" />
-                  </div>
-                </div>
-              </div>
-
-              {/* Card 2 — Hero component skeleton */}
-              <div className="absolute top-16 left-0 right-4 bg-white rounded-xl border border-surface-200 shadow-lg p-6 rotate-[1deg]">
-                <div className="space-y-3">
-                  <div className="h-3 w-20 bg-primary-100 rounded-full" />
-                  <div className="h-4 w-full bg-surface-100 rounded-full" />
-                  <div className="h-4 w-3/4 bg-surface-100 rounded-full" />
-                  <div className="h-3 w-full bg-surface-50 rounded-full mt-4" />
-                  <div className="h-3 w-2/3 bg-surface-50 rounded-full" />
-                  <div className="mt-4 flex gap-3">
-                    <div className="h-8 w-24 bg-surface-900 rounded-lg" />
-                    <div className="h-8 w-24 bg-surface-100 rounded-lg" />
-                  </div>
-                </div>
-              </div>
-
-              {/* Card 3 — CTA component skeleton */}
-              <div className="absolute bottom-0 left-8 right-0 bg-white rounded-xl border border-surface-200 shadow-md p-5 rotate-[-1deg]">
-                <div className="text-center space-y-2">
-                  <div className="h-3.5 w-40 bg-surface-100 rounded-full mx-auto" />
-                  <div className="h-2.5 w-56 bg-surface-50 rounded-full mx-auto" />
-                  <div className="h-8 w-28 bg-primary-600 rounded-lg mx-auto mt-3" />
-                </div>
-              </div>
-            </div>
+          {/* Right — Component Assembly Animation */}
+          <div className="hidden lg:flex lg:col-span-5 justify-center items-center">
+            <ComponentAssemblyVisual />
           </div>
         </div>
 

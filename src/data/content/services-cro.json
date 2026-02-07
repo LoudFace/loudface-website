@@ -1,0 +1,123 @@
+{
+  "hero": {
+    "eyebrow": "Conversion Rate Optimization",
+    "headline": "Your traffic is worth more<br>than your conversion rate suggests",
+    "description": "Zero-click searches own 60-70% of queries. AI overviews cut CTR by ~35%. The visitors who do land on your site are fewer, but they're ready to act \u2014 if your site lets them. We run CRO programs that treat every page as a revenue conversation, not a brochure.",
+    "primaryCta": "Book an intro call",
+    "secondaryCta": "See how it works"
+  },
+  "stats": [
+    { "value": "288%", "label": "Best Conversion Increase" },
+    { "value": "90-day", "label": "Optimization Cycles" },
+    { "value": "Weekly", "label": "Executive Showcases" },
+    { "value": "100%", "label": "Hands-Free Execution" }
+  ],
+  "problems": {
+    "title": "Traffic without conversion is a vanity metric.",
+    "highlightWord": "vanity",
+    "items": [
+      {
+        "number": "01",
+        "title": "High traffic, flat pipeline",
+        "description": "You're driving visitors, but the numbers that matter \u2014 demo starts, form submissions, qualified leads \u2014 haven't moved. Your dashboard shows growth. Your pipeline says otherwise."
+      },
+      {
+        "number": "02",
+        "title": "Design-first, conversion-second",
+        "description": "Your site won design awards or internal applause, but nobody built it to convert. Layouts optimized for aesthetics, not comprehension. Copy that describes features instead of solving problems. No clear path from landing to action."
+      },
+      {
+        "number": "03",
+        "title": "Random tests, no system",
+        "description": "Someone ran an A/B test on a button color six months ago. That's the CRO program. No hypothesis framework, no prioritization, no connection between what you're testing and what actually moves revenue."
+      }
+    ]
+  },
+  "approach": {
+    "title": "CRO as a system, not experiments",
+    "highlightWord": "system",
+    "intro": "We don't run isolated A/B tests and call it optimization. Every page, layout decision, and line of copy gets evaluated through one filter: Does this build confidence? Reduce friction? Move the visitor toward a decision?",
+    "steps": [
+      {
+        "number": "1",
+        "title": "Conversion audit",
+        "description": "We map your current funnel: where visitors land, where they drop off, where friction kills momentum. Every finding scored against revenue impact, not statistical curiosity."
+      },
+      {
+        "number": "2",
+        "title": "90-day roadmap",
+        "description": "3-5 measurable goals tied to pipeline outcomes. A shared Scoreboard tracking conversion rate, demo starts, form submissions, and scroll depth. Clear priorities so nothing gets tested at random."
+      },
+      {
+        "number": "3",
+        "title": "Continuous testing",
+        "description": "Headlines, CTAs, page structure, forms, social proof placement \u2014 tested systematically alongside your SEO/AEO program. As traffic scales, conversion rates improve in parallel. The compound effect is where the ROI lives."
+      },
+      {
+        "number": "4",
+        "title": "Weekly showcase",
+        "description": "A live walkthrough of what shipped, how conversion metrics moved, and what's next. Every test tied to business outcomes your exec team cares about \u2014 not statistical noise."
+      }
+    ]
+  },
+  "capabilities": {
+    "title": "What the program covers",
+    "highlightWord": "covers",
+    "items": [
+      {
+        "title": "Conversion clarity",
+        "description": "Message hierarchy, information architecture, and UX designed for comprehension and decision-making. We structure pages so visitors understand your value in seconds, not minutes."
+      },
+      {
+        "title": "Confidence-building design",
+        "description": "Layout, copy, and social proof positioned to reduce buyer hesitation at every stage. Trust indicators, case study placement, and pricing transparency \u2014 all engineered to move prospects past \"I'll think about it.\""
+      },
+      {
+        "title": "Copy that converts",
+        "description": "Positioning-first copywriting where every word earns its place. Headlines that qualify visitors. CTAs that name the next step. Body copy that builds the case for action instead of filling space."
+      },
+      {
+        "title": "Technical performance",
+        "description": "Core Web Vitals, page speed, and mobile responsiveness directly affect conversion. A page that loads in 4 seconds loses 25% of visitors before they see your headline. We treat performance as a conversion lever, not a dev task."
+      },
+      {
+        "title": "Data-driven iteration",
+        "description": "Systematic testing tied to a shared Scoreboard. We model conservative forecasts \u2014 incremental CRO improvement alongside traffic growth \u2014 so you can see exactly when the program pays for itself."
+      }
+    ]
+  },
+  "faq": {
+    "title": "Common questions about our CRO program",
+    "items": [
+      {
+        "question": "How is this different from running A/B tests?",
+        "answer": "A/B testing is a tactic. CRO is the system that decides what to test, why, and how to measure whether it mattered. We build a prioritization framework around your business goals, run tests systematically, and compound the wins \u2014 not cherry-pick one-off experiments."
+      },
+      {
+        "question": "Do I need a certain amount of traffic for CRO to work?",
+        "answer": "Statistical significance matters, so very low-traffic sites need a different approach. For most B2B sites with 5,000+ monthly visitors, there's enough data to run meaningful tests. Below that threshold, we focus on conversion-oriented design and copy \u2014 which doesn't require test data to improve."
+      },
+      {
+        "question": "Can CRO work alongside our existing SEO program?",
+        "answer": "That's how it should work. We run CRO and SEO/AEO as integrated tracks \u2014 as traffic grows from search, conversion rates improve in parallel. The compound effect is where the real ROI lives. If you're already working with us on SEO/AEO, CRO plugs directly into the same Scoreboard and showcase cadence."
+      },
+      {
+        "question": "What metrics do you track?",
+        "answer": "Conversion rate by page and traffic source, demo starts, form submissions, scroll depth on priority pages, time to first meaningful action, and qualified leads from organic. Every metric tied to revenue, not vanity."
+      },
+      {
+        "question": "How long before I see results?",
+        "answer": "Quick wins \u2014 headline, CTA, and above-the-fold improvements \u2014 can move numbers within the first 30 days. Compound gains build over 90-day cycles. We set clear goals at the start and report against them weekly."
+      },
+      {
+        "question": "Do I need to manage the testing?",
+        "answer": "No. We own the roadmap, prioritization, execution, and reporting. You get a single point of contact, weekly showcases, and a shared Scoreboard. Zero task management on your end."
+      }
+    ]
+  },
+  "cta": {
+    "title": "Ready to turn your traffic into revenue?",
+    "subtitle": "Let's audit your current conversion funnel and build a program that compounds results alongside your traffic growth.",
+    "ctaText": "Book an intro call"
+  }
+}

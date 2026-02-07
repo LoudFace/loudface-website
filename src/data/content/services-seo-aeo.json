@@ -1,0 +1,155 @@
+{
+  "hero": {
+    "eyebrow": "SEO & AI Engine Optimization",
+    "headline": "Get cited —<br>not just ranked",
+    "description": "Rankings are table stakes. The real question: does your brand get cited when buyers ask ChatGPT, Perplexity, or Google AI Mode about your industry? We run hands-free search programs that build authority across every platform where your buyers look for answers.",
+    "primaryCta": "Book an intro call",
+    "secondaryCta": "See how it works"
+  },
+  "stats": [
+    { "value": "5+", "label": "AI Engines Monitored" },
+    { "value": "90-day", "label": "Strategy Cycles" },
+    { "value": "Weekly", "label": "Executive Showcases" },
+    { "value": "100%", "label": "Hands-Free Execution" }
+  ],
+  "problems": {
+    "title": "Search has changed. Most strategies haven't.",
+    "highlightWord": "changed",
+    "items": [
+      {
+        "number": "01",
+        "title": "Rankings without revenue",
+        "description": "You're on page one for a few keywords, but traffic doesn't convert. Monthly reports full of impressions and backlink counts, with no clear line to pipeline or revenue. Vanity metrics dressed up as progress."
+      },
+      {
+        "number": "02",
+        "title": "Invisible to AI engines",
+        "description": "Someone asks ChatGPT about your category, and your brand doesn't come up. AI engines don't just scrape Google. They synthesize knowledge from across the web. If you're not part of that knowledge graph, you're invisible to a growing share of buyers."
+      },
+      {
+        "number": "03",
+        "title": "Tactics without a system",
+        "description": "Blog posts without a topical plan. Technical fixes that happen reactively. Nobody owns the results, and nothing connects search work to business outcomes. You have a checklist, not a strategy."
+      }
+    ]
+  },
+  "approach": {
+    "title": "The Autopilot model",
+    "highlightWord": "Autopilot",
+    "intro": "We don't wait for tickets or send monthly recommendation decks. We own the roadmap, execute the work, and show up every week with measurable progress tied to your business goals.",
+    "steps": [
+      {
+        "number": "1",
+        "title": "Foundation audit",
+        "description": "We map technical health, content gaps, entity coverage, and AI engine presence. Every opportunity scored against business impact, not keyword difficulty."
+      },
+      {
+        "number": "2",
+        "title": "90-day roadmap",
+        "description": "3-5 measurable goals tied to revenue outcomes. A shared scoreboard you can check anytime. Clear decision rights so nothing stalls."
+      },
+      {
+        "number": "3",
+        "title": "Continuous execution",
+        "description": "Content, technical improvements, link building, and AEO optimization ship weekly. One point of contact. No task management on your end."
+      },
+      {
+        "number": "4",
+        "title": "Weekly showcase",
+        "description": "A live walkthrough of what shipped, how metrics moved, and what's next. Every deliverable tied to the outcomes your exec team cares about."
+      }
+    ]
+  },
+  "tracks": {
+    "title": "Two disciplines. One integrated program.",
+    "highlightWord": "integrated",
+    "description": "Most agencies bolt AEO onto an existing SEO retainer as an afterthought. We built our program to treat both as first-class disciplines that feed each other.",
+    "bridge": "These feed each other. SEO builds the authority that makes you rankable. AEO makes sure AI engines know about it.",
+    "seo": {
+      "label": "SEO",
+      "title": "Search Engine Optimization",
+      "description": "The foundation: technical health, content authority, and the signals Google uses to rank.",
+      "items": [
+        "Technical SEO & Core Web Vitals",
+        "Internal linking architecture",
+        "Structured data & schema markup",
+        "Topical authority clusters",
+        "Hub-and-spoke content strategy",
+        "Programmatic SEO at scale"
+      ]
+    },
+    "aeo": {
+      "label": "AEO",
+      "title": "AI Engine Optimization",
+      "description": "The frontier: entity clarity, citation signals, and structured content that AI engines recommend.",
+      "items": [
+        "LLMs.txt implementation",
+        "Entity-first content structure",
+        "Conversational Q&A formatting",
+        "FAQ schema for AI parsing",
+        "LLM visibility monitoring",
+        "Brand citation tracking"
+      ]
+    }
+  },
+  "capabilities": {
+    "title": "What the program covers",
+    "highlightWord": "covers",
+    "items": [
+      {
+        "title": "Technical foundation",
+        "description": "Site health, Core Web Vitals, crawl optimization, structured data, internal linking. The infrastructure that makes everything else work."
+      },
+      {
+        "title": "Content systems",
+        "description": "Topical clusters, comparison pages, FAQ compilations, and programmatic SEO. Built for both Google and AI engines with short, scannable paragraphs that models can actually parse."
+      },
+      {
+        "title": "Off-page & distribution",
+        "description": "Guest posts on high-DR publications, G2 and Capterra presence, Reddit and Quora strategy, community engagement. The sources AI engines pull from when forming answers about your category."
+      },
+      {
+        "title": "E-E-A-T & authority signals",
+        "description": "Author bios with credentials, expert quotes, thought leadership placement. The trust signals that Google and AI engines weigh when deciding who to cite."
+      },
+      {
+        "title": "LLM visibility monitoring",
+        "description": "We track how your brand appears across ChatGPT, Perplexity, Gemini, Claude, and Google AI Mode. Citation frequency, mention quality, and competitive positioning across AI-generated answers."
+      }
+    ]
+  },
+  "faq": {
+    "title": "Common questions about our SEO/AEO program",
+    "items": [
+      {
+        "question": "How is this different from traditional SEO?",
+        "answer": "Traditional SEO optimizes for Google rankings. We optimize for how your brand appears everywhere buyers look for answers, including AI engines that don't show traditional search results. The tactics overlap (content, technical health, authority signals) but you're measuring different things and optimizing for different outcomes."
+      },
+      {
+        "question": "What AI engines do you optimize for?",
+        "answer": "ChatGPT, Perplexity, Gemini, Claude, and Google AI Mode. These are the platforms reshaping how B2B buyers research solutions. We monitor your brand's presence across all of them and optimize the signals they pull from."
+      },
+      {
+        "question": "Do I need to manage the work?",
+        "answer": "No. The Autopilot model means we own the roadmap, execution, and reporting. You get a single point of contact, weekly showcases, and a shared scoreboard, but zero task management responsibility."
+      },
+      {
+        "question": "How long before I see results?",
+        "answer": "SEO compounds over time. Meaningful organic growth typically starts in 3-6 months. AEO can move faster because AI engines re-index information more frequently. We set 90-day goals and report against them weekly so you always know where things stand."
+      },
+      {
+        "question": "Can you work alongside our existing team?",
+        "answer": "Yes. We operate async-first with clear decision rights and integrate into your existing workflows. Most clients have us work alongside content, demand gen, or product marketing teams."
+      },
+      {
+        "question": "What does the weekly showcase include?",
+        "answer": "A live walkthrough of what shipped, how key metrics moved, and what's planned next. Every piece of work tied back to business outcomes, not SEO jargon. Think of it as a weekly executive briefing, not a status call."
+      }
+    ]
+  },
+  "cta": {
+    "title": "Ready to be the brand AI engines cite?",
+    "subtitle": "Let's map your current search presence and build a program that grows authority across every engine that matters.",
+    "ctaText": "Book an intro call"
+  }
+}
