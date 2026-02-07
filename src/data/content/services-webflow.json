@@ -1,0 +1,191 @@
+{
+  "hero": {
+    "eyebrow": "Webflow Development",
+    "headline": "Webflow sites built to scale —<br>not just to launch",
+    "description": "We build component-first Webflow websites that your team can actually build on. Spin up landing pages in hours, split test everything, and watch your conversion rates climb.",
+    "primaryCta": "Book an intro call",
+    "secondaryCta": "View our work"
+  },
+  "stats": [
+    {
+      "value": "4+",
+      "label": "Years Certified Partner"
+    },
+    {
+      "value": "2+",
+      "label": "Years Enterprise Partner"
+    },
+    {
+      "value": "200+",
+      "label": "Projects Completed"
+    },
+    {
+      "value": "288%",
+      "label": "Best Conversion Increase"
+    }
+  ],
+  "problems": {
+    "title": "Most Webflow sites hit a wall",
+    "highlightWord": "wall",
+    "items": [
+      {
+        "number": "01",
+        "title": "Built once, stuck forever",
+        "description": "Your site looked great on launch day. But now every new landing page takes weeks, every change needs a developer, and your marketing team is stuck waiting in a queue."
+      },
+      {
+        "number": "02",
+        "title": "No room to experiment",
+        "description": "You can't A/B test because your site wasn't built for it. Every variant is a Frankenstein of duplicated pages and inconsistent layouts. You're guessing instead of measuring."
+      },
+      {
+        "number": "03",
+        "title": "Pretty but underperforming",
+        "description": "Your site wins design compliments but not conversions. It's slow, hard to track, and the analytics don't tell you anything actionable. Looking good isn't the same as performing well."
+      }
+    ]
+  },
+  "approach": {
+    "title": "Scale-first Webflow development",
+    "highlightWord": "Scale-first",
+    "intro": "We don't just build Webflow sites — we build systems. Every project starts with a component library designed for your team to move fast without breaking things. The result: a site that gets better over time, not harder to manage.",
+    "steps": [
+      {
+        "number": "1",
+        "title": "Component-first architecture",
+        "description": "Every element is a reusable building block. Your marketing team can assemble new pages from proven components without touching code or waiting on developers."
+      },
+      {
+        "number": "2",
+        "title": "Built for split testing",
+        "description": "We structure your site so spinning up A/B test variants takes minutes, not sprints. Test headlines, layouts, CTAs, and entire page structures — then let the data decide."
+      },
+      {
+        "number": "3",
+        "title": "Landing pages at speed",
+        "description": "Need a campaign page by Friday? When your site is built on a solid component system, high-quality landing pages go from concept to live in hours."
+      },
+      {
+        "number": "4",
+        "title": "Performance baked in",
+        "description": "Fast load times aren't an afterthought — they're part of the architecture. Clean code, optimized assets, and zero bloat. Your visitors get a fast experience, and Google rewards you for it."
+      }
+    ]
+  },
+  "capabilities": {
+    "title": "Everything under the hood",
+    "highlightWord": "hood",
+    "items": [
+      {
+        "title": "Trackable analytics",
+        "description": "Every click, scroll, and conversion event wired up and reporting from day one. Know exactly what's working.",
+        "span": 1
+      },
+      {
+        "title": "Third-party integrations",
+        "description": "HubSpot, Segment, Google Tag Manager, Zapier, Cal.com — we've integrated them all. Your Webflow site plays nice with your stack.",
+        "span": 1
+      },
+      {
+        "title": "SEO-ready structure",
+        "description": "Clean semantic markup, proper heading hierarchy, meta tags, schema, and page speed optimized. Built to rank, not just to look good.",
+        "span": 1
+      },
+      {
+        "title": "CMS that makes sense",
+        "description": "Content collections structured so your team can publish without guesswork. No training manual required. We design the CMS around how your team actually works, not the other way around.",
+        "span": 2
+      },
+      {
+        "title": "Responsive down to the pixel",
+        "description": "Not just 'it works on mobile.' We design every breakpoint intentionally so your site feels native on every screen size.",
+        "span": 1
+      },
+      {
+        "title": "Scalable for growth",
+        "description": "Whether you're running 5 landing pages or 50, the system holds up. Add pages, sections, and campaigns without technical debt piling up.",
+        "span": 3
+      }
+    ]
+  },
+  "credibility": {
+    "title": "Enterprise-grade Webflow expertise",
+    "highlightWord": "expertise",
+    "stats": [
+      {
+        "value": "4+",
+        "label": "Years",
+        "description": "Certified Webflow Partner"
+      },
+      {
+        "value": "2+",
+        "label": "Years",
+        "description": "Enterprise Partner"
+      },
+      {
+        "value": "200+",
+        "label": "Projects",
+        "description": "Completed on Webflow"
+      },
+      {
+        "value": "288%",
+        "label": "Increase",
+        "description": "Best conversion result"
+      }
+    ],
+    "description": "We're not generalists who happen to use Webflow. It's our primary platform, and we've built our entire practice around mastering it. From funded startups to established enterprises, we bring a rare amount of experience to every build.",
+    "badges": [
+      {
+        "src": "/images/Enterprise-Blue-Badge.webp",
+        "alt": "Webflow Enterprise Partner Badge"
+      },
+      {
+        "src": "/images/Awwwards.svg",
+        "alt": "Awwwards Honorable Nominee"
+      },
+      {
+        "src": "/images/Trustpilot.svg",
+        "alt": "Trustpilot Top-Rated Agency"
+      },
+      {
+        "src": "/images/10-best-website-creator-2024.svg",
+        "alt": "10 Best Website Creator 2024"
+      }
+    ]
+  },
+  "caseStudies": {
+    "title": "Real results from real builds",
+    "highlightWord": "results",
+    "cta": "View all case studies"
+  },
+  "faq": {
+    "title": "Common questions about our Webflow work",
+    "items": [
+      {
+        "question": "How long does a typical Webflow project take?",
+        "answer": "Most projects go from kickoff to launch in 4-8 weeks depending on complexity. Our component-first approach means we move fast without cutting corners."
+      },
+      {
+        "question": "Can my team update the site after launch?",
+        "answer": "Absolutely. That's the whole point. We build with your team's independence in mind — reusable components, clear CMS structure, and documentation so you're not dependent on us for every change."
+      },
+      {
+        "question": "Do you offer ongoing support after launch?",
+        "answer": "Yes. We offer retainer arrangements for ongoing optimization, new page builds, and split testing. Most clients see the best results when we continue optimizing together."
+      },
+      {
+        "question": "Why Webflow over WordPress or a custom build?",
+        "answer": "Webflow gives us the design flexibility of custom code with the content management your team needs. No plugins to maintain, no security patches, no server management. It's faster to build, faster to load, and easier to scale."
+      },
+      {
+        "question": "Can you migrate our existing site to Webflow?",
+        "answer": "We do this regularly. We'll audit your current site, preserve your SEO equity, and rebuild it on a component system designed for growth."
+      }
+    ]
+  },
+  "cta": {
+    "title": "Ready to build a Webflow site that scales with you?",
+    "subtitle": "Let's talk about your goals and show you how a component-first approach changes the game.",
+    "ctaText": "Book an intro call"
+  }
+}

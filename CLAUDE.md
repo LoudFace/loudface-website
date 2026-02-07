@@ -191,6 +191,16 @@ npm run build        # Always build before pushing
 git push origin main # Triggers Webflow Cloud deployment (no CLI deploy)
 ```
 
+## Frontend Aesthetics
+
+You tend to converge toward generic "AI slop" aesthetics. Avoid this.
+- Typography: Never use Inter, Roboto, Arial. Use distinctive fonts from Google Fonts.
+- Color: Commit to a cohesive aesthetic. Dominant colors with sharp accents, not timid evenly-distributed palettes.
+- Motion: Use animations and micro-interactions. Staggered reveals on page load.
+- Backgrounds: Create depth with layered gradients and patterns, not solid colors.
+- Avoid purple gradients on white backgrounds, cookie-cutter layouts.
+Think outside the box. Make unexpected choices.
+
 ## Webflow MCP Tools
 
 When available, use MCP tools for read operations (listing sites, collections, items, schemas). Use direct Webflow API v2 calls in code for runtime data fetching in Server Components.

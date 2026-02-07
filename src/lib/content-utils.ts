@@ -23,6 +23,7 @@ import newsletterContent from "@/data/content/newsletter.json";
 import faqItemsContent from "@/data/content/faq-items.json";
 import workContent from "@/data/content/work.json";
 import aboutContent from "@/data/content/about.json";
+import servicesWebflowContent from "@/data/content/services-webflow.json";
 
 // Type definitions for content files
 export interface CTAContent {
@@ -254,6 +255,60 @@ export interface AboutContent {
   finalCta: AboutFinalCta;
 }
 
+export interface ServicesWebflowStat {
+  value: string;
+  label: string;
+  description?: string;
+}
+
+export interface ServicesWebflowContent {
+  hero: {
+    eyebrow: string;
+    headline: string;
+    description: string;
+    primaryCta: string;
+    secondaryCta: string;
+  };
+  stats: { value: string; label: string }[];
+  problems: {
+    title: string;
+    highlightWord: string;
+    items: { number: string; title: string; description: string }[];
+  };
+  approach: {
+    title: string;
+    highlightWord: string;
+    intro: string;
+    steps: { number: string; title: string; description: string }[];
+  };
+  capabilities: {
+    title: string;
+    highlightWord: string;
+    items: { title: string; description: string; span: number }[];
+  };
+  credibility: {
+    title: string;
+    highlightWord: string;
+    stats: ServicesWebflowStat[];
+    description: string;
+    badges: { src: string; alt: string }[];
+  };
+  caseStudies: {
+    title: string;
+    highlightWord: string;
+    cta: string;
+  };
+  faq: {
+    title: string;
+    items: FAQItem[];
+  };
+  cta: {
+    title: string;
+    subtitle: string;
+    ctaText: string;
+  };
+}
+
 // Content registry - maps file names to their content
 const contentRegistry: Record<string, unknown> = {
   cta: ctaContent,
@@ -270,6 +325,7 @@ const contentRegistry: Record<string, unknown> = {
   "faq-items": faqItemsContent,
   work: workContent,
   about: aboutContent,
+  "services-webflow": servicesWebflowContent,
 };
 
 /**
@@ -377,6 +433,13 @@ export function getWorkContent(): WorkContent {
  */
 export function getAboutContent(): AboutContent {
   return aboutContent as AboutContent;
+}
+
+/**
+ * Get Services Webflow page content
+ */
+export function getServicesWebflowContent(): ServicesWebflowContent {
+  return servicesWebflowContent as ServicesWebflowContent;
 }
 
 /**

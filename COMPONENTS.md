@@ -4,7 +4,7 @@ Quick-reference for every reusable component. **Check here before writing any ma
 
 Import all UI primitives from the barrel:
 ```tsx
-import { Badge, BulletLabel, Button, Card, CarouselNav, SectionContainer, SectionHeader } from '@/components/ui';
+import { Badge, BulletLabel, Button, Card, CarouselNav, PixelBreakpointAnimation, ScalableGridAnimation, SectionContainer, SectionHeader } from '@/components/ui';
 ```
 
 ---
@@ -103,6 +103,22 @@ Prev/next arrow buttons for Embla carousels.
 <CarouselNav variant="light" onPrevClick={scrollPrev} onNextClick={scrollNext} />
 ```
 
+### PixelBreakpointAnimation
+
+Animated pixel grid that morphs between mobile / tablet / desktop layout representations. Chunky retro pixels dissolve and reform in a wave pattern. Client component (no props).
+
+```tsx
+<PixelBreakpointAnimation />
+```
+
+### ScalableGridAnimation
+
+Animated 4x2 grid of mini-page wireframes that progressively fills in (2 → 4 → 8 tiles) with spring pop-in animation. Each tile has distinct wireframe content (accent bars, nav dots, headers, image blocks, text lines). Includes a page counter. Designed for dark backgrounds. Client component (no props).
+
+```tsx
+<ScalableGridAnimation />
+```
+
 ### SectionContainer
 
 Wrapper providing consistent padding, max-width, and horizontal gutters for page sections.
@@ -184,7 +200,7 @@ All section components are exported from `@/components/sections` (or `@/componen
 
 ```
 src/components/index.ts        → re-exports everything
-src/components/ui/index.ts     → Badge, BulletLabel, Button, Card, CarouselNav, SectionContainer, SectionHeader
+src/components/ui/index.ts     → Badge, BulletLabel, Button, Card, CarouselNav, PixelBreakpointAnimation, ScalableGridAnimation, SectionContainer, SectionHeader
 src/components/sections/index.ts → Hero, Partners, CaseStudySlider, Audit, Results, Marketing, Approach, Knowledge, FAQ, CTA
 ```
 

@@ -3,5 +3,7 @@ export { BulletLabel } from './BulletLabel';
 export { Button } from './Button';
 export { Card } from './Card';
 export { CarouselNav } from './CarouselNav';
+export { PixelBreakpointAnimation } from './PixelBreakpointAnimation';
+export { ScalableGridAnimation } from './ScalableGridAnimation';
 export { SectionContainer } from './SectionContainer';
 export { SectionHeader } from './SectionHeader';
