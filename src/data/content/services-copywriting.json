@@ -1,0 +1,155 @@
+{
+  "hero": {
+    "eyebrow": "Messaging & Copywriting",
+    "headline": "Copy first.<br>Everything else follows.",
+    "description": "Most agencies design the page, then fill in the words. We do it backwards — on purpose. Messaging is the first deliverable at LoudFace because it determines page structure, visual hierarchy, conversion flow, and how AI engines parse your content. Copy → Design → Dev. Non-negotiable.",
+    "primaryCta": "Book an intro call",
+    "secondaryCta": "See how it works"
+  },
+  "stats": [
+    { "value": "1st", "label": "Deliverable in Every Build" },
+    { "value": "100%", "label": "Human-Written Content" },
+    { "value": "Weekly", "label": "Production Cadence" },
+    { "value": "288%", "label": "Best Conversion from Copy" }
+  ],
+  "problems": {
+    "title": "Your copy is probably working against you.",
+    "highlightWord": "against",
+    "items": [
+      {
+        "number": "01",
+        "title": "Copy that fills layouts, not pipelines",
+        "description": "The agency designed the pages first, then asked someone to 'fill in the text.' The result: messaging that fits the wireframe instead of driving it. Headlines describe features. Body copy reads like a product spec. The site looks polished, but the words don't do any work."
+      },
+      {
+        "number": "02",
+        "title": "Messaging that sounds like everyone else",
+        "description": "Read your competitors' homepages. Now read yours. Can you tell them apart? Generic value props, recycled buzzwords, no clear positioning. Visitors land, skim, and can't figure out why you're the better choice. So they keep shopping."
+      },
+      {
+        "number": "03",
+        "title": "Content with no compounding effect",
+        "description": "Someone publishes a blog post when there's time. Topics chosen by gut feel. Nothing ties to a keyword strategy, topical plan, or content cluster. You have content. It doesn't rank, compound, or connect to pipeline."
+      }
+    ]
+  },
+  "approach": {
+    "title": "Copy → Design → Dev",
+    "highlightWord": "Copy",
+    "intro": "We don't fill wireframes with words. When copy leads, design has a clear brief and dev has a clear spec. No rework cycles, no last-minute rewrites, no layouts fighting the message. The page ships faster and converts better because the hard thinking happened first.",
+    "steps": [
+      {
+        "number": "1",
+        "title": "Positioning & voice extraction",
+        "description": "We study your buyer, their decision journey, and what separates you from every alternative they're considering. Founder interviews, competitor audits, the language your market actually uses. That research becomes the positioning foundation every word builds on."
+      },
+      {
+        "number": "2",
+        "title": "Messaging architecture",
+        "description": "Before writing a single headline, we design the information hierarchy. What does a visitor need to understand first? What builds confidence? What triggers action? Every page gets a conversion blueprint before copy is written."
+      },
+      {
+        "number": "3",
+        "title": "Conversion copy",
+        "description": "Every headline, subhead, and CTA runs through one filter: does it build confidence, reduce friction, and move someone toward a decision? Written for human readers, search engines, and AI citations in one pass."
+      },
+      {
+        "number": "4",
+        "title": "Content systems",
+        "description": "For Growth track clients, we run end-to-end content production: research, calendar, writing, publishing. Topical clusters, comparison pages, programmatic content — managed weekly and built to compound authority over time."
+      }
+    ]
+  },
+  "tracks": {
+    "title": "Two tracks. One messaging strategy.",
+    "highlightWord": "strategy",
+    "description": "Copy at LoudFace isn't a one-time deliverable. It's embedded in both our Build and Growth tracks, so your messaging stays sharp whether you're launching a new site or scaling content production.",
+    "bridge": "Build copy sets the positioning. Growth content amplifies it across every channel where buyers research solutions.",
+    "build": {
+      "label": "Build",
+      "title": "Website & Conversion Copy",
+      "description": "The messaging foundation: positioning, page copy, and the words that turn visitors into leads.",
+      "items": [
+        "Homepage & core page messaging",
+        "Service & product page copy",
+        "Landing pages & campaign copy",
+        "Pricing & comparison pages",
+        "Founder voice extraction",
+        "Messaging hierarchy & information architecture"
+      ]
+    },
+    "growth": {
+      "label": "Growth",
+      "title": "Content Production & Authority",
+      "description": "The compounding engine: systematic content that builds topical authority, ranks, and feeds AI engines.",
+      "items": [
+        "Blog articles & thought leadership",
+        "Topical authority clusters",
+        "Programmatic content at scale",
+        "Comparison & alternative pages",
+        "FAQ compilations & hub pages",
+        "Content calendars managed end-to-end"
+      ]
+    }
+  },
+  "capabilities": {
+    "title": "What the work looks like",
+    "highlightWord": "work",
+    "items": [
+      {
+        "title": "Positioning-first copywriting",
+        "description": "Before we write a word, we understand your buyer and what your product actually does better. Copy built to position and persuade — clarity over cleverness, substance over style."
+      },
+      {
+        "title": "Founder voice extraction",
+        "description": "We translate founder visions into messaging an unsophisticated buyer instantly understands. Technical depth without jargon. We take complex products and make them feel obvious."
+      },
+      {
+        "title": "SEO & AEO-native writing",
+        "description": "Question-based headings, direct answers in the first 50 words, entity-first structure, scannable paragraphs. Every piece written for Google rankings and AI engine citations simultaneously."
+      },
+      {
+        "title": "Programmatic content systems",
+        "description": "Templated approaches for TOFU and MOFU content: same topic addressed across different use cases, end users, and ICPs. Weekly production cadence managed from research to publish."
+      },
+      {
+        "title": "Thought leadership that takes a stance",
+        "description": "Not generic how-to posts. Opinionated, data-informed writing on industry shifts and topics your competitors haven't covered yet. The kind of content that gets cited because it actually says something."
+      }
+    ]
+  },
+  "faq": {
+    "title": "Common questions about our copywriting",
+    "items": [
+      {
+        "question": "Why does copy need to come before design?",
+        "answer": "Because copy determines page structure. The messaging hierarchy — what visitors need to understand first, second, third — dictates the layout, not the other way around. When design comes first, you get pretty pages with placeholder messaging that doesn't convert. Copy → Design → Dev eliminates that problem."
+      },
+      {
+        "question": "Can you write for technical or complex products?",
+        "answer": "That's our focus. We work with B2B and SaaS companies where the product is genuinely complex. The process starts with founder interviews and product deep-dives so we can extract the core value, then translate it into language that buyers understand without dumbing down the substance."
+      },
+      {
+        "question": "Do you use AI to write content?",
+        "answer": "We use AI to accelerate research, spot gaps, and pressure-test drafts. But humans write and review everything. AI-generated content has a ceiling — it can't extract founder voice, take a genuine stance, or write with the specificity that builds trust with real buyers."
+      },
+      {
+        "question": "What does the content production cadence look like?",
+        "answer": "For Growth track clients, we typically run 5 new articles plus 5 refreshed articles per week, managed end-to-end. We handle research, content calendars, writing, and publishing. You approve the calendar. We handle the rest."
+      },
+      {
+        "question": "Can you work with our existing brand guidelines?",
+        "answer": "Yes. We adapt to existing voice and tone guidelines when they exist. When they don't, we create them as part of the positioning work. Either way, every piece of copy sounds like your brand, not like an agency wrote it."
+      },
+      {
+        "question": "How is this different from hiring a freelance copywriter?",
+        "answer": "A freelancer writes words. We design how information lives on your site — what goes where, why, and how it connects to search, conversion, and your broader growth program. Copy isn't a silo here. It's the foundation everything else is built on."
+      }
+    ]
+  },
+  "cta": {
+    "title": "Ready to lead with messaging that converts?",
+    "subtitle": "Let's start with your positioning and build the copy that drives every page, campaign, and conversion on your site.",
+    "ctaText": "Book an intro call"
+  }
+}

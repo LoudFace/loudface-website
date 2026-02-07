@@ -26,6 +26,8 @@ import aboutContent from "@/data/content/about.json";
 import servicesWebflowContent from "@/data/content/services-webflow.json";
 import servicesSeoAeoContent from "@/data/content/services-seo-aeo.json";
 import servicesCroContent from "@/data/content/services-cro.json";
+import servicesCopywritingContent from "@/data/content/services-copywriting.json";
+import servicesUxUiDesignContent from "@/data/content/services-ux-ui-design.json";
 
 // Type definitions for content files
 export interface CTAContent {
@@ -398,6 +400,108 @@ export interface ServicesCroContent {
   };
 }
 
+export interface ServicesCopywritingTrack {
+  label: string;
+  title: string;
+  description: string;
+  items: string[];
+}
+
+export interface ServicesCopywritingContent {
+  hero: {
+    eyebrow: string;
+    headline: string;
+    description: string;
+    primaryCta: string;
+    secondaryCta: string;
+  };
+  stats: { value: string; label: string }[];
+  problems: {
+    title: string;
+    highlightWord: string;
+    items: { number: string; title: string; description: string }[];
+  };
+  approach: {
+    title: string;
+    highlightWord: string;
+    intro: string;
+    steps: { number: string; title: string; description: string }[];
+  };
+  tracks: {
+    title: string;
+    highlightWord: string;
+    description: string;
+    bridge: string;
+    build: ServicesCopywritingTrack;
+    growth: ServicesCopywritingTrack;
+  };
+  capabilities: {
+    title: string;
+    highlightWord: string;
+    items: { title: string; description: string }[];
+  };
+  faq: {
+    title: string;
+    items: FAQItem[];
+  };
+  cta: {
+    title: string;
+    subtitle: string;
+    ctaText: string;
+  };
+}
+
+export interface ServicesUxUiDesignTrack {
+  label: string;
+  title: string;
+  description: string;
+  items: string[];
+}
+
+export interface ServicesUxUiDesignContent {
+  hero: {
+    eyebrow: string;
+    headline: string;
+    description: string;
+    primaryCta: string;
+    secondaryCta: string;
+  };
+  stats: { value: string; label: string }[];
+  problems: {
+    title: string;
+    highlightWord: string;
+    items: { number: string; title: string; description: string }[];
+  };
+  approach: {
+    title: string;
+    highlightWord: string;
+    intro: string;
+    steps: { number: string; title: string; description: string }[];
+  };
+  tracks: {
+    title: string;
+    highlightWord: string;
+    description: string;
+    bridge: string;
+    build: ServicesUxUiDesignTrack;
+    growth: ServicesUxUiDesignTrack;
+  };
+  capabilities: {
+    title: string;
+    highlightWord: string;
+    items: { title: string; description: string }[];
+  };
+  faq: {
+    title: string;
+    items: FAQItem[];
+  };
+  cta: {
+    title: string;
+    subtitle: string;
+    ctaText: string;
+  };
+}
+
 // Content registry - maps file names to their content
 const contentRegistry: Record<string, unknown> = {
   cta: ctaContent,
@@ -417,6 +521,8 @@ const contentRegistry: Record<string, unknown> = {
   "services-webflow": servicesWebflowContent,
   "services-seo-aeo": servicesSeoAeoContent,
   "services-cro": servicesCroContent,
+  "services-copywriting": servicesCopywritingContent,
+  "services-ux-ui-design": servicesUxUiDesignContent,
 };
 
 /**
@@ -545,6 +651,20 @@ export function getServicesSeoAeoContent(): ServicesSeoAeoContent {
  */
 export function getServicesCroContent(): ServicesCroContent {
   return servicesCroContent as ServicesCroContent;
+}
+
+/**
+ * Get Services Copywriting page content
+ */
+export function getServicesCopywritingContent(): ServicesCopywritingContent {
+  return servicesCopywritingContent as ServicesCopywritingContent;
+}
+
+/**
+ * Get Services UX/UI Design page content
+ */
+export function getServicesUxUiDesignContent(): ServicesUxUiDesignContent {
+  return servicesUxUiDesignContent as ServicesUxUiDesignContent;
 }
 
 /**

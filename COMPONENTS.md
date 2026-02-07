@@ -4,7 +4,7 @@ Quick-reference for every reusable component. **Check here before writing any ma
 
 Import all UI primitives from the barrel:
 ```tsx
-import { AICitationVisual, Badge, BulletLabel, Button, Card, CarouselNav, ComponentAssemblyVisual, ConversionSplitVisual, PixelBreakpointAnimation, ScalableGridAnimation, SectionContainer, SectionHeader } from '@/components/ui';
+import { AICitationVisual, Badge, BulletLabel, Button, Card, CarouselNav, ComponentAssemblyVisual, CopyFirstVisual, ConversionSplitVisual, DesignSystemVisual, PixelBreakpointAnimation, ScalableGridAnimation, SectionContainer, SectionHeader } from '@/components/ui';
 ```
 
 ---
@@ -109,6 +109,22 @@ Prev/next arrow buttons for Embla carousels.
 
 ```tsx
 <CarouselNav variant="light" onPrevClick={scrollPrev} onNextClick={scrollNext} />
+```
+
+### CopyFirstVisual
+
+Animated browser frame where copy appears first (headline, value prop, CTA, proof), then page wireframe structure crystallizes around the text. Demonstrates the Copy → Design → Dev workflow. Cycles through three scenarios: Homepage, Pricing, Product. Annotation pills (H1, Value prop, CTA, Proof) connected by dashed lines are the signature differentiator. Floating badges show "Copy-led" checkmark and "288% best result" on completion. Client component (no props).
+
+```tsx
+<CopyFirstVisual />
+```
+
+### DesignSystemVisual
+
+Animated browser frame where design tokens (color, type, spacing, radius) appear first, then component blocks materialize with dashed connection lines, then a full page wireframe composes from those components. Token sidebar annotations in the right margin are the signature differentiator. Cycles through three scenarios: Tokens, Components, Live. Floating badges show "42 components" and "100% Consistency" on completion. Client component (no props).
+
+```tsx
+<DesignSystemVisual />
 ```
 
 ### ConversionSplitVisual
@@ -224,7 +240,7 @@ All section components are exported from `@/components/sections` (or `@/componen
 
 ```
 src/components/index.ts        → re-exports everything
-src/components/ui/index.ts     → AICitationVisual, Badge, BulletLabel, Button, Card, CarouselNav, ComponentAssemblyVisual, ConversionSplitVisual, PixelBreakpointAnimation, ScalableGridAnimation, SectionContainer, SectionHeader
+src/components/ui/index.ts     → AICitationVisual, Badge, BulletLabel, Button, Card, CarouselNav, ComponentAssemblyVisual, CopyFirstVisual, ConversionSplitVisual, PixelBreakpointAnimation, ScalableGridAnimation, SectionContainer, SectionHeader
 src/components/sections/index.ts → Hero, Partners, CaseStudySlider, Audit, Results, Marketing, Approach, Knowledge, FAQ, CTA
 ```
 

@@ -1,0 +1,155 @@
+{
+  "hero": {
+    "eyebrow": "UX/UI Design",
+    "headline": "Every layout is a revenue decision.<br>Design it like one.",
+    "description": "Your website is a sequence of layout decisions: what goes where, what's prominent, what the visitor sees first. Most agencies make those decisions based on aesthetics. We make them based on what converts. Messaging shapes the hierarchy, data informs every interaction, and the output is a design system your team can build on without us.",
+    "primaryCta": "Book an intro call",
+    "secondaryCta": "See how it works"
+  },
+  "stats": [
+    { "value": "200+", "label": "Projects Designed" },
+    { "value": "90+", "label": "Target PageSpeed Score" },
+    { "value": "Sub-2s", "label": "Target Load Time" },
+    { "value": "288%", "label": "Best Conversion Increase" }
+  ],
+  "problems": {
+    "title": "Your design is probably losing you money.",
+    "highlightWord": "losing",
+    "items": [
+      {
+        "number": "01",
+        "title": "Looks great, converts poorly",
+        "description": "The site won compliments internally. Maybe externally. But conversion rate hasn't moved. Layouts optimized for how they photograph, not how visitors read. No information hierarchy guiding someone from interest to action. A beautiful page that doesn't convert is expensive decoration."
+      },
+      {
+        "number": "02",
+        "title": "Every new page starts from scratch",
+        "description": "No component system. No shared tokens. Each landing page is a one-off built by whoever was available. Your team can't spin up a test variant without a designer and a two-week timeline. The site gets harder to manage with every page you add."
+      },
+      {
+        "number": "03",
+        "title": "Designed for one audience",
+        "description": "Your site was designed for people staring at screens. Nobody considered how search engines parse the layout, whether the heading hierarchy makes semantic sense, or how AI systems extract meaning from your pages. In 2026, human visitors are half the audience."
+      }
+    ]
+  },
+  "approach": {
+    "title": "Systems, not pages",
+    "highlightWord": "Systems",
+    "intro": "We don't design pages. We design the system that produces them. Start with the component library, typography scale, and spacing tokens. Then build every layout from those constraints. New pages ship fast and stay consistent. Your team builds without a designer in the loop.",
+    "steps": [
+      {
+        "number": "1",
+        "title": "Discovery & messaging alignment",
+        "description": "We don't open Figma until the copy is done. Discovery surfaces your goals, audience, and competitive landscape. Messaging gives us the hierarchy every layout needs. No wireframes from vibes."
+      },
+      {
+        "number": "2",
+        "title": "Design system setup",
+        "description": "Colors, typography, spacing, grid systems, and a reusable component library built in Figma. This is the foundation. Everything built after this point inherits from the system, so consistency isn't something you maintain. It's automatic."
+      },
+      {
+        "number": "3",
+        "title": "Conversion-focused UI",
+        "description": "Every page layout mapped to a user action. Message hierarchy that communicates value in seconds. CTA placement, scroll flow, form design, social proof positioning. Tested against conversion data, not committee opinion."
+      },
+      {
+        "number": "4",
+        "title": "Build, train, iterate",
+        "description": "Pixel-perfect translation to Webflow, QA across every breakpoint, and hands-on training for your team. Under the Growth track, design keeps shipping: new templates, A/B variations, and conversion improvements on a weekly cadence."
+      }
+    ]
+  },
+  "tracks": {
+    "title": "Design in both tracks. Never a one-off.",
+    "highlightWord": "both",
+    "description": "Design doesn't end at launch. Under Build, we create the system. Under Growth, we keep improving it. New page templates, test variants, and conversion upgrades ship as part of the weekly cadence.",
+    "bridge": "Build creates the design system. Growth uses it to ship faster and convert better.",
+    "build": {
+      "label": "Build",
+      "title": "Design Systems & Brand Execution",
+      "description": "The foundation: brand guidelines, component library, and conversion-optimized layouts that your team builds on.",
+      "items": [
+        "Brand guidelines & visual identity",
+        "Figma component library",
+        "Typography, color, and spacing tokens",
+        "Conversion-focused page layouts",
+        "Responsive design across all breakpoints",
+        "Webflow component translation"
+      ]
+    },
+    "growth": {
+      "label": "Growth",
+      "title": "Ongoing Design & Optimization",
+      "description": "The continuous function: new page templates, A/B test variations, and design improvements tied to conversion data.",
+      "items": [
+        "New landing page templates",
+        "A/B test variant design",
+        "Conversion improvement iterations",
+        "Campaign-specific page design",
+        "Design system expansion",
+        "Performance optimization"
+      ]
+    }
+  },
+  "capabilities": {
+    "title": "What we actually build",
+    "highlightWord": "build",
+    "items": [
+      {
+        "title": "Conversion-focused UX",
+        "description": "Every layout maps to a user action. Message hierarchy designed so visitors understand the value and know what to do next within seconds. CTA placement, scroll flow, and confidence-building elements are deliberate decisions tested against real visitor behavior."
+      },
+      {
+        "title": "Component-first design systems",
+        "description": "Reusable components in Figma that translate directly to Webflow. Your team can assemble landing pages from pre-built blocks without a developer. Design tokens manage colors, typography, and spacing site-wide. One update propagates everywhere."
+      },
+      {
+        "title": "Performance as a design constraint",
+        "description": "Sub-2-second load times and 90+ PageSpeed scores are design requirements, not dev tasks. Compressed assets, purposeful motion, lean layouts. Every second of delay costs roughly 7% of conversions. We design with that math visible."
+      },
+      {
+        "title": "Search and AI-ready structure",
+        "description": "Semantic heading hierarchies, schema-ready layouts, and information architecture built for hub-and-spoke content models. Question-based headings, scannable sections, entity definitions. Pages discoverable by Google and parseable by AI engines from the first wireframe."
+      },
+      {
+        "title": "Brand execution with substance",
+        "description": "We translate complex products into interfaces an unfamiliar buyer understands in seconds. Design that communicates credibility for B2B and enterprise, where trust is the primary conversion barrier. Clean, sophisticated execution without sacrificing conversion clarity."
+      }
+    ]
+  },
+  "faq": {
+    "title": "Common questions about our design work",
+    "items": [
+      {
+        "question": "Why does copy need to be done before design?",
+        "answer": "Because copy determines the layout. What visitors need to see first, second, third is a messaging decision that shapes every wireframe. When design comes first, you get layouts filled with placeholder text and headlines that describe features instead of solving problems."
+      },
+      {
+        "question": "What exactly is a 'design system'?",
+        "answer": "A reusable set of components, color tokens, typography rules, and spacing conventions that every page inherits. Think of it as a kit of parts your team can assemble into new pages. You get consistency and speed without maintaining either manually, and the site stays on-brand even when you're building pages without us."
+      },
+      {
+        "question": "Do I need a full redesign, or can you improve what I have?",
+        "answer": "Depends on the foundation. If your current site has a solid component structure and decent performance, we can optimize within it: layout changes, conversion improvements, new templates. If the codebase is brittle or no design system exists, a strategic rebuild usually pays for itself faster than patching problems individually."
+      },
+      {
+        "question": "How does design connect to SEO and CRO?",
+        "answer": "Directly. Page structure affects how Google indexes content and how AI engines parse it. Layout decisions affect where visitors look, what they understand, and whether they act. We design for all three audiences from the first wireframe: human visitors, search crawlers, and AI systems."
+      },
+      {
+        "question": "Can our team create new pages after launch?",
+        "answer": "That's the point of a component system. We train your team on how to assemble pages from the library we build. Landing pages that used to take weeks can ship in hours, consistent and on-brand, without waiting on a designer."
+      },
+      {
+        "question": "How is this different from hiring a design agency?",
+        "answer": "Most design agencies deliver mockups. We deliver a working system: components, tokens, documentation, and a site that converts. Design at LoudFace is inseparable from copy, CRO, and SEO. It's not a standalone deliverable. It's the layer where your growth strategy becomes visible."
+      }
+    ]
+  },
+  "cta": {
+    "title": "Ready for design that earns its keep?",
+    "subtitle": "Let's look at your current site and figure out what's costing you conversions. Then build a design system that does the job.",
+    "ctaText": "Book an intro call"
+  }
+}
