@@ -9,8 +9,7 @@ import { COLLECTION_IDS } from '@/lib/constants';
 import { fetchHomepageData, getAccessToken } from '@/lib/cms-data';
 import { avatarImage, heroImage, thumbnailImage } from '@/lib/image-utils';
 import { asset } from '@/lib/assets';
-import { SectionContainer } from '@/components/ui/SectionContainer';
-import { Button } from '@/components/ui/Button';
+import { Button, SectionContainer } from '@/components/ui';
 import type { BlogPost, Category, TeamMember } from '@/lib/types';
 
 interface PageProps {

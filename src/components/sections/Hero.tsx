@@ -2,8 +2,8 @@ import Link from 'next/link';
 import { getHeroContent } from '@/lib/content-utils';
 import { AI_PLATFORM_ICONS } from '@/lib/icons';
 import { asset } from '@/lib/assets';
-import { optimizeImage, thumbnailImage } from '@/lib/image-utils';
-import { Button } from '@/components/ui/Button';
+import { optimizeImage, logoImage } from '@/lib/image-utils';
+import { Button } from '@/components/ui';
 import type { CaseStudy, Client, Industry } from '@/lib/types';
 
 interface HeroProps {
@@ -34,6 +34,9 @@ export function Hero({
     if (!clientId) return undefined;
     return clients.get(clientId);
   }
+
+  // Only show featured case studies in the hero slider
+  const featuredStudies = caseStudies.filter((s) => s.featured);
 
   // Build aiLinks array from JSON content + shared icons
   const aiLinks = content.aiLinks.map((link) => ({
@@ -66,10 +69,10 @@ export function Hero({
           <div className="flex-1 min-w-0">
             {client?.['colored-logo']?.url ? (
               <img
-                src={optimizeImage(client['colored-logo'].url, 60)}
+                src={logoImage(client['colored-logo'].url)}
                 alt={isHidden ? '' : client.name || 'Client logo'}
                 loading="lazy"
-                className="max-h-6 w-auto"
+                className="h-5 w-24 object-contain object-left"
               />
             ) : (
               <span className="font-medium text-surface-700">
@@ -90,7 +93,7 @@ export function Hero({
         <div className="aspect-[388/250] overflow-hidden">
           <img
             src={
-              thumbnailImage(study['main-project-image-thumbnail']?.url) ||
+              optimizeImage(study['main-project-image-thumbnail']?.url, 800, 80) ||
               asset('/images/placeholder.webp')
             }
             alt={
@@ -170,22 +173,22 @@ export function Hero({
                 <div className="absolute inset-0 flex gap-4 p-4">
                   {/* Column 1: Scroll Down */}
                   <div className="flex-1 flex flex-col gap-4 animate-scroll-down hover:[animation-play-state:paused]">
-                    {caseStudies.map((study) => (
+                    {featuredStudies.map((study) => (
                       <CaseStudyCard key={study.id} study={study} />
                     ))}
                     {/* Duplicate for seamless loop */}
-                    {caseStudies.map((study) => (
+                    {featuredStudies.map((study) => (
                       <CaseStudyCard key={`dup-${study.id}`} study={study} isHidden />
                     ))}
                   </div>
 
                   {/* Column 2: Scroll Up (hidden below xl) */}
                   <div className="hidden xl:flex flex-1 flex-col gap-4 animate-scroll-up hover:[animation-play-state:paused]">
-                    {[...caseStudies].reverse().map((study) => (
+                    {[...featuredStudies].reverse().map((study) => (
                       <CaseStudyCard key={study.id} study={study} />
                     ))}
                     {/* Duplicate for seamless loop */}
-                    {[...caseStudies].reverse().map((study) => (
+                    {[...featuredStudies].reverse().map((study) => (
                       <CaseStudyCard key={`dup-${study.id}`} study={study} isHidden />
                     ))}
                   </div>

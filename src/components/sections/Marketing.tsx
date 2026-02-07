@@ -1,7 +1,6 @@
 import { getMarketingContent, type MarketingCard } from '@/lib/content-utils';
 import { asset } from '@/lib/assets';
-import { SectionContainer } from '@/components/ui/SectionContainer';
-import { Button } from '@/components/ui/Button';
+import { Button, SectionContainer } from '@/components/ui';
 
 interface MarketingProps {
   title?: string;

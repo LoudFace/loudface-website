@@ -2,7 +2,7 @@ import Link from 'next/link';
 import { asset } from '@/lib/assets';
 import { optimizeImage } from '@/lib/image-utils';
 import { getResultsContent, type VideoTestimonial } from '@/lib/content-utils';
-import { Button } from '@/components/ui/Button';
+import { Button } from '@/components/ui';
 import type { CaseStudy, Client, Testimonial } from '@/lib/types';
 
 interface ResultsProps {
@@ -86,7 +86,7 @@ export function Results({
             <p className="font-medium text-surface-700">{study['result-1---title'] || ''}</p>
             <div className="h-4" />
             <p className="text-sm text-surface-500 line-clamp-2">
-              {study['result-1---number'] || ''}
+              {study['paragraph-summary'] || ''}
             </p>
           </div>
           <span className="sm:hidden inline-flex items-center font-medium text-surface-900 mt-4 transition-opacity hover:opacity-70">

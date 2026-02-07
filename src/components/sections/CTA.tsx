@@ -1,5 +1,5 @@
 import { getCTAContent } from '@/lib/content-utils';
-import { Button } from '@/components/ui/Button';
+import { Button } from '@/components/ui';
 
 interface CTAProps {
   title?: string;

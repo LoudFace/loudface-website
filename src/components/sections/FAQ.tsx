@@ -1,8 +1,6 @@
 import Script from 'next/script';
 import { getFAQContent } from '@/lib/content-utils';
-import { SectionContainer } from '@/components/ui/SectionContainer';
-import { SectionHeader } from '@/components/ui/SectionHeader';
-import { Button } from '@/components/ui/Button';
+import { Button, SectionContainer, SectionHeader } from '@/components/ui';
 
 interface FAQItem {
   question: string;

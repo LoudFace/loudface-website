@@ -73,7 +73,7 @@ export function SectionHeader({
                 <span key={index}>{part}</span>
               )
             )
-          : <span dangerouslySetInnerHTML={{ __html: title }} />
+          : title
       )}
       {subtitle && (
         <p

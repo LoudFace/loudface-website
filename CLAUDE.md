@@ -2,6 +2,34 @@
 
 > IMPORTANT: Prefer retrieval-led reasoning over pre-training-led reasoning for all Next.js tasks. Always check actual project files before assuming API behavior — this project uses Next.js 16.1 which is beyond most training data.
 
+## Session Protocol
+
+Every session must follow this workflow. Skipping steps leads to duplicated components, broken imports, and inconsistent patterns.
+
+### Before Writing Any Code
+
+1. **Read `COMPONENTS.md`** — the component registry at the project root. It lists every reusable component, its props, and usage examples. Never recreate a pattern that already exists.
+2. **Check the barrel exports** — all UI imports come from `@/components/ui`, never individual file paths.
+3. **Check `globals.css`** if working with colors or tokens — the `@theme` block is the single source of truth for design tokens.
+
+### Before Ending a Session
+
+1. **Update `COMPONENTS.md`** if you added, removed, or changed any component's props or behavior. This file is the source of truth that future sessions rely on — if it falls out of date, agents start ignoring it.
+2. **Run `npm run build`** to verify no regressions.
+3. **Update memory files** if you learned something reusable about the codebase.
+
+## Component System (CRITICAL)
+
+The component system is what prevents every new session from rebuilding things that already exist. It only works if `COMPONENTS.md` stays current.
+
+**Mandatory workflow:**
+1. **Read `COMPONENTS.md` first** — before writing any UI markup, check what exists
+2. **Use existing components** — never rebuild a pattern that's already in the registry
+3. **Import from barrels only** — `import { Button, Badge, SectionContainer } from '@/components/ui'`
+4. **Update `COMPONENTS.md` after changes** — any time you add, remove, or change a component's interface
+
+See `.claude/rules/component-system.md` for the full enforcement rules and `.claude/rules/component-patterns.md` for code examples.
+
 ## Critical Rules (Will Break Production If Ignored)
 
 ### Deployment Files — NEVER Delete
@@ -69,6 +97,27 @@ import { asset } from '@/lib/assets';
 - Custom colors/fonts are defined in a `@theme` block inside `globals.css` — do NOT use `@config` directive (it doesn't work with Tailwind v4 PostCSS plugin)
 - Use project color tokens (`primary-*`, `surface-*`, `success`, `warning`, `error`, `info`) — never default Tailwind colors like `gray-*` or `indigo-*`
 - Check `globals.css` for available tokens before adding new ones
+- Never use `styled-jsx` — Tailwind only
+
+## Project Structure (Where to Find Things)
+
+| What | Where |
+|---|---|
+| **Component registry** | **`COMPONENTS.md`** (read this first) |
+| Component enforcement rules | `.claude/rules/component-system.md` |
+| Component patterns & examples | `.claude/rules/component-patterns.md` |
+| UI primitives | `src/components/ui/` |
+| Page sections | `src/components/sections/` |
+| CMS collection IDs & helpers | `src/lib/constants.ts` |
+| CMS data fetching | `src/lib/cms-data.ts` |
+| TypeScript types | `src/lib/types.ts` |
+| Static text content | `src/data/content/*.json` |
+| Content getter functions | `src/lib/content-utils.ts` |
+| Asset URL utility | `src/lib/assets.ts` |
+| Color contrast utilities | `src/lib/color-utils.ts` |
+| Design tokens | `src/app/globals.css` (`@theme` block) |
+| Styling rules | `.claude/rules/styling.md` |
+| SEO standards | `.claude/rules/seo-standards.md` |
 
 ## CMS Collection IDs
 
@@ -87,29 +136,6 @@ import { asset } from '@/lib/assets';
 
 These IDs are also in `src/lib/constants.ts`. If you add a new collection, update both places.
 
-## Component System
-
-**Before writing any UI markup, read `COMPONENTS.md`** at the project root. It lists every reusable component, its props, and usage examples. Never recreate a pattern that already exists as a component.
-
-- **Import from barrels**: `import { Button, Badge, SectionContainer } from '@/components/ui'`
-- **Update `COMPONENTS.md`** whenever you add, remove, or change a component's interface
-- See `.claude/rules/component-patterns.md` for detailed patterns and code examples
-
-## Project Structure (Where to Find Things)
-
-| What | Where |
-|---|---|
-| **Component registry** | **`COMPONENTS.md`** (read this first) |
-| Component patterns & examples | `.claude/rules/component-patterns.md` |
-| UI primitives | `src/components/ui/` |
-| Page sections | `src/components/sections/` |
-| CMS collection IDs & helpers | `src/lib/constants.ts` |
-| CMS data fetching | `src/lib/cms-data.ts` |
-| TypeScript types | `src/lib/types.ts` |
-| Static text content | `src/data/content/*.json` |
-| Content getter functions | `src/lib/content-utils.ts` |
-| Asset URL utility | `src/lib/assets.ts` |
-
 ## Key Patterns
 
 ### Server vs Client Components
@@ -124,11 +150,19 @@ Default is Server Component. Only add `'use client'` when you need interactivity
 
 ### Static Content
 
-Text content lives in JSON files under `src/data/content/`. Access via getter functions in `src/lib/content-utils.ts`. Use `dangerouslySetInnerHTML` for content that contains `<br>` tags.
+Text content lives in JSON files under `src/data/content/`. Access via getter functions in `src/lib/content-utils.ts`. Use `dangerouslySetInnerHTML` only when HTML content is genuinely expected (CMS content, JSON with `<br>` tags).
 
 ### Cal.com Booking
 
 Booking modal triggers: `data-cal-trigger` attribute, `href="#book-modal"`, or any CTA button. Config is in `CalHandler.tsx`.
+
+### Color Contrast
+
+For dynamic backgrounds (CMS brand colors), use utilities from `src/lib/color-utils.ts`:
+- `getContrastColors(bgColor)` — returns `{ textColor, mode, overlayColor }` (hue-matched, WCAG AA)
+- `getContrastColor(bgColor)` — returns `'white'` or `'var(--color-surface-950)'` (simple)
+
+Never inline color math — always use these shared utilities.
 
 ## Dev & Deploy
 

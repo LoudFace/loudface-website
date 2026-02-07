@@ -16,8 +16,8 @@ import type { Metadata } from 'next';
 import { fetchHomepageData, getAccessToken, getEmptyHomepageData } from '@/lib/cms-data';
 import { asset } from '@/lib/assets';
 import { heroImage, avatarImage, thumbnailImage, optimizeImage } from '@/lib/image-utils';
-import { SectionContainer } from '@/components/ui/SectionContainer';
-import { Button } from '@/components/ui/Button';
+import { getContrastColor } from '@/lib/color-utils';
+import { Button, SectionContainer } from '@/components/ui';
 import type {
   CaseStudy,
   Client,
@@ -29,18 +29,6 @@ import type {
 
 interface PageProps {
   params: Promise<{ slug: string }>;
-}
-
-// Color contrast helper
-function getContrastColor(hex: string | undefined): string {
-  if (!hex || !hex.startsWith('#')) return 'white';
-  const clean = hex.replace('#', '');
-  if (clean.length < 6) return 'white';
-  const r = parseInt(clean.slice(0, 2), 16);
-  const g = parseInt(clean.slice(2, 4), 16);
-  const b = parseInt(clean.slice(4, 6), 16);
-  const luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
-  return luminance > 0.5 ? 'var(--color-surface-950)' : 'white';
 }
 
 // Extract TOC from main-body HTML

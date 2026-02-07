@@ -11,6 +11,7 @@
 import { fetchHomepageData, getAccessToken, getEmptyHomepageData } from '@/lib/cms-data';
 import { getFAQItemsContent } from '@/lib/content-utils';
 import { asset } from '@/lib/assets';
+import type { CaseStudy } from '@/lib/types';
 import {
   Hero,
   Partners,
@@ -75,8 +76,26 @@ export default async function HomePage() {
 
       {/* Results Section (Bento Grid) */}
       <Results
-        caseStudies={caseStudies.slice(0, 2)}
-        testimonial={allTestimonials[0]}
+        caseStudies={(() => {
+          const targetSlugs = ['viaduct', 'dimer-health'];
+          const picked = targetSlugs
+            .map((slug) => caseStudies.find((s) => s.slug === slug))
+            .filter(Boolean) as CaseStudy[];
+          return picked.length === 2
+            ? picked
+            : caseStudies.filter((s) => s.featured && s.testimonial).slice(0, 2);
+        })()}
+        testimonial={
+          (() => {
+            const viaduct = caseStudies.find((s) => s.slug === 'viaduct');
+            const studyWithTestimonial = viaduct?.testimonial
+              ? viaduct
+              : caseStudies.find((s) => s.featured && s.testimonial);
+            return studyWithTestimonial?.testimonial
+              ? testimonials.get(studyWithTestimonial.testimonial)
+              : allTestimonials[0];
+          })()
+        }
         clients={clients}
       />
 

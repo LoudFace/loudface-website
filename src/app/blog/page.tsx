@@ -7,8 +7,7 @@ import Script from 'next/script';
 import { fetchHomepageData, getAccessToken, getEmptyHomepageData } from '@/lib/cms-data';
 import { thumbnailImage } from '@/lib/image-utils';
 import { asset } from '@/lib/assets';
-import { SectionContainer } from '@/components/ui/SectionContainer';
-import { SectionHeader } from '@/components/ui/SectionHeader';
+import { SectionContainer, SectionHeader } from '@/components/ui';
 import type { Category, TeamMember } from '@/lib/types';
 
 export const metadata: Metadata = {

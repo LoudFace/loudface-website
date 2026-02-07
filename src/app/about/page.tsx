@@ -108,32 +108,26 @@ export default async function AboutPage() {
       </SectionContainer>
 
       {/* Counter Section (Dark Purple Background) */}
-      <section className="bg-wine-950 text-wine-text">
-        <div className="py-16 md:py-20 lg:py-24">
-          <div className="px-4 md:px-8 lg:px-12">
-            <div className="max-w-7xl mx-auto">
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-                {content.counter.stats.map((stat, index) => (
-                  <div key={index} className="border border-wine-border/30 rounded-lg p-8">
-                    <span className="text-4xl md:text-5xl font-medium text-white/60">{stat.number}</span>
-                    <h3 className="mt-2 text-sm font-medium text-wine-text">{stat.label}</h3>
-                    <p className="mt-6 text-wine-text/70 text-sm leading-relaxed">{stat.description}</p>
-                  </div>
-                ))}
-                {/* Award badge card */}
-                <div className="bg-wine-900 rounded-lg p-8 flex items-center justify-center">
-                  <img
-                    src={asset(content.counter.awardBadge)}
-                    alt="10+ Best Website Creator 2024"
-                    className="max-w-full max-h-[22.5rem]"
-                    loading="lazy"
-                  />
-                </div>
-              </div>
+      <SectionContainer className="bg-wine-950 text-wine-text">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+          {content.counter.stats.map((stat, index) => (
+            <div key={index} className="border border-wine-border/30 rounded-lg p-8">
+              <span className="text-4xl md:text-5xl font-medium text-white/60">{stat.number}</span>
+              <h3 className="mt-2 text-sm font-medium text-wine-text">{stat.label}</h3>
+              <p className="mt-6 text-wine-text/70 text-sm leading-relaxed">{stat.description}</p>
             </div>
+          ))}
+          {/* Award badge card */}
+          <div className="bg-wine-900 rounded-lg p-8 flex items-center justify-center">
+            <img
+              src={asset(content.counter.awardBadge)}
+              alt="10+ Best Website Creator 2024"
+              className="max-w-full max-h-[22.5rem]"
+              loading="lazy"
+            />
           </div>
         </div>
-      </section>
+      </SectionContainer>
 
       {/* Journey Section */}
       <SectionContainer padding="lg">

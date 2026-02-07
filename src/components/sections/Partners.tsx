@@ -55,17 +55,14 @@ export function Partners({
 
             <div className="h-4" />
 
-            {/* Testimonial Headshots */}
-            {testimonials.length > 0 && (
+            {/* Testimonial Headshots — only show those with real profile images */}
+            {testimonials.filter((t) => t['profile-image']?.url).length > 0 && (
               <div className="flex flex-wrap justify-center relative z-20">
-                {testimonials.map((testimonial) => (
+                {testimonials.filter((t) => t['profile-image']?.url).map((testimonial) => (
                   <div key={testimonial.id} className="relative z-20 -ml-2 first:ml-0">
                     <div className="testimonial-headshot relative cursor-pointer z-20 group">
                       <img
-                        src={
-                          avatarImage(testimonial['profile-image']?.url) ||
-                          asset('/images/placeholder-avatar.svg')
-                        }
+                        src={avatarImage(testimonial['profile-image']!.url)}
                         loading="lazy"
                         width="40"
                         height="40"
