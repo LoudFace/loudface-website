@@ -6,6 +6,7 @@ import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { asset } from "@/lib/assets";
 import { fetchHomepageData } from "@/lib/cms-data";
+import { PostHogProvider } from "@/components/PostHogProvider";
 
 export const metadata: Metadata = {
   title: {
@@ -163,43 +164,45 @@ export default async function RootLayout({
         />
       </head>
       <body className="font-sans antialiased overflow-x-hidden">
-        {/* Skip link for keyboard accessibility */}
-        <a href="#main-content" className="skip-link">
-          Skip to main content
-        </a>
+        <PostHogProvider>
+          {/* Skip link for keyboard accessibility */}
+          <a href="#main-content" className="skip-link">
+            Skip to main content
+          </a>
 
-        <Header />
+          <Header />
 
-        <main id="main-content">{children}</main>
+          <main id="main-content">{children}</main>
 
-        <Footer caseStudies={caseStudies} blogPosts={blogPosts} />
+          <Footer caseStudies={caseStudies} blogPosts={blogPosts} />
 
-        {/* Webflow Enterprise Partner Badge — site-wide */}
-        <a
-          href="https://webflow.com/@loudface"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="fixed bottom-6 right-6 z-50 transition-opacity hover:opacity-80"
-          aria-label="Webflow Enterprise Partner"
-        >
-          <img
-            loading="lazy"
-            src={asset('/images/Enterprise-Blue-Badge.webp')}
-            alt="Webflow Enterprise Partner Badge"
-            className="w-[11.4rem] h-auto drop-shadow-lg"
-          />
-        </a>
+          {/* Webflow Enterprise Partner Badge — site-wide */}
+          <a
+            href="https://webflow.com/@loudface"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="fixed bottom-6 right-6 z-50 transition-opacity hover:opacity-80"
+            aria-label="Webflow Enterprise Partner"
+          >
+            <img
+              loading="lazy"
+              src={asset('/images/Enterprise-Blue-Badge.webp')}
+              alt="Webflow Enterprise Partner Badge"
+              className="w-[11.4rem] h-auto drop-shadow-lg"
+            />
+          </a>
 
-        {/* Cal.com embed script */}
-        <Script id="cal-embed" strategy="afterInteractive">
-          {`
-            (function (C, A, L) { let p = function (a, ar) { a.q.push(ar); }; let d = C.document; C.Cal = C.Cal || function () { let cal = C.Cal; let ar = arguments; if (!cal.loaded) { cal.ns = {}; cal.q = cal.q || []; d.head.appendChild(d.createElement("script")).src = A; cal.loaded = true; } if (ar[0] === L) { const api = function () { p(api, arguments); }; const namespace = ar[1]; api.q = api.q || []; if(typeof namespace === "string"){cal.ns[namespace] = cal.ns[namespace] || api;p(cal.ns[namespace], ar);p(cal, ["initNamespace", namespace]);} else p(cal, ar); return;} p(cal, ar); }; })(window, "https://app.cal.com/embed/embed.js", "init");
-            Cal("init", {origin:"https://app.cal.com"});
-          `}
-        </Script>
+          {/* Cal.com embed script */}
+          <Script id="cal-embed" strategy="afterInteractive">
+            {`
+              (function (C, A, L) { let p = function (a, ar) { a.q.push(ar); }; let d = C.document; C.Cal = C.Cal || function () { let cal = C.Cal; let ar = arguments; if (!cal.loaded) { cal.ns = {}; cal.q = cal.q || []; d.head.appendChild(d.createElement("script")).src = A; cal.loaded = true; } if (ar[0] === L) { const api = function () { p(api, arguments); }; const namespace = ar[1]; api.q = api.q || []; if(typeof namespace === "string"){cal.ns[namespace] = cal.ns[namespace] || api;p(cal.ns[namespace], ar);p(cal, ["initNamespace", namespace]);} else p(cal, ar); return;} p(cal, ar); }; })(window, "https://app.cal.com/embed/embed.js", "init");
+              Cal("init", {origin:"https://app.cal.com"});
+            `}
+          </Script>
 
-        {/* Cal.com booking modal handler */}
-        <CalHandler />
+          {/* Cal.com booking modal handler */}
+          <CalHandler />
+        </PostHogProvider>
       </body>
     </html>
   );
