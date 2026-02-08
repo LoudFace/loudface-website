@@ -254,7 +254,7 @@ src/components/sections/index.ts → Hero, Partners, CaseStudySlider, Audit, Res
 4. **Import from barrels** — use `@/components/ui` or `@/components`, not individual file paths
 5. **Server by default** — only add `'use client'` when hooks or event handlers are needed
 6. **Use `asset()`** for all static image paths (see `@/lib/assets`)
-7. **Use `<Link>`** for all internal navigation (handles basePath)
+7. **Use `<Link>`** for all internal navigation (client-side transitions and prefetching)
 8. **Use `Card`** for all card surfaces — never write raw card markup with `bg-white rounded-xl border...`
 9. **Follow the page archetype** in `component-patterns.md` when creating new pages
 10. **Follow the text color hierarchy** in `styling.md` — don't freestyle text colors

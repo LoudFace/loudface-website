@@ -1,6 +1,6 @@
 # Deploy Command
 
-Build and deploy the LoudFace Next.js website to Webflow Cloud.
+Build and deploy the LoudFace Next.js website to Vercel.
 
 ## Instructions
 
@@ -21,24 +21,20 @@ Build and deploy the LoudFace Next.js website to Webflow Cloud.
    ```
 
 4. **Verify deployment** by:
-   - Waiting 2-5 minutes for Webflow Cloud to build
+   - Checking the Vercel dashboard for build status
    - Checking the live site (www.loudface.co)
    - Verifying images load (no 404s in console)
    - Testing the Cal.com booking modal
    - Testing dynamic routes (`/work/[slug]`)
 
-**Note:** Deployment is git-based. There is no `webflow cloud deploy` CLI command.
+## Environment Variables
 
-## Required Configuration Files
+CMS env vars must be set on Vercel (Settings → Environment Variables):
 
-These files MUST exist for Webflow Cloud deployment:
-
-| File | Purpose |
-|------|---------|
-| `webflow.json` | Framework detection (`{"cloud":{"framework":"nextjs"}}`) |
-| `open-next.config.ts` | OpenNext Cloudflare adapter config |
-| `wrangler.jsonc` | Cloudflare Workers config |
-| `@opennextjs/cloudflare` | Must be in devDependencies |
+| Variable | Purpose |
+|----------|---------|
+| `WEBFLOW_SITE_API_TOKEN` | Webflow CMS API token |
+| `WEBFLOW_SITE_ID` | Webflow site identifier |
 
 ## Troubleshooting
 

@@ -273,6 +273,12 @@ export function Footer({ caseStudies = [], blogPosts = [] }: FooterProps) {
                   >
                     Terms of Service
                   </Link>
+                  <Link
+                    href="/cookies"
+                    className="text-sm text-surface-500 hover:text-surface-300 transition-colors"
+                  >
+                    Cookie Policy
+                  </Link>
                 </div>
               </div>
             </div>
