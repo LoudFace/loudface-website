@@ -83,7 +83,7 @@ export default async function AboutPage() {
         <div className="max-w-3xl mx-auto text-center">
           <Badge
             size="md"
-            icon={<img src={asset(content.hero.badgeIcon)} alt="" className="w-6 h-6" loading="eager" />}
+            icon={<img src={asset(content.hero.badgeIcon)} alt="" width="24" height="24" className="w-6 h-6" loading="eager" />}
             className="mb-6"
           >
             {content.hero.badge}
@@ -124,6 +124,8 @@ export default async function AboutPage() {
             <img
               src={asset(content.counter.awardBadge)}
               alt="10+ Best Website Creator 2024"
+              width="400"
+              height="360"
               className="max-w-full max-h-[22.5rem]"
               loading="lazy"
             />
@@ -172,6 +174,8 @@ export default async function AboutPage() {
                     <img
                       src={optimizeImage(member['profile-picture'].url, 600)}
                       alt={member.name}
+                      width="600"
+                      height="560"
                       className="w-full h-full object-cover"
                       loading={index < 3 ? 'eager' : 'lazy'}
                     />
@@ -196,7 +200,7 @@ export default async function AboutPage() {
         {/* Accepting new clients CTA card */}
         <div className="mt-12 bg-surface-100 border border-surface-200 rounded-xl p-10 lg:p-12">
           <div className="flex items-center gap-2 mb-4">
-            <img src={asset('/images/green-circle.svg')} alt="" className="w-3 h-3" />
+            <img src={asset('/images/green-circle.svg')} alt="" width="12" height="12" className="w-3 h-3" />
             <span className="text-sm font-medium text-surface-900">{content.team.ctaCard.indicator}</span>
           </div>
           <h3 className="text-xl font-medium text-surface-900">{content.team.ctaCard.headline}</h3>
@@ -219,6 +223,8 @@ export default async function AboutPage() {
                     <img
                       src={logoImage(client['colored-logo']?.url)}
                       alt={client.name}
+                      width="120"
+                      height="32"
                       className="max-w-full max-h-full object-contain"
                       loading="lazy"
                     />
@@ -253,6 +259,8 @@ export default async function AboutPage() {
               <img
                 src={asset(award.icon)}
                 alt=""
+                width="64"
+                height="64"
                 className="w-16 h-16 mb-8"
                 loading="lazy"
               />

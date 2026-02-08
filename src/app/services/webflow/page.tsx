@@ -7,14 +7,26 @@
  */
 import type { Metadata } from 'next';
 import Link from 'next/link';
+import dynamic from 'next/dynamic';
 import { fetchHomepageData, getAccessToken, getEmptyHomepageData } from '@/lib/cms-data';
 import { getServicesWebflowContent } from '@/lib/content-utils';
 import { asset } from '@/lib/assets';
 import { getContrastColors } from '@/lib/color-utils';
 import { caseStudyThumbnail, logoImage } from '@/lib/image-utils';
-import { SectionContainer, SectionHeader, Card, Button, BulletLabel, PixelBreakpointAnimation, ScalableGridAnimation, ComponentAssemblyVisual } from '@/components/ui';
+import { SectionContainer, SectionHeader, Card, Button, BulletLabel } from '@/components/ui';
 import { FAQ, CTA } from '@/components/sections';
 import type { CaseStudy, Client, Industry } from '@/lib/types';
+
+// Dynamic import below-fold visual components — defers client JS hydration
+const PixelBreakpointAnimation = dynamic(
+  () => import('@/components/ui/PixelBreakpointAnimation').then(m => ({ default: m.PixelBreakpointAnimation })),
+);
+const ScalableGridAnimation = dynamic(
+  () => import('@/components/ui/ScalableGridAnimation').then(m => ({ default: m.ScalableGridAnimation })),
+);
+const ComponentAssemblyVisual = dynamic(
+  () => import('@/components/ui/ComponentAssemblyVisual').then(m => ({ default: m.ComponentAssemblyVisual })),
+);
 
 export const metadata: Metadata = {
   title: 'Webflow Development Services',
@@ -512,6 +524,8 @@ export default async function WebflowServicePage() {
               key={i}
               src={asset(badge.src)}
               alt={badge.alt}
+              width="120"
+              height="30"
               className={`h-7.5 w-auto ${badge.src.endsWith('.svg') ? 'brightness-0 invert opacity-70' : ''}`}
               loading="lazy"
             />
@@ -559,6 +573,8 @@ export default async function WebflowServicePage() {
                             study['project-title'] ||
                             study.name
                           }
+                          width="800"
+                          height="500"
                           loading="lazy"
                           className="w-full h-full object-cover object-top transition-transform duration-500 group-hover:scale-105"
                         />
@@ -634,6 +650,8 @@ export default async function WebflowServicePage() {
                           <img
                             src={logoImage(client['colored-logo'].url)}
                             alt={client.name || 'Client'}
+                            width="120"
+                            height="20"
                             className="h-5 w-auto max-w-[100px] object-contain opacity-60 group-hover:opacity-100 transition-opacity"
                             loading="lazy"
                           />

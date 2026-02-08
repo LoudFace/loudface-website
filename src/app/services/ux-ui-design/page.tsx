@@ -5,6 +5,7 @@
  * - JSON: services-ux-ui-design.json (via content layer)
  */
 import type { Metadata } from 'next';
+import dynamic from 'next/dynamic';
 import { getServicesUxUiDesignContent } from '@/lib/content-utils';
 import {
   SectionContainer,
@@ -13,9 +14,13 @@ import {
   Button,
   BulletLabel,
   Badge,
-  DesignSystemVisual,
 } from '@/components/ui';
 import { FAQ, CTA } from '@/components/sections';
+
+// Dynamic import below-fold visual component — defers client JS hydration
+const DesignSystemVisual = dynamic(
+  () => import('@/components/ui/DesignSystemVisual').then(m => ({ default: m.DesignSystemVisual })),
+);
 
 export const metadata: Metadata = {
   title: 'UX/UI Design Services',

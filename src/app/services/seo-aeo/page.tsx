@@ -5,6 +5,7 @@
  * - JSON: services-seo-aeo.json (via content layer)
  */
 import type { Metadata } from 'next';
+import dynamic from 'next/dynamic';
 import { getServicesSeoAeoContent } from '@/lib/content-utils';
 import { AI_PLATFORM_ICONS } from '@/lib/icons';
 import {
@@ -14,9 +15,13 @@ import {
   Button,
   BulletLabel,
   Badge,
-  AICitationVisual,
 } from '@/components/ui';
 import { FAQ, CTA } from '@/components/sections';
+
+// Dynamic import below-fold visual component — defers client JS hydration
+const AICitationVisual = dynamic(
+  () => import('@/components/ui/AICitationVisual').then(m => ({ default: m.AICitationVisual })),
+);
 
 export const metadata: Metadata = {
   title: 'SEO & AI Engine Optimization Services',

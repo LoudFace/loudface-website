@@ -177,6 +177,8 @@ export default async function WorkPage({
                             srcSet={thumb.srcset}
                             sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
                             alt={study['main-project-image-thumbnail']?.alt || study['project-title'] || study.name}
+                            width="800"
+                            height="500"
                             loading={index < 6 ? 'eager' : 'lazy'}
                             className="w-full h-full object-cover object-top transition-transform duration-500 group-hover:scale-105"
                           />
@@ -257,6 +259,8 @@ export default async function WorkPage({
                             <img
                               src={logoImage(client['colored-logo'].url)}
                               alt={client.name || 'Client'}
+                              width="120"
+                              height="20"
                               className="h-5 w-auto max-w-[100px] object-contain opacity-60 group-hover:opacity-100 transition-opacity"
                               loading="lazy"
                             />

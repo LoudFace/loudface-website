@@ -5,6 +5,7 @@
  * - JSON: services-copywriting.json (via content layer)
  */
 import type { Metadata } from 'next';
+import dynamic from 'next/dynamic';
 import { getServicesCopywritingContent } from '@/lib/content-utils';
 import {
   SectionContainer,
@@ -13,9 +14,13 @@ import {
   Button,
   BulletLabel,
   Badge,
-  CopyFirstVisual,
 } from '@/components/ui';
 import { FAQ, CTA } from '@/components/sections';
+
+// Dynamic import below-fold visual component — defers client JS hydration
+const CopyFirstVisual = dynamic(
+  () => import('@/components/ui/CopyFirstVisual').then(m => ({ default: m.CopyFirstVisual })),
+);
 
 export const metadata: Metadata = {
   title: 'Messaging & Copywriting Services',

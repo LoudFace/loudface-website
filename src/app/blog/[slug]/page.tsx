@@ -214,6 +214,8 @@ export default async function BlogPostPage({ params }: PageProps) {
                     <img
                       src={avatarImage(author['profile-picture'].url)}
                       alt={author.name}
+                      width="80"
+                      height="80"
                       className="w-10 h-10 rounded-full object-cover"
                     />
                   )}
@@ -238,6 +240,8 @@ export default async function BlogPostPage({ params }: PageProps) {
               <img
                 src={heroImage(post.thumbnail.url).src}
                 alt={post.thumbnail.alt || post.name}
+                width="1200"
+                height="675"
                 className="w-full rounded-xl shadow-lg"
                 loading="eager"
               />
@@ -287,6 +291,8 @@ export default async function BlogPostPage({ params }: PageProps) {
                       <img
                         src={avatarImage(author['profile-picture'].url)}
                         alt={author.name}
+                        width="80"
+                        height="80"
                         className="w-12 h-12 rounded-full object-cover"
                       />
                     )}
@@ -328,6 +334,8 @@ export default async function BlogPostPage({ params }: PageProps) {
                     <img
                       src={thumbnailImage(related.thumbnail?.url) || asset('/images/placeholder.webp')}
                       alt={related.name}
+                      width="800"
+                      height="450"
                       className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                       loading="lazy"
                     />

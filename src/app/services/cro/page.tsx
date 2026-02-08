@@ -5,6 +5,7 @@
  * - JSON: services-cro.json (via content layer)
  */
 import type { Metadata } from 'next';
+import dynamic from 'next/dynamic';
 import { getServicesCroContent } from '@/lib/content-utils';
 import {
   SectionContainer,
@@ -12,9 +13,13 @@ import {
   Card,
   Button,
   BulletLabel,
-  ConversionSplitVisual,
 } from '@/components/ui';
 import { FAQ, CTA } from '@/components/sections';
+
+// Dynamic import below-fold visual component — defers client JS hydration
+const ConversionSplitVisual = dynamic(
+  () => import('@/components/ui/ConversionSplitVisual').then(m => ({ default: m.ConversionSplitVisual })),
+);
 
 export const metadata: Metadata = {
   title: 'Conversion Rate Optimization Services',

@@ -215,6 +215,8 @@ export default async function CaseStudyPage({ params }: PageProps) {
               <img
                 src={optimizeImage(client['light-logo'].url, 120)}
                 alt={client.name}
+                width="120"
+                height="24"
                 className="h-6 mb-4 opacity-80"
               />
             )}
@@ -278,6 +280,8 @@ export default async function CaseStudyPage({ params }: PageProps) {
                   srcSet={hero.srcset}
                   sizes="(max-width: 768px) 100vw, (max-width: 1200px) 80vw, 1000px"
                   alt={study['main-project-image-thumbnail'].alt || projectTitle}
+                  width="1200"
+                  height="675"
                   className="w-full rounded-xl shadow-lg"
                   loading="eager"
                   fetchPriority="high"
@@ -429,6 +433,8 @@ export default async function CaseStudyPage({ params }: PageProps) {
                   <img
                     src={avatarImage(testimonial['profile-image'].url)}
                     alt={testimonial.name}
+                    width="80"
+                    height="80"
                     className="w-10 h-10 rounded-full object-cover"
                   />
                 )}
@@ -470,6 +476,8 @@ export default async function CaseStudyPage({ params }: PageProps) {
                     <img
                       src={thumbnailImage(related['main-project-image-thumbnail']?.url) || asset('/images/placeholder.webp')}
                       alt={related['project-title'] || related.name}
+                      width="800"
+                      height="500"
                       className="w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-300"
                       loading="lazy"
                     />
