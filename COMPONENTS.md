@@ -159,6 +159,20 @@ Animated 4x2 grid of mini-page wireframes that progressively fills in (2 → 4 �
 <ScalableGridAnimation />
 ```
 
+### Pagination
+
+URL-based pagination nav for listing pages (blog, case studies). Renders page numbers with prev/next arrows, ellipsis for large ranges, and highlights the current page.
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `currentPage` | `number` | — | Active page number (1-indexed) |
+| `totalPages` | `number` | — | Total number of pages |
+| `basePath` | `string` | — | Base URL for page links (e.g. `/blog`) |
+
+```tsx
+<Pagination currentPage={2} totalPages={6} basePath="/blog" />
+```
+
 ### SectionContainer
 
 Wrapper providing consistent padding, max-width, and horizontal gutters for page sections.

@@ -1,5 +1,7 @@
 /**
  * Blog Index Page
+ *
+ * Paginated blog listing (12 posts per page) to keep HTML size under 256 KB.
  */
 import type { Metadata } from 'next';
 import Link from 'next/link';
@@ -7,9 +9,11 @@ import Script from 'next/script';
 import { fetchHomepageData, getAccessToken, getEmptyHomepageData } from '@/lib/cms-data';
 import { thumbnailImage } from '@/lib/image-utils';
 import { asset } from '@/lib/assets';
-import { SectionContainer, SectionHeader } from '@/components/ui';
+import { Pagination, SectionContainer, SectionHeader } from '@/components/ui';
 import { CTA } from '@/components/sections';
 import type { Category, TeamMember } from '@/lib/types';
+
+const POSTS_PER_PAGE = 12;
 
 export const metadata: Metadata = {
   title: 'Blog | Insights & Resources',
@@ -19,13 +23,28 @@ export const metadata: Metadata = {
   },
 };
 
-export default async function BlogPage() {
+export default async function BlogPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ page?: string }>;
+}) {
+  const { page: pageParam } = await searchParams;
+  const currentPage = Math.max(1, parseInt(pageParam || '1', 10));
+
   const accessToken = getAccessToken();
   const cmsData = accessToken
     ? await fetchHomepageData(accessToken)
     : getEmptyHomepageData();
 
   const { blogPosts, categories, teamMembers } = cmsData;
+
+  // Pagination
+  const totalPages = Math.ceil(blogPosts.length / POSTS_PER_PAGE);
+  const safePage = Math.min(currentPage, Math.max(1, totalPages));
+  const paginatedPosts = blogPosts.slice(
+    (safePage - 1) * POSTS_PER_PAGE,
+    safePage * POSTS_PER_PAGE
+  );
 
   // Helper functions
   function getCategory(id: string | undefined): Category | undefined {
@@ -38,14 +57,14 @@ export default async function BlogPage() {
     return teamMembers.get(id);
   }
 
-  // Structured Data
+  // Structured Data — only include current page's posts
   const blogSchema = {
     '@context': 'https://schema.org',
     '@type': 'Blog',
     name: 'LoudFace Blog',
     description: 'Insights on Webflow development, SEO, AEO, and design best practices.',
     url: 'https://www.loudface.co/blog',
-    blogPost: blogPosts.map((post) => ({
+    blogPost: paginatedPosts.map((post) => ({
       '@type': 'BlogPosting',
       headline: post.name,
       url: `https://www.loudface.co/blog/${post.slug}`,
@@ -83,67 +102,77 @@ export default async function BlogPage() {
           subtitle="Stay updated with our latest insights and resources."
         />
 
-        {blogPosts.length === 0 ? (
+        {paginatedPosts.length === 0 ? (
           <div className="mt-12 text-center py-16">
             <p className="text-surface-600">No blog posts found. Check back soon!</p>
           </div>
         ) : (
-          <div className="mt-12 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {blogPosts.map((post, index) => {
-              const category = getCategory(post.category);
-              const author = getAuthor(post.author);
+          <>
+            <div className="mt-12 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {paginatedPosts.map((post, index) => {
+                const category = getCategory(post.category);
+                const author = getAuthor(post.author);
 
-              return (
-                <Link
-                  key={post.slug}
-                  href={`/blog/${post.slug}`}
-                  className="group block bg-white rounded-xl border border-surface-200 overflow-hidden transition-all duration-300 hover:shadow-lg hover:-translate-y-1 focus-visible:outline-2 focus-visible:outline-primary-500 focus-visible:outline-offset-4"
-                >
-                  <div className="aspect-video overflow-hidden">
-                    <img
-                      src={thumbnailImage(post.thumbnail?.url) || asset('/images/placeholder.webp')}
-                      alt={post.thumbnail?.alt || post.name}
-                      loading={index < 6 ? 'eager' : 'lazy'}
-                      className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-                    />
-                  </div>
+                return (
+                  <Link
+                    key={post.slug}
+                    href={`/blog/${post.slug}`}
+                    className="group block bg-white rounded-xl border border-surface-200 overflow-hidden transition-all duration-300 hover:shadow-lg hover:-translate-y-1 focus-visible:outline-2 focus-visible:outline-primary-500 focus-visible:outline-offset-4"
+                  >
+                    <div className="aspect-video overflow-hidden">
+                      <img
+                        src={thumbnailImage(post.thumbnail?.url) || asset('/images/placeholder.webp')}
+                        alt={post.thumbnail?.alt || post.name}
+                        loading={index < 6 ? 'eager' : 'lazy'}
+                        className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                      />
+                    </div>
 
-                  <div className="p-5">
-                    <div className="flex items-center gap-3 mb-3">
-                      {category && (
-                        <span className="px-2.5 py-1 bg-primary-50 text-primary-700 rounded-full text-xs font-medium">
-                          {category.name}
+                    <div className="p-5">
+                      <div className="flex items-center gap-3 mb-3">
+                        {category && (
+                          <span className="px-2.5 py-1 bg-primary-50 text-primary-700 rounded-full text-xs font-medium">
+                            {category.name}
+                          </span>
+                        )}
+                        <span className="text-xs text-surface-500">
+                          {post['time-to-read'] ? `${post['time-to-read']} min read` : '5 min read'}
                         </span>
+                      </div>
+
+                      <h2 className="font-medium text-lg text-surface-900 line-clamp-2 group-hover:text-primary-600 transition-colors">
+                        {post.name}
+                      </h2>
+
+                      {post.excerpt && (
+                        <p className="mt-2 text-sm text-surface-600 line-clamp-2">
+                          {post.excerpt}
+                        </p>
                       )}
-                      <span className="text-xs text-surface-500">5 min read</span>
+
+                      <div className="mt-4 pt-4 border-t border-surface-100 flex items-center justify-between">
+                        <span className="text-xs text-surface-500">
+                          By {author?.name || 'LoudFace'}
+                        </span>
+                        <span className="flex items-center gap-1.5 text-sm font-medium text-surface-500 group-hover:text-primary-600 transition-colors">
+                          Read more
+                          <svg className="w-4 h-4 transform group-hover:translate-x-1 transition-transform" viewBox="0 0 16 16" fill="none">
+                            <path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                          </svg>
+                        </span>
+                      </div>
                     </div>
+                  </Link>
+                );
+              })}
+            </div>
 
-                    <h2 className="font-medium text-lg text-surface-900 line-clamp-2 group-hover:text-primary-600 transition-colors">
-                      {post.name}
-                    </h2>
-
-                    {post.excerpt && (
-                      <p className="mt-2 text-sm text-surface-600 line-clamp-2">
-                        {post.excerpt}
-                      </p>
-                    )}
-
-                    <div className="mt-4 pt-4 border-t border-surface-100 flex items-center justify-between">
-                      <span className="text-xs text-surface-500">
-                        By {author?.name || 'LoudFace'}
-                      </span>
-                      <span className="flex items-center gap-1.5 text-sm font-medium text-surface-500 group-hover:text-primary-600 transition-colors">
-                        Read more
-                        <svg className="w-4 h-4 transform group-hover:translate-x-1 transition-transform" viewBox="0 0 16 16" fill="none">
-                          <path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-                        </svg>
-                      </span>
-                    </div>
-                  </div>
-                </Link>
-              );
-            })}
-          </div>
+            <Pagination
+              currentPage={safePage}
+              totalPages={totalPages}
+              basePath="/blog"
+            />
+          </>
         )}
       </SectionContainer>
 

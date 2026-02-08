@@ -1,10 +1,8 @@
 /**
- * Work / Case Studies Gallery Page
+ * Case Studies Gallery Page
  *
- * Displays all case studies in a bento-style grid with:
- * - Hero section with stats
- * - CMS-powered gallery with client brand colors
- * - SEO structured data
+ * Paginated listing (12 per page) to keep HTML size under 256 KB.
+ * Featured studies always appear first.
  */
 import type { Metadata } from 'next';
 import Link from 'next/link';
@@ -14,9 +12,11 @@ import { getWorkContent } from '@/lib/content-utils';
 import { asset } from '@/lib/assets';
 import { getContrastColors } from '@/lib/color-utils';
 import { caseStudyThumbnail, logoImage } from '@/lib/image-utils';
-import { SectionContainer, SectionHeader } from '@/components/ui';
+import { Pagination, SectionContainer, SectionHeader } from '@/components/ui';
 import { CTA } from '@/components/sections';
 import type { CaseStudy, Client, Industry, Technology } from '@/lib/types';
+
+const ITEMS_PER_PAGE = 12;
 
 export const metadata: Metadata = {
   title: 'Our Work | Case Studies & Portfolio',
@@ -26,7 +26,14 @@ export const metadata: Metadata = {
   },
 };
 
-export default async function WorkPage() {
+export default async function WorkPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ page?: string }>;
+}) {
+  const { page: pageParam } = await searchParams;
+  const currentPage = Math.max(1, parseInt(pageParam || '1', 10));
+
   const content = getWorkContent();
 
   const accessToken = getAccessToken();
@@ -67,7 +74,15 @@ export default async function WorkPage() {
   const regularStudies = withSummary.filter(s => !s.featured);
   const sortedStudies = [...featuredStudies, ...regularStudies];
 
-  // Structured Data
+  // Pagination
+  const totalPages = Math.ceil(sortedStudies.length / ITEMS_PER_PAGE);
+  const safePage = Math.min(currentPage, Math.max(1, totalPages));
+  const paginatedStudies = sortedStudies.slice(
+    (safePage - 1) * ITEMS_PER_PAGE,
+    safePage * ITEMS_PER_PAGE
+  );
+
+  // Structured Data — includes all studies for SEO discovery
   const collectionSchema = {
     '@context': 'https://schema.org',
     '@type': 'CollectionPage',
@@ -131,148 +146,156 @@ export default async function WorkPage() {
           subtitle={content.gallerySubtitle}
         />
 
-        {sortedStudies.length === 0 ? (
+        {paginatedStudies.length === 0 ? (
           <div className="mt-12 text-center py-16">
             <p className="text-surface-600">No case studies found. Check back soon!</p>
           </div>
         ) : (
-          <div className="mt-12 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {sortedStudies.map((study, index) => {
-              const client = getClient(study.client);
-              const industry = getIndustry(study.industry);
-              const technologies = getTechnologies(study.technologies as string[] | undefined);
-              const clientColor = study['client-color'] || 'var(--color-primary-500)';
-              const { textColor: statTextColor } = getContrastColors(clientColor);
-              const hasStats = study['result-1---number'] || study['result-2---number'];
+          <>
+            <div className="mt-12 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {paginatedStudies.map((study, index) => {
+                const client = getClient(study.client);
+                const industry = getIndustry(study.industry);
+                const technologies = getTechnologies(study.technologies as string[] | undefined);
+                const clientColor = study['client-color'] || 'var(--color-primary-500)';
+                const { textColor: statTextColor } = getContrastColors(clientColor);
+                const hasStats = study['result-1---number'] || study['result-2---number'];
 
-              return (
-                <Link
-                  key={study.slug}
-                  href={`/case-studies/${study.slug}`}
-                  className="group relative bg-white rounded-2xl border border-surface-200 overflow-hidden transition-all duration-300 hover:shadow-xl hover:border-surface-300 hover:-translate-y-1 focus-visible:outline-2 focus-visible:outline-primary-500 focus-visible:outline-offset-4"
-                >
-                  {/* Image Section */}
-                  <div className="relative aspect-[16/10] overflow-hidden">
-                    {(() => {
-                      const thumb = caseStudyThumbnail(study['main-project-image-thumbnail']?.url);
-                      return (
-                        <img
-                          src={thumb.src || asset('/images/placeholder.webp')}
-                          srcSet={thumb.srcset}
-                          sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
-                          alt={study['main-project-image-thumbnail']?.alt || study['project-title'] || study.name}
-                          loading={index < 6 ? 'eager' : 'lazy'}
-                          className="w-full h-full object-cover object-top transition-transform duration-500 group-hover:scale-105"
-                        />
-                      );
-                    })()}
+                return (
+                  <Link
+                    key={study.slug}
+                    href={`/case-studies/${study.slug}`}
+                    className="group relative bg-white rounded-2xl border border-surface-200 overflow-hidden transition-all duration-300 hover:shadow-xl hover:border-surface-300 hover:-translate-y-1 focus-visible:outline-2 focus-visible:outline-primary-500 focus-visible:outline-offset-4"
+                  >
+                    {/* Image Section */}
+                    <div className="relative aspect-[16/10] overflow-hidden">
+                      {(() => {
+                        const thumb = caseStudyThumbnail(study['main-project-image-thumbnail']?.url);
+                        return (
+                          <img
+                            src={thumb.src || asset('/images/placeholder.webp')}
+                            srcSet={thumb.srcset}
+                            sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                            alt={study['main-project-image-thumbnail']?.alt || study['project-title'] || study.name}
+                            loading={index < 6 ? 'eager' : 'lazy'}
+                            className="w-full h-full object-cover object-top transition-transform duration-500 group-hover:scale-105"
+                          />
+                        );
+                      })()}
 
-                    {industry && (
-                      <span className="absolute top-3 left-3 px-2.5 py-1 bg-white/90 backdrop-blur-sm rounded-full text-xs font-medium text-surface-700 shadow-sm">
-                        {industry.name}
-                      </span>
-                    )}
-                  </div>
+                      {industry && (
+                        <span className="absolute top-3 left-3 px-2.5 py-1 bg-white/90 backdrop-blur-sm rounded-full text-xs font-medium text-surface-700 shadow-sm">
+                          {industry.name}
+                        </span>
+                      )}
+                    </div>
 
-                  {/* Content Section */}
-                  <div className="p-5">
-                    {technologies.length > 0 && (
-                      <div className="flex flex-wrap gap-1.5 mb-3">
-                        {technologies.slice(0, 3).map((tech) => (
-                          <span key={tech.id} className="inline-flex items-center gap-1 px-2 py-0.5 bg-surface-100 rounded text-2xs font-medium text-surface-600">
-                            {tech.name}
-                          </span>
-                        ))}
-                        {technologies.length > 3 && (
-                          <span className="px-2 py-0.5 bg-surface-100 rounded text-2xs font-medium text-surface-500">
-                            +{technologies.length - 3}
-                          </span>
-                        )}
-                      </div>
-                    )}
-
-                    <h2 className="font-medium text-lg text-surface-900 line-clamp-2 group-hover:text-primary-600 transition-colors">
-                      {study['project-title'] || study.name}
-                    </h2>
-
-                    {study['paragraph-summary'] && (
-                      <p className="mt-2 text-sm text-surface-600 line-clamp-2">
-                        {study['paragraph-summary']}
-                      </p>
-                    )}
-
-                    {hasStats && (() => {
-                      const hasBothStats = study['result-1---number'] && study['result-2---number'];
-                      return (
-                        <div className={`mt-4 ${hasBothStats ? 'grid grid-cols-2 gap-2' : ''}`}>
-                          {study['result-1---number'] && (
-                            <div
-                              className="rounded-lg p-3"
-                              style={{ backgroundColor: clientColor, color: statTextColor }}
-                            >
-                              <span className="block text-xl font-medium">
-                                {study['result-1---number']}
-                              </span>
-                              <span className="text-xs opacity-75 line-clamp-1">
-                                {study['result-1---title']}
-                              </span>
-                            </div>
-                          )}
-                          {study['result-2---number'] && (
-                            <div
-                              className="rounded-lg p-3"
-                              style={{ backgroundColor: clientColor, color: statTextColor }}
-                            >
-                              <span className="block text-xl font-medium">
-                                {study['result-2---number']}
-                              </span>
-                              <span className="text-xs opacity-75 line-clamp-1">
-                                {study['result-2---title']}
-                              </span>
-                            </div>
+                    {/* Content Section */}
+                    <div className="p-5">
+                      {technologies.length > 0 && (
+                        <div className="flex flex-wrap gap-1.5 mb-3">
+                          {technologies.slice(0, 3).map((tech) => (
+                            <span key={tech.id} className="inline-flex items-center gap-1 px-2 py-0.5 bg-surface-100 rounded text-2xs font-medium text-surface-600">
+                              {tech.name}
+                            </span>
+                          ))}
+                          {technologies.length > 3 && (
+                            <span className="px-2 py-0.5 bg-surface-100 rounded text-2xs font-medium text-surface-500">
+                              +{technologies.length - 3}
+                            </span>
                           )}
                         </div>
-                      );
-                    })()}
+                      )}
 
-                    <div className="mt-4 pt-4 border-t border-surface-100 flex items-center justify-between">
-                      <div className="flex-shrink-0">
-                        {client?.['colored-logo']?.url ? (
-                          <img
-                            src={logoImage(client['colored-logo'].url)}
-                            alt={client.name || 'Client'}
-                            className="h-5 w-auto max-w-[100px] object-contain opacity-60 group-hover:opacity-100 transition-opacity"
-                            loading="lazy"
-                          />
-                        ) : (
-                          <span className="text-sm font-medium text-surface-400">
-                            {client?.name || ''}
-                          </span>
-                        )}
+                      <h2 className="font-medium text-lg text-surface-900 line-clamp-2 group-hover:text-primary-600 transition-colors">
+                        {study['project-title'] || study.name}
+                      </h2>
+
+                      {study['paragraph-summary'] && (
+                        <p className="mt-2 text-sm text-surface-600 line-clamp-2">
+                          {study['paragraph-summary']}
+                        </p>
+                      )}
+
+                      {hasStats && (() => {
+                        const hasBothStats = study['result-1---number'] && study['result-2---number'];
+                        return (
+                          <div className={`mt-4 ${hasBothStats ? 'grid grid-cols-2 gap-2' : ''}`}>
+                            {study['result-1---number'] && (
+                              <div
+                                className="rounded-lg p-3"
+                                style={{ backgroundColor: clientColor, color: statTextColor }}
+                              >
+                                <span className="block text-xl font-medium">
+                                  {study['result-1---number']}
+                                </span>
+                                <span className="text-xs opacity-75 line-clamp-1">
+                                  {study['result-1---title']}
+                                </span>
+                              </div>
+                            )}
+                            {study['result-2---number'] && (
+                              <div
+                                className="rounded-lg p-3"
+                                style={{ backgroundColor: clientColor, color: statTextColor }}
+                              >
+                                <span className="block text-xl font-medium">
+                                  {study['result-2---number']}
+                                </span>
+                                <span className="text-xs opacity-75 line-clamp-1">
+                                  {study['result-2---title']}
+                                </span>
+                              </div>
+                            )}
+                          </div>
+                        );
+                      })()}
+
+                      <div className="mt-4 pt-4 border-t border-surface-100 flex items-center justify-between">
+                        <div className="flex-shrink-0">
+                          {client?.['colored-logo']?.url ? (
+                            <img
+                              src={logoImage(client['colored-logo'].url)}
+                              alt={client.name || 'Client'}
+                              className="h-5 w-auto max-w-[100px] object-contain opacity-60 group-hover:opacity-100 transition-opacity"
+                              loading="lazy"
+                            />
+                          ) : (
+                            <span className="text-sm font-medium text-surface-400">
+                              {client?.name || ''}
+                            </span>
+                          )}
+                        </div>
+
+                        <span className="flex items-center gap-1.5 text-sm font-medium text-surface-500 group-hover:text-primary-600 transition-colors">
+                          {content.viewProjectText}
+                          <svg
+                            className="w-4 h-4 transform group-hover:translate-x-1 transition-transform"
+                            viewBox="0 0 16 16"
+                            fill="none"
+                          >
+                            <path
+                              d="M3 8h10M9 4l4 4-4 4"
+                              stroke="currentColor"
+                              strokeWidth="1.5"
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                            />
+                          </svg>
+                        </span>
                       </div>
-
-                      <span className="flex items-center gap-1.5 text-sm font-medium text-surface-500 group-hover:text-primary-600 transition-colors">
-                        {content.viewProjectText}
-                        <svg
-                          className="w-4 h-4 transform group-hover:translate-x-1 transition-transform"
-                          viewBox="0 0 16 16"
-                          fill="none"
-                        >
-                          <path
-                            d="M3 8h10M9 4l4 4-4 4"
-                            stroke="currentColor"
-                            strokeWidth="1.5"
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                          />
-                        </svg>
-                      </span>
                     </div>
-                  </div>
-                </Link>
-              );
-            })}
-          </div>
+                  </Link>
+                );
+              })}
+            </div>
+
+            <Pagination
+              currentPage={safePage}
+              totalPages={totalPages}
+              basePath="/case-studies"
+            />
+          </>
         )}
       </SectionContainer>
 

@@ -10,5 +10,6 @@ export { ConversionSplitVisual } from './ConversionSplitVisual';
 export { DesignSystemVisual } from './DesignSystemVisual';
 export { PixelBreakpointAnimation } from './PixelBreakpointAnimation';
 export { ScalableGridAnimation } from './ScalableGridAnimation';
+export { Pagination } from './Pagination';
 export { SectionContainer } from './SectionContainer';
 export { SectionHeader } from './SectionHeader';
