@@ -119,17 +119,11 @@ export default async function RootLayout({
         />
         <link rel="dns-prefetch" href="https://app.cal.com" />
 
-        {/* Preload critical fonts */}
+        {/* Preload critical fonts — only hero-essential weights.
+            Fewer preloads = less bandwidth contention on slow mobile. */}
         <link
           rel="preload"
           href="/fonts/Satoshi-Regular.woff2"
-          as="font"
-          type="font/woff2"
-          crossOrigin=""
-        />
-        <link
-          rel="preload"
-          href="/fonts/Satoshi-Medium.woff2"
           as="font"
           type="font/woff2"
           crossOrigin=""
@@ -188,6 +182,8 @@ export default async function RootLayout({
               loading="lazy"
               src={asset('/images/Enterprise-Blue-Badge.webp')}
               alt="Webflow Enterprise Partner Badge"
+              width="660"
+              height="85"
               className="w-[11.4rem] h-auto drop-shadow-lg"
             />
           </a>

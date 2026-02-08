@@ -8,21 +8,34 @@
  * Components: Hero, Partners, CaseStudySlider, Audit, Results,
  *             Marketing, Approach, Knowledge, FAQ, CTA
  */
+import dynamic from 'next/dynamic';
 import { fetchHomepageData, getAccessToken, getEmptyHomepageData } from '@/lib/cms-data';
 import { getFAQItemsContent } from '@/lib/content-utils';
 import type { CaseStudy } from '@/lib/types';
 import {
   Hero,
   Partners,
-  CaseStudySlider,
   Audit,
   Results,
   Marketing,
-  Approach,
-  Knowledge,
   FAQ,
   CTA,
 } from '@/components';
+
+// Dynamic import below-fold carousel sections — defers their client JS
+// out of the critical rendering window, reducing TBT on mobile.
+// SSR is preserved (HTML renders normally), only JS hydration is deferred.
+const CaseStudySlider = dynamic(
+  () => import('@/components/sections/CaseStudySlider').then(m => ({ default: m.CaseStudySlider })),
+);
+
+const Approach = dynamic(
+  () => import('@/components/sections/Approach').then(m => ({ default: m.Approach })),
+);
+
+const Knowledge = dynamic(
+  () => import('@/components/sections/Knowledge').then(m => ({ default: m.Knowledge })),
+);
 
 export default async function HomePage() {
   // FAQ items loaded from JSON content layer

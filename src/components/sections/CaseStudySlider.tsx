@@ -106,15 +106,15 @@ export function CaseStudySlider({
                         <div className="flex-none w-full md:w-[280px] max-h-[400px] rounded-md overflow-hidden">
                           <img
                             src={
-                              optimizeImage(study['main-project-image-thumbnail']?.url, 600) ||
+                              optimizeImage(study['main-project-image-thumbnail']?.url, 400) ||
                               asset('/images/placeholder.webp')
                             }
                             alt={
                               study['main-project-image-thumbnail']?.alt ||
                               study['project-title']
                             }
-                            width="600"
-                            height="841"
+                            width="400"
+                            height="560"
                             loading="lazy"
                             className="w-full h-full object-cover object-left-top"
                           />
