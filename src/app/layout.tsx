@@ -118,6 +118,7 @@ export default async function RootLayout({
           crossOrigin=""
         />
         <link rel="dns-prefetch" href="https://app.cal.com" />
+        <link rel="dns-prefetch" href="https://www.googletagmanager.com" />
 
         {/* Preload critical fonts — only hero-essential weights.
             Fewer preloads = less bandwidth contention on slow mobile. */}
@@ -158,6 +159,16 @@ export default async function RootLayout({
         />
       </head>
       <body className="font-sans antialiased overflow-x-hidden">
+        {/* Google Tag Manager (noscript) */}
+        <noscript>
+          <iframe
+            src="https://www.googletagmanager.com/ns.html?id=GTM-T53LKJXQ"
+            height="0"
+            width="0"
+            style={{ display: 'none', visibility: 'hidden' }}
+          />
+        </noscript>
+
         <PostHogProvider>
           {/* Skip link for keyboard accessibility */}
           <a href="#main-content" className="skip-link">
@@ -187,6 +198,26 @@ export default async function RootLayout({
               className="w-[11.4rem] h-auto drop-shadow-lg"
             />
           </a>
+
+          {/* Google Tag Manager — GTM-T53LKJXQ */}
+          <Script id="gtm-main" strategy="lazyOnload">
+            {`(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+})(window,document,'script','dataLayer','GTM-T53LKJXQ');`}
+          </Script>
+
+          {/* Google Tag Manager — GTM-PDCXVZX (deferred until user interaction) */}
+          <Script id="gtm-deferred" strategy="lazyOnload">
+            {`(function(){var loaded=false;function loadGTM(){if(loaded)return;loaded=true;
+var w=window,d=document,s='script',l='dataLayer',i='GTM-PDCXVZX';
+w[l]=w[l]||[];w[l].push({'gtm.start':new Date().getTime(),event:'gtm.js'});
+var f=d.getElementsByTagName(s)[0],j=d.createElement(s);j.async=true;
+j.src='https://www.googletagmanager.com/gtm.js?id='+i;f.parentNode.insertBefore(j,f);}
+['scroll','touchstart','mousemove'].forEach(function(e){
+window.addEventListener(e,loadGTM,{once:true,passive:true});});})();`}
+          </Script>
 
           {/* Cal.com embed script */}
           <Script id="cal-embed" strategy="lazyOnload">
