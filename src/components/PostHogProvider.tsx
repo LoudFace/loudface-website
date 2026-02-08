@@ -1,45 +1,46 @@
 'use client';
 
-import posthog from 'posthog-js';
-import { PostHogProvider as PHProvider, usePostHog } from 'posthog-js/react';
 import { usePathname, useSearchParams } from 'next/navigation';
-import { Suspense, useEffect } from 'react';
-
-if (typeof window !== 'undefined' && process.env.NEXT_PUBLIC_POSTHOG_KEY) {
-  posthog.init(process.env.NEXT_PUBLIC_POSTHOG_KEY, {
-    api_host: process.env.NEXT_PUBLIC_POSTHOG_HOST || 'https://us.i.posthog.com',
-    capture_pageview: false, // We capture manually below for SPA navigation
-    capture_pageleave: true,
-    person_profiles: 'identified_only',
-  });
-}
+import { Suspense, useEffect, useRef } from 'react';
 
 function PostHogPageView() {
   const pathname = usePathname();
   const searchParams = useSearchParams();
-  const posthogClient = usePostHog();
+  const initialized = useRef(false);
 
   useEffect(() => {
-    if (pathname && posthogClient) {
+    if (!process.env.NEXT_PUBLIC_POSTHOG_KEY) return;
+
+    // Dynamic import keeps posthog-js out of the main bundle (~88 KB).
+    // It loads in a separate chunk after hydration, avoiding TBT impact.
+    import('posthog-js').then(({ default: posthog }) => {
+      if (!initialized.current) {
+        posthog.init(process.env.NEXT_PUBLIC_POSTHOG_KEY!, {
+          api_host: process.env.NEXT_PUBLIC_POSTHOG_HOST || 'https://us.i.posthog.com',
+          capture_pageview: false,
+          capture_pageleave: true,
+          person_profiles: 'identified_only',
+        });
+        initialized.current = true;
+      }
+
       let url = window.origin + pathname;
       const search = searchParams.toString();
-      if (search) {
-        url += '?' + search;
-      }
-      posthogClient.capture('$pageview', { $current_url: url });
-    }
-  }, [pathname, searchParams, posthogClient]);
+      if (search) url += '?' + search;
+      posthog.capture('$pageview', { $current_url: url });
+    });
+  }, [pathname, searchParams]);
 
   return null;
 }
 
 export function PostHogProvider({ children }: { children: React.ReactNode }) {
   return (
-    <PHProvider client={posthog}>
+    <>
       <Suspense fallback={null}>
         <PostHogPageView />
       </Suspense>
       {children}
-    </PHProvider>
+    </>
   );
 }

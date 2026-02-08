@@ -13,3 +13,4 @@ export { ScalableGridAnimation } from './ScalableGridAnimation';
 export { Pagination } from './Pagination';
 export { SectionContainer } from './SectionContainer';
 export { SectionHeader } from './SectionHeader';
+export { VideoFacade } from './VideoFacade';

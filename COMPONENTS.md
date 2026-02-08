@@ -173,6 +173,26 @@ URL-based pagination nav for listing pages (blog, case studies). Renders page nu
 <Pagination currentPage={2} totalPages={6} basePath="/blog" />
 ```
 
+### VideoFacade
+
+Lazy-loading wrapper for video embeds. Uses IntersectionObserver to defer iframe injection until the element scrolls into view (with 200px margin). Eliminates video player JS and video file downloads from the initial page load while showing the native player UI once visible. Client component.
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `videoUrl` | `string` | required | Iframe src URL for the video player |
+| `title` | `string` | required | Accessible title for the video |
+| `name` | `string` | required | Speaker/person name displayed below |
+| `role` | `string` | required | Speaker role/title displayed below |
+
+```tsx
+<VideoFacade
+  videoUrl="https://app.vidzflow.com/v/abc123"
+  title="Client Testimonial"
+  name="Jane Doe"
+  role="CEO | Acme Corp"
+/>
+```
+
 ### SectionContainer
 
 Wrapper providing consistent padding, max-width, and horizontal gutters for page sections.
@@ -254,7 +274,7 @@ All section components are exported from `@/components/sections` (or `@/componen
 
 ```
 src/components/index.ts        → re-exports everything
-src/components/ui/index.ts     → AICitationVisual, Badge, BulletLabel, Button, Card, CarouselNav, ComponentAssemblyVisual, CopyFirstVisual, ConversionSplitVisual, PixelBreakpointAnimation, ScalableGridAnimation, SectionContainer, SectionHeader
+src/components/ui/index.ts     → AICitationVisual, Badge, BulletLabel, Button, Card, CarouselNav, ComponentAssemblyVisual, CopyFirstVisual, ConversionSplitVisual, DesignSystemVisual, PixelBreakpointAnimation, ScalableGridAnimation, Pagination, SectionContainer, SectionHeader, VideoFacade
 src/components/sections/index.ts → Hero, Partners, CaseStudySlider, Audit, Results, Marketing, Approach, Knowledge, FAQ, CTA
 ```
 

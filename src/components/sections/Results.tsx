@@ -2,7 +2,7 @@ import Link from 'next/link';
 import { asset } from '@/lib/assets';
 import { optimizeImage } from '@/lib/image-utils';
 import { getResultsContent, type VideoTestimonial } from '@/lib/content-utils';
-import { Button, Card } from '@/components/ui';
+import { Button, Card, VideoFacade } from '@/components/ui';
 import type { CaseStudy, Client, Testimonial } from '@/lib/types';
 
 interface ResultsProps {
@@ -125,23 +125,12 @@ export function Results({
                 {/* Video Testimonial 1 */}
                 {finalVideoTestimonials[0] && (
                   <div>
-                    <div className="bg-surface-900 rounded-xl overflow-hidden">
-                      <div className="aspect-video w-full">
-                        <iframe
-                          src={finalVideoTestimonials[0].videoUrl}
-                          title={finalVideoTestimonials[0].videoTitle || 'Video testimonial'}
-                          allow="fullscreen"
-                          loading="lazy"
-                          className="w-full h-full border-0"
-                        />
-                      </div>
-                      <div className="px-5 py-4 flex flex-col gap-1">
-                        <span className="font-bold text-white">
-                          {finalVideoTestimonials[0].name}
-                        </span>
-                        <span className="text-white/80">{finalVideoTestimonials[0].role}</span>
-                      </div>
-                    </div>
+                    <VideoFacade
+                      videoUrl={finalVideoTestimonials[0].videoUrl}
+                      title={finalVideoTestimonials[0].videoTitle || 'Video testimonial'}
+                      name={finalVideoTestimonials[0].name}
+                      role={finalVideoTestimonials[0].role}
+                    />
                   </div>
                 )}
 
@@ -196,23 +185,12 @@ export function Results({
                 {/* Video Testimonial 2 */}
                 {finalVideoTestimonials[1] && (
                   <div>
-                    <div className="bg-surface-900 rounded-xl overflow-hidden">
-                      <div className="aspect-video w-full">
-                        <iframe
-                          src={finalVideoTestimonials[1].videoUrl}
-                          title={finalVideoTestimonials[1].videoTitle || 'Video testimonial'}
-                          allow="fullscreen"
-                          loading="lazy"
-                          className="w-full h-full border-0"
-                        />
-                      </div>
-                      <div className="px-5 py-4 flex flex-col gap-1">
-                        <span className="font-bold text-white">
-                          {finalVideoTestimonials[1].name}
-                        </span>
-                        <span className="text-white/80">{finalVideoTestimonials[1].role}</span>
-                      </div>
-                    </div>
+                    <VideoFacade
+                      videoUrl={finalVideoTestimonials[1].videoUrl}
+                      title={finalVideoTestimonials[1].videoTitle || 'Video testimonial'}
+                      name={finalVideoTestimonials[1].name}
+                      role={finalVideoTestimonials[1].role}
+                    />
                   </div>
                 )}
               </div>

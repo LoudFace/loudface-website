@@ -24,7 +24,7 @@ function isRemoteUrl(url: string): boolean {
  *
  * @param url - Original image URL
  * @param width - Target width in pixels
- * @param quality - Image quality (1-100), default 100
+ * @param quality - Image quality (1-100), default 80
  * @param format - Output format ('webp' | 'auto' | 'original'), default 'webp'
  * @returns Optimized URL through weserv.nl proxy
  *
@@ -38,7 +38,7 @@ function isRemoteUrl(url: string): boolean {
 export function optimizeImage(
   url: string | undefined,
   width: number,
-  quality: number = 100,
+  quality: number = 80,
   format: "webp" | "auto" | "original" = "webp"
 ): string | undefined {
   if (!url) return undefined;
@@ -84,7 +84,7 @@ export function optimizeImage(
 export function generateSrcset(
   url: string | undefined,
   sizes: number[],
-  quality: number = 100,
+  quality: number = 80,
   format: "webp" | "auto" | "original" = "webp"
 ): string | undefined {
   if (!url || !isRemoteUrl(url)) {

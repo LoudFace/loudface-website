@@ -93,7 +93,7 @@ export function Hero({
         <div className="aspect-[388/250] overflow-hidden">
           <img
             src={
-              optimizeImage(study['main-project-image-thumbnail']?.url, 800) ||
+              optimizeImage(study['main-project-image-thumbnail']?.url, 400) ||
               asset('/images/placeholder.webp')
             }
             alt={
@@ -101,6 +101,8 @@ export function Hero({
                 ? ''
                 : study['main-project-image-thumbnail']?.alt || study['project-title']
             }
+            width="388"
+            height="250"
             loading="lazy"
             className="w-full h-full object-cover object-top"
           />
