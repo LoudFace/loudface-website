@@ -47,11 +47,28 @@ export default async function HomePage() {
     industries,
   } = cmsData;
 
+  // Minimize data sent to client components (CaseStudySlider, Knowledge).
+  // Next.js serializes all client-component props into inline <script> tags.
+  // Without trimming, full article HTML per blog post + case study body inflated
+  // the homepage to ~2.4 MB.
+
+  // Strip rich-text body fields never used on the homepage
+  const lightCaseStudies = caseStudies.map(({ 'main-body': _, ...rest }) => rest);
+
+  // Knowledge carousel only needs a handful of recent posts, not all 60+
+  const lightBlogPosts = blogPosts
+    .slice(0, 6)
+    .map(({ content: _, ...rest }) => rest);
+
+  // CaseStudySlider only shows studies that have testimonials — pre-filter
+  // server-side so we don't ship unused entries to the client
+  const sliderCaseStudies = lightCaseStudies.filter(s => testimonials.has(s.id));
+
   return (
     <>
       {/* Hero Section */}
       <Hero
-        caseStudies={caseStudies}
+        caseStudies={lightCaseStudies}
         clients={clients}
         industries={industries}
       />
@@ -64,9 +81,7 @@ export default async function HomePage() {
 
       {/* Case Study Slider Section */}
       <CaseStudySlider
-        caseStudies={caseStudies}
-        clients={clients}
-        industries={industries}
+        caseStudies={sliderCaseStudies}
         testimonials={testimonials}
       />
 
@@ -78,18 +93,18 @@ export default async function HomePage() {
         caseStudies={(() => {
           const targetSlugs = ['viaduct', 'dimer-health'];
           const picked = targetSlugs
-            .map((slug) => caseStudies.find((s) => s.slug === slug))
+            .map((slug) => lightCaseStudies.find((s) => s.slug === slug))
             .filter(Boolean) as CaseStudy[];
           return picked.length === 2
             ? picked
-            : caseStudies.filter((s) => s.featured && s.testimonial).slice(0, 2);
+            : lightCaseStudies.filter((s) => s.featured && s.testimonial).slice(0, 2);
         })()}
         testimonial={
           (() => {
-            const viaduct = caseStudies.find((s) => s.slug === 'viaduct');
+            const viaduct = lightCaseStudies.find((s) => s.slug === 'viaduct');
             const studyWithTestimonial = viaduct?.testimonial
               ? viaduct
-              : caseStudies.find((s) => s.featured && s.testimonial);
+              : lightCaseStudies.find((s) => s.featured && s.testimonial);
             return studyWithTestimonial?.testimonial
               ? testimonials.get(studyWithTestimonial.testimonial)
               : allTestimonials[0];
@@ -106,7 +121,7 @@ export default async function HomePage() {
 
       {/* Knowledge/Blog Section */}
       <Knowledge
-        posts={blogPosts}
+        posts={lightBlogPosts}
         categories={Array.from(categories.values())}
         authors={Array.from(teamMembers.values())}
       />
