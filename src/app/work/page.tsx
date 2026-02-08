@@ -279,21 +279,6 @@ export default async function WorkPage() {
       {/* CTA */}
       <CTA />
 
-      {/* Webflow Enterprise Partner Badge */}
-      <a
-        href="https://webflow.com/@loudface"
-        target="_blank"
-        rel="noopener noreferrer"
-        className="fixed bottom-6 right-6 z-50 transition-opacity hover:opacity-80"
-        aria-label="Webflow Enterprise Partner"
-      >
-        <img
-          loading="lazy"
-          src={asset('/images/Enterprise-Blue-Badge.webp')}
-          alt="Webflow Enterprise Partner Badge"
-          className="w-48 h-auto drop-shadow-lg"
-        />
-      </a>
     </>
   );
 }

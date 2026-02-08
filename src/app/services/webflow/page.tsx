@@ -512,7 +512,7 @@ export default async function WebflowServicePage() {
               key={i}
               src={asset(badge.src)}
               alt={badge.alt}
-              className="h-10 w-auto brightness-0 invert opacity-60 hover:opacity-100 transition-opacity duration-200"
+              className={`h-7.5 w-auto ${badge.src.endsWith('.svg') ? 'brightness-0 invert opacity-70' : ''}`}
               loading="lazy"
             />
           ))}

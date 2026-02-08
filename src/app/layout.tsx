@@ -4,6 +4,7 @@ import "./globals.css";
 import { CalHandler } from "@/components/CalHandler";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
+import { asset } from "@/lib/assets";
 import { fetchHomepageData } from "@/lib/cms-data";
 
 export const metadata: Metadata = {
@@ -161,7 +162,7 @@ export default async function RootLayout({
           }}
         />
       </head>
-      <body className="font-sans antialiased">
+      <body className="font-sans antialiased overflow-x-hidden">
         {/* Skip link for keyboard accessibility */}
         <a href="#main-content" className="skip-link">
           Skip to main content
@@ -172,6 +173,22 @@ export default async function RootLayout({
         <main id="main-content">{children}</main>
 
         <Footer caseStudies={caseStudies} blogPosts={blogPosts} />
+
+        {/* Webflow Enterprise Partner Badge — site-wide */}
+        <a
+          href="https://webflow.com/@loudface"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="fixed bottom-6 right-6 z-50 transition-opacity hover:opacity-80"
+          aria-label="Webflow Enterprise Partner"
+        >
+          <img
+            loading="lazy"
+            src={asset('/images/Enterprise-Blue-Badge.webp')}
+            alt="Webflow Enterprise Partner Badge"
+            className="w-[11.4rem] h-auto drop-shadow-lg"
+          />
+        </a>
 
         {/* Cal.com embed script */}
         <Script id="cal-embed" strategy="afterInteractive">

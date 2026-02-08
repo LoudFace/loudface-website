@@ -328,7 +328,7 @@ export function Header() {
             <div className="flex items-center gap-10">
               <Link
                 href="/"
-                className="flex items-center flex-shrink-0"
+                className="flex items-center flex-shrink-0 cursor-pointer"
                 aria-label="LoudFace Home"
               >
                 <Image
@@ -356,7 +356,8 @@ export function Header() {
                   </Link>
                 ))}
                 {renderDropdown(servicesDropdown, "services")}
-                {renderDropdown(industriesDropdown, "industries")}
+                {/* TODO: Re-enable Industries dropdown when industry pages are ready */}
+                {/* {renderDropdown(industriesDropdown, "industries")} */}
               </nav>
             </div>
 
@@ -484,7 +485,8 @@ export function Header() {
             </div>
           </div>
 
-          {/* Mobile Industries Accordion */}
+          {/* TODO: Re-enable Industries accordion when industry pages are ready */}
+          {/*
           <div className="border-b border-surface-100">
             <button
               type="button"
@@ -528,6 +530,7 @@ export function Header() {
               ))}
             </div>
           </div>
+          */}
 
           <div className="pt-6">
             <button

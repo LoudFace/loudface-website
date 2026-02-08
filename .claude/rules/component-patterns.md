@@ -96,7 +96,7 @@ Available types in `types.ts`:
 
 ## Static Images (CRITICAL)
 
-**ALWAYS use `asset()` for hardcoded image paths.** This is required for Webflow Cloud deployment.
+**ALWAYS use `asset()` for hardcoded image paths.** This keeps all asset references going through one place.
 
 ```tsx
 import { asset } from '@/lib/assets';
@@ -158,16 +158,16 @@ For CMS images with fallbacks, use `asset()` only for the fallback:
 
 ## Internal Links (CRITICAL)
 
-**Use Next.js `Link` component for all internal navigation.** It automatically handles the basePath.
+**Use Next.js `Link` component for all internal navigation.** It handles client-side transitions and prefetching.
 
 ```tsx
 import Link from 'next/link';
 
-// CORRECT - Link handles basePath automatically
+// CORRECT
 <Link href="/work">Our Work</Link>
 <Link href={`/work/${item.slug}`}>View Case Study</Link>
 
-// WRONG - bypasses basePath handling
+// WRONG - loses client-side navigation
 <a href="/work">Our Work</a>
 ```
 

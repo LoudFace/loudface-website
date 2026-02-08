@@ -17,7 +17,7 @@ import { fetchHomepageData, getAccessToken, getEmptyHomepageData } from '@/lib/c
 import { asset } from '@/lib/assets';
 import { heroImage, avatarImage, thumbnailImage, optimizeImage } from '@/lib/image-utils';
 import { getContrastColor } from '@/lib/color-utils';
-import { SectionContainer } from '@/components/ui';
+import { Button, SectionContainer } from '@/components/ui';
 import { CTA } from '@/components/sections';
 import type {
   CaseStudy,
@@ -246,7 +246,8 @@ export default async function CaseStudyPage({ params }: PageProps) {
                   {study.country}
                 </span>
               )}
-              {websiteUrl && (
+              {/* TODO: Re-enable Visit site button when ready */}
+              {/* {websiteUrl && (
                 <a
                   href={websiteUrl}
                   target="_blank"
@@ -259,7 +260,7 @@ export default async function CaseStudyPage({ params }: PageProps) {
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
                   </svg>
                 </a>
-              )}
+              )} */}
             </div>
           </div>
         </div>
@@ -402,20 +403,10 @@ export default async function CaseStudyPage({ params }: PageProps) {
                 </div>
               )}
 
-              {/* Visit Website */}
-              {websiteUrl && (
-                <a
-                  href={websiteUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex items-center justify-center gap-2 w-full px-4 py-3 bg-surface-900 text-white rounded-lg font-medium hover:bg-surface-800 transition-colors"
-                >
-                  View live site
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
-                  </svg>
-                </a>
-              )}
+              {/* CTA */}
+              <Button variant="primary" fullWidth calTrigger>
+                Book an intro call
+              </Button>
             </aside>
           </div>
         </div>

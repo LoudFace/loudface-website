@@ -10,7 +10,6 @@
  */
 import { fetchHomepageData, getAccessToken, getEmptyHomepageData } from '@/lib/cms-data';
 import { getFAQItemsContent } from '@/lib/content-utils';
-import { asset } from '@/lib/assets';
 import type { CaseStudy } from '@/lib/types';
 import {
   Hero,
@@ -118,21 +117,6 @@ export default async function HomePage() {
       {/* CTA Section */}
       <CTA />
 
-      {/* Webflow Enterprise Partner Badge */}
-      <a
-        href="https://webflow.com/@loudface"
-        target="_blank"
-        rel="noopener noreferrer"
-        className="fixed bottom-6 right-6 z-50 transition-opacity hover:opacity-80"
-        aria-label="Webflow Enterprise Partner"
-      >
-        <img
-          loading="lazy"
-          src={asset('/images/Enterprise-Blue-Badge.webp')}
-          alt="Webflow Enterprise Partner Badge"
-          className="w-24 h-auto drop-shadow-lg"
-        />
-      </a>
     </>
   );
 }

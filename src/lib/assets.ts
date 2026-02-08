@@ -1,28 +1,14 @@
 /**
  * Asset URL Utility
  *
- * Handles path prefixing for static assets when deployed to Webflow Cloud.
- * Webflow Cloud mounts the app at /customsite, so all static asset URLs
- * need this prefix to load correctly.
+ * Normalizes static asset paths. Ensures a leading slash.
+ * Kept as a thin wrapper so all asset references go through one place.
  *
  * @example
- * // Instead of: src="/images/logo.svg"
- * // Use: src={asset('/images/logo.svg')}
- */
-
-/**
- * Prefix a static asset path with the base URL.
- * Works in both development (no prefix) and production (with /customsite prefix).
+ * // src={asset('/images/logo.svg')}
  */
 export function asset(path: string): string {
-  // In production (Webflow Cloud), add /customsite prefix
-  // In development, no prefix needed
-  const isProduction = process.env.NODE_ENV === "production";
-  const base = isProduction ? "/customsite" : "";
-  // Remove trailing slash from base and leading slash from path to avoid double slashes
-  const cleanBase = base.endsWith("/") ? base.slice(0, -1) : base;
-  const cleanPath = path.startsWith("/") ? path : `/${path}`;
-  return `${cleanBase}${cleanPath}`;
+  return path.startsWith("/") ? path : `/${path}`;
 }
 
 /**

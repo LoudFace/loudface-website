@@ -13,15 +13,13 @@ export function Footer({ caseStudies = [], blogPosts = [] }: FooterProps) {
   // Navigation data
   const companyLinks = [
     { label: 'About us', href: '/about' },
-    { label: 'Contact', href: '/contact' },
-    { label: 'Careers', href: '/careers' },
   ];
 
   const serviceLinks = [
-    { label: 'Webflow Development', href: '/services/webflow-development' },
-    { label: 'UX/UI Design', href: '/services/design' },
+    { label: 'Webflow Development', href: '/services/webflow' },
+    { label: 'UX/UI Design', href: '/services/ux-ui-design' },
     { label: 'Copywriting', href: '/services/copywriting' },
-    { label: 'SEO/AEO', href: '/services/seo' },
+    { label: 'SEO/AEO', href: '/services/seo-aeo' },
     { label: 'CRO', href: '/services/cro' },
   ];
 
@@ -34,7 +32,7 @@ export function Footer({ caseStudies = [], blogPosts = [] }: FooterProps) {
 
   const resourceLinks = [
     { label: 'Blog', href: '/blog' },
-    { label: 'LoudFace Ventures', href: '/ventures' },
+    { label: 'Case Studies', href: '/work' },
   ];
 
   // AI Platform links - from shared icons module
@@ -113,7 +111,8 @@ export function Footer({ caseStudies = [], blogPosts = [] }: FooterProps) {
                     </nav>
                   </div>
 
-                  {/* Industries */}
+                  {/* TODO: Re-enable Industries column when industry pages are ready */}
+                  {/*
                   <div className="flex flex-col gap-3">
                     <h3 className="text-sm font-semibold text-white mb-1">Industries</h3>
                     <nav aria-label="Industries links">
@@ -131,6 +130,7 @@ export function Footer({ caseStudies = [], blogPosts = [] }: FooterProps) {
                       </ul>
                     </nav>
                   </div>
+                  */}
 
                   {/* Resources */}
                   <div className="flex flex-col gap-3">

@@ -32,58 +32,18 @@ See `.claude/rules/component-system.md` for the full enforcement rules and `.cla
 
 ## Critical Rules (Will Break Production If Ignored)
 
-### Deployment Files — NEVER Delete
+### Static Image Paths
 
-These files are required for Webflow Cloud deployment. Do not remove or rename them.
+Use `asset()` from `@/lib/assets` for all hardcoded image paths. This normalizes the path (ensures leading slash) and keeps all asset references going through one place.
 
-**webflow.json:**
-```json
-{
-  "cloud": {
-    "framework": "nextjs"
-  }
-}
-```
-
-**open-next.config.ts:**
-```typescript
-import { defineCloudflareConfig } from "@opennextjs/cloudflare";
-export default defineCloudflareConfig({});
-```
-
-**wrangler.jsonc:**
-```jsonc
-{
-  "$schema": "node_modules/wrangler/config-schema.json",
-  "main": ".open-next/worker.js",
-  "name": "loudface-website",
-  "compatibility_date": "2024-12-30",
-  "compatibility_flags": ["nodejs_compat"],
-  "assets": {
-    "directory": ".open-next/assets",
-    "binding": "ASSETS"
-  }
-}
-```
-
-If any of these get corrupted, restore them exactly as shown above. `@opennextjs/cloudflare` must be in devDependencies. `next.config.ts` must have `output: "standalone"` — Cloudflare builds fail without it.
-
-### basePath Handling
-
-Webflow Cloud mounts the app at `/customsite`. The basePath in `next.config.ts` is **conditional** — only applied in production. Do not hardcode it.
-
-- **Static image paths** → Use `asset()` from `@/lib/assets` (adds `/customsite` prefix in production)
-- **Internal navigation** → Use `<Link>` from `next/link` (handles basePath automatically)
+- **Static image paths** → Use `asset()` from `@/lib/assets`
+- **Internal navigation** → Use `<Link>` from `next/link`
 - **External/CMS image URLs** → Use as-is, do NOT wrap with `asset()`
 
 ```tsx
-// ✅ Correct
 import { asset } from '@/lib/assets';
 <img src={asset('/images/logo.svg')} />
 <Link href="/work">Our Work</Link>
-
-// ❌ Wrong — will 404 in production
-<img src="/images/logo.svg" />
 ```
 
 ### Next.js 16 Gotchas
@@ -188,7 +148,7 @@ Only for remote CMS URLs — local static images use `asset()` instead.
 ```bash
 npm run dev          # Starts on port 3005
 npm run build        # Always build before pushing
-git push origin main # Triggers Webflow Cloud deployment (no CLI deploy)
+git push origin main # Triggers Vercel deployment (auto-deploys)
 ```
 
 ## Frontend Aesthetics
