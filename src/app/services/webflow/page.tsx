@@ -77,7 +77,7 @@ export default async function WebflowServicePage() {
               <Button variant="primary" size="lg" calTrigger>
                 {content.hero.primaryCta}
               </Button>
-              <Button variant="outline" size="lg" href="/work">
+              <Button variant="outline" size="lg" href="/case-studies">
                 {content.hero.secondaryCta}
               </Button>
             </div>
@@ -538,7 +538,7 @@ export default async function WebflowServicePage() {
               return (
                 <Link
                   key={study.slug}
-                  href={`/work/${study.slug}`}
+                  href={`/case-studies/${study.slug}`}
                   className="group relative bg-white rounded-2xl border border-surface-200 overflow-hidden transition-all duration-300 hover:shadow-xl hover:border-surface-300 hover:-translate-y-1 focus-visible:outline-2 focus-visible:outline-primary-500 focus-visible:outline-offset-4"
                 >
                   {/* Image */}
@@ -673,7 +673,7 @@ export default async function WebflowServicePage() {
         )}
 
         <div className="mt-10 text-center">
-          <Button variant="outline" size="lg" href="/work">
+          <Button variant="outline" size="lg" href="/case-studies">
             {content.caseStudies.cta}
           </Button>
         </div>

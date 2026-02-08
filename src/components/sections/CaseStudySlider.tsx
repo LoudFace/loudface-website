@@ -97,7 +97,7 @@ export function CaseStudySlider({
                         style={cardStyle}
                       >
                         <Link
-                          href={`/work/${study.slug}`}
+                          href={`/case-studies/${study.slug}`}
                           className="absolute inset-0 z-10 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:rounded-lg"
                           aria-label={`View ${study['project-title']} case study`}
                         />

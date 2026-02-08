@@ -22,7 +22,7 @@ export const metadata: Metadata = {
   title: 'Our Work | Case Studies & Portfolio',
   description: "Explore LoudFace's portfolio of successful Webflow projects. See real results including traffic growth, conversion improvements, and business transformations.",
   alternates: {
-    canonical: '/work',
+    canonical: '/case-studies',
   },
 };
 
@@ -73,13 +73,13 @@ export default async function WorkPage() {
     '@type': 'CollectionPage',
     name: 'Case Studies',
     description: "Explore LoudFace's portfolio of successful Webflow projects.",
-    url: 'https://www.loudface.co/work',
+    url: 'https://www.loudface.co/case-studies',
     mainEntity: {
       '@type': 'ItemList',
       itemListElement: sortedStudies.map((study, index) => ({
         '@type': 'ListItem',
         position: index + 1,
-        url: `https://www.loudface.co/work/${study.slug}`,
+        url: `https://www.loudface.co/case-studies/${study.slug}`,
         name: study['project-title'] || study.name,
       })),
     },
@@ -148,7 +148,7 @@ export default async function WorkPage() {
               return (
                 <Link
                   key={study.slug}
-                  href={`/work/${study.slug}`}
+                  href={`/case-studies/${study.slug}`}
                   className="group relative bg-white rounded-2xl border border-surface-200 overflow-hidden transition-all duration-300 hover:shadow-xl hover:border-surface-300 hover:-translate-y-1 focus-visible:outline-2 focus-visible:outline-primary-500 focus-visible:outline-offset-4"
                 >
                   {/* Image Section */}

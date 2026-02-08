@@ -32,7 +32,7 @@ export function Footer({ caseStudies = [], blogPosts = [] }: FooterProps) {
 
   const resourceLinks = [
     { label: 'Blog', href: '/blog' },
-    { label: 'Case Studies', href: '/work' },
+    { label: 'Case Studies', href: '/case-studies' },
   ];
 
   // AI Platform links - from shared icons module
@@ -160,7 +160,7 @@ export function Footer({ caseStudies = [], blogPosts = [] }: FooterProps) {
                           {caseStudies.slice(0, 5).map((study) => (
                             <li key={study.id}>
                               <Link
-                                href={`/work/${study.slug}`}
+                                href={`/case-studies/${study.slug}`}
                                 className="block text-sm text-surface-400 hover:text-white transition-colors truncate"
                                 title={study['project-title'] || study.name}
                               >

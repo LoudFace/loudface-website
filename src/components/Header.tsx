@@ -24,7 +24,7 @@ interface Dropdown {
 }
 
 const navLinks: NavLink[] = [
-  { label: "Our Work", href: "/work" },
+  { label: "Our Work", href: "/case-studies" },
   { label: "About us", href: "/about" },
 ];
 

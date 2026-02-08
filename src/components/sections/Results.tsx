@@ -57,7 +57,7 @@ export function Results({
 
     return (
       <Link
-        href={`/work/${study.slug}`}
+        href={`/case-studies/${study.slug}`}
         className="flex flex-col bg-white border border-surface-200 rounded-xl p-6 no-underline h-full transition-all duration-200 hover:border-surface-300 hover:shadow-md focus-visible:outline-2 focus-visible:outline-primary-500 focus-visible:outline-offset-2"
       >
         <div className="flex justify-between items-center">

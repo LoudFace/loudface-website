@@ -60,7 +60,7 @@ export function Hero({
 
     return (
       <Link
-        href={`/work/${study.slug}`}
+        href={`/case-studies/${study.slug}`}
         className="flex-shrink-0 flex flex-col bg-white rounded-xl overflow-hidden border border-surface-200 hover:opacity-85 transition-opacity focus-visible:outline-2 focus-visible:outline-primary-500 focus-visible:outline-offset-2"
         tabIndex={isHidden ? -1 : undefined}
         aria-hidden={isHidden || undefined}

@@ -71,13 +71,13 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     title: projectTitle,
     description,
     alternates: {
-      canonical: `/work/${slug}`,
+      canonical: `/case-studies/${slug}`,
     },
     openGraph: {
       title: `${projectTitle} | LoudFace`,
       description,
       type: 'article',
-      url: `/work/${slug}`,
+      url: `/case-studies/${slug}`,
       images: study['main-project-image-thumbnail']?.url
         ? [{ url: study['main-project-image-thumbnail'].url }]
         : undefined,
@@ -159,14 +159,14 @@ export default async function CaseStudyPage({ params }: PageProps) {
   const { toc, html: processedBody } = extractTocAndAddIds(study['main-body']);
 
   const projectTitle = study['project-title'] || study.name;
-  const canonicalUrl = `https://www.loudface.co/work/${slug}`;
+  const canonicalUrl = `https://www.loudface.co/case-studies/${slug}`;
 
   const breadcrumbSchema = {
     '@context': 'https://schema.org',
     '@type': 'BreadcrumbList',
     itemListElement: [
       { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://www.loudface.co/' },
-      { '@type': 'ListItem', position: 2, name: 'Work', item: 'https://www.loudface.co/work' },
+      { '@type': 'ListItem', position: 2, name: 'Case Studies', item: 'https://www.loudface.co/case-studies' },
       { '@type': 'ListItem', position: 3, name: projectTitle },
     ],
   };
@@ -205,7 +205,7 @@ export default async function CaseStudyPage({ params }: PageProps) {
           <div className="max-w-5xl mx-auto">
             <nav className="mb-6" aria-label="Breadcrumb">
               <ol className="flex items-center gap-2 text-sm opacity-70" style={{ color: textColor }}>
-                <li><Link href="/work" className="hover:opacity-100">Work</Link></li>
+                <li><Link href="/case-studies" className="hover:opacity-100">Case Studies</Link></li>
                 <li><span className="mx-1">/</span></li>
                 <li className="opacity-100">{projectTitle}</li>
               </ol>
@@ -449,7 +449,7 @@ export default async function CaseStudyPage({ params }: PageProps) {
         <SectionContainer>
           <div className="flex items-center justify-between mb-8">
             <h2 className="text-2xl md:text-3xl font-medium text-surface-900">More work</h2>
-            <Link href="/work" className="text-sm font-medium text-surface-600 hover:text-primary-600 transition-colors">
+            <Link href="/case-studies" className="text-sm font-medium text-surface-600 hover:text-primary-600 transition-colors">
               View all →
             </Link>
           </div>
@@ -462,7 +462,7 @@ export default async function CaseStudyPage({ params }: PageProps) {
               return (
                 <Link
                   key={related.slug}
-                  href={`/work/${related.slug}`}
+                  href={`/case-studies/${related.slug}`}
                   className="group block bg-white rounded-xl border border-surface-200 overflow-hidden hover:shadow-lg hover:-translate-y-1 transition-all duration-200"
                 >
                   <div className="h-1" style={{ background: relatedColor }} />
