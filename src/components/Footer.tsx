@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import { NewsletterForm } from './NewsletterForm';
+import { FooterLocations } from './FooterLocations';
 import { asset } from '@/lib/assets';
 import { getAIPlatformsWithIcons, getSocialLinksWithIcons } from '@/lib/icons';
 import type { CaseStudy, BlogPost } from '@/lib/types';
@@ -257,6 +258,14 @@ export function Footer({ caseStudies = [], blogPosts = [] }: FooterProps) {
 
               {/* Divider */}
               <div className="h-8 md:h-12" />
+              <div className="h-px bg-surface-700" />
+              <div className="h-8 md:h-10" />
+
+              {/* Locations */}
+              <FooterLocations />
+
+              {/* Divider */}
+              <div className="h-8 md:h-10" />
               <div className="h-px bg-surface-700" />
               <div className="h-6" />
 

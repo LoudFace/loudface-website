@@ -10,7 +10,7 @@ import { fetchHomepageData, getAccessToken } from '@/lib/cms-data';
 import { avatarImage, heroImage, thumbnailImage } from '@/lib/image-utils';
 import { asset } from '@/lib/assets';
 import { SectionContainer } from '@/components/ui';
-import { CTA } from '@/components/sections';
+import { CTA, RelatedComparisons } from '@/components/sections';
 import type { BlogPost, Category, TeamMember } from '@/lib/types';
 
 interface PageProps {
@@ -123,16 +123,25 @@ export default async function BlogPostPage({ params }: PageProps) {
           author = teamMembers.get(post.author) || null;
         }
 
-        // Get related posts
+        // Category-based related posts
         const sameCategoryPosts = blogPosts
           .filter(p => p.slug !== slug && p.category === post!.category)
           .slice(0, 3);
 
         if (sameCategoryPosts.length < 3) {
-          const otherPosts = blogPosts
+          // Slug keyword affinity fallback — prefer posts with similar topics
+          const slugKeywords = slug.split('-').filter(w => w.length > 3);
+          const remaining = 3 - sameCategoryPosts.length;
+          const affinityPosts = blogPosts
             .filter(p => p.slug !== slug && !sameCategoryPosts.some(sp => sp.slug === p.slug))
-            .slice(0, 3 - sameCategoryPosts.length);
-          relatedPosts = [...sameCategoryPosts, ...otherPosts];
+            .map(p => ({
+              ...p,
+              affinity: slugKeywords.filter(kw => p.slug.includes(kw)).length,
+            }))
+            .sort((a, b) => b.affinity - a.affinity)
+            .slice(0, remaining);
+
+          relatedPosts = [...sameCategoryPosts, ...affinityPosts];
         } else {
           relatedPosts = sameCategoryPosts;
         }
@@ -145,6 +154,18 @@ export default async function BlogPostPage({ params }: PageProps) {
   if (!post) {
     notFound();
   }
+
+  const COMPARISON_SLUGS = [
+    'webflow-vs-framer',
+    'webflow-vs-wix-studio',
+    'webflow-vs-squarespace',
+    'webflow-vs-hubspot',
+    'webflow-vs-wordpress-org',
+    'webflow-vs-wordpress-com',
+    'webflow-vs-editorx',
+    'webflow-vs-popular-alternatives',
+  ];
+  const isComparisonPost = COMPARISON_SLUGS.includes(slug);
 
   const { toc, html: processedContent } = extractTocAndAddIds(post.content);
   const canonicalUrl = `https://www.loudface.co/blog/${slug}`;
@@ -324,6 +345,9 @@ export default async function BlogPostPage({ params }: PageProps) {
           </div>
         </div>
       </SectionContainer>
+
+      {/* Comparison Cross-Links */}
+      {isComparisonPost && <RelatedComparisons currentSlug={slug} />}
 
       {/* Related Posts */}
       {relatedPosts.length > 0 && (

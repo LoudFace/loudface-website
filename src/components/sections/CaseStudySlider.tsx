@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { getCaseStudySliderContent } from '@/lib/content-utils';
 import { asset } from '@/lib/assets';
-import { optimizeImage } from '@/lib/image-utils';
+import { caseStudyThumbnail } from '@/lib/image-utils';
 import { getContrastColors } from '@/lib/color-utils';
 import { BulletLabel, Button, CarouselNav, SectionContainer } from '@/components/ui';
 import { useCarousel } from '@/hooks/useCarousel';
@@ -106,9 +106,11 @@ export function CaseStudySlider({
                         <div className="flex-none w-full md:w-[280px] max-h-[400px] rounded-md overflow-hidden">
                           <img
                             src={
-                              optimizeImage(study['main-project-image-thumbnail']?.url, 400) ||
+                              caseStudyThumbnail(study['main-project-image-thumbnail']?.url)?.src ||
                               asset('/images/placeholder.webp')
                             }
+                            srcSet={caseStudyThumbnail(study['main-project-image-thumbnail']?.url)?.srcset}
+                            sizes="(min-width: 768px) 740px, 100vw"
                             alt={
                               study['main-project-image-thumbnail']?.alt ||
                               study['project-title']

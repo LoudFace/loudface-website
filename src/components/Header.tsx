@@ -92,7 +92,7 @@ const industriesDropdown: Dropdown = {
       title: "E-commerce",
       description:
         "Conversion-first SEO built for speed, performance, and measurable ROI.",
-      href: "/seo-for/e-commerce",
+      href: "/seo-for/ecommerce",
     },
     {
       icon: "/images/Vector.svg",

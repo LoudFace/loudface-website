@@ -28,6 +28,7 @@ import servicesSeoAeoContent from "@/data/content/services-seo-aeo.json";
 import servicesCroContent from "@/data/content/services-cro.json";
 import servicesCopywritingContent from "@/data/content/services-copywriting.json";
 import servicesUxUiDesignContent from "@/data/content/services-ux-ui-design.json";
+import seoForHubContent from "@/data/content/seo-for-hub.json";
 
 // Type definitions for content files
 export interface CTAContent {
@@ -81,6 +82,7 @@ export interface MarketingCard {
   imageAlt: string;
   title: string;
   description: string;
+  href?: string;
 }
 
 export interface MarketingContent {
@@ -364,6 +366,32 @@ export interface ServicesSeoAeoContent {
   };
 }
 
+export interface SeoForHubContent {
+  hero: {
+    eyebrow: string;
+    headline: string;
+    description: string;
+    primaryCta: string;
+    secondaryCta: string;
+  };
+  stats: { value: string; label: string }[];
+  valueProps: {
+    title: string;
+    highlightWord: string;
+    items: { number: string; title: string; description: string }[];
+  };
+  approach: {
+    title: string;
+    highlightWord: string;
+    intro: string;
+    steps: { number: string; title: string; description: string }[];
+  };
+  faq: {
+    title: string;
+    items: FAQItem[];
+  };
+}
+
 export interface ServicesCroContent {
   hero: {
     eyebrow: string;
@@ -523,6 +551,7 @@ const contentRegistry: Record<string, unknown> = {
   "services-cro": servicesCroContent,
   "services-copywriting": servicesCopywritingContent,
   "services-ux-ui-design": servicesUxUiDesignContent,
+  "seo-for-hub": seoForHubContent,
 };
 
 /**
@@ -665,6 +694,13 @@ export function getServicesCopywritingContent(): ServicesCopywritingContent {
  */
 export function getServicesUxUiDesignContent(): ServicesUxUiDesignContent {
   return servicesUxUiDesignContent as ServicesUxUiDesignContent;
+}
+
+/**
+ * Get SEO for Industry hub page content
+ */
+export function getSeoForHubContent(): SeoForHubContent {
+  return seoForHubContent as SeoForHubContent;
 }
 
 /**

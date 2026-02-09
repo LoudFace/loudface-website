@@ -1,3 +1,4 @@
+import Link from 'next/link';
 import { getMarketingContent, type MarketingCard } from '@/lib/content-utils';
 import { asset } from '@/lib/assets';
 import { Button, SectionContainer } from '@/components/ui';
@@ -61,6 +62,14 @@ export function Marketing({
               <h3 className="text-xl font-bold text-surface-900">{card.title}</h3>
               <div className="h-2" />
               <p className="text-surface-600">{card.description}</p>
+              {card.href && (
+                <Link
+                  href={card.href}
+                  className="inline-block mt-3 text-sm font-medium text-primary-600 hover:text-primary-700 transition-colors"
+                >
+                  Learn more →
+                </Link>
+              )}
             </div>
           </div>
         ))}

@@ -16,7 +16,7 @@ import {
   BulletLabel,
   Badge,
 } from '@/components/ui';
-import { FAQ, CTA, RelatedServices } from '@/components/sections';
+import { FAQ, CTA, RelatedServices, RelatedArticles } from '@/components/sections';
 
 // Dynamic import below-fold visual component — defers client JS hydration
 const CopyFirstVisual = dynamic(
@@ -687,6 +687,14 @@ export default function CopywritingServicePage() {
 
       {/* ─── Related Services ─── */}
       <RelatedServices currentService="/services/copywriting" />
+
+      <RelatedArticles
+        articles={[
+          { href: '/blog/webflow-best-cms-for-marketers', title: 'Best CMS for Marketers', description: 'Why Webflow is the best CMS for marketing teams that want full control over content and design.' },
+          { href: '/blog/use-webflow-as-your-marketing-funnel', title: 'Use Webflow as Your Marketing Funnel', description: 'Strategy and structure for building high-converting marketing funnels with Webflow.' },
+          { href: '/blog/how-to-choose-the-right-webflow-agency-for-your-brand', title: 'Choose the Right Webflow Agency', description: 'What to look for when selecting a Webflow agency that fits your brand and goals.' },
+        ]}
+      />
 
       {/* ─── Section 7: CTA ─── */}
       <CTA

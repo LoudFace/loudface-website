@@ -15,7 +15,7 @@ import {
   Button,
   BulletLabel,
 } from '@/components/ui';
-import { FAQ, CTA, RelatedServices } from '@/components/sections';
+import { FAQ, CTA, RelatedServices, RelatedArticles } from '@/components/sections';
 
 // Dynamic import below-fold visual component — defers client JS hydration
 const ConversionSplitVisual = dynamic(
@@ -601,6 +601,14 @@ export default function CroServicePage() {
 
       {/* ─── Related Services ─── */}
       <RelatedServices currentService="/services/cro" />
+
+      <RelatedArticles
+        articles={[
+          { href: '/blog/best-webflow-split-testing-tools-compared', title: 'Best A/B Testing Tools for Webflow', description: 'Compare the top split testing tools for Webflow to find the right one for your optimization workflow.' },
+          { href: '/blog/ab-testing-setup-using-delta-reference-and-confidence-intervals', title: 'A/B Testing with Confidence Intervals', description: 'How to set up reliable A/B tests using delta, reference, and statistical confidence intervals.' },
+          { href: '/blog/use-webflow-as-your-marketing-funnel', title: 'Use Webflow as Your Marketing Funnel', description: 'Strategy and structure for building high-converting marketing funnels with Webflow.' },
+        ]}
+      />
 
       {/* ─── Section 6: CTA ─── */}
       <CTA

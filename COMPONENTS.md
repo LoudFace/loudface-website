@@ -257,6 +257,8 @@ All section components are exported from `@/components/sections` (or `@/componen
 | `EditorialProse` | `EditorialProse.tsx` | Splits CMS RichText at H2 boundaries into numbered insight cards (ghosted 01/02/03 numbers, heading, first-paragraph summary, native `<details>` expand for remaining content). Props: `html`, `industryName?` | No |
 | `DeliverablesGrid` | `DeliverablesGrid.tsx` | Split layout: header left, dual-column vertical marquee right. Items scroll in opposite directions (CSS-only, uses existing scroll-down/scroll-up keyframes). Fade masks at edges. Respects `prefers-reduced-motion`. Props: `html`, `industryName?` | No |
 | `RelatedServices` | `RelatedServices.tsx` | Cross-link section showing the other 4 service pages. Takes `currentService` (href string) to exclude the current page. Place before CTA on service pages. | No |
+| `RelatedComparisons` | `RelatedComparisons.tsx` | Pill-style cross-links between Webflow comparison blog posts. Takes `currentSlug` to exclude the current post. Conditionally rendered on comparison blog posts (slug matches known comparison list). | No |
+| `RelatedArticles` | `RelatedArticles.tsx` | Blog post links section for service pages. Takes `articles` array of `{ href, title, description }`. Place between RelatedServices and CTA on service pages. | No |
 
 **"Client?"** = requires `'use client'` directive (has hooks/interactivity).
 
@@ -278,7 +280,7 @@ All section components are exported from `@/components/sections` (or `@/componen
 ```
 src/components/index.ts        → re-exports everything
 src/components/ui/index.ts     → AICitationVisual, Badge, BulletLabel, Button, Card, CarouselNav, ComponentAssemblyVisual, CopyFirstVisual, ConversionSplitVisual, DesignSystemVisual, PixelBreakpointAnimation, ScalableGridAnimation, Pagination, SectionContainer, SectionHeader, VideoFacade
-src/components/sections/index.ts → Hero, Partners, CaseStudySlider, Audit, Results, Marketing, Approach, Knowledge, FAQ, CTA, EditorialProse, DeliverablesGrid, RelatedServices
+src/components/sections/index.ts → Hero, Partners, CaseStudySlider, Audit, Results, Marketing, Approach, Knowledge, FAQ, CTA, EditorialProse, DeliverablesGrid, RelatedServices, RelatedComparisons, RelatedArticles
 ```
 
 ---

@@ -2,7 +2,7 @@ import Link from 'next/link';
 import { getHeroContent } from '@/lib/content-utils';
 import { AI_PLATFORM_ICONS } from '@/lib/icons';
 import { asset } from '@/lib/assets';
-import { optimizeImage, logoImage } from '@/lib/image-utils';
+import { caseStudyThumbnail, logoImage } from '@/lib/image-utils';
 import { Button } from '@/components/ui';
 import type { CaseStudy, Client, Industry } from '@/lib/types';
 
@@ -93,9 +93,11 @@ export function Hero({
         <div className="aspect-[388/250] overflow-hidden">
           <img
             src={
-              optimizeImage(study['main-project-image-thumbnail']?.url, 400) ||
+              caseStudyThumbnail(study['main-project-image-thumbnail']?.url)?.src ||
               asset('/images/placeholder.webp')
             }
+            srcSet={caseStudyThumbnail(study['main-project-image-thumbnail']?.url)?.srcset}
+            sizes="388px"
             alt={
               isHidden
                 ? ''

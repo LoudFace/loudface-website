@@ -158,27 +158,33 @@ export function cardImage(url: string | undefined): string | undefined {
 
 /**
  * Optimized hero/feature image with srcset
- * Returns both optimized URL and srcset for responsive loading
+ *
+ * Uses the original Webflow CDN URL as src (no proxy, no quality loss).
+ * Provides a high-quality srcset in original format for responsive loading.
  */
 export function heroImage(url: string | undefined): {
   src: string | undefined;
   srcset: string | undefined;
 } {
   return {
-    src: optimizeImage(url, ImageSizes.hero),
-    srcset: generateSrcset(url, [800, 1200, 1600, 1920]),
+    src: url,
+    srcset: generateSrcset(url, [800, 1200, 1600, 1920], 95, "original"),
   };
 }
 
 /**
  * Generate responsive image props for case study thumbnails
+ *
+ * Uses the original Webflow CDN URL as src (no proxy, no quality loss).
+ * Provides a high-quality srcset in original format (no WebP conversion)
+ * for responsive loading on smaller viewports.
  */
 export function caseStudyThumbnail(url: string | undefined): {
   src: string | undefined;
   srcset: string | undefined;
 } {
   return {
-    src: optimizeImage(url, ImageSizes.cardImage),
-    srcset: generateSrcset(url, [400, 600, 800, 1200]),
+    src: url,
+    srcset: generateSrcset(url, [600, 900, 1200, 1800], 95, "original"),
   };
 }

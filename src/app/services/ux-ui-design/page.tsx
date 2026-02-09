@@ -16,7 +16,7 @@ import {
   BulletLabel,
   Badge,
 } from '@/components/ui';
-import { FAQ, CTA, RelatedServices } from '@/components/sections';
+import { FAQ, CTA, RelatedServices, RelatedArticles } from '@/components/sections';
 
 // Dynamic import below-fold visual component — defers client JS hydration
 const DesignSystemVisual = dynamic(
@@ -772,6 +772,14 @@ export default function UxUiDesignServicePage() {
 
       {/* ─── Related Services ─── */}
       <RelatedServices currentService="/services/ux-ui-design" />
+
+      <RelatedArticles
+        articles={[
+          { href: '/blog/convert-figma-designs-to-webflow-pages', title: 'Convert Figma Designs to Webflow', description: 'How to translate Figma designs into production-ready Webflow pages with accuracy.' },
+          { href: '/blog/webflow-website-design', title: 'Webflow Website Design', description: 'Best practices for designing high-performing websites in Webflow.' },
+          { href: '/blog/webflow-and-lottie-animations', title: 'Webflow & Lottie Animations', description: 'How to add engaging motion design to your Webflow projects using Lottie animations.' },
+        ]}
+      />
 
       {/* ─── Section 7: CTA ─── */}
       <CTA

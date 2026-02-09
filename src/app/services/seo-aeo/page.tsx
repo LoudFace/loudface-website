@@ -18,7 +18,7 @@ import {
   Badge,
 } from '@/components/ui';
 import Link from 'next/link';
-import { FAQ, CTA, RelatedServices } from '@/components/sections';
+import { FAQ, CTA, RelatedServices, RelatedArticles } from '@/components/sections';
 
 // Dynamic import below-fold visual component — defers client JS hydration
 const AICitationVisual = dynamic(
@@ -619,6 +619,14 @@ export default function SeoAeoServicePage() {
 
       {/* ─── Related Services ─── */}
       <RelatedServices currentService="/services/seo-aeo" />
+
+      <RelatedArticles
+        articles={[
+          { href: '/blog/is-webflow-good-for-seo', title: 'Is Webflow Good for SEO?', description: 'Built-in SEO features, technical performance, and how Webflow compares to WordPress for search.' },
+          { href: '/blog/seo-vs-aeo-for-webflow', title: 'SEO vs AEO for Webflow', description: 'How traditional search optimization and AI engine optimization work together on Webflow.' },
+          { href: '/blog/webflow-connection-guide-google-analytics-and-search-console', title: 'Connect Webflow to GA4 & Search Console', description: 'Step-by-step guide to connecting Google Analytics and Search Console to your Webflow site.' },
+        ]}
+      />
 
       {/* ─── Section 8: CTA ─── */}
       <CTA

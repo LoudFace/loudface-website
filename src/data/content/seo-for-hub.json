@@ -1,0 +1,84 @@
+{
+  "hero": {
+    "eyebrow": "SEO by Industry",
+    "headline": "Same keywords,<br>different playbooks",
+    "description": "An e-commerce brand competing against Amazon faces nothing like a healthcare practice navigating YMYL. We build SEO strategies around your industry's search dynamics — not templates.",
+    "primaryCta": "Get a free SEO audit",
+    "secondaryCta": "See our approach"
+  },
+  "stats": [
+    { "value": "6", "label": "Industry programs" },
+    { "value": "147%", "label": "Avg. organic traffic lift" },
+    { "value": "90-day", "label": "Strategy cycles" },
+    { "value": "100%", "label": "Hands-free execution" }
+  ],
+  "valueProps": {
+    "title": "Why industry-specific SEO wins",
+    "highlightWord": "wins",
+    "items": [
+      {
+        "number": "01",
+        "title": "Industry search intent is unique",
+        "description": "A 'best software' query in B2B means a buying committee with a 6-month cycle. In e-commerce, it means someone ready to purchase right now. Generic keyword strategies miss this entirely."
+      },
+      {
+        "number": "02",
+        "title": "Compliance shapes strategy",
+        "description": "Healthcare has YMYL. FinTech has regulatory disclaimers. SaaS has JavaScript rendering issues. Each vertical has constraints that reshape technical SEO, content strategy, and link building from the ground up."
+      },
+      {
+        "number": "03",
+        "title": "Competition maps differ by sector",
+        "description": "E-commerce competes against marketplaces. SaaS fights product-led comparison pages. Startups battle established brands with zero domain authority. Your SEO strategy must be built around who you're actually competing against."
+      }
+    ]
+  },
+  "approach": {
+    "title": "One methodology. Calibrated per vertical.",
+    "highlightWord": "Calibrated",
+    "intro": "Every industry engagement follows our proven Autopilot framework — but the tactics, content types, and technical priorities are completely different for each sector.",
+    "steps": [
+      {
+        "number": "1",
+        "title": "Industry audit",
+        "description": "Map your industry's search landscape: competitor analysis, SERP features, compliance requirements, and content gap opportunities specific to your vertical."
+      },
+      {
+        "number": "2",
+        "title": "Sector-specific roadmap",
+        "description": "90-day plan calibrated to your industry dynamics. Healthcare needs E-E-A-T authority. E-commerce needs product schema. SaaS needs JavaScript rendering solutions."
+      },
+      {
+        "number": "3",
+        "title": "Vertical execution",
+        "description": "Content, technical SEO, and link building tailored to your sector's norms. We produce the types of content your industry's buyers actually search for."
+      },
+      {
+        "number": "4",
+        "title": "Outcome reporting",
+        "description": "Weekly showcases tied to your business KPIs — not vanity metrics. Pipeline attribution, revenue correlation, and market share tracking."
+      }
+    ]
+  },
+  "faq": {
+    "title": "Industry SEO: Common Questions",
+    "items": [
+      {
+        "question": "Why can't I use the same SEO strategy for every industry?",
+        "answer": "Each industry has unique search intent patterns, compliance requirements, competitive dynamics, and content formats that perform best. A generic strategy ignores these differences and leaves significant traffic and revenue on the table."
+      },
+      {
+        "question": "How long until I see results from industry-specific SEO?",
+        "answer": "Most clients see measurable organic traffic improvements within 90 days. The timeline depends on your current domain authority, competitive landscape, and industry-specific factors like content freshness requirements or compliance review cycles."
+      },
+      {
+        "question": "What industries do you work with?",
+        "answer": "We have dedicated programs for E-Commerce, Healthcare, SaaS, Startups, B2B, and FinTech. We also build custom strategies for industries outside these verticals — book a call and we'll scope your specific needs."
+      },
+      {
+        "question": "Do you handle both SEO and AEO for industry-specific programs?",
+        "answer": "Yes. Every industry program includes both traditional search engine optimization and AI engine optimization. We monitor your brand's visibility across Google, ChatGPT, Perplexity, Claude, and other AI platforms."
+      }
+    ]
+  }
+}

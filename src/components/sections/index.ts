@@ -11,3 +11,5 @@ export { CTA } from './CTA';
 export { EditorialProse } from './EditorialProse';
 export { DeliverablesGrid } from './DeliverablesGrid';
 export { RelatedServices } from './RelatedServices';
+export { RelatedComparisons } from './RelatedComparisons';
+export { RelatedArticles } from './RelatedArticles';

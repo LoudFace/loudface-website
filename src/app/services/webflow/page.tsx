@@ -15,7 +15,7 @@ import { asset } from '@/lib/assets';
 import { getContrastColors } from '@/lib/color-utils';
 import { caseStudyThumbnail, logoImage } from '@/lib/image-utils';
 import { SectionContainer, SectionHeader, Card, Button, BulletLabel } from '@/components/ui';
-import { FAQ, CTA, RelatedServices } from '@/components/sections';
+import { FAQ, CTA, RelatedServices, RelatedArticles } from '@/components/sections';
 import type { CaseStudy, Client, Industry } from '@/lib/types';
 
 // Dynamic import below-fold visual components — defers client JS hydration
@@ -743,6 +743,14 @@ export default async function WebflowServicePage() {
 
       {/* ─── Related Services ─── */}
       <RelatedServices currentService="/services/webflow" />
+
+      <RelatedArticles
+        articles={[
+          { href: '/blog/how-to-use-figma-to-webflow-plugin', title: 'Figma to Webflow Plugin Guide', description: 'How to use the Figma to Webflow plugin to streamline your design-to-development workflow.' },
+          { href: '/blog/understanding-webflow-pricing', title: 'Webflow Pricing Explained', description: 'Compare Site Plans, Workspace Plans, and add-ons to find the right plan for your business.' },
+          { href: '/blog/best-webflow-tools-and-integrations', title: 'Best Webflow Tools & Integrations', description: 'The top tools and integrations for Webflow developers, from CMS extensions to analytics.' },
+        ]}
+      />
 
       {/* ─── Section 8: CTA ─── */}
       <CTA
