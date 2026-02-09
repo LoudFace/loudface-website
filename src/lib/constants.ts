@@ -13,6 +13,7 @@ export const COLLECTION_IDS = {
   categories: "67b46e2d70ec96bfb7787071",
   industries: "67bd0a772117f7c7227e7b4d",
   "service-categories": "67bcfb9cdb20a1832e2799c3",
+  "seo-pages": "6988a63150526a37d700fae3",
 } as const;
 
 export type CollectionName = keyof typeof COLLECTION_IDS;

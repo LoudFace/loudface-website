@@ -5,6 +5,9 @@ export const metadata: Metadata = {
   title: 'Cookie Policy',
   description:
     'How LoudFace uses cookies and tracking technologies. Read our full cookie policy.',
+  alternates: {
+    canonical: '/cookies',
+  },
 };
 
 export default function CookiePolicyPage() {

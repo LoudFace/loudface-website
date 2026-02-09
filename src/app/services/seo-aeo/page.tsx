@@ -5,6 +5,7 @@
  * - JSON: services-seo-aeo.json (via content layer)
  */
 import type { Metadata } from 'next';
+import Script from 'next/script';
 import dynamic from 'next/dynamic';
 import { getServicesSeoAeoContent } from '@/lib/content-utils';
 import { AI_PLATFORM_ICONS } from '@/lib/icons';
@@ -16,7 +17,8 @@ import {
   BulletLabel,
   Badge,
 } from '@/components/ui';
-import { FAQ, CTA } from '@/components/sections';
+import Link from 'next/link';
+import { FAQ, CTA, RelatedServices } from '@/components/sections';
 
 // Dynamic import below-fold visual component — defers client JS hydration
 const AICitationVisual = dynamic(
@@ -35,8 +37,44 @@ export const metadata: Metadata = {
 export default function SeoAeoServicePage() {
   const content = getServicesSeoAeoContent();
 
+  const serviceSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'Service',
+    name: 'SEO & AI Engine Optimization Services',
+    description:
+      'Get your brand cited by ChatGPT, Perplexity, and Google AI Mode. Hands-free SEO and AEO programs that build authority across every engine where your buyers look.',
+    provider: {
+      '@type': 'Organization',
+      name: 'LoudFace',
+      url: 'https://www.loudface.co',
+    },
+    areaServed: 'Worldwide',
+    serviceType: ['Search Engine Optimization', 'AI Engine Optimization'],
+  };
+
+  const breadcrumbSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://www.loudface.co/' },
+      { '@type': 'ListItem', position: 2, name: 'SEO & AEO' },
+    ],
+  };
+
   return (
     <>
+      {/* Structured Data */}
+      <Script
+        id="service-schema"
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(serviceSchema) }}
+      />
+      <Script
+        id="breadcrumb-schema"
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
+      />
+
       {/* ─── Section 1: Hero ─── */}
       <SectionContainer padding="lg">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center">
@@ -530,14 +568,59 @@ export default function SeoAeoServicePage() {
         </div>
       </SectionContainer>
 
-      {/* ─── Section 6: FAQ ─── */}
+      {/* ─── Section 6: SEO by Industry ─── */}
+      <SectionContainer>
+        <SectionHeader
+          title="SEO by Industry"
+          highlightWord="Industry"
+          subtitle="Every vertical has unique search dynamics. We build strategies around yours."
+        />
+        <div className="mt-8 lg:mt-12 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          {[
+            { href: '/seo-for/ecommerce', label: 'E-Commerce SEO', desc: 'Compete with Amazon and marketplace giants.' },
+            { href: '/seo-for/healthcare', label: 'Healthcare SEO', desc: 'Navigate YMYL, E-E-A-T, and multi-location local search.' },
+            { href: '/seo-for/saas', label: 'SaaS SEO', desc: 'Fix JavaScript rendering and build product-led content.' },
+            { href: '/seo-for/startups', label: 'Startup SEO', desc: 'Build authority from zero on a lean budget.' },
+            { href: '/seo-for/b2b', label: 'B2B SEO', desc: 'Align search with long sales cycles and buying committees.' },
+            { href: '/seo-for/fintech', label: 'FinTech SEO', desc: 'Meet YMYL standards and build financial trust signals.' },
+          ].map((item) => (
+            <Link
+              key={item.href}
+              href={item.href}
+              className="group flex items-center gap-4 p-4 rounded-xl border border-surface-200 bg-white
+                transition-all duration-200 hover:border-surface-300 hover:shadow-md
+                focus-visible:outline-2 focus-visible:outline-primary-500 focus-visible:outline-offset-4"
+            >
+              <div>
+                <div className="font-medium text-surface-900 group-hover:text-primary-600 transition-colors">
+                  {item.label}
+                </div>
+                <div className="mt-1 text-sm text-surface-500">{item.desc}</div>
+              </div>
+              <svg
+                className="w-5 h-5 flex-shrink-0 text-surface-400 group-hover:text-primary-500 transition-colors ml-auto"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7" />
+              </svg>
+            </Link>
+          ))}
+        </div>
+      </SectionContainer>
+
+      {/* ─── Section 7: FAQ ─── */}
       <FAQ
         title={content.faq.title}
         items={content.faq.items}
         showFooter
       />
 
-      {/* ─── Section 7: CTA ─── */}
+      {/* ─── Related Services ─── */}
+      <RelatedServices currentService="/services/seo-aeo" />
+
+      {/* ─── Section 8: CTA ─── */}
       <CTA
         title={content.cta.title}
         subtitle={content.cta.subtitle}

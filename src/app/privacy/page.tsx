@@ -1,10 +1,14 @@
 import type { Metadata } from 'next';
+import Link from 'next/link';
 import { SectionContainer } from '@/components/ui';
 
 export const metadata: Metadata = {
   title: 'Privacy Policy',
   description:
     'How LoudFace collects, uses, and protects your personal information. Read our full privacy policy.',
+  alternates: {
+    canonical: '/privacy',
+  },
 };
 
 export default function PrivacyPolicyPage() {
@@ -83,9 +87,9 @@ export default function PrivacyPolicyPage() {
             <p>
               For detailed information on the cookies we use and your choices regarding cookies,
               please refer to our{' '}
-              <a href="/cookies" className="text-primary-600 hover:text-primary-700 underline">
+              <Link href="/cookies" className="text-primary-600 hover:text-primary-700 underline">
                 Cookie Policy
-              </a>
+              </Link>
               .
             </p>
           </section>

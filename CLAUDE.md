@@ -95,6 +95,7 @@ import { asset } from '@/lib/assets';
 | Categories | `67b46e2d70ec96bfb7787071` | `/api/cms/categories` |
 | Industries | `67bd0a772117f7c7227e7b4d` | `/api/cms/industries` |
 | Service Categories | `67bcfb9cdb20a1832e2799c3` | `/api/cms/service-categories` |
+| SEO Pages | `6988a63150526a37d700fae3` | `/api/cms/seo-pages` |
 
 These IDs are also in `src/lib/constants.ts`. If you add a new collection, update both places.
 
@@ -164,3 +165,18 @@ Think outside the box. Make unexpected choices.
 ## Webflow MCP Tools
 
 When available, use MCP tools for read operations (listing sites, collections, items, schemas). Use direct Webflow API v2 calls in code for runtime data fetching in Server Components.
+
+# DataForSEO MCP Profiles
+
+You have access to multiple DataForSEO MCP configurations. Only ONE should be active at a time to avoid context overflow.
+
+## Available profiles:
+- **dfs-research**: KEYWORDS_DATA, DATAFORSEO_LABS, SERP — use for keyword research, competitor keywords, domain overview, SERP analysis
+- **dfs-audit**: ONPAGE, BACKLINKS, DOMAIN_ANALYTICS — use for technical audits, backlink analysis, site crawling
+- **dfs-content**: CONTENT_ANALYSIS, AI_OPTIMIZATION — use for brand monitoring, sentiment analysis, AEO optimization
+
+## Rules:
+1. Before starting any SEO task, identify which profile is needed
+2. Check which MCP is currently active using /mcp
+3. If the wrong profile is active, tell me to switch before proceeding
+4. Never try to use tools from a disabled profile

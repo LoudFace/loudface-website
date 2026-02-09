@@ -1,3 +1,4 @@
+import Link from 'next/link';
 import { getCTAContent } from '@/lib/content-utils';
 import { Button } from '@/components/ui';
 
@@ -62,6 +63,20 @@ export function CTA({
                 </svg>
               </Button>
             </div>
+
+            <p className="mt-6 text-sm text-surface-500">
+              Or{' '}
+              <Link
+                href="/case-studies"
+                className={`font-medium underline underline-offset-2 transition-colors ${
+                  variant === 'dark'
+                    ? 'text-surface-400 hover:text-white'
+                    : 'text-surface-600 hover:text-surface-900'
+                }`}
+              >
+                explore our work
+              </Link>
+            </p>
           </div>
         </div>
       </div>

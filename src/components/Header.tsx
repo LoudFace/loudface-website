@@ -71,38 +71,38 @@ const servicesDropdown: Dropdown = {
 
 const industriesDropdown: Dropdown = {
   label: "Industries",
-  description: "Specialized Webflow solutions for your sector.",
+  description: "Specialized SEO strategies for your sector.",
   items: [
     {
       icon: "/images/arcticons_app-saasu.svg",
       title: "SaaS",
       description:
-        "High-performance Webflow sites that scale with your product.",
-      href: "/industries/saas",
+        "High-performance SEO strategies that scale with your product.",
+      href: "/seo-for/saas",
     },
     {
       icon: "/images/arcticons_studysmarter.svg",
-      title: "Education",
+      title: "B2B",
       description:
-        "Accessible, SEO-driven Webflow sites for schools and edtech platforms.",
-      href: "/industries/education",
+        "Authority-driven SEO strategies that capture high-intent B2B search demand.",
+      href: "/seo-for/b2b",
     },
     {
       icon: "/images/arcticons_shopify.svg",
       title: "E-commerce",
       description:
-        "Conversion-first Webflow stores built for speed, performance, and measurable ROI.",
-      href: "/industries/ecommerce",
+        "Conversion-first SEO built for speed, performance, and measurable ROI.",
+      href: "/seo-for/e-commerce",
     },
     {
       icon: "/images/Vector.svg",
       title: "Healthcare",
       description:
-        "HIPAA-ready Webflow builds that communicate care and compliance.",
-      href: "/industries/healthcare",
+        "SEO strategies that communicate care and compliance.",
+      href: "/seo-for/healthcare",
     },
   ],
-  ctaText: "Looking for a new agency partner? Get in touch",
+  ctaText: "View all industries →",
 };
 
 export function Header() {
@@ -356,8 +356,7 @@ export function Header() {
                   </Link>
                 ))}
                 {renderDropdown(servicesDropdown, "services")}
-                {/* TODO: Re-enable Industries dropdown when industry pages are ready */}
-                {/* {renderDropdown(industriesDropdown, "industries")} */}
+                {renderDropdown(industriesDropdown, "industries")}
               </nav>
             </div>
 
@@ -485,8 +484,6 @@ export function Header() {
             </div>
           </div>
 
-          {/* TODO: Re-enable Industries accordion when industry pages are ready */}
-          {/*
           <div className="border-b border-surface-100">
             <button
               type="button"
@@ -530,7 +527,6 @@ export function Header() {
               ))}
             </div>
           </div>
-          */}
 
           <div className="pt-6">
             <button

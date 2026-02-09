@@ -24,10 +24,10 @@ export function Footer({ caseStudies = [], blogPosts = [] }: FooterProps) {
   ];
 
   const industryLinks = [
-    { label: 'SaaS', href: '/industries/saas' },
-    { label: 'E-commerce', href: '/industries/ecommerce' },
-    { label: 'Education', href: '/industries/education' },
-    { label: 'Healthcare', href: '/industries/healthcare' },
+    { label: 'SaaS', href: '/seo-for/saas' },
+    { label: 'E-commerce', href: '/seo-for/e-commerce' },
+    { label: 'B2B', href: '/seo-for/b2b' },
+    { label: 'Healthcare', href: '/seo-for/healthcare' },
   ];
 
   const resourceLinks = [
@@ -111,8 +111,6 @@ export function Footer({ caseStudies = [], blogPosts = [] }: FooterProps) {
                     </nav>
                   </div>
 
-                  {/* TODO: Re-enable Industries column when industry pages are ready */}
-                  {/*
                   <div className="flex flex-col gap-3">
                     <h3 className="text-sm font-semibold text-white mb-1">Industries</h3>
                     <nav aria-label="Industries links">
@@ -127,10 +125,17 @@ export function Footer({ caseStudies = [], blogPosts = [] }: FooterProps) {
                             </Link>
                           </li>
                         ))}
+                        <li>
+                          <Link
+                            href="/seo-for"
+                            className="text-sm text-primary-400 hover:text-white transition-colors"
+                          >
+                            View all industries →
+                          </Link>
+                        </li>
                       </ul>
                     </nav>
                   </div>
-                  */}
 
                   {/* Resources */}
                   <div className="flex flex-col gap-3">

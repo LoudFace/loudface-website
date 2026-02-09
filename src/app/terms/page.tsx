@@ -5,6 +5,9 @@ export const metadata: Metadata = {
   title: 'Terms of Service',
   description:
     'Terms and conditions for using loudface.co. Read our full terms of service.',
+  alternates: {
+    canonical: '/terms',
+  },
 };
 
 export default function TermsOfServicePage() {

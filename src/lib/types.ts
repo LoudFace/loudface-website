@@ -165,6 +165,62 @@ export interface ServiceCategory {
 }
 
 /**
+ * SEO Page CMS item (programmatic SEO hub)
+ * Complete interface covering all fields from the seo-pages collection
+ */
+export interface SeoPage {
+  id: string;
+  name: string;
+  slug: string;
+  "meta-title"?: string;
+  "meta-description"?: string;
+  industry?: string; // Reference ID to industries collection
+  "display-order"?: number;
+  "hero-headline"?: string;
+  "hero-subtitle"?: string;
+  "hero-description"?: string;
+  "hero-image"?: WebflowImage;
+  "pain-points-title"?: string;
+  "pain-point-1-title"?: string;
+  "pain-point-1-desc"?: string;
+  "pain-point-2-title"?: string;
+  "pain-point-2-desc"?: string;
+  "pain-point-3-title"?: string;
+  "pain-point-3-desc"?: string;
+  "strategy-title"?: string;
+  "strategy-intro"?: string;
+  "strategy-step-1-title"?: string;
+  "strategy-step-1-desc"?: string;
+  "strategy-step-2-title"?: string;
+  "strategy-step-2-desc"?: string;
+  "strategy-step-3-title"?: string;
+  "strategy-step-3-desc"?: string;
+  "strategy-step-4-title"?: string;
+  "strategy-step-4-desc"?: string;
+  "results-title"?: string;
+  "stat-1-value"?: string;
+  "stat-1-label"?: string;
+  "stat-2-value"?: string;
+  "stat-2-label"?: string;
+  "stat-3-value"?: string;
+  "stat-3-label"?: string;
+  "faq-1-question"?: string;
+  "faq-1-answer"?: string;
+  "faq-2-question"?: string;
+  "faq-2-answer"?: string;
+  "faq-3-question"?: string;
+  "faq-3-answer"?: string;
+  "faq-4-question"?: string;
+  "faq-4-answer"?: string;
+  "faq-5-question"?: string;
+  "faq-5-answer"?: string;
+  "main-body"?: string; // RichText — long-form prose section
+  "deliverables"?: string; // RichText — detailed deliverables list
+  "cta-title"?: string;
+  "cta-subtitle"?: string;
+}
+
+/**
  * Blog FAQ CMS item
  * Complete interface covering all fields from cms-schemas.json
  */

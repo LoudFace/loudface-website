@@ -5,6 +5,7 @@
  * - JSON: services-cro.json (via content layer)
  */
 import type { Metadata } from 'next';
+import Script from 'next/script';
 import dynamic from 'next/dynamic';
 import { getServicesCroContent } from '@/lib/content-utils';
 import {
@@ -14,7 +15,7 @@ import {
   Button,
   BulletLabel,
 } from '@/components/ui';
-import { FAQ, CTA } from '@/components/sections';
+import { FAQ, CTA, RelatedServices } from '@/components/sections';
 
 // Dynamic import below-fold visual component — defers client JS hydration
 const ConversionSplitVisual = dynamic(
@@ -33,8 +34,44 @@ export const metadata: Metadata = {
 export default function CroServicePage() {
   const content = getServicesCroContent();
 
+  const serviceSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'Service',
+    name: 'Conversion Rate Optimization Services',
+    description:
+      'Turn your existing traffic into revenue with systematic CRO programs. We run conversion audits, test headlines and CTAs, and report against pipeline outcomes weekly.',
+    provider: {
+      '@type': 'Organization',
+      name: 'LoudFace',
+      url: 'https://www.loudface.co',
+    },
+    areaServed: 'Worldwide',
+    serviceType: 'Conversion Rate Optimization',
+  };
+
+  const breadcrumbSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://www.loudface.co/' },
+      { '@type': 'ListItem', position: 2, name: 'CRO' },
+    ],
+  };
+
   return (
     <>
+      {/* Structured Data */}
+      <Script
+        id="service-schema"
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(serviceSchema) }}
+      />
+      <Script
+        id="breadcrumb-schema"
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
+      />
+
       {/* ─── Section 1: Hero ─── */}
       <SectionContainer padding="lg">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center">
@@ -561,6 +598,9 @@ export default function CroServicePage() {
         items={content.faq.items}
         showFooter
       />
+
+      {/* ─── Related Services ─── */}
+      <RelatedServices currentService="/services/cro" />
 
       {/* ─── Section 6: CTA ─── */}
       <CTA

@@ -254,6 +254,9 @@ All section components are exported from `@/components/sections` (or `@/componen
 | `Knowledge` | `Knowledge.tsx` | Blog post carousel | Yes |
 | `FAQ` | `FAQ.tsx` | Accordion FAQ section | No |
 | `CTA` | `CTA.tsx` | Final call-to-action section | No |
+| `EditorialProse` | `EditorialProse.tsx` | Splits CMS RichText at H2 boundaries into numbered insight cards (ghosted 01/02/03 numbers, heading, first-paragraph summary, native `<details>` expand for remaining content). Props: `html`, `industryName?` | No |
+| `DeliverablesGrid` | `DeliverablesGrid.tsx` | Split layout: header left, dual-column vertical marquee right. Items scroll in opposite directions (CSS-only, uses existing scroll-down/scroll-up keyframes). Fade masks at edges. Respects `prefers-reduced-motion`. Props: `html`, `industryName?` | No |
+| `RelatedServices` | `RelatedServices.tsx` | Cross-link section showing the other 4 service pages. Takes `currentService` (href string) to exclude the current page. Place before CTA on service pages. | No |
 
 **"Client?"** = requires `'use client'` directive (has hooks/interactivity).
 
@@ -275,7 +278,7 @@ All section components are exported from `@/components/sections` (or `@/componen
 ```
 src/components/index.ts        → re-exports everything
 src/components/ui/index.ts     → AICitationVisual, Badge, BulletLabel, Button, Card, CarouselNav, ComponentAssemblyVisual, CopyFirstVisual, ConversionSplitVisual, DesignSystemVisual, PixelBreakpointAnimation, ScalableGridAnimation, Pagination, SectionContainer, SectionHeader, VideoFacade
-src/components/sections/index.ts → Hero, Partners, CaseStudySlider, Audit, Results, Marketing, Approach, Knowledge, FAQ, CTA
+src/components/sections/index.ts → Hero, Partners, CaseStudySlider, Audit, Results, Marketing, Approach, Knowledge, FAQ, CTA, EditorialProse, DeliverablesGrid, RelatedServices
 ```
 
 ---

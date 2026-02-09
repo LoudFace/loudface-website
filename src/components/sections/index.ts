@@ -8,3 +8,6 @@ export { Approach } from './Approach';
 export { Knowledge } from './Knowledge';
 export { FAQ } from './FAQ';
 export { CTA } from './CTA';
+export { EditorialProse } from './EditorialProse';
+export { DeliverablesGrid } from './DeliverablesGrid';
+export { RelatedServices } from './RelatedServices';

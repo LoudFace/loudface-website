@@ -8,6 +8,7 @@
  * Components: Hero, Partners, CaseStudySlider, Audit, Results,
  *             Marketing, Approach, Knowledge, FAQ, CTA
  */
+import type { Metadata } from 'next';
 import dynamic from 'next/dynamic';
 import { fetchHomepageData, getAccessToken, getEmptyHomepageData } from '@/lib/cms-data';
 import { getFAQItemsContent } from '@/lib/content-utils';
@@ -36,6 +37,12 @@ const Approach = dynamic(
 const Knowledge = dynamic(
   () => import('@/components/sections/Knowledge').then(m => ({ default: m.Knowledge })),
 );
+
+export const metadata: Metadata = {
+  alternates: {
+    canonical: '/',
+  },
+};
 
 export default async function HomePage() {
   // FAQ items loaded from JSON content layer

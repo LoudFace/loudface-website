@@ -17,6 +17,7 @@ import type {
   Industry,
   Technology,
   ServiceCategory,
+  SeoPage,
 } from "./types";
 
 /**
@@ -246,6 +247,26 @@ export async function fetchHomepageData(
   }
 
   return data;
+}
+
+/**
+ * Fetch SEO pages collection (programmatic SEO hub)
+ * Separate from fetchHomepageData to avoid burdening all pages with an extra API call.
+ */
+export async function fetchSeoPages(
+  accessToken: string
+): Promise<SeoPage[]> {
+  const data = await fetchCollection<Record<string, unknown>>(
+    "seo-pages",
+    accessToken
+  );
+  if (!data?.items) return [];
+  return data.items
+    .filter(isPublished)
+    .map((item) => normalizeItem<SeoPage>(item))
+    .sort(
+      (a, b) => (a["display-order"] || 999) - (b["display-order"] || 999)
+    );
 }
 
 /**

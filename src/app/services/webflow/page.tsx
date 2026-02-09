@@ -6,6 +6,7 @@
  * - CMS: case-studies, clients, industries (for case studies section)
  */
 import type { Metadata } from 'next';
+import Script from 'next/script';
 import Link from 'next/link';
 import dynamic from 'next/dynamic';
 import { fetchHomepageData, getAccessToken, getEmptyHomepageData } from '@/lib/cms-data';
@@ -14,7 +15,7 @@ import { asset } from '@/lib/assets';
 import { getContrastColors } from '@/lib/color-utils';
 import { caseStudyThumbnail, logoImage } from '@/lib/image-utils';
 import { SectionContainer, SectionHeader, Card, Button, BulletLabel } from '@/components/ui';
-import { FAQ, CTA } from '@/components/sections';
+import { FAQ, CTA, RelatedServices } from '@/components/sections';
 import type { CaseStudy, Client, Industry } from '@/lib/types';
 
 // Dynamic import below-fold visual components — defers client JS hydration
@@ -46,6 +47,30 @@ export default async function WebflowServicePage() {
     ? await fetchHomepageData(accessToken)
     : getEmptyHomepageData();
 
+  const serviceSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'Service',
+    name: 'Webflow Development Services',
+    description:
+      'Scale-first Webflow development with component-based architecture. Split test faster, ship landing pages in hours, and grow without technical debt.',
+    provider: {
+      '@type': 'Organization',
+      name: 'LoudFace',
+      url: 'https://www.loudface.co',
+    },
+    areaServed: 'Worldwide',
+    serviceType: 'Webflow Development',
+  };
+
+  const breadcrumbSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://www.loudface.co/' },
+      { '@type': 'ListItem', position: 2, name: 'Webflow Development' },
+    ],
+  };
+
   const {
     caseStudies: rawCaseStudies,
     clients: clientsMap,
@@ -69,6 +94,18 @@ export default async function WebflowServicePage() {
 
   return (
     <>
+      {/* Structured Data */}
+      <Script
+        id="service-schema"
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(serviceSchema) }}
+      />
+      <Script
+        id="breadcrumb-schema"
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
+      />
+
       {/* ─── Section 1: Hero ─── */}
       <SectionContainer padding="lg">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center">
@@ -703,6 +740,9 @@ export default async function WebflowServicePage() {
         items={content.faq.items}
         showFooter
       />
+
+      {/* ─── Related Services ─── */}
+      <RelatedServices currentService="/services/webflow" />
 
       {/* ─── Section 8: CTA ─── */}
       <CTA

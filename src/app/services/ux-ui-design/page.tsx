@@ -5,6 +5,7 @@
  * - JSON: services-ux-ui-design.json (via content layer)
  */
 import type { Metadata } from 'next';
+import Script from 'next/script';
 import dynamic from 'next/dynamic';
 import { getServicesUxUiDesignContent } from '@/lib/content-utils';
 import {
@@ -15,7 +16,7 @@ import {
   BulletLabel,
   Badge,
 } from '@/components/ui';
-import { FAQ, CTA } from '@/components/sections';
+import { FAQ, CTA, RelatedServices } from '@/components/sections';
 
 // Dynamic import below-fold visual component — defers client JS hydration
 const DesignSystemVisual = dynamic(
@@ -34,8 +35,44 @@ export const metadata: Metadata = {
 export default function UxUiDesignServicePage() {
   const content = getServicesUxUiDesignContent();
 
+  const serviceSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'Service',
+    name: 'UX/UI Design Services',
+    description:
+      'Conversion-focused design systems for B2B and SaaS websites. Component libraries, design tokens, and layouts built for humans, search engines, and AI — not just aesthetics.',
+    provider: {
+      '@type': 'Organization',
+      name: 'LoudFace',
+      url: 'https://www.loudface.co',
+    },
+    areaServed: 'Worldwide',
+    serviceType: 'UX/UI Design',
+  };
+
+  const breadcrumbSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://www.loudface.co/' },
+      { '@type': 'ListItem', position: 2, name: 'UX/UI Design' },
+    ],
+  };
+
   return (
     <>
+      {/* Structured Data */}
+      <Script
+        id="service-schema"
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(serviceSchema) }}
+      />
+      <Script
+        id="breadcrumb-schema"
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
+      />
+
       {/* ─── Section 1: Hero ─── */}
       <SectionContainer padding="lg">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center">
@@ -732,6 +769,9 @@ export default function UxUiDesignServicePage() {
         items={content.faq.items}
         showFooter
       />
+
+      {/* ─── Related Services ─── */}
+      <RelatedServices currentService="/services/ux-ui-design" />
 
       {/* ─── Section 7: CTA ─── */}
       <CTA
