@@ -59,7 +59,7 @@ export function Approach({
         </div>
 
         {/* Embla Carousel */}
-        <div className="embla w-full overflow-visible">
+        <div className="embla w-full overflow-hidden md:overflow-visible">
           <div className="embla__viewport overflow-hidden" ref={emblaRef}>
             <div className="embla__container flex items-start gap-4 xs:gap-10 touch-pan-y">
               {finalSteps.map((step, index) => (
@@ -94,7 +94,7 @@ export function Approach({
 
         {/* Mobile nav buttons */}
         <div className="block md:hidden">
-          <div className="flex justify-center items-end relative">
+          <div className="flex justify-center">
             <CarouselNav
               variant="dark"
               className="gap-3"
