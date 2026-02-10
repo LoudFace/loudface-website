@@ -2,13 +2,6 @@
 
 import { useEffect } from "react";
 
-// Type for the Cal global object
-declare global {
-  interface Window {
-    Cal?: (action: string, options?: Record<string, unknown>) => void;
-  }
-}
-
 /**
  * CalHandler Component
  *
@@ -37,8 +30,8 @@ export function CalHandler() {
         e.preventDefault();
         e.stopPropagation();
 
-        // Open Cal.com popup modal
-        if (typeof window.Cal !== "undefined") {
+        // Open Cal.com popup modal (Cal loads via lazyOnload, may not exist yet)
+        if (window.Cal) {
           window.Cal("modal", {
             calLink: "arnelbukva/loudface-intro-call",
             config: { layout: "month_view" },

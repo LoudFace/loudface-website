@@ -10,6 +10,8 @@ interface HeroProps {
   headline?: string;
   description?: string;
   ctaText?: string;
+  scarcityText?: string;
+  aiLinksLabel?: string;
   caseStudies: CaseStudy[];
   clients?: Map<string, Client>;
   industries?: Map<string, Industry>;
@@ -19,6 +21,8 @@ export function Hero({
   headline,
   description,
   ctaText,
+  scarcityText,
+  aiLinksLabel,
   caseStudies,
   clients = new Map(),
 }: HeroProps) {
@@ -29,6 +33,7 @@ export function Hero({
   const finalHeadline = headline ?? content.headline;
   const finalDescription = description ?? content.description;
   const finalCtaText = ctaText ?? content.ctaText;
+  const finalAiLinksLabel = aiLinksLabel ?? content.aiLinksLabel;
 
   function getClient(clientId: string | undefined): Client | undefined {
     if (!clientId) return undefined;
@@ -137,7 +142,12 @@ export function Hero({
               />
 
               {/* AI Platform Links */}
-              <div className="flex gap-2 flex-wrap mt-5 justify-center lg:justify-start">
+              {finalAiLinksLabel && (
+                <p className="mt-5 mb-0 text-sm text-surface-500">
+                  {finalAiLinksLabel}
+                </p>
+              )}
+              <div className={`flex gap-2 flex-wrap ${finalAiLinksLabel ? 'mt-2.5' : 'mt-5'} justify-center lg:justify-start`}>
                 {aiLinks.map((link) => (
                   <a
                     key={link.name}
@@ -167,6 +177,11 @@ export function Hero({
               >
                 {finalCtaText}
               </Button>
+              {scarcityText && (
+                <p className="mt-2.5 text-sm text-surface-500 italic">
+                  {scarcityText}
+                </p>
+              )}
             </div>
 
             {/* Right: Scrolling Case Studies - Hidden on mobile */}

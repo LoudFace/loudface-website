@@ -1,0 +1,163 @@
+{
+  "hero": {
+    "headline": "Your website converts.<br>Your organic traffic compounds.<br>One team runs both.",
+    "description": "LoudFace is the conversion and organic growth team behind 200+ B2B SaaS websites. We build on Webflow (or custom stack), then run SEO, AEO, and CRO to grow what we shipped.",
+    "ctaText": "Book your strategy call",
+    "aiLinksLabel": "See what AI says about us"
+  },
+  "partners": {
+    "tagline": "Trusted by B2B SaaS teams shipping real products"
+  },
+  "problem": {
+    "heading": "Your website is costing you deals.<br>You just can't see it.",
+    "items": [
+      {
+        "bold": "Your homepage explains what you built, not why anyone should care.",
+        "body": "Visitors land, skim, and leave because the messaging talks about features instead of the problem you solve for buyers."
+      },
+      {
+        "bold": "Marketing owns a website they can't update without engineering.",
+        "body": "Every landing page needs a dev sprint. Every campaign launch gets delayed. You're burning budget waiting on your own team."
+      },
+      {
+        "bold": "You redesigned six months ago and organic traffic still hasn't moved.",
+        "body": "The site looks better, but nobody optimized it for search. You're invisible to the buyers actively Googling what you sell."
+      },
+      {
+        "bold": "Buyers are asking ChatGPT, Perplexity, and Claude for recommendations in your category. You don't come up.",
+        "body": "AI-powered search is already shaping shortlists before a prospect ever visits your site. If you're not in those answers, competitors are."
+      },
+      {
+        "bold": "Your site gets traffic, but the conversion rate hasn't changed in a year.",
+        "body": "No one is running experiments, testing messaging, or optimizing the pages that actually drive pipeline. Traffic without conversion is just a vanity metric."
+      }
+    ]
+  },
+  "tracks": {
+    "heading": "One partner from launch to growth",
+    "intro": "Most agencies hand you a website and move on. Most SEO shops inherit someone else's mess and work around it. We do both, and because we do both, neither half is compromised.",
+    "build": {
+      "label": "01",
+      "title": "Build",
+      "subtitle": "A website that earns its traffic",
+      "body": "We design and build B2B SaaS websites on Webflow, from positioning and copy to UX, UI, and production code. The result is a site your marketing team can run without engineering support, built to convert the traffic you're about to drive to it.",
+      "detail": "Shipped in weeks, not quarters. Your team gets full CMS control from day one.",
+      "capabilities": [
+        "UX/UI Design",
+        "Webflow Development",
+        "Conversion Copywriting",
+        "CMS Architecture",
+        "Design System Setup"
+      ]
+    },
+    "grow": {
+      "label": "02",
+      "title": "Grow",
+      "subtitle": "Traffic and conversions, month over month",
+      "body": "After launch, we stay. We run SEO and AEO to bring in organic traffic from search engines and AI platforms. We run CRO to make sure that traffic converts. You get a team that knows your site inside out because we built it.",
+      "detail": "No onboarding lag. No \"getting up to speed.\" We're already there.",
+      "capabilities": [
+        "Technical SEO",
+        "AI Engine Optimization (AEO)",
+        "Content Strategy",
+        "Conversion Rate Optimization",
+        "Performance Analytics"
+      ]
+    },
+    "connector": "Most of our clients start with a build. Within three months, they ask us to handle growth too. That's by design."
+  },
+  "results": {
+    "heading": "The work speaks. Specifically.",
+    "subtitle": "Real projects, real metrics, real SaaS companies."
+  },
+  "process": {
+    "heading": "How an engagement works",
+    "subtitle": "No 47-slide proposals. No three-month discovery phases. Here's what actually happens.",
+    "steps": [
+      {
+        "number": "01",
+        "title": "Strategy call",
+        "timeline": "Week 0",
+        "body": "We talk for 30 minutes. You tell us what's broken, what you've tried, and what good looks like. We tell you honestly whether we're the right fit. If we are, we send a scope and timeline within 48 hours."
+      },
+      {
+        "number": "02",
+        "title": "Design and build",
+        "timeline": "Weeks 1-6",
+        "body": "We handle positioning, copy, design, and Webflow development in parallel, not in sequence. You see working pages, not static mockups. Your team reviews in weekly syncs and has CMS access from week two."
+      },
+      {
+        "number": "03",
+        "title": "Launch and measure",
+        "timeline": "Weeks 6-8",
+        "body": "We launch, set up analytics, and establish baseline metrics. No vanity dashboards. We track the numbers that connect to pipeline: organic traffic, conversion rates, form submissions, and qualified lead volume."
+      },
+      {
+        "number": "04",
+        "title": "Grow and optimize",
+        "timeline": "Month 3+",
+        "body": "SEO, AEO, and CRO kick in. We publish content, optimize pages, and run conversion experiments. You get a monthly report with what we did, what moved, and what we're doing next."
+      }
+    ]
+  },
+  "stats": {
+    "heading": "Numbers, not adjectives",
+    "items": [
+      {
+        "value": "200+",
+        "label": "Projects completed",
+        "description": "B2B SaaS websites designed, built, and shipped on Webflow since 2020."
+      },
+      {
+        "value": "288%",
+        "label": "Increase in conversions",
+        "description": "Measured across the Dimer Health engagement over a six-month optimization period."
+      },
+      {
+        "value": "4+",
+        "label": "Years as Webflow Enterprise Partner",
+        "description": "One of a small number of agencies with Enterprise Partner status globally."
+      },
+      {
+        "value": "<6 wks",
+        "label": "Average time to launch",
+        "description": "From kickoff to live site. Most agencies quote 12-16 weeks for the same scope."
+      }
+    ]
+  },
+  "blog": {
+    "title": "Playbooks for SaaS marketing teams",
+    "subtitle": "Tactical content on SaaS websites, SEO, conversion optimization, and growth."
+  },
+  "faq": [
+    {
+      "question": "What types of companies do you work with?",
+      "answer": "B2B SaaS companies, primarily Series A and later. Our clients typically have a product in market, a marketing team (even if it's one person), and a website that isn't pulling its weight. We've worked across verticals — fintech, healthtech, devtools, HR tech, cybersecurity — but the common thread is always B2B SaaS."
+    },
+    {
+      "question": "Why Webflow instead of a custom-coded site?",
+      "answer": "Speed and independence. Webflow lets us ship a production-quality site in weeks instead of months, and your marketing team can update pages, publish content, and launch campaigns without filing engineering tickets. For most B2B SaaS companies under $100M ARR, a custom-coded marketing site is overkill, and the maintenance cost quietly drains budget every quarter."
+    },
+    {
+      "question": "Do we have to sign up for growth services, or can we just get a website?",
+      "answer": "You can start with a website build only. Most of our clients do. About 70% of them add SEO and CRO within the first three months after launch, because by then they've seen the site perform and want to push it further. But there's no obligation and no bait-and-switch."
+    },
+    {
+      "question": "How long does a website project take?",
+      "answer": "Most builds go from kickoff to launch in 4-6 weeks. That includes strategy, copywriting, design, and Webflow development. Larger projects with complex CMS structures or multiple product lines can take 8-10 weeks. We'll give you a specific timeline in the scoping call before you commit to anything."
+    },
+    {
+      "question": "What does the growth engagement look like month to month?",
+      "answer": "We run SEO (technical and content), AEO (AI search optimization), and CRO (conversion experiments) on a monthly retainer. You get a dedicated team, weekly async updates, and a monthly performance review. We track organic traffic, keyword rankings, conversion rates, and qualified leads. Minimum engagement is three months — SEO needs at least that long to show meaningful results."
+    },
+    {
+      "question": "We already have a website. Can you optimize it without rebuilding?",
+      "answer": "Sometimes. If your current site is on Webflow or a platform we can work with efficiently, we can run SEO and CRO on what you have. If the site itself is the bottleneck — slow, hard to update, poorly structured for search — we'll tell you that honestly. We won't spend six months optimizing a site that needs to be rebuilt."
+    }
+  ],
+  "cta": {
+    "title": "Let's figure out what's holding your site back.",
+    "subtitle": "30-minute strategy call. No pitch deck. We'll look at your site together and tell you what we'd change and why.",
+    "ctaText": "Book a strategy call"
+  }
+}

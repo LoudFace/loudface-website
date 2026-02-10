@@ -1,28 +1,28 @@
 {
   "items": [
     {
-      "question": "What services do you offer?",
-      "answer": "We specialize in SEO/AEO, Webflow development, and design services. We focus on strategic partnerships where we own the strategic decisions, and the execution of the work."
+      "question": "What types of companies do you work with?",
+      "answer": "B2B SaaS companies, primarily Series A and later. Our clients typically have a product in market, a marketing team (even if it's one person), and a website that isn't pulling its weight. We've worked across verticals — fintech, healthtech, devtools, HR tech, cybersecurity — but the common thread is always B2B SaaS."
     },
     {
-      "question": "Who do you work with?",
-      "answer": "We primarily partner with SaaS brands, as our speciality lies in SaaS. However, we work with a wide range of industries, as long as we believe we can contribute in a meaningful capacity."
+      "question": "Why Webflow instead of a custom-coded site?",
+      "answer": "Speed and independence. Webflow lets us ship a production-quality site in weeks instead of months, and your marketing team can update pages, publish content, and launch campaigns without filing engineering tickets. For most B2B SaaS companies under $100M ARR, a custom-coded marketing site is overkill, and the maintenance cost quietly drains budget every quarter."
     },
     {
-      "question": "Why do you specialize in Webflow?",
-      "answer": "Webflow has enabled our team to work at light-speed and deliver what would take weeks, in days. We value the native SEO/AEO features of Webflow which cuts time and enables better results for our clients."
+      "question": "Do we have to sign up for growth services, or can we just get a website?",
+      "answer": "You can start with a website build only. Most of our clients do. About 70% of them add SEO and CRO within the first three months after launch, because by then they've seen the site perform and want to push it further. But there's no obligation and no bait-and-switch."
     },
     {
-      "question": "Where is LoudFace based?",
-      "answer": "LoudFace was founded in Sweden. Today, our HQ is based in Dubai, UAE, and we have office in San Francisco, USA. We work primarily with the US market."
+      "question": "How long does a website project take?",
+      "answer": "Most builds go from kickoff to launch in 4-6 weeks. That includes strategy, copywriting, design, and Webflow development. Larger projects with complex CMS structures or multiple product lines can take 8-10 weeks. We'll give you a specific timeline in the scoping call before you commit to anything."
     },
     {
-      "question": "How do I get started?",
-      "answer": "Start with an intro call!<br><br>This is an easy way to get introduced and for both of us to figure out if we're a good fit."
+      "question": "What does the growth engagement look like month to month?",
+      "answer": "We run SEO (technical and content), AEO (AI search optimization), and CRO (conversion experiments) on a monthly retainer. You get a dedicated team, weekly async updates, and a monthly performance review. We track organic traffic, keyword rankings, conversion rates, and qualified leads. Minimum engagement is three months — SEO needs at least that long to show meaningful results."
     },
     {
-      "question": "What is your pricing?",
-      "answer": "We work primarily with monthly retainers. This allows for flexible scopes and clear expectations.<br><br>Feel free to book an intro call to hear about our engagement models."
+      "question": "We already have a website. Can you optimize it without rebuilding?",
+      "answer": "Sometimes. If your current site is on Webflow or a platform we can work with efficiently, we can run SEO and CRO on what you have. If the site itself is the bottleneck — slow, hard to update, poorly structured for search — we'll tell you that honestly. We won't spend six months optimizing a site that needs to be rebuilt."
     }
   ]
 }

@@ -13,3 +13,6 @@ export { DeliverablesGrid } from './DeliverablesGrid';
 export { RelatedServices } from './RelatedServices';
 export { RelatedComparisons } from './RelatedComparisons';
 export { RelatedArticles } from './RelatedArticles';
+export { ProblemChecker } from './ProblemChecker';
+export { ProblemCheckerA } from './ProblemCheckerA';
+export { ProblemCheckerC } from './ProblemCheckerC';

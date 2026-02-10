@@ -29,6 +29,7 @@ import servicesCroContent from "@/data/content/services-cro.json";
 import servicesCopywritingContent from "@/data/content/services-copywriting.json";
 import servicesUxUiDesignContent from "@/data/content/services-ux-ui-design.json";
 import seoForHubContent from "@/data/content/seo-for-hub.json";
+import homepageV2Content from "@/data/content/homepage-v2.json";
 
 // Type definitions for content files
 export interface CTAContent {
@@ -41,6 +42,7 @@ export interface HeroContent {
   headline: string;
   description: string;
   ctaText: string;
+  aiLinksLabel?: string;
   aiLinks: Array<{
     name: string;
     url: string;
@@ -392,6 +394,79 @@ export interface SeoForHubContent {
   };
 }
 
+export interface HomepageV2ProblemItem {
+  bold: string;
+  body: string;
+}
+
+export interface HomepageV2Track {
+  label: string;
+  title: string;
+  subtitle: string;
+  body: string;
+  detail: string;
+  capabilities: string[];
+}
+
+export interface HomepageV2ProcessStep {
+  number: string;
+  title: string;
+  timeline: string;
+  body: string;
+}
+
+export interface HomepageV2StatItem {
+  value: string;
+  label: string;
+  description: string;
+}
+
+export interface HomepageV2Content {
+  hero: {
+    headline: string;
+    description: string;
+    ctaText: string;
+    aiLinksLabel: string;
+  };
+  partners: {
+    tagline: string;
+  };
+  problem: {
+    heading: string;
+    items: HomepageV2ProblemItem[];
+  };
+  tracks: {
+    heading: string;
+    intro: string;
+    build: HomepageV2Track;
+    grow: HomepageV2Track;
+    connector: string;
+  };
+  results: {
+    heading: string;
+    subtitle: string;
+  };
+  process: {
+    heading: string;
+    subtitle: string;
+    steps: HomepageV2ProcessStep[];
+  };
+  stats: {
+    heading: string;
+    items: HomepageV2StatItem[];
+  };
+  blog: {
+    title: string;
+    subtitle: string;
+  };
+  faq: FAQItem[];
+  cta: {
+    title: string;
+    subtitle: string;
+    ctaText: string;
+  };
+}
+
 export interface ServicesCroContent {
   hero: {
     eyebrow: string;
@@ -552,6 +627,7 @@ const contentRegistry: Record<string, unknown> = {
   "services-copywriting": servicesCopywritingContent,
   "services-ux-ui-design": servicesUxUiDesignContent,
   "seo-for-hub": seoForHubContent,
+  "homepage-v2": homepageV2Content,
 };
 
 /**
@@ -701,6 +777,13 @@ export function getServicesUxUiDesignContent(): ServicesUxUiDesignContent {
  */
 export function getSeoForHubContent(): SeoForHubContent {
   return seoForHubContent as SeoForHubContent;
+}
+
+/**
+ * Get Homepage V2 content
+ */
+export function getHomepageV2Content(): HomepageV2Content {
+  return homepageV2Content as HomepageV2Content;
 }
 
 /**

@@ -1,7 +1,8 @@
 {
-  "headline": "Conversion-first Webflow sites with SEO/AEO that scales your traffic",
-  "description": "A strategic Enterprise-grade Webflow partner that ship measurable results fast.<br><br>For companies who need experts, not overhead.<br><br>See what our AI-friends have to say about us👇",
-  "ctaText": "Book an intro call",
+  "headline": "Your website converts.<br>Your organic traffic compounds.<br>One team runs both.",
+  "description": "LoudFace is the conversion and organic growth team behind 200+ B2B SaaS websites. We build on Webflow (or custom stack), then run SEO, AEO, and CRO to grow what we shipped.",
+  "ctaText": "Book your strategy call",
+  "aiLinksLabel": "See what AI says about us",
   "aiLinks": [
     {
       "name": "ChatGPT",
