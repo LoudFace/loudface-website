@@ -103,7 +103,7 @@ export function CaseStudySlider({
                         />
 
                         {/* Thumbnail */}
-                        <div className="flex-none w-full md:w-[280px] max-h-[400px] rounded-md overflow-hidden">
+                        <div className="flex-none w-full md:w-[280px] aspect-video md:aspect-auto max-h-[400px] rounded-md overflow-hidden">
                           <img
                             src={
                               caseStudyThumbnail(study['main-project-image-thumbnail']?.url)?.src ||
