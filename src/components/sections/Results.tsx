@@ -47,8 +47,8 @@ export function Results({
   // Format title with highlighted words
   function formatTitle(text: string) {
     return text
-      .replace(/customers/g, '<span class="text-surface-400">customers</span>')
-      .replace(/results/g, '<span class="text-surface-400">results</span>');
+      .replace(/customers/g, '<span class="text-surface-500">customers</span>')
+      .replace(/results/g, '<span class="text-surface-500">results</span>');
   }
 
   // Case Study Card component

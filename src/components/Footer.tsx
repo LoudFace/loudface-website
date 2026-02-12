@@ -26,7 +26,7 @@ export function Footer({ caseStudies = [], blogPosts = [] }: FooterProps) {
 
   const industryLinks = [
     { label: 'SaaS', href: '/seo-for/saas' },
-    { label: 'E-commerce', href: '/seo-for/e-commerce' },
+    { label: 'E-commerce', href: '/seo-for/ecommerce' },
     { label: 'B2B', href: '/seo-for/b2b' },
     { label: 'Healthcare', href: '/seo-for/healthcare' },
   ];
@@ -271,25 +271,25 @@ export function Footer({ caseStudies = [], blogPosts = [] }: FooterProps) {
 
               {/* Copyright */}
               <div className="flex flex-wrap justify-between items-center gap-4">
-                <p className="text-surface-500 text-sm">
+                <p className="text-surface-400 text-sm">
                   &copy; {currentYear} LoudFace. All rights reserved.
                 </p>
                 <div className="flex gap-6">
                   <Link
                     href="/privacy"
-                    className="text-sm text-surface-500 hover:text-surface-300 transition-colors"
+                    className="text-sm text-surface-400 hover:text-surface-300 transition-colors"
                   >
                     Privacy Policy
                   </Link>
                   <Link
                     href="/terms"
-                    className="text-sm text-surface-500 hover:text-surface-300 transition-colors"
+                    className="text-sm text-surface-400 hover:text-surface-300 transition-colors"
                   >
                     Terms of Service
                   </Link>
                   <Link
                     href="/cookies"
-                    className="text-sm text-surface-500 hover:text-surface-300 transition-colors"
+                    className="text-sm text-surface-400 hover:text-surface-300 transition-colors"
                   >
                     Cookie Policy
                   </Link>

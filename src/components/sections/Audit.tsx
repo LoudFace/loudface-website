@@ -24,7 +24,7 @@ export function Audit({ title, highlightText, description, challenges }: AuditPr
             {/* Header */}
             <div className="max-w-xs md:max-w-none mx-auto md:mx-0 md:text-left text-center">
               <h2 className="text-2xl sm:text-3xl md:text-4xl font-medium text-surface-900">
-                {finalTitle} <span className="text-surface-400">{finalHighlightText}</span>
+                {finalTitle} <span className="text-surface-500">{finalHighlightText}</span>
               </h2>
             </div>
 

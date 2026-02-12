@@ -65,7 +65,7 @@ export function FooterLocations() {
           {/* Address */}
           <div className="mt-2.5">
             {loc.address.map((line, j) => (
-              <p key={j} className="text-sm text-surface-500 leading-relaxed">
+              <p key={j} className="text-sm text-surface-400 leading-relaxed">
                 {line}
               </p>
             ))}

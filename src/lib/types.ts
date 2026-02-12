@@ -103,6 +103,7 @@ export interface BlogPost {
   "time-to-read"?: string;
   featured?: boolean;
   "published-date"?: string;
+  "last-updated"?: string;
   author?: string; // Reference ID to team-members collection
   category?: string; // Reference ID to categories collection (main category)
   categories?: string[]; // Multi-reference to categories collection

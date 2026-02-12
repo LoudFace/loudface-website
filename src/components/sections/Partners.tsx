@@ -39,15 +39,9 @@ export function Partners({
               <span className="font-bold text-surface-900">{finalStarRatingPrefix}</span>
               <div className="flex items-center gap-0.5">
                 {Array.from({ length: starCount }).map((_, i) => (
-                  <img
-                    key={i}
-                    src={asset('/images/star-icon.svg')}
-                    loading="lazy"
-                    width="14"
-                    height="14"
-                    alt=""
-                    className="w-3.5 h-3.5"
-                  />
+                  <svg key={i} className="w-3.5 h-3.5" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                    <path d="M6.748.669a.275.275 0 0 1 .504 0l1.716 3.903a.275.275 0 0 0 .219.167l4.069.506a.275.275 0 0 1 .155.498l-3.008 2.919a.275.275 0 0 0-.084.27l.798 4.217a.275.275 0 0 1-.407.31L7.135 11.363a.275.275 0 0 0-.27 0l-3.575 2.1a.275.275 0 0 1-.407-.311l.798-4.216a.275.275 0 0 0-.083-.27L.59 5.742a.275.275 0 0 1 .155-.498l4.069-.506a.275.275 0 0 0 .218-.167L6.748.67Z" fill="currentColor" className="text-primary-600" />
+                  </svg>
                 ))}
               </div>
               <span className="font-bold text-surface-900">{finalStarRatingSuffix}</span>

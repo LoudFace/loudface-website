@@ -11,6 +11,7 @@ import { avatarImage, heroImage, thumbnailImage } from '@/lib/image-utils';
 import { asset } from '@/lib/assets';
 import { SectionContainer } from '@/components/ui';
 import { CTA, RelatedComparisons } from '@/components/sections';
+import { truncateSeoTitle } from '@/lib/seo-utils';
 import type { BlogPost, Category, TeamMember } from '@/lib/types';
 
 interface PageProps {
@@ -59,11 +60,31 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 
       if (item) {
         const fieldData = item.fieldData as Record<string, unknown>;
+        const rawTitle = (fieldData['meta-title'] as string) || (fieldData.name as string);
+        const title = truncateSeoTitle(rawTitle);
+        const description = (fieldData['meta-description'] as string) || (fieldData.excerpt as string) || '';
+        const thumbnail = fieldData.thumbnail as { url?: string } | undefined;
+        const imageUrl = thumbnail?.url || '/images/og-image.jpg';
         return {
-          title: (fieldData['meta-title'] as string) || (fieldData.name as string),
-          description: (fieldData['meta-description'] as string) || (fieldData.excerpt as string) || '',
+          title,
+          description,
           alternates: {
             canonical: `/blog/${slug}`,
+          },
+          openGraph: {
+            type: 'article',
+            title,
+            description,
+            url: `/blog/${slug}`,
+            images: [{ url: imageUrl, width: 1200, height: 630, alt: title }],
+            publishedTime: (fieldData['published-date'] as string) || undefined,
+            modifiedTime: (fieldData['last-updated'] as string) || (fieldData['published-date'] as string) || undefined,
+          },
+          twitter: {
+            card: 'summary_large_image',
+            title,
+            description,
+            images: [imageUrl],
           },
         };
       }
@@ -177,6 +198,7 @@ export default async function BlogPostPage({ params }: PageProps) {
     description: post.excerpt || '',
     image: post.thumbnail?.url,
     datePublished: post['published-date'],
+    dateModified: post['last-updated'] || post['published-date'],
     author: {
       '@type': 'Person',
       name: author?.name || 'LoudFace',

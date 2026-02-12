@@ -113,7 +113,7 @@ export function Knowledge({
                               <Badge variant="outline">
                                 {category?.name || 'Uncategorized'}
                               </Badge>
-                              <span className="opacity-50">
+                              <span className="text-surface-500">
                                 <span className="font-medium text-base">{finalReadTime}</span>
                               </span>
                             </div>

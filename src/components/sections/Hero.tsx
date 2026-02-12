@@ -40,8 +40,9 @@ export function Hero({
     return clients.get(clientId);
   }
 
-  // Only show featured case studies in the hero slider
-  const featuredStudies = caseStudies.filter((s) => s.featured);
+  // Only show featured case studies in the hero slider — cap at 4 to
+  // keep DOM size reasonable (each card is duplicated for the infinite loop)
+  const featuredStudies = caseStudies.filter((s) => s.featured).slice(0, 4);
 
   // Build aiLinks array from JSON content + shared icons
   const aiLinks = content.aiLinks.map((link) => ({
