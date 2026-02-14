@@ -215,21 +215,25 @@ export default async function AboutPage() {
           {clientsWithLogos.length > 0 && (
             <div className="mt-10 pt-8 border-t border-surface-200">
               <div className="flex flex-wrap items-center gap-6">
-                {clientsWithLogos.map((client) => (
-                  <div
-                    key={client.id}
-                    className="w-20 h-8 flex items-center justify-center"
-                  >
-                    <img
-                      src={logoImage(client['colored-logo']?.url)}
-                      alt={client.name}
-                      width="120"
-                      height="32"
-                      className="max-w-full max-h-full object-contain"
-                      loading="lazy"
-                    />
-                  </div>
-                ))}
+                {clientsWithLogos.map((client) => {
+                  const scale = client['logo-scale'] ?? 1;
+                  return (
+                    <div
+                      key={client.id}
+                      className="w-20 h-8 flex items-center justify-center"
+                      style={scale !== 1 ? { transform: `scale(${scale})` } : undefined}
+                    >
+                      <img
+                        src={logoImage(client['colored-logo']?.url)}
+                        alt={client.name}
+                        width="120"
+                        height="32"
+                        className="max-w-full max-h-full object-contain"
+                        loading="lazy"
+                      />
+                    </div>
+                  );
+                })}
               </div>
             </div>
           )}

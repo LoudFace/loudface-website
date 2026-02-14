@@ -78,7 +78,8 @@ export function Hero({
                 src={logoImage(client['colored-logo'].url)}
                 alt={isHidden ? '' : client.name || 'Client logo'}
                 loading="lazy"
-                className="h-5 w-24 object-contain object-left"
+                className="h-5 w-24 object-contain object-left origin-left"
+                style={client['logo-scale'] && client['logo-scale'] !== 1 ? { transform: `scale(${client['logo-scale']})` } : undefined}
               />
             ) : (
               <span className="font-medium text-surface-700">

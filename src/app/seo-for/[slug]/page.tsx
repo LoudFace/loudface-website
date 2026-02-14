@@ -285,21 +285,26 @@ export default async function SeoForIndustryPage({ params }: PageProps) {
             Trusted by leading {industryName ? `${industryName} ` : ''}companies
           </p>
           <div className="flex flex-wrap justify-center items-center gap-4 sm:gap-6 md:gap-x-12 md:gap-y-8">
-            {showcaseClients.map((client) => (
-              <div key={client.id} className="flex items-center justify-center">
-                <img
-                  src={
-                    logoImage(client['colored-logo']?.url) ||
-                    asset('/images/placeholder-logo.svg')
-                  }
-                  loading="lazy"
-                  width="100"
-                  height="45"
-                  alt={client.name}
-                  className="max-w-[100px] max-h-[45px] w-auto h-auto object-contain grayscale opacity-60 transition-all duration-200 hover:grayscale-0 hover:opacity-100"
-                />
-              </div>
-            ))}
+            {showcaseClients.map((client) => {
+              const scale = client['logo-scale'] ?? 1;
+              return (
+                <div
+                  key={client.id}
+                  className="w-24 h-10 flex items-center justify-center"
+                  style={scale !== 1 ? { transform: `scale(${scale})` } : undefined}
+                >
+                  <img
+                    src={
+                      logoImage(client['colored-logo']?.url) ||
+                      asset('/images/placeholder-logo.svg')
+                    }
+                    loading="lazy"
+                    alt={client.name}
+                    className="max-w-full max-h-full object-contain grayscale opacity-60 transition-all duration-200 hover:grayscale-0 hover:opacity-100"
+                  />
+                </div>
+              );
+            })}
           </div>
         </SectionContainer>
       )}

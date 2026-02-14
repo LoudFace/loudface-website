@@ -135,28 +135,12 @@ export function avatarImage(url: string | undefined): string | undefined {
 }
 
 /**
- * Optimized logo image with visual-weight normalization.
- *
- * Uses weserv.nl fit=contain to pad every logo into a uniform 300x120
- * bounding box with a transparent background. This ensures tall/narrow
- * logos and wide/short logos arrive at the same dimensions, so CSS
- * renders them at equal visual weight without aspect-ratio tricks.
- *
- * Output is PNG to preserve transparency for the contain padding.
+ * Optimized logo image
+ * Displayed at ~100px, serves 300px for 3x retina.
+ * Keeps original format (no WebP) to preserve sharp edges on SVG/PNG logos.
  */
 export function logoImage(url: string | undefined): string | undefined {
-  if (!url || !isRemoteUrl(url)) return url;
-
-  const params = new URLSearchParams();
-  params.set("url", url);
-  params.set("w", "300");
-  params.set("h", "120");
-  params.set("fit", "contain");
-  params.set("cbg", "transparent");
-  params.set("output", "png");
-  params.set("q", "95");
-
-  return `https://images.weserv.nl/?${params.toString()}`;
+  return optimizeImage(url, ImageSizes.logo, 95, "original");
 }
 
 /**
