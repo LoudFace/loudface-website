@@ -46,7 +46,7 @@ export const metadata: Metadata = {
     images: ["/images/og-image.jpg"],
   },
   icons: {
-    icon: "/images/favicon.png",
+    icon: "/lf-logo.svg",
     apple: "/images/webclip.png",
   },
   other: {
