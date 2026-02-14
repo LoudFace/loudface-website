@@ -110,9 +110,9 @@ export const ImageSizes = {
   thumbnail: 800,
   thumbnailLarge: 1000,
 
-  // Logos (displayed ~100px wide, serve 120px for ~1.2x retina — sufficient for flat graphics)
-  logo: 120,
-  logoSmall: 80,
+  // Logos (displayed ~100px wide, serve 300px for 3x retina — sharp flat graphics)
+  logo: 300,
+  logoSmall: 160,
 
   // Cards (displayed ~280-400px, serve 800px for 2x)
   cardImage: 800,
@@ -136,10 +136,11 @@ export function avatarImage(url: string | undefined): string | undefined {
 
 /**
  * Optimized logo image
- * Displayed at ~100px, serves 200px for 2x retina
+ * Displayed at ~100px, serves 300px for 3x retina.
+ * Keeps original format (no WebP) to preserve sharp edges on SVG/PNG logos.
  */
 export function logoImage(url: string | undefined): string | undefined {
-  return optimizeImage(url, ImageSizes.logo);
+  return optimizeImage(url, ImageSizes.logo, 95, "original");
 }
 
 /**
