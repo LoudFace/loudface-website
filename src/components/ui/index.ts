@@ -5,6 +5,7 @@ export { Button } from './Button';
 export { Card } from './Card';
 export { CarouselNav } from './CarouselNav';
 export { ComponentAssemblyVisual } from './ComponentAssemblyVisual';
+export { LogoImage } from './LogoImage';
 export { CopyFirstVisual } from './CopyFirstVisual';
 export { ConversionSplitVisual } from './ConversionSplitVisual';
 export { DesignSystemVisual } from './DesignSystemVisual';

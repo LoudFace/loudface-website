@@ -1,6 +1,7 @@
 import { asset } from '@/lib/assets';
 import { avatarImage, logoImage } from '@/lib/image-utils';
 import { getPartnersContent } from '@/lib/content-utils';
+import { LogoImage } from '@/components/ui';
 import type { Testimonial, Client } from '@/lib/types';
 
 interface PartnersProps {
@@ -93,26 +94,18 @@ export function Partners({
             {/* Client Logos */}
             {showcaseClients.length > 0 && (
               <div className="flex flex-wrap justify-center items-center gap-4 sm:gap-6 md:gap-x-12 md:gap-y-8">
-                {showcaseClients.map((client) => {
-                  const scale = client['logo-scale'] ?? 1;
-                  return (
-                    <div
-                      key={client.id}
-                      className="logo-item w-24 h-10 flex items-center justify-center"
-                      style={scale !== 1 ? { transform: `scale(${scale})` } : undefined}
-                    >
-                      <img
-                        src={
-                          logoImage(client['colored-logo']?.url) ||
-                          asset('/images/placeholder-logo.svg')
-                        }
-                        loading="lazy"
-                        alt={client.name}
-                        className="max-w-full max-h-full object-contain grayscale opacity-60 transition-all duration-200 hover:grayscale-0 hover:opacity-100"
-                      />
-                    </div>
-                  );
-                })}
+                {showcaseClients.map((client) => (
+                  <LogoImage
+                    key={client.id}
+                    src={
+                      logoImage(client['colored-logo']?.url) ||
+                      asset('/images/placeholder-logo.svg')
+                    }
+                    alt={client.name}
+                    containerClassName="logo-item"
+                    imgClassName="grayscale opacity-60 transition-all duration-200 hover:grayscale-0 hover:opacity-100"
+                  />
+                ))}
               </div>
             )}
           </div>

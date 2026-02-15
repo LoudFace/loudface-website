@@ -4,7 +4,7 @@ Quick-reference for every reusable component. **Check here before writing any ma
 
 Import all UI primitives from the barrel:
 ```tsx
-import { AICitationVisual, Badge, BulletLabel, Button, Card, CarouselNav, ComponentAssemblyVisual, CopyFirstVisual, ConversionSplitVisual, DesignSystemVisual, PixelBreakpointAnimation, ScalableGridAnimation, SectionContainer, SectionHeader } from '@/components/ui';
+import { AICitationVisual, Badge, BulletLabel, Button, Card, CarouselNav, ComponentAssemblyVisual, CopyFirstVisual, ConversionSplitVisual, DesignSystemVisual, LogoImage, PixelBreakpointAnimation, ScalableGridAnimation, SectionContainer, SectionHeader } from '@/components/ui';
 ```
 
 ---
@@ -109,6 +109,27 @@ Prev/next arrow buttons for Embla carousels.
 
 ```tsx
 <CarouselNav variant="light" onPrevClick={scrollPrev} onNextClick={scrollNext} />
+```
+
+### LogoImage
+
+Auto-scaling logo image that normalizes visual weight across different aspect ratios. Uses Dan Paquette's proportional normalization formula on load. Starts invisible and fades in after the scale is calculated. Client component.
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `src` | `string` | required | Image URL |
+| `alt` | `string` | required | Accessible alt text |
+| `containerWidth` | `number` | `96` | Bounding box width in px |
+| `containerHeight` | `number` | `40` | Bounding box height in px |
+| `containerClassName` | `string` | `''` | Classes on the outer wrapper div |
+| `imgClassName` | `string` | `''` | Classes on the `<img>` element |
+
+```tsx
+<LogoImage
+  src={logoImage(client['colored-logo']?.url) || asset('/images/placeholder-logo.svg')}
+  alt={client.name}
+  imgClassName="grayscale opacity-60 transition-all duration-200 hover:grayscale-0 hover:opacity-100"
+/>
 ```
 
 ### CopyFirstVisual
@@ -279,7 +300,7 @@ All section components are exported from `@/components/sections` (or `@/componen
 
 ```
 src/components/index.ts        → re-exports everything
-src/components/ui/index.ts     → AICitationVisual, Badge, BulletLabel, Button, Card, CarouselNav, ComponentAssemblyVisual, CopyFirstVisual, ConversionSplitVisual, DesignSystemVisual, PixelBreakpointAnimation, ScalableGridAnimation, Pagination, SectionContainer, SectionHeader, VideoFacade
+src/components/ui/index.ts     → AICitationVisual, Badge, BulletLabel, Button, Card, CarouselNav, ComponentAssemblyVisual, CopyFirstVisual, ConversionSplitVisual, DesignSystemVisual, LogoImage, PixelBreakpointAnimation, ScalableGridAnimation, Pagination, SectionContainer, SectionHeader, VideoFacade
 src/components/sections/index.ts → Hero, Partners, CaseStudySlider, Audit, Results, Marketing, Approach, Knowledge, FAQ, CTA, EditorialProse, DeliverablesGrid, RelatedServices, RelatedComparisons, RelatedArticles
 ```
 

@@ -689,8 +689,7 @@ export default async function WebflowServicePage() {
                             alt={client.name || 'Client'}
                             width="120"
                             height="20"
-                            className="h-5 w-auto max-w-[100px] object-contain opacity-60 group-hover:opacity-100 transition-opacity origin-left"
-                            style={client['logo-scale'] && client['logo-scale'] !== 1 ? { transform: `scale(${client['logo-scale']})` } : undefined}
+                            className="h-5 w-auto max-w-[100px] object-contain opacity-60 group-hover:opacity-100 transition-opacity"
                             loading="lazy"
                           />
                         ) : (

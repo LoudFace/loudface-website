@@ -70,7 +70,6 @@ export interface Client {
   "colored-logo"?: WebflowImage;
   "light-logo"?: WebflowImage;
   "dark-logo"?: WebflowImage;
-  "logo-scale"?: number;
 }
 
 /**
