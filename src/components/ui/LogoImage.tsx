@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useRef, useEffect } from 'react';
 
 interface LogoImageProps {
   src: string;
@@ -35,10 +35,11 @@ export function LogoImage({
 }: LogoImageProps) {
   const [adjustedWidth, setAdjustedWidth] = useState(containerWidth);
   const [loaded, setLoaded] = useState(false);
+  const imgRef = useRef<HTMLImageElement>(null);
 
-  const handleLoad = useCallback(
-    (e: React.SyntheticEvent<HTMLImageElement>) => {
-      const { naturalWidth, naturalHeight } = e.currentTarget;
+  const normalize = useCallback(
+    (img: HTMLImageElement) => {
+      const { naturalWidth, naturalHeight } = img;
       if (!naturalWidth || !naturalHeight) {
         setLoaded(true);
         return;
@@ -63,6 +64,23 @@ export function LogoImage({
     [containerWidth, containerHeight],
   );
 
+  // Handle images that loaded before React hydrated (SSR race condition).
+  // On production, Vercel delivers HTML fast and images may finish loading
+  // before React attaches the onLoad handler — so onLoad never fires.
+  useEffect(() => {
+    const img = imgRef.current;
+    if (img && img.complete && img.naturalWidth > 0) {
+      normalize(img);
+    }
+  }, [normalize]);
+
+  const handleLoad = useCallback(
+    (e: React.SyntheticEvent<HTMLImageElement>) => {
+      normalize(e.currentTarget);
+    },
+    [normalize],
+  );
+
   const handleError = useCallback(() => {
     setLoaded(true);
   }, []);
@@ -78,6 +96,7 @@ export function LogoImage({
       }}
     >
       <img
+        ref={imgRef}
         src={src}
         alt={alt}
         loading="lazy"
