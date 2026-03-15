@@ -184,6 +184,58 @@ const serviceSchema = {
 />
 ```
 
+### AboutPage Schema (for About Page)
+
+Add to `src/app/about/page.tsx` — strengthens entity identity for AEO:
+
+```tsx
+const aboutSchema = {
+  "@context": "https://schema.org",
+  "@type": "AboutPage",
+  "name": "About LoudFace",
+  "description": "Learn about LoudFace, our mission, and the team behind your next successful web project.",
+  "url": "https://www.loudface.co/about",
+  "mainEntity": {
+    "@type": "Organization",
+    "name": "LoudFace",
+    "url": "https://www.loudface.co",
+    "description": "B2B SaaS web design, SEO, AEO, and growth agency. Webflow Enterprise Partners with 7+ years of experience.",
+    "foundingDate": "2019",
+    "address": {
+      "@type": "PostalAddress",
+      "addressLocality": "Dubai",
+      "addressCountry": "AE"
+    },
+    // Include team members if available from CMS
+    ...(teamMembers.length > 0 && {
+      "employee": teamMembers.map(member => ({
+        "@type": "Person",
+        "name": member.name,
+        "jobTitle": member['job-title'] || undefined,
+      })),
+    }),
+  },
+};
+
+const breadcrumbSchema = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://www.loudface.co" },
+    { "@type": "ListItem", "position": 2, "name": "About" },
+  ],
+};
+
+<script
+  type="application/ld+json"
+  dangerouslySetInnerHTML={{ __html: JSON.stringify(aboutSchema) }}
+/>
+<script
+  type="application/ld+json"
+  dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
+/>
+```
+
 ### LocalBusiness Schema (Optional)
 
 ```json
@@ -270,4 +322,4 @@ import Script from 'next/script';
 | SEO industry hub | Service, BreadcrumbList, ItemList |
 | SEO industry detail | Service, BreadcrumbList |
 | FAQ section | FAQPage |
-| About page | Organization (already global) |
+| About page | AboutPage, BreadcrumbList |

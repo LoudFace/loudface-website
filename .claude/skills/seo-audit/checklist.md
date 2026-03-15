@@ -1,6 +1,6 @@
-# SEO Audit Detailed Checklist
+# SEO, AEO & GEO Audit Detailed Checklist
 
-Complete checklist for thorough SEO audits.
+Complete checklist for thorough SEO, AI Engine Optimization (AEO), and Generative Engine Optimization (GEO) audits.
 
 ## Technical SEO
 
@@ -325,34 +325,80 @@ Sitemap: https://www.loudface.co/sitemap-index.xml
 
 ## AEO (AI Engine Optimization)
 
-### Entity & Authority
+AI engines (ChatGPT, Perplexity, Claude, Gemini) extract content differently from traditional crawlers. These checks ensure the site is structured for AI citation and recommendation.
+
+### 9a. Entity Identity & Disambiguation
+
+AI engines must unambiguously identify WHO you are before they can recommend you.
 
 | Check | Requirement |
 |-------|-------------|
 | Organization schema `sameAs` | Includes all social/directory profiles (LinkedIn, Instagram, Dribbble, etc.) |
+| Organization schema detail | Includes `foundingDate`, `address`, `logo`, and `description` |
+| About page entity declaration | First paragraph has clear: who, what, where, expertise, founding year |
+| Entity name consistency | Brand name identical across schema JSON-LD, OG metadata, page content, social bios |
+| Team member visibility | Names, roles, credentials in server-rendered HTML (not behind JS tabs) |
+| AboutPage schema | Present with `mainEntity` linking to Organization |
 | About page entity clarity | Clear statement of who, what, where, and expertise |
-| Team member attribution | Names, roles, credentials visible (Person schema optional) |
-| Consistent entity naming | Brand name identical across schema, OG, content, and social profiles |
 
-### Content Structure for AI Citation
+### 9b. Category Membership & Positioning
+
+AI uses explicit category claims to match entities to queries like "best [category] in [location]."
 
 | Check | Requirement |
 |-------|-------------|
-| Lead with the answer | First paragraph of each page is a self-contained summary |
-| Q&A patterns | Key pages have question H2/H3 with immediate answer paragraphs |
-| Specific claims | Stats, timeframes, and case study references instead of vague claims |
-| Definitive language | "We provide X" not "X might help" on service pages |
-| Comparison readiness | Content addresses "best X", "X vs Y", "alternative to Z" queries |
+| Category-membership statements | Service pages contain "LoudFace is a B2B SaaS web design agency" or equivalent |
+| Category claim placement | Claims appear in first 100 words of key pages (AI extracts opening paragraphs first) |
+| Cross-page reinforcement | Multiple pages reinforce the same positioning (homepage, about, services, case studies) |
+| Industry vertical pages | Niche targeting pages exist (`/seo-for/saas`, `/seo-for/ecommerce`) |
+| Location signals | Schema address, "based in Dubai" in content where relevant |
+| Schema description | Organization schema `description` contains category claims |
 
-### Technical AEO Signals
+### 9c. Content Structure for AI Extraction
+
+AI extracts self-contained chunks, not full pages. Structure content so chunks are independently meaningful.
+
+| Check | Requirement |
+|-------|-------------|
+| Self-contained first paragraph | Each page opens with a summary that answers the implicit query |
+| Q&A patterns | Key pages have question H2/H3 with immediate answer paragraph |
+| FAQ schema | FAQ sections use proper FAQPage schema |
+| Specific claims with evidence | Stats, timeframes, case study references instead of vague claims |
+| No hedging language | "We provide X" not "X might help" on service pages |
+| Standalone H2 sections | Each H2 section is independently meaningful without reading rest of page |
+
+### 9d. Comparison & Recommendation Readiness
+
+AI engines field "best X", "X vs Y", and "alternative to Z" queries constantly.
+
+| Check | Requirement |
+|-------|-------------|
+| Clear differentiators | Service pages state what makes this offering different |
+| Measurable outcomes | Case studies include specific numbers and timeframes |
+| "vs" and "alternative" content | Addresses comparison queries where relevant |
+| Structured comparisons | Tables, pros/cons lists, side-by-side breakdowns |
+| Ranking language | "best for", "ideal when", "recommended if" present where appropriate |
+
+### 9e. Technical AEO Signals
 
 | Check | Requirement |
 |-------|-------------|
 | AI bot access | robots.txt allows GPTBot, ChatGPT-User, ClaudeBot, Anthropic-ai, PerplexityBot, Google-Extended, Bytespider |
-| Server-rendered content | AI scrapers don't execute JS — key content must be in SSR HTML |
+| Server-rendered content | All citable content in SSR HTML (AI scrapers don't execute JS) |
 | No content gates | No excessive paywalls, login walls, or interstitials blocking AI reading |
 | Structured data | Machine-readable entity relationships via JSON-LD schemas |
-| Industry vertical pages | `/seo-for/[slug]` pattern for vertical targeting ("best SEO for [industry]") |
+
+### 9f. Content Freshness Signals
+
+AI engines weight recency. Stale content gets passed over for newer sources.
+
+| Check | Requirement |
+|-------|-------------|
+| Blog schema dates | `datePublished` and `dateModified` in BlogPosting schema |
+| Visible date markup | "Last updated" or "Published on" dates visible in blog post HTML |
+| Recent proof on services | Current-year case studies, up-to-date stats on service pages |
+| Current references | Content references recent events, tools, or data (not 2+ years stale) |
+| Dynamic sitemap dates | `lastModified` uses actual modification dates, not hardcoded values |
 
 ### Content Patterns That Get Cited
 
@@ -363,6 +409,81 @@ Sitemap: https://www.loudface.co/sitemap-index.xml
 | Structured comparisons | Tables, pros/cons lists | AI engines present structured data more readily |
 | Entity attribution | "LoudFace, based in Dubai, specializes in..." | Helps AI associate claims with the right entity |
 | Definitive statements | "We build websites on Webflow" | Hedging ("might", "could") weakens citation confidence |
+
+## GEO (Generative Engine Optimization)
+
+GEO focuses on how well content performs when processed by generative AI -- how quotable, extractable, and authoritative it appears to language models.
+
+### 10a. Quotability & Extractability
+
+AI engines select text passages to quote. Quotable content is concise, specific, and self-contained.
+
+| Check | Requirement |
+|-------|-------------|
+| Concise claim sentences | Key claims under 30 words with full context (no dangling pronouns) |
+| Contextualized statistics | "147% increase in organic traffic over 6 months" not just "147% increase" |
+| Answer-first structure | Definitions and explanations lead with the answer, details follow |
+| Clear list markup | Lists use HTML `<ol>`/`<ul>`, not comma-separated paragraphs |
+| Section takeaways | Each major section ends with a clear summary sentence |
+
+### 10b. Authoritative Tone & Confidence
+
+Language models assess confidence level when deciding what to cite. Definitive language gets cited; hedging gets skipped.
+
+| Check | Requirement |
+|-------|-------------|
+| Definitive service language | "We build", "We deliver", "Our process includes" on service pages |
+| No hedging on core claims | No "might", "could potentially", "may or may not" on capabilities |
+| Credentials with claims | "with 200+ projects delivered" not just "experienced" |
+| Active voice | "We grew their traffic 3x" not "Traffic was grown" |
+| Consistent first-person plural | "we" on agency pages -- AI attributes claims to entities that own them |
+
+### 10c. Source Citation Within Content
+
+AI engines give higher authority to content that references external sources -- it signals original synthesis.
+
+| Check | Requirement |
+|-------|-------------|
+| Blog source citations | Posts cite specific studies, data points, official documentation |
+| Verifiable case study outcomes | Named clients (with permission) or anonymized with specifics |
+| Framework references | Methodology claims reference named frameworks, not generic "our framework" |
+| External authority links | Links to authoritative sources present where claims need backing |
+
+### 10d. Structured Knowledge Formats
+
+Certain content formats are dramatically more extractable by AI than prose paragraphs.
+
+| Check | Requirement |
+|-------|-------------|
+| Comparison tables | Use actual `<table>` markup, not divs styled as tables |
+| Step-by-step processes | Ordered lists with clear step labels |
+| Feature/service matrices | Structured markup that AI can parse |
+| FAQ sections | Semantic Q&A markup with FAQPage schema |
+| "What is X" definitions | Appear near top of relevant pages (featured snippet + AI extraction) |
+
+### 10e. Topical Authority & Content Depth
+
+AI engines evaluate topical authority -- a site covering a topic thoroughly across multiple interlinked pages gets cited over one with a single shallow mention.
+
+| Check | Requirement |
+|-------|-------------|
+| Multi-format coverage | Core topics covered via service page + blog posts + case studies + FAQ |
+| Internal linking across types | Service pages link to blog deep-dives, blogs link to case studies |
+| Broad + specific angles | Both "What is CRO?" and "A/B testing setup using confidence intervals" |
+| No thin indexed pages | Every indexed page has substantial, unique content (800+ words preferred) |
+| Pillar + cluster architecture | Hub pages linking to detailed subtopic pages for primary topics |
+
+### 10f. Brand Consistency Across Surfaces
+
+AI engines match entities across sources. Inconsistencies reduce citation confidence.
+
+| Check | Requirement |
+|-------|-------------|
+| Brand name consistency | Identical in schema, OG tags, content, footer, social profiles |
+| Brand description alignment | Schema description matches about page first paragraph |
+| Service list consistency | Same services named the same way across all pages |
+| Contact/location consistency | Same address in schema, footer, about page, Google Business Profile |
+| Social profile validity | Schema `sameAs` links are valid and resolve to active profiles |
 
 ## Font & Resource Loading
 
