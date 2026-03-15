@@ -455,6 +455,7 @@ export default async function CaseStudyPage({ params }: PageProps) {
                     alt={testimonial.name}
                     width="80"
                     height="80"
+                    loading="lazy"
                     className="w-10 h-10 rounded-full object-cover"
                   />
                 )}
@@ -476,7 +477,7 @@ export default async function CaseStudyPage({ params }: PageProps) {
           <div className="flex items-center justify-between mb-8">
             <h2 className="text-2xl md:text-3xl font-medium text-surface-900">More work</h2>
             <Link href="/case-studies" className="text-sm font-medium text-surface-600 hover:text-primary-600 transition-colors">
-              View all →
+              All case studies
             </Link>
           </div>
 

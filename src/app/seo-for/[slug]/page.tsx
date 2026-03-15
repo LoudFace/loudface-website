@@ -524,7 +524,7 @@ export default async function SeoForIndustryPage({ params }: PageProps) {
               href="/blog"
               className="text-sm font-medium text-surface-600 hover:text-primary-600 transition-colors"
             >
-              View all →
+              All blog posts
             </Link>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">

@@ -316,6 +316,7 @@ export default async function BlogPostPage({ params }: PageProps) {
                 height="675"
                 className="w-full rounded-xl shadow-lg"
                 loading="eager"
+                fetchPriority="high"
               />
             </div>
           </div>
@@ -365,6 +366,7 @@ export default async function BlogPostPage({ params }: PageProps) {
                         alt={author.name}
                         width="80"
                         height="80"
+                        loading="lazy"
                         className="w-12 h-12 rounded-full object-cover"
                       />
                     )}
@@ -391,7 +393,7 @@ export default async function BlogPostPage({ params }: PageProps) {
           <div className="flex items-center justify-between mb-8">
             <h2 className="text-2xl md:text-3xl font-medium text-surface-900">Related posts</h2>
             <Link href="/blog" className="text-sm font-medium text-surface-600 hover:text-primary-600 transition-colors">
-              View all →
+              All blog posts
             </Link>
           </div>
 

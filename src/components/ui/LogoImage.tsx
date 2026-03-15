@@ -99,6 +99,8 @@ export function LogoImage({
         ref={imgRef}
         src={src}
         alt={alt}
+        width={containerWidth}
+        height={containerHeight}
         loading="lazy"
         onLoad={handleLoad}
         onError={handleError}
