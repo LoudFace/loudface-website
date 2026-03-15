@@ -135,6 +135,23 @@ export default function CopywritingServicePage() {
         </div>
       </SectionContainer>
 
+      {/* ─── Definition ─── */}
+      <SectionContainer padding="sm">
+        <div className="max-w-3xl">
+          <h2 className="text-2xl sm:text-3xl md:text-4xl font-medium text-surface-900">
+            What is conversion <span className="text-surface-500">copywriting?</span>
+          </h2>
+          <p className="mt-4 text-lg text-surface-600">
+            Conversion copywriting is the discipline of writing website content that persuades visitors to take a specific action — booking a demo, requesting a quote, or signing up.
+            Unlike brand copywriting, it follows a{' '}
+            <a href="https://copyhackers.com/conversion-copywriting/" target="_blank" rel="noopener noreferrer" className="text-primary-600 hover:text-primary-700 underline underline-offset-2">research-driven methodology</a>:{' '}
+            customer interviews, message mining, and A/B testing shape every headline and CTA.
+            At LoudFace, copy is the first deliverable in every project — not an afterthought — because messaging determines page structure, visual hierarchy, and how AI engines parse your content.
+          </p>
+          <p className="mt-2 text-sm text-surface-500">Last updated: March 2026</p>
+        </div>
+      </SectionContainer>
+
       {/* ─── Section 2: Problems ─── */}
       <SectionContainer>
         <SectionHeader
@@ -283,9 +300,9 @@ export default function CopywritingServicePage() {
           <div className="relative">
             <div className="absolute top-5 left-0 right-0 h-px bg-surface-700" />
 
-            <div className="grid grid-cols-4 gap-8">
+            <ol className="grid grid-cols-4 gap-8 list-none p-0 m-0">
               {content.approach.steps.map((step) => (
-                <div key={step.number} className="relative">
+                <li key={step.number} className="relative">
                   <div className="relative z-10 w-10 h-10 rounded-full bg-primary-600 text-white flex items-center justify-center font-mono text-sm font-medium mx-auto">
                     {step.number}
                   </div>
@@ -298,17 +315,17 @@ export default function CopywritingServicePage() {
                       {step.description}
                     </p>
                   </Card>
-                </div>
+                </li>
               ))}
-            </div>
+            </ol>
           </div>
         </div>
 
         {/* Mobile: Vertical timeline */}
         <div className="lg:hidden mt-10">
-          <div className="relative border-l-2 border-surface-700 ml-5 space-y-8">
+          <ol className="relative border-l-2 border-surface-700 ml-5 space-y-8 list-none p-0 m-0">
             {content.approach.steps.map((step) => (
-              <div key={step.number} className="relative pl-10">
+              <li key={step.number} className="relative pl-10">
                 <div className="absolute -left-5 top-0 w-10 h-10 rounded-full bg-primary-600 text-white flex items-center justify-center font-mono text-sm font-medium">
                   {step.number}
                 </div>
@@ -321,9 +338,9 @@ export default function CopywritingServicePage() {
                     {step.description}
                   </p>
                 </Card>
-              </div>
+              </li>
             ))}
-          </div>
+          </ol>
         </div>
       </SectionContainer>
 

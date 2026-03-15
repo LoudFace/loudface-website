@@ -137,6 +137,70 @@ export default function SeoAeoServicePage() {
         </div>
       </SectionContainer>
 
+      {/* ─── Definition + Comparison Table ─── */}
+      <SectionContainer padding="sm">
+        <div className="max-w-3xl">
+          <h2 className="text-2xl sm:text-3xl md:text-4xl font-medium text-surface-900">
+            What is SEO &amp; AEO<span className="text-surface-500">?</span>
+          </h2>
+          <p className="mt-4 text-lg text-surface-600">
+            SEO (Search Engine Optimization) is the practice of improving a website&apos;s visibility in search engine results through technical improvements, content strategy, and authority building.
+            AEO (AI Engine Optimization) extends this to AI-powered answer engines —{' '}
+            <a href="https://openai.com/chatgpt" target="_blank" rel="noopener noreferrer" className="text-primary-600 hover:text-primary-700 underline underline-offset-2">ChatGPT</a>,{' '}
+            <a href="https://www.perplexity.ai" target="_blank" rel="noopener noreferrer" className="text-primary-600 hover:text-primary-700 underline underline-offset-2">Perplexity</a>,{' '}
+            Google AI Mode, and Claude — ensuring your brand gets cited in AI-generated responses.
+            LoudFace runs integrated SEO and AEO programs that build authority across every platform where B2B buyers research solutions.
+          </p>
+          <p className="mt-2 text-sm text-surface-500">Last updated: March 2026</p>
+        </div>
+
+        {/* Comparison Table: SEO vs AEO */}
+        <div className="mt-10 overflow-x-auto">
+          <table className="w-full border-collapse text-left text-sm">
+            <caption className="sr-only">SEO vs AEO comparison — key differences between search engine and AI engine optimization</caption>
+            <thead>
+              <tr className="border-b border-surface-200">
+                <th className="py-3 pr-4 font-medium text-surface-900 w-1/3">Dimension</th>
+                <th className="py-3 px-4 font-medium text-surface-900 w-1/3">SEO</th>
+                <th className="py-3 pl-4 font-medium text-surface-900 w-1/3">AEO</th>
+              </tr>
+            </thead>
+            <tbody className="text-surface-600">
+              <tr className="border-b border-surface-100">
+                <td className="py-3 pr-4 font-medium text-surface-900">Goal</td>
+                <td className="py-3 px-4">Rank on search engine results pages</td>
+                <td className="py-3 pl-4">Get cited in AI-generated answers</td>
+              </tr>
+              <tr className="border-b border-surface-100">
+                <td className="py-3 pr-4 font-medium text-surface-900">Target engines</td>
+                <td className="py-3 px-4">Google, Bing</td>
+                <td className="py-3 pl-4">ChatGPT, Perplexity, Gemini, Claude</td>
+              </tr>
+              <tr className="border-b border-surface-100">
+                <td className="py-3 pr-4 font-medium text-surface-900">Content format</td>
+                <td className="py-3 px-4">Keyword-optimized long-form pages</td>
+                <td className="py-3 pl-4">Self-contained, quotable paragraphs</td>
+              </tr>
+              <tr className="border-b border-surface-100">
+                <td className="py-3 pr-4 font-medium text-surface-900">Authority signal</td>
+                <td className="py-3 px-4">Backlinks, domain rating</td>
+                <td className="py-3 pl-4">Entity clarity, structured data, citations</td>
+              </tr>
+              <tr className="border-b border-surface-100">
+                <td className="py-3 pr-4 font-medium text-surface-900">Measurement</td>
+                <td className="py-3 px-4">Rankings, organic traffic, CTR</td>
+                <td className="py-3 pl-4">Brand mentions, citation frequency, share of voice</td>
+              </tr>
+              <tr>
+                <td className="py-3 pr-4 font-medium text-surface-900">Timeline</td>
+                <td className="py-3 px-4">3-6 months for measurable gains</td>
+                <td className="py-3 pl-4">90-day cycles with weekly monitoring</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </SectionContainer>
+
       {/* ─── Section 2: Problem ─── */}
       <SectionContainer>
         <SectionHeader
@@ -251,9 +315,9 @@ export default function SeoAeoServicePage() {
           <div className="relative">
             <div className="absolute top-5 left-0 right-0 h-px bg-surface-700" />
 
-            <div className="grid grid-cols-4 gap-8">
+            <ol className="grid grid-cols-4 gap-8 list-none p-0 m-0">
               {content.approach.steps.map((step) => (
-                <div key={step.number} className="relative">
+                <li key={step.number} className="relative">
                   <div className="relative z-10 w-10 h-10 rounded-full bg-primary-600 text-white flex items-center justify-center font-mono text-sm font-medium mx-auto">
                     {step.number}
                   </div>
@@ -266,17 +330,17 @@ export default function SeoAeoServicePage() {
                       {step.description}
                     </p>
                   </Card>
-                </div>
+                </li>
               ))}
-            </div>
+            </ol>
           </div>
         </div>
 
         {/* Mobile: Vertical timeline */}
         <div className="lg:hidden mt-10">
-          <div className="relative border-l-2 border-surface-700 ml-5 space-y-8">
+          <ol className="relative border-l-2 border-surface-700 ml-5 space-y-8 list-none p-0 m-0">
             {content.approach.steps.map((step) => (
-              <div key={step.number} className="relative pl-10">
+              <li key={step.number} className="relative pl-10">
                 <div className="absolute -left-5 top-0 w-10 h-10 rounded-full bg-primary-600 text-white flex items-center justify-center font-mono text-sm font-medium">
                   {step.number}
                 </div>
@@ -289,9 +353,9 @@ export default function SeoAeoServicePage() {
                     {step.description}
                   </p>
                 </Card>
-              </div>
+              </li>
             ))}
-          </div>
+          </ol>
         </div>
       </SectionContainer>
 

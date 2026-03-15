@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { asset } from "@/lib/assets";
 
 interface NavLink {
   label: string;
@@ -298,7 +299,7 @@ export function Header() {
                 aria-label="LoudFace Home"
               >
                 <Image
-                  src="/images/loudface.svg"
+                  src={asset('/images/loudface.svg')}
                   width={133}
                   height={26}
                   alt="LoudFace"

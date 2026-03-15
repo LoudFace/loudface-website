@@ -168,6 +168,65 @@ export default async function WebflowServicePage() {
         </div>
       </SectionContainer>
 
+      {/* ─── Definition + Comparison Table ─── */}
+      <SectionContainer padding="sm">
+        <div className="max-w-3xl">
+          <h2 className="text-2xl sm:text-3xl md:text-4xl font-medium text-surface-900">
+            What is Webflow <span className="text-surface-500">development?</span>
+          </h2>
+          <p className="mt-4 text-lg text-surface-600">
+            Webflow development is the process of designing and building production websites on the{' '}
+            <a href="https://webflow.com" target="_blank" rel="noopener noreferrer" className="text-primary-600 hover:text-primary-700 underline underline-offset-2">Webflow</a>{' '}
+            platform — a visual development tool that generates clean, semantic HTML, CSS, and JavaScript without manual coding. Unlike traditional CMS platforms,{' '}
+            <a href="https://university.webflow.com/lesson/intro-to-the-designer" target="_blank" rel="noopener noreferrer" className="text-primary-600 hover:text-primary-700 underline underline-offset-2">Webflow&apos;s visual designer</a>{' '}
+            gives developers pixel-level control while keeping sites editable by non-technical teams.
+            LoudFace specializes in component-first Webflow architecture — building reusable systems that scale with your business rather than becoming technical debt.
+          </p>
+          <p className="mt-2 text-sm text-surface-500">Last updated: March 2026</p>
+        </div>
+
+        {/* Comparison Table: Traditional vs Component-First */}
+        <div className="mt-10 overflow-x-auto">
+          <table className="w-full border-collapse text-left text-sm">
+            <caption className="sr-only">Traditional Webflow build vs LoudFace component-first build comparison</caption>
+            <thead>
+              <tr className="border-b border-surface-200">
+                <th className="py-3 pr-4 font-medium text-surface-900 w-1/3">Capability</th>
+                <th className="py-3 px-4 font-medium text-surface-500 w-1/3">Traditional build</th>
+                <th className="py-3 pl-4 font-medium text-primary-700 w-1/3">Component-first build</th>
+              </tr>
+            </thead>
+            <tbody className="text-surface-600">
+              <tr className="border-b border-surface-100">
+                <td className="py-3 pr-4 font-medium text-surface-900">New landing page</td>
+                <td className="py-3 px-4">2-4 weeks, needs a developer</td>
+                <td className="py-3 pl-4">Hours, marketing team can self-serve</td>
+              </tr>
+              <tr className="border-b border-surface-100">
+                <td className="py-3 pr-4 font-medium text-surface-900">A/B test variant</td>
+                <td className="py-3 px-4">Duplicate page, manual rebuild</td>
+                <td className="py-3 pl-4">Swap components, launch same day</td>
+              </tr>
+              <tr className="border-b border-surface-100">
+                <td className="py-3 pr-4 font-medium text-surface-900">Design consistency</td>
+                <td className="py-3 px-4">Drifts over time, page-by-page fixes</td>
+                <td className="py-3 pl-4">Enforced by shared component library</td>
+              </tr>
+              <tr className="border-b border-surface-100">
+                <td className="py-3 pr-4 font-medium text-surface-900">Technical debt</td>
+                <td className="py-3 px-4">Accumulates with every new page</td>
+                <td className="py-3 pl-4">Stays flat — components update globally</td>
+              </tr>
+              <tr>
+                <td className="py-3 pr-4 font-medium text-surface-900">Team independence</td>
+                <td className="py-3 px-4">Dependent on original developer</td>
+                <td className="py-3 pl-4">Any team member can publish</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </SectionContainer>
+
       {/* ─── Section 2: Problem ─── */}
       <SectionContainer>
         <SectionHeader
@@ -208,15 +267,13 @@ export default async function WebflowServicePage() {
           <div className="relative">
             <div className="absolute top-5 left-0 right-0 h-px bg-surface-700" />
 
-            <div className="grid grid-cols-4 gap-8">
+            <ol className="grid grid-cols-4 gap-8 list-none p-0 m-0">
               {content.approach.steps.map((step) => (
-                <div key={step.number} className="relative">
-                  {/* Numbered node */}
+                <li key={step.number} className="relative">
                   <div className="relative z-10 w-10 h-10 rounded-full bg-primary-600 text-white flex items-center justify-center font-mono text-sm font-medium mx-auto">
                     {step.number}
                   </div>
 
-                  {/* Card below */}
                   <Card variant="glass" padding="md" hover={false} className="mt-6">
                     <h3 className="text-lg font-medium text-white">
                       {step.title}
@@ -225,18 +282,17 @@ export default async function WebflowServicePage() {
                       {step.description}
                     </p>
                   </Card>
-                </div>
+                </li>
               ))}
-            </div>
+            </ol>
           </div>
         </div>
 
         {/* Mobile: Vertical timeline */}
         <div className="lg:hidden mt-10">
-          <div className="relative border-l-2 border-surface-700 ml-5 space-y-8">
+          <ol className="relative border-l-2 border-surface-700 ml-5 space-y-8 list-none p-0 m-0">
             {content.approach.steps.map((step) => (
-              <div key={step.number} className="relative pl-10">
-                {/* Numbered node */}
+              <li key={step.number} className="relative pl-10">
                 <div className="absolute -left-5 top-0 w-10 h-10 rounded-full bg-primary-600 text-white flex items-center justify-center font-mono text-sm font-medium">
                   {step.number}
                 </div>
@@ -249,9 +305,9 @@ export default async function WebflowServicePage() {
                     {step.description}
                   </p>
                 </Card>
-              </div>
+              </li>
             ))}
-          </div>
+          </ol>
         </div>
       </SectionContainer>
 

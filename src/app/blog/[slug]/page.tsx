@@ -291,7 +291,7 @@ export default async function BlogPostPage({ params }: PageProps) {
                       alt={author.name}
                       width="80"
                       height="80"
-                      loading="eager"
+                      loading="lazy"
                       className="w-10 h-10 rounded-full object-cover"
                     />
                   )}

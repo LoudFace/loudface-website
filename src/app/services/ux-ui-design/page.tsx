@@ -135,6 +135,26 @@ export default function UxUiDesignServicePage() {
         </div>
       </SectionContainer>
 
+      {/* ─── Definition ─── */}
+      <SectionContainer padding="sm">
+        <div className="max-w-3xl">
+          <h2 className="text-2xl sm:text-3xl md:text-4xl font-medium text-surface-900">
+            What is UX/UI <span className="text-surface-500">design?</span>
+          </h2>
+          <p className="mt-4 text-lg text-surface-600">
+            UX (User Experience) design determines how a website works — the flow from landing to conversion, information hierarchy, and interaction patterns.
+            UI (User Interface) design determines how it looks — typography, color, spacing, and visual consistency.
+            Together, they shape whether a visitor understands your product and takes action.
+            LoudFace designs{' '}
+            <a href="https://www.nngroup.com/articles/conversion-centered-design/" target="_blank" rel="noopener noreferrer" className="text-primary-600 hover:text-primary-700 underline underline-offset-2">conversion-centered</a>{' '}
+            interfaces where every layout decision is backed by data — not opinion — and the output is a{' '}
+            <a href="https://bradfrost.com/blog/post/atomic-web-design/" target="_blank" rel="noopener noreferrer" className="text-primary-600 hover:text-primary-700 underline underline-offset-2">design system</a>{' '}
+            your team can build on.
+          </p>
+          <p className="mt-2 text-sm text-surface-500">Last updated: March 2026</p>
+        </div>
+      </SectionContainer>
+
       {/* ─── Section 2: Problems ─── */}
       <SectionContainer>
         <SectionHeader
@@ -308,9 +328,9 @@ export default function UxUiDesignServicePage() {
           <div className="relative">
             <div className="absolute top-5 left-0 right-0 h-px bg-surface-700" />
 
-            <div className="grid grid-cols-4 gap-8">
+            <ol className="grid grid-cols-4 gap-8 list-none p-0 m-0">
               {content.approach.steps.map((step) => (
-                <div key={step.number} className="relative">
+                <li key={step.number} className="relative">
                   <div className="relative z-10 w-10 h-10 rounded-full bg-primary-600 text-white flex items-center justify-center font-mono text-sm font-medium mx-auto">
                     {step.number}
                   </div>
@@ -323,17 +343,17 @@ export default function UxUiDesignServicePage() {
                       {step.description}
                     </p>
                   </Card>
-                </div>
+                </li>
               ))}
-            </div>
+            </ol>
           </div>
         </div>
 
         {/* Mobile: Vertical timeline */}
         <div className="lg:hidden mt-10">
-          <div className="relative border-l-2 border-surface-700 ml-5 space-y-8">
+          <ol className="relative border-l-2 border-surface-700 ml-5 space-y-8 list-none p-0 m-0">
             {content.approach.steps.map((step) => (
-              <div key={step.number} className="relative pl-10">
+              <li key={step.number} className="relative pl-10">
                 <div className="absolute -left-5 top-0 w-10 h-10 rounded-full bg-primary-600 text-white flex items-center justify-center font-mono text-sm font-medium">
                   {step.number}
                 </div>
@@ -346,9 +366,9 @@ export default function UxUiDesignServicePage() {
                     {step.description}
                   </p>
                 </Card>
-              </div>
+              </li>
             ))}
-          </div>
+          </ol>
         </div>
       </SectionContainer>
 

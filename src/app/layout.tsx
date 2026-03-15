@@ -78,7 +78,8 @@ const organizationSchema = {
   url: "https://www.loudface.co",
   logo: "https://www.loudface.co/images/loudface.svg",
   description:
-    "Industry-leading Webflow development, SEO/AEO & design agency delivering measurable ROI and sustainable business growth.",
+    "LoudFace is a B2B SaaS web design, SEO, AEO, and growth agency based in Dubai. Webflow Enterprise Partners with 200+ projects delivered.",
+  foundingDate: "2019",
   address: {
     "@type": "PostalAddress",
     addressLocality: "Dubai",
@@ -89,6 +90,8 @@ const organizationSchema = {
     "https://www.linkedin.com/company/loudface",
     "https://dribbble.com/loudface",
     "https://webflow.com/@loudface",
+    "https://clutch.co/profile/loudface",
+    "https://www.designrush.com/agency/profile/loudface",
   ],
 };
 

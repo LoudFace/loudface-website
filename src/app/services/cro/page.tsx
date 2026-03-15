@@ -134,6 +134,25 @@ export default function CroServicePage() {
         </div>
       </SectionContainer>
 
+      {/* ─── Definition ─── */}
+      <SectionContainer padding="sm">
+        <div className="max-w-3xl">
+          <h2 className="text-2xl sm:text-3xl md:text-4xl font-medium text-surface-900">
+            What is conversion rate <span className="text-surface-500">optimization?</span>
+          </h2>
+          <p className="mt-4 text-lg text-surface-600">
+            Conversion rate optimization (CRO) is the systematic process of increasing the percentage of website visitors who take a desired action — submitting a form, booking a demo, or completing a purchase.
+            Unlike redesigns based on opinion, CRO uses{' '}
+            <a href="https://support.google.com/optimize/answer/7012154" target="_blank" rel="noopener noreferrer" className="text-primary-600 hover:text-primary-700 underline underline-offset-2">A/B testing</a>,{' '}
+            heatmap analysis, and{' '}
+            <a href="https://web.dev/articles/vitals" target="_blank" rel="noopener noreferrer" className="text-primary-600 hover:text-primary-700 underline underline-offset-2">Core Web Vitals</a>{' '}
+            data to make evidence-based improvements.
+            LoudFace runs hands-free CRO programs for B2B SaaS companies, treating every page as a revenue conversation — not a brochure.
+          </p>
+          <p className="mt-2 text-sm text-surface-500">Last updated: March 2026</p>
+        </div>
+      </SectionContainer>
+
       {/* ─── Section 2: Problem ─── */}
       <SectionContainer>
         <SectionHeader
@@ -279,9 +298,9 @@ export default function CroServicePage() {
           <div className="relative">
             <div className="absolute top-5 left-0 right-0 h-px bg-surface-700" />
 
-            <div className="grid grid-cols-4 gap-8">
+            <ol className="grid grid-cols-4 gap-8 list-none p-0 m-0">
               {content.approach.steps.map((step) => (
-                <div key={step.number} className="relative">
+                <li key={step.number} className="relative">
                   <div className="relative z-10 w-10 h-10 rounded-full bg-primary-600 text-white flex items-center justify-center font-mono text-sm font-medium mx-auto">
                     {step.number}
                   </div>
@@ -294,17 +313,17 @@ export default function CroServicePage() {
                       {step.description}
                     </p>
                   </Card>
-                </div>
+                </li>
               ))}
-            </div>
+            </ol>
           </div>
         </div>
 
         {/* Mobile: Vertical timeline */}
         <div className="lg:hidden mt-10">
-          <div className="relative border-l-2 border-surface-700 ml-5 space-y-8">
+          <ol className="relative border-l-2 border-surface-700 ml-5 space-y-8 list-none p-0 m-0">
             {content.approach.steps.map((step) => (
-              <div key={step.number} className="relative pl-10">
+              <li key={step.number} className="relative pl-10">
                 <div className="absolute -left-5 top-0 w-10 h-10 rounded-full bg-primary-600 text-white flex items-center justify-center font-mono text-sm font-medium">
                   {step.number}
                 </div>
@@ -317,9 +336,9 @@ export default function CroServicePage() {
                     {step.description}
                   </p>
                 </Card>
-              </div>
+              </li>
             ))}
-          </div>
+          </ol>
         </div>
       </SectionContainer>
 
