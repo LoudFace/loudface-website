@@ -220,6 +220,14 @@ export default async function BlogPostPage({ params }: PageProps) {
     author: {
       '@type': 'Person',
       name: author?.name || 'LoudFace',
+      ...(author?.['job-title'] && { jobTitle: author['job-title'] }),
+      ...(author?.['profile-picture']?.url && { image: author['profile-picture'].url }),
+      url: 'https://www.loudface.co/about',
+      worksFor: {
+        '@type': 'Organization',
+        name: 'LoudFace',
+        url: 'https://www.loudface.co',
+      },
     },
     publisher: {
       '@type': 'Organization',

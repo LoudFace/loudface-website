@@ -79,6 +79,8 @@ const organizationSchema = {
   logo: "https://www.loudface.co/images/loudface.svg",
   description:
     "LoudFace is a B2B SaaS web design, SEO, AEO, and growth agency based in Dubai. Webflow Enterprise Partners with 200+ projects delivered.",
+  disambiguatingDescription:
+    "LoudFace is a Dubai-based B2B SaaS web design and growth agency, not to be confused with other entities sharing a similar name.",
   foundingDate: "2019",
   address: {
     "@type": "PostalAddress",

@@ -26,7 +26,9 @@ These are already implemented in the root layout.
   "name": "LoudFace",
   "url": "https://www.loudface.co",
   "logo": "https://www.loudface.co/images/loudface.svg",
-  "description": "LoudFace is a creative agency specializing in Webflow development, brand strategy, and digital marketing.",
+  "description": "LoudFace is a B2B SaaS web design, SEO, AEO, and growth agency. Webflow Enterprise Partners with 7+ years of experience building conversion-optimized websites.",
+  "disambiguatingDescription": "LoudFace is a Dubai-based B2B SaaS web design and growth agency, not to be confused with other entities sharing a similar name.",
+  "foundingDate": "2019",
   "address": {
     "@type": "PostalAddress",
     "addressLocality": "Dubai",
@@ -161,6 +163,38 @@ const blogPostSchema = {
 />
 ```
 
+### Person Schema (for Blog Post Authors)
+
+Add to blog post pages alongside BlogPosting schema. Strengthens E-E-A-T signals for AI citation (96% of AI Overview content comes from E-E-A-T verified sources).
+
+```tsx
+const authorSchema = {
+  "@context": "https://schema.org",
+  "@type": "Person",
+  "name": post.author?.name || "LoudFace Team",
+  "url": post.author?.url || "https://www.loudface.co/about",
+  "jobTitle": post.author?.role || undefined,
+  "worksFor": {
+    "@type": "Organization",
+    "name": "LoudFace",
+    "url": "https://www.loudface.co"
+  },
+  ...(post.author?.linkedin && {
+    "sameAs": [post.author.linkedin]
+  }),
+  ...(post.author?.image?.url && {
+    "image": post.author.image.url
+  })
+};
+
+<script
+  type="application/ld+json"
+  dangerouslySetInnerHTML={{ __html: JSON.stringify(authorSchema) }}
+/>
+```
+
+**Why Person schema matters for AEO**: AI engines use Person schema to verify author expertise. A named author with a LinkedIn profile and job title gets significantly more AI citations than a generic "Team" byline. The r=0.81 correlation between E-E-A-T signals and AI citation makes this one of the highest-impact structured data additions.
+
 ### Service Schema (Optional)
 
 ```tsx
@@ -183,6 +217,111 @@ const serviceSchema = {
   dangerouslySetInnerHTML={{ __html: JSON.stringify(serviceSchema) }}
 />
 ```
+
+### HowTo Schema (for Process/Methodology Sections)
+
+Add to pages with step-by-step processes. Research shows FAQ + HowTo + Article combinations deliver 73% higher AI Overview selection rates.
+
+```tsx
+const howToSchema = {
+  "@context": "https://schema.org",
+  "@type": "HowTo",
+  "name": "How LoudFace Builds High-Converting Webflow Websites",
+  "description": "Our proven 5-step process for designing and developing conversion-optimized Webflow websites for B2B SaaS companies.",
+  "totalTime": "PT8W",  // ISO 8601 duration (8 weeks)
+  "step": [
+    {
+      "@type": "HowToStep",
+      "position": 1,
+      "name": "Discovery & Strategy",
+      "text": "We audit your current site, analyze competitors, and define conversion goals. This phase includes stakeholder interviews and data analysis.",
+      "url": "https://www.loudface.co/services/webflow#discovery"
+    },
+    {
+      "@type": "HowToStep",
+      "position": 2,
+      "name": "UX Research & Wireframing",
+      "text": "Information architecture and wireframes based on user research and conversion best practices.",
+      "url": "https://www.loudface.co/services/webflow#wireframing"
+    },
+    {
+      "@type": "HowToStep",
+      "position": 3,
+      "name": "Visual Design",
+      "text": "High-fidelity designs that align with your brand while optimizing for conversion and accessibility.",
+      "url": "https://www.loudface.co/services/webflow#design"
+    },
+    {
+      "@type": "HowToStep",
+      "position": 4,
+      "name": "Webflow Development",
+      "text": "Pixel-perfect implementation in Webflow with clean CMS architecture, responsive design, and performance optimization.",
+      "url": "https://www.loudface.co/services/webflow#development"
+    },
+    {
+      "@type": "HowToStep",
+      "position": 5,
+      "name": "Launch & Optimization",
+      "text": "QA testing, SEO setup, analytics configuration, and post-launch CRO based on real user data.",
+      "url": "https://www.loudface.co/services/webflow#launch"
+    }
+  ]
+};
+
+<script
+  type="application/ld+json"
+  dangerouslySetInnerHTML={{ __html: JSON.stringify(howToSchema) }}
+/>
+```
+
+**When to use HowTo**: Any page that describes a multi-step process — service methodologies, implementation guides, onboarding flows. The `totalTime` field is optional but recommended. Each step should have a clear `name` and descriptive `text`.
+
+### Speakable Schema (for Voice Assistant Optimization)
+
+Marks key passages for voice assistant extraction. Sites with Speakable markup see 127% increase in voice search referrals.
+
+```tsx
+const speakableSchema = {
+  "@context": "https://schema.org",
+  "@type": "WebPage",
+  "name": "Page Title",
+  "speakable": {
+    "@type": "SpeakableSpecification",
+    "cssSelector": [
+      ".speakable-intro",     // First paragraph / executive summary
+      ".speakable-definition", // Key definition or answer
+      ".speakable-cta"        // Call-to-action / key takeaway
+    ]
+  },
+  "url": "https://www.loudface.co/page-path"
+};
+
+// Alternative: use xpath instead of cssSelector
+const speakableSchemaXpath = {
+  "@context": "https://schema.org",
+  "@type": "WebPage",
+  "name": "Page Title",
+  "speakable": {
+    "@type": "SpeakableSpecification",
+    "xpath": [
+      "/html/body/main/section[1]/p[1]",
+      "/html/body/main/section[2]/h2[1]"
+    ]
+  }
+};
+
+<script
+  type="application/ld+json"
+  dangerouslySetInnerHTML={{ __html: JSON.stringify(speakableSchema) }}
+/>
+```
+
+**Implementation notes**:
+- Mark 2-3 passages per page maximum — quality over quantity
+- Best candidates: opening summary paragraph, key definition, primary CTA
+- Add corresponding CSS classes to the HTML elements you want voice assistants to read
+- Speakable content should be self-contained sentences that make sense when read aloud
+- Keep speakable passages under 2-3 sentences each
 
 ### AboutPage Schema (for About Page)
 
@@ -255,6 +394,28 @@ const breadcrumbSchema = {
 }
 ```
 
+## Schema Stacking for Maximum AI Extraction
+
+Pages with multiple applicable schema types should include ALL relevant schemas. Research shows stacking schemas (e.g., FAQ + HowTo + Article) delivers 73% higher AI Overview selection rates.
+
+### Stacking Rules
+
+1. **Every schema gets its own `<script>` tag** — don't nest unrelated schemas
+2. **Shared context**: All schemas on a page should reference the same canonical URL
+3. **No conflicts**: If two schemas describe the same property differently, pick one source of truth
+4. **BreadcrumbList goes everywhere**: Every page below the homepage gets it
+
+### Recommended Stacks
+
+| Page Pattern | Schema Stack |
+|--------------|-------------|
+| Service + FAQ | Service + FAQPage + BreadcrumbList |
+| Service + Process | Service + HowTo + BreadcrumbList |
+| Blog + FAQ | BlogPosting + FAQPage + BreadcrumbList + Person |
+| Case Study | Article + BreadcrumbList |
+| About + Team | AboutPage + Organization + Person[] |
+| Any key page | Add Speakable to mark voice-readable passages |
+
 ## Schema Validation
 
 ### Testing Tools
@@ -316,10 +477,12 @@ import Script from 'next/script';
 | Homepage | WebSite, Organization (global) |
 | Case study detail | Article, BreadcrumbList |
 | Case studies listing | CollectionPage |
-| Blog post detail | BlogPosting, BreadcrumbList |
+| Blog post detail | BlogPosting, BreadcrumbList, Person (author) |
 | Blog listing | CollectionPage |
-| Service page | Service, BreadcrumbList |
+| Service page | Service, BreadcrumbList, HowTo (if process section) |
+| Service page with FAQ | Service, FAQPage, BreadcrumbList |
 | SEO industry hub | Service, BreadcrumbList, ItemList |
 | SEO industry detail | Service, BreadcrumbList |
 | FAQ section | FAQPage |
-| About page | AboutPage, BreadcrumbList |
+| About page | AboutPage, BreadcrumbList, Person (team members) |
+| Any key page | Speakable (mark 2-3 passages for voice assistants) |

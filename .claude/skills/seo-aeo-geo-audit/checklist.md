@@ -126,10 +126,12 @@ Complete checklist for thorough SEO, AI Engine Optimization (AEO), and Generativ
 | Page Type | Schemas Needed |
 |-----------|----------------|
 | Case study | Article, BreadcrumbList |
-| Blog post | BlogPosting, BreadcrumbList |
+| Blog post | BlogPosting, BreadcrumbList, Person (author) |
 | FAQ section | FAQPage |
-| Service page | Service (optional) |
-| Team page | Person (optional) |
+| Service page | Service, HowTo (if step-by-step process present) |
+| Team page | Person |
+| Process/methodology | HowTo + BreadcrumbList |
+| Key content pages | Speakable (marks passages for voice assistants) |
 
 ### Schema Validation
 
@@ -139,6 +141,18 @@ Complete checklist for thorough SEO, AI Engine Optimization (AEO), and Generativ
 - [ ] No console errors
 - [ ] Passes Google Rich Results Test
 
+### Schema Stacking for AI Extraction
+
+Pages with multiple applicable schema types should include ALL relevant schemas. Research shows FAQ + HowTo + Article combinations deliver 73% higher AI Overview selection rates.
+
+| Page Pattern | Recommended Schema Stack |
+|--------------|------------------------|
+| Service page with FAQ | Service + FAQPage + BreadcrumbList |
+| Service page with process | Service + HowTo + BreadcrumbList |
+| Blog post with FAQ | BlogPosting + FAQPage + BreadcrumbList + Person |
+| Case study | Article + BreadcrumbList |
+| About page with team | AboutPage + Organization + Person (employees) |
+
 ## Site Infrastructure
 
 ### Required Files
@@ -147,6 +161,7 @@ Complete checklist for thorough SEO, AI Engine Optimization (AEO), and Generativ
 |------|----------|---------|
 | sitemap.xml | /sitemap-index.xml | Page discovery |
 | robots.txt | /robots.txt | Crawler directives |
+| llms.txt | /llms.txt | AI engine context (site summary for LLM crawlers) |
 
 ### Sitemap Requirements
 
@@ -171,9 +186,11 @@ Sitemap: https://www.loudface.co/sitemap-index.xml
 
 | Metric | Target | Tool |
 |--------|--------|------|
-| LCP | < 2.5s | PageSpeed Insights |
-| FID | < 100ms | PageSpeed Insights |
-| CLS | < 0.1 | PageSpeed Insights |
+| LCP (Largest Contentful Paint) | < 2.5s | PageSpeed Insights |
+| INP (Interaction to Next Paint) | < 200ms | PageSpeed Insights |
+| CLS (Cumulative Layout Shift) | < 0.1 | PageSpeed Insights |
+
+> **Note**: INP replaced FID (First Input Delay) as a Core Web Vital in March 2024. INP measures responsiveness across ALL interactions during a page visit, not just the first one. Target < 200ms.
 
 ### Quick Checks
 
@@ -340,6 +357,7 @@ AI engines must unambiguously identify WHO you are before they can recommend you
 | Team member visibility | Names, roles, credentials in server-rendered HTML (not behind JS tabs) |
 | AboutPage schema | Present with `mainEntity` linking to Organization |
 | About page entity clarity | Clear statement of who, what, where, and expertise |
+| disambiguatingDescription | Organization schema includes property to prevent AI entity confusion |
 
 ### 9b. Category Membership & Positioning
 
@@ -387,10 +405,12 @@ AI engines field "best X", "X vs Y", and "alternative to Z" queries constantly.
 | Server-rendered content | All citable content in SSR HTML (AI scrapers don't execute JS) |
 | No content gates | No excessive paywalls, login walls, or interstitials blocking AI reading |
 | Structured data | Machine-readable entity relationships via JSON-LD schemas |
+| llms.txt present | Plain-text site summary at `/llms.txt` for LLM crawler context |
+| disambiguatingDescription | Organization schema includes disambiguation to prevent entity confusion |
 
 ### 9f. Content Freshness Signals
 
-AI engines weight recency. Stale content gets passed over for newer sources.
+AI engines weight recency heavily. Content >14 days without updates sees 23% citation decline. Updated within 3 months: 2x more citations. By week 27+ without updates, content becomes effectively invisible to AI engines.
 
 | Check | Requirement |
 |-------|-------------|
@@ -410,6 +430,45 @@ AI engines weight recency. Stale content gets passed over for newer sources.
 | Entity attribution | "LoudFace, based in Dubai, specializes in..." | Helps AI associate claims with the right entity |
 | Definitive statements | "We build websites on Webflow" | Hedging ("might", "could") weakens citation confidence |
 
+### 9g. E-E-A-T Signals for AI Citation
+
+96% of AI Overview content comes from E-E-A-T verified sources (r=0.81 correlation). AI engines weight author expertise and entity credibility heavily.
+
+| Check | Requirement |
+|-------|-------------|
+| Named author bylines | Blog posts have named authors with credentials, not just "Team" bylines |
+| Author Person schema | JSON-LD Person schema for blog post authors (links to profile/LinkedIn) |
+| Team expertise on service pages | References to specific years of experience, certifications, tools mastered |
+| Experience demonstration | Case studies show first-hand work and outcomes, not just descriptions |
+| External validation | Client testimonials, partner badges ("Webflow Enterprise Partner"), industry awards |
+| About page credentials | Team credentials, founding story, measurable track record (projects count, years) |
+| Original research | Content includes unique data or insights not available elsewhere |
+
+### Content Freshness Decay Benchmarks
+
+AI engines have steeper freshness decay than traditional search:
+
+| Timeframe | Impact on AI Citations |
+|-----------|----------------------|
+| 0-14 days | Full citation potential |
+| 15-30 days | 23% decline in citation frequency |
+| 2-3 months | Still viable but 2x disadvantage vs. fresher sources |
+| 4-6 months | Significant decline — cited only when no fresher alternative exists |
+| 27+ weeks | Effectively invisible to AI engines |
+
+### llms.txt Requirements
+
+The `llms.txt` standard (proposed by Jeremy Howard) provides LLM-readable context about your site.
+
+| Check | Requirement |
+|-------|-------------|
+| File present | `llms.txt` exists at site root (`/llms.txt`) |
+| Site identity | Contains site name, purpose, and primary domain |
+| Key services | Lists core service offerings |
+| Primary topics | Lists main content topics/expertise areas |
+| Citation format | Specifies preferred citation format (brand name, URL) |
+| Contact info | Includes contact or attribution information |
+
 ## GEO (Generative Engine Optimization)
 
 GEO focuses on how well content performs when processed by generative AI -- how quotable, extractable, and authoritative it appears to language models.
@@ -425,6 +484,9 @@ AI engines select text passages to quote. Quotable content is concise, specific,
 | Answer-first structure | Definitions and explanations lead with the answer, details follow |
 | Clear list markup | Lists use HTML `<ol>`/`<ul>`, not comma-separated paragraphs |
 | Section takeaways | Each major section ends with a clear summary sentence |
+| 40-word rule | Critical claim sentences under 40 words — extracted at 2.7x rate vs. longer blocks |
+| Optimal semantic units | Key content sections are 134-167 words for maximum AI extraction |
+| Entity in quotable text | Brand name appears in quotable passages (attribution survives extraction) |
 
 ### 10b. Authoritative Tone & Confidence
 
@@ -460,6 +522,9 @@ Certain content formats are dramatically more extractable by AI than prose parag
 | Feature/service matrices | Structured markup that AI can parse |
 | FAQ sections | Semantic Q&A markup with FAQPage schema |
 | "What is X" definitions | Appear near top of relevant pages (featured snippet + AI extraction) |
+| HowTo schema | Step-by-step process content has HowTo structured data |
+| Speakable schema | 2-3 key passages per page marked for voice assistant reading |
+| Schema stacking | Multiple schema types per page for maximum AI extraction surface |
 
 ### 10e. Topical Authority & Content Depth
 

@@ -73,6 +73,9 @@ For each page, check:
   - Case studies -> Article + BreadcrumbList schemas
   - Blog posts -> BlogPosting + BreadcrumbList schemas
 - [ ] All schemas valid JSON-LD syntax
+- [ ] Schema stacking applied: pages with multiple applicable types include all relevant schemas (e.g., Service + FAQ + BreadcrumbList on a service page with FAQ section)
+- [ ] HowTo schema used for step-by-step process sections (73% AI Overview selection boost when combined with FAQ + Article)
+- [ ] Speakable schema marks key content passages for voice assistant extraction
 
 ### Step 6: Site Infrastructure (for "site" audit)
 
@@ -116,6 +119,7 @@ AI engines must unambiguously identify WHO you are before they can recommend you
 - [ ] Organization schema includes `foundingDate`, `address`, `logo`, and `description`
 - [ ] Team member names, roles, and credentials are in server-rendered HTML (not hidden behind JS tabs)
 - [ ] AboutPage schema present with `mainEntity` linking to Organization
+- [ ] Organization schema includes `disambiguatingDescription` for AI entity resolution (e.g., "Not to be confused with LoudFace cosmetics brand")
 
 #### 9b. Category Membership & Positioning
 
@@ -154,16 +158,30 @@ AI engines field "best X", "X vs Y", and "alternative to Z" queries constantly.
 - [ ] All citable content is in server-rendered HTML (AI scrapers don't execute JS)
 - [ ] No content gates, paywalls, or interstitials blocking AI from reading
 - [ ] Structured data provides machine-readable entity relationships via JSON-LD
+- [ ] `llms.txt` file present at site root — plain-text site summary for LLM crawlers (proposed standard, ~15% adoption among tech sites in 2026)
+- [ ] `llms.txt` contains: site name, purpose, key services, primary topics, and preferred citation format
 
 #### 9f. Content Freshness Signals
 
-AI engines weight recency. Stale content gets passed over for newer, actively-maintained sources.
+AI engines weight recency heavily. Research shows content >14 days without updates sees 23% citation decline. Content updated within 3 months receives 2x more AI citations. By week 27+ without updates, content becomes effectively invisible to AI engines.
 
 - [ ] Blog posts have `datePublished` and `dateModified` in BlogPosting schema
 - [ ] Visible "Last updated" or "Published on" dates in blog post markup (not hidden)
 - [ ] Service pages show recent proof: current-year case studies, up-to-date stats
 - [ ] Content references recent events, tools, or data (not outdated examples from 2+ years ago)
 - [ ] Sitemap `lastModified` uses actual modification dates, not hardcoded values
+
+#### 9g. E-E-A-T Signals for AI Citation
+
+96% of AI Overview content comes from E-E-A-T verified sources (r=0.81 correlation). AI engines heavily weight author expertise and entity credibility.
+
+- [ ] Blog posts have named author bylines with credentials (not just "LoudFace Team")
+- [ ] Author Person schema present for blog post authors (links to author profile/LinkedIn)
+- [ ] Service pages reference specific team expertise: years of experience, certifications, named tools mastered
+- [ ] Case studies demonstrate Experience (first-hand work) and Expertise (specialized knowledge)
+- [ ] External validation signals present: client testimonials, partner badges (e.g., "Webflow Enterprise Partner"), industry awards
+- [ ] About page includes team credentials, founding story, and measurable track record
+- [ ] Content demonstrates original research or unique data not available elsewhere
 
 ### Step 10: GEO (Generative Engine Optimization) Audit
 
@@ -178,6 +196,9 @@ AI engines select text passages to quote. Quotable content is concise, specific,
 - [ ] Definitions and explanations lead with the answer, details follow
 - [ ] Lists and enumerations use clear markup (HTML lists, not comma-separated paragraphs)
 - [ ] Each major section ends with a clear takeaway sentence (AI often grabs closing statements)
+- [ ] Critical claim sentences are under 40 words — research shows text blocks under 40 words are extracted at 2.7x the rate of longer blocks
+- [ ] Key content sections are 134-167 words — the optimal semantic unit length for AI extraction and citation
+- [ ] Entity name appears in quotable passages (attribution survives when text is extracted out of context)
 
 #### 10b. Authoritative Tone & Confidence
 
@@ -207,6 +228,9 @@ Certain content formats are dramatically more extractable by AI than prose parag
 - [ ] Feature/service matrices use structured markup that AI can parse
 - [ ] FAQ sections use semantic Q&A markup with FAQPage schema
 - [ ] "What is X" definitions appear near the top of relevant pages (featured snippet + AI extraction)
+- [ ] HowTo schema for step-by-step process content (service methodologies, implementation guides)
+- [ ] Speakable schema marks 2-3 key passages per page for voice assistant reading (127% increase in voice search referrals)
+- [ ] Schema stacking: pages combine multiple schema types (Article + FAQ + BreadcrumbList) for maximum AI extraction surface
 
 #### 10e. Topical Authority & Content Depth
 
@@ -227,6 +251,10 @@ AI engines match entities across sources. Inconsistencies create confusion and r
 - [ ] Service list consistent: same services named the same way across all pages
 - [ ] Contact/location info consistent: same address in schema, footer, about page, Google Business Profile
 - [ ] Social profile links in schema `sameAs` are valid and resolve to active profiles
+
+#### Important: AI Overview ≠ Traditional Rankings
+
+Only 38% of pages cited in Google AI Overviews rank in the traditional top 10 (down from 76% in 2024). This means AEO/GEO optimization is increasingly independent of traditional SEO rankings. A page can rank #30 organically but still be cited in AI Overviews if it has strong E-E-A-T signals, quotable content, and proper structured data.
 
 ### Step 11: Font & Resource Loading Audit
 
@@ -444,6 +472,29 @@ If fonts load late, the browser shows invisible text (FOIT) or swaps fonts (FOUT
 
 Every `<a>` with `target="_blank"` needs `rel="noopener noreferrer"` for security (prevents tab-napping) and signals. Next.js `<Link>` handles this automatically for internal links, but external `<a>` tags need it manually.
 
+### 22. llms.txt — The New robots.txt for AI
+
+The `llms.txt` standard (proposed by Jeremy Howard) is a plain-text file at the site root that tells LLMs how to interpret and cite your content. Unlike robots.txt (which controls access), llms.txt provides context: what the site is, what it does, and how it should be referenced. Adoption is ~15% among tech sites as of 2026, but growing. Include: site name, purpose, key services/topics, preferred citation format, and contact.
+
+### 23. E-E-A-T Is the Top AI Citation Signal
+
+Research shows 96% of AI Overview content comes from E-E-A-T verified sources. The correlation between E-E-A-T signals and AI citation is r=0.81 — stronger than any single traditional ranking factor. This means:
+- Author bylines with credentials matter more for AI citation than for traditional SEO
+- Person schema for authors directly impacts whether AI engines cite your content
+- "LoudFace Team" as an author is significantly weaker than a named expert with a LinkedIn profile
+- Demonstrating Experience (first-hand work) is as important as Expertise (knowledge)
+
+### 24. Content Freshness Decay Is Exponential for AI
+
+AI engines have much steeper freshness decay curves than Google organic search:
+- **Day 0-14**: Full citation potential
+- **Day 15-30**: 23% decline in citation frequency
+- **Month 2-3**: Still viable but losing ground to fresher sources (2x disadvantage)
+- **Month 4-6**: Significant decline — only cited when no fresher alternative exists
+- **Week 27+**: Effectively invisible to AI engines
+
+This means content that was "evergreen" for Google SEO may need quarterly updates to maintain AI citation viability. Add visible "Last updated" dates and actually update content — don't just change the date.
+
 ## Search Commands
 
 Use these to find issues:
@@ -631,6 +682,29 @@ Grep pattern='target="_blank"' glob="*.tsx" path="src"
 # Verify OG image generator exists
 Glob pattern="src/app/opengraph-image*"
 
+# --- AEO: E-E-A-T & ENTITY ---
+
+# Check for llms.txt file
+Glob pattern="public/llms.txt"
+
+# Check for Person schema (author entities)
+Grep pattern="Person|author.*schema|authorSchema" glob="*.tsx" path="src"
+
+# Check for Speakable schema
+Grep pattern="speakable|Speakable" glob="*.tsx" path="src"
+
+# Check for HowTo schema
+Grep pattern="HowTo|howToSchema" glob="*.tsx" path="src"
+
+# Check for disambiguatingDescription in schema
+Grep pattern="disambiguatingDescription" glob="*.tsx" path="src/app"
+
+# Check for author bylines in blog posts
+Grep pattern="author|byline|written.by" glob="*.tsx" path="src/app/blog"
+
+# Check for E-E-A-T credential signals
+Grep pattern="certified|certification|years.*experience|expert|specialist" glob="*.tsx" path="src"
+
 # --- DUPLICATE META ---
 
 # Extract all title strings to compare for duplicates
@@ -660,10 +734,10 @@ Generate a report in this format:
 | Site Infrastructure | X/10 | Pass/Warn/Fail |
 | Canonicals & Pagination | X/10 | Pass/Warn/Fail |
 | SSR & Rendering | X/10 | Pass/Warn/Fail |
-| AEO Readiness | X/15 | Pass/Warn/Fail |
-| GEO Readiness | X/15 | Pass/Warn/Fail |
+| AEO Readiness | X/20 | Pass/Warn/Fail |
+| GEO Readiness | X/20 | Pass/Warn/Fail |
 
-**Overall Score**: X/110
+**Overall Score**: X/130
 
 ## Critical Issues (Must Fix)
 
@@ -701,13 +775,37 @@ Priority order for fixes:
 
 | Score | Meaning |
 |-------|---------|
-| 10 (or 15) | Perfect, no issues |
-| 8-9 (or 12-14) | Minor issues only |
-| 6-7 (or 9-11) | Some issues to address |
-| 4-5 (or 6-8) | Significant issues |
-| 0-3 (or 0-5) | Critical problems |
+| 10 (or 20) | Perfect, no issues |
+| 8-9 (or 16-19) | Minor issues only |
+| 6-7 (or 12-15) | Some issues to address |
+| 4-5 (or 8-11) | Significant issues |
+| 0-3 (or 0-7) | Critical problems |
 
-AEO and GEO are scored out of 15 (not 10) because they cover more ground and are weighted higher for sites that sell these services.
+AEO and GEO are scored out of 20 (not 10) because they cover more ground, include E-E-A-T and freshness decay signals, and are weighted higher for sites that sell these services.
+
+## Post-Audit: AI Citation Monitoring
+
+After implementing audit fixes, track AI citation performance over time. This is not a one-time audit — it's an ongoing measurement practice.
+
+### What to Monitor
+
+| Metric | Tool | Frequency |
+|--------|------|-----------|
+| AI citation share (brand mentions in AI responses) | Otterly AI, Peec AI, Siftly | Weekly |
+| AI sentiment (how AI engines describe your brand) | Manual prompting + Siftly | Monthly |
+| Zero-click displacement (traffic lost to AI answers) | GSC + GA4 comparison | Monthly |
+| Content freshness score (% of pages updated in last 90 days) | Internal audit | Quarterly |
+| Schema validation (no errors in structured data) | Google Rich Results Test | After deploys |
+
+### Monitoring Prompts
+
+Test these queries in ChatGPT, Perplexity, Claude, and Gemini:
+- "Best [your category] agency" (e.g., "Best B2B SaaS web design agency")
+- "[Your brand] vs [competitor]"
+- "Who should I hire for [your service]?"
+- "[Your service] agency in [your location]"
+
+Track whether your brand appears, how it's described, and whether the citation includes accurate information from your structured data.
 
 ## Reference Files
 
