@@ -151,6 +151,42 @@ export default function CroServicePage() {
           </p>
           <p className="mt-2 text-sm text-surface-500">Last updated: March 2026</p>
         </div>
+
+        {/* Comparison Table: Opinion-Based vs Data-Driven CRO */}
+        <div className="mt-10 overflow-x-auto">
+          <table className="w-full border-collapse text-left text-sm">
+            <caption className="sr-only">Opinion-based redesign vs data-driven CRO comparison</caption>
+            <thead>
+              <tr className="border-b border-surface-200">
+                <th className="py-3 pr-4 font-medium text-surface-900 w-1/3">Factor</th>
+                <th className="py-3 px-4 font-medium text-surface-500 w-1/3">Opinion-based redesign</th>
+                <th className="py-3 pl-4 font-medium text-primary-700 w-1/3">Data-driven CRO</th>
+              </tr>
+            </thead>
+            <tbody className="text-surface-600">
+              <tr className="border-b border-surface-100">
+                <td className="py-3 pr-4 font-medium text-surface-900">Decision basis</td>
+                <td className="py-3 px-4">Stakeholder preferences, trends</td>
+                <td className="py-3 pl-4">A/B tests, heatmaps, session recordings</td>
+              </tr>
+              <tr className="border-b border-surface-100">
+                <td className="py-3 pr-4 font-medium text-surface-900">Iteration speed</td>
+                <td className="py-3 px-4">Quarterly redesigns, big-bang launches</td>
+                <td className="py-3 pl-4">Weekly micro-tests, continuous improvement</td>
+              </tr>
+              <tr className="border-b border-surface-100">
+                <td className="py-3 pr-4 font-medium text-surface-900">Risk level</td>
+                <td className="py-3 px-4">High — one launch, hope it works</td>
+                <td className="py-3 pl-4">Low — test before full rollout</td>
+              </tr>
+              <tr className="border-b border-surface-100">
+                <td className="py-3 pr-4 font-medium text-surface-900">ROI attribution</td>
+                <td className="py-3 px-4">Hard to measure, vague lift claims</td>
+                <td className="py-3 pl-4">Exact conversion lift per experiment</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
       </SectionContainer>
 
       {/* ─── Section 2: Problem ─── */}

@@ -13,6 +13,7 @@ import {
   getAccessToken,
   getEmptyHomepageData,
 } from '@/lib/cms-data';
+import { truncateSeoTitle } from '@/lib/seo-utils';
 import {
   Button,
   BulletLabel,
@@ -94,7 +95,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     return { title: 'SEO Services', robots: { index: false } };
   }
 
-  const title = page['meta-title'] || page['hero-headline'] || page.name;
+  const title = truncateSeoTitle(page['meta-title'] || page['hero-headline'] || page.name);
   const description =
     page['meta-description'] ||
     page['hero-description'] ||

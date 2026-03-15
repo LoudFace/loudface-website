@@ -153,6 +153,42 @@ export default function UxUiDesignServicePage() {
           </p>
           <p className="mt-2 text-sm text-surface-500">Last updated: March 2026</p>
         </div>
+
+        {/* Comparison Table: Ad-Hoc Design vs Design System */}
+        <div className="mt-10 overflow-x-auto">
+          <table className="w-full border-collapse text-left text-sm">
+            <caption className="sr-only">Ad-hoc page design vs design-system approach comparison</caption>
+            <thead>
+              <tr className="border-b border-surface-200">
+                <th className="py-3 pr-4 font-medium text-surface-900 w-1/3">Dimension</th>
+                <th className="py-3 px-4 font-medium text-surface-500 w-1/3">Ad-hoc page design</th>
+                <th className="py-3 pl-4 font-medium text-primary-700 w-1/3">Design system approach</th>
+              </tr>
+            </thead>
+            <tbody className="text-surface-600">
+              <tr className="border-b border-surface-100">
+                <td className="py-3 pr-4 font-medium text-surface-900">New page turnaround</td>
+                <td className="py-3 px-4">Start from scratch each time</td>
+                <td className="py-3 pl-4">Assemble from proven components in hours</td>
+              </tr>
+              <tr className="border-b border-surface-100">
+                <td className="py-3 pr-4 font-medium text-surface-900">Brand consistency</td>
+                <td className="py-3 px-4">Drifts with each designer or project</td>
+                <td className="py-3 pl-4">Enforced by shared tokens and components</td>
+              </tr>
+              <tr className="border-b border-surface-100">
+                <td className="py-3 pr-4 font-medium text-surface-900">Developer handoff</td>
+                <td className="py-3 px-4">Static mockups, back-and-forth revisions</td>
+                <td className="py-3 pl-4">Documented specs, production-ready assets</td>
+              </tr>
+              <tr className="border-b border-surface-100">
+                <td className="py-3 pr-4 font-medium text-surface-900">Conversion impact</td>
+                <td className="py-3 px-4">Aesthetic-first, conversion is an afterthought</td>
+                <td className="py-3 pl-4">Every layout decision backed by CRO data</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
       </SectionContainer>
 
       {/* ─── Section 2: Problems ─── */}

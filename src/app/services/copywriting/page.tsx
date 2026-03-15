@@ -150,6 +150,42 @@ export default function CopywritingServicePage() {
           </p>
           <p className="mt-2 text-sm text-surface-500">Last updated: March 2026</p>
         </div>
+
+        {/* Comparison Table: Brand Copy vs Conversion Copy */}
+        <div className="mt-10 overflow-x-auto">
+          <table className="w-full border-collapse text-left text-sm">
+            <caption className="sr-only">Brand copywriting vs conversion copywriting comparison</caption>
+            <thead>
+              <tr className="border-b border-surface-200">
+                <th className="py-3 pr-4 font-medium text-surface-900 w-1/3">Aspect</th>
+                <th className="py-3 px-4 font-medium text-surface-500 w-1/3">Brand copywriting</th>
+                <th className="py-3 pl-4 font-medium text-primary-700 w-1/3">Conversion copywriting</th>
+              </tr>
+            </thead>
+            <tbody className="text-surface-600">
+              <tr className="border-b border-surface-100">
+                <td className="py-3 pr-4 font-medium text-surface-900">Primary goal</td>
+                <td className="py-3 px-4">Build awareness and brand affinity</td>
+                <td className="py-3 pl-4">Drive a specific action (demo, signup, purchase)</td>
+              </tr>
+              <tr className="border-b border-surface-100">
+                <td className="py-3 pr-4 font-medium text-surface-900">Research method</td>
+                <td className="py-3 px-4">Brand guidelines, tone documents</td>
+                <td className="py-3 pl-4">Customer interviews, message mining, A/B tests</td>
+              </tr>
+              <tr className="border-b border-surface-100">
+                <td className="py-3 pr-4 font-medium text-surface-900">Success metric</td>
+                <td className="py-3 px-4">Brand recall, sentiment scores</td>
+                <td className="py-3 pl-4">Conversion rate, revenue per visitor</td>
+              </tr>
+              <tr className="border-b border-surface-100">
+                <td className="py-3 pr-4 font-medium text-surface-900">Iteration cycle</td>
+                <td className="py-3 px-4">Annual brand refresh</td>
+                <td className="py-3 pl-4">Continuous testing, headline-level optimization</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
       </SectionContainer>
 
       {/* ─── Section 2: Problems ─── */}
