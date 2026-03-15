@@ -70,6 +70,7 @@ export function getEmptyHomepageData(): HomepageData {
 /**
  * Fetch a single collection from Webflow CMS with caching and retry.
  * Retries up to 3 times with exponential backoff on failure.
+ * Uses longer backoff for 429 (rate limit) vs 5xx (server error).
  */
 export async function fetchCollection<T>(
   collectionKey: keyof typeof COLLECTION_IDS,
@@ -100,13 +101,24 @@ export async function fetchCollection<T>(
         return data;
       }
 
-      // Log non-OK responses, retry on server errors (5xx)
       console.warn(
         `[CMS] ${collectionKey} returned ${res.status} (attempt ${attempt}/${MAX_RETRIES})`
       );
+
       if (res.status < 500 && res.status !== 429) {
         // Client error (4xx except rate limit) — don't retry
         return null;
+      }
+
+      // For 429 (rate limit): respect Retry-After header, fallback to longer backoff
+      if (res.status === 429 && attempt < MAX_RETRIES) {
+        const retryAfter = res.headers.get("Retry-After");
+        const waitMs = retryAfter
+          ? Math.min(parseInt(retryAfter, 10) * 1000, 30000) // Cap at 30s
+          : 5000 * Math.pow(2, attempt - 1); // 5s, 10s
+        console.warn(`[CMS] ${collectionKey} rate limited, waiting ${waitMs}ms`);
+        await new Promise((r) => setTimeout(r, waitMs));
+        continue;
       }
     } catch (error) {
       console.warn(
@@ -115,7 +127,7 @@ export async function fetchCollection<T>(
       );
     }
 
-    // Exponential backoff before retry: 1s, 2s, 4s
+    // Exponential backoff for 5xx / network errors: 1s, 2s, 4s
     if (attempt < MAX_RETRIES) {
       await new Promise((r) => setTimeout(r, 1000 * Math.pow(2, attempt - 1)));
     }
@@ -279,14 +291,22 @@ export async function fetchHomepageData(
     }
   } catch (error) {
     console.error("[CMS] Homepage data fetch failed:", error);
-    throw new CmsDataError(
-      `CMS data fetch failed: ${error instanceof Error ? error.message : String(error)}`
-    );
+    // Return partial data — individual collections may have succeeded.
+    // Callers that require complete data should use assertCmsData().
   }
 
-  // Build-time guardrail: fail the build if critical CMS data is empty.
-  // This prevents deploying a broken site with "No case studies found".
-  // Vercel will keep serving the previous working deployment instead.
+  return data;
+}
+
+/**
+ * Validate that critical CMS data was fetched successfully.
+ * Call this in pages where empty CMS data means a broken page (e.g., homepage).
+ * Throws CmsDataError to fail the build — Vercel keeps the previous working deployment.
+ *
+ * Pages like blog/[slug] or services/* should NOT call this — they degrade gracefully
+ * with partial data rather than crashing the entire build.
+ */
+export function assertCmsData(data: HomepageData): void {
   if (data.caseStudies.length === 0 && data.blogPosts.length === 0) {
     throw new CmsDataError(
       "Build aborted: CMS returned 0 case studies and 0 blog posts. " +
@@ -294,8 +314,6 @@ export async function fetchHomepageData(
         "The previous working deployment will continue serving."
     );
   }
-
-  return data;
 }
 
 /**

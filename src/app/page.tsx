@@ -10,7 +10,7 @@
  */
 import type { Metadata } from 'next';
 import dynamic from 'next/dynamic';
-import { fetchHomepageData, getAccessToken, getEmptyHomepageData } from '@/lib/cms-data';
+import { fetchHomepageData, getAccessToken, getEmptyHomepageData, assertCmsData } from '@/lib/cms-data';
 import { getHomepageContent } from '@/lib/content-utils';
 import type { CaseStudy } from '@/lib/types';
 import {
@@ -77,6 +77,12 @@ export default async function HomePage() {
   const cmsData = accessToken
     ? await fetchHomepageData(accessToken)
     : getEmptyHomepageData();
+
+  // Homepage guardrail: fail the build if critical CMS data is empty.
+  // Other pages (blog, case studies, services) degrade gracefully instead.
+  if (process.env.NODE_ENV === 'production') {
+    assertCmsData(cmsData);
+  }
 
   const {
     caseStudies,

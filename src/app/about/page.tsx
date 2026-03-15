@@ -71,8 +71,55 @@ export default async function AboutPage() {
     return result;
   }
 
+  // Structured data for About page
+  const breadcrumbSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://www.loudface.co' },
+      { '@type': 'ListItem', position: 2, name: 'About' },
+    ],
+  };
+
+  const aboutSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'AboutPage',
+    name: 'About LoudFace',
+    description: 'Learn about LoudFace, our mission, and the passionate team behind your next successful web project.',
+    url: 'https://www.loudface.co/about',
+    mainEntity: {
+      '@type': 'Organization',
+      name: 'LoudFace',
+      url: 'https://www.loudface.co',
+      description: 'B2B SaaS web design, SEO, AEO, and growth agency. Webflow Enterprise Partners with 7+ years of experience.',
+      foundingDate: '2019',
+      address: {
+        '@type': 'PostalAddress',
+        addressLocality: 'Dubai',
+        addressCountry: 'AE',
+      },
+      ...(teamMembers.length > 0 && {
+        employee: teamMembers.map(member => ({
+          '@type': 'Person',
+          name: member.name,
+          jobTitle: member['job-title'] || undefined,
+        })),
+      }),
+    },
+  };
+
   return (
     <>
+      {/* Structured Data */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(aboutSchema) }}
+      />
+
       {/* Hero Section */}
       <SectionContainer padding="lg">
         <div className="max-w-3xl mx-auto text-center">

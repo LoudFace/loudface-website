@@ -240,7 +240,7 @@ export default async function CaseStudyPage({ params }: PageProps) {
                 alt={client.name}
                 width="120"
                 height="24"
-                loading="eager"
+                loading="lazy"
                 className="h-6 mb-4 opacity-80"
               />
             )}

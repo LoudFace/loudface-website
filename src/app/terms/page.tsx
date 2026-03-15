@@ -8,6 +8,22 @@ export const metadata: Metadata = {
   alternates: {
     canonical: '/terms',
   },
+  openGraph: {
+    title: 'Terms of Service | LoudFace',
+    description: 'Terms and conditions for using loudface.co. Read our full terms of service.',
+    type: 'website',
+    url: '/terms',
+    siteName: 'LoudFace',
+    locale: 'en_US',
+    images: [{ url: '/opengraph-image', width: 1200, height: 630, alt: 'LoudFace Terms of Service' }],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    site: '@loudface',
+    title: 'Terms of Service | LoudFace',
+    description: 'Terms and conditions for using loudface.co. Read our full terms of service.',
+    images: ['/opengraph-image'],
+  },
 };
 
 export default function TermsOfServicePage() {

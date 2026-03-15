@@ -54,12 +54,20 @@ export const metadata: Metadata = {
   },
 };
 
-// Structured data for WebSite
+// Structured data for WebSite (with SearchAction for sitelinks search box)
 const websiteSchema = {
   "@context": "https://schema.org",
   "@type": "WebSite",
   name: "LoudFace",
   url: "https://www.loudface.co",
+  potentialAction: {
+    "@type": "SearchAction",
+    target: {
+      "@type": "EntryPoint",
+      urlTemplate: "https://www.loudface.co/blog?q={search_term_string}",
+    },
+    "query-input": "required name=search_term_string",
+  },
 };
 
 // Structured data for Organization
@@ -89,8 +97,9 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  // Fetch CMS data for Footer — errors propagate to fail the build.
-  // A broken footer is better caught at build time than shipped silently.
+  // Fetch CMS data for Footer.
+  // fetchHomepageData never throws — it retries and returns partial data.
+  // The homepage page.tsx calls assertCmsData() as the real guardrail.
   const accessToken = process.env.WEBFLOW_SITE_API_TOKEN || '';
   const footerData = await fetchHomepageData(accessToken);
   const caseStudies = footerData.caseStudies;

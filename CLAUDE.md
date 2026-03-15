@@ -36,10 +36,11 @@ See `.claude/rules/component-system.md` for the full enforcement rules and `.cla
 
 CMS data fetch failures must **fail the build**, not render empty pages. A failed Vercel build keeps the previous working deployment live. A silent failure deploys a broken site.
 
-- **Never wrap `fetchHomepageData()` in a try/catch that returns empty data.** The function has built-in retry logic (3 attempts with backoff) and throws `CmsDataError` if critical data is empty.
+- **`fetchHomepageData()` is resilient** — it retries (3 attempts with backoff, longer for 429 rate limits) and returns partial data. It never throws.
+- **`assertCmsData(data)` is the guardrail** — call it in the homepage `page.tsx` (and any other page where empty CMS data is unacceptable). It throws `CmsDataError` if case studies AND blog posts are both empty, failing the build.
 - **Never use `getEmptyHomepageData()` as a production fallback.** It exists only for local dev when no API token is configured.
-- **If adding a new page that fetches CMS data:** let errors propagate. Do not catch and render empty state on static pages — that empty state will be cached by the CDN.
-- The guardrail is in `cms-data.ts`: if case studies AND blog posts are both empty after retries, the build aborts with a clear error message.
+- **If adding a new page that fetches CMS data:** call `assertCmsData()` only if the page is broken without CMS data (e.g., homepage). Other pages (blog, services, case studies) should degrade gracefully with partial data.
+- The architecture: **data layer is resilient, page layer decides strictness.** Layout and most pages accept partial data. The homepage demands complete data.
 
 ### Static Image Paths
 

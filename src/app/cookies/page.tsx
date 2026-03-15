@@ -8,6 +8,22 @@ export const metadata: Metadata = {
   alternates: {
     canonical: '/cookies',
   },
+  openGraph: {
+    title: 'Cookie Policy | LoudFace',
+    description: 'How LoudFace uses cookies and tracking technologies. Read our full cookie policy.',
+    type: 'website',
+    url: '/cookies',
+    siteName: 'LoudFace',
+    locale: 'en_US',
+    images: [{ url: '/opengraph-image', width: 1200, height: 630, alt: 'LoudFace Cookie Policy' }],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    site: '@loudface',
+    title: 'Cookie Policy | LoudFace',
+    description: 'How LoudFace uses cookies and tracking technologies. Read our full cookie policy.',
+    images: ['/opengraph-image'],
+  },
 };
 
 export default function CookiePolicyPage() {
