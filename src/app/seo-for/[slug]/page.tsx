@@ -6,7 +6,6 @@
  */
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
-import Script from 'next/script';
 import type { Metadata } from 'next';
 import {
   fetchSeoPages,
@@ -112,6 +111,11 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
       description,
       type: 'website',
       url: `/seo-for/${slug}`,
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: `${title} | LoudFace`,
+      description,
     },
   };
 }
@@ -239,14 +243,12 @@ export default async function SeoForIndustryPage({ params }: PageProps) {
 
   return (
     <>
-      {/* Structured Data */}
-      <Script
-        id="breadcrumb-schema"
+      {/* Structured Data — native script for SSR visibility to crawlers */}
+      <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
       />
-      <Script
-        id="service-schema"
+      <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(serviceSchema) }}
       />

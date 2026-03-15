@@ -33,12 +33,17 @@ export const metadata: Metadata = {
     title: 'Messaging & Copywriting Services | LoudFace',
     description:
       'Copy-first messaging for B2B and SaaS websites. Positioning, conversion copy, and programmatic content optimized for humans, search, and AI citations.',
+    siteName: 'LoudFace',
+    locale: 'en_US',
+    images: [{ url: '/opengraph-image', width: 1200, height: 630, alt: 'LoudFace Copywriting Services' }],
   },
   twitter: {
     card: 'summary_large_image',
+    site: '@loudface',
     title: 'Messaging & Copywriting Services | LoudFace',
     description:
       'Copy-first messaging for B2B and SaaS websites. Positioning, conversion copy, and programmatic content optimized for humans, search, and AI citations.',
+    images: ['/opengraph-image'],
   },
 };
 

@@ -25,6 +25,22 @@ export const metadata: Metadata = {
   alternates: {
     canonical: '/about',
   },
+  openGraph: {
+    title: 'About LoudFace | Meet the Team Behind Your Growth',
+    description: "Learn about LoudFace, our mission, and the passionate team behind your next successful web project. Webflow Enterprise Partners with 7+ years of experience.",
+    type: 'website',
+    url: '/about',
+    siteName: 'LoudFace',
+    locale: 'en_US',
+    images: [{ url: '/opengraph-image', width: 1200, height: 630, alt: 'About LoudFace' }],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    site: '@loudface',
+    title: 'About LoudFace | Meet the Team Behind Your Growth',
+    description: "Learn about LoudFace, our mission, and the passionate team behind your next successful web project. Webflow Enterprise Partners with 7+ years of experience.",
+    images: ['/opengraph-image'],
+  },
 };
 
 export default async function AboutPage() {

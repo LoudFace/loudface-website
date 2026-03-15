@@ -6,7 +6,6 @@
  */
 import type { Metadata } from 'next';
 import Link from 'next/link';
-import Script from 'next/script';
 import { fetchHomepageData, getAccessToken, getEmptyHomepageData } from '@/lib/cms-data';
 import { getWorkContent } from '@/lib/content-utils';
 import { asset } from '@/lib/assets';
@@ -23,6 +22,22 @@ export const metadata: Metadata = {
   description: "Explore LoudFace's portfolio of successful Webflow projects. See real results including traffic growth, conversion improvements, and business transformations.",
   alternates: {
     canonical: '/case-studies',
+  },
+  openGraph: {
+    title: 'Case Studies & Portfolio | LoudFace',
+    description: "Explore LoudFace's portfolio of successful Webflow projects. See real results including traffic growth, conversion improvements, and business transformations.",
+    type: 'website',
+    url: '/case-studies',
+    siteName: 'LoudFace',
+    locale: 'en_US',
+    images: [{ url: '/opengraph-image', width: 1200, height: 630, alt: 'LoudFace Case Studies' }],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    site: '@loudface',
+    title: 'Case Studies & Portfolio | LoudFace',
+    description: "Explore LoudFace's portfolio of successful Webflow projects. See real results including traffic growth, conversion improvements, and business transformations.",
+    images: ['/opengraph-image'],
   },
 };
 
@@ -102,8 +117,8 @@ export default async function WorkPage({
 
   return (
     <>
-      <Script
-        id="collection-schema"
+      {/* CollectionPage structured data — native script for SSR visibility to crawlers */}
+      <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(collectionSchema) }}
       />
@@ -209,9 +224,9 @@ export default async function WorkPage({
                         </div>
                       )}
 
-                      <h2 className="font-medium text-lg text-surface-900 line-clamp-2 group-hover:text-primary-600 transition-colors">
+                      <h3 className="font-medium text-lg text-surface-900 line-clamp-2 group-hover:text-primary-600 transition-colors">
                         {study['project-title'] || study.name}
-                      </h2>
+                      </h3>
 
                       {study['paragraph-summary'] && (
                         <p className="mt-2 text-sm text-surface-600 line-clamp-2">

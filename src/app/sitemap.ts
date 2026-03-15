@@ -4,7 +4,8 @@ import { fetchHomepageData, fetchSeoPages, getAccessToken, getEmptyHomepageData 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = 'https://www.loudface.co';
   const lastModified = new Date();
-  const staticLastModified = new Date('2025-01-15');
+  // Use current build time for static pages — avoids stale hardcoded dates
+  const staticLastModified = lastModified;
 
   // Fetch CMS data for dynamic routes
   const accessToken = getAccessToken();

@@ -53,9 +53,9 @@ export function FooterLocations() {
         >
           {/* City + live time */}
           <div className="flex items-center gap-3">
-            <h3 className="text-sm font-semibold text-white tracking-wide uppercase">
+            <span className="text-sm font-semibold text-white tracking-wide uppercase">
               {loc.city}
-            </h3>
+            </span>
             <span className="text-surface-500">&mdash;</span>
             <span className="text-sm text-surface-400 tabular-nums min-w-[5ch]">
               {times[loc.timezone] || '\u00A0'}

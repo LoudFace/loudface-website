@@ -75,6 +75,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   if (!study) {
     return {
       title: 'Case Study Not Found',
+      robots: { index: false },
     };
   }
 
@@ -195,6 +196,7 @@ export default async function CaseStudyPage({ params }: PageProps) {
     '@context': 'https://schema.org',
     '@type': 'Article',
     headline: projectTitle,
+    url: canonicalUrl,
     description: study['paragraph-summary'] || `Case study: ${projectTitle}`,
     image: study['main-project-image-thumbnail']?.url,
     author: { '@type': 'Organization', name: 'LoudFace', url: 'https://www.loudface.co' },
@@ -337,7 +339,7 @@ export default async function CaseStudyPage({ params }: PageProps) {
             {/* Table of Contents - Mobile only */}
             {toc.length > 0 && (
               <nav className="toc lg:hidden">
-                <h3 className="text-sm font-medium text-surface-500 uppercase tracking-wide mb-4">On this page</h3>
+                <span className="block text-sm font-medium text-surface-500 uppercase tracking-wide mb-4">On this page</span>
                 <ul className="flex flex-wrap gap-x-6 gap-y-2">
                   {toc.map((item) => (
                     <li key={item.id}>
@@ -369,7 +371,7 @@ export default async function CaseStudyPage({ params }: PageProps) {
               {/* Table of Contents */}
               {toc.length > 0 && (
                 <nav className="toc">
-                  <h3 className="text-sm font-medium text-surface-500 uppercase tracking-wide mb-3">On this page</h3>
+                  <span className="block text-sm font-medium text-surface-500 uppercase tracking-wide mb-3">On this page</span>
                   <ul className="space-y-2">
                     {toc.map((item) => (
                       <li key={item.id}>
@@ -388,7 +390,7 @@ export default async function CaseStudyPage({ params }: PageProps) {
               {/* Services */}
               {services.length > 0 && (
                 <div>
-                  <h3 className="text-sm font-medium text-surface-500 uppercase tracking-wide mb-3">Services</h3>
+                  <span className="block text-sm font-medium text-surface-500 uppercase tracking-wide mb-3">Services</span>
                   <div className="flex flex-wrap gap-2">
                     {services.map(svc => (
                       <Link key={svc.id} href={`/services/${svc.slug}`} className="px-3 py-1 bg-surface-100 hover:bg-surface-200 rounded text-sm text-surface-700 transition-colors">
@@ -402,7 +404,7 @@ export default async function CaseStudyPage({ params }: PageProps) {
               {/* Technologies */}
               {technologies.length > 0 && (
                 <div>
-                  <h3 className="text-sm font-medium text-surface-500 uppercase tracking-wide mb-3">Technologies</h3>
+                  <span className="block text-sm font-medium text-surface-500 uppercase tracking-wide mb-3">Technologies</span>
                   <div className="flex flex-wrap gap-2">
                     {technologies.map(tech => (
                       <span key={tech.id} className="px-3 py-1 bg-surface-100 rounded text-sm text-surface-700">
@@ -416,7 +418,7 @@ export default async function CaseStudyPage({ params }: PageProps) {
               {/* Client Info */}
               {(study.country || study['company-size']) && (
                 <div>
-                  <h3 className="text-sm font-medium text-surface-500 uppercase tracking-wide mb-3">Client</h3>
+                  <span className="block text-sm font-medium text-surface-500 uppercase tracking-wide mb-3">Client</span>
                   <div className="space-y-2 text-sm text-surface-700">
                     {client?.name && <div>{client.name}</div>}
                     {study.country && <div>{study.country}</div>}

@@ -39,12 +39,17 @@ export const metadata: Metadata = {
     title: 'Webflow Development Services | LoudFace',
     description:
       'Scale-first Webflow development with component-based architecture. Split test faster, ship landing pages in hours, and grow without technical debt.',
+    siteName: 'LoudFace',
+    locale: 'en_US',
+    images: [{ url: '/opengraph-image', width: 1200, height: 630, alt: 'LoudFace Webflow Development' }],
   },
   twitter: {
     card: 'summary_large_image',
+    site: '@loudface',
     title: 'Webflow Development Services | LoudFace',
     description:
       'Scale-first Webflow development with component-based architecture. Split test faster, ship landing pages in hours, and grow without technical debt.',
+    images: ['/opengraph-image'],
   },
 };
 

@@ -5,7 +5,6 @@
  */
 import type { Metadata } from 'next';
 import Link from 'next/link';
-import Script from 'next/script';
 import { fetchHomepageData, getAccessToken, getEmptyHomepageData } from '@/lib/cms-data';
 import { thumbnailImage } from '@/lib/image-utils';
 import { asset } from '@/lib/assets';
@@ -17,9 +16,25 @@ const POSTS_PER_PAGE = 12;
 
 export const metadata: Metadata = {
   title: 'Blog | Insights & Resources',
-  description: 'Insights on Webflow development, SEO, AEO, and design best practices from the LoudFace team.',
+  description: 'Actionable insights on Webflow development, SEO, AEO, and conversion design from the LoudFace team. Browse guides, tutorials, and deep-dives for B2B SaaS growth.',
   alternates: {
     canonical: '/blog',
+  },
+  openGraph: {
+    title: 'LoudFace Blog | Webflow, SEO & Growth Insights',
+    description: 'Actionable insights on Webflow development, SEO, AEO, and conversion design from the LoudFace team. Browse guides, tutorials, and deep-dives for B2B SaaS growth.',
+    type: 'website',
+    url: '/blog',
+    siteName: 'LoudFace',
+    locale: 'en_US',
+    images: [{ url: '/opengraph-image', width: 1200, height: 630, alt: 'LoudFace Blog' }],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    site: '@loudface',
+    title: 'LoudFace Blog | Webflow, SEO & Growth Insights',
+    description: 'Actionable insights on Webflow development, SEO, AEO, and conversion design from the LoudFace team. Browse guides, tutorials, and deep-dives for B2B SaaS growth.',
+    images: ['/opengraph-image'],
   },
 };
 
@@ -74,8 +89,8 @@ export default async function BlogPage({
 
   return (
     <>
-      <Script
-        id="blog-schema"
+      {/* Blog structured data — native script for SSR visibility to crawlers */}
+      <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(blogSchema) }}
       />
@@ -142,9 +157,9 @@ export default async function BlogPage({
                         </span>
                       </div>
 
-                      <h2 className="font-medium text-lg text-surface-900 line-clamp-2 group-hover:text-primary-600 transition-colors">
+                      <h3 className="font-medium text-lg text-surface-900 line-clamp-2 group-hover:text-primary-600 transition-colors">
                         {post.name}
-                      </h2>
+                      </h3>
 
                       {post.excerpt && (
                         <p className="mt-2 text-sm text-surface-600 line-clamp-2">

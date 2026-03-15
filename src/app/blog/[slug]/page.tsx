@@ -54,7 +54,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const accessToken = getAccessToken();
 
   if (!accessToken) {
-    return { title: 'Blog Post' };
+    return { title: 'Blog Post', robots: { index: false } };
   }
 
   try {
@@ -107,7 +107,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     // Fall through to default
   }
 
-  return { title: 'Blog Post' };
+  return { title: 'Blog Post', robots: { index: false } };
 }
 
 export default async function BlogPostPage({ params }: PageProps) {
@@ -209,6 +209,7 @@ export default async function BlogPostPage({ params }: PageProps) {
     '@context': 'https://schema.org',
     '@type': 'BlogPosting',
     headline: post.name,
+    url: canonicalUrl,
     description: post.excerpt || '',
     image: post.thumbnail?.url,
     datePublished: post['published-date'],
@@ -338,7 +339,7 @@ export default async function BlogPostPage({ params }: PageProps) {
             <aside className="hidden lg:block lg:sticky lg:top-24 lg:self-start space-y-8">
               {toc.length > 0 && (
                 <nav className="toc">
-                  <h3 className="text-sm font-medium text-surface-500 uppercase tracking-wide mb-3">On this page</h3>
+                  <span className="block text-sm font-medium text-surface-500 uppercase tracking-wide mb-3">On this page</span>
                   <ul className="space-y-2">
                     {toc.map((item) => (
                       <li key={item.id}>
@@ -356,7 +357,7 @@ export default async function BlogPostPage({ params }: PageProps) {
 
               {author && (
                 <div className="bg-surface-50 rounded-xl p-5">
-                  <h3 className="text-sm font-medium text-surface-500 uppercase tracking-wide mb-3">Written by</h3>
+                  <span className="block text-sm font-medium text-surface-500 uppercase tracking-wide mb-3">Written by</span>
                   <div className="flex items-center gap-3">
                     {author['profile-picture']?.url && (
                       <img

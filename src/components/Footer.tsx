@@ -76,7 +76,7 @@ export function Footer({ caseStudies = [], blogPosts = [] }: FooterProps) {
                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-8 gap-y-10">
                   {/* Company */}
                   <div className="flex flex-col gap-3">
-                    <h3 className="text-sm font-semibold text-white mb-1">Company</h3>
+                    <span className="text-sm font-semibold text-white mb-1 block">Company</span>
                     <nav aria-label="Company links">
                       <ul className="flex flex-col gap-2 list-none m-0 p-0">
                         {companyLinks.map((link) => (
@@ -95,7 +95,7 @@ export function Footer({ caseStudies = [], blogPosts = [] }: FooterProps) {
 
                   {/* Services */}
                   <div className="flex flex-col gap-3">
-                    <h3 className="text-sm font-semibold text-white mb-1">Services</h3>
+                    <span className="text-sm font-semibold text-white mb-1 block">Services</span>
                     <nav aria-label="Services links">
                       <ul className="flex flex-col gap-2 list-none m-0 p-0">
                         {serviceLinks.map((link) => (
@@ -113,7 +113,7 @@ export function Footer({ caseStudies = [], blogPosts = [] }: FooterProps) {
                   </div>
 
                   <div className="flex flex-col gap-3">
-                    <h3 className="text-sm font-semibold text-white mb-1">Industries</h3>
+                    <span className="text-sm font-semibold text-white mb-1 block">Industries</span>
                     <nav aria-label="Industries links">
                       <ul className="flex flex-col gap-2 list-none m-0 p-0">
                         {industryLinks.map((link) => (
@@ -140,7 +140,7 @@ export function Footer({ caseStudies = [], blogPosts = [] }: FooterProps) {
 
                   {/* Resources */}
                   <div className="flex flex-col gap-3">
-                    <h3 className="text-sm font-semibold text-white mb-1">Resources</h3>
+                    <span className="text-sm font-semibold text-white mb-1 block">Resources</span>
                     <nav aria-label="Resources links">
                       <ul className="flex flex-col gap-2 list-none m-0 p-0">
                         {resourceLinks.map((link) => (
@@ -160,7 +160,7 @@ export function Footer({ caseStudies = [], blogPosts = [] }: FooterProps) {
                   {/* Case Studies */}
                   {caseStudies.length > 0 && (
                     <div className="flex flex-col gap-3 lg:col-span-2">
-                      <h3 className="text-sm font-semibold text-white mb-1">Case Studies</h3>
+                      <span className="text-sm font-semibold text-white mb-1 block">Case Studies</span>
                       <nav aria-label="Case studies links">
                         <ul className="flex flex-col gap-2 list-none m-0 p-0">
                           {caseStudies.slice(0, 5).map((study) => (
@@ -182,7 +182,7 @@ export function Footer({ caseStudies = [], blogPosts = [] }: FooterProps) {
                   {/* Articles */}
                   {blogPosts.length > 0 && (
                     <div className="flex flex-col gap-3 lg:col-span-2">
-                      <h3 className="text-sm font-semibold text-white mb-1">Articles</h3>
+                      <span className="text-sm font-semibold text-white mb-1 block">Articles</span>
                       <nav aria-label="Blog articles links">
                         <ul className="flex flex-col gap-2 list-none m-0 p-0">
                           {blogPosts.slice(0, 5).map((post) => (
@@ -212,7 +212,7 @@ export function Footer({ caseStudies = [], blogPosts = [] }: FooterProps) {
               <div className="flex flex-wrap justify-between items-start gap-8">
                 {/* AI Summary */}
                 <div>
-                  <h3 className="text-sm font-medium text-surface-400 mb-3">Explore AI Summary</h3>
+                  <span className="text-sm font-medium text-surface-400 mb-3 block">Explore AI Summary</span>
                   <div className="flex gap-3">
                     {aiPlatforms.map((platform) => (
                       <a

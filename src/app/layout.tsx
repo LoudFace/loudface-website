@@ -43,6 +43,7 @@ export const metadata: Metadata = {
     title: "Webflow Development, SEO/AEO & Design Agency | LoudFace",
     description:
       "Transform your website into a growth engine. Industry-leading Webflow development, SEO/AEO & design delivering measurable ROI and sustainable business growth.",
+    images: ["https://www.loudface.co/opengraph-image"],
   },
   icons: {
     icon: "/lf-logo.svg",

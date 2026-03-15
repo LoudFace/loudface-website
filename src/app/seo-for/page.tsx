@@ -6,7 +6,6 @@
  */
 import type { Metadata } from 'next';
 import Link from 'next/link';
-import Script from 'next/script';
 import {
   fetchSeoPages,
   fetchHomepageData,
@@ -179,20 +178,17 @@ export default async function SeoForHubPage() {
 
   return (
     <>
-      {/* Structured Data */}
-      <Script
-        id="breadcrumb-schema"
+      {/* Structured Data — native script for SSR visibility to crawlers */}
+      <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
       />
-      <Script
-        id="service-schema"
+      <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(serviceSchema) }}
       />
       {seoPages.length > 0 && (
-        <Script
-          id="itemlist-schema"
+        <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(itemListSchema) }}
         />
@@ -499,9 +495,9 @@ export default async function SeoForHubPage() {
 
                   {/* Content */}
                   <div className="p-6">
-                    <h2 className="text-lg font-medium text-surface-900 group-hover:text-primary-600 transition-colors">
+                    <h3 className="text-lg font-medium text-surface-900 group-hover:text-primary-600 transition-colors">
                       {page['hero-headline'] || page.name}
-                    </h2>
+                    </h3>
                     {page['hero-subtitle'] && (
                       <p className="mt-2 text-sm text-surface-600 line-clamp-2">
                         {page['hero-subtitle']}

@@ -35,12 +35,17 @@ export const metadata: Metadata = {
     title: 'SEO & AI Engine Optimization Services | LoudFace',
     description:
       'Get cited by ChatGPT, Perplexity, and Google AI Mode. Hands-free SEO and AEO programs that build authority across every engine your buyers use.',
+    siteName: 'LoudFace',
+    locale: 'en_US',
+    images: [{ url: '/opengraph-image', width: 1200, height: 630, alt: 'LoudFace SEO & AEO Services' }],
   },
   twitter: {
     card: 'summary_large_image',
+    site: '@loudface',
     title: 'SEO & AI Engine Optimization Services | LoudFace',
     description:
       'Get cited by ChatGPT, Perplexity, and Google AI Mode. Hands-free SEO and AEO programs that build authority across every engine your buyers use.',
+    images: ['/opengraph-image'],
   },
 };
 

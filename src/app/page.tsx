@@ -44,6 +44,24 @@ export const metadata: Metadata = {
   alternates: {
     canonical: '/',
   },
+  openGraph: {
+    title: 'B2B SaaS Web Design, SEO & Growth Agency | LoudFace',
+    description:
+      'Design, development, and growth for Series A+ SaaS companies. We ship your website on Webflow in weeks, then drive traffic and conversions with SEO and CRO.',
+    type: 'website',
+    url: '/',
+    siteName: 'LoudFace',
+    locale: 'en_US',
+    images: [{ url: '/opengraph-image', width: 1200, height: 630, alt: 'LoudFace - B2B SaaS Growth Agency' }],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    site: '@loudface',
+    title: 'B2B SaaS Web Design, SEO & Growth Agency | LoudFace',
+    description:
+      'Design, development, and growth for Series A+ SaaS companies. We ship your website on Webflow in weeks, then drive traffic and conversions with SEO and CRO.',
+    images: ['/opengraph-image'],
+  },
 };
 
 export default async function HomePage() {
