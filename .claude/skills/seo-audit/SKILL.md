@@ -145,6 +145,66 @@ Sidebar labels ("Services", "Technologies", "On this page") are **not** content 
 
 Service names in case study sidebars, technology tags, and similar elements should be `<Link>` components to their respective pages, not plain `<span>` elements. Every missed link is lost internal link equity.
 
+### 6. OG/Twitter Complete Replacement (Not Merge)
+
+When a child page defines its own `openGraph` object in Next.js metadata, it **completely replaces** the parent layout's OG — it does NOT merge. This means `siteName`, `locale`, `images`, and `type` from the layout are all lost. Every page that sets `openGraph` must re-specify all fields:
+
+```tsx
+openGraph: {
+  title: '...',
+  description: '...',
+  type: 'website',
+  url: '/page-path',
+  siteName: 'LoudFace',       // MUST re-specify
+  locale: 'en_US',            // MUST re-specify
+  images: [{ url: '/opengraph-image', width: 1200, height: 630, alt: '...' }],  // MUST re-specify
+},
+```
+
+### 7. CMS Data Normalization Drops System Fields
+
+The `normalizeItem()` function in `cms-data.ts` only carries `id` + `fieldData`. Webflow system fields (`createdOn`, `lastPublished`, `lastUpdated`) are **dropped** during normalization and unavailable on TypeScript types. If you need dates for structured data schemas (e.g., `datePublished`, `dateModified`), you must either:
+- Add the system fields to the normalization function
+- Use CMS-level date fields (like `published-date` on BlogPost) instead
+- Omit the date fields from the schema rather than using incorrect data
+
+### 8. Fallback Metadata Must Include `noindex`
+
+When `generateMetadata` for dynamic pages (blog/[slug], case-studies/[slug]) returns fallback metadata because CMS data is unavailable, always add `robots: { index: false }`. Otherwise, Google may index a thin/broken page with generic metadata.
+
+```tsx
+// When CMS data fails or slug not found
+return {
+  title: 'Page Not Found',
+  robots: { index: false },  // CRITICAL
+};
+```
+
+### 9. `fetchPriority="high"` on LCP Elements
+
+The Largest Contentful Paint element (usually the hero/featured image) needs both `loading="eager"` AND `fetchPriority="high"`. Many migrations set `loading="eager"` but forget `fetchPriority`, which tells the browser preload scanner to prioritize the resource.
+
+### 10. CLS from Client Components Without Dimensions
+
+Client components that calculate dimensions in JS (like logo normalizers) must still set `width` and `height` on the `<img>` tag for the pre-JS render. Otherwise, CLS occurs during hydration. The wrapper `<div>` having dimensions is not sufficient — the browser needs them on the `<img>` itself for aspect ratio calculation.
+
+### 11. Sitemap `lastModified` Must Be Dynamic
+
+Never hardcode sitemap dates. Use `new Date()` (current build time) for static pages. For CMS content, use the item's published/modified date if available, falling back to build time.
+
+### 12. Webflow URL Structure Changes Need Exhaustive Redirects
+
+Common Webflow → Next.js URL changes that need 301 redirects:
+- `/work` → `/case-studies` (portfolio section rename)
+- `/about-us` → `/about`
+- `/policy-pages/terms-of-service` → `/terms`
+- `/policy-pages/privacy-policy` → `/privacy`
+- `/services` (index page) → `/services/webflow` (if index removed)
+- `/contact` → `/` (if contact page merged into homepage CTA)
+- `/careers` → `/about` (if careers removed)
+
+Use wildcard patterns for nested paths: `/work/:slug*` → `/case-studies/:slug*`
+
 ## Search Commands
 
 Use these to find issues:
@@ -176,6 +236,35 @@ Grep pattern="generateMetadata" glob="*.tsx" path="src/app"
 
 # Check for brand suffix in CMS title handling
 Grep pattern="truncateSeoTitle|meta-title" glob="*.tsx" path="src"
+
+# Find pages with openGraph but missing twitter (inheritance bug)
+Grep pattern="openGraph:" glob="*.tsx" path="src/app"
+# Then cross-check each result for twitter: in the same metadata block
+
+# Find pages with openGraph missing siteName/locale (replacement bug)
+Grep pattern="openGraph:" glob="*.tsx" path="src/app"
+# Each must also have siteName and locale
+
+# Find images missing width/height (CLS risk)
+Grep pattern="<img" glob="*.tsx" path="src"
+# Cross-check each for width= and height= attributes
+
+# Find images missing loading attribute (should be explicit)
+Grep pattern="<img(?!.*loading=)" glob="*.tsx" path="src"
+
+# Find LCP candidates missing fetchPriority
+Grep pattern='loading="eager"' glob="*.tsx" path="src"
+# Cross-check for fetchPriority="high"
+
+# Find fallback metadata returns missing noindex
+Grep pattern="generateMetadata" glob="*.tsx" path="src/app"
+# Check all early returns / error paths for robots: { index: false }
+
+# Verify redirects cover old Webflow URLs
+# Check next.config.ts redirects() section
+
+# Find hardcoded dates in sitemap (should be dynamic)
+Grep pattern="new Date\(" glob="sitemap.ts" path="src/app"
 ```
 
 ## Output Format

@@ -29,9 +29,8 @@ These are already implemented in the root layout.
   "description": "LoudFace is a creative agency specializing in Webflow development, brand strategy, and digital marketing.",
   "address": {
     "@type": "PostalAddress",
-    "addressLocality": "Los Angeles",
-    "addressRegion": "CA",
-    "addressCountry": "US"
+    "addressLocality": "Dubai",
+    "addressCountry": "AE"
   },
   "sameAs": [
     "https://www.instagram.com/loudface.co/",
@@ -71,7 +70,7 @@ const faqSchema = {
 
 ### Article Schema (for Case Studies)
 
-Add to `src/app/work/[slug]/page.tsx`:
+Add to `src/app/case-studies/[slug]/page.tsx`:
 
 ```tsx
 // In the page component, after fetching case study data
@@ -98,7 +97,7 @@ const articleSchema = {
   "dateModified": study['updated-on'] || study['created-on'] || new Date().toISOString(),
   "mainEntityOfPage": {
     "@type": "WebPage",
-    "@id": `https://www.loudface.co/work/${study.slug}`
+    "@id": `https://www.loudface.co/case-studies/${study.slug}`
   }
 };
 
@@ -107,7 +106,7 @@ const breadcrumbSchema = {
   "@type": "BreadcrumbList",
   "itemListElement": [
     { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://www.loudface.co/" },
-    { "@type": "ListItem", "position": 2, "name": "Work", "item": "https://www.loudface.co/work" },
+    { "@type": "ListItem", "position": 2, "name": "Case Studies", "item": "https://www.loudface.co/case-studies" },
     { "@type": "ListItem", "position": 3, "name": study.name }
   ]
 };
@@ -198,9 +197,8 @@ const serviceSchema = {
   "image": "https://www.loudface.co/images/og-image.jpg",
   "address": {
     "@type": "PostalAddress",
-    "addressLocality": "Los Angeles",
-    "addressRegion": "CA",
-    "addressCountry": "US"
+    "addressLocality": "Dubai",
+    "addressCountry": "AE"
   }
 }
 ```
