@@ -21,6 +21,17 @@ import type {
 } from "./types";
 
 /**
+ * Error thrown when CMS data fetching fails critically.
+ * Signals to the build process that the deployment should be aborted.
+ */
+export class CmsDataError extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = "CmsDataError";
+  }
+}
+
+/**
  * Homepage data structure containing all CMS collections
  */
 export interface HomepageData {
@@ -57,7 +68,8 @@ export function getEmptyHomepageData(): HomepageData {
 }
 
 /**
- * Fetch a single collection from Webflow CMS with caching
+ * Fetch a single collection from Webflow CMS with caching and retry.
+ * Retries up to 3 times with exponential backoff on failure.
  */
 export async function fetchCollection<T>(
   collectionKey: keyof typeof COLLECTION_IDS,
@@ -72,21 +84,45 @@ export async function fetchCollection<T>(
     return cached;
   }
 
-  // Fetch from API with Next.js caching
-  const res = await fetch(
-    `https://api.webflow.com/v2/collections/${collectionId}/items`,
-    {
-      headers: { Authorization: `Bearer ${accessToken}` },
-      next: { revalidate: 300 }, // Revalidate every 5 minutes
+  const MAX_RETRIES = 3;
+  const url = `https://api.webflow.com/v2/collections/${collectionId}/items`;
+
+  for (let attempt = 1; attempt <= MAX_RETRIES; attempt++) {
+    try {
+      const res = await fetch(url, {
+        headers: { Authorization: `Bearer ${accessToken}` },
+        next: { revalidate: 300 },
+      });
+
+      if (res.ok) {
+        const data = await res.json();
+        setCache(collectionId, data);
+        return data;
+      }
+
+      // Log non-OK responses, retry on server errors (5xx)
+      console.warn(
+        `[CMS] ${collectionKey} returned ${res.status} (attempt ${attempt}/${MAX_RETRIES})`
+      );
+      if (res.status < 500 && res.status !== 429) {
+        // Client error (4xx except rate limit) — don't retry
+        return null;
+      }
+    } catch (error) {
+      console.warn(
+        `[CMS] ${collectionKey} fetch error (attempt ${attempt}/${MAX_RETRIES}):`,
+        error instanceof Error ? error.message : error
+      );
     }
-  );
 
-  if (!res.ok) return null;
+    // Exponential backoff before retry: 1s, 2s, 4s
+    if (attempt < MAX_RETRIES) {
+      await new Promise((r) => setTimeout(r, 1000 * Math.pow(2, attempt - 1)));
+    }
+  }
 
-  const data = await res.json();
-  // Cache the response (only works in dev)
-  setCache(collectionId, data);
-  return data;
+  console.error(`[CMS] ${collectionKey} failed after ${MAX_RETRIES} attempts`);
+  return null;
 }
 
 /**
@@ -243,7 +279,20 @@ export async function fetchHomepageData(
     }
   } catch (error) {
     console.error("[CMS] Homepage data fetch failed:", error);
-    // Return empty data - page will render with fallback content
+    throw new CmsDataError(
+      `CMS data fetch failed: ${error instanceof Error ? error.message : String(error)}`
+    );
+  }
+
+  // Build-time guardrail: fail the build if critical CMS data is empty.
+  // This prevents deploying a broken site with "No case studies found".
+  // Vercel will keep serving the previous working deployment instead.
+  if (data.caseStudies.length === 0 && data.blogPosts.length === 0) {
+    throw new CmsDataError(
+      "Build aborted: CMS returned 0 case studies and 0 blog posts. " +
+        "This usually means the Webflow API was temporarily unavailable. " +
+        "The previous working deployment will continue serving."
+    );
   }
 
   return data;

@@ -67,8 +67,13 @@ export const metadata: Metadata = {
 export default async function HomePage() {
   const content = getHomepageContent();
 
-  // CMS Data Fetching
+  // CMS Data Fetching — errors propagate to fail the build (no silent empty pages)
   const accessToken = getAccessToken();
+  if (!accessToken && process.env.NODE_ENV === 'production') {
+    throw new Error(
+      'Build aborted: WEBFLOW_SITE_API_TOKEN is not set. Cannot build homepage without CMS data.'
+    );
+  }
   const cmsData = accessToken
     ? await fetchHomepageData(accessToken)
     : getEmptyHomepageData();

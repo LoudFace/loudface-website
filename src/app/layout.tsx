@@ -89,18 +89,12 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  // Fetch CMS data for Footer
+  // Fetch CMS data for Footer — errors propagate to fail the build.
+  // A broken footer is better caught at build time than shipped silently.
   const accessToken = process.env.WEBFLOW_SITE_API_TOKEN || '';
-  let caseStudies: Awaited<ReturnType<typeof fetchHomepageData>>['caseStudies'] = [];
-  let blogPosts: Awaited<ReturnType<typeof fetchHomepageData>>['blogPosts'] = [];
-
-  try {
-    const data = await fetchHomepageData(accessToken);
-    caseStudies = data.caseStudies;
-    blogPosts = data.blogPosts;
-  } catch (error) {
-    console.error('Failed to fetch CMS data for footer:', error);
-  }
+  const footerData = await fetchHomepageData(accessToken);
+  const caseStudies = footerData.caseStudies;
+  const blogPosts = footerData.blogPosts;
 
   return (
     <html lang="en">
