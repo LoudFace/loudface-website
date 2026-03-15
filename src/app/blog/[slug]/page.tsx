@@ -3,7 +3,6 @@
  */
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
-import Script from 'next/script';
 import type { Metadata } from 'next';
 import { COLLECTION_IDS } from '@/lib/constants';
 import { fetchCollection, fetchHomepageData, getAccessToken } from '@/lib/cms-data';
@@ -241,13 +240,12 @@ export default async function BlogPostPage({ params }: PageProps) {
 
   return (
     <>
-      <Script
-        id="article-schema"
+      {/* Structured Data — native script tags for SSR visibility to crawlers */}
+      <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(articleSchema) }}
       />
-      <Script
-        id="breadcrumb-schema"
+      <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
       />

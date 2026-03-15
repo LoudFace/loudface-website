@@ -25,6 +25,7 @@ interface Dropdown {
 
 const navLinks: NavLink[] = [
   { label: "Our Work", href: "/case-studies" },
+  { label: "Blog", href: "/blog" },
   { label: "About us", href: "/about" },
 ];
 
@@ -225,9 +226,9 @@ export function Header() {
         >
           <div className="p-6">
             <div className="pb-4">
-              <h4 className="text-sm font-semibold text-surface-900">
+              <span className="block text-sm font-semibold text-surface-900">
                 {dropdown.label}
-              </h4>
+              </span>
               <p className="text-2xs text-surface-500 mt-1">
                 {dropdown.description}
               </p>

@@ -227,19 +227,24 @@ const serviceSchema = {
 
 ### Next.js Best Practice
 
+**CRITICAL**: Always use native `<script>`, never `<Script>` from `next/script`. The `<Script>` component defers loading, which means crawlers that render only initial HTML will miss your structured data entirely.
+
 ```tsx
-// Build schema object in the component
+// CORRECT — rendered in initial SSR HTML, visible to all crawlers
 const schema = {
   "@context": "https://schema.org",
   "@type": "...",
   // ... properties
 };
 
-// Use dangerouslySetInnerHTML for proper escaping
 <script
   type="application/ld+json"
   dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }}
 />
+
+// WRONG — deferred, crawlers may miss it
+import Script from 'next/script';
+<Script id="schema" type="application/ld+json" ... />
 ```
 
 ### Multiple Schemas on One Page

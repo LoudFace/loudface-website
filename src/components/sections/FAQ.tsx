@@ -1,4 +1,3 @@
-import Script from 'next/script';
 import { getFAQContent } from '@/lib/content-utils';
 import { Button, SectionContainer, SectionHeader } from '@/components/ui';
 
@@ -62,9 +61,8 @@ export function FAQ({
 
   return (
     <>
-      {/* FAQPage Structured Data */}
-      <Script
-        id="faq-schema"
+      {/* FAQPage Structured Data — native script for SSR visibility to crawlers */}
+      <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
       />

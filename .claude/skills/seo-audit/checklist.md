@@ -220,3 +220,57 @@ Sitemap: https://www.loudface.co/sitemap-index.xml
 - [ ] No mixed content warnings
 - [ ] Valid SSL certificate
 - [ ] Security headers present
+
+## Next.js-Specific SEO Pitfalls
+
+### JSON-LD Rendering
+
+| Check | Requirement |
+|-------|-------------|
+| Schema tags | Must use native `<script>`, NOT `<Script>` from next/script |
+| Global schemas | In layout.tsx using native `<script>` |
+| Page schemas | In page.tsx using native `<script>` |
+| FAQ schemas | In FAQ component using native `<script>` |
+
+### Metadata Inheritance
+
+| Check | Requirement |
+|-------|-------------|
+| Twitter meta in child pages | Must be explicitly set (doesn't auto-inherit from layout when OG is set) |
+| Title template | Layout uses `%s | LoudFace` — child pages provide only the page part |
+| CMS titles | Must strip existing brand suffix before passing to template |
+| OG images | Root `opengraph-image.tsx` provides fallback; explicit images override |
+
+### Heading Hierarchy
+
+| Check | Requirement |
+|-------|-------------|
+| Nav dropdown titles | Must use `<span>`, not `<h4>` |
+| Sidebar labels | Use `<h3>` only within article context |
+| "Key Results" sections | Use `<h2>` if it's a major page section |
+| Component headings | Non-content headings (labels, nav items) must not use heading tags |
+
+### Internal Linking
+
+| Check | Requirement |
+|-------|-------------|
+| Blog in header nav | Blog page must be linked from main navigation |
+| Service names in case studies | Must be `<Link>` components, not `<span>` elements |
+| Cross-linking between sections | Service pages link to related blog posts and case studies |
+| About page outbound links | Links to services, case studies, or blog from about page |
+
+## Post-Migration SEO Checklist
+
+When auditing after a Webflow-to-Next.js (or any) migration:
+
+- [ ] All old URL patterns have 301 redirects in `next.config.ts`
+- [ ] No redirect chains or loops
+- [ ] Sitemap generated correctly with all new URLs
+- [ ] Old sitemap deleted from Google Search Console
+- [ ] New sitemap submitted to Google Search Console
+- [ ] Key pages requested for re-indexing via URL Inspection tool
+- [ ] Google Search Console verification file present (`public/google*.html`)
+- [ ] robots.txt references correct sitemap URL
+- [ ] AI crawler bots (GPTBot, ClaudeBot, PerplexityBot) are allowed in robots.txt
+- [ ] No soft 404s (pages returning 200 with error content)
+- [ ] Search analytics monitored for impression/click drops post-migration

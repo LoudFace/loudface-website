@@ -6,7 +6,6 @@
  * - CMS: case-studies, clients, industries (for case studies section)
  */
 import type { Metadata } from 'next';
-import Script from 'next/script';
 import Link from 'next/link';
 import dynamic from 'next/dynamic';
 import { fetchHomepageData, getAccessToken, getEmptyHomepageData } from '@/lib/cms-data';
@@ -105,14 +104,12 @@ export default async function WebflowServicePage() {
 
   return (
     <>
-      {/* Structured Data */}
-      <Script
-        id="service-schema"
+      {/* Structured Data — native script tags for SSR visibility to crawlers */}
+      <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(serviceSchema) }}
       />
-      <Script
-        id="breadcrumb-schema"
+      <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
       />

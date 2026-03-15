@@ -38,7 +38,7 @@ const Knowledge = dynamic(
 );
 
 export const metadata: Metadata = {
-  title: 'B2B SaaS Websites That Convert',
+  title: 'B2B SaaS Web Design, SEO & Growth Agency',
   description:
     'Design, development, and growth for Series A+ SaaS companies. We ship your website on Webflow in weeks, then drive traffic and conversions with SEO and CRO.',
   alternates: {

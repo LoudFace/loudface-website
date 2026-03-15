@@ -11,7 +11,6 @@
  */
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
-import Script from 'next/script';
 import type { Metadata } from 'next';
 import { fetchCollection, fetchHomepageData, getAccessToken, getEmptyHomepageData } from '@/lib/cms-data';
 import { asset } from '@/lib/assets';
@@ -82,6 +81,8 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const projectTitle = study['project-title'] || study.name;
   const description = study['paragraph-summary'] || `Case study: ${projectTitle}`;
 
+  const imageUrl = study['main-project-image-thumbnail']?.url;
+
   return {
     title: projectTitle,
     description,
@@ -93,9 +94,13 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
       description,
       type: 'article',
       url: `/case-studies/${slug}`,
-      images: study['main-project-image-thumbnail']?.url
-        ? [{ url: study['main-project-image-thumbnail'].url }]
-        : undefined,
+      images: imageUrl ? [{ url: imageUrl, width: 1200, height: 630, alt: projectTitle }] : undefined,
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: `${projectTitle} | LoudFace`,
+      description,
+      images: imageUrl ? [imageUrl] : undefined,
     },
   };
 }
@@ -199,14 +204,12 @@ export default async function CaseStudyPage({ params }: PageProps) {
 
   return (
     <>
-      {/* Structured Data */}
-      <Script
-        id="breadcrumb-schema"
+      {/* Structured Data — native script tags for SSR visibility to crawlers */}
+      <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
       />
-      <Script
-        id="article-schema"
+      <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(articleSchema) }}
       />
@@ -315,7 +318,7 @@ export default async function CaseStudyPage({ params }: PageProps) {
             {/* Key Results */}
             {results.length > 0 && (
               <div className="mb-8">
-                <h3 className="text-sm font-medium text-surface-500 uppercase tracking-wide mb-4">Key Results</h3>
+                <h2 className="text-sm font-medium text-surface-500 uppercase tracking-wide mb-4">Key Results</h2>
                 <div className={`grid gap-4 ${
                   results.length === 1 ? 'grid-cols-1' :
                   results.length === 2 ? 'grid-cols-2' :
@@ -388,9 +391,9 @@ export default async function CaseStudyPage({ params }: PageProps) {
                   <h3 className="text-sm font-medium text-surface-500 uppercase tracking-wide mb-3">Services</h3>
                   <div className="flex flex-wrap gap-2">
                     {services.map(svc => (
-                      <span key={svc.id} className="px-3 py-1 bg-surface-100 rounded text-sm text-surface-700">
+                      <Link key={svc.id} href={`/services/${svc.slug}`} className="px-3 py-1 bg-surface-100 hover:bg-surface-200 rounded text-sm text-surface-700 transition-colors">
                         {svc.name}
-                      </span>
+                      </Link>
                     ))}
                   </div>
                 </div>

@@ -5,7 +5,6 @@
  * - JSON: services-copywriting.json (via content layer)
  */
 import type { Metadata } from 'next';
-import Script from 'next/script';
 import dynamic from 'next/dynamic';
 import { getServicesCopywritingContent } from '@/lib/content-utils';
 import {
@@ -72,14 +71,12 @@ export default function CopywritingServicePage() {
 
   return (
     <>
-      {/* Structured Data */}
-      <Script
-        id="service-schema"
+      {/* Structured Data — native script tags for SSR visibility to crawlers */}
+      <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(serviceSchema) }}
       />
-      <Script
-        id="breadcrumb-schema"
+      <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
       />
