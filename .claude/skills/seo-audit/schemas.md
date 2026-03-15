@@ -262,8 +262,12 @@ import Script from 'next/script';
 | Page Type | Schemas to Add |
 |-----------|----------------|
 | Homepage | WebSite, Organization (global) |
-| Case study | Article, BreadcrumbList |
-| Blog post | BlogPosting, BreadcrumbList |
+| Case study detail | Article, BreadcrumbList |
+| Case studies listing | CollectionPage |
+| Blog post detail | BlogPosting, BreadcrumbList |
+| Blog listing | CollectionPage |
 | Service page | Service, BreadcrumbList |
+| SEO industry hub | Service, BreadcrumbList, ItemList |
+| SEO industry detail | Service, BreadcrumbList |
 | FAQ section | FAQPage |
 | About page | Organization (already global) |

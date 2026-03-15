@@ -85,13 +85,13 @@ function extractStats(page: SeoPage) {
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { slug } = await params;
   const accessToken = getAccessToken();
-  if (!accessToken) return { title: 'SEO Services' };
+  if (!accessToken) return { title: 'SEO Services', robots: { index: false } };
 
   const seoPages = await fetchSeoPages(accessToken);
   const page = seoPages.find((p) => p.slug === slug);
 
   if (!page) {
-    return { title: 'SEO Services' };
+    return { title: 'SEO Services', robots: { index: false } };
   }
 
   const title = page['meta-title'] || page['hero-headline'] || page.name;
@@ -111,11 +111,16 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
       description,
       type: 'website',
       url: `/seo-for/${slug}`,
+      siteName: 'LoudFace',
+      locale: 'en_US',
+      images: [{ url: '/opengraph-image', width: 1200, height: 630, alt: `${title} | LoudFace` }],
     },
     twitter: {
       card: 'summary_large_image',
+      site: '@loudface',
       title: `${title} | LoudFace`,
       description,
+      images: ['/opengraph-image'],
     },
   };
 }

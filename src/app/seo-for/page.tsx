@@ -39,12 +39,17 @@ export const metadata: Metadata = {
       'Industry-specific SEO for E-Commerce, Healthcare, SaaS, Startups, B2B, and FinTech. Custom search optimization built around your vertical.',
     type: 'website',
     url: '/seo-for',
+    siteName: 'LoudFace',
+    locale: 'en_US',
+    images: [{ url: '/opengraph-image', width: 1200, height: 630, alt: 'LoudFace SEO Services by Industry' }],
   },
   twitter: {
     card: 'summary_large_image',
+    site: '@loudface',
     title: 'SEO Services by Industry | LoudFace',
     description:
       'Industry-specific SEO for E-Commerce, Healthcare, SaaS, Startups, B2B, and FinTech. Custom search optimization built around your vertical.',
+    images: ['/opengraph-image'],
   },
 };
 

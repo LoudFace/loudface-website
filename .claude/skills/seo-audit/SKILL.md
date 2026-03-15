@@ -82,7 +82,77 @@ For each page, check:
 - [ ] All pages accessible (no 404s)
 - [ ] HTTPS enforced
 
-### Step 7: Migration & Redirect Audit
+### Step 7: Canonical & Pagination Audit
+
+- [ ] All pages have `alternates.canonical` set in metadata
+- [ ] Canonical URLs use relative paths (Next.js `metadataBase` resolves them to absolute)
+- [ ] No canonical mismatches (canonical URL must match the page's actual URL)
+- [ ] Paginated listing pages (`?page=2`, `?page=3`) are NOT in the sitemap
+- [ ] Paginated pages either self-canonicalize or canonical to page 1 (pick a strategy)
+- [ ] No duplicate `description` across pages — each must be unique
+
+### Step 8: SSR & Rendering Audit
+
+Crawlers only see server-rendered HTML. Content behind client-side JS may be invisible.
+
+- [ ] Key page content (H1, body text, internal links) is server-rendered, not client-only
+- [ ] `'use client'` components still render meaningful HTML on the server (not empty shells)
+- [ ] No hydration errors that cause content mismatch between SSR and client
+- [ ] Dynamic imports (`next/dynamic`) have `ssr: true` (default) — not `ssr: false` for content
+
+To verify: `curl -s https://www.loudface.co/[page] | grep -c '<h1'` should return 1.
+
+### Step 9: AEO (AI Engine Optimization) Audit
+
+AI engines (ChatGPT, Perplexity, Claude, Gemini) extract content differently from traditional crawlers. This step ensures the site is structured for AI citation.
+
+#### Entity & Authority Signals
+- [ ] Organization schema includes `sameAs` with all social/directory profiles
+- [ ] About page has clear entity description (who, what, where, expertise)
+- [ ] Team member pages/sections include names, roles, and credentials
+- [ ] Service pages use definitive language ("We provide X" not "X might help")
+
+#### Content Structure for AI Extraction
+- [ ] Key pages have clear Q&A patterns (question as H2/H3, answer immediately follows)
+- [ ] FAQ sections use proper FAQPage schema (already checked in Step 5)
+- [ ] Content includes specific claims with evidence (stats, timeframes, case study references)
+- [ ] Avoid hedging language ("might", "could", "possibly") on core service descriptions
+- [ ] First paragraph of each page is a self-contained summary (AI often extracts just this)
+
+#### Technical AEO Signals
+- [ ] robots.txt allows AI bots: GPTBot, ChatGPT-User, ClaudeBot, Anthropic-ai, PerplexityBot, Google-Extended, Bytespider
+- [ ] Content is in server-rendered HTML (AI scrapers don't execute JS)
+- [ ] No excessive paywall or gate patterns that block AI from reading content
+- [ ] Structured data provides machine-readable entity relationships
+
+#### Comparison & Recommendation Readiness
+- [ ] Service pages clearly state what differentiates the offering (AI uses this for "best X" queries)
+- [ ] Case studies include measurable outcomes (AI cites specific numbers)
+- [ ] Content addresses "vs" and "alternative to" queries where relevant
+- [ ] Industry-specific pages exist for vertical targeting (seo-for/[slug] pattern)
+
+### Step 10: Font & Resource Loading Audit
+
+- [ ] Critical fonts have `font-display: swap` or `optional` (prevents FOIT)
+- [ ] Above-fold fonts are preloaded via `<link rel="preload">`
+- [ ] No render-blocking CSS or JS in the critical path
+- [ ] Third-party scripts (analytics, chat, etc.) are deferred or loaded after interaction
+
+### Step 11: External Link Audit
+
+- [ ] External links with `target="_blank"` have `rel="noopener noreferrer"`
+- [ ] Sponsored/affiliate links have `rel="nofollow sponsored"`
+- [ ] No broken external links (links to domains that no longer exist)
+- [ ] Social media links in footer/header are correct and resolve
+
+### Step 12: Duplicate Content & Meta Audit
+
+- [ ] No two pages share the same `<title>` tag
+- [ ] No two pages share the same `<meta name="description">`
+- [ ] OG image file (`opengraph-image.tsx` or equivalent) exists and generates correctly
+- [ ] Dynamic pages don't produce thin/empty content when CMS data is missing (caught by noindex fallback)
+
+### Step 13: Migration & Redirect Audit
 
 When auditing after a site migration:
 - [ ] All old URLs redirect (301) to new equivalents
@@ -205,6 +275,52 @@ Common Webflow → Next.js URL changes that need 301 redirects:
 
 Use wildcard patterns for nested paths: `/work/:slug*` → `/case-studies/:slug*`
 
+### 13. Canonical Must Be Set on Every Indexable Page
+
+Every page that should appear in search results needs `alternates.canonical` in its metadata. Without it, search engines may pick the wrong URL (with query params, trailing slashes, etc.) as the canonical version. Next.js resolves relative canonical paths against `metadataBase`.
+
+```tsx
+alternates: {
+  canonical: '/services/webflow',  // relative — metadataBase makes it absolute
+},
+```
+
+### 14. Paginated Pages Need Careful Canonical Strategy
+
+Blog and case study listing pages support `?page=2`. These paginated URLs should NOT be in the sitemap and should self-canonicalize (each page canonicals to itself, not page 1). Google dropped `rel="prev/next"` support, so canonical is the main signal.
+
+### 15. SSR Verification for AI and Traditional Crawlers
+
+Both Google and AI scrapers (GPTBot, ClaudeBot) primarily read server-rendered HTML. Content that only appears after client-side JS execution may be invisible. Verify with:
+
+```bash
+curl -s https://www.loudface.co/ | grep '<h1' | head -5
+```
+
+If H1 or key content is missing from the curl output, it's client-rendered only and needs to move to a Server Component.
+
+### 16. AEO Content Patterns That Get Cited
+
+AI engines prefer content that:
+- **Leads with a direct answer** — first paragraph answers the query, details follow
+- **Uses specific numbers** — "147% increase in 6 months" not "significant improvement"
+- **States things definitively** — "We provide X" not "X might help"
+- **Includes structured comparisons** — tables, pros/cons, "X vs Y" sections
+- **Has clear entity attribution** — "LoudFace, a B2B SaaS agency based in Dubai, specializes in..."
+
+Content that hedges, uses filler, or buries the answer deep in the page rarely gets cited.
+
+### 17. Font Loading Affects LCP and CLS
+
+If fonts load late, the browser shows invisible text (FOIT) or swaps fonts (FOUT), both of which hurt Core Web Vitals. Check that:
+- `font-display: swap` is set on all `@font-face` declarations
+- Critical fonts are preloaded in `<head>` via layout.tsx
+- Font files are self-hosted (not loaded from Google Fonts CDN, which adds an extra connection)
+
+### 18. External Links Must Have `rel` Attributes
+
+Every `<a>` with `target="_blank"` needs `rel="noopener noreferrer"` for security (prevents tab-napping) and signals. Next.js `<Link>` handles this automatically for internal links, but external `<a>` tags need it manually.
+
 ## Search Commands
 
 Use these to find issues:
@@ -265,6 +381,68 @@ Grep pattern="generateMetadata" glob="*.tsx" path="src/app"
 
 # Find hardcoded dates in sitemap (should be dynamic)
 Grep pattern="new Date\(" glob="sitemap.ts" path="src/app"
+
+# --- CANONICAL & PAGINATION ---
+
+# Find pages missing canonical
+Grep pattern="canonical:" glob="*.tsx" path="src/app"
+# Every page with metadata/generateMetadata should have alternates.canonical
+
+# Check if paginated URLs are in sitemap (they shouldn't be)
+Grep pattern="page=" glob="sitemap.ts" path="src/app"
+
+# Find duplicate meta descriptions (compare description strings across files)
+Grep pattern="description:" glob="*.tsx" path="src/app" -A 1
+
+# --- SSR VERIFICATION ---
+
+# Find client components that render key content (potential SSR gap)
+Grep pattern="'use client'" glob="*.tsx" path="src/components/sections"
+# Cross-check: do these contain H1/H2 tags or main page content?
+
+# Find dynamic imports with ssr: false (content won't be server-rendered)
+Grep pattern="ssr:\s*false" glob="*.tsx" path="src"
+
+# --- AEO READINESS ---
+
+# Check robots.txt allows AI bots
+Grep pattern="GPTBot|ClaudeBot|PerplexityBot|Anthropic|Google-Extended|Bytespider" glob="robots.ts" path="src/app"
+
+# Check Organization schema has sameAs (social profiles for entity disambiguation)
+Grep pattern="sameAs" glob="layout.tsx" path="src/app"
+
+# Find hedging language in service pages (weak for AI citation)
+Grep pattern="might help|could be|possibly|may or may not" glob="*.tsx" path="src/app/services"
+
+# Check FAQ sections exist and have schema
+Grep pattern="FAQPage|faqSchema" glob="*.tsx" path="src"
+
+# --- FONT LOADING ---
+
+# Check font-display is set
+Grep pattern="font-display" glob="*.css" path="src"
+
+# Check for font preloads in layout
+Grep pattern="preload.*font|font.*preload" glob="layout.tsx" path="src/app"
+
+# --- EXTERNAL LINKS ---
+
+# Find external links missing rel attributes
+Grep pattern='target="_blank"' glob="*.tsx" path="src"
+# Cross-check each for rel="noopener" or rel="noopener noreferrer"
+
+# Find all external <a> tags (not Link components)
+Grep pattern='<a href="http' glob="*.tsx" path="src"
+
+# --- OG IMAGE ---
+
+# Verify OG image generator exists
+Glob pattern="src/app/opengraph-image*"
+
+# --- DUPLICATE META ---
+
+# Extract all title strings to compare for duplicates
+Grep pattern="title:" glob="*.tsx" path="src/app" -A 0
 ```
 
 ## Output Format
@@ -288,8 +466,11 @@ Generate a report in this format:
 | Structured Data | X/10 | ✅/⚠️/❌ |
 | Internal Links | X/10 | ✅/⚠️/❌ |
 | Site Infrastructure | X/10 | ✅/⚠️/❌ |
+| AEO Readiness | X/10 | ✅/⚠️/❌ |
+| Canonicals & Pagination | X/10 | ✅/⚠️/❌ |
+| SSR & Rendering | X/10 | ✅/⚠️/❌ |
 
-**Overall Score**: X/60
+**Overall Score**: X/90
 
 ## Critical Issues (Must Fix)
 

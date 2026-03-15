@@ -33,6 +33,8 @@ export const metadata: Metadata = {
     title: 'UX/UI Design Services | LoudFace',
     description:
       'Conversion-focused design systems for B2B and SaaS websites. Component libraries, design tokens, and layouts built for humans, search, and AI.',
+    type: 'website',
+    url: '/services/ux-ui-design',
     siteName: 'LoudFace',
     locale: 'en_US',
     images: [{ url: '/opengraph-image', width: 1200, height: 630, alt: 'LoudFace UX/UI Design' }],

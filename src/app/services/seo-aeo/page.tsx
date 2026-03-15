@@ -35,6 +35,8 @@ export const metadata: Metadata = {
     title: 'SEO & AI Engine Optimization Services | LoudFace',
     description:
       'Get cited by ChatGPT, Perplexity, and Google AI Mode. Hands-free SEO and AEO programs that build authority across every engine your buyers use.',
+    type: 'website',
+    url: '/services/seo-aeo',
     siteName: 'LoudFace',
     locale: 'en_US',
     images: [{ url: '/opengraph-image', width: 1200, height: 630, alt: 'LoudFace SEO & AEO Services' }],
@@ -466,6 +468,8 @@ export default function SeoAeoServicePage() {
                     <img
                       src={`https://cdn.brandfetch.io/${platform.domain}/icon/fallback/transparent?c=1idmHW4h6BoV1E9hJTF`}
                       alt=""
+                      width="20"
+                      height="20"
                       className="w-5 h-5 rounded-sm object-contain"
                       loading="lazy"
                     />

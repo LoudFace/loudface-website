@@ -282,6 +282,139 @@ Sitemap: https://www.loudface.co/sitemap-index.xml
 | Draft filtering | `isPublished()` filter applied before normalization |
 | Missing data fallbacks | Dynamic pages must handle null/undefined CMS data gracefully |
 
+## Canonical & Pagination
+
+### Canonical URLs
+
+| Check | Requirement |
+|-------|-------------|
+| Canonical present | Every indexable page has `alternates.canonical` in metadata |
+| Canonical format | Uses relative paths (Next.js `metadataBase` resolves to absolute) |
+| Canonical accuracy | Canonical URL matches the page's actual URL (no mismatches) |
+| No query param leaks | Canonical doesn't include `?page=`, `?utm_`, or other params |
+
+### Pagination
+
+| Check | Requirement |
+|-------|-------------|
+| Paginated URLs in sitemap | `?page=2`, `?page=3` etc. should NOT be in sitemap |
+| Canonical strategy | Paginated pages self-canonicalize (each page is its own canonical) |
+| Pagination component | Links to page 2, 3, etc. are crawlable `<a>` tags (not JS-only navigation) |
+| First page canonical | `/blog` and `/blog?page=1` should resolve to the same canonical |
+
+## SSR & Rendering
+
+### Server-Side Rendering Verification
+
+| Check | Requirement |
+|-------|-------------|
+| H1 in SSR HTML | `curl -s URL \| grep '<h1'` returns the page heading |
+| Key content in SSR | Main body text, internal links visible in raw HTML response |
+| No empty client shells | `'use client'` components still render meaningful HTML on server |
+| No `ssr: false` on content | `next/dynamic` imports with `ssr: false` must not contain indexable content |
+| No hydration errors | Console shows no hydration mismatch warnings (causes content flicker) |
+
+### Client Component Audit
+
+| Pattern | Risk | Check |
+|---------|------|-------|
+| `'use client'` with H1/H2 | Content may not be in SSR HTML | Verify with curl |
+| `dynamic(() => ..., { ssr: false })` | Content invisible to crawlers | Only for non-content UI (modals, charts) |
+| `useEffect` that sets text content | Text only appears after JS hydration | Use server-side data fetching instead |
+| Client-only state for visibility | Content hidden until JS runs | Use CSS, not JS, for show/hide |
+
+## AEO (AI Engine Optimization)
+
+### Entity & Authority
+
+| Check | Requirement |
+|-------|-------------|
+| Organization schema `sameAs` | Includes all social/directory profiles (LinkedIn, Instagram, Dribbble, etc.) |
+| About page entity clarity | Clear statement of who, what, where, and expertise |
+| Team member attribution | Names, roles, credentials visible (Person schema optional) |
+| Consistent entity naming | Brand name identical across schema, OG, content, and social profiles |
+
+### Content Structure for AI Citation
+
+| Check | Requirement |
+|-------|-------------|
+| Lead with the answer | First paragraph of each page is a self-contained summary |
+| Q&A patterns | Key pages have question H2/H3 with immediate answer paragraphs |
+| Specific claims | Stats, timeframes, and case study references instead of vague claims |
+| Definitive language | "We provide X" not "X might help" on service pages |
+| Comparison readiness | Content addresses "best X", "X vs Y", "alternative to Z" queries |
+
+### Technical AEO Signals
+
+| Check | Requirement |
+|-------|-------------|
+| AI bot access | robots.txt allows GPTBot, ChatGPT-User, ClaudeBot, Anthropic-ai, PerplexityBot, Google-Extended, Bytespider |
+| Server-rendered content | AI scrapers don't execute JS — key content must be in SSR HTML |
+| No content gates | No excessive paywalls, login walls, or interstitials blocking AI reading |
+| Structured data | Machine-readable entity relationships via JSON-LD schemas |
+| Industry vertical pages | `/seo-for/[slug]` pattern for vertical targeting ("best SEO for [industry]") |
+
+### Content Patterns That Get Cited
+
+| Pattern | Example | Why AI Prefers It |
+|---------|---------|-------------------|
+| Direct answer first | "LoudFace is a B2B SaaS agency that..." | AI extracts first paragraph for snippets |
+| Specific numbers | "147% increase in 6 months" | Concrete data is more citable than vague claims |
+| Structured comparisons | Tables, pros/cons lists | AI engines present structured data more readily |
+| Entity attribution | "LoudFace, based in Dubai, specializes in..." | Helps AI associate claims with the right entity |
+| Definitive statements | "We build websites on Webflow" | Hedging ("might", "could") weakens citation confidence |
+
+## Font & Resource Loading
+
+### Font Performance
+
+| Check | Requirement |
+|-------|-------------|
+| `font-display` | All `@font-face` declarations have `font-display: swap` or `optional` |
+| Font preloading | Critical above-fold fonts preloaded via `<link rel="preload">` in layout |
+| Self-hosted fonts | Font files served from same origin (not external CDN) to avoid extra connection |
+| No FOIT | No Flash of Invisible Text — text renders immediately with fallback font |
+
+### Resource Loading
+
+| Check | Requirement |
+|-------|-------------|
+| No render-blocking CSS | Critical CSS inlined or loaded with high priority |
+| Deferred third-party JS | Analytics, chat widgets, etc. loaded after main content |
+| Dynamic imports | Below-fold interactive components use `next/dynamic` to defer JS |
+| Preconnect hints | `<link rel="preconnect">` for external origins (CDN, analytics) |
+
+## External Links
+
+### Link Attributes
+
+| Check | Requirement |
+|-------|-------------|
+| `target="_blank"` security | All external links with `target="_blank"` have `rel="noopener noreferrer"` |
+| Sponsored links | Affiliate or paid links have `rel="nofollow sponsored"` |
+| UGC links | User-generated content links have `rel="nofollow ugc"` |
+| No broken external links | External links resolve (no dead domains or 404s) |
+
+### Social & Directory Links
+
+| Check | Requirement |
+|-------|-------------|
+| Footer social links | All social media URLs correct and resolve |
+| Schema `sameAs` | Organization schema `sameAs` matches actual social profile URLs |
+| Consistent profiles | Same brand name, bio, and logo across all platforms |
+
+## Duplicate Content & Meta
+
+### Uniqueness Checks
+
+| Check | Requirement |
+|-------|-------------|
+| Unique titles | No two pages share the same `<title>` tag |
+| Unique descriptions | No two pages share the same `<meta name="description">` |
+| No thin pages | Dynamic pages don't render empty/placeholder content when CMS data is missing |
+| OG image exists | `opengraph-image.tsx` or equivalent file exists and generates valid images |
+| OG image dimensions | Generated OG images are 1200x630px (recommended by all platforms) |
+
 ## Post-Migration SEO Checklist
 
 When auditing after a Webflow-to-Next.js (or any) migration:

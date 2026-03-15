@@ -39,6 +39,8 @@ export const metadata: Metadata = {
     title: 'Webflow Development Services | LoudFace',
     description:
       'Scale-first Webflow development with component-based architecture. Split test faster, ship landing pages in hours, and grow without technical debt.',
+    type: 'website',
+    url: '/services/webflow',
     siteName: 'LoudFace',
     locale: 'en_US',
     images: [{ url: '/opengraph-image', width: 1200, height: 630, alt: 'LoudFace Webflow Development' }],
@@ -334,7 +336,7 @@ export default async function WebflowServicePage() {
                         { name: 'Notion', domain: 'notion.so' },
                       ].map((b, i) => (
                         <span key={`${dup}-${i}`} className="flex-shrink-0 flex items-center gap-2 px-3 py-1.5 rounded-lg bg-white border border-surface-200 shadow-sm whitespace-nowrap">
-                          <img src={`https://cdn.brandfetch.io/${b.domain}/icon/fallback/transparent?c=1idmHW4h6BoV1E9hJTF`} alt="" className="w-4 h-4 rounded-sm object-contain" loading="lazy" />
+                          <img src={`https://cdn.brandfetch.io/${b.domain}/icon/fallback/transparent?c=1idmHW4h6BoV1E9hJTF`} alt="" width="16" height="16" className="w-4 h-4 rounded-sm object-contain" loading="lazy" />
                           <span className="text-sm font-medium text-surface-700">{b.name}</span>
                         </span>
                       ))
@@ -354,7 +356,7 @@ export default async function WebflowServicePage() {
                         { name: 'Asana', domain: 'asana.com' },
                       ].map((b, i) => (
                         <span key={`${dup}-${i}`} className="flex-shrink-0 flex items-center gap-2 px-3 py-1.5 rounded-lg bg-white border border-surface-200 shadow-sm whitespace-nowrap">
-                          <img src={`https://cdn.brandfetch.io/${b.domain}/icon/fallback/transparent?c=1idmHW4h6BoV1E9hJTF`} alt="" className="w-4 h-4 rounded-sm object-contain" loading="lazy" />
+                          <img src={`https://cdn.brandfetch.io/${b.domain}/icon/fallback/transparent?c=1idmHW4h6BoV1E9hJTF`} alt="" width="16" height="16" className="w-4 h-4 rounded-sm object-contain" loading="lazy" />
                           <span className="text-sm font-medium text-surface-700">{b.name}</span>
                         </span>
                       ))
@@ -372,7 +374,7 @@ export default async function WebflowServicePage() {
                         { name: 'Linear', domain: 'linear.app' },
                       ].map((b, i) => (
                         <span key={`${dup}-${i}`} className="flex-shrink-0 flex items-center gap-2 px-3 py-1.5 rounded-lg bg-white border border-surface-200 shadow-sm whitespace-nowrap">
-                          <img src={`https://cdn.brandfetch.io/${b.domain}/icon/fallback/transparent?c=1idmHW4h6BoV1E9hJTF`} alt="" className="w-4 h-4 rounded-sm object-contain" loading="lazy" />
+                          <img src={`https://cdn.brandfetch.io/${b.domain}/icon/fallback/transparent?c=1idmHW4h6BoV1E9hJTF`} alt="" width="16" height="16" className="w-4 h-4 rounded-sm object-contain" loading="lazy" />
                           <span className="text-sm font-medium text-surface-700">{b.name}</span>
                         </span>
                       ))

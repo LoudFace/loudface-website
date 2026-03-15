@@ -90,12 +90,15 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
             title,
             description,
             url: `/blog/${slug}`,
+            siteName: 'LoudFace',
+            locale: 'en_US',
             images: [{ url: imageUrl, width: 1200, height: 630, alt: title }],
             publishedTime: (fieldData['published-date'] as string) || undefined,
             modifiedTime: (fieldData['last-updated'] as string) || (fieldData['published-date'] as string) || undefined,
           },
           twitter: {
             card: 'summary_large_image',
+            site: '@loudface',
             title,
             description,
             images: [imageUrl],
@@ -288,6 +291,7 @@ export default async function BlogPostPage({ params }: PageProps) {
                       alt={author.name}
                       width="80"
                       height="80"
+                      loading="eager"
                       className="w-10 h-10 rounded-full object-cover"
                     />
                   )}

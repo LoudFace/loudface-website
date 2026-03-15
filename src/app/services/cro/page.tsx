@@ -32,6 +32,8 @@ export const metadata: Metadata = {
     title: 'Conversion Rate Optimization Services | LoudFace',
     description:
       'Turn existing traffic into revenue with systematic CRO. Conversion audits, headline and CTA testing, and weekly pipeline reporting. Book a free audit.',
+    type: 'website',
+    url: '/services/cro',
     siteName: 'LoudFace',
     locale: 'en_US',
     images: [{ url: '/opengraph-image', width: 1200, height: 630, alt: 'LoudFace CRO Services' }],

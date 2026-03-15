@@ -95,10 +95,13 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
       description,
       type: 'article',
       url: `/case-studies/${slug}`,
+      siteName: 'LoudFace',
+      locale: 'en_US',
       images: imageUrl ? [{ url: imageUrl, width: 1200, height: 630, alt: projectTitle }] : undefined,
     },
     twitter: {
       card: 'summary_large_image',
+      site: '@loudface',
       title: `${projectTitle} | LoudFace`,
       description,
       images: imageUrl ? [imageUrl] : undefined,
@@ -237,6 +240,7 @@ export default async function CaseStudyPage({ params }: PageProps) {
                 alt={client.name}
                 width="120"
                 height="24"
+                loading="eager"
                 className="h-6 mb-4 opacity-80"
               />
             )}
