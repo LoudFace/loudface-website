@@ -1,5 +1,5 @@
 ---
-name: seo-audit
+name: seo-aeo-geo-audit
 description: Comprehensive SEO, AEO & GEO audit of pages, components, or the entire site. Use before publishing content, after major changes, or for periodic SEO health checks.
 allowed-tools: Read, Grep, Glob, Bash
 argument-hint: "[file, directory, or 'site' for full audit]"
