@@ -109,43 +109,8 @@ export function Header() {
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [mobileAccordion, setMobileAccordion] = useState<string | null>(null);
-  const [timezone, setTimezone] = useState({
-    city: "",
-    timezone: "",
-    time: "",
-  });
   const dropdownRefs = useRef<Record<string, HTMLDivElement | null>>({});
   const closeTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-
-  // Update timezone display
-  useEffect(() => {
-    const updateTime = () => {
-      try {
-        const now = new Date();
-        const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
-        const parts = timeZone.split("/");
-        const offset = -now.getTimezoneOffset();
-        const hours = Math.floor(Math.abs(offset) / 60);
-        const sign = offset >= 0 ? "+" : "-";
-
-        setTimezone({
-          city: parts[parts.length - 1]?.replace(/_/g, " ") || "",
-          timezone: `GMT${sign}${hours}`,
-          time: now.toLocaleTimeString("en-US", {
-            hour: "2-digit",
-            minute: "2-digit",
-            hour12: false,
-          }),
-        });
-      } catch {
-        // Ignore errors
-      }
-    };
-
-    updateTime();
-    const interval = setInterval(updateTime, 60000);
-    return () => clearInterval(interval);
-  }, []);
 
   // Close dropdown on outside click
   useEffect(() => {
@@ -367,16 +332,6 @@ export function Header() {
                 <div className="w-1.5 h-1.5 bg-success rounded-full animate-pulse" />
                 <span className="text-2xs font-medium text-surface-600">
                   Accepting Bookings
-                </span>
-              </div>
-
-              {/* Timezone */}
-              <div className="hidden xl:flex text-2xs text-surface-400 gap-1.5 tabular-nums">
-                <span>{timezone.city}</span>
-                <span>{timezone.timezone}</span>
-                <span className="text-surface-300">·</span>
-                <span className="font-medium text-surface-500">
-                  {timezone.time}
                 </span>
               </div>
 
