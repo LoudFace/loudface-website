@@ -3,23 +3,21 @@
  *
  * Data Sources:
  * - CMS: case-studies, clients, testimonials, blog, categories, team-members, industries
- * - JSON: faq-items.json, homepage-v2.json (via content layer)
+ * - JSON: homepage.json (via content layer)
  *
- * Components: Hero, Partners, ProblemCheckerA, CaseStudySlider, Audit, Results,
- *             Marketing, Approach, Knowledge, FAQ, CTA
+ * Components: Hero, Partners, ProblemCheckerA, CaseStudySlider, Results,
+ *             Knowledge, FAQ, CTA
  */
 import type { Metadata } from 'next';
 import dynamic from 'next/dynamic';
 import { fetchHomepageData, getAccessToken, getEmptyHomepageData } from '@/lib/cms-data';
-import { getFAQItemsContent, getHomepageV2Content } from '@/lib/content-utils';
+import { getHomepageContent } from '@/lib/content-utils';
 import type { CaseStudy } from '@/lib/types';
 import {
   Hero,
   Partners,
   ProblemCheckerA,
-  Audit,
   Results,
-  Marketing,
   FAQ,
   CTA,
 } from '@/components';
@@ -35,26 +33,21 @@ const CaseStudySlider = dynamic(
   () => import('@/components/sections/CaseStudySlider').then(m => ({ default: m.CaseStudySlider })),
 );
 
-const Approach = dynamic(
-  () => import('@/components/sections/Approach').then(m => ({ default: m.Approach })),
-);
-
 const Knowledge = dynamic(
   () => import('@/components/sections/Knowledge').then(m => ({ default: m.Knowledge })),
 );
 
 export const metadata: Metadata = {
+  title: 'B2B SaaS Websites That Convert',
+  description:
+    'Design, development, and growth for Series A+ SaaS companies. We ship your website on Webflow in weeks, then drive traffic and conversions with SEO and CRO.',
   alternates: {
     canonical: '/',
   },
 };
 
 export default async function HomePage() {
-  // FAQ items loaded from JSON content layer
-  const faqItems = getFAQItemsContent().items;
-
-  // V2 content for new sections (problem checker, process)
-  const v2Content = getHomepageV2Content();
+  const content = getHomepageContent();
 
   // CMS Data Fetching
   const accessToken = getAccessToken();
@@ -62,7 +55,6 @@ export default async function HomePage() {
     ? await fetchHomepageData(accessToken)
     : getEmptyHomepageData();
 
-  // Destructure for easier template access
   const {
     caseStudies,
     clients,
@@ -96,37 +88,110 @@ export default async function HomePage() {
 
   return (
     <>
-      {/* Hero Section */}
+      {/* Hero */}
       <Hero
+        headline={content.hero.headline}
+        description={content.hero.description}
+        ctaText={content.hero.ctaText}
         scarcityText={`2 client slots open for ${currentQuarter}`}
+        aiLinksLabel={content.hero.aiLinksLabel}
         caseStudies={lightCaseStudies}
         clients={clients}
         industries={industries}
       />
 
-      {/* Partners Section */}
+      {/* Partners */}
       <Partners
+        tagline={content.partners.tagline}
         testimonials={allTestimonials}
         clients={allClients}
       />
 
       {/* Problem Checker */}
       <ProblemCheckerA
-        heading={v2Content.problem.heading}
-        items={v2Content.problem.items}
+        heading={content.problem.heading}
+        items={content.problem.items}
       />
 
-      {/* Case Study Slider Section */}
+      {/* Two Tracks: Build + Grow */}
+      <SectionContainer padding="lg" className="bg-surface-900 text-surface-300">
+        <div className="max-w-3xl">
+          <h2 className="text-2xl sm:text-3xl md:text-4xl font-medium text-white">
+            {content.tracks.heading}
+          </h2>
+          <div className="h-4" />
+          <p className="text-lg text-surface-300">
+            {content.tracks.intro}
+          </p>
+        </div>
+
+        <div className="mt-12 lg:mt-16 grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8">
+          {/* Build Track */}
+          <Card variant="glass" padding="lg">
+            <div className="flex items-center gap-3 mb-6">
+              <span className="text-sm font-mono text-primary-400">{content.tracks.build.label}</span>
+              <h3 className="text-2xl font-medium text-white">{content.tracks.build.title}</h3>
+            </div>
+            <p className="text-primary-400 font-medium mb-4">{content.tracks.build.subtitle}</p>
+            <p className="text-surface-300 leading-relaxed mb-6">{content.tracks.build.body}</p>
+            <p className="text-sm text-surface-400 italic mb-6">{content.tracks.build.detail}</p>
+            <div className="border-t border-white/10 pt-6">
+              <div className="flex flex-wrap gap-2">
+                {content.tracks.build.capabilities.map((cap, i) => (
+                  <span
+                    key={i}
+                    className="inline-block px-3 py-1.5 text-sm bg-white/5 text-surface-300 rounded-lg"
+                  >
+                    {cap}
+                  </span>
+                ))}
+              </div>
+            </div>
+          </Card>
+
+          {/* Grow Track */}
+          <Card variant="glass" padding="lg">
+            <div className="flex items-center gap-3 mb-6">
+              <span className="text-sm font-mono text-primary-400">{content.tracks.grow.label}</span>
+              <h3 className="text-2xl font-medium text-white">{content.tracks.grow.title}</h3>
+            </div>
+            <p className="text-primary-400 font-medium mb-4">{content.tracks.grow.subtitle}</p>
+            <p className="text-surface-300 leading-relaxed mb-6">{content.tracks.grow.body}</p>
+            <p className="text-sm text-surface-400 italic mb-6">{content.tracks.grow.detail}</p>
+            <div className="border-t border-white/10 pt-6">
+              <div className="flex flex-wrap gap-2">
+                {content.tracks.grow.capabilities.map((cap, i) => (
+                  <span
+                    key={i}
+                    className="inline-block px-3 py-1.5 text-sm bg-white/5 text-surface-300 rounded-lg"
+                  >
+                    {cap}
+                  </span>
+                ))}
+              </div>
+            </div>
+          </Card>
+        </div>
+
+        {/* Connector line */}
+        <div className="mt-10 md:mt-12 text-center">
+          <p className="text-surface-400 text-lg italic max-w-2xl mx-auto">
+            {content.tracks.connector}
+          </p>
+        </div>
+      </SectionContainer>
+
+      {/* Case Study Slider */}
       <CaseStudySlider
+        title="The work speaks. Specifically."
         caseStudies={sliderCaseStudies}
         testimonials={testimonials}
       />
 
-      {/* Audit Section */}
-      <Audit />
-
-      {/* Results Section (Bento Grid) */}
+      {/* Results (Bento Grid) */}
       <Results
+        title={content.results.heading}
+        subtitle={content.results.subtitle}
         caseStudies={(() => {
           const targetSlugs = ['viaduct', 'dimer-health'];
           const picked = targetSlugs
@@ -150,21 +215,15 @@ export default async function HomePage() {
         clients={clients}
       />
 
-      {/* Marketing Section */}
-      <Marketing />
-
-      {/* Approach Section (Process + Stats) */}
-      <Approach />
-
       {/* How We Work (Process Timeline) */}
       <SectionContainer>
         <div className="text-center max-w-3xl mx-auto">
           <h2 className="text-2xl sm:text-3xl md:text-4xl font-medium text-surface-900">
-            {v2Content.process.heading}
+            {content.process.heading}
           </h2>
           <div className="h-4" />
           <p className="text-lg text-surface-600">
-            {v2Content.process.subtitle}
+            {content.process.subtitle}
           </p>
         </div>
 
@@ -174,7 +233,7 @@ export default async function HomePage() {
             {/* Timeline bar */}
             <div className="relative flex items-start justify-between mb-12">
               <div className="absolute top-4 left-0 right-0 h-px bg-surface-200" />
-              {v2Content.process.steps.map((step) => (
+              {content.process.steps.map((step) => (
                 <div key={step.number} className="relative flex flex-col items-center w-1/4 px-2">
                   <div className="w-8 h-8 rounded-full bg-surface-900 text-white flex items-center justify-center text-sm font-mono font-medium z-10">
                     {step.number}
@@ -187,7 +246,7 @@ export default async function HomePage() {
             </div>
             {/* Step cards */}
             <div className="grid grid-cols-4 gap-6">
-              {v2Content.process.steps.map((step) => (
+              {content.process.steps.map((step) => (
                 <Card key={step.number} hover={false}>
                   <h3 className="text-lg font-medium text-surface-900">{step.title}</h3>
                   <div className="h-3" />
@@ -199,7 +258,7 @@ export default async function HomePage() {
 
           {/* Mobile: vertical timeline */}
           <div className="md:hidden space-y-8">
-            {v2Content.process.steps.map((step) => (
+            {content.process.steps.map((step) => (
               <div key={step.number} className="flex gap-4">
                 <div className="flex flex-col items-center">
                   <div className="w-8 h-8 rounded-full bg-surface-900 text-white flex items-center justify-center text-sm font-mono font-medium shrink-0">
@@ -220,19 +279,52 @@ export default async function HomePage() {
         </div>
       </SectionContainer>
 
-      {/* Knowledge/Blog Section */}
+      {/* Stats */}
+      <SectionContainer padding="sm" className="bg-surface-50">
+        <div className="text-center mb-10 md:mb-12">
+          <h2 className="text-2xl sm:text-3xl md:text-4xl font-medium text-surface-900">
+            {content.stats.heading}
+          </h2>
+        </div>
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8">
+          {content.stats.items.map((stat, i) => (
+            <div key={i} className="text-center">
+              <div className="text-3xl md:text-4xl font-medium font-mono text-surface-900">
+                {stat.value}
+              </div>
+              <div className="mt-2 text-sm font-medium text-surface-600 uppercase tracking-wider">
+                {stat.label}
+              </div>
+              <div className="mt-2 text-sm text-surface-500">
+                {stat.description}
+              </div>
+            </div>
+          ))}
+        </div>
+      </SectionContainer>
+
+      {/* Knowledge/Blog */}
       <Knowledge
+        title="Playbooks for SaaS marketing teams"
+        highlightWord="Playbooks"
+        description={content.blog.subtitle}
         posts={lightBlogPosts}
         categories={Array.from(categories.values())}
         authors={Array.from(teamMembers.values())}
       />
 
-      {/* FAQ Section */}
-      <FAQ items={faqItems} />
+      {/* FAQ */}
+      <FAQ
+        title="Common questions about working with us"
+        items={content.faq}
+      />
 
-      {/* CTA Section */}
-      <CTA />
-
+      {/* CTA */}
+      <CTA
+        title={content.cta.title}
+        subtitle={content.cta.subtitle}
+        ctaText={content.cta.ctaText}
+      />
     </>
   );
 }

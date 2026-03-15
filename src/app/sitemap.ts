@@ -4,6 +4,7 @@ import { fetchHomepageData, fetchSeoPages, getAccessToken, getEmptyHomepageData 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = 'https://www.loudface.co';
   const lastModified = new Date();
+  const staticLastModified = new Date('2025-01-15');
 
   // Fetch CMS data for dynamic routes
   const accessToken = getAccessToken();
@@ -38,7 +39,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     },
     {
       url: `${baseUrl}/about`,
-      lastModified,
+      lastModified: staticLastModified,
       changeFrequency: 'monthly',
       priority: 0.7,
     },
@@ -51,50 +52,50 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     // Service pages
     {
       url: `${baseUrl}/services/seo-aeo`,
-      lastModified,
+      lastModified: staticLastModified,
       changeFrequency: 'monthly',
       priority: 0.9,
     },
     {
       url: `${baseUrl}/services/webflow`,
-      lastModified,
+      lastModified: staticLastModified,
       changeFrequency: 'monthly',
       priority: 0.9,
     },
     {
       url: `${baseUrl}/services/cro`,
-      lastModified,
+      lastModified: staticLastModified,
       changeFrequency: 'monthly',
       priority: 0.9,
     },
     {
       url: `${baseUrl}/services/ux-ui-design`,
-      lastModified,
+      lastModified: staticLastModified,
       changeFrequency: 'monthly',
       priority: 0.9,
     },
     {
       url: `${baseUrl}/services/copywriting`,
-      lastModified,
+      lastModified: staticLastModified,
       changeFrequency: 'monthly',
       priority: 0.9,
     },
     // Legal pages
     {
       url: `${baseUrl}/privacy`,
-      lastModified,
+      lastModified: staticLastModified,
       changeFrequency: 'yearly',
       priority: 0.3,
     },
     {
       url: `${baseUrl}/terms`,
-      lastModified,
+      lastModified: staticLastModified,
       changeFrequency: 'yearly',
       priority: 0.3,
     },
     {
       url: `${baseUrl}/cookies`,
-      lastModified,
+      lastModified: staticLastModified,
       changeFrequency: 'yearly',
       priority: 0.3,
     },

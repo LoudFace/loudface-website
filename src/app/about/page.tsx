@@ -11,13 +11,12 @@
  * - Final CTA
  */
 import type { Metadata } from 'next';
-import Script from 'next/script';
 import { fetchHomepageData, getAccessToken, getEmptyHomepageData } from '@/lib/cms-data';
 import { getAboutContent } from '@/lib/content-utils';
 import { asset } from '@/lib/assets';
 import { optimizeImage, logoImage } from '@/lib/image-utils';
-import { Badge, BulletLabel, Button, LogoImage, SectionContainer, SectionHeader } from '@/components/ui';
-import { CTA } from '@/components/sections';
+import { Badge, Button, LogoImage, SectionContainer, SectionHeader } from '@/components/ui';
+import { CTA, FAQ } from '@/components/sections';
 import type { TeamMember, Client } from '@/lib/types';
 
 export const metadata: Metadata = {
@@ -56,28 +55,8 @@ export default async function AboutPage() {
     return result;
   }
 
-  // Organization schema for SEO
-  const organizationSchema = {
-    "@context": "https://schema.org",
-    "@type": "Organization",
-    "name": "LoudFace",
-    "url": "https://www.loudface.co",
-    "description": "Learn about LoudFace, our mission, and the passionate team behind your next successful web project.",
-    "foundingDate": "2017",
-    "numberOfEmployees": {
-      "@type": "QuantitativeValue",
-      "minValue": 6
-    }
-  };
-
   return (
     <>
-      <Script
-        id="organization-schema"
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationSchema) }}
-      />
-
       {/* Hero Section */}
       <SectionContainer padding="lg">
         <div className="max-w-3xl mx-auto text-center">
@@ -115,7 +94,7 @@ export default async function AboutPage() {
           {content.counter.stats.map((stat, index) => (
             <div key={index} className="border border-wine-border/30 rounded-lg p-8">
               <span className="text-4xl md:text-5xl font-medium text-white/60">{stat.number}</span>
-              <h3 className="mt-2 text-sm font-medium text-wine-text">{stat.label}</h3>
+              <p className="mt-2 text-sm font-medium text-wine-text">{stat.label}</p>
               <p className="mt-6 text-wine-text/70 text-sm leading-relaxed">{stat.description}</p>
             </div>
           ))}
@@ -258,7 +237,7 @@ export default async function AboutPage() {
                 className="w-16 h-16 mb-8"
                 loading="lazy"
               />
-              <h4 className="text-xl font-medium text-surface-900">{award.title}</h4>
+              <h3 className="text-xl font-medium text-surface-900">{award.title}</h3>
               <p className="mt-2 text-surface-600">{award.description}</p>
             </div>
           ))}
@@ -266,43 +245,12 @@ export default async function AboutPage() {
       </div>
 
       {/* FAQ Section */}
-      <SectionContainer>
-        <SectionHeader
-          title={content.faq.title}
-          highlightWord={content.faq.highlightWord}
-        />
-
-        <div className="mt-8 max-w-3xl">
-          <div className="divide-y divide-surface-200 border-y border-surface-200">
-            {content.faq.items.map((item, index) => (
-              <details key={index} className="group faq-details">
-                <summary className="flex items-center justify-between gap-4 py-5 cursor-pointer list-none select-none hover:bg-surface-50 -mx-4 px-4 transition-colors focus-visible:outline-2 focus-visible:outline-primary-500 focus-visible:outline-offset-2 rounded-lg">
-                  <span className="text-base md:text-lg font-medium text-surface-900 pr-4">
-                    {item.question}
-                  </span>
-                  <span className="flex-shrink-0 w-6 h-6 relative" aria-hidden="true">
-                    <span className="absolute top-1/2 left-0 w-6 h-0.5 bg-surface-400 -translate-y-1/2 transition-transform group-open:rotate-0"></span>
-                    <span className="absolute top-1/2 left-0 w-6 h-0.5 bg-surface-400 -translate-y-1/2 rotate-90 transition-transform group-open:rotate-0"></span>
-                  </span>
-                </summary>
-                <div className="pb-5 pr-10 text-surface-600 leading-relaxed overflow-hidden animate-fade-in">
-                  <p>{item.answer}</p>
-                </div>
-              </details>
-            ))}
-          </div>
-
-          {/* Footer CTA */}
-          <div className="mt-8">
-            <p className="text-surface-600">{content.faq.footerText}</p>
-            <div className="mt-4">
-              <Button variant="primary" size="lg" calTrigger>
-                {content.faq.footerCtaText}
-              </Button>
-            </div>
-          </div>
-        </div>
-      </SectionContainer>
+      <FAQ
+        title={content.faq.title}
+        items={content.faq.items}
+        footerText={content.faq.footerText}
+        footerCtaText={content.faq.footerCtaText}
+      />
 
       {/* Final CTA */}
       <CTA

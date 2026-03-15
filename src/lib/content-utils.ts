@@ -20,7 +20,6 @@ import resultsContent from "@/data/content/results.json";
 import auditContent from "@/data/content/audit.json";
 import caseStudySliderContent from "@/data/content/case-study-slider.json";
 import newsletterContent from "@/data/content/newsletter.json";
-import faqItemsContent from "@/data/content/faq-items.json";
 import workContent from "@/data/content/work.json";
 import aboutContent from "@/data/content/about.json";
 import servicesWebflowContent from "@/data/content/services-webflow.json";
@@ -29,7 +28,7 @@ import servicesCroContent from "@/data/content/services-cro.json";
 import servicesCopywritingContent from "@/data/content/services-copywriting.json";
 import servicesUxUiDesignContent from "@/data/content/services-ux-ui-design.json";
 import seoForHubContent from "@/data/content/seo-for-hub.json";
-import homepageV2Content from "@/data/content/homepage-v2.json";
+import homepageContent from "@/data/content/homepage.json";
 
 // Type definitions for content files
 export interface CTAContent {
@@ -157,9 +156,6 @@ export interface FAQItem {
   answer: string;
 }
 
-export interface FAQItemsContent {
-  items: FAQItem[];
-}
 
 export interface WorkStat {
   number: string;
@@ -394,12 +390,12 @@ export interface SeoForHubContent {
   };
 }
 
-export interface HomepageV2ProblemItem {
+export interface HomepageProblemItem {
   bold: string;
   body: string;
 }
 
-export interface HomepageV2Track {
+export interface HomepageTrack {
   label: string;
   title: string;
   subtitle: string;
@@ -408,20 +404,20 @@ export interface HomepageV2Track {
   capabilities: string[];
 }
 
-export interface HomepageV2ProcessStep {
+export interface HomepageProcessStep {
   number: string;
   title: string;
   timeline: string;
   body: string;
 }
 
-export interface HomepageV2StatItem {
+export interface HomepageStatItem {
   value: string;
   label: string;
   description: string;
 }
 
-export interface HomepageV2Content {
+export interface HomepageContent {
   hero: {
     headline: string;
     description: string;
@@ -433,13 +429,13 @@ export interface HomepageV2Content {
   };
   problem: {
     heading: string;
-    items: HomepageV2ProblemItem[];
+    items: HomepageProblemItem[];
   };
   tracks: {
     heading: string;
     intro: string;
-    build: HomepageV2Track;
-    grow: HomepageV2Track;
+    build: HomepageTrack;
+    grow: HomepageTrack;
     connector: string;
   };
   results: {
@@ -449,11 +445,11 @@ export interface HomepageV2Content {
   process: {
     heading: string;
     subtitle: string;
-    steps: HomepageV2ProcessStep[];
+    steps: HomepageProcessStep[];
   };
   stats: {
     heading: string;
-    items: HomepageV2StatItem[];
+    items: HomepageStatItem[];
   };
   blog: {
     title: string;
@@ -618,7 +614,6 @@ const contentRegistry: Record<string, unknown> = {
   audit: auditContent,
   "case-study-slider": caseStudySliderContent,
   newsletter: newsletterContent,
-  "faq-items": faqItemsContent,
   work: workContent,
   about: aboutContent,
   "services-webflow": servicesWebflowContent,
@@ -627,7 +622,7 @@ const contentRegistry: Record<string, unknown> = {
   "services-copywriting": servicesCopywritingContent,
   "services-ux-ui-design": servicesUxUiDesignContent,
   "seo-for-hub": seoForHubContent,
-  "homepage-v2": homepageV2Content,
+  homepage: homepageContent,
 };
 
 /**
@@ -717,13 +712,6 @@ export function getNewsletterContent(): NewsletterContent {
 }
 
 /**
- * Get FAQ items content
- */
-export function getFAQItemsContent(): FAQItemsContent {
-  return faqItemsContent as FAQItemsContent;
-}
-
-/**
  * Get Work page content
  */
 export function getWorkContent(): WorkContent {
@@ -780,10 +768,10 @@ export function getSeoForHubContent(): SeoForHubContent {
 }
 
 /**
- * Get Homepage V2 content
+ * Get Homepage content
  */
-export function getHomepageV2Content(): HomepageV2Content {
-  return homepageV2Content as HomepageV2Content;
+export function getHomepageContent(): HomepageContent {
+  return homepageContent as HomepageContent;
 }
 
 /**

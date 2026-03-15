@@ -26,9 +26,20 @@ const CopyFirstVisual = dynamic(
 export const metadata: Metadata = {
   title: 'Messaging & Copywriting Services',
   description:
-    'Copy-first website messaging and content production for B2B and SaaS companies. Positioning, conversion copy, and programmatic content systems — all optimized for humans, search engines, and AI citations.',
+    'Copy-first messaging for B2B and SaaS websites. Positioning, conversion copy, and programmatic content optimized for humans, search, and AI citations.',
   alternates: {
     canonical: '/services/copywriting',
+  },
+  openGraph: {
+    title: 'Messaging & Copywriting Services | LoudFace',
+    description:
+      'Copy-first messaging for B2B and SaaS websites. Positioning, conversion copy, and programmatic content optimized for humans, search, and AI citations.',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Messaging & Copywriting Services | LoudFace',
+    description:
+      'Copy-first messaging for B2B and SaaS websites. Positioning, conversion copy, and programmatic content optimized for humans, search, and AI citations.',
   },
 };
 
@@ -40,7 +51,7 @@ export default function CopywritingServicePage() {
     '@type': 'Service',
     name: 'Messaging & Copywriting Services',
     description:
-      'Copy-first website messaging and content production for B2B and SaaS companies. Positioning, conversion copy, and programmatic content systems — all optimized for humans, search engines, and AI citations.',
+      'Copy-first messaging for B2B and SaaS websites. Positioning, conversion copy, and programmatic content optimized for humans, search, and AI citations.',
     provider: {
       '@type': 'Organization',
       name: 'LoudFace',
@@ -54,7 +65,7 @@ export default function CopywritingServicePage() {
     '@context': 'https://schema.org',
     '@type': 'BreadcrumbList',
     itemListElement: [
-      { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://www.loudface.co/' },
+      { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://www.loudface.co' },
       { '@type': 'ListItem', position: 2, name: 'Copywriting' },
     ],
   };

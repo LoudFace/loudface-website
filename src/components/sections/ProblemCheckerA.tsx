@@ -1,8 +1,13 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import Cal, { getCalApi } from '@calcom/embed-react';
+import dynamic from 'next/dynamic';
 import { Button, SectionContainer } from '@/components/ui';
+
+const Cal = dynamic(
+  () => import('@calcom/embed-react').then((m) => m.default || m),
+  { ssr: false }
+);
 
 interface ProblemItem {
   bold: string;
@@ -55,6 +60,7 @@ export function ProblemCheckerA({ heading, items }: ProblemCheckerAProps) {
   useEffect(() => {
     if (!showEmbed) return;
     (async () => {
+      const { getCalApi } = await import('@calcom/embed-react');
       const cal = await getCalApi({ namespace: CAL_NAMESPACE });
       cal('ui', {
         hideEventTypeDetails: true,

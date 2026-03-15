@@ -28,9 +28,20 @@ const AICitationVisual = dynamic(
 export const metadata: Metadata = {
   title: 'SEO & AI Engine Optimization Services',
   description:
-    'Get your brand cited by ChatGPT, Perplexity, and Google AI Mode. Hands-free SEO and AEO programs that build authority across every engine where your buyers look.',
+    'Get cited by ChatGPT, Perplexity, and Google AI Mode. Hands-free SEO and AEO programs that build authority across every engine your buyers use.',
   alternates: {
     canonical: '/services/seo-aeo',
+  },
+  openGraph: {
+    title: 'SEO & AI Engine Optimization Services | LoudFace',
+    description:
+      'Get cited by ChatGPT, Perplexity, and Google AI Mode. Hands-free SEO and AEO programs that build authority across every engine your buyers use.',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'SEO & AI Engine Optimization Services | LoudFace',
+    description:
+      'Get cited by ChatGPT, Perplexity, and Google AI Mode. Hands-free SEO and AEO programs that build authority across every engine your buyers use.',
   },
 };
 
@@ -42,7 +53,7 @@ export default function SeoAeoServicePage() {
     '@type': 'Service',
     name: 'SEO & AI Engine Optimization Services',
     description:
-      'Get your brand cited by ChatGPT, Perplexity, and Google AI Mode. Hands-free SEO and AEO programs that build authority across every engine where your buyers look.',
+      'Get cited by ChatGPT, Perplexity, and Google AI Mode. Hands-free SEO and AEO programs that build authority across every engine your buyers use.',
     provider: {
       '@type': 'Organization',
       name: 'LoudFace',
@@ -56,7 +67,7 @@ export default function SeoAeoServicePage() {
     '@context': 'https://schema.org',
     '@type': 'BreadcrumbList',
     itemListElement: [
-      { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://www.loudface.co/' },
+      { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://www.loudface.co' },
       { '@type': 'ListItem', position: 2, name: 'SEO & AEO' },
     ],
   };

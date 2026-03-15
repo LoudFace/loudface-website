@@ -30,16 +30,22 @@ import type { SeoPage } from '@/lib/types';
 export const metadata: Metadata = {
   title: 'SEO Services by Industry',
   description:
-    'Industry-specific SEO strategies for E-Commerce, Healthcare, SaaS, Startups, B2B, and FinTech. Custom search optimization programs built around your sector\'s unique dynamics.',
+    'Industry-specific SEO for E-Commerce, Healthcare, SaaS, Startups, B2B, and FinTech. Custom search optimization built around your vertical.',
   alternates: {
     canonical: '/seo-for',
   },
   openGraph: {
     title: 'SEO Services by Industry | LoudFace',
     description:
-      'Industry-specific SEO strategies for E-Commerce, Healthcare, SaaS, Startups, B2B, and FinTech. Custom search optimization programs built around your sector\'s unique dynamics.',
+      'Industry-specific SEO for E-Commerce, Healthcare, SaaS, Startups, B2B, and FinTech. Custom search optimization built around your vertical.',
     type: 'website',
     url: '/seo-for',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'SEO Services by Industry | LoudFace',
+    description:
+      'Industry-specific SEO for E-Commerce, Healthcare, SaaS, Startups, B2B, and FinTech. Custom search optimization built around your vertical.',
   },
 };
 
@@ -134,7 +140,7 @@ export default async function SeoForHubPage() {
         '@type': 'ListItem',
         position: 1,
         name: 'Home',
-        item: 'https://www.loudface.co/',
+        item: 'https://www.loudface.co',
       },
       {
         '@type': 'ListItem',

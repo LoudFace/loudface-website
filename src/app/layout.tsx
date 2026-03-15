@@ -28,14 +28,6 @@ export const metadata: Metadata = {
     title: "Webflow Development, SEO/AEO & Design Agency | LoudFace",
     description:
       "Transform your website into a growth engine. Industry-leading Webflow development, SEO/AEO & design delivering measurable ROI and sustainable business growth.",
-    images: [
-      {
-        url: "/images/og-image.jpg",
-        width: 1200,
-        height: 630,
-        alt: "LoudFace - Webflow Development Agency",
-      },
-    ],
   },
   twitter: {
     card: "summary_large_image",
@@ -43,7 +35,6 @@ export const metadata: Metadata = {
     title: "Webflow Development, SEO/AEO & Design Agency | LoudFace",
     description:
       "Transform your website into a growth engine. Industry-leading Webflow development, SEO/AEO & design delivering measurable ROI and sustainable business growth.",
-    images: ["/images/og-image.jpg"],
   },
   icons: {
     icon: "/lf-logo.svg",
@@ -59,7 +50,7 @@ const websiteSchema = {
   "@context": "https://schema.org",
   "@type": "WebSite",
   name: "LoudFace",
-  url: "https://www.loudface.co/",
+  url: "https://www.loudface.co",
 };
 
 // Structured data for Organization

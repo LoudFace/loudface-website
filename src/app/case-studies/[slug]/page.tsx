@@ -13,7 +13,7 @@ import { notFound } from 'next/navigation';
 import Link from 'next/link';
 import Script from 'next/script';
 import type { Metadata } from 'next';
-import { fetchHomepageData, getAccessToken, getEmptyHomepageData } from '@/lib/cms-data';
+import { fetchCollection, fetchHomepageData, getAccessToken, getEmptyHomepageData } from '@/lib/cms-data';
 import { asset } from '@/lib/assets';
 import { heroImage, avatarImage, thumbnailImage, optimizeImage } from '@/lib/image-utils';
 import { getContrastColor } from '@/lib/color-utils';
@@ -30,6 +30,21 @@ import type {
 
 interface PageProps {
   params: Promise<{ slug: string }>;
+}
+
+export async function generateStaticParams() {
+  const accessToken = getAccessToken();
+  if (!accessToken) return [];
+
+  const data = await fetchCollection<Record<string, unknown>>('case-studies', accessToken);
+  if (!data?.items) return [];
+
+  return data.items
+    .filter((item) => !item.isDraft && !item.isArchived)
+    .map((item) => ({
+      slug: (item.fieldData as Record<string, unknown>)?.slug as string,
+    }))
+    .filter((item) => item.slug);
 }
 
 // Extract TOC from main-body HTML
@@ -165,7 +180,7 @@ export default async function CaseStudyPage({ params }: PageProps) {
     '@context': 'https://schema.org',
     '@type': 'BreadcrumbList',
     itemListElement: [
-      { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://www.loudface.co/' },
+      { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://www.loudface.co' },
       { '@type': 'ListItem', position: 2, name: 'Case Studies', item: 'https://www.loudface.co/case-studies' },
       { '@type': 'ListItem', position: 3, name: projectTitle },
     ],

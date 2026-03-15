@@ -36,6 +36,17 @@ export const metadata: Metadata = {
   alternates: {
     canonical: '/services/webflow',
   },
+  openGraph: {
+    title: 'Webflow Development Services | LoudFace',
+    description:
+      'Scale-first Webflow development with component-based architecture. Split test faster, ship landing pages in hours, and grow without technical debt.',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Webflow Development Services | LoudFace',
+    description:
+      'Scale-first Webflow development with component-based architecture. Split test faster, ship landing pages in hours, and grow without technical debt.',
+  },
 };
 
 export default async function WebflowServicePage() {
@@ -66,7 +77,7 @@ export default async function WebflowServicePage() {
     '@context': 'https://schema.org',
     '@type': 'BreadcrumbList',
     itemListElement: [
-      { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://www.loudface.co/' },
+      { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://www.loudface.co' },
       { '@type': 'ListItem', position: 2, name: 'Webflow Development' },
     ],
   };

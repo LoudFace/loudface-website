@@ -6,7 +6,7 @@ import Link from 'next/link';
 import Script from 'next/script';
 import type { Metadata } from 'next';
 import { COLLECTION_IDS } from '@/lib/constants';
-import { fetchHomepageData, getAccessToken } from '@/lib/cms-data';
+import { fetchCollection, fetchHomepageData, getAccessToken } from '@/lib/cms-data';
 import { avatarImage, heroImage, thumbnailImage } from '@/lib/image-utils';
 import { asset } from '@/lib/assets';
 import { SectionContainer } from '@/components/ui';
@@ -16,6 +16,21 @@ import type { BlogPost, Category, TeamMember } from '@/lib/types';
 
 interface PageProps {
   params: Promise<{ slug: string }>;
+}
+
+export async function generateStaticParams() {
+  const accessToken = getAccessToken();
+  if (!accessToken) return [];
+
+  const data = await fetchCollection<Record<string, unknown>>('blog', accessToken);
+  if (!data?.items) return [];
+
+  return data.items
+    .filter((item) => !item.isDraft && !item.isArchived)
+    .map((item) => ({
+      slug: (item.fieldData as Record<string, unknown>)?.slug as string,
+    }))
+    .filter((item) => item.slug);
 }
 
 // Extract TOC from content
@@ -48,7 +63,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
       `https://api.webflow.com/v2/collections/${COLLECTION_IDS['blog']}/items`,
       {
         headers: { Authorization: `Bearer ${accessToken}` },
-        next: { revalidate: 60 },
+        next: { revalidate: 300 },
       }
     );
 
@@ -119,7 +134,7 @@ export default async function BlogPostPage({ params }: PageProps) {
       `https://api.webflow.com/v2/collections/${COLLECTION_IDS['blog']}/items`,
       {
         headers: { Authorization: `Bearer ${accessToken}` },
-        next: { revalidate: 60 },
+        next: { revalidate: 300 },
       }
     );
 
@@ -218,7 +233,7 @@ export default async function BlogPostPage({ params }: PageProps) {
     '@context': 'https://schema.org',
     '@type': 'BreadcrumbList',
     itemListElement: [
-      { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://www.loudface.co/' },
+      { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://www.loudface.co' },
       { '@type': 'ListItem', position: 2, name: 'Blog', item: 'https://www.loudface.co/blog' },
       { '@type': 'ListItem', position: 3, name: post.name },
     ],

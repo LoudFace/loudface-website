@@ -35,7 +35,7 @@ export async function GET(
         headers: {
           Authorization: `Bearer ${accessToken}`,
         },
-        next: { revalidate: 60 }, // Cache for 60 seconds
+        next: { revalidate: 300 }, // Cache for 5 minutes
       }
     );
 

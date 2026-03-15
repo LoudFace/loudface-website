@@ -77,7 +77,9 @@ export function Hero({
               <img
                 src={logoImage(client['colored-logo'].url)}
                 alt={isHidden ? '' : client.name || 'Client logo'}
-                loading="lazy"
+                width={96}
+                height={20}
+                loading={isHidden ? 'lazy' : 'eager'}
                 className="h-5 w-24 object-contain object-left"
               />
             ) : (
@@ -111,7 +113,8 @@ export function Hero({
             }
             width="388"
             height="250"
-            loading="lazy"
+            loading={isHidden ? 'lazy' : 'eager'}
+            fetchPriority={isHidden ? undefined : 'high'}
             className="w-full h-full object-cover object-top"
           />
         </div>

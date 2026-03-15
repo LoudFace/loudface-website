@@ -25,9 +25,20 @@ const ConversionSplitVisual = dynamic(
 export const metadata: Metadata = {
   title: 'Conversion Rate Optimization Services',
   description:
-    'Turn your existing traffic into revenue with systematic CRO programs. We run conversion audits, test headlines and CTAs, and report against pipeline outcomes weekly.',
+    'Turn existing traffic into revenue with systematic CRO. Conversion audits, headline and CTA testing, and weekly pipeline reporting. Book a free audit.',
   alternates: {
     canonical: '/services/cro',
+  },
+  openGraph: {
+    title: 'Conversion Rate Optimization Services | LoudFace',
+    description:
+      'Turn existing traffic into revenue with systematic CRO. Conversion audits, headline and CTA testing, and weekly pipeline reporting. Book a free audit.',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Conversion Rate Optimization Services | LoudFace',
+    description:
+      'Turn existing traffic into revenue with systematic CRO. Conversion audits, headline and CTA testing, and weekly pipeline reporting. Book a free audit.',
   },
 };
 
@@ -39,7 +50,7 @@ export default function CroServicePage() {
     '@type': 'Service',
     name: 'Conversion Rate Optimization Services',
     description:
-      'Turn your existing traffic into revenue with systematic CRO programs. We run conversion audits, test headlines and CTAs, and report against pipeline outcomes weekly.',
+      'Turn existing traffic into revenue with systematic CRO. Conversion audits, headline and CTA testing, and weekly pipeline reporting. Book a free audit.',
     provider: {
       '@type': 'Organization',
       name: 'LoudFace',
@@ -53,7 +64,7 @@ export default function CroServicePage() {
     '@context': 'https://schema.org',
     '@type': 'BreadcrumbList',
     itemListElement: [
-      { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://www.loudface.co/' },
+      { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://www.loudface.co' },
       { '@type': 'ListItem', position: 2, name: 'CRO' },
     ],
   };

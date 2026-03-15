@@ -77,7 +77,7 @@ export async function fetchCollection<T>(
     `https://api.webflow.com/v2/collections/${collectionId}/items`,
     {
       headers: { Authorization: `Bearer ${accessToken}` },
-      next: { revalidate: 60 }, // Revalidate every 60 seconds
+      next: { revalidate: 300 }, // Revalidate every 5 minutes
     }
   );
 

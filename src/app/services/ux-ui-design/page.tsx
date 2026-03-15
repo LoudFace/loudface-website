@@ -26,9 +26,20 @@ const DesignSystemVisual = dynamic(
 export const metadata: Metadata = {
   title: 'UX/UI Design Services',
   description:
-    'Conversion-focused design systems for B2B and SaaS websites. Component libraries, design tokens, and layouts built for humans, search engines, and AI — not just aesthetics.',
+    'Conversion-focused design systems for B2B and SaaS websites. Component libraries, design tokens, and layouts built for humans, search, and AI.',
   alternates: {
     canonical: '/services/ux-ui-design',
+  },
+  openGraph: {
+    title: 'UX/UI Design Services | LoudFace',
+    description:
+      'Conversion-focused design systems for B2B and SaaS websites. Component libraries, design tokens, and layouts built for humans, search, and AI.',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'UX/UI Design Services | LoudFace',
+    description:
+      'Conversion-focused design systems for B2B and SaaS websites. Component libraries, design tokens, and layouts built for humans, search, and AI.',
   },
 };
 
@@ -40,7 +51,7 @@ export default function UxUiDesignServicePage() {
     '@type': 'Service',
     name: 'UX/UI Design Services',
     description:
-      'Conversion-focused design systems for B2B and SaaS websites. Component libraries, design tokens, and layouts built for humans, search engines, and AI — not just aesthetics.',
+      'Conversion-focused design systems for B2B and SaaS websites. Component libraries, design tokens, and layouts built for humans, search, and AI.',
     provider: {
       '@type': 'Organization',
       name: 'LoudFace',
@@ -54,7 +65,7 @@ export default function UxUiDesignServicePage() {
     '@context': 'https://schema.org',
     '@type': 'BreadcrumbList',
     itemListElement: [
-      { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://www.loudface.co/' },
+      { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://www.loudface.co' },
       { '@type': 'ListItem', position: 2, name: 'UX/UI Design' },
     ],
   };

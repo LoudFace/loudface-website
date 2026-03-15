@@ -31,6 +31,14 @@ interface PageProps {
   params: Promise<{ slug: string }>;
 }
 
+export async function generateStaticParams() {
+  const accessToken = getAccessToken();
+  if (!accessToken) return [];
+
+  const seoPages = await fetchSeoPages(accessToken);
+  return seoPages.map((page) => ({ slug: page.slug }));
+}
+
 // --- Helper extractors ---
 
 function extractFaqItems(page: SeoPage) {
@@ -199,7 +207,7 @@ export default async function SeoForIndustryPage({ params }: PageProps) {
         '@type': 'ListItem',
         position: 1,
         name: 'Home',
-        item: 'https://www.loudface.co/',
+        item: 'https://www.loudface.co',
       },
       {
         '@type': 'ListItem',

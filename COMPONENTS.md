@@ -268,10 +268,7 @@ All section components are exported from `@/components/sections` (or `@/componen
 | `Hero` | `Hero.tsx` | Homepage hero with scrolling case study cards | No |
 | `Partners` | `Partners.tsx` | Client logos marquee + testimonials | Yes |
 | `CaseStudySlider` | `CaseStudySlider.tsx` | Embla carousel of case study cards | Yes |
-| `Audit` | `Audit.tsx` | Website audit CTA section | No |
 | `Results` | `Results.tsx` | Bento grid of results/metrics | No |
-| `Marketing` | `Marketing.tsx` | Marketing services feature section | No |
-| `Approach` | `Approach.tsx` | Process steps carousel + stats | Yes |
 | `Knowledge` | `Knowledge.tsx` | Blog post carousel | Yes |
 | `FAQ` | `FAQ.tsx` | Accordion FAQ section | No |
 | `CTA` | `CTA.tsx` | Final call-to-action section | No |
@@ -280,6 +277,9 @@ All section components are exported from `@/components/sections` (or `@/componen
 | `RelatedServices` | `RelatedServices.tsx` | Cross-link section showing the other 4 service pages. Takes `currentService` (href string) to exclude the current page. Place before CTA on service pages. | No |
 | `RelatedComparisons` | `RelatedComparisons.tsx` | Pill-style cross-links between Webflow comparison blog posts. Takes `currentSlug` to exclude the current post. Conditionally rendered on comparison blog posts (slug matches known comparison list). | No |
 | `RelatedArticles` | `RelatedArticles.tsx` | Blog post links section for service pages. Takes `articles` array of `{ href, title, description }`. Place between RelatedServices and CTA on service pages. | No |
+| `ProblemChecker` | `ProblemChecker.tsx` | Interactive checklist of common website problems | Yes |
+| `ProblemCheckerA` | `ProblemCheckerA.tsx` | Problem checklist variant with Cal.com embed (lazy-loaded). Props: `heading`, `items` | Yes |
+| `ProblemCheckerC` | `ProblemCheckerC.tsx` | Problem checklist variant C | Yes |
 
 **"Client?"** = requires `'use client'` directive (has hooks/interactivity).
 
@@ -301,7 +301,7 @@ All section components are exported from `@/components/sections` (or `@/componen
 ```
 src/components/index.ts        → re-exports everything
 src/components/ui/index.ts     → AICitationVisual, Badge, BulletLabel, Button, Card, CarouselNav, ComponentAssemblyVisual, CopyFirstVisual, ConversionSplitVisual, DesignSystemVisual, LogoImage, PixelBreakpointAnimation, ScalableGridAnimation, Pagination, SectionContainer, SectionHeader, VideoFacade
-src/components/sections/index.ts → Hero, Partners, CaseStudySlider, Audit, Results, Marketing, Approach, Knowledge, FAQ, CTA, EditorialProse, DeliverablesGrid, RelatedServices, RelatedComparisons, RelatedArticles
+src/components/sections/index.ts → Hero, Partners, CaseStudySlider, Results, Knowledge, FAQ, CTA, EditorialProse, DeliverablesGrid, RelatedServices, RelatedComparisons, RelatedArticles, ProblemChecker, ProblemCheckerA, ProblemCheckerC
 ```
 
 ---
