@@ -78,6 +78,30 @@ export default function SeoAeoServicePage() {
     ],
   };
 
+  const howToSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'HowTo',
+    name: content.approach.title,
+    description: content.approach.intro,
+    step: content.approach.steps.map((s: { number: string; title: string; description: string }) => ({
+      '@type': 'HowToStep',
+      position: Number(s.number),
+      name: s.title,
+      text: s.description,
+    })),
+  };
+
+  const speakableSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'WebPage',
+    name: 'SEO & AI Engine Optimization Services',
+    speakable: {
+      '@type': 'SpeakableSpecification',
+      cssSelector: ['h1', '[data-speakable]'],
+    },
+    url: 'https://www.loudface.co/services/seo-aeo',
+  };
+
   return (
     <>
       {/* Structured Data — native script tags for SSR visibility to crawlers */}
@@ -88,6 +112,14 @@ export default function SeoAeoServicePage() {
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(howToSchema) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(speakableSchema) }}
       />
 
       {/* ─── Section 1: Hero ─── */}

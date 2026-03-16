@@ -115,8 +115,24 @@ export default async function HomePage() {
 
   const currentQuarter = `Q${Math.ceil((new Date().getMonth() + 1) / 3)}`;
 
+  const speakableSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'WebPage',
+    name: 'LoudFace - B2B SaaS Web Design, SEO & Growth Agency',
+    speakable: {
+      '@type': 'SpeakableSpecification',
+      cssSelector: ['h1', '[data-speakable]'],
+    },
+    url: 'https://www.loudface.co',
+  };
+
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(speakableSchema) }}
+      />
+
       {/* Hero */}
       <Hero
         headline={content.hero.headline}
