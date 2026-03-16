@@ -60,6 +60,16 @@ Complete checklist for thorough SEO, AI Engine Optimization (AEO), and Generativ
 | Readability | Short paragraphs, bullet lists |
 | Unique content | No duplicate from other pages |
 
+### Keyword Cannibalization
+
+| Check | Requirement |
+|-------|-------------|
+| Unique primary keyword per page | No two pages target the same primary keyword (compare title tags and H1s) |
+| Intent differentiation | If two pages cover the same topic, they must target different intents (informational vs. transactional) |
+| Service vs. blog separation | Service pages target "X services" (transactional); blog posts target "What is X" (informational) |
+| SEO landing pages vs. service pages | `/seo-for/saas` targets different keywords than `/services/seo-aeo` |
+| Consolidation opportunities | Thin pages on same topic should be merged into one definitive resource |
+
 ### Page Type Word Counts
 
 | Type | Target | Minimum |
@@ -170,6 +180,15 @@ Pages with multiple applicable schema types should include ALL relevant schemas.
 - [ ] Valid XML format
 - [ ] Submitted to Google Search Console
 - [ ] Updated on new content
+
+### Crawl Budget
+
+| Check | Requirement |
+|-------|-------------|
+| No infinite crawlable paths | Parameterized URLs (`?sort=`, `?filter=`) don't generate unlimited pages |
+| No session IDs in URLs | Session tokens not appended to crawlable URLs |
+| Faceted navigation controlled | Faceted filters (if any) use `noindex` or canonical to base URL |
+| Important pages reachable | Key pages within 3 clicks of homepage |
 
 ### Robots.txt Requirements
 
@@ -645,3 +664,85 @@ When auditing after a Webflow-to-Next.js (or any) migration:
 - [ ] Global schemas (WebSite, Organization) present in layout
 - [ ] Page-specific schemas use correct URLs (new paths, not old Webflow paths)
 - [ ] Schema `url` fields use absolute URLs with canonical domain
+
+## Off-Site Presence & Third-Party Citation Surface
+
+Brands are 6.5x more likely to be cited via third-party sources than their own domain. This section audits external citation surfaces that cannot be verified through code-level checks.
+
+### AI Platform Source Selection Reference
+
+Each AI platform selects sources differently. Optimize accordingly:
+
+| Platform | Source Selection | Key Optimization Signal |
+|----------|-----------------|------------------------|
+| Google AI Overviews | Correlates with traditional rankings + E-E-A-T | Schema markup, topical authority |
+| ChatGPT (with search) | Wider range beyond top-ranked pages | Content structure, recency, source citations |
+| Perplexity | Always cites with links; favors authoritative, recent content | Statistics, expert attribution, freshness |
+| Gemini | Google index + Knowledge Graph | Entity disambiguation, schema, Knowledge Panel |
+| Claude (with search) | Brave Search results + training data | Well-structured content, factual density |
+| Copilot | Bing index + authoritative sources | Bing ranking signals, structured data |
+
+### Directory & Review Profiles
+
+| Check | Requirement |
+|-------|-------------|
+| Google Business Profile | Exists, current, name/address/services match website and schema |
+| Review platforms | Active profiles on relevant platforms (Clutch, G2, DesignRush for B2B) |
+| Review recency | Recent reviews within last 6 months |
+| Profile descriptions | Match website entity claims and Organization schema description |
+
+### Social Presence
+
+| Check | Requirement |
+|-------|-------------|
+| LinkedIn company page | Active with regular posts (AI engines index LinkedIn) |
+| YouTube channel | Exists for how-to content (frequently cited by Google AI Overviews) |
+| Schema `sameAs` completeness | All active social profiles listed |
+| Profile consistency | Same brand name, bio, logo across all platforms |
+
+### Community & Earned Media
+
+| Check | Requirement |
+|-------|-------------|
+| Guest posts | Team members authored content on industry publications |
+| Community presence | Authentic participation in Reddit/Quora (7.8% of ChatGPT citations come from Wikipedia, 1.8% from Reddit) |
+| Industry roundups | Brand featured in comparison articles, "best of" lists |
+| Wikipedia | Page exists if brand is notable enough (highest single-source citation share for ChatGPT) |
+
+### Third-Party Consistency
+
+| Check | Requirement |
+|-------|-------------|
+| Brand name | Identical across all third-party profiles |
+| Services described | Consistent with website and schema |
+| Contact info | Same address, phone, email everywhere |
+| No stale info | No outdated logos, team sizes, or discontinued services |
+
+### Princeton GEO Research Benchmarks
+
+Optimization methods ranked by visibility boost (KDD 2024, Perplexity.ai):
+
+| Method | Visibility Boost | Priority |
+|--------|:---------------:|----------|
+| Cite sources | +40% | Must have |
+| Add statistics | +37% | Must have |
+| Add quotations | +30% | High |
+| Authoritative tone | +25% | High |
+| Improve clarity | +20% | Medium |
+| Technical terms | +18% | Medium |
+| Fluency optimization | +15-30% | Medium |
+| **Keyword stuffing** | **-10%** | **Avoid** |
+
+Best combo: Fluency + Statistics = maximum boost. Low-ranking sites see up to 115% improvement.
+
+### Content Types by Citation Share
+
+| Content Type | Citation Share | Optimization Priority |
+|-------------|:------------:|----------------------|
+| Comparison articles | ~33% | Highest — create "X vs Y" content |
+| Definitive guides | ~15% | High — comprehensive topic coverage |
+| Original research/data | ~12% | High — unique citable statistics |
+| Best-of/listicles | ~10% | Medium — structured entity lists |
+| Product/service pages | ~10% | Medium — specific extractable details |
+| How-to guides | ~8% | Medium — step-by-step structure |
+| Opinion/analysis | ~10% | Medium — expert quotable perspectives |

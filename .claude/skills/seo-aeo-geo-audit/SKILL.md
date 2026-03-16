@@ -56,6 +56,11 @@ For each page, check:
 - [ ] Internal links present (3-5 minimum)
 - [ ] Anchor text descriptive (not "click here")
 
+#### Keyword Cannibalization
+- [ ] No two pages target the same primary keyword (check title tags and H1s for overlap)
+- [ ] Service pages don't compete with blog posts for the same query (one should be informational, the other transactional)
+- [ ] If overlap detected: consolidate thin pages or differentiate intent (e.g., "What is CRO" blog vs. "CRO Services" service page)
+
 ### Step 4: Image Audit
 
 - [ ] All images have `alt` attribute
@@ -84,6 +89,8 @@ For each page, check:
 - [ ] No broken internal links
 - [ ] All pages accessible (no 404s)
 - [ ] HTTPS enforced
+- [ ] No crawl budget waste: parameterized URLs (`?sort=`, `?filter=`) not generating infinite crawlable paths
+- [ ] No session IDs or tracking params in crawlable URLs
 
 ### Step 7: Canonical & Pagination Audit
 
@@ -108,6 +115,19 @@ To verify: `curl -s https://www.loudface.co/[page] | grep -c '<h1'` should retur
 ### Step 9: AEO (AI Engine Optimization) Audit
 
 AI engines (ChatGPT, Perplexity, Claude, Gemini) extract content differently from traditional crawlers. This step ensures the site is structured for AI citation.
+
+**How each platform selects sources:**
+
+| Platform | Source Selection | Key Signal |
+|----------|-----------------|------------|
+| **Google AI Overviews** | Strong correlation with traditional rankings + E-E-A-T | Schema markup, topical authority |
+| **ChatGPT (with search)** | Wider range — cites beyond top-ranked pages | Content structure, recency, source citations |
+| **Perplexity** | Always cites sources with links; favors authoritative, recent content | Statistics, expert attribution, freshness |
+| **Gemini** | Google index + Knowledge Graph | Entity disambiguation, schema, Knowledge Panel |
+| **Claude (with search)** | Brave Search results + training data | Well-structured content, factual density |
+| **Copilot** | Bing index + authoritative sources | Bing ranking signals, structured data |
+
+**Key stats**: AI Overviews appear in ~45% of Google searches. Optimized content gets cited 3x more often. Brands are 6.5x more likely to be cited via third-party sources (Wikipedia, review sites) than their own domain.
 
 #### 9a. Entity Identity & Disambiguation
 
@@ -186,6 +206,33 @@ AI engines weight recency heavily. Research shows content >14 days without updat
 ### Step 10: GEO (Generative Engine Optimization) Audit
 
 GEO focuses on how well content performs when processed by generative AI -- how quotable, extractable, and authoritative it appears to language models.
+
+**Princeton GEO research benchmarks** (KDD 2024, studied across Perplexity.ai):
+
+| Method | Visibility Boost | Application |
+|--------|:---------------:|-------------|
+| Cite sources | +40% | Add authoritative references with links |
+| Add statistics | +37% | Include specific numbers with sources |
+| Add quotations | +30% | Expert quotes with name and title |
+| Authoritative tone | +25% | Demonstrated expertise, no hedging |
+| Improve clarity | +20% | Simplify complex concepts |
+| Technical terms | +18% | Domain-specific terminology |
+| Fluency optimization | +15-30% | Readability and flow |
+| **Keyword stuffing** | **-10%** | **Actively hurts AI visibility** |
+
+Best combo: Fluency + Statistics = maximum boost. Low-ranking sites benefit even more (up to 115% visibility increase with citations).
+
+**Content types that get cited most:**
+
+| Content Type | Citation Share | Why |
+|-------------|:------------:|-----|
+| Comparison articles | ~33% | Structured, balanced, high-intent |
+| Definitive guides | ~15% | Comprehensive, authoritative |
+| Original research/data | ~12% | Unique, citable statistics |
+| Best-of/listicles | ~10% | Clear structure, entity-rich |
+| Product/service pages | ~10% | Specific extractable details |
+| How-to guides | ~8% | Step-by-step structure |
+| Opinion/analysis | ~10% | Expert perspective, quotable |
 
 #### 10a. Quotability & Extractability
 
@@ -286,6 +333,34 @@ When auditing after a site migration:
 - [ ] Key pages requested for re-indexing via GSC
 - [ ] Old sitemap deleted from GSC
 - [ ] No soft 404s (pages that return 200 but show error content)
+
+### Step 15: Off-Site Presence & Third-Party Citation Surface
+
+AI engines don't just cite your website — they cite where you appear. Brands are 6.5x more likely to be cited via third-party sources than their own domain. This step audits your off-site citation surface.
+
+#### 15a. Directory & Review Profiles
+- [ ] Google Business Profile exists and is current (name, address, services, hours match site)
+- [ ] Relevant review platforms have active profiles (G2, Clutch, DesignRush, TrustRadius for B2B; Yelp, TripAdvisor for local)
+- [ ] Review profiles have recent reviews (within last 6 months)
+- [ ] Profile descriptions match website entity claims and schema description
+
+#### 15b. Social Presence as Citation Source
+- [ ] LinkedIn company page active with regular posts (AI engines index LinkedIn content)
+- [ ] YouTube channel exists for key how-to content (frequently cited by Google AI Overviews)
+- [ ] All social profiles listed in Organization schema `sameAs` are active and consistent
+
+#### 15c. Community & Earned Media
+- [ ] Brand or team members have authored guest posts on industry publications
+- [ ] Presence in relevant Reddit/Quora discussions (authentic, not spammy)
+- [ ] Wikipedia page exists (if brand is notable enough) — 7.8% of ChatGPT citations come from Wikipedia
+- [ ] Featured in industry roundups, comparison articles, or "best of" lists
+
+#### 15d. Third-Party Content Consistency
+- [ ] Brand name, description, and services consistent across all third-party profiles
+- [ ] Contact info and location identical to website and schema
+- [ ] No outdated information on third-party profiles (old services, wrong team size, stale logos)
+
+**Note**: This step cannot be fully verified through code-level auditing. It requires manual review of external platforms. Flag gaps and provide a checklist for the team to address.
 
 ## Critical Gotchas (Learned the Hard Way)
 
@@ -494,6 +569,22 @@ AI engines have much steeper freshness decay curves than Google organic search:
 - **Week 27+**: Effectively invisible to AI engines
 
 This means content that was "evergreen" for Google SEO may need quarterly updates to maintain AI citation viability. Add visible "Last updated" dates and actually update content — don't just change the date.
+
+### 25. Third-Party Sources Are Your Biggest AI Citation Channel
+
+Brands are 6.5x more likely to be cited in AI answers via third-party sources (Wikipedia, review sites, Reddit, industry publications) than via their own website. Wikipedia alone accounts for 7.8% of all ChatGPT citations. This means:
+- A Clutch or G2 profile with recent reviews may generate more AI citations than your homepage
+- Guest posts on industry blogs create citation paths AI engines trust as independent validation
+- Reddit/Quora presence matters — AI engines treat community endorsement as an authority signal
+- Your off-site presence audit (Step 15) is not optional — it may be the highest-ROI activity for AI visibility
+
+### 26. Keyword Cannibalization Kills Both SEO and AEO
+
+When two pages target the same primary keyword, search engines split ranking signals and AI engines don't know which to cite. Common patterns:
+- Service page "CRO Services" competing with blog post "What is CRO?" — differentiate intent (transactional vs. informational)
+- Multiple blog posts covering the same topic with slight variations — consolidate into one definitive guide
+- SEO landing pages (`/seo-for/saas`) competing with the main service page (`/services/seo-aeo`) — different keyword focus required
+- Check: compare title tags and H1s across all pages. If two pages could rank for the same query, they're cannibalizing each other.
 
 ## Search Commands
 
@@ -705,6 +796,29 @@ Grep pattern="author|byline|written.by" glob="*.tsx" path="src/app/blog"
 # Check for E-E-A-T credential signals
 Grep pattern="certified|certification|years.*experience|expert|specialist" glob="*.tsx" path="src"
 
+# --- KEYWORD CANNIBALIZATION ---
+
+# Compare H1s across pages for overlap
+Grep pattern="<h1|as=\"h1\"" glob="*.tsx" path="src/app" output_mode="content"
+
+# Compare title tags for similar targeting
+Grep pattern="title:" glob="*.tsx" path="src/app" -A 0
+
+# Find pages with similar keyword focus
+Grep pattern="Webflow.*agency|agency.*Webflow" glob="*.tsx" path="src/app"
+Grep pattern="SEO.*agency|agency.*SEO" glob="*.tsx" path="src/app"
+
+# --- OFF-SITE PRESENCE ---
+
+# Check Organization schema sameAs for completeness (directory/review profiles)
+Grep pattern="sameAs" glob="layout.tsx" path="src/app" output_mode="content" -A 10
+
+# Check for review site/directory mentions in content
+Grep pattern="clutch|designrush|g2\.com|trustpilot|google.*review" -i glob="*.tsx" path="src"
+
+# Check for YouTube or video content references
+Grep pattern="youtube|youtu\.be|video" -i glob="*.tsx" path="src"
+
 # --- DUPLICATE META ---
 
 # Extract all title strings to compare for duplicates
@@ -736,8 +850,9 @@ Generate a report in this format:
 | SSR & Rendering | X/10 | Pass/Warn/Fail |
 | AEO Readiness | X/20 | Pass/Warn/Fail |
 | GEO Readiness | X/20 | Pass/Warn/Fail |
+| Off-Site Presence | X/10 | Pass/Warn/Fail |
 
-**Overall Score**: X/130
+**Overall Score**: X/140
 
 ## Critical Issues (Must Fix)
 
