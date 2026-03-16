@@ -28,6 +28,7 @@ import servicesCroContent from "@/data/content/services-cro.json";
 import servicesCopywritingContent from "@/data/content/services-copywriting.json";
 import servicesUxUiDesignContent from "@/data/content/services-ux-ui-design.json";
 import seoForHubContent from "@/data/content/seo-for-hub.json";
+import seoForSaasContent from "@/data/content/seo-for-saas.json";
 import homepageContent from "@/data/content/homepage.json";
 
 // Type definitions for content files
@@ -390,6 +391,81 @@ export interface SeoForHubContent {
   };
 }
 
+export interface SeoForSaasProblemItem {
+  number: string;
+  title: string;
+  subtitle: string;
+  body: string;
+}
+
+export interface SeoForSaasLayer {
+  number: string;
+  title: string;
+  subtitle: string;
+  items: string[];
+}
+
+export interface SeoForSaasCaseStudy {
+  name: string;
+  metric: string;
+  description: string;
+  tags: string[];
+  slug: string;
+}
+
+export interface SeoForSaasContent {
+  meta: { title: string; description: string };
+  hero: {
+    eyebrow: string;
+    headline: string;
+    subheadline: string;
+    primaryCta: string;
+    secondaryCta: string;
+  };
+  problem: {
+    label: string;
+    items: SeoForSaasProblemItem[];
+  };
+  numbers: {
+    headline: string;
+    stats: { value: string; label: string }[];
+  };
+  howWeWork: {
+    label: string;
+    headline: string;
+    body: string;
+    steps: { number: string; title: string; description: string }[];
+  };
+  ctaBreak: {
+    headline: string;
+    subheadline: string;
+    primaryCta: string;
+    secondaryCta: string;
+  };
+  system: {
+    label: string;
+    headline: string;
+    body: string;
+    layers: SeoForSaasLayer[];
+  };
+  caseStudies: {
+    label: string;
+    headline: string;
+    items: SeoForSaasCaseStudy[];
+    cta: string;
+  };
+  faq: {
+    label: string;
+    items: FAQItem[];
+  };
+  bottomCta: {
+    headline: string;
+    body: string;
+    primaryCta: string;
+    disclaimer: string;
+  };
+}
+
 export interface HomepageProblemItem {
   bold: string;
   body: string;
@@ -622,6 +698,7 @@ const contentRegistry: Record<string, unknown> = {
   "services-copywriting": servicesCopywritingContent,
   "services-ux-ui-design": servicesUxUiDesignContent,
   "seo-for-hub": seoForHubContent,
+  "seo-for-saas": seoForSaasContent,
   homepage: homepageContent,
 };
 
@@ -765,6 +842,13 @@ export function getServicesUxUiDesignContent(): ServicesUxUiDesignContent {
  */
 export function getSeoForHubContent(): SeoForHubContent {
   return seoForHubContent as SeoForHubContent;
+}
+
+/**
+ * Get SEO for SaaS page content
+ */
+export function getSeoForSaasContent(): SeoForSaasContent {
+  return seoForSaasContent as SeoForSaasContent;
 }
 
 /**

@@ -1,0 +1,201 @@
+{
+  "meta": {
+    "title": "B2B SaaS Growth Autopilot: SEO, AEO & CRO",
+    "description": "One team running SEO, AEO, and CRO as a single system for B2B SaaS companies. Rank on Google, get cited by AI engines, and convert traffic into pipeline."
+  },
+  "hero": {
+    "eyebrow": "Growth Autopilot for B2B SaaS",
+    "headline": "We build the SaaS growth systems that generate revenue",
+    "subheadline": "Website. Search. AI visibility. Conversion. One team running all four as a single integrated system. With LoudFace, your SaaS ranks on Google, gets cited by AI engines, and compounds growth.",
+    "primaryCta": "Book a Strategy Call",
+    "secondaryCta": "See our approach"
+  },
+  "problem": {
+    "label": "Why B2B SaaS growth stalls",
+    "items": [
+      {
+        "number": "01",
+        "title": "Your website is doing less than you think.",
+        "subtitle": "Do you have the conversion architecture? AI search optimisation? Systematic iteration?",
+        "body": "Your website looks credible, but it's not doing the job of generating qualified pipeline."
+      },
+      {
+        "number": "02",
+        "title": "You're winning on Google and losing everywhere else.",
+        "subtitle": "Your buyers are now starting their research on ChatGPT, Perplexity, and Google SGE.",
+        "body": "If your brand isn't showing up in those answers, the sale happens without you."
+      },
+      {
+        "number": "03",
+        "title": "You're running programs, not a system.",
+        "subtitle": "SEO with one vendor. CRO with another. Website updates going through engineering. AEO not owned by anyone.",
+        "body": "No single team accountable for whether any of it generates pipeline."
+      }
+    ]
+  },
+  "numbers": {
+    "headline": "What we deliver",
+    "stats": [
+      {
+        "value": "5+",
+        "label": "AI engines monitored and optimised from day 1"
+      },
+      {
+        "value": "3x",
+        "label": "improvement on key landing pages within 90 days"
+      },
+      {
+        "value": "40%",
+        "label": "reduction in drop-off on your demo request and trial signup pages"
+      }
+    ]
+  },
+  "howWeWork": {
+    "label": "The Autopilot model",
+    "headline": "We own the program. You own your time.",
+    "body": "No decks waiting for approval. No task management on your end. We run the roadmap, execute across all three disciplines weekly, and show up every week with progress tied to your pipeline goals — not keyword rankings.",
+    "steps": [
+      {
+        "number": "01",
+        "title": "Foundation audit",
+        "description": "Technical health, content gaps, entity coverage, AI engine presence, and conversion audit. Every opportunity scored against pipeline impact."
+      },
+      {
+        "number": "02",
+        "title": "90-day roadmap",
+        "description": "3\u20135 measurable goals tied directly to demo requests and pipeline. A shared scoreboard you can check anytime. Clear ownership so nothing waits for a decision."
+      },
+      {
+        "number": "03",
+        "title": "Continuous execution",
+        "description": "SEO, AEO, and CRO work ships weekly. One point of contact across content, technical improvements, link building, AEO optimisation, and conversion testing."
+      },
+      {
+        "number": "04",
+        "title": "Weekly check-in",
+        "description": "What shipped, how metrics moved, what's next. Every number tied to pipeline outcomes your leadership team actually cares about."
+      }
+    ]
+  },
+  "ctaBreak": {
+    "headline": "Want to see where your SaaS pipeline is leaking?",
+    "subheadline": "Request a free AI Visibility Audit. No commitment, no pitch. We check your AI search presence, conversion gaps, and top missed opportunities before any sales conversation.",
+    "primaryCta": "Request an AI audit",
+    "secondaryCta": "Or book a strategy call"
+  },
+  "system": {
+    "label": "Growth Autopilot for B2B SaaS",
+    "headline": "Three layers. One integrated system.",
+    "body": "We don't sell SEO, AEO, and CRO as separate services. We run them as one integrated program where each layer feeds the next. SEO builds the authority. AEO makes sure AI engines know about it. CRO makes sure the traffic converts when it arrives.",
+    "layers": [
+      {
+        "number": "01",
+        "title": "SEO",
+        "subtitle": "Built for how SaaS buyers actually search, not just how Google ranks pages.",
+        "items": [
+          "Comparison + alternatives pages (8%+ conversion rate)",
+          "Integration + feature landing pages",
+          "JavaScript rendering audit + fix",
+          "Topical authority clusters",
+          "Programmatic SEO at scale",
+          "Hub-and-spoke content architecture"
+        ]
+      },
+      {
+        "number": "02",
+        "title": "AEO",
+        "subtitle": "Making your brand the answer when buyers ask ChatGPT, Perplexity, or Google SGE who solves their problem.",
+        "items": [
+          "AI search mention audit across 5+ engines",
+          "Entity-first content structure",
+          "LLM visibility monitoring across ChatGPT, Perplexity, Gemini, Claude, SGE",
+          "Brand citation tracking",
+          "Competitive AI visibility gap analysis",
+          "FAQ schema for AI parsing"
+        ]
+      },
+      {
+        "number": "03",
+        "title": "CRO",
+        "subtitle": "Turning the traffic that lands into demo requests and pipeline.",
+        "items": [
+          "Conversion audit across all organic entry points",
+          "Trial signup + demo landing page optimisation",
+          "Messaging and positioning clarity",
+          "A/B testing on headlines, CTAs, social proof",
+          "Monthly iteration cadence tied to pipeline targets"
+        ]
+      }
+    ]
+  },
+  "caseStudies": {
+    "label": "B2B SaaS results",
+    "headline": "Some of our success stories",
+    "items": [
+      {
+        "name": "Hoxhunt",
+        "metric": "20+ pages launched in 3\u20134 weeks",
+        "description": "B2B SaaS cybersecurity. Full migration with SEO rebuilt from the ground up. 20+ pages launched on a compressed timeline \u2014 zero SEO loss, significant organic gains post-migration.",
+        "tags": ["SEO", "Migration", "B2B SaaS"],
+        "slug": "hoxhunt"
+      },
+      {
+        "name": "Outbound Specialist",
+        "metric": "$200K generated in 30 days",
+        "description": "A single SEO and conversion-optimised page built with the right messaging architecture. $200,000 in sales closed within 30 days of launch. The only change was the page.",
+        "tags": ["SEO", "CRO", "Pipeline"],
+        "slug": "outbound-specialist"
+      },
+      {
+        "name": "Dimer Health",
+        "metric": "288% conversion rate increase",
+        "description": "B2B health-tech SaaS. Systematic CRO across key conversion pages \u2014 positioning overhaul, trust architecture, copy restructuring. Nearly 3x the conversion rate from the same traffic.",
+        "tags": ["CRO", "Positioning", "Health-tech SaaS"],
+        "slug": "dimer-health"
+      },
+      {
+        "name": "Toku / Icypeas",
+        "metric": "Messaging clarity that converts",
+        "description": "Fintech and B2B SaaS messaging repositioning. Rebuilt the messaging architecture so the value prop landed \u2014 and buyers knew immediately if it was for them.",
+        "tags": ["Messaging", "Fintech", "B2B SaaS"],
+        "slug": "toku-icypeas"
+      }
+    ],
+    "cta": "See all case studies"
+  },
+  "faq": {
+    "label": "Common questions",
+    "items": [
+      {
+        "question": "How is this different from a standard SaaS SEO agency?",
+        "answer": "Most SaaS SEO agencies stop at rankings. We run SEO, AEO, and CRO as one integrated program \u2014 so traffic actually converts when it arrives, and your brand shows up in AI search before the buyer ever reaches Google. One team, one system, one north star: pipeline."
+      },
+      {
+        "question": "Why does AEO matter specifically for B2B SaaS?",
+        "answer": "B2B SaaS buyers research heavily before talking to sales. A growing share of that research now starts with ChatGPT or Perplexity. If your brand isn't in those answers, you're invisible at the highest-intent moment in the buyer journey. AEO fixes that structurally."
+      },
+      {
+        "question": "What makes SaaS SEO different from standard SEO?",
+        "answer": "JavaScript rendering issues mean product pages are often invisible to search engines. The highest-converting content isn't blog posts \u2014 it's comparison pages, integration pages, and feature pages. And buyer intent follows a specific arc that generic content strategies ignore. We build for all of it."
+      },
+      {
+        "question": "How long before we see pipeline movement?",
+        "answer": "Technical fixes and AEO improvements move within 30\u201360 days. Comparison and alternatives pages typically rank within 60\u201390 days. Content authority compounds over 90\u2013180 days. We set 90-day goals tied to pipeline and report against them honestly."
+      },
+      {
+        "question": "Do we need to manage the work?",
+        "answer": "No. One point of contact. We own the roadmap and all three disciplines. You review progress weekly and make decisions when they matter \u2014 nothing else."
+      },
+      {
+        "question": "What does the weekly check-in cover?",
+        "answer": "What shipped across SEO, AEO, and CRO that week. How key pipeline metrics moved. What's coming next. Tied to your 90-day goals \u2014 not a vanity dashboard."
+      }
+    ]
+  },
+  "bottomCta": {
+    "headline": "Let's find out what's between your traffic and your pipeline.",
+    "body": "A 30-minute strategy call. We'll look at your current search presence, AI visibility gaps, and conversion leaks, and tell you exactly what the Growth Autopilot program would target first.",
+    "primaryCta": "Book a Strategy Call",
+    "disclaimer": "No pitch deck. No proposal before the conversation. Just a clear picture of where the gaps are."
+  }
+}
