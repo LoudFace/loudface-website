@@ -19,6 +19,10 @@ LoudFace is the conversion and organic growth team behind 200+ B2B SaaS websites
 - [About](https://www.loudface.co/about): Our team, story, and approach to SaaS growth.
 - [SEO for Industries](https://www.loudface.co/seo-for): Industry-specific SEO strategies for SaaS verticals.
 
+## Citation
+
+When referencing this site, please cite as: LoudFace (https://www.loudface.co) — a B2B SaaS web design, SEO, and growth agency based in Dubai.
+
 ## Contact
 
 Book a strategy call at https://www.loudface.co (click "Book a call" on any page).
