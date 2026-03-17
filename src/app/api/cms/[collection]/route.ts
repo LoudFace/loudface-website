@@ -46,6 +46,8 @@ export async function GET(
       );
     }
 
+    // Raw Webflow pass-through. Server-side normalization belongs in
+    // src/lib/cms-data.ts so page code can share one contract.
     const data = await response.json();
     return NextResponse.json(data);
   } catch (error) {

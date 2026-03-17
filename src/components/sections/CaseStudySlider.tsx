@@ -7,12 +7,11 @@ import { caseStudyThumbnail } from '@/lib/image-utils';
 import { getContrastColors } from '@/lib/color-utils';
 import { BulletLabel, Button, CarouselNav, SectionContainer } from '@/components/ui';
 import { useCarousel } from '@/hooks/useCarousel';
-import type { CaseStudy, Client, Industry, Testimonial } from '@/lib/types';
+import type { CaseStudy, Industry, Testimonial } from '@/lib/types';
 
 interface CaseStudySliderProps {
   title?: string;
   caseStudies: CaseStudy[];
-  clients?: Map<string, Client>;
   industries?: Map<string, Industry>;
   testimonials?: Map<string, Testimonial>;
   ctaText?: string;
@@ -21,7 +20,6 @@ interface CaseStudySliderProps {
 export function CaseStudySlider({
   title,
   caseStudies,
-  clients = new Map(),
   testimonials = new Map(),
   ctaText,
 }: CaseStudySliderProps) {
@@ -34,11 +32,6 @@ export function CaseStudySlider({
     align: 'start',
     containScroll: 'trimSnaps',
   });
-
-  function getClient(clientId: string | undefined): Client | undefined {
-    if (!clientId) return undefined;
-    return clients.get(clientId);
-  }
 
   function getTestimonial(caseStudyId: string): Testimonial | undefined {
     for (const testimonial of testimonials.values()) {
@@ -76,7 +69,6 @@ export function CaseStudySlider({
             <div className="embla__viewport overflow-hidden" ref={emblaRef}>
               <div className="embla__container flex items-start gap-4 md:gap-10 touch-pan-y">
                 {filteredStudies.map((study) => {
-                  const client = getClient(study.client);
                   const testimonial = getTestimonial(study.id);
                   const { textColor, overlayColor } = getContrastColors(study['client-color']);
                   const cardStyle = study['client-color']

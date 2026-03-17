@@ -12,12 +12,13 @@
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
 import type { Metadata } from 'next';
-import { fetchCollection, fetchHomepageData, getAccessToken, getEmptyHomepageData } from '@/lib/cms-data';
+import { fetchCollection, fetchHomepageData, fetchItemBySlug, getAccessToken } from '@/lib/cms-data';
 import { asset } from '@/lib/assets';
 import { heroImage, avatarImage, thumbnailImage, optimizeImage } from '@/lib/image-utils';
 import { getContrastColor } from '@/lib/color-utils';
 import { Button, SectionContainer } from '@/components/ui';
 import { CTA } from '@/components/sections';
+import { buildNoIndexMetadata, buildPageMetadata } from '@/lib/seo-utils';
 import type {
   CaseStudy,
   Client,
@@ -66,17 +67,14 @@ function extractTocAndAddIds(html: string | undefined): { toc: { id: string; tex
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { slug } = await params;
   const accessToken = getAccessToken();
-  const cmsData = accessToken
-    ? await fetchHomepageData(accessToken)
-    : getEmptyHomepageData();
+  if (!accessToken) {
+    return buildNoIndexMetadata('Case Study Not Found');
+  }
 
-  const study = cmsData.caseStudies.find((s) => s.slug === slug);
+  const study = await fetchItemBySlug<CaseStudy>('case-studies', slug, accessToken);
 
   if (!study) {
-    return {
-      title: 'Case Study Not Found',
-      robots: { index: false },
-    };
+    return buildNoIndexMetadata('Case Study Not Found');
   }
 
   const projectTitle = study['project-title'] || study.name;
@@ -84,38 +82,27 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 
   const imageUrl = study['main-project-image-thumbnail']?.url;
 
-  return {
+  return buildPageMetadata({
     title: projectTitle,
     description,
-    alternates: {
-      canonical: `/case-studies/${slug}`,
-    },
-    openGraph: {
-      title: `${projectTitle} | LoudFace`,
-      description,
-      type: 'article',
-      url: `/case-studies/${slug}`,
-      siteName: 'LoudFace',
-      locale: 'en_US',
-      images: imageUrl ? [{ url: imageUrl, width: 1200, height: 630, alt: projectTitle }] : undefined,
-    },
-    twitter: {
-      card: 'summary_large_image',
-      site: '@loudface',
-      title: `${projectTitle} | LoudFace`,
-      description,
-      images: imageUrl ? [imageUrl] : undefined,
-    },
-  };
+    canonicalPath: `/case-studies/${slug}`,
+    type: 'article',
+    imageUrl,
+  });
 }
 
 export default async function CaseStudyPage({ params }: PageProps) {
   const { slug } = await params;
 
   const accessToken = getAccessToken();
-  const cmsData = accessToken
-    ? await fetchHomepageData(accessToken)
-    : getEmptyHomepageData();
+  if (!accessToken) {
+    notFound();
+  }
+
+  const [cmsData, study] = await Promise.all([
+    fetchHomepageData(accessToken),
+    fetchItemBySlug<CaseStudy>('case-studies', slug, accessToken),
+  ]);
 
   const {
     caseStudies,
@@ -125,10 +112,7 @@ export default async function CaseStudyPage({ params }: PageProps) {
     industries: industriesMap,
     technologies: technologiesMap,
     serviceCategories: serviceCategoriesMap,
-    blogPosts,
   } = cmsData;
-
-  const study = caseStudies.find((s) => s.slug === slug) as (CaseStudy & { id: string }) | undefined;
 
   if (!study) {
     notFound();
@@ -171,7 +155,6 @@ export default async function CaseStudyPage({ params }: PageProps) {
 
   const clientColor = study['client-color'] || 'var(--color-primary-500)';
   const textColor = getContrastColor(clientColor);
-  const websiteUrl = study['website-link'] || study['visit-the-website'];
 
   const results = [
     { number: study['result-1---number'], title: study['result-1---title'] },

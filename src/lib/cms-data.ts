@@ -5,6 +5,7 @@
  * Handles caching, normalization, and reference lookups.
  */
 
+import { cache } from "react";
 import { COLLECTION_IDS } from "./constants";
 import { getCached, setCache } from "./cms-cache";
 import type {
@@ -18,6 +19,7 @@ import type {
   Technology,
   ServiceCategory,
   SeoPage,
+  WebflowItem,
 } from "./types";
 
 /**
@@ -46,6 +48,11 @@ export interface HomepageData {
   industries: Map<string, Industry>;
   technologies: Map<string, Technology>;
   serviceCategories: Map<string, ServiceCategory>;
+}
+
+export interface FooterData {
+  caseStudies: CaseStudy[];
+  blogPosts: BlogPost[];
 }
 
 /**
@@ -77,7 +84,7 @@ export async function fetchCollection<T>(
   accessToken: string
 ): Promise<{ items: T[] } | null> {
   const collectionId = COLLECTION_IDS[collectionKey];
-  if (!collectionId) return null;
+  if (!collectionId || !accessToken) return null;
 
   // Check cache first (only works in dev)
   const cached = getCached<{ items: T[] }>(collectionId);
@@ -154,6 +161,66 @@ function isPublished(item: Record<string, unknown>): boolean {
   return !item.isDraft && !item.isArchived;
 }
 
+const fetchPublishedItemBySlugCached = cache(
+  async (
+    collectionKey: keyof typeof COLLECTION_IDS,
+    slug: string,
+    accessToken: string
+  ): Promise<Record<string, unknown> | null> => {
+    const data = await fetchCollection<Record<string, unknown>>(
+      collectionKey,
+      accessToken
+    );
+
+    if (!data?.items) {
+      return null;
+    }
+
+    const item = data.items.find((entry) => {
+      const fieldData = entry.fieldData as Record<string, unknown> | undefined;
+      return isPublished(entry) && fieldData?.slug === slug;
+    });
+
+    return item ?? null;
+  }
+);
+
+export async function fetchItemBySlug<T>(
+  collectionKey: keyof typeof COLLECTION_IDS,
+  slug: string,
+  accessToken: string
+): Promise<T | null> {
+  if (!slug || !accessToken) {
+    return null;
+  }
+
+  const item = await fetchPublishedItemBySlugCached(
+    collectionKey,
+    slug,
+    accessToken
+  );
+
+  return item ? normalizeItem<T>(item) : null;
+}
+
+export async function fetchRawItemBySlug(
+  collectionKey: keyof typeof COLLECTION_IDS,
+  slug: string,
+  accessToken: string
+): Promise<WebflowItem | null> {
+  if (!slug || !accessToken) {
+    return null;
+  }
+
+  const item = await fetchPublishedItemBySlugCached(
+    collectionKey,
+    slug,
+    accessToken
+  );
+
+  return item as WebflowItem | null;
+}
+
 /**
  * Fetch all homepage CMS data in parallel
  *
@@ -164,6 +231,10 @@ export async function fetchHomepageData(
   accessToken: string
 ): Promise<HomepageData> {
   const data = getEmptyHomepageData();
+
+  if (!accessToken) {
+    return data;
+  }
 
   try {
     // Fetch all CMS collections in parallel
@@ -323,6 +394,8 @@ export function assertCmsData(data: HomepageData): void {
 export async function fetchSeoPages(
   accessToken: string
 ): Promise<SeoPage[]> {
+  if (!accessToken) return [];
+
   const data = await fetchCollection<Record<string, unknown>>(
     "seo-pages",
     accessToken
@@ -336,9 +409,49 @@ export async function fetchSeoPages(
     );
 }
 
+export async function fetchFooterData(accessToken: string): Promise<FooterData> {
+  const data: FooterData = {
+    caseStudies: [],
+    blogPosts: [],
+  };
+
+  if (!accessToken) {
+    return data;
+  }
+
+  try {
+    const [caseStudiesData, blogData] = await Promise.all([
+      fetchCollection<Record<string, unknown>>("case-studies", accessToken),
+      fetchCollection<Record<string, unknown>>("blog", accessToken),
+    ]);
+
+    if (caseStudiesData?.items) {
+      data.caseStudies = caseStudiesData.items
+        .filter(isPublished)
+        .map((item) => normalizeItem<CaseStudy>(item));
+    }
+
+    if (blogData?.items) {
+      data.blogPosts = blogData.items
+        .filter(isPublished)
+        .map((item) => normalizeItem<BlogPost>(item))
+        .sort((a, b) => {
+          const dateA = new Date(a["published-date"] || 0).getTime();
+          const dateB = new Date(b["published-date"] || 0).getTime();
+          return dateB - dateA;
+        });
+    }
+  } catch (error) {
+    console.error("[CMS] Footer data fetch failed:", error);
+  }
+
+  return data;
+}
+
 /**
  * Get access token from environment
  */
 export function getAccessToken(): string | undefined {
-  return process.env.WEBFLOW_SITE_API_TOKEN;
+  const token = process.env.WEBFLOW_SITE_API_TOKEN?.trim();
+  return token ? token : undefined;
 }

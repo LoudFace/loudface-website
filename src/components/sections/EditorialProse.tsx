@@ -18,6 +18,9 @@ interface EditorialProseProps {
 
 export function EditorialProse({ html, industryName }: EditorialProseProps) {
   const sections = splitProseByH2(html);
+  const title = industryName
+    ? `${industryName} Intelligence`
+    : 'Industry Intelligence';
 
   // Fallback: if 0-1 sections, render as a single prose block
   if (sections.length <= 1) {
@@ -42,7 +45,7 @@ export function EditorialProse({ html, industryName }: EditorialProseProps) {
       <BulletLabel>Deep Dive</BulletLabel>
       <div className="mt-4">
         <SectionHeader
-          title="Industry Intelligence"
+          title={title}
           highlightWord="Intelligence"
         />
       </div>

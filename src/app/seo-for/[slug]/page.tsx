@@ -8,12 +8,12 @@ import { notFound } from 'next/navigation';
 import Link from 'next/link';
 import type { Metadata } from 'next';
 import {
+  fetchItemBySlug,
   fetchSeoPages,
   fetchHomepageData,
   getAccessToken,
-  getEmptyHomepageData,
 } from '@/lib/cms-data';
-import { truncateSeoTitle } from '@/lib/seo-utils';
+import { buildNoIndexMetadata, buildPageMetadata, truncateSeoTitle } from '@/lib/seo-utils';
 import {
   Button,
   BulletLabel,
@@ -86,13 +86,12 @@ function extractStats(page: SeoPage) {
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { slug } = await params;
   const accessToken = getAccessToken();
-  if (!accessToken) return { title: 'SEO Services', robots: { index: false } };
+  if (!accessToken) return buildNoIndexMetadata('SEO Services');
 
-  const seoPages = await fetchSeoPages(accessToken);
-  const page = seoPages.find((p) => p.slug === slug);
+  const page = await fetchItemBySlug<SeoPage>('seo-pages', slug, accessToken);
 
   if (!page) {
-    return { title: 'SEO Services', robots: { index: false } };
+    return buildNoIndexMetadata('SEO Services');
   }
 
   const title = truncateSeoTitle(page['meta-title'] || page['hero-headline'] || page.name);
@@ -101,29 +100,11 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     page['hero-description'] ||
     `Professional SEO services for ${page.name}. Get found by your ideal customers.`;
 
-  return {
+  return buildPageMetadata({
     title,
     description,
-    alternates: {
-      canonical: `/seo-for/${slug}`,
-    },
-    openGraph: {
-      title: `${title} | LoudFace`,
-      description,
-      type: 'website',
-      url: `/seo-for/${slug}`,
-      siteName: 'LoudFace',
-      locale: 'en_US',
-      images: [{ url: '/opengraph-image', width: 1200, height: 630, alt: `${title} | LoudFace` }],
-    },
-    twitter: {
-      card: 'summary_large_image',
-      site: '@loudface',
-      title: `${title} | LoudFace`,
-      description,
-      images: ['/opengraph-image'],
-    },
-  };
+    canonicalPath: `/seo-for/${slug}`,
+  });
 }
 
 // --- Page ---
@@ -134,13 +115,10 @@ export default async function SeoForIndustryPage({ params }: PageProps) {
   const accessToken = getAccessToken();
   if (!accessToken) notFound();
 
-  // Fetch SEO pages and homepage data in parallel
-  const [seoPages, cmsData] = await Promise.all([
-    fetchSeoPages(accessToken),
-    fetchHomepageData(accessToken).catch(() => getEmptyHomepageData()),
+  const [page, cmsData] = await Promise.all([
+    fetchItemBySlug<SeoPage>('seo-pages', slug, accessToken),
+    fetchHomepageData(accessToken),
   ]);
-
-  const page = seoPages.find((p) => p.slug === slug);
   if (!page) notFound();
 
   const faqItems = extractFaqItems(page);
@@ -205,8 +183,6 @@ export default async function SeoForIndustryPage({ params }: PageProps) {
   if (relatedPosts.length === 0) {
     relatedPosts = cmsData.blogPosts.slice(0, 3);
   }
-
-  const canonicalUrl = `https://www.loudface.co/seo-for/${slug}`;
 
   // --- Structured Data ---
   const breadcrumbSchema = {

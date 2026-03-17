@@ -5,10 +5,14 @@
  * so page titles should stay under 48 chars for a total < 60.
  */
 
+import type { Metadata } from "next";
+
 const BRAND_SUFFIX = ' | LoudFace';
 const BRAND_SUFFIX_LENGTH = BRAND_SUFFIX.length; // 12
 const MAX_SERP_TITLE = 60;
 const DEFAULT_MAX_PAGE_TITLE = MAX_SERP_TITLE - BRAND_SUFFIX_LENGTH; // 48
+const SITE_NAME = 'LoudFace';
+const SITE_TWITTER = '@loudface';
 
 /**
  * Truncate a page title to fit within SERP display limits.
@@ -47,4 +51,60 @@ export function truncateSeoTitle(
   truncated = truncated.replace(/[,;:\u2014\u2013\-]$/, '').trim();
 
   return truncated;
+}
+
+export function buildNoIndexMetadata(title: string): Metadata {
+  return {
+    title,
+    robots: { index: false },
+  };
+}
+
+interface BuildPageMetadataOptions {
+  title: string;
+  description: string;
+  canonicalPath: string;
+  type?: 'article' | 'website';
+  imageUrl?: string;
+  publishedTime?: string;
+  modifiedTime?: string;
+}
+
+export function buildPageMetadata({
+  title,
+  description,
+  canonicalPath,
+  type = 'website',
+  imageUrl = '/opengraph-image',
+  publishedTime,
+  modifiedTime,
+}: BuildPageMetadataOptions): Metadata {
+  const socialTitle = `${title}${BRAND_SUFFIX}`;
+  const image = { url: imageUrl, width: 1200, height: 630, alt: socialTitle };
+
+  return {
+    title,
+    description,
+    alternates: {
+      canonical: canonicalPath,
+    },
+    openGraph: {
+      type,
+      title: socialTitle,
+      description,
+      url: canonicalPath,
+      siteName: SITE_NAME,
+      locale: 'en_US',
+      images: [image],
+      ...(publishedTime ? { publishedTime } : {}),
+      ...(modifiedTime ? { modifiedTime } : {}),
+    },
+    twitter: {
+      card: 'summary_large_image',
+      site: SITE_TWITTER,
+      title: socialTitle,
+      description,
+      images: [imageUrl],
+    },
+  };
 }

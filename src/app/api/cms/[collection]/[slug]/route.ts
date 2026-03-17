@@ -62,10 +62,9 @@ export async function GET(
       );
     }
 
-    // Normalize: merge item metadata with fieldData
-    const item = { ...rawItem, ...rawItem.fieldData };
-
-    return NextResponse.json(item);
+    // Keep API routes as raw Webflow pass-throughs. Server-side normalization
+    // belongs in src/lib/cms-data.ts so all page code shares one contract.
+    return NextResponse.json(rawItem);
   } catch (error) {
     console.error('CMS fetch error:', error);
     return NextResponse.json(

@@ -63,7 +63,7 @@ Multi-variant button that renders as `<button>`, `<Link>`, or `<a>` depending on
 | `children` | `ReactNode` | required | Button text |
 | `variant` | `'primary' \| 'secondary' \| 'ghost' \| 'outline'` | `'primary'` | Visual style |
 | `size` | `'sm' \| 'md' \| 'lg'` | `'md'` | Padding/text size |
-| `href` | `string` | — | Makes it a link (internal = `<Link>`, external = `<a>`) |
+| `href` | `string` | — | Makes it a link (internal = `<Link>`, external = `<a target="_blank" rel="noopener noreferrer">`) |
 | `calTrigger` | `boolean` | — | Marks as Cal.com booking trigger |
 | `type` | `'button' \| 'submit' \| 'reset'` | `'button'` | HTML button type (ignored when `href` is set) |
 | `onClick` | `() => void` | — | Click handler (ignored when `href` is set) |
@@ -84,7 +84,7 @@ Consistent card surface for content containers. Use instead of writing raw card 
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
 | `children` | `ReactNode` | required | Card content |
-| `variant` | `'default' \| 'dark' \| 'glass'` | `'default'` | `default` = white + border, `dark` = solid dark, `glass` = frosted (dark sections) |
+| `variant` | `'default' \| 'dark' \| 'glass'` | `'default'` | `default` = white + border, `dark` = solid dark, `glass` = subtle translucent surface for dark sections |
 | `padding` | `'sm' \| 'md' \| 'lg' \| 'none'` | `'md'` | Inner padding (`sm` = p-4, `md` = p-6, `lg` = p-8) |
 | `hover` | `boolean` | `true` | Enable hover interaction styles |
 | `className` | `string` | `''` | Additional classes |
@@ -102,9 +102,9 @@ Prev/next arrow buttons for Embla carousels.
 
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
-| `variant` | `'light' \| 'dark'` | required | Color scheme matching background |
-| `onPrevClick` | `() => void` | required | Previous slide callback |
-| `onNextClick` | `() => void` | required | Next slide callback |
+| `variant` | `'light' \| 'dark'` | `'light'` | Color scheme matching background |
+| `onPrevClick` | `() => void` | — | Optional previous slide callback |
+| `onNextClick` | `() => void` | — | Optional next slide callback |
 | `className` | `string` | — | Additional classes |
 
 ```tsx
@@ -119,8 +119,8 @@ Auto-scaling logo image that normalizes visual weight across different aspect ra
 |------|------|---------|-------------|
 | `src` | `string` | required | Image URL |
 | `alt` | `string` | required | Accessible alt text |
-| `containerWidth` | `number` | `96` | Bounding box width in px |
-| `containerHeight` | `number` | `40` | Bounding box height in px |
+| `containerWidth` | `number` | `106` | Bounding box width in px |
+| `containerHeight` | `number` | `44` | Bounding box height in px |
 | `containerClassName` | `string` | `''` | Classes on the outer wrapper div |
 | `imgClassName` | `string` | `''` | Classes on the `<img>` element |
 

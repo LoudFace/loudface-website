@@ -1,22 +1,16 @@
 import { MetadataRoute } from 'next';
-import { fetchHomepageData, fetchSeoPages, getAccessToken, getEmptyHomepageData } from '@/lib/cms-data';
+import {
+  assertCmsData,
+  fetchHomepageData,
+  fetchSeoPages,
+  getAccessToken,
+} from '@/lib/cms-data';
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = 'https://www.loudface.co';
   const lastModified = new Date();
   // Use current build time for static pages — avoids stale hardcoded dates
   const staticLastModified = lastModified;
-
-  // Fetch CMS data for dynamic routes
-  const accessToken = getAccessToken();
-  const [cmsData, seoPages] = await Promise.all([
-    accessToken
-      ? fetchHomepageData(accessToken)
-      : Promise.resolve(getEmptyHomepageData()),
-    accessToken ? fetchSeoPages(accessToken) : Promise.resolve([]),
-  ]);
-
-  const { caseStudies, blogPosts } = cmsData;
 
   // Static pages
   const staticPages: MetadataRoute.Sitemap = [
@@ -101,6 +95,28 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 0.3,
     },
   ];
+
+  const accessToken = getAccessToken();
+  if (!accessToken) {
+    if (process.env.NODE_ENV === 'production') {
+      throw new Error(
+        'Sitemap generation requires WEBFLOW_SITE_API_TOKEN in production.'
+      );
+    }
+
+    return staticPages;
+  }
+
+  const [cmsData, seoPages] = await Promise.all([
+    fetchHomepageData(accessToken),
+    fetchSeoPages(accessToken),
+  ]);
+
+  if (process.env.NODE_ENV === 'production') {
+    assertCmsData(cmsData);
+  }
+
+  const { caseStudies, blogPosts } = cmsData;
 
   // Case study pages
   const caseStudyPages: MetadataRoute.Sitemap = caseStudies.map((study) => ({

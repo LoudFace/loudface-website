@@ -2,7 +2,7 @@ import Link from 'next/link';
 import { asset } from '@/lib/assets';
 import { optimizeImage } from '@/lib/image-utils';
 import { getResultsContent, type VideoTestimonial } from '@/lib/content-utils';
-import { Button, Card, VideoFacade } from '@/components/ui';
+import { Button, Card, SectionContainer, VideoFacade } from '@/components/ui';
 import type { CaseStudy, Client, Testimonial } from '@/lib/types';
 
 interface ResultsProps {
@@ -99,112 +99,110 @@ export function Results({
   };
 
   return (
-    <section className="bg-surface-50 border-t border-surface-200 pb-8 md:pb-0">
-      <div className="py-12 md:py-16">
-        <div className="px-4 md:px-8 lg:px-12">
-          <div className="max-w-7xl mx-auto">
-            {/* Spacer */}
-            <div className="h-6 sm:h-8 md:h-12" />
+    <SectionContainer
+      className="border-t border-surface-200 bg-surface-50 pb-8 md:pb-0"
+      padding="sm"
+    >
+      {/* Spacer */}
+      <div className="h-6 sm:h-8 md:h-12" />
 
-            {/* Header */}
-            <header className="max-w-lg md:max-w-xl mx-auto md:mx-0 text-center md:text-left">
-              <h2
-                className="text-2xl sm:text-3xl md:text-4xl font-medium text-surface-900 leading-tight"
-                dangerouslySetInnerHTML={{ __html: formatTitle(finalTitle) }}
+      {/* Header */}
+      <header className="max-w-lg text-center md:mx-0 md:max-w-xl md:text-left">
+        <h2
+          className="text-2xl sm:text-3xl md:text-4xl font-medium text-surface-900 leading-tight"
+          dangerouslySetInnerHTML={{ __html: formatTitle(finalTitle) }}
+        />
+        <div className="h-4" />
+        <p className="text-surface-600 text-lg">{finalSubtitle}</p>
+      </header>
+
+      <div className="h-6 sm:h-8 md:h-12" />
+
+      {/* Bento Grid - Two column masonry layout */}
+      <div className="grid items-start grid-cols-1 gap-5 md:grid-cols-2 md:gap-x-6">
+        {/* Left Column */}
+        <div className="flex flex-col gap-5">
+          {/* Video Testimonial 1 */}
+          {finalVideoTestimonials[0] && (
+            <div>
+              <VideoFacade
+                videoUrl={finalVideoTestimonials[0].videoUrl}
+                title={finalVideoTestimonials[0].videoTitle || 'Video testimonial'}
+                name={finalVideoTestimonials[0].name}
+                role={finalVideoTestimonials[0].role}
               />
-              <div className="h-4" />
-              <p className="text-surface-600 text-lg">{finalSubtitle}</p>
-            </header>
-
-            <div className="h-6 sm:h-8 md:h-12" />
-
-            {/* Bento Grid - Two column masonry layout */}
-            <div className="grid gap-5 md:gap-x-6 grid-cols-1 md:grid-cols-2 items-start">
-              {/* Left Column */}
-              <div className="flex flex-col gap-5">
-                {/* Video Testimonial 1 */}
-                {finalVideoTestimonials[0] && (
-                  <div>
-                    <VideoFacade
-                      videoUrl={finalVideoTestimonials[0].videoUrl}
-                      title={finalVideoTestimonials[0].videoTitle || 'Video testimonial'}
-                      name={finalVideoTestimonials[0].name}
-                      role={finalVideoTestimonials[0].role}
-                    />
-                  </div>
-                )}
-
-                {/* Case Study 2 */}
-                {slot2Item && (
-                  <div>
-                    <CaseStudyCard study={slot2Item} />
-                  </div>
-                )}
-              </div>
-
-              {/* Right Column */}
-              <div className="flex flex-col gap-5">
-                {/* Case Study 1 */}
-                {slot1Item && (
-                  <div>
-                    <CaseStudyCard study={slot1Item} />
-                  </div>
-                )}
-
-                {/* Testimonial */}
-                {testimonial && (
-                  <div>
-                    <Card hover={false} className="flex flex-col">
-                      <blockquote
-                        className="text-base leading-7 text-surface-700 line-clamp-6 [&>p]:m-0"
-                        dangerouslySetInnerHTML={{ __html: testimonial['testimonial-body'] || '' }}
-                      />
-                      <div className="h-6" />
-                      <div className="flex justify-between items-end">
-                        <div className="flex flex-col gap-1">
-                          <span className="font-bold text-surface-900">{testimonial.name}</span>
-                          <span className="text-surface-600">{testimonial.role}</span>
-                        </div>
-                        <div
-                          className="w-10 h-10 flex items-center justify-center bg-surface-900 rounded-full cursor-pointer transition-transform hover:scale-105"
-                          aria-label="View testimonial"
-                        >
-                          <img
-                            src={asset('/images/top-right-arrow.svg')}
-                            loading="lazy"
-                            width="16"
-                            height="16"
-                            alt=""
-                          />
-                        </div>
-                      </div>
-                    </Card>
-                  </div>
-                )}
-
-                {/* Video Testimonial 2 */}
-                {finalVideoTestimonials[1] && (
-                  <div>
-                    <VideoFacade
-                      videoUrl={finalVideoTestimonials[1].videoUrl}
-                      title={finalVideoTestimonials[1].videoTitle || 'Video testimonial'}
-                      name={finalVideoTestimonials[1].name}
-                      role={finalVideoTestimonials[1].role}
-                    />
-                  </div>
-                )}
-              </div>
-
-              {/* CTA Button (full width) */}
-              <div className="md:col-span-2 flex justify-center pt-6">
-                <Button variant="primary" size="lg" href={finalCtaHref}>
-                  {finalCtaText}
-                </Button>
-              </div>
             </div>
-          </div>
+          )}
+
+          {/* Case Study 2 */}
+          {slot2Item && (
+            <div>
+              <CaseStudyCard study={slot2Item} />
+            </div>
+          )}
+        </div>
+
+        {/* Right Column */}
+        <div className="flex flex-col gap-5">
+          {/* Case Study 1 */}
+          {slot1Item && (
+            <div>
+              <CaseStudyCard study={slot1Item} />
+            </div>
+          )}
+
+          {/* Testimonial */}
+          {testimonial && (
+            <div>
+              <Card hover={false} className="flex flex-col">
+                <blockquote
+                  className="text-base leading-7 text-surface-700 line-clamp-6 [&>p]:m-0"
+                  dangerouslySetInnerHTML={{ __html: testimonial['testimonial-body'] || '' }}
+                />
+                <div className="h-6" />
+                <div className="flex justify-between items-end">
+                  <div className="flex flex-col gap-1">
+                    <span className="font-bold text-surface-900">{testimonial.name}</span>
+                    <span className="text-surface-600">{testimonial.role}</span>
+                  </div>
+                  <div
+                    className="w-10 h-10 flex items-center justify-center bg-surface-900 rounded-full cursor-pointer transition-transform hover:scale-105"
+                    aria-label="View testimonial"
+                  >
+                    <img
+                      src={asset('/images/top-right-arrow.svg')}
+                      loading="lazy"
+                      width="16"
+                      height="16"
+                      alt=""
+                    />
+                  </div>
+                </div>
+              </Card>
+            </div>
+          )}
+
+          {/* Video Testimonial 2 */}
+          {finalVideoTestimonials[1] && (
+            <div>
+              <VideoFacade
+                videoUrl={finalVideoTestimonials[1].videoUrl}
+                title={finalVideoTestimonials[1].videoTitle || 'Video testimonial'}
+                name={finalVideoTestimonials[1].name}
+                role={finalVideoTestimonials[1].role}
+              />
+            </div>
+          )}
+        </div>
+
+        {/* CTA Button (full width) */}
+        <div className="flex justify-center pt-6 md:col-span-2">
+          <Button variant="primary" size="lg" href={finalCtaHref}>
+            {finalCtaText}
+          </Button>
         </div>
       </div>
-    </section>
+
+    </SectionContainer>
   );
 }

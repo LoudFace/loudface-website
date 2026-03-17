@@ -4,13 +4,12 @@
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
 import type { Metadata } from 'next';
-import { COLLECTION_IDS } from '@/lib/constants';
-import { fetchCollection, fetchHomepageData, getAccessToken } from '@/lib/cms-data';
+import { fetchCollection, fetchHomepageData, fetchItemBySlug, getAccessToken } from '@/lib/cms-data';
 import { avatarImage, heroImage, thumbnailImage } from '@/lib/image-utils';
 import { asset } from '@/lib/assets';
-import { SectionContainer } from '@/components/ui';
+import { Badge, SectionContainer } from '@/components/ui';
 import { CTA, RelatedComparisons } from '@/components/sections';
-import { truncateSeoTitle } from '@/lib/seo-utils';
+import { buildNoIndexMetadata, buildPageMetadata, truncateSeoTitle } from '@/lib/seo-utils';
 import type { BlogPost, Category, TeamMember } from '@/lib/types';
 
 interface PageProps {
@@ -54,63 +53,28 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const accessToken = getAccessToken();
 
   if (!accessToken) {
-    return { title: 'Blog Post', robots: { index: false } };
+    return buildNoIndexMetadata('Blog Post');
   }
 
-  try {
-    const postsRes = await fetch(
-      `https://api.webflow.com/v2/collections/${COLLECTION_IDS['blog']}/items`,
-      {
-        headers: { Authorization: `Bearer ${accessToken}` },
-        next: { revalidate: 300 },
-      }
-    );
-
-    if (postsRes.ok) {
-      const postsData = await postsRes.json();
-      const item = postsData.items?.find((i: Record<string, unknown>) =>
-        (i.fieldData as Record<string, unknown>)?.slug === slug
-      );
-
-      if (item) {
-        const fieldData = item.fieldData as Record<string, unknown>;
-        const rawTitle = (fieldData['meta-title'] as string) || (fieldData.name as string);
-        const title = truncateSeoTitle(rawTitle);
-        const description = (fieldData['meta-description'] as string) || (fieldData.excerpt as string) || '';
-        const thumbnail = fieldData.thumbnail as { url?: string } | undefined;
-        const imageUrl = thumbnail?.url || '/images/og-image.jpg';
-        return {
-          title,
-          description,
-          alternates: {
-            canonical: `/blog/${slug}`,
-          },
-          openGraph: {
-            type: 'article',
-            title,
-            description,
-            url: `/blog/${slug}`,
-            siteName: 'LoudFace',
-            locale: 'en_US',
-            images: [{ url: imageUrl, width: 1200, height: 630, alt: title }],
-            publishedTime: (fieldData['published-date'] as string) || undefined,
-            modifiedTime: (fieldData['last-updated'] as string) || (fieldData['published-date'] as string) || undefined,
-          },
-          twitter: {
-            card: 'summary_large_image',
-            site: '@loudface',
-            title,
-            description,
-            images: [imageUrl],
-          },
-        };
-      }
-    }
-  } catch {
-    // Fall through to default
+  const post = await fetchItemBySlug<BlogPost>('blog', slug, accessToken);
+  if (!post) {
+    return buildNoIndexMetadata('Blog Post');
   }
 
-  return { title: 'Blog Post', robots: { index: false } };
+  const rawTitle = post['meta-title'] || post.name;
+  const title = truncateSeoTitle(rawTitle);
+  const description = post['meta-description'] || post.excerpt || '';
+  const imageUrl = post.thumbnail?.url || '/images/og-image.jpg';
+
+  return buildPageMetadata({
+    title,
+    description,
+    canonicalPath: `/blog/${slug}`,
+    type: 'article',
+    imageUrl,
+    publishedTime: post['published-date'],
+    modifiedTime: post['last-updated'] || post['published-date'],
+  });
 }
 
 export default async function BlogPostPage({ params }: PageProps) {
@@ -121,76 +85,50 @@ export default async function BlogPostPage({ params }: PageProps) {
     notFound();
   }
 
-  // Fetch CMS data
-  const cmsData = await fetchHomepageData(accessToken);
+  const [cmsData, post] = await Promise.all([
+    fetchHomepageData(accessToken),
+    fetchItemBySlug<BlogPost>('blog', slug, accessToken),
+  ]);
   const { blogPosts, categories, teamMembers } = cmsData;
 
-  // Fetch blog posts with full content
-  let post: BlogPost | null = null;
   let category: Category | null = null;
   let author: TeamMember | null = null;
   let relatedPosts: BlogPost[] = [];
 
-  try {
-    const postsRes = await fetch(
-      `https://api.webflow.com/v2/collections/${COLLECTION_IDS['blog']}/items`,
-      {
-        headers: { Authorization: `Bearer ${accessToken}` },
-        next: { revalidate: 300 },
-      }
-    );
-
-    if (postsRes.ok) {
-      const postsData = await postsRes.json();
-      const item = postsData.items?.find((i: Record<string, unknown>) =>
-        (i.fieldData as Record<string, unknown>)?.slug === slug
-      );
-
-      if (item) {
-        const fieldData = item.fieldData as Record<string, unknown>;
-        post = {
-          id: item.id as string,
-          ...fieldData,
-        } as BlogPost;
-
-        // Get category and author
-        if (post.category) {
-          category = categories.get(post.category) || null;
-        }
-        if (post.author) {
-          author = teamMembers.get(post.author) || null;
-        }
-
-        // Category-based related posts
-        const sameCategoryPosts = blogPosts
-          .filter(p => p.slug !== slug && p.category === post!.category)
-          .slice(0, 3);
-
-        if (sameCategoryPosts.length < 3) {
-          // Slug keyword affinity fallback — prefer posts with similar topics
-          const slugKeywords = slug.split('-').filter(w => w.length > 3);
-          const remaining = 3 - sameCategoryPosts.length;
-          const affinityPosts = blogPosts
-            .filter(p => p.slug !== slug && !sameCategoryPosts.some(sp => sp.slug === p.slug))
-            .map(p => ({
-              ...p,
-              affinity: slugKeywords.filter(kw => p.slug.includes(kw)).length,
-            }))
-            .sort((a, b) => b.affinity - a.affinity)
-            .slice(0, remaining);
-
-          relatedPosts = [...sameCategoryPosts, ...affinityPosts];
-        } else {
-          relatedPosts = sameCategoryPosts;
-        }
-      }
-    }
-  } catch (error) {
-    console.error('Blog post fetch error:', error);
-  }
-
   if (!post) {
     notFound();
+  }
+
+  if (post.category) {
+    category = categories.get(post.category) || null;
+  }
+  if (post.author) {
+    author = teamMembers.get(post.author) || null;
+  }
+
+  const sameCategoryPosts = blogPosts
+    .filter((entry) => entry.slug !== slug && entry.category === post.category)
+    .slice(0, 3);
+
+  if (sameCategoryPosts.length < 3) {
+    const slugKeywords = slug.split('-').filter((word) => word.length > 3);
+    const remaining = 3 - sameCategoryPosts.length;
+    const affinityPosts = blogPosts
+      .filter(
+        (entry) =>
+          entry.slug !== slug &&
+          !sameCategoryPosts.some((matched) => matched.slug === entry.slug)
+      )
+      .map((entry) => ({
+        ...entry,
+        affinity: slugKeywords.filter((keyword) => entry.slug.includes(keyword)).length,
+      }))
+      .sort((a, b) => b.affinity - a.affinity)
+      .slice(0, remaining);
+
+    relatedPosts = [...sameCategoryPosts, ...affinityPosts];
+  } else {
+    relatedPosts = sameCategoryPosts;
   }
 
   const COMPARISON_SLUGS = [
@@ -275,9 +213,9 @@ export default async function BlogPostPage({ params }: PageProps) {
             </nav>
 
             {category && (
-              <span className="inline-block px-3 py-1 bg-primary-50 text-primary-700 rounded-full text-sm font-medium mb-4">
+              <Badge className="mb-4 border-primary-100 bg-primary-50 text-primary-700">
                 {category.name}
-              </span>
+              </Badge>
             )}
 
             <h1 className="text-3xl md:text-4xl lg:text-5xl font-medium text-surface-900 leading-tight">

@@ -42,8 +42,8 @@ export default async function ThankYouPage() {
           </h1>
 
           <p className="mt-6 text-lg text-surface-600 leading-relaxed">
-            On our call, we'll dig into what you need help with, whether
-            that's a strategic partnership or a defined scope you need us
+            On our call, we&apos;ll dig into what you need help with, whether
+            that&apos;s a strategic partnership or a defined scope you need us
             to execute.
           </p>
         </div>
@@ -73,7 +73,7 @@ export default async function ThankYouPage() {
               </div>
               <div className="min-w-0 flex-1">
                 <span className="text-sm font-medium text-surface-900">Browse our case studies</span>
-                <p className="text-sm text-surface-500">See the results we've driven for teams like yours</p>
+                <p className="text-sm text-surface-500">See the results we&apos;ve driven for teams like yours</p>
               </div>
               <svg className="w-5 h-5 text-surface-400 flex-shrink-0 transition-transform group-hover:translate-x-0.5" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" aria-hidden="true">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />

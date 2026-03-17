@@ -102,12 +102,20 @@ export default async function HomePage() {
   // the homepage to ~2.4 MB.
 
   // Strip rich-text body fields never used on the homepage
-  const lightCaseStudies = caseStudies.map(({ 'main-body': _, ...rest }) => rest);
+  const lightCaseStudies = caseStudies.map((study) => {
+    const trimmedStudy = { ...study };
+    delete trimmedStudy['main-body'];
+    return trimmedStudy;
+  });
 
   // Knowledge carousel only needs a handful of recent posts, not all 60+
   const lightBlogPosts = blogPosts
     .slice(0, 6)
-    .map(({ content: _, ...rest }) => rest);
+    .map((post) => {
+      const trimmedPost = { ...post };
+      delete trimmedPost.content;
+      return trimmedPost;
+    });
 
   // CaseStudySlider only shows studies that have testimonials — pre-filter
   // server-side so we don't ship unused entries to the client

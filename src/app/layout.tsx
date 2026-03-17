@@ -5,7 +5,7 @@ import { CalHandler } from "@/components/CalHandler";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { asset } from "@/lib/assets";
-import { fetchHomepageData } from "@/lib/cms-data";
+import { fetchFooterData, getAccessToken } from "@/lib/cms-data";
 import { PostHogProvider } from "@/components/PostHogProvider";
 
 export const metadata: Metadata = {
@@ -102,11 +102,10 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  // Fetch CMS data for Footer.
-  // fetchHomepageData never throws — it retries and returns partial data.
-  // The homepage page.tsx calls assertCmsData() as the real guardrail.
-  const accessToken = process.env.WEBFLOW_SITE_API_TOKEN || '';
-  const footerData = await fetchHomepageData(accessToken);
+  const accessToken = getAccessToken();
+  const footerData = accessToken
+    ? await fetchFooterData(accessToken)
+    : { caseStudies: [], blogPosts: [] };
   const caseStudies = footerData.caseStudies;
   const blogPosts = footerData.blogPosts;
 
