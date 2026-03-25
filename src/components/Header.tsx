@@ -68,7 +68,7 @@ const servicesDropdown: Dropdown = {
       href: "/services/copywriting",
     },
     {
-      icon: "/images/stair-group.svg",
+      icon: "/images/growth-autopilot-icon.svg",
       title: "Growth Autopilot",
       description:
         "SEO, AEO, and CRO as one integrated system for B2B SaaS.",

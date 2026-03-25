@@ -1,0 +1,31 @@
+<svg width="40" height="36" viewBox="0 0 40 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Three isometric cubes in a triangular cycle — SEO + AEO + CRO as one system -->
+
+  <!-- Block 1: Top center -->
+  <rect width="10" height="8" transform="matrix(0.866025 0.5 -0.866025 0.5 20 0.5)" fill="#F0F5F4" stroke="black" stroke-width="0.4"/>
+  <rect width="10" height="7" transform="matrix(0.866025 0.5 0 1 11.34 5.5)" fill="#F0F5F4" stroke="black" stroke-width="0.4"/>
+  <rect width="10" height="7" transform="matrix(0.866025 -0.5 0 1 20 5.5)" fill="#F0F5F4" stroke="black" stroke-width="0.4"/>
+
+  <!-- Block 2: Bottom left -->
+  <rect width="10" height="8" transform="matrix(0.866025 0.5 -0.866025 0.5 8.66 17)" fill="#F0F5F4" stroke="black" stroke-width="0.4"/>
+  <rect width="10" height="7" transform="matrix(0.866025 0.5 0 1 0 22)" fill="#F0F5F4" stroke="black" stroke-width="0.4"/>
+  <rect width="10" height="7" transform="matrix(0.866025 -0.5 0 1 8.66 22)" fill="#F0F5F4" stroke="black" stroke-width="0.4"/>
+
+  <!-- Block 3: Bottom right -->
+  <rect width="10" height="8" transform="matrix(0.866025 0.5 -0.866025 0.5 31.34 17)" fill="#F0F5F4" stroke="black" stroke-width="0.4"/>
+  <rect width="10" height="7" transform="matrix(0.866025 0.5 0 1 22.68 22)" fill="#F0F5F4" stroke="black" stroke-width="0.4"/>
+  <rect width="10" height="7" transform="matrix(0.866025 -0.5 0 1 31.34 22)" fill="#F0F5F4" stroke="black" stroke-width="0.4"/>
+
+  <!-- Connecting arrows — clockwise cycle -->
+  <!-- Arrow: Block 1 → Block 3 -->
+  <path d="M26 9.5L30.5 15.5" stroke="black" stroke-width="0.5" stroke-linecap="round"/>
+  <path d="M30.5 15.5L30.2 13.2M30.5 15.5L28.3 14.8" stroke="black" stroke-width="0.5" stroke-linecap="round" stroke-linejoin="round"/>
+
+  <!-- Arrow: Block 3 → Block 2 -->
+  <path d="M22 28.5L13.5 28.5" stroke="black" stroke-width="0.5" stroke-linecap="round"/>
+  <path d="M13.5 28.5L15.3 26.8M13.5 28.5L15.3 30.2" stroke="black" stroke-width="0.5" stroke-linecap="round" stroke-linejoin="round"/>
+
+  <!-- Arrow: Block 2 → Block 1 -->
+  <path d="M6.5 17.5L11.5 10" stroke="black" stroke-width="0.5" stroke-linecap="round"/>
+  <path d="M11.5 10L9.3 10.5M11.5 10L11 12.3" stroke="black" stroke-width="0.5" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>
