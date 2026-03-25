@@ -1,0 +1,207 @@
+{
+  "hero": {
+    "eyebrow": "Growth Autopilot System",
+    "headline": "Turn your website into<br>a revenue channel.",
+    "description": "We run SEO, AEO, and CRO as one integrated system — so your website stops being a brochure and starts generating qualified pipeline.",
+    "primaryCta": "Get Your Free AI Visibility Audit",
+    "secondaryCta": "See our packages"
+  },
+  "stats": [
+    { "value": "$200K", "label": "Generated in 30 days from a single conversion-optimised page" },
+    { "value": "288%", "label": "Conversion rate increase for a B2B SaaS health-tech brand" },
+    { "value": "200+", "label": "B2B brands grown across SaaS, fintech, and AI verticals" },
+    { "value": "1 team", "label": "For SEO, AEO, and CRO — no vendor fragmentation" }
+  ],
+  "problems": {
+    "title": "Sound familiar?",
+    "highlightWord": "familiar",
+    "items": [
+      {
+        "number": "01",
+        "title": "You're visible on Google but not on AI search.",
+        "description": "ChatGPT, Perplexity, and Google SGE are where B2B buyers start their research. If your brand isn't in those answers, the deal starts without you.",
+        "tag": "AEO blind spot"
+      },
+      {
+        "number": "02",
+        "title": "Traffic is growing but revenue isn't.",
+        "description": "The average B2B SaaS with proper CRO converts at 4–6%. If you're at 1–2%, that gap is qualified pipeline you're leaving for competitors. Traffic without conversion is just vanity.",
+        "tag": "Conversion gap"
+      },
+      {
+        "number": "03",
+        "title": "You have 3 vendors running 3 separate playbooks.",
+        "description": "SEO with one agency. CRO with another. Nobody owns AEO. Nothing connects. Nothing compounds. You're paying for execution but not getting a strategy.",
+        "tag": "Fragmented GTM"
+      }
+    ]
+  },
+  "approach": {
+    "title": "Growth Autopilot is a system. Not a service package.",
+    "highlightWord": "system",
+    "intro": "Most agencies sell you deliverables: blog posts, backlinks, a redesign. We build an integrated growth engine where SEO feeds AEO visibility, and AEO-optimised content feeds CRO. Each layer compounds the one before it.",
+    "layers": [
+      {
+        "number": "01",
+        "title": "SEO",
+        "description": "Technical foundation, content architecture, and keyword strategy built for pipeline — not vanity metrics.",
+        "items": [
+          "Technical SEO audit + remediation",
+          "Content strategy for buyer intent",
+          "Category authority building",
+          "Programmatic page infrastructure"
+        ]
+      },
+      {
+        "number": "02",
+        "title": "AEO",
+        "description": "AI Engine Optimisation. Making your brand the answer when buyers ask ChatGPT, Perplexity, or Google SGE who solves their problem.",
+        "items": [
+          "AI search mention audit",
+          "Schema + structured data",
+          "Competitive AI visibility gap analysis",
+          "Answer-optimised content layer"
+        ]
+      },
+      {
+        "number": "03",
+        "title": "CRO",
+        "description": "Conversion rate optimisation on every page that matters — turning qualified traffic into booked demos and pipeline.",
+        "items": [
+          "Conversion audit + copy overhaul",
+          "Landing page experimentation",
+          "Messaging and positioning clarity",
+          "Monthly iteration cadence"
+        ]
+      }
+    ]
+  },
+  "packages": {
+    "title": "Three tiers. One system.",
+    "highlightWord": "system",
+    "items": [
+      {
+        "name": "Base Autopilot",
+        "tagline": "One focused track. Right for teams who need to move on a single clear priority.",
+        "featured": false,
+        "features": [
+          "Choose one track: Webflow Build or SEO/AEO Growth",
+          "1 active work batch per week",
+          "Async delivery, weekly updates",
+          "Monthly reporting on agreed KPIs",
+          "Single point of contact"
+        ],
+        "ctaText": "Start with a free audit"
+      },
+      {
+        "name": "Growth Autopilot Plus",
+        "tagline": "System designed for B2B SaaS teams who need the revenue pipeline moving.",
+        "featured": true,
+        "badge": "Tier 1 entry point",
+        "features": [
+          "Build + Growth tracks running simultaneously",
+          "2 active work batches per week",
+          "SEO + AEO + CRO integrated strategy",
+          "Webflow system build in parallel",
+          "Bi-weekly strategy syncs",
+          "Pipeline-focused reporting (not vanity metrics)"
+        ],
+        "ctaText": "Get started"
+      },
+      {
+        "name": "Scale Autopilot",
+        "tagline": "Full multi-track execution for companies running 3+ growth initiatives. Multi-stakeholder governance, priority handling, and the highest throughput.",
+        "featured": false,
+        "features": [
+          "3–4 parallel tracks in execution",
+          "Multi-stakeholder governance layer",
+          "Priority queue across all workstreams",
+          "Dedicated senior strategy lead",
+          "Weekly syncs + real-time Slack access",
+          "Full-funnel attribution and pipeline reporting"
+        ],
+        "ctaText": "Book a discovery call"
+      }
+    ]
+  },
+  "caseStudies": {
+    "title": "Results from B2B teams we've grown.",
+    "subtitle": "Only Tier 1 B2B Tech and SaaS references. No vanity case studies.",
+    "items": [
+      {
+        "metric": "$200K",
+        "metricLabel": "Generated in 30 days",
+        "client": "Outbound Specialist",
+        "description": "A single conversion-optimised landing page, built and shipped with the right messaging architecture. $200,000 in sales closed within 30 days of launch. The only change was the page.",
+        "tags": ["CRO", "Landing Page", "Conversion Copy"]
+      },
+      {
+        "metric": "288%",
+        "metricLabel": "Conversion Rate Increase",
+        "client": "Dimer Health",
+        "description": "B2B health-tech SaaS. Systematic CRO across key conversion pages — positioning overhaul, trust architecture, and copy restructuring. Nearly 3x the conversion rate from the same traffic.",
+        "tags": ["CRO", "Positioning", "Health-tech SaaS"]
+      },
+      {
+        "metric": "20+",
+        "metricLabel": "Pages Launched in 3–4 Weeks",
+        "client": "Hoxhunt",
+        "description": "B2B SaaS cybersecurity. Full WordPress to Webflow migration with SEO rebuilt from the ground up. 20+ pages launched on a compressed timeline without SEO loss — and with significant organic gains post-migration.",
+        "tags": ["SEO", "Migration", "B2B SaaS"]
+      },
+      {
+        "metric": "Clarity",
+        "metricLabel": "That converts",
+        "client": "Toku / Icypeas",
+        "description": "Fintech and B2B SaaS messaging repositioning. When positioning is unclear, traffic doesn't convert. We rebuilt the messaging architecture and site design so the value prop landed — and buyers knew immediately if it was for them.",
+        "tags": ["Messaging", "Fintech", "Redesign"]
+      }
+    ]
+  },
+  "audit": {
+    "eyebrow": "Free — no pitch, no fluff",
+    "title": "Start with a free AI Visibility Audit.",
+    "description": "We'll check whether your brand is showing up in ChatGPT, Perplexity, and Google SGE when your buyers are actively searching for what you offer. Delivered as a detailed Loom walkthrough.",
+    "checks": [
+      "Are you mentioned when buyers search your category in ChatGPT and Perplexity?",
+      "Schema and structured data issues blocking AI search indexing",
+      "Competitive AI visibility gap — how you compare to 3 direct competitors",
+      "3 highest-impact fixes you can act on immediately"
+    ],
+    "note": "Delivered manually by Arnel (Founder)."
+  },
+  "faq": {
+    "title": "Common questions about Growth Autopilot",
+    "items": [
+      {
+        "question": "How is this different from hiring separate SEO, AEO, and CRO agencies?",
+        "answer": "Most companies run three separate vendors with three separate playbooks. Nothing connects. Nothing compounds. Growth Autopilot integrates all three disciplines into a single system where SEO feeds AEO visibility, and AEO-optimised content feeds CRO. One team, one strategy, one Scoreboard."
+      },
+      {
+        "question": "What kind of companies is this for?",
+        "answer": "B2B SaaS and tech companies, typically $1M–$50M ARR, who have a website that should be generating pipeline but isn't. If your growth metrics and your pipeline don't match, Growth Autopilot is built for you."
+      },
+      {
+        "question": "What does the free AI Visibility Audit include?",
+        "answer": "We manually check whether your brand is being cited in ChatGPT, Perplexity, and Google SGE when buyers search your category. You get a detailed Loom walkthrough covering your current AI visibility, competitive gaps, schema issues, and 3 actionable fixes. No automated tool — done personally by our founder."
+      },
+      {
+        "question": "How long before I see results?",
+        "answer": "Quick wins — headline, CTA, and above-the-fold improvements — can move numbers within the first 30 days. SEO and AEO gains compound over 90-day cycles. We set clear goals at the start and report against them weekly."
+      },
+      {
+        "question": "Do I need to manage anything?",
+        "answer": "No. We own the roadmap, prioritization, execution, and reporting. You get a single point of contact, regular syncs, and a shared Scoreboard. Zero task management on your end."
+      },
+      {
+        "question": "Can I start with one track and expand later?",
+        "answer": "Yes. The Base Autopilot tier gives you one focused track — either Webflow Build or SEO/AEO Growth. You can upgrade to Growth Autopilot Plus or Scale Autopilot at any time as your needs grow."
+      }
+    ]
+  },
+  "cta": {
+    "title": "Pipeline that compounds.",
+    "subtitle": "If your growth metrics and your pipeline don't match, the system is broken. Let's fix the system.",
+    "ctaText": "Get Your Free AI Visibility Audit"
+  }
+}

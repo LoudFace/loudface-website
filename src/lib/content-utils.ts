@@ -27,6 +27,7 @@ import servicesSeoAeoContent from "@/data/content/services-seo-aeo.json";
 import servicesCroContent from "@/data/content/services-cro.json";
 import servicesCopywritingContent from "@/data/content/services-copywriting.json";
 import servicesUxUiDesignContent from "@/data/content/services-ux-ui-design.json";
+import servicesGrowthAutopilotContent from "@/data/content/services-growth-autopilot.json";
 import seoForHubContent from "@/data/content/seo-for-hub.json";
 import seoForSaasContent from "@/data/content/seo-for-saas.json";
 import homepageContent from "@/data/content/homepage.json";
@@ -575,6 +576,67 @@ export interface ServicesCroContent {
   };
 }
 
+export interface ServicesGrowthAutopilotContent {
+  hero: {
+    eyebrow: string;
+    headline: string;
+    description: string;
+    primaryCta: string;
+    secondaryCta: string;
+  };
+  stats: { value: string; label: string }[];
+  problems: {
+    title: string;
+    highlightWord: string;
+    items: { number: string; title: string; description: string; tag: string }[];
+  };
+  approach: {
+    title: string;
+    highlightWord: string;
+    intro: string;
+    layers: { number: string; title: string; description: string; items: string[] }[];
+  };
+  packages: {
+    title: string;
+    highlightWord: string;
+    items: {
+      name: string;
+      tagline: string;
+      featured: boolean;
+      badge?: string;
+      features: string[];
+      ctaText: string;
+    }[];
+  };
+  caseStudies: {
+    title: string;
+    subtitle: string;
+    items: {
+      metric: string;
+      metricLabel: string;
+      client: string;
+      description: string;
+      tags: string[];
+    }[];
+  };
+  audit: {
+    eyebrow: string;
+    title: string;
+    description: string;
+    checks: string[];
+    note: string;
+  };
+  faq: {
+    title: string;
+    items: FAQItem[];
+  };
+  cta: {
+    title: string;
+    subtitle: string;
+    ctaText: string;
+  };
+}
+
 export interface ServicesCopywritingTrack {
   label: string;
   title: string;
@@ -835,6 +897,13 @@ export function getServicesCopywritingContent(): ServicesCopywritingContent {
  */
 export function getServicesUxUiDesignContent(): ServicesUxUiDesignContent {
   return servicesUxUiDesignContent as ServicesUxUiDesignContent;
+}
+
+/**
+ * Get Services Growth Autopilot page content
+ */
+export function getServicesGrowthAutopilotContent(): ServicesGrowthAutopilotContent {
+  return servicesGrowthAutopilotContent as ServicesGrowthAutopilotContent;
 }
 
 /**

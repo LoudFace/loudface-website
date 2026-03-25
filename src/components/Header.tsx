@@ -67,6 +67,13 @@ const servicesDropdown: Dropdown = {
         "Persuasive, SEO-optimized content that connects and converts.",
       href: "/services/copywriting",
     },
+    {
+      icon: "/images/stair-group.svg",
+      title: "Growth Autopilot",
+      description:
+        "SEO, AEO, and CRO as one integrated system for B2B SaaS.",
+      href: "/services/growth-autopilot",
+    },
   ],
   ctaText: "Looking for a new agency partner? Get in touch",
 };

@@ -19,6 +19,7 @@ const ALL_SERVICES: ServiceLink[] = [
   { href: '/services/cro', label: 'Conversion Rate Optimization', description: 'Data-driven optimization that converts' },
   { href: '/services/ux-ui-design', label: 'UX/UI Design', description: 'Conversion-focused design systems' },
   { href: '/services/copywriting', label: 'Copywriting', description: 'Persuasive content that connects' },
+  { href: '/services/growth-autopilot', label: 'Growth Autopilot', description: 'SEO, AEO & CRO as one integrated system' },
 ];
 
 interface RelatedServicesProps {

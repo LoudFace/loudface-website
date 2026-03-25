@@ -22,6 +22,7 @@ export function Footer({ caseStudies = [], blogPosts = [] }: FooterProps) {
     { label: 'Copywriting', href: '/services/copywriting' },
     { label: 'SEO/AEO', href: '/services/seo-aeo' },
     { label: 'CRO', href: '/services/cro' },
+    { label: 'Growth Autopilot', href: '/services/growth-autopilot' },
   ];
 
   const industryLinks = [
