@@ -18,7 +18,7 @@ import { heroImage, avatarImage, thumbnailImage, optimizeImage } from '@/lib/ima
 import { getContrastColor } from '@/lib/color-utils';
 import { Button, SectionContainer } from '@/components/ui';
 import { CTA } from '@/components/sections';
-import { buildNoIndexMetadata, buildPageMetadata, truncateSeoTitle } from '@/lib/seo-utils';
+import { buildNoIndexMetadata, buildPageMetadata, truncateSeoTitle, truncateSeoDescription } from '@/lib/seo-utils';
 import type {
   CaseStudy,
   Client,
@@ -51,10 +51,16 @@ export async function generateStaticParams() {
 function extractTocAndAddIds(html: string | undefined): { toc: { id: string; text: string }[]; html: string } {
   if (!html) return { toc: [], html: '' };
 
+  // Downgrade any H1 tags in CMS content to H2 (page already has an H1)
+  let normalized = html.replace(/<h1([^>]*)>(.*?)<\/h1>/gi, '<h2$1>$2</h2>');
+
+  // Fix any HTTP links to our domain that should be HTTPS
+  normalized = normalized.replace(/http:\/\/loudface\.co/g, 'https://www.loudface.co');
+
   const toc: { id: string; text: string }[] = [];
   let index = 0;
 
-  const processedHtml = html.replace(/<h2([^>]*)>(.*?)<\/h2>/gi, (_match, attrs, content) => {
+  const processedHtml = normalized.replace(/<h2([^>]*)>(.*?)<\/h2>/gi, (_match, attrs, content) => {
     const text = content.replace(/<[^>]*>/g, '').trim();
     const id = `section-${index++}-${text.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '')}`;
     toc.push({ id, text });
@@ -80,8 +86,8 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const rawTitle = study['project-title'] || study.name;
   const title = truncateSeoTitle(rawTitle);
   const summary = study['paragraph-summary'];
-  // Build a meaningful description fallback instead of the generic "Case study: X"
-  const description = summary
+  // Truncate CMS summary to SERP limits, fall back to a keyword-rich description
+  const description = truncateSeoDescription(summary)
     || `See how we helped ${study.name} achieve measurable results. Full case study with approach, metrics, and outcomes.`;
 
   const imageUrl = study['main-project-image-thumbnail']?.url;

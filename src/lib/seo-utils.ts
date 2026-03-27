@@ -11,6 +11,8 @@ const BRAND_SUFFIX = ' | LoudFace';
 const BRAND_SUFFIX_LENGTH = BRAND_SUFFIX.length; // 12
 const MAX_SERP_TITLE = 60;
 const DEFAULT_MAX_PAGE_TITLE = MAX_SERP_TITLE - BRAND_SUFFIX_LENGTH; // 48
+const MAX_META_DESCRIPTION = 160;
+const MIN_META_DESCRIPTION = 80;
 const SITE_NAME = 'LoudFace';
 const SITE_TWITTER = '@loudface';
 
@@ -45,6 +47,46 @@ export function truncateSeoTitle(
     if (lastSpace > maxLength * 0.7) {
       truncated = truncated.slice(0, lastSpace).trim();
     }
+  }
+
+  // Strip trailing punctuation that looks incomplete
+  truncated = truncated.replace(/[,;:\u2014\u2013\-]$/, '').trim();
+
+  return truncated;
+}
+
+/**
+ * Truncate a meta description to fit SERP display limits.
+ *
+ * - Prefers cutting at sentence boundaries (period) when possible.
+ * - Falls back to word boundaries.
+ * - If the description is too short, returns null so callers can use a fallback.
+ */
+export function truncateSeoDescription(
+  description: string | undefined,
+  maxLength: number = MAX_META_DESCRIPTION,
+): string | null {
+  if (!description) return null;
+
+  const cleaned = description.replace(/\s+/g, ' ').trim();
+
+  // Too short to be useful — return null so caller can use a better fallback
+  if (cleaned.length < MIN_META_DESCRIPTION) return null;
+
+  if (cleaned.length <= maxLength) return cleaned;
+
+  let truncated = cleaned.slice(0, maxLength).trim();
+
+  // Try to cut at a sentence boundary
+  const lastPeriod = truncated.lastIndexOf('.');
+  if (lastPeriod > maxLength * 0.6) {
+    return truncated.slice(0, lastPeriod + 1);
+  }
+
+  // Fall back to word boundary
+  const lastSpace = truncated.lastIndexOf(' ');
+  if (lastSpace > maxLength * 0.7) {
+    truncated = truncated.slice(0, lastSpace).trim();
   }
 
   // Strip trailing punctuation that looks incomplete

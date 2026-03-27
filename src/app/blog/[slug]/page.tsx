@@ -9,7 +9,7 @@ import { avatarImage, heroImage, thumbnailImage } from '@/lib/image-utils';
 import { asset } from '@/lib/assets';
 import { Badge, SectionContainer } from '@/components/ui';
 import { CTA, RelatedComparisons } from '@/components/sections';
-import { buildNoIndexMetadata, buildPageMetadata, truncateSeoTitle } from '@/lib/seo-utils';
+import { buildNoIndexMetadata, buildPageMetadata, truncateSeoTitle, truncateSeoDescription } from '@/lib/seo-utils';
 import type { BlogPost, Category, TeamMember } from '@/lib/types';
 
 interface PageProps {
@@ -69,7 +69,9 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 
   const rawTitle = post['meta-title'] || post.name;
   const title = truncateSeoTitle(rawTitle);
-  const description = post['meta-description'] || post.excerpt || '';
+  const description = truncateSeoDescription(post['meta-description'])
+    || truncateSeoDescription(post.excerpt)
+    || '';
   const imageUrl = post.thumbnail?.url || '/images/og-image.jpg';
 
   return buildPageMetadata({

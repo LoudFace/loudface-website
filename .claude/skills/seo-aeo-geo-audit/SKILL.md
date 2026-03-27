@@ -2,23 +2,85 @@
 name: seo-aeo-geo-audit
 description: Comprehensive SEO, AEO & GEO audit of pages, components, or the entire site. Use before publishing content, after major changes, or for periodic SEO health checks.
 allowed-tools: Read, Grep, Glob, Bash
-argument-hint: "[file, directory, or 'site' for full audit]"
+argument-hint: "[file, directory, 'site', or 'crawl' for live site crawl]"
 ---
 
 # SEO, AEO & GEO Audit
 
 Perform a comprehensive audit covering traditional SEO, AI Engine Optimization (AEO), and Generative Engine Optimization (GEO).
 
-**Target**: $ARGUMENTS (file path, directory, or "site" for full audit)
+**Target**: $ARGUMENTS (file path, directory, "site" for full code audit, or "crawl" for live site crawl)
 
 ## Audit Process
+
+### Step 0: Live Site Crawl (when argument is "crawl" or "site")
+
+**This step catches issues that code-level auditing CANNOT detect** — broken links in CMS content, redirect chains, rendered meta tag lengths, missing alt text on CMS images, orphan pages, etc. These are the issues tools like Ahrefs, Screaming Frog, and DataForSEO catch.
+
+**When to run the crawl:**
+- Argument is `crawl` → run ONLY the crawl (skip code audit steps)
+- Argument is `site` → run the crawl FIRST, then proceed to code audit steps
+- Any other argument → skip this step (code-level audit only)
+
+**Crawl against production:**
+```bash
+npm run crawl-audit
+```
+
+**Crawl against dev server (if production not deployed yet):**
+```bash
+# Terminal 1: Start dev server (if not already running)
+npm run dev &
+sleep 5
+
+# Terminal 2: Run crawl
+npm run crawl-audit:dev
+```
+
+**What the crawler checks:**
+- **404 pages** — URLs in sitemap or linked internally that return 404
+- **Broken redirect chains** — redirect targets that themselves 404
+- **HTTPS pages with HTTP links** — mixed content/protocol issues
+- **Orphan pages** — in sitemap but zero internal pages link to them
+- **Pages linking to broken pages** — live pages containing dead links
+- **Pages linking to redirects** — links that should point to final destination
+- **Meta description too long (>160 chars)** — from rendered HTML, catches CMS descriptions
+- **Meta description too short (<80 chars)** — thin or missing descriptions
+- **Title too long (>60 chars)** or too short (<30 chars)
+- **Missing alt text** — on ALL images including CMS/Webflow CDN images
+- **Multiple H1 tags** — catches H1s injected by CMS rich text
+- **Missing H1** — pages without any H1 tag
+- **Indexable pages not in sitemap** — discovered via crawl but missing from sitemap.xml
+- **Thin internal linking** — pages with only 1 incoming internal link
+- **Redirect chains** — multi-hop redirects that should be simplified
+- **Thin content** — pages under 300 words
+- **Missing canonical URLs** — indexable pages without canonical tags
+- **Missing meta description** — pages without any meta description
+
+**After the crawl:**
+
+1. Read the full output and the JSON report at `crawl-audit-report.json`
+2. For each ERROR, determine if it's fixable in code:
+   - **Broken links from code** → fix the `href` in the source component
+   - **Broken links from CMS content** → these are in Webflow rich text; we handle them via `extractTocAndAddIds()` which already normalizes H1s and HTTP links in CMS content. For link-level fixes, add redirects in `next.config.ts`
+   - **Missing redirects** → add to `next.config.ts` redirects array
+   - **Orphan pages** → add internal links from relevant pages
+   - **Meta description issues** → handled by `truncateSeoDescription()` in seo-utils.ts; if the CMS value is too short/long, the code truncates or falls back to a generated description
+3. For each WARNING, fix if possible, otherwise note as CMS-only fix
+4. Report any issues that require manual Webflow CMS updates
+
+**CMS content handling built into the codebase:**
+- `blog/[slug]/page.tsx` → `extractTocAndAddIds()` downgrades H1→H2 and fixes `http://loudface.co` → `https://www.loudface.co` in CMS rich text
+- `case-studies/[slug]/page.tsx` → same H1 downgrading and HTTP link fixing
+- `seo-utils.ts` → `truncateSeoDescription()` clips CMS descriptions to 160 chars; returns null for descriptions under 80 chars so callers can use better fallbacks
 
 ### Step 1: Determine Scope
 
 Based on the argument:
+- **"crawl"**: Run live crawl only (Step 0), skip code audit
 - **Single file** (`src/app/page.tsx`): Audit that page only
 - **Directory** (`src/app/work/`): Audit all pages in directory
-- **"site"**: Full site-wide audit
+- **"site"**: Live crawl (Step 0) + full code audit (Steps 2-15)
 
 ### Step 2: Technical SEO Audit
 
@@ -922,9 +984,39 @@ Test these queries in ChatGPT, Perplexity, Claude, and Gemini:
 
 Track whether your brand appears, how it's described, and whether the citation includes accurate information from your structured data.
 
+### 27. Crawl Audit Catches What Code Audit Cannot
+
+The code-level audit (Steps 2-15) reads source files. It CANNOT detect:
+- **Broken links in CMS rich text** — these are Webflow HTML rendered via `dangerouslySetInnerHTML`. The source code doesn't contain the actual link hrefs.
+- **CMS meta descriptions that are too long/short** — the code has truncation logic, but you can only verify it works by checking the rendered HTML.
+- **CMS images missing alt text** — the `alt` value comes from Webflow's CMS, not from the codebase.
+- **Redirect chains** — you need to actually follow HTTP redirects to detect chains.
+- **Orphan pages** — requires crawling all pages to build a full link graph.
+- **Live 404s** — a page might exist in the sitemap but 404 in production due to CMS draft/archive status.
+
+**Always run `npm run crawl-audit` (or use the "crawl" argument) when:**
+- After a production deploy
+- After adding/removing CMS content in Webflow
+- After adding/changing redirects in `next.config.ts`
+- As part of a periodic SEO health check (monthly minimum)
+
+### 28. Meta Description Truncation
+
+The `truncateSeoDescription()` function in `seo-utils.ts` handles CMS descriptions that exceed 160 characters:
+- Cuts at sentence boundaries (period) when possible
+- Falls back to word boundaries
+- Returns `null` for descriptions under 80 chars (too short to be useful), so the caller can use a generated fallback
+
+Use it in any `generateMetadata` function that uses CMS text for descriptions:
+```tsx
+import { truncateSeoDescription } from '@/lib/seo-utils';
+const description = truncateSeoDescription(cmsField) || 'Fallback description with keywords.';
+```
+
 ## Reference Files
 
 For detailed checklists and schema examples:
 - [Detailed Checklist](checklist.md)
 - [Schema Examples](schemas.md)
 - [SEO Standards](../../rules/seo-standards.md)
+- [Crawl Audit Script](../../../scripts/crawl-audit.mjs)
