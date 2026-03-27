@@ -18,7 +18,7 @@ import { heroImage, avatarImage, thumbnailImage, optimizeImage } from '@/lib/ima
 import { getContrastColor } from '@/lib/color-utils';
 import { Button, SectionContainer } from '@/components/ui';
 import { CTA } from '@/components/sections';
-import { buildNoIndexMetadata, buildPageMetadata } from '@/lib/seo-utils';
+import { buildNoIndexMetadata, buildPageMetadata, truncateSeoTitle } from '@/lib/seo-utils';
 import type {
   CaseStudy,
   Client,
@@ -77,13 +77,17 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     return buildNoIndexMetadata('Case Study Not Found');
   }
 
-  const projectTitle = study['project-title'] || study.name;
-  const description = study['paragraph-summary'] || `Case study: ${projectTitle}`;
+  const rawTitle = study['project-title'] || study.name;
+  const title = truncateSeoTitle(rawTitle);
+  const summary = study['paragraph-summary'];
+  // Build a meaningful description fallback instead of the generic "Case study: X"
+  const description = summary
+    || `See how we helped ${study.name} achieve measurable results. Full case study with approach, metrics, and outcomes.`;
 
   const imageUrl = study['main-project-image-thumbnail']?.url;
 
   return buildPageMetadata({
-    title: projectTitle,
+    title,
     description,
     canonicalPath: `/case-studies/${slug}`,
     type: 'article',

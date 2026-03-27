@@ -35,10 +35,16 @@ export async function generateStaticParams() {
 function extractTocAndAddIds(html: string | undefined): { toc: { id: string; text: string }[]; html: string } {
   if (!html) return { toc: [], html: '' };
 
+  // Downgrade any H1 tags in CMS content to H2 (page already has an H1)
+  let normalized = html.replace(/<h1([^>]*)>(.*?)<\/h1>/gi, '<h2$1>$2</h2>');
+
+  // Fix any HTTP links to our domain that should be HTTPS
+  normalized = normalized.replace(/http:\/\/loudface\.co/g, 'https://www.loudface.co');
+
   const toc: { id: string; text: string }[] = [];
   let index = 0;
 
-  const processedHtml = html.replace(/<h2([^>]*)>(.*?)<\/h2>/gi, (_match, attrs, content) => {
+  const processedHtml = normalized.replace(/<h2([^>]*)>(.*?)<\/h2>/gi, (_match, attrs, content) => {
     const text = content.replace(/<[^>]*>/g, '').trim();
     const id = `section-${index++}-${text.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '')}`;
     toc.push({ id, text });
@@ -132,7 +138,6 @@ export default async function BlogPostPage({ params }: PageProps) {
   }
 
   const COMPARISON_SLUGS = [
-    'webflow-vs-framer',
     'webflow-vs-wix-studio',
     'webflow-vs-squarespace',
     'webflow-vs-hubspot',

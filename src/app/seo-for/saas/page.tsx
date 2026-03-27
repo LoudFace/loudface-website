@@ -424,7 +424,7 @@ export default async function SaaSPage() {
           {content.caseStudies.items.map((study) => (
             <Link
               key={study.slug}
-              href={`/work/${study.slug}`}
+              href={`/case-studies/${study.slug}`}
               className="group block rounded-2xl border border-surface-200 bg-white p-8 transition-all duration-200 hover:border-surface-300 hover:shadow-md focus-visible:outline-2 focus-visible:outline-primary-500 focus-visible:outline-offset-4"
             >
               <p className="text-sm font-medium text-surface-500">

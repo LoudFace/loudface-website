@@ -13,7 +13,6 @@ interface ComparisonLink {
 }
 
 const COMPARISON_POSTS: ComparisonLink[] = [
-  { href: '/blog/webflow-vs-framer', label: 'Webflow vs Framer' },
   { href: '/blog/webflow-vs-wix-studio', label: 'Webflow vs Wix Studio' },
   { href: '/blog/webflow-vs-squarespace', label: 'Webflow vs Squarespace' },
   { href: '/blog/webflow-vs-hubspot', label: 'Webflow vs HubSpot' },
