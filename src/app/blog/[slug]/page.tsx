@@ -44,6 +44,21 @@ function extractTocAndAddIds(html: string | undefined): { toc: { id: string; tex
   // Rewrite legacy internal URLs to canonical paths (eliminates 308 redirect chains)
   normalized = rewriteLegacyUrls(normalized);
 
+  // Fix malformed URLs from CMS rich text: <https://example.com> → https://example.com
+  // Webflow sometimes wraps URLs in angle brackets inside code examples
+  normalized = normalized.replace(/src="<(https?:\/\/[^">]+)>"/g, 'src="$1"');
+  normalized = normalized.replace(/href="<(https?:\/\/[^">]+)>"/g, 'href="$1"');
+
+  // Add alt text to CMS images that have empty or missing alt attributes
+  normalized = normalized.replace(
+    /<img([^>]*?)alt=""([^>]*?)>/gi,
+    '<img$1alt="Blog post image"$2>',
+  );
+  normalized = normalized.replace(
+    /<img(?![^>]*alt=)([^>]*?)>/gi,
+    '<img alt="Blog post image"$1>',
+  );
+
   const toc: { id: string; text: string }[] = [];
   let index = 0;
 

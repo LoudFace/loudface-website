@@ -13,7 +13,7 @@ import {
   fetchHomepageData,
   getAccessToken,
 } from '@/lib/cms-data';
-import { buildNoIndexMetadata, buildPageMetadata, truncateSeoTitle } from '@/lib/seo-utils';
+import { buildNoIndexMetadata, buildPageMetadata, truncateSeoTitle, truncateSeoDescription } from '@/lib/seo-utils';
 import {
   Button,
   BulletLabel,
@@ -95,10 +95,11 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   }
 
   const title = truncateSeoTitle(page['meta-title'] || page['hero-headline'] || page.name);
-  const description =
+  const rawDescription =
     page['meta-description'] ||
     page['hero-description'] ||
     `Professional SEO services for ${page.name}. Get found by your ideal customers.`;
+  const description = truncateSeoDescription(rawDescription) || rawDescription;
 
   return buildPageMetadata({
     title,

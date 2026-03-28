@@ -60,6 +60,20 @@ function extractTocAndAddIds(html: string | undefined): { toc: { id: string; tex
   // Rewrite legacy internal URLs to canonical paths (eliminates 308 redirect chains)
   normalized = rewriteLegacyUrls(normalized);
 
+  // Fix malformed URLs from CMS rich text: <https://example.com> → https://example.com
+  normalized = normalized.replace(/src="<(https?:\/\/[^">]+)>"/g, 'src="$1"');
+  normalized = normalized.replace(/href="<(https?:\/\/[^">]+)>"/g, 'href="$1"');
+
+  // Add alt text to CMS images that have empty or missing alt attributes
+  normalized = normalized.replace(
+    /<img([^>]*?)alt=""([^>]*?)>/gi,
+    '<img$1alt="Case study image"$2>',
+  );
+  normalized = normalized.replace(
+    /<img(?![^>]*alt=)([^>]*?)>/gi,
+    '<img alt="Case study image"$1>',
+  );
+
   const toc: { id: string; text: string }[] = [];
   let index = 0;
 
@@ -88,10 +102,18 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 
   const rawTitle = study['project-title'] || study.name;
   const title = truncateSeoTitle(rawTitle);
-  const summary = study['paragraph-summary'];
-  // Truncate CMS summary to SERP limits, fall back to a keyword-rich description
-  const description = truncateSeoDescription(summary)
-    || `See how we helped ${study.name} achieve measurable results. Full case study with approach, metrics, and outcomes.`;
+  const summary = study['paragraph-summary']?.replace(/\s+/g, ' ').trim();
+  // Truncate CMS summary to SERP limits; if too short, extend with contextual suffix
+  let description = truncateSeoDescription(summary);
+  if (!description && summary) {
+    // Summary exists but is under 80 chars — extend it with context
+    description = truncateSeoDescription(
+      `${summary} See how LoudFace helped ${study.name} achieve measurable results with our design and development approach.`
+    );
+  }
+  if (!description) {
+    description = `See how LoudFace helped ${study.name} achieve measurable results. Full case study with approach, metrics, and outcomes.`;
+  }
 
   const imageUrl = study['main-project-image-thumbnail']?.url;
 

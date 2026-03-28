@@ -309,7 +309,7 @@ export default async function AboutPage() {
             <div key={index} className="p-10 lg:p-16">
               <img
                 src={asset(award.icon)}
-                alt=""
+                alt={`${award.title} icon`}
                 width="64"
                 height="64"
                 className="w-16 h-16 mb-8"
