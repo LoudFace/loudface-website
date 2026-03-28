@@ -9,7 +9,7 @@ import { avatarImage, heroImage, thumbnailImage } from '@/lib/image-utils';
 import { asset } from '@/lib/assets';
 import { Badge, SectionContainer } from '@/components/ui';
 import { CTA, RelatedComparisons } from '@/components/sections';
-import { buildNoIndexMetadata, buildPageMetadata, truncateSeoTitle, truncateSeoDescription } from '@/lib/seo-utils';
+import { buildNoIndexMetadata, buildPageMetadata, truncateSeoTitle, truncateSeoDescription, rewriteLegacyUrls } from '@/lib/seo-utils';
 import type { BlogPost, Category, TeamMember } from '@/lib/types';
 
 interface PageProps {
@@ -40,6 +40,9 @@ function extractTocAndAddIds(html: string | undefined): { toc: { id: string; tex
 
   // Fix any HTTP links to our domain that should be HTTPS
   normalized = normalized.replace(/http:\/\/loudface\.co/g, 'https://www.loudface.co');
+
+  // Rewrite legacy internal URLs to canonical paths (eliminates 308 redirect chains)
+  normalized = rewriteLegacyUrls(normalized);
 
   const toc: { id: string; text: string }[] = [];
   let index = 0;

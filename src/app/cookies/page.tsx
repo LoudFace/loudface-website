@@ -4,13 +4,13 @@ import { SectionContainer } from '@/components/ui';
 export const metadata: Metadata = {
   title: 'Cookie Policy',
   description:
-    'How LoudFace uses cookies and tracking technologies. Read our full cookie policy.',
+    'How LoudFace uses cookies and tracking technologies on loudface.co. Learn what data we collect, how we use analytics, and how to manage your preferences.',
   alternates: {
     canonical: '/cookies',
   },
   openGraph: {
     title: 'Cookie Policy | LoudFace',
-    description: 'How LoudFace uses cookies and tracking technologies. Read our full cookie policy.',
+    description: 'How LoudFace uses cookies and tracking technologies on loudface.co. Learn what data we collect, how we use analytics, and how to manage your preferences.',
     type: 'website',
     url: '/cookies',
     siteName: 'LoudFace',
@@ -21,7 +21,7 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     site: '@loudface',
     title: 'Cookie Policy | LoudFace',
-    description: 'How LoudFace uses cookies and tracking technologies. Read our full cookie policy.',
+    description: 'How LoudFace uses cookies and tracking technologies on loudface.co. Learn what data we collect, how we use analytics, and how to manage your preferences.',
     images: ['/opengraph-image'],
   },
 };

@@ -254,7 +254,7 @@ export function Header() {
                   <div className="flex-shrink-0 flex items-center justify-center w-9 h-9 bg-surface-100 group-hover:bg-surface-200 rounded-lg transition-colors duration-150">
                     <Image
                       src={item.icon}
-                      alt=""
+                      alt={`${item.title} icon`}
                       width={20}
                       height={20}
                       className="w-5 h-5"
@@ -437,7 +437,7 @@ export function Header() {
                 >
                   <Image
                     src={item.icon}
-                    alt=""
+                    alt={`${item.title} icon`}
                     width={20}
                     height={20}
                     className="w-5 h-5"
@@ -481,7 +481,7 @@ export function Header() {
                 >
                   <Image
                     src={item.icon}
-                    alt=""
+                    alt={`${item.title} icon`}
                     width={20}
                     height={20}
                     className="w-5 h-5"

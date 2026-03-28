@@ -4,13 +4,13 @@ import { SectionContainer } from '@/components/ui';
 export const metadata: Metadata = {
   title: 'Terms of Service',
   description:
-    'Terms and conditions for using loudface.co. Read our full terms of service.',
+    'Terms and conditions governing the use of loudface.co and LoudFace services. Covers intellectual property, liability, payments, and dispute resolution.',
   alternates: {
     canonical: '/terms',
   },
   openGraph: {
     title: 'Terms of Service | LoudFace',
-    description: 'Terms and conditions for using loudface.co. Read our full terms of service.',
+    description: 'Terms and conditions governing the use of loudface.co and LoudFace services. Covers intellectual property, liability, payments, and dispute resolution.',
     type: 'website',
     url: '/terms',
     siteName: 'LoudFace',
@@ -21,7 +21,7 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     site: '@loudface',
     title: 'Terms of Service | LoudFace',
-    description: 'Terms and conditions for using loudface.co. Read our full terms of service.',
+    description: 'Terms and conditions governing the use of loudface.co and LoudFace services. Covers intellectual property, liability, payments, and dispute resolution.',
     images: ['/opengraph-image'],
   },
 };

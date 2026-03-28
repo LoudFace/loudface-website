@@ -18,7 +18,7 @@ import { heroImage, avatarImage, thumbnailImage, optimizeImage } from '@/lib/ima
 import { getContrastColor } from '@/lib/color-utils';
 import { Button, SectionContainer } from '@/components/ui';
 import { CTA } from '@/components/sections';
-import { buildNoIndexMetadata, buildPageMetadata, truncateSeoTitle, truncateSeoDescription } from '@/lib/seo-utils';
+import { buildNoIndexMetadata, buildPageMetadata, truncateSeoTitle, truncateSeoDescription, rewriteLegacyUrls, resolveServiceSlug } from '@/lib/seo-utils';
 import type {
   CaseStudy,
   Client,
@@ -56,6 +56,9 @@ function extractTocAndAddIds(html: string | undefined): { toc: { id: string; tex
 
   // Fix any HTTP links to our domain that should be HTTPS
   normalized = normalized.replace(/http:\/\/loudface\.co/g, 'https://www.loudface.co');
+
+  // Rewrite legacy internal URLs to canonical paths (eliminates 308 redirect chains)
+  normalized = rewriteLegacyUrls(normalized);
 
   const toc: { id: string; text: string }[] = [];
   let index = 0;
@@ -390,7 +393,7 @@ export default async function CaseStudyPage({ params }: PageProps) {
                   <span className="block text-sm font-medium text-surface-500 uppercase tracking-wide mb-3">Services</span>
                   <div className="flex flex-wrap gap-2">
                     {services.map(svc => (
-                      <Link key={svc.id} href={`/services/${svc.slug}`} className="px-3 py-1 bg-surface-100 hover:bg-surface-200 rounded text-sm text-surface-700 transition-colors">
+                      <Link key={svc.id} href={`/services/${resolveServiceSlug(svc.slug)}`} className="px-3 py-1 bg-surface-100 hover:bg-surface-200 rounded text-sm text-surface-700 transition-colors">
                         {svc.name}
                       </Link>
                     ))}

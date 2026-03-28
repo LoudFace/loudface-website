@@ -5,13 +5,13 @@ import { SectionContainer } from '@/components/ui';
 export const metadata: Metadata = {
   title: 'Privacy Policy',
   description:
-    'How LoudFace collects, uses, and protects your personal information. Read our full privacy policy.',
+    'How LoudFace collects, uses, and protects your personal information. Learn about data retention, third-party sharing, and your rights under GDPR.',
   alternates: {
     canonical: '/privacy',
   },
   openGraph: {
     title: 'Privacy Policy | LoudFace',
-    description: 'How LoudFace collects, uses, and protects your personal information. Read our full privacy policy.',
+    description: 'How LoudFace collects, uses, and protects your personal information. Learn about data retention, third-party sharing, and your rights under GDPR.',
     type: 'website',
     url: '/privacy',
     siteName: 'LoudFace',
@@ -22,7 +22,7 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     site: '@loudface',
     title: 'Privacy Policy | LoudFace',
-    description: 'How LoudFace collects, uses, and protects your personal information. Read our full privacy policy.',
+    description: 'How LoudFace collects, uses, and protects your personal information. Learn about data retention, third-party sharing, and your rights under GDPR.',
     images: ['/opengraph-image'],
   },
 };

@@ -95,6 +95,80 @@ export function truncateSeoDescription(
   return truncated;
 }
 
+/**
+ * Map of legacy internal URLs to their current canonical paths.
+ * Mirrors the redirects in next.config.ts — used to rewrite links in
+ * CMS rich-text content so browsers never follow a 308 redirect chain.
+ */
+const LEGACY_URL_MAP: Record<string, string> = {
+  // Old service slugs with Webflow random suffixes
+  '/services/webflow-development-pnkr2': '/services/webflow',
+  '/services/design-pia5o': '/services/ux-ui-design',
+  '/services/copywriting-5n9z9': '/services/copywriting',
+  '/services/cms-migration-x841v': '/services/webflow',
+  '/services/branding-jvbsh': '/services/ux-ui-design',
+  '/services/seo-62e9c': '/services/seo-aeo',
+  // Renamed pages
+  '/about-us': '/about',
+  '/contact': '/',
+  '/why-webflow': '/services/webflow',
+  '/services': '/services/webflow',
+  // Old blog slugs
+  '/blog/the-future-of-webflow': '/blog/how-to-future-proof-your-webflow-website-for-search-and-ai-agents',
+  '/blog/is-webflow-good-for-small-businesses': '/blog/why-saas-companies-are-moving-to-webflow-in-2026-and-what-they-gain',
+  '/blog/seo-vs-aeo-what-actually-changes-for-your-webflow-site-in-2026': '/blog/seo-vs-aeo-for-webflow',
+  '/blog/seo-vs-aeo-webflow': '/blog/seo-vs-aeo-for-webflow',
+  // Old case study slugs
+  '/case-studies/icypeas': '/case-studies/b2b-saas-brand-and-website-redesign-case-study',
+  '/case-studies/toku': '/case-studies/toku-design-messaging-upgrade',
+  // Trailing slash variants
+  '/case-studies/': '/case-studies',
+};
+
+/**
+ * Map of legacy service category slugs to their canonical slugs.
+ * Used when rendering service links from CMS multi-reference fields.
+ */
+export const LEGACY_SERVICE_SLUG_MAP: Record<string, string> = {
+  'webflow-development-pnkr2': 'webflow',
+  'design-pia5o': 'ux-ui-design',
+  'copywriting-5n9z9': 'copywriting',
+  'cms-migration-x841v': 'webflow',
+  'branding-jvbsh': 'ux-ui-design',
+  'seo-62e9c': 'seo-aeo',
+};
+
+/**
+ * Rewrite legacy internal URLs in CMS rich-text HTML.
+ *
+ * Scans `href="..."` attributes for paths that match known redirects
+ * and replaces them with the canonical URL, eliminating 308 redirect chains.
+ */
+export function rewriteLegacyUrls(html: string): string {
+  if (!html) return html;
+
+  // Match href attributes with relative paths or full loudface.co URLs
+  return html.replace(
+    /href="((?:https?:\/\/(?:www\.)?loudface\.co)?\/[^"]*?)"/g,
+    (_match, rawUrl: string) => {
+      // Normalize to a relative path
+      const path = rawUrl.replace(/^https?:\/\/(?:www\.)?loudface\.co/, '');
+      const canonical = LEGACY_URL_MAP[path];
+      if (canonical) {
+        return `href="${canonical}"`;
+      }
+      return _match;
+    },
+  );
+}
+
+/**
+ * Resolve a service category slug, mapping legacy slugs to canonical ones.
+ */
+export function resolveServiceSlug(slug: string): string {
+  return LEGACY_SERVICE_SLUG_MAP[slug] || slug;
+}
+
 export function buildNoIndexMetadata(title: string): Metadata {
   return {
     title,

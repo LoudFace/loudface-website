@@ -16,13 +16,13 @@ const POSTS_PER_PAGE = 12;
 
 export const metadata: Metadata = {
   title: 'Blog | Insights & Resources',
-  description: 'Actionable insights on Webflow development, SEO, AEO, and conversion design from the LoudFace team. Browse guides, tutorials, and deep-dives for B2B SaaS growth.',
+  description: 'Actionable insights on Webflow development, SEO, AEO, and conversion design from the LoudFace team. Browse guides, tutorials, and deep-dives for B2B SaaS.',
   alternates: {
     canonical: '/blog',
   },
   openGraph: {
     title: 'LoudFace Blog | Webflow, SEO & Growth Insights',
-    description: 'Actionable insights on Webflow development, SEO, AEO, and conversion design from the LoudFace team. Browse guides, tutorials, and deep-dives for B2B SaaS growth.',
+    description: 'Actionable insights on Webflow development, SEO, AEO, and conversion design from the LoudFace team. Browse guides, tutorials, and deep-dives for B2B SaaS.',
     type: 'website',
     url: '/blog',
     siteName: 'LoudFace',
@@ -33,7 +33,7 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     site: '@loudface',
     title: 'LoudFace Blog | Webflow, SEO & Growth Insights',
-    description: 'Actionable insights on Webflow development, SEO, AEO, and conversion design from the LoudFace team. Browse guides, tutorials, and deep-dives for B2B SaaS growth.',
+    description: 'Actionable insights on Webflow development, SEO, AEO, and conversion design from the LoudFace team. Browse guides, tutorials, and deep-dives for B2B SaaS.',
     images: ['/opengraph-image'],
   },
 };
