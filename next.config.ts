@@ -160,6 +160,12 @@ const nextConfig: NextConfig = {
         destination: '/case-studies/toku-design-messaging-upgrade',
         permanent: true,
       },
+      // Draft case study linked from blog content
+      {
+        source: '/case-studies/ciela',
+        destination: '/case-studies',
+        permanent: false,
+      },
     ];
   },
 };
