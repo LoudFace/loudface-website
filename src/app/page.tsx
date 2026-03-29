@@ -91,28 +91,91 @@ export default async function HomePage() {
 
   // Minimize data sent to client components (CaseStudySlider, Knowledge).
   // Next.js serializes all client-component props into inline <script> tags.
-  // Without trimming, full article HTML per blog post + case study body inflated
-  // the homepage to ~2.4 MB.
+  // Only include fields each component actually reads — every extra field
+  // inflates the HTML and adds to main-thread parse time (TBT).
 
-  // Strip rich-text body fields never used on the homepage
-  const lightCaseStudies = caseStudies.map((study) => {
-    const trimmedStudy = { ...study };
-    delete trimmedStudy['main-body'];
-    return trimmedStudy;
-  });
+  // Hero only needs featured studies with minimal fields
+  const heroCaseStudies = caseStudies
+    .filter(s => s.featured)
+    .slice(0, 4)
+    .map(s => ({
+      id: s.id,
+      slug: s.slug,
+      name: s.name,
+      featured: s.featured,
+      client: s.client,
+      'project-title': s['project-title'],
+      'main-project-image-thumbnail': s['main-project-image-thumbnail'],
+      'result-1---number': s['result-1---number'],
+      'result-1---title': s['result-1---title'],
+    })) as CaseStudy[];
 
-  // Knowledge carousel only needs a handful of recent posts, not all 60+
+  // CaseStudySlider needs studies with testimonials, minimal fields
+  const sliderCaseStudies = caseStudies
+    .filter(s => testimonials.has(s.id))
+    .map(s => ({
+      id: s.id,
+      slug: s.slug,
+      name: s.name,
+      client: s.client,
+      'project-title': s['project-title'],
+      'paragraph-summary': s['paragraph-summary'],
+      'client-color': s['client-color'],
+      'main-project-image-thumbnail': s['main-project-image-thumbnail'],
+      'result-1---number': s['result-1---number'],
+      'result-1---title': s['result-1---title'],
+    })) as CaseStudy[];
+
+  // Slim testimonials for CaseStudySlider (client component — serialized to HTML)
+  const slimTestimonials = new Map(
+    Array.from(testimonials.entries()).map(([id, t]) => [id, {
+      id: t.id,
+      slug: t.slug,
+      name: t.name,
+      role: t.role,
+      'case-study': t['case-study'],
+      'testimonial-body': t['testimonial-body'],
+    }])
+  );
+
+  // Knowledge carousel only needs a handful of recent posts with minimal fields
   const lightBlogPosts = blogPosts
     .slice(0, 6)
-    .map((post) => {
-      const trimmedPost = { ...post };
-      delete trimmedPost.content;
-      return trimmedPost;
-    });
+    .map(post => ({
+      id: post.id,
+      slug: post.slug,
+      name: post.name,
+      excerpt: post.excerpt,
+      category: post.category,
+      author: post.author,
+      thumbnail: post.thumbnail,
+    }));
 
-  // CaseStudySlider only shows studies that have testimonials — pre-filter
-  // server-side so we don't ship unused entries to the client
-  const sliderCaseStudies = lightCaseStudies.filter(s => testimonials.has(s.id));
+  // Slim categories and authors for Knowledge (client component)
+  const lightCategories = Array.from(categories.values()).map(c => ({
+    id: c.id,
+    name: c.name,
+    slug: c.slug,
+  }));
+
+  const lightAuthors = Array.from(teamMembers.values()).map(a => ({
+    id: a.id,
+    name: a.name,
+  }));
+
+  // Results bento grid needs studies with result stats + testimonial ref
+  const resultsCaseStudies = caseStudies.map(s => ({
+    id: s.id,
+    slug: s.slug,
+    name: s.name,
+    featured: s.featured,
+    client: s.client,
+    testimonial: s.testimonial,
+    'project-title': s['project-title'],
+    'paragraph-summary': s['paragraph-summary'],
+    'result-1---number': s['result-1---number'],
+    'result-1---title': s['result-1---title'],
+  })) as CaseStudy[];
 
   const currentQuarter = `Q${Math.ceil((new Date().getMonth() + 1) / 3)}`;
 
@@ -130,9 +193,8 @@ export default async function HomePage() {
   // Preload the first hero carousel image — this is the LCP element on mobile.
   // Without preload, the browser discovers the image only after parsing the HTML,
   // which adds 1-2s to LCP on slow connections.
-  const firstFeatured = lightCaseStudies.find(s => s.featured);
-  const heroPreloadUrl = firstFeatured
-    ? caseStudyThumbnail(firstFeatured['main-project-image-thumbnail']?.url)?.src
+  const heroPreloadUrl = heroCaseStudies[0]
+    ? caseStudyThumbnail(heroCaseStudies[0]['main-project-image-thumbnail']?.url)?.src
     : undefined;
 
   return (
@@ -152,7 +214,7 @@ export default async function HomePage() {
         ctaText={content.hero.ctaText}
         scarcityText={`2 client slots open for ${currentQuarter}`}
         aiLinksLabel={content.hero.aiLinksLabel}
-        caseStudies={lightCaseStudies}
+        caseStudies={heroCaseStudies}
         clients={clients}
         industries={industries}
       />
@@ -242,7 +304,7 @@ export default async function HomePage() {
       <CaseStudySlider
         title="The work speaks. Specifically."
         caseStudies={sliderCaseStudies}
-        testimonials={testimonials}
+        testimonials={slimTestimonials}
       />
 
       {/* Results (Bento Grid) */}
@@ -252,20 +314,20 @@ export default async function HomePage() {
         caseStudies={(() => {
           const targetSlugs = ['viaduct', 'dimer-health'];
           const picked = targetSlugs
-            .map((slug) => lightCaseStudies.find((s) => s.slug === slug))
+            .map((slug) => resultsCaseStudies.find((s) => s.slug === slug))
             .filter(Boolean) as CaseStudy[];
           return picked.length === 2
             ? picked
-            : lightCaseStudies.filter((s) => s.featured && s.testimonial).slice(0, 2);
+            : resultsCaseStudies.filter((s) => s.featured && s.testimonial).slice(0, 2);
         })()}
         testimonial={
           (() => {
-            const viaduct = lightCaseStudies.find((s) => s.slug === 'viaduct');
+            const viaduct = resultsCaseStudies.find((s) => s.slug === 'viaduct');
             const studyWithTestimonial = viaduct?.testimonial
               ? viaduct
-              : lightCaseStudies.find((s) => s.featured && s.testimonial);
+              : resultsCaseStudies.find((s) => s.featured && s.testimonial);
             return studyWithTestimonial?.testimonial
-              ? testimonials.get(studyWithTestimonial.testimonial)
+              ? slimTestimonials.get(studyWithTestimonial.testimonial)
               : allTestimonials[0];
           })()
         }
@@ -366,8 +428,8 @@ export default async function HomePage() {
         highlightWord="Playbooks"
         description={content.blog.subtitle}
         posts={lightBlogPosts}
-        categories={Array.from(categories.values())}
-        authors={Array.from(teamMembers.values())}
+        categories={lightCategories}
+        authors={lightAuthors}
       />
 
       {/* FAQ */}
