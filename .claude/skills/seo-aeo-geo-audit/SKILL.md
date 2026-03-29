@@ -45,7 +45,7 @@ npm run crawl-audit:dev
 - **Pages linking to broken pages** — live pages containing dead links
 - **Pages linking to redirects** — links that should point to final destination
 - **Meta description too long (>160 chars)** — from rendered HTML, catches CMS descriptions
-- **Meta description too short (<80 chars)** — thin or missing descriptions
+- **Meta description too short (<120 chars)** — Ahrefs flags descriptions under ~120 chars; our `MIN_META_DESCRIPTION` threshold is 120
 - **Title too long (>60 chars)** or too short (<30 chars)
 - **Missing alt text** — on ALL images including CMS images
 - **Multiple H1 tags** — catches H1s injected by CMS rich text
@@ -72,7 +72,7 @@ npm run crawl-audit:dev
 **CMS content handling built into the codebase:**
 - `blog/[slug]/page.tsx` → `extractTocAndAddIds()` downgrades H1→H2 and fixes `http://loudface.co` → `https://www.loudface.co` in CMS rich text
 - `case-studies/[slug]/page.tsx` → same H1 downgrading and HTTP link fixing
-- `seo-utils.ts` → `truncateSeoDescription()` clips CMS descriptions to 160 chars; returns null for descriptions under 80 chars so callers can use better fallbacks
+- `seo-utils.ts` → `truncateSeoDescription()` clips CMS descriptions to 160 chars; returns null for descriptions under 120 chars so callers can use better fallbacks. Sentence-boundary truncation also respects the 120-char minimum to avoid producing short results from long inputs.
 
 ### Step 1: Determine Scope
 
@@ -127,6 +127,7 @@ For each page, check:
 
 - [ ] All images have `alt` attribute
 - [ ] Decorative images use `alt=""`
+- [ ] **Carousel/loop duplicate images must have the same alt text as originals** — do NOT use `alt=""` for hidden copies even if the parent has `aria-hidden="true"`. Crawlers (Ahrefs, Screaming Frog) ignore `aria-hidden` and flag empty alt as missing. The `isHidden` pattern should only affect `tabIndex`, `loading`, and `fetchPriority`, never `alt`.
 - [ ] Alt text is descriptive and includes keywords where natural
 - [ ] Below-fold images use `loading="lazy"`
 - [ ] Static images use `asset()` function
@@ -153,6 +154,7 @@ For each page, check:
 - [ ] HTTPS enforced
 - [ ] No crawl budget waste: parameterized URLs (`?sort=`, `?filter=`) not generating infinite crawlable paths
 - [ ] No session IDs or tracking params in crawlable URLs
+- [ ] **Sitemap/gallery filter alignment** — `sitemap.ts` and each index page (`case-studies/page.tsx`, `blog/page.tsx`, `seo-for/page.tsx`) must use the **same filter criteria** for which items to include. If the sitemap includes items that the gallery page filters out, those items become orphan pages (in sitemap, zero internal links). Check that both use the same `.filter()` predicate (e.g., both filter by `slug` or both filter by `paragraph-summary`).
 
 ### Step 7: Canonical & Pagination Audit
 
@@ -991,7 +993,7 @@ The code-level audit (Steps 2-15) reads source files. It CANNOT detect:
 - **CMS meta descriptions that are too long/short** — the code has truncation logic, but you can only verify it works by checking the rendered HTML.
 - **CMS images missing alt text** — the `alt` value comes from the CMS, not from the codebase.
 - **Redirect chains** — you need to actually follow HTTP redirects to detect chains.
-- **Orphan pages** — requires crawling all pages to build a full link graph.
+- **Orphan pages** — requires crawling all pages to build a full link graph. However, the most common cause (sitemap/gallery filter mismatch) IS detectable via code audit — see Step 6.
 - **Live 404s** — a page might exist in the sitemap but 404 in production due to CMS draft/archive status.
 
 **Always run `npm run crawl-audit` (or use the "crawl" argument) when:**
@@ -1002,10 +1004,12 @@ The code-level audit (Steps 2-15) reads source files. It CANNOT detect:
 
 ### 28. Meta Description Truncation
 
-The `truncateSeoDescription()` function in `seo-utils.ts` handles CMS descriptions that exceed 160 characters:
-- Cuts at sentence boundaries (period) when possible
+The `truncateSeoDescription()` function in `seo-utils.ts` handles CMS descriptions:
+- Returns `null` for descriptions under 120 chars (too short for Ahrefs — threshold was raised from 80), so the caller can use a generated fallback
+- Cuts at sentence boundaries (period) when possible, but **only if the result stays ≥ 120 chars** — this prevents a 165-char input from being truncated to 99 chars at a period
 - Falls back to word boundaries
-- Returns `null` for descriptions under 80 chars (too short to be useful), so the caller can use a generated fallback
+
+**Critical edge case (learned the hard way):** A CMS description of 165 chars passes the MIN check, gets sliced to 160, then sentence-boundary truncation finds a period at position 99 and cuts there — producing a 99-char result that Ahrefs flags as "too short". The sentence-boundary check now guards against this by requiring `lastPeriod + 1 >= MIN_META_DESCRIPTION`.
 
 Use it in any `generateMetadata` function that uses CMS text for descriptions:
 ```tsx

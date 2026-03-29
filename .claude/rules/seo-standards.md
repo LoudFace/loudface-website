@@ -11,7 +11,7 @@ Mandatory SEO requirements for all content and pages.
 - **Unique**: Every page must have a unique title
 
 ### Meta Descriptions
-- **Length**: 150-160 characters
+- **Length**: 120-160 characters (Ahrefs flags under ~120 as "too short"; `MIN_META_DESCRIPTION = 120` in `seo-utils.ts`)
 - **Include**: Primary keyword, value proposition, call-to-action
 - **Tone**: Compelling, action-oriented (not just descriptive)
 - **Unique**: Every page must have a unique description
