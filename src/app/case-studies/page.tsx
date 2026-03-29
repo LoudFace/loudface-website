@@ -96,10 +96,10 @@ export default async function WorkPage({
       .filter((tech): tech is Technology => tech !== undefined);
   }
 
-  // Only show studies with a paragraph summary, featured first
-  const withSummary = caseStudies.filter(s => s['paragraph-summary']);
-  const featuredStudies = withSummary.filter(s => s.featured);
-  const regularStudies = withSummary.filter(s => !s.featured);
+  // Show all case studies with slugs, featured first
+  const withSlug = caseStudies.filter(s => s.slug);
+  const featuredStudies = withSlug.filter(s => s.featured);
+  const regularStudies = withSlug.filter(s => !s.featured);
   const sortedStudies = [...featuredStudies, ...regularStudies];
 
   // Pagination
