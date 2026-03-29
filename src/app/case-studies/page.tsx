@@ -220,7 +220,7 @@ export default async function WorkPage({
                             alt={study['main-project-image-thumbnail']?.alt || study['project-title'] || study.name}
                             width="800"
                             height="500"
-                            loading={index < 6 ? 'eager' : 'lazy'}
+                            loading={index < 3 ? 'eager' : 'lazy'}
                             className="w-full h-full object-cover object-top transition-transform duration-500 group-hover:scale-105"
                           />
                         );

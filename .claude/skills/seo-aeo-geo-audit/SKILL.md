@@ -75,6 +75,60 @@ npm run crawl-audit:dev
 - `case-studies/[slug]/page.tsx` → same H1 downgrading and HTTP link fixing
 - `seo-utils.ts` → `truncateSeoDescription()` clips CMS descriptions to 160 chars; returns null for descriptions under 120 chars so callers can use better fallbacks. Sentence-boundary truncation also respects the 120-char minimum to avoid producing short results from long inputs.
 
+### Step 0b: PageSpeed & Core Web Vitals Audit (when argument is "crawl" or "site")
+
+**This step measures performance scores and Core Web Vitals** — LCP, CLS, TBT, FCP, Speed Index, and TTI. Google uses Core Web Vitals as ranking factors, and slow pages hurt both SEO and user experience.
+
+**When to run:**
+- Argument is `crawl` or `site` → run after the crawl (Step 0)
+- Any other argument → skip this step
+
+**Run against production (uses Google PageSpeed Insights API — free, no key, 400 queries/day):**
+```bash
+npm run pagespeed-audit              # mobile (default)
+npm run pagespeed-audit -- --desktop  # desktop
+```
+
+**Run against dev server (uses Lighthouse CLI locally):**
+```bash
+npm run pagespeed-audit:dev              # mobile
+npm run pagespeed-audit:dev -- --desktop  # desktop
+```
+
+**Test specific pages only:**
+```bash
+npm run pagespeed-audit -- --pages=/,/blog,/services/webflow
+```
+
+**What it reports:**
+- **Category scores** (0-100): Performance, Accessibility, Best Practices, SEO
+- **Core Web Vitals**: LCP (< 2.5s), FCP (< 1.8s), TBT (< 200ms), CLS (< 0.1), SI (< 3.4s), TTI (< 3.8s)
+- **Real-world data (CrUX)**: If available, shows actual p75 field metrics from Chrome users
+- **Top opportunities**: Actionable suggestions with estimated savings (e.g., "Reduce unused JavaScript — save 450ms")
+- **JSON report**: Saved to `pagespeed-report.json` for detailed analysis
+
+**After the PageSpeed audit:**
+
+1. Read the summary table — any Performance score under 90 or LCP over 2.5s needs investigation
+2. Review top opportunities — focus on the highest savings items first
+3. Common fixes:
+   - **Large LCP** → Check hero image size, preload LCP image, use `fetchPriority="high"`
+   - **High TBT** → Reduce JavaScript bundle size, defer non-critical scripts
+   - **High CLS** → Add width/height to images, use `font-display: swap`, reserve space for dynamic content
+   - **Slow FCP** → Preload critical fonts, reduce render-blocking CSS
+4. For pages with CrUX data: field metrics are more authoritative than lab metrics — if lab scores are good but field is poor, investigate real-user conditions (slow networks, older devices)
+5. Re-run after fixes to verify improvements
+
+**Thresholds (Google "good" category):**
+
+| Metric | Good | Needs Improvement | Poor |
+|--------|------|-------------------|------|
+| Performance | ≥ 90 | 50-89 | < 50 |
+| LCP | ≤ 2.5s | 2.5-4.0s | > 4.0s |
+| TBT (lab proxy for FID) | ≤ 200ms | 200-600ms | > 600ms |
+| CLS | ≤ 0.1 | 0.1-0.25 | > 0.25 |
+| FCP | ≤ 1.8s | 1.8-3.0s | > 3.0s |
+
 ### Step 1: Determine Scope
 
 Based on the argument:
@@ -917,8 +971,9 @@ Generate a report in this format:
 | AEO Readiness | X/20 | Pass/Warn/Fail |
 | GEO Readiness | X/20 | Pass/Warn/Fail |
 | Off-Site Presence | X/10 | Pass/Warn/Fail |
+| PageSpeed & CWV | X/10 | Pass/Warn/Fail |
 
-**Overall Score**: X/140
+**Overall Score**: X/150
 
 ## Critical Issues (Must Fix)
 
@@ -963,6 +1018,13 @@ Priority order for fixes:
 | 0-3 (or 0-7) | Critical problems |
 
 AEO and GEO are scored out of 20 (not 10) because they cover more ground, include E-E-A-T and freshness decay signals, and are weighted higher for sites that sell these services.
+
+**PageSpeed & CWV scoring** (out of 10):
+- 10: All pages ≥ 90 performance, all CWV in "good" range
+- 8-9: Most pages ≥ 90, minor CWV misses on 1-2 pages
+- 6-7: Average performance 75-89, some CWV in "needs improvement"
+- 4-5: Average performance 50-74, multiple CWV failures
+- 0-3: Average performance < 50, critical CWV failures across pages
 
 ## Post-Audit: AI Citation Monitoring
 

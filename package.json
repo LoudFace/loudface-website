@@ -8,7 +8,9 @@
     "start": "next start",
     "lint": "eslint",
     "crawl-audit": "node scripts/crawl-audit.mjs",
-    "crawl-audit:dev": "node scripts/crawl-audit.mjs http://localhost:3005"
+    "crawl-audit:dev": "node scripts/crawl-audit.mjs http://localhost:3005",
+    "pagespeed-audit": "node scripts/pagespeed-audit.mjs",
+    "pagespeed-audit:dev": "node scripts/pagespeed-audit.mjs http://localhost:3005"
   },
   "dependencies": {
     "@calcom/embed-react": "^1.5.3",

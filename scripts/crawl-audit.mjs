@@ -30,7 +30,7 @@ const USER_AGENT = 'LoudFace-CrawlAudit/1.0';
 
 const META_TITLE_MIN = 30;
 const META_TITLE_MAX = 60;
-const META_DESC_MIN = 80;
+const META_DESC_MIN = 120;
 const META_DESC_MAX = 160;
 
 // ============================================================

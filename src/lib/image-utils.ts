@@ -132,8 +132,8 @@ export function heroImage(url: string | undefined): {
   srcset: string | undefined;
 } {
   return {
-    src: url,
-    srcset: generateSrcset(url, [800, 1200, 1600, 1920], 95, 'original'),
+    src: optimizeImage(url, 1200, 85, 'webp'),
+    srcset: generateSrcset(url, [600, 800, 1200, 1600], 85),
   };
 }
 
@@ -145,7 +145,7 @@ export function caseStudyThumbnail(url: string | undefined): {
   srcset: string | undefined;
 } {
   return {
-    src: url,
-    srcset: generateSrcset(url, [600, 900, 1200, 1800], 95, 'original'),
+    src: optimizeImage(url, 800, 80, 'webp'),
+    srcset: generateSrcset(url, [400, 600, 800, 1200]),
   };
 }

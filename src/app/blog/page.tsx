@@ -150,7 +150,7 @@ export default async function BlogPage({
                         alt={post.thumbnail?.alt || post.name}
                         width="800"
                         height="450"
-                        loading={index < 6 ? 'eager' : 'lazy'}
+                        loading={index < 3 ? 'eager' : 'lazy'}
                         className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                       />
                     </div>
