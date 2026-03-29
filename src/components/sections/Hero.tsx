@@ -76,7 +76,7 @@ export function Hero({
             {client?.['colored-logo']?.url ? (
               <img
                 src={logoImage(client['colored-logo'].url)}
-                alt={isHidden ? '' : client.name || 'Client logo'}
+                alt={client.name || 'Client logo'}
                 width={96}
                 height={20}
                 loading={isHidden ? 'lazy' : 'eager'}
@@ -106,11 +106,7 @@ export function Hero({
             }
             srcSet={caseStudyThumbnail(study['main-project-image-thumbnail']?.url)?.srcset}
             sizes="388px"
-            alt={
-              isHidden
-                ? ''
-                : study['main-project-image-thumbnail']?.alt || study['project-title'] || study.name
-            }
+            alt={study['main-project-image-thumbnail']?.alt || study['project-title'] || study.name}
             width="388"
             height="250"
             loading={isHidden ? 'lazy' : 'eager'}

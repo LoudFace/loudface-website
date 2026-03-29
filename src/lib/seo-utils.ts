@@ -12,7 +12,7 @@ const BRAND_SUFFIX_LENGTH = BRAND_SUFFIX.length; // 12
 const MAX_SERP_TITLE = 60;
 const DEFAULT_MAX_PAGE_TITLE = MAX_SERP_TITLE - BRAND_SUFFIX_LENGTH; // 48
 const MAX_META_DESCRIPTION = 160;
-const MIN_META_DESCRIPTION = 80;
+const MIN_META_DESCRIPTION = 120;
 const SITE_NAME = 'LoudFace';
 const SITE_TWITTER = '@loudface';
 
@@ -77,9 +77,9 @@ export function truncateSeoDescription(
 
   let truncated = cleaned.slice(0, maxLength).trim();
 
-  // Try to cut at a sentence boundary
+  // Try to cut at a sentence boundary (but not if it would drop below MIN)
   const lastPeriod = truncated.lastIndexOf('.');
-  if (lastPeriod > maxLength * 0.6) {
+  if (lastPeriod > maxLength * 0.6 && lastPeriod + 1 >= MIN_META_DESCRIPTION) {
     return truncated.slice(0, lastPeriod + 1);
   }
 
