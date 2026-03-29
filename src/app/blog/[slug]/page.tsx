@@ -59,10 +59,10 @@ function extractTocAndAddIds(html: string | undefined): { toc: { id: string; tex
   normalized = normalized.replace(/src="<(https?:\/\/[^">]+)>"/g, 'src="$1"');
   normalized = normalized.replace(/href="<(https?:\/\/[^">]+)>"/g, 'href="$1"');
 
-  // Add alt text to CMS images that have empty or missing alt attributes
+  // Add alt text to CMS images that have empty, missing, or Webflow placeholder alt attributes
   normalized = normalized.replace(
-    /<img([^>]*?)alt=""([^>]*?)>/gi,
-    '<img$1alt="Blog post image"$2>',
+    /<img([^>]*?)alt="(__wf_reserved_inherit)?"([^>]*?)>/gi,
+    '<img$1alt="Blog post image"$3>',
   );
   normalized = normalized.replace(
     /<img(?![^>]*alt=)([^>]*?)>/gi,
