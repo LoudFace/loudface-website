@@ -56,6 +56,7 @@ npm run crawl-audit:dev
 - **Thin content** — pages under 300 words
 - **Missing canonical URLs** — indexable pages without canonical tags
 - **Missing meta description** — pages without any meta description
+- **Slow pages (TTFB > 1s)** — pages with server response time over 1 second; indicates heavy data fetching, unoptimized queries, or missing caching. Check `fetchHomepageData()` call count and whether heavy pages fetch more data than needed.
 
 **After the crawl:**
 
@@ -87,8 +88,9 @@ Based on the argument:
 For each page, check:
 
 #### Meta Tags
-- [ ] `<title>` present and 50-60 characters
-- [ ] `<meta name="description">` present and 150-160 characters
+- [ ] `<title>` present and 50-60 characters (including ` | LoudFace` suffix from layout template)
+- [ ] `<title>` unlikely to be rewritten by Google — rewrites happen when: title is too long (truncated in SERP), doesn't match page content/H1, is keyword-stuffed, or is too generic. If Ahrefs reports "SERP title changed", check whether the page title closely matches the H1 and primary keyword. Google often shortens titles to the H1 if the `<title>` is too long or mismatched.
+- [ ] `<meta name="description">` present and 120-160 characters (Ahrefs flags under ~120 as "too short")
 - [ ] `<link rel="canonical">` present
 - [ ] `<meta name="robots">` set appropriately
 
