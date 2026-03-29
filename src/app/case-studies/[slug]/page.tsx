@@ -60,6 +60,10 @@ function extractTocAndAddIds(html: string | undefined): { toc: { id: string; tex
   // Rewrite legacy internal URLs to canonical paths (eliminates 308 redirect chains)
   normalized = rewriteLegacyUrls(normalized);
 
+  // Replace curly/smart quotes with straight quotes in HTML attributes
+  normalized = normalized.replace(/[\u201C\u201D]/g, '"');
+  normalized = normalized.replace(/[\u2018\u2019]/g, "'");
+
   // Fix malformed URLs from CMS rich text: <https://example.com> → https://example.com
   normalized = normalized.replace(/src="<(https?:\/\/[^">]+)>"/g, 'src="$1"');
   normalized = normalized.replace(/href="<(https?:\/\/[^">]+)>"/g, 'href="$1"');

@@ -109,7 +109,7 @@ export function Hero({
             alt={
               isHidden
                 ? ''
-                : study['main-project-image-thumbnail']?.alt || study['project-title']
+                : study['main-project-image-thumbnail']?.alt || study['project-title'] || study.name
             }
             width="388"
             height="250"

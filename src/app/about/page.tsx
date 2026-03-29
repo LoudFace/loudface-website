@@ -140,7 +140,7 @@ export default async function AboutPage() {
         <div className="max-w-3xl mx-auto text-center">
           <Badge
             size="md"
-            icon={<img src={asset(content.hero.badgeIcon)} alt="" width="24" height="24" className="w-6 h-6" loading="eager" />}
+            icon={<img src={asset(content.hero.badgeIcon)} alt="Handshake" width="24" height="24" className="w-6 h-6" loading="eager" />}
             className="mb-6"
           >
             {content.hero.badge}
@@ -257,7 +257,7 @@ export default async function AboutPage() {
         {/* Accepting new clients CTA card */}
         <div className="mt-12 bg-surface-100 border border-surface-200 rounded-xl p-10 lg:p-12">
           <div className="flex items-center gap-2 mb-4">
-            <img src={asset('/images/green-circle.svg')} alt="" width="12" height="12" className="w-3 h-3" />
+            <img src={asset('/images/green-circle.svg')} alt="Available" width="12" height="12" className="w-3 h-3" />
             <span className="text-sm font-medium text-surface-900">{content.team.ctaCard.indicator}</span>
           </div>
           <h3 className="text-xl font-medium text-surface-900">{content.team.ctaCard.headline}</h3>
