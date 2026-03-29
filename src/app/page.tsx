@@ -12,6 +12,7 @@ import type { Metadata } from 'next';
 import dynamic from 'next/dynamic';
 import { fetchHomepageData, assertCmsData } from '@/lib/cms-data';
 import { getHomepageContent } from '@/lib/content-utils';
+import { caseStudyThumbnail } from '@/lib/image-utils';
 import type { CaseStudy } from '@/lib/types';
 import {
   Hero,
@@ -126,8 +127,19 @@ export default async function HomePage() {
     url: 'https://www.loudface.co',
   };
 
+  // Preload the first hero carousel image — this is the LCP element on mobile.
+  // Without preload, the browser discovers the image only after parsing the HTML,
+  // which adds 1-2s to LCP on slow connections.
+  const firstFeatured = lightCaseStudies.find(s => s.featured);
+  const heroPreloadUrl = firstFeatured
+    ? caseStudyThumbnail(firstFeatured['main-project-image-thumbnail']?.url)?.src
+    : undefined;
+
   return (
     <>
+      {heroPreloadUrl && (
+        <link rel="preload" as="image" href={heroPreloadUrl} fetchPriority="high" />
+      )}
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(speakableSchema) }}
