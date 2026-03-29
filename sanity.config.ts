@@ -8,6 +8,7 @@ export default defineConfig({
   title: 'LoudFace CMS',
   projectId: 'xjjjqhgt',
   dataset: 'production',
+  basePath: '/studio',
   plugins: [structureTool(), visionTool()],
   schema: {
     types: schemaTypes,
