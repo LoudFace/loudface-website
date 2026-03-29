@@ -1,7 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { COLLECTION_IDS, isValidCollection } from '@/lib/constants';
-
-export const runtime = 'edge';
+import { fetchItemBySlug, isValidCollection } from '@/lib/cms-data';
 
 export async function GET(
   request: NextRequest,
@@ -9,7 +7,6 @@ export async function GET(
 ) {
   const { collection, slug } = await params;
 
-  // Validate collection and get ID from shared constants
   if (!collection || !isValidCollection(collection)) {
     return NextResponse.json(
       { error: 'Collection not found' },
@@ -17,54 +14,17 @@ export async function GET(
     );
   }
 
-  const collectionId = COLLECTION_IDS[collection];
-  const accessToken = process.env.WEBFLOW_SITE_API_TOKEN;
-
-  if (!accessToken) {
-    return NextResponse.json(
-      { error: 'CMS not configured' },
-      { status: 500 }
-    );
-  }
-
   try {
-    // Use Webflow API v2 - fetch all items and filter by slug
-    const response = await fetch(
-      `https://api.webflow.com/v2/collections/${collectionId}/items`,
-      {
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-        },
-        next: { revalidate: 300 }, // Cache for 5 minutes
-      }
-    );
+    const item = await fetchItemBySlug(collection, slug);
 
-    if (!response.ok) {
-      return NextResponse.json(
-        { error: 'Failed to fetch from CMS' },
-        { status: response.status }
-      );
-    }
-
-    const data = await response.json();
-    // v2 API: slug is in fieldData
-    interface WebflowItem {
-      id: string;
-      fieldData?: { slug?: string; [key: string]: unknown };
-      [key: string]: unknown;
-    }
-    const rawItem = data.items?.find((i: WebflowItem) => i.fieldData?.slug === slug);
-
-    if (!rawItem) {
+    if (!item) {
       return NextResponse.json(
         { error: 'Item not found' },
         { status: 404 }
       );
     }
 
-    // Keep API routes as raw Webflow pass-throughs. Server-side normalization
-    // belongs in src/lib/cms-data.ts so all page code shares one contract.
-    return NextResponse.json(rawItem);
+    return NextResponse.json(item);
   } catch (error) {
     console.error('CMS fetch error:', error);
     return NextResponse.json(

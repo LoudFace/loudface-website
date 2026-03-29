@@ -1,6 +1,6 @@
 # CMS Component Creation
 
-Create React components that render Webflow CMS data. For general component patterns (templates, carousel setup, server vs client decisions), see `.claude/rules/component-patterns.md` — it's always loaded in context.
+Create React components that render Sanity CMS data. For general component patterns (templates, carousel setup, server vs client decisions), see `.claude/rules/component-patterns.md` — it's always loaded in context.
 
 This skill covers **CMS-specific** patterns only.
 
@@ -19,7 +19,7 @@ import Link from 'next/link';
 
 **ALWAYS import CMS types from `@/lib/types`:**
 
-Available types: `CaseStudy`, `Client`, `Testimonial`, `BlogPost`, `Category`, `Industry`, `TeamMember`, `Technology`, `ServiceCategory`, `WebflowImage`
+Available types: `CaseStudy`, `Client`, `Testimonial`, `BlogPost`, `Category`, `Industry`, `TeamMember`, `Technology`, `ServiceCategory`, `CmsImage`
 
 ## Field Access Patterns
 
@@ -29,7 +29,7 @@ item.name
 item.slug
 item.id
 
-// Kebab-case fields (Webflow field names)
+// Kebab-case fields (CMS field names)
 item['project-title']
 item['result-1---number']
 
@@ -66,7 +66,7 @@ Always handle empty collections:
 | Content Type | Solution |
 |--------------|----------|
 | Static text (headlines, CTAs) | JSON content layer (`src/data/content/`) |
-| Webflow CMS items | CMS data fetching (`src/lib/cms-data.ts`) |
+| CMS items | CMS data fetching (`src/lib/cms-data.ts`) |
 
 ### Adding Static Text Support
 

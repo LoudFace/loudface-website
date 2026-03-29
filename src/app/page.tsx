@@ -10,7 +10,7 @@
  */
 import type { Metadata } from 'next';
 import dynamic from 'next/dynamic';
-import { fetchHomepageData, getAccessToken, getEmptyHomepageData, assertCmsData } from '@/lib/cms-data';
+import { fetchHomepageData, assertCmsData } from '@/lib/cms-data';
 import { getHomepageContent } from '@/lib/content-utils';
 import type { CaseStudy } from '@/lib/types';
 import {
@@ -68,15 +68,7 @@ export default async function HomePage() {
   const content = getHomepageContent();
 
   // CMS Data Fetching — errors propagate to fail the build (no silent empty pages)
-  const accessToken = getAccessToken();
-  if (!accessToken && process.env.NODE_ENV === 'production') {
-    throw new Error(
-      'Build aborted: WEBFLOW_SITE_API_TOKEN is not set. Cannot build homepage without CMS data.'
-    );
-  }
-  const cmsData = accessToken
-    ? await fetchHomepageData(accessToken)
-    : getEmptyHomepageData();
+  const cmsData = await fetchHomepageData();
 
   // Homepage guardrail: fail the build if critical CMS data is empty.
   // Other pages (blog, case studies, services) degrade gracefully instead.

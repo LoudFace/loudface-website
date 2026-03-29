@@ -313,8 +313,8 @@ Sitemap: https://www.loudface.co/sitemap-index.xml
 
 | Check | Requirement |
 |-------|-------------|
-| `normalizeItem()` field access | Only `id` + `fieldData` fields available — Webflow system fields dropped |
-| Date fields in schemas | Use CMS-level dates (`published-date`) not Webflow system dates (`createdOn`) |
+| `normalizeItem()` field access | Only `id` + `fieldData` fields available — CMS system fields dropped |
+| Date fields in schemas | Use CMS-level dates (`published-date`) not CMS system dates (`createdOn`) |
 | Draft filtering | `isPublished()` filter applied before normalization |
 | Missing data fallbacks | Dynamic pages must handle null/undefined CMS data gracefully |
 
@@ -622,13 +622,13 @@ AI engines match entities across sources. Inconsistencies reduce citation confid
 
 ## Post-Migration SEO Checklist
 
-When auditing after a Webflow-to-Next.js (or any) migration:
+When auditing after a legacy CMS migration (or any migration):
 
 ### Redirects
 - [ ] All old URL patterns have 301 redirects in `next.config.ts`
 - [ ] No redirect chains or loops (A → B → C should be A → C)
 - [ ] Wildcard redirects for nested paths (e.g., `/work/:slug*` → `/case-studies/:slug*`)
-- [ ] Common Webflow URL patterns covered:
+- [ ] Common legacy URL patterns covered:
   - [ ] `/work` → `/case-studies` (portfolio rename)
   - [ ] `/about-us` → `/about` (slug simplification)
   - [ ] `/policy-pages/*` → `/terms`, `/privacy`, `/cookies` (flattened structure)
@@ -639,7 +639,7 @@ When auditing after a Webflow-to-Next.js (or any) migration:
 
 ### Google Search Console
 - [ ] Google Search Console verification file present (`public/google*.html`)
-- [ ] Old Webflow sitemap deleted from GSC
+- [ ] Old sitemap deleted from GSC
 - [ ] New sitemap submitted to GSC
 - [ ] Key pages requested for re-indexing via URL Inspection tool
 - [ ] Search analytics monitored for impression/click drops post-migration
@@ -655,14 +655,14 @@ When auditing after a Webflow-to-Next.js (or any) migration:
 ### Content Parity
 - [ ] All old pages have equivalent new pages (nothing dropped without redirect)
 - [ ] No soft 404s (pages returning 200 with error/placeholder content)
-- [ ] CMS content rendering correctly (field name mapping between Webflow and Next.js)
+- [ ] CMS content rendering correctly (field name mapping between CMS and Next.js)
 - [ ] Rich text / HTML content from CMS displays properly (not escaped)
-- [ ] Image CDN URLs still resolving (Webflow assets-global.website-files.com)
+- [ ] Image CDN URLs still resolving (no old CDN domains returning 404)
 
 ### Structured Data
 - [ ] All JSON-LD uses native `<script>`, not Next.js `<Script>`
 - [ ] Global schemas (WebSite, Organization) present in layout
-- [ ] Page-specific schemas use correct URLs (new paths, not old Webflow paths)
+- [ ] Page-specific schemas use correct URLs (new paths, not old CMS paths)
 - [ ] Schema `url` fields use absolute URLs with canonical domain
 
 ## Off-Site Presence & Third-Party Citation Surface

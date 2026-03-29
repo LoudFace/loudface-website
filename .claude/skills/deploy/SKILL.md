@@ -19,8 +19,9 @@ Before deploying, verify:
    - See CLAUDE.md "Static Image Paths" section
 
 4. **Environment variables set on Vercel**
-   - `WEBFLOW_SITE_API_TOKEN` — Webflow CMS API token
-   - `WEBFLOW_SITE_ID` — Webflow site identifier
+   - `NEXT_PUBLIC_SANITY_PROJECT_ID` — Sanity project identifier
+   - `NEXT_PUBLIC_SANITY_DATASET` — Sanity dataset name
+   - `SANITY_API_TOKEN` — Sanity API token
    - Set via Vercel Dashboard → Project → Settings → Environment Variables
 
 5. **CMS API routes working**
@@ -81,7 +82,7 @@ import { asset } from '@/lib/assets';
 
 - Verify environment variables are set on Vercel (Settings → Environment Variables)
 - Verify collection IDs in CLAUDE.md
-- Check API token permissions in Webflow dashboard
+- Check API token permissions in Sanity dashboard
 - Test API routes locally first
 
 ### Styles Not Working (White/Invisible Text)

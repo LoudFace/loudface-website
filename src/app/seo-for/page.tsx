@@ -9,8 +9,6 @@ import Link from 'next/link';
 import {
   fetchSeoPages,
   fetchHomepageData,
-  getAccessToken,
-  getEmptyHomepageData,
 } from '@/lib/cms-data';
 import { getSeoForHubContent } from '@/lib/content-utils';
 import { logoImage } from '@/lib/image-utils';
@@ -24,7 +22,7 @@ import {
   SectionHeader,
 } from '@/components/ui';
 import { FAQ, CTA } from '@/components/sections';
-import type { SeoPage } from '@/lib/types';
+
 
 export const metadata: Metadata = {
   title: 'SEO Services by Industry',
@@ -122,13 +120,9 @@ function getIndustryIcon(slug: string) {
 
 export default async function SeoForHubPage() {
   const content = getSeoForHubContent();
-  const accessToken = getAccessToken();
-
   const [seoPages, cmsData] = await Promise.all([
-    accessToken ? fetchSeoPages(accessToken) : Promise.resolve([] as SeoPage[]),
-    accessToken
-      ? fetchHomepageData(accessToken).catch(() => getEmptyHomepageData())
-      : Promise.resolve(getEmptyHomepageData()),
+    fetchSeoPages(),
+    fetchHomepageData(),
   ]);
 
   const showcaseClients = cmsData.allClients.filter(

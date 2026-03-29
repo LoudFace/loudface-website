@@ -8,7 +8,7 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import dynamic from 'next/dynamic';
-import { fetchHomepageData, getAccessToken, getEmptyHomepageData } from '@/lib/cms-data';
+import { fetchHomepageData } from '@/lib/cms-data';
 import { getServicesWebflowContent } from '@/lib/content-utils';
 import { asset } from '@/lib/assets';
 import { getContrastColors } from '@/lib/color-utils';
@@ -59,10 +59,7 @@ export default async function WebflowServicePage() {
   const content = getServicesWebflowContent();
 
   // CMS data for case studies section
-  const accessToken = getAccessToken();
-  const cmsData = accessToken
-    ? await fetchHomepageData(accessToken)
-    : getEmptyHomepageData();
+  const cmsData = await fetchHomepageData();
 
   const serviceSchema = {
     '@context': 'https://schema.org',

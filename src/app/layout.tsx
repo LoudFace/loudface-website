@@ -5,7 +5,7 @@ import { CalHandler } from "@/components/CalHandler";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { asset } from "@/lib/assets";
-import { fetchFooterData, getAccessToken } from "@/lib/cms-data";
+import { fetchFooterData } from "@/lib/cms-data";
 import { PostHogProvider } from "@/components/PostHogProvider";
 
 export const metadata: Metadata = {
@@ -102,10 +102,7 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const accessToken = getAccessToken();
-  const footerData = accessToken
-    ? await fetchFooterData(accessToken)
-    : { caseStudies: [], blogPosts: [] };
+  const footerData = await fetchFooterData();
   const caseStudies = footerData.caseStudies;
   const blogPosts = footerData.blogPosts;
 
@@ -113,17 +110,7 @@ export default async function RootLayout({
     <html lang="en">
       <head>
         {/* Preconnect hints for performance */}
-        <link rel="preconnect" href="https://images.weserv.nl" crossOrigin="" />
-        <link
-          rel="preconnect"
-          href="https://assets-global.website-files.com"
-          crossOrigin=""
-        />
-        <link
-          rel="preconnect"
-          href="https://uploads-ssl.webflow.com"
-          crossOrigin=""
-        />
+        <link rel="preconnect" href="https://cdn.sanity.io" crossOrigin="" />
         <link rel="dns-prefetch" href="https://app.cal.com" />
         <link rel="dns-prefetch" href="https://www.googletagmanager.com" />
 

@@ -92,7 +92,7 @@ Available types in `types.ts`:
 - `TeamMember` - Team member items
 - `Technology` - Technology items
 - `ServiceCategory` - Service category items
-- `WebflowImage` - Image field structure
+- `CmsImage` - Image field structure
 
 ## Static Images (CRITICAL)
 
@@ -114,7 +114,7 @@ import { asset } from '@/lib/assets';
 |--------------|----------------|
 | Hardcoded paths (`/images/...`) | ✅ Yes |
 | JSON content paths | ✅ Yes |
-| Webflow CMS URLs (full https://...) | ❌ No |
+| Remote CMS URLs (full https://...) | ❌ No |
 | External URLs | ❌ No |
 
 ### JSON Content Images
@@ -129,7 +129,7 @@ When image paths come from JSON content files, apply `asset()` at render time:
 
 ### CMS Image Optimization
 
-For CMS images (remote Webflow URLs), use helpers from `@/lib/image-utils` for resizing and WebP conversion:
+For CMS images (Sanity CDN URLs), use helpers from `@/lib/image-utils` for resizing and WebP conversion:
 
 ```tsx
 import { thumbnailImage, logoImage, avatarImage, heroImage } from '@/lib/image-utils';

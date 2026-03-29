@@ -5,7 +5,7 @@
  */
 import type { Metadata } from 'next';
 import Link from 'next/link';
-import { fetchHomepageData, getAccessToken, getEmptyHomepageData } from '@/lib/cms-data';
+import { fetchHomepageData } from '@/lib/cms-data';
 import { thumbnailImage } from '@/lib/image-utils';
 import { asset } from '@/lib/assets';
 import { Pagination, SectionContainer, SectionHeader } from '@/components/ui';
@@ -46,10 +46,7 @@ export default async function BlogPage({
   const { page: pageParam } = await searchParams;
   const currentPage = Math.max(1, parseInt(pageParam || '1', 10));
 
-  const accessToken = getAccessToken();
-  const cmsData = accessToken
-    ? await fetchHomepageData(accessToken)
-    : getEmptyHomepageData();
+  const cmsData = await fetchHomepageData();
 
   const { blogPosts, categories, teamMembers } = cmsData;
 

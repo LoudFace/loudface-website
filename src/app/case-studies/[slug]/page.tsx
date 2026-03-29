@@ -12,7 +12,7 @@
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
 import type { Metadata } from 'next';
-import { fetchCollection, fetchHomepageData, fetchItemBySlug, getAccessToken } from '@/lib/cms-data';
+import { fetchCollection, fetchHomepageData, fetchItemBySlug } from '@/lib/cms-data';
 import { asset } from '@/lib/assets';
 import { heroImage, avatarImage, thumbnailImage, optimizeImage } from '@/lib/image-utils';
 import { getContrastColor } from '@/lib/color-utils';
@@ -33,18 +33,12 @@ interface PageProps {
 }
 
 export async function generateStaticParams() {
-  const accessToken = getAccessToken();
-  if (!accessToken) return [];
-
-  const data = await fetchCollection<Record<string, unknown>>('case-studies', accessToken);
-  if (!data?.items) return [];
-
-  return data.items
-    .filter((item) => !item.isDraft && !item.isArchived)
+  const items = await fetchCollection<Record<string, unknown>>('case-studies');
+  return items
+    .filter((item) => item.slug)
     .map((item) => ({
-      slug: (item.fieldData as Record<string, unknown>)?.slug as string,
-    }))
-    .filter((item) => item.slug);
+      slug: item.slug as string,
+    }));
 }
 
 // Extract TOC from main-body HTML
@@ -97,12 +91,8 @@ function extractTocAndAddIds(html: string | undefined): { toc: { id: string; tex
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { slug } = await params;
-  const accessToken = getAccessToken();
-  if (!accessToken) {
-    return buildNoIndexMetadata('Case Study Not Found');
-  }
 
-  const study = await fetchItemBySlug<CaseStudy>('case-studies', slug, accessToken);
+  const study = await fetchItemBySlug<CaseStudy>('case-studies', slug);
 
   if (!study) {
     return buildNoIndexMetadata('Case Study Not Found');
@@ -137,14 +127,9 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 export default async function CaseStudyPage({ params }: PageProps) {
   const { slug } = await params;
 
-  const accessToken = getAccessToken();
-  if (!accessToken) {
-    notFound();
-  }
-
   const [cmsData, study] = await Promise.all([
-    fetchHomepageData(accessToken),
-    fetchItemBySlug<CaseStudy>('case-studies', slug, accessToken),
+    fetchHomepageData(),
+    fetchItemBySlug<CaseStudy>('case-studies', slug),
   ]);
 
   const {

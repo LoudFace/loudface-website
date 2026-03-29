@@ -4,8 +4,8 @@
  * This module provides utilities for working with local JSON content files.
  * These files store static text content that was previously hardcoded in components.
  *
- * NOTE: This is separate from the Webflow CMS system. The CMS Control Panel
- * handles dynamic data from Webflow API. This handles static component defaults.
+ * NOTE: This is separate from Sanity CMS. The CMS handles dynamic data
+ * via GROQ queries. This module handles static component defaults from JSON.
  */
 
 // Content file imports - add new content files here as they're created

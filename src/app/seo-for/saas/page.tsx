@@ -7,11 +7,7 @@
  */
 import type { Metadata } from 'next';
 import Link from 'next/link';
-import {
-  fetchHomepageData,
-  getAccessToken,
-  getEmptyHomepageData,
-} from '@/lib/cms-data';
+import { fetchHomepageData } from '@/lib/cms-data';
 import { getSeoForSaasContent } from '@/lib/content-utils';
 import { avatarImage } from '@/lib/image-utils';
 import {
@@ -58,10 +54,7 @@ export const metadata: Metadata = {
 };
 
 export default async function SaaSPage() {
-  const accessToken = getAccessToken();
-  const cmsData = accessToken
-    ? await fetchHomepageData(accessToken).catch(() => getEmptyHomepageData())
-    : getEmptyHomepageData();
+  const cmsData = await fetchHomepageData();
 
   // Testimonials with body text and profile image for the testimonials section
   const displayTestimonials = cmsData.allTestimonials.filter(

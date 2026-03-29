@@ -11,7 +11,6 @@ import {
   fetchItemBySlug,
   fetchSeoPages,
   fetchHomepageData,
-  getAccessToken,
 } from '@/lib/cms-data';
 import { buildNoIndexMetadata, buildPageMetadata, truncateSeoTitle, truncateSeoDescription } from '@/lib/seo-utils';
 import {
@@ -32,10 +31,7 @@ interface PageProps {
 }
 
 export async function generateStaticParams() {
-  const accessToken = getAccessToken();
-  if (!accessToken) return [];
-
-  const seoPages = await fetchSeoPages(accessToken);
+  const seoPages = await fetchSeoPages();
   return seoPages.map((page) => ({ slug: page.slug }));
 }
 
@@ -85,10 +81,8 @@ function extractStats(page: SeoPage) {
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { slug } = await params;
-  const accessToken = getAccessToken();
-  if (!accessToken) return buildNoIndexMetadata('SEO Services');
 
-  const page = await fetchItemBySlug<SeoPage>('seo-pages', slug, accessToken);
+  const page = await fetchItemBySlug<SeoPage>('seo-pages', slug);
 
   if (!page) {
     return buildNoIndexMetadata('SEO Services');
@@ -113,12 +107,9 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 export default async function SeoForIndustryPage({ params }: PageProps) {
   const { slug } = await params;
 
-  const accessToken = getAccessToken();
-  if (!accessToken) notFound();
-
   const [page, cmsData] = await Promise.all([
-    fetchItemBySlug<SeoPage>('seo-pages', slug, accessToken),
-    fetchHomepageData(accessToken),
+    fetchItemBySlug<SeoPage>('seo-pages', slug),
+    fetchHomepageData(),
   ]);
   if (!page) notFound();
 

@@ -1,31 +1,20 @@
 /**
- * Webflow CMS Type Definitions
+ * Sanity CMS Type Definitions
  * Centralized TypeScript interfaces for CMS data
  */
 
 /**
- * Base Webflow item structure from API v2 response
+ * Image field structure from CMS
+ * Shape: { url, alt } — used by all components that render CMS images
  */
-export interface WebflowItem {
-  id: string;
-  fieldData: Record<string, unknown>;
-  isDraft?: boolean;
-  isArchived?: boolean;
-  createdOn?: string;
-  lastUpdated?: string;
-}
-
-/**
- * Image field structure from Webflow
- */
-export interface WebflowImage {
+export interface CmsImage {
   url: string;
   alt: string | null;
 }
 
+
 /**
  * Case Study CMS item
- * Complete interface covering all fields from cms-schemas.json
  */
 export interface CaseStudy {
   id: string;
@@ -33,10 +22,10 @@ export interface CaseStudy {
   name: string;
   "project-title": string;
   "paragraph-summary"?: string;
-  "main-body"?: string; // Rich text content
-  "main-project-image-thumbnail"?: WebflowImage;
-  "client-logo"?: WebflowImage;
-  "client-logo-inversed"?: WebflowImage;
+  "main-body"?: string;
+  "main-project-image-thumbnail"?: CmsImage;
+  "client-logo"?: CmsImage;
+  "client-logo-inversed"?: CmsImage;
   "client-color": string;
   "secondary-client-color"?: string;
   "company-size"?: string;
@@ -50,46 +39,43 @@ export interface CaseStudy {
   "result-3---number"?: string;
   "result-3---title"?: string;
   featured?: boolean;
-  client: string; // Reference ID to clients collection
-  industry?: string; // Reference ID to industries collection
-  industries?: string[]; // Multi-reference to industries collection
-  testimonial?: string; // Reference ID to testimonials collection
-  technologies?: string[]; // Multi-reference to technologies collection
-  "services-provided"?: string[]; // Multi-reference to service-categories collection
+  client: string;
+  industry?: string;
+  industries?: string[];
+  testimonial?: string;
+  technologies?: string[];
+  "services-provided"?: string[];
 }
 
 /**
  * Client CMS item
- * Complete interface covering all fields from cms-schemas.json
  */
 export interface Client {
   id: string;
   name: string;
   slug: string;
   "showcase-logo"?: boolean;
-  "colored-logo"?: WebflowImage;
-  "light-logo"?: WebflowImage;
-  "dark-logo"?: WebflowImage;
+  "colored-logo"?: CmsImage;
+  "light-logo"?: CmsImage;
+  "dark-logo"?: CmsImage;
 }
 
 /**
  * Testimonial CMS item
- * Complete interface covering all fields from cms-schemas.json
  */
 export interface Testimonial {
   id: string;
   name: string;
   slug: string;
   role?: string;
-  "testimonial-body"?: string; // Rich text content
-  "profile-image"?: WebflowImage;
-  "case-study"?: string; // Reference ID to case-studies collection
-  client?: string; // Reference ID to clients collection
+  "testimonial-body"?: string;
+  "profile-image"?: CmsImage;
+  "case-study"?: string;
+  client?: string;
 }
 
 /**
  * Blog Post CMS item
- * Complete interface covering all fields from cms-schemas.json
  */
 export interface BlogPost {
   id: string;
@@ -97,56 +83,52 @@ export interface BlogPost {
   slug: string;
   "meta-title"?: string;
   "meta-description"?: string;
-  thumbnail?: WebflowImage;
+  thumbnail?: CmsImage;
   excerpt?: string;
-  content?: string; // Rich text content (main body)
+  content?: string;
   "time-to-read"?: string;
   featured?: boolean;
   "published-date"?: string;
   "last-updated"?: string;
-  author?: string; // Reference ID to team-members collection
-  category?: string; // Reference ID to categories collection (main category)
-  categories?: string[]; // Multi-reference to categories collection
+  author?: string;
+  category?: string;
+  categories?: string[];
 }
 
 /**
  * Category CMS item
- * Complete interface covering all fields from cms-schemas.json
  */
 export interface Category {
   id: string;
   name: string;
   slug: string;
-  color?: string; // Color field
+  color?: string;
 }
 
 /**
  * Team Member CMS item
- * Complete interface covering all fields from cms-schemas.json
  */
 export interface TeamMember {
   id: string;
   name: string;
   slug: string;
-  "profile-picture"?: WebflowImage;
+  "profile-picture"?: CmsImage;
   "bio-summary"?: string;
   "job-title"?: string;
 }
 
 /**
  * Technology CMS item
- * Complete interface covering all fields from cms-schemas.json
  */
 export interface Technology {
   id: string;
   name: string;
   slug: string;
-  logo?: WebflowImage;
+  logo?: CmsImage;
 }
 
 /**
  * Industry CMS item
- * Complete interface covering all fields from cms-schemas.json
  */
 export interface Industry {
   id: string;
@@ -157,7 +139,6 @@ export interface Industry {
 
 /**
  * Service Category CMS item
- * Complete interface covering all fields from cms-schemas.json
  */
 export interface ServiceCategory {
   id: string;
@@ -167,7 +148,6 @@ export interface ServiceCategory {
 
 /**
  * SEO Page CMS item (programmatic SEO hub)
- * Complete interface covering all fields from the seo-pages collection
  */
 export interface SeoPage {
   id: string;
@@ -175,12 +155,12 @@ export interface SeoPage {
   slug: string;
   "meta-title"?: string;
   "meta-description"?: string;
-  industry?: string; // Reference ID to industries collection
+  industry?: string;
   "display-order"?: number;
   "hero-headline"?: string;
   "hero-subtitle"?: string;
   "hero-description"?: string;
-  "hero-image"?: WebflowImage;
+  "hero-image"?: CmsImage;
   "pain-points-title"?: string;
   "pain-point-1-title"?: string;
   "pain-point-1-desc"?: string;
@@ -215,36 +195,18 @@ export interface SeoPage {
   "faq-4-answer"?: string;
   "faq-5-question"?: string;
   "faq-5-answer"?: string;
-  "main-body"?: string; // RichText — long-form prose section
-  "deliverables"?: string; // RichText — detailed deliverables list
+  "main-body"?: string;
+  "deliverables"?: string;
   "cta-title"?: string;
   "cta-subtitle"?: string;
 }
 
 /**
  * Blog FAQ CMS item
- * Complete interface covering all fields from cms-schemas.json
  */
 export interface BlogFAQ {
   id: string;
   name: string;
   slug: string;
-  "blog-post"?: string; // Reference ID to blog collection
+  "blog-post"?: string;
 }
-
-/**
- * Webflow API v2 collection response
- */
-export interface WebflowCollectionResponse<T = WebflowItem> {
-  items: T[];
-  pagination?: {
-    limit: number;
-    offset: number;
-    total: number;
-  };
-}
-
-/**
- * Helper type to normalize Webflow item (merge id with fieldData)
- */
-export type NormalizedItem<T> = Omit<T, "fieldData"> & T;

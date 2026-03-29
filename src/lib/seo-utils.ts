@@ -101,7 +101,7 @@ export function truncateSeoDescription(
  * CMS rich-text content so browsers never follow a 308 redirect chain.
  */
 const LEGACY_URL_MAP: Record<string, string> = {
-  // Old service slugs with Webflow random suffixes
+  // Old service slugs with random suffixes
   '/services/webflow-development-pnkr2': '/services/webflow',
   '/services/design-pia5o': '/services/ux-ui-design',
   '/services/copywriting-5n9z9': '/services/copywriting',

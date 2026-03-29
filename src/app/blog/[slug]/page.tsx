@@ -4,7 +4,7 @@
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
 import type { Metadata } from 'next';
-import { fetchCollection, fetchHomepageData, fetchItemBySlug, getAccessToken } from '@/lib/cms-data';
+import { fetchCollection, fetchHomepageData, fetchItemBySlug } from '@/lib/cms-data';
 import { avatarImage, heroImage, thumbnailImage } from '@/lib/image-utils';
 import { asset } from '@/lib/assets';
 import { Badge, SectionContainer } from '@/components/ui';
@@ -17,18 +17,12 @@ interface PageProps {
 }
 
 export async function generateStaticParams() {
-  const accessToken = getAccessToken();
-  if (!accessToken) return [];
-
-  const data = await fetchCollection<Record<string, unknown>>('blog', accessToken);
-  if (!data?.items) return [];
-
-  return data.items
-    .filter((item) => !item.isDraft && !item.isArchived)
+  const items = await fetchCollection<Record<string, unknown>>('blog');
+  return items
+    .filter((item) => item.slug)
     .map((item) => ({
-      slug: (item.fieldData as Record<string, unknown>)?.slug as string,
-    }))
-    .filter((item) => item.slug);
+      slug: item.slug as string,
+    }));
 }
 
 // Extract TOC from content
@@ -45,21 +39,19 @@ function extractTocAndAddIds(html: string | undefined): { toc: { id: string; tex
   normalized = rewriteLegacyUrls(normalized);
 
   // Replace curly/smart quotes with straight quotes in HTML attributes
-  // Webflow's rich text editor sometimes converts quotes in code examples
+  // Rich text editors sometimes convert quotes in code examples
   normalized = normalized.replace(/[\u201C\u201D]/g, '"');
   normalized = normalized.replace(/[\u2018\u2019]/g, "'");
 
   // Escape <script> tags in CMS rich text so they display as code, not execute.
-  // Webflow code examples sometimes contain unescaped script tags.
   normalized = normalized.replace(/<script\b/gi, '&lt;script');
   normalized = normalized.replace(/<\/script>/gi, '&lt;/script&gt;');
 
   // Fix malformed URLs from CMS rich text: <https://example.com> → https://example.com
-  // Webflow sometimes wraps URLs in angle brackets inside code examples
   normalized = normalized.replace(/src="<(https?:\/\/[^">]+)>"/g, 'src="$1"');
   normalized = normalized.replace(/href="<(https?:\/\/[^">]+)>"/g, 'href="$1"');
 
-  // Add alt text to CMS images that have empty, missing, or Webflow placeholder alt attributes
+  // Add alt text to CMS images that have empty, missing, or placeholder alt attributes
   normalized = normalized.replace(
     /<img([^>]*?)alt="(__wf_reserved_inherit)?"([^>]*?)>/gi,
     '<img$1alt="Blog post image"$3>',
@@ -84,13 +76,8 @@ function extractTocAndAddIds(html: string | undefined): { toc: { id: string; tex
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { slug } = await params;
-  const accessToken = getAccessToken();
 
-  if (!accessToken) {
-    return buildNoIndexMetadata('Blog Post');
-  }
-
-  const post = await fetchItemBySlug<BlogPost>('blog', slug, accessToken);
+  const post = await fetchItemBySlug<BlogPost>('blog', slug);
   if (!post) {
     return buildNoIndexMetadata('Blog Post');
   }
@@ -115,15 +102,10 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 
 export default async function BlogPostPage({ params }: PageProps) {
   const { slug } = await params;
-  const accessToken = getAccessToken();
-
-  if (!accessToken) {
-    notFound();
-  }
 
   const [cmsData, post] = await Promise.all([
-    fetchHomepageData(accessToken),
-    fetchItemBySlug<BlogPost>('blog', slug, accessToken),
+    fetchHomepageData(),
+    fetchItemBySlug<BlogPost>('blog', slug),
   ]);
   const { blogPosts, categories, teamMembers } = cmsData;
 

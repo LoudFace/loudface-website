@@ -3,7 +3,6 @@ import {
   assertCmsData,
   fetchHomepageData,
   fetchSeoPages,
-  getAccessToken,
 } from '@/lib/cms-data';
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
@@ -102,20 +101,9 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     },
   ];
 
-  const accessToken = getAccessToken();
-  if (!accessToken) {
-    if (process.env.NODE_ENV === 'production') {
-      throw new Error(
-        'Sitemap generation requires WEBFLOW_SITE_API_TOKEN in production.'
-      );
-    }
-
-    return staticPages;
-  }
-
   const [cmsData, seoPages] = await Promise.all([
-    fetchHomepageData(accessToken),
-    fetchSeoPages(accessToken),
+    fetchHomepageData(),
+    fetchSeoPages(),
   ]);
 
   if (process.env.NODE_ENV === 'production') {

@@ -1,13 +1,12 @@
 /**
  * CMS Data Fetching Utilities
  *
- * Consolidates all CMS data fetching logic for the homepage and other pages.
- * Handles caching, normalization, and reference lookups.
+ * Fetches data from Sanity CMS using GROQ queries.
+ * GROQ projections map camelCase Sanity fields to kebab-case TypeScript interfaces.
  */
 
-import { cache } from "react";
-import { COLLECTION_IDS } from "./constants";
-import { getCached, setCache } from "./cms-cache";
+import { cache } from 'react';
+import { client } from './sanity.client';
 import type {
   CaseStudy,
   Client,
@@ -19,8 +18,8 @@ import type {
   Technology,
   ServiceCategory,
   SeoPage,
-  WebflowItem,
-} from "./types";
+  BlogFAQ,
+} from './types';
 
 /**
  * Error thrown when CMS data fetching fails critically.
@@ -29,13 +28,182 @@ import type {
 export class CmsDataError extends Error {
   constructor(message: string) {
     super(message);
-    this.name = "CmsDataError";
+    this.name = 'CmsDataError';
   }
 }
 
-/**
- * Homepage data structure containing all CMS collections
- */
+// ── GROQ projection fragments ─────────────────────────────────────
+
+// Maps Sanity camelCase fields back to kebab-case to match existing TypeScript interfaces.
+// Images projected as { url, alt } to match CmsImage shape.
+
+const CASE_STUDY_PROJECTION = `{
+  "id": _id,
+  "slug": slug.current,
+  name,
+  "project-title": projectTitle,
+  "paragraph-summary": paragraphSummary,
+  "main-body": mainBody,
+  "main-project-image-thumbnail": mainProjectImageThumbnail { "url": asset->url, "alt": alt },
+  "client-logo": clientLogo { "url": asset->url, "alt": alt },
+  "client-logo-inversed": clientLogoInversed { "url": asset->url, "alt": alt },
+  "client-color": clientColor,
+  "secondary-client-color": secondaryClientColor,
+  "company-size": companySize,
+  country,
+  "website-link": websiteLink,
+  "visit-the-website": visitTheWebsite,
+  "result-1---number": result1Number,
+  "result-1---title": result1Title,
+  "result-2---number": result2Number,
+  "result-2---title": result2Title,
+  "result-3---number": result3Number,
+  "result-3---title": result3Title,
+  featured,
+  "client": client._ref,
+  "industry": industry._ref,
+  "industries": industries[]._ref,
+  "testimonial": testimonial._ref,
+  "technologies": technologies[]._ref,
+  "services-provided": servicesProvided[]._ref
+}`;
+
+const CLIENT_PROJECTION = `{
+  "id": _id,
+  name,
+  "slug": slug.current,
+  "showcase-logo": showcaseLogo,
+  "colored-logo": coloredLogo { "url": asset->url, "alt": alt },
+  "light-logo": lightLogo { "url": asset->url, "alt": alt },
+  "dark-logo": darkLogo { "url": asset->url, "alt": alt }
+}`;
+
+const TESTIMONIAL_PROJECTION = `{
+  "id": _id,
+  name,
+  "slug": slug.current,
+  role,
+  "testimonial-body": testimonialBody,
+  "profile-image": profileImage { "url": asset->url, "alt": alt },
+  "case-study": caseStudy._ref,
+  "client": client._ref
+}`;
+
+const BLOG_POST_PROJECTION = `{
+  "id": _id,
+  name,
+  "slug": slug.current,
+  "meta-title": metaTitle,
+  "meta-description": metaDescription,
+  "thumbnail": thumbnail { "url": asset->url, "alt": alt },
+  excerpt,
+  content,
+  "time-to-read": timeToRead,
+  featured,
+  "published-date": publishedDate,
+  "last-updated": lastUpdated,
+  "author": author._ref,
+  "category": category._ref,
+  "categories": categories[]._ref
+}`;
+
+const CATEGORY_PROJECTION = `{
+  "id": _id,
+  name,
+  "slug": slug.current,
+  color
+}`;
+
+const TEAM_MEMBER_PROJECTION = `{
+  "id": _id,
+  name,
+  "slug": slug.current,
+  "profile-picture": profilePicture { "url": asset->url, "alt": alt },
+  "bio-summary": bioSummary,
+  "job-title": jobTitle
+}`;
+
+const INDUSTRY_PROJECTION = `{
+  "id": _id,
+  name,
+  "slug": slug.current,
+  "radio-filter---checked-attribute": radioFilterCheckedAttribute
+}`;
+
+const TECHNOLOGY_PROJECTION = `{
+  "id": _id,
+  name,
+  "slug": slug.current,
+  "logo": logo { "url": asset->url, "alt": alt }
+}`;
+
+const SERVICE_CATEGORY_PROJECTION = `{
+  "id": _id,
+  name,
+  "slug": slug.current
+}`;
+
+const SEO_PAGE_PROJECTION = `{
+  "id": _id,
+  name,
+  "slug": slug.current,
+  "meta-title": metaTitle,
+  "meta-description": metaDescription,
+  "industry": industry._ref,
+  "display-order": displayOrder,
+  "hero-headline": heroHeadline,
+  "hero-subtitle": heroSubtitle,
+  "hero-description": heroDescription,
+  "hero-image": heroImage { "url": asset->url, "alt": alt },
+  "pain-points-title": painPointsTitle,
+  "pain-point-1-title": painPoint1Title,
+  "pain-point-1-desc": painPoint1Desc,
+  "pain-point-2-title": painPoint2Title,
+  "pain-point-2-desc": painPoint2Desc,
+  "pain-point-3-title": painPoint3Title,
+  "pain-point-3-desc": painPoint3Desc,
+  "strategy-title": strategyTitle,
+  "strategy-intro": strategyIntro,
+  "strategy-step-1-title": strategyStep1Title,
+  "strategy-step-1-desc": strategyStep1Desc,
+  "strategy-step-2-title": strategyStep2Title,
+  "strategy-step-2-desc": strategyStep2Desc,
+  "strategy-step-3-title": strategyStep3Title,
+  "strategy-step-3-desc": strategyStep3Desc,
+  "strategy-step-4-title": strategyStep4Title,
+  "strategy-step-4-desc": strategyStep4Desc,
+  "results-title": resultsTitle,
+  "stat-1-value": stat1Value,
+  "stat-1-label": stat1Label,
+  "stat-2-value": stat2Value,
+  "stat-2-label": stat2Label,
+  "stat-3-value": stat3Value,
+  "stat-3-label": stat3Label,
+  "faq-1-question": faq1Question,
+  "faq-1-answer": faq1Answer,
+  "faq-2-question": faq2Question,
+  "faq-2-answer": faq2Answer,
+  "faq-3-question": faq3Question,
+  "faq-3-answer": faq3Answer,
+  "faq-4-question": faq4Question,
+  "faq-4-answer": faq4Answer,
+  "faq-5-question": faq5Question,
+  "faq-5-answer": faq5Answer,
+  "main-body": mainBody,
+  "deliverables": deliverables,
+  "cta-title": ctaTitle,
+  "cta-subtitle": ctaSubtitle
+}`;
+
+const BLOG_FAQ_PROJECTION = `{
+  "id": _id,
+  name,
+  "slug": slug.current,
+  "blog-post": blogPost._ref
+}`;
+
+// ── Homepage data structure ──────────────────────────────────────────
+
 export interface HomepageData {
   caseStudies: CaseStudy[];
   clients: Map<string, Client>;
@@ -55,9 +223,6 @@ export interface FooterData {
   blogPosts: BlogPost[];
 }
 
-/**
- * Empty data structure for when CMS fetch fails or no token
- */
 export function getEmptyHomepageData(): HomepageData {
   return {
     caseStudies: [],
@@ -74,296 +239,93 @@ export function getEmptyHomepageData(): HomepageData {
   };
 }
 
-/**
- * Fetch a single collection from Webflow CMS with caching and retry.
- * Retries up to 3 times with exponential backoff on failure.
- * Uses longer backoff for 429 (rate limit) vs 5xx (server error).
- */
-export async function fetchCollection<T>(
-  collectionKey: keyof typeof COLLECTION_IDS,
-  accessToken: string
-): Promise<{ items: T[] } | null> {
-  const collectionId = COLLECTION_IDS[collectionKey];
-  if (!collectionId || !accessToken) return null;
-
-  // Check cache first (only works in dev)
-  const cached = getCached<{ items: T[] }>(collectionId);
-  if (cached) {
-    return cached;
-  }
-
-  const MAX_RETRIES = 3;
-  const url = `https://api.webflow.com/v2/collections/${collectionId}/items`;
-
-  for (let attempt = 1; attempt <= MAX_RETRIES; attempt++) {
-    try {
-      const res = await fetch(url, {
-        headers: { Authorization: `Bearer ${accessToken}` },
-        next: { revalidate: 300 },
-      });
-
-      if (res.ok) {
-        const data = await res.json();
-        setCache(collectionId, data);
-        return data;
-      }
-
-      console.warn(
-        `[CMS] ${collectionKey} returned ${res.status} (attempt ${attempt}/${MAX_RETRIES})`
-      );
-
-      if (res.status < 500 && res.status !== 429) {
-        // Client error (4xx except rate limit) — don't retry
-        return null;
-      }
-
-      // For 429 (rate limit): respect Retry-After header, fallback to longer backoff
-      if (res.status === 429 && attempt < MAX_RETRIES) {
-        const retryAfter = res.headers.get("Retry-After");
-        const waitMs = retryAfter
-          ? Math.min(parseInt(retryAfter, 10) * 1000, 30000) // Cap at 30s
-          : 5000 * Math.pow(2, attempt - 1); // 5s, 10s
-        console.warn(`[CMS] ${collectionKey} rate limited, waiting ${waitMs}ms`);
-        await new Promise((r) => setTimeout(r, waitMs));
-        continue;
-      }
-    } catch (error) {
-      console.warn(
-        `[CMS] ${collectionKey} fetch error (attempt ${attempt}/${MAX_RETRIES}):`,
-        error instanceof Error ? error.message : error
-      );
-    }
-
-    // Exponential backoff for 5xx / network errors: 1s, 2s, 4s
-    if (attempt < MAX_RETRIES) {
-      await new Promise((r) => setTimeout(r, 1000 * Math.pow(2, attempt - 1)));
-    }
-  }
-
-  console.error(`[CMS] ${collectionKey} failed after ${MAX_RETRIES} attempts`);
-  return null;
-}
+// ── Data fetching ────────────────────────────────────────────────────
 
 /**
- * Normalize a CMS item by merging fieldData into the root object
+ * Fetch all homepage CMS data in parallel via GROQ
  */
-function normalizeItem<T>(item: Record<string, unknown>): T {
-  return {
-    id: item.id,
-    ...(item.fieldData as Record<string, unknown>),
-  } as T;
-}
-
-/**
- * Filter out draft and archived items
- */
-function isPublished(item: Record<string, unknown>): boolean {
-  return !item.isDraft && !item.isArchived;
-}
-
-const fetchPublishedItemBySlugCached = cache(
-  async (
-    collectionKey: keyof typeof COLLECTION_IDS,
-    slug: string,
-    accessToken: string
-  ): Promise<Record<string, unknown> | null> => {
-    const data = await fetchCollection<Record<string, unknown>>(
-      collectionKey,
-      accessToken
-    );
-
-    if (!data?.items) {
-      return null;
-    }
-
-    const item = data.items.find((entry) => {
-      const fieldData = entry.fieldData as Record<string, unknown> | undefined;
-      return isPublished(entry) && fieldData?.slug === slug;
-    });
-
-    return item ?? null;
-  }
-);
-
-export async function fetchItemBySlug<T>(
-  collectionKey: keyof typeof COLLECTION_IDS,
-  slug: string,
-  accessToken: string
-): Promise<T | null> {
-  if (!slug || !accessToken) {
-    return null;
-  }
-
-  const item = await fetchPublishedItemBySlugCached(
-    collectionKey,
-    slug,
-    accessToken
-  );
-
-  return item ? normalizeItem<T>(item) : null;
-}
-
-export async function fetchRawItemBySlug(
-  collectionKey: keyof typeof COLLECTION_IDS,
-  slug: string,
-  accessToken: string
-): Promise<WebflowItem | null> {
-  if (!slug || !accessToken) {
-    return null;
-  }
-
-  const item = await fetchPublishedItemBySlugCached(
-    collectionKey,
-    slug,
-    accessToken
-  );
-
-  return item as WebflowItem | null;
-}
-
-/**
- * Fetch all homepage CMS data in parallel
- *
- * @param accessToken - Webflow API token
- * @returns HomepageData with all collections normalized
- */
-export async function fetchHomepageData(
-  accessToken: string
-): Promise<HomepageData> {
+export async function fetchHomepageData(): Promise<HomepageData> {
   const data = getEmptyHomepageData();
 
-  if (!accessToken) {
-    return data;
-  }
-
   try {
-    // Fetch all CMS collections in parallel
     const [
-      caseStudiesData,
-      clientsData,
-      testimonialsData,
-      blogData,
-      categoriesData,
-      teamMembersData,
-      industriesData,
-      technologiesData,
-      serviceCategoriesData,
+      caseStudies,
+      clients,
+      testimonials,
+      blogPosts,
+      categories,
+      teamMembers,
+      industries,
+      technologies,
+      serviceCategories,
     ] = await Promise.all([
-      fetchCollection<Record<string, unknown>>("case-studies", accessToken),
-      fetchCollection<Record<string, unknown>>("clients", accessToken),
-      fetchCollection<Record<string, unknown>>("testimonials", accessToken),
-      fetchCollection<Record<string, unknown>>("blog", accessToken),
-      fetchCollection<Record<string, unknown>>("categories", accessToken),
-      fetchCollection<Record<string, unknown>>("team-members", accessToken),
-      fetchCollection<Record<string, unknown>>("industries", accessToken),
-      fetchCollection<Record<string, unknown>>("technologies", accessToken),
-      fetchCollection<Record<string, unknown>>(
-        "service-categories",
-        accessToken
-      ),
+      client.fetch<CaseStudy[]>(`*[_type == "caseStudy"] ${CASE_STUDY_PROJECTION}`),
+      client.fetch<Client[]>(`*[_type == "client"] ${CLIENT_PROJECTION}`),
+      client.fetch<Testimonial[]>(`*[_type == "testimonial"] ${TESTIMONIAL_PROJECTION}`),
+      client.fetch<BlogPost[]>(`*[_type == "blogPost"] ${BLOG_POST_PROJECTION}`),
+      client.fetch<Category[]>(`*[_type == "category"] ${CATEGORY_PROJECTION}`),
+      client.fetch<TeamMember[]>(`*[_type == "teamMember"] ${TEAM_MEMBER_PROJECTION}`),
+      client.fetch<Industry[]>(`*[_type == "industry"] ${INDUSTRY_PROJECTION}`),
+      client.fetch<Technology[]>(`*[_type == "technology"] ${TECHNOLOGY_PROJECTION}`),
+      client.fetch<ServiceCategory[]>(`*[_type == "serviceCategory"] ${SERVICE_CATEGORY_PROJECTION}`),
     ]);
 
-    // Build clients lookup map and array
-    if (clientsData?.items) {
-      clientsData.items.forEach((item) => {
-        if (isPublished(item)) {
-          const client = normalizeItem<Client>(item);
-          data.clients.set(item.id as string, client);
-          data.allClients.push(client);
+    data.caseStudies = caseStudies || [];
+
+    if (clients) {
+      for (const c of clients) {
+        data.clients.set(c.id, c);
+        data.allClients.push(c);
+      }
+    }
+
+    if (testimonials) {
+      for (const t of testimonials) {
+        data.allTestimonials.push(t);
+        if (t['case-study']) {
+          data.testimonials.set(t['case-study'], t);
         }
-      });
+      }
     }
 
-    // Normalize case studies and filter published only
-    if (caseStudiesData?.items) {
-      data.caseStudies = caseStudiesData.items
-        .filter(isPublished)
-        .map((item) => normalizeItem<CaseStudy>(item));
+    if (categories) {
+      for (const c of categories) {
+        data.categories.set(c.id, c);
+      }
     }
 
-    // Build testimonials lookup map and array
-    if (testimonialsData?.items) {
-      testimonialsData.items.forEach((item) => {
-        if (isPublished(item)) {
-          const testimonial = normalizeItem<Testimonial>(item);
-          data.allTestimonials.push(testimonial);
-          // Also index by case-study ID for case study cards
-          const fieldData = item.fieldData as Record<string, unknown>;
-          if (fieldData["case-study"]) {
-            data.testimonials.set(
-              fieldData["case-study"] as string,
-              testimonial
-            );
-          }
-        }
-      });
+    if (teamMembers) {
+      for (const m of teamMembers) {
+        data.teamMembers.set(m.id, m);
+      }
     }
 
-    // Build categories lookup map
-    if (categoriesData?.items) {
-      categoriesData.items.forEach((item) => {
-        if (isPublished(item)) {
-          const category = normalizeItem<Category>(item);
-          data.categories.set(item.id as string, category);
-        }
-      });
+    if (industries) {
+      for (const i of industries) {
+        data.industries.set(i.id, i);
+      }
     }
 
-    // Build team members lookup map
-    if (teamMembersData?.items) {
-      teamMembersData.items.forEach((item) => {
-        if (isPublished(item)) {
-          const member = normalizeItem<TeamMember>(item);
-          data.teamMembers.set(item.id as string, member);
-        }
-      });
+    if (technologies) {
+      for (const t of technologies) {
+        data.technologies.set(t.id, t);
+      }
     }
 
-    // Build industries lookup map
-    if (industriesData?.items) {
-      industriesData.items.forEach((item) => {
-        if (isPublished(item)) {
-          const industry = normalizeItem<Industry>(item);
-          data.industries.set(item.id as string, industry);
-        }
-      });
+    if (serviceCategories) {
+      for (const s of serviceCategories) {
+        data.serviceCategories.set(s.id, s);
+      }
     }
 
-    // Build technologies lookup map
-    if (technologiesData?.items) {
-      technologiesData.items.forEach((item) => {
-        if (isPublished(item)) {
-          const technology = normalizeItem<Technology>(item);
-          data.technologies.set(item.id as string, technology);
-        }
-      });
-    }
-
-    // Build service categories lookup map
-    if (serviceCategoriesData?.items) {
-      serviceCategoriesData.items.forEach((item) => {
-        if (isPublished(item)) {
-          const serviceCategory = normalizeItem<ServiceCategory>(item);
-          data.serviceCategories.set(item.id as string, serviceCategory);
-        }
-      });
-    }
-
-    // Build blog posts array (sorted by published date, newest first)
-    if (blogData?.items) {
-      data.blogPosts = blogData.items
-        .filter(isPublished)
-        .map((item) => normalizeItem<BlogPost>(item))
-        .sort((a: BlogPost, b: BlogPost) => {
-          const dateA = new Date(a["published-date"] || 0).getTime();
-          const dateB = new Date(b["published-date"] || 0).getTime();
-          return dateB - dateA;
-        });
-    }
+    // Sort blog posts by published date, newest first
+    data.blogPosts = (blogPosts || []).sort((a, b) => {
+      const dateA = new Date(a['published-date'] || 0).getTime();
+      const dateB = new Date(b['published-date'] || 0).getTime();
+      return dateB - dateA;
+    });
   } catch (error) {
-    console.error("[CMS] Homepage data fetch failed:", error);
-    // Return partial data — individual collections may have succeeded.
-    // Callers that require complete data should use assertCmsData().
+    console.error('[CMS] Homepage data fetch failed:', error);
   }
 
   return data;
@@ -371,87 +333,114 @@ export async function fetchHomepageData(
 
 /**
  * Validate that critical CMS data was fetched successfully.
- * Call this in pages where empty CMS data means a broken page (e.g., homepage).
- * Throws CmsDataError to fail the build — Vercel keeps the previous working deployment.
- *
- * Pages like blog/[slug] or services/* should NOT call this — they degrade gracefully
- * with partial data rather than crashing the entire build.
  */
 export function assertCmsData(data: HomepageData): void {
   if (data.caseStudies.length === 0 && data.blogPosts.length === 0) {
     throw new CmsDataError(
-      "Build aborted: CMS returned 0 case studies and 0 blog posts. " +
-        "This usually means the Webflow API was temporarily unavailable. " +
-        "The previous working deployment will continue serving."
+      'Build aborted: CMS returned 0 case studies and 0 blog posts. ' +
+        'This usually means Sanity was temporarily unavailable. ' +
+        'The previous working deployment will continue serving.'
     );
   }
+}
+
+// ── Sanity type → GROQ projection map ────────────────────────────────
+
+const TYPE_PROJECTIONS: Record<string, string> = {
+  caseStudy: CASE_STUDY_PROJECTION,
+  client: CLIENT_PROJECTION,
+  testimonial: TESTIMONIAL_PROJECTION,
+  blogPost: BLOG_POST_PROJECTION,
+  category: CATEGORY_PROJECTION,
+  teamMember: TEAM_MEMBER_PROJECTION,
+  industry: INDUSTRY_PROJECTION,
+  technology: TECHNOLOGY_PROJECTION,
+  serviceCategory: SERVICE_CATEGORY_PROJECTION,
+  seoPage: SEO_PAGE_PROJECTION,
+  blogFaq: BLOG_FAQ_PROJECTION,
+};
+
+// Collection key → Sanity type (for API route compatibility)
+const COLLECTION_TO_TYPE: Record<string, string> = {
+  blog: 'blogPost',
+  'case-studies': 'caseStudy',
+  testimonials: 'testimonial',
+  clients: 'client',
+  'blog-faq': 'blogFaq',
+  'team-members': 'teamMember',
+  technologies: 'technology',
+  categories: 'category',
+  industries: 'industry',
+  'service-categories': 'serviceCategory',
+  'seo-pages': 'seoPage',
+};
+
+/**
+ * Fetch a single item by slug
+ */
+export const fetchItemBySlug = cache(
+  async <T>(collectionKey: string, slug: string): Promise<T | null> => {
+    if (!slug) return null;
+
+    const sanityType = COLLECTION_TO_TYPE[collectionKey] || collectionKey;
+    const projection = TYPE_PROJECTIONS[sanityType] || `{ "id": _id, ... }`;
+
+    const result = await client.fetch<T | null>(
+      `*[_type == $type && slug.current == $slug][0] ${projection}`,
+      { type: sanityType, slug }
+    );
+
+    return result;
+  }
+);
+
+/**
+ * Fetch all items from a collection (used by API routes)
+ */
+export async function fetchCollection<T>(collectionKey: string): Promise<T[]> {
+  const sanityType = COLLECTION_TO_TYPE[collectionKey] || collectionKey;
+  const projection = TYPE_PROJECTIONS[sanityType] || `{ "id": _id, ... }`;
+
+  return client.fetch<T[]>(
+    `*[_type == $type] ${projection}`,
+    { type: sanityType }
+  );
 }
 
 /**
  * Fetch SEO pages collection (programmatic SEO hub)
- * Separate from fetchHomepageData to avoid burdening all pages with an extra API call.
  */
-export async function fetchSeoPages(
-  accessToken: string
-): Promise<SeoPage[]> {
-  if (!accessToken) return [];
-
-  const data = await fetchCollection<Record<string, unknown>>(
-    "seo-pages",
-    accessToken
+export async function fetchSeoPages(): Promise<SeoPage[]> {
+  return client.fetch<SeoPage[]>(
+    `*[_type == "seoPage"] | order(displayOrder asc) ${SEO_PAGE_PROJECTION}`
   );
-  if (!data?.items) return [];
-  return data.items
-    .filter(isPublished)
-    .map((item) => normalizeItem<SeoPage>(item))
-    .sort(
-      (a, b) => (a["display-order"] || 999) - (b["display-order"] || 999)
-    );
-}
-
-export async function fetchFooterData(accessToken: string): Promise<FooterData> {
-  const data: FooterData = {
-    caseStudies: [],
-    blogPosts: [],
-  };
-
-  if (!accessToken) {
-    return data;
-  }
-
-  try {
-    const [caseStudiesData, blogData] = await Promise.all([
-      fetchCollection<Record<string, unknown>>("case-studies", accessToken),
-      fetchCollection<Record<string, unknown>>("blog", accessToken),
-    ]);
-
-    if (caseStudiesData?.items) {
-      data.caseStudies = caseStudiesData.items
-        .filter(isPublished)
-        .map((item) => normalizeItem<CaseStudy>(item));
-    }
-
-    if (blogData?.items) {
-      data.blogPosts = blogData.items
-        .filter(isPublished)
-        .map((item) => normalizeItem<BlogPost>(item))
-        .sort((a, b) => {
-          const dateA = new Date(a["published-date"] || 0).getTime();
-          const dateB = new Date(b["published-date"] || 0).getTime();
-          return dateB - dateA;
-        });
-    }
-  } catch (error) {
-    console.error("[CMS] Footer data fetch failed:", error);
-  }
-
-  return data;
 }
 
 /**
- * Get access token from environment
+ * Fetch footer data (case studies + blog posts)
  */
-export function getAccessToken(): string | undefined {
-  const token = process.env.WEBFLOW_SITE_API_TOKEN?.trim();
-  return token ? token : undefined;
+export async function fetchFooterData(): Promise<FooterData> {
+  try {
+    const [caseStudies, blogPosts] = await Promise.all([
+      client.fetch<CaseStudy[]>(`*[_type == "caseStudy"] ${CASE_STUDY_PROJECTION}`),
+      client.fetch<BlogPost[]>(
+        `*[_type == "blogPost"] | order(publishedDate desc) ${BLOG_POST_PROJECTION}`
+      ),
+    ]);
+
+    return {
+      caseStudies: caseStudies || [],
+      blogPosts: blogPosts || [],
+    };
+  } catch (error) {
+    console.error('[CMS] Footer data fetch failed:', error);
+    return { caseStudies: [], blogPosts: [] };
+  }
+}
+
+/**
+ * Check if a collection key is valid
+ */
+export function isValidCollection(name: string): boolean {
+  return name in COLLECTION_TO_TYPE;
 }

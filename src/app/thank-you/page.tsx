@@ -6,7 +6,7 @@
  */
 import type { Metadata } from 'next';
 import Link from 'next/link';
-import { fetchHomepageData, getAccessToken, getEmptyHomepageData } from '@/lib/cms-data';
+import { fetchHomepageData } from '@/lib/cms-data';
 import { SectionContainer } from '@/components/ui';
 import { Partners } from '@/components/sections';
 
@@ -20,10 +20,7 @@ export const metadata: Metadata = {
 };
 
 export default async function ThankYouPage() {
-  const accessToken = getAccessToken();
-  const cmsData = accessToken
-    ? await fetchHomepageData(accessToken)
-    : getEmptyHomepageData();
+  const cmsData = await fetchHomepageData();
 
   return (
     <>

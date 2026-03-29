@@ -47,7 +47,7 @@ npm run crawl-audit:dev
 - **Meta description too long (>160 chars)** — from rendered HTML, catches CMS descriptions
 - **Meta description too short (<80 chars)** — thin or missing descriptions
 - **Title too long (>60 chars)** or too short (<30 chars)
-- **Missing alt text** — on ALL images including CMS/Webflow CDN images
+- **Missing alt text** — on ALL images including CMS images
 - **Multiple H1 tags** — catches H1s injected by CMS rich text
 - **Missing H1** — pages without any H1 tag
 - **Indexable pages not in sitemap** — discovered via crawl but missing from sitemap.xml
@@ -62,12 +62,12 @@ npm run crawl-audit:dev
 1. Read the full output and the JSON report at `crawl-audit-report.json`
 2. For each ERROR, determine if it's fixable in code:
    - **Broken links from code** → fix the `href` in the source component
-   - **Broken links from CMS content** → these are in Webflow rich text; we handle them via `extractTocAndAddIds()` which already normalizes H1s and HTTP links in CMS content. For link-level fixes, add redirects in `next.config.ts`
+   - **Broken links from CMS content** → these are in CMS rich text; we handle them via `extractTocAndAddIds()` which already normalizes H1s and HTTP links in CMS content. For link-level fixes, add redirects in `next.config.ts`
    - **Missing redirects** → add to `next.config.ts` redirects array
    - **Orphan pages** → add internal links from relevant pages
    - **Meta description issues** → handled by `truncateSeoDescription()` in seo-utils.ts; if the CMS value is too short/long, the code truncates or falls back to a generated description
 3. For each WARNING, fix if possible, otherwise note as CMS-only fix
-4. Report any issues that require manual Webflow CMS updates
+4. Report any issues that require manual CMS updates
 
 **CMS content handling built into the codebase:**
 - `blog/[slug]/page.tsx` → `extractTocAndAddIds()` downgrades H1→H2 and fixes `http://loudface.co` → `https://www.loudface.co` in CMS rich text
@@ -495,7 +495,7 @@ openGraph: {
 
 ### 7. CMS Data Normalization Drops System Fields
 
-The `normalizeItem()` function in `cms-data.ts` only carries `id` + `fieldData`. Webflow system fields (`createdOn`, `lastPublished`, `lastUpdated`) are **dropped** during normalization and unavailable on TypeScript types. If you need dates for structured data schemas (e.g., `datePublished`, `dateModified`), you must either:
+The `normalizeItem()` function in `cms-data.ts` only carries `id` + `fieldData`. CMS system fields (`createdOn`, `lastPublished`, `lastUpdated`) are **dropped** during normalization and unavailable on TypeScript types. If you need dates for structured data schemas (e.g., `datePublished`, `dateModified`), you must either:
 - Add the system fields to the normalization function
 - Use CMS-level date fields (like `published-date` on BlogPost) instead
 - Omit the date fields from the schema rather than using incorrect data
@@ -524,9 +524,9 @@ Client components that calculate dimensions in JS (like logo normalizers) must s
 
 Never hardcode sitemap dates. Use `new Date()` (current build time) for static pages. For CMS content, use the item's published/modified date if available, falling back to build time.
 
-### 12. Webflow URL Structure Changes Need Exhaustive Redirects
+### 12. Legacy CMS Migration URL Changes Need Exhaustive Redirects
 
-Common Webflow -> Next.js URL changes that need 301 redirects:
+Common legacy CMS migration URL changes that need 301 redirects:
 - `/work` -> `/case-studies` (portfolio section rename)
 - `/about-us` -> `/about`
 - `/policy-pages/terms-of-service` -> `/terms`
@@ -987,16 +987,16 @@ Track whether your brand appears, how it's described, and whether the citation i
 ### 27. Crawl Audit Catches What Code Audit Cannot
 
 The code-level audit (Steps 2-15) reads source files. It CANNOT detect:
-- **Broken links in CMS rich text** — these are Webflow HTML rendered via `dangerouslySetInnerHTML`. The source code doesn't contain the actual link hrefs.
+- **Broken links in CMS rich text** — these are CMS HTML rendered via `dangerouslySetInnerHTML`. The source code doesn't contain the actual link hrefs.
 - **CMS meta descriptions that are too long/short** — the code has truncation logic, but you can only verify it works by checking the rendered HTML.
-- **CMS images missing alt text** — the `alt` value comes from Webflow's CMS, not from the codebase.
+- **CMS images missing alt text** — the `alt` value comes from the CMS, not from the codebase.
 - **Redirect chains** — you need to actually follow HTTP redirects to detect chains.
 - **Orphan pages** — requires crawling all pages to build a full link graph.
 - **Live 404s** — a page might exist in the sitemap but 404 in production due to CMS draft/archive status.
 
 **Always run `npm run crawl-audit` (or use the "crawl" argument) when:**
 - After a production deploy
-- After adding/removing CMS content in Webflow
+- After adding/removing CMS content in Sanity
 - After adding/changing redirects in `next.config.ts`
 - As part of a periodic SEO health check (monthly minimum)
 

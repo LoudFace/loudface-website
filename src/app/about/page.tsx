@@ -11,7 +11,7 @@
  * - Final CTA
  */
 import type { Metadata } from 'next';
-import { fetchHomepageData, getAccessToken, getEmptyHomepageData } from '@/lib/cms-data';
+import { fetchHomepageData } from '@/lib/cms-data';
 import { getAboutContent } from '@/lib/content-utils';
 import { asset } from '@/lib/assets';
 import { optimizeImage, logoImage } from '@/lib/image-utils';
@@ -47,10 +47,7 @@ export default async function AboutPage() {
   const content = getAboutContent();
 
   // Fetch CMS data for team members and clients
-  const accessToken = getAccessToken();
-  const cmsData = accessToken
-    ? await fetchHomepageData(accessToken)
-    : getEmptyHomepageData();
+  const cmsData = await fetchHomepageData();
 
   const { teamMembers: teamMembersMap, allClients } = cmsData;
 

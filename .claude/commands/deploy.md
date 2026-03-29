@@ -33,8 +33,9 @@ CMS env vars must be set on Vercel (Settings → Environment Variables):
 
 | Variable | Purpose |
 |----------|---------|
-| `WEBFLOW_SITE_API_TOKEN` | Webflow CMS API token |
-| `WEBFLOW_SITE_ID` | Webflow site identifier |
+| `NEXT_PUBLIC_SANITY_PROJECT_ID` | Sanity project identifier |
+| `NEXT_PUBLIC_SANITY_DATASET` | Sanity dataset name |
+| `SANITY_API_TOKEN` | Sanity API token |
 
 ## Troubleshooting
 

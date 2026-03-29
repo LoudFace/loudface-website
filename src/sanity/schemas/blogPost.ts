@@ -1,0 +1,104 @@
+import { defineType, defineField } from 'sanity';
+
+export const blogPost = defineType({
+  name: 'blogPost',
+  title: 'Blog Post',
+  type: 'document',
+  fields: [
+    defineField({
+      name: 'name',
+      title: 'Name',
+      type: 'string',
+      validation: (rule) => rule.required(),
+    }),
+    defineField({
+      name: 'slug',
+      title: 'Slug',
+      type: 'slug',
+      options: { source: 'name' },
+      validation: (rule) => rule.required(),
+    }),
+    defineField({
+      name: 'metaTitle',
+      title: 'Meta Title',
+      type: 'string',
+    }),
+    defineField({
+      name: 'metaDescription',
+      title: 'Meta Description',
+      type: 'text',
+      rows: 3,
+    }),
+    defineField({
+      name: 'thumbnail',
+      title: 'Thumbnail',
+      type: 'image',
+      options: { hotspot: true },
+      fields: [
+        defineField({
+          name: 'alt',
+          title: 'Alt Text',
+          type: 'string',
+        }),
+      ],
+    }),
+    defineField({
+      name: 'excerpt',
+      title: 'Excerpt',
+      type: 'text',
+      rows: 3,
+    }),
+    defineField({
+      name: 'content',
+      title: 'Content',
+      type: 'text',
+      description: 'Rich text content stored as HTML',
+    }),
+    defineField({
+      name: 'timeToRead',
+      title: 'Time to Read',
+      type: 'string',
+    }),
+    defineField({
+      name: 'featured',
+      title: 'Featured',
+      type: 'boolean',
+      initialValue: false,
+    }),
+    defineField({
+      name: 'publishedDate',
+      title: 'Published Date',
+      type: 'datetime',
+    }),
+    defineField({
+      name: 'lastUpdated',
+      title: 'Last Updated',
+      type: 'datetime',
+    }),
+    defineField({
+      name: 'author',
+      title: 'Author',
+      type: 'reference',
+      to: [{ type: 'teamMember' }],
+    }),
+    defineField({
+      name: 'category',
+      title: 'Category',
+      type: 'reference',
+      to: [{ type: 'category' }],
+    }),
+    defineField({
+      name: 'categories',
+      title: 'Categories',
+      type: 'array',
+      of: [{ type: 'reference', to: [{ type: 'category' }] }],
+    }),
+  ],
+  preview: {
+    select: {
+      title: 'name',
+      subtitle: 'excerpt',
+      media: 'thumbnail',
+    },
+  },
+});

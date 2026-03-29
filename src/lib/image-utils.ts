@@ -1,45 +1,41 @@
 /**
  * Image Optimization Utilities
  *
- * Uses weserv.nl (images.weserv.nl) as a free image proxy/CDN for real-time
- * image transformations. Webflow CDN does NOT support URL-based transformations,
- * so we route images through weserv.nl which actually resizes and converts them.
+ * Uses Sanity CDN's built-in image transformation pipeline for resizing,
+ * format conversion, and quality optimization.
  *
- * weserv.nl features:
- * - Free, open-source image proxy
- * - Real resizing and format conversion
- * - Global CDN with caching
- * - WebP/AVIF output support
+ * Sanity CDN URL format:
+ *   https://cdn.sanity.io/images/{projectId}/{dataset}/{id}.{ext}?w=800&q=80&fm=webp
  */
 
 /**
- * Check if a URL should be optimized (remote URLs only)
+ * Check if a URL is a Sanity CDN URL that supports transforms
  */
-function isRemoteUrl(url: string): boolean {
-  return url.startsWith("http://") || url.startsWith("https://");
+function isSanityCdnUrl(url: string): boolean {
+  return url.includes('cdn.sanity.io/images/');
 }
 
 /**
- * Optimize an image URL using weserv.nl image proxy
+ * Check if a URL is a remote URL
+ */
+function isRemoteUrl(url: string): boolean {
+  return url.startsWith('http://') || url.startsWith('https://');
+}
+
+/**
+ * Optimize an image URL using Sanity CDN transforms
  *
- * @param url - Original image URL
+ * @param url - Original image URL (Sanity CDN)
  * @param width - Target width in pixels
  * @param quality - Image quality (1-100), default 80
  * @param format - Output format ('webp' | 'auto' | 'original'), default 'webp'
- * @returns Optimized URL through weserv.nl proxy
- *
- * @example
- * // Resize to 100px width with WebP
- * optimizeImage(url, 100)
- *
- * // Resize with custom quality
- * optimizeImage(url, 200, 90)
+ * @returns Optimized URL with Sanity CDN query params
  */
 export function optimizeImage(
   url: string | undefined,
   width: number,
   quality: number = 80,
-  format: "webp" | "auto" | "original" = "webp"
+  format: 'webp' | 'auto' | 'original' = 'webp'
 ): string | undefined {
   if (!url) return undefined;
 
@@ -48,44 +44,30 @@ export function optimizeImage(
     return url;
   }
 
-  // Build weserv.nl URL
-  // Docs: https://images.weserv.nl/docs/
-  const params = new URLSearchParams();
-  params.set("url", url);
-  params.set("w", String(width));
-  params.set("q", String(quality));
-
-  // Add format conversion
-  if (format === "webp") {
-    params.set("output", "webp");
-  } else if (format === "auto") {
-    // weserv.nl auto-negotiates format based on Accept header
-    params.set("output", "webp"); // Default to webp for best compression
+  // For Sanity CDN URLs, append native transform params
+  if (isSanityCdnUrl(url)) {
+    const separator = url.includes('?') ? '&' : '?';
+    let params = `w=${width}&q=${quality}`;
+    if (format === 'webp') {
+      params += '&fm=webp';
+    } else if (format === 'auto') {
+      params += '&auto=format';
+    }
+    return `${url}${separator}${params}`;
   }
-  // 'original' omits output param, keeps original format
 
-  return `https://images.weserv.nl/?${params.toString()}`;
+  // For other remote URLs, pass through as-is
+  return url;
 }
 
 /**
  * Generate srcset for responsive images
- *
- * @param url - Original image URL
- * @param sizes - Array of widths for srcset
- * @param quality - Image quality
- * @param format - Output format
- * @returns srcset string for use in img element
- *
- * @example
- * // Generate srcset for responsive hero image
- * generateSrcset(url, [400, 800, 1200])
- * // Returns: "https://images.weserv.nl/?url=...&w=400 400w, ..."
  */
 export function generateSrcset(
   url: string | undefined,
   sizes: number[],
   quality: number = 80,
-  format: "webp" | "auto" | "original" = "webp"
+  format: 'webp' | 'auto' | 'original' = 'webp'
 ): string | undefined {
   if (!url || !isRemoteUrl(url)) {
     return undefined;
@@ -93,75 +75,57 @@ export function generateSrcset(
 
   return sizes
     .map((width) => `${optimizeImage(url, width, quality, format)} ${width}w`)
-    .join(", ");
+    .join(', ');
 }
 
 /**
  * Pre-configured image sizes for common use cases
- * Values account for 2x retina displays
  */
 export const ImageSizes = {
-  // Avatars (displayed 36-40px, serve 80px for 2x)
   avatar: 80,
   avatarLarge: 120,
-
-  // Thumbnails (displayed ~350-400px, serve 800px for 2x)
   thumbnailSmall: 400,
   thumbnail: 800,
   thumbnailLarge: 1000,
-
-  // Logos (displayed ~100px wide, serve 300px for 3x retina — sharp flat graphics)
   logo: 300,
   logoSmall: 160,
-
-  // Cards (displayed ~280-400px, serve 800px for 2x)
   cardImage: 800,
   cardImageLarge: 1200,
-
-  // Hero/Feature images
   hero: 1600,
   heroLarge: 1920,
-
-  // Full width
   fullWidth: 1920,
 } as const;
 
 /**
- * Optimized avatar image (for profile pictures, testimonials)
- * Displayed at 36-40px, serves 80px for 2x retina
+ * Optimized avatar image (profile pictures, testimonials)
  */
 export function avatarImage(url: string | undefined): string | undefined {
   return optimizeImage(url, ImageSizes.avatar);
 }
 
 /**
- * Optimized logo image
- * Displayed at ~100px, serves 300px for 3x retina.
- * Keeps original format (no WebP) to preserve sharp edges on SVG/PNG logos.
+ * Optimized logo image — keeps original format for sharp edges
  */
 export function logoImage(url: string | undefined): string | undefined {
-  return optimizeImage(url, ImageSizes.logo, 95, "original");
+  return optimizeImage(url, ImageSizes.logo, 95, 'original');
 }
 
 /**
- * Optimized thumbnail image (for cards, grids)
+ * Optimized thumbnail image (cards, grids)
  */
 export function thumbnailImage(url: string | undefined): string | undefined {
   return optimizeImage(url, ImageSizes.thumbnail);
 }
 
 /**
- * Optimized card image (larger thumbnails for feature cards)
+ * Optimized card image
  */
 export function cardImage(url: string | undefined): string | undefined {
   return optimizeImage(url, ImageSizes.cardImage);
 }
 
 /**
- * Optimized hero/feature image with srcset
- *
- * Uses the original Webflow CDN URL as src (no proxy, no quality loss).
- * Provides a high-quality srcset in original format for responsive loading.
+ * Hero/feature image with srcset
  */
 export function heroImage(url: string | undefined): {
   src: string | undefined;
@@ -169,16 +133,12 @@ export function heroImage(url: string | undefined): {
 } {
   return {
     src: url,
-    srcset: generateSrcset(url, [800, 1200, 1600, 1920], 95, "original"),
+    srcset: generateSrcset(url, [800, 1200, 1600, 1920], 95, 'original'),
   };
 }
 
 /**
- * Generate responsive image props for case study thumbnails
- *
- * Uses the original Webflow CDN URL as src (no proxy, no quality loss).
- * Provides a high-quality srcset in original format (no WebP conversion)
- * for responsive loading on smaller viewports.
+ * Case study thumbnail with srcset
  */
 export function caseStudyThumbnail(url: string | undefined): {
   src: string | undefined;
@@ -186,6 +146,6 @@ export function caseStudyThumbnail(url: string | undefined): {
 } {
   return {
     src: url,
-    srcset: generateSrcset(url, [600, 900, 1200, 1800], 95, "original"),
+    srcset: generateSrcset(url, [600, 900, 1200, 1800], 95, 'original'),
   };
 }

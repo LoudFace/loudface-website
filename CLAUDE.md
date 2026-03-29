@@ -36,11 +36,10 @@ See `.claude/rules/component-system.md` for the full enforcement rules and `.cla
 
 CMS data fetch failures must **fail the build**, not render empty pages. A failed Vercel build keeps the previous working deployment live. A silent failure deploys a broken site.
 
-- **`fetchHomepageData()` is resilient** — it retries (3 attempts with backoff, longer for 429 rate limits) and returns partial data. It never throws.
+- **`fetchHomepageData()` is resilient** — fetches all collections via GROQ in parallel, returns partial data on failure. It never throws.
 - **`assertCmsData(data)` is the guardrail** — call it in the homepage `page.tsx` (and any other page where empty CMS data is unacceptable). It throws `CmsDataError` if case studies AND blog posts are both empty, failing the build.
-- **Never use `getEmptyHomepageData()` as a production fallback.** It exists only for local dev when no API token is configured.
 - **If adding a new page that fetches CMS data:** call `assertCmsData()` only if the page is broken without CMS data (e.g., homepage). Other pages (blog, services, case studies) should degrade gracefully with partial data.
-- The architecture: **data layer is resilient, page layer decides strictness.** Layout and most pages accept partial data. The homepage demands complete data.
+- The architecture: **data layer is resilient, page layer decides strictness.**
 
 ### Static Image Paths
 
@@ -82,32 +81,34 @@ import { asset } from '@/lib/assets';
 | Design tokens (single source) | `src/app/globals.css` (`@theme` block) |
 | UI primitives | `src/components/ui/` |
 | Page sections | `src/components/sections/` |
-| CMS collection IDs & helpers | `src/lib/constants.ts` |
-| CMS data fetching & normalization | `src/lib/cms-data.ts` |
+| Sanity CMS schemas | `src/sanity/schemas/` |
+| Sanity client config | `src/lib/sanity.client.ts` |
+| Sanity Studio | `src/app/studio/[[...tool]]/` (visit `/studio`) |
+| CMS data fetching (GROQ) | `src/lib/cms-data.ts` |
 | TypeScript types | `src/lib/types.ts` |
 | Static text content | `src/data/content/*.json` |
 | Content getter functions | `src/lib/content-utils.ts` |
 | Asset URL utility | `src/lib/assets.ts` |
-| CMS image optimization (weserv.nl proxy) | `src/lib/image-utils.ts` |
+| CMS image optimization (Sanity CDN) | `src/lib/image-utils.ts` |
 | Color contrast utilities | `src/lib/color-utils.ts` |
 
-## CMS Collection IDs
+## CMS Collections (Sanity)
 
-| Collection | ID | API Route |
+| Collection | Sanity Type | API Route |
 |---|---|---|
-| Blog | `67b46d898180d5b8499f87e8` | `/api/cms/blog` |
-| Case Studies | `67bcc512271a06e2e0acc70d` | `/api/cms/case-studies` |
-| Testimonials | `67bd0c6f1a9fdd9770be5469` | `/api/cms/testimonials` |
-| Clients | `67c6f017e3221db91323ff13` | `/api/cms/clients` |
-| Blog FAQ | `67bd3732a35ec40d3038b40a` | `/api/cms/blog-faq` |
-| Team Members | `68d819d1810ef43a5ef97da4` | `/api/cms/team-members` |
-| Technologies | `67be3e735523f789035b6c56` | `/api/cms/technologies` |
-| Categories | `67b46e2d70ec96bfb7787071` | `/api/cms/categories` |
-| Industries | `67bd0a772117f7c7227e7b4d` | `/api/cms/industries` |
-| Service Categories | `67bcfb9cdb20a1832e2799c3` | `/api/cms/service-categories` |
-| SEO Pages | `6988a63150526a37d700fae3` | `/api/cms/seo-pages` |
+| Blog | `blogPost` | `/api/cms/blog` |
+| Case Studies | `caseStudy` | `/api/cms/case-studies` |
+| Testimonials | `testimonial` | `/api/cms/testimonials` |
+| Clients | `client` | `/api/cms/clients` |
+| Blog FAQ | `blogFaq` | `/api/cms/blog-faq` |
+| Team Members | `teamMember` | `/api/cms/team-members` |
+| Technologies | `technology` | `/api/cms/technologies` |
+| Categories | `category` | `/api/cms/categories` |
+| Industries | `industry` | `/api/cms/industries` |
+| Service Categories | `serviceCategory` | `/api/cms/service-categories` |
+| SEO Pages | `seoPage` | `/api/cms/seo-pages` |
 
-These IDs are also in `src/lib/constants.ts`. If you add a new collection, update both places.
+Schemas live in `src/sanity/schemas/`. To add a new collection, create a schema file, add it to the barrel in `schemas/index.ts`, and add a projection + COLLECTION_TO_TYPE entry in `cms-data.ts`.
 
 ## Key Patterns
 
@@ -117,10 +118,12 @@ Default is Server Component. Only add `'use client'` when you need interactivity
 
 ### CMS Data
 
-- Uses Webflow API v2 — raw items have field data nested in a `fieldData` object
-- **Server Components**: Fetch and normalize via `src/lib/cms-data.ts` (merges `fieldData` into root, filters drafts)
-- **API routes** at `src/app/api/cms/[collection]/route.ts` are pass-through proxies — they return raw Webflow responses without normalization
-- Single-item route: `src/app/api/cms/[collection]/[slug]/route.ts`
+- Uses **Sanity CMS** with GROQ queries. Project ID: `xjjjqhgt`, dataset: `production`.
+- **Server Components**: Fetch via `src/lib/cms-data.ts` — GROQ projections return data in kebab-case to match existing TypeScript interfaces.
+- **API routes** at `src/app/api/cms/[collection]/route.ts` proxy through the same GROQ queries.
+- **Sanity Studio** embedded at `/studio` for content editing.
+- Rich text is stored as raw HTML strings (not Portable Text) for backward compatibility.
+- Images are on Sanity CDN (`cdn.sanity.io`) — GROQ projects them as `{ url, alt }` matching the `CmsImage` type.
 
 ### Static Content
 
@@ -144,9 +147,9 @@ Never inline color math — always use these shared utilities.
 
 ### CMS Image Optimization
 
-For CMS images (Webflow CDN URLs), use helpers from `src/lib/image-utils.ts` — they route through weserv.nl for real resizing and WebP conversion:
+For CMS images (Sanity CDN URLs), use helpers from `src/lib/image-utils.ts` — they append Sanity CDN transform params (`?w=800&q=80&fm=webp`):
 - `thumbnailImage(url)` — card grids (800px)
-- `logoImage(url)` — client logos (200px)
+- `logoImage(url)` — client logos (300px, original format)
 - `avatarImage(url)` — profile pictures (80px)
 - `heroImage(url)` — returns `{ src, srcset }` for responsive hero images
 - `caseStudyThumbnail(url)` — returns `{ src, srcset }` for case study cards
@@ -172,9 +175,9 @@ You tend to converge toward generic "AI slop" aesthetics. Avoid this.
 - Avoid purple gradients on white backgrounds, cookie-cutter layouts.
 Think outside the box. Make unexpected choices.
 
-## Webflow MCP Tools
+## Sanity Studio
 
-When available, use MCP tools for read operations (listing sites, collections, items, schemas). Use direct Webflow API v2 calls in code for runtime data fetching in Server Components.
+Embedded at `/studio` — a full-featured CMS editor for all content. Schemas are in `src/sanity/schemas/`. Config at `sanity.config.ts`.
 
 # DataForSEO MCP Profiles
 
@@ -190,3 +193,28 @@ You have access to multiple DataForSEO MCP configurations. Only ONE should be ac
 2. Check which MCP is currently active using /mcp
 3. If the wrong profile is active, tell me to switch before proceeding
 4. Never try to use tools from a disabled profile
+
+<!-- VERCEL BEST PRACTICES START -->
+## Best practices for developing on Vercel
+
+These defaults are optimized for AI coding agents (and humans) working on apps that deploy to Vercel.
+
+- Treat Vercel Functions as stateless + ephemeral (no durable RAM/FS, no background daemons), use Blob or marketplace integrations for preserving state
+- Edge Functions (standalone) are deprecated; prefer Vercel Functions
+- Don't start new projects on Vercel KV/Postgres (both discontinued); use Marketplace Redis/Postgres instead
+- Store secrets in Vercel Env Variables; not in git or `NEXT_PUBLIC_*`
+- Provision Marketplace native integrations with `vercel integration add` (CI/agent-friendly)
+- Sync env + project settings with `vercel env pull` / `vercel pull` when you need local/offline parity
+- Use `waitUntil` for post-response work; avoid the deprecated Function `context` parameter
+- Set Function regions near your primary data source; avoid cross-region DB/service roundtrips
+- Tune Fluid Compute knobs (e.g., `maxDuration`, memory/CPU) for long I/O-heavy calls (LLMs, APIs)
+- Use Runtime Cache for fast **regional** caching + tag invalidation (don't treat it as global KV)
+- Use Cron Jobs for schedules; cron runs in UTC and triggers your production URL via HTTP GET
+- Use Vercel Blob for uploads/media; Use Edge Config for small, globally-read config
+- If Enable Deployment Protection is enabled, use a bypass secret to directly access them
+- Add OpenTelemetry via `@vercel/otel` on Node; don't expect OTEL support on the Edge runtime
+- Enable Web Analytics + Speed Insights early
+- Use AI Gateway for model routing, set AI_GATEWAY_API_KEY, using a model string (e.g. 'anthropic/claude-sonnet-4.6'), Gateway is already default in AI SDK
+  needed. Always curl https://ai-gateway.vercel.sh/v1/models first; never trust model IDs from memory
+- For durable agent loops or untrusted code: use Workflow (pause/resume/state) + Sandbox; use Vercel MCP for secure infra access
+<!-- VERCEL BEST PRACTICES END -->
