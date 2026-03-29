@@ -112,10 +112,10 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
   const { caseStudies, blogPosts } = cmsData;
 
-  // Case study pages — only include studies with a paragraph summary
-  // (matches the gallery filter so we don't create sitemap-only orphan pages)
+  // Case study pages — include all case studies that have a slug
+  // (even if they lack a paragraph-summary, they're still indexable pages)
   const caseStudyPages: MetadataRoute.Sitemap = caseStudies
-    .filter((study) => study['paragraph-summary'])
+    .filter((study) => study.slug)
     .map((study) => ({
       url: `${baseUrl}/case-studies/${study.slug}`,
       lastModified,

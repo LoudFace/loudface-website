@@ -103,14 +103,12 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const summary = study['paragraph-summary']?.replace(/\s+/g, ' ').trim();
   // Truncate CMS summary to SERP limits; if too short, extend with contextual suffix
   let description = truncateSeoDescription(summary);
-  if (!description && summary) {
-    // Summary exists but is under 80 chars — extend it with context
-    description = truncateSeoDescription(
-      `${summary} See how LoudFace helped ${study.name} achieve measurable results with our design and development approach.`
-    );
-  }
   if (!description) {
-    description = `See how LoudFace helped ${study.name} achieve measurable results. Full case study with approach, metrics, and outcomes.`;
+    // Summary missing or under 80 chars — build a longer description with context
+    const base = summary
+      ? `${summary} See how LoudFace helped ${study.name} achieve measurable results with our design and development approach.`
+      : `See how LoudFace helped ${study.name} achieve measurable results. Full case study with approach, metrics, and outcomes.`;
+    description = truncateSeoDescription(base) || base;
   }
 
   const imageUrl = study['main-project-image-thumbnail']?.url;

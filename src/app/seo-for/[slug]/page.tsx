@@ -92,8 +92,13 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const rawDescription =
     page['meta-description'] ||
     page['hero-description'] ||
-    `Professional SEO services for ${page.name}. Get found by your ideal customers.`;
-  const description = truncateSeoDescription(rawDescription) || rawDescription;
+    `Professional SEO services for ${page.name}. Get found by your ideal customers with our data-driven SEO and AEO programs.`;
+  // If CMS description is too short, extend it with contextual suffix before truncating
+  let description = truncateSeoDescription(rawDescription);
+  if (!description) {
+    const extended = `${rawDescription} We build hands-free SEO programs that drive organic traffic and qualified leads for ${page.name} companies.`;
+    description = truncateSeoDescription(extended) || extended;
+  }
 
   return buildPageMetadata({
     title,

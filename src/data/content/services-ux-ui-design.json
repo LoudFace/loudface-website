@@ -1,7 +1,7 @@
 {
   "hero": {
     "eyebrow": "UX/UI Design",
-    "headline": "Every layout is a revenue decision.<br>Design it like one.",
+    "headline": "Every layout is a revenue decision. <span class=\"block\">Design it like one.</span>",
     "description": "Your website is a sequence of layout decisions: what goes where, what's prominent, what the visitor sees first. Most agencies make those decisions based on aesthetics. We make them based on what converts. Messaging shapes the hierarchy, data informs every interaction, and the output is a design system your team can build on without us.",
     "primaryCta": "Book an intro call",
     "secondaryCta": "See how it works"

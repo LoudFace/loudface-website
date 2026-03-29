@@ -17,29 +17,45 @@ import type { CaseStudy, Client, Industry, Technology } from '@/lib/types';
 
 const ITEMS_PER_PAGE = 12;
 
-export const metadata: Metadata = {
-  title: 'Our Work | Case Studies & Portfolio',
-  description: "Explore LoudFace's portfolio of successful Webflow projects. See real results including traffic growth, conversion improvements, and business transformations.",
-  alternates: {
-    canonical: '/case-studies',
-  },
-  openGraph: {
-    title: 'Case Studies & Portfolio | LoudFace',
+export async function generateMetadata({
+  searchParams,
+}: {
+  searchParams: Promise<{ page?: string }>;
+}): Promise<Metadata> {
+  const { page } = await searchParams;
+  const currentPage = parseInt(page || '1', 10);
+
+  const base: Metadata = {
+    title: 'Our Work | Case Studies & Portfolio',
     description: "Explore LoudFace's portfolio of successful Webflow projects. See real results including traffic growth, conversion improvements, and business transformations.",
-    type: 'website',
-    url: '/case-studies',
-    siteName: 'LoudFace',
-    locale: 'en_US',
-    images: [{ url: '/opengraph-image', width: 1200, height: 630, alt: 'LoudFace Case Studies' }],
-  },
-  twitter: {
-    card: 'summary_large_image',
-    site: '@loudface',
-    title: 'Case Studies & Portfolio | LoudFace',
-    description: "Explore LoudFace's portfolio of successful Webflow projects. See real results including traffic growth, conversion improvements, and business transformations.",
-    images: ['/opengraph-image'],
-  },
-};
+    alternates: {
+      canonical: '/case-studies',
+    },
+    openGraph: {
+      title: 'Case Studies & Portfolio | LoudFace',
+      description: "Explore LoudFace's portfolio of successful Webflow projects. See real results including traffic growth, conversion improvements, and business transformations.",
+      type: 'website',
+      url: '/case-studies',
+      siteName: 'LoudFace',
+      locale: 'en_US',
+      images: [{ url: '/opengraph-image', width: 1200, height: 630, alt: 'LoudFace Case Studies' }],
+    },
+    twitter: {
+      card: 'summary_large_image',
+      site: '@loudface',
+      title: 'Case Studies & Portfolio | LoudFace',
+      description: "Explore LoudFace's portfolio of successful Webflow projects. See real results including traffic growth, conversion improvements, and business transformations.",
+      images: ['/opengraph-image'],
+    },
+  };
+
+  // Paginated pages should not be indexed — canonical points to page 1
+  if (currentPage > 1) {
+    base.robots = { index: false, follow: true };
+  }
+
+  return base;
+}
 
 export default async function WorkPage({
   searchParams,

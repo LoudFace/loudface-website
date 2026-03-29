@@ -121,6 +121,7 @@ const LEGACY_URL_MAP: Record<string, string> = {
   // Old case study slugs
   '/case-studies/icypeas': '/case-studies/b2b-saas-brand-and-website-redesign-case-study',
   '/case-studies/toku': '/case-studies/toku-design-messaging-upgrade',
+  '/case-studies/ciela': '/case-studies',
   // Trailing slash variants
   '/case-studies/': '/case-studies',
 };
