@@ -193,32 +193,29 @@ export default async function RootLayout({
             />
           </a>
 
-          {/* Google Tag Manager — GTM-T53LKJXQ */}
-          <Script id="gtm-main" strategy="lazyOnload">
-            {`(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
-new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
-j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
-'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
-})(window,document,'script','dataLayer','GTM-T53LKJXQ');`}
-          </Script>
-
-          {/* Google Tag Manager — GTM-PDCXVZX (deferred until user interaction) */}
+          {/* Google Tag Manager — both containers deferred until user interaction.
+              This keeps TBT near zero — GTM scripts are ~170KB + ~120KB and create
+              long tasks that block the main thread if loaded during page lifecycle. */}
           <Script id="gtm-deferred" strategy="lazyOnload">
             {`(function(){var loaded=false;function loadGTM(){if(loaded)return;loaded=true;
-var w=window,d=document,s='script',l='dataLayer',i='GTM-PDCXVZX';
-w[l]=w[l]||[];w[l].push({'gtm.start':new Date().getTime(),event:'gtm.js'});
+var w=window,d=document,s='script',l='dataLayer';
+w[l]=w[l]||[];
+['GTM-T53LKJXQ','GTM-PDCXVZX'].forEach(function(i){
+w[l].push({'gtm.start':new Date().getTime(),event:'gtm.js'});
 var f=d.getElementsByTagName(s)[0],j=d.createElement(s);j.async=true;
-j.src='https://www.googletagmanager.com/gtm.js?id='+i;f.parentNode.insertBefore(j,f);}
-['scroll','touchstart','mousemove'].forEach(function(e){
+j.src='https://www.googletagmanager.com/gtm.js?id='+i;f.parentNode.insertBefore(j,f);
+});}
+['scroll','touchstart','mousemove','keydown'].forEach(function(e){
 window.addEventListener(e,loadGTM,{once:true,passive:true});});})();`}
           </Script>
 
-          {/* Cal.com embed script */}
+          {/* Cal.com embed — deferred until user interaction (only needed for booking clicks) */}
           <Script id="cal-embed" strategy="lazyOnload">
-            {`
-              (function (C, A, L) { let p = function (a, ar) { a.q.push(ar); }; let d = C.document; C.Cal = C.Cal || function () { let cal = C.Cal; let ar = arguments; if (!cal.loaded) { cal.ns = {}; cal.q = cal.q || []; d.head.appendChild(d.createElement("script")).src = A; cal.loaded = true; } if (ar[0] === L) { const api = function () { p(api, arguments); }; const namespace = ar[1]; api.q = api.q || []; if(typeof namespace === "string"){cal.ns[namespace] = cal.ns[namespace] || api;p(cal.ns[namespace], ar);p(cal, ["initNamespace", namespace]);} else p(cal, ar); return;} p(cal, ar); }; })(window, "https://app.cal.com/embed/embed.js", "init");
-              Cal("init", {origin:"https://app.cal.com"});
-            `}
+            {`(function(){var loaded=false;function loadCal(){if(loaded)return;loaded=true;
+(function(C,A,L){let p=function(a,ar){a.q.push(ar);};let d=C.document;C.Cal=C.Cal||function(){let cal=C.Cal;let ar=arguments;if(!cal.loaded){cal.ns={};cal.q=cal.q||[];d.head.appendChild(d.createElement("script")).src=A;cal.loaded=true;}if(ar[0]===L){const api=function(){p(api,arguments);};const namespace=ar[1];api.q=api.q||[];if(typeof namespace==="string"){cal.ns[namespace]=cal.ns[namespace]||api;p(cal.ns[namespace],ar);p(cal,["initNamespace",namespace]);}else p(cal,ar);return;}p(cal,ar);};})(window,"https://app.cal.com/embed/embed.js","init");
+Cal("init",{origin:"https://app.cal.com"});}
+['scroll','touchstart','mousemove','keydown'].forEach(function(e){
+window.addEventListener(e,loadCal,{once:true,passive:true});});})();`}
           </Script>
 
           {/* Cal.com booking modal handler */}

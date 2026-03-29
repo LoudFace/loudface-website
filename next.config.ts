@@ -1,6 +1,15 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  experimental: {
+    optimizePackageImports: [
+      'embla-carousel',
+      'embla-carousel-react',
+      'embla-carousel-autoplay',
+      'embla-carousel-wheel-gestures',
+      'posthog-js',
+    ],
+  },
   images: {
     remotePatterns: [
       {
