@@ -49,6 +49,11 @@ function extractTocAndAddIds(html: string | undefined): { toc: { id: string; tex
   normalized = normalized.replace(/[\u201C\u201D]/g, '"');
   normalized = normalized.replace(/[\u2018\u2019]/g, "'");
 
+  // Escape <script> tags in CMS rich text so they display as code, not execute.
+  // Webflow code examples sometimes contain unescaped script tags.
+  normalized = normalized.replace(/<script\b/gi, '&lt;script');
+  normalized = normalized.replace(/<\/script>/gi, '&lt;/script&gt;');
+
   // Fix malformed URLs from CMS rich text: <https://example.com> → https://example.com
   // Webflow sometimes wraps URLs in angle brackets inside code examples
   normalized = normalized.replace(/src="<(https?:\/\/[^">]+)>"/g, 'src="$1"');
