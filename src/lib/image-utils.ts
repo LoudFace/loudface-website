@@ -35,7 +35,8 @@ export function optimizeImage(
   url: string | undefined,
   width: number,
   quality: number = 80,
-  format: 'webp' | 'auto' | 'original' = 'webp'
+  format: 'webp' | 'auto' | 'original' = 'webp',
+  maxHeight?: number
 ): string | undefined {
   if (!url) return undefined;
 
@@ -48,6 +49,9 @@ export function optimizeImage(
   if (isSanityCdnUrl(url)) {
     const separator = url.includes('?') ? '&' : '?';
     let params = `w=${width}&q=${quality}`;
+    if (maxHeight) {
+      params += `&h=${maxHeight}&fit=crop`;
+    }
     if (format === 'webp') {
       params += '&fm=webp';
     } else if (format === 'auto') {
@@ -67,14 +71,19 @@ export function generateSrcset(
   url: string | undefined,
   sizes: number[],
   quality: number = 80,
-  format: 'webp' | 'auto' | 'original' = 'webp'
+  format: 'webp' | 'auto' | 'original' = 'webp',
+  maxHeight?: number
 ): string | undefined {
   if (!url || !isRemoteUrl(url)) {
     return undefined;
   }
 
   return sizes
-    .map((width) => `${optimizeImage(url, width, quality, format)} ${width}w`)
+    .map((width) => {
+      // Scale maxHeight proportionally to each srcset width
+      const h = maxHeight ? Math.round(maxHeight * width / sizes[sizes.length - 1]) : undefined;
+      return `${optimizeImage(url, width, quality, format, h)} ${width}w`;
+    })
     .join(', ');
 }
 
@@ -144,8 +153,11 @@ export function caseStudyThumbnail(url: string | undefined): {
   src: string | undefined;
   srcset: string | undefined;
 } {
+  // Cap height to 16:10 aspect ratio — source images are often full-page
+  // screenshots (8000-10000px tall). Without height cap, w=1200 images
+  // are 370KB+. With &h=750&fit=crop they drop to ~40-60KB.
   return {
-    src: optimizeImage(url, 800, 80, 'webp'),
-    srcset: generateSrcset(url, [400, 600, 800, 1200]),
+    src: optimizeImage(url, 800, 80, 'webp', 500),
+    srcset: generateSrcset(url, [400, 600, 800, 1200], 80, 'webp', 750),
   };
 }
