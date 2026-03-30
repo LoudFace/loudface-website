@@ -148,15 +148,7 @@
   font-display: swap;
 }
 
-@font-face {
-  font-family: Satoshi;
-  src:
-    url("/fonts/Satoshi-MediumItalic.woff2") format("woff2"),
-    url("/fonts/Satoshi-MediumItalic.woff") format("woff");
-  font-weight: 500;
-  font-style: italic;
-  font-display: swap;
-}
+
 
 @font-face {
   font-family: Neue Montreal;
