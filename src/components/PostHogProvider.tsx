@@ -20,6 +20,7 @@ function PostHogPageView() {
           capture_pageview: false,
           capture_pageleave: true,
           person_profiles: 'identified_only',
+          disable_session_recording: true,
         });
         initialized.current = true;
       }
