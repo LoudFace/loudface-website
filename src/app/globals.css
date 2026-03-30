@@ -220,14 +220,6 @@
   font-display: swap;
 }
 
-@font-face {
-  font-family: Geist Mono;
-  src: url("/fonts/GeistMono-Light.woff") format("woff");
-  font-weight: 300;
-  font-style: normal;
-  font-display: swap;
-}
-
 /* ===========================================
  * BASE LAYER
  * Reset, global defaults, and library defaults
@@ -1016,6 +1008,24 @@
 
   .prose-surface blockquote p {
     margin: 0;
+  }
+
+  /* --- AI Audit: Stacking Card Deck --- */
+
+  .audit-deck {
+    height: 100dvh;
+    overflow-y: auto;
+    scroll-snap-type: y mandatory;
+    scroll-behavior: smooth;
+  }
+
+  .audit-slide {
+    min-height: 100dvh;
+    scroll-snap-align: start;
+    scroll-snap-stop: always;
+    overflow-y: auto;
+    /* Each slide gets a subtle inset shadow at top so you see the "stack" edge */
+    box-shadow: 0 -1px 0 0 var(--color-surface-800);
   }
 
 }

@@ -58,9 +58,11 @@ export function Hero({
   const CaseStudyCard = ({
     study,
     isHidden = false,
+    isPriority = false,
   }: {
     study: CaseStudy;
     isHidden?: boolean;
+    isPriority?: boolean;
   }) => {
     const client = getClient(study.client);
 
@@ -79,7 +81,7 @@ export function Hero({
                 alt={client.name || 'Client logo'}
                 width={96}
                 height={20}
-                loading={isHidden ? 'lazy' : 'eager'}
+                loading={isPriority ? 'eager' : 'lazy'}
                 className="h-5 w-24 object-contain object-left"
               />
             ) : (
@@ -109,8 +111,8 @@ export function Hero({
             alt={study['main-project-image-thumbnail']?.alt || study['project-title'] || study.name}
             width="388"
             height="250"
-            loading={isHidden ? 'lazy' : 'eager'}
-            fetchPriority={isHidden ? undefined : 'high'}
+            loading={isPriority ? 'eager' : 'lazy'}
+            fetchPriority={isPriority ? 'high' : undefined}
             className="w-full h-full object-cover object-top"
           />
         </div>
@@ -192,8 +194,8 @@ export function Hero({
                 <div className="absolute inset-0 flex gap-4 p-4">
                   {/* Column 1: Scroll Down */}
                   <div className="flex-1 flex flex-col gap-4 animate-scroll-down hover:[animation-play-state:paused]">
-                    {featuredStudies.map((study) => (
-                      <CaseStudyCard key={study.id} study={study} />
+                    {featuredStudies.map((study, i) => (
+                      <CaseStudyCard key={study.id} study={study} isPriority={i === 0} />
                     ))}
                     {/* Duplicate for seamless loop */}
                     {featuredStudies.map((study) => (
@@ -204,7 +206,7 @@ export function Hero({
                   {/* Column 2: Scroll Up (hidden below xl) */}
                   <div className="hidden xl:flex flex-1 flex-col gap-4 animate-scroll-up hover:[animation-play-state:paused]">
                     {[...featuredStudies].reverse().map((study) => (
-                      <CaseStudyCard key={study.id} study={study} />
+                      <CaseStudyCard key={study.id} study={study} isHidden />
                     ))}
                     {/* Duplicate for seamless loop */}
                     {[...featuredStudies].reverse().map((study) => (
