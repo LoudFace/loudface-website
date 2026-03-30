@@ -221,6 +221,7 @@ export default async function WorkPage({
                             width="800"
                             height="500"
                             loading={index < 3 ? 'eager' : 'lazy'}
+                            fetchPriority={index === 0 ? 'high' : undefined}
                             className="w-full h-full object-cover object-top transition-transform duration-500 group-hover:scale-105"
                           />
                         );
