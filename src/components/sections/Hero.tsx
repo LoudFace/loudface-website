@@ -194,8 +194,8 @@ export function Hero({
                 <div className="absolute inset-0 flex gap-4 p-4">
                   {/* Column 1: Scroll Down */}
                   <div className="flex-1 flex flex-col gap-4 animate-scroll-down hover:[animation-play-state:paused]">
-                    {featuredStudies.map((study, i) => (
-                      <CaseStudyCard key={study.id} study={study} isPriority={i === 0} />
+                    {featuredStudies.map((study) => (
+                      <CaseStudyCard key={study.id} study={study} />
                     ))}
                     {/* Duplicate for seamless loop */}
                     {featuredStudies.map((study) => (

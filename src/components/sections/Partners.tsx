@@ -58,7 +58,7 @@ export function Partners({
                     <div className="testimonial-headshot relative cursor-pointer z-20 group">
                       <img
                         src={avatarImage(testimonial['profile-image']!.url)}
-                        loading="eager"
+                        loading="lazy"
                         width="40"
                         height="40"
                         alt={testimonial.name}
@@ -102,7 +102,7 @@ export function Partners({
                       asset('/images/placeholder-logo.svg')
                     }
                     alt={client.name}
-                    loading={i < 6 ? 'eager' : 'lazy'}
+                    loading={i < 3 ? 'eager' : 'lazy'}
                     containerClassName="logo-item"
                     imgClassName="grayscale opacity-60 transition-all duration-200 hover:grayscale-0 hover:opacity-100"
                   />
