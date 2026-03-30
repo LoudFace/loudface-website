@@ -102,7 +102,7 @@ export function Partners({
                       asset('/images/placeholder-logo.svg')
                     }
                     alt={client.name}
-                    loading={i < 3 ? 'eager' : 'lazy'}
+                    loading="lazy"
                     containerClassName="logo-item"
                     imgClassName="grayscale opacity-60 transition-all duration-200 hover:grayscale-0 hover:opacity-100"
                   />
