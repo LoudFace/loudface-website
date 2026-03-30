@@ -113,10 +113,11 @@ export function avatarImage(url: string | undefined): string | undefined {
 }
 
 /**
- * Optimized logo image — keeps original format for sharp edges
+ * Optimized logo image — WebP at display-appropriate size.
+ * Logos display at ~106px wide, so 200px covers 2x retina.
  */
 export function logoImage(url: string | undefined): string | undefined {
-  return optimizeImage(url, ImageSizes.logo, 95, 'original');
+  return optimizeImage(url, 200, 90, 'webp');
 }
 
 /**

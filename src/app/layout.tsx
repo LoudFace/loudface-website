@@ -39,10 +39,8 @@ const neueMontreal = localFont({
 
 const geistMono = localFont({
   src: [
-    { path: "../../public/fonts/GeistMono-Regular.woff", weight: "400", style: "normal" },
-    { path: "../../public/fonts/GeistMono-Medium.woff", weight: "500", style: "normal" },
-    { path: "../../public/fonts/GeistMono-SemiBold.woff", weight: "600", style: "normal" },
-    { path: "../../public/fonts/GeistMono-Bold.woff", weight: "700", style: "normal" },
+    { path: "../../public/fonts/GeistMono-Regular.woff2", weight: "400", style: "normal" },
+    { path: "../../public/fonts/GeistMono-Medium.woff2", weight: "500", style: "normal" },
   ],
   variable: "--font-geist-mono",
   display: "swap",
