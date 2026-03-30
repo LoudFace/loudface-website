@@ -50,7 +50,7 @@ export function optimizeImage(
     const separator = url.includes('?') ? '&' : '?';
     let params = `w=${width}&q=${quality}`;
     if (maxHeight) {
-      params += `&h=${maxHeight}&fit=crop`;
+      params += `&h=${maxHeight}&fit=crop&crop=top,left`;
     }
     if (format === 'webp') {
       params += '&fm=webp';
