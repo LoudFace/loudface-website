@@ -9,7 +9,6 @@
  *             Knowledge, FAQ, CTA
  */
 import type { Metadata } from 'next';
-import dynamic from 'next/dynamic';
 import { fetchHomepageData, assertCmsData } from '@/lib/cms-data';
 import { getHomepageContent } from '@/lib/content-utils';
 
@@ -27,16 +26,10 @@ import {
   Card,
 } from '@/components/ui';
 
-// Dynamic import below-fold carousel sections — defers their client JS
-// out of the critical rendering window, reducing TBT on mobile.
-// SSR is preserved (HTML renders normally), only JS hydration is deferred.
-const CaseStudySlider = dynamic(
-  () => import('@/components/sections/CaseStudySlider').then(m => ({ default: m.CaseStudySlider })),
-);
-
-const Knowledge = dynamic(
-  () => import('@/components/sections/Knowledge').then(m => ({ default: m.Knowledge })),
-);
+import {
+  DeferredCaseStudySlider,
+  DeferredKnowledge,
+} from '@/components/sections/DeferredSections';
 
 export const metadata: Metadata = {
   title: 'B2B SaaS Web Design, SEO & Growth Agency',
@@ -291,7 +284,7 @@ export default async function HomePage() {
       </SectionContainer>
 
       {/* Case Study Slider */}
-      <CaseStudySlider
+      <DeferredCaseStudySlider
         title="The work speaks. Specifically."
         caseStudies={sliderCaseStudies}
         testimonials={slimTestimonials}
@@ -413,7 +406,7 @@ export default async function HomePage() {
       </SectionContainer>
 
       {/* Knowledge/Blog */}
-      <Knowledge
+      <DeferredKnowledge
         title="Playbooks for SaaS marketing teams"
         highlightWord="Playbooks"
         description={content.blog.subtitle}
