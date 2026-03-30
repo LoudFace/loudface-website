@@ -58,7 +58,7 @@ export function Partners({
                     <div className="testimonial-headshot relative cursor-pointer z-20 group">
                       <img
                         src={avatarImage(testimonial['profile-image']!.url)}
-                        loading="lazy"
+                        loading="eager"
                         width="40"
                         height="40"
                         alt={testimonial.name}
@@ -94,7 +94,7 @@ export function Partners({
             {/* Client Logos */}
             {showcaseClients.length > 0 && (
               <div className="flex flex-wrap justify-center items-center gap-4 sm:gap-6 md:gap-x-12 md:gap-y-8">
-                {showcaseClients.map((client) => (
+                {showcaseClients.map((client, i) => (
                   <LogoImage
                     key={client.id}
                     src={
@@ -102,6 +102,7 @@ export function Partners({
                       asset('/images/placeholder-logo.svg')
                     }
                     alt={client.name}
+                    loading={i < 6 ? 'eager' : 'lazy'}
                     containerClassName="logo-item"
                     imgClassName="grayscale opacity-60 transition-all duration-200 hover:grayscale-0 hover:opacity-100"
                   />

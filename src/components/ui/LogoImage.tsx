@@ -9,6 +9,7 @@ interface LogoImageProps {
   containerHeight?: number;
   containerClassName?: string;
   imgClassName?: string;
+  loading?: 'lazy' | 'eager';
 }
 
 /**
@@ -32,9 +33,11 @@ export function LogoImage({
   containerHeight = 44,
   containerClassName = '',
   imgClassName = '',
+  loading = 'lazy',
 }: LogoImageProps) {
   const [adjustedWidth, setAdjustedWidth] = useState(containerWidth);
-  const [loaded, setLoaded] = useState(false);
+  // Eager logos start visible to avoid delaying LCP; lazy logos fade in after load
+  const [loaded, setLoaded] = useState(loading === 'eager');
   const imgRef = useRef<HTMLImageElement>(null);
 
   const normalize = useCallback(
@@ -101,7 +104,7 @@ export function LogoImage({
         alt={alt}
         width={containerWidth}
         height={containerHeight}
-        loading="lazy"
+        loading={loading}
         onLoad={handleLoad}
         onError={handleError}
         className={`max-w-full max-h-full object-contain ${imgClassName}`}
