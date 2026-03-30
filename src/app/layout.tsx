@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import localFont from "next/font/local";
 import Script from "next/script";
 import "./globals.css";
 import { CalHandler } from "@/components/CalHandler";
@@ -7,6 +8,46 @@ import { Footer } from "@/components/Footer";
 import { asset } from "@/lib/assets";
 import { fetchFooterData } from "@/lib/cms-data";
 import { PostHogProvider } from "@/components/PostHogProvider";
+
+/* ─── Fonts via next/font/local ───────────────────────────────────────
+   Benefits over manual @font-face:
+   - Hashed filenames → Cache-Control: immutable (permanent browser cache)
+   - Automatic size-adjust fallback → reduces CLS from font swap
+   - Managed preloading → Next.js preloads only what's needed
+   ──────────────────────────────────────────────────────────────────── */
+const satoshi = localFont({
+  src: [
+    { path: "../../public/fonts/Satoshi-Regular.woff2", weight: "400", style: "normal" },
+    { path: "../../public/fonts/Satoshi-Medium.woff2", weight: "500", style: "normal" },
+    { path: "../../public/fonts/Satoshi-Bold.woff2", weight: "700", style: "normal" },
+  ],
+  variable: "--font-satoshi",
+  display: "swap",
+  preload: true,
+});
+
+const neueMontreal = localFont({
+  src: [
+    { path: "../../public/fonts/NeueMontreal-Regular.woff2", weight: "400", style: "normal" },
+    { path: "../../public/fonts/NeueMontreal-Medium.woff2", weight: "500", style: "normal" },
+    { path: "../../public/fonts/NeueMontreal-Bold.woff2", weight: "700", style: "normal" },
+  ],
+  variable: "--font-neue-montreal",
+  display: "swap",
+  preload: true,
+});
+
+const geistMono = localFont({
+  src: [
+    { path: "../../public/fonts/GeistMono-Regular.woff", weight: "400", style: "normal" },
+    { path: "../../public/fonts/GeistMono-Medium.woff", weight: "500", style: "normal" },
+    { path: "../../public/fonts/GeistMono-SemiBold.woff", weight: "600", style: "normal" },
+    { path: "../../public/fonts/GeistMono-Bold.woff", weight: "700", style: "normal" },
+  ],
+  variable: "--font-geist-mono",
+  display: "swap",
+  preload: false, // Mono font rarely visible — don't preload
+});
 
 export const metadata: Metadata = {
   title: {
@@ -107,29 +148,12 @@ export default async function RootLayout({
   const blogPosts = footerData.blogPosts;
 
   return (
-    <html lang="en">
+    <html lang="en" className={`${satoshi.variable} ${neueMontreal.variable} ${geistMono.variable}`}>
       <head>
         {/* Preconnect hints for performance */}
         <link rel="preconnect" href="https://cdn.sanity.io" crossOrigin="" />
         <link rel="dns-prefetch" href="https://app.cal.com" />
         <link rel="dns-prefetch" href="https://www.googletagmanager.com" />
-
-        {/* Preload critical fonts — only hero-essential weights.
-            Fewer preloads = less bandwidth contention on slow mobile. */}
-        <link
-          rel="preload"
-          href="/fonts/Satoshi-Regular.woff2"
-          as="font"
-          type="font/woff2"
-          crossOrigin=""
-        />
-        <link
-          rel="preload"
-          href="/fonts/NeueMontreal-Medium.woff2"
-          as="font"
-          type="font/woff2"
-          crossOrigin=""
-        />
 
         {/* React Grab - dev-only context selector for coding agents */}
         {process.env.NODE_ENV === "development" && (

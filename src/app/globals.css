@@ -61,10 +61,11 @@
   --color-info-light: #dbeafe;
   --color-info-dark: #1e40af;
 
-  /* Font families */
-  --font-sans: "Satoshi", system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
-  --font-heading: "Neue Montreal", system-ui, sans-serif;
-  --font-mono: "Geist Mono", ui-monospace, SFMono-Regular, monospace;
+  /* Font families — placeholder values so Tailwind v4 generates the utility classes.
+     Actual runtime values are set in @layer base below, referencing next/font variables. */
+  --font-sans: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-heading: system-ui, sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, monospace;
 
   /* Custom font sizes (text-2xs, text-nav, text-hero) */
   --text-2xs: 0.8125rem;
@@ -114,102 +115,16 @@
   --color-rose-*: initial;
 }
 
-/* ===========================================
- * FONT DECLARATIONS
- * (Unlayered — resource definitions, not cascade rules)
- * =========================================== */
-@font-face {
-  font-family: Satoshi;
-  src:
-    url("/fonts/Satoshi-Bold.woff2") format("woff2"),
-    url("/fonts/Satoshi-Bold.woff") format("woff");
-  font-weight: 700;
-  font-style: normal;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: Satoshi;
-  src:
-    url("/fonts/Satoshi-Medium.woff2") format("woff2"),
-    url("/fonts/Satoshi-Medium.woff") format("woff");
-  font-weight: 500;
-  font-style: normal;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: Satoshi;
-  src:
-    url("/fonts/Satoshi-Regular.woff2") format("woff2"),
-    url("/fonts/Satoshi-Regular.woff") format("woff");
-  font-weight: 400;
-  font-style: normal;
-  font-display: swap;
-}
-
-
-
-@font-face {
-  font-family: Neue Montreal;
-  src:
-    url("/fonts/NeueMontreal-Medium.woff2") format("woff2"),
-    url("/fonts/NeueMontreal-Medium.woff") format("woff");
-  font-weight: 500;
-  font-style: normal;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: Neue Montreal;
-  src:
-    url("/fonts/NeueMontreal-Bold.woff2") format("woff2"),
-    url("/fonts/NeueMontreal-Bold.woff") format("woff");
-  font-weight: 700;
-  font-style: normal;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: Neue Montreal;
-  src:
-    url("/fonts/NeueMontreal-Regular.woff2") format("woff2"),
-    url("/fonts/NeueMontreal-Regular.woff") format("woff");
-  font-weight: 400;
-  font-style: normal;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: Geist Mono;
-  src: url("/fonts/GeistMono-Regular.woff") format("woff");
-  font-weight: 400;
-  font-style: normal;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: Geist Mono;
-  src: url("/fonts/GeistMono-Medium.woff") format("woff");
-  font-weight: 500;
-  font-style: normal;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: Geist Mono;
-  src: url("/fonts/GeistMono-SemiBold.woff") format("woff");
-  font-weight: 600;
-  font-style: normal;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: Geist Mono;
-  src: url("/fonts/GeistMono-Bold.woff") format("woff");
-  font-weight: 700;
-  font-style: normal;
-  font-display: swap;
+/* Font declarations are handled by next/font/local in layout.tsx.
+ * This gives us: hashed filenames (immutable cache), size-adjust
+ * fallbacks (less CLS), and managed preloading.
+ *
+ * Override @theme font placeholders with next/font runtime variables.
+ * Must be unlayered to beat @theme's :root specificity in the cascade. */
+html {
+  --font-sans: var(--font-satoshi), system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-heading: var(--font-neue-montreal), system-ui, sans-serif;
+  --font-mono: var(--font-geist-mono), ui-monospace, SFMono-Regular, monospace;
 }
 
 /* ===========================================
@@ -278,7 +193,7 @@
   h4,
   h5,
   h6 {
-    font-family: "Neue Montreal", system-ui, sans-serif;
+    font-family: var(--font-heading);
     font-weight: 500;
   }
 
@@ -466,7 +381,7 @@
   .prose h4 {
     margin-top: 1.5em;
     margin-bottom: 0.75em;
-    font-family: "Neue Montreal", system-ui, sans-serif;
+    font-family: var(--font-heading);
     font-weight: 500;
   }
 
@@ -623,7 +538,7 @@
     padding: 1rem 0 1rem 1.25rem;
     margin-top: 3rem;
     margin-bottom: 1.5rem;
-    font-family: "Neue Montreal", system-ui, sans-serif;
+    font-family: var(--font-heading);
     font-weight: 500;
     font-size: 1.5rem;
     color: var(--color-surface-950);
@@ -641,7 +556,7 @@
     padding-left: 1rem;
     margin-top: 2.5rem;
     margin-bottom: 1rem;
-    font-family: "Neue Montreal", system-ui, sans-serif;
+    font-family: var(--font-heading);
     font-weight: 500;
     font-size: 1.25rem;
     color: var(--color-surface-800);
@@ -716,7 +631,7 @@
     content: counter(item) ".";
     position: absolute;
     left: 0;
-    font-family: "Geist Mono", monospace;
+    font-family: var(--font-mono);
     font-weight: 500;
     font-size: 0.875rem;
     color: var(--color-primary-500);
@@ -770,7 +685,7 @@
 
   /* Inline code */
   .case-study-prose code {
-    font-family: "Geist Mono", monospace;
+    font-family: var(--font-mono);
     font-size: 0.875em;
     padding: 0.2em 0.4em;
     background: var(--color-surface-100);
@@ -811,7 +726,7 @@
     padding: 1rem 0 1rem 1.25rem;
     margin-top: 3rem;
     margin-bottom: 1.5rem;
-    font-family: "Neue Montreal", system-ui, sans-serif;
+    font-family: var(--font-heading);
     font-weight: 500;
     font-size: 1.5rem;
     color: var(--color-surface-950);
@@ -828,7 +743,7 @@
     padding-left: 1rem;
     margin-top: 2.5rem;
     margin-bottom: 1rem;
-    font-family: "Neue Montreal", system-ui, sans-serif;
+    font-family: var(--font-heading);
     font-weight: 500;
     font-size: 1.25rem;
     color: var(--color-surface-800);
@@ -897,7 +812,7 @@
   }
 
   .blog-prose code {
-    font-family: "Geist Mono", monospace;
+    font-family: var(--font-mono);
     font-size: 0.875em;
     padding: 0.2em 0.4em;
     background: var(--color-surface-100);
@@ -924,7 +839,7 @@
   .prose-surface h2 {
     margin-top: 2.5rem;
     margin-bottom: 1rem;
-    font-family: "Neue Montreal", system-ui, sans-serif;
+    font-family: var(--font-heading);
     font-weight: 500;
     font-size: 1.5rem;
     color: var(--color-surface-900);
@@ -939,7 +854,7 @@
     padding-left: 1rem;
     margin-top: 2rem;
     margin-bottom: 0.75rem;
-    font-family: "Neue Montreal", system-ui, sans-serif;
+    font-family: var(--font-heading);
     font-weight: 500;
     font-size: 1.25rem;
     color: var(--color-surface-800);
