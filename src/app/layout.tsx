@@ -134,6 +134,33 @@ const organizationSchema = {
     "https://clutch.co/profile/loudface",
     "https://www.designrush.com/agency/profile/loudface",
   ],
+  knowsAbout: [
+    "Webflow Development",
+    "Web Design",
+    "SEO",
+    "Answer Engine Optimization",
+    "Conversion Rate Optimization",
+    "B2B SaaS Marketing",
+    "UX/UI Design",
+    "Copywriting",
+  ],
+  founder: {
+    "@type": "Person",
+    name: "Arnel Bukva",
+    url: "https://www.linkedin.com/in/arnelbukva/",
+  },
+  hasOfferCatalog: {
+    "@type": "OfferCatalog",
+    name: "LoudFace Services",
+    itemListElement: [
+      { "@type": "Offer", itemOffered: { "@type": "Service", name: "Webflow Development" } },
+      { "@type": "Offer", itemOffered: { "@type": "Service", name: "SEO & AEO" } },
+      { "@type": "Offer", itemOffered: { "@type": "Service", name: "UX/UI Design" } },
+      { "@type": "Offer", itemOffered: { "@type": "Service", name: "Copywriting" } },
+      { "@type": "Offer", itemOffered: { "@type": "Service", name: "Conversion Rate Optimization" } },
+      { "@type": "Offer", itemOffered: { "@type": "Service", name: "Growth Autopilot" } },
+    ],
+  },
 };
 
 export default async function RootLayout({

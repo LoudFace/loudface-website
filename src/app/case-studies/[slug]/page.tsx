@@ -19,6 +19,7 @@ import { getContrastColor } from '@/lib/color-utils';
 import { Button, SectionContainer } from '@/components/ui';
 import { CTA } from '@/components/sections';
 import { buildNoIndexMetadata, buildPageMetadata, truncateSeoTitle, truncateSeoDescription, rewriteLegacyUrls, resolveServiceSlug } from '@/lib/seo-utils';
+import { extractFAQFromHTML, buildFAQSchema, buildSpeakableSchema, buildReviewSchema } from '@/lib/schema-utils';
 import type {
   CaseStudy,
   Client,
@@ -216,6 +217,19 @@ export default async function CaseStudyPage({ params }: PageProps) {
     mainEntityOfPage: { '@type': 'WebPage', '@id': canonicalUrl },
   };
 
+  // Auto-extract FAQ from H2 headings for FAQPage schema
+  const faqItems = extractFAQFromHTML(study['main-body']);
+  const faqSchema = buildFAQSchema(faqItems);
+  const speakableSchema = buildSpeakableSchema(projectTitle, canonicalUrl);
+
+  // Review schema from testimonial (trust signal for AI and traditional search)
+  const reviewSchema = testimonial?.['testimonial-body']
+    ? buildReviewSchema(
+        { name: testimonial.name, role: testimonial.role, quote: testimonial['testimonial-body'] },
+        client?.name || study.name,
+      )
+    : null;
+
   return (
     <>
       {/* Structured Data — native script tags for SSR visibility to crawlers */}
@@ -227,6 +241,22 @@ export default async function CaseStudyPage({ params }: PageProps) {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(articleSchema) }}
       />
+      {faqSchema && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
+        />
+      )}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(speakableSchema) }}
+      />
+      {reviewSchema && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(reviewSchema) }}
+        />
+      )}
 
       {/* Hero */}
       <section

@@ -10,6 +10,7 @@ import { asset } from '@/lib/assets';
 import { Badge, SectionContainer } from '@/components/ui';
 import { CTA, RelatedComparisons } from '@/components/sections';
 import { buildNoIndexMetadata, buildPageMetadata, truncateSeoTitle, truncateSeoDescription, rewriteLegacyUrls } from '@/lib/seo-utils';
+import { extractFAQFromHTML, buildFAQSchema, buildSpeakableSchema } from '@/lib/schema-utils';
 import type { BlogPost, Category, TeamMember } from '@/lib/types';
 
 interface PageProps {
@@ -205,6 +206,11 @@ export default async function BlogPostPage({ params }: PageProps) {
     ],
   };
 
+  // Auto-extract FAQ from H2 headings for FAQPage schema (3.1x higher AI extraction rate)
+  const faqItems = extractFAQFromHTML(post.content);
+  const faqSchema = buildFAQSchema(faqItems);
+  const speakableSchema = buildSpeakableSchema(post.name, canonicalUrl);
+
   return (
     <>
       {/* Structured Data — native script tags for SSR visibility to crawlers */}
@@ -215,6 +221,16 @@ export default async function BlogPostPage({ params }: PageProps) {
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
+      />
+      {faqSchema && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
+        />
+      )}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(speakableSchema) }}
       />
 
       {/* Hero */}
@@ -265,6 +281,32 @@ export default async function BlogPostPage({ params }: PageProps) {
                     )}
                   </div>
                 </div>
+              )}
+            </div>
+
+            {/* Publication & freshness dates — visible freshness signals improve E-E-A-T */}
+            <div className="mt-4 flex items-center justify-center gap-3 text-sm text-surface-500">
+              {post['published-date'] && (
+                <time dateTime={post['published-date']}>
+                  {new Date(post['published-date']).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
+                </time>
+              )}
+              {post['last-updated'] && post['last-updated'] !== post['published-date'] && (
+                <>
+                  <span className="text-surface-300">·</span>
+                  <span>
+                    Updated{' '}
+                    <time dateTime={post['last-updated']}>
+                      {new Date(post['last-updated']).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
+                    </time>
+                  </span>
+                </>
+              )}
+              {post['time-to-read'] && (
+                <>
+                  <span className="text-surface-300">·</span>
+                  <span>{post['time-to-read']}</span>
+                </>
               )}
             </div>
           </div>
