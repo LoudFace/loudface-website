@@ -65,7 +65,8 @@ const CASE_STUDY_PROJECTION = `{
   "industries": industries[]._ref,
   "testimonial": testimonial._ref,
   "technologies": technologies[]._ref,
-  "services-provided": servicesProvided[]._ref
+  "services-provided": servicesProvided[]._ref,
+  "faq": faq[]{ question, answer }
 }`;
 
 const CLIENT_PROJECTION = `{
@@ -104,7 +105,8 @@ const BLOG_POST_PROJECTION = `{
   "last-updated": lastUpdated,
   "author": author._ref,
   "category": category._ref,
-  "categories": categories[]._ref
+  "categories": categories[]._ref,
+  "faq": faq[]{ question, answer }
 }`;
 
 const CATEGORY_PROJECTION = `{

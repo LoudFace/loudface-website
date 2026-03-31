@@ -45,6 +45,7 @@ export interface CaseStudy {
   testimonial?: string;
   technologies?: string[];
   "services-provided"?: string[];
+  faq?: FAQItem[];
 }
 
 /**
@@ -77,6 +78,11 @@ export interface Testimonial {
 /**
  * Blog Post CMS item
  */
+export interface FAQItem {
+  question: string;
+  answer: string;
+}
+
 export interface BlogPost {
   id: string;
   name: string;
@@ -93,6 +99,7 @@ export interface BlogPost {
   author?: string;
   category?: string;
   categories?: string[];
+  faq?: FAQItem[];
 }
 
 /**

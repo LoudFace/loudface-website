@@ -179,6 +179,24 @@ export const caseStudy = defineType({
       type: 'array',
       of: [{ type: 'reference', to: [{ type: 'serviceCategory' }] }],
     }),
+    defineField({
+      name: 'faq',
+      title: 'FAQ',
+      type: 'array',
+      description: 'Frequently asked questions shown as an accordion at the bottom of the case study. Auto-generated from content, editable here.',
+      of: [
+        {
+          type: 'object',
+          fields: [
+            defineField({ name: 'question', title: 'Question', type: 'string', validation: (rule) => rule.required() }),
+            defineField({ name: 'answer', title: 'Answer', type: 'text', rows: 3, validation: (rule) => rule.required() }),
+          ],
+          preview: {
+            select: { title: 'question', subtitle: 'answer' },
+          },
+        },
+      ],
+    }),
   ],
   preview: {
     select: {

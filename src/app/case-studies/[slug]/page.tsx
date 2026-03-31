@@ -246,8 +246,8 @@ export default async function CaseStudyPage({ params }: PageProps) {
     mainEntityOfPage: { '@type': 'WebPage', '@id': canonicalUrl },
   };
 
-  // Auto-extract FAQ from H2 headings for FAQPage schema
-  const faqItems = extractFAQFromHTML(study['main-body']);
+  // FAQ: prefer hand-written CMS FAQ, fall back to auto-extracted from H2 headings
+  const faqItems = study.faq?.length ? study.faq : extractFAQFromHTML(study['main-body']);
   const faqSchema = buildFAQSchema(faqItems);
   const speakableSchema = buildSpeakableSchema(projectTitle, canonicalUrl);
 

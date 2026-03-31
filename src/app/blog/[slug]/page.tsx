@@ -206,8 +206,8 @@ export default async function BlogPostPage({ params }: PageProps) {
     ],
   };
 
-  // Auto-extract FAQ from H2 headings for FAQPage schema (3.1x higher AI extraction rate)
-  const faqItems = extractFAQFromHTML(post.content);
+  // FAQ: prefer hand-written CMS FAQ, fall back to auto-extracted from H2 headings
+  const faqItems = post.faq?.length ? post.faq : extractFAQFromHTML(post.content);
   const faqSchema = buildFAQSchema(faqItems);
   const speakableSchema = buildSpeakableSchema(post.name, canonicalUrl);
 
