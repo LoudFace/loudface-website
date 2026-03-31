@@ -11,6 +11,7 @@
  * - Final CTA
  */
 import type { Metadata } from 'next';
+import Link from 'next/link';
 import { fetchHomepageData } from '@/lib/cms-data';
 import { getAboutContent } from '@/lib/content-utils';
 import { asset } from '@/lib/assets';
@@ -222,7 +223,7 @@ export default async function AboutPage() {
         {teamMembers.length > 0 && (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {teamMembers.map((member, index) => (
-              <div key={member.id || index}>
+              <Link key={member.id || index} href={`/team/${member.slug}`} className="group block">
                 <div className="aspect-[300/280] bg-surface-100 rounded-xl overflow-hidden">
                   {member['profile-picture']?.url ? (
                     <img
@@ -230,7 +231,7 @@ export default async function AboutPage() {
                       alt={member.name}
                       width="600"
                       height="560"
-                      className="w-full h-full object-cover"
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                       loading={index < 3 ? 'eager' : 'lazy'}
                     />
                   ) : (
@@ -241,12 +242,12 @@ export default async function AboutPage() {
                     </div>
                   )}
                 </div>
-                <h3 className="mt-4 text-xl font-medium text-surface-900">{member.name}</h3>
+                <h3 className="mt-4 text-xl font-medium text-surface-900 group-hover:text-primary-600 transition-colors">{member.name}</h3>
                 <p className="mt-1 text-surface-600">{member['job-title'] || ''}</p>
                 {member['bio-summary'] && (
                   <p className="mt-3 text-surface-600 text-sm leading-relaxed">{member['bio-summary']}</p>
                 )}
-              </div>
+              </Link>
             ))}
           </div>
         )}

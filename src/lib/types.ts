@@ -115,6 +115,9 @@ export interface TeamMember {
   "profile-picture"?: CmsImage;
   "bio-summary"?: string;
   "job-title"?: string;
+  "linkedin-url"?: string;
+  "twitter-url"?: string;
+  skills?: string[];
 }
 
 /**

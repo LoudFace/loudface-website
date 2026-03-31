@@ -17,6 +17,7 @@ LoudFace is the conversion and organic growth team behind 200+ B2B SaaS websites
 - [Case Studies](https://www.loudface.co/case-studies): Real projects with real metrics from B2B SaaS companies.
 - [Blog](https://www.loudface.co/blog): Tactical content on SaaS websites, SEO, conversion optimization, and growth.
 - [About](https://www.loudface.co/about): Our team, story, and approach to SaaS growth.
+- [Team](https://www.loudface.co/team): Individual author profiles with published articles.
 - [SEO for Industries](https://www.loudface.co/seo-for): Industry-specific SEO strategies for SaaS verticals.
 
 ## Citation

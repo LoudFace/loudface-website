@@ -189,7 +189,36 @@ export default async function CaseStudyPage({ params }: PageProps) {
     { number: study['result-3---number'], title: study['result-3---title'] },
   ].filter(r => r.number);
 
-  const relatedStudies = caseStudies.filter(s => s.slug !== slug).slice(0, 3);
+  // Smart related case studies: prioritize same industry, then shared services, then recency
+  const relatedStudies = (() => {
+    const others = caseStudies.filter(s => s.slug !== slug);
+    if (others.length <= 3) return others;
+
+    // Score each case study by relevance
+    const studyIndustries = study.industries || (study.industry ? [study.industry] : []);
+    const studyServices = study['services-provided'] || [];
+
+    const scored = others.map(s => {
+      let score = 0;
+      const sIndustries = s.industries || (s.industry ? [s.industry] : []);
+      const sServices = s['services-provided'] || [];
+
+      // Industry match: +3 per shared industry
+      for (const ind of sIndustries) {
+        if (studyIndustries.includes(ind)) score += 3;
+      }
+      // Service match: +2 per shared service
+      for (const svc of sServices) {
+        if (studyServices.includes(svc)) score += 2;
+      }
+      return { study: s, score };
+    });
+
+    return scored
+      .sort((a, b) => b.score - a.score)
+      .slice(0, 3)
+      .map(s => s.study);
+  })();
   const { toc, html: processedBody } = extractTocAndAddIds(study['main-body']);
 
   const projectTitle = study['project-title'] || study.name;

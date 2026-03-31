@@ -178,7 +178,7 @@ export default async function BlogPostPage({ params }: PageProps) {
       name: author?.name || 'LoudFace',
       ...(author?.['job-title'] && { jobTitle: author['job-title'] }),
       ...(author?.['profile-picture']?.url && { image: author['profile-picture'].url }),
-      url: 'https://www.loudface.co/about',
+      url: author?.slug ? `https://www.loudface.co/team/${author.slug}` : 'https://www.loudface.co/about',
       worksFor: {
         '@type': 'Organization',
         name: 'LoudFace',
@@ -263,7 +263,7 @@ export default async function BlogPostPage({ params }: PageProps) {
 
             <div className="mt-8 flex items-center justify-center gap-4">
               {author && (
-                <div className="flex items-center gap-3">
+                <Link href={`/team/${author.slug}`} className="flex items-center gap-3 group">
                   {author['profile-picture']?.url && (
                     <img
                       src={avatarImage(author['profile-picture'].url)}
@@ -275,12 +275,12 @@ export default async function BlogPostPage({ params }: PageProps) {
                     />
                   )}
                   <div className="text-left">
-                    <div className="font-medium text-surface-900">{author.name}</div>
+                    <div className="font-medium text-surface-900 group-hover:text-primary-600 transition-colors">{author.name}</div>
                     {author['job-title'] && (
                       <div className="text-sm text-surface-500">{author['job-title']}</div>
                     )}
                   </div>
-                </div>
+                </Link>
               )}
             </div>
 
@@ -366,7 +366,7 @@ export default async function BlogPostPage({ params }: PageProps) {
               )}
 
               {author && (
-                <div className="bg-surface-50 rounded-xl p-5">
+                <Link href={`/team/${author.slug}`} className="block bg-surface-50 rounded-xl p-5 group hover:bg-surface-100 transition-colors">
                   <span className="block text-sm font-medium text-surface-500 uppercase tracking-wide mb-3">Written by</span>
                   <div className="flex items-center gap-3">
                     {author['profile-picture']?.url && (
@@ -380,13 +380,13 @@ export default async function BlogPostPage({ params }: PageProps) {
                       />
                     )}
                     <div>
-                      <div className="font-medium text-surface-900">{author.name}</div>
+                      <div className="font-medium text-surface-900 group-hover:text-primary-600 transition-colors">{author.name}</div>
                       {author['job-title'] && (
                         <div className="text-sm text-surface-500">{author['job-title']}</div>
                       )}
                     </div>
                   </div>
-                </div>
+                </Link>
               )}
             </aside>
           </div>

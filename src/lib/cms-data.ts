@@ -120,7 +120,10 @@ const TEAM_MEMBER_PROJECTION = `{
   "slug": slug.current,
   "profile-picture": profilePicture { "url": asset->url, "alt": alt },
   "bio-summary": bioSummary,
-  "job-title": jobTitle
+  "job-title": jobTitle,
+  "linkedin-url": linkedinUrl,
+  "twitter-url": twitterUrl,
+  skills
 }`;
 
 const INDUSTRY_PROJECTION = `{

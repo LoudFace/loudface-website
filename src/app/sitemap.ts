@@ -110,7 +110,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     assertCmsData(cmsData);
   }
 
-  const { caseStudies, blogPosts } = cmsData;
+  const { caseStudies, blogPosts, teamMembers } = cmsData;
 
   // Case study pages — include all case studies that have a slug
   // (even if they lack a paragraph-summary, they're still indexable pages)
@@ -139,5 +139,15 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.7,
   }));
 
-  return [...staticPages, ...caseStudyPages, ...blogPostPages, ...seoPageEntries];
+  // Team member / author pages — E-E-A-T signals
+  const teamMemberPages: MetadataRoute.Sitemap = Array.from(teamMembers.values())
+    .filter((member) => member.slug)
+    .map((member) => ({
+      url: `${baseUrl}/team/${member.slug}`,
+      lastModified: staticLastModified,
+      changeFrequency: 'monthly' as const,
+      priority: 0.5,
+    }));
+
+  return [...staticPages, ...caseStudyPages, ...blogPostPages, ...seoPageEntries, ...teamMemberPages];
 }
