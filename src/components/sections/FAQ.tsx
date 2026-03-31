@@ -14,6 +14,8 @@ interface FAQProps {
   footerTitle?: string;
   footerText?: string;
   footerCtaText?: string;
+  /** Skip JSON-LD schema generation (use when schema is already emitted elsewhere on the page) */
+  skipSchema?: boolean;
 }
 
 // Strip HTML tags from answer for schema
@@ -32,6 +34,7 @@ export function FAQ({
   footerTitle,
   footerText,
   footerCtaText,
+  skipSchema = false,
 }: FAQProps) {
   const content = getFAQContent();
 
@@ -62,10 +65,12 @@ export function FAQ({
   return (
     <>
       {/* FAQPage Structured Data — native script for SSR visibility to crawlers */}
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
-      />
+      {!skipSchema && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
+        />
+      )}
 
       <SectionContainer>
         {/* Header - always on top */}

@@ -8,7 +8,7 @@ import { fetchCollection, fetchHomepageData, fetchItemBySlug } from '@/lib/cms-d
 import { avatarImage, heroImage, thumbnailImage } from '@/lib/image-utils';
 import { asset } from '@/lib/assets';
 import { Badge, SectionContainer } from '@/components/ui';
-import { CTA, RelatedComparisons } from '@/components/sections';
+import { CTA, FAQ, RelatedComparisons } from '@/components/sections';
 import { buildNoIndexMetadata, buildPageMetadata, truncateSeoTitle, truncateSeoDescription, rewriteLegacyUrls } from '@/lib/seo-utils';
 import { extractFAQFromHTML, buildFAQSchema, buildSpeakableSchema } from '@/lib/schema-utils';
 import type { BlogPost, Category, TeamMember } from '@/lib/types';
@@ -392,6 +392,17 @@ export default async function BlogPostPage({ params }: PageProps) {
           </div>
         </div>
       </SectionContainer>
+
+      {/* FAQ — visible accordion from auto-extracted H2 headings */}
+      {faqItems.length >= 2 && (
+        <FAQ
+          title="Frequently Asked Questions"
+          subtitle={`Key takeaways from this article on ${post.name.length > 50 ? post.name.slice(0, 47) + '…' : post.name}.`}
+          items={faqItems}
+          showFooter={false}
+          skipSchema
+        />
+      )}
 
       {/* Comparison Cross-Links */}
       {isComparisonPost && <RelatedComparisons currentSlug={slug} />}

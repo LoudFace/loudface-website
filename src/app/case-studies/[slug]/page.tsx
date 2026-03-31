@@ -17,7 +17,7 @@ import { asset } from '@/lib/assets';
 import { heroImage, avatarImage, thumbnailImage, optimizeImage } from '@/lib/image-utils';
 import { getContrastColor } from '@/lib/color-utils';
 import { Button, SectionContainer } from '@/components/ui';
-import { CTA } from '@/components/sections';
+import { CTA, FAQ } from '@/components/sections';
 import { buildNoIndexMetadata, buildPageMetadata, truncateSeoTitle, truncateSeoDescription, rewriteLegacyUrls, resolveServiceSlug } from '@/lib/seo-utils';
 import { extractFAQFromHTML, buildFAQSchema, buildSpeakableSchema, buildReviewSchema } from '@/lib/schema-utils';
 import type {
@@ -541,6 +541,17 @@ export default async function CaseStudyPage({ params }: PageProps) {
             </div>
           </div>
         </section>
+      )}
+
+      {/* FAQ — visible accordion from auto-extracted H2 headings */}
+      {faqItems.length >= 2 && (
+        <FAQ
+          title="Frequently Asked Questions"
+          subtitle={`Key insights from the ${client?.name || study.name} case study.`}
+          items={faqItems}
+          showFooter={false}
+          skipSchema
+        />
       )}
 
       {/* Related Work */}
