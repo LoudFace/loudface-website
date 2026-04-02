@@ -201,7 +201,7 @@ export default async function RootLayout({
           }}
         />
       </head>
-      <body className="font-sans antialiased overflow-x-hidden">
+      <body className="font-sans antialiased overflow-x-clip">
         {/* Google Tag Manager (noscript) */}
         <noscript>
           <iframe

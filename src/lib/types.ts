@@ -45,6 +45,7 @@ export interface CaseStudy {
   testimonial?: string;
   technologies?: string[];
   "services-provided"?: string[];
+  charts?: CaseStudyChart[];
   faq?: FAQItem[];
 }
 
@@ -81,6 +82,22 @@ export interface Testimonial {
 export interface FAQItem {
   question: string;
   answer: string;
+}
+
+export interface ChartDataPoint {
+  label: string;
+  value: number;
+  secondaryValue?: number;
+  displayValue?: string;
+  secondaryDisplayValue?: string;
+}
+
+export interface CaseStudyChart {
+  title: string;
+  chartType: 'barComparison' | 'horizontalBar';
+  legendPrimary?: string;
+  legendSecondary?: string;
+  data: ChartDataPoint[];
 }
 
 export interface BlogPost {

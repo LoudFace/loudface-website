@@ -4,7 +4,7 @@ Quick-reference for every reusable component. **Check here before writing any ma
 
 Import all UI primitives from the barrel:
 ```tsx
-import { AICitationVisual, Badge, BulletLabel, Button, Card, CarouselNav, ComponentAssemblyVisual, CopyFirstVisual, ConversionSplitVisual, DesignSystemVisual, LogoImage, PixelBreakpointAnimation, ScalableGridAnimation, SectionContainer, SectionHeader } from '@/components/ui';
+import { AICitationVisual, Badge, BulletLabel, Button, Card, CaseStudyCharts, CarouselNav, ComponentAssemblyVisual, CopyFirstVisual, ConversionSplitVisual, DesignSystemVisual, LogoImage, PixelBreakpointAnimation, ScalableGridAnimation, SectionContainer, SectionHeader } from '@/components/ui';
 ```
 
 ---
@@ -75,6 +75,23 @@ Multi-variant button that renders as `<button>`, `<Link>`, or `<a>` depending on
 ```tsx
 <Button variant="primary" size="lg" calTrigger>Book an intro call</Button>
 <Button variant="outline" href="/work">View case studies</Button>
+```
+
+### CaseStudyCharts
+
+Server-rendered charts for case study results. Zero client JS — pure div-based bars with inline widths. Reads `CaseStudyChart[]` from the CMS `charts` field. Two chart types: `barComparison` (grouped vertical bars, two series) and `horizontalBar` (single-series horizontal bars).
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `charts` | `CaseStudyChart[]` | required | Chart data from CMS |
+| `accentColor` | `string` | `var(--color-primary-500)` | Bar fill color (typically `clientColor`) |
+
+```tsx
+import { CaseStudyCharts } from '@/components/ui';
+import type { CaseStudyChart } from '@/lib/types';
+
+// Renders all charts in a responsive 2-column grid
+<CaseStudyCharts charts={study.charts} accentColor={clientColor} />
 ```
 
 ### Card

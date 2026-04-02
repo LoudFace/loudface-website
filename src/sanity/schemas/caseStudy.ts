@@ -180,6 +180,96 @@ export const caseStudy = defineType({
       of: [{ type: 'reference', to: [{ type: 'serviceCategory' }] }],
     }),
     defineField({
+      name: 'charts',
+      title: 'Charts',
+      type: 'array',
+      description: 'Optional data charts displayed below the key results section',
+      of: [
+        {
+          type: 'object',
+          fields: [
+            defineField({
+              name: 'title',
+              title: 'Title',
+              type: 'string',
+              validation: (rule) => rule.required(),
+            }),
+            defineField({
+              name: 'chartType',
+              title: 'Chart Type',
+              type: 'string',
+              options: {
+                list: [
+                  { title: 'Bar Comparison (two series)', value: 'barComparison' },
+                  { title: 'Horizontal Bar (single series)', value: 'horizontalBar' },
+                ],
+              },
+              validation: (rule) => rule.required(),
+            }),
+            defineField({
+              name: 'legendPrimary',
+              title: 'Legend Primary',
+              type: 'string',
+              description: 'Label for first series (bar comparison only)',
+            }),
+            defineField({
+              name: 'legendSecondary',
+              title: 'Legend Secondary',
+              type: 'string',
+              description: 'Label for second series (bar comparison only)',
+            }),
+            defineField({
+              name: 'data',
+              title: 'Data Points',
+              type: 'array',
+              of: [
+                {
+                  type: 'object',
+                  fields: [
+                    defineField({
+                      name: 'label',
+                      title: 'Label',
+                      type: 'string',
+                      validation: (rule) => rule.required(),
+                    }),
+                    defineField({
+                      name: 'value',
+                      title: 'Value',
+                      type: 'number',
+                      validation: (rule) => rule.required(),
+                    }),
+                    defineField({
+                      name: 'secondaryValue',
+                      title: 'Secondary Value',
+                      type: 'number',
+                      description: 'Second series value (bar comparison only)',
+                    }),
+                    defineField({
+                      name: 'displayValue',
+                      title: 'Display Value',
+                      type: 'string',
+                      description: 'Formatted display string (e.g. "16.1K")',
+                    }),
+                    defineField({
+                      name: 'secondaryDisplayValue',
+                      title: 'Secondary Display Value',
+                      type: 'string',
+                    }),
+                  ],
+                  preview: {
+                    select: { title: 'label', subtitle: 'displayValue' },
+                  },
+                },
+              ],
+            }),
+          ],
+          preview: {
+            select: { title: 'title', subtitle: 'chartType' },
+          },
+        },
+      ],
+    }),
+    defineField({
       name: 'faq',
       title: 'FAQ',
       type: 'array',

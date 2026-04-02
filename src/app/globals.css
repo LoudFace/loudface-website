@@ -534,16 +534,12 @@ html {
 
   /* H2 - Left accent border with gradient */
   .case-study-prose h2 {
-    position: relative;
-    padding: 1rem 0 1rem 1.25rem;
     margin-top: 3rem;
     margin-bottom: 1.5rem;
     font-family: var(--font-heading);
-    font-weight: 500;
+    font-weight: 600;
     font-size: 1.5rem;
     color: var(--color-surface-950);
-    border-left: 3px solid var(--color-primary-500);
-    background: linear-gradient(to right, var(--color-surface-50) 0%, transparent 70%);
   }
 
   .case-study-prose h2:first-child {
@@ -644,7 +640,7 @@ html {
     padding: 1.5rem 2rem;
     background: var(--color-surface-50);
     border-radius: 0.75rem;
-    border-left: 4px solid var(--color-primary-500);
+    border-left: 4px solid var(--color-surface-300);
   }
 
   .case-study-prose blockquote p {
@@ -691,6 +687,41 @@ html {
     background: var(--color-surface-100);
     border-radius: 0.25rem;
     color: var(--color-primary-600);
+  }
+
+  .case-study-prose table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 1.5rem;
+    margin-bottom: 1.5rem;
+    font-size: 0.875rem;
+    line-height: 1.5;
+  }
+
+  .case-study-prose thead {
+    border-bottom: 2px solid var(--color-surface-200);
+  }
+
+  .case-study-prose th {
+    text-align: left;
+    font-weight: 600;
+    color: var(--color-surface-900);
+    padding: 0.625rem 0.75rem;
+    white-space: nowrap;
+  }
+
+  .case-study-prose td {
+    padding: 0.5rem 0.75rem;
+    color: var(--color-surface-600);
+    border-bottom: 1px solid var(--color-surface-100);
+  }
+
+  .case-study-prose tbody tr:last-child td {
+    border-bottom: none;
+  }
+
+  .case-study-prose td strong {
+    color: var(--color-surface-900);
   }
 
   /* Scroll offset for fixed header */

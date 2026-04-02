@@ -16,7 +16,7 @@ import { fetchCollection, fetchHomepageData, fetchItemBySlug } from '@/lib/cms-d
 import { asset } from '@/lib/assets';
 import { heroImage, avatarImage, thumbnailImage, optimizeImage } from '@/lib/image-utils';
 import { getContrastColor } from '@/lib/color-utils';
-import { Button, SectionContainer } from '@/components/ui';
+import { Button, SectionContainer, CaseStudyCharts } from '@/components/ui';
 import { CTA, FAQ } from '@/components/sections';
 import { buildNoIndexMetadata, buildPageMetadata, truncateSeoTitle, truncateSeoDescription, rewriteLegacyUrls, resolveServiceSlug } from '@/lib/seo-utils';
 import { extractFAQFromHTML, buildFAQSchema, buildSpeakableSchema, buildReviewSchema } from '@/lib/schema-utils';
@@ -296,9 +296,9 @@ export default async function CaseStudyPage({ params }: PageProps) {
           <div className="max-w-5xl mx-auto">
             <nav className="mb-6" aria-label="Breadcrumb">
               <ol className="flex items-center gap-2 text-sm opacity-70" style={{ color: textColor }}>
-                <li><Link href="/case-studies" className="hover:opacity-100">Case Studies</Link></li>
-                <li><span className="mx-1">/</span></li>
-                <li className="opacity-100">{projectTitle}</li>
+                <li className="shrink-0"><Link href="/case-studies" className="hover:opacity-100">Case Studies</Link></li>
+                <li className="shrink-0"><span className="mx-1">/</span></li>
+                <li className="opacity-100 min-w-0 truncate">{projectTitle}</li>
               </ol>
             </nav>
 
@@ -399,12 +399,19 @@ export default async function CaseStudyPage({ params }: PageProps) {
                   'grid-cols-1 sm:grid-cols-3'
                 }`}>
                   {results.map((result, i) => (
-                    <div key={i} className="flex items-baseline gap-3 p-4 rounded-lg bg-surface-50 border-l-4" style={{ borderLeftColor: clientColor }}>
-                      <span className="text-2xl md:text-3xl font-medium text-surface-900">{result.number}</span>
-                      <span className="text-sm text-surface-600">{result.title}</span>
+                    <div key={i} className="p-5 rounded-lg bg-surface-50">
+                      <span className="block text-2xl md:text-3xl font-medium text-surface-900">{result.number}</span>
+                      <span className="block mt-1 text-sm text-surface-600 leading-snug">{result.title}</span>
                     </div>
                   ))}
                 </div>
+              </div>
+            )}
+
+            {/* Charts */}
+            {study.charts && study.charts.length > 0 && (
+              <div className="mb-8">
+                <CaseStudyCharts charts={study.charts} accentColor={clientColor} />
               </div>
             )}
 
@@ -428,7 +435,7 @@ export default async function CaseStudyPage({ params }: PageProps) {
             )}
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-[1fr_280px] gap-8 lg:gap-12">
+          <div className="grid grid-cols-1 lg:grid-cols-[1fr_280px] lg:items-start gap-8 lg:gap-12">
             {/* Article Body */}
             <article className="min-w-0">
               {processedBody ? (

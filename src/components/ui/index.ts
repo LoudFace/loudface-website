@@ -3,6 +3,7 @@ export { Badge } from './Badge';
 export { BulletLabel } from './BulletLabel';
 export { Button } from './Button';
 export { Card } from './Card';
+export { CaseStudyCharts } from './CaseStudyCharts';
 export { CarouselNav } from './CarouselNav';
 export { ComponentAssemblyVisual } from './ComponentAssemblyVisual';
 export { LogoImage } from './LogoImage';

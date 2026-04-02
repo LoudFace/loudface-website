@@ -66,6 +66,7 @@ const CASE_STUDY_PROJECTION = `{
   "testimonial": testimonial._ref,
   "technologies": technologies[]._ref,
   "services-provided": servicesProvided[]._ref,
+  "charts": charts[]{ title, chartType, legendPrimary, legendSecondary, data[]{ label, value, secondaryValue, displayValue, secondaryDisplayValue } },
   "faq": faq[]{ question, answer }
 }`;
 
