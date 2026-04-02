@@ -393,7 +393,7 @@ export default async function BlogPostPage({ params }: PageProps) {
         </div>
       </SectionContainer>
 
-      {/* FAQ — visible accordion from auto-extracted H2 headings */}
+      {/* FAQ — open layout from auto-extracted H2 headings */}
       {faqItems.length >= 2 && (
         <FAQ
           title="Frequently Asked Questions"
@@ -401,6 +401,7 @@ export default async function BlogPostPage({ params }: PageProps) {
           items={faqItems}
           showFooter={false}
           skipSchema
+          variant="open"
         />
       )}
 

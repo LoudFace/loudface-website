@@ -14,7 +14,7 @@ import Link from 'next/link';
 import type { Metadata } from 'next';
 import { fetchCollection, fetchHomepageData, fetchItemBySlug } from '@/lib/cms-data';
 import { asset } from '@/lib/assets';
-import { heroImage, avatarImage, thumbnailImage, optimizeImage } from '@/lib/image-utils';
+import { avatarImage, thumbnailImage, optimizeImage } from '@/lib/image-utils';
 import { getContrastColor } from '@/lib/color-utils';
 import { Button, SectionContainer, CaseStudyCharts } from '@/components/ui';
 import { CTA, FAQ } from '@/components/sections';
@@ -241,8 +241,10 @@ export default async function CaseStudyPage({ params }: PageProps) {
     url: canonicalUrl,
     description: study['paragraph-summary'] || `Case study: ${projectTitle}`,
     image: study['main-project-image-thumbnail']?.url,
+    ...(study._createdAt && { datePublished: study._createdAt }),
+    ...(study._updatedAt && { dateModified: study._updatedAt }),
     author: { '@type': 'Organization', name: 'LoudFace', url: 'https://www.loudface.co' },
-    publisher: { '@type': 'Organization', name: 'LoudFace' },
+    publisher: { '@type': 'Organization', name: 'LoudFace', logo: { '@type': 'ImageObject', url: 'https://www.loudface.co/images/loudface.svg' } },
     mainEntityOfPage: { '@type': 'WebPage', '@id': canonicalUrl },
   };
 
@@ -308,7 +310,7 @@ export default async function CaseStudyPage({ params }: PageProps) {
                 alt={client.name}
                 width="120"
                 height="24"
-                loading="lazy"
+                loading="eager"
                 className="h-6 mb-4 opacity-80"
               />
             )}
@@ -340,6 +342,15 @@ export default async function CaseStudyPage({ params }: PageProps) {
                   {study.country}
                 </span>
               )}
+              {study._createdAt && (
+                <time
+                  dateTime={study._createdAt}
+                  className="text-sm opacity-70"
+                  style={{ color: textColor }}
+                >
+                  {new Date(study._createdAt).toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}
+                </time>
+              )}
               {/* TODO: Re-enable Visit site button when ready */}
               {/* {websiteUrl && (
                 <a
@@ -360,29 +371,6 @@ export default async function CaseStudyPage({ params }: PageProps) {
         </div>
       </section>
 
-      {/* Hero Image */}
-      {study['main-project-image-thumbnail']?.url && (() => {
-        const hero = heroImage(study['main-project-image-thumbnail'].url);
-        return (
-          <div className="bg-white pt-12 md:pt-16">
-            <div className="px-4 md:px-8 lg:px-12">
-              <div className="max-w-5xl mx-auto">
-                <img
-                  src={hero.src}
-                  srcSet={hero.srcset}
-                  sizes="(max-width: 768px) 100vw, (max-width: 1200px) 80vw, 1000px"
-                  alt={study['main-project-image-thumbnail'].alt || projectTitle}
-                  width="1200"
-                  height="675"
-                  className="w-full rounded-xl shadow-lg"
-                  loading="eager"
-                  fetchPriority="high"
-                />
-              </div>
-            </div>
-          </div>
-        );
-      })()}
 
       {/* Main Content */}
       <SectionContainer className="bg-white" padding="sm">
@@ -486,9 +474,9 @@ export default async function CaseStudyPage({ params }: PageProps) {
                   <span className="block text-sm font-medium text-surface-500 uppercase tracking-wide mb-3">Technologies</span>
                   <div className="flex flex-wrap gap-2">
                     {technologies.map(tech => (
-                      <span key={tech.id} className="px-3 py-1 bg-surface-100 rounded text-sm text-surface-700">
+                      <Link key={tech.id} href={`/case-studies?tech=${tech.slug}`} className="px-3 py-1 bg-surface-100 hover:bg-surface-200 rounded text-sm text-surface-700 transition-colors">
                         {tech.name}
-                      </span>
+                      </Link>
                     ))}
                   </div>
                 </div>

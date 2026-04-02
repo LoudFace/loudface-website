@@ -47,6 +47,8 @@ export interface CaseStudy {
   "services-provided"?: string[];
   charts?: CaseStudyChart[];
   faq?: FAQItem[];
+  _createdAt?: string;
+  _updatedAt?: string;
 }
 
 /**

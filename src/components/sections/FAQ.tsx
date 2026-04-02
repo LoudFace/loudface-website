@@ -16,6 +16,8 @@ interface FAQProps {
   footerCtaText?: string;
   /** Skip JSON-LD schema generation (use when schema is already emitted elsewhere on the page) */
   skipSchema?: boolean;
+  /** `accordion` = collapsed <details> toggles (default), `open` = all answers visible */
+  variant?: 'accordion' | 'open';
 }
 
 // Strip HTML tags from answer for schema
@@ -35,6 +37,7 @@ export function FAQ({
   footerText,
   footerCtaText,
   skipSchema = false,
+  variant = 'accordion',
 }: FAQProps) {
   const content = getFAQContent();
 
@@ -81,24 +84,39 @@ export function FAQ({
         {/* FAQ Items + Footer CTA */}
         <div className="grid grid-cols-1 lg:grid-cols-[2fr_1fr] gap-8 lg:gap-12">
           {/* FAQ Items */}
-          <div className="space-y-0 divide-y divide-surface-200 border-y border-surface-200">
-            {items.map((item, index) => (
-              <details key={index} className="group faq-details">
-                <summary className="flex items-center justify-between gap-4 py-5 cursor-pointer list-none select-none hover:bg-surface-50 -mx-4 px-4 transition-colors focus-visible:outline-2 focus-visible:outline-primary-500 focus-visible:outline-offset-2 rounded-lg">
-                  <span className="text-base md:text-lg font-medium text-surface-900 pr-4">
+          {variant === 'accordion' ? (
+            <div className="space-y-0 divide-y divide-surface-200 border-y border-surface-200">
+              {items.map((item, index) => (
+                <details key={index} className="group faq-details">
+                  <summary className="flex items-center justify-between gap-4 py-5 cursor-pointer list-none select-none hover:bg-surface-50 -mx-4 px-4 transition-colors focus-visible:outline-2 focus-visible:outline-primary-500 focus-visible:outline-offset-2 rounded-lg">
+                    <span className="text-base md:text-lg font-medium text-surface-900 pr-4">
+                      {item.question}
+                    </span>
+                    <span className="flex-shrink-0 w-6 h-6 relative" aria-hidden="true">
+                      <span className="absolute top-1/2 left-0 w-6 h-0.5 bg-surface-400 -translate-y-1/2 transition-transform group-open:rotate-0" />
+                      <span className="absolute top-1/2 left-0 w-6 h-0.5 bg-surface-400 -translate-y-1/2 rotate-90 transition-transform group-open:rotate-0" />
+                    </span>
+                  </summary>
+                  <div className="pb-5 pr-10 text-surface-600 leading-relaxed overflow-hidden animate-fade-in">
+                    <p dangerouslySetInnerHTML={{ __html: item.answer }} />
+                  </div>
+                </details>
+              ))}
+            </div>
+          ) : (
+            <div className="space-y-8">
+              {items.map((item, index) => (
+                <div key={index}>
+                  <h3 className="text-base md:text-lg font-medium text-surface-900">
                     {item.question}
-                  </span>
-                  <span className="flex-shrink-0 w-6 h-6 relative" aria-hidden="true">
-                    <span className="absolute top-1/2 left-0 w-6 h-0.5 bg-surface-400 -translate-y-1/2 transition-transform group-open:rotate-0" />
-                    <span className="absolute top-1/2 left-0 w-6 h-0.5 bg-surface-400 -translate-y-1/2 rotate-90 transition-transform group-open:rotate-0" />
-                  </span>
-                </summary>
-                <div className="pb-5 pr-10 text-surface-600 leading-relaxed overflow-hidden animate-fade-in">
-                  <p dangerouslySetInnerHTML={{ __html: item.answer }} />
+                  </h3>
+                  <div className="mt-2 text-surface-600 leading-relaxed">
+                    <p dangerouslySetInnerHTML={{ __html: item.answer }} />
+                  </div>
                 </div>
-              </details>
-            ))}
-          </div>
+              ))}
+            </div>
+          )}
 
           {/* Footer CTA */}
           {showFooter && (

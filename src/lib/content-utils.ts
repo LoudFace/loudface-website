@@ -31,6 +31,7 @@ import servicesGrowthAutopilotContent from "@/data/content/services-growth-autop
 import seoForHubContent from "@/data/content/seo-for-hub.json";
 import seoForSaasContent from "@/data/content/seo-for-saas.json";
 import homepageContent from "@/data/content/homepage.json";
+import pricingContent from "@/data/content/pricing.json";
 
 // Type definitions for content files
 export interface CTAContent {
@@ -739,6 +740,63 @@ export interface ServicesUxUiDesignContent {
   };
 }
 
+export interface PricingContent {
+  hero: {
+    eyebrow: string;
+    headline: string;
+    description: string;
+  };
+  howItWorks: {
+    title: string;
+    highlightWord: string;
+    steps: { number: string; title: string; description: string }[];
+  };
+  plans: {
+    qualifier: string;
+    tiers: {
+      name: string;
+      tagline: string;
+      description: string;
+      changes?: string[];
+      upgradeHint: string | null;
+      featured: boolean;
+      badge?: string;
+    }[];
+  };
+  tracks: {
+    title: string;
+    highlightWord: string;
+    subtitle: string;
+    items: { icon: string; label: string; tagline: string; description: string }[];
+  };
+  comparison: {
+    title: string;
+    highlightWord: string;
+    rows: { label: string; solo: string; dual: string; scale: string }[];
+    footnote: string;
+  };
+  beyondRetainers: {
+    title: string;
+    description: string;
+    options: { title: string; description: string }[];
+    ctaText: string;
+  };
+  included: {
+    title: string;
+    highlightWord: string;
+    items: { feature: string; description: string }[];
+  };
+  faq: {
+    title: string;
+    items: FAQItem[];
+  };
+  cta: {
+    title: string;
+    subtitle: string;
+    ctaText: string;
+  };
+}
+
 // Content registry - maps file names to their content
 const contentRegistry: Record<string, unknown> = {
   cta: ctaContent,
@@ -762,6 +820,7 @@ const contentRegistry: Record<string, unknown> = {
   "seo-for-hub": seoForHubContent,
   "seo-for-saas": seoForSaasContent,
   homepage: homepageContent,
+  pricing: pricingContent,
 };
 
 /**
@@ -925,6 +984,13 @@ export function getSeoForSaasContent(): SeoForSaasContent {
  */
 export function getHomepageContent(): HomepageContent {
   return homepageContent as HomepageContent;
+}
+
+/**
+ * Get Pricing page content
+ */
+export function getPricingContent(): PricingContent {
+  return pricingContent as PricingContent;
 }
 
 /**

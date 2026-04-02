@@ -287,7 +287,7 @@ All section components are exported from `@/components/sections` (or `@/componen
 | `CaseStudySlider` | `CaseStudySlider.tsx` | Embla carousel of case study cards | Yes |
 | `Results` | `Results.tsx` | Bento grid of results/metrics | No |
 | `Knowledge` | `Knowledge.tsx` | Blog post carousel | Yes |
-| `FAQ` | `FAQ.tsx` | Accordion FAQ section | No |
+| `FAQ` | `FAQ.tsx` | FAQ section. `variant="accordion"` (default) = collapsed `<details>` toggles, `variant="open"` = all answers visible. Props: `title?`, `subtitle?`, `items`, `showFooter?`, `footerTitle?`, `footerText?`, `footerCtaText?`, `skipSchema?`, `variant?` | No |
 | `CTA` | `CTA.tsx` | Final call-to-action section | No |
 | `EditorialProse` | `EditorialProse.tsx` | Splits CMS RichText at H2 boundaries into numbered insight cards (ghosted 01/02/03 numbers, heading, first-paragraph summary, native `<details>` expand for remaining content). Props: `html`, `industryName?` | No |
 | `DeliverablesGrid` | `DeliverablesGrid.tsx` | Split layout: header left, dual-column vertical marquee right. Items scroll in opposite directions (CSS-only, uses existing scroll-down/scroll-up keyframes). Fade masks at edges. Respects `prefers-reduced-motion`. Props: `html`, `industryName?` | No |
