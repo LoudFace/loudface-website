@@ -219,7 +219,13 @@ export default async function CaseStudyPage({ params }: PageProps) {
       .slice(0, 3)
       .map(s => s.study);
   })();
-  const { toc, html: processedBody } = extractTocAndAddIds(study['main-body']);
+  const { toc, html: processedBody } = (() => {
+    let body = study['main-body'] || '';
+    // Strip the first <figure> if it appears before or right after the first paragraph —
+    // the hero section already provides the visual header, so this image is redundant.
+    body = body.replace(/^(\s*(?:<p[^>]*>.*?<\/p>\s*)?)<figure[^>]*>[\s\S]*?<\/figure>/, '$1');
+    return extractTocAndAddIds(body);
+  })();
 
   const projectTitle = study['project-title'] || study.name;
   const canonicalUrl = `https://www.loudface.co/case-studies/${slug}`;
