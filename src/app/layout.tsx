@@ -85,9 +85,16 @@ export const metadata: Metadata = {
     images: ["https://www.loudface.co/opengraph-image"],
   },
   icons: {
-    icon: "/lf-logo.svg",
-    apple: "/images/webclip.png",
+    icon: [
+      { url: "/images/favicon-32x32.png", sizes: "32x32", type: "image/png" },
+      { url: "/images/favicon-96x96.png", sizes: "96x96", type: "image/png" },
+      { url: "/lf-logo.svg", type: "image/svg+xml" },
+    ],
+    apple: [
+      { url: "/images/webclip.png", sizes: "256x256" },
+    ],
   },
+  manifest: "/site.webmanifest",
   other: {
     "theme-color": "#0a0a0a", // surface-950 — meta tags require literal values
   },
