@@ -10,23 +10,23 @@
     "steps": [
       {
         "number": "01",
-        "title": "Pick your track",
-        "description": "Build (Webflow design, dev, conversion) or Growth (SEO, AEO, content systems). Or run both."
+        "title": "Intro call",
+        "description": "30 minutes. We learn your goals, current setup, and the gap. We recommend the right tier."
       },
       {
         "number": "02",
-        "title": "We own the roadmap",
-        "description": "No micromanaging. We plan, prioritize, and ship based on what moves the needle."
+        "title": "Scoping & proposal",
+        "description": "We map out the first initiatives, define success metrics, and send a fixed monthly proposal."
       },
       {
         "number": "03",
-        "title": "You stay in the loop",
-        "description": "Showcases, async updates, and a live Scoreboard so you always know what's happening and why."
+        "title": "Kickoff",
+        "description": "Access setup, Scoreboard live, first initiative briefed. You meet your delivery team."
       },
       {
         "number": "04",
-        "title": "You scale up or down",
-        "description": "Upgrade when you need more firepower. Downgrade when things stabilize. No lock-in drama."
+        "title": "We ship, weekly",
+        "description": "Showcases land in your inbox. Work flows on cadence. You approve, we ship, repeat."
       }
     ]
   },
@@ -108,19 +108,19 @@
     "footnote": "Every engagement is scoped to your goals. Pricing depends on tier, scope, and complexity. Book an intro call and we'll recommend the right fit."
   },
   "beyondRetainers": {
-    "title": "Beyond Retainers",
-    "description": "Not every engagement fits a monthly retainer. We also run:",
+    "title": "Special Arrangements",
+    "description": "Every engagement runs through a retainer, but we flex the structure when it makes sense:",
     "options": [
       {
-        "title": "Fixed-scope projects",
-        "description": "Defined deliverable, fixed price, clear timeline. Great for redesigns, migrations, or one-off builds."
+        "title": "Have a fixed scope?",
+        "description": "We deliver it inside a retainer with a 3-month minimum. You get the same team, cadence, and Scoreboard. We just point all the velocity at your defined deliverable until it ships."
       },
       {
         "title": "Performance deals",
-        "description": "We tie part of our fee to results. You pay for outcomes, not hours."
+        "description": "For the right partnership, we tie part of our fee to results. You pay for outcomes, not hours. Available case-by-case."
       }
     ],
-    "ctaText": "Book an Intro Call to Explore These Options"
+    "ctaText": "Talk to Us About Your Scope"
   },
   "included": {
     "title": "What Every Plan Includes",

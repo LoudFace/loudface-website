@@ -127,14 +127,14 @@ export default function PricingPage() {
 
       {/* ─── Hero (Light, centered, oversized type) ─── */}
       <SectionContainer padding="lg">
-        <div className="max-w-3xl mx-auto text-center">
+        <div className="max-w-4xl mx-auto text-center">
           <span className="inline-flex items-center gap-2 rounded-full bg-surface-100 border border-surface-200 px-4 py-1.5 text-xs font-medium text-surface-600 tracking-wide uppercase mb-8">
             <span className="w-1.5 h-1.5 rounded-full bg-primary-500" />
             {content.hero.eyebrow}
           </span>
 
           <h1
-            className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-medium text-surface-900 leading-tight tracking-tight"
+            className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-medium text-surface-900 leading-[1.1] tracking-tight text-balance"
             dangerouslySetInnerHTML={{ __html: content.hero.headline }}
           />
 
@@ -188,6 +188,45 @@ export default function PricingPage() {
         </div>
       </SectionContainer>
 
+      {/* ─── Two Tracks (Light, sits before plans so the term is defined first) ─── */}
+      <SectionContainer padding="sm">
+        <div className="max-w-3xl mx-auto text-center mb-12">
+          <h2 className="text-2xl sm:text-3xl md:text-4xl font-medium text-surface-900 mb-4">
+            {content.tracks.title.split(content.tracks.highlightWord)[0]}
+            <span className="text-primary-600">{content.tracks.highlightWord}</span>
+            {content.tracks.title.split(content.tracks.highlightWord)[1] || ''}
+          </h2>
+          <p className="text-surface-500 text-base max-w-xl mx-auto">
+            {content.tracks.subtitle}
+          </p>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto">
+          {content.tracks.items.map((track) => (
+            <div
+              key={track.label}
+              className="rounded-2xl bg-white border border-surface-200 p-8 transition-colors hover:border-surface-300"
+            >
+              <div className="flex items-center gap-3 mb-4">
+                <div className="w-10 h-10 rounded-xl bg-surface-900 text-white flex items-center justify-center">
+                  {track.icon === 'build'
+                    ? <BuildIcon className="w-5 h-5" />
+                    : <GrowthIcon className="w-5 h-5" />
+                  }
+                </div>
+                <div>
+                  <h3 className="text-lg font-medium text-surface-900">{track.label}</h3>
+                  <p className="text-sm text-primary-600">{track.tagline}</p>
+                </div>
+              </div>
+              <p className="text-sm text-surface-600 leading-relaxed">
+                {track.description}
+              </p>
+            </div>
+          ))}
+        </div>
+      </SectionContainer>
+
       {/* ─── Plans (Dark section — the centrepiece) ─── */}
       <SectionContainer padding="lg" className="bg-surface-900" id="plans">
         <div className="text-center mb-4">
@@ -195,8 +234,14 @@ export default function PricingPage() {
             Choose your tier
           </h2>
         </div>
-        <p className="text-sm text-surface-400 text-center max-w-xl mx-auto mb-16">
+        <p className="text-sm text-surface-400 text-center max-w-xl mx-auto mb-3">
           {content.plans.qualifier}
+        </p>
+        <p className="text-center mb-16">
+          <span className="inline-flex items-center gap-2 rounded-full bg-white/10 border border-white/15 px-4 py-1.5 text-sm font-medium text-white">
+            <span className="w-1.5 h-1.5 rounded-full bg-primary-400" />
+            Engagements start from $5k/mo
+          </span>
         </p>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-stretch">
@@ -266,49 +311,10 @@ export default function PricingPage() {
                       : '!border-surface-500 !text-white hover:!bg-surface-700'
                     }
                   >
-                    Book an Intro Call
+                    {tier.featured ? 'Start with Dual' : `Start with ${tier.name.split(' ')[0]}`}
                   </Button>
                 </div>
               </div>
-            </div>
-          ))}
-        </div>
-      </SectionContainer>
-
-      {/* ─── Two Tracks (Transitional — dark to light) ─── */}
-      <SectionContainer className="bg-surface-900 !pt-0" padding="lg">
-        <div className="max-w-3xl mx-auto text-center mb-12">
-          <h2 className="text-2xl sm:text-3xl md:text-4xl font-medium text-white mb-4">
-            {content.tracks.title.split(content.tracks.highlightWord)[0]}
-            <span className="text-surface-500">{content.tracks.highlightWord}</span>
-            {content.tracks.title.split(content.tracks.highlightWord)[1] || ''}
-          </h2>
-          <p className="text-surface-400 text-sm max-w-xl mx-auto">
-            {content.tracks.subtitle}
-          </p>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto">
-          {content.tracks.items.map((track) => (
-            <div
-              key={track.label}
-              className="rounded-2xl bg-surface-800 border border-surface-700 p-8 transition-colors hover:border-surface-600"
-            >
-              <div className="flex items-center gap-3 mb-4">
-                <div className="w-10 h-10 rounded-xl bg-white/10 text-white flex items-center justify-center">
-                  {track.icon === 'build'
-                    ? <BuildIcon className="w-5 h-5" />
-                    : <GrowthIcon className="w-5 h-5" />
-                  }
-                </div>
-                <div>
-                  <h3 className="text-lg font-medium text-white">{track.label}</h3>
-                  <p className="text-sm text-primary-400">{track.tagline}</p>
-                </div>
-              </div>
-              <p className="text-sm text-surface-300 leading-relaxed">
-                {track.description}
-              </p>
             </div>
           ))}
         </div>

@@ -28,6 +28,7 @@ const navLinks: NavLink[] = [
   { label: "Our Work", href: "/case-studies" },
   { label: "Blog", href: "/blog" },
   { label: "About us", href: "/about" },
+  { label: "Pricing", href: "/pricing" },
 ];
 
 const servicesDropdown: Dropdown = {
@@ -295,6 +296,15 @@ export function Header() {
 
   return (
     <header className="sticky top-0 z-50 bg-white/95 backdrop-blur-md border-b border-surface-100/80">
+      {/* Accepting Bookings — square tab attached just below the navbar's bottom border */}
+      <div className="hidden lg:block absolute top-full right-0">
+        <div className="inline-flex items-center gap-2 px-4 py-2 bg-white/95 backdrop-blur-md border border-surface-100/80 border-t-0 border-r-0 rounded-bl-lg">
+            <div className="w-1.5 h-1.5 bg-success rounded-full animate-pulse" />
+            <span className="text-2xs font-medium text-surface-600">
+              Accepting Bookings
+            </span>
+        </div>
+      </div>
       <div className="py-3.5 px-4 md:px-8 lg:px-12">
         <div className="max-w-7xl mx-auto">
           <div className="flex items-center justify-between gap-8">
@@ -334,19 +344,8 @@ export function Header() {
               </nav>
             </div>
 
-            {/* Right: Status, Timezone, CTA */}
+            {/* Right: CTA */}
             <div className="flex items-center gap-5">
-              {/* Status Badge */}
-              <div className="hidden lg:flex items-center gap-2 px-3 py-1.5 bg-surface-50 rounded-full">
-                <div className="w-1.5 h-1.5 bg-success rounded-full animate-pulse" />
-                <span className="text-2xs font-medium text-surface-600">
-                  Accepting Bookings
-                </span>
-              </div>
-
-              {/* Divider */}
-              <div className="hidden lg:block w-px h-5 bg-surface-200" />
-
               {/* CTA Button */}
               <button
                 type="button"
