@@ -82,6 +82,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     },
     // Legal pages
     {
+      url: `${baseUrl}/ai-audit`,
+      lastModified: staticLastModified,
+      changeFrequency: 'monthly',
+      priority: 0.8,
+    },
+    {
       url: `${baseUrl}/partners`,
       lastModified: staticLastModified,
       changeFrequency: 'monthly',
