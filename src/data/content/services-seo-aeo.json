@@ -1,78 +1,80 @@
 {
   "hero": {
-    "eyebrow": "SEO & AI Engine Optimization",
+    "eyebrow": "SEO + AEO for B2B SaaS",
     "headline": "Get cited —<br>not just ranked",
-    "description": "Rankings are table stakes. The real question: does your brand get cited when buyers ask ChatGPT, Perplexity, or Google AI Mode about your industry? We run hands-free search programs that build authority across every platform where your buyers look for answers.",
-    "primaryCta": "Book an intro call",
+    "description": "We run SEO and AEO as one integrated program. Your brand ranks on Google, gets cited by AI engines, and converts the traffic that actually matters.",
+    "primaryCta": "Free AI Visibility Audit",
     "secondaryCta": "See how it works"
   },
   "stats": [
-    { "value": "5+", "label": "AI Engines Monitored" },
-    { "value": "90-day", "label": "Strategy Cycles" },
-    { "value": "Weekly", "label": "Executive Showcases" },
-    { "value": "100%", "label": "Hands-Free Execution" }
+    { "value": "$200K", "label": "Generated in 30 days from a single SEO-optimised page" },
+    { "value": "288%", "label": "Conversion rate increase for a B2B SaaS health-tech brand" },
+    { "value": "200+", "label": "B2B brands grown across SaaS, fintech, and AI verticals" },
+    { "value": "5+", "label": "AI engines monitored — ChatGPT, Perplexity, Gemini, Claude, Google SGE" }
   ],
   "problems": {
-    "title": "Search has changed. Most strategies haven't.",
+    "title": "Search has changed. So have the strategies.",
     "highlightWord": "changed",
+    "subtitle": "Outdated SEO strategies result in empty pipelines.",
     "items": [
       {
         "number": "01",
-        "title": "Rankings without revenue",
-        "description": "You're on page one for a few keywords, but traffic doesn't convert. Monthly reports full of impressions and backlink counts, with no clear line to pipeline or revenue. Vanity metrics dressed up as progress."
+        "title": "You're ranking. Your pipeline isn't moving.",
+        "description": "You're on page #1 for a handful of keywords. Traffic is ticking up, but demo requests aren't. Monthly reports full of impressions and backlink counts with no clear line to revenue."
       },
       {
         "number": "02",
-        "title": "Invisible to AI engines",
-        "description": "Someone asks ChatGPT about your category, and your brand doesn't come up. AI engines don't just scrape Google. They synthesize knowledge from across the web. If you're not part of that knowledge graph, you're invisible to a growing share of buyers."
+        "title": "Your brand doesn't show up in AI searches.",
+        "description": "When a buyer asks ChatGPT, Perplexity, or Google SGE, your competitors come up. You don't. AI engines don't just scrape Google. They pull from a wider knowledge graph, and if you're not in it, you're invisible to a growing share of customers."
       },
       {
         "number": "03",
-        "title": "Tactics without a system",
-        "description": "Blog posts without a topical plan. Technical fixes that happen reactively. Nobody owns the results, and nothing connects search work to business outcomes. You have a checklist, not a strategy."
+        "title": "You have tactics. Not a system.",
+        "description": "Blog posts without a topical strategy. Technical fixes done reactively. Nothing connects search activity to pipeline. You're paying for execution with no accountability to outcomes."
       }
     ]
   },
   "approach": {
-    "title": "The Autopilot model",
+    "title": "How we work: The Autopilot model",
     "highlightWord": "Autopilot",
     "intro": "We don't wait for tickets or send monthly recommendation decks. We own the roadmap, execute the work, and show up every week with measurable progress tied to your business goals.",
     "steps": [
       {
         "number": "1",
         "title": "Foundation audit",
-        "description": "We map technical health, content gaps, entity coverage, and AI engine presence. Every opportunity scored against business impact, not keyword difficulty."
+        "description": "We map technical health, content gaps, entity coverage, and AI engine presence. Every opportunity is scored against business impact, not keyword difficulty or domain authority vanity scores."
       },
       {
         "number": "2",
         "title": "90-day roadmap",
-        "description": "3-5 measurable goals tied to revenue outcomes. A shared scoreboard you can check anytime. Clear decision rights so nothing stalls."
+        "description": "3–5 measurable goals tied directly to pipeline outcomes. A shared scoreboard you can check anytime. Clear ownership so nothing stalls waiting for someone to make a call."
       },
       {
         "number": "3",
         "title": "Continuous execution",
-        "description": "Content, technical improvements, link building, and AEO optimization ship weekly. One point of contact. No task management on your end."
+        "description": "Content, technical improvements, link building, and AEO optimisation ship weekly. One point of contact. Zero task management on your end."
       },
       {
         "number": "4",
-        "title": "Weekly showcase",
-        "description": "A live walkthrough of what shipped, how metrics moved, and what's next. Every deliverable tied to the outcomes your exec team cares about."
+        "title": "Weekly check-in",
+        "description": "A live walkthrough of what shipped, how metrics moved, and what's next. Every number tied to outcomes your leadership team actually cares about. Not vanity dashboards."
       }
     ]
   },
   "tracks": {
-    "title": "Two disciplines. One integrated program.",
+    "title": "Two disciplines. One integrated system.",
     "highlightWord": "integrated",
-    "description": "Most agencies bolt AEO onto an existing SEO retainer as an afterthought. We built our program to treat both as first-class disciplines that feed each other.",
-    "bridge": "These feed each other. SEO builds the authority that makes you rankable. AEO makes sure AI engines know about it.",
+    "headline": "SEO gets you found. AEO gets you chosen.",
+    "description": "Most agencies bolt AEO onto an existing SEO retainer as an afterthought. We built the program so both disciplines feed each other from day one.",
+    "bridge": "SEO builds the authority that makes you rankable. AEO makes sure AI engines know about it, and recommend you.",
     "seo": {
       "label": "SEO",
-      "title": "Search Engine Optimization",
+      "title": "Search Engine Optimisation",
       "description": "The foundation: technical health, content authority, and the signals Google uses to rank.",
       "items": [
-        "Technical SEO & Core Web Vitals",
+        "Technical SEO + Core Web Vitals",
         "Internal linking architecture",
-        "Structured data & schema markup",
+        "Structured data + schema markup",
         "Topical authority clusters",
         "Hub-and-spoke content strategy",
         "Programmatic SEO at scale"
@@ -80,41 +82,41 @@
     },
     "aeo": {
       "label": "AEO",
-      "title": "AI Engine Optimization",
-      "description": "The frontier: entity clarity, citation signals, and structured content that AI engines recommend.",
+      "title": "AI Engine Optimisation",
+      "description": "The frontier: entity clarity, citation signals, and content AI engines actually recommend.",
       "items": [
-        "LLMs.txt implementation",
+        "AI search mention audit",
         "Entity-first content structure",
-        "Conversational Q&A formatting",
+        "LLM visibility monitoring across ChatGPT, Perplexity, Gemini, Claude, SGE",
+        "Brand citation tracking",
         "FAQ schema for AI parsing",
-        "LLM visibility monitoring",
-        "Brand citation tracking"
+        "Competitive AI visibility gap analysis"
       ]
     }
   },
   "capabilities": {
-    "title": "What the program covers",
-    "highlightWord": "covers",
+    "title": "Full program scope",
+    "highlightWord": "scope",
     "items": [
       {
         "title": "Technical foundation",
-        "description": "Site health, Core Web Vitals, crawl optimization, structured data, internal linking. The infrastructure that makes everything else work."
+        "description": "Site health, Core Web Vitals, crawl optimisation, structured data, internal linking. The infrastructure that makes everything else compound."
       },
       {
         "title": "Content systems",
-        "description": "Topical clusters, comparison pages, FAQ compilations, and programmatic SEO. Built for both Google and AI engines with short, scannable paragraphs that models can actually parse."
+        "description": "Topical clusters, comparison pages, FAQ compilations, and programmatic SEO. Built for both Google and AI engines — structured so models can parse it, humans can act on it."
       },
       {
-        "title": "Off-page & distribution",
-        "description": "Guest posts on high-DR publications, G2 and Capterra presence, Reddit and Quora strategy, community engagement. The sources AI engines pull from when forming answers about your category."
+        "title": "Off-page + distribution",
+        "description": "Guest posts on high-DR publications, G2 and Capterra presence, Reddit and Quora strategy, community engagement. The exact sources AI engines pull from when forming answers about your category."
       },
       {
-        "title": "E-E-A-T & authority signals",
-        "description": "Author bios with credentials, expert quotes, thought leadership placement. The trust signals that Google and AI engines weigh when deciding who to cite."
+        "title": "E-E-A-T + authority signals",
+        "description": "Author credentials, expert quotes, thought leadership placement. The trust signals Google and AI engines weigh when deciding who to cite — and who to skip."
       },
       {
         "title": "LLM visibility monitoring",
-        "description": "We track how your brand appears across ChatGPT, Perplexity, Gemini, Claude, and Google AI Mode. Citation frequency, mention quality, and competitive positioning across AI-generated answers."
+        "description": "We track how your brand appears across ChatGPT, Perplexity, Gemini, Claude, and Google AI Mode. Citation frequency, mention quality, competitive positioning — reported weekly, not quarterly."
       }
     ]
   },
@@ -123,33 +125,40 @@
     "items": [
       {
         "question": "How is this different from traditional SEO?",
-        "answer": "Traditional SEO optimizes for Google rankings. We optimize for how your brand appears everywhere buyers look for answers, including AI engines that don't show traditional search results. The tactics overlap (content, technical health, authority signals) but you're measuring different things and optimizing for different outcomes."
+        "answer": "Most SEO agencies optimise for rankings. We optimise for pipeline. That means every content decision, technical fix, and link target is scored against business impact — not keyword difficulty. And we layer AEO from day one so you're not invisible in AI search while you wait for Google to move."
       },
       {
-        "question": "What AI engines do you optimize for?",
-        "answer": "ChatGPT, Perplexity, Gemini, Claude, and Google AI Mode. These are the platforms reshaping how B2B buyers research solutions. We monitor your brand's presence across all of them and optimize the signals they pull from."
+        "question": "What AI engines do you optimise for?",
+        "answer": "ChatGPT, Perplexity, Google SGE, Gemini, Claude, and Grok. We monitor citation frequency, mention quality, and competitive positioning across all of them — reported weekly."
       },
       {
         "question": "Do I need to manage the work?",
-        "answer": "No. The Autopilot model means we own the roadmap, execution, and reporting. You get a single point of contact, weekly showcases, and a shared scoreboard, but zero task management responsibility."
+        "answer": "No. One point of contact. We own the roadmap and execution. You review progress weekly, make decisions when they matter, and skip the project management overhead."
       },
       {
         "question": "How long before I see results?",
-        "answer": "SEO compounds over time. Meaningful organic growth typically starts in 3-6 months. AEO can move faster because AI engines re-index information more frequently. We set 90-day goals and report against them weekly so you always know where things stand."
+        "answer": "Technical fixes and AEO improvements move fast — often within the first 30–60 days. Content authority and organic rankings compound over 90–180 days. We set 90-day goals and report against them honestly — no inflated projections."
       },
       {
         "question": "Can you work alongside our existing team?",
-        "answer": "Yes. We operate async-first with clear decision rights and integrate into your existing workflows. Most clients have us work alongside content, demand gen, or product marketing teams."
+        "answer": "Yes. We integrate with your content, product marketing, and web teams where it makes sense. We can run fully autonomous or in close collaboration — depending on what your team needs."
       },
       {
-        "question": "What does the weekly showcase include?",
-        "answer": "A live walkthrough of what shipped, how key metrics moved, and what's planned next. Every piece of work tied back to business outcomes, not SEO jargon. Think of it as a weekly executive briefing, not a status call."
+        "question": "What does the weekly check-in cover?",
+        "answer": "What shipped that week, how key metrics moved, what's coming next, and any decisions we need from you. Tied to your 90-day goals — not a vanity dashboard."
       }
     ]
   },
+  "ctaBreak": {
+    "title": "Want to see where you stand before committing to anything?",
+    "subtitle": "Free audit. No commitment, no pitch. Just a clear picture of where you stand in AI search.",
+    "ctaText": "Request an AI Visibility Audit"
+  },
   "cta": {
-    "title": "Ready to be the brand AI engines cite?",
-    "subtitle": "Let's map your current search presence and build a program that grows authority across every engine that matters.",
-    "ctaText": "Book an intro call"
+    "title": "Find out if your brand shows up where your buyers are looking.",
+    "subtitle": "We'll check your AI search presence across ChatGPT, Perplexity, and Google SGE, and show you exactly where the gaps are.",
+    "primaryCta": "Free AI Visibility Audit",
+    "secondaryCta": "Or book a strategy call",
+    "disclaimer": "No automated sequences. No pitch before the audit. We do the work first."
   }
 }

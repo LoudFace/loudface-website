@@ -3,11 +3,18 @@
  *
  * Data Sources:
  * - JSON: services-seo-aeo.json (via content layer)
+ * - CMS: clients (logo strip), case studies + testimonials (slider),
+ *         blog posts + categories + team members (knowledge carousel)
  */
 import type { Metadata } from 'next';
 import dynamic from 'next/dynamic';
+import Link from 'next/link';
 import { getServicesSeoAeoContent } from '@/lib/content-utils';
+import { fetchHomepageData } from '@/lib/cms-data';
+import { logoImage, avatarImage } from '@/lib/image-utils';
+import { asset } from '@/lib/assets';
 import { AI_PLATFORM_ICONS } from '@/lib/icons';
+import type { CaseStudy, Testimonial, BlogPost, TeamMember } from '@/lib/types';
 import {
   SectionContainer,
   SectionHeader,
@@ -15,9 +22,13 @@ import {
   Button,
   BulletLabel,
   Badge,
+  LogoImage,
 } from '@/components/ui';
-import Link from 'next/link';
-import { FAQ, CTA, RelatedServices, RelatedArticles } from '@/components/sections';
+import { FAQ, RelatedServices } from '@/components/sections';
+import {
+  DeferredCaseStudySlider,
+  DeferredKnowledge,
+} from '@/components/sections/DeferredSections';
 
 // Dynamic import below-fold visual component — defers client JS hydration
 const AICitationVisual = dynamic(
@@ -51,8 +62,77 @@ export const metadata: Metadata = {
   },
 };
 
-export default function SeoAeoServicePage() {
+export default async function SeoAeoServicePage() {
   const content = getServicesSeoAeoContent();
+
+  // CMS data for logo strip, case study slider, testimonials, blog
+  const cmsData = await fetchHomepageData();
+  const {
+    caseStudies,
+    allClients,
+    testimonials,
+    allTestimonials,
+    blogPosts,
+    categories,
+    teamMembers,
+  } = cmsData;
+
+  const showcaseClients = allClients.filter((c) => c['showcase-logo']);
+
+  // Slim data for client components (CaseStudySlider, Knowledge)
+  const sliderCaseStudies = caseStudies
+    .filter(s => testimonials.has(s.id))
+    .map(s => ({
+      id: s.id,
+      slug: s.slug,
+      name: s.name,
+      client: s.client,
+      'project-title': s['project-title'],
+      'paragraph-summary': s['paragraph-summary'],
+      'client-color': s['client-color'],
+      'main-project-image-thumbnail': s['main-project-image-thumbnail'],
+      'result-1---number': s['result-1---number'],
+      'result-1---title': s['result-1---title'],
+    })) as CaseStudy[];
+
+  const slimTestimonials = new Map(
+    Array.from(testimonials.entries()).map(([id, t]) => [id, {
+      id: t.id,
+      slug: t.slug,
+      name: t.name,
+      role: t.role,
+      'case-study': t['case-study'],
+      'testimonial-body': t['testimonial-body'],
+    }])
+  );
+
+  // Testimonials for the standalone testimonial section
+  const displayTestimonials = allTestimonials.filter(
+    (t) => t['profile-image']?.url && t['testimonial-body']
+  );
+
+  const lightBlogPosts = blogPosts
+    .slice(0, 6)
+    .map(post => ({
+      id: post.id,
+      slug: post.slug,
+      name: post.name,
+      excerpt: post.excerpt,
+      category: post.category,
+      author: post.author,
+      thumbnail: post.thumbnail,
+    }));
+
+  const lightCategories = Array.from(categories.values()).map(c => ({
+    id: c.id,
+    name: c.name,
+    slug: c.slug,
+  }));
+
+  const lightAuthors = Array.from(teamMembers.values()).map(a => ({
+    id: a.id,
+    name: a.name,
+  }));
 
   const serviceSchema = {
     '@context': 'https://schema.org',
@@ -104,7 +184,7 @@ export default function SeoAeoServicePage() {
 
   return (
     <>
-      {/* Structured Data — native script tags for SSR visibility to crawlers */}
+      {/* Structured Data */}
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(serviceSchema) }}
@@ -139,8 +219,11 @@ export default function SeoAeoServicePage() {
             </p>
 
             <div className="mt-8 flex flex-wrap gap-4">
-              <Button variant="primary" size="lg" calTrigger>
+              <Button variant="primary" size="lg" href="/ai-audit">
                 {content.hero.primaryCta}
+                <svg className="ml-2 w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                </svg>
               </Button>
               <Button variant="outline" size="lg" href="#how-it-works">
                 {content.hero.secondaryCta}
@@ -157,7 +240,7 @@ export default function SeoAeoServicePage() {
         {/* Stats Strip */}
         <div className="mt-12 pt-8 border-t border-surface-200">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-8">
-            {content.stats.map((stat, i) => (
+            {content.stats.map((stat: { value: string; label: string }, i: number) => (
               <div key={i} className="text-center">
                 <span className="text-2xl md:text-3xl font-mono font-medium text-surface-900">
                   {stat.value}
@@ -169,90 +252,48 @@ export default function SeoAeoServicePage() {
         </div>
       </SectionContainer>
 
-      {/* ─── Definition + Comparison Table ─── */}
-      <SectionContainer padding="sm">
-        <div className="max-w-3xl">
-          <h2 className="text-2xl sm:text-3xl md:text-4xl font-medium text-surface-900">
-            What is SEO &amp; AEO<span className="text-surface-500">?</span>
-          </h2>
-          <p className="mt-4 text-lg text-surface-600">
-            SEO (Search Engine Optimization) is the practice of improving a website&apos;s visibility in search engine results through technical improvements, content strategy, and authority building.
-            AEO (AI Engine Optimization) extends this to AI-powered answer engines —{' '}
-            <a href="https://openai.com/chatgpt" target="_blank" rel="noopener noreferrer" className="text-primary-600 hover:text-primary-700 underline underline-offset-2">ChatGPT</a>,{' '}
-            <a href="https://www.perplexity.ai" target="_blank" rel="noopener noreferrer" className="text-primary-600 hover:text-primary-700 underline underline-offset-2">Perplexity</a>,{' '}
-            Google AI Mode, and Claude — ensuring your brand gets cited in AI-generated responses.
-            LoudFace runs integrated SEO and AEO programs that build authority across every platform where B2B buyers research solutions.
+      {/* ─── Logo Strip ─── */}
+      {showcaseClients.length > 0 && (
+        <SectionContainer padding="sm">
+          <p className="text-sm text-surface-500 mb-6">
+            Trusted by B2B SaaS teams at
           </p>
-          <p className="mt-2 text-sm text-surface-500">Last updated: March 2026</p>
-        </div>
-
-        {/* Comparison Table: SEO vs AEO */}
-        <div className="mt-10 overflow-x-auto">
-          <table className="w-full border-collapse text-left text-sm">
-            <caption className="sr-only">SEO vs AEO comparison — key differences between search engine and AI engine optimization</caption>
-            <thead>
-              <tr className="border-b border-surface-200">
-                <th className="py-3 pr-4 font-medium text-surface-900 w-1/3">Dimension</th>
-                <th className="py-3 px-4 font-medium text-surface-900 w-1/3">SEO</th>
-                <th className="py-3 pl-4 font-medium text-surface-900 w-1/3">AEO</th>
-              </tr>
-            </thead>
-            <tbody className="text-surface-600">
-              <tr className="border-b border-surface-100">
-                <td className="py-3 pr-4 font-medium text-surface-900">Goal</td>
-                <td className="py-3 px-4">Rank on search engine results pages</td>
-                <td className="py-3 pl-4">Get cited in AI-generated answers</td>
-              </tr>
-              <tr className="border-b border-surface-100">
-                <td className="py-3 pr-4 font-medium text-surface-900">Target engines</td>
-                <td className="py-3 px-4">Google, Bing</td>
-                <td className="py-3 pl-4">ChatGPT, Perplexity, Gemini, Claude</td>
-              </tr>
-              <tr className="border-b border-surface-100">
-                <td className="py-3 pr-4 font-medium text-surface-900">Content format</td>
-                <td className="py-3 px-4">Keyword-optimized long-form pages</td>
-                <td className="py-3 pl-4">Self-contained, quotable paragraphs</td>
-              </tr>
-              <tr className="border-b border-surface-100">
-                <td className="py-3 pr-4 font-medium text-surface-900">Authority signal</td>
-                <td className="py-3 px-4">Backlinks, domain rating</td>
-                <td className="py-3 pl-4">Entity clarity, structured data, citations</td>
-              </tr>
-              <tr className="border-b border-surface-100">
-                <td className="py-3 pr-4 font-medium text-surface-900">Measurement</td>
-                <td className="py-3 px-4">Rankings, organic traffic, CTR</td>
-                <td className="py-3 pl-4">Brand mentions, citation frequency, share of voice</td>
-              </tr>
-              <tr>
-                <td className="py-3 pr-4 font-medium text-surface-900">Timeline</td>
-                <td className="py-3 px-4">3-6 months for measurable gains</td>
-                <td className="py-3 pl-4">90-day cycles with weekly monitoring</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </SectionContainer>
+          <div className="flex flex-wrap items-center gap-4 sm:gap-6 md:gap-x-10 md:gap-y-6">
+            {showcaseClients.slice(0, 8).map((client) => (
+              <LogoImage
+                key={client.id}
+                src={
+                  logoImage(client['colored-logo']?.url) ||
+                  asset('/images/placeholder-logo.svg')
+                }
+                alt={client.name}
+                containerClassName="logo-item"
+                imgClassName="grayscale opacity-50 transition-opacity duration-200 hover:opacity-80"
+              />
+            ))}
+          </div>
+        </SectionContainer>
+      )}
 
       {/* ─── Section 2: Problem ─── */}
       <SectionContainer>
         <SectionHeader
           title={content.problems.title}
           highlightWord={content.problems.highlightWord}
+          subtitle={content.problems.subtitle}
         />
 
         <div className="mt-8 lg:mt-12 grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8">
-          {/* Card 1: Rankings without revenue — diverging lines chart */}
+          {/* Card 1: Rankings without pipeline — diverging lines chart */}
           <Card padding="lg" hover={false}>
             <div className="h-24 rounded-xl bg-surface-50 border border-surface-100 flex items-center justify-center px-4" aria-hidden="true">
               <svg className="w-full h-16" viewBox="0 0 200 64" fill="none">
-                {/* Traffic line — goes up */}
                 <path
                   d="M10,48 C40,45 70,38 100,30 C130,22 160,16 190,8"
                   stroke="var(--color-surface-400)"
                   strokeWidth="2"
                   strokeLinecap="round"
                 />
-                {/* Revenue line — stays flat/dips */}
                 <path
                   d="M10,48 C40,50 70,52 100,51 C130,52 160,54 190,56"
                   stroke="var(--color-error)"
@@ -260,7 +301,6 @@ export default function SeoAeoServicePage() {
                   strokeLinecap="round"
                   strokeDasharray="6 4"
                 />
-                {/* Labels */}
                 <text x="192" y="8" fontSize="8" fill="var(--color-surface-400)" fontWeight="500">Traffic</text>
                 <text x="192" y="58" fontSize="8" fill="var(--color-error)" fontWeight="500">Revenue</text>
               </svg>
@@ -310,7 +350,6 @@ export default function SeoAeoServicePage() {
           <Card padding="lg" hover={false}>
             <div className="h-24 rounded-xl bg-surface-50 border border-surface-100 flex items-center justify-center relative overflow-hidden" aria-hidden="true">
               <svg className="w-full h-full" viewBox="0 0 200 96" fill="none">
-                {/* Scattered rectangles at random angles */}
                 <rect x="20" y="15" width="28" height="14" rx="3" fill="var(--color-surface-200)" transform="rotate(-12 20 15)" />
                 <rect x="70" y="50" width="24" height="12" rx="3" fill="var(--color-surface-300)" transform="rotate(8 70 50)" />
                 <rect x="120" y="20" width="30" height="14" rx="3" fill="var(--color-surface-200)" transform="rotate(15 120 20)" />
@@ -348,7 +387,7 @@ export default function SeoAeoServicePage() {
             <div className="absolute top-5 left-0 right-0 h-px bg-surface-700" />
 
             <ol className="grid grid-cols-4 gap-8 list-none p-0 m-0">
-              {content.approach.steps.map((step) => (
+              {content.approach.steps.map((step: { number: string; title: string; description: string }) => (
                 <li key={step.number} className="relative">
                   <div className="relative z-10 w-10 h-10 rounded-full bg-primary-600 text-white flex items-center justify-center font-mono text-sm font-medium mx-auto">
                     {step.number}
@@ -371,7 +410,7 @@ export default function SeoAeoServicePage() {
         {/* Mobile: Vertical timeline */}
         <div className="lg:hidden mt-10">
           <ol className="relative border-l-2 border-surface-700 ml-5 space-y-8 list-none p-0 m-0">
-            {content.approach.steps.map((step) => (
+            {content.approach.steps.map((step: { number: string; title: string; description: string }) => (
               <li key={step.number} className="relative pl-10">
                 <div className="absolute -left-5 top-0 w-10 h-10 rounded-full bg-primary-600 text-white flex items-center justify-center font-mono text-sm font-medium">
                   {step.number}
@@ -391,13 +430,37 @@ export default function SeoAeoServicePage() {
         </div>
       </SectionContainer>
 
+      {/* ─── CTA Break ─── */}
+      <SectionContainer padding="lg" className="bg-surface-50">
+        <div className="max-w-2xl mx-auto text-center">
+          <h2 className="text-2xl sm:text-3xl md:text-4xl font-medium text-surface-900 leading-tight tracking-tight text-balance">
+            {content.ctaBreak.title}
+          </h2>
+          <p className="mt-4 text-lg text-surface-600">
+            {content.ctaBreak.subtitle}
+          </p>
+          <div className="mt-8">
+            <Button variant="primary" size="lg" href="/ai-audit" className="rounded-full">
+              {content.ctaBreak.ctaText}
+              <svg className="ml-2 w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 8l4 4m0 0l-4 4m4-4H3" />
+              </svg>
+            </Button>
+          </div>
+        </div>
+      </SectionContainer>
+
       {/* ─── Section 4: Two Tracks ─── */}
       <SectionContainer>
-        <SectionHeader
-          title={content.tracks.title}
-          highlightWord={content.tracks.highlightWord}
-          subtitle={content.tracks.description}
-        />
+        <div className="max-w-3xl">
+          <BulletLabel>{content.tracks.title}</BulletLabel>
+          <h2 className="mt-4 text-2xl sm:text-3xl md:text-4xl font-medium text-surface-900 leading-tight tracking-tight">
+            {content.tracks.headline}
+          </h2>
+          <p className="mt-4 text-lg text-surface-600">
+            {content.tracks.description}
+          </p>
+        </div>
 
         <div className="mt-8 lg:mt-12 border border-surface-200 rounded-2xl overflow-hidden">
           <div className="grid grid-cols-1 md:grid-cols-2 divide-y md:divide-y-0 md:divide-x divide-surface-200">
@@ -411,7 +474,7 @@ export default function SeoAeoServicePage() {
                 {content.tracks.seo.description}
               </p>
               <ul className="mt-6 space-y-3">
-                {content.tracks.seo.items.map((item) => (
+                {content.tracks.seo.items.map((item: string) => (
                   <li key={item} className="flex items-center gap-3">
                     <svg className="w-5 h-5 flex-shrink-0" viewBox="0 0 20 20" fill="none">
                       <circle cx="10" cy="10" r="9" fill="var(--color-primary-100)" />
@@ -433,7 +496,7 @@ export default function SeoAeoServicePage() {
                 {content.tracks.aeo.description}
               </p>
               <ul className="mt-6 space-y-3">
-                {content.tracks.aeo.items.map((item) => (
+                {content.tracks.aeo.items.map((item: string) => (
                   <li key={item} className="flex items-center gap-3">
                     <svg className="w-5 h-5 flex-shrink-0" viewBox="0 0 20 20" fill="none">
                       <circle cx="10" cy="10" r="9" fill="var(--color-primary-100)" />
@@ -455,229 +518,33 @@ export default function SeoAeoServicePage() {
         </div>
       </SectionContainer>
 
-      {/* ─── Section 5: Capabilities Bento Grid ─── */}
+      {/* ─── Case Study Slider ─── */}
+      {sliderCaseStudies.length > 0 && (
+        <DeferredCaseStudySlider
+          title="The work speaks. Specifically."
+          caseStudies={sliderCaseStudies}
+          testimonials={slimTestimonials}
+        />
+      )}
+
+      {/* ─── Section 5: Full Program Scope ─── */}
       <SectionContainer>
         <SectionHeader
           title={content.capabilities.title}
           highlightWord={content.capabilities.highlightWord}
         />
 
-        <div className="mt-8 lg:mt-12 grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6">
-          {/* ── Card 1: Technical Foundation — Score Gauge ── */}
-          <Card padding="none" hover={false}>
-            <div className="p-5" aria-hidden="true">
-              <div className="h-40 rounded-xl bg-surface-50 border border-surface-100 p-4 flex items-center gap-4">
-                <div className="flex-shrink-0">
-                  <svg width="88" height="88" viewBox="0 0 88 88" fill="none">
-                    <circle cx="44" cy="44" r="36" stroke="var(--color-surface-200)" strokeWidth="6" />
-                    <circle
-                      cx="44" cy="44" r="36"
-                      stroke="var(--color-success)"
-                      strokeWidth="6"
-                      strokeLinecap="round"
-                      strokeDasharray={`${0.96 * 2 * Math.PI * 36} ${2 * Math.PI * 36}`}
-                      transform="rotate(-90 44 44)"
-                    />
-                    <text x="44" y="40" textAnchor="middle" style={{ fontSize: '22px', fontWeight: 600, fill: 'var(--color-surface-900)', fontFamily: 'var(--font-mono)' }}>96</text>
-                    <text x="44" y="56" textAnchor="middle" style={{ fontSize: '10px', fill: 'var(--color-surface-500)' }}>/ 100</text>
-                  </svg>
-                </div>
-                <div className="flex flex-col gap-2">
-                  {['Core Web Vitals', 'Schema markup', 'Crawl health', 'Internal links'].map((item) => (
-                    <div key={item} className="flex items-center gap-2">
-                      <svg className="w-4 h-4 flex-shrink-0" viewBox="0 0 16 16" fill="none">
-                        <circle cx="8" cy="8" r="7" fill="var(--color-success)" fillOpacity="0.15" />
-                        <path d="M5 8l2 2 4-4" stroke="var(--color-success)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-                      </svg>
-                      <span className="text-sm text-surface-700">{item}</span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </div>
-            <div className="px-5 pb-5">
+        <div className="mt-8 lg:mt-12 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {content.capabilities.items.map((item: { title: string; description: string }, i: number) => (
+            <Card key={i} padding="lg" hover={false}>
               <h3 className="text-lg font-medium text-surface-900">
-                {content.capabilities.items[0].title}
+                {item.title}
               </h3>
-              <p className="mt-2 text-surface-600">
-                {content.capabilities.items[0].description}
+              <p className="mt-3 text-surface-600">
+                {item.description}
               </p>
-            </div>
-          </Card>
-
-          {/* ── Card 2: Content Systems — Topical Cluster Node Map ── */}
-          <Card padding="none" hover={false}>
-            <div className="p-5" aria-hidden="true">
-              <div className="h-40 rounded-xl bg-surface-50 border border-surface-100 flex items-center justify-center">
-                <svg className="w-full h-full" viewBox="0 0 240 160" fill="none">
-                  {/* Connecting lines */}
-                  <line x1="120" y1="80" x2="55" y2="35" stroke="var(--color-surface-300)" strokeWidth="1" />
-                  <line x1="120" y1="80" x2="185" y2="35" stroke="var(--color-surface-300)" strokeWidth="1" />
-                  <line x1="120" y1="80" x2="45" y2="100" stroke="var(--color-surface-300)" strokeWidth="1" />
-                  <line x1="120" y1="80" x2="195" y2="100" stroke="var(--color-surface-300)" strokeWidth="1" />
-                  <line x1="120" y1="80" x2="80" y2="135" stroke="var(--color-surface-300)" strokeWidth="1" />
-                  <line x1="120" y1="80" x2="160" y2="135" stroke="var(--color-surface-300)" strokeWidth="1" />
-
-                  {/* Center hub node */}
-                  <circle cx="120" cy="80" r="18" fill="var(--color-primary-500)" />
-                  <text x="120" y="78" textAnchor="middle" fontSize="7" fontWeight="600" fill="white">Main</text>
-                  <text x="120" y="87" textAnchor="middle" fontSize="6" fill="white" fillOpacity="0.8">Topic</text>
-
-                  {/* Spoke nodes */}
-                  {[
-                    { cx: 55, cy: 35, label: 'Guide' },
-                    { cx: 185, cy: 35, label: 'How-to' },
-                    { cx: 45, cy: 100, label: 'FAQ' },
-                    { cx: 195, cy: 100, label: 'Compare' },
-                    { cx: 80, cy: 135, label: 'Stats' },
-                    { cx: 160, cy: 135, label: 'Tools' },
-                  ].map((node) => (
-                    <g key={node.label}>
-                      <circle cx={node.cx} cy={node.cy} r="12" fill="var(--color-primary-100)" />
-                      <text x={node.cx} y={node.cy + 3} textAnchor="middle" fontSize="7" fontWeight="500" fill="var(--color-primary-700)">{node.label}</text>
-                    </g>
-                  ))}
-                </svg>
-              </div>
-            </div>
-            <div className="px-5 pb-5">
-              <h3 className="text-lg font-medium text-surface-900">
-                {content.capabilities.items[1].title}
-              </h3>
-              <p className="mt-2 text-surface-600">
-                {content.capabilities.items[1].description}
-              </p>
-            </div>
-          </Card>
-
-          {/* ── Card 3: Off-page & Distribution — Platform Grid ── */}
-          <Card padding="none" hover={false}>
-            <div className="p-5" aria-hidden="true">
-              <div className="h-40 rounded-xl bg-surface-50 border border-surface-100 p-4 grid grid-cols-2 gap-2.5">
-                {[
-                  { name: 'G2', domain: 'g2.com' },
-                  { name: 'Capterra', domain: 'capterra.com' },
-                  { name: 'Reddit', domain: 'reddit.com' },
-                  { name: 'Quora', domain: 'quora.com' },
-                ].map((platform) => (
-                  <div key={platform.name} className="flex items-center gap-2 px-3 py-2 rounded-lg bg-white border border-surface-200">
-                    <img
-                      src={`https://cdn.brandfetch.io/${platform.domain}/icon/fallback/transparent?c=1idmHW4h6BoV1E9hJTF`}
-                      alt=""
-                      width="20"
-                      height="20"
-                      className="w-5 h-5 rounded-sm object-contain"
-                      loading="lazy"
-                    />
-                    <span className="text-sm font-medium text-surface-700">{platform.name}</span>
-                  </div>
-                ))}
-              </div>
-            </div>
-            <div className="px-5 pb-5">
-              <h3 className="text-lg font-medium text-surface-900">
-                {content.capabilities.items[2].title}
-              </h3>
-              <p className="mt-2 text-surface-600">
-                {content.capabilities.items[2].description}
-              </p>
-            </div>
-          </Card>
-
-          {/* ── Card 4: E-E-A-T — Author Profile Card (wide) ── */}
-          <Card padding="none" hover={false} className="md:col-span-1">
-            <div className="p-5" aria-hidden="true">
-              <div className="h-40 rounded-xl bg-surface-50 border border-surface-100 p-4">
-                <div className="flex items-start gap-3">
-                  {/* Avatar */}
-                  <div className="w-12 h-12 rounded-full bg-surface-200 flex items-center justify-center flex-shrink-0">
-                    <svg className="w-6 h-6 text-surface-400" viewBox="0 0 24 24" fill="none">
-                      <circle cx="12" cy="8" r="4" fill="currentColor" />
-                      <path d="M4 20c0-4.4 3.6-8 8-8s8 3.6 8 8" fill="currentColor" />
-                    </svg>
-                  </div>
-                  {/* Info */}
-                  <div className="min-w-0">
-                    <div className="text-sm font-semibold text-surface-900">Dr. Jane Smith</div>
-                    <div className="text-2xs text-surface-500 mt-0.5">VP Engineering, Acme Corp</div>
-                    <div className="flex gap-1.5 mt-2">
-                      <span className="px-2 py-0.5 rounded bg-primary-50 border border-primary-200 text-[9px] font-medium text-primary-700">Forbes</span>
-                      <span className="px-2 py-0.5 rounded bg-primary-50 border border-primary-200 text-[9px] font-medium text-primary-700">TechCrunch</span>
-                    </div>
-                  </div>
-                </div>
-                {/* Skeleton bio */}
-                <div className="mt-4 space-y-1.5">
-                  <div className="h-2 w-full bg-surface-200 rounded-full" />
-                  <div className="h-2 w-4/5 bg-surface-200 rounded-full" />
-                  <div className="h-2 w-3/5 bg-surface-100 rounded-full" />
-                </div>
-              </div>
-            </div>
-            <div className="px-5 pb-5">
-              <h3 className="text-lg font-medium text-surface-900">
-                {content.capabilities.items[3].title}
-              </h3>
-              <p className="mt-2 text-surface-600">
-                {content.capabilities.items[3].description}
-              </p>
-            </div>
-          </Card>
-
-          {/* ── Card 5: LLM Visibility Monitoring — Citation Dashboard (2-col) ── */}
-          <Card padding="none" hover={false} className="md:col-span-2">
-            <div className="grid grid-cols-1 sm:grid-cols-2">
-              <div className="p-5" aria-hidden="true">
-                <div className="h-full min-h-[12rem] rounded-xl bg-surface-50 border border-surface-100 p-4">
-                  <div className="text-2xs font-medium text-surface-400 uppercase tracking-wider mb-3">
-                    AI Citation Monitor
-                  </div>
-                  <div className="space-y-2.5">
-                    {[
-                      { name: 'ChatGPT', cited: true, count: '12x' },
-                      { name: 'Perplexity', cited: true, count: '8x' },
-                      { name: 'Google AI', cited: true, count: '6x' },
-                      { name: 'Claude', cited: true, count: '5x' },
-                      { name: 'Grok', cited: false, count: '—' },
-                    ].map((platform) => {
-                      const icon = AI_PLATFORM_ICONS[platform.name];
-                      return (
-                        <div key={platform.name} className="flex items-center gap-3">
-                          <div className="w-7 h-7 rounded-md bg-white border border-surface-200 flex items-center justify-center flex-shrink-0">
-                            {icon && (
-                              <svg
-                                className="w-4 h-4 text-surface-600"
-                                viewBox={icon.viewBox}
-                                dangerouslySetInnerHTML={{ __html: icon.path }}
-                              />
-                            )}
-                          </div>
-                          <span className="text-sm font-medium text-surface-700 w-20">{platform.name}</span>
-                          <div className="flex items-center gap-1.5 ml-auto">
-                            <span
-                              className="w-2 h-2 rounded-full"
-                              style={{ backgroundColor: platform.cited ? 'var(--color-success)' : 'var(--color-surface-300)' }}
-                            />
-                            <span className={`text-xs font-medium ${platform.cited ? 'text-surface-700' : 'text-surface-400'}`}>
-                              {platform.cited ? `Cited (${platform.count})` : 'Not cited'}
-                            </span>
-                          </div>
-                        </div>
-                      );
-                    })}
-                  </div>
-                </div>
-              </div>
-              <div className="p-5 flex flex-col justify-center">
-                <h3 className="text-lg font-medium text-surface-900">
-                  {content.capabilities.items[4].title}
-                </h3>
-                <p className="mt-2 text-surface-600">
-                  {content.capabilities.items[4].description}
-                </p>
-              </div>
-            </div>
-          </Card>
+            </Card>
+          ))}
         </div>
       </SectionContainer>
 
@@ -723,7 +590,48 @@ export default function SeoAeoServicePage() {
         </div>
       </SectionContainer>
 
-      {/* ─── Section 7: FAQ ─── */}
+      {/* ─── Testimonials ─── */}
+      {displayTestimonials.length > 0 && (
+        <SectionContainer className="bg-surface-50">
+          <SectionHeader
+            title="What our clients say"
+            highlightWord="clients"
+          />
+          <div className="mt-8 lg:mt-12 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {displayTestimonials.slice(0, 3).map((t) => (
+              <div
+                key={t.id}
+                className="rounded-2xl bg-white border border-surface-200 p-6 md:p-8"
+              >
+                <div
+                  className="text-sm text-surface-600 leading-relaxed [&>p]:m-0 line-clamp-5"
+                  dangerouslySetInnerHTML={{
+                    __html: t['testimonial-body'] || '',
+                  }}
+                />
+                <div className="mt-6 flex items-center gap-3">
+                  <img
+                    src={avatarImage(t['profile-image']!.url)}
+                    alt={t.name}
+                    width="40"
+                    height="40"
+                    loading="lazy"
+                    className="w-10 h-10 rounded-full object-cover"
+                  />
+                  <div>
+                    <div className="text-sm font-medium text-surface-900">
+                      {t.name}
+                    </div>
+                    <div className="text-2xs text-surface-500">{t.role}</div>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </SectionContainer>
+      )}
+
+      {/* ─── FAQ ─── */}
       <FAQ
         title={content.faq.title}
         items={content.faq.items}
@@ -733,20 +641,43 @@ export default function SeoAeoServicePage() {
       {/* ─── Related Services ─── */}
       <RelatedServices currentService="/services/seo-aeo" />
 
-      <RelatedArticles
-        articles={[
-          { href: '/blog/is-webflow-good-for-seo', title: 'Is Webflow Good for SEO?', description: 'Built-in SEO features, technical performance, and how Webflow compares to WordPress for search.' },
-          { href: '/blog/seo-vs-aeo-for-webflow', title: 'SEO vs AEO for Webflow', description: 'How traditional search optimization and AI engine optimization work together on Webflow.' },
-          { href: '/blog/webflow-connection-guide-google-analytics-and-search-console', title: 'Connect Webflow to GA4 & Search Console', description: 'Step-by-step guide to connecting Google Analytics and Search Console to your Webflow site.' },
-        ]}
-      />
+      {/* ─── Blog / Knowledge ─── */}
+      {lightBlogPosts.length > 0 && (
+        <DeferredKnowledge
+          title="From our blog"
+          highlightWord="blog"
+          description="Playbooks and insights for B2B SaaS marketing teams."
+          posts={lightBlogPosts}
+          categories={lightCategories}
+          authors={lightAuthors}
+        />
+      )}
 
-      {/* ─── Section 8: CTA ─── */}
-      <CTA
-        title={content.cta.title}
-        subtitle={content.cta.subtitle}
-        ctaText={content.cta.ctaText}
-      />
+      {/* ─── Bottom CTA ─── */}
+      <SectionContainer padding="lg" className="bg-surface-900">
+        <div className="max-w-2xl mx-auto text-center">
+          <h2 className="text-2xl sm:text-3xl md:text-4xl font-medium text-white leading-tight tracking-tight text-balance">
+            {content.cta.title}
+          </h2>
+          <p className="mt-6 text-lg text-surface-300 leading-relaxed">
+            {content.cta.subtitle}
+          </p>
+          <div className="mt-10 flex flex-wrap justify-center gap-4">
+            <Button variant="primary" size="lg" href="/ai-audit" className="rounded-full">
+              {content.cta.primaryCta}
+              <svg className="ml-2 w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 8l4 4m0 0l-4 4m4-4H3" />
+              </svg>
+            </Button>
+            <Button variant="outline" size="lg" calTrigger className="rounded-full border-surface-600 text-surface-300 hover:border-surface-400 hover:text-white">
+              {content.cta.secondaryCta}
+            </Button>
+          </div>
+          <p className="mt-6 text-sm text-surface-500">
+            {content.cta.disclaimer}
+          </p>
+        </div>
+      </SectionContainer>
     </>
   );
 }

@@ -335,6 +335,7 @@ export interface ServicesSeoAeoContent {
   problems: {
     title: string;
     highlightWord: string;
+    subtitle: string;
     items: { number: string; title: string; description: string }[];
   };
   approach: {
@@ -346,6 +347,7 @@ export interface ServicesSeoAeoContent {
   tracks: {
     title: string;
     highlightWord: string;
+    headline: string;
     description: string;
     bridge: string;
     seo: ServicesSeoAeoTrack;
@@ -360,10 +362,17 @@ export interface ServicesSeoAeoContent {
     title: string;
     items: FAQItem[];
   };
-  cta: {
+  ctaBreak: {
     title: string;
     subtitle: string;
     ctaText: string;
+  };
+  cta: {
+    title: string;
+    subtitle: string;
+    primaryCta: string;
+    secondaryCta: string;
+    disclaimer: string;
   };
 }
 
