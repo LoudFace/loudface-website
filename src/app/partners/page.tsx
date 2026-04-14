@@ -178,7 +178,7 @@ export default async function PartnersPage() {
           </p>
 
           <div className="mt-10">
-            <Button variant="primary" size="lg" calTrigger className="rounded-full">
+            <Button variant="primary" size="lg" href="https://loudface.notion.site/337b63394d10805f9bc5c22cf56c7c0f?pvs=105" className="rounded-full">
               Become a Partner
               <ArrowIcon className="ml-2 w-5 h-5" />
             </Button>
@@ -263,7 +263,7 @@ export default async function PartnersPage() {
           </p>
 
           <div className="mt-10">
-            <Button variant="primary" size="lg" calTrigger className="rounded-full">
+            <Button variant="primary" size="lg" href="https://loudface.notion.site/337b63394d10805f9bc5c22cf56c7c0f?pvs=105" className="rounded-full">
               Become a Partner
               <ArrowIcon className="ml-2 w-5 h-5" />
             </Button>
@@ -398,8 +398,8 @@ export default async function PartnersPage() {
             <Button
               variant="primary"
               size="lg"
-              calTrigger
-              className="px-8 py-4 rounded-full hover:-translate-y-0.5"
+              href="https://loudface.notion.site/337b63394d10805f9bc5c22cf56c7c0f?pvs=105"
+                           className="px-8 py-4 rounded-full hover:-translate-y-0.5"
             >
               Become a Partner
               <ArrowIcon className="ml-2 w-5 h-5" />
