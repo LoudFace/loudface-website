@@ -276,6 +276,15 @@ window.addEventListener(e,loadCal,{once:true,passive:true});});})();`}
 
           {/* Cal.com booking modal handler */}
           <CalHandler />
+
+          {/* Leadsy.ai visitor identification pixel — deferred to avoid blocking */}
+          <Script
+            id="vtag-ai-js"
+            src="https://r2.leadsy.ai/tag.js"
+            strategy="lazyOnload"
+            data-pid="svBdk8PfDCJmCF4z"
+            data-version="062024"
+          />
         </PostHogProvider>
       </body>
     </html>
