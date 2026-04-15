@@ -277,11 +277,13 @@ window.addEventListener(e,loadCal,{once:true,passive:true});});})();`}
           {/* Cal.com booking modal handler */}
           <CalHandler />
 
-          {/* Leadsy.ai visitor identification pixel — deferred to avoid blocking */}
+          {/* Leadsy.ai visitor identification pixel — afterInteractive so it
+              fires on fast-bouncing sessions (lazyOnload missed them). Tag is
+              already async so it won't block rendering. */}
           <Script
             id="vtag-ai-js"
             src="https://r2.leadsy.ai/tag.js"
-            strategy="lazyOnload"
+            strategy="afterInteractive"
             data-pid="svBdk8PfDCJmCF4z"
             data-version="062024"
           />
