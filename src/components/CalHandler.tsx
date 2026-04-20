@@ -35,7 +35,13 @@ export function CalHandler() {
         if (typeof window.Cal === "function") {
           window.Cal("modal", {
             calLink: "arnelbukva/loudface-intro-call",
-            config: { layout: "month_view" },
+            config: {
+              layout: "month_view",
+              utm_source: "website",
+              utm_medium: "embed",
+              utm_campaign: "intro_call",
+              utm_content: window.location.pathname,
+            },
           });
         }
       }

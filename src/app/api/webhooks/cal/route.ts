@@ -8,6 +8,14 @@ type CalAttendee = {
   timeZone?: string;
 };
 
+type CalTracking = {
+  utm_source?: string;
+  utm_medium?: string;
+  utm_campaign?: string;
+  utm_term?: string;
+  utm_content?: string;
+};
+
 type CalWebhookPayload = {
   triggerEvent: string;
   createdAt?: string;
@@ -24,8 +32,31 @@ type CalWebhookPayload = {
     organizer?: { email?: string; name?: string };
     responses?: Record<string, { label?: string; value?: unknown }>;
     metadata?: Record<string, unknown>;
+    tracking?: CalTracking;
   };
 };
+
+const UTM_KEYS = ['utm_source', 'utm_medium', 'utm_campaign', 'utm_term', 'utm_content'] as const;
+
+function extractUtm(payload: CalWebhookPayload['payload']): CalTracking {
+  const out: CalTracking = {};
+  const tracking = payload?.tracking;
+  const responses = payload?.responses;
+  for (const key of UTM_KEYS) {
+    const fromTracking = tracking?.[key];
+    if (typeof fromTracking === 'string' && fromTracking) {
+      out[key] = fromTracking;
+      continue;
+    }
+    const resp = responses?.[key]?.value;
+    if (typeof resp === 'string' && resp) out[key] = resp;
+  }
+  return out;
+}
+
+function classifySource(utm: CalTracking): 'website_embed' | 'external' {
+  return utm.utm_source === 'website' && utm.utm_medium === 'embed' ? 'website_embed' : 'external';
+}
 
 const EVENT_MAP: Record<string, string> = {
   BOOKING_CREATED: 'call_booked',
@@ -81,6 +112,9 @@ export async function POST(request: Request) {
     return NextResponse.json({ received: true });
   }
 
+  const utm = extractUtm(body.payload);
+  const source = classifySource(utm);
+
   const properties = {
     booking_uid: body.payload?.uid,
     booking_id: body.payload?.bookingId,
@@ -93,6 +127,8 @@ export async function POST(request: Request) {
     attendee_name: attendee?.name,
     attendee_timezone: attendee?.timeZone,
     organizer_email: body.payload?.organizer?.email,
+    source,
+    ...utm,
   };
 
   posthog.identify({
