@@ -128,7 +128,7 @@ export default function GrowthAutopilotPage() {
         </p>
 
         <div className="mt-8 flex flex-wrap gap-4">
-          <Button variant="primary" size="lg" calTrigger>
+          <Button variant="primary" size="lg" href="/audit">
             {content.hero.primaryCta}
           </Button>
           <Button variant="outline" size="lg" href="#packages">
@@ -366,7 +366,7 @@ export default function GrowthAutopilotPage() {
               </p>
 
               <div className="mt-8">
-                <Button variant="primary" size="lg" calTrigger fullWidth>
+                <Button variant="primary" size="lg" href="/audit" fullWidth>
                   Request My Free AI Visibility Audit
                 </Button>
               </div>
@@ -394,6 +394,7 @@ export default function GrowthAutopilotPage() {
         title={content.cta.title}
         subtitle={content.cta.subtitle}
         ctaText={content.cta.ctaText}
+        ctaHref="/audit"
       />
     </>
   );

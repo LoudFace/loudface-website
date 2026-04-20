@@ -219,7 +219,7 @@ export default async function SeoAeoServicePage() {
             </p>
 
             <div className="mt-8 flex flex-wrap gap-4">
-              <Button variant="primary" size="lg" href="/ai-audit">
+              <Button variant="primary" size="lg" href="/audit">
                 {content.hero.primaryCta}
                 <svg className="ml-2 w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 8l4 4m0 0l-4 4m4-4H3" />
@@ -440,7 +440,7 @@ export default async function SeoAeoServicePage() {
             {content.ctaBreak.subtitle}
           </p>
           <div className="mt-8">
-            <Button variant="primary" size="lg" href="/ai-audit" className="rounded-full">
+            <Button variant="primary" size="lg" href="/audit" className="rounded-full">
               {content.ctaBreak.ctaText}
               <svg className="ml-2 w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 8l4 4m0 0l-4 4m4-4H3" />
@@ -663,7 +663,7 @@ export default async function SeoAeoServicePage() {
             {content.cta.subtitle}
           </p>
           <div className="mt-10 flex flex-wrap justify-center gap-4">
-            <Button variant="primary" size="lg" href="/ai-audit" className="rounded-full">
+            <Button variant="primary" size="lg" href="/audit" className="rounded-full">
               {content.cta.primaryCta}
               <svg className="ml-2 w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 8l4 4m0 0l-4 4m4-4H3" />

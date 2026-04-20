@@ -278,13 +278,12 @@ export default async function SaaSPage() {
             {content.ctaBreak.subheadline}
           </p>
           <div className="mt-8 flex flex-wrap justify-center gap-4">
-            <button
-              type="button"
-              data-cal-trigger=""
+            <Link
+              href="/audit"
               className="inline-flex items-center justify-center font-medium rounded-lg px-6 py-3 text-base bg-white text-primary-700 hover:bg-primary-50 transition-colors duration-200 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
             >
               {content.ctaBreak.primaryCta}
-            </button>
+            </Link>
             <button
               type="button"
               data-cal-trigger=""
@@ -460,14 +459,7 @@ export default async function SaaSPage() {
         </div>
       </SectionContainer>
 
-      {/* ─── 10. FAQ ─── */}
-      <FAQ
-        title="Common questions"
-        items={content.faq.items}
-        showFooter
-      />
-
-      {/* ─── 11. Bottom CTA ─── */}
+      {/* ─── 10. Bottom CTA ─── */}
       <section className="bg-surface-900">
         <div className="py-24 md:py-32 lg:py-40">
           <div className="px-4 md:px-8 lg:px-12">
@@ -511,6 +503,13 @@ export default async function SaaSPage() {
           </div>
         </div>
       </section>
+
+      {/* ─── 11. FAQ ─── */}
+      <FAQ
+        title="Common questions"
+        items={content.faq.items}
+        showFooter
+      />
     </>
   );
 }

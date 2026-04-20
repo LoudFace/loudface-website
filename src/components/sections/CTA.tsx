@@ -6,6 +6,8 @@ interface CTAProps {
   title?: string;
   subtitle?: string;
   ctaText?: string;
+  /** If provided, the CTA becomes a link instead of a Cal.com booking trigger */
+  ctaHref?: string;
   variant?: 'light' | 'dark';
 }
 
@@ -13,6 +15,7 @@ export function CTA({
   title,
   subtitle,
   ctaText,
+  ctaHref,
   variant = 'light',
 }: CTAProps) {
   // Load content from JSON file
@@ -44,7 +47,7 @@ export function CTA({
               <Button
                 variant="primary"
                 size="lg"
-                calTrigger
+                {...(ctaHref ? { href: ctaHref } : { calTrigger: true })}
                 className="px-8 py-4 rounded-full hover:-translate-y-0.5"
               >
                 {finalCtaText}
