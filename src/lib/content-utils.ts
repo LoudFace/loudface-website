@@ -30,6 +30,7 @@ import servicesUxUiDesignContent from "@/data/content/services-ux-ui-design.json
 import servicesGrowthAutopilotContent from "@/data/content/services-growth-autopilot.json";
 import seoForHubContent from "@/data/content/seo-for-hub.json";
 import seoForSaasContent from "@/data/content/seo-for-saas.json";
+import seoForB2bContent from "@/data/content/seo-for-b2b.json";
 import homepageContent from "@/data/content/homepage.json";
 import pricingContent from "@/data/content/pricing.json";
 
@@ -422,6 +423,79 @@ export interface SeoForSaasCaseStudy {
   description: string;
   tags: string[];
   slug: string;
+}
+
+export interface SeoForB2bProblemItem {
+  number: string;
+  title: string;
+  subtitle: string;
+  body: string;
+}
+
+export interface SeoForB2bCaseStudy {
+  name: string;
+  metric: string;
+  description: string;
+  tags: string[];
+  slug: string;
+}
+
+export interface SeoForB2bRelatedInsight {
+  title: string;
+  slug: string;
+  description: string;
+}
+
+export interface SeoForB2bContent {
+  meta: { title: string; description: string };
+  hero: {
+    eyebrow: string;
+    headline: string;
+    subheadline: string;
+    primaryCta: string;
+    secondaryCta: string;
+  };
+  problem: {
+    label: string;
+    items: SeoForB2bProblemItem[];
+  };
+  howWeBuild: {
+    label: string;
+    headline: string;
+    body: string;
+    steps: { number: string; title: string; description: string }[];
+  };
+  ctaBreak: {
+    headline: string;
+    subheadline: string;
+    primaryCta: string;
+    secondaryCta: string;
+  };
+  stats: {
+    headline: string;
+    items: { value: string; label: string }[];
+  };
+  caseStudies: {
+    label: string;
+    headline: string;
+    items: SeoForB2bCaseStudy[];
+    cta: string;
+  };
+  bottomCta: {
+    headline: string;
+    body: string;
+    primaryCta: string;
+    disclaimer: string;
+  };
+  faq: {
+    label: string;
+    items: FAQItem[];
+  };
+  relatedInsights: {
+    label: string;
+    headline: string;
+    items: SeoForB2bRelatedInsight[];
+  };
 }
 
 export interface SeoForSaasContent {
@@ -828,6 +902,7 @@ const contentRegistry: Record<string, unknown> = {
   "services-ux-ui-design": servicesUxUiDesignContent,
   "seo-for-hub": seoForHubContent,
   "seo-for-saas": seoForSaasContent,
+  "seo-for-b2b": seoForB2bContent,
   homepage: homepageContent,
   pricing: pricingContent,
 };
@@ -986,6 +1061,13 @@ export function getSeoForHubContent(): SeoForHubContent {
  */
 export function getSeoForSaasContent(): SeoForSaasContent {
   return seoForSaasContent as SeoForSaasContent;
+}
+
+/**
+ * Get SEO for B2B page content
+ */
+export function getSeoForB2bContent(): SeoForB2bContent {
+  return seoForB2bContent as SeoForB2bContent;
 }
 
 /**

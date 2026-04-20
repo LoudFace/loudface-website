@@ -1,0 +1,170 @@
+{
+  "meta": {
+    "title": "Growth Autopilot for B2B: SEO, AEO & CRO",
+    "description": "B2B growth infrastructure that reaches every decision maker at every stage. SEO, AEO, and CRO as one system — so pipeline compounds instead of stalling between campaigns."
+  },
+  "hero": {
+    "eyebrow": "Growth Autopilot for B2B Companies",
+    "headline": "We build B2B growth engines that turn your PLG motion into a compounding revenue system.",
+    "subheadline": "B2B buying is slow, committee-driven, and largely invisible to standard marketing programs. We build around that reality. Our growth infrastructure reaches every decision maker at every stage of the sales cycle, so pipeline compounds instead of stalling between campaigns.",
+    "primaryCta": "Book a Strategy Call",
+    "secondaryCta": "See how it works"
+  },
+  "problem": {
+    "label": "Why most B2B growth programs produce traffic, not revenue",
+    "items": [
+      {
+        "number": "01",
+        "title": "You're marketing to one person, but the buying committee has six.",
+        "subtitle": "The average B2B purchase involves 3\u20137 decision makers, each with different priorities, search behaviour, and objections.",
+        "body": "Your CFO is Googling ROI calculators. Your CTO is searching security certifications. Your end user is comparing alternatives. One campaign, one landing page, and one content strategy can't reach all of them."
+      },
+      {
+        "number": "02",
+        "title": "Your sales cycle is 6 months, but your attribution model is 30 days.",
+        "subtitle": "Most B2B marketing teams measure success on a timeline that makes their best channels look like they're failing.",
+        "body": "A buyer who read your thought leadership in January and signed in July shows up as unattributed revenue. So the programs that build long-term pipeline get cut, and the ones that generate short-term noise get funded. The measurement problem is killing your growth strategy before it starts."
+      },
+      {
+        "number": "03",
+        "title": "Your website is set up for inbound, but your buyers aren't searching that way.",
+        "subtitle": "B2B buyers don't start with your brand \u2014 they start with their problem.",
+        "body": "\"How do we reduce enterprise onboarding time.\" \"What's the best way to manage distributed procurement.\" They're asking ChatGPT and Perplexity before they ever visit your site. If your content architecture isn't built around the specific questions your buying committee asks at every stage, you're invisible at the moments that shape the shortlist."
+      }
+    ]
+  },
+  "howWeBuild": {
+    "label": "How Growth Autopilot for B2B works",
+    "headline": "B2B pipeline comes from systems that reach the right person at the right stage \u2014 consistently.",
+    "body": "No decks waiting for approval. No task management on your end. We run the roadmap, execute across every discipline weekly, and report against pipeline goals \u2014 not vanity metrics.",
+    "steps": [
+      {
+        "number": "01",
+        "title": "We map how your buyers actually research",
+        "description": "Before we write a word or fix a technical issue, we map the full search behaviour of every decision maker in your typical deal. The CFO's queries. The CTO's queries. The end user's queries. The late-stage comparison queries that happen right before a vendor gets shortlisted. This becomes the architecture everything else is built on."
+      },
+      {
+        "number": "02",
+        "title": "We build content that reaches the full committee",
+        "description": "A pillar page for the executive sponsor. Technical documentation for the evaluator. ROI frameworks for the budget holder. Comparison and alternatives pages for the researcher doing due diligence. Each piece of content is built for a specific person at a specific stage \u2014 not a keyword volume number on a spreadsheet."
+      },
+      {
+        "number": "03",
+        "title": "We make your brand the answer before buyers reach your website",
+        "description": "B2B buyers increasingly start on AI search, asking ChatGPT or Perplexity which vendor is best positioned to solve their specific problem. We get your brand into those answers through entity optimisation, structured content, and citation presence on the sources AI engines pull from."
+      },
+      {
+        "number": "04",
+        "title": "We close the gap between traffic and pipeline",
+        "description": "Most B2B websites convert at under 2% because the content and conversion architecture weren't built together. We run systematic CRO across your highest-intent pages \u2014 demo request flows, pricing pages, case study pages, and comparison pages \u2014 testing until conversion rates reflect the quality of the buying intent arriving."
+      }
+    ]
+  },
+  "ctaBreak": {
+    "headline": "Want to see where your PLG motion is leaking?",
+    "subheadline": "Request a free AI Visibility Audit. No commitment, no pitch. We check your AI search presence, conversion gaps, and top missed opportunities before any sales conversation.",
+    "primaryCta": "Request an AI audit",
+    "secondaryCta": "Or book a strategy call"
+  },
+  "stats": {
+    "headline": "What we deliver for our clients",
+    "items": [
+      {
+        "value": "3\u20137",
+        "label": "decision-maker ICPs \u2014 we build content that reaches all of them"
+      },
+      {
+        "value": "3x",
+        "label": "conversion rate lift on high-intent B2B pages"
+      },
+      {
+        "value": "5+",
+        "label": "AI engines where we establish and monitor your brand's citation presence"
+      }
+    ]
+  },
+  "caseStudies": {
+    "label": "B2B results",
+    "headline": "Some of our success stories",
+    "items": [
+      {
+        "name": "Outbound Specialist",
+        "metric": "One page. 30 days. $200,000 in closed revenue.",
+        "description": "A single bottom-of-funnel landing page rebuilt with the right conversion architecture for a B2B audience. $200K in sales closed within 30 days. The buying committee had everything they needed to say yes \u2014 on one page.",
+        "tags": ["CRO", "B2B", "Pipeline"],
+        "slug": "outbound-specialist"
+      },
+      {
+        "name": "Hoxhunt",
+        "metric": "Enterprise-grade migration. Zero pipeline disruption.",
+        "description": "B2B SaaS cybersecurity. Full site migration with SEO architecture rebuilt from scratch \u2014 20+ pages shipped on a compressed timeline. No organic traffic loss. Significant gains post-launch. A buying committee that could still find them during the transition.",
+        "tags": ["SEO", "Technical", "Enterprise B2B"],
+        "slug": "hoxhunt"
+      },
+      {
+        "name": "Toku / Icypeas",
+        "metric": "Positioning clarity that shortened the sales cycle.",
+        "description": "B2B fintech. When your messaging doesn't clearly answer \"why you over the alternative\" \u2014 the buying committee stalls. We rebuilt the messaging architecture so every decision maker could find their answer fast. Positioning clarity that moved deals forward.",
+        "tags": ["Messaging", "Fintech", "B2B"],
+        "slug": "toku-design-messaging-upgrade"
+      }
+    ],
+    "cta": "See all case studies"
+  },
+  "bottomCta": {
+    "headline": "Let's find out what's between your traffic and your pipeline.",
+    "body": "A 30-minute strategy call. We'll look at your current search presence, AI visibility gaps, and conversion leaks, and tell you exactly what the Growth Autopilot program would target first.",
+    "primaryCta": "Book a Strategy Call",
+    "disclaimer": "No pitch deck. No proposal before the conversation. Just a clear picture of where the gaps are."
+  },
+  "faq": {
+    "label": "Questions B2B marketing leaders ask us",
+    "items": [
+      {
+        "question": "Our sales cycle is 9+ months. How does this work with that timeline?",
+        "answer": "We build for it from the start. That means multi-touch attribution so you can see organic influence on deals that close months later, content mapped to the full buying journey not just top-of-funnel, and reporting that tracks pipeline contribution \u2014 not monthly conversions that make long-cycle channels look broken."
+      },
+      {
+        "question": "We already have a content team in-house. Where do you fit?",
+        "answer": "Most in-house B2B content teams are strong on thought leadership and product marketing but under-resourced on conversion architecture, AEO, and committee-targeted content systems. We plug into what's working and build what's missing \u2014 without replacing your team."
+      },
+      {
+        "question": "How do you handle the fact that our buyers don't use the same language we do?",
+        "answer": "That's one of the first things we fix. We map actual search queries from each decision maker role \u2014 not the language your internal team uses to describe your product. The CFO searching \"reduce operational overhead\" and your sales team calling it \"efficiency gains\" are the same problem \u2014 but they need different content to rank and convert."
+      },
+      {
+        "question": "What does AI search optimisation mean for a B2B company specifically?",
+        "answer": "It means when a procurement lead or a CTO asks ChatGPT which vendor is best positioned for their specific use case \u2014 your brand comes up as a credible option. We get you there through entity optimisation, structured content, and citation building on the B2B sources AI engines weight most heavily \u2014 analyst sites, industry publications, G2, and peer review platforms."
+      },
+      {
+        "question": "How quickly will we see pipeline impact?",
+        "answer": "Technical and AEO work moves within 30\u201360 days. Conversion improvements on existing high-intent pages typically show within one quarter. Content authority and ranking for competitive B2B queries compounds over 90\u2013180 days. We set 90-day pipeline goals at the start and report against them weekly \u2014 no waiting until the end of a quarter to find out if it's working."
+      },
+      {
+        "question": "How is this different from our current SEO agency?",
+        "answer": "Your current SEO agency is likely optimising for rankings and traffic. We optimise for qualified pipeline across a multi-stakeholder buying journey. That means content built for buying committees, attribution that survives a 9-month sales cycle, and CRO that converts the traffic when it arrives. Most SEO agencies don't own any of that \u2014 we own all of it."
+      }
+    ]
+  },
+  "relatedInsights": {
+    "label": "Related insights",
+    "headline": "Go deeper on the B2B growth stack",
+    "items": [
+      {
+        "title": "Citation Authority Is the New Backlink Strategy: How to Become a Trusted LLM Source",
+        "slug": "how-to-become-a-trusted-llm-source",
+        "description": "Why citations \u2014 not backlinks \u2014 decide whether AI engines surface your brand as the answer."
+      },
+      {
+        "title": "Most AEO Advice Is Already Outdated: Here's What's Actually Working in 2026",
+        "slug": "aeo-strategies-that-work",
+        "description": "The AEO tactics that moved the needle in 2024 don't work anymore. Here's the current playbook."
+      },
+      {
+        "title": "Machine-to-Machine Marketing: Why Your 2026 Strategy Needs to Target AI Systems, Not Just Humans",
+        "slug": "machine-to-machine-marketing",
+        "description": "Your next buyer's first touchpoint isn't a human \u2014 it's an AI model summarising your category."
+      }
+    ]
+  }
+}
