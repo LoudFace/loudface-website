@@ -38,6 +38,10 @@ type CalWebhookPayload = {
 
 const UTM_KEYS = ['utm_source', 'utm_medium', 'utm_campaign', 'utm_term', 'utm_content'] as const;
 
+// Cal.com does NOT forward UTM query params from embed URLs to webhooks by default.
+// This extractor works only if the event type has hidden custom questions named
+// utm_source/utm_medium/etc. that the embed config prefills. Kept defensive in case
+// someone adds those later; will be empty otherwise.
 function extractUtm(payload: CalWebhookPayload['payload']): CalTracking {
   const out: CalTracking = {};
   const tracking = payload?.tracking;
@@ -52,10 +56,6 @@ function extractUtm(payload: CalWebhookPayload['payload']): CalTracking {
     if (typeof resp === 'string' && resp) out[key] = resp;
   }
   return out;
-}
-
-function classifySource(utm: CalTracking): 'website_embed' | 'external' {
-  return utm.utm_source === 'website' && utm.utm_medium === 'embed' ? 'website_embed' : 'external';
 }
 
 const EVENT_MAP: Record<string, string> = {
@@ -113,7 +113,6 @@ export async function POST(request: Request) {
   }
 
   const utm = extractUtm(body.payload);
-  const source = classifySource(utm);
 
   const properties = {
     booking_uid: body.payload?.uid,
@@ -127,7 +126,6 @@ export async function POST(request: Request) {
     attendee_name: attendee?.name,
     attendee_timezone: attendee?.timeZone,
     organizer_email: body.payload?.organizer?.email,
-    source,
     ...utm,
   };
 
@@ -144,24 +142,6 @@ export async function POST(request: Request) {
     event,
     properties,
   });
-
-  if (source === 'external') {
-    posthog.capture({
-      distinctId: email,
-      event: 'cal_webhook_debug',
-      properties: {
-        trigger_event: body.triggerEvent,
-        payload_keys: Object.keys(body.payload ?? {}).join(','),
-        has_tracking: Boolean(body.payload?.tracking),
-        tracking_keys: Object.keys(body.payload?.tracking ?? {}).join(','),
-        response_keys: Object.keys(body.payload?.responses ?? {}).join(','),
-        metadata_keys: Object.keys(body.payload?.metadata ?? {}).join(','),
-        raw_tracking: JSON.stringify(body.payload?.tracking ?? null),
-        raw_metadata: JSON.stringify(body.payload?.metadata ?? null),
-        raw_responses: JSON.stringify(body.payload?.responses ?? null),
-      },
-    });
-  }
 
   await posthog.shutdown();
 

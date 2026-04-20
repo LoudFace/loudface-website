@@ -71,6 +71,7 @@ export function CalHandler() {
             const email = attendee?.email?.toLowerCase().trim();
             if (!email) return;
 
+            const params = new URLSearchParams(window.location.search);
             import("posthog-js").then(({ default: posthog }) => {
               if (!posthog.__loaded) return;
               posthog.identify(email, {
@@ -78,9 +79,17 @@ export function CalHandler() {
                 name: attendee?.name,
               });
               posthog.capture("call_booked_client", {
+                source: "website_embed",
                 event_type: detail?.eventType?.slug,
                 event_type_title: detail?.eventType?.title,
                 booking_date: detail?.date,
+                page_path: window.location.pathname,
+                page_url: window.location.href,
+                utm_source: params.get("utm_source") || undefined,
+                utm_medium: params.get("utm_medium") || undefined,
+                utm_campaign: params.get("utm_campaign") || undefined,
+                utm_term: params.get("utm_term") || undefined,
+                utm_content: params.get("utm_content") || undefined,
               });
             });
           } catch (err) {
