@@ -3,7 +3,11 @@
 export interface AuditInput {
   url: string;
   email: string;
+  /** Extracted server-side from URL metadata (JSON-LD → og:site_name → title → domain). */
   companyName: string;
+  /** Source of the extracted brand name, for diagnostics. */
+  brandSource?: 'json-ld' | 'og-site-name' | 'title' | 'domain-fallback';
+  /** Deprecated — no longer user-provided; may exist on legacy records. */
   industry?: string;
 }
 
@@ -46,6 +50,11 @@ export interface AuditDiagnostics {
   competitorSource: 'dataforseo-labs' | 'ai-extracted' | 'hardcoded';
   inferredCategory: string;
   inferredEntityType: string;
+  /** Confidence in the inferred category (based on keyword density across Phase 1) */
+  categoryConfidence?: 'high' | 'medium' | 'low';
+  /** Brand recognition was very low AND category could not be inferred — downstream
+   *  Phase 2/3 results may be about unrelated entities with the same name. */
+  lowEntityConfidence?: boolean;
   /** Per-slide data quality: maps slide name to its data status */
   slideData: Record<string, SlideDataQuality>;
 }

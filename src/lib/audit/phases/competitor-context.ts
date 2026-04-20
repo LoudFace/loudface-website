@@ -150,7 +150,8 @@ export async function runCompetitorContext(
     }
   });
 
-  // Calculate metrics
+  // Recommendation rate = how often the brand is offered as an alternative
+  // to a competitor when asked "what's an alternative to X?"
   const allResults = queries.flatMap((q) => q.results);
   const brandMentions = allResults.filter((r) => r.mentioned).length;
   const totalResults = allResults.length;
@@ -158,20 +159,12 @@ export async function runCompetitorContext(
     ? Math.round((brandMentions / totalResults) * 100)
     : 0;
 
-  // Calculate share of voice by competitor
+  // NOTE: shareOfVoiceByCompetitor is populated later in the pipeline from
+  // Phase 3 (unbranded category) responses, where brand + competitors are
+  // measured against the same prompts. Phase 2 "alternative to X" queries
+  // are inherently biased in favor of competitor X, so they cannot produce
+  // a fair SoV comparison. Initialize empty here.
   const shareOfVoiceByCompetitor: Record<string, number> = {};
-  for (const comp of topCompetitors) {
-    const compQueries = queries.filter((q) => q.targetCompetitor === comp.name);
-    const compResults = compQueries.flatMap((q) => q.results);
-    // Count how many responses mention the competitor (not the brand)
-    const compMentions = compResults.filter((r) => {
-      const text = (r.rawResponse || '').toLowerCase();
-      return text.includes(comp.name.toLowerCase()) || text.includes(comp.domain.toLowerCase());
-    }).length;
-    shareOfVoiceByCompetitor[comp.name] = compResults.length > 0
-      ? Math.round((compMentions / compResults.length) * 100)
-      : 0;
-  }
 
   return {
     competitors,
@@ -200,10 +193,11 @@ function extractCompanyName(domain: string): string {
 }
 
 /**
- * Guess a domain from a company name.
- * e.g., "Deel" → "deel.com", "Bitwage" → "bitwage.com"
- * Used when AI-extracted competitors don't have domain info.
+ * For AI-extracted competitors we don't know the real domain.
+ * Return a slug that can be pattern-matched against AI responses
+ * (URLs, mentions) without pretending it's a real TLD.
+ * Example: "Webflow" → "webflow", "HubSpot" → "hubspot"
  */
 function guessDomain(name: string): string {
-  return name.toLowerCase().replace(/\s+/g, '') + '.com';
+  return name.toLowerCase().replace(/\s+/g, '').replace(/[^a-z0-9-]/g, '');
 }

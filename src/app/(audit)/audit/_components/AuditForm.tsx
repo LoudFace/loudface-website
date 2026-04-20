@@ -3,26 +3,10 @@
 import { useState, type FormEvent } from 'react';
 import { useRouter } from 'next/navigation';
 
-const INDUSTRIES = [
-  'SaaS',
-  'E-commerce',
-  'Fintech',
-  'Healthcare',
-  'Education',
-  'Marketing',
-  'Real Estate',
-  'Legal',
-  'Technology',
-  'Professional Services',
-  'Other',
-];
-
 export function AuditForm() {
   const router = useRouter();
   const [url, setUrl] = useState('');
   const [email, setEmail] = useState('');
-  const [companyName, setCompanyName] = useState('');
-  const [industry, setIndustry] = useState('');
   const [status, setStatus] = useState<'idle' | 'loading' | 'error'>('idle');
   const [errorMsg, setErrorMsg] = useState('');
 
@@ -38,8 +22,6 @@ export function AuditForm() {
         body: JSON.stringify({
           url: url.trim(),
           email: email.trim(),
-          companyName: companyName.trim(),
-          ...(industry && industry !== '' ? { industry } : {}),
         }),
       });
 
@@ -51,7 +33,6 @@ export function AuditForm() {
         return;
       }
 
-      // Redirect to results page
       router.push(`/audit/${data.id}`);
     } catch {
       setStatus('error');
@@ -64,23 +45,6 @@ export function AuditForm() {
 
   return (
     <form onSubmit={handleSubmit} className="space-y-5">
-      {/* Company Name */}
-      <div>
-        <label htmlFor="companyName" className="block text-sm font-medium text-surface-300 mb-1.5">
-          Company Name <span className="text-error">*</span>
-        </label>
-        <input
-          id="companyName"
-          type="text"
-          required
-          maxLength={100}
-          placeholder="Acme Corp"
-          value={companyName}
-          onChange={(e) => setCompanyName(e.target.value)}
-          className={inputClass}
-        />
-      </div>
-
       {/* Website URL */}
       <div>
         <label htmlFor="url" className="block text-sm font-medium text-surface-300 mb-1.5">
@@ -94,7 +58,11 @@ export function AuditForm() {
           value={url}
           onChange={(e) => setUrl(e.target.value)}
           className={inputClass}
+          autoComplete="url"
         />
+        <p className="mt-1.5 text-2xs text-surface-500">
+          We&apos;ll pull your brand name and details directly from your site.
+        </p>
       </div>
 
       {/* Email */}
@@ -110,27 +78,8 @@ export function AuditForm() {
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           className={inputClass}
+          autoComplete="email"
         />
-      </div>
-
-      {/* Industry (optional) */}
-      <div>
-        <label htmlFor="industry" className="block text-sm font-medium text-surface-300 mb-1.5">
-          Industry <span className="text-surface-500">(optional)</span>
-        </label>
-        <select
-          id="industry"
-          value={industry}
-          onChange={(e) => setIndustry(e.target.value)}
-          className={`${inputClass} appearance-none`}
-        >
-          <option value="">Select your industry</option>
-          {INDUSTRIES.map((ind) => (
-            <option key={ind} value={ind}>
-              {ind}
-            </option>
-          ))}
-        </select>
       </div>
 
       {/* Error message */}

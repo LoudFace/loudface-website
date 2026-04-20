@@ -7,7 +7,7 @@ import {
   inferCategory,
   extractCompetitorsFromResponses,
   extractSpecificCategory,
-  filterDFSCompetitors,
+  mentionsBrand,
 } from './analysis';
 import { TraceCollector } from './dataforseo';
 import {
@@ -70,7 +70,7 @@ export async function runAudit(id: string): Promise<void> {
     return;
   }
 
-  const { companyName, url, industry } = record.input;
+  const { companyName, url } = record.input;
   const domain = url
     .replace(/^https?:\/\//, '')
     .replace(/^www\./, '')
@@ -87,7 +87,7 @@ export async function runAudit(id: string): Promise<void> {
     const brandBaseline = await runBrandBaseline(
       companyName,
       domain,
-      industry,
+      undefined,
       async (pct) => {
         await updateProgress(
           id,
@@ -100,20 +100,34 @@ export async function runAudit(id: string): Promise<void> {
 
     // Infer category from Phase 1 results (use all queries for stronger signal)
     const allPhase1Results = brandBaseline.queries.flatMap((q) => q.results);
-    const { category: broadCategory, industry: inferredIndustry, entityType } = inferCategory(
-      allPhase1Results,
-      industry,
-    );
+    const {
+      category: broadCategory,
+      industry: inferredIndustry,
+      entityType,
+      confidence: categoryConfidence,
+    } = inferCategory(allPhase1Results);
+
+    // Entity confidence gate: if brand recognition is very low AND category
+    // could not be inferred, Phase 2/3 results will be noise about unrelated
+    // entities. Downstream slides still render (with the "Gaps" surface being
+    // the accurate story), but diagnostics flag the low confidence.
+    const lowEntityConfidence =
+      brandBaseline.brandRecognitionScore < 10 && categoryConfidence === 'low';
+    if (lowEntityConfidence) {
+      console.log(
+        `[Audit] Low entity confidence: brand recognition ${brandBaseline.brandRecognitionScore}%, category "${broadCategory}". Downstream results may be unreliable.`,
+      );
+    }
 
     // Try to extract a more specific category from AI descriptions
     // e.g., "crypto payroll" instead of "fintech", "Webflow agency" instead of "web design agency"
-    const specificCategory = extractSpecificCategory(allPhase1Results, companyName, domain, industry);
+    const specificCategory = extractSpecificCategory(allPhase1Results, companyName, domain);
     const category = specificCategory || broadCategory;
 
-    console.log(`[Audit] Inferred: broadCategory="${broadCategory}", specificCategory="${specificCategory ?? '(none)'}", final="${category}", type="${entityType}"`);
+    console.log(`[Audit] Inferred: broadCategory="${broadCategory}", specificCategory="${specificCategory ?? '(none)'}", final="${category}", type="${entityType}", confidence="${categoryConfidence}"`);
 
     // Extract competitor names from Phase 1 AI responses (for cross-validation)
-    const aiCompetitors = extractCompetitorsFromResponses(allPhase1Results, companyName, industry);
+    const aiCompetitors = extractCompetitorsFromResponses(allPhase1Results, companyName);
     console.log(`[Audit] AI-extracted competitors: ${aiCompetitors.map((c) => `${c.name}(${c.mentionCount})`).join(', ') || '(none)'}`);
 
     // ─── Phase 2: Competitor Context ──────────────────────────────
@@ -157,6 +171,31 @@ export async function runAudit(id: string): Promise<void> {
       tracer,
     );
 
+    // ─── Phase 3 SoV Population ───────────────────────────────────
+    // For each competitor, count how many Phase 3 (unbranded category) responses
+    // mention them. This is the only place brand + competitors are measured on
+    // identical prompts, so it's the only fair Share of Voice comparison.
+    //
+    // Important: we use mentionsBrand() (not substring match) so short names
+    // like "Slack" don't match "slackers" and domain roots match as whole tokens.
+    const allPhase3Results = categoryVisibility.queries.flatMap((q) => q.results);
+    const phase3Total = allPhase3Results.length;
+
+    if (phase3Total > 0) {
+      for (const comp of competitorContext.competitors) {
+        let mentions = 0;
+        for (const r of allPhase3Results) {
+          if (!r.rawResponse) continue;
+          if (mentionsBrand(r.rawResponse, comp.name, comp.domain)) {
+            mentions++;
+          }
+        }
+        competitorContext.shareOfVoiceByCompetitor[comp.name] = Math.round(
+          (mentions / phase3Total) * 100,
+        );
+      }
+    }
+
     // ─── Scoring ──────────────────────────────────────────────────
     await updateProgress(id, 91, 'Calculating your audit scores...');
 
@@ -199,6 +238,8 @@ export async function runAudit(id: string): Promise<void> {
       competitorSource,
       inferredCategory: category,
       inferredEntityType: entityType,
+      categoryConfidence,
+      lowEntityConfidence,
       slideData,
     };
 

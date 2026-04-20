@@ -522,7 +522,22 @@ function validateCategoryVisibility(
     issues: [],
   };
 
-  // Check for overly broad categories
+  // 'uncertain' is the explicit fallback when density-based inferCategory()
+  // can't find enough keyword signal — treat it as an error, not a warning.
+  if (data.inferredCategory.toLowerCase() === 'uncertain') {
+    const issue: ValidationIssue = {
+      metric: 'Inferred Category',
+      severity: 'error',
+      message: 'Category could not be inferred from Phase 1 responses',
+      explanation: 'inferCategory() returned "uncertain" — keyword density across all Phase 1 responses was below the threshold. This usually means the brand is too niche for AI platforms to describe consistently, or the brand name matches an unrelated entity. Phase 3 queries will fall back to generic "software" queries and produce low-signal results.',
+      suggestion: 'Check Phase 1 responses for brand recognition. If low, flag lowEntityConfidence in diagnostics.',
+    };
+    categoryMetric.valid = false;
+    categoryMetric.issues.push(issue);
+    issues.push(issue);
+  }
+
+  // Check for overly broad categories (fallback warning)
   const broadCategories = ['software', 'saas', 'fintech', 'technology', 'marketing', 'design', 'AI'];
   if (broadCategories.includes(data.inferredCategory.toLowerCase())) {
     const issue: ValidationIssue = {

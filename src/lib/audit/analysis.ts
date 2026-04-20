@@ -7,6 +7,39 @@ import type {
 } from './types';
 
 /**
+ * Does the text mention the brand?
+ * - Domain match is always a whole-token match (avoids "Toku" matching "tokusatsu").
+ * - Brand name match is word-boundary-aware so short names don't match
+ *   substrings ("test" must not match "testing" / "contestant").
+ *
+ * Rules:
+ *   • Brand names ≥4 chars → word-boundary regex
+ *   • Brand names <4 chars → require word-boundary AND adjacent punctuation/quote
+ *     (capital words under 4 chars are ambiguous; we require strong signal)
+ */
+export function mentionsBrand(
+  text: string,
+  brandName: string,
+  brandDomain: string,
+): boolean {
+  if (!text) return false;
+  const lowerText = text.toLowerCase();
+
+  // Domain check: match the root (strip www and TLD) and the full domain
+  const cleanedDomain = brandDomain.toLowerCase().replace(/^www\./, '');
+  if (cleanedDomain && lowerText.includes(cleanedDomain)) {
+    return true;
+  }
+
+  if (!brandName) return false;
+
+  // Use word-boundary match for the brand name
+  const escaped = brandName.toLowerCase().replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  const re = new RegExp(`(?:^|[^a-z0-9])${escaped}(?=$|[^a-z0-9])`, 'i');
+  return re.test(text);
+}
+
+/**
  * Parse a DataForSEO LLM response into a structured PlatformResult.
  * Checks whether the brand is mentioned, cited, and determines sentiment.
  */
@@ -39,12 +72,10 @@ export function parseResponse(
     })
     .join('\n');
 
-  const lowerText = fullText.toLowerCase();
-  const lowerBrand = brandName.toLowerCase();
   const lowerDomain = brandDomain.toLowerCase().replace(/^www\./, '');
 
-  // Check for brand mention
-  const mentioned = lowerText.includes(lowerBrand) || lowerText.includes(lowerDomain);
+  // Check for brand mention (word-boundary aware — see mentionsBrand).
+  const mentioned = mentionsBrand(fullText, brandName, brandDomain);
 
   // Extract citations/sources from all possible locations
   const sources: SourceCitation[] = [];
@@ -103,12 +134,24 @@ export function parseResponse(
 }
 
 /**
+ * Find the position of the first word-boundary-aware brand mention.
+ * Returns -1 if the brand is not mentioned.
+ */
+function findBrandIndex(text: string, brandName: string): number {
+  if (!text || !brandName) return -1;
+  const escaped = brandName.toLowerCase().replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  const re = new RegExp(`(?:^|[^a-z0-9])(${escaped})(?=$|[^a-z0-9])`, 'i');
+  const match = re.exec(text);
+  if (!match) return -1;
+  // Return index of the captured group (the actual brand name, not the boundary char)
+  return match.index + match[0].toLowerCase().indexOf(brandName.toLowerCase());
+}
+
+/**
  * Extract a relevant snippet around the brand mention.
  */
 function extractSnippet(text: string, brandName: string): string {
-  const lowerText = text.toLowerCase();
-  const lowerBrand = brandName.toLowerCase();
-  const idx = lowerText.indexOf(lowerBrand);
+  const idx = findBrandIndex(text, brandName);
 
   if (idx === -1) {
     // No mention — return truncated response
@@ -131,13 +174,11 @@ function extractSnippet(text: string, brandName: string): string {
  * Returns positive, neutral, or negative.
  */
 function analyzeSentiment(text: string, brandName: string): Sentiment {
-  const lowerText = text.toLowerCase();
-  const lowerBrand = brandName.toLowerCase();
-
-  // Only analyze text near brand mentions
-  const idx = lowerText.indexOf(lowerBrand);
+  // Only analyze text near word-boundary brand mentions
+  const idx = findBrandIndex(text, brandName);
   if (idx === -1) return 'neutral';
 
+  const lowerText = text.toLowerCase();
   const context = lowerText.slice(
     Math.max(0, idx - 200),
     Math.min(lowerText.length, idx + brandName.length + 200),
@@ -181,47 +222,53 @@ export function extractAccurateInfo(
   domain?: string,
   industry?: string,
 ): string[] {
-  const lowerBrand = brandName.toLowerCase();
-
-  // Context signals that indicate the sentence is about the CORRECT entity.
-  // Built from domain keywords + industry + common business descriptors.
+  // Context signals that indicate the sentence is about a real business
+  // (rather than a band, a TV show, a word in another language, a product).
+  // Kept generic so the function works for any client — domain/industry
+  // keywords plug in as optional bonus signals.
   const domainWords = (domain ?? '')
     .replace(/^www\./, '')
-    .replace(/\.(com|io|co|net|org|ai|app|dev)$/, '')
+    .replace(/\.(com|io|co|net|org|ai|app|dev|xyz|so|to)$/, '')
     .split(/[-_.]/)
     .filter((w) => w.length > 2);
 
   const positiveSignals = [
-    // Business context
-    'agency', 'company', 'startup', 'founded', 'team', 'clients',
-    'services', 'software', 'saas', 'b2b',
-    // Common SaaS/agency terms
-    'webflow', 'seo', 'aeo', 'cro', 'marketing', 'website', 'web design',
-    'conversion', 'organic growth', 'digital', 'development',
-    // Industry terms (strongest signal for correct entity)
-    ...(industry ? industry.toLowerCase().split(/\s+/).map(() => industry!.toLowerCase()) : []),
+    // Business entity signals
+    'agency', 'company', 'startup', 'founded', 'headquartered', 'team',
+    'clients', 'customers', 'services', 'service provider', 'software',
+    'saas', 'b2b', 'b2c', 'platform', 'tool', 'product', 'provider',
+    'founded in', 'based in', 'established',
+    // Business activity signals
+    'offers', 'provides', 'specializes', 'helps', 'delivers', 'builds',
+    'enables', 'focuses on', 'designed for',
+    // Optional bonuses from user context
+    ...(industry ? [industry.toLowerCase()] : []),
     ...domainWords.map((w) => w.toLowerCase()),
   ];
 
-  // Signals that the sentence is about a DIFFERENT entity with the same name
-  const negativeSignals = [
-    // Hardware/products that aren't the company
-    'helmet', 'biker', 'bone-conduction', 'glasses', 'eyewear', 'headphones',
-    'speaker', 'audio device', 'wearable',
-    // Music/entertainment
-    'band', 'album', 'song', 'gig', 'music', 'musician', 'recording artist',
-    'wisconsin', 'racine',
-    // Apparel (common for brand name conflicts)
-    'apparel', 'clothing', 'fashion', 'streetwear', 'merch',
-    // Sound studio
-    'sound design', 'music composition',
-    // Different company with same name (CX/comms platforms, TV channels, etc.)
-    'customer experience platform', 'cx platform', 'customer engagement platform',
-    'cloud communications', 'enterprise communications', 'contact center',
-    'call center', 'telephony', 'pbx', 'voip',
-    'tv channel', 'television channel', 'streaming service', 'anime channel',
-    'tokusatsu', 'live-action', 'kanji', 'japanese term',
-    'accounts receivable automation', 'payment collections',
+  // Generic "wrong-entity" disambiguation signals.
+  // These are domains where a similarly-named thing might confuse the AI.
+  // Kept as generic categories rather than client-specific lists.
+  const wrongEntityContexts = [
+    // Music / entertainment
+    'band', 'album', 'song', 'musician', 'recording artist', 'rapper',
+    'singer', 'songwriter', 'discography', 'tracklist',
+    // TV / film / anime
+    'tv channel', 'television channel', 'streaming service', 'anime',
+    'tokusatsu', 'sitcom', 'drama series', 'film director', 'filmmaker',
+    // Games / characters
+    'video game', 'character in', 'fictional character', 'protagonist of',
+    // Language / definition
+    'japanese term', 'japanese word', 'kanji', 'chinese term',
+    'means "', 'is a word', 'translates to', 'etymology',
+    // Apparel / accessories unrelated to the business
+    'apparel brand', 'clothing brand', 'fashion label', 'streetwear',
+    // Hardware unrelated
+    'helmet', 'bone-conduction', 'eyewear', 'wearable device',
+    'speech-to-text', 'speech to text', 'hearing aid',
+    'closed caption', 'transcription glasses', 'waverly labs',
+    // Famous people / places unrelated
+    'born in', 'born on', 'biography', 'autobiography',
   ];
 
   type ScoredFact = { text: string; score: number; platform: string };
@@ -242,29 +289,26 @@ export function extractAccurateInfo(
       )
       .filter((s) => {
         if (s.length < 30 || s.length > 300) return false;
-        // Skip questions
-        if (s.endsWith('?')) return false;
-        // Skip sentences that are just labels/headers (no verb)
-        if (s.endsWith(':')) return false;
-        // Skip meta-commentary ("Based on my search results...")
+        // Skip questions, labels, meta-commentary
+        if (s.endsWith('?') || s.endsWith(':')) return false;
         if (s.startsWith('Based on my search') || s.startsWith('I ')) return false;
         if (s.startsWith('Could you') || s.startsWith('It appears')) return false;
-        // Must mention the brand
-        if (!s.toLowerCase().includes(lowerBrand)) return false;
+        // Must mention the brand (word-boundary)
+        if (findBrandIndex(s, brandName) === -1) return false;
         return true;
       });
 
     for (const sentence of sentences) {
       const lower = sentence.toLowerCase();
 
-      // Score: positive for relevance, negative for wrong-entity signals
+      // Score: positive for business-entity relevance, negative for wrong-entity
       let score = 0;
 
       for (const signal of positiveSignals) {
         if (lower.includes(signal)) score += 2;
       }
-      for (const signal of negativeSignals) {
-        if (lower.includes(signal)) score -= 5; // Heavy penalty for wrong entity
+      for (const signal of wrongEntityContexts) {
+        if (lower.includes(signal)) score -= 5;
       }
 
       // Bonus for sentences with specific facts (numbers, years, percentages)
@@ -418,8 +462,7 @@ export function extractGaps(
  */
 export function inferCategory(
   responses: PlatformResult[],
-  fallbackIndustry?: string,
-): { category: string; industry: string; entityType: 'product' | 'service' } {
+): { category: string; industry: string; entityType: 'product' | 'service'; confidence: 'high' | 'medium' | 'low' } {
   // Prefer responses that actually mentioned the brand (more relevant)
   // Fall back to all responses if none mentioned it
   const mentionedResponses = responses.filter((r) => r.mentioned && r.rawResponse);
@@ -432,11 +475,19 @@ export function inferCategory(
     .toLowerCase();
 
   if (!allText) {
-    const category = fallbackIndustry?.toLowerCase() || 'software';
-    return { category, industry: fallbackIndustry || 'technology', entityType: 'product' };
+    return { category: 'uncertain', industry: 'Unknown', entityType: 'product', confidence: 'low' };
   }
 
-  // Step 1: Determine entity type (service/agency vs product/software)
+  // Use token count for density-based scoring — broad keyword bucket matches
+  // across diverse responses used to win even when the signal was incidental.
+  const totalTokens = Math.max(1, allText.split(/\s+/).length);
+  const countOccurrences = (needle: string): number => {
+    if (!needle) return 0;
+    const re = new RegExp(`\\b${needle.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\b`, 'gi');
+    return (allText.match(re) || []).length;
+  };
+
+  // Step 1: Entity type (service/agency vs product/software) with density
   const serviceSignals = [
     'agency', 'agencies', 'consulting', 'consultancy', 'firm',
     'services', 'service provider', 'freelance', 'studio',
@@ -448,15 +499,12 @@ export function inferCategory(
 
   let serviceScore = 0;
   let productScore = 0;
-  for (const s of serviceSignals) {
-    if (allText.includes(s)) serviceScore++;
-  }
-  for (const s of productSignals) {
-    if (allText.includes(s)) productScore++;
-  }
+  for (const s of serviceSignals) serviceScore += countOccurrences(s);
+  for (const s of productSignals) productScore += countOccurrences(s);
   let entityType: 'product' | 'service' = serviceScore > productScore ? 'service' : 'product';
 
-  // Step 2: Determine category using keyword scoring (most specific wins)
+  // Step 2: Category — each def contributes a density score (hits per 1000 tokens).
+  // A category has to clear MIN_DENSITY to be trusted, else we fall back to 'uncertain'.
   const categoryDefs = [
     // Service categories
     { keywords: ['webflow', 'web design', 'web development', 'website design', 'website development'], cat: 'web design agency', ind: 'Professional Services', forType: 'service' as const, weight: 3 },
@@ -464,52 +512,60 @@ export function inferCategory(
     { keywords: ['branding', 'brand identity', 'creative agency', 'design agency'], cat: 'design agency', ind: 'Professional Services', forType: 'service' as const, weight: 2 },
     { keywords: ['marketing agency', 'digital marketing', 'advertising agency', 'media agency'], cat: 'marketing agency', ind: 'Professional Services', forType: 'service' as const, weight: 2 },
     { keywords: ['consulting', 'management consulting', 'strategy consulting'], cat: 'consulting', ind: 'Professional Services', forType: 'service' as const, weight: 2 },
-    // Product categories
-    { keywords: ['crm', 'customer relationship'], cat: 'CRM', ind: 'SaaS', forType: 'product' as const, weight: 3 },
-    { keywords: ['project management', 'task management', 'workflow'], cat: 'project management', ind: 'SaaS', forType: 'product' as const, weight: 3 },
-    { keywords: ['e-commerce', 'ecommerce', 'online store', 'online shop'], cat: 'e-commerce', ind: 'E-commerce', forType: 'product' as const, weight: 3 },
-    { keywords: ['analytics', 'data analysis', 'business intelligence'], cat: 'analytics', ind: 'SaaS', forType: 'product' as const, weight: 2 },
-    { keywords: ['fintech', 'financial', 'banking', 'payment', 'payments'], cat: 'fintech', ind: 'Fintech', forType: 'product' as const, weight: 2 },
-    { keywords: ['healthcare', 'health', 'medical', 'clinical'], cat: 'healthcare', ind: 'Healthcare', forType: 'product' as const, weight: 2 },
-    { keywords: ['education', 'learning', 'edtech', 'lms'], cat: 'education', ind: 'Education', forType: 'product' as const, weight: 2 },
-    { keywords: ['real estate', 'property', 'proptech'], cat: 'real estate', ind: 'Real Estate', forType: 'product' as const, weight: 2 },
-    { keywords: ['legal', 'law firm', 'legaltech'], cat: 'legal', ind: 'Legal', forType: 'product' as const, weight: 2 },
-    { keywords: ['hr', 'human resources', 'recruiting', 'talent'], cat: 'HR', ind: 'SaaS', forType: 'product' as const, weight: 2 },
-    { keywords: ['cybersecurity', 'security', 'infosec'], cat: 'cybersecurity', ind: 'Technology', forType: 'product' as const, weight: 2 },
-    { keywords: ['artificial intelligence', 'machine learning', 'ai-powered'], cat: 'AI', ind: 'Technology', forType: 'product' as const, weight: 2 },
-    { keywords: ['saas', 'software as a service', 'cloud'], cat: 'SaaS', ind: 'SaaS', forType: 'product' as const, weight: 1 },
-    { keywords: ['marketing', 'advertising'], cat: 'marketing', ind: 'Marketing', forType: 'product' as const, weight: 1 },
-    { keywords: ['design', 'creative'], cat: 'design', ind: 'Design', forType: 'product' as const, weight: 1 },
+    // Product categories — tighter keyword lists, fewer false-positive triggers
+    { keywords: ['crm', 'customer relationship management'], cat: 'CRM', ind: 'SaaS', forType: 'product' as const, weight: 3 },
+    { keywords: ['project management', 'task management', 'workflow automation'], cat: 'project management', ind: 'SaaS', forType: 'product' as const, weight: 3 },
+    { keywords: ['e-commerce', 'ecommerce', 'online store', 'online shop', 'shopify'], cat: 'e-commerce', ind: 'E-commerce', forType: 'product' as const, weight: 3 },
+    { keywords: ['analytics platform', 'data analytics', 'business intelligence'], cat: 'analytics', ind: 'SaaS', forType: 'product' as const, weight: 2 },
+    { keywords: ['fintech', 'financial technology', 'neobank', 'payment processing'], cat: 'fintech', ind: 'Fintech', forType: 'product' as const, weight: 3 },
+    { keywords: ['healthtech', 'digital health', 'electronic health record', 'telemedicine', 'telehealth'], cat: 'healthtech', ind: 'Healthcare', forType: 'product' as const, weight: 3 },
+    { keywords: ['edtech', 'learning management system', 'online course platform', 'lms'], cat: 'edtech', ind: 'Education', forType: 'product' as const, weight: 3 },
+    { keywords: ['proptech', 'real estate platform', 'property management software'], cat: 'proptech', ind: 'Real Estate', forType: 'product' as const, weight: 3 },
+    { keywords: ['legaltech', 'law practice management'], cat: 'legaltech', ind: 'Legal', forType: 'product' as const, weight: 3 },
+    { keywords: ['hr software', 'human resources platform', 'hris', 'applicant tracking', 'recruiting software'], cat: 'HR software', ind: 'SaaS', forType: 'product' as const, weight: 3 },
+    { keywords: ['cybersecurity', 'endpoint security', 'infosec', 'threat detection'], cat: 'cybersecurity', ind: 'Technology', forType: 'product' as const, weight: 3 },
+    { keywords: ['machine learning platform', 'ai platform', 'large language model', 'llm', 'generative ai'], cat: 'AI', ind: 'Technology', forType: 'product' as const, weight: 2 },
+    { keywords: ['developer tool', 'devtools', 'code editor', 'api platform'], cat: 'developer tools', ind: 'Developer Tools', forType: 'product' as const, weight: 2 },
+    { keywords: ['customer support software', 'help desk software', 'ticketing system'], cat: 'customer support', ind: 'SaaS', forType: 'product' as const, weight: 2 },
   ];
 
-  let bestCategory = { cat: 'software', ind: fallbackIndustry || 'technology', score: 0 };
+  // Require at least 1 hit per 1000 tokens for a category to "win" confidently.
+  const MIN_DENSITY_HIGH = 1.0; // strong signal
+  const MIN_DENSITY_MEDIUM = 0.4; // moderate signal
+
+  type Ranked = { cat: string; ind: string; score: number; density: number };
+  let best: Ranked = { cat: 'uncertain', ind: 'Unknown', score: 0, density: 0 };
 
   for (const def of categoryDefs) {
-    let score = 0;
-    for (const kw of def.keywords) {
-      if (allText.includes(kw)) score += def.weight;
-    }
-    // Boost categories that match the detected entity type
+    let hits = 0;
+    for (const kw of def.keywords) hits += countOccurrences(kw);
+    if (hits === 0) continue;
+    let score = hits * def.weight;
     if (def.forType === entityType) score += 1;
 
-    if (score > bestCategory.score) {
-      bestCategory = { cat: def.cat, ind: def.ind, score };
+    const density = (hits / totalTokens) * 1000;
+    if (score > best.score) {
+      best = { cat: def.cat, ind: def.ind, score, density };
     }
   }
 
-  // Use the fallback industry as category if nothing scored
-  if (bestCategory.score === 0 && fallbackIndustry) {
-    bestCategory.cat = fallbackIndustry.toLowerCase();
-    bestCategory.ind = fallbackIndustry;
+  let confidence: 'high' | 'medium' | 'low';
+  if (best.density >= MIN_DENSITY_HIGH) {
+    confidence = 'high';
+  } else if (best.density >= MIN_DENSITY_MEDIUM) {
+    confidence = 'medium';
+  } else {
+    // Not enough signal — don't pretend we know the category
+    return { category: 'uncertain', industry: 'Unknown', entityType, confidence: 'low' };
   }
 
   // Override: if the category name itself signals a service, force the entity type
   const serviceCategoryKeywords = ['agency', 'consulting', 'firm', 'studio', 'services'];
-  if (serviceCategoryKeywords.some((kw) => bestCategory.cat.toLowerCase().includes(kw))) {
+  if (serviceCategoryKeywords.some((kw) => best.cat.toLowerCase().includes(kw))) {
     entityType = 'service';
   }
 
-  return { category: bestCategory.cat, industry: bestCategory.ind, entityType };
+  return { category: best.cat, industry: best.ind, entityType, confidence };
 }
 
 // ─── Competitor Extraction from AI Responses ───────────────────────
@@ -572,7 +628,6 @@ export function filterDFSCompetitors(
 export function extractCompetitorsFromResponses(
   responses: PlatformResult[],
   companyName: string,
-  industry?: string,
 ): { name: string; mentionCount: number }[] {
   const lowerBrand = companyName.toLowerCase();
   const nameCounts = new Map<string, number>();
@@ -580,23 +635,22 @@ export function extractCompetitorsFromResponses(
   // Competitive context keywords — we only extract names near these
   const competitiveContextRe = /competitor|alternative|rival|instead of|compared|versus|vs\.|switch from|replace|similar to/i;
 
-  // Wrong-entity signals: sections mentioning these are about a different entity
-  const wrongEntitySignals = [
-    'communications platform', 'cx platform', 'customer experience platform',
-    'customer engagement platform', 'cloud communications', 'enterprise communications',
-    'contact center', 'call center', 'telephony', 'pbx', 'voip',
-    'tv channel', 'television channel', 'streaming service',
-    'tokusatsu', 'live-action', 'kanji', 'virtue',
-    'helmet', 'biker', 'bone-conduction', 'glasses', 'eyewear',
-    'apparel', 'clothing', 'fashion', 'streetwear',
-    'music composition', 'sound design', 'recording artist',
+  // Generic wrong-entity contexts (same set as extractAccurateInfo —
+  // if the paragraph is about a band/TV show/word, skip it)
+  const wrongEntityContexts = [
+    'band', 'album', 'song', 'musician', 'rapper', 'singer',
+    'tv channel', 'television channel', 'streaming service', 'anime',
+    'tokusatsu', 'film director', 'filmmaker',
+    'japanese term', 'japanese word', 'kanji', 'means "',
+    'is a word', 'translates to', 'etymology',
+    'apparel brand', 'clothing brand', 'fashion label',
+    'helmet', 'bone-conduction', 'eyewear',
   ];
 
-  // Right-entity signals: industry-related terms that confirm the correct entity
+  // Right-entity signals: generic business vocabulary that confirms the correct entity
   const rightEntitySignals = [
-    ...(industry ? industry.toLowerCase().split(/\s+/) : []),
-    'payroll', 'compensation', 'compliance', 'token', 'crypto',
-    'saas', 'b2b', 'software', 'platform',
+    'saas', 'b2b', 'b2c', 'software', 'platform', 'app',
+    'company', 'startup', 'agency', 'service', 'tool', 'product',
   ];
 
   for (const r of responses) {
@@ -606,7 +660,7 @@ export function extractCompetitorsFromResponses(
     const lowerResponse = r.rawResponse.toLowerCase();
     let wrongScore = 0;
     let rightScore = 0;
-    for (const s of wrongEntitySignals) { if (lowerResponse.includes(s)) wrongScore++; }
+    for (const s of wrongEntityContexts) { if (lowerResponse.includes(s)) wrongScore++; }
     for (const s of rightEntitySignals) { if (lowerResponse.includes(s)) rightScore++; }
     // Skip if wrong-entity signals dominate (likely about a different company)
     if (wrongScore > rightScore && wrongScore >= 2) continue;
@@ -619,7 +673,7 @@ export function extractCompetitorsFromResponses(
 
       // Skip sections about the wrong entity
       const lowerSection = section.toLowerCase();
-      if (wrongEntitySignals.some((s) => lowerSection.includes(s))) continue;
+      if (wrongEntityContexts.some((s) => lowerSection.includes(s))) continue;
 
       // Within competitive sections, extract bold names: **CompanyName**
       const boldNames = section.matchAll(/\*\*([A-Z][A-Za-z0-9.]{1,25}(?:\s[A-Z]?[A-Za-z0-9.]+)?)\*\*/g);
@@ -704,8 +758,10 @@ function isLikelyCompetitorName(name: string, lowerBrand: string): boolean {
   if (words.length > 2) return false;
   // Reject ALL-CAPS short acronyms (SEO, CRO, AEO, etc.) — these are services, not companies
   if (/^[A-Z]{2,4}$/.test(name)) return false;
+  // Reject overly short single words — too prone to false positives
+  if (words.length === 1 && words[0].length < 4) return false;
+
   // Reject common English words that happen to be capitalized in markdown
-  // This is a comprehensive list to prevent false positives
   const notCompanyNames = new Set([
     // Generic business terms
     'company', 'platform', 'tool', 'service', 'software', 'solution',
@@ -720,24 +776,48 @@ function isLikelyCompetitorName(name: string, lowerBrand: string): boolean {
     'services', 'products', 'about', 'contact', 'resources', 'locations',
     'benefits', 'limitations', 'drawbacks', 'considerations', 'operations',
     'details', 'information', 'description', 'analysis', 'review', 'reviews',
-    // Common English words often capitalized
+    // Common English words
     'close', 'open', 'help', 'scout', 'rise', 'base', 'link', 'share',
     'reach', 'flow', 'hub', 'core', 'edge', 'spark', 'pulse', 'wave',
     'ease', 'use', 'quality', 'support', 'security', 'integration',
-    'step', 'steps', 'next', 'first', 'last', 'final',
-    // Service/industry terms (not company names)
+    'step', 'steps', 'next', 'first', 'last', 'final', 'test', 'example',
+    // Broad research/business method terms
+    'research', 'methods', 'automation', 'shift', 'crowdsourced', 'focus',
+    'innovation', 'trends', 'insights', 'metrics', 'data', 'content',
+    'workflow', 'workflows', 'interface', 'usability', 'experience', 'journey',
+    'ecosystem', 'framework', 'approach', 'methodology', 'process',
+    'user', 'users', 'business', 'enterprise', 'global', 'digital',
+    'startup', 'startups', 'teams', 'feedback', 'evaluation',
+    // Service/industry terms
     'stablecoin', 'payroll', 'crypto', 'token', 'compensation', 'tax',
-    'contractor', 'management', 'payment', 'payments', 'global',
+    'contractor', 'management', 'payment', 'payments',
     'marketing', 'design', 'development', 'growth', 'strategy',
     'seo', 'cro', 'aeo', 'saas', 'b2b',
   ]);
   if (words.some((w) => notCompanyNames.has(w.toLowerCase()))) return false;
-  // Reject multi-word generic phrases
+
+  // Reject 2-word phrases where both words are common nouns (likely a descriptive phrase, not a brand)
+  if (words.length === 2) {
+    // Heuristic: real company names often have a distinct/coined word, not two dictionary-common nouns.
+    // Strong indicator of a real brand: at least one word is unusual (mixed case, contains a number,
+    // is non-standard English, or is ≥8 chars).
+    const hasDistinctiveWord = words.some((w) => {
+      if (/\d/.test(w)) return true; // "Web3", "Cal.com"
+      if (/[A-Z].*[A-Z]/.test(w)) return true; // "HubSpot", "GitHub"
+      if (w.length >= 8) return true; // Long words often coined
+      return false;
+    });
+    if (!hasDistinctiveWord) return false;
+  }
+
+  // Reject common multi-word generic phrases
   const genericPhrases = new Set([
     'general impression', 'food quality', 'ease of use', 'price point',
     'customer support', 'contractor management', 'stablecoin payroll',
     'key features', 'main competitors', 'top alternatives', 'next steps',
     'company info', 'integrated growth', 'how it works',
+    'research methods', 'automation shift', 'crowdsourced focus',
+    'user experience', 'customer experience', 'product roadmap',
   ]);
   if (genericPhrases.has(lower)) return false;
   return true;
@@ -760,23 +840,29 @@ export function extractSpecificCategory(
   responses: PlatformResult[],
   companyName: string,
   domain?: string,
-  industry?: string,
 ): string | null {
   // Business context signals (descriptions matching these are more likely correct)
+  const domainRoot = (domain ?? '')
+    .replace(/^www\./, '')
+    .split('.')[0] || '';
+
   const businessSignals = [
     'platform', 'software', 'saas', 'agency', 'company', 'service',
-    'solution', 'tool', 'startup', 'provider', 'payroll', 'compliance',
+    'solution', 'tool', 'startup', 'provider', 'app', 'product',
     'marketing', 'development', 'consulting', 'analytics',
-    ...(industry ? industry.toLowerCase().split(/\s+/) : []),
+    ...(domainRoot.length > 2 ? [domainRoot] : []),
   ];
 
-  // Wrong-entity signals (descriptions matching these are about a different entity)
+  // Generic wrong-entity signals (same vocabulary as elsewhere)
   const wrongEntitySignals = [
-    'musician', 'artist', 'band', 'album', 'song', 'singer',
-    'tv channel', 'television', 'streaming', 'anime', 'tokusatsu',
-    'japanese term', 'japanese word', 'kanji', 'virtue',
-    'helmet', 'biker', 'glasses', 'eyewear', 'headphones',
-    'apparel', 'clothing', 'fashion',
+    'musician', 'artist', 'band', 'album', 'song', 'singer', 'songwriter',
+    'tv channel', 'television', 'streaming service', 'anime', 'tokusatsu',
+    'japanese term', 'japanese word', 'kanji',
+    'helmet', 'bone-conduction', 'eyewear', 'headphones',
+    'apparel brand', 'clothing brand', 'fashion label',
+    'wearable device', 'speech-to-text', 'speech to text',
+    'hearing aid', 'closed caption', 'transcription glasses',
+    'waverly labs',
   ];
 
   const descriptions: { text: string; score: number }[] = [];
@@ -866,6 +952,39 @@ export function extractSpecificCategory(
 
   // Safety check: the extracted category shouldn't be too short or too generic
   if (result.length < 4 || /^(?:a|an|the|new|good|best|top)$/i.test(result)) return null;
+
+  // Reject fragments that start with a preposition/participle — these leak
+  // from template phrases like "...service founded in [year] that specializes in..."
+  // where the stop-word regex consumed "service" and left sentence-middle debris.
+  const firstWord = result.split(/\s+/)[0].toLowerCase();
+  const fragmentStarters = new Set([
+    'founded', 'established', 'based', 'located', 'headquartered',
+    'that', 'which', 'who', 'whose',
+    'specializing', 'specializes', 'focused', 'focusing',
+    'offering', 'providing', 'delivering', 'building',
+    'designed', 'created', 'built',
+    'for', 'of', 'to', 'in', 'on', 'with', 'by',
+    'was', 'is', 'are', 'were',
+  ]);
+  if (fragmentStarters.has(firstWord)) return null;
+
+  // Reject results that still contain template-phrase fragments
+  if (/\b(?:founded\s+in|specializes?\s+in|that\s+specializes?|that\s+specializing|focused\s+on)\b/i.test(result)) {
+    return null;
+  }
+
+  // Reject if the result ends on a dangling connector/conjunction — these
+  // are mid-sentence fragments, not a noun phrase category.
+  if (/\b(?:that|which|who|whose|for|of|to|in|on|with|by|and|or|the|a|an)$/i.test(result)) {
+    return null;
+  }
+
+  // Strip trailing dangling words (e.g. "digital marketing agency that" → "digital marketing agency")
+  // as a second-chance recovery before returning.
+  const stripped = result.replace(/\s+(?:that|which|who|whose|for|of|to|in|on|with|by|and|or|the|a|an)$/i, '').trim();
+  if (stripped.length >= 4 && stripped.split(/\s+/).length >= 2) {
+    return stripped;
+  }
 
   return result;
 }

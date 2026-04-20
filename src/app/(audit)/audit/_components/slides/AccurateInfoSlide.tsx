@@ -42,8 +42,9 @@ export function AccurateInfoSlide({ data, totalSlides }: AccurateInfoSlideProps)
               <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v3.75m9-.75a9 9 0 11-18 0 9 9 0 0118 0zm-9 3.75h.008v.008H12v-.008z" />
             </svg>
             <p className="text-surface-400 text-sm">
-              AI platforms did not surface significant accurate information about your brand.
-              This indicates a major visibility gap.
+              We couldn&apos;t extract specific factual claims about your brand
+              from AI responses. See the Gaps &amp; Inaccuracies slide for
+              details on where AI falls short.
             </p>
           </div>
         )}

@@ -3,6 +3,7 @@ import { after } from 'next/server';
 import { nanoid } from 'nanoid';
 import { setAuditRecord, getRedis } from '@/lib/audit/pipeline';
 import { runAudit } from '@/lib/audit/pipeline';
+import { extractBrandFromUrl } from '@/lib/audit/extract-brand';
 import type { AuditRecord } from '@/lib/audit/types';
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -52,12 +53,12 @@ async function checkRateLimit(ip: string): Promise<string | null> {
 export async function POST(request: Request) {
   try {
     const body = await request.json();
-    const { url, email, companyName, industry } = body;
+    const { url, email } = body;
 
     // ─── Validation ───────────────────────────────────────────────
-    if (!url || !email || !companyName) {
+    if (!url || !email) {
       return NextResponse.json(
-        { error: 'url, email, and companyName are required' },
+        { error: 'url and email are required' },
         { status: 400 },
       );
     }
@@ -72,13 +73,6 @@ export async function POST(request: Request) {
     if (!URL_RE.test(url)) {
       return NextResponse.json(
         { error: 'Invalid website URL' },
-        { status: 400 },
-      );
-    }
-
-    if (companyName.length > 100) {
-      return NextResponse.json(
-        { error: 'Company name must be 100 characters or fewer' },
         { status: 400 },
       );
     }
@@ -101,6 +95,17 @@ export async function POST(request: Request) {
       normalizedUrl = `https://${normalizedUrl}`;
     }
 
+    // ─── Extract brand from the URL ───────────────────────────────
+    // This replaces the user-typed companyName + industry fields.
+    // The extractor pulls from JSON-LD Organization → og:site_name → <title> → domain.
+    const extracted = await extractBrandFromUrl(normalizedUrl);
+    if (!extracted) {
+      return NextResponse.json(
+        { error: 'Could not resolve that URL. Check the domain and try again.' },
+        { status: 400 },
+      );
+    }
+
     // ─── Create Audit Record ──────────────────────────────────────
     const id = nanoid(12);
     const record: AuditRecord = {
@@ -108,8 +113,8 @@ export async function POST(request: Request) {
       input: {
         url: normalizedUrl,
         email: email.trim().toLowerCase(),
-        companyName: companyName.trim(),
-        ...(industry ? { industry: industry.trim() } : {}),
+        companyName: extracted.name,
+        brandSource: extracted.source,
       },
       status: 'processing',
       progress: 0,

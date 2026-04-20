@@ -16,7 +16,16 @@ export function MarketPositionSlide({
   companyName,
   totalSlides,
 }: MarketPositionSlideProps) {
-  // Build data points for the quadrant chart
+  // Each entity has two measures across the same Phase 3 unbranded queries:
+  //   x = Discovery Visibility (% of queries where this entity is mentioned)
+  //   y = Share of Voice (this entity's slice of the total mention pool)
+  // For competitors, shareOfVoiceByCompetitor[name] stores their mention rate
+  // (despite the field name — see scoring.ts). We derive SoV the same way the
+  // brand's SoV is derived: entity_rate / (all_entity_rates) * 100.
+  const competitorRates = Object.entries(competitorContext.shareOfVoiceByCompetitor);
+  const totalCompetitorRate = competitorRates.reduce((s, [, r]) => s + r, 0);
+  const totalEntityRate = scores.discoveryVisibility + totalCompetitorRate;
+
   const points = [
     {
       label: companyName,
@@ -24,20 +33,12 @@ export function MarketPositionSlide({
       y: scores.shareOfVoice,
       highlight: true,
     },
-    ...Object.entries(competitorContext.shareOfVoiceByCompetitor).map(
-      ([name, sov]) => {
-        // Deterministic jitter based on name to avoid hydration mismatch
-        let hash = 0;
-        for (let i = 0; i < name.length; i++) hash = (hash * 31 + name.charCodeAt(i)) | 0;
-        const jitter = ((hash & 0xffff) / 0xffff) * 20;
-        return {
-          label: name,
-          x: Math.min(100, sov + jitter),
-          y: sov,
-          highlight: false,
-        };
-      },
-    ),
+    ...competitorRates.map(([name, rate]) => ({
+      label: name,
+      x: rate,
+      y: totalEntityRate > 0 ? Math.round((rate / totalEntityRate) * 100) : 0,
+      highlight: false,
+    })),
   ];
 
   return (

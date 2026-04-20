@@ -23,30 +23,30 @@ export function calculateScores(
   competitorContext: CompetitorContextData,
   categoryVisibility: CategoryVisibilityData,
 ): AuditScores {
-  // Discovery Visibility: % of category queries where brand appears
+  // Discovery Visibility: % of category queries where brand appears (Phase 3).
   const totalCatResults = categoryVisibility.queries.flatMap((q) => q.results);
   const catMentions = totalCatResults.filter((r) => r.mentioned).length;
   const discoveryVisibility = totalCatResults.length > 0
     ? Math.round((catMentions / totalCatResults.length) * 100)
     : 0;
 
-  // Share of Voice: brand mentions across competitor queries vs total mentions
-  const allCompResults = competitorContext.queries.flatMap((q) => q.results);
-  const brandInComp = allCompResults.filter((r) => r.mentioned).length;
-  const totalCompResponses = allCompResults.length;
-  const shareOfVoice = totalCompResponses > 0
-    ? Math.round((brandInComp / totalCompResponses) * 100)
+  // Share of Voice uses the SAME Phase 3 (unbranded category) responses that
+  // drive Discovery Visibility. This is the only place where brand + all
+  // competitors can be measured against identical prompts, so it's the only
+  // apples-to-apples SoV we have. The brand's SoV is its share of all entity
+  // mentions (brand + competitors) across Phase 3 responses — not just a raw
+  // mention rate — so it reflects competitive pressure.
+  const competitorSoVMap = competitorContext.shareOfVoiceByCompetitor;
+  const totalCompetitorSoV = Object.values(competitorSoVMap).reduce((s, n) => s + n, 0);
+  const brandMentionRatePhase3 = discoveryVisibility; // same denominator
+  const shareOfVoice = totalCompetitorSoV + brandMentionRatePhase3 > 0
+    ? Math.round((brandMentionRatePhase3 / (totalCompetitorSoV + brandMentionRatePhase3)) * 100)
     : 0;
 
-  // Competitive Standing: rank among competitors by recommendation rate
-  const competitorMentions = Object.entries(
-    competitorContext.shareOfVoiceByCompetitor,
-  ).sort(([, a], [, b]) => b - a);
-
-  // Find brand's rank (brand itself won't be in competitor list, so compare by shareOfVoice)
+  // Competitive Standing: rank brand vs competitors using Phase 3 rates.
   let competitiveStanding = 1;
-  for (const [, rate] of competitorMentions) {
-    if (rate > shareOfVoice) competitiveStanding++;
+  for (const rate of Object.values(competitorSoVMap)) {
+    if (rate > brandMentionRatePhase3) competitiveStanding++;
   }
 
   // Platform Coverage: how many platforms mention the brand in Phase 1
@@ -70,11 +70,17 @@ export function calculateScores(
   };
 }
 
+/**
+ * Grade thresholds are calibrated to real-world AI visibility distributions.
+ * Category leaders often hit 40-60% Phase-3 visibility and 30-40% SoV.
+ * Niche/emerging brands typically land at 5-20% visibility, 5-15% SoV.
+ * The old thresholds (A: 70/40) were unreachable — almost nothing graded above D.
+ */
 function calculateGrade(visibility: number, sov: number): OverallGrade {
-  if (visibility >= 70 && sov >= 40) return 'A';
-  if (visibility >= 50 && sov >= 25) return 'B';
-  if (visibility >= 30 && sov >= 15) return 'C';
-  if (visibility >= 15) return 'D';
+  if (visibility >= 55 && sov >= 30) return 'A';
+  if (visibility >= 35 && sov >= 18) return 'B';
+  if (visibility >= 18 && sov >= 8) return 'C';
+  if (visibility >= 5 || sov >= 3) return 'D';
   return 'F';
 }
 
