@@ -145,6 +145,24 @@ export async function POST(request: Request) {
     properties,
   });
 
+  if (source === 'external') {
+    posthog.capture({
+      distinctId: email,
+      event: 'cal_webhook_debug',
+      properties: {
+        trigger_event: body.triggerEvent,
+        payload_keys: Object.keys(body.payload ?? {}).join(','),
+        has_tracking: Boolean(body.payload?.tracking),
+        tracking_keys: Object.keys(body.payload?.tracking ?? {}).join(','),
+        response_keys: Object.keys(body.payload?.responses ?? {}).join(','),
+        metadata_keys: Object.keys(body.payload?.metadata ?? {}).join(','),
+        raw_tracking: JSON.stringify(body.payload?.tracking ?? null),
+        raw_metadata: JSON.stringify(body.payload?.metadata ?? null),
+        raw_responses: JSON.stringify(body.payload?.responses ?? null),
+      },
+    });
+  }
+
   await posthog.shutdown();
 
   return NextResponse.json({ received: true, event });
