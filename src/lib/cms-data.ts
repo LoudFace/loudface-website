@@ -109,7 +109,17 @@ const BLOG_POST_PROJECTION = `{
   "author": author._ref,
   "category": category._ref,
   "categories": categories[]._ref,
-  "faq": faq[]{ question, answer }
+  "faq": faq[]{ question, answer },
+  "visuals": visuals[]{
+    _key,
+    position,
+    type,
+    alt,
+    caption,
+    "asset": asset { "url": asset->url, "alt": alt },
+    generation,
+    chart
+  }
 }`;
 
 const CATEGORY_PROJECTION = `{

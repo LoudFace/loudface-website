@@ -119,6 +119,48 @@ export interface BlogPost {
   category?: string;
   categories?: string[];
   faq?: FAQItem[];
+  visuals?: BlogVisual[];
+}
+
+export interface BlogVisualPosition {
+  anchor: 'hero' | 'after-h2' | 'end';
+  h2Index?: number;
+}
+
+export interface BlogVisualChartDatum {
+  label: string;
+  value: number;
+  series?: string;
+  unit?: string;
+}
+
+export interface BlogVisualChart {
+  kind: 'bar' | 'horizontalBar' | 'stat' | 'table';
+  title?: string;
+  xAxis?: string;
+  yAxis?: string;
+  data: BlogVisualChartDatum[];
+  source?: string;
+  sourceUrl?: string;
+}
+
+export interface BlogVisual {
+  _key?: string;
+  position: BlogVisualPosition;
+  type: 'illustration' | 'chart' | 'screenshot';
+  alt: string;
+  caption?: string;
+  asset?: CmsImage;
+  generation?: {
+    promptTemplate?: string;
+    subject?: string;
+    finalPrompt?: string;
+    negativePrompt?: string;
+    model?: string;
+    requestId?: string;
+    generatedAt?: string;
+  };
+  chart?: BlogVisualChart;
 }
 
 /**

@@ -10,10 +10,15 @@
     "crawl-audit": "node scripts/crawl-audit.mjs",
     "crawl-audit:dev": "node scripts/crawl-audit.mjs http://localhost:3005",
     "pagespeed-audit": "node scripts/pagespeed-audit.mjs",
-    "pagespeed-audit:dev": "node scripts/pagespeed-audit.mjs http://localhost:3005"
+    "pagespeed-audit:dev": "node scripts/pagespeed-audit.mjs http://localhost:3005",
+    "visuals:plan": "tsx scripts/visuals/plan.ts",
+    "visuals:illustrate": "tsx scripts/visuals/illustrate.ts",
+    "visuals:compose": "tsx scripts/visuals/compose.ts",
+    "visuals:generate": "tsx scripts/visuals/run.ts"
   },
   "dependencies": {
     "@calcom/embed-react": "^1.5.3",
+    "@fal-ai/client": "^1.9.5",
     "@sanity/image-url": "^2.1.0",
     "@sanity/vision": "^5.18.0",
     "embla-carousel": "^8.6.0",

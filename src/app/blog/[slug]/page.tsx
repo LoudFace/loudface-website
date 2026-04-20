@@ -8,6 +8,7 @@ import { fetchCollection, fetchHomepageData, fetchItemBySlug } from '@/lib/cms-d
 import { avatarImage, heroImage, thumbnailImage } from '@/lib/image-utils';
 import { asset } from '@/lib/assets';
 import { Badge, SectionContainer } from '@/components/ui';
+import { BlogContent } from '@/components/blog';
 import { CTA, FAQ, RelatedComparisons } from '@/components/sections';
 import { buildNoIndexMetadata, buildPageMetadata, truncateSeoTitle, truncateSeoDescription, rewriteLegacyUrls } from '@/lib/seo-utils';
 import { extractFAQFromHTML, buildFAQSchema, buildSpeakableSchema } from '@/lib/schema-utils';
@@ -339,7 +340,7 @@ export default async function BlogPostPage({ params }: PageProps) {
             {/* Article Body */}
             <article className="min-w-0">
               {processedContent ? (
-                <div className="blog-prose" dangerouslySetInnerHTML={{ __html: processedContent }} />
+                <BlogContent html={processedContent} visuals={post.visuals} />
               ) : (
                 <p className="text-surface-500">No content available for this post.</p>
               )}

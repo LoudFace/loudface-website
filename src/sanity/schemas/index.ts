@@ -6,6 +6,7 @@ import { teamMember } from './teamMember';
 import { client } from './client';
 import { caseStudy } from './caseStudy';
 import { blogPost } from './blogPost';
+import { blogVisual } from './blogVisual';
 import { testimonial } from './testimonial';
 import { blogFaq } from './blogFaq';
 import { seoPage } from './seoPage';
@@ -19,6 +20,7 @@ export const schemaTypes = [
   client,
   caseStudy,
   blogPost,
+  blogVisual,
   testimonial,
   blogFaq,
   seoPage,
