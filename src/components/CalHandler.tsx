@@ -5,7 +5,10 @@ import { useEffect } from "react";
 /**
  * CalHandler Component
  *
- * Handles click events for Cal.com booking modal triggers.
+ * Handles click events for Cal.com booking modal triggers and stitches
+ * successful bookings to PostHog via posthog.identify(email). The source-of-truth
+ * 'call_booked' event is captured server-side via the /api/webhooks/cal endpoint.
+ *
  * Listens for clicks on:
  * - Elements with .btn-cta class
  * - Elements with [data-cal-trigger] attribute
@@ -16,7 +19,6 @@ export function CalHandler() {
     const handleClick = (e: MouseEvent) => {
       const target = e.target as HTMLElement;
 
-      // Check if clicked on .btn-cta, [data-cal-trigger], or a link to #book-modal
       const isBtnCta =
         target.classList.contains("btn-cta") || target.closest(".btn-cta");
       const isCalTrigger =
@@ -30,8 +32,7 @@ export function CalHandler() {
         e.preventDefault();
         e.stopPropagation();
 
-        // Open Cal.com popup modal (Cal loads via lazyOnload, may not exist yet)
-        if (window.Cal) {
+        if (typeof window.Cal === "function") {
           window.Cal("modal", {
             calLink: "arnelbukva/loudface-intro-call",
             config: { layout: "month_view" },
@@ -41,7 +42,60 @@ export function CalHandler() {
     };
 
     document.addEventListener("click", handleClick);
-    return () => document.removeEventListener("click", handleClick);
+
+    // Stitch the anonymous PostHog session to the attendee's email the moment
+    // the booking succeeds. The server webhook still fires the 'call_booked'
+    // event — this call is purely for identity attribution.
+    let registered = false;
+    const registerBookingListener = () => {
+      if (registered || !window.Cal) return;
+      registered = true;
+      window.Cal("on", {
+        action: "bookingSuccessful",
+        callback: (e: unknown) => {
+          try {
+            const detail = (e as { detail?: { data?: unknown } })?.detail?.data as
+              | {
+                  booking?: { attendees?: Array<{ email?: string; name?: string }> };
+                  eventType?: { slug?: string; title?: string };
+                  date?: string;
+                }
+              | undefined;
+            const attendee = detail?.booking?.attendees?.[0];
+            const email = attendee?.email?.toLowerCase().trim();
+            if (!email) return;
+
+            import("posthog-js").then(({ default: posthog }) => {
+              if (!posthog.__loaded) return;
+              posthog.identify(email, {
+                email,
+                name: attendee?.name,
+              });
+              posthog.capture("call_booked_client", {
+                event_type: detail?.eventType?.slug,
+                event_type_title: detail?.eventType?.title,
+                booking_date: detail?.date,
+              });
+            });
+          } catch (err) {
+            console.warn("[CalHandler] bookingSuccessful handler error", err);
+          }
+        },
+      });
+    };
+
+    // Cal loads lazily; poll briefly until it's ready, then register once.
+    const interval = window.setInterval(() => {
+      if (typeof window.Cal === "function") {
+        registerBookingListener();
+        window.clearInterval(interval);
+      }
+    }, 500);
+
+    return () => {
+      document.removeEventListener("click", handleClick);
+      window.clearInterval(interval);
+    };
   }, []);
 
   return null;
