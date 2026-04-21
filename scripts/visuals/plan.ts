@@ -7,6 +7,7 @@
 
 import fs from 'fs';
 import path from 'path';
+import { pathToFileURL } from 'url';
 import { fetchBlogPostBySlug } from './lib/sanity';
 import { generate, extractJson } from './lib/claude';
 import { readSystemPrompt } from './lib/prompts';
@@ -138,6 +139,7 @@ async function main() {
   }
 }
 
-if (import.meta.url === `file://${process.argv[1]}`) {
+// Use pathToFileURL so paths with spaces get URL-encoded to match import.meta.url.
+if (import.meta.url === pathToFileURL(process.argv[1]).href) {
   main();
 }

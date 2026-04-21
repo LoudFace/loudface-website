@@ -27,17 +27,18 @@ export function publishedId(anyId: string): string {
 
 export async function fetchBlogPostBySlug(slug: string) {
   const client = sanityClient();
-  const query = `*[_type == "blogPost" && slug.current == $slug][0]{
-    _id,
-    _rev,
-    name,
-    "slug": slug.current,
-    excerpt,
-    content,
-    visuals,
-    thumbnail
-  }`;
+  // Return the FULL document (no projection). createOrReplace writes every
+  // field we pass in, so a partial projection would silently wipe fields like
+  // metaTitle, author, categories, faq, etc. when a fresh draft is created.
+  // The slug field stays as its native object shape `{_type: 'slug', current}`.
+  const query = `*[_type == "blogPost" && slug.current == $slug][0]`;
   return client.fetch(query, { slug });
+}
+
+/** Delete a document by ID. Used to clean up broken drafts. */
+export async function deleteDocument(id: string): Promise<void> {
+  const client = sanityClient();
+  await client.delete(id);
 }
 
 export async function uploadImageAsset(localPath: string, filename: string) {

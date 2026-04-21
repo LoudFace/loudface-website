@@ -14,8 +14,13 @@ All steps are local. Nothing deploys to Vercel.
 ## Quick start
 
 ```bash
-# Full pipeline
+# Full pipeline (inconsistent style across shots — text-to-image)
 npm run visuals:generate -- saas-seo-agencies
+
+# Style-locked run — every illustration uses the reference as its style anchor
+# (routes to fal's /edit variant of nano-banana-pro / nano-banana-2)
+npm run visuals:generate -- saas-seo-agencies --reference https://cdn.sanity.io/.../anchor.png
+npm run visuals:generate -- saas-seo-agencies --reference ./local-anchor.png
 
 # Just plan (no API cost for fal.ai)
 npm run visuals:generate -- saas-seo-agencies --plan-only
@@ -24,6 +29,16 @@ npm run visuals:generate -- saas-seo-agencies --plan-only
 npm run visuals:generate -- saas-seo-agencies --skip-plan
 npm run visuals:generate -- saas-seo-agencies --skip-plan --skip-illustrate
 ```
+
+### Style consistency
+
+Without `--reference`, each shot is generated independently — styles will drift.
+With `--reference`, all shots go through fal's `/edit` endpoint with the reference
+as `image_urls`, so outputs stay visually on-brand.
+
+Bootstrap workflow for a new brand: run once without `--reference` to seed a hero,
+upload that hero to Sanity, then use its CDN URL as `--reference` for every
+subsequent post.
 
 Then visit `/studio` → Blog Posts → your post. Review each visual, regenerate any that miss, and publish from Studio.
 

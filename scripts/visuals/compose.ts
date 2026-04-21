@@ -7,6 +7,7 @@
 
 import fs from 'fs';
 import path from 'path';
+import { pathToFileURL } from 'url';
 import { fetchBlogPostBySlug, sanityClient, draftId, uploadImageAsset, publishedId } from './lib/sanity';
 import { ShotListSchema, IllustrationResultSchema, type IllustrationResult } from './types';
 
@@ -73,6 +74,15 @@ export async function composeForSlug(slug: string): Promise<void> {
         generation: result.generation,
       });
     } else if (shot.type === 'chart' && shot.chart) {
+      // Sanity requires a unique `_key` on every array-of-object item. The
+      // chart.data rows are a nested array, so they each need their own key.
+      const chart = {
+        ...shot.chart,
+        data: shot.chart.data.map((d, i) => ({
+          _key: `${shot.slot}-row-${i}`,
+          ...d,
+        })),
+      };
       visuals.push({
         _key: shot.slot,
         _type: 'blogVisual',
@@ -80,7 +90,7 @@ export async function composeForSlug(slug: string): Promise<void> {
         type: 'chart',
         alt: shot.alt,
         ...(shot.caption && { caption: shot.caption }),
-        chart: shot.chart,
+        chart,
       });
     }
   }
@@ -92,18 +102,25 @@ export async function composeForSlug(slug: string): Promise<void> {
   const existingDraft = await client.getDocument(targetDraftId);
 
   if (existingDraft) {
-    await client.patch(targetDraftId).set({ visuals }).commit();
+    // Heal drafts corrupted by an earlier projection bug: if slug was flattened
+    // to a bare string, recreate the draft from the published doc.
+    const draftSlug = (existingDraft as { slug?: unknown }).slug;
+    const slugIsBroken = typeof draftSlug === 'string';
+    if (slugIsBroken) {
+      console.log('  ⚠  Existing draft has malformed slug — recreating from published doc.');
+      await writeFreshDraft(client, post, targetDraftId, visuals);
+    } else {
+      await client.patch(targetDraftId).set({ visuals }).commit();
+    }
   } else {
-    await client.createOrReplace({
-      ...post,
-      _id: targetDraftId,
-      visuals,
-    });
+    await writeFreshDraft(client, post, targetDraftId, visuals);
   }
 
-  const studioPath = `/studio/desk/blogPost;${publishedId(post._id)}`;
+  const studioPath = `/studio/structure/blogPost;${publishedId(post._id)}`;
+  const studioBase = process.env.STUDIO_BASE_URL ?? 'http://localhost:3005';
   console.log(`✓ Draft ready for review.`);
-  console.log(`  Studio: ${studioPath}`);
+  console.log(`  Studio (local): ${studioBase}${studioPath}`);
+  console.log(`  Studio (prod):  https://www.loudface.co${studioPath}`);
   console.log(`  Visuals attached: ${visuals.length}`);
   logVisualPositions(visuals);
 }
@@ -113,6 +130,26 @@ function logVisualPositions(visuals: SanityVisual[]) {
     const pos = v.position.anchor === 'after-h2' ? `after H2 #${v.position.h2Index}` : v.position.anchor;
     console.log(`    · ${v._key} → ${v.type} @ ${pos}`);
   }
+}
+
+/**
+ * Writes a draft from scratch by copying every field from the published doc,
+ * stamping the draft ID, and attaching visuals. Strips system fields that
+ * Sanity regenerates (_rev, _createdAt, _updatedAt) to avoid revision conflicts.
+ */
+async function writeFreshDraft(
+  client: ReturnType<typeof sanityClient>,
+  publishedDoc: Record<string, unknown>,
+  targetDraftId: string,
+  visuals: SanityVisual[],
+): Promise<void> {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const { _rev, _createdAt, _updatedAt, ...rest } = publishedDoc as Record<string, unknown>;
+  await client.createOrReplace({
+    ...rest,
+    _id: targetDraftId,
+    visuals,
+  } as never);
 }
 
 async function main() {
@@ -130,6 +167,7 @@ async function main() {
   }
 }
 
-if (import.meta.url === `file://${process.argv[1]}`) {
+// Use pathToFileURL so paths with spaces get URL-encoded to match import.meta.url.
+if (import.meta.url === pathToFileURL(process.argv[1]).href) {
   main();
 }

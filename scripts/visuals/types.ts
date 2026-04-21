@@ -91,6 +91,8 @@ export const IllustrationResultSchema = z.object({
     model: z.string(),
     requestId: z.string(),
     generatedAt: z.string().datetime(),
+    /** Whether a style-reference image was attached for this generation. */
+    hasReference: z.boolean().optional(),
   }),
 });
 
