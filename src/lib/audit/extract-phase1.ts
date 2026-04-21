@@ -201,8 +201,12 @@ export async function extractPhase1Insights(args: {
     tag: 'brand-baseline',
     tracer,
     maxOutputTokens: 2048,
-    // Use sonnet for this — entity disambiguation + nuanced truth-checking is worth the extra cost
-    model: 'anthropic/claude-sonnet-4.6',
+    // Haiku 4.5 — cheaper and still handles the entity disambiguation + claim
+    // extraction task reliably. We burned ~$0.20-0.50 per audit on Sonnet for
+    // what is essentially structured fact extraction against a ground-truth
+    // anchor. Haiku produces comparable Zod-validated output at ~10x lower
+    // cost and meaningfully lower latency.
+    model: 'anthropic/claude-haiku-4.5',
   });
 
   if (!result.value) {

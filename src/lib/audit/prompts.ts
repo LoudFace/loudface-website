@@ -1,17 +1,18 @@
 // ─── Brand Baseline Queries (Phase 1) ───────────────────────────────
 
 export function getBrandQueries(company: string): string[] {
+  // 6 queries × 4 platforms = 24 calls. Trimmed from 10 — "Tell me about X"
+  // and "What does X do" duplicated "What is X"; "Should I consider X" and
+  // "X features and capabilities" duplicated "Is X any good" / "pricing and
+  // plans". The remaining six cover the distinct jobs: identity, reputation,
+  // quality judgement, pricing, competitive framing, and customer fit.
   return [
     `What is ${company}?`,
-    `Tell me about ${company}`,
     `${company} reviews and reputation`,
     `Is ${company} any good?`,
     `${company} pricing and plans`,
-    `What does ${company} do?`,
     `${company} vs competitors`,
     `Who uses ${company}?`,
-    `${company} features and capabilities`,
-    `Should I consider ${company}?`,
   ];
 }
 
@@ -60,20 +61,20 @@ export function getCategoryQueries(
   const catLower = category.toLowerCase();
   const industryNeeded = industry && !catLower.includes(industry.toLowerCase());
 
+  // 5 queries per entity type × 4 platforms = 20 calls. Trimmed from 8 —
+  // the dropped queries were lower-intent ("how do I pick", "enterprise X
+  // with compliance") that rarely returned brand mentions. What remains is
+  // the shortlisting + buyer-persona variety, which drives most of the
+  // useful discovery signal.
   if (entityType === 'service') {
     return [
-      // Evaluation / shortlisting
       `Best ${category} for B2B SaaS companies`,
       `Top ${category} providers in 2026`,
       `Which ${category} should I hire?`,
       industryNeeded
         ? `Recommended ${category} for ${industry} clients`
         : `Recommended ${category} for growing businesses`,
-      // Buyer-journey / intent
       `Best ${category} for startups with a limited budget`,
-      `Enterprise-grade ${category} with proven case studies`,
-      `What ${category} do venture-backed companies hire?`,
-      `How do I choose a ${category} — what matters most?`,
     ];
   }
   if (entityType === 'brand') {
@@ -86,32 +87,20 @@ export function getCategoryQueries(
       : `Most sustainable ${category} brands in 2026`;
 
     return [
-      // Shortlisting
       `Best ${category} in 2026`,
       `Top ${category} to buy right now`,
-      `Which ${category} should I buy?`,
       industryNeeded
         ? `Recommended ${category} for ${industry} shoppers`
         : `Recommended ${category} for everyday use`,
-      // Buyer-journey / intent
-      `Best ${category} for under $100`,
       `Premium ${category} worth the money`,
       sustainabilityQuery,
-      `What ${category} do reviewers recommend most?`,
     ];
   }
   return [
-    // Shortlisting
     `Best ${category} software in 2026`,
     industryNeeded ? `Top ${category} tools for ${industry}` : `Top ${category} tools`,
     `What ${category} solution should I use?`,
     `Recommended ${category} platforms for businesses`,
-    // Buyer-journey / intent
     `Best ${category} for early-stage startups`,
-    `Enterprise ${category} with the best security and compliance`,
-    industryNeeded
-      ? `Which ${category} tool is best for ${industry} companies?`
-      : `Which ${category} tool is best for scaling companies?`,
-    `How do I pick a ${category} — what should I compare?`,
   ];
 }

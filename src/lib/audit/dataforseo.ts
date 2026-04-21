@@ -11,8 +11,15 @@ import { isDirectLLMPlatform, queryDirectLLM } from './direct-llm';
 const DFS_BASE = 'https://api.dataforseo.com/v3';
 
 const PLATFORM_MODELS: Record<AIPlatform, string> = {
+  // chatgpt + gemini are handled by direct-llm.ts via OpenRouter; these DFS
+  // entries are just fallbacks used if someone calls DFS for those platforms
+  // directly (they're skipped in queryLLM via isDirectLLMPlatform).
   chatgpt: 'gpt-4o',
-  claude: 'claude-sonnet-4-0',
+  // Haiku instead of Sonnet — a 10-12x cost reduction (Sonnet was $0.066/call
+  // vs Haiku ~$0.005) with no quality loss for the "what is X" / "alternatives
+  // to X" / "best X" queries we're running. Sonnet-level reasoning is not
+  // required to produce a brand-mention paragraph.
+  claude: 'claude-haiku-4-5',
   gemini: 'gemini-2.0-flash',
   perplexity: 'sonar',
 };

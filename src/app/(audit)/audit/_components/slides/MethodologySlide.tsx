@@ -9,8 +9,8 @@ const PHASES = [
     number: '01',
     title: 'Brand Baseline',
     description: 'Direct brand queries — testing how AI platforms respond when users explicitly ask about your brand.',
-    queries: '10 queries',
-    detail: 'Name recognition, features, pricing, reviews',
+    queries: '6 queries',
+    detail: 'Identity, reputation, quality, pricing, competitive framing, customer fit',
   },
   {
     number: '02',
@@ -23,8 +23,8 @@ const PHASES = [
     number: '03',
     title: 'Category Visibility',
     description: 'Unbranded discovery — when users search for solutions in your category, do AI platforms surface your brand?',
-    queries: '8 queries',
-    detail: 'Shortlisting + buyer-journey intent prompts',
+    queries: '5 queries',
+    detail: 'Shortlisting + buyer-persona intent prompts',
   },
 ];
 
