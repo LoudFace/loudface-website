@@ -70,6 +70,17 @@ function extractTocAndAddIds(html: string | undefined): { toc: { id: string; tex
     '<img alt="Blog post image"$1>',
   );
 
+  // Wrap every <table> in a horizontally-scrollable container. The article
+  // column is ~560px on desktop (narrow because of the sticky TOC sidebar),
+  // which is too cramped for typical 4-6 column comparison tables. Letting
+  // the table keep its natural column widths and scrolling the WRAPPER when
+  // it exceeds the column is the standard editorial pattern, and preserves
+  // table semantics (which `display: block` on <table> breaks).
+  normalized = normalized.replace(
+    /<table\b[\s\S]*?<\/table>/gi,
+    (match) => `<div class="blog-table-wrap">${match}</div>`,
+  );
+
   const toc: { id: string; text: string }[] = [];
   let index = 0;
 

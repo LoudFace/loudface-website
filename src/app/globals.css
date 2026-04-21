@@ -879,66 +879,84 @@ html {
   }
 
   /* Tables inside blog posts (e.g., comparison matrices, citation breakdowns).
-     The CMS stores raw <table> HTML, so we need explicit styles here.
+     The CMS stores raw <table> HTML. Each table is wrapped by the page's
+     HTML processor in <div class="blog-table-wrap"> so the container can
+     provide horizontal scroll when the table's natural width exceeds the
+     article column (which is only ~560px on desktop due to the sticky TOC
+     sidebar). We preserve natural `table-layout: auto` so columns size to
+     content — cramped equal-width columns were worse than a scrollable one. */
+  .blog-table-wrap {
+    margin: 2rem 0;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    border: 1px solid var(--color-surface-200);
+    border-radius: 0.5rem;
+    /* Horizontal scroll hint: a faint right-edge shadow that fades as the
+       user scrolls the table right, letting readers know content extends
+       beyond the visible edge. CSS-only, no JS needed. */
+    background-image:
+      linear-gradient(to right, var(--color-surface-50), var(--color-surface-50) 0%),
+      radial-gradient(farthest-side at 100% 50%, rgba(15, 15, 20, 0.08), transparent);
+    background-position: 0 0, 100% 0;
+    background-size: 0 100%, 14px 100%;
+    background-repeat: no-repeat;
+    background-attachment: local, scroll;
+  }
 
-     Layout strategy: `table-layout: fixed` distributes column width evenly
-     and allows text to wrap inside cells. Without this, the browser gives
-     long cells more width and the article column (narrow because of the
-     sticky TOC sidebar — ~560px at desktop) gets cramped horizontally.
-     Fixed layout + word-wrap means tall cells, never scrolling ones.
+  .blog-table-wrap table {
+    width: 100%;
+    margin: 0;
+    border-collapse: collapse;
+    font-size: 0.875rem;
+    line-height: 1.5;
+    /* Natural column sizing: each cell gets the width its content needs.
+       The wrapper scrolls when the total width exceeds the article column. */
+    min-width: max-content;
+  }
 
-     Font drops to 0.875rem so 5-6 column comparison tables stay readable
-     at the narrow column width. */
+  /* Legacy selector kept for any direct <table> references; styling points
+     at the same look so the old path (if hit) doesn't look broken. */
   .blog-prose table {
     width: 100%;
     margin: 2rem 0;
     border-collapse: collapse;
     font-size: 0.875rem;
     line-height: 1.5;
-    table-layout: fixed;
-    word-wrap: break-word;
-    overflow-wrap: break-word;
   }
 
-  .blog-prose thead {
+  .blog-prose thead,
+  .blog-table-wrap thead {
     background: var(--color-surface-50);
     border-bottom: 2px solid var(--color-surface-200);
   }
 
-  .blog-prose th {
-    padding: 0.625rem 0.75rem;
+  .blog-prose th,
+  .blog-table-wrap th {
+    padding: 0.625rem 0.875rem;
     text-align: left;
     font-weight: 600;
     font-family: var(--font-heading);
     color: var(--color-surface-900);
     vertical-align: top;
     line-height: 1.3;
+    white-space: nowrap;
   }
 
-  .blog-prose td {
-    padding: 0.625rem 0.75rem;
+  .blog-prose td,
+  .blog-table-wrap td {
+    padding: 0.625rem 0.875rem;
     border-bottom: 1px solid var(--color-surface-100);
     vertical-align: top;
   }
 
-  .blog-prose tbody tr:last-child td {
+  .blog-prose tbody tr:last-child td,
+  .blog-table-wrap tbody tr:last-child td {
     border-bottom: none;
   }
 
-  .blog-prose tbody tr:hover {
+  .blog-prose tbody tr:hover,
+  .blog-table-wrap tbody tr:hover {
     background: var(--color-surface-50);
-  }
-
-  /* On very narrow viewports (<480px) the fixed layout's equal column split
-     becomes painful — fall back to block+scroll so each row is readable at
-     natural column widths. Above that, fixed layout handles everything. */
-  @media (max-width: 480px) {
-    .blog-prose table {
-      display: block;
-      overflow-x: auto;
-      -webkit-overflow-scrolling: touch;
-      table-layout: auto;
-    }
   }
 
   .blog-prose [id] {
