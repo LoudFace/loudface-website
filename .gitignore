@@ -62,3 +62,5 @@ competitive-research/
 
 # Python caches (skill scripts)
 __pycache__/
+scripts/internal-links/inventory.json
+scripts/internal-links/patches/
