@@ -132,6 +132,47 @@ function decodeEntities(s: string): string {
     .replace(/&#(\d+);/g, (_, n) => String.fromCharCode(Number(n)));
 }
 
+/**
+ * Strip trailing corporate and regional suffixes so "Patagonia Europe
+ * Coöperatief U.A." becomes "Patagonia" before it's fed into LLM queries.
+ * Without this, Phase 3 mention-matching fails because the response text
+ * says "Patagonia" but we're searching for the full legal/regional string.
+ *
+ * Only strips suffixes from a conservative list — "New Balance" won't
+ * lose "Balance" because "balance" isn't in the list.
+ */
+function stripBrandSuffixes(name: string): string {
+  // Corporate legal suffixes (case-insensitive, may be followed by period)
+  const corporate = [
+    'inc', 'incorporated', 'llc', 'ltd', 'limited', 'corp', 'corporation', 'co',
+    'plc', 'lp', 'llp', 'pllc', 'pty', 'pty ltd',
+    'sa', 's\\.a\\.', 's\\.a', 'ag', 'gmbh', 'bv', 'b\\.v\\.', 'nv', 'n\\.v\\.',
+    'coöperatief', 'cooperatief', 'u\\.a\\.', 'ua',
+    'sarl', 's\\.a\\.r\\.l\\.', 'kg', 'oy', 'ab', 'as', 'aps',
+    's\\.l\\.', 'sl', 'sp\\. z o\\.o\\.', 'sro', 's\\.r\\.o\\.',
+  ].join('|');
+
+  // Regional suffixes (case-insensitive)
+  const regional = [
+    'europe', 'eu', 'usa', 'us', 'uk', 'na', 'apac', 'emea',
+    'international', 'global', 'worldwide',
+    'group', 'holdings', 'holding',
+  ].join('|');
+
+  const combined = `(?:${corporate}|${regional})`;
+  // Strip repeated trailing suffixes: "Patagonia Europe Coöperatief U.A." → "Patagonia"
+  let out = name.trim();
+  const re = new RegExp(`\\s+${combined}\\.?\\s*$`, 'i');
+  let prev = '';
+  while (out !== prev) {
+    prev = out;
+    out = out.replace(re, '').trim();
+  }
+
+  // Guard against over-stripping — if the result is <2 chars, keep the original.
+  return out.length >= 2 ? out : name.trim();
+}
+
 /** Pull the first JSON-LD Organization (or subtype) name from HTML. */
 function extractJsonLdOrgName(html: string): string | null {
   const scriptRe = /<script[^>]+type=["']application\/ld\+json["'][^>]*>([\s\S]*?)<\/script>/gi;
@@ -163,9 +204,14 @@ function extractJsonLdOrgName(html: string): string | null {
         const types = Array.isArray(type) ? type : type ? [type] : [];
         const isOrg = types.some((t) => orgTypes.has(t));
         if (!isOrg) continue;
-        const name = typed.legalName || typed.name;
+        // Prefer `name` (the common brand name like "Patagonia") over `legalName`
+        // (the registered entity like "Patagonia Europe Coöperatief U.A.").
+        // legalName breaks downstream brand-mention matching: Phase 3 responses
+        // say "Patagonia", not the full legal entity, so the match misses and
+        // the audit grades the brand F.
+        const name = typed.name || typed.legalName;
         if (name && typeof name === 'string' && name.trim().length > 0) {
-          return decodeEntities(name).trim();
+          return stripBrandSuffixes(decodeEntities(name).trim());
         }
       }
     } catch {

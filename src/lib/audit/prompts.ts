@@ -78,6 +78,13 @@ export function getCategoryQueries(
   }
   if (entityType === 'brand') {
     // Ecommerce / consumer brands / marketplaces — no "software/tools/platforms" wording.
+    // When the category already ends in a noun like "brand", "box", "retailer", or "store",
+    // we drop the trailing "brands"/"stores" to avoid reading "brand brands" / "box brands".
+    const trailsInBrandNoun = /\b(brand|brands|box|boxes|retailer|retailers|store|stores|shop|shops|marketplace|marketplaces)$/i.test(catLower.trim());
+    const sustainabilityQuery = trailsInBrandNoun
+      ? `Most sustainable ${category} in 2026`
+      : `Most sustainable ${category} brands in 2026`;
+
     return [
       // Shortlisting
       `Best ${category} in 2026`,
@@ -89,7 +96,7 @@ export function getCategoryQueries(
       // Buyer-journey / intent
       `Best ${category} for under $100`,
       `Premium ${category} worth the money`,
-      `Most sustainable ${category} brands in 2026`,
+      sustainabilityQuery,
       `What ${category} do reviewers recommend most?`,
     ];
   }

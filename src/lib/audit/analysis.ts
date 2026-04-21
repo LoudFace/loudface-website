@@ -197,6 +197,11 @@ const NEVER_COMPETITOR_DOMAINS = new Set([
   'clevelandclinic.org', 'hopkinsmedicine.org', 'nih.gov', 'medlineplus.gov',
   'nerdynav.com', 'tomsguide.com', 'cnet.com', 'pcmag.com',
   'themodestman.com', 'consumeraffairs.com',
+  // Business registries and corporate-info aggregators — pollute citation
+  // analysis for brands with EU/UK entities (observed on patagonia.com).
+  'dnb.com', 'northdata.com', 'pappers.fr', 'opencorporates.com',
+  'find-and-update.company-information.service.gov.uk',
+  'companieshouse.gov.uk', 'bloomberg.com',
 ]);
 
 /**
