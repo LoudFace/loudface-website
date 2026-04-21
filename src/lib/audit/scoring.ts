@@ -36,12 +36,21 @@ export function calculateScores(
   // apples-to-apples SoV we have. The brand's SoV is its share of all entity
   // mentions (brand + competitors) across Phase 3 responses — not just a raw
   // mention rate — so it reflects competitive pressure.
+  //
+  // If there are NO competitors tracked (filter rejected everything, no AI
+  // extract, no hardcoded fallback), SoV is undefined — a brand alone in its
+  // own graph is technically 100% of a nonsense ratio. We return 0 and let
+  // the UI surface this via competitorsTracked=0 rather than reporting a
+  // misleading perfect score.
   const competitorSoVMap = competitorContext.shareOfVoiceByCompetitor;
   const totalCompetitorSoV = Object.values(competitorSoVMap).reduce((s, n) => s + n, 0);
   const brandMentionRatePhase3 = discoveryVisibility; // same denominator
-  const shareOfVoice = totalCompetitorSoV + brandMentionRatePhase3 > 0
-    ? Math.round((brandMentionRatePhase3 / (totalCompetitorSoV + brandMentionRatePhase3)) * 100)
-    : 0;
+  const hasCompetitors = competitorContext.competitors.length > 0;
+  const shareOfVoice = !hasCompetitors
+    ? 0
+    : totalCompetitorSoV + brandMentionRatePhase3 > 0
+      ? Math.round((brandMentionRatePhase3 / (totalCompetitorSoV + brandMentionRatePhase3)) * 100)
+      : 0;
 
   // Competitive Standing: rank brand vs competitors using Phase 3 rates.
   let competitiveStanding = 1;

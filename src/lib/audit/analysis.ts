@@ -202,6 +202,15 @@ const NEVER_COMPETITOR_DOMAINS = new Set([
   'dnb.com', 'northdata.com', 'pappers.fr', 'opencorporates.com',
   'find-and-update.company-information.service.gov.uk',
   'companieshouse.gov.uk', 'bloomberg.com',
+  // Developer reference / education sites — DFS keyword-overlap picks these
+  // up for agencies that blog about web tech (Finsweet, Flow Ninja).
+  // Conservative list: only sites that are never real competitors to
+  // anyone. Tools like ahrefs.com / semrush.com stay off this list because
+  // they're valid competitors for SEO brands.
+  'mozilla.org', 'developer.mozilla.org', 'w3schools.com', 'dev.to',
+  'freecodecamp.org', 'css-tricks.com', 'smashingmagazine.com',
+  'sitepoint.com', 'tutorialspoint.com', 'geeksforgeeks.org',
+  'scribd.com',
 ]);
 
 /**
