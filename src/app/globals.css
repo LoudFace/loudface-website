@@ -851,6 +851,81 @@ html {
     color: var(--color-primary-600);
   }
 
+  /* Fenced code blocks (e.g., JSON-LD, config samples).
+     `max-width: 100%` + `overflow-x: auto` keeps long lines (URLs, schema refs)
+     inside the article column instead of visually bleeding into the TOC. */
+  .blog-prose pre {
+    margin: 2rem 0;
+    padding: 1.25rem 1.5rem;
+    background: var(--color-surface-900);
+    color: var(--color-surface-100);
+    border-radius: 0.75rem;
+    font-family: var(--font-mono);
+    font-size: 0.85rem;
+    line-height: 1.6;
+    max-width: 100%;
+    overflow-x: auto;
+    white-space: pre;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .blog-prose pre code {
+    background: transparent;
+    padding: 0;
+    border-radius: 0;
+    color: inherit;
+    font-size: inherit;
+    font-family: inherit;
+  }
+
+  /* Tables inside blog posts (e.g., comparison matrices, citation breakdowns).
+     The CMS stores raw <table> HTML, so we need explicit styles here. */
+  .blog-prose table {
+    width: 100%;
+    margin: 2rem 0;
+    border-collapse: collapse;
+    font-size: 0.95rem;
+    line-height: 1.5;
+  }
+
+  .blog-prose thead {
+    background: var(--color-surface-50);
+    border-bottom: 2px solid var(--color-surface-200);
+  }
+
+  .blog-prose th {
+    padding: 0.75rem 1rem;
+    text-align: left;
+    font-weight: 600;
+    font-family: var(--font-heading);
+    color: var(--color-surface-900);
+    vertical-align: top;
+  }
+
+  .blog-prose td {
+    padding: 0.75rem 1rem;
+    border-bottom: 1px solid var(--color-surface-100);
+    vertical-align: top;
+  }
+
+  .blog-prose tbody tr:last-child td {
+    border-bottom: none;
+  }
+
+  .blog-prose tbody tr:hover {
+    background: var(--color-surface-50);
+  }
+
+  /* Scroll horizontally instead of squishing on narrow viewports.
+     The <article> has min-w-0 so the scroll container lives on the table itself. */
+  @media (max-width: 640px) {
+    .blog-prose table {
+      display: block;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+  }
+
   .blog-prose [id] {
     scroll-margin-top: 6rem;
   }
