@@ -76,8 +76,19 @@ const Phase1Schema = z.object({
       )
       .describe('Statements the AI made that contradict the ground truth. Max 4 items.'),
     knowledge_gaps: z
-      .array(z.string())
-      .describe('Aspects of the brand that AI platforms failed to mention or got confused about. Each item is one full sentence. Max 4 items.'),
+      .array(
+        z.object({
+          gap: z
+            .string()
+            .describe('One full sentence describing a specific thing AI platforms failed to mention or got confused about.'),
+          suggested_page_path: z
+            .string()
+            .describe(
+              'A concrete URL path to create or update on the brand\'s own site that would close this gap. Must start with "/". 2-5 segments max. Examples: "/pricing", "/features/ai-prompt-to-code", "/about/sustainability", "/compare/figma-vs-adobe-xd". Pick a path that would realistically rank for the missing information — not a generic "/about".',
+            ),
+        }),
+      )
+      .describe('Aspects of the brand that AI platforms failed to mention or got confused about, paired with the specific page the brand should create to close each gap. Max 4 items.'),
   }),
   competitors_mentioned: z
     .array(

@@ -1,6 +1,7 @@
 'use client';
 
 import type { AuditResults } from '@/lib/audit/types';
+import type { BenchmarkContext } from '@/lib/audit/benchmarks';
 import type { EntityConfidenceSignal } from './EntityConfidenceBanner';
 import { CoverSlide } from './slides/CoverSlide';
 import { ScorecardSlide } from './slides/ScorecardSlide';
@@ -25,11 +26,12 @@ interface AuditDeckProps {
   auditDate: string;
   entityConfidence?: EntityConfidenceSignal;
   partialDataReason?: string;
+  benchmarkContext?: BenchmarkContext | null;
 }
 
 const TOTAL_SLIDES = 15;
 
-export function AuditDeck({ results, companyName, domain, auditDate, entityConfidence, partialDataReason }: AuditDeckProps) {
+export function AuditDeck({ results, companyName, domain, auditDate, entityConfidence, partialDataReason, benchmarkContext }: AuditDeckProps) {
   const signal: EntityConfidenceSignal = entityConfidence ?? {
     low: false,
     brandRecognitionScore: results.brandBaseline.brandRecognitionScore,
@@ -51,6 +53,7 @@ export function AuditDeck({ results, companyName, domain, auditDate, entityConfi
         totalSlides={TOTAL_SLIDES}
         entityConfidence={signal}
         partialDataReason={partialDataReason}
+        benchmarkContext={benchmarkContext}
       />
 
       <MethodologySlide totalSlides={TOTAL_SLIDES} />

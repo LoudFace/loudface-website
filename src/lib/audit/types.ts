@@ -109,7 +109,18 @@ export interface BrandBaselineData {
   brandRecognitionScore: number; // 0-100
   accurateInfo: string[];
   inaccuracies: string[];
+  /**
+   * Flat list of knowledge-gap sentences. Preserved for backward-compat with
+   * audits stored before structured gap data was added.
+   */
   gaps: string[];
+  /**
+   * Structured gaps paired with a suggested URL path on the brand's site that
+   * would close each gap (e.g., "/features/ai-prompt-to-code"). When present,
+   * action-item generation uses this to make "create page X" recommendations
+   * concrete instead of generic. May be undefined on older audit records.
+   */
+  gapsWithSuggestions?: Array<{ gap: string; suggestedPath: string }>;
 }
 
 export interface BrandQuery {

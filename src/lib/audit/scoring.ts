@@ -279,8 +279,19 @@ export function generateActionItems(
     });
   }
 
-  // Knowledge gap — quote the biggest gap, not a generic "fill gaps".
-  if (brandBaseline.gaps.length > 0) {
+  // Knowledge gap — quote the biggest gap AND name the specific page to create.
+  // Prefer structured gaps (emitted by Phase 1 extraction with suggested URL paths)
+  // over the legacy flat string list so the action item is prescriptive.
+  const topGap = brandBaseline.gapsWithSuggestions?.[0];
+  if (topGap) {
+    const gapText = truncate(topGap.gap, 140);
+    items.push({
+      priority: 'high',
+      title: `Publish ${topGap.suggestedPath}`,
+      description: `AI is missing: "${gapText}" Create this page on your site so AI has a canonical source to cite. Use the gap as the H1 question, answer directly in the first paragraph, add schema markup, and earn a few links to it.`,
+      linkedService: '/services/copywriting',
+    });
+  } else if (brandBaseline.gaps.length > 0) {
     const firstGap = truncate(brandBaseline.gaps[0], 140);
     items.push({
       priority: 'high',

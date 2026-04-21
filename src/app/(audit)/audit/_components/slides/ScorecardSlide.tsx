@@ -1,4 +1,5 @@
 import type { AuditScores } from '@/lib/audit/types';
+import type { BenchmarkContext } from '@/lib/audit/benchmarks';
 import { getTrafficLight } from '@/lib/audit/scoring';
 import { SlideShell } from './SlideShell';
 import { TrafficLight } from './charts/TrafficLight';
@@ -11,6 +12,7 @@ interface ScorecardSlideProps {
   totalSlides: number;
   entityConfidence?: EntityConfidenceSignal;
   partialDataReason?: string;
+  benchmarkContext?: BenchmarkContext | null;
 }
 
 const GRADE_COLORS: Record<string, string> = {
@@ -21,7 +23,7 @@ const GRADE_COLORS: Record<string, string> = {
   F: 'text-error',
 };
 
-export function ScorecardSlide({ scores, companyName, totalSlides, entityConfidence, partialDataReason }: ScorecardSlideProps) {
+export function ScorecardSlide({ scores, companyName, totalSlides, entityConfidence, partialDataReason, benchmarkContext }: ScorecardSlideProps) {
   return (
     <SlideShell index={1} totalSlides={totalSlides}>
       <div className="flex-1 flex flex-col justify-center">
@@ -36,6 +38,8 @@ export function ScorecardSlide({ scores, companyName, totalSlides, entityConfide
           with {scores.shareOfVoice}% share of voice. Competitive standing
           is {scores.competitiveStanding} of {scores.competitorsTracked} tracked brands.
         </p>
+
+        {benchmarkContext && <BenchmarkStrip context={benchmarkContext} />}
 
         {entityConfidence?.low && <EntityConfidenceBanner signal={entityConfidence} />}
         {partialDataReason && <PartialDataBanner reason={partialDataReason} />}
@@ -81,6 +85,51 @@ export function ScorecardSlide({ scores, companyName, totalSlides, entityConfide
       </div>
     </SlideShell>
   );
+}
+
+/**
+ * Renders three compact percentile pills ("You're in the 70th percentile for
+ * Share of Voice in SaaS design tools"). Only shown when the bucket has
+ * enough peers — the getBenchmarkContext helper returns null below threshold
+ * so this component never needs to handle the empty state.
+ */
+function BenchmarkStrip({ context }: { context: BenchmarkContext }) {
+  const { categoryLabel, sampleSize, percentiles } = context;
+  const rows = [
+    { label: 'Discovery Visibility', percentile: percentiles.discoveryVisibility },
+    { label: 'Share of Voice', percentile: percentiles.shareOfVoice },
+    { label: 'Brand Recognition', percentile: percentiles.brandRecognition },
+  ];
+
+  return (
+    <div className="mb-8 rounded-xl border border-primary-500/20 bg-primary-500/5 p-4 sm:p-5">
+      <p className="text-2xs tracking-wider uppercase text-primary-300/80 mb-2">
+        Category benchmark · {categoryLabel}
+      </p>
+      <p className="text-sm text-surface-300 leading-relaxed mb-3">
+        Against {sampleSize} other {categoryLabel} audits — here&apos;s where you land.
+      </p>
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 sm:gap-3">
+        {rows.map((r) => (
+          <div key={r.label} className="rounded-lg bg-white/5 px-3 py-2">
+            <p className="text-2xs text-surface-500">{r.label}</p>
+            <p className="text-base font-medium text-white">
+              {percentileLabel(r.percentile)}
+            </p>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+/** "70th percentile", "Top 5%", "Bottom quartile" — give shape to the number. */
+function percentileLabel(p: number): string {
+  if (p >= 95) return `Top ${100 - p}%`;
+  if (p >= 75) return `${p}th percentile`;
+  if (p >= 50) return `${p}th percentile`;
+  if (p >= 25) return `Bottom ${100 - p}%`;
+  return `Bottom ${100 - p}%`;
 }
 
 function MetricCard({

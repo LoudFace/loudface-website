@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
-import { getAuditRecord } from '@/lib/audit/pipeline';
+import { getAuditRecord, getRedis } from '@/lib/audit/pipeline';
+import { getBenchmarkContext } from '@/lib/audit/benchmarks';
 import { AuditProgress } from '../_components/AuditProgress';
 import { AuditDeck } from '../_components/AuditDeck';
 
@@ -55,6 +56,17 @@ export default async function AuditResultsPage({
 
   const partialDataReason = record.diagnostics?.partialDataReason;
 
+  // Pull benchmark context if the category has enough peer audits. Returns null
+  // silently below the minimum sample size — ScorecardSlide just hides the
+  // context block in that case.
+  let benchmarkContext = null;
+  try {
+    const redis = await getRedis();
+    benchmarkContext = await getBenchmarkContext(redis, record);
+  } catch (err) {
+    console.warn('[Audit page] Failed to load benchmark context:', err);
+  }
+
   return (
     <AuditDeck
       results={record.results}
@@ -63,6 +75,7 @@ export default async function AuditResultsPage({
       auditDate={record.completedAt || record.createdAt}
       entityConfidence={entityConfidence}
       partialDataReason={partialDataReason}
+      benchmarkContext={benchmarkContext}
     />
   );
 }

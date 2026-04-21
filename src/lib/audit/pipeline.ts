@@ -7,6 +7,8 @@ import { mentionsBrand } from './analysis';
 import { scrapeGroundTruth } from './ground-truth';
 import { extractPhase1Insights } from './extract-phase1';
 import { TraceCollector } from './dataforseo';
+import { sendAuditCompleteEmail } from './email';
+import { recordBenchmark } from './benchmarks';
 import {
   calculateScores,
   calculatePlatformBreakdown,
@@ -14,6 +16,27 @@ import {
 } from './scoring';
 
 const AUDIT_TTL = 60 * 60 * 24 * 30; // 30 days
+
+/**
+ * Defend against LLM-emitted paths that would produce ugly CTAs: ensure a
+ * leading slash, strip any accidental origin, collapse double slashes, and
+ * cap to ~60 chars. We don't validate slug characters because the path is
+ * a SUGGESTION shown to the user — they write the actual page.
+ */
+function normalizeSuggestedPath(raw: string): string {
+  if (!raw || typeof raw !== 'string') return '/';
+  let out = raw.trim();
+  // Drop scheme + host if the model emitted a full URL.
+  out = out.replace(/^https?:\/\/[^/]+/i, '');
+  // Ensure leading slash.
+  if (!out.startsWith('/')) out = `/${out}`;
+  // Collapse duplicate slashes.
+  out = out.replace(/\/{2,}/g, '/');
+  // Strip trailing slash (except root).
+  if (out.length > 1) out = out.replace(/\/+$/, '');
+  if (out.length > 80) out = out.slice(0, 80);
+  return out || '/';
+}
 
 /**
  * Strip trailing filler words that slip past the LLM's word-count hint
@@ -169,7 +192,11 @@ export async function runAudit(id: string): Promise<void> {
       brandBaseline.inaccuracies = phase1.brand_knowledge.inaccurate_claims.map(
         (c) => `${c.claim} (${c.why_wrong})`,
       );
-      brandBaseline.gaps = phase1.brand_knowledge.knowledge_gaps;
+      brandBaseline.gaps = phase1.brand_knowledge.knowledge_gaps.map((g) => g.gap);
+      brandBaseline.gapsWithSuggestions = phase1.brand_knowledge.knowledge_gaps.map((g) => ({
+        gap: g.gap,
+        suggestedPath: normalizeSuggestedPath(g.suggested_page_path),
+      }));
     }
 
     // Competitors extracted from Phase 1 responses, used by Phase 2 as cross-validation.
@@ -322,6 +349,20 @@ export async function runAudit(id: string): Promise<void> {
 
     await setAuditRecord(completeRecord);
     console.log(`[Audit] Complete: ${id}`);
+
+    // Persist this audit into the category benchmark bucket (if it's a
+    // high-confidence, full-data run — recordBenchmark skips partial ones).
+    try {
+      const redis = await getRedis();
+      await recordBenchmark(redis, completeRecord);
+    } catch (err) {
+      console.warn('[Audit] recordBenchmark failed (non-fatal):', err);
+    }
+
+    // Fire the completion email. Never awaited in a way that could fail the
+    // audit — the email module catches its own errors and no-ops if env vars
+    // are missing. We still `await` so the dev server surfaces delivery logs.
+    await sendAuditCompleteEmail(completeRecord);
   } catch (err) {
     console.error(`[Audit] Failed: ${id}`, err);
 
