@@ -10,7 +10,17 @@ Generates inline visuals (AI illustrations, data charts, live screenshots) for L
 4. **Compose** — uploads generated + captured images to Sanity's asset pipeline and writes a draft of the blog post with the `visuals` array populated. **Never publishes.**
 5. **Render** — the blog page (`src/app/blog/[slug]/page.tsx`) reads `post.visuals` and splices them into the article body at their H2-anchored positions.
 
-All steps are local. Nothing deploys to Vercel.
+All steps are local. Nothing deploys to Vercel. Individual shot failures soft-fail — one bad URL or a fal timeout won't abort the run; the pipeline continues with the remaining visuals and prints a summary at the end.
+
+## First-time setup
+
+The screenshot worker needs Chromium installed locally. Run once per machine:
+
+```bash
+npm run visuals:setup   # downloads Chromium via Playwright (~150MB)
+```
+
+If you skip this and try to run the pipeline, the worker fails with a clear "run `npm run visuals:setup`" message rather than a cryptic Playwright error.
 
 ## Quick start
 
@@ -30,7 +40,21 @@ npm run visuals:generate -- saas-seo-agencies --plan-only
 npm run visuals:generate -- saas-seo-agencies --skip-plan
 npm run visuals:generate -- saas-seo-agencies --skip-plan --skip-illustrate
 npm run visuals:generate -- saas-seo-agencies --skip-plan --skip-illustrate --skip-screenshot
+
+# Re-run and preserve hand-edits you made in Sanity Studio
+# (captions tweaked, assets swapped, visuals manually removed)
+npm run visuals:generate -- saas-seo-agencies --merge
 ```
+
+### Merge mode
+
+By default, compose overwrites the draft's entire `visuals` array with whatever the current plan produces. That's fine for the first run, but if you've opened the draft in Studio and hand-tuned a caption or swapped an image, re-running the pipeline will silently discard those edits.
+
+Pass `--merge` to keep existing draft entries whose `_key` matches a plan slot:
+
+- **Matching slot exists in draft → kept as-is** (your Studio edits survive).
+- **New slot not in draft → added** (fresh fal/playwright output).
+- **Slot in draft but gone from new plan → kept anyway**, with a warning. Safer than silent deletion; delete manually in Studio if you don't want it.
 
 ### Style consistency
 
@@ -122,10 +146,14 @@ The system prompt at `prompts/planner-system.md` is the biggest quality lever. I
 
 ## Failure recovery
 
+Both workers **soft-fail per shot** — a single bad URL or fal timeout skips that slot and keeps going. The pipeline prints a summary of failed slots at the end and compose just omits them from the draft.
+
 - **Zod validation fails** — Claude returned a malformed shot list. Re-run the planner; if it happens twice, tighten the system prompt.
-- **fal.ai fails mid-batch** — images already generated are cached. Re-run with `--skip-plan` to resume; completed slots return from cache.
-- **Playwright fails on a capture** — usually a bad `waitFor` selector, a page that never fires `networkidle`, or a blocked target (auth wall). Fix the shot in `plan.json` and re-run with `--skip-plan --skip-illustrate`; already-cached screenshots return from the shared cache.
-- **Sanity compose fails** — images are uploaded; re-run with `--skip-plan --skip-illustrate --skip-screenshot` to just retry the draft write.
+- **fal.ai fails on one shot** — the rest of the illustrations still generate. Completed slots are cached by `sha(model + prompt)`. Re-run with `--skip-plan` to retry only the failed ones; cache hits on successful slots are free.
+- **Playwright fails on a capture** — usually a bad `waitFor` selector, a page that never fires `networkidle`, or a blocked target (auth wall, Cloudflare bot challenge). That slot is skipped; the rest capture normally. Fix the shot in `plan.json` and re-run with `--skip-plan --skip-illustrate`; cached screenshots return from the shared cache.
+- **Chromium binary missing** — the worker will tell you to run `npm run visuals:setup`. One-time install per machine.
+- **Sanity compose fails** — images are already uploaded (Sanity dedupes by content hash, so re-uploads are instant). Re-run with `--skip-plan --skip-illustrate --skip-screenshot` to just retry the draft write.
+- **Lost hand-edits in draft** — re-running the pipeline overwrites the draft's `visuals` array by default. Use `--merge` on every re-run after you've tweaked captions in Studio.
 
 ## Screenshot worker
 

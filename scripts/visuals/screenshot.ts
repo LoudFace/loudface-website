@@ -50,6 +50,7 @@ export async function screenshotPlan(slug: string): Promise<ScreenshotResult[]> 
   console.log(`→ Capturing ${screenshotShots.length} screenshots via Playwright...`);
 
   const results: ScreenshotResult[] = [];
+  const failures: Array<{ slot: string; error: string }> = [];
 
   try {
     for (const shot of screenshotShots) {
@@ -80,9 +81,14 @@ export async function screenshotPlan(slug: string): Promise<ScreenshotResult[]> 
           height = dims.height;
           console.log(`captured ✓ (${dims.width}×${dims.height})`);
         } catch (err) {
-          console.log('failed ✗');
-          console.error(`    ${err instanceof Error ? err.message : err}`);
-          throw err;
+          // Soft-fail: a single bad URL (expired permalink, bot wall, network
+          // blip) shouldn't kill a multi-shot run. The shot is skipped, compose
+          // will log a warning and emit the article with the remaining visuals.
+          const msg = err instanceof Error ? err.message : String(err);
+          console.log('failed ✗ (skipping)');
+          console.error(`    ${msg}`);
+          failures.push({ slot: shot.slot, error: msg });
+          continue;
         }
       }
 
@@ -107,6 +113,13 @@ export async function screenshotPlan(slug: string): Promise<ScreenshotResult[]> 
   const resultsPath = path.join(CACHE_ROOT, slug, 'screenshots.json');
   fs.writeFileSync(resultsPath, JSON.stringify(results, null, 2));
   console.log(`✓ Saved ${results.length} screenshots → .visuals-cache/${slug}/screenshots/`);
+
+  if (failures.length > 0) {
+    console.warn(`⚠  ${failures.length} screenshot(s) failed — compose will skip those slots:`);
+    for (const f of failures) {
+      console.warn(`    · ${f.slot}: ${f.error}`);
+    }
+  }
 
   return results;
 }

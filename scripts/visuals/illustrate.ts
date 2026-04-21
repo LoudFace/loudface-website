@@ -127,6 +127,7 @@ export async function illustratePlan(
   );
 
   const results: IllustrationResult[] = [];
+  const failures: Array<{ slot: string; error: string }> = [];
   for (const shot of illustrationShots) {
     if (!shot.template || !shot.subject) {
       console.warn(`  ⚠  Skipping "${shot.slot}" — missing template or subject`);
@@ -200,9 +201,15 @@ export async function illustratePlan(
         },
       });
     } catch (err) {
-      console.log('failed ✗');
-      console.error(`    ${err instanceof Error ? err.message : err}`);
-      throw err;
+      // Soft-fail: a single fal.ai timeout, content-policy rejection, or
+      // model blip shouldn't kill the rest of the run. Cached illustrations
+      // already written to disk stay; compose will log a warning and skip
+      // this slot, emitting the article with the remaining visuals.
+      const msg = err instanceof Error ? err.message : String(err);
+      console.log('failed ✗ (skipping)');
+      console.error(`    ${msg}`);
+      failures.push({ slot: shot.slot, error: msg });
+      continue;
     }
   }
 
@@ -211,6 +218,13 @@ export async function illustratePlan(
   console.log(
     `✓ Saved ${results.length} illustrations → .visuals-cache/${slug}/illustrations${dirSuffix}/`,
   );
+
+  if (failures.length > 0) {
+    console.warn(`⚠  ${failures.length} illustration(s) failed — compose will skip those slots:`);
+    for (const f of failures) {
+      console.warn(`    · ${f.slot}: ${f.error}`);
+    }
+  }
 
   return results;
 }

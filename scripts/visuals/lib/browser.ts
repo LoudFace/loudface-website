@@ -56,22 +56,39 @@ let cachedBrowser: Browser | null = null;
 /**
  * Returns a shared headless browser instance, launching one on first call.
  * Callers must eventually invoke `closeBrowser()` to release resources.
+ *
+ * Throws a clear, actionable error if Chromium isn't installed on the machine
+ * — this is the #1 failure mode on a fresh clone, since `npm install` alone
+ * doesn't pull down browser binaries.
  */
 export async function getBrowser(): Promise<Browser> {
   if (cachedBrowser && cachedBrowser.isConnected()) return cachedBrowser;
-  cachedBrowser = await chromium.launch({
-    headless: true,
-    // Common flags that help with bot-detection on fingerprinted targets
-    // without needing a full stealth plugin. Good enough for the sites we
-    // target (public pages + Perplexity). If we ever need authenticated
-    // ChatGPT/Claude/Gemini, move to a hosted browser service.
-    args: [
-      '--disable-blink-features=AutomationControlled',
-      '--disable-features=IsolateOrigins,site-per-process',
-      '--no-sandbox',
-    ],
-  });
-  return cachedBrowser;
+  try {
+    cachedBrowser = await chromium.launch({
+      headless: true,
+      // Common flags that help with bot-detection on fingerprinted targets
+      // without needing a full stealth plugin. Good enough for the sites we
+      // target (public pages + Perplexity). If we ever need authenticated
+      // ChatGPT/Claude/Gemini, move to a hosted browser service.
+      args: [
+        '--disable-blink-features=AutomationControlled',
+        '--disable-features=IsolateOrigins,site-per-process',
+        '--no-sandbox',
+      ],
+    });
+    return cachedBrowser;
+  } catch (err) {
+    const msg = err instanceof Error ? err.message : String(err);
+    // Playwright's own "Executable doesn't exist" error is cryptic and buries
+    // the fix. Re-throw with a clear one-line remedy so the user knows what
+    // to do even on their first-ever visuals run.
+    if (msg.includes("Executable doesn't exist") || msg.includes('browserType.launch')) {
+      throw new Error(
+        `Playwright Chromium binary not installed. Run: npm run visuals:setup\n(Original error: ${msg})`,
+      );
+    }
+    throw err;
+  }
 }
 
 export async function closeBrowser(): Promise<void> {

@@ -2,7 +2,14 @@
  * Compose — uploads illustrations to Sanity, assembles the visuals array,
  * writes a draft of the blog post. Never publishes.
  *
- * Usage: npx tsx scripts/visuals/compose.ts <slug>
+ * Usage:
+ *   npx tsx scripts/visuals/compose.ts <slug>
+ *   npx tsx scripts/visuals/compose.ts <slug> --merge
+ *
+ * By default, compose overwrites the draft's `visuals` array with what the
+ * current plan produces. Pass --merge to preserve existing visuals in the
+ * draft when their `_key` matches a plan slot — useful when you've hand-edited
+ * captions in Studio and want to re-run without losing those edits.
  */
 
 import fs from 'fs';
@@ -36,7 +43,17 @@ interface SanityVisual {
   };
 }
 
-export async function composeForSlug(slug: string): Promise<void> {
+export interface ComposeOpts {
+  /**
+   * When true, visuals already present in the existing draft with a matching
+   * `_key` are kept as-is (preserving hand-edited captions, swapped assets,
+   * etc). Only slots the current plan produces that are NOT yet in the draft
+   * get appended. Default false — matches the original overwrite behavior.
+   */
+  merge?: boolean;
+}
+
+export async function composeForSlug(slug: string, opts: ComposeOpts = {}): Promise<void> {
   const cacheDir = path.join(CACHE_ROOT, slug);
   const planPath = path.join(cacheDir, 'plan.json');
   const illustrationsPath = path.join(cacheDir, 'illustrations.json');
@@ -66,7 +83,11 @@ export async function composeForSlug(slug: string): Promise<void> {
   const client = sanityClient();
 
   const uploadCount = illustrations.length + screenshots.length;
-  console.log(`→ Uploading ${uploadCount} images to Sanity assets (${illustrations.length} illustrations, ${screenshots.length} screenshots)...`);
+  if (uploadCount > 0) {
+    console.log(`→ Uploading ${uploadCount} image(s) to Sanity assets (${illustrations.length} illustration${illustrations.length === 1 ? '' : 's'}, ${screenshots.length} screenshot${screenshots.length === 1 ? '' : 's'})...`);
+  } else {
+    console.log(`→ No image uploads needed (charts-only plan or nothing to upload).`);
+  }
 
   for (const shot of plan.shots) {
     if (shot.type === 'illustration') {
@@ -137,11 +158,35 @@ export async function composeForSlug(slug: string): Promise<void> {
     }
   }
 
-  console.log(`→ Writing draft to Sanity with ${visuals.length} visuals...`);
   const targetDraftId = draftId(post._id);
-
-  // Fetch existing draft if present, so we can preserve any concurrent edits
   const existingDraft = await client.getDocument(targetDraftId);
+
+  // If --merge, preserve existing draft visuals whose `_key` matches a plan
+  // slot — this is how you keep hand-edited captions when re-running the
+  // pipeline. New slots still get added, slots dropped from the plan are
+  // kept in place (safer than silent deletion).
+  let finalVisuals = visuals;
+  if (opts.merge && existingDraft) {
+    const existing = ((existingDraft as { visuals?: SanityVisual[] }).visuals ?? []);
+    const planSlotKeys = new Set(visuals.map((v) => v._key));
+    const existingByKey = new Map(existing.map((v) => [v._key, v]));
+
+    // Preserve existing entries where they exist; only use fresh ones for slots
+    // that weren't already in the draft.
+    const mergedFromPlan = visuals.map((v) => existingByKey.get(v._key) ?? v);
+    // Plus any existing draft visuals the current plan dropped — we keep them
+    // rather than silently delete. Warn so the user sees what's stale.
+    const orphanedInDraft = existing.filter((v) => !planSlotKeys.has(v._key));
+    if (orphanedInDraft.length > 0) {
+      console.log(`  ⚠  --merge: keeping ${orphanedInDraft.length} existing draft visual(s) not in the new plan:`);
+      for (const v of orphanedInDraft) console.log(`      · ${v._key} (${v.type})`);
+    }
+    finalVisuals = [...mergedFromPlan, ...orphanedInDraft];
+    const preservedCount = visuals.filter((v) => existingByKey.has(v._key)).length;
+    console.log(`  · Merge: ${preservedCount} slot(s) preserved from existing draft, ${visuals.length - preservedCount} updated/added.`);
+  }
+
+  console.log(`→ Writing draft to Sanity with ${finalVisuals.length} visuals${opts.merge ? ' (merge mode)' : ''}...`);
 
   if (existingDraft) {
     // Heal drafts corrupted by an earlier projection bug: if slug was flattened
@@ -150,12 +195,12 @@ export async function composeForSlug(slug: string): Promise<void> {
     const slugIsBroken = typeof draftSlug === 'string';
     if (slugIsBroken) {
       console.log('  ⚠  Existing draft has malformed slug — recreating from published doc.');
-      await writeFreshDraft(client, post, targetDraftId, visuals);
+      await writeFreshDraft(client, post, targetDraftId, finalVisuals);
     } else {
-      await client.patch(targetDraftId).set({ visuals }).commit();
+      await client.patch(targetDraftId).set({ visuals: finalVisuals }).commit();
     }
   } else {
-    await writeFreshDraft(client, post, targetDraftId, visuals);
+    await writeFreshDraft(client, post, targetDraftId, finalVisuals);
   }
 
   const studioPath = `/studio/structure/blogPost;${publishedId(post._id)}`;
@@ -163,8 +208,8 @@ export async function composeForSlug(slug: string): Promise<void> {
   console.log(`✓ Draft ready for review.`);
   console.log(`  Studio (local): ${studioBase}${studioPath}`);
   console.log(`  Studio (prod):  https://www.loudface.co${studioPath}`);
-  console.log(`  Visuals attached: ${visuals.length}`);
-  logVisualPositions(visuals);
+  console.log(`  Visuals attached: ${finalVisuals.length}`);
+  logVisualPositions(finalVisuals);
 }
 
 function logVisualPositions(visuals: SanityVisual[]) {
@@ -195,13 +240,15 @@ async function writeFreshDraft(
 }
 
 async function main() {
-  const slug = process.argv[2];
+  const args = process.argv.slice(2);
+  const slug = args.find((a) => !a.startsWith('--'));
+  const merge = args.includes('--merge');
   if (!slug) {
-    console.error('Usage: npx tsx scripts/visuals/compose.ts <slug>');
+    console.error('Usage: npx tsx scripts/visuals/compose.ts <slug> [--merge]');
     process.exit(1);
   }
   try {
-    await composeForSlug(slug);
+    await composeForSlug(slug, { merge });
   } catch (err) {
     console.error('✗ Compose failed:');
     console.error(err instanceof Error ? err.message : err);

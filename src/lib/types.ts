@@ -152,7 +152,7 @@ export interface BlogVisualChart {
 export interface BlogVisualCapture {
   sourceUrl?: string;
   capturedAt?: string;
-  viewport?: string;
+  viewport?: 'desktop' | 'tablet' | 'mobile';
 }
 
 export interface BlogVisual {

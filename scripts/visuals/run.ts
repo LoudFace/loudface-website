@@ -8,6 +8,9 @@
  *   npx tsx scripts/visuals/run.ts <slug> --skip-screenshot  (skip Playwright captures)
  *   npx tsx scripts/visuals/run.ts <slug> --skip-compose     (stop before Sanity write)
  *   npx tsx scripts/visuals/run.ts <slug> --plan-only
+ *   npx tsx scripts/visuals/run.ts <slug> --merge
+ *       Preserve existing draft visuals whose `_key` matches a plan slot.
+ *       Use when re-running after hand-editing captions in Studio.
  *   npx tsx scripts/visuals/run.ts <slug> --reference <url-or-local-path>
  *       Use a reference image to lock visual style across all illustrations.
  */
@@ -25,6 +28,7 @@ interface Flags {
   skipScreenshot: boolean;
   skipCompose: boolean;
   planOnly: boolean;
+  merge: boolean;
   referenceImage?: string;
 }
 
@@ -36,6 +40,7 @@ function parseFlags(argv: string[]): Flags {
     skipScreenshot: argv.includes('--skip-screenshot'),
     skipCompose: argv.includes('--skip-compose'),
     planOnly: argv.includes('--plan-only'),
+    merge: argv.includes('--merge'),
     referenceImage: refIdx >= 0 ? argv[refIdx + 1] : undefined,
   };
 }
@@ -45,7 +50,7 @@ async function main() {
   const slug = argv.find((a) => !a.startsWith('--') && argv[argv.indexOf(a) - 1] !== '--reference');
   if (!slug) {
     console.error(
-      'Usage: npx tsx scripts/visuals/run.ts <slug> [--skip-plan|--skip-illustrate|--skip-compose|--plan-only] [--reference <url-or-path>]',
+      'Usage: npx tsx scripts/visuals/run.ts <slug> [--skip-plan|--skip-illustrate|--skip-screenshot|--skip-compose|--plan-only|--merge] [--reference <url-or-path>]',
     );
     process.exit(1);
   }
@@ -81,7 +86,7 @@ async function main() {
   }
 
   if (!flags.skipCompose) {
-    await composeForSlug(slug);
+    await composeForSlug(slug, { merge: flags.merge });
   } else {
     console.log('→ Skipping compose step (not writing to Sanity)');
   }
