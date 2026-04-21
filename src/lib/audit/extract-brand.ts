@@ -173,6 +173,26 @@ function stripBrandSuffixes(name: string): string {
   return out.length >= 2 ? out : name.trim();
 }
 
+/**
+ * Some sites set their og:site_name or <title> to the bare domain
+ * ("Calendly.com", "Notion.so", "Figma.com"). That TLD suffix breaks
+ * downstream brand-mention matching because LLM responses almost always
+ * refer to the brand without the dot-TLD. Strip recognized TLD patterns.
+ *
+ * Conservative list — only well-known TLDs. A brand that genuinely ends in
+ * ".tv" or similar will keep its suffix. We only run this on single-word
+ * names because multi-word brands like "Warby Parker" couldn't legitimately
+ * have a TLD glued to the end.
+ */
+function stripTldSuffix(name: string): string {
+  const trimmed = name.trim();
+  if (trimmed.includes(' ')) return trimmed;
+  const match = trimmed.match(/^(.+?)\.(com|io|co|app|ai|dev|net|org|so|xyz)$/i);
+  if (!match) return trimmed;
+  const stripped = match[1];
+  return stripped.length >= 2 ? stripped : trimmed;
+}
+
 /** Pull the first JSON-LD Organization (or subtype) name from HTML. */
 function extractJsonLdOrgName(html: string): string | null {
   const scriptRe = /<script[^>]+type=["']application\/ld\+json["'][^>]*>([\s\S]*?)<\/script>/gi;
@@ -211,7 +231,7 @@ function extractJsonLdOrgName(html: string): string | null {
         // the audit grades the brand F.
         const name = typed.name || typed.legalName;
         if (name && typeof name === 'string' && name.trim().length > 0) {
-          return stripBrandSuffixes(decodeEntities(name).trim());
+          return stripTldSuffix(stripBrandSuffixes(decodeEntities(name).trim()));
         }
       }
     } catch {
@@ -280,19 +300,19 @@ export async function extractBrandFromUrl(
   // 2. og:site_name
   const ogSiteName = extractMeta(searchSpace, 'og:site_name');
   if (ogSiteName) {
-    return { name: ogSiteName, domain, source: 'og-site-name' };
+    return { name: stripTldSuffix(ogSiteName), domain, source: 'og-site-name' };
   }
 
   // 3. application-name meta
   const appName = extractMeta(searchSpace, 'application-name');
   if (appName) {
-    return { name: appName, domain, source: 'og-site-name' };
+    return { name: stripTldSuffix(appName), domain, source: 'og-site-name' };
   }
 
   // 4. <title> tag
   const title = extractTitle(searchSpace);
   if (title) {
-    const cleaned = cleanTitle(title);
+    const cleaned = stripTldSuffix(cleanTitle(title));
     if (cleaned && cleaned.length >= 2 && cleaned.length <= 60) {
       return { name: cleaned, domain, source: 'title' };
     }
