@@ -118,7 +118,8 @@ const BLOG_POST_PROJECTION = `{
     caption,
     "asset": asset { "url": asset->url, "alt": alt },
     generation,
-    chart
+    chart,
+    capture
   }
 }`;
 

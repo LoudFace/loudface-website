@@ -13,6 +13,7 @@
     "pagespeed-audit:dev": "node scripts/pagespeed-audit.mjs http://localhost:3005",
     "visuals:plan": "tsx scripts/visuals/plan.ts",
     "visuals:illustrate": "tsx scripts/visuals/illustrate.ts",
+    "visuals:screenshot": "tsx scripts/visuals/screenshot.ts",
     "visuals:compose": "tsx scripts/visuals/compose.ts",
     "visuals:generate": "tsx scripts/visuals/run.ts"
   },
@@ -44,6 +45,7 @@
     "@types/react-dom": "^19",
     "eslint": "^9",
     "eslint-config-next": "16.1.3",
+    "playwright": "^1.59.1",
     "tailwindcss": "^4",
     "typescript": "^5"
   }

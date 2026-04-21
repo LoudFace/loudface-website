@@ -1,10 +1,12 @@
 /**
- * Orchestrator — plan → illustrate → compose.
+ * Orchestrator — plan → illustrate → screenshot → compose.
  *
  * Usage:
  *   npx tsx scripts/visuals/run.ts <slug>
- *   npx tsx scripts/visuals/run.ts <slug> --skip-plan      (re-use existing plan)
- *   npx tsx scripts/visuals/run.ts <slug> --skip-compose   (stop before Sanity write)
+ *   npx tsx scripts/visuals/run.ts <slug> --skip-plan        (re-use existing plan)
+ *   npx tsx scripts/visuals/run.ts <slug> --skip-illustrate  (skip fal.ai calls)
+ *   npx tsx scripts/visuals/run.ts <slug> --skip-screenshot  (skip Playwright captures)
+ *   npx tsx scripts/visuals/run.ts <slug> --skip-compose     (stop before Sanity write)
  *   npx tsx scripts/visuals/run.ts <slug> --plan-only
  *   npx tsx scripts/visuals/run.ts <slug> --reference <url-or-local-path>
  *       Use a reference image to lock visual style across all illustrations.
@@ -14,11 +16,13 @@ import fs from 'fs';
 import path from 'path';
 import { planVisualsForSlug } from './plan';
 import { illustratePlan } from './illustrate';
+import { screenshotPlan } from './screenshot';
 import { composeForSlug } from './compose';
 
 interface Flags {
   skipPlan: boolean;
   skipIllustrate: boolean;
+  skipScreenshot: boolean;
   skipCompose: boolean;
   planOnly: boolean;
   referenceImage?: string;
@@ -29,6 +33,7 @@ function parseFlags(argv: string[]): Flags {
   return {
     skipPlan: argv.includes('--skip-plan'),
     skipIllustrate: argv.includes('--skip-illustrate'),
+    skipScreenshot: argv.includes('--skip-screenshot'),
     skipCompose: argv.includes('--skip-compose'),
     planOnly: argv.includes('--plan-only'),
     referenceImage: refIdx >= 0 ? argv[refIdx + 1] : undefined,
@@ -67,6 +72,12 @@ async function main() {
     await illustratePlan(slug, { referenceImage: flags.referenceImage });
   } else {
     console.log('→ Skipping illustration worker');
+  }
+
+  if (!flags.skipScreenshot) {
+    await screenshotPlan(slug);
+  } else {
+    console.log('→ Skipping screenshot worker');
   }
 
   if (!flags.skipCompose) {

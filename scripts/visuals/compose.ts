@@ -9,7 +9,13 @@ import fs from 'fs';
 import path from 'path';
 import { pathToFileURL } from 'url';
 import { fetchBlogPostBySlug, sanityClient, draftId, uploadImageAsset, publishedId } from './lib/sanity';
-import { ShotListSchema, IllustrationResultSchema, type IllustrationResult } from './types';
+import {
+  ShotListSchema,
+  IllustrationResultSchema,
+  ScreenshotResultSchema,
+  type IllustrationResult,
+  type ScreenshotResult,
+} from './types';
 
 const CACHE_ROOT = path.resolve(process.cwd(), '.visuals-cache');
 
@@ -23,12 +29,18 @@ interface SanityVisual {
   asset?: { _type: 'image'; asset: { _type: 'reference'; _ref: string } };
   generation?: Record<string, unknown>;
   chart?: Record<string, unknown>;
+  capture?: {
+    sourceUrl: string;
+    capturedAt: string;
+    viewport: string;
+  };
 }
 
 export async function composeForSlug(slug: string): Promise<void> {
   const cacheDir = path.join(CACHE_ROOT, slug);
   const planPath = path.join(cacheDir, 'plan.json');
   const illustrationsPath = path.join(cacheDir, 'illustrations.json');
+  const screenshotsPath = path.join(cacheDir, 'screenshots.json');
 
   if (!fs.existsSync(planPath)) {
     throw new Error(`No plan found at ${planPath}. Run plan.ts first.`);
@@ -38,6 +50,9 @@ export async function composeForSlug(slug: string): Promise<void> {
   const illustrations: IllustrationResult[] = fs.existsSync(illustrationsPath)
     ? JSON.parse(fs.readFileSync(illustrationsPath, 'utf-8')).map((x: unknown) => IllustrationResultSchema.parse(x))
     : [];
+  const screenshots: ScreenshotResult[] = fs.existsSync(screenshotsPath)
+    ? JSON.parse(fs.readFileSync(screenshotsPath, 'utf-8')).map((x: unknown) => ScreenshotResultSchema.parse(x))
+    : [];
 
   const post = await fetchBlogPostBySlug(slug);
   if (!post) {
@@ -45,11 +60,13 @@ export async function composeForSlug(slug: string): Promise<void> {
   }
 
   const illustrationBySlot = new Map(illustrations.map((r: IllustrationResult) => [r.slot, r]));
+  const screenshotBySlot = new Map(screenshots.map((r: ScreenshotResult) => [r.slot, r]));
 
   const visuals: SanityVisual[] = [];
   const client = sanityClient();
 
-  console.log(`→ Uploading ${illustrations.length} illustrations to Sanity assets...`);
+  const uploadCount = illustrations.length + screenshots.length;
+  console.log(`→ Uploading ${uploadCount} images to Sanity assets (${illustrations.length} illustrations, ${screenshots.length} screenshots)...`);
 
   for (const shot of plan.shots) {
     if (shot.type === 'illustration') {
@@ -72,6 +89,31 @@ export async function composeForSlug(slug: string): Promise<void> {
         ...(shot.caption && { caption: shot.caption }),
         asset: { _type: 'image', asset: { _type: 'reference', _ref: asset._id } },
         generation: result.generation,
+      });
+    } else if (shot.type === 'screenshot') {
+      const result = screenshotBySlot.get(shot.slot);
+      if (!result) {
+        console.warn(`  ⚠  No captured screenshot for slot "${shot.slot}" — skipping`);
+        continue;
+      }
+      const filename = `${slug}__${shot.slot}.png`;
+      process.stdout.write(`  · ${shot.slot} ... `);
+      const asset = await uploadImageAsset(result.localPath, filename);
+      console.log(`uploaded (${asset._id})`);
+
+      visuals.push({
+        _key: shot.slot,
+        _type: 'blogVisual',
+        position: shot.position,
+        type: 'screenshot',
+        alt: shot.alt,
+        ...(shot.caption && { caption: shot.caption }),
+        asset: { _type: 'image', asset: { _type: 'reference', _ref: asset._id } },
+        capture: {
+          sourceUrl: result.capture.sourceUrl,
+          capturedAt: result.capture.capturedAt,
+          viewport: result.capture.viewport,
+        },
       });
     } else if (shot.type === 'chart' && shot.chart) {
       // Sanity requires a unique `_key` on every array-of-object item. The

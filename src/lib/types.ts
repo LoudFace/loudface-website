@@ -144,6 +144,17 @@ export interface BlogVisualChart {
   sourceUrl?: string;
 }
 
+/**
+ * Metadata recorded when a screenshot visual is captured. Surfaced in the
+ * article UI as a "Source:" link under the image so readers can verify the
+ * capture against the live page.
+ */
+export interface BlogVisualCapture {
+  sourceUrl?: string;
+  capturedAt?: string;
+  viewport?: string;
+}
+
 export interface BlogVisual {
   _key?: string;
   position: BlogVisualPosition;
@@ -161,6 +172,7 @@ export interface BlogVisual {
     generatedAt?: string;
   };
   chart?: BlogVisualChart;
+  capture?: BlogVisualCapture;
 }
 
 /**
