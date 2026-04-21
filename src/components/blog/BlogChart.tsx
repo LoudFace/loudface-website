@@ -159,27 +159,38 @@ function VerticalGroupedBars({ data }: { data: BlogVisualChart['data'] }) {
 
 /* ── Horizontal Bars ────────────────────────────────────────── */
 
+/**
+ * Two-row layout per data point: label + value share the top row, bar fills
+ * the full column width on the row below. This was a redesign from a
+ * 3-column grid [label | bar | value] that cramped long labels at the
+ * ~560px article column width we get on desktop (narrow sidebar takes the
+ * right 280px). In the new layout the bar always gets full width so length
+ * comparison stays legible, and labels can be as long as needed without
+ * truncating.
+ */
 function HorizontalBars({ data }: { data: BlogVisualChart['data'] }) {
   const maxValue = Math.max(...data.map((d) => d.value));
   return (
-    <div className="space-y-3" role="img">
+    <div className="space-y-4" role="img">
       {data.map((item, i) => {
         const pct = maxValue > 0 ? (item.value / maxValue) * 100 : 0;
         return (
-          <div key={i} className="grid grid-cols-[100px_1fr_auto] sm:grid-cols-[140px_1fr_auto] items-center gap-3">
-            <span className="text-xs sm:text-sm text-surface-600 truncate">{item.label}</span>
-            <div className="h-7 bg-surface-100 rounded-sm overflow-hidden">
+          <div key={i} className="min-w-0">
+            <div className="flex items-baseline justify-between gap-3 mb-1.5">
+              <span className="text-sm text-surface-700 leading-snug">{item.label}</span>
+              <span className="text-sm font-medium text-surface-900 tabular-nums shrink-0">
+                {formatValue(item.value, item.unit)}
+              </span>
+            </div>
+            <div className="h-2.5 bg-surface-100 rounded-full overflow-hidden">
               <div
-                className="h-full rounded-sm"
+                className="h-full rounded-full"
                 style={{
                   width: `${Math.max(pct, 2)}%`,
                   backgroundColor: 'var(--color-primary-500)',
                 }}
               />
             </div>
-            <span className="text-xs sm:text-sm font-medium text-surface-900 tabular-nums w-16 text-right">
-              {formatValue(item.value, item.unit)}
-            </span>
           </div>
         );
       })}

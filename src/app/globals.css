@@ -879,13 +879,25 @@ html {
   }
 
   /* Tables inside blog posts (e.g., comparison matrices, citation breakdowns).
-     The CMS stores raw <table> HTML, so we need explicit styles here. */
+     The CMS stores raw <table> HTML, so we need explicit styles here.
+
+     Layout strategy: `table-layout: fixed` distributes column width evenly
+     and allows text to wrap inside cells. Without this, the browser gives
+     long cells more width and the article column (narrow because of the
+     sticky TOC sidebar — ~560px at desktop) gets cramped horizontally.
+     Fixed layout + word-wrap means tall cells, never scrolling ones.
+
+     Font drops to 0.875rem so 5-6 column comparison tables stay readable
+     at the narrow column width. */
   .blog-prose table {
     width: 100%;
     margin: 2rem 0;
     border-collapse: collapse;
-    font-size: 0.95rem;
+    font-size: 0.875rem;
     line-height: 1.5;
+    table-layout: fixed;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
   }
 
   .blog-prose thead {
@@ -894,16 +906,17 @@ html {
   }
 
   .blog-prose th {
-    padding: 0.75rem 1rem;
+    padding: 0.625rem 0.75rem;
     text-align: left;
     font-weight: 600;
     font-family: var(--font-heading);
     color: var(--color-surface-900);
     vertical-align: top;
+    line-height: 1.3;
   }
 
   .blog-prose td {
-    padding: 0.75rem 1rem;
+    padding: 0.625rem 0.75rem;
     border-bottom: 1px solid var(--color-surface-100);
     vertical-align: top;
   }
@@ -916,13 +929,15 @@ html {
     background: var(--color-surface-50);
   }
 
-  /* Scroll horizontally instead of squishing on narrow viewports.
-     The <article> has min-w-0 so the scroll container lives on the table itself. */
-  @media (max-width: 640px) {
+  /* On very narrow viewports (<480px) the fixed layout's equal column split
+     becomes painful — fall back to block+scroll so each row is readable at
+     natural column widths. Above that, fixed layout handles everything. */
+  @media (max-width: 480px) {
     .blog-prose table {
       display: block;
       overflow-x: auto;
       -webkit-overflow-scrolling: touch;
+      table-layout: auto;
     }
   }
 
