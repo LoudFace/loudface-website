@@ -2,14 +2,16 @@ import type { CompetitorContextData } from '@/lib/audit/types';
 import { getTrafficLight } from '@/lib/audit/scoring';
 import { SlideShell } from './SlideShell';
 import { TrafficLight } from './charts/TrafficLight';
+import { EntityConfidenceBanner, type EntityConfidenceSignal } from '../EntityConfidenceBanner';
 
 interface CompetitorContextSlideProps {
   data: CompetitorContextData;
   companyName: string;
   totalSlides: number;
+  entityConfidence?: EntityConfidenceSignal;
 }
 
-export function CompetitorContextSlide({ data, companyName, totalSlides }: CompetitorContextSlideProps) {
+export function CompetitorContextSlide({ data, companyName, totalSlides, entityConfidence }: CompetitorContextSlideProps) {
   return (
     <SlideShell index={6} totalSlides={totalSlides}>
       <div className="flex-1 flex flex-col justify-center">
@@ -22,6 +24,8 @@ export function CompetitorContextSlide({ data, companyName, totalSlides }: Compe
         <p className="text-surface-400 text-sm mb-8 max-w-xl">
           When users search for alternatives to your competitors, does {companyName} get recommended?
         </p>
+
+        {entityConfidence?.low && <EntityConfidenceBanner signal={entityConfidence} variant="compact" />}
 
         {/* Recommendation rate */}
         <div className="flex items-center gap-4 mb-8 rounded-xl bg-white/5 p-4">

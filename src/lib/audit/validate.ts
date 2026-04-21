@@ -269,7 +269,7 @@ function validateBrandBaseline(
           severity: 'error',
           message: `Wrong-entity fact leaked through: "${fact.slice(0, 80)}..."`,
           explanation: 'A fact about a different entity (same name) made it past the relevance filter. The negative signal list may need updating for this brand.',
-          suggestion: 'Add the missing negative signals to extractAccurateInfo() in analysis.ts.',
+          suggestion: 'Update the Phase 1 extraction prompt in extract-phase1.ts to reject this wrong-entity pattern.',
         };
         accurateInfoMetric.valid = false;
         accurateInfoMetric.issues.push(issue);

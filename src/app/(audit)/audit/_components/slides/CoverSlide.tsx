@@ -1,13 +1,15 @@
 import { asset } from '@/lib/assets';
 import { SlideShell } from './SlideShell';
+import { EntityConfidenceBanner, type EntityConfidenceSignal } from '../EntityConfidenceBanner';
 
 interface CoverSlideProps {
   companyName: string;
   auditDate: string;
   totalSlides: number;
+  entityConfidence?: EntityConfidenceSignal;
 }
 
-export function CoverSlide({ companyName, auditDate, totalSlides }: CoverSlideProps) {
+export function CoverSlide({ companyName, auditDate, totalSlides, entityConfidence }: CoverSlideProps) {
   const formattedDate = new Date(auditDate).toLocaleDateString('en-US', {
     year: 'numeric',
     month: 'long',
@@ -40,6 +42,12 @@ export function CoverSlide({ companyName, auditDate, totalSlides }: CoverSlidePr
         <p className="text-surface-500 text-sm">
           {formattedDate}
         </p>
+
+        {entityConfidence?.low && (
+          <div className="mt-8 w-full max-w-xl text-left">
+            <EntityConfidenceBanner signal={entityConfidence} />
+          </div>
+        )}
 
         {/* Scroll hint */}
         <div className="mt-auto pt-12 animate-bounce">

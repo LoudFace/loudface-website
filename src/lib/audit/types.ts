@@ -55,6 +55,9 @@ export interface AuditDiagnostics {
   /** Brand recognition was very low AND category could not be inferred — downstream
    *  Phase 2/3 results may be about unrelated entities with the same name. */
   lowEntityConfidence?: boolean;
+  /** If Phase 1 extraction flagged a wrong-entity match, a one-sentence summary
+   *  of the entity the AI was actually describing. Used to contextualize low-confidence audits. */
+  wrongEntityDescription?: string;
   /** Per-slide data quality: maps slide name to its data status */
   slideData: Record<string, SlideDataQuality>;
 }

@@ -1,12 +1,15 @@
 import type { BrandBaselineData, BrandQuery, PlatformResult } from '../types';
 import { queryAllPlatforms, withConcurrency, TraceCollector } from '../dataforseo';
-import { parseResponse, extractAccurateInfo, extractGaps } from '../analysis';
+import { parseResponse } from '../analysis';
 import { getBrandQueries } from '../prompts';
 
 /**
- * Phase 1: Brand Baseline Analysis
- * Runs 10 direct brand queries across 4 AI platforms.
- * Tests how AI platforms perceive and represent the brand.
+ * Phase 1: Brand Baseline — raw data gathering.
+ *
+ * Runs 10 direct brand queries across 4 AI platforms and returns the raw
+ * responses. `accurateInfo` / `inaccuracies` / `gaps` are populated by the
+ * LLM-based extraction layer in pipeline.ts — not here. This function only
+ * gathers data.
  */
 export async function runBrandBaseline(
   companyName: string,
@@ -36,29 +39,22 @@ export async function runBrandBaseline(
 
     // Report progress (each query is ~4% of total audit)
     if (onProgress) {
-      await onProgress(Math.round((queries.length / prompts.length) * 40));
+      await onProgress(Math.round((queries.length / prompts.length) * 35));
     }
   });
 
-  // Flatten all results for analysis
   const allResults = queries.flatMap((q) => q.results);
-
-  // Calculate recognition score: % of all responses that mention the brand
   const totalResponses = allResults.length;
   const mentionedCount = allResults.filter((r) => r.mentioned).length;
   const brandRecognitionScore = totalResponses > 0
     ? Math.round((mentionedCount / totalResponses) * 100)
     : 0;
 
-  // Extract what AI gets right and wrong
-  const accurateInfo = extractAccurateInfo(allResults, companyName, domain, industry);
-  const { inaccuracies, gaps } = extractGaps(queries);
-
   return {
     queries,
     brandRecognitionScore,
-    accurateInfo,
-    inaccuracies,
-    gaps,
+    accurateInfo: [],
+    inaccuracies: [],
+    gaps: [],
   };
 }

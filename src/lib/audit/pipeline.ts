@@ -3,12 +3,9 @@ import type { AuditRecord, AuditResults, AuditDiagnostics, SlideDataQuality } fr
 import { runBrandBaseline } from './phases/brand-baseline';
 import { runCompetitorContext } from './phases/competitor-context';
 import { runCategoryVisibility } from './phases/category-visibility';
-import {
-  inferCategory,
-  extractCompetitorsFromResponses,
-  extractSpecificCategory,
-  mentionsBrand,
-} from './analysis';
+import { mentionsBrand } from './analysis';
+import { scrapeGroundTruth } from './ground-truth';
+import { extractPhase1Insights } from './extract-phase1';
 import { TraceCollector } from './dataforseo';
 import {
   calculateScores,
@@ -81,8 +78,19 @@ export async function runAudit(id: string): Promise<void> {
   const auditStart = Date.now();
 
   try {
+    // ─── Ground Truth Scrape ──────────────────────────────────────
+    // One fetch of the target site, used to anchor every downstream LLM
+    // extraction against the brand's own story (disambiguation + claim-checking).
+    await updateProgress(id, 1, 'Reading your website...');
+    const groundTruth = await scrapeGroundTruth(url);
+    if (!groundTruth) {
+      console.warn(`[Audit] Ground-truth scrape failed for ${url} — extraction will run with domain only.`);
+    } else {
+      console.log(`[Audit] Ground truth confidence=${groundTruth.confidence}, title="${groundTruth.title.slice(0, 60)}"`);
+    }
+
     // ─── Phase 1: Brand Baseline ──────────────────────────────────
-    await updateProgress(id, 1, 'Analyzing brand recognition across AI platforms...');
+    await updateProgress(id, 3, 'Analyzing brand recognition across AI platforms...');
 
     const brandBaseline = await runBrandBaseline(
       companyName,
@@ -98,37 +106,60 @@ export async function runAudit(id: string): Promise<void> {
       tracer,
     );
 
-    // Infer category from Phase 1 results (use all queries for stronger signal)
-    const allPhase1Results = brandBaseline.queries.flatMap((q) => q.results);
-    const {
-      category: broadCategory,
-      industry: inferredIndustry,
-      entityType,
-      confidence: categoryConfidence,
-    } = inferCategory(allPhase1Results);
+    // ─── Phase 1 Structured Extraction ────────────────────────────
+    // Replaces ~900 lines of regex analysis with a single schema-constrained
+    // LLM call grounded on the ground-truth scrape.
+    await updateProgress(id, 38, 'Synthesizing Phase 1 findings...');
+    const phase1 = await extractPhase1Insights({
+      companyName,
+      domain,
+      groundTruth,
+      brandBaseline,
+      tracer,
+    });
 
-    // Entity confidence gate: if brand recognition is very low AND category
-    // could not be inferred, Phase 2/3 results will be noise about unrelated
-    // entities. Downstream slides still render (with the "Gaps" surface being
-    // the accurate story), but diagnostics flag the low confidence.
+    // Fall back to conservative defaults if extraction fails entirely.
+    const category = phase1?.categorization.specific_category
+      || phase1?.categorization.broad_category
+      || 'business';
+    const inferredIndustry = phase1?.categorization.industry || 'business';
+    const richEntityType = phase1?.categorization.entity_type || 'other';
+    // Downstream phases take a narrow 'product' | 'service' binary (query-template selector).
+    // agencies/publishers/services/consulting map to 'service'; everything else to 'product'.
+    const entityType: 'product' | 'service' =
+      richEntityType === 'agency' || richEntityType === 'publisher' ? 'service' : 'product';
+    const categoryConfidence = phase1?.entity_disambiguation.confidence ?? 'low';
     const lowEntityConfidence =
-      brandBaseline.brandRecognitionScore < 10 && categoryConfidence === 'low';
+      !phase1
+      || phase1.entity_disambiguation.is_correct_entity === false
+      || (brandBaseline.brandRecognitionScore < 10 && categoryConfidence === 'low');
+
     if (lowEntityConfidence) {
       console.log(
-        `[Audit] Low entity confidence: brand recognition ${brandBaseline.brandRecognitionScore}%, category "${broadCategory}". Downstream results may be unreliable.`,
+        `[Audit] Low entity confidence: ${phase1?.entity_disambiguation.wrong_entity_description || 'extraction unavailable'}`,
       );
     }
 
-    // Try to extract a more specific category from AI descriptions
-    // e.g., "crypto payroll" instead of "fintech", "Webflow agency" instead of "web design agency"
-    const specificCategory = extractSpecificCategory(allPhase1Results, companyName, domain);
-    const category = specificCategory || broadCategory;
+    // Overwrite the regex-derived findings with the structured extraction.
+    // accurate/inaccurate/gaps become plain strings for UI compatibility —
+    // the richer objects live on the extraction result if we want them later.
+    if (phase1) {
+      brandBaseline.accurateInfo = phase1.brand_knowledge.accurate_claims.map((c) => c.claim);
+      brandBaseline.inaccuracies = phase1.brand_knowledge.inaccurate_claims.map(
+        (c) => `${c.claim} (${c.why_wrong})`,
+      );
+      brandBaseline.gaps = phase1.brand_knowledge.knowledge_gaps;
+    }
 
-    console.log(`[Audit] Inferred: broadCategory="${broadCategory}", specificCategory="${specificCategory ?? '(none)'}", final="${category}", type="${entityType}", confidence="${categoryConfidence}"`);
+    // Competitors extracted from Phase 1 responses, used by Phase 2 as cross-validation.
+    const aiCompetitors = (phase1?.competitors_mentioned ?? []).map((c) => ({
+      name: c.name,
+      mentionCount: c.mention_count,
+    }));
 
-    // Extract competitor names from Phase 1 AI responses (for cross-validation)
-    const aiCompetitors = extractCompetitorsFromResponses(allPhase1Results, companyName);
-    console.log(`[Audit] AI-extracted competitors: ${aiCompetitors.map((c) => `${c.name}(${c.mentionCount})`).join(', ') || '(none)'}`);
+    console.log(
+      `[Audit] Phase 1 extraction: category="${category}", entityType="${entityType}", confidence="${categoryConfidence}", correctEntity=${phase1?.entity_disambiguation.is_correct_entity}, competitors=${aiCompetitors.map((c) => `${c.name}(${c.mentionCount})`).join(', ') || '(none)'}`,
+    );
 
     // ─── Phase 2: Competitor Context ──────────────────────────────
     await updateProgress(id, 41, 'Identifying your competitors...');
@@ -230,16 +261,21 @@ export async function runAudit(id: string): Promise<void> {
 
     // ─── Build Diagnostics ──────────────────────────────────────
     const traceSummary = tracer.getSummary();
-    const slideData = buildSlideDataQuality(results, competitorSource, category, entityType);
+    const slideData = buildSlideDataQuality(results, competitorSource, category, richEntityType);
+    const wrongEntityDescription = phase1?.entity_disambiguation.is_correct_entity === false
+      ? phase1.entity_disambiguation.wrong_entity_description
+      : undefined;
+
     const diagnostics: AuditDiagnostics = {
       ...traceSummary,
       totalDurationMs: Date.now() - auditStart,
       traces: tracer.getTraces(),
       competitorSource,
       inferredCategory: category,
-      inferredEntityType: entityType,
+      inferredEntityType: richEntityType,
       categoryConfidence,
       lowEntityConfidence,
+      wrongEntityDescription,
       slideData,
     };
 

@@ -1,12 +1,14 @@
 import type { CompetitorContextData } from '@/lib/audit/types';
 import { SlideShell } from './SlideShell';
 import { HorizontalBar } from './charts/HorizontalBar';
+import { EntityConfidenceBanner, type EntityConfidenceSignal } from '../EntityConfidenceBanner';
 
 interface CompetitiveGapSlideProps {
   data: CompetitorContextData;
   companyName: string;
   brandShareOfVoice: number;
   totalSlides: number;
+  entityConfidence?: EntityConfidenceSignal;
 }
 
 export function CompetitiveGapSlide({
@@ -14,6 +16,7 @@ export function CompetitiveGapSlide({
   companyName,
   brandShareOfVoice,
   totalSlides,
+  entityConfidence,
 }: CompetitiveGapSlideProps) {
   // Build bar items: brand + competitors sorted by share of voice
   const barItems = [
@@ -36,6 +39,8 @@ export function CompetitiveGapSlide({
           How often AI platforms recommend each brand when users actively seek alternatives.
           {companyName} holds {brandShareOfVoice}% share of voice.
         </p>
+
+        {entityConfidence?.low && <EntityConfidenceBanner signal={entityConfidence} variant="compact" />}
 
         <div className="rounded-xl bg-white/5 p-5 sm:p-6">
           <HorizontalBar items={barItems} />

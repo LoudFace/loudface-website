@@ -1,6 +1,7 @@
 'use client';
 
 import type { AuditResults } from '@/lib/audit/types';
+import type { EntityConfidenceSignal } from './EntityConfidenceBanner';
 import { CoverSlide } from './slides/CoverSlide';
 import { ScorecardSlide } from './slides/ScorecardSlide';
 import { MethodologySlide } from './slides/MethodologySlide';
@@ -22,23 +23,31 @@ interface AuditDeckProps {
   companyName: string;
   domain: string;
   auditDate: string;
+  entityConfidence?: EntityConfidenceSignal;
 }
 
 const TOTAL_SLIDES = 15;
 
-export function AuditDeck({ results, companyName, domain, auditDate }: AuditDeckProps) {
+export function AuditDeck({ results, companyName, domain, auditDate, entityConfidence }: AuditDeckProps) {
+  const signal: EntityConfidenceSignal = entityConfidence ?? {
+    low: false,
+    brandRecognitionScore: results.brandBaseline.brandRecognitionScore,
+  };
+
   return (
     <div className="audit-deck">
       <CoverSlide
         companyName={companyName}
         auditDate={auditDate}
         totalSlides={TOTAL_SLIDES}
+        entityConfidence={signal}
       />
 
       <ScorecardSlide
         scores={results.scores}
         companyName={companyName}
         totalSlides={TOTAL_SLIDES}
+        entityConfidence={signal}
       />
 
       <MethodologySlide totalSlides={TOTAL_SLIDES} />
@@ -47,6 +56,7 @@ export function AuditDeck({ results, companyName, domain, auditDate }: AuditDeck
         data={results.brandBaseline}
         companyName={companyName}
         totalSlides={TOTAL_SLIDES}
+        entityConfidence={signal}
       />
 
       <AccurateInfoSlide
@@ -63,6 +73,7 @@ export function AuditDeck({ results, companyName, domain, auditDate }: AuditDeck
         data={results.competitorContext}
         companyName={companyName}
         totalSlides={TOTAL_SLIDES}
+        entityConfidence={signal}
       />
 
       <CompetitiveGapSlide
@@ -70,12 +81,14 @@ export function AuditDeck({ results, companyName, domain, auditDate }: AuditDeck
         companyName={companyName}
         brandShareOfVoice={results.scores.shareOfVoice}
         totalSlides={TOTAL_SLIDES}
+        entityConfidence={signal}
       />
 
       <CategoryVisibilitySlide
         data={results.categoryVisibility}
         companyName={companyName}
         totalSlides={TOTAL_SLIDES}
+        entityConfidence={signal}
       />
 
       <MarketPositionSlide

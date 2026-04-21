@@ -47,12 +47,19 @@ export default async function AuditResultsPage({
     notFound();
   }
 
+  const entityConfidence = {
+    low: record.diagnostics?.lowEntityConfidence === true,
+    wrongEntityDescription: record.diagnostics?.wrongEntityDescription,
+    brandRecognitionScore: record.results.brandBaseline.brandRecognitionScore,
+  };
+
   return (
     <AuditDeck
       results={record.results}
       companyName={record.input.companyName}
       domain={record.input.url}
       auditDate={record.completedAt || record.createdAt}
+      entityConfidence={entityConfidence}
     />
   );
 }

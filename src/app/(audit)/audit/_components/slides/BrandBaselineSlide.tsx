@@ -3,14 +3,16 @@ import { getTrafficLight } from '@/lib/audit/scoring';
 import { SlideShell } from './SlideShell';
 import { QueryMatrix } from './charts/QueryMatrix';
 import { TrafficLight } from './charts/TrafficLight';
+import { EntityConfidenceBanner, type EntityConfidenceSignal } from '../EntityConfidenceBanner';
 
 interface BrandBaselineSlideProps {
   data: BrandBaselineData;
   companyName: string;
   totalSlides: number;
+  entityConfidence?: EntityConfidenceSignal;
 }
 
-export function BrandBaselineSlide({ data, companyName, totalSlides }: BrandBaselineSlideProps) {
+export function BrandBaselineSlide({ data, companyName, totalSlides, entityConfidence }: BrandBaselineSlideProps) {
   return (
     <SlideShell index={3} totalSlides={totalSlides}>
       <div className="flex-1 flex flex-col">
@@ -26,6 +28,8 @@ export function BrandBaselineSlide({ data, companyName, totalSlides }: BrandBase
             perceive and represent {companyName}.
           </p>
         </div>
+
+        {entityConfidence?.low && <EntityConfidenceBanner signal={entityConfidence} variant="compact" />}
 
         {/* Score badge */}
         <div className="flex items-center gap-4 mb-6 rounded-xl bg-white/5 p-4">
