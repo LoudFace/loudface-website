@@ -7,7 +7,6 @@ import { mentionsBrand } from './analysis';
 import { scrapeGroundTruth } from './ground-truth';
 import { extractPhase1Insights } from './extract-phase1';
 import { TraceCollector } from './dataforseo';
-import { sendAuditCompleteEmail } from './email';
 import { recordBenchmark } from './benchmarks';
 import {
   calculateScores,
@@ -358,11 +357,6 @@ export async function runAudit(id: string): Promise<void> {
     } catch (err) {
       console.warn('[Audit] recordBenchmark failed (non-fatal):', err);
     }
-
-    // Fire the completion email. Never awaited in a way that could fail the
-    // audit — the email module catches its own errors and no-ops if env vars
-    // are missing. We still `await` so the dev server surfaces delivery logs.
-    await sendAuditCompleteEmail(completeRecord);
   } catch (err) {
     console.error(`[Audit] Failed: ${id}`, err);
 
