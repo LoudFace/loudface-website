@@ -36,11 +36,13 @@ export const ChartDatumSchema = z.object({
 export const ChartSchema = z.object({
   kind: ChartKindSchema,
   title: z.string(),
-  xAxis: z.string().optional(),
-  yAxis: z.string().optional(),
+  xAxis: z.string().nullish(),
+  yAxis: z.string().nullish(),
   data: z.array(ChartDatumSchema).min(1),
-  source: z.string().optional(),
-  sourceUrl: z.string().url().optional().or(z.literal('')),
+  source: z.string().nullish(),
+  // Claude sometimes emits null for missing URLs. `.nullish()` accepts null |
+  // undefined; `.or(z.literal(''))` keeps explicit empty strings valid too.
+  sourceUrl: z.string().url().nullish().or(z.literal('')),
 });
 
 export type Chart = z.infer<typeof ChartSchema>;
@@ -51,14 +53,16 @@ export const ShotSchema = z.object({
   type: z.enum(['illustration', 'chart']),
   position: PositionSchema,
   alt: z.string().min(10),
-  caption: z.string().optional(),
+  // `.nullish()` so Claude can emit `"caption": null` without blowing up the
+  // schema — we treat null and undefined the same downstream.
+  caption: z.string().nullish(),
 
   // Illustration-only
-  template: IllustrationTemplateSchema.optional(),
-  subject: z.string().optional(),
+  template: IllustrationTemplateSchema.nullish(),
+  subject: z.string().nullish(),
 
   // Chart-only
-  chart: ChartSchema.optional(),
+  chart: ChartSchema.nullish(),
 }).refine(
   (s) => s.type !== 'illustration' || (s.template && s.subject),
   { message: 'illustration shots require template and subject' },

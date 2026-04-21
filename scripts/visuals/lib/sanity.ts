@@ -12,6 +12,11 @@ export function sanityClient(): SanityClient {
     apiVersion: '2025-03-29',
     useCdn: false,
     token: requireEnv('SANITY_API_TOKEN'),
+    // "raw" returns BOTH draft and published documents in a single query.
+    // We need this so plan.ts can plan visuals for a freshly-created draft
+    // that has no published version yet. Without it, Sanity v6+ defaults to
+    // "published" and the planner reports "No blogPost found with slug".
+    perspective: 'raw',
   });
   return cachedClient;
 }
