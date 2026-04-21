@@ -1,13 +1,17 @@
 /**
  * Structured LLM extraction primitive.
  *
- * Wraps AI SDK's `generateObject` with Vercel AI Gateway routing, so callers
+ * Wraps AI SDK's `generateObject` routed through OpenRouter, so callers
  * get typed JSON back instead of regex-parsed free text. Used by the audit
  * pipeline to replace the regex-based analysis that was producing gibberish
  * categories, wrong-entity claims, and fragmented strings.
  *
- * Requires `AI_GATEWAY_API_KEY` in the environment. On Vercel deployments
- * the OIDC token is auto-injected; locally, set it in `.env.local`.
+ * Why OpenRouter over Vercel AI Gateway: Vercel's team-wallet credit system
+ * depleted mid-audit and silently failed Phase 1 extraction, which cascaded
+ * into fallback "business"/"other" categorization + skipped benchmarks.
+ * OpenRouter is pay-as-you-go with transparent per-call pricing.
+ *
+ * Requires `OPENROUTER_API_KEY` in the environment.
  *
  * This is intentionally separate from the DataForSEO wrapper: DataForSEO
  * caps `user_prompt` at 500 chars, which is far too small for extraction
@@ -17,12 +21,32 @@
  */
 
 import { generateObject } from 'ai';
+import { createOpenRouter } from '@openrouter/ai-sdk-provider';
 import type { ZodType } from 'zod';
 import type { ApiCallTrace } from './types';
 import type { TraceCollector } from './dataforseo';
 
 /** Default model for extraction — haiku is fast, cheap, and reliable at structured output. */
 const DEFAULT_MODEL = 'anthropic/claude-haiku-4.5';
+
+/**
+ * Singleton OpenRouter provider. Constructed lazily so the module loads
+ * even when OPENROUTER_API_KEY isn't set (build time, tests).
+ */
+let _openrouter: ReturnType<typeof createOpenRouter> | null = null;
+function getOpenRouter(): ReturnType<typeof createOpenRouter> {
+  if (!_openrouter) {
+    _openrouter = createOpenRouter({
+      apiKey: process.env.OPENROUTER_API_KEY,
+      // Attribution headers — show up on OpenRouter's dashboard.
+      headers: {
+        'HTTP-Referer': 'https://loudface.co',
+        'X-Title': 'LoudFace AI Visibility Audit',
+      },
+    });
+  }
+  return _openrouter;
+}
 
 export interface StructuredExtractionOptions<T> {
   /** Zod schema the output must satisfy. */
@@ -61,12 +85,12 @@ export interface StructuredExtractionResult<T> {
 export async function extractStructured<T>(
   opts: StructuredExtractionOptions<T>,
 ): Promise<StructuredExtractionResult<T>> {
-  const model = opts.model ?? DEFAULT_MODEL;
+  const modelId = opts.model ?? DEFAULT_MODEL;
   const start = Date.now();
 
   try {
     const { object, usage } = await generateObject({
-      model,
+      model: getOpenRouter().chat(modelId),
       schema: opts.schema,
       prompt: opts.prompt,
       system: opts.system,
@@ -95,7 +119,7 @@ export async function extractStructured<T>(
     };
   } catch (err) {
     const message = err instanceof Error ? err.message : 'Unknown extraction error';
-    console.error(`[extractStructured] Failed (${model}):`, message);
+    console.error(`[extractStructured] Failed (${modelId}):`, message);
 
     if (opts.tracer && opts.tag) {
       opts.tracer.add({

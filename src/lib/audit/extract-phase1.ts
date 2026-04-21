@@ -94,7 +94,12 @@ const Phase1Schema = z.object({
     .array(
       z.object({
         name: z.string().describe('Competitor name as it appeared in responses.'),
-        mention_count: z.number().int().min(1).describe('Approximate number of times it was mentioned across all responses.'),
+        // Plain `z.number()` rather than `.int()` — OpenRouter routes some
+        // Anthropic models via Azure, whose JSON-schema implementation
+        // rejects `type: integer` outright. Our code treats this as an int
+        // anyway; keeping the type permissive avoids a cross-provider
+        // schema rejection that silently fails Phase 1 extraction.
+        mention_count: z.number().describe('Approximate number of times it was mentioned across all responses. Integer, at least 1.'),
       }),
     )
     .describe('Companies the AI platforms named as competitors or alternatives to the brand. Max 8 items, sorted by mention_count desc.'),
