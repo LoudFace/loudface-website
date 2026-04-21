@@ -14,11 +14,10 @@ import { getBrandQueries } from '../prompts';
 export async function runBrandBaseline(
   companyName: string,
   domain: string,
-  industry?: string,
   onProgress?: (pct: number) => Promise<void>,
   tracer?: TraceCollector,
 ): Promise<BrandBaselineData> {
-  const prompts = getBrandQueries(companyName, industry);
+  const prompts = getBrandQueries(companyName);
   const queries: BrandQuery[] = [];
 
   // Run queries 2 at a time (each query hits 4 platforms in parallel)

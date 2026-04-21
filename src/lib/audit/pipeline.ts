@@ -15,6 +15,20 @@ import {
 
 const AUDIT_TTL = 60 * 60 * 24 * 30; // 30 days
 
+/**
+ * Strip trailing filler words that slip past the LLM's word-count hint
+ * ("digital marketing agency that" → "digital marketing agency"). Prevents
+ * garbled query templates like "Top digital marketing agency that providers".
+ */
+function sanitizeCategory(raw: string): string {
+  const trailingFillers = /\s+(that|which|for|with|of|and|the|a|an|in|on|to|by)$/i;
+  let out = raw.trim().replace(/\s+/g, ' ');
+  while (trailingFillers.test(out)) {
+    out = out.replace(trailingFillers, '');
+  }
+  return out;
+}
+
 // ─── Redis Client (reuse across invocations in warm lambdas) ─────────
 
 let redisClient: RedisClientType | null = null;
@@ -95,7 +109,6 @@ export async function runAudit(id: string): Promise<void> {
     const brandBaseline = await runBrandBaseline(
       companyName,
       domain,
-      undefined,
       async (pct) => {
         await updateProgress(
           id,
@@ -119,10 +132,12 @@ export async function runAudit(id: string): Promise<void> {
     });
 
     // Fall back to conservative defaults if extraction fails entirely.
-    const category = phase1?.categorization.specific_category
-      || phase1?.categorization.broad_category
-      || 'business';
-    const inferredIndustry = phase1?.categorization.industry || 'business';
+    const category = sanitizeCategory(
+      phase1?.categorization.specific_category
+        || phase1?.categorization.broad_category
+        || 'business',
+    );
+    const inferredIndustry = sanitizeCategory(phase1?.categorization.industry || 'business');
     const richEntityType = phase1?.categorization.entity_type || 'other';
     // Downstream phases take a narrow 'product' | 'service' binary (query-template selector).
     // agencies/publishers/services/consulting map to 'service'; everything else to 'product'.

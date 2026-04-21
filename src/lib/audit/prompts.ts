@@ -1,7 +1,6 @@
 // ─── Brand Baseline Queries (Phase 1) ───────────────────────────────
 
-export function getBrandQueries(company: string, industry?: string): string[] {
-  const cat = industry || 'their industry';
+export function getBrandQueries(company: string): string[] {
   return [
     `What is ${company}?`,
     `Tell me about ${company}`,
@@ -12,7 +11,7 @@ export function getBrandQueries(company: string, industry?: string): string[] {
     `${company} vs competitors`,
     `Who uses ${company}?`,
     `${company} features and capabilities`,
-    `Should I use ${company} for ${cat}?`,
+    `Should I consider ${company}?`,
   ];
 }
 
@@ -48,20 +47,28 @@ export function getCategoryQueries(
   industry: string,
   entityType: 'product' | 'service' = 'product',
 ): string[] {
+  // Avoid "for agency" style duplication when the industry word already appears in the category.
+  const catLower = category.toLowerCase();
+  const industryNeeded = industry && !catLower.includes(industry.toLowerCase());
+
   if (entityType === 'service') {
     return [
       `Best ${category} for B2B SaaS companies`,
       `Top ${category} providers in 2026`,
       `Which ${category} should I hire?`,
-      `Recommended ${category} for ${industry}`,
+      industryNeeded
+        ? `Recommended ${category} for ${industry} clients`
+        : `Recommended ${category} for growing businesses`,
       `Best ${category} for startups and growing companies`,
     ];
   }
   return [
     `Best ${category} software in 2026`,
-    `Top ${category} tools for ${industry}`,
+    industryNeeded ? `Top ${category} tools for ${industry}` : `Top ${category} tools`,
     `What ${category} solution should I use?`,
     `Recommended ${category} platforms for businesses`,
-    `Which ${category} tool is best for ${industry} companies?`,
+    industryNeeded
+      ? `Which ${category} tool is best for ${industry} companies?`
+      : `Which ${category} tool is best for scaling companies?`,
   ];
 }

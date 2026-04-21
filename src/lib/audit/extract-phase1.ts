@@ -43,15 +43,15 @@ const Phase1Schema = z.object({
     confidence: z.enum(CONFIDENCE).describe('Confidence in the entity-match judgment.'),
     wrong_entity_description: z
       .string()
-      .describe('If is_correct_entity is false, a one-sentence description of what entity the AI is actually describing. Empty string if is_correct_entity is true.'),
+      .describe('If is_correct_entity is false, a concise NOUN PHRASE describing the other entity the AI is mistakenly describing. Must start with an indefinite article ("a" / "an") and slot cleanly after the phrase "The AI responses appear to describe __". Examples: "an insurance-claims automation platform, not the SEO agency at omnius.so", "a consumer wearable device, not the agency at loudface.co". Do NOT start with "The AI platforms...", "They describe...", or any meta-commentary about the responses themselves. Empty string if is_correct_entity is true.'),
   }),
   categorization: z.object({
     specific_category: z
       .string()
-      .describe('The most specific category that fits the brand. 2-5 words. Examples: "Webflow agency", "crypto payroll platform", "mental-health app". Derived from the ground truth, not from AI responses.'),
+      .describe('The most specific category that fits the brand. 2-5 words, must read as a complete noun phrase, never ending in a preposition, article, or conjunction (that, for, of, with, and, the). Examples: "Webflow agency", "crypto payroll platform", "mental-health app". Derived from the ground truth, not from AI responses.'),
     broad_category: z
       .string()
-      .describe('The broader industry the specific category belongs to. 1-3 words. Examples: "marketing agency", "fintech", "consumer health".'),
+      .describe('The broader industry the specific category belongs to. 1-3 words, complete noun phrase. Examples: "marketing agency", "fintech", "consumer health".'),
     industry: z
       .string()
       .describe('The single-word industry label. Examples: "SaaS", "agency", "ecommerce".'),

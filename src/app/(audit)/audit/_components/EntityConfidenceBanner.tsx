@@ -26,7 +26,7 @@ export function EntityConfidenceBanner({ signal, variant = 'full' }: EntityConfi
     : 'Low signal — limited AI knowledge about this brand';
 
   const detail = wrongEntityDescription
-    ? `The AI responses we analyzed appear to describe ${wrongEntityDescription}. Numeric results below reflect mentions of that other entity, not your brand.`
+    ? `${formatWrongEntity(wrongEntityDescription)} Numeric results below reflect mentions of that other entity, not your brand.`
     : `Only ${brandRecognitionScore}% of branded queries recognized this brand, and the category could not be inferred with confidence. Share-of-voice and competitor numbers below should be read as a starting baseline, not a verdict.`;
 
   if (variant === 'compact') {
@@ -54,6 +54,29 @@ export function EntityConfidenceBanner({ signal, variant = 'full' }: EntityConfi
       </div>
     </div>
   );
+}
+
+/**
+ * Normalize `wrong_entity_description` into a standalone sentence.
+ *
+ * The LLM is asked for a noun phrase that slots after "The AI responses appear
+ * to describe __", but occasionally returns a full sentence instead ("The AI
+ * platforms are describing a different company..."). We only prepend the
+ * preamble when the input clearly starts with an indefinite article — anything
+ * else is treated as a standalone sentence so we don't stack "The AI responses
+ * appear to describe The AI platforms..." style duplicates.
+ */
+function formatWrongEntity(raw: string): string {
+  const trimmed = raw.trim().replace(/\s+/g, ' ');
+  if (!trimmed) return '';
+
+  const withTerminator = /[.!?]$/.test(trimmed) ? trimmed : `${trimmed}.`;
+  const startsWithIndefiniteArticle = /^(a|an)\s/i.test(trimmed);
+
+  if (startsWithIndefiniteArticle) {
+    return `The AI responses appear to describe ${withTerminator}`;
+  }
+  return withTerminator;
 }
 
 function WarningIcon({ className = '' }: { className?: string }) {
