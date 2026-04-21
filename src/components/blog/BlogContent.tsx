@@ -5,7 +5,9 @@
  *   1. Split the processed HTML at each H2 opening tag.
  *   2. Between chunks, render any visuals whose `position.anchor === 'after-h2'`
  *      with `h2Index` matching that boundary.
- *   3. Hero visuals render before all content; `end` visuals render after.
+ *   3. Hero visuals render AFTER the intro segment (between the intro paragraphs
+ *      and the first H2), so they don't stack visually against the page
+ *      thumbnail. `end` visuals render after all segments.
  *
  * This runs at request time but the splitting is pure string work — no client JS.
  */
@@ -31,10 +33,6 @@ export function BlogContent({ html, visuals }: BlogContentProps) {
 
   return (
     <>
-      {heroVisuals.map((v) => (
-        <BlogVisual key={keyFor(v)} visual={v} priority />
-      ))}
-
       {segments.map((segment, i) => {
         // Segment i corresponds to "after H2 #i":
         //   - i=0 is the content before the first H2 (intro).
@@ -45,6 +43,12 @@ export function BlogContent({ html, visuals }: BlogContentProps) {
         return (
           <section key={`seg-${i}`}>
             <div className="blog-prose" dangerouslySetInnerHTML={{ __html: segment }} />
+            {/* Hero visuals sit between the intro and the first H2 — this
+                gives the thumbnail room to breathe at the very top and uses
+                the hero as a visual beat before section 1 kicks off. */}
+            {i === 0 && heroVisuals.map((v) => (
+              <BlogVisual key={keyFor(v)} visual={v} />
+            ))}
             {visualsAfterThisSection.map((v) => (
               <BlogVisual key={keyFor(v)} visual={v} />
             ))}
