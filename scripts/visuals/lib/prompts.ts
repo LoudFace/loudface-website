@@ -106,18 +106,10 @@ function splitFrontmatter(raw: string): { frontmatter: Record<string, string>; b
 }
 
 /**
- * Phrase appended to the prompt when a reference image is attached, to
- * reinforce that the model should mimic the reference's visual style rather
- * than invent its own.
- */
-const REFERENCE_DIRECTIVE =
-  'Match the color palette, lighting, materials, texture, and overall visual style of the reference image exactly. Do not introduce stylistic elements that are not present in the reference — even if those elements appear in the reference image as incidental detail (such as readable text or labels), they must not be reproduced.';
-
-/**
  * Turns a comma-separated exclude list into a natural-language constraint
- * sentence. Used because gpt-image-1.5 and nano-banana-2 don't expose a
- * `negative_prompt` field — the only way to suppress content is to tell the
- * model inside the positive prompt.
+ * sentence. Used in NO-reference mode because gpt-image-1.5 and nano-banana-2
+ * don't expose a `negative_prompt` field — the only way to suppress content
+ * is to tell the model inside the positive prompt.
  */
 function toExclusionClause(excludes: string): string {
   if (!excludes.trim()) return '';
@@ -135,30 +127,33 @@ export interface RenderPromptResult {
 }
 
 /**
- * Renders a template into a final prompt. When a reference image is attached
- * we drop the style block and the style negatives, and append a directive
- * telling the model to follow the reference. Content-level excludes (faces,
- * text, logos) are folded into the positive prompt as a strict constraint
- * sentence because the allowed models don't expose negative_prompt.
+ * Renders a template into a final prompt.
+ *
+ * REFERENCE MODE (image_urls attached): returns the raw subject verbatim —
+ * no template wrapping, no composition/mood instructions, no style block, no
+ * exclusion clauses, no "match the reference" directive. Every extra sentence
+ * fights the reference images and the model ends up blending text cues with
+ * visual cues badly. The references carry 100% of the aesthetic load; the
+ * subject just names what's in the scene. Mirrors the prompt shape that
+ * works well in the fal.ai playground when editing an image.
+ *
+ * NO-REFERENCE MODE: returns subject wrapped in the template's editorial
+ * framing (composition, mood) plus the style block and a strict exclusion
+ * clause built from the template's negative-prompt sections. This is the
+ * legacy path for text-to-image generation without style anchors.
  */
 export function renderPrompt(
   template: IllustrationTemplate,
   subject: string,
   opts: { hasReference?: boolean } = {},
 ): RenderPromptResult {
-  const subjectRendered = template.subject.replace(/\{\{\s*subject\s*\}\}/g, subject);
-
-  const excludes = opts.hasReference
-    ? template.negativeBase
-    : [template.negativeBase, template.negativeStyle].filter(Boolean).join(', ');
-  const exclusionClause = toExclusionClause(excludes);
-
   if (opts.hasReference) {
-    return {
-      prompt: [subjectRendered, exclusionClause, REFERENCE_DIRECTIVE].filter(Boolean).join('\n\n'),
-      negativePrompt: excludes,
-    };
+    return { prompt: subject, negativePrompt: '' };
   }
+
+  const subjectRendered = template.subject.replace(/\{\{\s*subject\s*\}\}/g, subject);
+  const excludes = [template.negativeBase, template.negativeStyle].filter(Boolean).join(', ');
+  const exclusionClause = toExclusionClause(excludes);
 
   return {
     prompt: [subjectRendered, template.style, exclusionClause].filter(Boolean).join('\n\n'),

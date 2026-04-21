@@ -19,13 +19,15 @@ const CACHE_ROOT = path.resolve(process.cwd(), '.visuals-cache');
 
 export interface IllustrateOpts {
   /**
-   * Optional reference image(s) for style consistency. Can be:
+   * Optional reference image(s) for style consistency. Each entry can be:
    *   - Public URL (https://...)
    *   - Local file path (will be uploaded to fal storage)
    * When provided, all illustration shots route to the `/edit` variant of
-   * their model with the reference attached as `image_urls`.
+   * their model with the references attached as `image_urls`. Multiple
+   * references give the model more anchors for a cohesive thumbnail-style
+   * output — typically 2–3 works best; more can over-constrain.
    */
-  referenceImage?: string;
+  referenceImages?: string[];
   /**
    * Optional model override — forces every shot onto the same fal model
    * regardless of what the template frontmatter says. Used for A/B
@@ -105,25 +107,26 @@ export async function illustratePlan(
   const cacheDir = path.join(CACHE_ROOT, '_fal-cache');
   fs.mkdirSync(outDir, { recursive: true });
 
-  // Resolve reference image to a public URL (upload local file if needed).
-  let referenceUrl: string | undefined;
-  if (opts.referenceImage) {
-    if (/^https?:\/\//i.test(opts.referenceImage)) {
-      referenceUrl = opts.referenceImage;
-      console.log(`→ Using style reference: ${referenceUrl}`);
+  // Resolve each reference to a public URL. Local paths upload to fal storage.
+  const referenceUrls: string[] = [];
+  for (const ref of opts.referenceImages ?? []) {
+    if (/^https?:\/\//i.test(ref)) {
+      referenceUrls.push(ref);
+      console.log(`→ Using style reference: ${ref}`);
     } else {
-      const resolved = path.resolve(opts.referenceImage);
+      const resolved = path.resolve(ref);
       if (!fs.existsSync(resolved)) {
         throw new Error(`Reference image not found: ${resolved}`);
       }
       console.log(`→ Uploading style reference to fal storage: ${resolved}`);
-      referenceUrl = await uploadLocalFile(resolved);
-      console.log(`  hosted at: ${referenceUrl}`);
+      const url = await uploadLocalFile(resolved);
+      console.log(`  hosted at: ${url}`);
+      referenceUrls.push(url);
     }
   }
 
   console.log(
-    `→ Generating ${illustrationShots.length} illustrations via fal.ai${referenceUrl ? ' (edit mode, style-locked)' : ''}...`,
+    `→ Generating ${illustrationShots.length} illustrations via fal.ai${referenceUrls.length > 0 ? ` (edit mode, ${referenceUrls.length} style reference${referenceUrls.length === 1 ? '' : 's'})` : ''}...`,
   );
 
   const results: IllustrationResult[] = [];
@@ -135,11 +138,13 @@ export async function illustratePlan(
     }
 
     const template = readIllustrationTemplate(shot.template);
-    const hasReference = !!referenceUrl;
-    // When a reference is attached, renderPrompt drops the style block and
-    // style-negatives and appends a directive telling the model to mimic the
-    // reference. Without a reference, the full template (subject + style +
-    // both negative groups) is used.
+    const hasReference = referenceUrls.length > 0;
+    // When references are attached, renderPrompt returns the subject verbatim —
+    // no wrapping, no style block, no composition/mood instructions, no
+    // exclusion clauses. The references drive the entire visual aesthetic;
+    // any additional prompt text fights them and degrades the output.
+    // Without references, the full template (subject wrapper + style + both
+    // negative groups) is used.
     const { prompt: finalPrompt, negativePrompt } = renderPrompt(template, shot.subject, {
       hasReference,
     });
@@ -178,7 +183,7 @@ export async function illustratePlan(
         imageSize: effectiveImageSize,
         quality: effectiveQuality,
         inputFidelity: effectiveInputFidelity,
-        ...(referenceUrl && { imageUrls: [referenceUrl] }),
+        ...(referenceUrls.length > 0 && { imageUrls: referenceUrls }),
         outputPath,
         cacheDir,
       });
@@ -233,23 +238,33 @@ export async function illustratePlan(
 
 async function main() {
   const args = process.argv.slice(2);
-  const slug = args.find((a) => !a.startsWith('--'));
+  // A positional arg is the slug unless the previous arg is a flag that takes
+  // a value (i.e. `--reference <value>` shouldn't treat `<value>` as the slug).
+  const FLAGS_WITH_VALUE = new Set(['--reference', '--model', '--suffix']);
+  const slug = args.find((a, i) => !a.startsWith('--') && !FLAGS_WITH_VALUE.has(args[i - 1] ?? ''));
   const flagValue = (name: string): string | undefined => {
     const i = args.findIndex((a) => a === name);
     return i >= 0 ? args[i + 1] : undefined;
   };
-  const referenceImage = flagValue('--reference');
+  // Multiple --reference flags are allowed — each one is a separate style anchor.
+  const referenceImages: string[] = [];
+  for (let i = 0; i < args.length; i++) {
+    if (args[i] === '--reference' && args[i + 1]) {
+      referenceImages.push(args[i + 1]);
+    }
+  }
   const modelOverride = flagValue('--model');
   const suffix = flagValue('--suffix');
 
   if (!slug) {
     console.error(
-      'Usage: npx tsx scripts/visuals/illustrate.ts <slug> [--reference <url-or-path>] [--model <fal-model>] [--suffix <name>]',
+      'Usage: npx tsx scripts/visuals/illustrate.ts <slug> [--reference <url-or-path>]... [--model <fal-model>] [--suffix <name>]',
     );
+    console.error('  Pass --reference multiple times to attach several style anchors.');
     process.exit(1);
   }
   try {
-    await illustratePlan(slug, { referenceImage, modelOverride, suffix });
+    await illustratePlan(slug, { referenceImages, modelOverride, suffix });
   } catch (err) {
     console.error('✗ Illustration worker failed:');
     console.error(err instanceof Error ? err.message : err);

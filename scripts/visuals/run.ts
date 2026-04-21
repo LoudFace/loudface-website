@@ -29,11 +29,16 @@ interface Flags {
   skipCompose: boolean;
   planOnly: boolean;
   merge: boolean;
-  referenceImage?: string;
+  referenceImages: string[];
 }
 
 function parseFlags(argv: string[]): Flags {
-  const refIdx = argv.findIndex((a) => a === '--reference');
+  const referenceImages: string[] = [];
+  for (let i = 0; i < argv.length; i++) {
+    if (argv[i] === '--reference' && argv[i + 1]) {
+      referenceImages.push(argv[i + 1]);
+    }
+  }
   return {
     skipPlan: argv.includes('--skip-plan'),
     skipIllustrate: argv.includes('--skip-illustrate'),
@@ -41,13 +46,14 @@ function parseFlags(argv: string[]): Flags {
     skipCompose: argv.includes('--skip-compose'),
     planOnly: argv.includes('--plan-only'),
     merge: argv.includes('--merge'),
-    referenceImage: refIdx >= 0 ? argv[refIdx + 1] : undefined,
+    referenceImages,
   };
 }
 
 async function main() {
   const argv = process.argv.slice(2);
-  const slug = argv.find((a) => !a.startsWith('--') && argv[argv.indexOf(a) - 1] !== '--reference');
+  const FLAGS_WITH_VALUE = new Set(['--reference']);
+  const slug = argv.find((a, i) => !a.startsWith('--') && !FLAGS_WITH_VALUE.has(argv[i - 1] ?? ''));
   if (!slug) {
     console.error(
       'Usage: npx tsx scripts/visuals/run.ts <slug> [--skip-plan|--skip-illustrate|--skip-screenshot|--skip-compose|--plan-only|--merge] [--reference <url-or-path>]',
@@ -74,7 +80,7 @@ async function main() {
   }
 
   if (!flags.skipIllustrate) {
-    await illustratePlan(slug, { referenceImage: flags.referenceImage });
+    await illustratePlan(slug, { referenceImages: flags.referenceImages });
   } else {
     console.log('→ Skipping illustration worker');
   }
