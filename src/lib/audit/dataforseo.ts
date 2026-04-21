@@ -120,9 +120,40 @@ async function dfsRequest<T>(
 // ─── LLM Responses ─────────────────────────────────────────────────
 
 /**
+ * Classify an error as retryable. DataForSEO 5xx, timeouts, and internal
+ * task errors are worth a single retry — they're usually transient scraper
+ * flakes. Client errors (400/401/403), quota exhaustion, and abort errors
+ * are not retryable.
+ */
+function isRetryableError(err: unknown): boolean {
+  if (!(err instanceof Error)) return false;
+  const msg = err.message;
+  // Aborted by timeout — not retryable, we already waited long enough.
+  if (err.name === 'AbortError') return false;
+  // HTTP 5xx returned by dfsRequest.
+  if (/DataForSEO 5\d\d:/.test(msg)) return true;
+  // DataForSEO's own status codes for transient failures.
+  if (/DataForSEO error 40501/.test(msg)) return true; // internal task error
+  if (/DataForSEO error 40602/.test(msg)) return true; // service temporarily unavailable
+  // Network-level failures — fetch throws TypeError / generic Error on DNS/TLS.
+  if (/ECONNRESET|ETIMEDOUT|ENOTFOUND|fetch failed|network/i.test(msg)) return true;
+  return false;
+}
+
+function sleep(ms: number): Promise<void> {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+/**
  * Query a single AI platform with a prompt.
  * Uses the Live endpoint (up to 120s response time).
  * Optionally records a trace for diagnostics.
+ *
+ * Retries once with a 2s backoff on transient errors (DataForSEO 5xx,
+ * internal task errors, network failures). Observed in QA: ~40/41 Phase 1
+ * calls failing on a single brand due to a DFS scraper flake — retry-once
+ * is expected to recover most of those while only adding ~5% worst-case
+ * cost and latency.
  */
 export async function queryLLM(
   platform: AIPlatform,
@@ -131,10 +162,10 @@ export async function queryLLM(
   tracer?: TraceCollector,
 ): Promise<DFSLLMResponseResult | null> {
   const path = `/ai_optimization/${PLATFORM_PATHS[platform]}/llm_responses/live`;
-  const start = Date.now();
   const phase = (tag ?? 'unknown') as ApiCallTrace['phase'];
+  const start = Date.now();
 
-  try {
+  const attempt = async (): Promise<DFSLLMResponseResult | null> => {
     const results = await dfsRequest<DFSLLMResponseResult>(path, [
       {
         user_prompt: prompt.slice(0, 500), // API limit
@@ -144,38 +175,32 @@ export async function queryLLM(
         ...(tag ? { tag } : {}),
       },
     ]);
+    return results[0] ?? null;
+  };
 
-    const result = results[0] ?? null;
-    const durationMs = Date.now() - start;
-
-    // Check if we got a response but it had no actual content
-    const hasContent = result?.items?.some((item) =>
-      (item.sections?.length && item.sections.some((s) => s.text?.trim())) ||
-      item.text?.trim(),
-    );
-
-    if (tracer) {
-      tracer.add({
-        platform,
-        prompt: prompt.slice(0, 100),
-        phase,
-        status: result && hasContent ? 'success' : result ? 'empty' : 'empty',
-        responseTokens: result?.output_tokens,
-        costUsd: result?.money_spent ?? result?.cost,
-        durationMs,
-      });
+  let result: DFSLLMResponseResult | null = null;
+  let lastError: unknown = null;
+  for (let tries = 0; tries < 2; tries++) {
+    try {
+      result = await attempt();
+      lastError = null;
+      break;
+    } catch (err) {
+      lastError = err;
+      if (tries === 0 && isRetryableError(err)) {
+        console.warn(`[DFS] ${platform} query failed (retryable), retrying once after 2s:`, err instanceof Error ? err.message.slice(0, 160) : err);
+        await sleep(2000);
+        continue;
+      }
+      break;
     }
+  }
 
-    if (!hasContent && result) {
-      console.warn(`[DFS] ${platform} returned result but no text content for: "${prompt.slice(0, 60)}..."`);
-    }
+  const durationMs = Date.now() - start;
 
-    return result;
-  } catch (err) {
-    const durationMs = Date.now() - start;
-    const errorMessage = err instanceof Error ? err.message : 'Unknown error';
+  if (lastError) {
+    const errorMessage = lastError instanceof Error ? lastError.message : 'Unknown error';
     console.error(`[DFS] LLM query failed (${platform}):`, errorMessage);
-
     if (tracer) {
       tracer.add({
         platform,
@@ -186,9 +211,32 @@ export async function queryLLM(
         durationMs,
       });
     }
-
     return null;
   }
+
+  // Check if we got a response but it had no actual content
+  const hasContent = result?.items?.some((item) =>
+    (item.sections?.length && item.sections.some((s) => s.text?.trim())) ||
+    item.text?.trim(),
+  );
+
+  if (tracer) {
+    tracer.add({
+      platform,
+      prompt: prompt.slice(0, 100),
+      phase,
+      status: result && hasContent ? 'success' : result ? 'empty' : 'empty',
+      responseTokens: result?.output_tokens,
+      costUsd: result?.money_spent ?? result?.cost,
+      durationMs,
+    });
+  }
+
+  if (!hasContent && result) {
+    console.warn(`[DFS] ${platform} returned result but no text content for: "${prompt.slice(0, 60)}..."`);
+  }
+
+  return result;
 }
 
 /**

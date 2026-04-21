@@ -3,12 +3,14 @@ import { getTrafficLight } from '@/lib/audit/scoring';
 import { SlideShell } from './SlideShell';
 import { TrafficLight } from './charts/TrafficLight';
 import { EntityConfidenceBanner, type EntityConfidenceSignal } from '../EntityConfidenceBanner';
+import { PartialDataBanner } from '../PartialDataBanner';
 
 interface ScorecardSlideProps {
   scores: AuditScores;
   companyName: string;
   totalSlides: number;
   entityConfidence?: EntityConfidenceSignal;
+  partialDataReason?: string;
 }
 
 const GRADE_COLORS: Record<string, string> = {
@@ -19,7 +21,7 @@ const GRADE_COLORS: Record<string, string> = {
   F: 'text-error',
 };
 
-export function ScorecardSlide({ scores, companyName, totalSlides, entityConfidence }: ScorecardSlideProps) {
+export function ScorecardSlide({ scores, companyName, totalSlides, entityConfidence, partialDataReason }: ScorecardSlideProps) {
   return (
     <SlideShell index={1} totalSlides={totalSlides}>
       <div className="flex-1 flex flex-col justify-center">
@@ -36,6 +38,7 @@ export function ScorecardSlide({ scores, companyName, totalSlides, entityConfide
         </p>
 
         {entityConfidence?.low && <EntityConfidenceBanner signal={entityConfidence} />}
+        {partialDataReason && <PartialDataBanner reason={partialDataReason} />}
 
         {/* Overall grade */}
         <div className="flex items-center gap-4 mb-8">

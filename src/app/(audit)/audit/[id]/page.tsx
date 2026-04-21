@@ -53,6 +53,8 @@ export default async function AuditResultsPage({
     brandRecognitionScore: record.results.brandBaseline.brandRecognitionScore,
   };
 
+  const partialDataReason = record.diagnostics?.partialDataReason;
+
   return (
     <AuditDeck
       results={record.results}
@@ -60,6 +62,7 @@ export default async function AuditResultsPage({
       domain={record.input.url}
       auditDate={record.completedAt || record.createdAt}
       entityConfidence={entityConfidence}
+      partialDataReason={partialDataReason}
     />
   );
 }

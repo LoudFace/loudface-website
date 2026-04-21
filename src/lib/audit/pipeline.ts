@@ -1,5 +1,5 @@
 import { createClient, type RedisClientType } from 'redis';
-import type { AuditRecord, AuditResults, AuditDiagnostics, SlideDataQuality } from './types';
+import type { AuditRecord, AuditResults, AuditDiagnostics, SlideDataQuality, ApiCallTrace } from './types';
 import { runBrandBaseline } from './phases/brand-baseline';
 import { runCompetitorContext } from './phases/competitor-context';
 import { runCategoryVisibility } from './phases/category-visibility';
@@ -286,6 +286,7 @@ export async function runAudit(id: string): Promise<void> {
     const wrongEntityDescription = phase1?.entity_disambiguation.is_correct_entity === false
       ? phase1.entity_disambiguation.wrong_entity_description
       : undefined;
+    const partialDataReason = detectPartialData(tracer.getTraces());
 
     const diagnostics: AuditDiagnostics = {
       ...traceSummary,
@@ -297,8 +298,13 @@ export async function runAudit(id: string): Promise<void> {
       categoryConfidence,
       lowEntityConfidence,
       wrongEntityDescription,
+      partialDataReason,
       slideData,
     };
+
+    if (partialDataReason) {
+      console.warn(`[Audit] Partial data detected: ${partialDataReason}`);
+    }
 
     // Log diagnostics summary
     console.log(`[Audit] Diagnostics: ${diagnostics.successfulCalls}/${diagnostics.totalApiCalls} calls succeeded, ${diagnostics.failedCalls} failed, ${diagnostics.emptyCalls} empty. Cost: $${diagnostics.totalCostUsd}. Duration: ${Math.round(diagnostics.totalDurationMs / 1000)}s`);
@@ -341,6 +347,50 @@ export async function runAudit(id: string): Promise<void> {
 
     await setAuditRecord(failedRecord);
   }
+}
+
+// ─── Partial-Data Detection ────────────────────────────────────────
+
+/**
+ * If any single phase had ≥30% of its calls fail or return empty, the
+ * numbers derived from that phase are unreliable — the user should see a
+ * banner explaining the gap so they don't treat a noisy grade as authoritative.
+ *
+ * Observed flake: Patagonia audit hit 40/41 Phase 1 HTTP 500s from DataForSEO
+ * but the pipeline still produced a Grade A from Phase 2/3 data, giving a
+ * misleading recognition=0% with a strong overall score.
+ */
+function detectPartialData(traces: ApiCallTrace[]): string | undefined {
+  const phaseLabels: Record<ApiCallTrace['phase'], string> = {
+    'brand-baseline': 'branded-query recognition',
+    'competitor-context': 'competitor recommendation rate',
+    'category-visibility': 'category visibility',
+    'competitor-discovery': 'competitor discovery',
+  };
+
+  const byPhase = new Map<ApiCallTrace['phase'], { total: number; bad: number }>();
+  for (const t of traces) {
+    const phase = t.phase;
+    if (!phase) continue;
+    const entry = byPhase.get(phase) ?? { total: 0, bad: 0 };
+    entry.total++;
+    if (t.status === 'error' || t.status === 'empty') entry.bad++;
+    byPhase.set(phase, entry);
+  }
+
+  const affected: string[] = [];
+  for (const [phase, stats] of byPhase) {
+    if (stats.total < 4) continue; // too small a sample for the ratio to be meaningful
+    const badRatio = stats.bad / stats.total;
+    if (badRatio >= 0.3) {
+      const label = phaseLabels[phase] ?? phase;
+      affected.push(`${label} (${stats.bad}/${stats.total} calls)`);
+    }
+  }
+
+  if (affected.length === 0) return undefined;
+
+  return `Some parts of this audit ran on partial data — ${affected.join(' and ')} could not be measured reliably. Results below reflect what we could capture; rerun for a fuller read.`;
 }
 
 // ─── Slide Data Quality ─────────────────────────────────────────────

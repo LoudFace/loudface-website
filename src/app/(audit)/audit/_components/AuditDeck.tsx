@@ -24,11 +24,12 @@ interface AuditDeckProps {
   domain: string;
   auditDate: string;
   entityConfidence?: EntityConfidenceSignal;
+  partialDataReason?: string;
 }
 
 const TOTAL_SLIDES = 15;
 
-export function AuditDeck({ results, companyName, domain, auditDate, entityConfidence }: AuditDeckProps) {
+export function AuditDeck({ results, companyName, domain, auditDate, entityConfidence, partialDataReason }: AuditDeckProps) {
   const signal: EntityConfidenceSignal = entityConfidence ?? {
     low: false,
     brandRecognitionScore: results.brandBaseline.brandRecognitionScore,
@@ -41,6 +42,7 @@ export function AuditDeck({ results, companyName, domain, auditDate, entityConfi
         auditDate={auditDate}
         totalSlides={TOTAL_SLIDES}
         entityConfidence={signal}
+        partialDataReason={partialDataReason}
       />
 
       <ScorecardSlide
@@ -48,6 +50,7 @@ export function AuditDeck({ results, companyName, domain, auditDate, entityConfi
         companyName={companyName}
         totalSlides={TOTAL_SLIDES}
         entityConfidence={signal}
+        partialDataReason={partialDataReason}
       />
 
       <MethodologySlide totalSlides={TOTAL_SLIDES} />

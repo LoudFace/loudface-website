@@ -1,15 +1,17 @@
 import { asset } from '@/lib/assets';
 import { SlideShell } from './SlideShell';
 import { EntityConfidenceBanner, type EntityConfidenceSignal } from '../EntityConfidenceBanner';
+import { PartialDataBanner } from '../PartialDataBanner';
 
 interface CoverSlideProps {
   companyName: string;
   auditDate: string;
   totalSlides: number;
   entityConfidence?: EntityConfidenceSignal;
+  partialDataReason?: string;
 }
 
-export function CoverSlide({ companyName, auditDate, totalSlides, entityConfidence }: CoverSlideProps) {
+export function CoverSlide({ companyName, auditDate, totalSlides, entityConfidence, partialDataReason }: CoverSlideProps) {
   const formattedDate = new Date(auditDate).toLocaleDateString('en-US', {
     year: 'numeric',
     month: 'long',
@@ -43,9 +45,10 @@ export function CoverSlide({ companyName, auditDate, totalSlides, entityConfiden
           {formattedDate}
         </p>
 
-        {entityConfidence?.low && (
-          <div className="mt-8 w-full max-w-xl text-left">
-            <EntityConfidenceBanner signal={entityConfidence} />
+        {(entityConfidence?.low || partialDataReason) && (
+          <div className="mt-8 w-full max-w-xl text-left space-y-3">
+            {entityConfidence?.low && <EntityConfidenceBanner signal={entityConfidence} />}
+            {partialDataReason && <PartialDataBanner reason={partialDataReason} />}
           </div>
         )}
 

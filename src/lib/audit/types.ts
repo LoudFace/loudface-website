@@ -58,6 +58,12 @@ export interface AuditDiagnostics {
   /** If Phase 1 extraction flagged a wrong-entity match, a one-sentence summary
    *  of the entity the AI was actually describing. Used to contextualize low-confidence audits. */
   wrongEntityDescription?: string;
+  /** Set when any single phase had ≥30% of its calls fail or return empty —
+   *  signals that scores derived from the partial data may not be trustworthy.
+   *  The value is a human-readable explanation ("Phase 1 recognition couldn't
+   *  be measured — DataForSEO returned errors for 40/41 branded queries").
+   *  Undefined when all phases succeeded within acceptable bounds. */
+  partialDataReason?: string;
   /** Per-slide data quality: maps slide name to its data status */
   slideData: Record<string, SlideDataQuality>;
 }
