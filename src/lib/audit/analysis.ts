@@ -176,6 +176,27 @@ const NEVER_COMPETITOR_DOMAINS = new Set([
   'amazon.com', 'ebay.com', 'walmart.com', 'shopify.com',
   'g2.com', 'capterra.com', 'trustpilot.com', 'glassdoor.com',
   'crunchbase.com', 'producthunt.com',
+  // Reference / educational / government — co-rank for informational queries
+  // but are never real business competitors. Observed polluting DFS results
+  // for dominant fintech/SaaS brands (e.g., Investopedia for stripe.com).
+  'investopedia.com', 'nerdwallet.com', 'thebalance.com', 'thebalancemoney.com',
+  'consumerreports.org', 'bankrate.com', 'creditkarma.com',
+  'irs.gov', 'sec.gov', 'treasury.gov', 'ftc.gov', 'nist.gov', 'europa.eu',
+  'who.int', 'un.org', 'cdc.gov', 'sba.gov', 'uspto.gov',
+  'microsoft.com', 'apple.com',
+  'wsj.com', 'ft.com', 'economist.com', 'businessinsider.com',
+  'entrepreneur.com', 'inc.com', 'fastcompany.com',
+  'investor.gov', 'usa.gov', 'uschamber.com',
+  'stackoverflow.com', 'stackexchange.com', 'quora.com',
+  // Job boards and business directories — co-rank for remote-work / payroll / legal
+  // keywords but aren't direct competitors to fintech/SaaS.
+  'indeed.com', 'ziprecruiter.com', 'monster.com', 'careerbuilder.com',
+  // Vertical review / information sites that show up for retail & healthcare queries.
+  'allaboutvision.com', 'aao.org', 'runrepeat.com',
+  'healthline.com', 'webmd.com', 'mayoclinic.org',
+  'clevelandclinic.org', 'hopkinsmedicine.org', 'nih.gov', 'medlineplus.gov',
+  'nerdynav.com', 'tomsguide.com', 'cnet.com', 'pcmag.com',
+  'themodestman.com', 'consumeraffairs.com',
 ]);
 
 /**

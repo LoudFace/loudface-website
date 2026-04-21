@@ -11,8 +11,10 @@ interface AuditProgressProps {
 
 const PHASE_ICONS: Record<string, string> = {
   'Starting audit...': '01',
+  'Reading your website...': '01',
   'Analyzing brand recognition across AI platforms...': '01',
   'Testing how AI platforms perceive your brand...': '01',
+  'Synthesizing Phase 1 findings...': '01',
   'Identifying your competitors...': '02',
   'Measuring competitive recommendation rates...': '02',
   'Testing category discovery queries...': '03',
@@ -25,11 +27,46 @@ function getPhaseNumber(phase: string): string {
   return PHASE_ICONS[phase] || '01';
 }
 
+/**
+ * Rotating secondary taglines tied to the current phase — gives the user a
+ * sense that the audit is actively talking to AI platforms, not just spinning.
+ * Cycles every ~2.5s. Avoids false-promising specific prompt text, since a
+ * user's URL doesn't map cleanly to a named prompt on this client.
+ */
+const PHASE_TAGLINES: Record<string, string[]> = {
+  '01': [
+    'Asking ChatGPT: "What is [your brand]?"',
+    'Asking Claude about your brand positioning',
+    'Checking what Gemini knows about you',
+    'Measuring Perplexity\'s coverage of your brand',
+    'Comparing AI claims against your actual site',
+    'Flagging same-name entity confusions',
+  ],
+  '02': [
+    'Finding who ranks alongside you on AI overviews',
+    'Asking AI: "What\'s an alternative to [competitor]?"',
+    'Testing whether you show up as a competitor',
+    'Filtering keyword-overlap noise from real rivals',
+  ],
+  '03': [
+    'Running unbranded category queries',
+    'Asking: "Best [category] in 2026"',
+    'Measuring your share of category answers',
+    'Checking which sources each AI cites for your category',
+  ],
+  '04': [
+    'Calculating discovery and share-of-voice',
+    'Ranking you against your competitive set',
+    'Building your action plan',
+  ],
+};
+
 export function AuditProgress({ id, initialProgress, initialPhase }: AuditProgressProps) {
   const router = useRouter();
   const [progress, setProgress] = useState(initialProgress);
   const [phase, setPhase] = useState(initialPhase);
   const [failed, setFailed] = useState(false);
+  const [taglineIdx, setTaglineIdx] = useState(0);
 
   const poll = useCallback(async () => {
     try {
@@ -70,6 +107,14 @@ export function AuditProgress({ id, initialProgress, initialPhase }: AuditProgre
     };
   }, [poll]);
 
+  // Rotate the sub-tagline every 2.5s to communicate live work.
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setTaglineIdx((i) => i + 1);
+    }, 2500);
+    return () => clearInterval(interval);
+  }, []);
+
   if (failed) {
     return (
       <div className="flex min-h-dvh items-center justify-center bg-surface-950 px-4">
@@ -97,6 +142,8 @@ export function AuditProgress({ id, initialProgress, initialPhase }: AuditProgre
   }
 
   const phaseNum = getPhaseNumber(phase);
+  const taglines = PHASE_TAGLINES[phaseNum] ?? [];
+  const tagline = taglines.length ? taglines[taglineIdx % taglines.length] : '';
 
   return (
     <div className="flex min-h-dvh items-center justify-center bg-surface-950 px-4">
@@ -114,8 +161,16 @@ export function AuditProgress({ id, initialProgress, initialPhase }: AuditProgre
         </div>
 
         {/* Phase description */}
-        <p className="text-lg text-surface-300 mb-8 min-h-[1.75rem]">
+        <p className="text-lg text-surface-300 mb-2 min-h-[1.75rem]">
           {phase}
+        </p>
+
+        {/* Rotating sub-tagline — communicates active work */}
+        <p
+          key={tagline}
+          className="text-2xs text-surface-500 mb-8 min-h-[1rem] font-mono motion-safe:animate-fade-in"
+        >
+          {tagline}
         </p>
 
         {/* Progress bar */}

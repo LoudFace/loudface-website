@@ -14,7 +14,7 @@ export async function runCategoryVisibility(
   category: string,
   industry: string,
   onProgress?: (pct: number) => Promise<void>,
-  entityType: 'product' | 'service' = 'product',
+  entityType: 'product' | 'service' | 'brand' = 'product',
   tracer?: TraceCollector,
 ): Promise<CategoryVisibilityData> {
   const prompts = getCategoryQueries(category, industry, entityType);

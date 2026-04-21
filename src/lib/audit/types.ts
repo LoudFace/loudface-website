@@ -180,6 +180,17 @@ export interface PlatformScore {
   citationRate: number; // 0-100
   sentiment: Sentiment;
   topMentions: string[];
+  /** One-sentence diagnosis of this platform's coverage (e.g. "Recognizes you; cites your site directly") */
+  insight?: string;
+  /** Top domains this platform cited when responding about the brand, ranked by frequency */
+  topCitedDomains?: CitedDomain[];
+}
+
+export interface CitedDomain {
+  domain: string;
+  count: number;
+  /** Whether this is the brand's own domain */
+  isOwn: boolean;
 }
 
 // ─── Action Items ───────────────────────────────────────────────────

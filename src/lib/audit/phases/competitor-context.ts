@@ -45,7 +45,7 @@ export async function runCompetitorContext(
   domain: string,
   category: string,
   onProgress?: (pct: number) => Promise<void>,
-  entityType: 'product' | 'service' = 'product',
+  entityType: 'product' | 'service' | 'brand' = 'product',
   tracer?: TraceCollector,
   aiExtractedCompetitors: { name: string; mentionCount: number }[] = [],
 ): Promise<CompetitorContextData & { competitorSource: 'dataforseo-labs' | 'ai-extracted' | 'hardcoded' }> {
@@ -69,10 +69,13 @@ export async function runCompetitorContext(
     ),
   );
 
-  if (filteredDFS.length > 0 && dfsOverlap.length === 0 && aiExtractedCompetitors.length >= 3) {
+  if (filteredDFS.length > 0 && dfsOverlap.length === 0 && aiExtractedCompetitors.length >= 2) {
     // DataForSEO returned results but NONE overlap with what AI considers competitors.
     // This usually means DFS returned keyword-overlap sites (exchanges, news) not real competitors.
     // Trust the AI-extracted competitors instead.
+    // Threshold of 2: dominant brands (Stripe, Linear) often only get named alongside
+    // a couple of direct competitors, and DFS results are frequently reference sites
+    // (Investopedia, Nerdwallet) that share informational keywords but aren't rivals.
     console.log(`[Audit] DataForSEO competitors don't match AI-extracted ones. Using AI competitors.`);
     console.log(`[Audit]   DFS returned: ${competitors.map((c) => c.name).join(', ')}`);
     console.log(`[Audit]   AI extracted: ${aiExtractedCompetitors.map((c) => c.name).join(', ')}`);
@@ -85,7 +88,7 @@ export async function runCompetitorContext(
         keywordIntersection: 0,
       }));
     competitorSource = 'ai-extracted';
-  } else if (filteredDFS.length === 0 && aiExtractedCompetitors.length >= 3) {
+  } else if (filteredDFS.length === 0 && aiExtractedCompetitors.length >= 2) {
     // No DataForSEO results at all — use AI-extracted
     console.log(`[Audit] No DataForSEO competitors. Using AI-extracted.`);
     competitors = aiExtractedCompetitors

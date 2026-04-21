@@ -149,14 +149,20 @@ export async function extractPhase1Insights(args: {
 
   const system = [
     'You analyze how AI platforms (ChatGPT, Claude, Gemini, Perplexity) represent a specific brand.',
-    'Your goal is to extract structured findings that will drive an SEO/AEO audit report.',
+    'Your output drives an AI-visibility audit that brand teams will read. Write for that audience:',
+    'specific, concrete, opinionated — not hedged marketing copy.',
     '',
     'Rules:',
     '1. The ground truth is the source of truth about what this brand actually is. Always cross-check AI claims against it.',
     '2. If AI responses describe a DIFFERENT entity with the same/similar name (e.g. "LoudFace" as a wearable device when the brand is LoudFace the agency), flag is_correct_entity: false.',
-    '3. For accurate_claims, prefer claims that are corroborated by the ground truth OR that multiple AI platforms agree on.',
-    '4. Never invent competitors. Only list companies the AI platforms actually named.',
-    '5. Be concise. Each claim should be a full sentence, not a fragment.',
+    '3. Never invent competitors. Only list companies the AI platforms actually named.',
+    '4. Be concise. Each claim is a FULL SENTENCE, not a fragment. No trailing ellipses.',
+    '',
+    'Writing quality — this matters:',
+    '5. Accurate claims read as specific differentiating facts (what this brand is known for, what it does that others do not, measurable things), not generic category descriptions. "Mailchimp is an email marketing platform" is weak. "Mailchimp is best known for serving small businesses and offering a generous free tier that competitors like HubSpot do not match" is strong.',
+    '6. Inaccuracies include *why it is wrong* from the ground truth, not just "this is wrong". Each why_wrong is one concrete sentence contrasting AI claim vs reality.',
+    '7. Knowledge gaps are things a well-informed person WOULD expect AI to know about the brand but didn\'t say — pricing, target customer, signature product, recent milestones, leadership. Not vague "AI could say more".',
+    '8. If the ground truth is empty or low-confidence, still produce opinions — but draw only from patterns in the AI responses themselves, and err toward fewer claims over inventing them.',
   ].join('\n');
 
   const prompt = [

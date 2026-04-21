@@ -3,7 +3,7 @@ import { after } from 'next/server';
 import { nanoid } from 'nanoid';
 import { setAuditRecord, getRedis } from '@/lib/audit/pipeline';
 import { runAudit } from '@/lib/audit/pipeline';
-import { extractBrandFromUrl } from '@/lib/audit/extract-brand';
+import { extractBrandFromUrl, normalizeBrandName } from '@/lib/audit/extract-brand';
 import type { AuditRecord } from '@/lib/audit/types';
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -98,12 +98,23 @@ export async function POST(request: Request) {
     // ─── Extract brand from the URL ───────────────────────────────
     // This replaces the user-typed companyName + industry fields.
     // The extractor pulls from JSON-LD Organization → og:site_name → <title> → domain.
-    const extracted = await extractBrandFromUrl(normalizedUrl);
+    let extracted = await extractBrandFromUrl(normalizedUrl);
     if (!extracted) {
       return NextResponse.json(
         { error: 'Could not resolve that URL. Check the domain and try again.' },
         { status: 400 },
       );
+    }
+
+    // If the site blocked our fetch and we fell back to the domain root,
+    // ask Haiku to split concatenated multi-word brands (warbyparker → "Warby Parker").
+    // Fails silently — worst case we keep the domain-root name.
+    if (extracted.source === 'domain-fallback') {
+      try {
+        extracted = await normalizeBrandName(extracted);
+      } catch (err) {
+        console.warn('[API] Brand normalization failed, keeping fallback name:', err);
+      }
     }
 
     // ─── Create Audit Record ──────────────────────────────────────

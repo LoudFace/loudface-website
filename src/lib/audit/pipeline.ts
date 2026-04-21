@@ -139,10 +139,16 @@ export async function runAudit(id: string): Promise<void> {
     );
     const inferredIndustry = sanitizeCategory(phase1?.categorization.industry || 'business');
     const richEntityType = phase1?.categorization.entity_type || 'other';
-    // Downstream phases take a narrow 'product' | 'service' binary (query-template selector).
-    // agencies/publishers/services/consulting map to 'service'; everything else to 'product'.
-    const entityType: 'product' | 'service' =
-      richEntityType === 'agency' || richEntityType === 'publisher' ? 'service' : 'product';
+    // Downstream phases take a narrow 'product' | 'service' | 'brand' trio (query-template selector).
+    // - 'service': agencies/publishers → "Best X agencies/providers"
+    // - 'brand': consumer-brand/ecommerce/marketplace → "Best X brands" (no "software/tools/platforms")
+    // - 'product': saas/other → "Best X software/tools"
+    const entityType: 'product' | 'service' | 'brand' =
+      richEntityType === 'agency' || richEntityType === 'publisher'
+        ? 'service'
+        : richEntityType === 'consumer-brand' || richEntityType === 'ecommerce' || richEntityType === 'marketplace'
+          ? 'brand'
+          : 'product';
     const categoryConfidence = phase1?.entity_disambiguation.confidence ?? 'low';
     const lowEntityConfidence =
       !phase1
@@ -255,7 +261,7 @@ export async function runAudit(id: string): Promise<void> {
     // we directly ask about the company. Phase 2/3 are unbranded/competitor queries
     // where the brand intentionally may not appear, which would deflate mention rates.
     const brandResults = brandBaseline.queries.flatMap((q) => q.results);
-    const platformBreakdown = calculatePlatformBreakdown(brandResults);
+    const platformBreakdown = calculatePlatformBreakdown(brandResults, domain);
 
     // Generate action items
     const actionItems = generateActionItems(

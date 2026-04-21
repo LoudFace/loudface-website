@@ -11,7 +11,7 @@
  * `confidence` signal rather than a failure.
  */
 
-import { cleanDomain } from './extract-brand';
+import { cleanDomain, fetchHtml } from './extract-brand';
 
 export interface GroundTruth {
   url: string;
@@ -123,30 +123,8 @@ export async function scrapeGroundTruth(url: string): Promise<GroundTruth | null
   const domain = cleanDomain(normalized);
   if (!domain || !domain.includes('.')) return null;
 
-  const controller = new AbortController();
-  const timeout = setTimeout(() => controller.abort(), FETCH_TIMEOUT_MS);
-
-  let html: string;
-  try {
-    const res = await fetch(normalized, {
-      signal: controller.signal,
-      redirect: 'follow',
-      headers: {
-        'User-Agent': 'Mozilla/5.0 (compatible; LoudFaceAuditBot/1.0; +https://loudface.co)',
-        Accept: 'text/html,application/xhtml+xml,application/xml;q=0.9',
-      },
-    });
-
-    if (!res.ok) return null;
-    const contentType = res.headers.get('content-type') ?? '';
-    if (!/text\/html|application\/xhtml/i.test(contentType)) return null;
-
-    html = await res.text();
-  } catch {
-    return null;
-  } finally {
-    clearTimeout(timeout);
-  }
+  const html = await fetchHtml(normalized, FETCH_TIMEOUT_MS);
+  if (!html) return null;
 
   const headMatch = html.match(/<head[\s\S]*?<\/head>/i);
   const head = headMatch ? headMatch[0] : html.slice(0, 50000);
