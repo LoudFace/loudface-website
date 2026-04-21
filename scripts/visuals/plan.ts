@@ -83,11 +83,42 @@ function validateAgainstStructure(list: ShotList, h2Count: number) {
         throw new Error(`Shot "${shot.slot}" references H2 #${idx} but article has ${h2Count} H2s`);
       }
     }
+
+    // Hard block on known bot-walled URL patterns. The planner prompt also
+    // tells Claude not to emit these, but this guard ensures a regressed
+    // prompt can never slip a dead-on-arrival capture into a plan.
+    if (shot.type === 'screenshot' && shot.capture?.sourceUrl) {
+      assertScreenshotUrlIsSafe(shot.slot, shot.capture.sourceUrl);
+    }
   }
 
   const heroCount = list.shots.filter((s) => s.position.anchor === 'hero').length;
   if (heroCount !== 1) {
     throw new Error(`Expected exactly 1 hero shot, got ${heroCount}`);
+  }
+}
+
+/**
+ * Known targets that Cloudflare/Datadome will wall. Direct Perplexity live
+ * search URLs (as opposed to share permalinks at /search/<slug>-<id>) have a
+ * 100% capture-fails rate empirically. Extend this list as we discover more.
+ */
+function assertScreenshotUrlIsSafe(slot: string, rawUrl: string): void {
+  let url: URL;
+  try {
+    url = new URL(rawUrl);
+  } catch {
+    throw new Error(`Shot "${slot}" has an unparseable sourceUrl: ${rawUrl}`);
+  }
+  // Perplexity live queries: /search?q=... bot-walls every time. Permalinks
+  // are /search/<slug>-<id> and those DO render, so we only block the /search
+  // path when a `q` search param is present.
+  if (url.hostname.endsWith('perplexity.ai') && url.pathname === '/search' && url.searchParams.has('q')) {
+    throw new Error(
+      `Shot "${slot}" targets a live Perplexity search URL (${rawUrl}). ` +
+      `These always capture the Cloudflare bot-challenge page. ` +
+      `Use a share permalink (perplexity.ai/search/<slug>-<id>) or switch to a Google AI Overview screenshot / chart.`,
+    );
   }
 }
 

@@ -41,13 +41,13 @@ You return ONLY a JSON object matching this shape (no markdown, no commentary):
       }
     },
     {
-      "slot": "perplexity-answer-example",
+      "slot": "google-ai-overview-example",
       "type": "screenshot",
       "position": { "anchor": "after-h2", "h2Index": 3 },
-      "alt": "Perplexity answer for 'best CRM for small business' citing three sources including Zapier's guide",
-      "caption": "How Perplexity attributes sources in its AI-generated answers",
+      "alt": "Google AI Overview for 'best CRM for small business' naming three products above the organic search results",
+      "caption": "A Google AI Overview for the exact query, captured live.",
       "capture": {
-        "sourceUrl": "https://www.perplexity.ai/search?q=best+CRM+for+small+business",
+        "sourceUrl": "https://www.google.com/search?q=best+CRM+for+small+business",
         "viewport": "desktop"
       }
     }
@@ -102,7 +102,7 @@ Use a screenshot when the article references a specific piece of the live web th
 
 The `capture` object:
 
-- `sourceUrl` (required) — the publicly accessible URL. **Do not** propose URLs that require login. Authenticated ChatGPT/Claude/Gemini sessions will not work; prefer Perplexity, Google AI Overviews, or public shared-chat links.
+- `sourceUrl` (required) — the publicly accessible URL. **Do not** propose URLs that require login. Authenticated ChatGPT/Claude/Gemini sessions will not work; prefer Google AI Overviews via `google.com/search?q=...` or public shared-chat permalinks (`chatgpt.com/share/...`, `perplexity.ai/search/<slug>`). **Never emit a direct `perplexity.ai/search?q=...` URL — it is always blocked by Cloudflare and captures only the bot-challenge page.**
 - `selector` (optional) — a CSS selector to crop the screenshot to one element. **Omit this by default.** Only include it when you are citing a well-documented, stable selector (e.g. `article` on a news site, `.product-hero` on a known landing page). Do NOT guess selectors for Perplexity, Google, ChatGPT, or any SPA — their DOMs are volatile and invented selectors will miss. When the selector is omitted, the worker captures the viewport, which is almost always what you want for AI engine answers and SERPs.
 - `waitFor` (optional) — a CSS selector the worker waits for before capturing. Same rule: omit unless you know the selector is stable. The worker waits for `networkidle` plus 1.5 seconds by default, which is enough for most streamed answers.
 - `viewport` (optional) — `desktop` (default), `tablet`, or `mobile`. Pick `mobile` only when the article is specifically about mobile UX.
@@ -115,15 +115,18 @@ When to use a screenshot:
 - The article references a public documentation page, product landing page, or marketing page → screenshot of that URL.
 - The article quotes a specific AI engine answer AND you have a shareable permalink for it (e.g. `chatgpt.com/share/<id>`, `perplexity.ai/search/<slug>`) → screenshot of the permalink.
 
-When NOT to use a screenshot:
+When NOT to use a screenshot (these are hard blocks — do not emit):
 
-- The target requires authentication (ChatGPT/Claude/Gemini private chats, gated dashboards).
-- **Direct `perplexity.ai/search?q=...` URLs** — Perplexity serves a Cloudflare bot challenge to headless browsers, so the capture will just be the "Verify you are human" page. Use a shared Perplexity permalink if you have one, or fall back to a chart/illustration that conveys the same idea.
-- **Live query URLs on bot-protected sites generally** — if it's not a simple static page and not a permalink, assume it will bot-wall and skip it.
-- The article would be better served by a clean illustration or chart of the same concept.
-- The source is a PDF, a gated report, or anything ephemeral.
+- **`perplexity.ai/search?q=<live-query>`** — 100% of the time this captures the Cloudflare "Verify you are human" page, never an answer. If you want to show a Perplexity answer, you must have a share permalink of the form `perplexity.ai/search/<slug>-<id>` (note: `/search/<slug>`, NOT `/search?q=`). If you do not have a specific permalink, plan a Google AI Overview screenshot or a chart instead.
+- **Any ChatGPT/Claude/Gemini URL that isn't a public share permalink** — private conversations require auth and will capture a login wall.
+- **Non-permalink URLs on bot-protected sites generally** — if it's a live query URL (not a static page, not a permalink), assume Cloudflare/Datadome will wall it and skip it.
+- **PDFs, gated reports, anything ephemeral.**
+- **Any target you can't verify renders publicly from a clean headless browser.** When in doubt, plan a chart or illustration of the same concept. A missed screenshot is worse than no screenshot.
 
-If you are not certain a URL is publicly renderable by a headless browser, skip the screenshot and plan a chart or illustration instead. A missed screenshot is worse than no screenshot.
+Good screenshot targets (these always work):
+- `google.com/search?q=<query>` — the worker auto-adds `hl=en&gl=us` and bypasses EU consent, so SERPs and AI Overviews capture cleanly.
+- Public product/marketing/documentation pages (Stripe pricing, Linear features, Sanity docs, etc.).
+- Permalink-form AI engine shares: `chatgpt.com/share/<id>`, `perplexity.ai/search/<slug>-<id>`.
 
 ## Composition principles
 

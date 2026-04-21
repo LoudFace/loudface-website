@@ -16,7 +16,8 @@
     "visuals:screenshot": "tsx scripts/visuals/screenshot.ts",
     "visuals:compose": "tsx scripts/visuals/compose.ts",
     "visuals:generate": "tsx scripts/visuals/run.ts",
-    "visuals:setup": "playwright install chromium"
+    "visuals:setup": "playwright install chromium",
+    "visuals:publish": "tsx scripts/publish-draft.ts"
   },
   "dependencies": {
     "@calcom/embed-react": "^1.5.3",
