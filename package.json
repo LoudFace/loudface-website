@@ -20,6 +20,7 @@
     "visuals:publish": "tsx scripts/publish-draft.ts"
   },
   "dependencies": {
+    "@ai-sdk/google": "^3.0.64",
     "@calcom/embed-react": "^1.5.3",
     "@fal-ai/client": "^1.9.5",
     "@sanity/image-url": "^2.1.0",

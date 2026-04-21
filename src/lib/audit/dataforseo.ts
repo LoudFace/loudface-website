@@ -4,6 +4,7 @@ import type {
   DFSLLMResponseResult,
   DFSCompetitorResult,
 } from './types';
+import { isDirectLLMPlatform, queryDirectLLM } from './direct-llm';
 
 // ─── Config ─────────────────────────────────────────────────────────
 
@@ -161,6 +162,13 @@ export async function queryLLM(
   tag?: string,
   tracer?: TraceCollector,
 ): Promise<DFSLLMResponseResult | null> {
+  // ChatGPT and Gemini go through direct API calls (AI Gateway) — DataForSEO's
+  // scrapers for those platforms omit citations and have poor recall. Claude
+  // and Perplexity stay on DataForSEO since their scrapers work reliably.
+  if (isDirectLLMPlatform(platform)) {
+    return queryDirectLLM(platform, prompt, tag, tracer);
+  }
+
   const path = `/ai_optimization/${PLATFORM_PATHS[platform]}/llm_responses/live`;
   const phase = (tag ?? 'unknown') as ApiCallTrace['phase'];
   const start = Date.now();
