@@ -1,6 +1,13 @@
 /**
  * Blog Post Detail Page
+ *
+ * ISR: revalidates every 60 seconds so Sanity content edits (thumbnail
+ * swaps, visual updates, body-copy tweaks) propagate to the live page
+ * within a minute without needing a Vercel redeploy. New slugs are
+ * rendered on-demand via `dynamicParams: true` (Next default).
  */
+export const revalidate = 60;
+
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
 import type { Metadata } from 'next';

@@ -2,7 +2,12 @@
  * Blog Index Page
  *
  * Paginated blog listing (12 posts per page) to keep HTML size under 256 KB.
+ *
+ * ISR: revalidates every 60s so new posts and thumbnail changes surface on
+ * the index without needing a Vercel redeploy.
  */
+export const revalidate = 60;
+
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { fetchHomepageData } from '@/lib/cms-data';
