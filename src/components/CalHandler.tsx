@@ -50,8 +50,13 @@ export function CalHandler() {
     document.addEventListener("click", handleClick);
 
     // Stitch the anonymous PostHog session to the attendee's email the moment
-    // the booking succeeds. The server webhook still fires the 'call_booked'
-    // event — this call is purely for identity attribution.
+    // the booking succeeds. The server webhook is the source of truth for the
+    // `call_booked` event (it carries utm_source=website, utm_content=page,
+    // booking metadata, etc.). This client-side identify exists *only* so that
+    // the prior anonymous pageview history merges into the email-keyed person
+    // — without it, embed bookers would show up as two separate people in
+    // PostHog. Do NOT add a `posthog.capture()` here; it duplicates the server
+    // event and pollutes funnels.
     let registered = false;
     const registerBookingListener = () => {
       if (registered || !window.Cal) return;
@@ -61,35 +66,17 @@ export function CalHandler() {
         callback: (e: unknown) => {
           try {
             const detail = (e as { detail?: { data?: unknown } })?.detail?.data as
-              | {
-                  booking?: { attendees?: Array<{ email?: string; name?: string }> };
-                  eventType?: { slug?: string; title?: string };
-                  date?: string;
-                }
+              | { booking?: { attendees?: Array<{ email?: string; name?: string }> } }
               | undefined;
             const attendee = detail?.booking?.attendees?.[0];
             const email = attendee?.email?.toLowerCase().trim();
             if (!email) return;
 
-            const params = new URLSearchParams(window.location.search);
             import("posthog-js").then(({ default: posthog }) => {
               if (!posthog.__loaded) return;
               posthog.identify(email, {
                 email,
                 name: attendee?.name,
-              });
-              posthog.capture("call_booked_client", {
-                source: "website_embed",
-                event_type: detail?.eventType?.slug,
-                event_type_title: detail?.eventType?.title,
-                booking_date: detail?.date,
-                page_path: window.location.pathname,
-                page_url: window.location.href,
-                utm_source: params.get("utm_source") || undefined,
-                utm_medium: params.get("utm_medium") || undefined,
-                utm_campaign: params.get("utm_campaign") || undefined,
-                utm_term: params.get("utm_term") || undefined,
-                utm_content: params.get("utm_content") || undefined,
               });
             });
           } catch (err) {
