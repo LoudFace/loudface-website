@@ -18,7 +18,15 @@ import { Badge, SectionContainer } from '@/components/ui';
 import { BlogContent } from '@/components/blog';
 import { CTA, FAQ, RelatedComparisons } from '@/components/sections';
 import { buildNoIndexMetadata, buildPageMetadata, truncateSeoTitle, truncateSeoDescription, rewriteLegacyUrls } from '@/lib/seo-utils';
-import { extractFAQFromHTML, buildFAQSchema, buildSpeakableSchema } from '@/lib/schema-utils';
+import {
+  extractFAQFromHTML,
+  buildFAQSchema,
+  buildSpeakableSchema,
+  buildArticleAuthorSchema,
+  buildOrganizationPublisher,
+  buildImageObject,
+} from '@/lib/schema-utils';
+import { autoLinkServiceMentions } from '@/lib/html-utils';
 import type { BlogPost, Category, TeamMember } from '@/lib/types';
 
 interface PageProps {
@@ -181,34 +189,23 @@ export default async function BlogPostPage({ params }: PageProps) {
   const isComparisonPost = COMPARISON_SLUGS.includes(slug);
 
   const { toc, html: processedContent } = extractTocAndAddIds(post.content);
+  // Inject internal service links AFTER toc/heading processing so the
+  // auto-linker only touches paragraph-level prose.
+  const linkedContent = autoLinkServiceMentions(processedContent);
   const canonicalUrl = `https://www.loudface.co/blog/${slug}`;
 
+  const articleImage = buildImageObject(post.thumbnail?.url);
   const articleSchema = {
     '@context': 'https://schema.org',
     '@type': 'BlogPosting',
     headline: post.name,
     url: canonicalUrl,
     description: post.excerpt || '',
-    image: post.thumbnail?.url,
+    ...(articleImage && { image: articleImage }),
     datePublished: post['published-date'],
     dateModified: post['last-updated'] || post['published-date'],
-    author: {
-      '@type': 'Person',
-      name: author?.name || 'LoudFace',
-      ...(author?.['job-title'] && { jobTitle: author['job-title'] }),
-      ...(author?.['profile-picture']?.url && { image: author['profile-picture'].url }),
-      url: author?.slug ? `https://www.loudface.co/team/${author.slug}` : 'https://www.loudface.co/about',
-      worksFor: {
-        '@type': 'Organization',
-        name: 'LoudFace',
-        url: 'https://www.loudface.co',
-      },
-    },
-    publisher: {
-      '@type': 'Organization',
-      name: 'LoudFace',
-      url: 'https://www.loudface.co',
-    },
+    author: buildArticleAuthorSchema(author),
+    publisher: buildOrganizationPublisher(),
     mainEntityOfPage: {
       '@type': 'WebPage',
       '@id': canonicalUrl,
@@ -357,8 +354,8 @@ export default async function BlogPostPage({ params }: PageProps) {
           <div className="grid grid-cols-1 lg:grid-cols-[1fr_280px] gap-8 lg:gap-12">
             {/* Article Body */}
             <article className="min-w-0">
-              {processedContent ? (
-                <BlogContent html={processedContent} visuals={post.visuals} />
+              {linkedContent ? (
+                <BlogContent html={linkedContent} visuals={post.visuals} />
               ) : (
                 <p className="text-surface-500">No content available for this post.</p>
               )}

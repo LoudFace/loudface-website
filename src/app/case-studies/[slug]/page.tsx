@@ -19,7 +19,15 @@ import { getContrastColor } from '@/lib/color-utils';
 import { Button, SectionContainer, CaseStudyCharts } from '@/components/ui';
 import { CTA, FAQ } from '@/components/sections';
 import { buildNoIndexMetadata, buildPageMetadata, truncateSeoTitle, truncateSeoDescription, rewriteLegacyUrls, resolveServiceSlug } from '@/lib/seo-utils';
-import { extractFAQFromHTML, buildFAQSchema, buildSpeakableSchema, buildReviewSchema } from '@/lib/schema-utils';
+import {
+  extractFAQFromHTML,
+  buildFAQSchema,
+  buildSpeakableSchema,
+  buildReviewSchema,
+  buildImageObject,
+  buildOrganizationPublisher,
+} from '@/lib/schema-utils';
+import { autoLinkServiceMentions } from '@/lib/html-utils';
 import type {
   CaseStudy,
   Client,
@@ -226,6 +234,8 @@ export default async function CaseStudyPage({ params }: PageProps) {
     body = body.replace(/^(\s*(?:<p[^>]*>.*?<\/p>\s*)?)<figure[^>]*>[\s\S]*?<\/figure>/, '$1');
     return extractTocAndAddIds(body);
   })();
+  // Add internal service links to first AEO / CRO / Webflow mentions.
+  const linkedBody = autoLinkServiceMentions(processedBody);
 
   const projectTitle = study['project-title'] || study.name;
   const canonicalUrl = `https://www.loudface.co/case-studies/${slug}`;
@@ -240,17 +250,18 @@ export default async function CaseStudyPage({ params }: PageProps) {
     ],
   };
 
+  const caseStudyImage = buildImageObject(study['main-project-image-thumbnail']?.url);
   const articleSchema = {
     '@context': 'https://schema.org',
     '@type': 'Article',
     headline: projectTitle,
     url: canonicalUrl,
     description: study['paragraph-summary'] || `Case study: ${projectTitle}`,
-    image: study['main-project-image-thumbnail']?.url,
+    ...(caseStudyImage && { image: caseStudyImage }),
     ...(study._createdAt && { datePublished: study._createdAt }),
     ...(study._updatedAt && { dateModified: study._updatedAt }),
     author: { '@type': 'Organization', name: 'LoudFace', url: 'https://www.loudface.co' },
-    publisher: { '@type': 'Organization', name: 'LoudFace', logo: { '@type': 'ImageObject', url: 'https://www.loudface.co/images/loudface.svg' } },
+    publisher: buildOrganizationPublisher(),
     mainEntityOfPage: { '@type': 'WebPage', '@id': canonicalUrl },
   };
 
@@ -432,8 +443,8 @@ export default async function CaseStudyPage({ params }: PageProps) {
           <div className="grid grid-cols-1 lg:grid-cols-[1fr_280px] lg:items-start gap-8 lg:gap-12">
             {/* Article Body */}
             <article className="min-w-0">
-              {processedBody ? (
-                <div className="case-study-prose" dangerouslySetInnerHTML={{ __html: processedBody }} />
+              {linkedBody ? (
+                <div className="case-study-prose" dangerouslySetInnerHTML={{ __html: linkedBody }} />
               ) : (
                 <p className="text-surface-500">No content available for this case study.</p>
               )}

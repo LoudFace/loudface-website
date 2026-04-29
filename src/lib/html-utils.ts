@@ -84,6 +84,138 @@ export function splitProseByH2(html: string | undefined): ProseSection[] {
   return sections;
 }
 
+/* ─── Service mention auto-linking ───────────────────────────────────
+ *
+ * Adds the first internal-service link for each term inside a body of CMS
+ * HTML — so paragraph mentions of "AEO", "CRO", and "Webflow" route readers
+ * (and AI crawlers extracting entity relationships) to the relevant service
+ * page. Each term is linked at most once per article: the first occurrence
+ * wins, subsequent mentions stay as plain text to keep the prose readable.
+ *
+ * Skips:
+ *   - Anchors already wrapping the term (`<a>...AEO...</a>`)
+ *   - Code / pre blocks
+ *   - Headings (we only enter <p>, <li>, <td> blocks)
+ *   - HTML tag attributes (split-on-tags tokenization sees attrs as part of
+ *     the opening tag, never as a text segment)
+ */
+
+interface ServiceLinkRule {
+  /** Word-boundary-anchored regex matching one occurrence (no /g flag — handled below). */
+  pattern: RegExp;
+  /** Internal pathname to link to. */
+  href: string;
+}
+
+const SERVICE_LINK_RULES: ReadonlyArray<ServiceLinkRule> = [
+  { pattern: /\bAEO\b/, href: '/services/seo-aeo' },
+  { pattern: /\bCRO\b/, href: '/services/cro' },
+  { pattern: /\bWebflow\b/, href: '/services/webflow' },
+];
+
+const FORBIDDEN_LINK_PARENTS = new Set(['a', 'code', 'pre']);
+
+/**
+ * Replace the first occurrence of `pattern` in `html` with an anchor
+ * pointing to `href`, skipping text inside <a>, <code>, <pre>.
+ * Returns null if no replacement was made.
+ */
+function linkFirstOccurrence(
+  html: string,
+  pattern: RegExp,
+  href: string,
+): string | null {
+  // Tokenise into alternating tags / text segments. Tags appear as a single
+  // token starting with '<'; everything else is text the user can read.
+  const tokens = html.split(/(<[^>]+>)/);
+  let depth = 0;
+
+  for (let i = 0; i < tokens.length; i++) {
+    const token = tokens[i];
+    if (!token) continue;
+
+    if (token.startsWith('<')) {
+      const tagMatch = token.match(/^<\s*(\/?)\s*(\w+)/);
+      if (!tagMatch) continue;
+      const [, slash, rawName] = tagMatch;
+      const tagName = rawName.toLowerCase();
+      if (!FORBIDDEN_LINK_PARENTS.has(tagName)) continue;
+      // Self-closing tag (e.g. <a/>) doesn't change depth.
+      if (token.endsWith('/>')) continue;
+      depth = slash ? Math.max(0, depth - 1) : depth + 1;
+      continue;
+    }
+
+    if (depth > 0) continue; // inside forbidden parent
+    const match = token.match(pattern);
+    if (!match || match.index === undefined) continue;
+
+    const before = token.slice(0, match.index);
+    const after = token.slice(match.index + match[0].length);
+    tokens[i] = `${before}<a href="${href}">${match[0]}</a>${after}`;
+    return tokens.join('');
+  }
+
+  return null;
+}
+
+/** Detect service hrefs the article already links to so we don't double-link. */
+function detectExistingServiceLinks(html: string): Set<string> {
+  const found = new Set<string>();
+  for (const rule of SERVICE_LINK_RULES) {
+    const escaped = rule.href.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    const anchorRegex = new RegExp(`<a[^>]+href=(?:"|')${escaped}(?:"|')`, 'i');
+    if (anchorRegex.test(html)) {
+      found.add(rule.href);
+    }
+  }
+  return found;
+}
+
+/**
+ * Add internal-service links for first mentions of AEO / CRO / Webflow
+ * inside paragraph-like blocks (`<p>`, `<li>`, `<td>`). Each service is
+ * linked at most once per article; subsequent mentions remain plain text.
+ *
+ * Existing anchors pointing to the service hrefs short-circuit the rule —
+ * if the author already linked "AEO" once in the post, the auto-linker
+ * leaves the rest alone instead of stacking a second link.
+ *
+ * Pass `skipHrefs` to suppress linking on pages where the URL would loop
+ * the reader back to themselves (e.g. don't link "Webflow" on the
+ * /services/webflow page itself).
+ */
+export function autoLinkServiceMentions(
+  html: string | undefined,
+  skipHrefs: ReadonlySet<string> = new Set(),
+): string {
+  if (!html) return html ?? '';
+
+  const linked = new Set<string>([
+    ...skipHrefs,
+    ...detectExistingServiceLinks(html),
+  ]);
+
+  // Short-circuit when every service is already accounted for.
+  if (linked.size >= SERVICE_LINK_RULES.length) return html;
+
+  return html.replace(
+    /<(p|li|td)\b([^>]*)>([\s\S]*?)<\/\1>/gi,
+    (block, tag: string, attrs: string, inner: string) => {
+      let updated = inner;
+      for (const rule of SERVICE_LINK_RULES) {
+        if (linked.has(rule.href)) continue;
+        const next = linkFirstOccurrence(updated, rule.pattern, rule.href);
+        if (next !== null) {
+          updated = next;
+          linked.add(rule.href);
+        }
+      }
+      return updated === inner ? block : `<${tag}${attrs}>${updated}</${tag}>`;
+    },
+  );
+}
+
 /**
  * Extracts deliverable items from a <ul><li> HTML structure.
  *
