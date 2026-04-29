@@ -117,23 +117,44 @@ export function buildOrganizationPublisher(): object {
 }
 
 /**
- * Build an `ImageObject` from a CMS image URL with explicit dimensions.
+ * Build an `ImageObject` from a CMS image URL.
  *
- * Returns undefined for empty input so callers can spread conditionally
- * (`...(img && { image: img })`). Defaults match a standard 16:9 OG aspect
- * ratio; pass exact dimensions when the source aspect differs.
+ * Sanity asset URLs encode the original dimensions as `-WIDTHxHEIGHT` in
+ * the filename (e.g. `...-1216x810.png`). When the pattern matches, we
+ * emit accurate `width`/`height` so Google's Rich Results validator and
+ * AI crawlers see a truthful aspect ratio. When it doesn't match (custom
+ * URLs, query-string transforms that drop the suffix), we omit dimensions
+ * entirely rather than guess — Google infers them from the bytes anyway.
+ *
+ * Explicit `width`/`height` overrides parsing for callers that already
+ * know the rendered crop. Returns undefined for empty input so callers
+ * can spread conditionally (`...(img && { image: img })`).
  */
 export function buildImageObject(
   url: string | undefined,
-  width = 1200,
-  height = 675,
+  width?: number,
+  height?: number,
 ): object | undefined {
   if (!url) return undefined;
+
+  let resolvedWidth = width;
+  let resolvedHeight = height;
+
+  if (resolvedWidth === undefined || resolvedHeight === undefined) {
+    // Match `-1216x810.png` or `-1216x810.png?w=...` — strip query first.
+    const noQuery = url.split('?', 1)[0];
+    const match = noQuery.match(/-(\d+)x(\d+)\.[a-z0-9]+$/i);
+    if (match) {
+      resolvedWidth = resolvedWidth ?? Number.parseInt(match[1], 10);
+      resolvedHeight = resolvedHeight ?? Number.parseInt(match[2], 10);
+    }
+  }
+
   return {
     '@type': 'ImageObject',
     url,
-    width,
-    height,
+    ...(resolvedWidth ? { width: resolvedWidth } : {}),
+    ...(resolvedHeight ? { height: resolvedHeight } : {}),
   };
 }
 
