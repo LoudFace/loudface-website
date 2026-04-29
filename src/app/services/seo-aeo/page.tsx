@@ -11,10 +11,8 @@ import dynamic from 'next/dynamic';
 import Link from 'next/link';
 import { getServicesSeoAeoContent } from '@/lib/content-utils';
 import { fetchHomepageData } from '@/lib/cms-data';
-import { logoImage, avatarImage } from '@/lib/image-utils';
-import { asset } from '@/lib/assets';
 import { AI_PLATFORM_ICONS } from '@/lib/icons';
-import type { CaseStudy, Testimonial, BlogPost, TeamMember } from '@/lib/types';
+import type { CaseStudy } from '@/lib/types';
 import {
   SectionContainer,
   SectionHeader,
@@ -22,9 +20,8 @@ import {
   Button,
   BulletLabel,
   Badge,
-  LogoImage,
 } from '@/components/ui';
-import { FAQ, RelatedServices } from '@/components/sections';
+import { FAQ, Partners, RelatedServices, TestimonialGrid } from '@/components/sections';
 import {
   DeferredCaseStudySlider,
   DeferredKnowledge,
@@ -77,8 +74,6 @@ export default async function SeoAeoServicePage() {
     teamMembers,
   } = cmsData;
 
-  const showcaseClients = allClients.filter((c) => c['showcase-logo']);
-
   // Slim data for client components (CaseStudySlider, Knowledge)
   const sliderCaseStudies = caseStudies
     .filter(s => testimonials.has(s.id))
@@ -104,11 +99,6 @@ export default async function SeoAeoServicePage() {
       'case-study': t['case-study'],
       'testimonial-body': t['testimonial-body'],
     }])
-  );
-
-  // Testimonials for the standalone testimonial section
-  const displayTestimonials = allTestimonials.filter(
-    (t) => t['profile-image']?.url && t['testimonial-body']
   );
 
   const lightBlogPosts = blogPosts
@@ -252,28 +242,8 @@ export default async function SeoAeoServicePage() {
         </div>
       </SectionContainer>
 
-      {/* ─── Logo Strip ─── */}
-      {showcaseClients.length > 0 && (
-        <SectionContainer padding="sm">
-          <p className="text-sm text-surface-500 mb-6">
-            Trusted by B2B SaaS teams at
-          </p>
-          <div className="flex flex-wrap items-center gap-4 sm:gap-6 md:gap-x-10 md:gap-y-6">
-            {showcaseClients.slice(0, 8).map((client) => (
-              <LogoImage
-                key={client.id}
-                src={
-                  logoImage(client['colored-logo']?.url) ||
-                  asset('/images/placeholder-logo.svg')
-                }
-                alt={client.name}
-                containerClassName="logo-item"
-                imgClassName="grayscale opacity-50 transition-opacity duration-200 hover:opacity-80"
-              />
-            ))}
-          </div>
-        </SectionContainer>
-      )}
+      {/* ─── Social Proof: stars + headshots + tagline + logos ─── */}
+      <Partners testimonials={allTestimonials} clients={allClients} />
 
       {/* ─── Section 2: Problem ─── */}
       <SectionContainer>
@@ -591,45 +561,11 @@ export default async function SeoAeoServicePage() {
       </SectionContainer>
 
       {/* ─── Testimonials ─── */}
-      {displayTestimonials.length > 0 && (
-        <SectionContainer className="bg-surface-50">
-          <SectionHeader
-            title="What our clients say"
-            highlightWord="clients"
-          />
-          <div className="mt-8 lg:mt-12 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {displayTestimonials.slice(0, 3).map((t) => (
-              <div
-                key={t.id}
-                className="rounded-2xl bg-white border border-surface-200 p-6 md:p-8"
-              >
-                <div
-                  className="text-sm text-surface-600 leading-relaxed [&>p]:m-0 line-clamp-5"
-                  dangerouslySetInnerHTML={{
-                    __html: t['testimonial-body'] || '',
-                  }}
-                />
-                <div className="mt-6 flex items-center gap-3">
-                  <img
-                    src={avatarImage(t['profile-image']!.url)}
-                    alt={t.name}
-                    width="40"
-                    height="40"
-                    loading="lazy"
-                    className="w-10 h-10 rounded-full object-cover"
-                  />
-                  <div>
-                    <div className="text-sm font-medium text-surface-900">
-                      {t.name}
-                    </div>
-                    <div className="text-2xs text-surface-500">{t.role}</div>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-        </SectionContainer>
-      )}
+      <TestimonialGrid
+        testimonials={allTestimonials}
+        title="What our clients say"
+        highlightWord="clients"
+      />
 
       {/* ─── FAQ ─── */}
       <FAQ

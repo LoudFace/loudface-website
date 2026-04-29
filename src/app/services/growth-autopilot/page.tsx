@@ -6,6 +6,8 @@
  */
 import type { Metadata } from 'next';
 import { getServicesGrowthAutopilotContent } from '@/lib/content-utils';
+import { fetchCollection } from '@/lib/cms-data';
+import type { Client, Testimonial } from '@/lib/types';
 import {
   SectionContainer,
   SectionHeader,
@@ -14,7 +16,7 @@ import {
   BulletLabel,
   Badge,
 } from '@/components/ui';
-import { FAQ, CTA, RelatedServices } from '@/components/sections';
+import { CTA, FAQ, Partners, RelatedServices, TestimonialGrid } from '@/components/sections';
 
 export const metadata: Metadata = {
   title: 'Growth Autopilot — SEO, AEO & CRO as One System',
@@ -43,8 +45,13 @@ export const metadata: Metadata = {
   },
 };
 
-export default function GrowthAutopilotPage() {
+export default async function GrowthAutopilotPage() {
   const content = getServicesGrowthAutopilotContent();
+
+  const [clients, testimonials] = await Promise.all([
+    fetchCollection<Client>('clients'),
+    fetchCollection<Testimonial>('testimonials'),
+  ]);
 
   const serviceSchema = {
     '@context': 'https://schema.org',
@@ -128,7 +135,7 @@ export default function GrowthAutopilotPage() {
         </p>
 
         <div className="mt-8 flex flex-wrap gap-4">
-          <Button variant="primary" size="lg" href="/audit">
+          <Button variant="primary" size="lg" href="/ai-audit">
             {content.hero.primaryCta}
           </Button>
           <Button variant="outline" size="lg" href="#packages">
@@ -150,6 +157,9 @@ export default function GrowthAutopilotPage() {
           </div>
         </div>
       </SectionContainer>
+
+      {/* ─── Social Proof: stars + headshots + tagline + logos ─── */}
+      <Partners testimonials={testimonials} clients={clients} />
 
       {/* ─── Section 2: Problems ─── */}
       <SectionContainer>
@@ -324,6 +334,13 @@ export default function GrowthAutopilotPage() {
         </div>
       </SectionContainer>
 
+      {/* ─── Testimonials ─── */}
+      <TestimonialGrid
+        testimonials={testimonials}
+        title="What our clients say"
+        highlightWord="clients"
+      />
+
       {/* ─── Section 6: Audit CTA ─── */}
       <SectionContainer id="audit">
         <div className="rounded-xl border border-surface-200 overflow-hidden">
@@ -366,7 +383,7 @@ export default function GrowthAutopilotPage() {
               </p>
 
               <div className="mt-8">
-                <Button variant="primary" size="lg" href="/audit" fullWidth>
+                <Button variant="primary" size="lg" href="/ai-audit" fullWidth>
                   Request My Free AI Visibility Audit
                 </Button>
               </div>
@@ -394,7 +411,7 @@ export default function GrowthAutopilotPage() {
         title={content.cta.title}
         subtitle={content.cta.subtitle}
         ctaText={content.cta.ctaText}
-        ctaHref="/audit"
+        ctaHref="/ai-audit"
       />
     </>
   );

@@ -10,13 +10,15 @@
  */
 import type { Metadata } from 'next';
 import { getPricingContent } from '@/lib/content-utils';
+import { fetchCollection } from '@/lib/cms-data';
+import type { Client, Testimonial } from '@/lib/types';
 import {
   SectionContainer,
   SectionHeader,
   Button,
   Badge,
 } from '@/components/ui';
-import { FAQ, CTA } from '@/components/sections';
+import { CTA, FAQ, Partners, TestimonialGrid } from '@/components/sections';
 
 export const metadata: Metadata = {
   title: 'Pricing: Solo, Dual & Scale Autopilot Plans',
@@ -85,8 +87,13 @@ function BoltIcon({ className = 'w-5 h-5' }: { className?: string }) {
   );
 }
 
-export default function PricingPage() {
+export default async function PricingPage() {
   const content = getPricingContent();
+
+  const [clients, testimonials] = await Promise.all([
+    fetchCollection<Client>('clients'),
+    fetchCollection<Testimonial>('testimonials'),
+  ]);
 
   const breadcrumbSchema = {
     '@context': 'https://schema.org',
@@ -155,6 +162,9 @@ export default function PricingPage() {
           </div>
         </div>
       </SectionContainer>
+
+      {/* ─── Social Proof: stars + headshots + tagline + logos ─── */}
+      <Partners testimonials={testimonials} clients={clients} />
 
       {/* ─── How It Works (Light, numbered steps) ─── */}
       <SectionContainer>
@@ -447,6 +457,13 @@ export default function PricingPage() {
           ))}
         </div>
       </SectionContainer>
+
+      {/* ─── Testimonials ─── */}
+      <TestimonialGrid
+        testimonials={testimonials}
+        title="What our clients say"
+        highlightWord="clients"
+      />
 
       {/* ─── FAQ ─── */}
       <FAQ

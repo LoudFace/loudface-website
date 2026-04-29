@@ -32,6 +32,19 @@ export class CmsDataError extends Error {
   }
 }
 
+// Case study slugs that have CMS records but no real content.
+// Filtered out everywhere — gallery, sitemap, slider, related, slug pages.
+// Why: removing them in Sanity also breaks references on testimonials/clients,
+// so we keep the records and hide them at the data layer instead.
+const HIDDEN_CASE_STUDY_SLUGS: ReadonlySet<string> = new Set([
+  'draw-things',
+  'mycryptoguide',
+]);
+
+function isHiddenCaseStudySlug(slug: string | undefined | null): boolean {
+  return !!slug && HIDDEN_CASE_STUDY_SLUGS.has(slug);
+}
+
 // ── GROQ projection fragments ─────────────────────────────────────
 
 // Maps Sanity camelCase fields back to kebab-case to match existing TypeScript interfaces.
@@ -289,7 +302,9 @@ export async function fetchHomepageData(): Promise<HomepageData> {
       client.fetch<ServiceCategory[]>(`*[_type == "serviceCategory"] ${SERVICE_CATEGORY_PROJECTION}`),
     ]);
 
-    data.caseStudies = caseStudies || [];
+    data.caseStudies = (caseStudies || []).filter(
+      (s) => !isHiddenCaseStudySlug(s.slug),
+    );
 
     if (clients) {
       for (const c of clients) {
@@ -402,6 +417,10 @@ export const fetchItemBySlug = cache(
     if (!slug) return null;
 
     const sanityType = COLLECTION_TO_TYPE[collectionKey] || collectionKey;
+    if (sanityType === 'caseStudy' && isHiddenCaseStudySlug(slug)) {
+      return null;
+    }
+
     const projection = TYPE_PROJECTIONS[sanityType] || `{ "id": _id, ... }`;
 
     const result = await client.fetch<T | null>(
@@ -420,10 +439,18 @@ export async function fetchCollection<T>(collectionKey: string): Promise<T[]> {
   const sanityType = COLLECTION_TO_TYPE[collectionKey] || collectionKey;
   const projection = TYPE_PROJECTIONS[sanityType] || `{ "id": _id, ... }`;
 
-  return client.fetch<T[]>(
+  const items = await client.fetch<T[]>(
     `*[_type == $type] ${projection}`,
     { type: sanityType }
   );
+
+  if (sanityType === 'caseStudy' && Array.isArray(items)) {
+    return items.filter(
+      (item) => !isHiddenCaseStudySlug((item as { slug?: string }).slug),
+    );
+  }
+
+  return items;
 }
 
 /**
@@ -448,7 +475,9 @@ export async function fetchFooterData(): Promise<FooterData> {
     ]);
 
     return {
-      caseStudies: caseStudies || [],
+      caseStudies: (caseStudies || []).filter(
+        (s) => !isHiddenCaseStudySlug(s.slug),
+      ),
       blogPosts: blogPosts || [],
     };
   } catch (error) {

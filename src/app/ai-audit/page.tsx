@@ -12,15 +12,11 @@
 import type { Metadata } from 'next';
 import { fetchCollection } from '@/lib/cms-data';
 import type { Client, Testimonial } from '@/lib/types';
-import { logoImage, avatarImage } from '@/lib/image-utils';
-import { asset } from '@/lib/assets';
 import {
   SectionContainer,
-  BulletLabel,
   Button,
-  LogoImage,
 } from '@/components/ui';
-import { FAQ } from '@/components/sections';
+import { FAQ, Partners, TestimonialGrid } from '@/components/sections';
 import { AuditLandingForm } from './_components/AuditLandingForm';
 
 export const metadata: Metadata = {
@@ -114,11 +110,6 @@ export default async function AiAuditPage() {
     fetchCollection<Testimonial>('testimonials'),
   ]);
 
-  const showcaseClients = clients.filter((c) => c['showcase-logo']);
-  const displayTestimonials = testimonials.filter(
-    (t) => t['profile-image']?.url && t['testimonial-body']
-  );
-
   const breadcrumbSchema = {
     '@context': 'https://schema.org',
     '@type': 'BreadcrumbList',
@@ -181,67 +172,13 @@ export default async function AiAuditPage() {
             <AuditLandingForm />
           </div>
         </div>
-
-        {/* Trust line with logos */}
-        {showcaseClients.length > 0 && (
-          <div className="mt-16 pt-12 border-t border-surface-200">
-            <p className="text-sm text-surface-500 mb-6">
-              Used by B2B SaaS teams at
-            </p>
-            <div className="flex flex-wrap items-center gap-4 sm:gap-6 md:gap-x-10 md:gap-y-6">
-              {showcaseClients.slice(0, 8).map((client) => (
-                <LogoImage
-                  key={client.id}
-                  src={
-                    logoImage(client['colored-logo']?.url) ||
-                    asset('/images/placeholder-logo.svg')
-                  }
-                  alt={client.name}
-                  containerClassName="logo-item"
-                  imgClassName="grayscale opacity-50 transition-opacity duration-200 hover:opacity-80"
-                />
-              ))}
-            </div>
-          </div>
-        )}
       </SectionContainer>
 
+      {/* ─── Social Proof: stars + headshots + tagline + logos ─── */}
+      <Partners testimonials={testimonials} clients={clients} />
+
       {/* ─── Testimonials ─── */}
-      {displayTestimonials.length > 0 && (
-        <SectionContainer className="bg-surface-50">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {displayTestimonials.slice(0, 3).map((t) => (
-              <div
-                key={t.id}
-                className="rounded-2xl bg-white border border-surface-200 p-6 md:p-8"
-              >
-                <div
-                  className="text-sm text-surface-600 leading-relaxed [&>p]:m-0 line-clamp-5"
-                  dangerouslySetInnerHTML={{
-                    __html: t['testimonial-body'] || '',
-                  }}
-                />
-                <div className="mt-6 flex items-center gap-3">
-                  <img
-                    src={avatarImage(t['profile-image']!.url)}
-                    alt={t.name}
-                    width="40"
-                    height="40"
-                    loading="lazy"
-                    className="w-10 h-10 rounded-full object-cover"
-                  />
-                  <div>
-                    <div className="text-sm font-medium text-surface-900">
-                      {t.name}
-                    </div>
-                    <div className="text-2xs text-surface-500">{t.role}</div>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-        </SectionContainer>
-      )}
+      <TestimonialGrid testimonials={testimonials} />
 
       {/* ─── Problem Block (Dark) ─── */}
       <SectionContainer padding="lg" className="bg-surface-900 text-surface-300">
