@@ -1,13 +1,14 @@
 /**
  * CaseStudyCharts — lightweight, server-rendered chart component
  *
- * Zero client JS. Pure div-based bars styled with Tailwind + inline widths/heights.
- * Two chart types:
- *   - barComparison: grouped vertical bars (two series side-by-side per group)
- *   - horizontalBar: single-series horizontal bars (rows stacked top-to-bottom).
- *     Best for categorical data with long descriptive labels (prompt names,
- *     competitor names, page paths) where a horizontal layout lets labels wrap
- *     naturally instead of cramping under vertical columns.
+ * Zero client JS. Pure div-based horizontal bars styled with Tailwind +
+ * inline widths. Two chart types:
+ *   - horizontalBar: single-series horizontal bars (rows stacked top-to-bottom)
+ *   - barComparison: grouped horizontal bars (two stacked bars per row, before/after)
+ *
+ * Both types share the same label-column-on-the-left layout so long category
+ * labels (prompt names, competitor names, page paths) wrap naturally instead
+ * of cramping under narrow vertical columns.
  *
  * Accent color defaults to the case study's client color.
  */
@@ -18,8 +19,6 @@ interface CaseStudyChartsProps {
   charts: CaseStudyChart[];
   accentColor?: string;
 }
-
-const BAR_HEIGHT = 200;
 
 /* ── Horizontal Bar Chart (single series, true horizontal layout) ── */
 
@@ -67,9 +66,9 @@ function HorizontalBarChart({
   );
 }
 
-/* ── Vertical Grouped Bar Chart (two series) ───────────────── */
+/* ── Horizontal Grouped Bar Chart (two series, stacked per row) ── */
 
-function VerticalGroupedBarChart({
+function HorizontalGroupedBarChart({
   data,
   legendPrimary,
   legendSecondary,
@@ -85,9 +84,8 @@ function VerticalGroupedBarChart({
 
   return (
     <div>
-      {/* Legend */}
       {(legendPrimary || legendSecondary) && (
-        <div className="flex items-center gap-4 mb-6">
+        <div className="flex items-center gap-4 mb-4">
           {legendPrimary && (
             <div className="flex items-center gap-1.5">
               <div
@@ -109,57 +107,56 @@ function VerticalGroupedBarChart({
         </div>
       )}
 
-      {/* Chart area */}
-      <div
-        className="flex items-end gap-2 sm:gap-6"
-        role="img"
-        aria-label="Grouped bar chart"
-        style={{ height: `${BAR_HEIGHT}px` }}
-      >
+      <div className="space-y-3.5" role="img" aria-label="Grouped horizontal bar chart">
         {data.map((item, i) => {
           const primaryPct = maxValue > 0 ? (item.value / maxValue) * 100 : 0;
           const secondaryPct =
             maxValue > 0 ? ((item.secondaryValue ?? 0) / maxValue) * 100 : 0;
 
           return (
-            <div key={i} className="flex-1 flex flex-col items-center min-w-0 h-full">
-              {/* Bar pair */}
-              <div className="flex items-end gap-1 w-full h-full justify-center">
+            <div
+              key={i}
+              className="grid grid-cols-[minmax(0,_42%)_1fr] sm:grid-cols-[minmax(120px,_38%)_1fr] gap-2 sm:gap-3 items-center"
+            >
+              <span className="text-2xs sm:text-xs text-surface-600 leading-tight pr-1">
+                {item.label}
+              </span>
+              <div className="space-y-1">
                 {/* Primary (before) */}
-                <div className="flex flex-col items-center justify-end h-full flex-1 max-w-8">
-                  <span className="text-2xs font-medium text-surface-400 mb-1 tabular-nums hidden sm:block">
+                <div className="flex items-center gap-2">
+                  <div className="relative flex-1 h-3 bg-surface-100 rounded overflow-hidden">
+                    <div
+                      className="h-full rounded"
+                      style={{
+                        width: `${Math.max(primaryPct, 1)}%`,
+                        backgroundColor: accentColor,
+                        opacity: 0.3,
+                        minWidth: '4px',
+                      }}
+                    />
+                  </div>
+                  <span className="text-2xs sm:text-xs font-medium text-surface-500 tabular-nums shrink-0 w-10 text-right">
                     {item.displayValue || item.value.toLocaleString()}
                   </span>
-                  <div
-                    className="w-full rounded-t"
-                    style={{
-                      height: `${Math.max(primaryPct, 2)}%`,
-                      backgroundColor: accentColor,
-                      opacity: 0.3,
-                      minHeight: '4px',
-                    }}
-                  />
                 </div>
                 {/* Secondary (after) */}
-                <div className="flex flex-col items-center justify-end h-full flex-1 max-w-8">
-                  <span className="text-2xs font-medium text-surface-900 mb-1 tabular-nums hidden sm:block">
+                <div className="flex items-center gap-2">
+                  <div className="relative flex-1 h-3 bg-surface-100 rounded overflow-hidden">
+                    <div
+                      className="h-full rounded"
+                      style={{
+                        width: `${Math.max(secondaryPct, 1)}%`,
+                        backgroundColor: accentColor,
+                        minWidth: '4px',
+                      }}
+                    />
+                  </div>
+                  <span className="text-2xs sm:text-xs font-medium text-surface-900 tabular-nums shrink-0 w-10 text-right">
                     {item.secondaryDisplayValue ||
                       (item.secondaryValue ?? 0).toLocaleString()}
                   </span>
-                  <div
-                    className="w-full rounded-t"
-                    style={{
-                      height: `${Math.max(secondaryPct, 2)}%`,
-                      backgroundColor: accentColor,
-                      minHeight: '4px',
-                    }}
-                  />
                 </div>
               </div>
-              {/* Label */}
-              <span className="mt-2 text-2xs sm:text-xs text-surface-500 text-center leading-tight w-full">
-                {item.label}
-              </span>
             </div>
           );
         })}
@@ -189,7 +186,7 @@ export function CaseStudyCharts({
           {chart.chartType === 'horizontalBar' ? (
             <HorizontalBarChart data={chart.data} accentColor={accentColor} />
           ) : (
-            <VerticalGroupedBarChart
+            <HorizontalGroupedBarChart
               data={chart.data}
               legendPrimary={chart.legendPrimary}
               legendSecondary={chart.legendSecondary}
