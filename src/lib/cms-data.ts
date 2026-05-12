@@ -6,7 +6,7 @@
  */
 
 import { cache } from 'react';
-import { client } from './sanity.client';
+import { client, getServerClient } from './sanity.client';
 import type {
   CaseStudy,
   Client,
@@ -423,7 +423,11 @@ export const fetchItemBySlug = cache(
 
     const projection = TYPE_PROJECTIONS[sanityType] || `{ "id": _id, ... }`;
 
-    const result = await client.fetch<T | null>(
+    // Draft-aware: when Next.js draft mode is on, returns the draft document
+    // with stega encoding so VisualEditing can map text → field in Studio.
+    // When off, returns the public published document.
+    const fetchClient = await getServerClient();
+    const result = await fetchClient.fetch<T | null>(
       `*[_type == $type && slug.current == $slug][0] ${projection}`,
       { type: sanityType, slug }
     );
