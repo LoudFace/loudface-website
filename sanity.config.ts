@@ -19,12 +19,13 @@ import { schemaTypes } from './src/sanity/schemas';
  * - <VisualEditing /> mounted in the (site)/layout.tsx
  */
 
-// Where the live preview iframes from. Falls back to the production domain
-// so this works both on Vercel preview deployments and locally.
-const SITE_URL =
-  process.env.NEXT_PUBLIC_SITE_URL ||
-  process.env.NEXT_PUBLIC_VERCEL_URL?.replace(/^/, 'https://') ||
-  'https://www.loudface.co';
+// Where the live preview iframes from. Defaults to the canonical production
+// domain so the preview self-references — Studio at www.loudface.co/studio
+// iframes www.loudface.co content, same origin, no CORS edge cases.
+//
+// To preview against a Vercel preview deploy or localhost instead, set
+// NEXT_PUBLIC_SITE_URL on that environment.
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.loudface.co';
 
 export default defineConfig({
   name: 'loudface',
