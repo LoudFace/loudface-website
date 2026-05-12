@@ -8,12 +8,19 @@ const apiVersion = '2025-03-29';
 /**
  * Public, read-only client. Uses CDN in production.
  * Use for: published-content reads from anywhere (server or browser).
+ *
+ * CRITICAL: `perspective: 'published'` is required to exclude drafts. The
+ * default Sanity perspective is `raw`, which returns both drafts and published
+ * documents — meaning a draft-only document with a `slug.current` set is
+ * publicly retrievable. Without this, `fetchItemBySlug` and `generateStaticParams`
+ * would build pages for unpublished drafts and expose them at their public URLs.
  */
 export const client = createClient({
   projectId,
   dataset,
   apiVersion,
   useCdn: process.env.NODE_ENV === 'production',
+  perspective: 'published',
 });
 
 /**
