@@ -4,6 +4,8 @@
  * Paginated listing (12 per page) to keep HTML size under 256 KB.
  * Featured studies always appear first.
  */
+export const revalidate = 60;
+
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { fetchHomepageData } from '@/lib/cms-data';

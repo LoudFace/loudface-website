@@ -1,3 +1,5 @@
+export const revalidate = 60;
+
 import "../globals.css";
 import Script from "next/script";
 import { draftMode } from "next/headers";

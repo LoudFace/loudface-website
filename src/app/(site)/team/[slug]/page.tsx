@@ -8,6 +8,8 @@
  * - All blog posts by this author — demonstrates expertise
  * - Link back from blog posts → here → builds topical authority
  */
+export const revalidate = 60;
+
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
 import type { Metadata } from 'next';

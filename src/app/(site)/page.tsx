@@ -8,6 +8,8 @@
  * Components: Hero, Partners, ProblemCheckerA, CaseStudySlider, Results,
  *             Knowledge, FAQ, CTA
  */
+export const revalidate = 60;
+
 import type { Metadata } from 'next';
 import { fetchHomepageData, assertCmsData } from '@/lib/cms-data';
 import { getHomepageContent } from '@/lib/content-utils';
