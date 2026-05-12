@@ -1,5 +1,12 @@
 import type { Metadata } from 'next';
 
+/**
+ * (audit) Layout
+ * The audit tool is a focused, fullscreen workspace. Because this route group
+ * sits at app root (sibling to (site)/), site chrome is *not* inherited —
+ * no Header/Footer/Webflow-badge/Cal/Leadsy. Only the dark body bg is set here.
+ */
+
 export const metadata: Metadata = {
   title: {
     default: 'AI Visibility Audit | LoudFace',
@@ -18,10 +25,7 @@ export default function AuditLayout({
 }>) {
   return (
     <>
-      {/* Hide site chrome (Header, Footer, Webflow badge) on audit pages */}
       <style>{`
-        header, footer, [aria-label="Webflow Enterprise Partner"],
-        .skip-link { display: none !important; }
         body { background-color: var(--color-surface-950); color: var(--color-surface-300); overflow: hidden; }
       `}</style>
       {children}

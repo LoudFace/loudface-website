@@ -1,10 +1,19 @@
 'use client';
 
-import { useState, type FormEvent } from 'react';
+import { useState, useSyncExternalStore, type FormEvent } from 'react';
 import { useRouter } from 'next/navigation';
+
+const subscribeHydration = () => () => {};
+const getHydratedSnapshot = () => true;
+const getServerHydrationSnapshot = () => false;
 
 export function AuditLandingForm() {
   const router = useRouter();
+  const hydrated = useSyncExternalStore(
+    subscribeHydration,
+    getHydratedSnapshot,
+    getServerHydrationSnapshot,
+  );
   const [url, setUrl] = useState('');
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
@@ -15,6 +24,7 @@ export function AuditLandingForm() {
 
   async function handleSubmit(e: FormEvent) {
     e.preventDefault();
+    if (!hydrated || status === 'loading') return;
     setStatus('loading');
     setErrorMsg('');
 
@@ -166,7 +176,7 @@ export function AuditLandingForm() {
 
       <button
         type="submit"
-        disabled={status === 'loading'}
+        disabled={!hydrated || status === 'loading'}
         className="w-full rounded-lg bg-primary-600 px-6 py-3.5 text-base font-medium text-white transition-colors hover:bg-primary-500 focus-visible:outline-2 focus-visible:outline-primary-500 focus-visible:outline-offset-2 active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed"
       >
         {status === 'loading' ? (

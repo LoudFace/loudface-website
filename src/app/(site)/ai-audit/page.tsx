@@ -22,14 +22,14 @@ import { AuditLandingForm } from './_components/AuditLandingForm';
 export const metadata: Metadata = {
   title: 'Free AI Visibility Audit for B2B SaaS',
   description:
-    'Check where your brand stands across ChatGPT, Perplexity, and Google SGE versus competitors. Get a free AI search presence score and a personal Loom walkthrough.',
+    'Check where your brand stands across ChatGPT, Claude, Gemini, and Perplexity versus competitors. Get a free AI search presence score and a personal Loom walkthrough.',
   alternates: {
     canonical: '/ai-audit',
   },
   openGraph: {
     title: 'Free AI Visibility Audit for B2B SaaS | LoudFace',
     description:
-      'Check where your brand stands across ChatGPT, Perplexity, and Google SGE versus competitors. Get a free AI search presence score and a personal Loom walkthrough.',
+      'Check where your brand stands across ChatGPT, Claude, Gemini, and Perplexity versus competitors. Get a free AI search presence score and a personal Loom walkthrough.',
     type: 'website',
     url: '/ai-audit',
     siteName: 'LoudFace',
@@ -48,7 +48,7 @@ export const metadata: Metadata = {
     site: '@loudface',
     title: 'Free AI Visibility Audit for B2B SaaS | LoudFace',
     description:
-      'Check where your brand stands across ChatGPT, Perplexity, and Google SGE versus competitors. Get a free AI search presence score and a personal Loom walkthrough.',
+      'Check where your brand stands across ChatGPT, Claude, Gemini, and Perplexity versus competitors. Get a free AI search presence score and a personal Loom walkthrough.',
     images: ['/opengraph-image'],
   },
 };
@@ -61,7 +61,7 @@ const HERO_BENEFITS = [
 ];
 
 const AUDIT_REVEALS = [
-  'Your AI search presence score across ChatGPT, Perplexity, and Google SGE',
+  'Your AI search presence score across ChatGPT, Claude, Gemini, and Perplexity',
   'Side-by-side comparison vs your top 3 competitors',
   'The exact queries your buyers are running on AI platforms',
   'The gap between your Google rankings and your AI visibility',
@@ -77,7 +77,7 @@ const FAQ_ITEMS = [
   {
     question: 'How is this different from a generic SEO audit?',
     answer:
-      'It\u2019s not an SEO audit. We\u2019re measuring AI search visibility \u2014 whether your brand gets cited by ChatGPT and Perplexity when your buyers search for solutions. Most tools don\u2019t track this at all.',
+      'It\u2019s not an SEO audit. We\u2019re measuring AI search visibility \u2014 whether your brand gets cited by ChatGPT, Claude, Gemini, and Perplexity when your buyers search for solutions. Most tools don\u2019t track this at all.',
   },
   {
     question: 'What do you do with my information?',
@@ -144,8 +144,8 @@ export default async function AiAuditPage() {
             </h1>
 
             <p className="mt-6 text-lg text-surface-600 leading-relaxed max-w-lg">
-              Check where your brand stands across ChatGPT, Perplexity, and
-              Google SGE searches &mdash; versus your top competitors.
+              Check where your brand stands across ChatGPT, Claude, Gemini,
+              and Perplexity searches &mdash; versus your top competitors.
             </p>
 
             <div className="mt-8">
