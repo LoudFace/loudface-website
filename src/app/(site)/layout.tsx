@@ -1,4 +1,6 @@
+import "../globals.css";
 import Script from "next/script";
+import { draftMode } from "next/headers";
 import { VisualEditing } from "next-sanity/visual-editing";
 import { CalHandler } from "@/components/CalHandler";
 import { Header } from "@/components/Header";
@@ -6,6 +8,7 @@ import { Footer } from "@/components/Footer";
 import { asset } from "@/lib/assets";
 import { fetchFooterData } from "@/lib/cms-data";
 import { PostHogProvider } from "@/components/PostHogProvider";
+import { SanityLive } from "@/lib/sanity.live";
 
 /**
  * (site) Layout
@@ -26,9 +29,10 @@ export default async function SiteLayout({
   const footerData = await fetchFooterData();
   const caseStudies = footerData.caseStudies;
   const blogPosts = footerData.blogPosts;
+  const isDraftMode = (await draftMode()).isEnabled;
 
   return (
-    <>
+    <div className="font-sans antialiased overflow-x-clip">
       {/* Google Tag Manager (noscript) */}
       <noscript>
         <iframe
@@ -97,13 +101,17 @@ window.addEventListener(e,loadCal,{once:true,passive:true});});})();`}
         {/* Cal.com booking modal handler */}
         <CalHandler />
 
-        {/* Sanity Visual Editing — mounted UNCONDITIONALLY.
-            The component self-detects whether it's inside a Sanity Presentation
-            iframe and only renders the click-to-edit overlay when it is. The
-            comlink handshake to Studio happens on first load, before draft mode
-            is enabled, so mounting it conditionally on draftMode breaks the
-            initial connection ("Unable to connect to visual editing" error). */}
-        <VisualEditing />
+        {/* Sanity Live — ALWAYS mounted. Establishes the EventSource to the
+            Content Lake so subscribed sanityFetch queries auto-refresh when
+            content changes in Studio. Also what powers the initial Presentation
+            iframe comlink handshake (before draft mode is even toggled on). */}
+        <SanityLive />
+
+        {/* Sanity Visual Editing — only mounted when Next.js draft mode is on.
+            Renders the click-to-edit overlay + the "Viewing as draft" toolbar.
+            Outside draft mode, no overlay JS loads, page is identical to
+            published content. */}
+        {isDraftMode && <VisualEditing />}
 
         {/* Leadsy.ai visitor identification pixel — afterInteractive so it
             fires on fast-bouncing sessions (lazyOnload missed them). Tag is
@@ -116,6 +124,6 @@ window.addEventListener(e,loadCal,{once:true,passive:true});});})();`}
           data-version="062024"
         />
       </PostHogProvider>
-    </>
+    </div>
   );
 }

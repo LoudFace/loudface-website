@@ -1,21 +1,22 @@
 import type { Metadata } from "next";
 import localFont from "next/font/local";
 import Script from "next/script";
-import "./globals.css";
 
 /**
  * Root Layout — intentionally minimal.
  *
  * Holds only: <html>, <body>, fonts, structured data, metadata, and
- * a dev-only debug tool. All site chrome (Header, Footer, PostHog, GTM,
- * Cal, Leadsy, Webflow badge) lives in app/(site)/layout.tsx so that the
- * /studio and (audit) routes bypass it cleanly. This avoids the situation
- * where the Sanity Studio inherits styled-components conflicts, third-party
- * tracking scripts, and DOM that needs to be hidden with CSS.
+ * a dev-only debug tool.
  *
- * If you're adding a new sitewide marketing/site component, put it in
- * (site)/layout.tsx. If you're adding something that must apply to /studio
- * and (audit) too (rarely), add it here.
+ * IMPORTANT: globals.css (Tailwind + preflight + design tokens) is NOT
+ * imported here. It would otherwise apply to /studio and conflict with
+ * Sanity's styled-components (preflight resets buttons, svg, lists, etc.).
+ * globals.css is imported only in (site)/layout.tsx and (audit)/layout.tsx,
+ * so Sanity Studio renders against a clean slate. The /studio route gets
+ * exactly the styling Sanity ships — no Tailwind preflight bleed.
+ *
+ * All site chrome (Header, Footer, PostHog, GTM, Cal, Leadsy, Webflow badge)
+ * also lives in (site)/layout.tsx so that /studio and (audit) bypass them.
  */
 
 /* ─── Fonts via next/font/local ───────────────────────────────────────
@@ -213,7 +214,7 @@ export default function RootLayout({
           }}
         />
       </head>
-      <body className="font-sans antialiased overflow-x-clip">
+      <body>
         {children}
       </body>
     </html>

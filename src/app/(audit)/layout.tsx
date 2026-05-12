@@ -1,3 +1,4 @@
+import "../globals.css";
 import type { Metadata } from 'next';
 
 /**
@@ -5,6 +6,8 @@ import type { Metadata } from 'next';
  * The audit tool is a focused, fullscreen workspace. Because this route group
  * sits at app root (sibling to (site)/), site chrome is *not* inherited —
  * no Header/Footer/Webflow-badge/Cal/Leadsy. Only the dark body bg is set here.
+ *
+ * Imports globals.css explicitly because it's no longer in the root layout.
  */
 
 export const metadata: Metadata = {
