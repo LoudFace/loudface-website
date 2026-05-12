@@ -470,24 +470,29 @@ export async function fetchSeoPages(): Promise<SeoPage[]> {
  * Fetch footer data (case studies + blog posts)
  */
 export async function fetchFooterData(): Promise<FooterData> {
-  try {
-    const [caseStudies, blogPosts] = await Promise.all([
-      client.fetch<CaseStudy[]>(`*[_type == "caseStudy"] ${CASE_STUDY_PROJECTION}`),
-      client.fetch<BlogPost[]>(
-        `*[_type == "blogPost"] | order(publishedDate desc) ${BLOG_POST_PROJECTION}`
-      ),
-    ]);
+  // Track which of the two parallel fetches failed so we don't blow away both
+  // when only one is malformed.
+  const [caseStudiesRes, blogPostsRes] = await Promise.allSettled([
+    client.fetch<CaseStudy[]>(`*[_type == "caseStudy"] ${CASE_STUDY_PROJECTION}`),
+    client.fetch<BlogPost[]>(
+      `*[_type == "blogPost"] | order(publishedDate desc) ${BLOG_POST_PROJECTION}`
+    ),
+  ]);
 
-    return {
-      caseStudies: (caseStudies || []).filter(
-        (s) => !isHiddenCaseStudySlug(s.slug),
-      ),
-      blogPosts: blogPosts || [],
-    };
-  } catch (error) {
-    console.error('[CMS] Footer data fetch failed:', error);
-    return { caseStudies: [], blogPosts: [] };
+  if (caseStudiesRes.status === 'rejected') {
+    console.error('[CMS] Footer case studies fetch failed:', caseStudiesRes.reason);
   }
+  if (blogPostsRes.status === 'rejected') {
+    console.error('[CMS] Footer blog posts fetch failed:', blogPostsRes.reason);
+  }
+
+  const caseStudies = caseStudiesRes.status === 'fulfilled' ? caseStudiesRes.value : [];
+  const blogPosts = blogPostsRes.status === 'fulfilled' ? blogPostsRes.value : [];
+
+  return {
+    caseStudies: (caseStudies || []).filter((s) => !isHiddenCaseStudySlug(s.slug)),
+    blogPosts: blogPosts || [],
+  };
 }
 
 /**

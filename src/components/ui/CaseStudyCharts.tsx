@@ -1,10 +1,13 @@
 /**
  * CaseStudyCharts — lightweight, server-rendered chart component
  *
- * Zero client JS. Pure div-based vertical bars styled with Tailwind + inline heights.
+ * Zero client JS. Pure div-based bars styled with Tailwind + inline widths/heights.
  * Two chart types:
  *   - barComparison: grouped vertical bars (two series side-by-side per group)
- *   - horizontalBar: single-series vertical bars
+ *   - horizontalBar: single-series horizontal bars (rows stacked top-to-bottom).
+ *     Best for categorical data with long descriptive labels (prompt names,
+ *     competitor names, page paths) where a horizontal layout lets labels wrap
+ *     naturally instead of cramping under vertical columns.
  *
  * Accent color defaults to the case study's client color.
  */
@@ -18,9 +21,9 @@ interface CaseStudyChartsProps {
 
 const BAR_HEIGHT = 200;
 
-/* ── Vertical Bar Chart (single series) ────────────────────── */
+/* ── Horizontal Bar Chart (single series, true horizontal layout) ── */
 
-function VerticalBarChart({
+function HorizontalBarChart({
   data,
   accentColor,
 }: {
@@ -30,34 +33,33 @@ function VerticalBarChart({
   const maxValue = Math.max(...data.map((d) => d.value));
 
   return (
-    <div
-      className="flex items-end gap-3 sm:gap-4"
-      role="img"
-      aria-label="Vertical bar chart"
-      style={{ height: `${BAR_HEIGHT}px` }}
-    >
+    <div className="space-y-2.5" role="img" aria-label="Horizontal bar chart">
       {data.map((item, i) => {
         const pct = maxValue > 0 ? (item.value / maxValue) * 100 : 0;
 
         return (
-          <div key={i} className="flex-1 flex flex-col items-center justify-end h-full min-w-0">
-            {/* Value label */}
-            <span className="text-xs font-medium text-surface-900 mb-1.5 tabular-nums">
-              {item.displayValue || item.value.toLocaleString()}
-            </span>
-            {/* Bar */}
-            <div
-              className="w-full max-w-16 rounded-t"
-              style={{
-                height: `${Math.max(pct, 2)}%`,
-                backgroundColor: accentColor,
-                minHeight: '6px',
-              }}
-            />
-            {/* Label */}
-            <span className="mt-2 text-2xs sm:text-xs text-surface-500 text-center leading-tight w-full">
+          <div
+            key={i}
+            className="grid grid-cols-[minmax(0,_42%)_1fr] sm:grid-cols-[minmax(120px,_38%)_1fr] gap-2 sm:gap-3 items-center"
+          >
+            <span className="text-2xs sm:text-xs text-surface-600 leading-tight pr-1">
               {item.label}
             </span>
+            <div className="flex items-center gap-2">
+              <div className="relative flex-1 h-5 bg-surface-100 rounded overflow-hidden">
+                <div
+                  className="h-full rounded"
+                  style={{
+                    width: `${Math.max(pct, 2)}%`,
+                    backgroundColor: accentColor,
+                    minWidth: '4px',
+                  }}
+                />
+              </div>
+              <span className="text-2xs sm:text-xs font-medium text-surface-900 tabular-nums shrink-0 w-10 text-right">
+                {item.displayValue || item.value.toLocaleString()}
+              </span>
+            </div>
           </div>
         );
       })}
@@ -185,7 +187,7 @@ export function CaseStudyCharts({
             {chart.title}
           </h3>
           {chart.chartType === 'horizontalBar' ? (
-            <VerticalBarChart data={chart.data} accentColor={accentColor} />
+            <HorizontalBarChart data={chart.data} accentColor={accentColor} />
           ) : (
             <VerticalGroupedBarChart
               data={chart.data}
