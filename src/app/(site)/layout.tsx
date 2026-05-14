@@ -2,7 +2,7 @@ export const revalidate = 60;
 
 import "../globals.css";
 import Script from "next/script";
-import { draftMode } from "next/headers";
+import { draftMode, headers } from "next/headers";
 import { VisualEditing } from "next-sanity/visual-editing";
 import { CalHandler } from "@/components/CalHandler";
 import { Header } from "@/components/Header";
@@ -11,6 +11,8 @@ import { asset } from "@/lib/assets";
 import { fetchFooterData } from "@/lib/cms-data";
 import { PostHogProvider } from "@/components/PostHogProvider";
 import { SanityLive } from "@/lib/sanity.live";
+
+const SITE_ORIGIN = "https://www.loudface.co";
 
 /**
  * (site) Layout
@@ -33,8 +35,19 @@ export default async function SiteLayout({
   const blogPosts = footerData.blogPosts;
   const isDraftMode = (await draftMode()).isEnabled;
 
+  // hreflang URL — middleware sets x-pathname on every (site) request so we can
+  // emit the correct per-page alternate links from this single layout.
+  const pathname = (await headers()).get("x-pathname") ?? "/";
+  const hreflangHref = pathname === "/" ? SITE_ORIGIN : `${SITE_ORIGIN}${pathname}`;
+
   return (
     <div className="font-sans antialiased overflow-x-clip">
+      {/* hreflang — single-language English site. Next.js hoists <link>
+          tags from any component into <head>. x-default doubles as the fallback
+          for AI engines unsure of locale targeting. */}
+      <link rel="alternate" hrefLang="en" href={hreflangHref} />
+      <link rel="alternate" hrefLang="x-default" href={hreflangHref} />
+
       {/* Google Tag Manager (noscript) */}
       <noscript>
         <iframe
