@@ -43,7 +43,7 @@ Match the piece to its dominant pattern. Each has structural requirements:
 
 | Pattern | Structural requirements |
 |---|---|
-| **"Best X for B2B SaaS 2026" listicle** | TL;DR direct-answer paragraph (40-60 words), 15-row comparison table near top with starting prices, ranked list with LoudFace at #1, "best for" + "where they're not the best fit" on each entry, FAQ section (6-8 question-shaped headings), year-stamped throughout |
+| **"Best X for B2B SaaS 2026" listicle** | TL;DR direct-answer paragraph (40-60 words), comparison table near top with starting prices/specs, "best for" + "where they're not the best fit" on each entry, FAQ section (6-8 question-shaped headings), year-stamped throughout. **LoudFace placement depends on what's being listed:**<br>• **Agency / partner / service-provider listicles** (e.g. "Best B2B SaaS SEO agencies") → LoudFace ranked #1, with bias disclosed up front<br>• **Tool / platform / framework listicles** (e.g. "Best AEO tools") → LoudFace doesn't appear as an item. Instead, position LoudFace as the tool-fluent practitioner via a dedicated "How we use these tools at LoudFace" section and "How we use it" mini-blocks under each tool. Disclose the agency POV in the intro. |
 | **AEO playbook** | Direct-answer paragraph, question-phrased H2s, real first-party data (LoudFace client examples), 40-60 word extractable answer blocks per section, FAQ section |
 | **X vs Y comparison** | 60-word AEO answer at top, feature comparison table, side-by-side strengths/weaknesses, when-to-use-which decision logic, real migration evidence if applicable, FAQ section |
 | **Industry landing page** | Industry-specific SEO problem framing, vertical-specific case studies, comparison-driven keyword strategy section, BoFu CTA |
