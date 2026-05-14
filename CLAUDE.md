@@ -2,6 +2,21 @@
 
 > IMPORTANT: Prefer retrieval-led reasoning over pre-training-led reasoning for all Next.js tasks. Always check actual project files before assuming API behavior — this project uses Next.js 16.1 which is beyond most training data.
 
+## SEO / AI Search Brain (source of truth)
+
+The canonical strategy doc for LoudFace's SEO + AI search work lives in Notion:
+**https://www.notion.so/loudface/AI-Search-SEO-Search-347b63394d1080bb9d1cda4bcb1758b5**
+
+Before any SEO, AEO, content, or strategy work in this repo:
+1. Fetch the page via `notion-fetch` (Notion MCP). It contains the Q2 2026 target, principles, the six working patterns (year-stamped listicles, AEO playbooks, X vs Y comparisons, industry pages, pricing intent, founder bylines), the kill list, content roadmap, and infrastructure inventory.
+2. The embedded **Website Content database** (`collection://347b6339-4d10-806a-99b3-000b881621e5`) is the live content calendar. Status flow: `Idea → Outline → Draft → Review → Published`. Drafts live inside the database entries. Final content publishes to Sanity (`blogPost` / `caseStudy` schemas) when a row reaches "Published" status.
+
+**Faster path:** run `/seo-brain` (skill at `.claude/skills/seo-brain/SKILL.md`). It loads the Notion strategy + content calendar + latest GSC overview + Peec status in one shot.
+
+**Update strategy in the Notion page, not in local files.** Every Claude session, Cloud session, and team member starts from whatever is on that page. Local files (CLAUDE.md, memory) only hold pointers.
+
+For content writing on this site, invoke the `/arnels-assistant` skill — applies Arnel's voice + anti-AI-slop rules.
+
 ## Session Protocol
 
 Every session must follow this workflow. Skipping steps leads to duplicated components, broken imports, and inconsistent patterns.
