@@ -82,3 +82,12 @@ Keep it tight. The point is a fast briefing, not a report.
 All three downstream commands invoke `/arnels-assistant` internally for voice. `/arnels-assistant` is the root of all content writing — any voice improvements you make to it propagate automatically to everything in the loop.
 
 For non-site content (LinkedIn, X, internal docs), suggest calling `/arnels-assistant` directly without the SEO loop.
+
+## Logging
+
+After delivering the briefing, append one row to the **Activity Log** database (`collection://586eb325-8bfd-417d-8663-73cda77f8234`):
+- Action: `Loaded brain — [1-line headline of what was current]`
+- Skill: `seo-brain`
+- Target: short context (e.g. "GSC last 7d + calendar state")
+- Outcome: `Done`
+- Notes: omit unless something notable happened (a surprising trend, a failed fetch)

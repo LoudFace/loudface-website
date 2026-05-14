@@ -109,3 +109,12 @@ Under 100 words:
 ```
 
 Every shipped piece follows this chain. Voice improvements happen by editing `/arnels-assistant` itself, not by special-casing in downstream commands.
+
+## Logging
+
+After the draft is written and status flipped, append one row to the **Activity Log** database (`collection://586eb325-8bfd-417d-8663-73cda77f8234`):
+- Action: `Drafted "[piece title]" — [word count] words`
+- Skill: `draft-content`
+- Target: the Notion calendar entry URL (the database row, not the strategy page)
+- Outcome: `Done` if drafted successfully, `In progress` if blocked partway
+- Notes: pattern used (Listicle / Comparison / AEO playbook / etc.) + any notable choices

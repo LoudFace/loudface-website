@@ -33,6 +33,29 @@ To improve content quality across all future pieces: edit `/arnels-assistant` (b
 
 For one-off / non-site content (LinkedIn, X, internal docs), invoke `/arnels-assistant` directly without the SEO loop.
 
+## Observability — where to look
+
+Every meaningful loop step logs to the **Activity Log** database in Notion (`collection://586eb325-8bfd-417d-8663-73cda77f8234`, under the SEO brain page). That's the cross-session audit trail. For everything else, the surface map:
+
+| To see... | Look at... |
+|---|---|
+| What content the loop has touched (cross-session) | Activity Log database in Notion |
+| Current calendar state (what's drafted, shipped, idea) | Website Content database in Notion |
+| Strategy + working patterns + kill list | AI Search & SEO Search page in Notion |
+| Sanity edits + publishes | /studio embedded Studio |
+| Sanity webhook firings + revalidate logs | Vercel → loudface-website → Functions → `/api/revalidate` |
+| IndexNow ping results | Same `/api/revalidate` logs (status field in JSON response) + `/api/cron/indexnow` for weekly |
+| Cron runs | Vercel → Cron Jobs tab |
+| Deploys + build logs | Vercel → Deployments |
+| GSC trends (Google) | search.google.com/search-console |
+| AI citation tracking (Peec) | app.peec.ai |
+| Bing crawl status + URL inspection | bing.com/webmasters |
+| Voice rule history (`arnels-assistant` edits) | `git log -- ~/.claude/skills/arnels-assistant/SKILL.md` |
+| Cloudflare changes (zone settings, cache purges) | dash.cloudflare.com → loudface.co → Audit Log |
+| Code change history | `git log` in the repo |
+
+When something feels broken, the failure is almost always visible on one of these surfaces. Start with the Activity Log (was the step even attempted?), then drill into the specific surface.
+
 ## Session Protocol
 
 Every session must follow this workflow. Skipping steps leads to duplicated components, broken imports, and inconsistent patterns.

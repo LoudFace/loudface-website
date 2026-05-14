@@ -132,3 +132,12 @@ When a critique finds a recurring pattern that should become a permanent rule (e
 3. Arnel reviews monthly and updates `arnels-assistant/SKILL.md` + references — improvements compound
 
 This is how the writing voice improves over time: critique surfaces patterns, Arnel updates the skill, downstream commands automatically get sharper.
+
+## Logging
+
+After delivering the critique, append one row to the **Activity Log** database (`collection://586eb325-8bfd-417d-8663-73cda77f8234`):
+- Action: `Critiqued "[piece title]" — [X blockers, Y should-fix, Z suggestions]`
+- Skill: `critique-content`
+- Target: the Notion calendar entry URL (or whatever was reviewed)
+- Outcome: `Done`
+- Notes: any voice-rule candidates surfaced (so they're discoverable for the monthly `/arnels-assistant` review)

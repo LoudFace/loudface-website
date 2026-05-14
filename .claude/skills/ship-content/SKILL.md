@@ -164,3 +164,12 @@ GSC + Peec        →  measurement loops back into the brain
 ```
 
 The voice improvements happen by editing `/arnels-assistant` itself — every downstream command picks up the new rules automatically the next time it's invoked.
+
+## Logging
+
+After the page is live and Notion status is updated, append one row to the **Activity Log** database (`collection://586eb325-8bfd-417d-8663-73cda77f8234`):
+- Action: `Published "[piece title]" → [live URL]`
+- Skill: `ship-content`
+- Target: the live URL on loudface.co
+- Outcome: `Done` if confirmed live via curl, `In progress` if shipped to Sanity but the live curl hadn't reflected yet (CF cache, ISR delay)
+- Notes: Sanity doc ID + IndexNow status code + any follow-up flagged (e.g. "needs hero image via /blog-visuals")
