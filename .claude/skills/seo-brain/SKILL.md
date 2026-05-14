@@ -66,4 +66,19 @@ Keep it tight. The point is a fast briefing, not a report.
 - **Do not edit the Notion strategy page** unless the user explicitly asks. The page is human-curated. This command is read-only.
 - **Do not rewrite the principles section** — that's Arnel's framing.
 - The "What's working" and "Content roadmap" sections DO update — refresh from Notion before recommending content moves, don't trust stale memory.
-- For content writing, layer `/arnels-assistant` on top — applies voice + anti-AI-slop rules.
+
+## How this fits into the content loop
+
+`/seo-brain` is the loading step. After invoking it, the natural next step depends on the user's intent:
+
+```
+/seo-brain (THIS, loads context)
+    ↓
+/draft-content     ← when the user wants to write a piece from the calendar
+/critique-content  ← when there's already a draft to polish
+/ship-content      ← when a draft is approved and ready to publish
+```
+
+All three downstream commands invoke `/arnels-assistant` internally for voice. `/arnels-assistant` is the root of all content writing — any voice improvements you make to it propagate automatically to everything in the loop.
+
+For non-site content (LinkedIn, X, internal docs), suggest calling `/arnels-assistant` directly without the SEO loop.

@@ -15,7 +15,23 @@ Before any SEO, AEO, content, or strategy work in this repo:
 
 **Update strategy in the Notion page, not in local files.** Every Claude session, Cloud session, and team member starts from whatever is on that page. Local files (CLAUDE.md, memory) only hold pointers.
 
-For content writing on this site, invoke the `/arnels-assistant` skill — applies Arnel's voice + anti-AI-slop rules.
+## Content creation loop
+
+Every published piece on loudface.co flows through this four-command chain. **`/arnels-assistant` is the root of all content writing** — every command below loads it internally, so voice improvements made to `/arnels-assistant` automatically propagate.
+
+```
+/seo-brain         load strategy + trends                  (read-only context)
+     ↓
+/draft-content     write into Notion calendar entry        (uses /seo-brain + /arnels-assistant)
+     ↓
+/critique-content  anti-slop + voice pass                  (uses /arnels-assistant)
+     ↓
+/ship-content      push to Sanity, status → Published      (Sanity webhook → IndexNow auto-fires)
+```
+
+To improve content quality across all future pieces: edit `/arnels-assistant` (banned words, tone rules, anti-slop checklist). Don't special-case voice fixes in `/draft-content` or `/critique-content` — those compose on top. Centralize voice changes in one place so the loop stays clean.
+
+For one-off / non-site content (LinkedIn, X, internal docs), invoke `/arnels-assistant` directly without the SEO loop.
 
 ## Session Protocol
 
