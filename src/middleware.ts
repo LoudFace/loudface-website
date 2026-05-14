@@ -1,7 +1,21 @@
 import { NextResponse, type NextRequest } from 'next/server';
 
+// URLs that were once published and are now permanently removed. 410 Gone tells
+// Google/Bing to drop the URL from their index immediately — a plain 404 leaves
+// the URL in flux for months. Add to this list when a case study or blog post
+// is unpublished and won't redirect to a relevant alternative.
+const GONE_URLS = new Set<string>([
+  '/case-studies/finnrick-analytics',
+  '/case-studies/mycryptoguide',
+  '/case-studies/draw-things',
+]);
+
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
+
+  if (GONE_URLS.has(pathname)) {
+    return new NextResponse('Gone', { status: 410, headers: { 'content-type': 'text/plain' } });
+  }
 
   // Serve .md variants of pages by rewriting to the llms-md catch-all route
   if (pathname.endsWith('.md') && !pathname.startsWith('/api/') && !pathname.startsWith('/studio/')) {
