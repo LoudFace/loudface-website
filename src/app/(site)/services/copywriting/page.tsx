@@ -792,7 +792,7 @@ export default function CopywritingServicePage() {
         articles={[
           { href: '/blog/webflow-best-cms-for-marketers', title: 'Best CMS for Marketers', description: 'Why Webflow is the best CMS for marketing teams that want full control over content and design.' },
           { href: '/blog/use-webflow-as-your-marketing-funnel', title: 'Use Webflow as Your Marketing Funnel', description: 'Strategy and structure for building high-converting marketing funnels with Webflow.' },
-          { href: '/blog/how-to-choose-the-right-webflow-agency-for-your-brand', title: 'Choose the Right Webflow Agency', description: 'What to look for when selecting a Webflow agency that fits your brand and goals.' },
+          { href: '/blog/best-webflow-agencies', title: 'Best Webflow Agencies', description: 'The 15+ best Webflow agencies in 2026 — how to evaluate them, what to look for, and where LoudFace fits in.' },
         ]}
       />
 

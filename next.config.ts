@@ -163,6 +163,45 @@ const nextConfig: NextConfig = {
         destination: '/blog/seo-vs-aeo-for-webflow',
         permanent: true,
       },
+      // AEO topical-authority cleanup — redirect cannibalizing thin posts
+      // into the canonical AEO guide so Google can attribute one URL.
+      {
+        source: '/blog/aeo-strategies-that-work',
+        destination: '/blog/answer-engine-optimization-guide-2026',
+        permanent: true,
+      },
+      {
+        source: '/blog/aeo-for-webflow-how-to-make-your-site-discoverable-by-ai-search-engines',
+        destination: '/blog/answer-engine-optimization-guide-2026',
+        permanent: true,
+      },
+      // Webflow-agency decision cluster — four overlapping posts splitting
+      // authority. Consolidate into /blog/best-webflow-agencies as the general
+      // canonical (the /blog/best-b2b-saas-webflow-agencies-2026 sibling
+      // remains its own thing for that specific intent).
+      {
+        source: '/blog/top-webflow-agency',
+        destination: '/blog/best-webflow-agencies',
+        permanent: true,
+      },
+      {
+        source: '/blog/how-to-choose-the-right-webflow-agency-for-your-brand',
+        destination: '/blog/best-webflow-agencies',
+        permanent: true,
+      },
+      {
+        source: '/blog/why-choose-loudface-webflow-agency',
+        destination: '/about',
+        permanent: true,
+      },
+      // Webflow pricing cluster — duplicate intent. The agency-pricing post is
+      // the canonical (with the B2B SaaS variant as its sibling); the older
+      // "understanding-webflow-pricing" piece merges into it.
+      {
+        source: '/blog/understanding-webflow-pricing',
+        destination: '/blog/webflow-agency-pricing',
+        permanent: true,
+      },
       // Broken case study slugs → correct case study pages
       {
         source: '/case-studies/toku-icypeas',

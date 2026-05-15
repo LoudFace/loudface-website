@@ -847,7 +847,7 @@ export default async function WebflowServicePage() {
       <RelatedArticles
         articles={[
           { href: '/blog/how-to-use-figma-to-webflow-plugin', title: 'Figma to Webflow Plugin Guide', description: 'How to use the Figma to Webflow plugin to streamline your design-to-development workflow.' },
-          { href: '/blog/understanding-webflow-pricing', title: 'Webflow Pricing Explained', description: 'Compare Site Plans, Workspace Plans, and add-ons to find the right plan for your business.' },
+          { href: '/blog/webflow-agency-pricing', title: 'Webflow Agency Pricing', description: 'What a real Webflow agency engagement costs in 2026, with tiers, scopes, and the math behind agency vs in-house.' },
           { href: '/blog/best-webflow-tools-and-integrations', title: 'Best Webflow Tools & Integrations', description: 'The top tools and integrations for Webflow developers, from CMS extensions to analytics.' },
         ]}
       />
