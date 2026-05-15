@@ -353,6 +353,7 @@ export interface ServicesSeoAeoContent {
     bridge: string;
     seo: ServicesSeoAeoTrack;
     aeo: ServicesSeoAeoTrack;
+    geo: ServicesSeoAeoTrack;
   };
   capabilities: {
     title: string;
@@ -362,11 +363,6 @@ export interface ServicesSeoAeoContent {
   faq: {
     title: string;
     items: FAQItem[];
-  };
-  ctaBreak: {
-    title: string;
-    subtitle: string;
-    ctaText: string;
   };
   cta: {
     title: string;
