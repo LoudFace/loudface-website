@@ -413,7 +413,7 @@ export default async function SeoAeoServicePage() {
         </div>
 
         <div className="mt-8 lg:mt-12 border border-surface-200 rounded-2xl overflow-hidden">
-          <div className="grid grid-cols-1 md:grid-cols-3 divide-y md:divide-y-0 md:divide-x divide-surface-200">
+          <div className="grid grid-cols-1 lg:grid-cols-3 divide-y lg:divide-y-0 lg:divide-x divide-surface-200">
             {/* SEO Column */}
             <div className="p-8 lg:p-12">
               <Badge variant="outline" size="md">{content.tracks.seo.label}</Badge>
@@ -478,9 +478,6 @@ export default async function SeoAeoServicePage() {
                   </li>
                 ))}
               </ul>
-              <p className="mt-6 text-sm text-surface-500 italic">
-                {content.tracks.geo.footer}
-              </p>
             </div>
           </div>
 

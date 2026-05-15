@@ -10,7 +10,7 @@
     { "value": "$200K", "label": "Generated in 30 days from a single SEO-optimised page" },
     { "value": "288%", "label": "Conversion rate increase for a B2B SaaS health-tech brand" },
     { "value": "200+", "label": "B2B brands grown across SaaS, fintech, and AI verticals" },
-    { "value": "7+", "label": "AI engines monitored" }
+    { "value": "7+", "label": "AI engines monitored — ChatGPT, Perplexity, Gemini, Claude, Google AI Mode, Copilot, Grok" }
   ],
   "problems": {
     "title": "Search has changed. So have the strategies.",
@@ -101,11 +101,10 @@
         "GEO across ChatGPT, Gemini, Perplexity, Claude, Copilot",
         "Google Discover content optimisation",
         "Entity building + off-site citation distribution",
-        "AI citation rotation monitoring (40–60% monthly turnover)",
+        "AI citation rotation monitoring",
         "Cross-platform brand narrative consistency",
         "LinkedIn entity signals"
-      ],
-      "footer": "Ensures every AI surface tells the same story about your brand."
+      ]
     }
   },
   "capabilities": {
