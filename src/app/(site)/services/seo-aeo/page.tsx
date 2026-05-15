@@ -400,27 +400,7 @@ export default async function SeoAeoServicePage() {
         </div>
       </SectionContainer>
 
-      {/* ─── CTA Break ─── */}
-      <SectionContainer padding="lg" className="bg-surface-50">
-        <div className="max-w-2xl mx-auto text-center">
-          <h2 className="text-2xl sm:text-3xl md:text-4xl font-medium text-surface-900 leading-tight tracking-tight text-balance">
-            {content.ctaBreak.title}
-          </h2>
-          <p className="mt-4 text-lg text-surface-600">
-            {content.ctaBreak.subtitle}
-          </p>
-          <div className="mt-8">
-            <Button variant="primary" size="lg" href="/audit" className="rounded-full">
-              {content.ctaBreak.ctaText}
-              <svg className="ml-2 w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 8l4 4m0 0l-4 4m4-4H3" />
-              </svg>
-            </Button>
-          </div>
-        </div>
-      </SectionContainer>
-
-      {/* ─── Section 4: Two Tracks ─── */}
+      {/* ─── Section 4: Three Tracks (SEO / AEO / GEO) ─── */}
       <SectionContainer>
         <div className="max-w-3xl">
           <BulletLabel>{content.tracks.title}</BulletLabel>
@@ -433,7 +413,7 @@ export default async function SeoAeoServicePage() {
         </div>
 
         <div className="mt-8 lg:mt-12 border border-surface-200 rounded-2xl overflow-hidden">
-          <div className="grid grid-cols-1 md:grid-cols-2 divide-y md:divide-y-0 md:divide-x divide-surface-200">
+          <div className="grid grid-cols-1 lg:grid-cols-3 divide-y lg:divide-y-0 lg:divide-x divide-surface-200">
             {/* SEO Column */}
             <div className="p-8 lg:p-12">
               <Badge variant="outline" size="md">{content.tracks.seo.label}</Badge>
@@ -467,6 +447,28 @@ export default async function SeoAeoServicePage() {
               </p>
               <ul className="mt-6 space-y-3">
                 {content.tracks.aeo.items.map((item: string) => (
+                  <li key={item} className="flex items-center gap-3">
+                    <svg className="w-5 h-5 flex-shrink-0" viewBox="0 0 20 20" fill="none">
+                      <circle cx="10" cy="10" r="9" fill="var(--color-primary-100)" />
+                      <path d="M6 10l3 3 5-5" stroke="var(--color-primary-600)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                    </svg>
+                    <span className="text-surface-700">{item}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            {/* GEO Column */}
+            <div className="p-8 lg:p-12">
+              <Badge variant="outline" size="md">{content.tracks.geo.label}</Badge>
+              <h3 className="mt-4 text-xl font-medium text-surface-900">
+                {content.tracks.geo.title}
+              </h3>
+              <p className="mt-2 text-surface-600">
+                {content.tracks.geo.description}
+              </p>
+              <ul className="mt-6 space-y-3">
+                {content.tracks.geo.items.map((item: string) => (
                   <li key={item} className="flex items-center gap-3">
                     <svg className="w-5 h-5 flex-shrink-0" viewBox="0 0 20 20" fill="none">
                       <circle cx="10" cy="10" r="9" fill="var(--color-primary-100)" />

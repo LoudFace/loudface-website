@@ -1,8 +1,8 @@
 {
   "hero": {
-    "eyebrow": "SEO + AEO for B2B SaaS",
+    "eyebrow": "SEO + AEO + GEO for B2B SaaS",
     "headline": "Get cited —<br>not just ranked",
-    "description": "We run SEO and AEO as one integrated program. Your brand ranks on Google, gets cited by AI engines, and converts the traffic that actually matters.",
+    "description": "We run SEO, AEO, and GEO as one integrated program. Your brand ranks on Google, gets cited by AI engines, and appears consistently across every generative AI surface your buyers use.",
     "primaryCta": "Free AI Visibility Audit",
     "secondaryCta": "See how it works"
   },
@@ -10,7 +10,7 @@
     { "value": "$200K", "label": "Generated in 30 days from a single SEO-optimised page" },
     { "value": "288%", "label": "Conversion rate increase for a B2B SaaS health-tech brand" },
     { "value": "200+", "label": "B2B brands grown across SaaS, fintech, and AI verticals" },
-    { "value": "5+", "label": "AI engines monitored — ChatGPT, Perplexity, Gemini, Claude, Google SGE" }
+    { "value": "7+", "label": "AI engines monitored — ChatGPT, Perplexity, Gemini, Claude, Google AI Mode, Copilot, Grok" }
   ],
   "problems": {
     "title": "Search has changed. So have the strategies.",
@@ -25,12 +25,12 @@
       {
         "number": "02",
         "title": "Your brand doesn't show up in AI searches.",
-        "description": "When a buyer asks ChatGPT, Perplexity, or Google SGE, your competitors come up. You don't. AI engines don't just scrape Google. They pull from a wider knowledge graph, and if you're not in it, you're invisible to a growing share of customers."
+        "description": "When a buyer asks ChatGPT, Perplexity, Gemini, or any AI engine, your competitors come up. You don't. AI engines don't just scrape Google. They pull from a wider knowledge graph, and if you're not in it, you're invisible to a growing share of customers."
       },
       {
         "number": "03",
         "title": "You have tactics. Not a system.",
-        "description": "Blog posts without a topical strategy. Technical fixes done reactively. Nothing connects search activity to pipeline. You're paying for execution with no accountability to outcomes."
+        "description": "You're optimising for Google while your buyers are asking AI. Blog posts without an entity strategy. No presence in the knowledge graph AI engines pull from. Nothing connecting your content to citations, answers, or pipeline."
       }
     ]
   },
@@ -42,7 +42,7 @@
       {
         "number": "1",
         "title": "Foundation audit",
-        "description": "We map technical health, content gaps, entity coverage, and AI engine presence. Every opportunity is scored against business impact, not keyword difficulty or domain authority vanity scores."
+        "description": "We map technical health, content gaps, entity coverage, GEO surface presence, and AI engine visibility. Every opportunity is scored against business impact, not keyword difficulty or domain authority vanity scores."
       },
       {
         "number": "2",
@@ -52,7 +52,7 @@
       {
         "number": "3",
         "title": "Continuous execution",
-        "description": "Content, technical improvements, link building, and AEO optimisation ship weekly. One point of contact. Zero task management on your end."
+        "description": "SEO, AEO, and GEO work ships weekly — content, technical improvements, link building, and cross-platform entity signals. One point of contact. Zero task management on your end."
       },
       {
         "number": "4",
@@ -62,11 +62,11 @@
     ]
   },
   "tracks": {
-    "title": "Two disciplines. One integrated system.",
+    "title": "Three disciplines. One integrated system.",
     "highlightWord": "integrated",
-    "headline": "SEO gets you found. AEO gets you chosen.",
+    "headline": "SEO gets you found. AEO gets you cited. GEO makes you the answer everywhere.",
     "description": "Most agencies bolt AEO onto an existing SEO retainer as an afterthought. We built the program so both disciplines feed each other from day one.",
-    "bridge": "SEO builds the authority that makes you rankable. AEO makes sure AI engines know about it, and recommend you.",
+    "bridge": "SEO builds the authority that makes you rankable. AEO makes sure AI engines know about it and recommend you. GEO makes sure they tell the same story about you everywhere.",
     "seo": {
       "label": "SEO",
       "title": "Search Engine Optimisation",
@@ -87,10 +87,23 @@
       "items": [
         "AI search mention audit",
         "Entity-first content structure",
-        "LLM visibility monitoring across ChatGPT, Perplexity, Gemini, Claude, SGE",
+        "LLM visibility monitoring across ChatGPT, Perplexity, Gemini, Claude, Google AI Mode",
         "Brand citation tracking",
         "FAQ schema for AI parsing",
         "Competitive AI visibility gap analysis"
+      ]
+    },
+    "geo": {
+      "label": "GEO",
+      "title": "Generative Engine Optimisation",
+      "description": "The full surface area — consistent brand presence across every generative AI system your buyers use.",
+      "items": [
+        "GEO across ChatGPT, Gemini, Perplexity, Claude, Copilot",
+        "Google Discover content optimisation",
+        "Entity building + off-site citation distribution",
+        "AI citation rotation monitoring",
+        "Cross-platform brand narrative consistency",
+        "LinkedIn entity signals"
       ]
     }
   },
@@ -104,19 +117,19 @@
       },
       {
         "title": "Content systems",
-        "description": "Topical clusters, comparison pages, FAQ compilations, and programmatic SEO. Built for both Google and AI engines — structured so models can parse it, humans can act on it."
+        "description": "Topical clusters, comparison pages, FAQ compilations, programmatic SEO, and Google Discover content optimisation. Built for Google, AI engines, and Discover feeds — structured so models can parse it, humans can act on it."
       },
       {
         "title": "Off-page + distribution",
-        "description": "Guest posts on high-DR publications, G2 and Capterra presence, Reddit and Quora strategy, community engagement. The exact sources AI engines pull from when forming answers about your category."
+        "description": "Guest posts on high-DR publications, G2 and Capterra presence, Reddit and Quora strategy, community engagement. LinkedIn entity signals, Google Discover content optimisation, and consistent cross-platform framing so AI systems encounter the same brand narrative regardless of where they retrieve it."
       },
       {
         "title": "E-E-A-T + authority signals",
-        "description": "Author credentials, expert quotes, thought leadership placement. The trust signals Google and AI engines weigh when deciding who to cite — and who to skip."
+        "description": "Author credentials, expert quotes, thought leadership placement. The trust signals Google and AI engines weigh when deciding who to cite — and who to skip. Author credentials and expert quotes also improve how AI models assess source credibility when forming answers."
       },
       {
         "title": "LLM visibility monitoring",
-        "description": "We track how your brand appears across ChatGPT, Perplexity, Gemini, Claude, and Google AI Mode. Citation frequency, mention quality, competitive positioning — reported weekly, not quarterly."
+        "description": "We track how your brand appears across ChatGPT, Perplexity, Gemini, Claude, Google AI Mode, Copilot, and Grok. Citation frequency, mention quality, competitive positioning — reported weekly, not quarterly."
       }
     ]
   },
@@ -129,7 +142,7 @@
       },
       {
         "question": "What AI engines do you optimise for?",
-        "answer": "ChatGPT, Perplexity, Google SGE, Gemini, Claude, and Grok. We monitor citation frequency, mention quality, and competitive positioning across all of them — reported weekly."
+        "answer": "ChatGPT, Perplexity, Google AI Mode, Gemini, Claude, and Grok. We monitor citation frequency, mention quality, and competitive positioning across all of them — reported weekly."
       },
       {
         "question": "Do I need to manage the work?",
@@ -149,14 +162,9 @@
       }
     ]
   },
-  "ctaBreak": {
-    "title": "Want to see where you stand before committing to anything?",
-    "subtitle": "Free audit. No commitment, no pitch. Just a clear picture of where you stand in AI search.",
-    "ctaText": "Request an AI Visibility Audit"
-  },
   "cta": {
     "title": "Find out if your brand shows up where your buyers are looking.",
-    "subtitle": "We'll check your AI search presence across ChatGPT, Perplexity, and Google SGE, and show you exactly where the gaps are.",
+    "subtitle": "We'll check your AI search presence across ChatGPT, Perplexity, Gemini, Google AI Mode, and Copilot — and show you exactly where the gaps are.",
     "primaryCta": "Free AI Visibility Audit",
     "secondaryCta": "Or book a strategy call",
     "disclaimer": "No automated sequences. No pitch before the audit. We do the work first."
