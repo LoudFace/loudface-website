@@ -891,6 +891,15 @@ html {
     -webkit-overflow-scrolling: touch;
     border: 1px solid var(--color-surface-200);
     border-radius: 0.5rem;
+    /* Kill rendered whitespace inside the wrapper. The HTML parser fosters
+       newline/whitespace text nodes between <table> and <thead> (and between
+       </tbody> and </table>) OUT of the table — they end up rendering INSIDE
+       the wrapper with the inherited line-height ~31px, creating visible
+       empty bands above the header and below the last row. Setting
+       font-size: 0 collapses any such text-node height to 0. The table
+       inside has its own font-size that overrides for cell content. */
+    font-size: 0;
+    line-height: 0;
     /* Horizontal scroll hint: a faint right-edge shadow that fades as the
        user scrolls the table right, letting readers know content extends
        beyond the visible edge. CSS-only, no JS needed. */
