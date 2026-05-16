@@ -15,21 +15,101 @@ Before any SEO, AEO, content, or strategy work in this repo:
 
 **Update strategy in the Notion page, not in local files.** Every Claude session, Cloud session, and team member starts from whatever is on that page. Local files (CLAUDE.md, memory) only hold pointers.
 
-## Content creation loop
+## Super-brain cascading architecture (CRITICAL — read first for any SEO/content/strategy work)
 
-Every published piece on loudface.co flows through this four-command chain. **`/arnels-assistant` is the root of all content writing** — every command below loads it internally, so voice improvements made to `/arnels-assistant` automatically propagate.
+**The system is designed to cascade automatically. You do NOT wait for the user to type `/seo-brain` or `/pattern-audit` or `/serp-recon`. When the user says ANYTHING that touches SEO, AEO, content writing, content ideation, content strategy, or competitive analysis — even informally ("what should we write?", "let's brainstorm a piece", "is X working?", "explore Y as a topic") — you immediately run `/seo-brain` in the background to load the full context. From there, you reason about which skills to chain next and propose moves without making the user spell them out.**
+
+The vision: an autonomous strategist that always has the full picture loaded, surfaces patterns the user can't see, and proposes the right next move before being asked.
+
+**Critical: ground all content in the Thought Leadership KB.** Every content draft must be checked against the [Thought Leadership Knowledge Base](https://www.notion.so/f11ec4b74f184818925f302bb56e577b) (`collection://5fad9e1a-d149-4ce6-b984-3e27aa430faf`) BEFORE writing. This DB holds Arnel + team's first-party insights, battle-tested opinions, and contrarian takes from real client engagements. If a relevant Active insight exists, the draft must pull from it directly — not paraphrase generic agency thinking. If a draft would contradict an Active insight, stop and flag it before continuing. If a session surfaces a new insight (e.g. Arnel corrects an assumption mid-draft), propose adding it as a new KB entry before resuming the draft. This is the system-level fix for "AI agent invents generic agency-speak that doesn't match what LoudFace actually believes."
+
+### Auto-cascade triggers (run `/seo-brain` silently, no confirmation needed)
+
+The trigger is *intent*, not exact words. Fire on any of these:
+
+| User says (anywhere in their message)... | Auto-fire |
+|---|---|
+| "draft", "write", "content piece", "blog post", "listicle", "comparison", "case study" | `/seo-brain` → propose next move |
+| "what should we write/ship/draft next" | `/seo-brain` → recommend |
+| "what's working", "what's the state", "what's our position" | `/seo-brain` → briefing |
+| "is X working", "audit X", "investigate X", "why is X" | `/seo-brain` then likely `/pattern-audit X` |
+| "research a topic", "competitor research", "what's ranking" | `/seo-brain` then `/serp-recon` |
+| "brainstorm content", "content ideas", "calendar" | `/seo-brain` → surface coverage gaps + anomalies |
+| Mentions a specific tracked prompt / topic | `/seo-brain` → check Prompt Coverage DB |
+
+If you're not sure whether to cascade, cascade. The cost is one extra Notion fetch; the value is never flying blind.
+
+### The skills available to the cascade (you decide when to invoke)
+
+When `/seo-brain` surfaces a signal, chain the right tool without asking:
+
+- **`/seo-brain`** — always the first step. Loads strategy + state + anomalies + coverage gaps + competitor landscape + calendar.
+- **`/pattern-audit {pattern}`** — when seo-brain flags an anomaly (e.g. validated pattern with 0 citations despite N posts), OR when user questions a pattern's performance. Aggregates competitor citations across the pattern's prompts, identifies structural gaps, returns cut/hold/restructure options.
+- **`/serp-recon {keyword}`** — before any new draft. Pulls page-1 + page-2 Google SERP + AI-cited URLs, computes structural differentials, returns "what to copy from winners."
+- **`/peec-research {prompt}`** — when a piece targets a specific tracked prompt. Returns fan-out queries + current LoudFace visibility + competitor citation snippets.
+- **`/draft-content {entry}`** — runs the full draft pipeline (loads /seo-brain + /arnels-assistant + /serp-recon + reads Required research from Pattern row).
+- **`/critique-content {draft}`** — anti-slop + voice pass. Runs after draft, before ship.
+- **`/verify-content {target}`** — fresh-subagent voice + claim verification. Hard gate before ship. Has a **Diff mode** for post-ship edits that add new claims.
+- **`/ship-content {entry}`** — push to Sanity, status → Published. Sanity webhook → IndexNow auto-fires.
+- **`/refresh-calendar`** — pulls latest GSC + Peec into the calendar. Runs nightly automatically.
+
+### Data sources the super-brain reads (all programmatic — no manual triggers)
+
+| Source | What it holds | Refresh cadence | Stale threshold | Recovery |
+|---|---|---|---|---|
+| AI Search & SEO Search page | Strategy, bet, principles, working patterns, kill list | Manual (Arnel-curated) | n/a | Editorial |
+| Patterns Registry (`collection://a6c661c7-aeb4-4fb5-ad0a-7962288366c1`) | 6 patterns + rollups (Peec mentions, clicks, imps, posts) + Required research per pattern | Native Notion rollups (live); Required research manually curated | n/a | n/a |
+| Website Content (`collection://347b6339-4d10-806a-99b3-000b881621e5`) | Calendar entries with per-post GSC + Peec metrics | Every 24h via `refreshCalendarMetrics` worker tool | > 48h | `ntn workers exec refreshCalendarMetrics -d '{"dryRun":false}'` |
+| Daily Snapshots (`collection://3dec2e5f-e8d2-4747-a3ba-b5510a9de981`) | Aggregate project-wide GSC + Peec metrics, one row per day | Every 24h via `dailySnapshotsSync` (the cron) | > 36h | `ntn workers sync trigger dailySnapshotsSync` |
+| Cusp Pages (`collection://436bed59-aecf-45ea-9e3b-ccadad09b8e3`) | Pages on the edge of top-10 (position 10–60, >1k imps) | Every 24h via `scanCuspPages` side effect | > 48h | `ntn workers exec scanCuspPages -d '{"dryRun":false}'` |
+| Targets (`collection://f212cbd0-1e4c-4fb9-af9e-ae371496d4ed`) | Quarterly KPI targets with current value + status | Every 24h via `recomputeTargets` side effect | > 48h | `ntn workers exec recomputeTargets -d '{"dryRun":false}'` |
+| **Prompt Coverage** (`collection://869461d7-1eb2-4612-ae6e-f6f09bfcadd5`) | Each tracked Peec prompt × LoudFace URLs targeting it × citation status | Every 7 days via weekly gate inside `dailySnapshotsSync` | > 10 days | `ntn workers exec refreshPromptCoverage -d '{"dryRun":false}'` |
+| **Competitor Landscape** (`collection://2452bdb6-7272-46f9-b5ac-e963901d9a51`) | Top 15 competitor URLs per validated pattern with citation counts | Every 7 days via the same weekly gate | > 10 days | `ntn workers exec refreshCompetitorLandscape -d '{"dryRun":false}'` |
+| **Thought Leadership KB** (`collection://5fad9e1a-d149-4ce6-b984-3e27aa430faf`) | First-party insights, battle-tested opinions, contrarian takes from Arnel + team. Source of truth for what LoudFace actually believes from real engagement experience. | Human-curated (Arnel + team add insights as they emerge in client work or content sessions) | n/a | Editorial — propose new entries when surfaced, never invent |
+| Monthly AEO Snapshots (`collection://9981f13f-1d87-4229-b91f-c26f54193d6b`) | 30-day brand visibility deltas vs prior 30-day window | Monthly on the 1st at 9am UTC via Claude Cloud `/schedule` "peec-audit-monthly" routine | > 35 days | Manually run `/peec-audit` or re-arm the Cloud routine |
+| Activity Log (`collection://586eb325-8bfd-417d-8663-73cda77f8234`) | Every loop step's cross-session audit trail | Event-driven (each skill writes its own row) | n/a | n/a |
+| **Pending Commitments** (`collection://600eedcf-4ba8-4492-8a46-20b5b98e2d8d`) | Durable record of actions Claude committed to mid-conversation but hasn't yet executed. Closes the "verbal commitment lost at session boundary" gap. | Event-driven (write when committing, update when executing) | n/a (always check at session start) | Manual: surface `Status = Not started` rows in next `/seo-brain` load |
+
+**How drift is caught:** `/seo-brain` runs a freshness check as Step 0 of every load. If any source is past its stale threshold, the brief starts with a 🩺 alert and the exact recovery command. Drift is visible from the moment a session begins — no silent decay.
+
+**How outstanding commitments are surfaced:** `/seo-brain` also reads Pending Commitments at session start (before any briefing logic runs). Any row with `Status = Not started` or `In progress` is surfaced at the top of the brief. This prevents verbal commitments made mid-conversation from being lost when a session ends. When you complete a commitment, update its row to `Status = Done` — don't just rely on Activity Log.
+
+**How the cron itself is monitored:** the worker is deployed to Notion's hosted runtime with `schedule: "1d"`. Notion handles execution. Status visible via `ntn workers sync status` from the worker directory. Recent runs via `ntn workers runs list`. If `dailySnapshotsSync` shows ERROR (3+ consecutive failures), the freshness alert in `/seo-brain` will catch it because Daily Snapshots won't have updated.
+
+**Manual override path** (rare): every step has a `ntn workers exec <toolKey>` command. Used only when an automatic run fails and `/seo-brain` flags the staleness. The recovery commands are in the table above.
+
+### The full content creation cascade
+
+Every published piece on loudface.co flows through this chain. **`/arnels-assistant` is the root of all content writing** — every command below loads it internally, so voice improvements made to `/arnels-assistant` automatically propagate.
 
 ```
-/seo-brain         load strategy + trends                  (read-only context)
+/seo-brain          load strategy + trends + anomalies + coverage gaps + competitor landscape + KB insights
+     ↓              (auto-fires on any content/SEO/strategy intent; KB is non-skippable for content tasks)
+[optional]
+/pattern-audit      when an anomaly surfaces or pattern decision needed
      ↓
-/draft-content     write into Notion calendar entry        (uses /seo-brain + /arnels-assistant)
+/serp-recon         page-1 + page-2 Google SERP + AI-cited URLs + structural diffs
      ↓
-/critique-content  anti-slop + voice pass                  (uses /arnels-assistant)
+/peec-research      if piece targets a specific tracked prompt
      ↓
-/ship-content      push to Sanity, status → Published      (Sanity webhook → IndexNow auto-fires)
+/draft-content      write into Notion calendar entry, grounded in KB insights (reads Required research from Pattern row + Active KB rows)
+     ↓
+/critique-content   anti-slop + voice pass (mechanical linter + arnels-assistant)
+     ↓
+/verify-content     fresh-subagent voice + claim verification (Full mode) — also checks draft does not contradict KB
+     ↓
+/ship-content       push to Sanity → IndexNow + revalidate auto-fire
+     ↓
+/verify-content     (Diff mode) if any post-ship patch adds new claims
+     ↓
+/refresh-calendar   nightly GSC + Peec writeback (runs automatically via worker)
 ```
+
+To improve content quality across all future pieces: edit `/arnels-assistant` (banned words, tone rules, anti-slop checklist). Don't special-case voice fixes in downstream commands — they compose on top.
 
 To improve content quality across all future pieces: edit `/arnels-assistant` (banned words, tone rules, anti-slop checklist). Don't special-case voice fixes in `/draft-content` or `/critique-content` — those compose on top. Centralize voice changes in one place so the loop stays clean.
+
+The calendar becomes the dashboard once `/refresh-calendar` runs. Open the Website Content database in Notion → see GSC Clicks 7d, GSC Impressions 7d, GSC Position 7d, Peec Mentions, Last Refreshed for every Published row. Sort/filter on those columns to spot winners and losers without leaving Notion.
 
 For one-off / non-site content (LinkedIn, X, internal docs), invoke `/arnels-assistant` directly without the SEO loop.
 
@@ -40,8 +120,11 @@ Every meaningful loop step logs to the **Activity Log** database in Notion (`col
 | To see... | Look at... |
 |---|---|
 | What content the loop has touched (cross-session) | Activity Log database in Notion |
+| Pre-ship verification reports (voice + claims) | Activity Log database, rows tagged `critique-content` — full reports stay in the originating chat |
 | Current calendar state (what's drafted, shipped, idea) | Website Content database in Notion |
+| Per-post performance (GSC + Peec, last 7d) | Same Website Content database — the metric columns are refreshed nightly by `/refresh-calendar` |
 | Strategy + working patterns + kill list | AI Search & SEO Search page in Notion |
+| First-party insights, battle-tested opinions, contrarian takes (what LoudFace actually believes) | Thought Leadership Knowledge Base in Notion (`collection://5fad9e1a-d149-4ce6-b984-3e27aa430faf`) — content drafts must check this before writing |
 | Sanity edits + publishes | /studio embedded Studio |
 | Sanity webhook firings + revalidate logs | Vercel → loudface-website → Functions → `/api/revalidate` |
 | IndexNow ping results | Same `/api/revalidate` logs (status field in JSON response) + `/api/cron/indexnow` for weekly |
@@ -85,6 +168,21 @@ The component system is what prevents every new session from rebuilding things t
 See `.claude/rules/component-system.md` for the full enforcement rules and `.claude/rules/component-patterns.md` for code examples (page archetype, dark section recipe, carousel setup).
 
 ## Critical Rules (Will Break Production If Ignored)
+
+### Refresh Candidacy — Always Use the 4-Stage Filter, Never Just `lastUpdated`
+
+When asked "what's stale?", "what should we refresh next?", "what content needs updating?", or any equivalent, do NOT filter by `lastUpdated` alone. That field gets bumped every time a piece is touched (title patches, content refreshes, single-field edits), which makes newly-shipped pieces and refreshed-yesterday pieces indistinguishable.
+
+A piece is a legitimate refresh candidate ONLY when ALL FOUR of these conditions are true:
+
+1. **`publishedDate` is older than 30 days** — excludes freshly published pieces. Use Sanity's `publishedDate` field, NOT `_createdAt` (which is the Sanity migration date for all migrated content and is therefore useless as a publication signal).
+2. **`lastUpdated` is older than 30 days** — excludes pieces refreshed in the current sprint.
+3. **The slug is not 301-redirected in `next.config.ts`** — already-merged URLs are out of scope; they exist in Sanity but the URL routes elsewhere.
+4. **The slug is not in the Activity Log for the last 7 days** — belt-and-suspenders: if a session touched it but didn't bump `lastUpdated`, the Activity Log still knows.
+
+Reference implementation: `scripts/audit-publication-dates-v2.mjs`. When a refresh-candidate list is requested, run an equivalent query before proposing anything. NEVER produce a list from naïve `lastUpdated`-only filtering — that's the failure mode that produced false-positive refresh proposals during the May 2026 content sprint (Arnel caught me proposing pieces I had shipped that morning).
+
+When a refresh completes, log it to Activity Log AND if it was a Pending Commitments row, update that row's `Status` to `Done`.
 
 ### CMS Data Fetching — Never Silently Swallow Errors
 

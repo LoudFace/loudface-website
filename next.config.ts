@@ -224,6 +224,13 @@ const nextConfig: NextConfig = {
         destination: '/blog/webflow-for-ecommerce',
         permanent: true,
       },
+      // Webflow brand overhaul news piece (2024-10) — topical, thin (3K chars),
+      // covered by the broader /blog/webflow-ai-revolution canonical now.
+      {
+        source: '/blog/webflows-new-brand-overhaul-and-platform-updates',
+        destination: '/blog/webflow-ai-revolution',
+        permanent: true,
+      },
       // Broken case study slugs → correct case study pages
       {
         source: '/case-studies/toku-icypeas',

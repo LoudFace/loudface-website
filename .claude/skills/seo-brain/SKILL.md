@@ -11,41 +11,122 @@ The Notion strategy page is the source of truth. The principles, working pattern
 
 ## What to do when invoked
 
-Run these fetches in parallel:
+The strategy page now stores volatile numbers in dedicated databases, not prose. Read the structured DBs for current state and the page for durable strategy. Run these fetches in parallel:
 
-1. **Notion strategy page**
+**Always FIRST (Step 0 — session bootstrap):**
+
+0. **Pending Commitments** (`collection://600eedcf-4ba8-4492-8a46-20b5b98e2d8d`) — fetch rows where `Status = Not started` OR `Status = In progress`. These are durable commitments from previous sessions that haven't been executed yet. Surface them at the very top of the brief (after the freshness alert if any). Without this read, verbal mid-conversation commitments vanish at session boundaries. This is the first source of truth a session should check — if anything is `In progress` from a previous session, the user needs to see it before any new work starts.
+
+**Always:**
+
+1. **Notion strategy page** (the narrative — bet, principles, content roadmap, off-site, brand recovery)
    `mcp__dc92055b-00e7-4079-83af-5ca13d1804f9__notion-fetch` with `id: 347b63394d1080bb9d1cda4bcb1758b5`
 
-2. **Website Content database state (calendar)**
+2. **Daily Snapshots — latest row** (current GSC + Peec aggregate state, typed numeric fields)
+   `mcp__dc92055b-00e7-4079-83af-5ca13d1804f9__notion-query-database-view` or `notion-fetch` on `collection://3dec2e5f-e8d2-4747-a3ba-b5510a9de981` sorted by `Captured at` desc, limit 1. **Written nightly by the `loudface-seo-sync` Notion Worker** (managed schema, deterministic TypeScript — no LLM in the write path). This is the canonical "current state" — never parse the strategy page prose for numbers, always read this DB row.
+
+3. **Website Content database** (calendar state — Idea / Outline / Draft / Review / Published)
    `mcp__dc92055b-00e7-4079-83af-5ca13d1804f9__notion-fetch` with `id: collection://347b6339-4d10-806a-99b3-000b881621e5`
-   (Use this to know what's in the calendar pipeline — Idea / Outline / Draft / Review / Published.)
 
-3. **GSC trend snapshot (last 7 days)**
-   `mcp__gscServer__get_performance_overview` with `site_url: https://www.loudface.co/`, `days: 7`
+**Always (NEW — part of the super-brain cascade):**
 
-4. *(Optional, only if AI-search visibility relevant to the question)* **Peec brand status**
-   `mcp__737dcbb9-499d-4c78-a804-0d3d3da4e307__list_brands` with `project_id: or_85a7fe4b-9032-4b0f-8b98-6deae65495ff` (then list_prompts for context)
+4. **Patterns Registry** (`collection://a6c661c7-aeb4-4fb5-ad0a-7962288366c1`) — pull all rows. Filter `Status = validated` for the current playbook. Apply anomaly-detection rules (see below) to surface review candidates in the brief output.
+
+5. **Prompt Coverage** (`collection://869461d7-1eb2-4612-ae6e-f6f09bfcadd5`) — pull rows where `Coverage status` is `no LoudFace coverage` OR `covered but losing`, sorted by `Volume` descending. These are the prompts where buyers are asking and LoudFace is either invisible or being out-cited. Surface the top 3-5 in the brief.
+
+6. **Competitor Landscape** (`collection://2452bdb6-7272-46f9-b5ac-e963901d9a51`) — pull top 10 rows by `Citations 30d`. Surface the top 5 competitor domains across all patterns. These are the domains that need to be on the radar for every `/serp-recon` and `/pattern-audit` going forward.
+
+7. **Thought Leadership Knowledge Base** (`collection://5fad9e1a-d149-4ce6-b984-3e27aa430faf`) — pull all rows where `Status = Active`. This is the central repository of Arnel + team first-party insights, battle-tested opinions, and experience-grounded takes. Surface 3-5 insights most relevant to the user's current intent in the brief. **Every content draft MUST be grounded in entries from this DB** — never generate content from generic agency thinking when a relevant insight exists. If a draft would contradict an Active insight, stop and flag it. New insights surfaced during a session should be proposed as additions (let the user approve before writing).
+
+**Conditionally (based on user intent):**
+
+8. **Cusp Pages** (`collection://436bed59-aecf-45ea-9e3b-ccadad09b8e3`) — when the user asks "what should I optimize next?" or "which page is highest-leverage?" Filter `Status = cusp`.
+
+9. **Targets** (`collection://f212cbd0-1e4c-4fb9-af9e-ae371496d4ed`) — when the user asks "are we on track?" or anything about quarterly goals.
+
+10. **Monthly AEO Snapshots** (`collection://9981f13f-1d87-4229-b91f-c26f54193d6b`) — when the user asks about month-over-month trends.
+
+11. **Peec live data** — only if Daily Snapshots is stale (`Captured at` >24h old) AND the question hinges on current AI-search visibility. The Daily Snapshots row should be fresh — falling back to live Peec means the cron failed.
 
 ## What to return
 
-A tight under-150-word briefing, structured as:
+### Data freshness check (FIRST step of every brain load)
+
+Before assembling the briefing, run this 5-line health check. If any source is stale, surface a 🩺 row at the very top of the brief.
+
+| Source | Stale threshold | What to flag |
+|---|---|---|
+| Daily Snapshots latest `Captured at` | > 36 hours | "Worker cron may be down — ran X hours ago" |
+| Prompt Coverage latest `Last refreshed` | > 10 days | "Weekly refresh overdue — ran X days ago" |
+| Competitor Landscape latest `Last refreshed` | > 10 days | "Weekly refresh overdue — ran X days ago" |
+| Website Content `Last Refreshed` (sample 3 rows) | > 48 hours | "Per-post sync drift — sampled rows last refreshed X hours ago" |
+
+If anything is stale, the brief starts with:
 
 ```
-**Where we are (last 7 days):**
-- GSC: X clicks · Y impressions · Z avg position · biggest delta = ...
-- Brand: "loudface" at position X.X (last 7d)
+🩺 **Data freshness alert:** [list each stale source with how-old + recovery command]
+```
 
-**What's working (from Notion brain):**
-- [one-line summary of the six patterns, or whichever is most relevant to today's question]
+Recovery commands the user can run if drift is real:
+- Daily sync drift: `ntn workers sync trigger dailySnapshotsSync` (from the worker dir) — re-runs the whole chain
+- Per-post metrics drift only: `ntn workers exec refreshCalendarMetrics -d '{"dryRun":false}'`
+- Weekly DBs drift only: `ntn workers exec refreshPromptCoverage -d '{"dryRun":false}'` + `ntn workers exec refreshCompetitorLandscape -d '{"dryRun":false}'`
+
+If everything is fresh, omit the 🩺 row entirely and proceed to the standard briefing.
+
+A tight under-200-word briefing, structured as:
+
+```
+[🩺 Data freshness alert (only if stale, omit if everything is fresh)]
+
+[📌 Pending commitments — only if any rows exist in Pending Commitments DB with Status = Not started or In progress. Format: "[Status] [Commitment] (Promised in: [Promised In Session])". List ALL pending rows, even if there are many — the user must know about durable outstanding work before any new work starts. If none exist, omit this section entirely.]
+
+**Current state (from Daily Snapshots, captured <date>):**
+- GSC 28d: X clicks · Y impressions · Z avg position
+- Brand: "loudface" at position X.X
+- Peec project-wide: X% visibility, sentiment Y, position-when-cited Z
+
+**What's working (from Patterns Registry, validated patterns ranked by current evidence):**
+- [top 2 validated patterns with their measured Peec citations]
+
+⚠️ **Pattern review candidates** (auto-detected anomalies):
+- [Any validated pattern where Posts tagged ≥ 3 AND Total Peec mentions = 0 — flagged as "investigate via /pattern-audit"]
+- [Any pattern where Total impressions 7d > 1000 AND Total clicks 7d = 0 — "click-through gap"]
+- If none, omit this section entirely.
+
+🎯 **Highest-leverage prompts to target** (from Prompt Coverage):
+- [top 3 prompts with Coverage status = "no LoudFace coverage" sorted by Volume desc]
+- [top 2 prompts with Coverage status = "covered but losing" — closest to a flip]
+
+🥊 **Competitor radar** (from Competitor Landscape, last 30d):
+- [top 5 domains across all patterns, with total cite counts and which pattern they dominate]
+
+🧠 **Active first-party insights** (from Thought Leadership KB, relevant to the user's intent):
+- [3-5 insight titles, each one line. Full body should be cited when drafting content. Never generate against the grain of these without explicit user override.]
 
 **Calendar next up:**
 - [next 2-3 entries with their dates + status]
 
 **Recently shipped:**
-- [anything notable from the last week — Notion edits, Sanity publishes, infra changes]
+- [anything notable from the last week — Activity Log shows it]
 ```
 
-Keep it tight. The point is a fast briefing, not a report.
+Keep it tight. The point is a fast briefing, not a report. Skip sections that have no signal (e.g. if no anomalies, drop the ⚠️ section).
+
+### Anomaly detection rules (auto-flag in brain output)
+
+When loading the Patterns Registry rollups, automatically check each validated pattern row against these rules:
+
+| Rule | Trigger | Severity | Recommended next step |
+|---|---|---|---|
+| Empty citation pattern | Posts tagged ≥ 3 AND Total Peec mentions = 0 over 7d | ⚠️ review | Run `/pattern-audit {pattern name}` to diagnose |
+| Click-through gap | Total impressions 7d > 1000 AND Total clicks 7d = 0 | ⚠️ review | Audit titles + meta descriptions for the highest-imp pieces; consider `/pattern-audit` for competitor benchmark |
+| Stale evidence | Last reviewed > 60 days ago AND status = validated | 💡 review | Re-audit; pattern evidence may be stale |
+| Killed pattern still receiving impressions | Status = killed AND Total impressions 7d > 500 | 💡 review | Consider unkilling, OR audit which pages are leaking attention |
+
+The first two are P0 anomalies — they mean the pattern is producing content but the content isn't winning either surface. Without auto-flagging, these stay hidden in the rollups indefinitely.
+
+If a flagged pattern appears, suggest the natural next action in the brain output (don't run `/pattern-audit` automatically — the user decides which to investigate when).
 
 ## When to use
 
@@ -63,9 +144,11 @@ Keep it tight. The point is a fast briefing, not a report.
 
 ## Important constraints
 
-- **Do not edit the Notion strategy page** unless the user explicitly asks. The page is human-curated. This command is read-only.
+- **Do not edit the strategy page prose** unless the user explicitly asks. The narrative (bet, principles, measurement framework, roadmap, off-site, brand recovery) is human-curated. This command is read-only on prose.
 - **Do not rewrite the principles section** — that's Arnel's framing.
-- The "What's working" and "Content roadmap" sections DO update — refresh from Notion before recommending content moves, don't trust stale memory.
+- **The databases ARE the source of truth for current state, not the prose.** Daily Snapshots (numbers), Patterns Registry (what's working), Cusp Pages (queue), Targets (KPIs), Monthly AEO Snapshots (trend). When answering "what's our position?" / "are we on track?" / "what should we optimize?" read from the DB rows, not from any narrative paragraph (which may be stale).
+- **Auto-refreshed sections write themselves.** `/refresh-calendar` writes a new Daily Snapshots row nightly; `/peec-audit` writes a Monthly AEO Snapshots row monthly. Don't manually update those rows here.
+- **Update the durable narrative when strategy shifts.** Add/promote/demote patterns in Patterns Registry, update Target rows when scope changes, edit the strategy page prose for changes to the bet, principles, or roadmap reasoning. Those are deliberate human edits — surface a recommendation, ask for approval, then edit.
 
 ## How this fits into the content loop
 
@@ -83,6 +166,21 @@ All three downstream commands invoke `/arnels-assistant` internally for voice. `
 
 For non-site content (LinkedIn, X, internal docs), suggest calling `/arnels-assistant` directly without the SEO loop.
 
+## Refresh candidacy logic (mandatory 4-stage filter)
+
+When the user asks "what's stale?", "what should we refresh?", "what content needs updating?", or any equivalent, do NOT use `lastUpdated` alone as the filter. `lastUpdated` gets bumped every time a piece is touched (including title patches, content refreshes, and field edits), which makes newly-shipped pieces and refreshed-yesterday pieces look identical.
+
+A piece is a legitimate refresh candidate ONLY if ALL FOUR of these conditions are true:
+
+1. **`publishedDate` is older than 30 days** — excludes freshly published pieces. Use Sanity field `publishedDate`, NOT `_createdAt` (which is uniformly the Sanity migration date for migrated content).
+2. **`lastUpdated` is older than 30 days** — excludes pieces refreshed in the current sprint.
+3. **The slug is not 301-redirected in `next.config.ts`** — already-merged URLs are out of scope; they exist in Sanity but the URL itself routes elsewhere.
+4. **The slug is not in the Activity Log for the last 7 days** — belt-and-suspenders: if a session touched it but didn't bump `lastUpdated`, the Activity Log still knows.
+
+Reference implementation: `scripts/audit-publication-dates-v2.mjs` in the loudface-website repo. If the user requests a stale-candidate list, run an equivalent of that query before proposing anything. NEVER produce a refresh list from naïve `lastUpdated`-only filtering — that's the failure mode that caused the May 2026 brand-overhaul incident.
+
+When you complete a refresh, log it to Activity Log AND if it was a commitment from the Pending Commitments DB, update that row's `Status` to `Done`.
+
 ## Logging
 
 After delivering the briefing, append one row to the **Activity Log** database (`collection://586eb325-8bfd-417d-8663-73cda77f8234`):
@@ -91,3 +189,14 @@ After delivering the briefing, append one row to the **Activity Log** database (
 - Target: short context (e.g. "GSC last 7d + calendar state")
 - Outcome: `Done`
 - Notes: omit unless something notable happened (a surprising trend, a failed fetch)
+
+## Changelog
+
+Behavioral changes to this skill, most-recent-first. When you update the skill, add an entry here. `/seo-brain` should mention the latest 2-3 entries when surfacing the briefing if any are within the last 14 days — so users know what behavior is currently in play.
+
+### 2026-05-16
+
+- Added Step 0: Pending Commitments DB read (`collection://600eedcf-4ba8-4492-8a46-20b5b98e2d8d`). Closes the "verbal commitments lost at session boundary" gap. Triggered by the brand-overhaul redirect incident (May 16, 2026).
+- Added the 4-stage refresh-candidacy filter as the mandatory audit logic. `lastUpdated`-only filtering is now explicitly banned; the reference impl is `scripts/audit-publication-dates-v2.mjs`. Triggered by Arnel pushback on stale-candidate false positives during the batch 11-13 sprint.
+- Added a `📌 Pending commitments` brief section between the freshness alert and the current-state block. Always surfaced when any rows are pending or in progress.
+- Added this changelog section as a permanent convention.

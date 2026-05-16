@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Architecture Recommendation: Notion vs Postgres — May 16, 2026</title>
+<style>
+* { box-sizing: border-box; }
+body { font-family: -apple-system, BlinkMacSystemFont, "Inter", system-ui, sans-serif; max-width: 920px; margin: 0 auto; padding: 48px 32px; line-height: 1.65; color: #1a1a1a; background: #fafaf9; }
+h1 { font-size: 2.2rem; font-weight: 700; line-height: 1.2; margin: 0 0 8px 0; }
+h2 { font-size: 1.5rem; font-weight: 650; margin: 56px 0 16px; padding-top: 24px; border-top: 1px solid #e7e5e4; }
+h3 { font-size: 1.15rem; font-weight: 600; margin: 32px 0 12px; }
+h4 { font-size: 1rem; font-weight: 600; margin: 20px 0 8px; color: #57534e; }
+p { margin: 0 0 16px; }
+.lede { font-size: 1.05rem; color: #57534e; margin-bottom: 32px; }
+.verdict { background: #1c1917; color: #fafaf9; padding: 28px 32px; border-radius: 8px; margin: 24px 0 40px; font-size: 1.02rem; }
+.verdict strong { color: #fbbf24; }
+.verdict p { margin: 0 0 14px; }
+.verdict p:last-child { margin-bottom: 0; }
+.warning { background: #fee2e2; border-left: 4px solid #dc2626; padding: 16px 20px; margin: 20px 0; border-radius: 4px; }
+.note { background: #fef3c7; border-left: 4px solid #f59e0b; padding: 16px 20px; margin: 20px 0; border-radius: 4px; }
+.proposal { background: #dcfce7; border-left: 4px solid #16a34a; padding: 16px 20px; margin: 20px 0; border-radius: 4px; }
+.code { background: #f5f5f4; padding: 2px 6px; border-radius: 3px; font-family: "Geist Mono", monospace; font-size: 0.92em; }
+pre { background: #1c1917; color: #fafaf9; padding: 16px 20px; border-radius: 6px; overflow-x: auto; font-family: "Geist Mono", monospace; font-size: 0.85rem; line-height: 1.5; }
+table { width: 100%; border-collapse: collapse; margin: 20px 0; font-size: 0.92rem; }
+th { background: #f5f5f4; padding: 10px 12px; text-align: left; font-weight: 600; border-bottom: 2px solid #d6d3d1; }
+td { padding: 10px 12px; border-bottom: 1px solid #e7e5e4; vertical-align: top; }
+.good { color: #16a34a; font-weight: 600; }
+.bad { color: #dc2626; font-weight: 600; }
+.meh { color: #d97706; font-weight: 600; }
+ul, ol { margin: 0 0 16px; padding-left: 24px; }
+li { margin-bottom: 6px; }
+.toc { background: #f5f5f4; padding: 20px 24px; border-radius: 6px; margin-bottom: 40px; font-size: 0.92rem; }
+.toc a { color: #1a1a1a; text-decoration: none; display: block; padding: 4px 0; }
+.toc a:hover { color: #dc2626; }
+.diagram { background: white; border: 1px solid #e7e5e4; border-radius: 8px; padding: 24px; margin: 24px 0; }
+.diagram-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; }
+.layer { background: #fafaf9; border: 1px solid #e7e5e4; border-radius: 6px; padding: 14px; font-size: 0.88rem; }
+.layer h5 { margin: 0 0 8px; font-size: 0.92rem; color: #57534e; text-transform: uppercase; letter-spacing: 0.04em; }
+.layer ul { margin: 0; padding-left: 18px; }
+.layer li { margin-bottom: 2px; font-size: 0.88rem; }
+.tags { display: flex; gap: 6px; flex-wrap: wrap; margin: 8px 0 16px; }
+.tag { display: inline-block; padding: 2px 10px; border-radius: 12px; font-size: 0.72rem; font-weight: 600; }
+.tag-notion { background: #f3f4f6; color: #1f2937; }
+.tag-worker { background: #ddd6fe; color: #5b21b6; }
+.tag-local { background: #fed7aa; color: #9a3412; }
+.tag-skill { background: #bfdbfe; color: #1e40af; }
+</style>
+</head>
+<body>
+
+<h1>Architecture Recommendation</h1>
+<p class="lede">Stay on Notion. Don't build Postgres. Here's why, and the exact path to "impeccable" without over-engineering.</p>
+
+<div class="verdict">
+<p><strong>The recommendation, in one paragraph.</strong> Don't build a Postgres database or a custom app. The problems we identified — Activity Log bloat, lost commitments, context window pressure, skill memory gaps — are <em>shape</em> problems, not <em>storage</em> problems. They get solved by adding a thin digest layer on top of the worker infrastructure that already exists in this repo (<span class="code">scripts/notion-workers/</span>), a small new "Pending Commitments" Notion database, and skill-level discipline around publication-aware audits and context scoping. Total focused effort: ~3 days. Total new infrastructure to maintain: zero. If we hit specific scaling triggers in 12+ months (laid out below), revisit Postgres then. Don't pre-build for problems you don't have.</p>
+<p>The trap with "build a real app" is that it sounds disciplined but is actually less disciplined. It commits us to UI work, hosting, backups, schema migrations, and a permissions layer to recover what Notion gives us for free. Worse: it removes you and the team from the loop because Notion's value isn't storage — it's that a human can open it, edit a row, and the system reflects the change immediately. Postgres would force you to either build a CRUD UI or route all edits through Claude. Both are downgrades.</p>
+</div>
+
+<div class="toc">
+<strong>Contents</strong>
+<a href="#part-1">1. The real question (and why "Notion vs Postgres" is the wrong framing)</a>
+<a href="#part-2">2. Decision matrix: where each storage layer wins</a>
+<a href="#part-3">3. The proposed architecture in one picture</a>
+<a href="#part-4">4. The 5 fixes, mapped to Notion-native execution</a>
+<a href="#part-5">5. Effort estimate and sequencing</a>
+<a href="#part-6">6. The triggers that would make me change this recommendation</a>
+</div>
+
+<h2 id="part-1">1. The real question</h2>
+
+<p>The framing "Notion vs Postgres" implies one storage layer holds everything. That's not how the system actually works today, and it shouldn't be how it works tomorrow.</p>
+
+<p>Right now we already use four storage layers in production:</p>
+
+<table>
+<tr><th>Layer</th><th>What it holds</th><th>Why it's there</th></tr>
+<tr><td><strong>Sanity</strong></td><td>Published content (blog posts, case studies, team, clients)</td><td>It's the CMS the live site reads from. Schema-validated, structured.</td></tr>
+<tr><td><strong>Notion</strong></td><td>Strategy, content calendar, KB insights, snapshots, patterns, targets</td><td>Human-readable, human-editable, multi-user, no UI to build.</td></tr>
+<tr><td><strong>GSC + Peec AI</strong></td><td>Search performance + AI citation data</td><td>External analytics. We read; we don't write.</td></tr>
+<tr><td><strong>The repo itself</strong></td><td>Skills, code, redirects, ship scripts, local memory</td><td>The execution layer. Git-versioned.</td></tr>
+</table>
+
+<p>None of these are competing with each other. They're each optimized for what they hold. Postgres would replace Notion — but Notion isn't the part that's struggling. The part that's struggling is the <strong>shape</strong> of how Notion data flows into Claude sessions.</p>
+
+<h3>What the actual problems are (and which layer fixes each)</h3>
+
+<table>
+<tr><th>Problem</th><th>Root cause</th><th>Fixed by</th></tr>
+<tr><td>Activity Log will exceed context budget</td><td>Raw rows piling up forever</td><td>Digest worker (existing infra)</td></tr>
+<tr><td>Skills forget what previous sessions did</td><td>No session-state read at startup</td><td>Pending Commitments DB + skill update</td></tr>
+<tr><td>"What's stale" audit is wrong</td><td>Skills use lastUpdated, not publishedDate</td><td>Skill logic update</td></tr>
+<tr><td>Verbal commitments vanish on session end</td><td>No durable "things I promised" surface</td><td>Pending Commitments DB</td></tr>
+<tr><td>Skill changes don't propagate visibly</td><td>No changelog in skill SKILL.md</td><td>Skill changelog convention</td></tr>
+</table>
+
+<p>Not one of these requires moving data out of Notion. They're all solved by either (a) summarizing Notion better, (b) adding one small Notion database, or (c) updating skill logic.</p>
+
+<h2 id="part-2">2. Decision matrix: where each storage layer wins</h2>
+
+<p>Let me be honest about what each layer is actually good at, including the cases where Postgres would genuinely beat Notion.</p>
+
+<table>
+<tr><th>Capability</th><th>Notion</th><th>Postgres</th><th>Sanity</th><th>Local files</th></tr>
+<tr><td>Human-edited, multi-user</td><td class="good">Great</td><td class="bad">Need UI</td><td class="meh">OK (Studio)</td><td class="bad">No</td></tr>
+<tr><td>Schema discipline</td><td class="meh">Soft</td><td class="good">Hard</td><td class="good">Hard</td><td class="bad">None</td></tr>
+<tr><td>Indexed queries at scale</td><td class="bad">Slow &gt;1k rows</td><td class="good">Fast</td><td class="good">Fast (GROQ)</td><td class="bad">No</td></tr>
+<tr><td>Aggregations / computed metrics</td><td class="meh">Rollups</td><td class="good">SQL views</td><td class="meh">GROQ projections</td><td class="bad">No</td></tr>
+<tr><td>Cost (operations)</td><td class="good">$0</td><td class="meh">$10-100/mo</td><td class="good">Already paid</td><td class="good">$0</td></tr>
+<tr><td>Cost (build / maintain)</td><td class="good">Zero</td><td class="bad">Real dev time</td><td class="good">Already built</td><td class="good">Trivial</td></tr>
+<tr><td>Survives team changes</td><td class="good">Anyone can edit</td><td class="meh">Needs UI or Claude</td><td class="good">Studio UI exists</td><td class="bad">Repo-local</td></tr>
+<tr><td>Real-time / event-driven</td><td class="meh">Webhooks limited</td><td class="good">LISTEN/NOTIFY</td><td class="good">Webhooks</td><td class="bad">No</td></tr>
+<tr><td>Backup / disaster recovery</td><td class="good">Notion handles</td><td class="bad">You handle</td><td class="good">Sanity handles</td><td class="meh">Git</td></tr>
+</table>
+
+<p>The honest reading: Notion loses on indexed queries at scale and aggregations. Everywhere else it's competitive or better. For our actual workload — under 1,000 active rows per database, human-edited inputs, low-frequency reads from skills — the indexed-query weakness doesn't matter yet.</p>
+
+<p>The point at which it <em>would</em> matter is genuinely far away. We have ~80 blog posts. To stress Notion's query limits we'd need 5,000+ rows in a single database with frequent complex filtering. Not on the 12-month horizon.</p>
+
+<h2 id="part-3">3. The proposed architecture in one picture</h2>
+
+<div class="diagram">
+<h4 style="margin-top: 0;">Three-layer model — already 80% built, just needs to be made explicit</h4>
+
+<div class="diagram-grid">
+<div class="layer">
+<h5>Layer 1: Human-curated</h5>
+<p style="font-size: 0.85rem; margin: 0 0 8px;">Notion. Source of truth for things humans edit.</p>
+<ul>
+<li>Strategy page</li>
+<li>Thought Leadership KB</li>
+<li>Patterns Registry</li>
+<li>Targets (KPIs)</li>
+<li>Pending Commitments <strong>(new)</strong></li>
+<li>Content calendar (Website Content DB — metadata only)</li>
+</ul>
+</div>
+<div class="layer">
+<h5>Layer 2: Machine-generated, time-series</h5>
+<p style="font-size: 0.85rem; margin: 0 0 8px;">Notion. But ring-buffered + digested by workers.</p>
+<ul>
+<li>Activity Log (last 7d raw + nightly digest)</li>
+<li>Daily Snapshots (30d rolling + monthly digest)</li>
+<li>Cusp Pages (current state only, not history)</li>
+<li>Prompt Coverage (current state only)</li>
+<li>Competitor Landscape (current state only)</li>
+</ul>
+</div>
+<div class="layer">
+<h5>Layer 3: Skill execution</h5>
+<p style="font-size: 0.85rem; margin: 0 0 8px;">Local + git. Per-session memory.</p>
+<ul>
+<li>Skills with CHANGELOG sections</li>
+<li>Per-skill context scoping (router pattern)</li>
+<li>Optional <span class="code">.claude/session-state.json</span></li>
+<li>Skill-level publication-aware audit logic</li>
+</ul>
+</div>
+</div>
+</div>
+
+<p>The key shift: Layer 2 currently treats every row as permanent. The proposal is to treat it as a ring buffer with automatic digesting. The Notion data stays — we just summarize old rows nightly so skills can read a digest instead of the raw stream.</p>
+
+<h3>How a session actually flows under this architecture</h3>
+
+<pre>User: "what should I refresh next?"
+  ↓
+/seo-brain skill loads (routed to "audit" context, not full brain):
+  - publishedDate + lastUpdated for all blog posts  [Sanity, fast]
+  - redirects from next.config.ts                   [local file]
+  - Pending Commitments rows (status=pending)       [Notion, ~10 rows]
+  - Activity Log last-7d-digest page                [Notion, 1 page]
+  ↓
+Skill applies the 4-stage filter:
+  - publishedDate &gt; 30d ago
+  - lastUpdated &gt; 30d ago
+  - slug not in redirects
+  - slug not in last-7d Activity Log
+  ↓
+Returns: list of genuine candidates, plus any pending commitments
+  that haven't been executed.
+  ↓
+Total tokens loaded: ~3-5KB. Today: ~30-50KB.</pre>
+
+<p>That's the entire architectural improvement. No new database engine. No new app. No new hosting. The "digest" pages are just regular Notion pages written by a worker on a cron.</p>
+
+<h2 id="part-4">4. The 5 fixes from yesterday, mapped to Notion-native execution</h2>
+
+<h3>Fix 1: Pending Commitments DB</h3>
+<div class="tags"><span class="tag tag-notion">Notion</span><span class="tag tag-skill">Skill update</span></div>
+<p><strong>What:</strong> One new Notion database. Columns: Commitment, Target URL, Action Type (rewrite / 301 / delete / verify), Status (pending / done / cancelled), Created, Promised By Session.</p>
+<p><strong>How skills use it:</strong> <span class="code">/seo-brain</span> reads <span class="code">Status = pending</span> rows at startup and surfaces them. Skills can write new rows. Session can't cleanly end with pending rows from this session unless explicitly deferred.</p>
+<p><strong>Effort:</strong> 30 min to create the DB. 1 hour to update <span class="code">/seo-brain</span>. Reads ~5-20 rows per session, trivial cost.</p>
+
+<h3>Fix 2: Publication-aware audit logic</h3>
+<div class="tags"><span class="tag tag-skill">Skill update</span></div>
+<p><strong>What:</strong> Update <span class="code">/seo-brain</span> and any skill that does refresh-candidacy work. Hardcode the 4-stage filter. Update <span class="code">CLAUDE.md</span> rule: "Refresh candidacy claims require publishedDate + lastUpdated + redirect-map + Activity-Log check."</p>
+<p><strong>Effort:</strong> 1 hour. Pure markdown + small skill logic update. <span class="code">scripts/audit-publication-dates-v2.mjs</span> already exists as the reference implementation.</p>
+
+<h3>Fix 3: Activity Log digest worker</h3>
+<div class="tags"><span class="tag tag-worker">Worker</span><span class="tag tag-notion">Notion</span></div>
+<p><strong>What:</strong> New tool inside <span class="code">scripts/notion-workers/</span>. Runs nightly. Reads Activity Log rows from last 7 days. Aggregates by skill, by URL, by outcome. Writes a "Digest: YYYY-MM-DD" Notion page. Optionally archives rows older than 60 days to an "Activity Log Archive" DB.</p>
+<p><strong>How skills use it:</strong> <span class="code">/seo-brain</span> reads the latest 1-2 digest pages instead of querying Activity Log directly. Total context cost: ~3KB vs ~50KB at 6-month scale.</p>
+<p><strong>Effort:</strong> ~1 day. The worker pattern (<span class="code">refreshCalendarMetrics</span>, <span class="code">dailySnapshotsSync</span>) is already established. This is one more tool in the same shape.</p>
+
+<h3>Fix 4: Per-skill context scoping (router pattern)</h3>
+<div class="tags"><span class="tag tag-skill">Skill update</span></div>
+<p><strong>What:</strong> <span class="code">/seo-brain</span> currently loads a fixed bundle every time. The proposal: examine the user's actual question first, then load only the relevant subset.</p>
+<p><strong>How:</strong> The skill markdown starts with an intent-detection step. Five canonical intents map to five different fetch bundles. (Diagram in yesterday's investigation doc, Proposal 4.)</p>
+<p><strong>Effort:</strong> ~half day. Significant skill rewrite, but contained to one file.</p>
+
+<h3>Fix 5: Session State file (and skill CHANGELOG)</h3>
+<div class="tags"><span class="tag tag-local">Local file</span><span class="tag tag-skill">Skill convention</span></div>
+<p><strong>What:</strong> Two small additions. (a) <span class="code">.claude/session-state.json</span> at repo root — each skill writes its last action. New sessions read it first. (b) Each skill's <span class="code">SKILL.md</span> grows a <span class="code">## Changelog</span> section that humans (or Claude) update when behavior changes. <span class="code">/seo-brain</span> reads its own changelog at load and shows last 2-3 entries.</p>
+<p><strong>Effort:</strong> Session state: ~half day. Skill changelog convention: trivial (just update the markdowns once and follow it).</p>
+
+<h2 id="part-5">5. Effort estimate and sequencing</h2>
+
+<p>Total focused effort to ship all five fixes: <strong>~3 days</strong>.</p>
+
+<table>
+<tr><th>Day</th><th>What ships</th><th>Outcome</th></tr>
+<tr><td>1 (morning)</td><td>Pending Commitments DB + skill update</td><td>No more lost verbal commitments. Stop the bleeding.</td></tr>
+<tr><td>1 (afternoon)</td><td>Publication-aware audit logic in <span class="code">/seo-brain</span> + CLAUDE.md rule</td><td>"What's stale" queries are correct. Stop refresh-candidate false positives.</td></tr>
+<tr><td>2</td><td>Activity Log digest worker. One-time backfill.</td><td>Activity Log context cost drops 10x. Sustainable for 12+ months.</td></tr>
+<tr><td>3 (morning)</td><td>Per-skill context scoping in <span class="code">/seo-brain</span></td><td>Per-task token cost drops 5-10x. Headroom for adding more KBs.</td></tr>
+<tr><td>3 (afternoon)</td><td>Session State + skill CHANGELOG convention</td><td>Cross-session continuity. Skill update trust.</td></tr>
+</table>
+
+<p>You could also stage this: Day 1 alone fixes the worst failure mode (lost commitments + wrong audits) and is the highest-leverage half-day on the list. The rest can wait until after batch 14 ships.</p>
+
+<h2 id="part-6">6. The triggers that would make me change this recommendation</h2>
+
+<p>I want to be honest about when Postgres would actually be the right call. Three triggers, any one of which should make us revisit:</p>
+
+<div class="warning">
+<strong>Trigger 1: Notion DB hits 5,000+ active rows.</strong> Today none of our DBs are close to this. Activity Log is the fastest-growing at ~10-20 rows/day, but the digest+archive pattern keeps active rows under 200 indefinitely. If we ever scale to managing 20+ client engagements in parallel and Activity Log balloons past digesting capacity, that's the signal.
+</div>
+
+<div class="warning">
+<strong>Trigger 2: We need real-time aggregations across multiple databases.</strong> Example: "for every blog post, show me Peec citation count, GSC clicks, branded search lift on NEW queries, and which Patterns it tags into — sorted by combined score, refreshing every 5 minutes." Notion can't do this cleanly. Today our analysis runs in nightly batches; if we ever need live dashboards, that's the signal.
+</div>
+
+<div class="warning">
+<strong>Trigger 3: We start selling AEO/SEO tooling externally.</strong> If LoudFace ever ships a product that lets other agencies run AEO programs (a "Peec for B2B SaaS" style SaaS), then yes — that needs a real database. But that's a different company than the one we're building right now. Don't pre-build for it.
+</div>
+
+<p>None of these triggers are imminent. The 3-day Notion-native fix has 12+ months of runway. By the time any trigger fires, we'll have months of operating experience to inform what the Postgres schema should actually look like — instead of guessing now.</p>
+
+<h2>The honest summary</h2>
+
+<p>The temptation to build "the proper system" is real. It feels disciplined. But the system we have is already three coordinated layers (Sanity + Notion + workers + skills), and the problems we hit today aren't because Notion is wrong — they're because we didn't add a digest layer and a commitments surface that Notion was always going to need at this scale.</p>
+
+<p>Build the digest. Add the commitments DB. Update the skills. Stop. If the triggers fire in 12 months, we revisit. If they don't, you saved a quarter of engineering time and the system runs impeccably because each layer does what it's actually good at.</p>
+
+<p>Tell me which day-1 fixes to start with and I'll execute. My default would be: Pending Commitments DB + publication-aware audit logic this afternoon, then ship batch 14 against the new audit, then come back for the worker + scoping work after batch 14 lands.</p>
+
+</body>
+</html>

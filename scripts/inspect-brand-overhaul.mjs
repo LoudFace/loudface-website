@@ -1,0 +1,14 @@
+import { createClient } from "@sanity/client";
+import { readFileSync } from "fs";
+const env = readFileSync(".env.local", "utf8").split("\n").reduce((a, l) => { const m = l.match(/^([^=]+)=(.*)$/); if (m) a[m[1].trim()] = m[2].trim().replace(/^["']|["']$/g, ""); return a; }, {});
+const client = createClient({ projectId: "xjjjqhgt", dataset: "production", apiVersion: "2025-03-29", useCdn: false, token: env.SANITY_API_TOKEN });
+const doc = await client.fetch(`*[_type == "blogPost" && slug.current == "webflows-new-brand-overhaul-and-platform-updates"][0]{_id, name, metaTitle, metaDescription, publishedDate, lastUpdated, "len": length(content), content}`);
+console.log(`_id: ${doc._id}`);
+console.log(`name: ${doc.name}`);
+console.log(`metaTitle: ${doc.metaTitle}`);
+console.log(`metaDescription: ${doc.metaDescription}`);
+console.log(`published: ${doc.publishedDate}`);
+console.log(`lastUpdated: ${doc.lastUpdated}`);
+console.log(`content length: ${doc.len}`);
+console.log(`\n--- first 2000 chars ---`);
+console.log(doc.content?.slice(0, 2000));

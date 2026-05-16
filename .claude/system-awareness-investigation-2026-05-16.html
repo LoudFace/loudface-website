@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>LoudFace System Awareness Investigation — May 16, 2026</title>
+<style>
+* { box-sizing: border-box; }
+body { font-family: -apple-system, BlinkMacSystemFont, "Inter", system-ui, sans-serif; max-width: 900px; margin: 0 auto; padding: 48px 32px; line-height: 1.65; color: #1a1a1a; background: #fafaf9; }
+h1 { font-size: 2.2rem; font-weight: 700; line-height: 1.2; margin: 0 0 8px 0; }
+h2 { font-size: 1.5rem; font-weight: 650; margin: 56px 0 16px; padding-top: 24px; border-top: 1px solid #e7e5e4; }
+h3 { font-size: 1.15rem; font-weight: 600; margin: 32px 0 12px; }
+h4 { font-size: 1rem; font-weight: 600; margin: 20px 0 8px; color: #57534e; }
+p { margin: 0 0 16px; }
+.lede { font-size: 1.05rem; color: #57534e; margin-bottom: 32px; }
+.note { background: #fef3c7; border-left: 4px solid #f59e0b; padding: 16px 20px; margin: 20px 0; border-radius: 4px; font-size: 0.95rem; }
+.confession { background: #fee2e2; border-left: 4px solid #dc2626; padding: 16px 20px; margin: 20px 0; border-radius: 4px; font-size: 0.95rem; }
+.proposal { background: #dcfce7; border-left: 4px solid #16a34a; padding: 16px 20px; margin: 20px 0; border-radius: 4px; font-size: 0.95rem; }
+.code { background: #f5f5f4; padding: 2px 6px; border-radius: 3px; font-family: "Geist Mono", monospace; font-size: 0.92em; }
+pre { background: #1c1917; color: #fafaf9; padding: 16px 20px; border-radius: 6px; overflow-x: auto; font-family: "Geist Mono", monospace; font-size: 0.85rem; line-height: 1.5; }
+table { width: 100%; border-collapse: collapse; margin: 20px 0; font-size: 0.92rem; }
+th { background: #f5f5f4; padding: 10px 12px; text-align: left; font-weight: 600; border-bottom: 2px solid #d6d3d1; }
+td { padding: 10px 12px; border-bottom: 1px solid #e7e5e4; vertical-align: top; }
+td.severity-high { color: #dc2626; font-weight: 600; }
+td.severity-med { color: #d97706; font-weight: 600; }
+td.severity-low { color: #16a34a; font-weight: 600; }
+ul, ol { margin: 0 0 16px; padding-left: 24px; }
+li { margin-bottom: 6px; }
+.tldr { background: #1c1917; color: #fafaf9; padding: 24px 28px; border-radius: 8px; margin: 24px 0 40px; }
+.tldr strong { color: #fbbf24; }
+.tldr p { margin: 0 0 12px; }
+.tldr p:last-child { margin-bottom: 0; }
+.toc { background: #f5f5f4; padding: 20px 24px; border-radius: 6px; margin-bottom: 40px; font-size: 0.92rem; }
+.toc a { color: #1a1a1a; text-decoration: none; display: block; padding: 4px 0; }
+.toc a:hover { color: #dc2626; }
+.priority-pill { display: inline-block; padding: 2px 10px; border-radius: 12px; font-size: 0.75rem; font-weight: 600; margin-right: 8px; vertical-align: middle; }
+.p-now { background: #dc2626; color: white; }
+.p-soon { background: #f59e0b; color: white; }
+.p-later { background: #6b7280; color: white; }
+</style>
+</head>
+<body>
+
+<h1>System Awareness Investigation</h1>
+<p class="lede">Why I lose track of what's already shipped, and how to fix it before the system breaks at scale. May 16, 2026.</p>
+
+<div class="tldr">
+<p><strong>TL;DR.</strong> Two real problems surfaced today. First, I treated old <span class="code">lastUpdated</span> timestamps as the canonical "what's stale" signal, but that field gets bumped every time I touch a piece, so newly-shipped content and recently-refreshed legacy content look identical. The fix is small: publication-date-aware audit logic + a "what I touched this session" memory hook. Second, the Notion brain is on track to exceed context limits within ~3 months as Activity Log + Daily Snapshots + Patterns Registry compound. The fix is bigger: a digest layer that auto-summarizes high-volume databases nightly, plus per-skill context scoping so <span class="code">/seo-brain</span> doesn't fetch everything for every task. Five concrete proposals below, ordered by leverage.</p>
+<p>Also: the brand-overhaul piece you flagged is now 301'd to <span class="code">/blog/webflow-ai-revolution</span>. That redirect should have happened weeks ago; the fact that it didn't is exactly the awareness gap this doc is about.</p>
+</div>
+
+<div class="toc">
+<strong>Contents</strong>
+<a href="#part-1">1. What actually went wrong today</a>
+<a href="#part-2">2. Root causes — three structural gaps</a>
+<a href="#part-3">3. The context-limit problem (and why it's about to get worse)</a>
+<a href="#part-4">4. Five proposals, ordered by leverage</a>
+<a href="#part-5">5. What I'm doing right now vs what needs your decision</a>
+</div>
+
+<h2 id="part-1">1. What actually went wrong today</h2>
+
+<div class="confession">
+<strong>Specific miss #1.</strong> I told you in earlier batches that <span class="code">/blog/webflows-new-brand-overhaul-and-platform-updates</span> would be removed. I never added the redirect. It's been live as 2024-10-10 AI-slop for the entire content sprint. Added now: 301 → <span class="code">/blog/webflow-ai-revolution</span>. But the bigger problem isn't the miss — it's that you had to be the one to catch it.
+</div>
+
+<div class="confession">
+<strong>Specific miss #2.</strong> When I built the "stale candidates" list across batches 11–13, my filter was <span class="code">lastUpdated &gt; N days ago</span>. That looked safe but had a known failure mode: pieces I shipped yesterday have a fresh <span class="code">lastUpdated</span> and pieces I refreshed yesterday have an equally fresh <span class="code">lastUpdated</span>. They look identical in any "show me what to refresh next" query. When you pushed back today, I built <span class="code">scripts/audit-publication-dates-v2.mjs</span> which uses <span class="code">publishedDate</span> as the real signal — and confirmed the system has been working correctly because I happened to pick distinct slugs each batch, but only by luck.
+</div>
+
+<h3>What the audit actually revealed</h3>
+
+<p>Of 82 published blog posts:</p>
+
+<table>
+<tr><th>Cohort</th><th>Count</th><th>How to identify</th></tr>
+<tr><td>Genuinely new (shipped in last 30d)</td><td>9</td><td><span class="code">publishedDate</span> within 30d</td></tr>
+<tr><td>Refreshed in last 30d (existed before)</td><td>61</td><td><span class="code">publishedDate</span> &gt; 30d, <span class="code">lastUpdated</span> within 30d</td></tr>
+<tr><td>Already 301-merged in earlier batches</td><td>8</td><td>Present in Sanity but URL returns 308</td></tr>
+<tr><td><strong>Genuinely stale (real refresh candidates)</strong></td><td><strong>4</strong></td><td>Both dates &gt;30d ago, no redirect</td></tr>
+</table>
+
+<p>So the system has 4 real candidates left, not the 12+ my naive query suggested. The discrepancy is entirely about whether the audit uses the right field.</p>
+
+<h2 id="part-2">2. Root causes — three structural gaps</h2>
+
+<h3>Gap 1: The skills don't have session memory</h3>
+
+<p><span class="code">/seo-brain</span>, <span class="code">/draft-content</span>, <span class="code">/ship-content</span>, <span class="code">/critique-content</span> each load fresh context every invocation. None of them know that the previous skill in the loop wrote anything. The Activity Log database in Notion is the cross-session audit trail, but the skills don't read it before acting — they only write to it after acting.</p>
+
+<p>Consequence: I can ship a piece in batch 11, propose it again as "stale" in batch 13, and the system has no immune response. The Activity Log knows; the skill doesn't.</p>
+
+<h3>Gap 2: <span class="code">lastUpdated</span> is overloaded</h3>
+
+<p>The field means "any change to this doc" — including title patches, content refreshes, and new publications. It's the obvious field to query, but it conflates three different events:</p>
+
+<ul>
+<li>"This is a new piece" (used to mean: <span class="code">lastUpdated == publishedDate</span>)</li>
+<li>"This was refreshed" (publishedDate old, lastUpdated recent)</li>
+<li>"This was patched for a small fix" (both dates ancient, lastUpdated bumped by a single field edit)</li>
+</ul>
+
+<p>Sanity doesn't distinguish these. Our schema doesn't either. So every audit needs to manually parse the relationship between <span class="code">publishedDate</span>, <span class="code">lastUpdated</span>, and the Activity Log to know what state a piece is actually in.</p>
+
+<h3>Gap 3: The "what was promised" surface doesn't exist</h3>
+
+<p>When I tell you "we'll 301 this piece" mid-conversation, that commitment vanishes when the session ends unless I either (a) immediately make the change or (b) write it to Notion. In the brand-overhaul case, I apparently committed verbally and then the session compacted/ended before I wrote the redirect. There's no "pending commitments" log anywhere, so when I resume work in a new session, I rebuild the to-do from scratch instead of from a durable record.</p>
+
+<p>This is the deepest structural gap because it's the one that produces the worst class of error: <em>actions I claimed to take but didn't</em>. Everything else is just inefficiency.</p>
+
+<h2 id="part-3">3. The context-limit problem (and why it's about to get worse)</h2>
+
+<p>You're right that this is the bigger issue. Let me show you the trajectory.</p>
+
+<table>
+<tr><th>Notion surface</th><th>Current size</th><th>Growth rate</th><th>Months until painful</th></tr>
+<tr><td>AI Search & SEO Search page</td><td>~15 KB</td><td>Slow (human-curated)</td><td>12+</td></tr>
+<tr><td>Website Content database</td><td>~82 entries</td><td>+15-25/quarter</td><td>6-9</td></tr>
+<tr><td>Patterns Registry</td><td>6 patterns</td><td>Static</td><td>n/a</td></tr>
+<tr><td>Thought Leadership KB</td><td>~10-20 insights</td><td>+5-15/month</td><td>4-6</td></tr>
+<tr><td>Daily Snapshots</td><td>~30 entries</td><td>+1/day = +30/month</td><td>3-4</td></tr>
+<tr><td>Cusp Pages</td><td>Variable</td><td>+5-20/day refresh</td><td>2-3</td></tr>
+<tr><td>Prompt Coverage</td><td>~50-200 prompts × URLs</td><td>+50/quarter</td><td>4-6</td></tr>
+<tr><td>Competitor Landscape</td><td>~75 entries (15/pattern × 5 patterns)</td><td>Stable size, weekly refresh</td><td>n/a</td></tr>
+<tr><td><strong>Activity Log</strong></td><td>~50 rows</td><td><strong>+5-10/day if I'm working</strong></td><td><strong>2-3</strong></td></tr>
+<tr><td>Monthly AEO Snapshots</td><td>1-2 rows</td><td>+1/month</td><td>24+</td></tr>
+<tr><td>Targets</td><td>~5-10 KPIs</td><td>Static</td><td>n/a</td></tr>
+</table>
+
+<p>The Activity Log is the canary. At my current sprint pace (~4 pieces per batch, multiple batches per day), it accumulates 10–20 rows per day. The skill <span class="code">/seo-brain</span> as documented fetches the strategy page + Website Content database + GSC. It doesn't currently fetch Activity Log — but the skills <em>should</em> fetch it (per Gap 1), and the moment they do, we're loading 500+ rows of free-text notes into every session within 90 days.</p>
+
+<p>The same issue affects Daily Snapshots (60-day rolling window already), Prompt Coverage (grows with every new tracked prompt), and Cusp Pages (rotates frequently but accumulates historical entries).</p>
+
+<h2 id="part-4">4. Five proposals, ordered by leverage</h2>
+
+<h3><span class="priority-pill p-now">DO NOW</span> Proposal 1: Pending Commitments database in Notion</h3>
+
+<p><strong>Problem solved:</strong> Gap 3 (verbal commitments vanish on session end).</p>
+
+<p><strong>Mechanic:</strong> A new Notion database called "Pending Commitments" with columns: <em>Commitment</em>, <em>Promised By Session</em>, <em>Target URL</em>, <em>Action Type</em> (rewrite / 301 / delete / other), <em>Status</em> (pending / done / cancelled), <em>Created</em>, <em>Completed</em>.</p>
+
+<p><strong>How it works:</strong> Whenever I say "I'll do X" but can't immediately do it, I write a row. <span class="code">/seo-brain</span> loads pending rows at session start. Sessions can't end with pending rows that were touched in-session unless the user explicitly defers them.</p>
+
+<p><strong>Cost:</strong> ~2 hours setup. One new Notion DB, one tool added to <span class="code">/seo-brain</span> Step 1.</p>
+
+<p><strong>Side effect:</strong> Forces me to be more disciplined about what I commit to mid-conversation. Verbal "we'll do that" becomes a tracked row.</p>
+
+<h3><span class="priority-pill p-now">DO NOW</span> Proposal 2: Publication-aware audit logic in skills</h3>
+
+<p><strong>Problem solved:</strong> Gap 2 (lastUpdated conflates new + refreshed + patched).</p>
+
+<p><strong>Mechanic:</strong> The canonical "what's stale" query becomes:</p>
+
+<pre>// pseudocode
+stale_candidates = published_blog_posts
+  .filter(d => published_date < N days ago)        // exclude freshly-published
+  .filter(d => last_updated < M days ago)          // exclude recently-refreshed
+  .filter(d => !redirected(d.slug, next_config))   // exclude already 301'd
+  .filter(d => !in_activity_log_last_N_days(d.slug)) // belt-and-suspenders
+</pre>
+
+<p>This 4-stage filter is what <span class="code">scripts/audit-publication-dates-v2.mjs</span> does today. The proposal: codify it as the default audit logic that <span class="code">/seo-brain</span> and any "what should I refresh next" workflow uses. Update <span class="code">CLAUDE.md</span> with the rule: "Refresh candidacy requires all four filters to pass."</p>
+
+<p><strong>Cost:</strong> ~1 hour. Update the <span class="code">/seo-brain</span> skill markdown + one inline rule in CLAUDE.md.</p>
+
+<h3><span class="priority-pill p-soon">DO SOON</span> Proposal 3: Activity Log digest worker</h3>
+
+<p><strong>Problem solved:</strong> Activity Log will exceed reasonable fetch size within 2-3 months.</p>
+
+<p><strong>Mechanic:</strong> A worker tool (the Notion workers infrastructure already exists per <span class="code">scripts/notion-workers/</span>) that runs nightly and:</p>
+<ol>
+<li>Reads Activity Log rows from the last 30 days</li>
+<li>Aggregates by skill, by URL touched, by outcome</li>
+<li>Writes a single "Digest: YYYY-MM-DD" page that summarizes the period</li>
+<li>Optionally archives older Activity Log rows to a separate "Activity Log Archive" DB</li>
+</ol>
+
+<p><strong>What skills read:</strong> Instead of fetching all rows, fetch (a) the latest digest + (b) only the last 7 days of raw rows. Total context cost: ~5 KB instead of 50+ KB.</p>
+
+<p><strong>Cost:</strong> ~1 day. New worker tool + skill update + one-time backfill.</p>
+
+<h3><span class="priority-pill p-soon">DO SOON</span> Proposal 4: Per-skill context scoping</h3>
+
+<p><strong>Problem solved:</strong> Right now <span class="code">/seo-brain</span> fetches a fixed bundle of context regardless of what the user actually asked. Big and getting bigger.</p>
+
+<p><strong>Mechanic:</strong> Add a routing layer to <span class="code">/seo-brain</span> that examines the user's intent and loads only the relevant subset:</p>
+
+<table>
+<tr><th>User intent</th><th>Load only</th></tr>
+<tr><td>"What should we write next?"</td><td>Strategy page summary + content calendar (next 14 days) + last 7d Activity Log</td></tr>
+<tr><td>"Audit what's stale"</td><td>publishedDate + lastUpdated for all blog posts + redirect map. <strong>Nothing else.</strong></td></tr>
+<tr><td>"What's working?"</td><td>GSC overview + Peec status + Targets + Daily Snapshots (last 14d only)</td></tr>
+<tr><td>"Brainstorm content"</td><td>Strategy page + Patterns Registry + KB insights (Active filter)</td></tr>
+<tr><td>"Ship this draft"</td><td>The single calendar entry + voice rules. Nothing else.</td></tr>
+</table>
+
+<p><strong>Cost:</strong> ~half day. Significant skill update. Pay off compounds as context budget pressures grow.</p>
+
+<h3><span class="priority-pill p-later">DO LATER</span> Proposal 5: A "Session State" file at project root</h3>
+
+<p><strong>Problem solved:</strong> Local session amnesia — when a new Claude session starts, it doesn't know what the previous session was working on.</p>
+
+<p><strong>Mechanic:</strong> A <span class="code">.claude/session-state.json</span> file that gets updated by each skill as it works. Records: current sprint, last batch shipped, what's pending, what the next planned action is.</p>
+
+<p><strong>How a new session uses it:</strong> First action of a new session reads this file. Shows the user: "Last session ended after shipping batch 13. Next planned action was batch 14 with these 4 pieces. Continue?"</p>
+
+<p><strong>Cost:</strong> ~1 day, plus discipline to keep it updated. Higher ongoing maintenance cost than the Pending Commitments DB but covers more state.</p>
+
+<p><strong>Trade-off vs Proposal 1:</strong> Pending Commitments is durable but narrow (just commitments). Session State is broader but local-only. They're complementary, not alternatives. Start with Pending Commitments because it survives across machines.</p>
+
+<h2 id="part-5">5. What I'm doing right now vs what needs your decision</h2>
+
+<h3>Already done in this turn (no decision needed)</h3>
+
+<div class="proposal">
+<strong>Added the missing redirect.</strong> <span class="code">/blog/webflows-new-brand-overhaul-and-platform-updates</span> → <span class="code">/blog/webflow-ai-revolution</span>. Lives in <span class="code">next.config.ts</span> uncommitted. Ship with the next batch commit unless you want it as a standalone fix.
+</div>
+
+<div class="proposal">
+<strong>Built and ran the publication-date-aware audit</strong> (<span class="code">scripts/audit-publication-dates-v2.mjs</span>). Confirmed only 4 genuine stale candidates remain. Anything proposed for "refresh" from now on should pass this audit first.
+</div>
+
+<h3>Awaiting your call</h3>
+
+<p>Five decisions, in priority order:</p>
+
+<ol>
+<li><strong>Proposal 1 (Pending Commitments DB)</strong> — should I create the Notion database now and update <span class="code">/seo-brain</span> to read from it?</li>
+<li><strong>Proposal 2 (publication-aware audit)</strong> — should I update the <span class="code">/seo-brain</span> skill + <span class="code">CLAUDE.md</span> to make the 4-stage filter mandatory before any "refresh candidate" claim?</li>
+<li><strong>Proposal 3 (Activity Log digest worker)</strong> — should I scope this as the next infra work after batch 14, or defer until the Activity Log actually gets painful?</li>
+<li><strong>Proposal 4 (per-skill context scoping)</strong> — should we redesign <span class="code">/seo-brain</span> as a router this week, or stage it for after the content sprint is done?</li>
+<li><strong>Proposal 5 (Session State file)</strong> — yes/no/later?</li>
+</ol>
+
+<h3>One more thing worth flagging</h3>
+
+<div class="note">
+<strong>The skills don't currently follow their own changelog.</strong> When I (or you) update <span class="code">/seo-brain</span> or <span class="code">/arnels-assistant</span>, there's no record of <em>what changed</em>. <span class="code">git log</span> on the skill file works but the diff isn't surfaced in any skill at load time. If we make significant edits to the skills as part of these proposals, future sessions won't know about them unless they read the file fresh. The fix: each skill could write a small <span class="code">CHANGELOG.md</span> section at the bottom of its own <span class="code">SKILL.md</span>, dated, when behavior changes. <span class="code">/seo-brain</span> reads its own changelog at load and shows the last 2-3 entries to the user before doing anything else. Tiny ceremony, big payoff in trust that the system has the latest rules loaded.
+</div>
+
+<p>Tell me which of these to do, and in what order. I'll execute against the call.</p>
+
+</body>
+</html>
