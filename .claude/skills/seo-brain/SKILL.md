@@ -220,6 +220,12 @@ After delivering the briefing, append one row to the **Activity Log** database (
 
 Behavioral changes to this skill, most-recent-first. When you update the skill, add an entry here. `/seo-brain` should mention the latest 2-3 entries when surfacing the briefing if any are within the last 14 days — so users know what behavior is currently in play.
 
+### 2026-05-16 (Notion content-authoring pattern — clickable links)
+
+- **Important pattern learned the hard way.** Inside Notion callout blocks, markdown link syntax `[text](url)` is stored as literal text — NOT converted to clickable rich-text links. Result: users see the raw markdown in the UI, not a click target. The canonical Notion way to add clickable in-page references is the `<mention-page url="..."/>` tag (self-closing) or `<mention-page url="...">Custom Label</mention-page>` (with override). Notion auto-fetches the page title and icon. Works inside callouts, paragraphs, bullet lists, etc.
+- When authoring Notion content with the MCP, use `<mention-page>` for any link to a Notion page OR database. Use markdown `[text](url)` only for external URLs.
+- The brain page's "📍 Jump to" navigation callout was rebuilt with `<mention-page>` tags after Arnel pointed out the markdown links weren't clickable. Now every link in the nav is a proper Notion mention with icon + title.
+
 ### 2026-05-16 (page restructure — no skill behavior change)
 
 - Notion brain page restructured into 5 sections grouped by reading frequency: Live state (Targets + Daily snapshot + Pending Commitments) → Content operations (Website Content + Patterns Registry + Cusp Pages) → Intelligence (KB + Prompt Coverage + Competitor Landscape) → Strategy (the bet + principles + measurement) → History databases (Activity Log + Infra & Decisions Log + Monthly AEO Snapshots) → Reference sub-pages.
