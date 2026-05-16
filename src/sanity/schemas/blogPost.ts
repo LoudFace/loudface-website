@@ -49,6 +49,15 @@ export const blogPost = defineType({
       rows: 3,
     }),
     defineField({
+      name: 'directAnswer',
+      title: 'Direct Answer (AEO-extractable)',
+      type: 'text',
+      rows: 4,
+      description:
+        '40–60 words. AI engines (ChatGPT, Perplexity, Claude, Google AI Overviews) lift this verbatim. Promote your strongest summary sentence pair. Test after publish by asking the question in chat.openai.com.',
+      validation: (rule) => rule.max(500),
+    }),
+    defineField({
       name: 'content',
       title: 'Content',
       type: 'text',

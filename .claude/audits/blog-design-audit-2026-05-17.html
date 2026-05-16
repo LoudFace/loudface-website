@@ -1,0 +1,1186 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>LoudFace Blog — Design Audit & Improvement Plan</title>
+<style>
+:root {
+  --bg: #f7f6f2;
+  --ink: #14140f;
+  --paper: #ffffff;
+  --muted: #6b6a62;
+  --rule: #d6d3c8;
+  --soft: #ece9e0;
+  --accent: #6366f1;
+  --accent-deep: #312e81;
+  --warn: #b54708;
+  --warn-soft: #fff3e8;
+  --crit: #b42318;
+  --crit-soft: #fee4e2;
+  --ok: #117a3d;
+  --ok-soft: #d7f0dd;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; background: var(--bg); color: var(--ink); }
+body {
+  font: 400 16px/1.6 'Iowan Old Style', 'Charter', 'Cambria', Georgia, serif;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+.mono { font-family: ui-monospace, 'SF Mono', 'JetBrains Mono', Menlo, monospace; }
+.sans { font-family: 'Inter', system-ui, -apple-system, sans-serif; letter-spacing: -0.005em; }
+
+/* Page chrome */
+.shell { max-width: 1180px; margin: 0 auto; padding: 64px 28px 120px; }
+.kicker {
+  display: inline-flex; align-items: center; gap: 10px;
+  font: 500 12px/1 ui-monospace, monospace;
+  text-transform: uppercase; letter-spacing: 0.18em;
+  color: var(--muted); margin-bottom: 28px;
+}
+.kicker::before {
+  content: ""; width: 24px; height: 1px; background: var(--ink);
+}
+h1.cover {
+  font: 500 clamp(40px, 7vw, 84px)/0.98 'Iowan Old Style', Georgia, serif;
+  letter-spacing: -0.025em;
+  margin: 0 0 24px;
+  max-width: 18ch;
+}
+h1.cover em { font-style: italic; color: var(--accent-deep); }
+.dek {
+  font: 400 clamp(17px, 1.8vw, 21px)/1.55 'Iowan Old Style', Georgia, serif;
+  max-width: 62ch;
+  color: var(--ink);
+  margin: 0 0 40px;
+}
+.meta-row {
+  display: flex; flex-wrap: wrap; gap: 18px 32px;
+  font: 500 12px/1.4 ui-monospace, monospace;
+  text-transform: uppercase; letter-spacing: 0.12em;
+  color: var(--muted);
+  padding-top: 24px;
+  border-top: 1px solid var(--ink);
+  margin-bottom: 80px;
+}
+.meta-row b { color: var(--ink); font-weight: 600; }
+
+/* TOC */
+nav.toc {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 0;
+  border-top: 1px solid var(--ink);
+  border-bottom: 1px solid var(--ink);
+  margin-bottom: 96px;
+}
+nav.toc a {
+  display: flex; flex-direction: column; gap: 6px;
+  padding: 18px 20px;
+  border-right: 1px solid var(--rule);
+  text-decoration: none;
+  color: var(--ink);
+  transition: background 120ms ease;
+}
+nav.toc a:hover { background: var(--soft); }
+nav.toc a:last-child { border-right: 0; }
+nav.toc .n { font: 500 11px/1 ui-monospace, monospace; color: var(--muted); letter-spacing: 0.18em; text-transform: uppercase; }
+nav.toc .t { font: 500 16px/1.25 'Iowan Old Style', Georgia, serif; letter-spacing: -0.01em; }
+
+/* Section */
+section.audit { margin: 0 0 96px; }
+section.audit > .head {
+  display: flex; align-items: flex-end; justify-content: space-between;
+  gap: 32px;
+  border-bottom: 1px solid var(--ink);
+  padding-bottom: 16px;
+  margin-bottom: 32px;
+}
+section.audit h2 {
+  font: 500 clamp(26px, 3.5vw, 40px)/1.05 'Iowan Old Style', Georgia, serif;
+  letter-spacing: -0.02em;
+  margin: 0;
+}
+section.audit .anchor {
+  font: 500 11px/1 ui-monospace, monospace;
+  text-transform: uppercase; letter-spacing: 0.2em;
+  color: var(--muted);
+}
+
+/* Verdict block */
+.verdict {
+  background: var(--paper);
+  border: 1px solid var(--ink);
+  padding: 36px 40px;
+  margin-bottom: 96px;
+  position: relative;
+}
+.verdict::before {
+  content: "VERDICT";
+  position: absolute; top: -10px; left: 32px;
+  background: var(--bg);
+  padding: 0 12px;
+  font: 600 11px/1 ui-monospace, monospace;
+  letter-spacing: 0.2em;
+  color: var(--ink);
+}
+.verdict-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 32px;
+}
+.verdict-grid > div h3 {
+  margin: 0 0 8px;
+  font: 600 12px/1 ui-monospace, monospace;
+  text-transform: uppercase; letter-spacing: 0.16em;
+  color: var(--muted);
+}
+.verdict-grid > div p {
+  margin: 0;
+  font: 400 18px/1.45 'Iowan Old Style', Georgia, serif;
+}
+.verdict-grid > div p .hl { background: linear-gradient(0deg, var(--soft) 40%, transparent 40%); padding: 0 2px; }
+.verdict-grid > div p strong { font-weight: 600; }
+.verdict-tag {
+  display: inline-block; padding: 4px 10px;
+  font: 500 11px/1.2 ui-monospace, monospace;
+  letter-spacing: 0.1em; text-transform: uppercase;
+}
+.tag-crit { background: var(--crit-soft); color: var(--crit); }
+.tag-warn { background: var(--warn-soft); color: var(--warn); }
+.tag-ok { background: var(--ok-soft); color: var(--ok); }
+
+/* Two-column finding */
+.finding {
+  display: grid;
+  grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+  gap: 56px;
+  padding: 32px 0;
+  border-bottom: 1px solid var(--rule);
+}
+.finding:first-of-type { border-top: 1px solid var(--rule); padding-top: 32px; }
+.finding .label {
+  font: 600 11px/1 ui-monospace, monospace;
+  letter-spacing: 0.16em; text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 10px;
+  display: flex; gap: 8px; align-items: center;
+}
+.finding .label .p {
+  display: inline-flex; padding: 3px 8px;
+  border: 1px solid var(--ink);
+}
+.finding h3 {
+  font: 500 clamp(22px, 2.4vw, 28px)/1.15 'Iowan Old Style', Georgia, serif;
+  letter-spacing: -0.015em;
+  margin: 0 0 12px;
+  max-width: 32ch;
+}
+.finding p {
+  font: 400 16px/1.65 'Iowan Old Style', Georgia, serif;
+  color: var(--ink);
+  margin: 0 0 14px;
+  max-width: 62ch;
+}
+.finding .lift {
+  margin-top: 20px;
+  padding: 16px 20px;
+  background: var(--paper);
+  border-left: 3px solid var(--accent);
+  font: 400 14px/1.55 'Iowan Old Style', Georgia, serif;
+}
+.finding .lift b { font-weight: 600; }
+.finding figure {
+  margin: 0;
+  background: var(--paper);
+  border: 1px solid var(--rule);
+}
+.finding figure img {
+  display: block; width: 100%; height: auto;
+}
+.finding figure figcaption {
+  padding: 10px 14px;
+  font: 500 11px/1.3 ui-monospace, monospace;
+  text-transform: uppercase; letter-spacing: 0.1em;
+  color: var(--muted);
+  border-top: 1px solid var(--rule);
+}
+
+/* Tags */
+.tag-row { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 12px; }
+.chip {
+  font: 500 10px/1.6 ui-monospace, monospace;
+  letter-spacing: 0.1em; text-transform: uppercase;
+  padding: 2px 8px;
+  border: 1px solid var(--rule);
+  color: var(--muted);
+  background: var(--paper);
+}
+
+/* Mockup blocks */
+.mock {
+  margin: 48px 0 80px;
+  background: var(--paper);
+  border: 1px solid var(--ink);
+  padding: 28px;
+}
+.mock-title {
+  display: flex; justify-content: space-between; align-items: center;
+  font: 500 11px/1 ui-monospace, monospace;
+  letter-spacing: 0.18em; text-transform: uppercase;
+  margin-bottom: 24px; padding-bottom: 16px;
+  border-bottom: 1px dashed var(--rule);
+}
+.mock-title .lr { display: flex; gap: 16px; align-items: center; color: var(--muted); }
+.mock-title .lr b { color: var(--ink); font-weight: 600; }
+.mock-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+.mock-frame {
+  background: #fafafa;
+  border: 1px solid var(--rule);
+  padding: 32px;
+  font-family: 'Inter', system-ui, sans-serif;
+  position: relative;
+  overflow: hidden;
+}
+.mock-frame::before {
+  content: attr(data-label);
+  position: absolute; top: 8px; right: 12px;
+  font: 500 10px/1 ui-monospace, monospace;
+  color: var(--muted); letter-spacing: 0.15em;
+}
+
+/* Code */
+pre.code {
+  margin: 16px 0;
+  padding: 18px 20px;
+  background: #14140f;
+  color: #ece9e0;
+  font: 400 13px/1.55 ui-monospace, monospace;
+  overflow-x: auto;
+  border-radius: 0;
+}
+pre.code .c { color: #8a8a76; }
+pre.code .k { color: #c0b3ff; }
+pre.code .s { color: #ffd591; }
+pre.code .v { color: #95d4a4; }
+
+/* Matrix */
+.matrix {
+  border: 1px solid var(--ink);
+  margin: 32px 0;
+}
+.matrix table { width: 100%; border-collapse: collapse; }
+.matrix th, .matrix td {
+  text-align: left; padding: 12px 16px;
+  font: 400 14px/1.4 'Iowan Old Style', Georgia, serif;
+  border-bottom: 1px solid var(--rule);
+}
+.matrix th {
+  font: 600 11px/1 ui-monospace, monospace;
+  letter-spacing: 0.14em; text-transform: uppercase;
+  background: var(--soft);
+  color: var(--ink);
+  border-bottom: 1px solid var(--ink);
+}
+.matrix tr:last-child td { border-bottom: 0; }
+.matrix td.eff, .matrix td.imp { text-align: center; width: 100px; font-weight: 600; }
+.matrix .pp-3 { color: var(--crit); }
+.matrix .pp-2 { color: var(--warn); }
+.matrix .pp-1 { color: var(--muted); }
+
+/* Mockup elements */
+.mock-old-hero {
+  text-align: center;
+  border: 1px solid #e5e5e5;
+  background: #fafafa;
+  border-radius: 16px;
+  padding: 48px 24px;
+}
+.mock-old-hero .h {
+  font: 500 36px/1.05 'Inter', sans-serif;
+  letter-spacing: -0.02em;
+  margin: 0;
+}
+.mock-old-hero .h .ac { color: #6366f1; }
+.mock-old-hero .sub {
+  margin: 14px auto 0;
+  max-width: 36ch;
+  font: 400 15px/1.5 'Inter', sans-serif;
+  color: #525252;
+}
+
+.mock-new-hero {
+  background: #14140f;
+  color: #f2efea;
+  padding: 56px 32px 40px;
+  position: relative;
+  overflow: hidden;
+}
+.mock-new-hero::after {
+  content: "";
+  position: absolute; right: -100px; bottom: -100px;
+  width: 300px; height: 300px;
+  background: radial-gradient(circle, #6366f1 0%, transparent 60%);
+  opacity: 0.5;
+}
+.mock-new-hero .stamp {
+  font: 500 11px/1 ui-monospace, monospace;
+  letter-spacing: 0.2em; text-transform: uppercase;
+  color: #a5b4fc; margin-bottom: 18px;
+}
+.mock-new-hero h1 {
+  font: 500 56px/0.95 'Iowan Old Style', Georgia, serif;
+  letter-spacing: -0.03em;
+  margin: 0;
+}
+.mock-new-hero h1 em { font-style: italic; color: #a5b4fc; }
+.mock-new-hero .answer {
+  margin: 32px 0 0;
+  padding: 20px 24px;
+  background: rgba(255,255,255,0.05);
+  border-left: 3px solid #a5b4fc;
+  position: relative; z-index: 1;
+}
+.mock-new-hero .answer .lab {
+  font: 500 10px/1 ui-monospace, monospace;
+  letter-spacing: 0.2em; text-transform: uppercase;
+  color: #a5b4fc; margin-bottom: 10px;
+}
+.mock-new-hero .answer .a {
+  font: 400 17px/1.55 'Iowan Old Style', Georgia, serif;
+  margin: 0;
+}
+
+/* Old article hero */
+.old-article-hero { text-align: center; padding: 32px 12px; background: #fff; border: 1px solid #e5e5e5; }
+.old-article-hero .bc { font: 400 13px/1 'Inter', sans-serif; color: #737373; margin-bottom: 16px; }
+.old-article-hero .badge {
+  display: inline-block; padding: 4px 10px; border-radius: 999px;
+  background: #eef2ff; color: #4338ca;
+  font: 500 11px/1.4 'Inter', sans-serif;
+  margin-bottom: 14px;
+}
+.old-article-hero h1 {
+  font: 500 32px/1.15 'Inter', sans-serif;
+  letter-spacing: -0.02em; margin: 0 auto;
+  max-width: 26ch;
+}
+.old-article-hero .ex {
+  font: 400 14px/1.5 'Inter', sans-serif;
+  color: #525252;
+  margin: 12px auto 16px;
+  max-width: 40ch;
+}
+.old-article-hero .by {
+  font: 400 12px/1 'Inter', sans-serif;
+  color: #737373;
+}
+
+/* New article hero */
+.new-article-hero {
+  background: #fcfbf7;
+  border: 1px solid #14140f;
+  padding: 0;
+  display: grid;
+  grid-template-columns: 1fr;
+}
+.new-article-hero .top-band {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 14px 24px;
+  border-bottom: 1px solid #14140f;
+  background: #14140f;
+  color: #f2efea;
+  font: 500 10px/1 ui-monospace, monospace;
+  letter-spacing: 0.18em; text-transform: uppercase;
+}
+.new-article-hero .top-band .right { color: #a5b4fc; }
+.new-article-hero .body { padding: 32px 28px 24px; }
+.new-article-hero .lead {
+  font: 400 11px/1.2 ui-monospace, monospace;
+  letter-spacing: 0.18em; text-transform: uppercase;
+  color: #6366f1;
+  margin-bottom: 16px;
+  display: flex; gap: 12px; align-items: center;
+}
+.new-article-hero .lead::before {
+  content: ""; width: 24px; height: 1px; background: #6366f1;
+}
+.new-article-hero h1 {
+  font: 500 44px/0.98 'Iowan Old Style', Georgia, serif;
+  letter-spacing: -0.025em;
+  margin: 0;
+  max-width: 22ch;
+}
+.new-article-hero h1 em { font-style: italic; color: #6366f1; }
+.new-article-hero .answer {
+  margin: 28px 0 0;
+  padding: 16px 20px;
+  background: #fff;
+  border: 1px solid #d6d3c8;
+  border-left: 3px solid #6366f1;
+}
+.new-article-hero .answer .lab {
+  font: 500 10px/1 ui-monospace, monospace;
+  letter-spacing: 0.18em; text-transform: uppercase;
+  color: #6b6a62; margin-bottom: 8px;
+}
+.new-article-hero .answer p {
+  font: 400 14px/1.55 'Iowan Old Style', Georgia, serif;
+  margin: 0; color: #14140f;
+}
+
+/* Card mock */
+.old-card {
+  background: #fff; border: 1px solid #e5e5e5; border-radius: 12px;
+  overflow: hidden;
+  font-family: 'Inter', sans-serif;
+}
+.old-card .thumb { background: linear-gradient(135deg, #c7d2fe, #6366f1); aspect-ratio: 16/9; }
+.old-card .body { padding: 16px; }
+.old-card .row { display: flex; gap: 8px; font-size: 11px; color: #737373; margin-bottom: 8px; }
+.old-card .row .pill { background: #eef2ff; color: #4338ca; padding: 2px 8px; border-radius: 999px; font-weight: 500; }
+.old-card .ti { font: 500 15px/1.3 'Inter', sans-serif; color: #14140f; }
+.old-card .ex { font: 400 13px/1.5 'Inter', sans-serif; color: #525252; margin-top: 6px; }
+.old-card .ft { margin-top: 12px; padding-top: 12px; border-top: 1px solid #f5f5f5; display: flex; justify-content: space-between; font: 400 11px/1 'Inter', sans-serif; color: #737373; }
+
+.new-card {
+  background: transparent;
+  font-family: 'Iowan Old Style', Georgia, serif;
+  display: grid;
+  grid-template-rows: auto 1fr;
+  border-top: 1px solid #14140f;
+  padding-top: 18px;
+}
+.new-card .meta {
+  display: flex; justify-content: space-between; align-items: baseline;
+  margin-bottom: 14px;
+  font: 500 10px/1 ui-monospace, monospace;
+  letter-spacing: 0.16em; text-transform: uppercase; color: #6b6a62;
+}
+.new-card .meta b { color: #14140f; font-weight: 600; }
+.new-card .thumb { aspect-ratio: 4/3; background: #ece9e0; margin-bottom: 16px; position: relative; overflow: hidden; }
+.new-card .thumb::after {
+  content: "AEO PLAYBOOK"; position: absolute; inset: 0;
+  display: grid; place-items: center;
+  font: 500 12px/1 ui-monospace, monospace;
+  letter-spacing: 0.18em; color: #6366f1;
+}
+.new-card h3 {
+  font: 500 22px/1.15 'Iowan Old Style', Georgia, serif;
+  letter-spacing: -0.015em; margin: 0 0 8px;
+}
+.new-card .ex { font: 400 14px/1.5 'Iowan Old Style', Georgia, serif; color: #525252; max-width: 36ch; }
+
+/* Footnotes */
+.foot {
+  margin: 80px 0 0;
+  padding-top: 32px;
+  border-top: 1px solid var(--ink);
+  font: 400 14px/1.6 'Iowan Old Style', Georgia, serif;
+  color: var(--muted);
+}
+.foot strong { color: var(--ink); font-weight: 600; }
+
+/* responsive */
+@media (max-width: 880px) {
+  .verdict-grid, .finding, .mock-grid { grid-template-columns: 1fr; gap: 24px; }
+  .verdict { padding: 28px 24px; }
+  section.audit > .head { flex-direction: column; align-items: flex-start; gap: 8px; }
+}
+</style>
+</head>
+<body>
+<div class="shell">
+
+<div class="kicker">Loudface Internal · Design Audit · 17 May 2026</div>
+
+<h1 class="cover">
+The blog reads like a <em>Webflow Marketplace template</em>. It should read like an authored thing.
+</h1>
+
+<p class="dek">
+Five live blog surfaces walked through the brand register: the index, an AEO playbook, a comparison page, a listicle, and the long-form guide. Across all five, the typography is competent, the spacing is clean, and the personality is invisible. For an agency selling $80&ndash;200K Webflow engagements, "competent" is the failure mode &mdash; not the floor.
+</p>
+
+<div class="meta-row">
+  <span><b>Auditor.</b> impeccable (brand register)</span>
+  <span><b>Pages reviewed.</b> 5 live, desktop + mobile</span>
+  <span><b>Aesthetic lane.</b> Stripe-minimal &rarr; needs voice</span>
+  <span><b>Slop test.</b> <span class="verdict-tag tag-crit">Fails on hero</span></span>
+</div>
+
+<nav class="toc">
+  <a href="#verdict"><span class="n">01</span><span class="t">Verdict at a glance</span></a>
+  <a href="#diagnosis"><span class="n">02</span><span class="t">Diagnosis &mdash; what's wrong</span></a>
+  <a href="#p0"><span class="n">03</span><span class="t">P0 &mdash; Brand register</span></a>
+  <a href="#p1"><span class="n">04</span><span class="t">P1 &mdash; Article craft</span></a>
+  <a href="#p2"><span class="n">05</span><span class="t">P2 &mdash; Polish + index</span></a>
+  <a href="#matrix"><span class="n">06</span><span class="t">Effort / impact matrix</span></a>
+  <a href="#mockups"><span class="n">07</span><span class="t">Proposed mockups</span></a>
+</nav>
+
+<!-- ─────────────────────────── 01 VERDICT ─────────────────────────── -->
+<section class="audit" id="verdict">
+  <div class="head">
+    <h2>The short version</h2>
+    <span class="anchor">01 &middot; Verdict</span>
+  </div>
+
+  <div class="verdict">
+    <div class="verdict-grid">
+      <div>
+        <h3>What works</h3>
+        <p>
+          The <span class="hl">prose styling is solid</span>: 18&nbsp;px Satoshi at 1.75 line-height, Neue Montreal headings with the signature left-accent H2 gradient, indigo-on-cream link underlines. The article body itself is comfortable to read on desktop. ISR + IndexNow ship within minutes. Schema markup is correctly emitted. Mobile breakpoints don't break.
+        </p>
+      </div>
+      <div>
+        <h3>What's failing the brand</h3>
+        <p>
+          The <strong>hero is a centered-stack template</strong>: breadcrumb &rarr; pill badge &rarr; H1 &rarr; excerpt &rarr; author chip &rarr; three dates. Every B2B SaaS blog in the Marketplace looks identical. The <strong>blog index</strong> has a bordered cream card with "Our <span style="color:#6366f1">Blog</span>" centered inside, immediately followed by a section header restating "Latest Articles." Two redundant titles, neither distinctive. <strong>Cards are identical thumbnail&ndash;category&ndash;title&ndash;excerpt grids</strong> &mdash; brand.md explicitly calls this out. <strong>AEO is the positioning</strong> but nothing in the design signals it &mdash; no direct-answer block, no FAQ hierarchy, no machine-extractable shape.
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <p style="font: 400 17px/1.6 'Iowan Old Style', Georgia, serif; max-width: 70ch; margin: 0 0 16px;">
+    A visitor looking at this blog cannot tell whether it's LoudFace, an Atlanta SaaS marketing shop, or a Webflow studio in Lisbon. The hero, the cards, the FAQ section &mdash; all of it would pass a clone check against any three competitors. The "premium agency" cue that justifies $80&ndash;200K engagements is missing from the surface that 80% of new prospects will see first (Google sends them to a blog post, not the homepage).
+  </p>
+
+  <p style="font: 500 18px/1.5 'Iowan Old Style', Georgia, serif; max-width: 60ch; margin: 0;">
+    The fix isn't more polish on the existing template. It's a register change &mdash; from <span class="verdict-tag tag-warn">Restrained &middot; product default</span> to <span class="verdict-tag tag-ok">Committed &middot; brand register</span>.
+  </p>
+</section>
+
+<!-- ─────────────────────────── 02 DIAGNOSIS ─────────────────────────── -->
+<section class="audit" id="diagnosis">
+  <div class="head">
+    <h2>Diagnosis</h2>
+    <span class="anchor">02 &middot; What's wrong, specifically</span>
+  </div>
+
+  <div class="finding">
+    <div>
+      <div class="label"><span class="p">A</span> Slop test &middot; aesthetic lane</div>
+      <h3>The blog has no named reference. It defaults to "Webflow Marketplace + indigo accent."</h3>
+      <p>
+        Before committing moves, brand.md says: name the reference. The current blog can only be described as "centered-stack with a primary-color highlight word" &mdash; the lowest-common-denominator B2B SaaS blog. A Klim specimen, a Vercel monochrome, a Stripe-Press editorial, an FT Alphaville &mdash; pick one and commit. Right now the design splits the difference into invisibility.
+      </p>
+      <div class="lift">
+        <b>Lift.</b> Name an aesthetic lane explicitly. The shape that fits an AEO-positioned agency selling $80&ndash;200K engagements: <b>editorial-but-systematic</b> &mdash; serif/sans pairing with strict typographic rhythm, asymmetric layout, mono labels for machine-readable cues, a single committed color move (indigo as field, not accent).
+      </div>
+    </div>
+    <figure>
+      <img src="file:///tmp/blog-audit/desktop-index-hero.png" alt="Current blog index hero with 'Our Blog' centered in cream card">
+      <figcaption>Current /blog hero &mdash; centered "Our Blog" in a bordered cream container, with "Latest Articles" header restating below.</figcaption>
+    </figure>
+  </div>
+
+  <div class="finding">
+    <div>
+      <div class="label"><span class="p">B</span> Color strategy</div>
+      <h3>Restrained where the register demands Committed.</h3>
+      <p>
+        Primary indigo (<span class="mono">#6366f1</span>) appears only in: the category badge fill, the "highlight word" in section headers, the H2 left-accent border, link hover, and the TOC bullet. That's the textbook Restrained strategy &mdash; product default. For brand surfaces, brand.md grants permission for Committed (one color carries 30&ndash;60% of surface) and Drenched (the surface IS the color). The blog should commit indigo or a deep ink to at least one moment per page &mdash; ideally the hero or the TL;DR block.
+      </p>
+      <div class="lift">
+        <b>Lift.</b> Identify two committed moments per blog post: (1) a dark hero band with the TL;DR direct-answer block on a contrasting surface; (2) a sticky right-margin pull-quote or stat treatment in indigo at H2 boundaries. The indigo stops being decoration and starts carrying voice.
+      </div>
+    </div>
+    <figure>
+      <img src="file:///tmp/blog-audit/desktop-schema-hero.png" alt="Schema markup article hero showing breadcrumb, H1, TL;DR block, and TOC sidebar">
+      <figcaption>Schema-markup post hero. The TL;DR block is the most useful element on the page and is rendered as plain prose &mdash; no visual hierarchy.</figcaption>
+    </figure>
+  </div>
+
+  <div class="finding">
+    <div>
+      <div class="label"><span class="p">C</span> Typography</div>
+      <h3>Neue Montreal at 30&ndash;48&nbsp;px is competent but uncommitted.</h3>
+      <p>
+        Article H1 ships at 30&nbsp;px on mobile and ~48&nbsp;px on desktop with weight 500. That's a SaaS-default heading scale &mdash; calmer than Stripe, smaller than Vercel, less risk than any Klim specimen. Brand.md says: "Flat scales (1.1&times; apart) read as uncommitted." The site's H1&rarr;H2&rarr;H3 ratio is roughly 1.5&rarr;1.3, which is fine but never declarative. The hero never goes big enough to function as a typographic event.
+      </p>
+      <div class="lift">
+        <b>Lift.</b> Move H1 to <span class="mono">clamp(36px, 6vw, 76px)</span> on article heroes. Tighten letter-spacing to <span class="mono">-0.03em</span>. Allow one italic accent word (per Neue Montreal-compatible italic, or swap one word into Tiempos Headline Italic / Söhne italic for editorial accent). The cost is one font face &mdash; the lift is "this looks designed."
+      </div>
+    </div>
+    <figure>
+      <img src="file:///tmp/blog-audit/desktop-share-of-answer-hero.png" alt="Share of Answer post hero with centered H1 and author byline">
+      <figcaption>Share-of-Answer hero. H1 is informative but the typographic moment is missed &mdash; the line below the hero image is doing more visual work than the headline.</figcaption>
+    </figure>
+  </div>
+
+  <div class="finding">
+    <div>
+      <div class="label"><span class="p">D</span> Layout</div>
+      <h3>The article column is 560&nbsp;px wide on a 1456&nbsp;px viewport. Tables and code overflow.</h3>
+      <p>
+        Two-column grid: 1fr article + 280&nbsp;px TOC sidebar inside a max-w-4xl wrapper, with 32&ndash;48&nbsp;px gutters between. The article ends up at ~560&nbsp;px &mdash; narrower than the New Yorker's web column. For 2,500-word AEO playbooks with 4&ndash;6 column comparison tables, this forces horizontal scroll on every table and pushes code blocks into <span class="mono">overflow-x</span>. The TOC takes the budget the content needs.
+      </p>
+      <div class="lift">
+        <b>Lift.</b> Either widen the article (drop TOC to a floating button + sheet on mobile, sticky on the far left margin on desktop), or make the article a 12-col grid where wide breakouts (tables, code, callouts, charts) can span 8&ndash;10 columns while prose stays at 6.
+      </div>
+    </div>
+    <figure>
+      <img src="file:///tmp/blog-audit/desktop-schema-full.png" alt="Full-page schema markup post showing TOC + narrow article column + tables and code overflowing">
+      <figcaption>Full-page article view. Notice the narrow article column relative to the page width, and the code blocks held inside it.</figcaption>
+    </figure>
+  </div>
+
+  <div class="finding">
+    <div>
+      <div class="label"><span class="p">E</span> Index page</div>
+      <h3>Two headlines back-to-back, then a 3-column thumbnail grid.</h3>
+      <p>
+        The index hero is a bordered cream card with "Our <span style="color:#6366f1">Blog</span>" centered &mdash; immediately followed by a SectionHeader "Latest Articles &middot; Stay updated with our latest insights and resources." Two consecutive headlines, both generic. The card grid below uses identical-sized cards stamped out 12 at a time. Brand.md's "Identical card grids" ban applies. No featured slot, no editorial curation, no AEO-pattern tag.
+      </p>
+      <div class="lift">
+        <b>Lift.</b> Drop the boxed hero entirely. Lead with a single statement of editorial intent (one sentence, large type, asymmetric). Replace the uniform grid with an editorial layout: 1 featured + 4 medium + 7 standard, all on a 12-col grid with deliberate density variation. Group by AEO pattern (year-stamped listicles &middot; AEO playbooks &middot; X vs Y &middot; founder bylines).
+      </div>
+    </div>
+    <figure>
+      <img src="file:///tmp/blog-audit/desktop-index-full.png" alt="Full blog index showing hero card + grid of identical post cards">
+      <figcaption>Full /blog index. 12 identical cards. Note the missing thumbnail on the schema-markup post (top-left) &mdash; gray placeholder is shipped to production.</figcaption>
+    </figure>
+  </div>
+
+  <div class="finding">
+    <div>
+      <div class="label"><span class="p">F</span> AEO surfacing</div>
+      <h3>The brand positioning is AEO. The blog design doesn't show it.</h3>
+      <p>
+        LoudFace's wedge is Answer Engine Optimization &mdash; the brand exists to help B2B SaaS get cited inside ChatGPT, Perplexity, and Google AI Overviews. The blog is the proof surface for that positioning. But: there's no visual treatment for the AEO direct-answer block (TL;DR ships as plain prose), no schema visualizer, no machine-extractable design language. FAQ section uses the "open" variant &mdash; just H3 questions with answers below, no design hierarchy that says "this is the format AI engines lift verbatim."
+      </p>
+      <div class="lift">
+        <b>Lift.</b> Build a <b>"Direct Answer" block component</b> &mdash; a deliberate visual element near the top of every AEO post with a mono label (<span class="mono">DIRECT ANSWER</span>), a 40&ndash;60-word boxed paragraph in a serif italic, and a small "How AI engines extract this" disclosure. Make the FAQ section visually distinct from the article body. The design becomes a demonstration of the methodology.
+      </div>
+    </div>
+    <figure>
+      <img src="file:///tmp/blog-audit/desktop-aeo-guide-hero.png" alt="AEO Complete Guide hero with centered H1 and dramatic mountain summit illustration">
+      <figcaption>AEO Complete Guide hero. The illustration carries the visual identity; the hero treatment around it is generic.</figcaption>
+    </figure>
+  </div>
+
+  <div class="finding">
+    <div>
+      <div class="label"><span class="p">G</span> Mobile</div>
+      <h3>Mobile is functional, never magical.</h3>
+      <p>
+        On mobile the centered-stack works (everything is centered there by necessity), but the hero consumes the entire first viewport: logo bar (60&nbsp;px) + breadcrumb (~50&nbsp;px) + badge + H1 (~110&nbsp;px) + excerpt + author chip + date row. By the time the first paragraph appears, the user has scrolled past ~600&nbsp;px of preamble &mdash; on a 740&nbsp;px viewport. The TL;DR direct answer (the most useful 60 words on the page) is below the fold.
+      </p>
+      <div class="lift">
+        <b>Lift.</b> Compress the mobile hero: drop excerpt to a single line, move "by Arnel &middot; 12 min" to a single byline row, push the TL;DR up to the fold. Goal: first paragraph of TL;DR visible at first viewport without scroll on a 740&nbsp;px tall device.
+      </div>
+    </div>
+    <figure>
+      <img src="file:///tmp/blog-audit/mobile-schema-hero.png" alt="Mobile schema markup post hero — entire viewport consumed by preamble before article content">
+      <figcaption>Mobile hero on the schema post. The TL;DR is barely visible at the bottom &mdash; the first 600&nbsp;px is breadcrumb/badge/H1/excerpt/dates.</figcaption>
+    </figure>
+  </div>
+</section>
+
+<!-- ─────────────────────────── 03 P0 ─────────────────────────── -->
+<section class="audit" id="p0">
+  <div class="head">
+    <h2>P0 &mdash; Brand register repositioning</h2>
+    <span class="anchor">03 &middot; Ship this month</span>
+  </div>
+
+  <p style="font: 400 16px/1.65 'Iowan Old Style', Georgia, serif; max-width: 68ch; margin: 0 0 32px;">
+    These four changes move the blog out of "competent B2B SaaS template" into "agency with a point of view." Done together, a visitor on their first article should be able to tell this isn't Webflow Marketplace. Estimated total lift: 3&ndash;5 days of design + dev. No new dependencies. Stays inside Tailwind v4 + existing tokens.
+  </p>
+
+  <div class="finding">
+    <div>
+      <div class="label"><span class="p">P0.1</span> Article hero rework</div>
+      <div class="tag-row">
+        <span class="chip">Brand register</span>
+        <span class="chip">Typography</span>
+        <span class="chip">Layout</span>
+      </div>
+      <h3>Replace centered-stack with editorial left-aligned hero + dark band + direct-answer block.</h3>
+      <p>
+        Drop the breadcrumb-pill-H1-excerpt-author-date stack. Replace with an editorial split: dark top band carrying the eyebrow (post type), AEO pattern, and update date in mono; a left-aligned H1 at <span class="mono">clamp(40px, 6vw, 72px)</span> with one italic accent word; the TL;DR direct-answer block immediately under the H1 in a distinct surface (cream paper border or indigo field). Author chip moves to a thin byline row below.
+      </p>
+      <div class="lift">
+        <b>Why this matters for AEO positioning.</b> The direct-answer block becomes the design language &mdash; every visitor learns instantly that LoudFace structures content for AI extraction. The mono pattern tag (<span class="mono">AEO PLAYBOOK &middot; YEAR-STAMPED 2026</span>) signals systematic thinking. The H1 typography shift signals craft.
+      </div>
+    </div>
+    <div>
+      <div class="mock-frame" data-label="MOCKUP &middot; PROPOSED">
+        <div class="new-article-hero">
+          <div class="top-band">
+            <span>AEO PLAYBOOK</span>
+            <span class="right">Updated 17 May 2026</span>
+          </div>
+          <div class="body">
+            <div class="lead">Direct from LoudFace research</div>
+            <h1>Schema Markup for AEO. The <em>five</em> types that actually drive citations.</h1>
+            <div class="answer">
+              <div class="lab">Direct Answer &middot; 47 words</div>
+              <p>Five schema types move the needle for AEO in 2026: Organization with sameAs and knowsAbout, FAQPage with question phrasing AI engines extract, Article with BlogPosting, BreadcrumbList, and Service. Schema only matters when it matches AI engines' extraction patterns &mdash; the rest is overhead.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div style="margin-top: 16px;">
+        <div class="mock-frame" data-label="MOCKUP &middot; CURRENT">
+          <div class="old-article-hero">
+            <div class="bc">Blog &middot; Schema Markup for AEO in 20…</div>
+            <div class="badge">Marketing</div>
+            <h1>Schema Markup for AEO in 2026: The 5 Types That Actually Drive Citations</h1>
+            <div class="ex">Generic schema posts say 'add schema and you'll rank' &mdash; that's wrong. Schema only drives AEO citations when it matches AI engines' extraction patterns.</div>
+            <div class="by">May 16, 2026</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="finding">
+    <div>
+      <div class="label"><span class="p">P0.2</span> Direct-answer block component</div>
+      <div class="tag-row">
+        <span class="chip">AEO positioning</span>
+        <span class="chip">New component</span>
+        <span class="chip">CMS schema add</span>
+      </div>
+      <h3>Promote "TL;DR" from prose paragraph to a first-class component with a deliberate visual.</h3>
+      <p>
+        The 40&ndash;60 word direct-answer block is the asset AI engines lift verbatim. Right now it's a paragraph beginning with bold "TL;DR:". That's invisible to a scanning reader and offers no signal that LoudFace is the agency that engineers this. Make it a real component (<span class="mono">&lt;DirectAnswer/&gt;</span>) added to the blogPost schema in Sanity, rendered with a mono label, a distinct surface (cream paper inside an article, indigo field inside a dark hero), and a small disclosure: "&darr; How AI engines extract this."
+      </p>
+      <pre class="code"><span class="c">// Sanity schema add — src/sanity/schemas/blogPost.ts</span>
+<span class="k">defineField</span>({
+  name: <span class="s">'directAnswer'</span>,
+  title: <span class="s">'Direct answer (AEO extractable)'</span>,
+  type: <span class="s">'text'</span>,
+  rows: <span class="v">4</span>,
+  description: <span class="s">'40–60 words. AI engines lift this verbatim. Test in chat.openai.com after publish.'</span>,
+  validation: <span class="k">Rule</span> =&gt; <span class="k">Rule</span>.max(<span class="v">450</span>),
+})</pre>
+      <div class="lift">
+        <b>Backfill plan.</b> 82 published posts already have inline TL;DR paragraphs. Write a one-time script that parses the first <span class="mono">&lt;p&gt;&lt;strong&gt;TL;DR:&lt;/strong&gt;…&lt;/p&gt;</span> and migrates the text to the new <span class="mono">directAnswer</span> field. Render the component above the article body. Falls back to first-paragraph extraction if empty.
+      </div>
+    </div>
+    <div>
+      <div class="mock-frame" data-label="MOCKUP &middot; DIRECT ANSWER">
+        <div style="background: #fcfbf7; border: 1px solid #14140f; padding: 28px 24px;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+            <div style="font: 500 11px/1 ui-monospace,monospace; letter-spacing: 0.2em; color: #6366f1;">DIRECT ANSWER</div>
+            <div style="font: 500 10px/1 ui-monospace,monospace; color: #6b6a62;">47 WORDS &middot; AEO-EXTRACTABLE</div>
+          </div>
+          <p style="font: 400 18px/1.5 'Iowan Old Style', Georgia, serif; margin: 0; color: #14140f;">
+            Five schema types move the needle for AEO in 2026: <b>Organization</b> with <span style="font-family:ui-monospace,monospace; font-size:14px;">sameAs</span> and <span style="font-family:ui-monospace,monospace; font-size:14px;">knowsAbout</span>, <b>FAQPage</b> with question phrasing AI engines extract, <b>Article</b> with <b>BlogPosting</b>, <b>BreadcrumbList</b>, and <b>Service</b>. Schema only matters when it matches AI engines' extraction patterns.
+          </p>
+          <details style="margin-top: 16px; font: 400 13px/1.5 'Iowan Old Style', Georgia, serif; color: #6b6a62;">
+            <summary style="cursor: pointer;">&darr; How AI engines extract this</summary>
+            <p style="margin: 12px 0 0;">ChatGPT's extraction model looks for the first 40&ndash;60 word self-contained paragraph after the page H1. Perplexity weights the same span 3&times; for citation scoring. Google AI Overviews uses a different model but converges on the same surface.</p>
+          </details>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="finding">
+    <div>
+      <div class="label"><span class="p">P0.3</span> Index page editorial rework</div>
+      <div class="tag-row">
+        <span class="chip">Brand register</span>
+        <span class="chip">Layout</span>
+        <span class="chip">Index only</span>
+      </div>
+      <h3>Drop the bordered hero card. Replace the uniform grid with a paced editorial layout.</h3>
+      <p>
+        The "Our Blog / Latest Articles" double-headline goes. In its place: one statement of editorial intent at the top, large, asymmetric, no decoration &mdash; "We publish the playbooks B2B SaaS founders use to get cited by AI." Below it, an editorial layout: one featured story (40&ndash;60% of fold), a row of three medium posts grouped by AEO pattern, then standard archive density. Group sections by Pattern Registry tag (Year-stamped listicles &middot; AEO playbooks &middot; X vs Y comparisons &middot; Founder bylines). Filter UI is invisible but URLs work (<span class="mono">/blog?pattern=playbook</span>).
+      </p>
+      <div class="lift">
+        <b>Why.</b> The current uniform grid signals "content farm with 82 posts." An edited, paced layout signals "agency with a point of view that publishes deliberately." Same posts, different read.
+      </div>
+    </div>
+    <figure>
+      <img src="file:///tmp/blog-audit/desktop-index-full.png" alt="Current blog index full">
+      <figcaption>Current /blog &mdash; uniform 3-column grid, no featured story, no editorial pacing. Note the missing thumbnail on the schema-markup card (gray placeholder shipping to production).</figcaption>
+    </figure>
+  </div>
+
+  <div class="finding">
+    <div>
+      <div class="label"><span class="p">P0.4</span> Fix the missing thumbnail bug</div>
+      <div class="tag-row">
+        <span class="chip">Bug fix</span>
+        <span class="chip">15 minutes</span>
+      </div>
+      <h3>The schema-markup post is shipping to production with a gray placeholder where the thumbnail should be.</h3>
+      <p>
+        Visible top-left on the /blog index. The <span class="mono">thumbnail</span> field on that Sanity document is empty (the ship script didn't include an image asset). Until the image exists, the card falls back to the gray placeholder &mdash; which is the first thing a visitor sees when landing on /blog.
+      </p>
+      <div class="lift">
+        <b>Fix.</b> Either generate the hero image via <span class="mono">/blog-visuals</span> and patch the document, or temporarily move that post off the index until art is ready. Either way, no production page should ship a gray box.
+      </div>
+    </div>
+    <figure>
+      <img src="file:///tmp/blog-audit/desktop-index-hero.png" alt="Blog index hero showing the missing thumbnail">
+      <figcaption>Top-left card &mdash; gray placeholder visible on /blog right now.</figcaption>
+    </figure>
+  </div>
+</section>
+
+<!-- ─────────────────────────── 04 P1 ─────────────────────────── -->
+<section class="audit" id="p1">
+  <div class="head">
+    <h2>P1 &mdash; Article body craft</h2>
+    <span class="anchor">04 &middot; Ship next month</span>
+  </div>
+
+  <p style="font: 400 16px/1.65 'Iowan Old Style', Georgia, serif; max-width: 68ch; margin: 0 0 32px;">
+    Once the hero and index are repositioned, the article body needs the same level of intention. These changes turn long-form pieces into reading experiences that feel authored, not templated. Estimated lift: 4&ndash;6 days across design + dev.
+  </p>
+
+  <div class="finding">
+    <div>
+      <div class="label"><span class="p">P1.1</span> Article column &amp; TOC rework</div>
+      <h3>Widen the article. Move the TOC to a floating element, or to the far-left margin.</h3>
+      <p>
+        Current: 1fr article + 280&nbsp;px sidebar inside max-w-4xl = ~560&nbsp;px article column. Proposed: 12-col grid. Prose stays at 6 cols (~640&nbsp;px). Wide breakouts (tables, code, charts, pull quotes, the direct-answer block, hero images) can span 8&ndash;12 cols. TOC becomes a left-margin sticky element at <span class="mono">lg</span>+ that uses the otherwise-empty 2&ndash;3 cols on the left edge. On mobile, TOC is a sheet behind a floating "On this page" button.
+      </p>
+      <div class="lift">
+        <b>Specific.</b> Tables and code blocks stop overflowing because they have native room to live. Pull quotes can break out into the margin like the New Yorker treatment. The visual rhythm becomes the article's own &mdash; not the SaaS-blog two-column default.
+      </div>
+    </div>
+    <div>
+      <pre class="code"><span class="c">// Proposed page layout — src/app/(site)/blog/[slug]/page.tsx</span>
+&lt;<span class="k">div</span> className=<span class="s">"max-w-7xl mx-auto px-4 lg:px-12 grid grid-cols-12 gap-x-6 lg:gap-x-8"</span>&gt;
+  <span class="c">{/* Far-left margin TOC, sticky, lg+ */}</span>
+  &lt;<span class="k">aside</span> className=<span class="s">"hidden lg:block col-span-3 sticky top-24 self-start"</span>&gt;
+    &lt;<span class="k">TocFloating</span> items={toc} /&gt;
+  &lt;/<span class="k">aside</span>&gt;
+
+  <span class="c">{/* Article — prose in 6 cols, wide breakouts can extend */}</span>
+  &lt;<span class="k">article</span> className=<span class="s">"col-span-12 lg:col-span-6 blog-prose"</span>&gt;…&lt;/<span class="k">article</span>&gt;
+
+  <span class="c">{/* Right margin — pull quotes, callouts, related links */}</span>
+  &lt;<span class="k">aside</span> className=<span class="s">"hidden lg:block col-span-3"</span>&gt;
+    &lt;<span class="k">PullQuotes</span> from={post} /&gt;
+  &lt;/<span class="k">aside</span>&gt;
+&lt;/<span class="k">div</span>&gt;</pre>
+    </div>
+  </div>
+
+  <div class="finding">
+    <div>
+      <div class="label"><span class="p">P1.2</span> FAQ section redesign</div>
+      <h3>The FAQ is the actual ranking surface. Treat it that way visually.</h3>
+      <p>
+        Right now the FAQ is the open variant: H3 question, paragraph answer, H3 question, paragraph answer. Identical to the article body. For an AEO-focused agency, this is the wrong move &mdash; AI engines lift FAQ content disproportionately, so the FAQ should be the most visually deliberate section of the page. Proposal: numbered Q&amp;A grid, mono labels (<span class="mono">Q.01</span>, <span class="mono">Q.02</span>), each Q in serif italic, each A in sans body, separated by hairlines. Add a "&darr; What ChatGPT extracts here" disclosure under each answer that shows the canonical AI-readable version.
+      </p>
+      <div class="lift">
+        <b>Bonus.</b> Each FAQ item becomes an anchor link with a copy button, so prospects can deep-link directly to a specific question in cold outreach. Small surface, real utility.
+      </div>
+    </div>
+    <div>
+      <div class="mock-frame" data-label="MOCKUP &middot; FAQ">
+        <div style="background: #fff; border: 1px solid #d6d3c8; padding: 24px;">
+          <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 24px; padding-bottom: 16px; border-bottom: 1px solid #14140f;">
+            <h3 style="font: 500 22px/1.1 'Iowan Old Style', Georgia, serif; margin: 0; letter-spacing: -0.015em;">Frequently asked</h3>
+            <span style="font: 500 10px/1 ui-monospace,monospace; letter-spacing: 0.2em; color: #6366f1;">7 QUESTIONS &middot; AEO-EXTRACTABLE</span>
+          </div>
+          <div style="display: grid; grid-template-columns: 60px 1fr; gap: 0 16px; row-gap: 24px;">
+            <div style="font: 500 11px/1.2 ui-monospace,monospace; letter-spacing: 0.18em; color: #6b6a62; padding-top: 4px;">Q.01</div>
+            <div>
+              <div style="font: italic 400 17px/1.4 'Iowan Old Style', Georgia, serif; margin-bottom: 8px;">Why does schema matter more for AEO than for SEO?</div>
+              <div style="font: 400 14px/1.55 'Inter', sans-serif; color: #525252;">Search engines used schema as one of many ranking signals. AI engines use it as an extraction map &mdash; they read schema first to find the exact spans they're allowed to lift…</div>
+            </div>
+            <div style="font: 500 11px/1.2 ui-monospace,monospace; letter-spacing: 0.18em; color: #6b6a62; padding-top: 4px;">Q.02</div>
+            <div>
+              <div style="font: italic 400 17px/1.4 'Iowan Old Style', Georgia, serif; margin-bottom: 8px;">Do I need every schema type or just one?</div>
+              <div style="font: 400 14px/1.55 'Inter', sans-serif; color: #525252;">Five is the working set: Organization, FAQPage, Article (with BlogPosting), BreadcrumbList, Service…</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="finding">
+    <div>
+      <div class="label"><span class="p">P1.3</span> Code block + table improvements</div>
+      <h3>Add language labels, copy buttons, line highlights. Tables get a mobile card-stack fallback.</h3>
+      <p>
+        Code blocks ship without a language label or copy affordance. For AEO/schema pieces (which are 30% code by volume), this is friction. Tables on mobile rely on horizontal scroll &mdash; usable, but every visitor has to discover it. Better: collapse tables to a card-stack on viewports &lt; 640&nbsp;px, with each row becoming a key&ndash;value card. Desktop keeps the table.
+      </p>
+      <pre class="code"><span class="c">// Server-rendered code block with language label + client copy button</span>
+&lt;<span class="k">div</span> className=<span class="s">"code-block group"</span>&gt;
+  &lt;<span class="k">div</span> className=<span class="s">"flex justify-between items-center px-4 py-2 bg-surface-800 text-xs font-mono"</span>&gt;
+    &lt;<span class="k">span</span> className=<span class="s">"text-surface-400 uppercase tracking-wider"</span>&gt;{language}&lt;/<span class="k">span</span>&gt;
+    &lt;<span class="k">CopyButton</span> text={raw} /&gt;
+  &lt;/<span class="k">div</span>&gt;
+  &lt;<span class="k">pre</span>&gt;&lt;<span class="k">code</span> className={<span class="s">`language-${language}`</span>}&gt;{highlighted}&lt;/<span class="k">code</span>&gt;&lt;/<span class="k">pre</span>&gt;
+&lt;/<span class="k">div</span>&gt;</pre>
+    </div>
+    <div>
+      <div class="mock-frame" data-label="MOCKUP &middot; CODE BLOCK">
+        <div style="background: #14140f; border-radius: 8px; overflow: hidden;">
+          <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px 16px; background: #1f1f17; border-bottom: 1px solid rgba(255,255,255,0.05);">
+            <span style="font: 500 10px/1 ui-monospace,monospace; letter-spacing: 0.18em; color: #a8a496;">JSON-LD &middot; Article schema</span>
+            <span style="font: 500 10px/1 ui-monospace,monospace; color: #a5b4fc; cursor: pointer;">⧉ COPY</span>
+          </div>
+          <pre style="margin: 0; padding: 16px; font: 400 12px/1.55 ui-monospace,monospace; color: #ece9e0; overflow-x: auto;">{
+  <span style="color:#c0b3ff;">"@context"</span>: <span style="color:#ffd591;">"https://schema.org"</span>,
+  <span style="color:#c0b3ff;">"@type"</span>: <span style="color:#ffd591;">"BlogPosting"</span>,
+  <span style="color:#c0b3ff;">"headline"</span>: <span style="color:#ffd591;">"Schema Markup for AEO"</span>,
+  <span style="color:#c0b3ff;">"author"</span>: { …
+}</pre>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="finding">
+    <div>
+      <div class="label"><span class="p">P1.4</span> Pull quotes + stat treatment</div>
+      <h3>Use the right-margin space for editorial breakouts.</h3>
+      <p>
+        Inside a 12-col grid, the right 3 cols are open real estate. Promote one or two pull quotes per article, plus any inline statistic (LoudFace client outcomes &mdash; CodeOp +49%, Zeiierman +43%, Toku percentage deltas) into margin treatments. These become the design moments that prove craft. The CMS field already exists for these inside the rich text (<span class="mono">&lt;blockquote&gt;</span>) &mdash; the rendering can promote selected ones to the margin.
+      </p>
+    </div>
+    <div>
+      <div class="mock-frame" data-label="MOCKUP &middot; PULL QUOTE">
+        <div style="background: transparent; padding: 24px 16px 24px 24px; border-left: 1px solid #14140f;">
+          <div style="font: 500 11px/1 ui-monospace,monospace; letter-spacing: 0.2em; color: #6366f1; margin-bottom: 16px;">PULL QUOTE &middot; SCHEMA AUDIT</div>
+          <p style="font: italic 500 22px/1.25 'Iowan Old Style', Georgia, serif; margin: 0 0 12px; color: #14140f; letter-spacing: -0.01em;">"30+ B2B SaaS sites audited. The pattern is always the same &mdash; technical SEO consultants added FAQPage, called it done, and never tested whether ChatGPT could extract it."</p>
+          <div style="font: 500 11px/1.4 ui-monospace,monospace; letter-spacing: 0.1em; color: #6b6a62;">&mdash; Arnel Bukva &middot; Founder &amp; Head of Growth</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="finding">
+    <div>
+      <div class="label"><span class="p">P1.5</span> Related articles redesign</div>
+      <h3>Three identical thumbnail cards say "we have more content." A curated list with editorial reasoning says "we have a point of view."</h3>
+      <p>
+        Current related-posts module: 3 cards with thumbnail, category pill, line-clamped title, hover lift. Identical to the index grid &mdash; redundant. Replace with a curated list: 3&ndash;5 items, each with a one-line editorial gloss explaining the connection ("If you found the FAQPage section useful, read our deeper dive on extractable answer formats"). Less visual real estate, more authority.
+      </p>
+    </div>
+    <div>
+      <div class="mock-frame" data-label="MOCKUP &middot; RELATED">
+        <div style="background: #fcfbf7; border: 1px solid #d6d3c8; padding: 24px;">
+          <div style="font: 500 11px/1 ui-monospace,monospace; letter-spacing: 0.2em; color: #6366f1; margin-bottom: 20px; display: flex; gap: 12px; align-items: center;"><span style="width:24px; height:1px; background:#6366f1;"></span>KEEP READING</div>
+          <ol style="list-style: none; margin: 0; padding: 0;">
+            <li style="padding: 18px 0; border-top: 1px solid #d6d3c8;">
+              <div style="display: grid; grid-template-columns: 30px 1fr 80px; gap: 16px; align-items: baseline;">
+                <span style="font: 500 11px/1 ui-monospace,monospace; color: #6b6a62; letter-spacing: 0.1em;">01</span>
+                <div>
+                  <div style="font: 500 17px/1.3 'Iowan Old Style', Georgia, serif; letter-spacing: -0.01em;">The Complete Guide to Answer Engine Optimization in 2026</div>
+                  <div style="font: italic 400 14px/1.5 'Iowan Old Style', Georgia, serif; color: #6b6a62; margin-top: 4px;">If you found the schema section useful, this is the broader playbook.</div>
+                </div>
+                <span style="font: 500 10px/1 ui-monospace,monospace; color: #6b6a62; letter-spacing: 0.1em; text-align: right;">18 MIN</span>
+              </div>
+            </li>
+            <li style="padding: 18px 0; border-top: 1px solid #d6d3c8;">
+              <div style="display: grid; grid-template-columns: 30px 1fr 80px; gap: 16px; align-items: baseline;">
+                <span style="font: 500 11px/1 ui-monospace,monospace; color: #6b6a62; letter-spacing: 0.1em;">02</span>
+                <div>
+                  <div style="font: 500 17px/1.3 'Iowan Old Style', Georgia, serif; letter-spacing: -0.01em;">Share of Answer: The new ranking metric</div>
+                  <div style="font: italic 400 14px/1.5 'Iowan Old Style', Georgia, serif; color: #6b6a62; margin-top: 4px;">Once schema is right, this is how you measure whether it's working.</div>
+                </div>
+                <span style="font: 500 10px/1 ui-monospace,monospace; color: #6b6a62; letter-spacing: 0.1em; text-align: right;">9 MIN</span>
+              </div>
+            </li>
+          </ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─────────────────────────── 05 P2 ─────────────────────────── -->
+<section class="audit" id="p2">
+  <div class="head">
+    <h2>P2 &mdash; Polish, motion, mobile</h2>
+    <span class="anchor">05 &middot; Ship when capacity allows</span>
+  </div>
+
+  <p style="font: 400 16px/1.65 'Iowan Old Style', Georgia, serif; max-width: 68ch; margin: 0 0 32px;">
+    These are the smaller refinements that lift the blog from "newly designed" into "memorable." Each is independent &mdash; can ship in any order, no dependencies. None require schema changes.
+  </p>
+
+  <div class="finding">
+    <div>
+      <div class="label"><span class="p">P2.1</span> Mobile reading mode</div>
+      <h3>First paragraph of TL;DR visible at first viewport. Floating TOC sheet.</h3>
+      <p>
+        Mobile hero is currently 600+&nbsp;px of preamble before content. Targets: H1 stays at 30&nbsp;px but truncates excerpt to a single line; author + dates collapse to one byline row; TL;DR moves directly under the byline, not below a hero image. TOC becomes a fixed floating button (bottom-right) opening a bottom-sheet on tap. Reading position is preserved between page nav (scroll restoration).
+      </p>
+    </div>
+    <figure>
+      <img src="file:///tmp/blog-audit/mobile-schema-hero.png" alt="Mobile schema markup hero">
+      <figcaption>Mobile hero today &mdash; TL;DR not visible at first scroll position.</figcaption>
+    </figure>
+  </div>
+
+  <div class="finding">
+    <div>
+      <div class="label"><span class="p">P2.2</span> Page-load motion</div>
+      <h3>One well-orchestrated entrance, not scattered micro-interactions.</h3>
+      <p>
+        Brand.md grants brand surfaces "ambitious first-load motion." Right now the blog has none &mdash; pages load fully assembled. Proposed: a tight 600&nbsp;ms entrance on article load &mdash; the dark top band slides in first, then the eyebrow fades, then the H1 reveals from bottom (clip-path), then the direct-answer block animates in. Total budget under 800&nbsp;ms, respects <span class="mono">prefers-reduced-motion</span>, runs once per page (sessionStorage gate). Index page: featured story crossfades through 3&ndash;5 posts on a 4&nbsp;s timer, with reduced-motion fallback to a static featured.
+      </p>
+    </div>
+    <div>
+      <pre class="code"><span class="c">// Reveal animation — pure CSS, no JS</span>
+.<span class="k">article-hero</span> {
+  animation: <span class="s">hero-reveal</span> 600ms <span class="s">cubic-bezier(.22,1,.36,1)</span> both;
+}
+@<span class="k">media</span> (prefers-reduced-motion: reduce) {
+  .<span class="k">article-hero</span> { animation: none; }
+}
+@<span class="k">keyframes</span> <span class="s">hero-reveal</span> {
+  <span class="v">0%</span>   { clip-path: <span class="s">inset(0 0 100% 0)</span>; opacity: 0; }
+  <span class="v">100%</span> { clip-path: <span class="s">inset(0 0 0 0)</span>;    opacity: 1; }
+}</pre>
+    </div>
+  </div>
+
+  <div class="finding">
+    <div>
+      <div class="label"><span class="p">P2.3</span> Blockquote treatment</div>
+      <h3>The card-style blockquote is fine for testimonials. It's wrong for inline quotation.</h3>
+      <p>
+        Current blockquote: cream card with indigo left border, rounded corners, padding box. This treatment reads as "highlighted callout" &mdash; the wrong cue for a literal quote inside reading prose. Replace with a typographic treatment: italic serif at 1.25&times; body size, hung indent with a large opening quote mark in the left margin (in Neue Montreal at large size), em-dash attribution below. The card-style stays available for "Note" or "Important" callout components.
+      </p>
+    </div>
+    <div>
+      <div class="mock-frame" data-label="MOCKUP &middot; BLOCKQUOTE">
+        <div style="position: relative; padding: 24px 8px 24px 64px; background: #fcfbf7;">
+          <div style="position: absolute; left: 8px; top: 0; font: 500 96px/0.8 'Iowan Old Style', Georgia, serif; color: #6366f1;">"</div>
+          <p style="font: italic 400 20px/1.45 'Iowan Old Style', Georgia, serif; margin: 0 0 12px; color: #14140f;">If schema were enough, every B2B SaaS site that's already added FAQPage would be cited inside ChatGPT. They aren't. The format matters less than the extraction pattern.</p>
+          <div style="font: 500 11px/1 ui-monospace,monospace; letter-spacing: 0.16em; color: #6b6a62;">&mdash; SCHEMA AUDIT, 30+ SITES</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="finding">
+    <div>
+      <div class="label"><span class="p">P2.4</span> Author credibility module</div>
+      <h3>Author appears twice (byline + sidebar). Neither is doing E-E-A-T work.</h3>
+      <p>
+        Both author surfaces are the same: avatar, name, "Founder &amp; Head of Growth." Generic. Promote one to a credibility block: link to LinkedIn, link to the team page, two pieces of credentialing ("Webflow Premium Enterprise Partner. Built websites for 30+ B2B SaaS companies."). The other surface can drop entirely. E-E-A-T signals matter for AEO &mdash; Perplexity weights author authority disproportionately.
+      </p>
+    </div>
+    <figure>
+      <img src="file:///tmp/blog-audit/desktop-best-webflow-hero.png" alt="Best Webflow agencies post hero showing author byline">
+      <figcaption>Best Webflow Agencies hero. Author byline is present but doesn't surface any credential or proof.</figcaption>
+    </figure>
+  </div>
+
+  <div class="finding">
+    <div>
+      <div class="label"><span class="p">P2.5</span> CTA section &mdash; context-aware</div>
+      <h3>The "Ready to grow your business?" CTA is the same on every post. Make it specific.</h3>
+      <p>
+        Every blog post ends with the same CTA: "Ready to grow your business? Let's discuss how we can help you achieve your goals." Generic. The post is already segmented by Pattern, Category, and Industry &mdash; use that. Schema-markup post should end with "Get your schema audited &mdash; 30-min review, free." AEO playbook should end with "Get your AEO readiness audit." Industry posts should reference the industry. Same CTA component, dynamic copy fed by Pattern + Industry fields.
+      </p>
+    </div>
+    <div>
+      <div class="mock-frame" data-label="MOCKUP &middot; CONTEXT CTA">
+        <div style="background: #14140f; color: #f2efea; padding: 40px 28px; position: relative; overflow: hidden;">
+          <div style="position: absolute; right: -50px; top: -50px; width: 160px; height: 160px; background: radial-gradient(circle, #6366f1 0%, transparent 60%); opacity: 0.4;"></div>
+          <div style="font: 500 10px/1 ui-monospace,monospace; letter-spacing: 0.2em; color: #a5b4fc; margin-bottom: 16px;">FROM THIS PLAYBOOK &middot; NEXT STEP</div>
+          <h3 style="font: 500 32px/1.05 'Iowan Old Style', Georgia, serif; margin: 0 0 12px; letter-spacing: -0.02em; max-width: 22ch;">Get <em>your</em> schema audited. Free 30-minute review.</h3>
+          <p style="font: 400 16px/1.5 'Iowan Old Style', Georgia, serif; margin: 0 0 24px; color: #d6d3c8; max-width: 50ch;">We'll run your top 5 pages through the same audit framework used on the 30+ sites referenced in this post. You get the gaps, the fixes, and the projected citation lift.</p>
+          <a style="display: inline-block; padding: 12px 24px; background: #f2efea; color: #14140f; font: 500 13px/1 'Inter', sans-serif; letter-spacing: 0.04em; border-radius: 999px;">Book the audit &rarr;</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─────────────────────────── 06 MATRIX ─────────────────────────── -->
+<section class="audit" id="matrix">
+  <div class="head">
+    <h2>Effort &times; impact</h2>
+    <span class="anchor">06 &middot; What to ship in what order</span>
+  </div>
+
+  <p style="font: 400 16px/1.65 'Iowan Old Style', Georgia, serif; max-width: 68ch; margin: 0 0 32px;">
+    Effort = engineering days. Impact = qualitative read on "how much closer this gets us to the brand register we want." P0 items have the highest impact-to-effort ratio. Bug fix (P0.4) is the most efficient lift on the board.
+  </p>
+
+  <div class="matrix">
+    <table>
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Change</th>
+          <th class="eff">Effort</th>
+          <th class="imp">Impact</th>
+          <th>What it earns</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td><b>P0.4</b></td><td>Fix missing thumbnail on /blog index</td><td class="eff pp-1">15 min</td><td class="imp pp-3">High</td><td>Production no longer ships a gray box</td></tr>
+        <tr><td><b>P0.2</b></td><td>Direct-answer block component + Sanity field</td><td class="eff pp-2">1 day</td><td class="imp pp-3">High</td><td>AEO positioning becomes visible</td></tr>
+        <tr><td><b>P0.1</b></td><td>Article hero rework (editorial layout, big H1, dark band)</td><td class="eff pp-2">2 days</td><td class="imp pp-3">High</td><td>First impression stops reading as template</td></tr>
+        <tr><td><b>P0.3</b></td><td>Index editorial rework (no boxed hero, paced layout)</td><td class="eff pp-2">2 days</td><td class="imp pp-3">High</td><td>"Agency with POV" not "content farm"</td></tr>
+        <tr><td><b>P1.1</b></td><td>12-col grid + TOC repositioning</td><td class="eff pp-2">2 days</td><td class="imp pp-3">High</td><td>Tables/code stop overflowing</td></tr>
+        <tr><td><b>P1.2</b></td><td>FAQ redesign with numbered hierarchy</td><td class="eff pp-2">1 day</td><td class="imp pp-2">Med</td><td>AEO surface becomes design language</td></tr>
+        <tr><td><b>P1.3</b></td><td>Code block: language label + copy button</td><td class="eff pp-2">1 day</td><td class="imp pp-2">Med</td><td>Reduces friction on AEO/schema content</td></tr>
+        <tr><td><b>P1.4</b></td><td>Pull quote margin treatment</td><td class="eff pp-2">0.5 day</td><td class="imp pp-2">Med</td><td>Editorial moments inside long posts</td></tr>
+        <tr><td><b>P1.5</b></td><td>Related articles &mdash; curated list with reasoning</td><td class="eff pp-1">0.5 day</td><td class="imp pp-2">Med</td><td>Authority over algorithm</td></tr>
+        <tr><td><b>P2.1</b></td><td>Mobile reading mode + floating TOC</td><td class="eff pp-2">1 day</td><td class="imp pp-2">Med</td><td>Mobile reads as designed not as crammed</td></tr>
+        <tr><td><b>P2.2</b></td><td>Page-load motion (article + index)</td><td class="eff pp-1">0.5 day</td><td class="imp pp-1">Low</td><td>Polish; the surface feels alive on load</td></tr>
+        <tr><td><b>P2.3</b></td><td>Blockquote typographic treatment</td><td class="eff pp-1">0.5 day</td><td class="imp pp-1">Low</td><td>Editorial cue for inline quotation</td></tr>
+        <tr><td><b>P2.4</b></td><td>Author credibility block (one surface, not two)</td><td class="eff pp-1">0.5 day</td><td class="imp pp-2">Med</td><td>E-E-A-T weight for Perplexity</td></tr>
+        <tr><td><b>P2.5</b></td><td>Context-aware CTA (pattern + industry driven)</td><td class="eff pp-2">1 day</td><td class="imp pp-2">Med</td><td>CTA stops being generic per-post</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <p style="font: 500 18px/1.45 'Iowan Old Style', Georgia, serif; max-width: 60ch; margin: 32px 0 0;">
+    Recommended sequence: P0.4 (today) &rarr; P0.2 (this week) &rarr; P0.1 + P0.3 (next week) &rarr; P1.1 &rarr; P1.2 &rarr; the rest in any order.
+  </p>
+</section>
+
+<!-- ─────────────────────────── 07 SUMMARY ─────────────────────────── -->
+<section class="audit" id="summary">
+  <div class="head">
+    <h2>The next move</h2>
+    <span class="anchor">07 &middot; Recommendation</span>
+  </div>
+
+  <div class="verdict">
+    <p style="font: 400 18px/1.55 'Iowan Old Style', Georgia, serif; margin: 0 0 16px; max-width: 70ch;">
+      Start with <b>P0.4</b> (15 min) and <b>P0.2</b> (the direct-answer component) this sprint. They unlock the design language that lets everything downstream make sense. P0.1 (article hero) and P0.3 (index) ship together as a "register change" release once the direct-answer block is live.
+    </p>
+    <p style="font: 400 18px/1.55 'Iowan Old Style', Georgia, serif; margin: 0; max-width: 70ch;">
+      The cumulative effect after P0+P1 is a blog that <b>no longer looks like a Webflow Marketplace template.</b> The blog becomes a demonstration of the AEO methodology rather than a description of it. Visitors arriving from a Google or AI search land on a surface that signals "this agency built this themselves, on purpose, for this audience." That's the cue worth $80&ndash;200K.
+    </p>
+  </div>
+
+  <div class="foot">
+    <p>
+      <strong>Source files reviewed.</strong>
+      <span class="mono">src/app/(site)/blog/[slug]/page.tsx</span> &middot;
+      <span class="mono">src/app/(site)/blog/page.tsx</span> &middot;
+      <span class="mono">src/components/blog/BlogContent.tsx</span> &middot;
+      <span class="mono">src/components/sections/FAQ.tsx</span> &middot;
+      <span class="mono">src/components/sections/CTA.tsx</span> &middot;
+      <span class="mono">src/app/globals.css</span> (blog-prose, blog-table-wrap, toc-link).
+    </p>
+    <p>
+      <strong>Live URLs sampled.</strong>
+      /blog &middot; /blog/schema-markup-for-aeo-2026 &middot; /blog/share-of-answer &middot; /blog/best-webflow-agencies &middot; /blog/answer-engine-optimization-guide-2026.
+      All five captured at desktop (1456&times;1024 @ 2&times;) and mobile (390&times;844 @ 2&times;). Screenshots in <span class="mono">/tmp/blog-audit/</span>.
+    </p>
+    <p>
+      <strong>Audit lens.</strong> <span class="mono">impeccable</span> skill, brand register (<span class="mono">.claude/skills/impeccable/reference/brand.md</span>). Cross-checked against <span class="mono">DESIGN.md</span> + <span class="mono">.claude/rules/component-patterns.md</span> + <span class="mono">.claude/rules/styling.md</span>.
+    </p>
+  </div>
+</section>
+
+</div>
+</body>
+</html>

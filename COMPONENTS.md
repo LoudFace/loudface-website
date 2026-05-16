@@ -276,6 +276,54 @@ Standardized section heading with optional eyebrow label, highlighted word, and 
 
 ---
 
+## Blog Components (`src/components/blog/`)
+
+Article-page-specific components, exported from `@/components/blog`.
+
+| Component | File | Description | Client? |
+|-----------|------|-------------|---------|
+| `BlogChart` | `BlogChart.tsx` | Inline data viz for AEO/SEO posts | No |
+| `BlogContent` | `BlogContent.tsx` | Splits HTML at H2 boundaries, interleaves CMS visuals | No |
+| `BlogIllustration` | `BlogIllustration.tsx` | SVG illustration wrapper | No |
+| `BlogVisual` | `BlogVisual.tsx` | Multi-mode visual (chart, illustration, screenshot) | No |
+| `DirectAnswer` | `DirectAnswer.tsx` | AEO-extractable 40–60 word summary block. Renders above article body with mono label + distinct surface + "How AI engines extract this" disclosure. Props: `answer` (required), `question?`, `compact?` | No |
+| `DirectAnswerStub` | `DirectAnswer.tsx` | Slim inline label variant — used where the full block doesn't fit. | No |
+| `CodeBlockEnhancer` | `CodeBlockEnhancer.tsx` | Wires up copy buttons emitted by `html-utils#wrapCodeBlocks`. Mount once per article body. Renders nothing. | Yes |
+| `FloatingToc` | `FloatingToc.tsx` | Mobile-only floating TOC button + bottom sheet. Hidden on lg+. Props: `items` ({id, text}[]). | Yes |
+
+### DirectAnswer
+
+The AEO design language. Every blog post renders this above the article body using a curated `directAnswer` field from the CMS (with an extraction fallback from TL;DR paragraphs). Visitors learn instantly that LoudFace structures content for AI extraction.
+
+```tsx
+<DirectAnswer answer="Five schema types move the needle for AEO in 2026: ..." />
+
+<DirectAnswer
+  question="Does schema markup help AI engines cite my site?"
+  answer="Yes, but only when the schema matches AI engines' extraction patterns. ..."
+  compact={true}
+/>
+```
+
+### FloatingToc
+
+Mobile-only TOC affordance. Renders a small floating button bottom-right that opens a full-height bottom sheet with all H2 anchors. Auto-hidden on lg+ (the sticky `.blog-body__toc` sidebar takes over).
+
+```tsx
+<FloatingToc items={toc} />
+```
+
+### CodeBlockEnhancer
+
+Behavioral island. Mount inside an article body alongside the rendered HTML. Finds `.code-block` wrappers (emitted by `html-utils#wrapCodeBlocks`) and adds clipboard copy on `[data-copy]` buttons.
+
+```tsx
+<BlogContent html={finalContent} visuals={post.visuals} />
+<CodeBlockEnhancer />
+```
+
+---
+
 ## Section Components (`src/components/sections/`)
 
 All section components are exported from `@/components/sections` (or `@/components` top-level barrel).

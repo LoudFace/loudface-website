@@ -12,10 +12,8 @@ import { notFound } from 'next/navigation';
 import Link from 'next/link';
 import type { Metadata } from 'next';
 import { fetchCollection, fetchHomepageData, fetchItemBySlug } from '@/lib/cms-data';
-import { avatarImage, heroImage, thumbnailImage } from '@/lib/image-utils';
-import { asset } from '@/lib/assets';
-import { Badge, SectionContainer } from '@/components/ui';
-import { BlogContent } from '@/components/blog';
+import { avatarImage, heroImage } from '@/lib/image-utils';
+import { BlogContent, CodeBlockEnhancer, DirectAnswer, FloatingToc } from '@/components/blog';
 import { CTA, FAQ, RelatedComparisons } from '@/components/sections';
 import { buildNoIndexMetadata, buildPageMetadata, truncateSeoTitle, truncateSeoDescription, rewriteLegacyUrls } from '@/lib/seo-utils';
 import {
@@ -26,7 +24,7 @@ import {
   buildOrganizationPublisher,
   buildImageObject,
 } from '@/lib/schema-utils';
-import { autoLinkServiceMentions } from '@/lib/html-utils';
+import { autoLinkServiceMentions, extractDirectAnswer, stripFirstTldr, wrapCodeBlocks } from '@/lib/html-utils';
 import type { BlogPost, Category, TeamMember } from '@/lib/types';
 
 interface PageProps {
@@ -57,8 +55,8 @@ function extractTocAndAddIds(html: string | undefined): { toc: { id: string; tex
 
   // Replace curly/smart quotes with straight quotes in HTML attributes
   // Rich text editors sometimes convert quotes in code examples
-  normalized = normalized.replace(/[\u201C\u201D]/g, '"');
-  normalized = normalized.replace(/[\u2018\u2019]/g, "'");
+  normalized = normalized.replace(/[“”]/g, '"');
+  normalized = normalized.replace(/[‘’]/g, "'");
 
   // Escape <script> tags in CMS rich text so they display as code, not execute.
   normalized = normalized.replace(/<script\b/gi, '&lt;script');
@@ -79,10 +77,9 @@ function extractTocAndAddIds(html: string | undefined): { toc: { id: string; tex
   );
 
   // Wrap every <table> in a horizontally-scrollable container. The article
-  // column is ~560px on desktop (narrow because of the sticky TOC sidebar),
-  // which is too cramped for typical 4-6 column comparison tables. Letting
-  // the table keep its natural column widths and scrolling the WRAPPER when
-  // it exceeds the column is the standard editorial pattern, and preserves
+  // column is ~640px on desktop (12-col grid, prose spans 6 cols). Letting
+  // tables keep natural column widths and scrolling the WRAPPER when they
+  // exceed the column is the standard editorial pattern, and preserves
   // table semantics (which `display: block` on <table> breaks).
   normalized = normalized.replace(
     /<table\b[\s\S]*?<\/table>/gi,
@@ -126,6 +123,135 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     publishedTime: post['published-date'],
     modifiedTime: post['last-updated'] || post['published-date'],
   });
+}
+
+// ───────────────────────────────────────────────────────────────────────────
+// Pattern inference — read the post's slug to figure out which editorial
+// pattern it follows. This drives the dark-band label on the hero so the
+// surface signals "AEO Playbook" vs "Comparison" vs "Listicle" etc.
+//
+// Patterns mirror the six in the strategy doc:
+//   - listicle (best/top/15)
+//   - comparison (X vs Y)
+//   - playbook (AEO playbooks, guides, how-to)
+//   - aeo (anything AEO/citation/answer-engine)
+//   - industry (industry-specific)
+//   - pricing (pricing/cost)
+//   - founder (founder bylines / opinions)
+// Falls back to "Field notes" for anything that doesn't fit.
+// ───────────────────────────────────────────────────────────────────────────
+type PatternKey =
+  | 'listicle'
+  | 'comparison'
+  | 'playbook'
+  | 'aeo'
+  | 'industry'
+  | 'pricing'
+  | 'founder'
+  | 'field';
+
+function inferPattern(slug: string, postName?: string): { key: PatternKey; label: string } {
+  const s = slug.toLowerCase();
+  const name = (postName || '').toLowerCase();
+
+  if (/(\d+\+?-best|best-\d+|best-.*-(agencies|tools|software|platforms)|ranked|top-\d+)/.test(s)) {
+    return { key: 'listicle', label: 'Ranked listicle' };
+  }
+  if (/-vs-/.test(s)) {
+    return { key: 'comparison', label: 'Comparison' };
+  }
+  if (/(pricing|cost|price)/.test(s)) {
+    return { key: 'pricing', label: 'Pricing breakdown' };
+  }
+  if (/(playbook|guide|how-to|complete-guide|tutorial|in-\d+-minutes|audit)/.test(s)) {
+    return { key: 'playbook', label: 'Playbook' };
+  }
+  if (/(aeo|answer-engine|citation|share-of-answer|schema)/.test(s)) {
+    return { key: 'aeo', label: 'AEO research' };
+  }
+  if (/(b2b-saas|industry|vertical|fintech|healthcare|cybersecurity)/.test(s)) {
+    return { key: 'industry', label: 'Industry brief' };
+  }
+  if (/(why-loudface|founder|opinion|why-i|lessons|what-i-learned)/.test(name)) {
+    return { key: 'founder', label: 'Founder byline' };
+  }
+  return { key: 'field', label: 'Field notes' };
+}
+
+// Pattern-aware CTA copy. The generic "Ready to grow your business?" was
+// the same on every post — replaced with a contextual offer that ties to
+// the playbook the visitor just read. Falls back to the original copy for
+// patterns where a specific offer doesn't apply.
+function ctaForPattern(key: PatternKey): {
+  title: string;
+  subtitle: string;
+  ctaText: string;
+} {
+  switch (key) {
+    case 'aeo':
+    case 'playbook':
+      return {
+        title: 'Get your AEO readiness audit. Free 30-min review.',
+        subtitle:
+          "We'll run your top 5 pages through the same audit framework referenced in this article. You get the gaps, the fixes, and projected citation lift.",
+        ctaText: 'Book the audit',
+      };
+    case 'listicle':
+      return {
+        title: "See where you'd land on this list.",
+        subtitle:
+          "We'll score your site against the same criteria used in this ranking and tell you honestly whether we're the right fit or not.",
+        ctaText: 'Book a 30-min review',
+      };
+    case 'comparison':
+      return {
+        title: 'Pick the right tool. We help you decide.',
+        subtitle:
+          "We've shipped on both. Tell us your stack and we'll tell you which option fits — and where each one breaks.",
+        ctaText: 'Talk to us',
+      };
+    case 'pricing':
+      return {
+        title: "Get a real number, not a 'starting at' figure.",
+        subtitle:
+          'Send us the scope. We send back a fixed-fee proposal within 48 hours, with milestones, deliverables, and what we will and will not do.',
+        ctaText: 'Request a proposal',
+      };
+    case 'industry':
+      return {
+        title: 'Built for your vertical. Not retrofitted.',
+        subtitle:
+          "We've shipped sites for SaaS companies in your industry. Let's discuss the patterns that work — and the ones that don't.",
+        ctaText: 'Book an intro call',
+      };
+    case 'founder':
+      return {
+        title: 'Talk to the team behind this take.',
+        subtitle:
+          "If this resonated, let's see whether we'd be a fit. Our model: fixed fee, fast turnaround, measurable outcomes.",
+        ctaText: 'Book a 30-min call',
+      };
+    case 'field':
+    default:
+      return {
+        title: 'Ready to grow your business?',
+        subtitle: "Let's discuss how we can help you achieve your goals.",
+        ctaText: 'Book a call',
+      };
+  }
+}
+
+function formatHeroDate(iso: string | undefined): string {
+  if (!iso) return '';
+  try {
+    return new Date(iso).toLocaleDateString('en-US', {
+      month: 'short',
+      day: 'numeric',
+      year: 'numeric',
+    });
+  } catch {
+    return '';
+  }
 }
 
 export default async function BlogPostPage({ params }: PageProps) {
@@ -188,10 +314,32 @@ export default async function BlogPostPage({ params }: PageProps) {
   ];
   const isComparisonPost = COMPARISON_SLUGS.includes(slug);
 
-  const { toc, html: processedContent } = extractTocAndAddIds(post.content);
+  // ── Direct Answer ───────────────────────────────────────────────────────
+  // Prefer the curated CMS field; fall back to extracting a TL;DR-style
+  // paragraph from the article body for posts that haven't been backfilled.
+  const directAnswerText =
+    post['direct-answer']?.trim() ||
+    extractDirectAnswer(post.content) ||
+    null;
+
+  // Always strip a leading TL;DR paragraph from the body when a Direct
+  // Answer block is rendered above. Without this, posts where the curated
+  // directAnswer was lifted from a TL;DR paragraph end up showing the same
+  // span twice. stripFirstTldr is conservative — it only removes the FIRST
+  // <p> beginning with a TL;DR marker, so posts that legitimately reference
+  // "TL;DR" later in the body keep that content.
+  const contentForBody = directAnswerText
+    ? stripFirstTldr(post.content)
+    : post.content;
+
+  const { toc, html: processedContent } = extractTocAndAddIds(contentForBody);
   // Inject internal service links AFTER toc/heading processing so the
   // auto-linker only touches paragraph-level prose.
   const linkedContent = autoLinkServiceMentions(processedContent);
+  // Wrap <pre> code blocks with a header band (language + copy affordance).
+  // Done last so the wrapper doesn't interfere with toc/auto-linker which
+  // operate on prose-level tags only.
+  const finalContent = wrapCodeBlocks(linkedContent);
   const canonicalUrl = `https://www.loudface.co/blog/${slug}`;
 
   const articleImage = buildImageObject(post.thumbnail?.url);
@@ -227,6 +375,12 @@ export default async function BlogPostPage({ params }: PageProps) {
   const faqSchema = buildFAQSchema(faqItems);
   const speakableSchema = buildSpeakableSchema(post.name, canonicalUrl);
 
+  const pattern = inferPattern(slug, post.name);
+  const publishedDateStr = formatHeroDate(post['published-date']);
+  const updatedDateStr = formatHeroDate(post['last-updated']);
+  const showUpdate =
+    updatedDateStr && post['last-updated'] !== post['published-date'];
+
   return (
     <>
       {/* Structured Data — native script tags for SSR visibility to crawlers */}
@@ -249,165 +403,169 @@ export default async function BlogPostPage({ params }: PageProps) {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(speakableSchema) }}
       />
 
-      {/* Hero */}
-      <section className="pt-24 pb-12 bg-white">
-        <div className="px-4 md:px-8 lg:px-12">
-          <div className="max-w-4xl mx-auto text-center">
-            <nav className="mb-6" aria-label="Breadcrumb">
-              <ol className="flex items-center justify-center gap-2 text-sm text-surface-500">
-                <li><Link href="/blog" className="hover:text-primary-600">Blog</Link></li>
-                <li><span className="mx-1">/</span></li>
-                <li className="text-surface-900 truncate max-w-[200px]">{post.name}</li>
-              </ol>
+      {/* ─────────────────────────────────────────────────────────────────
+          Editorial hero — left-aligned, asymmetric, with a dark top band
+          carrying the pattern label + update date. Replaces the previous
+          centered-stack (breadcrumb · badge · H1 · excerpt · author chip ·
+          dates) template that brand.md flagged as Webflow-Marketplace-tier.
+          The DirectAnswer block lives inside the hero so the most useful
+          40–60 words on the page are visible above the fold on mobile.
+          ───────────────────────────────────────────────────────────────── */}
+      <article className="blog-hero">
+        {/* Dark top band — pattern tag + update timestamp, mono caps */}
+        <div className="blog-hero__band">
+          <div className="blog-hero__band-inner">
+            <nav aria-label="Breadcrumb" className="blog-hero__crumbs">
+              <Link href="/blog">Blog</Link>
+              <span aria-hidden="true">/</span>
+              <span data-pattern={pattern.key}>{pattern.label}</span>
             </nav>
+            <div className="blog-hero__stamp">
+              {showUpdate && (
+                <>
+                  <time dateTime={post['last-updated']}>Updated {updatedDateStr}</time>
+                  <span aria-hidden="true" className="blog-hero__sep">·</span>
+                </>
+              )}
+              {publishedDateStr && (
+                <time dateTime={post['published-date']}>{publishedDateStr}</time>
+              )}
+              {post['time-to-read'] && (
+                <>
+                  <span aria-hidden="true" className="blog-hero__sep">·</span>
+                  <span>{post['time-to-read']}{/\bmin\b/i.test(post['time-to-read']) ? '' : ' min read'}</span>
+                </>
+              )}
+            </div>
+          </div>
+        </div>
 
+        {/* Editorial body — large H1, optional category eyebrow, byline. */}
+        <div className="blog-hero__body">
+          <div className="blog-hero__body-inner">
             {category && (
-              <Badge className="mb-4 border-primary-100 bg-primary-50 text-primary-700">
-                {category.name}
-              </Badge>
+              <div className="blog-hero__eyebrow">
+                <span aria-hidden="true" className="blog-hero__eyebrow-rule" />
+                <span>{category.name}</span>
+              </div>
             )}
 
-            <h1 className="text-3xl md:text-4xl lg:text-5xl font-medium text-surface-900 leading-tight">
-              {post.name}
-            </h1>
+            <h1 className="blog-hero__title">{post.name}</h1>
 
             {post.excerpt && (
-              <p className="mt-4 text-xl text-surface-600 max-w-2xl mx-auto">
-                {post.excerpt}
-              </p>
+              <p className="blog-hero__excerpt">{post.excerpt}</p>
             )}
 
-            <div className="mt-8 flex items-center justify-center gap-4">
+            {/* DirectAnswer — the AEO-extractable summary block. */}
+            {directAnswerText && (
+              <DirectAnswer answer={directAnswerText} />
+            )}
+
+            {/* Byline row — author + credentialing.
+                E-E-A-T signals matter for AEO; Perplexity weights author
+                authority disproportionately. We surface the team page link
+                + a short credential line so the byline does real work. */}
+            <div className="blog-hero__byline">
               {author && (
-                <Link href={`/team/${author.slug}`} className="flex items-center gap-3 group">
+                <Link href={`/team/${author.slug}`} className="blog-hero__author">
                   {author['profile-picture']?.url && (
                     <img
                       src={avatarImage(author['profile-picture'].url)}
                       alt={author.name}
                       width="80"
                       height="80"
-                      loading="lazy"
-                      className="w-10 h-10 rounded-full object-cover"
+                      loading="eager"
+                      className="blog-hero__avatar"
                     />
                   )}
-                  <div className="text-left">
-                    <div className="font-medium text-surface-900 group-hover:text-primary-600 transition-colors">{author.name}</div>
+                  <span>
+                    <span className="blog-hero__author-name">{author.name}</span>
                     {author['job-title'] && (
-                      <div className="text-sm text-surface-500">{author['job-title']}</div>
+                      <span className="blog-hero__author-role">{author['job-title']}</span>
                     )}
-                  </div>
+                  </span>
                 </Link>
               )}
-            </div>
-
-            {/* Publication & freshness dates — visible freshness signals improve E-E-A-T */}
-            <div className="mt-4 flex items-center justify-center gap-3 text-sm text-surface-500">
-              {post['published-date'] && (
-                <time dateTime={post['published-date']}>
-                  {new Date(post['published-date']).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
-                </time>
-              )}
-              {post['last-updated'] && post['last-updated'] !== post['published-date'] && (
-                <>
-                  <span className="text-surface-300">·</span>
-                  <span>
-                    Updated{' '}
-                    <time dateTime={post['last-updated']}>
-                      {new Date(post['last-updated']).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
-                    </time>
-                  </span>
-                </>
-              )}
-              {post['time-to-read'] && (
-                <>
-                  <span className="text-surface-300">·</span>
-                  <span>{post['time-to-read']}</span>
-                </>
-              )}
+              <span className="blog-hero__byline-cred" aria-label="Author credentials">
+                <span className="blog-hero__byline-cred-line">
+                  Webflow Premium Enterprise Partner
+                </span>
+                <span className="blog-hero__byline-cred-line">
+                  AEO playbook shipped on 30+ B2B SaaS sites
+                </span>
+              </span>
             </div>
           </div>
         </div>
-      </section>
 
-      {/* Featured Image */}
-      {post.thumbnail?.url && (
-        <div className="bg-white pb-12">
-          <div className="px-4 md:px-8 lg:px-12">
-            <div className="max-w-4xl mx-auto">
+        {/* Featured image — sits between hero and article body, full-width
+            on its own band so it can breathe. */}
+        {post.thumbnail?.url && (
+          <div className="blog-hero__featured">
+            <div className="blog-hero__featured-inner">
               <img
                 src={heroImage(post.thumbnail.url).src}
                 alt={post.thumbnail.alt || post.name}
                 width="1200"
                 height="675"
-                className="w-full rounded-xl shadow-lg"
+                className="blog-hero__featured-img"
                 loading="eager"
                 fetchPriority="high"
               />
             </div>
           </div>
-        </div>
-      )}
+        )}
+      </article>
 
-      {/* Content */}
-      <SectionContainer className="bg-white" padding="sm">
-        <div className="max-w-4xl mx-auto">
-          <div className="grid grid-cols-1 lg:grid-cols-[1fr_280px] gap-8 lg:gap-12">
-            {/* Article Body */}
-            <article className="min-w-0">
-              {linkedContent ? (
-                <BlogContent html={linkedContent} visuals={post.visuals} />
-              ) : (
-                <p className="text-surface-500">No content available for this post.</p>
-              )}
-            </article>
-
-            {/* Sidebar */}
-            <aside className="hidden lg:block lg:sticky lg:top-24 lg:self-start space-y-8">
-              {toc.length > 0 && (
-                <nav className="toc">
-                  <span className="block text-sm font-medium text-surface-500 uppercase tracking-wide mb-3">On this page</span>
-                  <ul className="space-y-2">
-                    {toc.map((item) => (
-                      <li key={item.id}>
-                        <a
-                          href={`#${item.id}`}
-                          className="toc-link block text-sm text-surface-600 hover:text-primary-600 transition-colors py-1 border-l-2 border-surface-200 hover:border-primary-500 pl-3"
-                        >
-                          {item.text}
-                        </a>
-                      </li>
-                    ))}
-                  </ul>
-                </nav>
-              )}
-
-              {author && (
-                <Link href={`/team/${author.slug}`} className="block bg-surface-50 rounded-xl p-5 group hover:bg-surface-100 transition-colors">
-                  <span className="block text-sm font-medium text-surface-500 uppercase tracking-wide mb-3">Written by</span>
-                  <div className="flex items-center gap-3">
-                    {author['profile-picture']?.url && (
-                      <img
-                        src={avatarImage(author['profile-picture'].url)}
-                        alt={author.name}
-                        width="80"
-                        height="80"
-                        loading="lazy"
-                        className="w-12 h-12 rounded-full object-cover"
-                      />
-                    )}
-                    <div>
-                      <div className="font-medium text-surface-900 group-hover:text-primary-600 transition-colors">{author.name}</div>
-                      {author['job-title'] && (
-                        <div className="text-sm text-surface-500">{author['job-title']}</div>
-                      )}
-                    </div>
-                  </div>
-                </Link>
-              )}
+      {/* ─────────────────────────────────────────────────────────────────
+          Article body — 12-col grid. TOC sticky at far-left on lg+; prose
+          in 6 cols; right 3 cols reserved for future pull quotes / inline
+          breakouts. Breakouts inside the prose body (.blog-prose .breakout)
+          can span past the 6-col line via negative margin.
+          ───────────────────────────────────────────────────────────────── */}
+      <section className="blog-body">
+        <div className="blog-body__grid">
+          {/* TOC — sticky on lg+, hidden on mobile (replaced by floating
+              button in a later P2 ship). */}
+          {toc.length > 0 && (
+            <aside className="blog-body__toc" aria-label="On this page">
+              <nav>
+                <span className="blog-body__toc-label">On this page</span>
+                <ol>
+                  {toc.map((item, i) => (
+                    <li key={item.id}>
+                      <a href={`#${item.id}`} className="toc-link">
+                        <span className="blog-body__toc-num" aria-hidden="true">
+                          {String(i + 1).padStart(2, '0')}
+                        </span>
+                        <span>{item.text}</span>
+                      </a>
+                    </li>
+                  ))}
+                </ol>
+              </nav>
             </aside>
+          )}
+
+          <div className="blog-body__article">
+            {finalContent ? (
+              <>
+                <BlogContent html={finalContent} visuals={post.visuals} />
+                <CodeBlockEnhancer />
+              </>
+            ) : (
+              <p className="text-surface-500">No content available for this post.</p>
+            )}
           </div>
+
+          {/* Mobile-only floating TOC. Hidden on lg+ via CSS. */}
+          {toc.length > 0 && <FloatingToc items={toc} />}
+
+          {/* Right margin — reserved for pull quotes and breakouts. Empty
+              for now; populated in P1.4. */}
+          <aside className="blog-body__margin" aria-hidden="true" />
         </div>
-      </SectionContainer>
+      </section>
 
       {/* FAQ — open layout from auto-extracted H2 headings */}
       {faqItems.length >= 2 && (
@@ -424,60 +582,62 @@ export default async function BlogPostPage({ params }: PageProps) {
       {/* Comparison Cross-Links */}
       {isComparisonPost && <RelatedComparisons currentSlug={slug} />}
 
-      {/* Related Posts */}
+      {/* ─────────────────────────────────────────────────────────────────
+          Related posts — curated list with editorial reasoning.
+          Replaces the 3-card thumbnail grid with a numbered list where
+          each entry includes an editorial gloss explaining the
+          connection. Authority over algorithm.
+          ───────────────────────────────────────────────────────────────── */}
       {relatedPosts.length > 0 && (
-        <SectionContainer>
-          <div className="flex items-center justify-between mb-8">
-            <h2 className="text-2xl md:text-3xl font-medium text-surface-900">Related posts</h2>
-            <Link href="/blog" className="text-sm font-medium text-surface-600 hover:text-primary-600 transition-colors">
-              All blog posts
-            </Link>
-          </div>
+        <section className="blog-related">
+          <div className="blog-related__inner">
+            <div className="blog-related__head">
+              <div className="blog-related__label">
+                <span aria-hidden="true" className="blog-related__rule" />
+                <span>Keep reading</span>
+              </div>
+              <Link href="/blog" className="blog-related__all">
+                All blog posts <span aria-hidden="true">→</span>
+              </Link>
+            </div>
 
-          <div className="grid md:grid-cols-3 gap-6">
-            {relatedPosts.map((related) => {
-              const relatedCategory = related.category ? categories.get(related.category) : undefined;
+            <ol className="blog-related__list">
+              {relatedPosts.map((related, i) => {
+                const relatedCategory = related.category ? categories.get(related.category) : undefined;
+                const num = String(i + 1).padStart(2, '0');
+                const readMin = related['time-to-read'] || '5 min';
+                const readLabel = /\bmin\b/i.test(readMin) ? readMin : `${readMin} min`;
+                // Heuristic editorial gloss based on shared category /
+                // slug-keyword affinity. We don't store curated glosses in
+                // the CMS yet — this gives a stronger signal than just
+                // "Related posts" until we do.
+                const gloss = relatedCategory
+                  ? `Same category — ${relatedCategory.name.toLowerCase()}. Adjacent angle on the same problem.`
+                  : `Deeper on a topic this piece touches but doesn't fully unpack.`;
 
-              return (
-                <Link
-                  key={related.slug}
-                  href={`/blog/${related.slug}`}
-                  className="group block bg-white rounded-xl border border-surface-200 overflow-hidden hover:shadow-lg hover:-translate-y-1 transition-all duration-200"
-                >
-                  <div className="aspect-video overflow-hidden">
-                    <img
-                      src={thumbnailImage(related.thumbnail?.url) || asset('/images/placeholder.webp')}
-                      alt={related.name}
-                      width="800"
-                      height="450"
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                      loading="lazy"
-                    />
-                  </div>
-                  <div className="p-4">
-                    {relatedCategory && (
-                      <span className="inline-block px-2 py-0.5 bg-surface-100 text-surface-600 rounded text-xs font-medium mb-2">
-                        {relatedCategory.name}
+                return (
+                  <li key={related.slug} className="blog-related__item">
+                    <Link href={`/blog/${related.slug}`} className="blog-related__row">
+                      <span className="blog-related__num" aria-hidden="true">{num}</span>
+                      <span className="blog-related__rowbody">
+                        <span className="blog-related__title">{related.name}</span>
+                        <span className="blog-related__gloss">{gloss}</span>
                       </span>
-                    )}
-                    <h3 className="font-medium text-surface-900 line-clamp-2 group-hover:text-primary-600 transition-colors">
-                      {related.name}
-                    </h3>
-                  </div>
-                </Link>
-              );
-            })}
+                      <span className="blog-related__read" aria-label={`${readLabel} read`}>{readLabel}</span>
+                      <span aria-hidden="true" className="blog-related__arrow">→</span>
+                    </Link>
+                  </li>
+                );
+              })}
+            </ol>
           </div>
-        </SectionContainer>
+        </section>
       )}
 
-      {/* CTA */}
-      <CTA
-        variant="dark"
-        title="Ready to grow your business?"
-        subtitle="Let's discuss how we can help you achieve your goals."
-        ctaText="Book a call"
-      />
+      {/* CTA — copy varies by post pattern so it ties to the playbook the
+          visitor just read. Falls back to the generic copy for patterns
+          without a specific offer. */}
+      <CTA variant="dark" {...ctaForPattern(pattern.key)} />
     </>
   );
 }
