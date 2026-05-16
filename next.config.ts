@@ -216,6 +216,14 @@ const nextConfig: NextConfig = {
         destination: '/blog/webflow-ai-revolution',
         permanent: true,
       },
+      // Webflow-for-ecommerce duplicate — /blog/is-webflow-good-for-ecommerce-...
+      // covered the same intent as /blog/webflow-for-ecommerce but with a
+      // much longer URL. Merge the long-URL version into the canonical.
+      {
+        source: '/blog/is-webflow-good-for-ecommerce-the-honest-2026-review-features-costs-alternatives',
+        destination: '/blog/webflow-for-ecommerce',
+        permanent: true,
+      },
       // Broken case study slugs → correct case study pages
       {
         source: '/case-studies/toku-icypeas',
