@@ -202,6 +202,20 @@ const nextConfig: NextConfig = {
         destination: '/blog/webflow-agency-pricing',
         permanent: true,
       },
+      // Cluster D agency-philosophy overlap — these long-URL pieces from the
+      // 2026-01 batch cover the same intent as their newer canonical siblings.
+      // The dev-costs piece duplicates /blog/webflow-agency-cost-b2b-saas-2026
+      // intent; the future-of-AI piece duplicates /blog/webflow-ai-revolution.
+      {
+        source: '/blog/how-ai-webflow-systems-reduce-development-costs-for-scaling-teams',
+        destination: '/blog/webflow-agency-cost-b2b-saas-2026',
+        permanent: true,
+      },
+      {
+        source: '/blog/the-future-of-webflow-ai-assisted-design-development-and-optimization',
+        destination: '/blog/webflow-ai-revolution',
+        permanent: true,
+      },
       // Broken case study slugs → correct case study pages
       {
         source: '/case-studies/toku-icypeas',
