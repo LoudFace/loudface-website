@@ -1,5 +1,5 @@
 import { getFAQContent } from '@/lib/content-utils';
-import { Button } from '@/components/ui';
+import { Button, SectionContainer, SectionHeader } from '@/components/ui';
 
 interface FAQItem {
   question: string;
@@ -16,32 +16,16 @@ interface FAQProps {
   footerCtaText?: string;
   /** Skip JSON-LD schema generation (use when schema is already emitted elsewhere on the page) */
   skipSchema?: boolean;
-  /**
-   * `accordion` = collapsible (CSS :target / <details>) inside the editorial grid.
-   * `open` = all answers visible. AEO surfaces almost always want `open` so
-   * the answers are scrapable without interaction.
-   */
+  /** `accordion` = collapsed <details> toggles (default), `open` = all answers visible */
   variant?: 'accordion' | 'open';
 }
 
-// Strip HTML tags from answer for schema + extraction preview
+// Strip HTML tags from answer for schema
 function stripHtml(html: string): string {
   return html
     .replace(/<[^>]*>/g, ' ')
     .replace(/\s+/g, ' ')
     .trim();
-}
-
-// Slugify the question to create stable anchor ids for FAQ deep-linking.
-// Match the convention used by H2 ids in the article body so external
-// anchors (#faq-q-01-…) keep working across content edits.
-function questionAnchor(idx: number, question: string): string {
-  const slug = question
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, '-')
-    .replace(/(^-|-$)/g, '')
-    .slice(0, 60);
-  return `faq-${String(idx + 1).padStart(2, '0')}-${slug}`;
 }
 
 export function FAQ({
@@ -63,6 +47,11 @@ export function FAQ({
   const finalFooterText = footerText ?? content.footerText;
   const finalFooterCtaText = footerCtaText ?? content.footerCtaText;
 
+  // Extract the last word for highlighting
+  const titleWords = finalTitle.split(' ');
+  const highlightWord = titleWords.length > 1 ? titleWords[titleWords.length - 1] : undefined;
+
+  // Generate FAQPage structured data
   const faqSchema = {
     '@context': 'https://schema.org',
     '@type': 'FAQPage',
@@ -78,6 +67,7 @@ export function FAQ({
 
   return (
     <>
+      {/* FAQPage Structured Data — native script for SSR visibility to crawlers */}
       {!skipSchema && (
         <script
           type="application/ld+json"
@@ -85,80 +75,55 @@ export function FAQ({
         />
       )}
 
-      <section className="faq-editorial">
-        <div className="faq-editorial__inner">
-          {/* Header — editorial register: mono label + serif title + count */}
-          <header className="faq-editorial__head">
-            <div className="faq-editorial__head-text">
-              <div className="faq-editorial__label">
-                <span aria-hidden="true" className="faq-editorial__rule" />
-                <span>Frequently asked</span>
-              </div>
-              <h2 className="faq-editorial__title">{finalTitle}</h2>
-              {finalSubtitle && (
-                <p className="faq-editorial__subtitle">{finalSubtitle}</p>
-              )}
-            </div>
-            <div className="faq-editorial__meta">
-              <span className="faq-editorial__count">
-                {items.length} {items.length === 1 ? 'question' : 'questions'}
-              </span>
-              <span className="faq-editorial__extractable">AEO-extractable</span>
-            </div>
-          </header>
+      <SectionContainer>
+        {/* Header - always on top */}
+        <div className="mb-8 lg:mb-12">
+          <SectionHeader title={finalTitle} highlightWord={highlightWord} subtitle={finalSubtitle} />
+        </div>
 
-          {/* Numbered Q&A list */}
-          <ol className="faq-editorial__list">
-            {items.map((item, index) => {
-              const anchor = questionAnchor(index, item.question);
-              const num = `Q.${String(index + 1).padStart(2, '0')}`;
-              if (variant === 'accordion') {
-                return (
-                  <li key={index} className="faq-editorial__item" id={anchor}>
-                    <details className="faq-editorial__details group">
-                      <summary className="faq-editorial__summary">
-                        <span className="faq-editorial__num" aria-hidden="true">{num}</span>
-                        <span className="faq-editorial__q">{item.question}</span>
-                        <span className="faq-editorial__toggle" aria-hidden="true">
-                          <span className="faq-editorial__toggle-bar" />
-                          <span className="faq-editorial__toggle-bar faq-editorial__toggle-bar--v" />
-                        </span>
-                      </summary>
-                      <div className="faq-editorial__body">
-                        <p
-                          className="faq-editorial__a"
-                          dangerouslySetInnerHTML={{ __html: item.answer }}
-                        />
-                      </div>
-                    </details>
-                  </li>
-                );
-              }
-              return (
-                <li key={index} className="faq-editorial__item faq-editorial__item--open" id={anchor}>
-                  <div className="faq-editorial__row">
-                    <span className="faq-editorial__num" aria-hidden="true">{num}</span>
-                    <div className="faq-editorial__rowbody">
-                      <h3 className="faq-editorial__q">{item.question}</h3>
-                      <p
-                        className="faq-editorial__a"
-                        dangerouslySetInnerHTML={{ __html: item.answer }}
-                      />
-                      <a href={`#${anchor}`} className="faq-editorial__anchor" aria-label={`Direct link to ${item.question}`}>
-                        Link to this answer
-                      </a>
-                    </div>
+        {/* FAQ Items + Footer CTA */}
+        <div className="grid grid-cols-1 lg:grid-cols-[2fr_1fr] gap-8 lg:gap-12">
+          {/* FAQ Items */}
+          {variant === 'accordion' ? (
+            <div className="space-y-0 divide-y divide-surface-200 border-y border-surface-200">
+              {items.map((item, index) => (
+                <details key={index} className="group faq-details">
+                  <summary className="flex items-center justify-between gap-4 py-5 cursor-pointer list-none select-none hover:bg-surface-50 -mx-4 px-4 transition-colors focus-visible:outline-2 focus-visible:outline-primary-500 focus-visible:outline-offset-2 rounded-lg">
+                    <span className="text-base md:text-lg font-medium text-surface-900 pr-4">
+                      {item.question}
+                    </span>
+                    <span className="flex-shrink-0 w-6 h-6 relative" aria-hidden="true">
+                      <span className="absolute top-1/2 left-0 w-6 h-0.5 bg-surface-400 -translate-y-1/2 transition-transform group-open:rotate-0" />
+                      <span className="absolute top-1/2 left-0 w-6 h-0.5 bg-surface-400 -translate-y-1/2 rotate-90 transition-transform group-open:rotate-0" />
+                    </span>
+                  </summary>
+                  <div className="pb-5 pr-10 text-surface-600 leading-relaxed overflow-hidden animate-fade-in">
+                    <p dangerouslySetInnerHTML={{ __html: item.answer }} />
                   </div>
-                </li>
-              );
-            })}
-          </ol>
+                </details>
+              ))}
+            </div>
+          ) : (
+            <div className="space-y-8">
+              {items.map((item, index) => (
+                <div key={index}>
+                  <h3 className="text-base md:text-lg font-medium text-surface-900">
+                    {item.question}
+                  </h3>
+                  <div className="mt-2 text-surface-600 leading-relaxed">
+                    <p dangerouslySetInnerHTML={{ __html: item.answer }} />
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
 
+          {/* Footer CTA */}
           {showFooter && (
-            <div className="faq-editorial__footer">
-              <h3>{finalFooterTitle}</h3>
-              <p>{finalFooterText}</p>
-              <div className="faq-editorial__footer-cta">
+            <div className="lg:pl-8 lg:text-left text-center flex flex-col justify-start">
+              <h3 className="text-xl font-bold text-surface-900">{finalFooterTitle}</h3>
+              <p className="mt-2 text-surface-600">{finalFooterText}</p>
+              <div className="mt-4">
                 <Button variant="primary" size="lg" calTrigger>
                   {finalFooterCtaText}
                 </Button>
@@ -166,8 +131,7 @@ export function FAQ({
             </div>
           )}
         </div>
-      </section>
+      </SectionContainer>
     </>
   );
 }
-

@@ -110,8 +110,6 @@ export interface BlogPost {
   "meta-description"?: string;
   thumbnail?: CmsImage;
   excerpt?: string;
-  /** 40–60 word AEO-extractable answer surfaced above the article body. AI engines lift this verbatim. */
-  "direct-answer"?: string;
   content?: string;
   "time-to-read"?: string;
   featured?: boolean;

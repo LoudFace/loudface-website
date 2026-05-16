@@ -114,7 +114,6 @@ const BLOG_POST_PROJECTION = `{
   "meta-description": metaDescription,
   "thumbnail": thumbnail { "url": asset->url, "alt": alt },
   excerpt,
-  "direct-answer": directAnswer,
   content,
   "time-to-read": timeToRead,
   featured,
