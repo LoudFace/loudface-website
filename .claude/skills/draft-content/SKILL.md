@@ -28,16 +28,87 @@ Invoke the **`/arnels-assistant`** skill. **This is non-negotiable.** Every piec
 - Humanizer patterns (have opinions, acknowledge complexity, use "I")
 - Pre-delivery checklist
 
-### Step 3: Pull the entry's content brief
+### Step 2.5: Brief against Peec (if the piece targets a tracked prompt)
+
+If the calendar entry's Target Keywords or Content Brief references a buyer prompt that Peec tracks (most do — anything tagged Listicle, Comparison, or AEO playbook), invoke **`/peec-research`** with that prompt. It returns:
+
+- The fan-out queries AI engines actually issue when answering this prompt (these are the real keywords to weave into H2s and the direct-answer block — NOT the parent prompt itself)
+- LoudFace's current visibility on this prompt (0% = retrieval failure, position 5+ = ranking weakness)
+- Top 3 competitors who outrank LoudFace for this prompt + one sample citation showing how each is described
+- Recommended optimization angle for this draft
+
+Skip this step only when the piece is brand new, a thought-leadership essay, or a process post that doesn't target a tracked prompt. When in doubt, run it — the cost is one Claude turn and the brief shapes the draft meaningfully.
+
+### Step 3: Pull the entry's content brief + the Pattern's required research
 
 Use `notion-fetch` on the specific entry. Read its:
 - Title
 - Target Keywords
 - Content Brief (the prompt for this piece)
 - Content Type (Blog Post / Listicle / Landing Page / Case Study)
-- Pattern reference if any
+- Pattern reference (relation column)
 
-### Step 4: Draft following the six patterns
+If the entry has a Pattern relation, also fetch that Pattern row from the Patterns Registry (`collection://a6c661c7-aeb4-4fb5-ad0a-7962288366c1`) and read its **Required research** field. This text lists the specific facts that must be gathered before writing — per-entity founder names, methodology distinctions, pricing sources, etc. If the field is non-empty, treat it as mandatory: every listed fact must either be in your research findings (from `/serp-recon` + targeted WebFetches) or explicitly flagged as "couldn't verify — left out."
+
+Skipping required research is the #1 cause of thin drafts that need post-ship expansion.
+
+### Step 3.5: SERP + AI-source recon (mandatory for SEO-targeted pieces)
+
+Invoke **`/serp-recon`** with the target keywords from Step 3 and the Pattern type. The skill spawns a fresh subagent that:
+- Pulls the top 10 Google organic positions via DataForSEO (incognito-equivalent — no location bias, no history bias)
+- Fetches the top 5-7 ranking pages and extracts their structure (word count, H2 sequence, FAQ presence, schema, named entities)
+- Extracts which URLs AI engines cite for related prompts via Peec (ChatGPT, Perplexity, Gemini)
+- Cross-references both surfaces to identify "double-winners" (rank in Google AND cited by AI)
+- Returns a structured recon brief with median word count, modal section sequence, and specific structural moves
+
+**Consume the recon brief in Step 4** — its median word count overrides the prose-range targets in this skill, its modal H2 sequence informs the new piece's structure, its named-entity list flags competitors to mention, and its AI-cited URLs become candidate outbound citations (reciprocity move).
+
+Skip recon only when: the piece is internal-only, a thought-leadership essay with no commercial intent, or an explicit pivot away from existing competitive structure (rare). When in doubt, run it — the cost is one subagent run; the value is structural data instead of guesswork.
+
+### Step 4: Peer-benchmark sanity check
+
+Before drafting, do a quick GROQ check against Sanity to find the 3-5 most similar published pieces (same Content Type, overlapping target keywords). Note their:
+- Median word count
+- Category used
+- FAQ count
+- Internal link count
+
+Use this as a floor for your draft — if peer median is 3,200 words, don't ship 2,000.
+
+### Step 4.5: Load site inventory (mandatory before any internal-linking decision)
+
+Run:
+
+```bash
+node scripts/site-inventory.mjs --markdown
+```
+
+This outputs a compact markdown digest of every Sanity-published piece + every static Next.js route on loudface.co. Use this output to ground every internal link in the draft. The inventory is always fresh (queried live from Sanity + filesystem at invocation time).
+
+**What the inventory tells you:**
+
+- **Static Next.js routes** — homepage, /audit, /pricing, /partners, /about, /services/*, /seo-for/* (which industries actually have shipped pages)
+- **Service categories (live routes)** — /services/seo-aeo, /services/cro, /services/webflow, /services/copywriting, /services/ux-ui-design, /services/growth-autopilot
+- **Industries with shipped pages** vs industries in Sanity that don't yet have routes (you can flag the latter as TODOs but don't link them)
+- **Case studies** — all 27 of them, with their industries
+- **All published blog posts** — for related-post linking
+
+**Hard rule for drafts going forward:**
+
+Every `<a href="/...">` in the draft MUST point to a path that exists in the inventory. If you want to link to a page that doesn't exist (e.g. an industry page that hasn't been built), don't write the link — write the recommendation in your summary as a "create this page next" suggestion instead.
+
+**Common internal-link patterns to look for:**
+
+- Service references → link to the actual `/services/*` route
+- Vertical context (fintech, devtools, etc.) → check if `/seo-for/[industry]` exists; only link if it does
+- Client / outcome citations → link to the actual `/case-studies/[slug]` page
+- Related blog posts → link to actual `/blog/[slug]` URLs from the inventory
+- Audit tool mentions → link to `/audit` or `/ai-audit` (both exist)
+- Pricing references → link to `/pricing` (it exists)
+
+If a piece is about a topic where a service page exists, link the service page at least once. If a vertical-specific story has a matching `/seo-for/[industry]` route, link it. The inventory tells you exactly what's available; use it.
+
+### Step 5: Draft following the six patterns
 
 Match the piece to its dominant pattern. Each has structural requirements:
 
@@ -57,17 +128,17 @@ Always include:
 - **Internal links** to relevant LoudFace pages (services, case studies, related posts)
 - **Anti-slop pass** via the arnels-assistant checklist
 
-### Step 5: Write the draft into the Notion entry body
+### Step 6: Write the draft into the Notion entry body
 
 Use `notion-update-page` with command `update_content`. The draft becomes the body of the database entry — Arnel reviews there, iterates with `/critique-content`, ships with `/ship-content`.
 
 Format the draft as Notion-flavored markdown (headings, lists, tables, callouts). Don't include the entry title in the body — Notion shows it at the top automatically.
 
-### Step 6: Update status
+### Step 7: Update status
 
 Update the entry's `Status` property from `Idea` → `Draft` (use `update_properties` command).
 
-### Step 7: Return a tight summary
+### Step 8: Return a tight summary
 
 Under 100 words:
 - Title + word count
@@ -80,7 +151,7 @@ Under 100 words:
 - **Never skip `/arnels-assistant`.** Voice is the root. Drafts without it sound generic and don't get cited.
 - **Respect the calendar's Content Brief.** Don't drift from what the strategist (Arnel or future team member) wrote when planning the piece.
 - **Don't publish.** This command only drafts. Publishing is a separate, deliberate step (`/ship-content`) that requires explicit approval.
-- **Word count targets:** Listicles 2,000-3,500. Comparison pages 1,800-2,500. AEO playbooks 1,500-2,500. Landing pages 1,000-1,800. Case studies 1,200-2,000.
+- **Word count targets** (use SERP recon's median if available; these are fallbacks): Listicles 2,800-3,500. Comparison pages 2,800-3,400. AEO playbooks 2,500-3,200. Landing pages 1,200-2,000. Case studies 1,500-2,500.
 - **If the calendar entry doesn't yet have a clear pattern**, ask the user before drafting. Don't guess.
 
 ## When to use
@@ -101,9 +172,13 @@ Under 100 words:
 ```
 /seo-brain         (load strategy + trends)
      ↓
+/serp-recon        (see what's ranking + what AI engines cite)
+     ↓
 /draft-content     (THIS — write into Notion entry, status → Draft)
      ↓
 /critique-content  (anti-slop + voice check, iterate)
+     ↓
+/verify-content    (fresh-subagent voice + claim verification)
      ↓
 /ship-content      (push to Sanity, status → Published, IndexNow auto-fires)
 ```

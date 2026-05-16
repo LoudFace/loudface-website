@@ -220,6 +220,15 @@ After delivering the briefing, append one row to the **Activity Log** database (
 
 Behavioral changes to this skill, most-recent-first. When you update the skill, add an entry here. `/seo-brain` should mention the latest 2-3 entries when surfacing the briefing if any are within the last 14 days — so users know what behavior is currently in play.
 
+### 2026-05-16 (site-aware blog drafting)
+
+- Added `scripts/site-inventory.mjs` — outputs every Sanity-published piece (blog posts, case studies, services, industries, SEO pages, team) + every static Next.js route on loudface.co. Runs in seconds, queried live (no caching).
+- `/draft-content` skill gained **Step 4.5: Load site inventory** before drafting. The drafting agent now sees the full surface map and is required to ground every internal link in real URLs. No more hallucinated links to pages that don't exist.
+- `/critique-content` skill gained **Pass 6: Internal-link validation**. Every internal link in the draft is checked against the inventory. Broken links flagged as 🚨 blockers; missed internal-link opportunities (service pages, case studies, industry pages, audit tool) flagged as ⚠️/💡 suggestions.
+- Important gap surfaced by the inventory: Sanity has 18 industries (`industry` collection) but only 3 have shipped Next.js routes (`/seo-for/b2b`, `/seo-for/saas`, and the index). Drafting agents should ONLY link to routes that actually exist, not invent industry URLs.
+- Sanity `serviceCategory` slugs (e.g. `seo-62e9c`, `branding-jvbsh`) are stale from the Webflow migration. The real service pages live at `/services/seo-aeo`, `/services/cro`, `/services/webflow`, `/services/copywriting`, `/services/ux-ui-design`, `/services/growth-autopilot` (Next.js static routes). Link to the Next.js routes; don't link to the Sanity-slug `/services/*-XXXXX` URLs.
+- This change keeps the strategy blog-focused while making blog drafts site-aware. No expansion of the brain's intelligence layer.
+
 ### 2026-05-16 (official Notion plugin installed)
 
 - Installed `makenotion/claude-code-notion-plugin` (notion-workspace-plugin@notion-plugin-marketplace, v0.1.0) at user scope. Adds 6 skills (`/Notion:find`, `/Notion:search`, `/Notion:create-page`, `/Notion:create-database-row`, `/Notion:create-task`, `/Notion:database-query`) + the official Notion MCP server. Always-on cost: ~217 tokens per session.

@@ -36,6 +36,28 @@ This is the source of truth for voice. **Never invent voice rules in this comman
 - Pasted text: use what the user provided
 - URL: fetch via WebFetch or curl
 
+### Step 2.5: Run the mechanical anti-slop linter (REQUIRED — do not skip)
+
+The qualitative critique is unreliable on its own (the model can drift on em-dash counts, miss a "Not X, Y" construction, rationalize a banned word). A deterministic linter at `scripts/lint-anti-slop.mjs` counts every rule mechanically:
+
+```bash
+# Save the draft body to a tmp file, then:
+node scripts/lint-anti-slop.mjs /tmp/draft.html
+# or via stdin:
+echo "$DRAFT_BODY" | node scripts/lint-anti-slop.mjs
+```
+
+The linter outputs a markdown report with severity-tagged findings (🚨 blocker / ⚠️ should-fix / 💡 suggestion) and exits non-zero when blockers are present. Always run it BEFORE the qualitative passes — the numbers anchor the rest of the critique.
+
+**How to use the linter output:**
+
+- **Every `🚨 blocker` becomes a blocker in the critique output.** Quote the rule (e.g. "em-dash budget: 12 vs 4") and the offending samples.
+- **Every `⚠️ should-fix`** rolls into the should-fix section of the critique.
+- **Every `💡 suggestion`** is a "consider" line at the bottom.
+- The qualitative passes (Steps 3 below) layer on TOP of the linter output — they catch voice / strategic issues the regex linter can't. They don't replace it.
+
+When the linter exits 0 with no findings, the piece is mechanically clean. The qualitative passes still run, but the bar for "blocker" jumps higher (only structural / voice failures count).
+
 ### Step 3: Run the critique passes
 
 Five passes, in order. Each generates findings — quote the offending text, explain why, propose the fix.
@@ -67,6 +89,27 @@ Search for: "delve", "leverage", "pivotal", "transformative", "in today's fast-p
 
 **Pass 5 — Read-aloud check**
 For 3-5 sample paragraphs, predict the next sentence before reading it. If it's predictable, the writing is too smooth. Flag for rewrite.
+
+**Pass 6 — Internal-link validation (NEW — mandatory)**
+
+Run `node scripts/site-inventory.mjs --markdown` to get the current site map. Then extract every internal link in the draft (any `<a href="/...">` or `[text](/...)`) and verify:
+
+- Each URL points to a path that exists in the inventory (static route, blog slug, case study slug, service category, etc.)
+- Any link to a `/seo-for/[industry]` page is verified — many industries exist in Sanity but don't have shipped Next.js routes yet. Only link the ones with actual static routes (today: `/seo-for/b2b`, `/seo-for/saas`, and the index).
+- Service links resolve to actual Next.js routes (`/services/seo-aeo`, `/services/cro`, `/services/webflow`, `/services/copywriting`, `/services/ux-ui-design`, `/services/growth-autopilot`) — NOT to the Sanity `serviceCategory` slugs (those have weird suffixes like `branding-jvbsh` and are stale).
+- Case study links resolve to real `/case-studies/[slug]` entries
+- Blog post links resolve to real `/blog/[slug]` entries (the inventory shows the full list)
+
+For any broken link, the critique should:
+1. Flag it as a 🚨 Blocker (broken links ship to production and create 404s or 308 redirects, both of which hurt the piece's authority)
+2. Quote the bad anchor + URL
+3. Propose either (a) a real URL from the inventory that fits the context, or (b) removing the link entirely if no real page matches
+
+Also flag internal-link opportunities the draft missed:
+
+- If the draft mentions a service we offer (Webflow, SEO/AEO, CRO, etc.) but doesn't link to the service page → 💡 suggestion
+- If the draft references a named client outcome (Toku, CodeOp, Zeiierman, etc.) but doesn't link to the case study → 💡 suggestion
+- If the draft is vertical-specific (fintech, SaaS, b2b) and a matching `/seo-for/[industry]` page exists → ⚠️ should-fix to add the link
 
 ### Step 4: Return the critique
 
