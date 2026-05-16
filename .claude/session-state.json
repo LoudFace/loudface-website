@@ -1,0 +1,23 @@
+{
+  "$schema": "https://schemas.loudface.co/session-state-v1.json",
+  "_doc": "Cross-session memory for Claude. Updated by skills as they work. Read by /seo-brain at session start (Step 0c). Git-tracked so it survives machines. Schema is intentionally minimal — Pending Commitments + Activity Log carry the heavier per-action audit trail; this file is just the 'where we are' pointer.",
+  "lastSession": {
+    "endedAt": "2026-05-16T22:00:00Z",
+    "endedReason": "in-progress",
+    "lastBatch": "batch 14",
+    "lastSkillRun": "seo-brain (Day 3 update)",
+    "lastCommit": "6e38113"
+  },
+  "currentSprint": {
+    "name": "Content refresh sprint + 3-day infra plan",
+    "started": "2026-05-15",
+    "summary": "14 content batches shipped (batches 1-14). Day 1 infra complete (Pending Commitments DB + publication-aware audit). Day 2 (digest worker) deferred — Activity Log not large enough yet. Day 3 in progress (context scoping done; session state + skill changelog convention being added).",
+    "nextPlannedAction": "Commit Day 3 changes, verify, close out. Future sessions: use /seo-brain audit profile to confirm zero stale candidates remain."
+  },
+  "infraVersion": {
+    "skillsLastUpdated": "2026-05-16",
+    "claudeMdLastUpdated": "2026-05-16",
+    "auditLogicVersion": "v2-4-stage-filter",
+    "pendingCommitmentsDb": "collection://600eedcf-4ba8-4492-8a46-20b5b98e2d8d"
+  }
+}

@@ -11,13 +11,39 @@ The Notion strategy page is the source of truth. The principles, working pattern
 
 ## What to do when invoked
 
-The strategy page now stores volatile numbers in dedicated databases, not prose. Read the structured DBs for current state and the page for durable strategy. Run these fetches in parallel:
+The strategy page now stores volatile numbers in dedicated databases, not prose. Read the structured DBs for current state and the page for durable strategy. Run these fetches in parallel.
 
-**Always FIRST (Step 0 — session bootstrap):**
+### Step 0: Session bootstrap (ALWAYS runs)
 
-0. **Pending Commitments** (`collection://600eedcf-4ba8-4492-8a46-20b5b98e2d8d`) — fetch rows where `Status = Not started` OR `Status = In progress`. These are durable commitments from previous sessions that haven't been executed yet. Surface them at the very top of the brief (after the freshness alert if any). Without this read, verbal mid-conversation commitments vanish at session boundaries. This is the first source of truth a session should check — if anything is `In progress` from a previous session, the user needs to see it before any new work starts.
+Three always-on reads:
 
-**Always:**
+0a. **Pending Commitments** (`collection://600eedcf-4ba8-4492-8a46-20b5b98e2d8d`) — fetch rows where `Status = Not started` OR `Status = In progress`. These are durable commitments from previous sessions that haven't been executed yet. Surface them at the very top of the brief (after the freshness alert if any). Without this read, verbal mid-conversation commitments vanish at session boundaries.
+
+0b. **Data freshness check** — see the full check below. If any source is stale, the brief starts with a 🩺 row.
+
+0c. **Session state file** — read `.claude/session-state.json` at the project root. Tells you: last session end time, last batch shipped, last commit, current sprint name + summary, next planned action, current infra version (audit logic version, pendingCommitmentsDb ID). Surface a one-line "resuming from" note in the brief if `currentSprint.summary` shows ongoing work. If the file is missing or older than 14 days, mention that the session is starting cold. Skills should UPDATE this file when finishing significant work — at minimum: lastBatch, lastSkillRun, lastCommit, nextPlannedAction.
+
+### Step 0.5: Intent classification (route to the right load profile)
+
+Before loading the full bundle, examine the user's actual question and pick ONE of five load profiles. This keeps context usage proportional to the task. The full bundle loads ~30-50KB; targeted profiles load 3-15KB.
+
+| Profile | Triggered when user asks... | Load only |
+|---|---|---|
+| `audit` | "what's stale?", "what should we refresh?", "what needs updating?", "audit my content" | Sanity publishedDate + lastUpdated for all blog posts. Next.config.ts redirect map. Activity Log last 7 days. NOTHING else. |
+| `briefing` (default) | "what's working?", "what's our SEO state?", "what should we ship next?", or any unspecific kickoff | Full bundle (Steps 1-7 below). |
+| `draft prep` | "draft [piece]", "write [piece]", "help me with [calendar entry]" | The single Website Content entry + Patterns Registry row matching its pattern tag + 3-5 most relevant Thought Leadership KB insights. Strategy page narrative ONLY if user explicitly asks for direction. |
+| `ship` | "ship [piece]", "publish [piece]", "/ship-content [piece]" | The single Website Content entry + voice rules (arnels-assistant). Pending Commitments check for any related rows. Nothing else. |
+| `decision` | "are we on track?", "are we hitting [target]?", "what's the bet?", "what should we kill?" | Strategy page narrative + Targets + Daily Snapshots latest row. Skip patterns, prompt coverage, competitor landscape. |
+
+If the user's intent is ambiguous, ask once: "Are you looking for a (1) general briefing, (2) audit of what's stale, (3) draft prep for a specific piece, (4) decision support, or (5) something else?" Default to `briefing` if no response.
+
+When a profile is selected, the brief output explicitly says which profile was used so the user knows what was (and wasn't) loaded. Example: "Loaded under `audit` profile — strategy page and KB insights NOT loaded. Run `/seo-brain briefing` for the full picture."
+
+### Step 1+ (load profile-specific subset of the following)
+
+The full menu is below. Each profile reads only the subset specified in its row above. Don't load fetches outside the profile's scope unless the user follows up with a question requiring them.
+
+**Always (under `briefing` profile only):**
 
 1. **Notion strategy page** (the narrative — bet, principles, content roadmap, off-site, brand recovery)
    `mcp__dc92055b-00e7-4079-83af-5ca13d1804f9__notion-fetch` with `id: 347b63394d1080bb9d1cda4bcb1758b5`
@@ -28,7 +54,7 @@ The strategy page now stores volatile numbers in dedicated databases, not prose.
 3. **Website Content database** (calendar state — Idea / Outline / Draft / Review / Published)
    `mcp__dc92055b-00e7-4079-83af-5ca13d1804f9__notion-fetch` with `id: collection://347b6339-4d10-806a-99b3-000b881621e5`
 
-**Always (NEW — part of the super-brain cascade):**
+**Additional briefing-profile fetches (super-brain cascade):**
 
 4. **Patterns Registry** (`collection://a6c661c7-aeb4-4fb5-ad0a-7962288366c1`) — pull all rows. Filter `Status = validated` for the current playbook. Apply anomaly-detection rules (see below) to surface review candidates in the brief output.
 
@@ -38,7 +64,7 @@ The strategy page now stores volatile numbers in dedicated databases, not prose.
 
 7. **Thought Leadership Knowledge Base** (`collection://5fad9e1a-d149-4ce6-b984-3e27aa430faf`) — pull all rows where `Status = Active`. This is the central repository of Arnel + team first-party insights, battle-tested opinions, and experience-grounded takes. Surface 3-5 insights most relevant to the user's current intent in the brief. **Every content draft MUST be grounded in entries from this DB** — never generate content from generic agency thinking when a relevant insight exists. If a draft would contradict an Active insight, stop and flag it. New insights surfaced during a session should be proposed as additions (let the user approve before writing).
 
-**Conditionally (based on user intent):**
+**Conditional fetches (even within `briefing` profile, only load if the question warrants):**
 
 8. **Cusp Pages** (`collection://436bed59-aecf-45ea-9e3b-ccadad09b8e3`) — when the user asks "what should I optimize next?" or "which page is highest-leverage?" Filter `Status = cusp`.
 
@@ -194,7 +220,13 @@ After delivering the briefing, append one row to the **Activity Log** database (
 
 Behavioral changes to this skill, most-recent-first. When you update the skill, add an entry here. `/seo-brain` should mention the latest 2-3 entries when surfacing the briefing if any are within the last 14 days — so users know what behavior is currently in play.
 
-### 2026-05-16
+### 2026-05-16 (Day 3 — context scoping + session state)
+
+- Added Step 0.5 intent classification with five load profiles: `audit`, `briefing` (default), `draft prep`, `ship`, `decision`. Each profile loads only the subset of data sources relevant to that intent. Full bundle is now opt-in (under `briefing` only) rather than loaded by default for every invocation. Brief output now declares which profile was selected so users know what was loaded.
+- Renamed section headers under the cascade to clarify they're briefing-profile-specific fetches. The "Always" framing was misleading once profiles existed.
+- Added Step 0c: read `.claude/session-state.json` at session start. Surfaces a "resuming from" note when there's recent in-progress work. Skills are expected to UPDATE the file when finishing significant work (lastBatch, lastSkillRun, lastCommit, nextPlannedAction). Convention documented in CLAUDE.md "Session State File" section.
+
+### 2026-05-16 (Day 1 — commitment surface + audit logic)
 
 - Added Step 0: Pending Commitments DB read (`collection://600eedcf-4ba8-4492-8a46-20b5b98e2d8d`). Closes the "verbal commitments lost at session boundary" gap. Triggered by the brand-overhaul redirect incident (May 16, 2026).
 - Added the 4-stage refresh-candidacy filter as the mandatory audit logic. `lastUpdated`-only filtering is now explicitly banned; the reference impl is `scripts/audit-publication-dates-v2.mjs`. Triggered by Arnel pushback on stale-candidate false positives during the batch 11-13 sprint.

@@ -169,6 +169,18 @@ See `.claude/rules/component-system.md` for the full enforcement rules and `.cla
 
 ## Critical Rules (Will Break Production If Ignored)
 
+### Skill Changelog Convention — When You Change a Skill, Add an Entry
+
+Each skill's `SKILL.md` file has a `## Changelog` section at the bottom (added when the skill is first meaningfully changed). When you update a skill's behavior, ADD an entry dated when you made the change, most-recent-first, with one line per behavioral change.
+
+The reason: future sessions read the skill markdown at invocation. Without a changelog, they don't know whether the skill they just loaded reflects yesterday's behavior or last quarter's. `/seo-brain` surfaces the last 2-3 changelog entries from its own SKILL.md when they're within the last 14 days, so users can see what changed.
+
+**Don't retroactively add changelogs to skills that haven't been touched recently** — the convention is "add when you change." If a skill SKILL.md doesn't have a `## Changelog` section yet, the first behavioral change you make adds it.
+
+### Session State File — `.claude/session-state.json`
+
+Tracks the "where we are" pointer that survives across sessions. `/seo-brain` reads this at session start (Step 0c) and shows a "resuming from" note if there's recent in-progress work. Skills update it when finishing significant work — at minimum: `lastBatch`, `lastSkillRun`, `lastCommit`, `nextPlannedAction`. The schema is intentionally minimal; Pending Commitments + Activity Log carry the heavier per-action detail. See the file's `_doc` field for the schema description.
+
 ### Refresh Candidacy — Always Use the 4-Stage Filter, Never Just `lastUpdated`
 
 When asked "what's stale?", "what should we refresh next?", "what content needs updating?", or any equivalent, do NOT filter by `lastUpdated` alone. That field gets bumped every time a piece is touched (title patches, content refreshes, single-field edits), which makes newly-shipped pieces and refreshed-yesterday pieces indistinguishable.
