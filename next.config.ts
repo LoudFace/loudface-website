@@ -231,6 +231,15 @@ const nextConfig: NextConfig = {
         destination: '/blog/webflow-ai-revolution',
         permanent: true,
       },
+      // "Stop Optimizing for Google" / AI-first content architecture — broad
+      // AEO framing duplicates the canonical AEO guide. The sub-topical pieces
+      // (40-60 word rule, share-of-answer, citation authority) already cover
+      // the specifics. Merge into the canonical.
+      {
+        source: '/blog/ai-first-content-architecture',
+        destination: '/blog/answer-engine-optimization-guide-2026',
+        permanent: true,
+      },
       // Broken case study slugs → correct case study pages
       {
         source: '/case-studies/toku-icypeas',
