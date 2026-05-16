@@ -959,6 +959,24 @@ html {
     background: var(--color-surface-50);
   }
 
+  /* Round the corner cells of the table to match the wrapper's border-radius.
+     Without this, the wrapper has rounded corners but the thead and last-row
+     cells are rectangular, so the rounded corners expose the page background
+     as four small white triangles (the "gap" effect). Cell radius is wrapper
+     radius minus the 1px border for visually clean nesting. */
+  .blog-table-wrap thead tr:first-child th:first-child {
+    border-top-left-radius: calc(0.5rem - 1px);
+  }
+  .blog-table-wrap thead tr:first-child th:last-child {
+    border-top-right-radius: calc(0.5rem - 1px);
+  }
+  .blog-table-wrap tbody tr:last-child td:first-child {
+    border-bottom-left-radius: calc(0.5rem - 1px);
+  }
+  .blog-table-wrap tbody tr:last-child td:last-child {
+    border-bottom-right-radius: calc(0.5rem - 1px);
+  }
+
   .blog-prose [id] {
     scroll-margin-top: 6rem;
   }
