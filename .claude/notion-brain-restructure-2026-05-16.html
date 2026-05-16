@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Notion Brain Page Restructure — May 16, 2026</title>
+<style>
+* { box-sizing: border-box; }
+body { font-family: -apple-system, BlinkMacSystemFont, "Inter", system-ui, sans-serif; max-width: 920px; margin: 0 auto; padding: 48px 32px; line-height: 1.65; color: #1a1a1a; background: #fafaf9; }
+h1 { font-size: 2.2rem; font-weight: 700; line-height: 1.2; margin: 0 0 8px 0; }
+h2 { font-size: 1.5rem; font-weight: 650; margin: 56px 0 16px; padding-top: 24px; border-top: 1px solid #e7e5e4; }
+h3 { font-size: 1.15rem; font-weight: 600; margin: 32px 0 12px; }
+p { margin: 0 0 16px; }
+.lede { font-size: 1.05rem; color: #57534e; margin-bottom: 32px; }
+.verdict { background: #1c1917; color: #fafaf9; padding: 28px 32px; border-radius: 8px; margin: 24px 0 40px; font-size: 1rem; }
+.verdict strong { color: #fbbf24; }
+.verdict p { margin: 0 0 14px; }
+.verdict p:last-child { margin-bottom: 0; }
+.note { background: #fef3c7; border-left: 4px solid #f59e0b; padding: 16px 20px; margin: 20px 0; border-radius: 4px; font-size: 0.95rem; }
+.warning { background: #fee2e2; border-left: 4px solid #dc2626; padding: 16px 20px; margin: 20px 0; border-radius: 4px; font-size: 0.95rem; }
+.proposal { background: #dcfce7; border-left: 4px solid #16a34a; padding: 16px 20px; margin: 20px 0; border-radius: 4px; font-size: 0.95rem; }
+.code { background: #f5f5f4; padding: 2px 6px; border-radius: 3px; font-family: "Geist Mono", monospace; font-size: 0.92em; }
+pre { background: #1c1917; color: #fafaf9; padding: 20px 24px; border-radius: 6px; overflow-x: auto; font-family: "Geist Mono", monospace; font-size: 0.84rem; line-height: 1.5; }
+table { width: 100%; border-collapse: collapse; margin: 20px 0; font-size: 0.92rem; }
+th { background: #f5f5f4; padding: 10px 12px; text-align: left; font-weight: 600; border-bottom: 2px solid #d6d3d1; }
+td { padding: 10px 12px; border-bottom: 1px solid #e7e5e4; vertical-align: top; }
+.before-after { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin: 24px 0; }
+.before-after > div { background: white; border: 1px solid #e7e5e4; border-radius: 8px; padding: 20px; }
+.before-after h4 { margin-top: 0; font-size: 0.95rem; text-transform: uppercase; letter-spacing: 0.04em; color: #57534e; }
+.before-after ul { margin: 0; padding-left: 20px; font-size: 0.88rem; }
+.before-after li { margin-bottom: 4px; }
+.bad { color: #dc2626; }
+.good { color: #16a34a; }
+ul, ol { margin: 0 0 16px; padding-left: 24px; }
+li { margin-bottom: 6px; }
+.toc { background: #f5f5f4; padding: 20px 24px; border-radius: 6px; margin-bottom: 40px; font-size: 0.92rem; }
+.toc a { color: #1a1a1a; text-decoration: none; display: block; padding: 4px 0; }
+.toc a:hover { color: #dc2626; }
+.layout-block { background: white; border: 1px solid #e7e5e4; border-radius: 6px; padding: 14px 18px; margin: 8px 0; }
+.layout-block h5 { margin: 0 0 6px; font-size: 0.92rem; }
+.layout-block .meta { font-size: 0.82rem; color: #57534e; }
+.section-tag { display: inline-block; padding: 2px 8px; border-radius: 10px; font-size: 0.7rem; font-weight: 600; margin-right: 6px; vertical-align: middle; }
+.tag-inline { background: #dcfce7; color: #166534; }
+.tag-linked { background: #dbeafe; color: #1e3a8a; }
+.tag-toggle { background: #fef3c7; color: #92400e; }
+.tag-narrative { background: #f3e8ff; color: #6b21a8; }
+.tag-move { background: #fed7aa; color: #9a3412; }
+</style>
+</head>
+<body>
+
+<h1>Notion Brain Page Restructure</h1>
+<p class="lede">Cleaner layout, no schema changes, no breaking changes to skills. Multi-source database is the wrong tool — here's what to actually do.</p>
+
+<div class="verdict">
+<p><strong>The recommendation in one paragraph.</strong> Don't use Notion's multi-source database feature — our databases have near-zero column overlap (Activity Log vs Daily Snapshots vs KB Insights vs Targets) and forcing them into one would create useless views AND break the skill that reads each DB by collection ID. DO restructure the page layout: group databases by reading frequency (daily glance vs weekly review vs occasional deep dive), make inline-vs-linked consistent within each group, collapse heavy strategy prose into toggles, and move the long content roadmap into its own sub-page. Net result: scrolling the brain page goes from "wall of prose then 12 disorganized databases" to "live state at top, operational DBs in the middle, strategy + history collapsed." ~90 minutes of focused work. Zero risk to skills or collection IDs.</p>
+</div>
+
+<div class="toc">
+<strong>Contents</strong>
+<a href="#part-1">1. Why multi-source DBs are wrong for this</a>
+<a href="#part-2">2. What's actually broken about the current layout</a>
+<a href="#part-3">3. The proposed new layout</a>
+<a href="#part-4">4. What changes vs what stays</a>
+<a href="#part-5">5. Effort + risks + execution plan</a>
+</div>
+
+<h2 id="part-1">1. Why multi-source DBs are wrong for this</h2>
+
+<p>Notion's multi-source database feature was designed for unifying conceptually-similar data from different origins. The canonical use case: a Contacts DB with sources for "personal address book", "work CRM export", and "conference attendees" — all rows are people, same schema (name / email / phone / notes), but originating from different places. Multi-source lets you see unified views across all sources.</p>
+
+<p>Our databases don't fit that mold. Compare schemas:</p>
+
+<table>
+<tr><th>Database</th><th>Primary columns</th><th>Row count</th></tr>
+<tr><td>Website Content</td><td>Title, Status, Pattern, Word Count, GSC Clicks/Impressions, Peec Mentions, Last Refreshed</td><td>~82</td></tr>
+<tr><td>Activity Log</td><td>Action, Skill, Target, Outcome, Notes, Date</td><td>~60</td></tr>
+<tr><td>Daily Snapshots</td><td>Captured At, GSC Clicks, GSC Impressions, GSC Position, Brand Position, Peec Visibility, Peec Sentiment, Headline</td><td>~30</td></tr>
+<tr><td>Targets</td><td>Metric, Category, Target Value, Current Value, Status, Target Date</td><td>~10</td></tr>
+<tr><td>Patterns Registry</td><td>Pattern Name, Status, Posts Tagged, Peec Mentions, GSC Clicks/Impressions, Last Reviewed</td><td>6</td></tr>
+<tr><td>Cusp Pages</td><td>URL, Current Position, Impressions, Biggest Fix, Status</td><td>~15</td></tr>
+<tr><td>Thought Leadership KB</td><td>Insight Title, Status, Body, Tags</td><td>~15</td></tr>
+<tr><td>Prompt Coverage</td><td>Prompt, URLs, Coverage Status, Volume, Last Refreshed</td><td>~100+</td></tr>
+<tr><td>Competitor Landscape</td><td>Domain, Pattern, Citations 30d, Last Refreshed</td><td>~75</td></tr>
+<tr><td>Monthly AEO Snapshots</td><td>Month, Visibility Delta, Top Movers</td><td>~2</td></tr>
+<tr><td>Infra & Decisions Log</td><td>Decision, Type, Status, Date, Notes</td><td>~20</td></tr>
+<tr><td>Pending Commitments</td><td>Commitment, Action Type, Target URL, Status, Promised In Session, Notes</td><td>8</td></tr>
+</table>
+
+<p>The schema overlap is essentially zero. The only shared field across all 12 databases is "title". Unified views across these would be incoherent: "show me a table of audit events AND content pieces AND insights AND competitor domains" doesn't answer any real question.</p>
+
+<div class="warning">
+<strong>The deeper problem with multi-source for our case:</strong> Notion's multi-source DBs collapse the data sources into one parent DB ID. The <span class="code">/seo-brain</span> skill currently reads each collection by its individual ID (e.g., <span class="code">collection://5fad9e1a-...</span> for the KB, <span class="code">collection://586eb325-...</span> for Activity Log, etc.). Moving to multi-source would either (a) break those reads and require rewriting every skill, or (b) require still addressing each source by its individual sub-ID, in which case the multi-source wrapper adds nothing. Either way the cost-benefit is negative.
+</div>
+
+<p>The honest answer: keep 12 individual databases. Solve the visual mess at the page-layout level instead.</p>
+
+<h2 id="part-2">2. What's actually broken about the current layout</h2>
+
+<p>Reading the page top-to-bottom right now, here's what I see:</p>
+
+<ol>
+<li><strong>Long callout</strong> (5 paragraphs, lots of pointers) — okay for first-time readers, but every return visit re-reads it</li>
+<li><strong>H1: "LoudFace AI mentions strategy — Q2 2026"</strong> (slightly out of date — we're targeting Q3 now)</li>
+<li><strong>Q3 target callout</strong> (good, but buried under the longer callout above)</li>
+<li><strong>The bet</strong> (2 paragraphs)</li>
+<li><strong>Principles</strong> (heavy — 10 numbered bullets across two sub-sections)</li>
+<li><strong>Measurement</strong> (heavy — 4 sub-sections, prose-heavy)</li>
+<li><strong>Current Health</strong> (1 paragraph pointing to Daily Snapshots DB at the bottom)</li>
+<li><strong>The pattern in one line</strong> (good — 1 sentence)</li>
+<li><strong>Patterns we ship</strong> (1 paragraph pointing to Patterns Registry DB)</li>
+<li><strong>Pages on the cusp</strong> (1 paragraph pointing to Cusp Pages DB)</li>
+<li><strong>Content roadmap</strong> (massive — Tier 0/1/2 + next 5-piece cadence + off-site + brand SERP recovery)</li>
+<li><strong>Content workflow</strong> + huge "where to look for X" table</li>
+<li><strong>Infrastructure & decisions log</strong> (1 paragraph pointing to the DB)</li>
+<li><strong>12 databases in a row at the bottom</strong>, mixed inline / linked, no headers grouping them</li>
+</ol>
+
+<p>The specific problems:</p>
+
+<ul>
+<li class="bad"><strong>You scroll past ~3 screens of prose before reaching any data.</strong> Every visit has the same overhead.</li>
+<li class="bad"><strong>Inline/linked is inconsistent.</strong> Website Content + Activity Log + Infra Log + Patterns Registry are inline. Daily Snapshots + Cusp Pages + Targets + Monthly AEO + Prompt Coverage + Competitor Landscape + KB + Pending Commitments are linked. No apparent reason — Targets is smaller than Patterns Registry but Targets is linked.</li>
+<li class="bad"><strong>No grouping at the bottom.</strong> 12 items as a flat list. The eye has to scan all of them to find one.</li>
+<li class="bad"><strong>Content roadmap is the heaviest section AND it doesn't belong on the brain page.</strong> It's a tactical planning artifact. The brain should reference it, not contain it.</li>
+<li class="bad"><strong>"Where to look for X" table is in the wrong section.</strong> It's an observability reference, not part of "Content workflow".</li>
+</ul>
+
+<h2 id="part-3">3. The proposed new layout</h2>
+
+<p>Reading frequency drives placement. Daily-glance items at the top. Weekly-review items in the middle. Strategy + history collapsed. Heavy tactical artifacts moved to sub-pages.</p>
+
+<h3>Header section (always visible)</h3>
+
+<div class="layout-block">
+<h5>1. Short callout (3 sentences max)</h5>
+<div class="meta">"Strategy and narrative live on this page. Numeric metrics + KPIs live in the linked databases below, grouped by reading frequency. Run <span class="code">/seo-brain</span> in any Claude session to auto-load."</div>
+</div>
+
+<div class="layout-block">
+<h5>2. H1: <code>LoudFace AI Search Strategy</code></h5>
+<div class="meta">Dropped the "Q2 2026" qualifier — keep it evergreen.</div>
+</div>
+
+<div class="layout-block">
+<h5>3. Current target callout (kept)</h5>
+<div class="meta">The Q3 target ("match median tracked agency in Peec by Aug 31") stays at the top so it's the first thing anyone reads after the title.</div>
+</div>
+
+<h3>Section 1: 📊 Live state (everything you check daily)</h3>
+
+<div class="layout-block">
+<span class="section-tag tag-inline">INLINE</span>
+<h5>Targets DB</h5>
+<div class="meta">~10 rows, small. Filter view: Q3 KPIs only. The KPI dashboard the team checks every day. Currently buried at position 4 in the wall of DBs.</div>
+</div>
+
+<div class="layout-block">
+<span class="section-tag tag-inline">INLINE</span>
+<h5>Daily Snapshots — latest row (filter view: top 7 days only)</h5>
+<div class="meta">~30 rows total but only the latest 7 shown inline. The current GSC + Peec position at a glance. Currently linked-only — should be inline so the daily check doesn't require a click.</div>
+</div>
+
+<div class="layout-block">
+<span class="section-tag tag-inline">INLINE</span>
+<h5>Pending Commitments DB (filter view: Status ≠ Done)</h5>
+<div class="meta">The work that's promised but not done. Currently linked — should be inline so it's the first thing visible on session start (mirrors what <span class="code">/seo-brain</span> Step 0a does for Claude).</div>
+</div>
+
+<h3>Section 2: 📝 Content operations (weekly review)</h3>
+
+<div class="layout-block">
+<span class="section-tag tag-inline">INLINE</span>
+<h5>Website Content DB (filter view: Status ≠ Published, sorted by Last Updated desc)</h5>
+<div class="meta">~82 rows total but only Idea/Outline/Draft/Review shown inline. The active calendar. Full archive view is still one click away.</div>
+</div>
+
+<div class="layout-block">
+<span class="section-tag tag-inline">INLINE</span>
+<h5>Patterns Registry DB (filter view: Status = validated OR experimenting)</h5>
+<div class="meta">6 rows. Already inline — keeps that.</div>
+</div>
+
+<div class="layout-block">
+<span class="section-tag tag-inline">INLINE</span>
+<h5>Cusp Pages DB (filter view: Status = cusp, top 5 by impressions)</h5>
+<div class="meta">~15 rows total but only top 5 shown inline. The current optimization queue. Currently linked — should be inline.</div>
+</div>
+
+<h3>Section 3: 🔍 Intelligence (collapsible, less frequent)</h3>
+
+<p>These are deep databases consulted during specific tasks (drafting content, competitor analysis, KB grounding). They don't need to be on the surface daily.</p>
+
+<div class="layout-block">
+<span class="section-tag tag-linked">LINKED</span>
+<h5>Thought Leadership KB → Prompt Coverage → Competitor Landscape</h5>
+<div class="meta">Three linked DBs in one toggle block. Click to open. Most reads are by Claude via skill, not by humans browsing.</div>
+</div>
+
+<h3>Section 4: 📜 Strategy & history (collapsible)</h3>
+
+<div class="layout-block">
+<span class="section-tag tag-toggle">TOGGLE</span>
+<h5>The bet · Principles · Measurement framework</h5>
+<div class="meta">Three toggles collapsing what's currently the bulk of the page. Open when onboarding someone new or reviewing strategy; collapsed during day-to-day work. The narrative stays exactly as written — Arnel's framing untouched. Just collapsed.</div>
+</div>
+
+<div class="layout-block">
+<span class="section-tag tag-linked">LINKED</span>
+<h5>Activity Log DB</h5>
+<div class="meta">~60 rows growing. Audit trail. Most reads are by Claude (Step 0c style lookups), not by humans browsing. Currently inline — better as linked so it doesn't dominate the page footer.</div>
+</div>
+
+<div class="layout-block">
+<span class="section-tag tag-linked">LINKED</span>
+<h5>Infra & Decisions Log DB</h5>
+<div class="meta">~20 rows growing. Same reasoning as Activity Log — historical, rarely browsed visually. Currently inline.</div>
+</div>
+
+<div class="layout-block">
+<span class="section-tag tag-linked">LINKED</span>
+<h5>Monthly AEO Snapshots DB</h5>
+<div class="meta">Long-window trend data. Linked. Same as today.</div>
+</div>
+
+<h3>Section 5: 📚 Reference (linked sub-pages)</h3>
+
+<div class="layout-block">
+<span class="section-tag tag-linked">LINKED</span>
+<h5>Content Loop Reference (existing sub-page)</h5>
+<div class="meta">No change. The detailed workflow / diagrams / observability reference.</div>
+</div>
+
+<div class="layout-block">
+<span class="section-tag tag-move">NEW SUB-PAGE</span>
+<h5>Content Roadmap (moved from main page)</h5>
+<div class="meta">The Tier 0 / Tier 1 / Tier 2 sections + the 5-piece cadence + the off-site section + brand SERP recovery. Currently inline at the bottom of strategy — should be its own page. The brain page links to it with a one-paragraph summary.</div>
+</div>
+
+<div class="layout-block">
+<span class="section-tag tag-move">MOVE</span>
+<h5>"Where to look for X" table → Content Loop Reference</h5>
+<div class="meta">The big table about "what content the loop has touched / pre-ship verification reports / etc." belongs in the Content Loop Reference page, not on the brain page. Move it there.</div>
+</div>
+
+<h2 id="part-4">4. What changes vs what stays</h2>
+
+<div class="before-after">
+<div>
+<h4>Changes</h4>
+<ul>
+<li>Page section ordering and headers</li>
+<li>Inline vs linked toggle on 8 databases</li>
+<li>Filter views applied to 4 databases (Targets, Daily Snapshots, Website Content, Cusp Pages)</li>
+<li>Three new collapsible toggles for strategy prose</li>
+<li>Content roadmap moves to its own sub-page</li>
+<li>"Where to look for X" table moves to Content Loop Reference</li>
+<li>H1 drops the "Q2 2026" qualifier</li>
+</ul>
+</div>
+<div>
+<h4 class="good">Stays (zero risk)</h4>
+<ul>
+<li>All 12 database collection IDs unchanged</li>
+<li>All 12 database schemas unchanged</li>
+<li>All database row content unchanged</li>
+<li>All skill references unchanged (<span class="code">/seo-brain</span> reads collections by ID, not by page position)</li>
+<li>All prose content (the bet, principles, measurement) — wording unchanged, just wrapped in toggles</li>
+<li>The strategy page URL itself unchanged</li>
+<li>The Content Loop Reference sub-page mostly unchanged (gains the table from the brain page)</li>
+</ul>
+</div>
+</div>
+
+<div class="proposal">
+<strong>Crucially: no skills break.</strong> <span class="code">/seo-brain</span>, <span class="code">/draft-content</span>, <span class="code">/ship-content</span>, and the others all reference databases by collection ID (e.g., <span class="code">collection://5fad9e1a-...</span>). Moving a database from inline to linked, or grouping it under a different section header, doesn't change its collection ID. The skills keep working without any updates.
+</div>
+
+<h2 id="part-5">5. Effort + risks + execution plan</h2>
+
+<h3>Effort estimate</h3>
+
+<p><strong>~90 minutes</strong> of focused work, broken down:</p>
+
+<ul>
+<li>~15 min: Create the new sub-page (Content Roadmap) and move the Tier 0/1/2 + cadence content into it</li>
+<li>~10 min: Move the "Where to look for X" table to Content Loop Reference</li>
+<li>~30 min: Restructure the brain page top-down: new sections, headers, toggles, ordering</li>
+<li>~20 min: Toggle inline/linked status + add filter views to 4 databases</li>
+<li>~15 min: Smoke-test by running <span class="code">/seo-brain</span> and checking each section loads what we expect</li>
+</ul>
+
+<h3>Risks</h3>
+
+<table>
+<tr><th>Risk</th><th>Likelihood</th><th>Mitigation</th></tr>
+<tr><td>A skill breaks because it referenced page position rather than collection ID</td><td class="bad">Very low</td><td>I'll grep skills for any page-position references before starting. None should exist.</td></tr>
+<tr><td>A filter view hides data that needs to be visible</td><td class="meh">Low</td><td>Filter views are reversible. We start broad and tighten only if it's clearly cleaner.</td></tr>
+<tr><td>Toggle collapses make important info less discoverable</td><td class="meh">Low</td><td>Smoke test: open the page as if I were onboarding to it for the first time. If something important is hidden in a toggle that shouldn't be, un-toggle it.</td></tr>
+<tr><td>The Content Roadmap content gets lost during the move</td><td class="bad">Very low</td><td>Notion edits are reversible (version history). I'll copy-paste rather than cut-paste.</td></tr>
+</table>
+
+<h3>Execution plan</h3>
+
+<p>If you say go, the sequence:</p>
+
+<ol>
+<li>Create the new "Content Roadmap" sub-page. Paste in the Tier 0/1/2 + cadence + off-site + brand SERP content from the brain page. Link from the brain page.</li>
+<li>Move the "Where to look for X" table to the Content Loop Reference sub-page.</li>
+<li>Restructure the brain page: new section headers, new ordering, three toggles for strategy/principles/measurement.</li>
+<li>Toggle inline/linked on the 8 databases. Apply filter views to Targets, Daily Snapshots, Website Content, Cusp Pages.</li>
+<li>Open the page top-to-bottom and confirm the new flow makes sense.</li>
+<li>Log the restructure to Activity Log + add a row to Pending Commitments → mark immediately Done.</li>
+<li>Update <span class="code">/seo-brain</span>'s skill changelog to note the page restructure (no behavior change, but it's worth flagging for future sessions).</li>
+</ol>
+
+<h3>What I'd skip</h3>
+
+<p>Two things I considered but won't do unless you ask:</p>
+
+<ul>
+<li><strong>Editing the prose itself.</strong> The bet, principles, measurement framework, content roadmap — those are Arnel's framing. I'll restructure where they live but not what they say.</li>
+<li><strong>Schema changes to any database.</strong> Out of scope for this work. If a database column needs to change, that's a separate decision.</li>
+</ul>
+
+<p>Tell me to go and I'll execute. Or call out anything in the proposed layout you want different first.</p>
+
+</body>
+</html>

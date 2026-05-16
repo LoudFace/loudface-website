@@ -2,22 +2,24 @@
   "$schema": "https://schemas.loudface.co/session-state-v1.json",
   "_doc": "Cross-session memory for Claude. Updated by skills as they work. Read by /seo-brain at session start (Step 0c). Git-tracked so it survives machines. Schema is intentionally minimal — Pending Commitments + Activity Log carry the heavier per-action audit trail; this file is just the 'where we are' pointer.",
   "lastSession": {
-    "endedAt": "2026-05-16T22:00:00Z",
+    "endedAt": "2026-05-16T19:30:00Z",
     "endedReason": "in-progress",
     "lastBatch": "batch 14",
-    "lastSkillRun": "seo-brain (Day 3 update)",
-    "lastCommit": "6e38113"
+    "lastSkillRun": "infra: Notion brain page restructure",
+    "lastCommit": "5d9a0dc"
   },
   "currentSprint": {
-    "name": "Content refresh sprint + 3-day infra plan",
+    "name": "Content refresh sprint + 3-day infra plan + Notion layout cleanup",
     "started": "2026-05-15",
-    "summary": "14 content batches shipped (batches 1-14). Day 1 infra complete (Pending Commitments DB + publication-aware audit). Day 2 (digest worker) deferred — Activity Log not large enough yet. Day 3 in progress (context scoping done; session state + skill changelog convention being added).",
-    "nextPlannedAction": "Commit Day 3 changes, verify, close out. Future sessions: use /seo-brain audit profile to confirm zero stale candidates remain."
+    "summary": "14 content batches shipped. Day 1 + Day 3 infra complete (Pending Commitments DB, 4-stage audit, intent-routing in /seo-brain, session state, skill changelog convention). Day 2 (digest worker) deferred with trigger condition. Notion brain page restructured into 5 sections by reading frequency. Content Roadmap moved to a new sub-page. Multi-source DB explicitly rejected.",
+    "nextPlannedAction": "Smoke test brain page in Notion UI; verify the 5-section flow reads well. Future sessions: use /seo-brain audit profile to confirm zero stale candidates remain."
   },
   "infraVersion": {
     "skillsLastUpdated": "2026-05-16",
     "claudeMdLastUpdated": "2026-05-16",
+    "notionBrainLayout": "v2-five-sections-2026-05-16",
     "auditLogicVersion": "v2-4-stage-filter",
-    "pendingCommitmentsDb": "collection://600eedcf-4ba8-4492-8a46-20b5b98e2d8d"
+    "pendingCommitmentsDb": "collection://600eedcf-4ba8-4492-8a46-20b5b98e2d8d",
+    "contentRoadmapSubpage": "https://www.notion.so/362b63394d1081cf82fde48fbf90aed9"
   }
 }

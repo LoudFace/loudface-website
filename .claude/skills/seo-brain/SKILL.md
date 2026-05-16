@@ -220,6 +220,14 @@ After delivering the briefing, append one row to the **Activity Log** database (
 
 Behavioral changes to this skill, most-recent-first. When you update the skill, add an entry here. `/seo-brain` should mention the latest 2-3 entries when surfacing the briefing if any are within the last 14 days — so users know what behavior is currently in play.
 
+### 2026-05-16 (page restructure — no skill behavior change)
+
+- Notion brain page restructured into 5 sections grouped by reading frequency: Live state (Targets + Daily snapshot + Pending Commitments) → Content operations (Website Content + Patterns Registry + Cusp Pages) → Intelligence (KB + Prompt Coverage + Competitor Landscape) → Strategy (the bet + principles + measurement) → History databases (Activity Log + Infra & Decisions Log + Monthly AEO Snapshots) → Reference sub-pages.
+- Tactical content (Tier 0/1/2 priorities, next 5-piece cadence, off-site experiments, brand SERP recovery) moved to a new sub-page: Content Roadmap (page id `362b63394d1081cf82fde48fbf90aed9`).
+- "Where to look for X" observability table removed from brain page — already lives on Content Loop Reference sub-page.
+- All 12 collection IDs unchanged, all schemas unchanged. Skill reads work without modification.
+- Multi-source database rejected as the wrong tool: our 12 DBs have near-zero column overlap (Activity Log vs Daily Snapshots vs KB Insights) so unifying them would create useless views AND would break collection-ID-based reads.
+
 ### 2026-05-16 (Day 3 — context scoping + session state)
 
 - Added Step 0.5 intent classification with five load profiles: `audit`, `briefing` (default), `draft prep`, `ship`, `decision`. Each profile loads only the subset of data sources relevant to that intent. Full bundle is now opt-in (under `briefing` only) rather than loaded by default for every invocation. Brief output now declares which profile was selected so users know what was loaded.
