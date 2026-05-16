@@ -220,6 +220,12 @@ After delivering the briefing, append one row to the **Activity Log** database (
 
 Behavioral changes to this skill, most-recent-first. When you update the skill, add an entry here. `/seo-brain` should mention the latest 2-3 entries when surfacing the briefing if any are within the last 14 days — so users know what behavior is currently in play.
 
+### 2026-05-16 (official Notion plugin installed)
+
+- Installed `makenotion/claude-code-notion-plugin` (notion-workspace-plugin@notion-plugin-marketplace, v0.1.0) at user scope. Adds 6 skills (`/Notion:find`, `/Notion:search`, `/Notion:create-page`, `/Notion:create-database-row`, `/Notion:create-task`, `/Notion:database-query`) + the official Notion MCP server. Always-on cost: ~217 tokens per session.
+- For repetitive Notion operations (create a page in a known database, query a database by name, create a task row), prefer the plugin's slash commands over hand-rolling notion-* MCP calls — they're more idiomatic and lower-token.
+- The existing Notion MCP we've been using all session still works; the plugin's MCP is the official `https://mcp.notion.com/mcp` endpoint. If sessions show duplicate Notion tools, the user can disable the older one via `claude plugin disable` or the MCP settings.
+
 ### 2026-05-16 (Notion content-authoring pattern — clickable links)
 
 - **Important pattern learned the hard way.** Inside Notion callout blocks, markdown link syntax `[text](url)` is stored as literal text — NOT converted to clickable rich-text links. Result: users see the raw markdown in the UI, not a click target. The canonical Notion way to add clickable in-page references is the `<mention-page url="..."/>` tag (self-closing) or `<mention-page url="...">Custom Label</mention-page>` (with override). Notion auto-fetches the page title and icon. Works inside callouts, paragraphs, bullet lists, etc.
