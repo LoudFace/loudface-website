@@ -891,15 +891,6 @@ html {
     -webkit-overflow-scrolling: touch;
     border: 1px solid var(--color-surface-200);
     border-radius: 0.5rem;
-    /* Kill rendered whitespace inside the wrapper. The HTML parser fosters
-       newline/whitespace text nodes between <table> and <thead> (and between
-       </tbody> and </table>) OUT of the table — they end up rendering INSIDE
-       the wrapper with the inherited line-height ~31px, creating visible
-       empty bands above the header and below the last row. Setting
-       font-size: 0 collapses any such text-node height to 0. The table
-       inside has its own font-size that overrides for cell content. */
-    font-size: 0;
-    line-height: 0;
     /* Horizontal scroll hint: a faint right-edge shadow that fades as the
        user scrolls the table right, letting readers know content extends
        beyond the visible edge. CSS-only, no JS needed. */
@@ -912,6 +903,22 @@ html {
     background-attachment: local, scroll;
   }
 
+  /* Legacy selector kept for any direct <table> references; styling points
+     at the same look so the old path (if hit) doesn't look broken. */
+  .blog-prose table {
+    width: 100%;
+    margin: 2rem 0;
+    border-collapse: collapse;
+    font-size: 0.875rem;
+    line-height: 1.5;
+  }
+
+  /* IMPORTANT: this rule MUST come AFTER `.blog-prose table` above. Both
+     selectors have identical specificity (0,0,1,1), so source order wins.
+     The table here is INSIDE .blog-prose AND inside .blog-table-wrap, so
+     both selectors match. The later-in-source rule wins. We need the
+     wrap-specific rules (margin: 0, border-collapse: separate) to override
+     the legacy .blog-prose margin: 2rem 0 + border-collapse: collapse. */
   .blog-table-wrap table {
     width: 100%;
     margin: 0;
@@ -926,16 +933,6 @@ html {
     /* Natural column sizing: each cell gets the width its content needs.
        The wrapper scrolls when the total width exceeds the article column. */
     min-width: max-content;
-  }
-
-  /* Legacy selector kept for any direct <table> references; styling points
-     at the same look so the old path (if hit) doesn't look broken. */
-  .blog-prose table {
-    width: 100%;
-    margin: 2rem 0;
-    border-collapse: collapse;
-    font-size: 0.875rem;
-    line-height: 1.5;
   }
 
   .blog-prose thead,
