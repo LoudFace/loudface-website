@@ -80,7 +80,14 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       changeFrequency: 'monthly',
       priority: 0.9,
     },
-    // Legal pages
+    // Commercial pages
+    {
+      url: `${baseUrl}/pricing`,
+      lastModified: staticLastModified,
+      changeFrequency: 'monthly',
+      priority: 0.9,
+    },
+    // Lead-gen / programmatic
     {
       url: `${baseUrl}/ai-audit`,
       lastModified: staticLastModified,
