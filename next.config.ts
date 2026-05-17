@@ -310,6 +310,49 @@ const nextConfig: NextConfig = {
         destination: '/case-studies',
         permanent: false,
       },
+      // ─── GSC drilldown cleanup (2026-05-17) ──────────────────────────
+      // 4 thin Webflow-era posts that Google has been flagging as
+      // "Crawled — currently not indexed" for 1-4 months. Last crawls
+      // ranged Jan 28 to Apr 11. Each merges into the closest canonical
+      // sibling so Google can consolidate authority and stop bucketing
+      // them as low-quality.
+      {
+        // "The Problem With Traditional Webflow Agencies" — opinion
+        // piece, low traffic. Merges into the canonical agency listicle.
+        source: '/blog/the-problem-with-traditional-webflow-agencies',
+        destination: '/blog/best-webflow-agencies',
+        permanent: true,
+      },
+      {
+        // "Why Are Startups Switching to Webflow" — generic, 0 impressions.
+        // The 2026 SaaS-moving-to-Webflow piece covers the same intent
+        // with current evidence.
+        source: '/blog/why-are-startups-switching-to-webflow',
+        destination: '/blog/why-saas-companies-are-moving-to-webflow-in-2026-and-what-they-gain',
+        permanent: true,
+      },
+      {
+        // "How to Future-Proof Your Webflow Website for Search and AI
+        // Agents" — duplicates the canonical AEO guide.
+        source: '/blog/how-to-future-proof-your-webflow-website-for-search-and-ai-agents',
+        destination: '/blog/answer-engine-optimization-guide-2026',
+        permanent: true,
+      },
+      {
+        // "Webflow Zapier Integration" — thin integration post.
+        // The broader tools+integrations listicle covers this.
+        source: '/blog/webflow-zapier-integration',
+        destination: '/blog/best-webflow-tools-and-integrations',
+        permanent: true,
+      },
+      {
+        // "Webflow Website Design" — generic, last crawled Jan 28.
+        // Funnel to the service page rather than redirecting between
+        // blog posts.
+        source: '/blog/webflow-website-design',
+        destination: '/services/webflow',
+        permanent: true,
+      },
     ];
   },
 };
