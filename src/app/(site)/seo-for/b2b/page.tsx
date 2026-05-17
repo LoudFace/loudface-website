@@ -447,10 +447,14 @@ export default async function B2bPage() {
       </section>
 
       {/* ─── 10. FAQ ─── */}
+      {/* skipSchema: the page emits its own FAQPage schema (see line ~102).
+          Without this flag the FAQ component would emit a second identical
+          FAQPage block. Same hygiene fix applied to /seo-for/saas. */}
       <FAQ
         title={content.faq.label}
         items={content.faq.items}
         showFooter
+        skipSchema
       />
 
       {/* ─── 11. Related Insights ─── */}

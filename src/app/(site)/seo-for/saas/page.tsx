@@ -505,10 +505,15 @@ export default async function SaaSPage() {
       </section>
 
       {/* ─── 11. FAQ ─── */}
+      {/* skipSchema: the page emits its own FAQPage schema (see line ~103).
+          Without this flag the FAQ component would emit a second identical
+          FAQPage block, which is what tripped Google Rich Results validation
+          on /seo-for/saas on 2026-05-17. */}
       <FAQ
         title="Common questions"
         items={content.faq.items}
         showFooter
+        skipSchema
       />
     </>
   );
