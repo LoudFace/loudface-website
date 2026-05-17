@@ -29,18 +29,66 @@ const nextConfig: NextConfig = {
           { key: 'Permissions-Policy', value: 'camera=(), microphone=(), geolocation=()' },
         ],
       },
-      // Long-lived cache for static assets served from public/
-      // (next/font assets in _next/static/ already get immutable from Vercel)
+      // ─── X-Robots-Tag: noindex on non-page assets ────────────────────
+      // Googlebot MUST be able to fetch /_next/static/* to render our
+      // pages (JS chunks, CSS, etc.). But every Vercel deploy generates
+      // new chunk hashes, and Google was bucketing each one as a
+      // separate "Crawled - currently not indexed" entry — 742 of them
+      // accumulated between Feb and May 2026, drowning the GSC coverage
+      // report. The fix is `X-Robots-Tag: noindex`: Google keeps fetching
+      // for rendering, but stops treating these URLs as indexable pages.
+      // Standard Next.js best practice; doesn't change SEO at all,
+      // cleans up the dashboard.
+      //
+      // Same pattern applied to: fonts, favicon, manifest, OG image
+      // generators — all are crawled-as-part-of-rendering but aren't
+      // pages.
       {
-        source: '/images/:path*',
-        headers: [
-          { key: 'Cache-Control', value: 'public, max-age=31536000, stale-while-revalidate=86400' },
-        ],
+        source: '/_next/:path*',
+        headers: [{ key: 'X-Robots-Tag', value: 'noindex' }],
       },
       {
         source: '/fonts/:path*',
         headers: [
           { key: 'Cache-Control', value: 'public, max-age=31536000, immutable' },
+          { key: 'X-Robots-Tag', value: 'noindex' },
+        ],
+      },
+      {
+        source: '/favicon.ico',
+        headers: [{ key: 'X-Robots-Tag', value: 'noindex' }],
+      },
+      {
+        source: '/site.webmanifest',
+        headers: [{ key: 'X-Robots-Tag', value: 'noindex' }],
+      },
+      {
+        source: '/opengraph-image',
+        headers: [{ key: 'X-Robots-Tag', value: 'noindex' }],
+      },
+      // Per-page OG image generators (Next.js auto-generates these from
+      // src/app/.../opengraph-image.tsx files). Path shape:
+      //   /blog/[slug]/opengraph-image-:hash
+      //   /case-studies/[slug]/opengraph-image-:hash
+      //   /team/[slug]/opengraph-image-:hash
+      {
+        source: '/blog/:slug/opengraph-image-:hash',
+        headers: [{ key: 'X-Robots-Tag', value: 'noindex' }],
+      },
+      {
+        source: '/case-studies/:slug/opengraph-image-:hash',
+        headers: [{ key: 'X-Robots-Tag', value: 'noindex' }],
+      },
+      {
+        source: '/team/:slug/opengraph-image-:hash',
+        headers: [{ key: 'X-Robots-Tag', value: 'noindex' }],
+      },
+      // ─── Long-lived cache for static assets served from public/ ──────
+      // (next/font assets in _next/static/ already get immutable from Vercel)
+      {
+        source: '/images/:path*',
+        headers: [
+          { key: 'Cache-Control', value: 'public, max-age=31536000, stale-while-revalidate=86400' },
         ],
       },
     ];
