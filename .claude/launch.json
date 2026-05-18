@@ -4,8 +4,9 @@
     {
       "name": "next-dev",
       "runtimeExecutable": "/opt/homebrew/bin/node",
-      "runtimeArgs": ["node_modules/.bin/next", "dev", "--port", "3005", "--hostname", "0.0.0.0"],
+      "runtimeArgs": ["node_modules/.bin/next", "dev", "--hostname", "0.0.0.0"],
       "port": 3005,
+      "autoPort": true,
       "env": {
         "PATH": "/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin"
       }

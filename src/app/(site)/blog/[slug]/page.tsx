@@ -15,7 +15,13 @@ import { fetchCollection, fetchHomepageData, fetchItemBySlug } from '@/lib/cms-d
 import { avatarImage, heroImage, thumbnailImage } from '@/lib/image-utils';
 import { asset } from '@/lib/assets';
 import { Badge, SectionContainer } from '@/components/ui';
-import { BlogContent } from '@/components/blog';
+import {
+  BlogContent,
+  BlogTOC,
+  BlogExploreWithAI,
+  BlogCTACard,
+  BlogShareRow,
+} from '@/components/blog';
 import { CTA, FAQ, RelatedComparisons } from '@/components/sections';
 import { buildNoIndexMetadata, buildPageMetadata, truncateSeoTitle, truncateSeoDescription, rewriteLegacyUrls } from '@/lib/seo-utils';
 import {
@@ -249,37 +255,52 @@ export default async function BlogPostPage({ params }: PageProps) {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(speakableSchema) }}
       />
 
-      {/* Hero */}
-      <section className="pt-24 pb-12 bg-white">
+      {/* Hero — inherits body bg (off-white surface-50). Type tightens
+          letter-spacing and switches to surface-950 for a neutral
+          near-black; excerpt drops to surface-500 (tertiary muted). */}
+      <section className="pt-24 pb-10">
         <div className="px-4 md:px-8 lg:px-12">
-          <div className="max-w-4xl mx-auto text-center">
+          <div className="max-w-3xl mx-auto text-center">
             <nav className="mb-6" aria-label="Breadcrumb">
-              <ol className="flex items-center justify-center gap-2 text-sm text-surface-500">
-                <li><Link href="/blog" className="hover:text-primary-600">Blog</Link></li>
-                <li><span className="mx-1">/</span></li>
-                <li className="text-surface-900 truncate max-w-[200px]">{post.name}</li>
+              <ol className="flex items-center justify-center gap-2 text-xs text-surface-500">
+                <li><Link href="/blog" className="hover:text-surface-950 transition-colors">Blog</Link></li>
+                <li><span className="text-surface-300 mx-0.5">/</span></li>
+                <li className="text-surface-700 truncate max-w-[260px]">{post.name}</li>
               </ol>
             </nav>
 
             {category && (
-              <Badge className="mb-4 border-primary-100 bg-primary-50 text-primary-700">
+              <Badge className="mb-5 border-primary-100 bg-primary-50 text-primary-700">
                 {category.name}
               </Badge>
             )}
 
-            <h1 className="text-3xl md:text-4xl lg:text-5xl font-medium text-surface-900 leading-tight">
+            <h1
+              className="font-medium text-surface-950 text-balance"
+              style={{
+                fontSize: 'clamp(1.875rem, 1.5rem + 1.875vw, 3rem)',
+                lineHeight: 1.1,
+                letterSpacing: '-0.03em',
+              }}
+            >
               {post.name}
             </h1>
 
             {post.excerpt && (
-              <p className="mt-4 text-xl text-surface-600 max-w-2xl mx-auto">
+              <p
+                className="mt-5 text-surface-500 max-w-2xl mx-auto text-pretty"
+                style={{
+                  fontSize: 'clamp(1.05rem, 1rem + 0.35vw, 1.25rem)',
+                  lineHeight: 1.45,
+                }}
+              >
                 {post.excerpt}
               </p>
             )}
 
-            <div className="mt-8 flex items-center justify-center gap-4">
+            <div className="mt-8 flex items-center justify-center gap-3 flex-wrap">
               {author && (
-                <Link href={`/team/${author.slug}`} className="flex items-center gap-3 group">
+                <Link href={`/team/${author.slug}`} className="flex items-center gap-2.5 group">
                   {author['profile-picture']?.url && (
                     <img
                       src={avatarImage(author['profile-picture'].url)}
@@ -287,30 +308,28 @@ export default async function BlogPostPage({ params }: PageProps) {
                       width="80"
                       height="80"
                       loading="lazy"
-                      className="w-10 h-10 rounded-full object-cover"
+                      className="w-8 h-8 rounded-full object-cover"
                     />
                   )}
-                  <div className="text-left">
-                    <div className="font-medium text-surface-900 group-hover:text-primary-600 transition-colors">{author.name}</div>
-                    {author['job-title'] && (
-                      <div className="text-sm text-surface-500">{author['job-title']}</div>
-                    )}
-                  </div>
+                  <span className="text-sm font-medium text-surface-950 group-hover:text-primary-600 transition-colors">
+                    {author.name}
+                  </span>
                 </Link>
               )}
-            </div>
 
-            {/* Publication & freshness dates — visible freshness signals improve E-E-A-T */}
-            <div className="mt-4 flex items-center justify-center gap-3 text-sm text-surface-500">
+              {/* Publication & freshness dates — visible freshness signals improve E-E-A-T */}
               {post['published-date'] && (
-                <time dateTime={post['published-date']}>
-                  {new Date(post['published-date']).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
-                </time>
+                <>
+                  <span className="w-1 h-1 rounded-full bg-surface-300" aria-hidden="true" />
+                  <time dateTime={post['published-date']} className="text-sm text-surface-500">
+                    {new Date(post['published-date']).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
+                  </time>
+                </>
               )}
               {post['last-updated'] && post['last-updated'] !== post['published-date'] && (
                 <>
-                  <span className="text-surface-300">·</span>
-                  <span>
+                  <span className="w-1 h-1 rounded-full bg-surface-300" aria-hidden="true" />
+                  <span className="text-sm text-surface-500">
                     Updated{' '}
                     <time dateTime={post['last-updated']}>
                       {new Date(post['last-updated']).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
@@ -320,8 +339,8 @@ export default async function BlogPostPage({ params }: PageProps) {
               )}
               {post['time-to-read'] && (
                 <>
-                  <span className="text-surface-300">·</span>
-                  <span>{post['time-to-read']}</span>
+                  <span className="w-1 h-1 rounded-full bg-surface-300" aria-hidden="true" />
+                  <span className="text-sm text-surface-500">{post['time-to-read']}</span>
                 </>
               )}
             </div>
@@ -329,17 +348,18 @@ export default async function BlogPostPage({ params }: PageProps) {
         </div>
       </section>
 
-      {/* Featured Image */}
+      {/* Featured Image — shadow softened from `shadow-lg` to `shadow-sm`
+          so it sits cleanly against the off-white page rather than floating */}
       {post.thumbnail?.url && (
-        <div className="bg-white pb-12">
+        <div className="pb-12">
           <div className="px-4 md:px-8 lg:px-12">
-            <div className="max-w-4xl mx-auto">
+            <div className="max-w-5xl mx-auto">
               <img
                 src={heroImage(post.thumbnail.url).src}
                 alt={post.thumbnail.alt || post.name}
                 width="1200"
                 height="675"
-                className="w-full rounded-xl shadow-lg"
+                className="w-full rounded-2xl shadow-sm"
                 loading="eager"
                 fetchPriority="high"
               />
@@ -348,10 +368,10 @@ export default async function BlogPostPage({ params }: PageProps) {
         </div>
       )}
 
-      {/* Content */}
-      <SectionContainer className="bg-white" padding="sm">
-        <div className="max-w-4xl mx-auto">
-          <div className="grid grid-cols-1 lg:grid-cols-[1fr_280px] gap-8 lg:gap-12">
+      {/* Content — sidebar stacks: TOC → Explore with AI → dark CTA card → Share → author */}
+      <SectionContainer padding="sm">
+        <div className="max-w-5xl mx-auto">
+          <div className="grid grid-cols-1 lg:grid-cols-[1fr_280px] gap-10 lg:gap-16">
             {/* Article Body */}
             <article className="min-w-0">
               {linkedContent ? (
@@ -362,28 +382,20 @@ export default async function BlogPostPage({ params }: PageProps) {
             </article>
 
             {/* Sidebar */}
-            <aside className="hidden lg:block lg:sticky lg:top-24 lg:self-start space-y-8">
-              {toc.length > 0 && (
-                <nav className="toc">
-                  <span className="block text-sm font-medium text-surface-500 uppercase tracking-wide mb-3">On this page</span>
-                  <ul className="space-y-2">
-                    {toc.map((item) => (
-                      <li key={item.id}>
-                        <a
-                          href={`#${item.id}`}
-                          className="toc-link block text-sm text-surface-600 hover:text-primary-600 transition-colors py-1 border-l-2 border-surface-200 hover:border-primary-500 pl-3"
-                        >
-                          {item.text}
-                        </a>
-                      </li>
-                    ))}
-                  </ul>
-                </nav>
-              )}
+            <aside className="hidden lg:block lg:sticky lg:top-24 lg:self-start space-y-9">
+              <BlogTOC items={toc} />
+              <BlogExploreWithAI articleUrl={canonicalUrl} />
+              <BlogCTACard />
+              <BlogShareRow articleUrl={canonicalUrl} articleTitle={post.name} />
 
               {author && (
-                <Link href={`/team/${author.slug}`} className="block bg-surface-50 rounded-xl p-5 group hover:bg-surface-100 transition-colors">
-                  <span className="block text-sm font-medium text-surface-500 uppercase tracking-wide mb-3">Written by</span>
+                <Link
+                  href={`/team/${author.slug}`}
+                  className="block group"
+                >
+                  <span className="block text-[11px] font-medium text-surface-500 uppercase tracking-[0.08em] mb-3">
+                    Written by
+                  </span>
                   <div className="flex items-center gap-3">
                     {author['profile-picture']?.url && (
                       <img
@@ -392,13 +404,15 @@ export default async function BlogPostPage({ params }: PageProps) {
                         width="80"
                         height="80"
                         loading="lazy"
-                        className="w-12 h-12 rounded-full object-cover"
+                        className="w-10 h-10 rounded-full object-cover"
                       />
                     )}
                     <div>
-                      <div className="font-medium text-surface-900 group-hover:text-primary-600 transition-colors">{author.name}</div>
+                      <div className="text-sm font-medium text-surface-950 group-hover:text-primary-600 transition-colors">
+                        {author.name}
+                      </div>
                       {author['job-title'] && (
-                        <div className="text-sm text-surface-500">{author['job-title']}</div>
+                        <div className="text-xs text-surface-500">{author['job-title']}</div>
                       )}
                     </div>
                   </div>

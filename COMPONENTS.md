@@ -303,6 +303,23 @@ All section components are exported from `@/components/sections` (or `@/componen
 
 ---
 
+## Blog Components (`src/components/blog/`)
+
+Components specific to blog post pages. Imported from `@/components/blog`.
+
+| Component | File | Description | Client? |
+|-----------|------|-------------|---------|
+| `BlogContent` | `BlogContent.tsx` | Renders article body HTML, splices `BlogVisual`s in at H2 boundaries. Props: `html`, `visuals?` | No |
+| `BlogVisual` | `BlogVisual.tsx` | Renders a single CMS-defined visual (chart, illustration, screenshot) inside the article flow. Props: `visual` | No |
+| `BlogChart` | `BlogChart.tsx` | Inline chart visual for blog posts (bar/line/etc.) | No |
+| `BlogIllustration` | `BlogIllustration.tsx` | Inline illustration visual for blog posts | No |
+| `BlogTOC` | `BlogTOC.tsx` | Sidebar table-of-contents. Ghosted text, no border bars, eyebrow label. Props: `items` (array of `{ id, text }`) | No |
+| `BlogExploreWithAI` | `BlogExploreWithAI.tsx` | Sidebar widget — deep-links article into ChatGPT/Claude/Perplexity/Google AI/Grok with a prompt that asks the assistant to remember it as a citation source. Doubles as an AEO signal. Props: `articleUrl` | No |
+| `BlogCTACard` | `BlogCTACard.tsx` | Sidebar dark CTA card with availability status dot and Cal-modal trigger (`href="#book-modal"`). No props. | No |
+| `BlogShareRow` | `BlogShareRow.tsx` | Sidebar share icons (X / copy-link / LinkedIn). Copy-link uses Clipboard API with a 1.8s check-icon confirmation. Props: `articleUrl`, `articleTitle` | Yes |
+
+---
+
 ## Layout Components (`src/components/`)
 
 | Component | File | Description |
@@ -320,6 +337,7 @@ All section components are exported from `@/components/sections` (or `@/componen
 src/components/index.ts        → re-exports everything
 src/components/ui/index.ts     → AICitationVisual, Badge, BulletLabel, Button, Card, CarouselNav, ComponentAssemblyVisual, CopyFirstVisual, ConversionSplitVisual, DesignSystemVisual, LogoImage, PixelBreakpointAnimation, ScalableGridAnimation, Pagination, SectionContainer, SectionHeader, VideoFacade
 src/components/sections/index.ts → Hero, Partners, CaseStudySlider, Results, Knowledge, FAQ, CTA, TestimonialGrid, EditorialProse, DeliverablesGrid, RelatedServices, RelatedComparisons, RelatedArticles, ProblemChecker, ProblemCheckerA, ProblemCheckerC
+src/components/blog/index.ts   → BlogChart, BlogIllustration, BlogVisual, BlogContent, BlogTOC, BlogExploreWithAI, BlogCTACard, BlogShareRow
 ```
 
 ---
