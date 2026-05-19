@@ -6,6 +6,7 @@ import { NextResponse, type NextRequest } from 'next/server';
 // is unpublished and won't redirect to a relevant alternative.
 const GONE_URLS = new Set<string>([
   '/case-studies/finnrick-analytics',
+  '/case-studies/finnrick-peptide-testing',
   '/case-studies/mycryptoguide',
   '/case-studies/draw-things',
 ]);
