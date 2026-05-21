@@ -1,0 +1,593 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>PREVIEW — fCMO Partner Program — 10% Lifetime Commission</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    // Approximate LoudFace brand tokens. Final shipped colors come from the site's
+    // tailwind.config — these are visual stand-ins for review purposes only.
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            surface: {
+              50:  '#f7f7f8',
+              100: '#eeeeef',
+              200: '#e4e4e7',
+              300: '#cfcfd4',
+              400: '#9ca3af',
+              500: '#6b7280',
+              600: '#4b5563',
+              700: '#374151',
+              800: '#1f2937',
+              900: '#0a0a0a',
+            },
+            primary: {
+              400: '#c4b5fd',
+              500: '#a78bfa',
+              600: '#8b5cf6',
+              700: '#7c3aed',
+            },
+            success: { DEFAULT: '#15803d', light: '#dcfce7', dark: '#14532d' },
+            error: { DEFAULT: '#b91c1c', light: '#fee2e2', dark: '#7f1d1d' },
+          },
+          fontFamily: {
+            heading: ['ui-sans-serif', 'system-ui', 'sans-serif'],
+            mono: ['ui-monospace', 'SFMono-Regular', 'monospace'],
+          },
+        },
+      },
+    };
+  </script>
+  <style>
+    html { scroll-behavior: smooth; }
+    body { font-family: ui-sans-serif, system-ui, sans-serif; }
+    .preview-banner {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      background: #fef3c7; color: #78350f;
+      padding: 6px 16px; font-size: 12px; font-weight: 500;
+      border-bottom: 1px solid #fcd34d;
+      text-align: center;
+    }
+    /* Make the placeholder logos visually quiet, like the real page */
+    .placeholder-logo {
+      display: inline-flex; align-items: center; justify-content: center;
+      height: 28px; padding: 0 14px;
+      border: 1px dashed #cfcfd4; border-radius: 4px;
+      color: #9ca3af; font-size: 13px; letter-spacing: 0.04em;
+    }
+    .text-2xs { font-size: 0.65rem; line-height: 1rem; }
+    /* FAQ accordion */
+    details > summary { list-style: none; }
+    details > summary::-webkit-details-marker { display: none; }
+    details[open] .faq-plus { transform: rotate(45deg); }
+    .faq-plus { transition: transform 0.15s ease; }
+  </style>
+</head>
+<body class="bg-white text-surface-900">
+  <div class="preview-banner">
+    PREVIEW · This is a static mockup of the new /partners page. Real CMS logos/testimonials, exact brand fonts, and form submission won't fire. Section order and copy match the staged page.tsx.
+  </div>
+
+  <div class="pt-10"><!-- spacer for preview banner -->
+
+  <!-- ─── SECTION 1: Hero ─── -->
+  <section class="bg-surface-900 text-surface-300 py-16 md:py-24 lg:py-32">
+    <div class="px-4 md:px-8 lg:px-12">
+      <div class="max-w-7xl mx-auto">
+        <div class="max-w-4xl">
+          <span class="inline-flex items-center gap-2 rounded-full bg-white/10 border border-white/15 px-4 py-1.5 text-xs font-medium text-white tracking-wide uppercase mb-8">
+            <span class="w-1.5 h-1.5 rounded-full bg-primary-400"></span>
+            LoudFace Partner Program
+          </span>
+          <h1 class="text-white font-medium leading-[1.1] tracking-tight text-3xl sm:text-4xl md:text-5xl lg:text-6xl text-balance">
+            Refer one B2B SaaS client. Earn 10% of their retainer for as long as they stay with us.
+          </h1>
+          <p class="mt-8 text-lg md:text-xl text-surface-300 max-w-2xl leading-relaxed">
+            No caps. No expiry. The LoudFace Partner Program is built for fractional CMOs, growth advisors, and consultants who advise B2B SaaS teams but don't want to run execution.
+          </p>
+          <div class="mt-10">
+            <a href="#apply" class="inline-flex items-center justify-center px-8 py-4 rounded-full bg-primary-600 text-white font-medium text-base transition-colors hover:bg-primary-500">
+              Apply in 2 minutes
+              <svg class="ml-2 w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── SECTION 2: Shared <Partners> social-proof block ─── -->
+  <!-- In the real component: 5-star row + testimonial headshots row + tagline + client logos -->
+  <section class="pt-12 md:pt-16 lg:pt-20">
+    <div class="px-4 md:px-8 lg:px-12">
+      <div class="max-w-7xl mx-auto">
+        <!-- Star Rating -->
+        <div class="flex items-center justify-center gap-2">
+          <span class="font-bold text-surface-900">Only</span>
+          <div class="flex items-center gap-0.5 text-primary-600">
+            <!-- 5 stars -->
+            <svg class="w-3.5 h-3.5" viewBox="0 0 14 14" fill="currentColor"><path d="M6.748.669a.275.275 0 0 1 .504 0l1.716 3.903a.275.275 0 0 0 .219.167l4.069.506a.275.275 0 0 1 .155.498l-3.008 2.919a.275.275 0 0 0-.084.27l.798 4.217a.275.275 0 0 1-.407.31L7.135 11.363a.275.275 0 0 0-.27 0l-3.575 2.1a.275.275 0 0 1-.407-.311l.798-4.216a.275.275 0 0 0-.083-.27L.59 5.742a.275.275 0 0 1 .155-.498l4.069-.506a.275.275 0 0 0 .218-.167L6.748.67Z"/></svg>
+            <svg class="w-3.5 h-3.5" viewBox="0 0 14 14" fill="currentColor"><path d="M6.748.669a.275.275 0 0 1 .504 0l1.716 3.903a.275.275 0 0 0 .219.167l4.069.506a.275.275 0 0 1 .155.498l-3.008 2.919a.275.275 0 0 0-.084.27l.798 4.217a.275.275 0 0 1-.407.31L7.135 11.363a.275.275 0 0 0-.27 0l-3.575 2.1a.275.275 0 0 1-.407-.311l.798-4.216a.275.275 0 0 0-.083-.27L.59 5.742a.275.275 0 0 1 .155-.498l4.069-.506a.275.275 0 0 0 .218-.167L6.748.67Z"/></svg>
+            <svg class="w-3.5 h-3.5" viewBox="0 0 14 14" fill="currentColor"><path d="M6.748.669a.275.275 0 0 1 .504 0l1.716 3.903a.275.275 0 0 0 .219.167l4.069.506a.275.275 0 0 1 .155.498l-3.008 2.919a.275.275 0 0 0-.084.27l.798 4.217a.275.275 0 0 1-.407.31L7.135 11.363a.275.275 0 0 0-.27 0l-3.575 2.1a.275.275 0 0 1-.407-.311l.798-4.216a.275.275 0 0 0-.083-.27L.59 5.742a.275.275 0 0 1 .155-.498l4.069-.506a.275.275 0 0 0 .218-.167L6.748.67Z"/></svg>
+            <svg class="w-3.5 h-3.5" viewBox="0 0 14 14" fill="currentColor"><path d="M6.748.669a.275.275 0 0 1 .504 0l1.716 3.903a.275.275 0 0 0 .219.167l4.069.506a.275.275 0 0 1 .155.498l-3.008 2.919a.275.275 0 0 0-.084.27l.798 4.217a.275.275 0 0 1-.407.31L7.135 11.363a.275.275 0 0 0-.27 0l-3.575 2.1a.275.275 0 0 1-.407-.311l.798-4.216a.275.275 0 0 0-.083-.27L.59 5.742a.275.275 0 0 1 .155-.498l4.069-.506a.275.275 0 0 0 .218-.167L6.748.67Z"/></svg>
+            <svg class="w-3.5 h-3.5" viewBox="0 0 14 14" fill="currentColor"><path d="M6.748.669a.275.275 0 0 1 .504 0l1.716 3.903a.275.275 0 0 0 .219.167l4.069.506a.275.275 0 0 1 .155.498l-3.008 2.919a.275.275 0 0 0-.084.27l.798 4.217a.275.275 0 0 1-.407.31L7.135 11.363a.275.275 0 0 0-.27 0l-3.575 2.1a.275.275 0 0 1-.407-.311l.798-4.216a.275.275 0 0 0-.083-.27L.59 5.742a.275.275 0 0 1 .155-.498l4.069-.506a.275.275 0 0 0 .218-.167L6.748.67Z"/></svg>
+          </div>
+          <span class="font-bold text-surface-900">5-Star Reviews</span>
+        </div>
+
+        <div class="h-4"></div>
+
+        <!-- Testimonial headshots row (real component renders avatars with tooltips) -->
+        <div class="flex flex-wrap justify-center">
+          <!-- 13 placeholder headshots representing Daan Smit, Christian Mailind, Elizabete, etc. -->
+          <div class="relative -ml-2 first:ml-0"><div class="w-10 h-10 rounded-full bg-surface-300 border-2 border-white shadow-sm flex items-center justify-center text-surface-600 text-xs font-medium">DS</div></div>
+          <div class="relative -ml-2"><div class="w-10 h-10 rounded-full bg-surface-300 border-2 border-white shadow-sm flex items-center justify-center text-surface-600 text-xs font-medium">CM</div></div>
+          <div class="relative -ml-2"><div class="w-10 h-10 rounded-full bg-surface-300 border-2 border-white shadow-sm flex items-center justify-center text-surface-600 text-xs font-medium">EL</div></div>
+          <div class="relative -ml-2"><div class="w-10 h-10 rounded-full bg-surface-300 border-2 border-white shadow-sm flex items-center justify-center text-surface-600 text-xs font-medium">DA</div></div>
+          <div class="relative -ml-2"><div class="w-10 h-10 rounded-full bg-surface-300 border-2 border-white shadow-sm flex items-center justify-center text-surface-600 text-xs font-medium">MM</div></div>
+          <div class="relative -ml-2"><div class="w-10 h-10 rounded-full bg-surface-300 border-2 border-white shadow-sm flex items-center justify-center text-surface-600 text-xs font-medium">MP</div></div>
+          <div class="relative -ml-2"><div class="w-10 h-10 rounded-full bg-surface-300 border-2 border-white shadow-sm flex items-center justify-center text-surface-600 text-xs font-medium">K</div></div>
+          <div class="relative -ml-2"><div class="w-10 h-10 rounded-full bg-surface-300 border-2 border-white shadow-sm flex items-center justify-center text-surface-600 text-xs font-medium">TM</div></div>
+          <div class="relative -ml-2"><div class="w-10 h-10 rounded-full bg-surface-300 border-2 border-white shadow-sm flex items-center justify-center text-surface-600 text-xs font-medium">PP</div></div>
+          <div class="relative -ml-2"><div class="w-10 h-10 rounded-full bg-surface-300 border-2 border-white shadow-sm flex items-center justify-center text-surface-600 text-xs font-medium">SK</div></div>
+          <div class="relative -ml-2"><div class="w-10 h-10 rounded-full bg-surface-300 border-2 border-white shadow-sm flex items-center justify-center text-surface-600 text-xs font-medium">SR</div></div>
+          <div class="relative -ml-2"><div class="w-10 h-10 rounded-full bg-surface-300 border-2 border-white shadow-sm flex items-center justify-center text-surface-600 text-xs font-medium">KO</div></div>
+          <div class="relative -ml-2"><div class="w-10 h-10 rounded-full bg-surface-300 border-2 border-white shadow-sm flex items-center justify-center text-surface-600 text-xs font-medium">PL</div></div>
+        </div>
+
+        <div class="h-4"></div>
+        <p class="text-center text-surface-600 text-lg">Trusted by B2B SaaS teams shipping real products</p>
+        <div class="h-8"></div>
+
+        <!-- Client logos -->
+        <div class="flex flex-wrap justify-center items-center gap-x-12 gap-y-8">
+          <span class="placeholder-logo">TOKU</span>
+          <span class="placeholder-logo">HOXHUNT</span>
+          <span class="placeholder-logo">ERASER</span>
+          <span class="placeholder-logo">DIMER HEALTH</span>
+          <span class="placeholder-logo">SPECKLE</span>
+          <span class="placeholder-logo">VIADUCT</span>
+          <span class="placeholder-logo">BRANDFIRM</span>
+          <span class="placeholder-logo">SEAMLESS.AI</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── SECTION 3: Earnings example ─── -->
+  <section class="py-16 md:py-24 lg:py-32">
+    <div class="px-4 md:px-8 lg:px-12">
+      <div class="max-w-7xl mx-auto">
+        <div class="max-w-3xl">
+          <div class="flex items-center gap-3">
+            <span class="w-2 h-2 bg-surface-400 rounded-full"></span>
+            <span class="text-lg font-medium text-surface-900">What you'd actually earn</span>
+          </div>
+          <h2 class="mt-6 text-2xl sm:text-3xl md:text-4xl font-medium text-surface-900 leading-tight tracking-tight">Math beats adjectives.</h2>
+          <p class="mt-6 text-lg text-surface-600 leading-relaxed">10% of the client's monthly retainer, paid every month they stay active. Here's how that compounds.</p>
+        </div>
+
+        <!-- Desktop table -->
+        <div class="mt-10 hidden md:block overflow-hidden rounded-2xl border border-surface-200">
+          <table class="w-full text-left">
+            <thead class="bg-surface-50">
+              <tr>
+                <th class="px-6 py-4 text-sm font-medium text-surface-700">Client retainer</th>
+                <th class="px-6 py-4 text-sm font-medium text-surface-700">Your monthly payout</th>
+                <th class="px-6 py-4 text-sm font-medium text-surface-700">After 12 months</th>
+                <th class="px-6 py-4 text-sm font-medium text-surface-700">After 24 months</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-surface-200 bg-white">
+              <tr><td class="px-6 py-5 text-surface-900 font-medium">$10,000 / month</td><td class="px-6 py-5 text-primary-600 font-mono font-medium">$1,000</td><td class="px-6 py-5 text-surface-700 font-mono">$12,000</td><td class="px-6 py-5 text-surface-900 font-mono font-medium">$24,000</td></tr>
+              <tr><td class="px-6 py-5 text-surface-900 font-medium">$15,000 / month</td><td class="px-6 py-5 text-primary-600 font-mono font-medium">$1,500</td><td class="px-6 py-5 text-surface-700 font-mono">$18,000</td><td class="px-6 py-5 text-surface-900 font-mono font-medium">$36,000</td></tr>
+              <tr><td class="px-6 py-5 text-surface-900 font-medium">$25,000 / month</td><td class="px-6 py-5 text-primary-600 font-mono font-medium">$2,500</td><td class="px-6 py-5 text-surface-700 font-mono">$30,000</td><td class="px-6 py-5 text-surface-900 font-mono font-medium">$60,000</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Mobile stacked cards -->
+        <div class="mt-10 md:hidden space-y-4">
+          <div class="rounded-2xl border border-surface-200 bg-white p-6">
+            <div class="text-xs font-mono uppercase tracking-wider text-surface-500">Client retainer</div>
+            <div class="mt-1 text-lg font-medium text-surface-900">$10,000 / month</div>
+            <div class="mt-4 grid grid-cols-3 gap-3 text-sm">
+              <div><div class="text-2xs uppercase tracking-wider text-surface-500">Monthly</div><div class="mt-1 font-mono font-medium text-primary-600">$1,000</div></div>
+              <div><div class="text-2xs uppercase tracking-wider text-surface-500">12 mo</div><div class="mt-1 font-mono text-surface-700">$12,000</div></div>
+              <div><div class="text-2xs uppercase tracking-wider text-surface-500">24 mo</div><div class="mt-1 font-mono font-medium text-surface-900">$24,000</div></div>
+            </div>
+          </div>
+          <div class="rounded-2xl border border-surface-200 bg-white p-6">
+            <div class="text-xs font-mono uppercase tracking-wider text-surface-500">Client retainer</div>
+            <div class="mt-1 text-lg font-medium text-surface-900">$15,000 / month</div>
+            <div class="mt-4 grid grid-cols-3 gap-3 text-sm">
+              <div><div class="text-2xs uppercase tracking-wider text-surface-500">Monthly</div><div class="mt-1 font-mono font-medium text-primary-600">$1,500</div></div>
+              <div><div class="text-2xs uppercase tracking-wider text-surface-500">12 mo</div><div class="mt-1 font-mono text-surface-700">$18,000</div></div>
+              <div><div class="text-2xs uppercase tracking-wider text-surface-500">24 mo</div><div class="mt-1 font-mono font-medium text-surface-900">$36,000</div></div>
+            </div>
+          </div>
+          <div class="rounded-2xl border border-surface-200 bg-white p-6">
+            <div class="text-xs font-mono uppercase tracking-wider text-surface-500">Client retainer</div>
+            <div class="mt-1 text-lg font-medium text-surface-900">$25,000 / month</div>
+            <div class="mt-4 grid grid-cols-3 gap-3 text-sm">
+              <div><div class="text-2xs uppercase tracking-wider text-surface-500">Monthly</div><div class="mt-1 font-mono font-medium text-primary-600">$2,500</div></div>
+              <div><div class="text-2xs uppercase tracking-wider text-surface-500">12 mo</div><div class="mt-1 font-mono text-surface-700">$30,000</div></div>
+              <div><div class="text-2xs uppercase tracking-wider text-surface-500">24 mo</div><div class="mt-1 font-mono font-medium text-surface-900">$60,000</div></div>
+            </div>
+          </div>
+        </div>
+
+        <p class="mt-6 text-sm text-surface-500 italic">Hypothetical based on our average retainer length. We'll replace this with real partner numbers once the first 2–3 cohort commissions clear.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── SECTION 4: How it works ─── -->
+  <section class="py-16 md:py-24 lg:py-32 bg-surface-50">
+    <div class="px-4 md:px-8 lg:px-12">
+      <div class="max-w-7xl mx-auto">
+        <h2 class="text-2xl sm:text-3xl md:text-4xl font-medium text-surface-900 leading-tight tracking-tight">Simple structure. Serious <span class="text-primary-600">upside.</span></h2>
+
+        <div class="mt-12 lg:mt-16 grid grid-cols-1 md:grid-cols-2 gap-6">
+          <!-- Step 01 -->
+          <div class="rounded-2xl border border-surface-200 bg-white p-8">
+            <span class="inline-block font-mono text-sm font-medium text-primary-600 mb-4">Step 01</span>
+            <h3 class="text-lg font-medium text-surface-900 mb-3">Apply (5 minutes)</h3>
+            <p class="text-sm text-surface-600 leading-relaxed">Quick form. We review every application manually and reply within 48 hours with either approval, or a no with a reason.</p>
+            <p class="mt-3 text-sm text-surface-500 leading-relaxed">We keep the partner network selective. This works best when both sides are the right fit.</p>
+          </div>
+          <!-- Step 02 -->
+          <div class="rounded-2xl border border-surface-200 bg-white p-8">
+            <span class="inline-block font-mono text-sm font-medium text-primary-600 mb-4">Step 02</span>
+            <h3 class="text-lg font-medium text-surface-900 mb-3">Get your partner kit</h3>
+            <p class="text-sm text-surface-600 leading-relaxed">Approved partners receive:</p>
+            <ul class="mt-4 space-y-2">
+              <li class="flex items-start gap-2 text-sm text-surface-600"><span class="mt-1 w-1 h-1 rounded-full bg-primary-600 shrink-0"></span><span>A unique UTM-tagged link (or a warm-intro template if you prefer that route)</span></li>
+              <li class="flex items-start gap-2 text-sm text-surface-600"><span class="mt-1 w-1 h-1 rounded-full bg-primary-600 shrink-0"></span><span>A partner agreement that takes 2 minutes to read</span></li>
+              <li class="flex items-start gap-2 text-sm text-surface-600"><span class="mt-1 w-1 h-1 rounded-full bg-primary-600 shrink-0"></span><span>Direct Slack/email access to Arnel (CEO) for deal questions</span></li>
+            </ul>
+          </div>
+          <!-- Step 03 -->
+          <div class="rounded-2xl border border-surface-200 bg-white p-8">
+            <span class="inline-block font-mono text-sm font-medium text-primary-600 mb-4">Step 03</span>
+            <h3 class="text-lg font-medium text-surface-900 mb-3">Refer a B2B SaaS client</h3>
+            <p class="text-sm text-surface-600 leading-relaxed">Send them your link, or introduce us over email. We handle discovery, scoping, proposal, and onboarding. You stay in your advisory seat.</p>
+          </div>
+          <!-- Step 04 -->
+          <div class="rounded-2xl border border-surface-200 bg-white p-8">
+            <span class="inline-block font-mono text-sm font-medium text-primary-600 mb-4">Step 04</span>
+            <h3 class="text-lg font-medium text-surface-900 mb-3">Get paid every month they stay</h3>
+            <p class="text-sm text-surface-600 leading-relaxed">10% of their retainer, paid by the 5th of every month, for as long as they're a client. Not 6 months. Not 12 months. Lifetime.</p>
+            <p class="mt-3 text-sm text-surface-500 leading-relaxed">First payment lands 30 days after their first invoice is paid.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── SECTION 5: What you earn / Who qualifies (Dark, two-column) ─── -->
+  <section class="bg-surface-900 text-surface-300 py-16 md:py-24 lg:py-32">
+    <div class="px-4 md:px-8 lg:px-12">
+      <div class="max-w-7xl mx-auto">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12">
+          <div>
+            <div class="flex items-center gap-3">
+              <span class="w-2 h-2 bg-surface-400 rounded-full"></span>
+              <span class="text-lg font-medium text-white">What you earn</span>
+            </div>
+            <h2 class="mt-6 text-2xl sm:text-3xl md:text-4xl font-medium text-white leading-tight tracking-tight">10% of retainer, every month they stay.</h2>
+            <p class="mt-6 text-surface-300 leading-relaxed">Paid by the 5th. No caps. No expiry. Most referral programs offer a one-time finder's fee. Ours pays every month the engagement is active.</p>
+          </div>
+          <div>
+            <div class="flex items-center gap-3">
+              <span class="w-2 h-2 bg-surface-400 rounded-full"></span>
+              <span class="text-lg font-medium text-white">Who qualifies</span>
+            </div>
+            <h2 class="mt-6 text-2xl sm:text-3xl md:text-4xl font-medium text-white leading-tight tracking-tight"><span class="text-primary-400">$10K/month</span> minimum retainer.</h2>
+            <p class="mt-6 text-surface-300 leading-relaxed">Referrals must be B2B SaaS, fintech, AI, or tech companies at $1M–$50M ARR with a retainer of at least $10K/month. Anything below isn't a fit — for them or for us.</p>
+          </div>
+        </div>
+        <div class="mt-10">
+          <a href="#apply" class="inline-flex items-center justify-center px-8 py-4 rounded-full bg-primary-600 text-white font-medium text-base transition-colors hover:bg-primary-500">
+            Apply in 2 minutes
+            <svg class="ml-2 w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── SECTION 6: Why partner ─── -->
+  <section class="py-16 md:py-24 lg:py-32">
+    <div class="px-4 md:px-8 lg:px-12">
+      <div class="max-w-7xl mx-auto">
+        <div class="max-w-3xl">
+          <div class="flex items-center gap-3">
+            <span class="w-2 h-2 bg-surface-400 rounded-full"></span>
+            <span class="text-lg font-medium text-surface-900">Why partner with LoudFace</span>
+          </div>
+          <h2 class="mt-6 text-2xl sm:text-3xl md:text-4xl font-medium text-surface-900 leading-tight tracking-tight text-balance">Your reputation goes out with every recommendation. We work like we know that.</h2>
+          <ul class="mt-8 space-y-4">
+            <li class="flex items-start gap-3"><svg class="w-5 h-5 text-primary-600 shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg><span class="text-surface-600 leading-relaxed">B2B SaaS only. No generalist client mix.</span></li>
+            <li class="flex items-start gap-3"><svg class="w-5 h-5 text-primary-600 shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg><span class="text-surface-600 leading-relaxed">SEO + AEO + CRO as one integrated system. One team, one strategy, one accountability.</span></li>
+            <li class="flex items-start gap-3"><svg class="w-5 h-5 text-primary-600 shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg><span class="text-surface-600 leading-relaxed">We report on pipeline and revenue. Not vanity metrics.</span></li>
+            <li class="flex items-start gap-3"><svg class="w-5 h-5 text-primary-600 shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg><span class="text-surface-600 leading-relaxed">We work as an extension of your advisory, not a replacement.</span></li>
+            <li class="flex items-start gap-3"><svg class="w-5 h-5 text-primary-600 shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg><span class="text-surface-600 leading-relaxed">200+ B2B SaaS sites shipped. 4+ years as a Webflow Enterprise Partner.</span></li>
+            <li class="flex items-start gap-3"><svg class="w-5 h-5 text-primary-600 shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg><span class="text-surface-600 leading-relaxed">Average launch in &lt;6 weeks. Most agencies quote 12–16.</span></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── SECTION 7: TestimonialGrid ─── -->
+  <section class="bg-surface-50 py-16 md:py-20 lg:py-24">
+    <div class="px-4 md:px-8 lg:px-12">
+      <div class="max-w-7xl mx-auto">
+        <div class="text-center max-w-3xl mx-auto">
+          <h2 class="text-2xl sm:text-3xl md:text-4xl font-medium text-surface-900">The clients you'd be referring to <span class="text-primary-600">us</span></h2>
+          <p class="mt-4 text-lg text-surface-600">A few words from the founders and operators we work with day-to-day.</p>
+        </div>
+        <div class="mt-8 lg:mt-12 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div class="rounded-2xl bg-white border border-surface-200 p-6 md:p-8">
+            <p class="text-sm text-surface-600 leading-relaxed">"LoudFace rebuilt our marketing site in 5 weeks. Conversion on the new homepage is 2.3× the old one and the team didn't need hand-holding to ship it."</p>
+            <div class="mt-6 flex items-center gap-3">
+              <div class="w-10 h-10 rounded-full bg-surface-300 flex items-center justify-center text-xs font-medium text-surface-600">DS</div>
+              <div><div class="text-sm font-medium text-surface-900">Daan Smit</div><div class="text-2xs text-surface-500">Head of Growth, [Client]</div></div>
+            </div>
+          </div>
+          <div class="rounded-2xl bg-white border border-surface-200 p-6 md:p-8">
+            <p class="text-sm text-surface-600 leading-relaxed">"They report on pipeline, not impressions. That's a rare bar to clear in this category — and the reason we kept the retainer past month 3."</p>
+            <div class="mt-6 flex items-center gap-3">
+              <div class="w-10 h-10 rounded-full bg-surface-300 flex items-center justify-center text-xs font-medium text-surface-600">CM</div>
+              <div><div class="text-sm font-medium text-surface-900">Christian Mailind</div><div class="text-2xs text-surface-500">CMO, [Client]</div></div>
+            </div>
+          </div>
+          <div class="rounded-2xl bg-white border border-surface-200 p-6 md:p-8">
+            <p class="text-sm text-surface-600 leading-relaxed">"We've worked with three agencies. LoudFace is the first that actually understood SEO + AEO are one motion, not two."</p>
+            <div class="mt-6 flex items-center gap-3">
+              <div class="w-10 h-10 rounded-full bg-surface-300 flex items-center justify-center text-xs font-medium text-surface-600">EL</div>
+              <div><div class="text-sm font-medium text-surface-900">Elizabete L.</div><div class="text-2xs text-surface-500">VP Marketing, [Client]</div></div>
+            </div>
+          </div>
+        </div>
+        <p class="mt-6 text-xs text-surface-400 italic text-center">Preview: real testimonial copy and avatars come from the CMS — same source as the homepage.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── SECTION 8: Criteria ─── -->
+  <section class="py-16 md:py-24 lg:py-32">
+    <div class="px-4 md:px-8 lg:px-12">
+      <div class="max-w-7xl mx-auto">
+        <div class="max-w-3xl">
+          <div class="flex items-center gap-3">
+            <span class="w-2 h-2 bg-surface-400 rounded-full"></span>
+            <span class="text-lg font-medium text-surface-900">Partner criteria</span>
+          </div>
+          <h2 class="mt-6 text-2xl sm:text-3xl md:text-4xl font-medium text-surface-900 leading-tight tracking-tight text-balance">We're selective about who we partner with, and we expect the same standard in return.</h2>
+        </div>
+        <div class="mt-12 grid grid-cols-1 md:grid-cols-2 gap-8">
+          <div class="rounded-2xl bg-white border border-surface-200 p-8">
+            <h3 class="text-lg font-medium text-surface-900 mb-6">You're the right fit if:</h3>
+            <ul class="space-y-4">
+              <li class="flex items-start gap-3"><svg class="w-5 h-5 text-success shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg><span class="text-sm text-surface-600 leading-relaxed">You're a fractional CMO, growth advisor, or marketing consultant</span></li>
+              <li class="flex items-start gap-3"><svg class="w-5 h-5 text-success shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg><span class="text-sm text-surface-600 leading-relaxed">Your clients are B2B SaaS, fintech, AI, or tech companies at $1M–$50M ARR</span></li>
+              <li class="flex items-start gap-3"><svg class="w-5 h-5 text-success shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg><span class="text-sm text-surface-600 leading-relaxed">You advise on strategy but don't run growth execution in-house</span></li>
+              <li class="flex items-start gap-3"><svg class="w-5 h-5 text-success shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg><span class="text-sm text-surface-600 leading-relaxed">You're confident enough in your recommendations to put your name behind them</span></li>
+              <li class="flex items-start gap-3"><svg class="w-5 h-5 text-success shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg><span class="text-sm text-surface-600 leading-relaxed">You make 1–3 client recommendations per quarter where LoudFace's service would be a real solve</span></li>
+            </ul>
+          </div>
+          <div class="rounded-2xl bg-white border border-surface-200 p-8">
+            <h3 class="text-lg font-medium text-surface-900 mb-6">This isn't the right fit if:</h3>
+            <ul class="space-y-4">
+              <li class="flex items-start gap-3"><svg class="w-5 h-5 text-error shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="m9.75 9.75 4.5 4.5m0-4.5-4.5 4.5M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/></svg><span class="text-sm text-surface-600 leading-relaxed">You run a competing full-service agency</span></li>
+              <li class="flex items-start gap-3"><svg class="w-5 h-5 text-error shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="m9.75 9.75 4.5 4.5m0-4.5-4.5 4.5M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/></svg><span class="text-sm text-surface-600 leading-relaxed">Your clients are primarily B2C or e-commerce</span></li>
+              <li class="flex items-start gap-3"><svg class="w-5 h-5 text-error shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="m9.75 9.75 4.5 4.5m0-4.5-4.5 4.5M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/></svg><span class="text-sm text-surface-600 leading-relaxed">You're looking for a white-label or reseller arrangement</span></li>
+              <li class="flex items-start gap-3"><svg class="w-5 h-5 text-error shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="m9.75 9.75 4.5 4.5m0-4.5-4.5 4.5M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/></svg><span class="text-sm text-surface-600 leading-relaxed">You expect us to do the selling and your only role is the introduction — the intro is half the work; the recommendation needs to be warm and contextual</span></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── SECTION 9: FAQ ─── -->
+  <section class="py-16 md:py-20 lg:py-24">
+    <div class="px-4 md:px-8 lg:px-12">
+      <div class="max-w-7xl mx-auto">
+        <div class="mb-8 lg:mb-12 text-center max-w-3xl mx-auto">
+          <h2 class="text-2xl sm:text-3xl md:text-4xl font-medium text-surface-900">Common questions about the partner <span class="text-primary-600">program</span></h2>
+        </div>
+        <div class="max-w-3xl mx-auto">
+          <div class="divide-y divide-surface-200 border-y border-surface-200">
+            <details class="group">
+              <summary class="flex items-center justify-between gap-4 py-5 cursor-pointer">
+                <span class="text-base md:text-lg font-medium text-surface-900 pr-4">Do I have to sign anything formal?</span>
+                <span class="faq-plus w-6 h-6 relative shrink-0"><span class="absolute top-1/2 left-0 w-6 h-0.5 bg-surface-400 -translate-y-1/2"></span><span class="absolute top-1/2 left-0 w-6 h-0.5 bg-surface-400 -translate-y-1/2 rotate-90"></span></span>
+              </summary>
+              <div class="pb-5 pr-10 text-surface-600 leading-relaxed"><p>Yes — a 1-page partner agreement covering commission terms, payout cadence, and confidentiality. Takes 2 minutes to read. We'll send it on approval.</p></div>
+            </details>
+            <details class="group">
+              <summary class="flex items-center justify-between gap-4 py-5 cursor-pointer">
+                <span class="text-base md:text-lg font-medium text-surface-900 pr-4">How do you track who referred who?</span>
+                <span class="faq-plus w-6 h-6 relative shrink-0"><span class="absolute top-1/2 left-0 w-6 h-0.5 bg-surface-400 -translate-y-1/2"></span><span class="absolute top-1/2 left-0 w-6 h-0.5 bg-surface-400 -translate-y-1/2 rotate-90"></span></span>
+              </summary>
+              <div class="pb-5 pr-10 text-surface-600 leading-relaxed"><p>Two ways. Either share your unique UTM-tagged link with your client (we attribute the lead automatically when they apply), or send a warm intro to arnel@loudface.co — we tag the lead to your account manually. Both methods are valid and pay out identically.</p></div>
+            </details>
+            <details class="group">
+              <summary class="flex items-center justify-between gap-4 py-5 cursor-pointer">
+                <span class="text-base md:text-lg font-medium text-surface-900 pr-4">When do I get paid?</span>
+                <span class="faq-plus w-6 h-6 relative shrink-0"><span class="absolute top-1/2 left-0 w-6 h-0.5 bg-surface-400 -translate-y-1/2"></span><span class="absolute top-1/2 left-0 w-6 h-0.5 bg-surface-400 -translate-y-1/2 rotate-90"></span></span>
+              </summary>
+              <div class="pb-5 pr-10 text-surface-600 leading-relaxed"><p>Monthly. First payout lands 30 days after your referral's first invoice is paid. After that, by the 5th of every month, as long as they're an active client. Paid via Wise, PayPal, or bank transfer (international friendly).</p></div>
+            </details>
+            <details class="group">
+              <summary class="flex items-center justify-between gap-4 py-5 cursor-pointer">
+                <span class="text-base md:text-lg font-medium text-surface-900 pr-4">What happens if my referral cancels in month 1?</span>
+                <span class="faq-plus w-6 h-6 relative shrink-0"><span class="absolute top-1/2 left-0 w-6 h-0.5 bg-surface-400 -translate-y-1/2"></span><span class="absolute top-1/2 left-0 w-6 h-0.5 bg-surface-400 -translate-y-1/2 rotate-90"></span></span>
+              </summary>
+              <div class="pb-5 pr-10 text-surface-600 leading-relaxed"><p>If the client churns within the first 60 days, the commission is clawed back from your next payout. After 60 days, no clawback — it's yours.</p></div>
+            </details>
+            <details class="group">
+              <summary class="flex items-center justify-between gap-4 py-5 cursor-pointer">
+                <span class="text-base md:text-lg font-medium text-surface-900 pr-4">Can I refer someone I'm currently advising?</span>
+                <span class="faq-plus w-6 h-6 relative shrink-0"><span class="absolute top-1/2 left-0 w-6 h-0.5 bg-surface-400 -translate-y-1/2"></span><span class="absolute top-1/2 left-0 w-6 h-0.5 bg-surface-400 -translate-y-1/2 rotate-90"></span></span>
+              </summary>
+              <div class="pb-5 pr-10 text-surface-600 leading-relaxed"><p>Yes. That's our ideal partner setup — you advise on strategy, we run execution. Just be transparent with your client that you're earning a referral fee. We'll never disclose it without your sign-off.</p></div>
+            </details>
+            <details class="group">
+              <summary class="flex items-center justify-between gap-4 py-5 cursor-pointer">
+                <span class="text-base md:text-lg font-medium text-surface-900 pr-4">What if my referral wants to negotiate scope or pricing?</span>
+                <span class="faq-plus w-6 h-6 relative shrink-0"><span class="absolute top-1/2 left-0 w-6 h-0.5 bg-surface-400 -translate-y-1/2"></span><span class="absolute top-1/2 left-0 w-6 h-0.5 bg-surface-400 -translate-y-1/2 rotate-90"></span></span>
+              </summary>
+              <div class="pb-5 pr-10 text-surface-600 leading-relaxed"><p>We handle all that. Your job ends at the intro. We'll keep you looped in on the deal status (lost / won / paused) within 5 business days of close or no-go.</p></div>
+            </details>
+            <details class="group">
+              <summary class="flex items-center justify-between gap-4 py-5 cursor-pointer">
+                <span class="text-base md:text-lg font-medium text-surface-900 pr-4">Is there a cap on how many referrals I can make?</span>
+                <span class="faq-plus w-6 h-6 relative shrink-0"><span class="absolute top-1/2 left-0 w-6 h-0.5 bg-surface-400 -translate-y-1/2"></span><span class="absolute top-1/2 left-0 w-6 h-0.5 bg-surface-400 -translate-y-1/2 rotate-90"></span></span>
+              </summary>
+              <div class="pb-5 pr-10 text-surface-600 leading-relaxed"><p>No. The more you refer, the more you earn. Top partners earn $30k+/year.</p></div>
+            </details>
+            <details class="group">
+              <summary class="flex items-center justify-between gap-4 py-5 cursor-pointer">
+                <span class="text-base md:text-lg font-medium text-surface-900 pr-4">Why 10% lifetime and not a one-time fee?</span>
+                <span class="faq-plus w-6 h-6 relative shrink-0"><span class="absolute top-1/2 left-0 w-6 h-0.5 bg-surface-400 -translate-y-1/2"></span><span class="absolute top-1/2 left-0 w-6 h-0.5 bg-surface-400 -translate-y-1/2 rotate-90"></span></span>
+              </summary>
+              <div class="pb-5 pr-10 text-surface-600 leading-relaxed"><p>Because a one-time fee turns referrals into a transaction. Lifetime payouts mean we both win when the client wins, and we both lose when they churn. It keeps our incentives aligned with yours and your client's.</p></div>
+            </details>
+            <details class="group">
+              <summary class="flex items-center justify-between gap-4 py-5 cursor-pointer">
+                <span class="text-base md:text-lg font-medium text-surface-900 pr-4">Can I refer non-SaaS clients?</span>
+                <span class="faq-plus w-6 h-6 relative shrink-0"><span class="absolute top-1/2 left-0 w-6 h-0.5 bg-surface-400 -translate-y-1/2"></span><span class="absolute top-1/2 left-0 w-6 h-0.5 bg-surface-400 -translate-y-1/2 rotate-90"></span></span>
+              </summary>
+              <div class="pb-5 pr-10 text-surface-600 leading-relaxed"><p>We can only pay commission on B2B SaaS, fintech, AI, or tech clients at $10K+/month retainer. If you have a great client outside that ICP, tell us anyway — we may know someone better suited and we'll make the intro for goodwill.</p></div>
+            </details>
+            <details class="group">
+              <summary class="flex items-center justify-between gap-4 py-5 cursor-pointer">
+                <span class="text-base md:text-lg font-medium text-surface-900 pr-4">What does the partner agreement actually cover?</span>
+                <span class="faq-plus w-6 h-6 relative shrink-0"><span class="absolute top-1/2 left-0 w-6 h-0.5 bg-surface-400 -translate-y-1/2"></span><span class="absolute top-1/2 left-0 w-6 h-0.5 bg-surface-400 -translate-y-1/2 rotate-90"></span></span>
+              </summary>
+              <div class="pb-5 pr-10 text-surface-600 leading-relaxed"><p>Commission rate (10%), payout schedule (monthly), tracking method, clawback terms (60 days), confidentiality on client info, and a 12-month notice clause if either side wants to wind down.</p></div>
+            </details>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── SECTION 10: Application form ─── -->
+  <section id="apply" class="py-16 md:py-24 lg:py-32 bg-surface-50">
+    <div class="px-4 md:px-8 lg:px-12">
+      <div class="max-w-7xl mx-auto">
+        <div class="max-w-2xl mx-auto">
+          <div class="text-center">
+            <div class="flex items-center justify-center gap-3">
+              <span class="w-2 h-2 bg-surface-400 rounded-full"></span>
+              <span class="text-lg font-medium text-surface-900">Apply now</span>
+            </div>
+            <h2 class="mt-6 text-2xl sm:text-3xl md:text-4xl font-medium text-surface-900 leading-tight tracking-tight text-balance">One conversation. One referral. 10% for as long as they stay.</h2>
+            <p class="mt-6 text-lg text-surface-600 leading-relaxed">Apply below. We respond within 48 hours, and the form takes about 2 minutes. If we're not a fit, we'll tell you why.</p>
+          </div>
+
+          <div class="mt-10 rounded-2xl bg-white border border-surface-200 p-6 md:p-8">
+            <form class="space-y-5" onsubmit="event.preventDefault(); alert('Preview only — real form POSTs to /api/partner-apply, which writes to Notion + DMs you on Slack.');">
+              <div>
+                <label class="block text-sm font-medium text-surface-900 mb-1.5">Full Name <span class="text-error">*</span></label>
+                <input type="text" required class="w-full rounded-lg border border-surface-200 bg-white px-4 py-3 text-sm" />
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-surface-900 mb-1.5">Email Address <span class="text-error">*</span></label>
+                <input type="email" required placeholder="you@yourpractice.com" class="w-full rounded-lg border border-surface-200 bg-white px-4 py-3 text-sm" />
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-surface-900 mb-1.5">LinkedIn Profile URL <span class="text-error">*</span></label>
+                <input type="url" required placeholder="https://www.linkedin.com/in/yourname" class="w-full rounded-lg border border-surface-200 bg-white px-4 py-3 text-sm" />
+                <p class="mt-1 text-xs text-surface-500">Your personal LinkedIn profile (e.g. linkedin.com/in/yourname).</p>
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-surface-900 mb-1.5">Website or Portfolio <span class="text-surface-400">(optional)</span></label>
+                <input type="url" placeholder="https://" class="w-full rounded-lg border border-surface-200 bg-white px-4 py-3 text-sm" />
+                <p class="mt-1 text-xs text-surface-500">Any website, portfolio, newsletter, or content page you'd like us to review.</p>
+              </div>
+              <fieldset>
+                <legend class="block text-sm font-medium text-surface-900 mb-1.5">Industry <span class="text-error">*</span></legend>
+                <p class="mt-1 text-xs text-surface-500">Select all that apply.</p>
+                <div class="mt-2 space-y-2 text-sm text-surface-700">
+                  <label class="flex items-center gap-3 cursor-pointer"><input type="checkbox" name="industry" class="w-4 h-4 rounded" /> B2B SaaS</label>
+                  <label class="flex items-center gap-3 cursor-pointer"><input type="checkbox" name="industry" class="w-4 h-4 rounded" /> B2B Product</label>
+                  <label class="flex items-center gap-3 cursor-pointer"><input type="checkbox" name="industry" class="w-4 h-4 rounded" /> D2C</label>
+                </div>
+              </fieldset>
+              <fieldset>
+                <legend class="block text-sm font-medium text-surface-900 mb-1.5">What's the average ACV of the clients you work with? <span class="text-error">*</span></legend>
+                <div class="mt-2 space-y-2 text-sm text-surface-700">
+                  <label class="flex items-center gap-3 cursor-pointer"><input type="radio" name="acv" class="w-4 h-4" /> $100 - $1K</label>
+                  <label class="flex items-center gap-3 cursor-pointer"><input type="radio" name="acv" class="w-4 h-4" /> $1K - $5K</label>
+                  <label class="flex items-center gap-3 cursor-pointer"><input type="radio" name="acv" class="w-4 h-4" /> $5K - $10K</label>
+                  <label class="flex items-center gap-3 cursor-pointer"><input type="radio" name="acv" class="w-4 h-4" /> $10K - $50K</label>
+                  <label class="flex items-center gap-3 cursor-pointer"><input type="radio" name="acv" class="w-4 h-4" /> $50K+</label>
+                </div>
+              </fieldset>
+              <fieldset>
+                <legend class="block text-sm font-medium text-surface-900 mb-1.5">Are you open to promoting LoudFace on your social channels? <span class="text-surface-400">(optional)</span></legend>
+                <p class="mt-1 text-xs text-surface-500">This includes sharing posts, creating content, or recommending LoudFace to your audience.</p>
+                <div class="mt-2 flex flex-wrap gap-4 text-sm text-surface-700">
+                  <label class="flex items-center gap-2 cursor-pointer"><input type="radio" name="social" class="w-4 h-4" /> Yes</label>
+                  <label class="flex items-center gap-2 cursor-pointer"><input type="radio" name="social" class="w-4 h-4" /> No</label>
+                  <label class="flex items-center gap-2 cursor-pointer"><input type="radio" name="social" class="w-4 h-4" /> Maybe</label>
+                </div>
+              </fieldset>
+              <fieldset>
+                <legend class="block text-sm font-medium text-surface-900 mb-1.5">Are you open to speaking at our webinar series? <span class="text-surface-400">(optional)</span></legend>
+                <p class="mt-1 text-xs text-surface-500">We run invite-only roundtables and webinars for B2B growth leaders. We'd love to feature the right partners as guest speakers.</p>
+                <div class="mt-2 flex flex-wrap gap-4 text-sm text-surface-700">
+                  <label class="flex items-center gap-2 cursor-pointer"><input type="radio" name="webinar" class="w-4 h-4" /> Yes</label>
+                  <label class="flex items-center gap-2 cursor-pointer"><input type="radio" name="webinar" class="w-4 h-4" /> No</label>
+                  <label class="flex items-center gap-2 cursor-pointer"><input type="radio" name="webinar" class="w-4 h-4" /> Maybe</label>
+                </div>
+              </fieldset>
+              <button type="submit" class="w-full rounded-full bg-primary-600 px-6 py-3.5 text-base font-medium text-white hover:bg-primary-500 inline-flex items-center justify-center gap-2">
+                Apply
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
+              </button>
+              <p class="text-xs text-surface-500 text-center">By submitting, you agree to our <a href="/privacy" class="underline">Privacy Policy</a>. We review every application personally and reply within 5–7 business days.</p>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── SECTION 11: Final CTA (shared <CTA> dark variant) ─── -->
+  <section class="bg-surface-900">
+    <div class="py-24 md:py-32 lg:py-40">
+      <div class="px-4 md:px-8 lg:px-12">
+        <div class="max-w-2xl mx-auto text-center">
+          <h2 class="text-2xl sm:text-3xl md:text-4xl font-medium leading-tight tracking-tight text-white">Have a B2B SaaS client we should meet?</h2>
+          <p class="mt-6 text-lg md:text-xl text-surface-300">If you're advising B2B SaaS companies on growth, this conversation is worth having.</p>
+          <div class="mt-10">
+            <a href="#apply" class="inline-flex items-center justify-center px-8 py-4 rounded-full bg-primary-600 text-white font-medium text-base hover:bg-primary-500">
+              Apply to the Partner Program
+              <svg class="ml-2 w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
+            </a>
+          </div>
+          <p class="mt-6 text-sm text-surface-400">Or <a href="/case-studies" class="font-medium underline">explore our work</a></p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── Mobile sticky CTA (visible <768px) ─── -->
+  <a href="#apply" aria-label="Apply to the Partner Program" class="md:hidden fixed bottom-4 right-4 z-50 inline-flex items-center gap-2 rounded-full bg-primary-600 text-white px-5 py-3 text-sm font-medium shadow-lg hover:bg-primary-500">
+    Apply
+    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
+  </a>
+
+  </div><!-- /spacer -->
+</body>
+</html>

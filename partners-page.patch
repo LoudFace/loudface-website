@@ -1,0 +1,1398 @@
+--- a/src/app/(site)/partners/page.tsx	2026-05-20 18:58:04
++++ b/src/app/(site)/partners/page.tsx	2026-05-20 19:04:32
+@@ -1,23 +1,34 @@
+ /**
+- * fCMO Partnership Landing Page
++ * fCMO Partnership Landing Page (rewrite — May 2026)
+  *
+  * Data Sources:
+  * - CMS: clients (logo strip), testimonials (social proof)
+  * - Inline copy (partner-specific content)
++ *
++ * Architecture notes (read the brief in /docs/partners-page-rewrite-may-2026.md):
++ * - Logo strip + 5-star reviews + testimonial headshots are delivered via the
++ *   shared <Partners> component (same instance used on the homepage). It pulls
++ *   tagline + star labels from src/data/content/partners.json so we do not
++ *   duplicate the data on this page.
++ * - Detail testimonial cards use the shared <TestimonialGrid>.
++ * - Application form is a native client component posting to /api/partner-apply
++ *   (replaces the Notion form link).
++ * - Mobile sticky CTA is its own client component, scrolls to #apply.
+  */
+ import type { Metadata } from 'next';
+ import { fetchCollection } from '@/lib/cms-data';
+ import type { Client, Testimonial } from '@/lib/types';
+-import { logoImage, avatarImage } from '@/lib/image-utils';
+-import { asset } from '@/lib/assets';
+ import {
+   SectionContainer,
+   SectionHeader,
+-  Button,
+   BulletLabel,
+-  Card,
+-  LogoImage,
+-} from '@/components/ui';
++  Partners,
++  TestimonialGrid,
++  FAQ,
++  CTA,
++} from '@/components';
++import { PartnerApplicationForm } from './_components/PartnerApplicationForm';
++import { MobileStickyCTA } from './_components/MobileStickyCTA';
+ 
+ export const metadata: Metadata = {
+   title: 'fCMO Partner Program — 10% Lifetime Commission',
+@@ -29,17 +40,17 @@
+   openGraph: {
+     title: 'fCMO Partner Program — 10% Lifetime Commission | LoudFace',
+     description:
+-      'Partner program for fractional CMOs and growth advisors. Refer B2B SaaS clients, earn 10% of their retainer every month they stay. No caps, no expiry.',
++      'Refer one B2B SaaS client. Earn 10% of their retainer for as long as they stay. No caps. No expiry.',
+     type: 'website',
+     url: '/partners',
+     siteName: 'LoudFace',
+     locale: 'en_US',
+     images: [
+       {
+-        url: '/opengraph-image',
++        url: '/partners/opengraph-image',
+         width: 1200,
+         height: 630,
+-        alt: 'LoudFace fCMO Partner Program',
++        alt: '10% lifetime commission — LoudFace Partner Program',
+       },
+     ],
+   },
+@@ -48,8 +59,8 @@
+     site: '@loudface',
+     title: 'fCMO Partner Program — 10% Lifetime Commission | LoudFace',
+     description:
+-      'Partner program for fractional CMOs and growth advisors. Refer B2B SaaS clients, earn 10% of their retainer every month they stay. No caps, no expiry.',
+-    images: ['/opengraph-image'],
++      'Refer one B2B SaaS client. Earn 10% of their retainer for as long as they stay. No caps. No expiry.',
++    images: ['/partners/opengraph-image'],
+   },
+ };
+ 
+@@ -57,49 +68,115 @@
+ const STEPS = [
+   {
+     number: '01',
+-    title: 'Apply',
+-    body: 'Fill out a short application. We review every submission manually and respond within 48 hours.',
++    title: 'Apply (5 minutes)',
++    body: 'Quick form. We review every application manually and reply within 48 hours with either approval, or a no with a reason.',
+     detail:
+       'We keep the partner network selective. This works best when both sides are the right fit.',
+   },
+   {
+     number: '02',
+-    title: 'Get your unique partner link',
+-    body: 'Once approved, you receive a unique tracking link. Every referral that comes through it is tagged to your account automatically.',
+-    detail: 'No manual follow-up, no attribution disputes.',
++    title: 'Get your partner kit',
++    body: 'Approved partners receive:',
++    bullets: [
++      'A unique UTM-tagged link (or a warm-intro template if you prefer that route)',
++      'A partner agreement that takes 2 minutes to read',
++      'Direct Slack/email access to Arnel (CEO) for deal questions',
++    ],
+   },
+   {
+     number: '03',
+-    title: 'Make the introduction',
+-    body: 'Share your link or introduce us directly. We handle the full sales conversation, scoping, and onboarding. You stay in your advisory role.',
++    title: 'Refer a B2B SaaS client',
++    body: 'Send them your link, or introduce us over email. We handle discovery, scoping, proposal, and onboarding. You stay in your advisory seat.',
+     detail: null,
+   },
+   {
+     number: '04',
+-    title: 'Earn 10% for the lifetime of the engagement',
+-    body: 'Every month your referral is an active LoudFace client, you earn 10% of their retainer value. No expiry. No caps. Paid monthly.',
+-    detail: null,
++    title: 'Get paid every month they stay',
++    body: '10% of their retainer, paid by the 5th of every month, for as long as they’re a client. Not 6 months. Not 12 months. Lifetime.',
++    detail: 'First payment lands 30 days after their first invoice is paid.',
+   },
+ ];
+ 
+ const RIGHT_FIT = [
+   "You're a fractional CMO, growth advisor, or marketing consultant",
+-  'Your clients are B2B SaaS, fintech, AI, or tech companies at $1M\u2013$50M ARR',
++  'Your clients are B2B SaaS, fintech, AI, or tech companies at $1M–$50M ARR',
+   "You advise on strategy but don't run growth execution in-house",
+   "You're confident enough in your recommendations to put your name behind them",
++  'You make 1–3 client recommendations per quarter where LoudFace’s service would be a real solve',
+ ];
+ 
+ const NOT_FIT = [
+   'You run a competing full-service agency',
+   'Your clients are primarily B2C or e-commerce',
+   "You're looking for a white-label or reseller arrangement",
++  'You expect us to do the selling and your only role is the introduction — the intro is half the work; the recommendation needs to be warm and contextual',
+ ];
+ 
+ const WHY_ITEMS = [
+-  'We only work with B2B SaaS, fintech, AI, and tech companies. No generalist client mix.',
+-  'We run SEO, AEO, and CRO as one integrated system. One team, one strategy, one accountability.',
+-  'We report on pipeline and revenue contribution. Not vanity metrics.',
+-  'We work as an extension of your advisory, not a replacement for it.',
++  'B2B SaaS only. No generalist client mix.',
++  'SEO + AEO + CRO as one integrated system. One team, one strategy, one accountability.',
++  'We report on pipeline and revenue. Not vanity metrics.',
++  'We work as an extension of your advisory, not a replacement.',
++  '200+ B2B SaaS sites shipped. 4+ years as a Webflow Enterprise Partner.',
++  'Average launch in <6 weeks. Most agencies quote 12–16.',
++];
++
++const EARNINGS_ROWS = [
++  { retainer: '$10,000 / month', monthly: '$1,000', y1: '$12,000', y2: '$24,000' },
++  { retainer: '$15,000 / month', monthly: '$1,500', y1: '$18,000', y2: '$36,000' },
++  { retainer: '$25,000 / month', monthly: '$2,500', y1: '$30,000', y2: '$60,000' },
++];
++
++const FAQ_ITEMS = [
++  {
++    question: 'Do I have to sign anything formal?',
++    answer:
++      'Yes — a 1-page partner agreement covering commission terms, payout cadence, and confidentiality. Takes 2 minutes to read. We’ll send it on approval.',
++  },
++  {
++    question: 'How do you track who referred who?',
++    answer:
++      'Two ways. Either share your unique UTM-tagged link with your client (we attribute the lead automatically when they apply), or send a warm intro to arnel@loudface.co — we tag the lead to your account manually. Both methods are valid and pay out identically.',
++  },
++  {
++    question: 'When do I get paid?',
++    answer:
++      'Monthly. First payout lands 30 days after your referral’s first invoice is paid. After that, by the 5th of every month, as long as they’re an active client. Paid via Wise, PayPal, or bank transfer (international friendly).',
++  },
++  {
++    question: 'What happens if my referral cancels in month 1?',
++    answer:
++      'If the client churns within the first 60 days, the commission is clawed back from your next payout. After 60 days, no clawback — it’s yours.',
++  },
++  {
++    question: 'Can I refer someone I’m currently advising?',
++    answer:
++      'Yes. That’s our ideal partner setup — you advise on strategy, we run execution. Just be transparent with your client that you’re earning a referral fee. We’ll never disclose it without your sign-off.',
++  },
++  {
++    question: 'What if my referral wants to negotiate scope or pricing?',
++    answer:
++      'We handle all that. Your job ends at the intro. We’ll keep you looped in on the deal status (lost / won / paused) within 5 business days of close or no-go.',
++  },
++  {
++    question: 'Is there a cap on how many referrals I can make?',
++    answer: 'No. The more you refer, the more you earn. Top partners earn $30k+/year.',
++  },
++  {
++    question: 'Why 10% lifetime and not a one-time fee?',
++    answer:
++      'Because a one-time fee turns referrals into a transaction. Lifetime payouts mean we both win when the client wins, and we both lose when they churn. It keeps our incentives aligned with yours and your client’s.',
++  },
++  {
++    question: 'Can I refer non-SaaS clients?',
++    answer:
++      'We can only pay commission on B2B SaaS, fintech, AI, or tech clients at $10K+/month retainer. If you have a great client outside that ICP, tell us anyway — we may know someone better suited and we’ll make the intro for goodwill.',
++  },
++  {
++    question: 'What does the partner agreement actually cover?',
++    answer:
++      'Commission rate (10%), payout schedule (monthly), tracking method, clawback terms (60 days), confidentiality on client info, and a 12-month notice clause if either side wants to wind down.',
++  },
+ ];
+ 
+ /* ─── Icons ─── */
+@@ -133,12 +210,6 @@
+     fetchCollection<Testimonial>('testimonials'),
+   ]);
+ 
+-  const showcaseClients = clients.filter((c) => c['showcase-logo']);
+-  // Pick a testimonial that has a profile image and body
+-  const featuredTestimonial = testimonials.find(
+-    (t) => t['profile-image']?.url && t['testimonial-body']
+-  );
+-
+   const breadcrumbSchema = {
+     '@context': 'https://schema.org',
+     '@type': 'BreadcrumbList',
+@@ -163,54 +234,110 @@
+             LoudFace Partner Program
+           </span>
+ 
+-          <h1 className="font-heading font-medium text-white leading-[1.1] tracking-tight">
+-            <span className="text-2xl sm:text-3xl md:text-4xl block">
+-              Your clients need growth execution.
+-            </span>
+-            <span className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl block mt-3 text-balance">
+-              We deliver it. You earn from it.
+-            </span>
++          <h1 className="font-heading font-medium text-white leading-[1.1] tracking-tight text-3xl sm:text-4xl md:text-5xl lg:text-6xl text-balance">
++            Refer one B2B SaaS client. Earn 10% of their retainer for as long as
++            they stay with us.
+           </h1>
+ 
+           <p className="mt-8 text-lg md:text-xl text-surface-300 max-w-2xl leading-relaxed">
+-            A partner program for fractional CMOs, growth advisors, and marketing
+-            consultants who work with B2B SaaS and tech companies.
++            No caps. No expiry. The LoudFace Partner Program is built for
++            fractional CMOs, growth advisors, and consultants who advise B2B SaaS
++            teams but don&apos;t want to run execution.
+           </p>
+ 
+           <div className="mt-10">
+-            <Button variant="primary" size="lg" href="https://loudface.notion.site/337b63394d10805f9bc5c22cf56c7c0f?pvs=105" className="rounded-full">
+-              Become a Partner
++            <a
++              href="#apply"
++              className="inline-flex items-center justify-center px-8 py-4 rounded-full bg-primary-600 text-white font-medium text-base transition-colors hover:bg-primary-500 focus-visible:outline-2 focus-visible:outline-primary-500 focus-visible:outline-offset-2"
++            >
++              Apply in 2 minutes
+               <ArrowIcon className="ml-2 w-5 h-5" />
+-            </Button>
++            </a>
+           </div>
+         </div>
++      </SectionContainer>
+ 
+-        {/* Client logos */}
+-        {showcaseClients.length > 0 && (
+-          <div className="mt-16 pt-12 border-t border-surface-700">
+-            <p className="text-sm text-surface-500 mb-8 uppercase tracking-wide font-medium">
+-              Companies our partners have referred
+-            </p>
+-            <div className="flex flex-wrap items-center gap-4 sm:gap-6 md:gap-x-12 md:gap-y-8">
+-              {showcaseClients.map((client) => (
+-                <LogoImage
+-                  key={client.id}
+-                  src={
+-                    logoImage(client['colored-logo']?.url) ||
+-                    asset('/images/placeholder-logo.svg')
+-                  }
+-                  alt={client.name}
+-                  containerClassName="logo-item"
+-                  imgClassName="brightness-0 invert opacity-40 transition-opacity duration-200 hover:opacity-70"
+-                />
++      {/* ─── SECTION 2: Shared social-proof block (5-star + headshots + tagline + logos) ─── */}
++      <Partners
++        testimonials={testimonials}
++        clients={clients}
++      />
++
++      {/* ─── SECTION 3: Earnings example ─── */}
++      <SectionContainer padding="lg">
++        <div className="max-w-3xl">
++          <BulletLabel>What you&apos;d actually earn</BulletLabel>
++          <h2 className="mt-6 text-2xl sm:text-3xl md:text-4xl font-medium text-surface-900 leading-tight tracking-tight">
++            Math beats adjectives.
++          </h2>
++          <p className="mt-6 text-lg text-surface-600 leading-relaxed">
++            10% of the client&apos;s monthly retainer, paid every month they
++            stay active. Here&apos;s how that compounds.
++          </p>
++        </div>
++
++        {/* Desktop table */}
++        <div className="mt-10 hidden md:block overflow-hidden rounded-2xl border border-surface-200">
++          <table className="w-full text-left">
++            <thead className="bg-surface-50">
++              <tr>
++                <th className="px-6 py-4 text-sm font-medium text-surface-700">Client retainer</th>
++                <th className="px-6 py-4 text-sm font-medium text-surface-700">Your monthly payout</th>
++                <th className="px-6 py-4 text-sm font-medium text-surface-700">After 12 months</th>
++                <th className="px-6 py-4 text-sm font-medium text-surface-700">After 24 months</th>
++              </tr>
++            </thead>
++            <tbody className="divide-y divide-surface-200 bg-white">
++              {EARNINGS_ROWS.map((row) => (
++                <tr key={row.retainer}>
++                  <td className="px-6 py-5 text-surface-900 font-medium">{row.retainer}</td>
++                  <td className="px-6 py-5 text-primary-600 font-mono font-medium">{row.monthly}</td>
++                  <td className="px-6 py-5 text-surface-700 font-mono">{row.y1}</td>
++                  <td className="px-6 py-5 text-surface-900 font-mono font-medium">{row.y2}</td>
++                </tr>
+               ))}
++            </tbody>
++          </table>
++        </div>
++
++        {/* Mobile: stacked cards */}
++        <div className="mt-10 md:hidden space-y-4">
++          {EARNINGS_ROWS.map((row) => (
++            <div
++              key={row.retainer}
++              className="rounded-2xl border border-surface-200 bg-white p-6"
++            >
++              <div className="text-xs font-mono uppercase tracking-wider text-surface-500">
++                Client retainer
++              </div>
++              <div className="mt-1 text-lg font-medium text-surface-900">{row.retainer}</div>
++              <div className="mt-4 grid grid-cols-3 gap-3 text-sm">
++                <div>
++                  <div className="text-2xs uppercase tracking-wider text-surface-500">Monthly</div>
++                  <div className="mt-1 font-mono font-medium text-primary-600">{row.monthly}</div>
++                </div>
++                <div>
++                  <div className="text-2xs uppercase tracking-wider text-surface-500">12 mo</div>
++                  <div className="mt-1 font-mono text-surface-700">{row.y1}</div>
++                </div>
++                <div>
++                  <div className="text-2xs uppercase tracking-wider text-surface-500">24 mo</div>
++                  <div className="mt-1 font-mono font-medium text-surface-900">{row.y2}</div>
++                </div>
++              </div>
+             </div>
+-          </div>
+-        )}
++          ))}
++        </div>
++
++        <p className="mt-6 text-sm text-surface-500 italic">
++          Hypothetical based on our average retainer length. We&apos;ll replace
++          this with real partner numbers once the first 2–3 cohort
++          commissions clear.
++        </p>
+       </SectionContainer>
+ 
+-      {/* ─── SECTION 2: Steps ─── */}
+-      <SectionContainer padding="lg">
++      {/* ─── SECTION 4: How it works (4 steps) ─── */}
++      <SectionContainer padding="lg" className="bg-surface-50">
+         <SectionHeader
+           title="Simple structure. Serious upside."
+           highlightWord="upside."
+@@ -231,6 +358,16 @@
+               <p className="text-sm text-surface-600 leading-relaxed">
+                 {step.body}
+               </p>
++              {step.bullets && (
++                <ul className="mt-4 space-y-2">
++                  {step.bullets.map((b) => (
++                    <li key={b} className="flex items-start gap-2 text-sm text-surface-600">
++                      <span className="mt-1 w-1 h-1 rounded-full bg-primary-600 shrink-0" />
++                      <span>{b}</span>
++                    </li>
++                  ))}
++                </ul>
++              )}
+               {step.detail && (
+                 <p className="mt-3 text-sm text-surface-500 leading-relaxed">
+                   {step.detail}
+@@ -241,107 +378,90 @@
+         </div>
+       </SectionContainer>
+ 
+-      {/* ─── SECTION 3: What You Earn (Dark, bold) ─── */}
++      {/* ─── SECTION 5: What you earn / Who qualifies (Dark) ─── */}
+       <SectionContainer padding="lg" className="bg-surface-900 text-surface-300">
+-        <div className="max-w-3xl">
+-          <BulletLabel variant="dark">What you earn</BulletLabel>
++        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12">
++          <div>
++            <BulletLabel variant="dark">What you earn</BulletLabel>
++            <h2 className="mt-6 text-2xl sm:text-3xl md:text-4xl font-medium text-white leading-tight tracking-tight">
++              10% of retainer, every month they stay.
++            </h2>
++            <p className="mt-6 text-surface-300 leading-relaxed">
++              Paid by the 5th. No caps. No expiry. Most referral programs offer
++              a one-time finder&apos;s fee. Ours pays every month the
++              engagement is active.
++            </p>
++          </div>
+ 
+-          <h2 className="mt-6 text-2xl sm:text-3xl md:text-4xl font-medium text-white leading-tight tracking-tight">
+-            10% lifetime commission.{' '}
+-            <span className="text-primary-400">
+-              On a minimum retainer of $10K/month.
+-            </span>
+-          </h2>
+-
+-          <p className="mt-6 text-lg text-surface-300 leading-relaxed max-w-2xl">
+-            Most referral programs offer a one-time finder&apos;s fee. Ours pays
+-            you every month the engagement is active.
+-          </p>
+-
+-          <p className="mt-4 text-surface-400">
+-            No delivery responsibility. No client management. No expiry.
+-          </p>
+-
+-          <div className="mt-10">
+-            <Button variant="primary" size="lg" href="https://loudface.notion.site/337b63394d10805f9bc5c22cf56c7c0f?pvs=105" className="rounded-full">
+-              Become a Partner
+-              <ArrowIcon className="ml-2 w-5 h-5" />
+-            </Button>
++          <div>
++            <BulletLabel variant="dark">Who qualifies</BulletLabel>
++            <h2 className="mt-6 text-2xl sm:text-3xl md:text-4xl font-medium text-white leading-tight tracking-tight">
++              <span className="text-primary-400">$10K/month</span> minimum
++              retainer.
++            </h2>
++            <p className="mt-6 text-surface-300 leading-relaxed">
++              Referrals must be B2B SaaS, fintech, AI, or tech companies at
++              $1M–$50M ARR with a retainer of at least $10K/month. Anything
++              below isn&apos;t a fit — for them or for us.
++            </p>
+           </div>
+         </div>
++
++        <div className="mt-10">
++          <a
++            href="#apply"
++            className="inline-flex items-center justify-center px-8 py-4 rounded-full bg-primary-600 text-white font-medium text-base transition-colors hover:bg-primary-500 focus-visible:outline-2 focus-visible:outline-primary-500 focus-visible:outline-offset-2"
++          >
++            Apply in 2 minutes
++            <ArrowIcon className="ml-2 w-5 h-5" />
++          </a>
++        </div>
+       </SectionContainer>
+ 
+-      {/* ─── SECTION 4: Why Partner ─── */}
++      {/* ─── SECTION 6: Why partner ─── */}
+       <SectionContainer padding="lg">
+         <div className="max-w-3xl">
+           <BulletLabel>Why partner with LoudFace</BulletLabel>
+ 
+-          <h2 className="mt-6 text-2xl sm:text-3xl md:text-4xl font-medium text-surface-900 leading-tight tracking-tight">
+-            Your reputation is on the line every time you make a recommendation.
++          <h2 className="mt-6 text-2xl sm:text-3xl md:text-4xl font-medium text-surface-900 leading-tight tracking-tight text-balance">
++            Your reputation goes out with every recommendation. We work like we
++            know that.
+           </h2>
+ 
+-          <p className="mt-6 text-lg text-surface-600 leading-relaxed">
+-            We understand that. Which is why we work the same way you do &mdash;
+-            accountable to pipeline outcomes.
+-          </p>
+-
+           <ul className="mt-8 space-y-4">
+             {WHY_ITEMS.map((item) => (
+               <li key={item} className="flex items-start gap-3">
+                 <span className="text-primary-600 mt-0.5 shrink-0">
+-                  <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+-                    <path strokeLinecap="round" strokeLinejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6" />
+-                  </svg>
++                  <CheckCircle className="w-5 h-5" />
+                 </span>
+                 <span className="text-surface-600 leading-relaxed">{item}</span>
+               </li>
+             ))}
+           </ul>
+         </div>
+-
+-        {/* Testimonial */}
+-        {featuredTestimonial && (
+-          <div className="mt-16 max-w-2xl rounded-2xl bg-surface-50 border border-surface-200 p-8 md:p-10">
+-            <div
+-              className="text-surface-700 leading-relaxed [&>p]:m-0"
+-              dangerouslySetInnerHTML={{
+-                __html: featuredTestimonial['testimonial-body'] || '',
+-              }}
+-            />
+-            <div className="mt-6 flex items-center gap-4">
+-              <img
+-                src={avatarImage(featuredTestimonial['profile-image']!.url)}
+-                alt={featuredTestimonial.name}
+-                width="48"
+-                height="48"
+-                className="w-12 h-12 rounded-full object-cover"
+-              />
+-              <div>
+-                <div className="font-medium text-surface-900">
+-                  {featuredTestimonial.name}
+-                </div>
+-                <div className="text-sm text-surface-500">
+-                  {featuredTestimonial.role}
+-                </div>
+-              </div>
+-            </div>
+-          </div>
+-        )}
+       </SectionContainer>
+ 
+-      {/* ─── SECTION 5: Criteria ─── */}
+-      <SectionContainer padding="lg" className="bg-surface-50">
++      {/* ─── SECTION 7: Testimonials carousel ─── */}
++      <TestimonialGrid
++        testimonials={testimonials}
++        title="The clients you'd be referring to us"
++        highlightWord="us"
++        subtitle="A few words from the founders and operators we work with day-to-day."
++        variant="gray"
++      />
++
++      {/* ─── SECTION 8: Criteria ─── */}
++      <SectionContainer padding="lg">
+         <div className="max-w-3xl">
+           <BulletLabel>Partner criteria</BulletLabel>
+ 
+           <h2 className="mt-6 text-2xl sm:text-3xl md:text-4xl font-medium text-surface-900 leading-tight tracking-tight text-balance">
+-            We&apos;re selective about who we partner with, and we expect the same
+-            standard in return.
++            We&apos;re selective about who we partner with, and we expect the
++            same standard in return.
+           </h2>
+         </div>
+ 
+         <div className="mt-12 grid grid-cols-1 md:grid-cols-2 gap-8">
+-          {/* Right fit */}
+           <div className="rounded-2xl bg-white border border-surface-200 p-8">
+             <h3 className="text-lg font-medium text-surface-900 mb-6">
+               You&apos;re the right fit if:
+@@ -358,7 +478,6 @@
+             </ul>
+           </div>
+ 
+-          {/* Not a fit */}
+           <div className="rounded-2xl bg-white border border-surface-200 p-8">
+             <h3 className="text-lg font-medium text-surface-900 mb-6">
+               This isn&apos;t the right fit if:
+@@ -377,36 +496,43 @@
+         </div>
+       </SectionContainer>
+ 
+-      {/* ─── SECTION 6: Final CTA ─── */}
+-      <SectionContainer padding="lg" className="bg-surface-900">
+-        <div className="max-w-2xl mx-auto text-center">
+-          <h2 className="text-2xl sm:text-3xl md:text-4xl font-medium text-white leading-tight tracking-tight text-balance">
+-            If you&apos;re advising B2B SaaS companies on growth, this
+-            conversation is worth having.
+-          </h2>
++      {/* ─── SECTION 9: FAQ ─── */}
++      <FAQ
++        title="Common questions about the partner program"
++        items={FAQ_ITEMS}
++        showFooter={false}
++      />
+ 
+-          <p className="mt-6 text-lg text-surface-300 leading-relaxed">
+-            One introduction to the right client. 10% of their retainer. Every
+-            month they stay.
+-          </p>
++      {/* ─── SECTION 10: Application form ─── */}
++      <SectionContainer id="apply" padding="lg" className="bg-surface-50">
++        <div className="max-w-2xl mx-auto">
++          <div className="text-center">
++            <BulletLabel className="justify-center">Apply now</BulletLabel>
++            <h2 className="mt-6 text-2xl sm:text-3xl md:text-4xl font-medium text-surface-900 leading-tight tracking-tight text-balance">
++              One conversation. One referral. 10% for as long as they stay.
++            </h2>
++            <p className="mt-6 text-lg text-surface-600 leading-relaxed">
++              Apply below. We respond within 48 hours, and the form takes about
++              2 minutes. If we&apos;re not a fit, we&apos;ll tell you why.
++            </p>
++          </div>
+ 
+-          <p className="mt-2 text-surface-400">
+-            Apply below and we&apos;ll follow up within 48 hours.
+-          </p>
+-
+-          <div className="mt-10">
+-            <Button
+-              variant="primary"
+-              size="lg"
+-              href="https://loudface.notion.site/337b63394d10805f9bc5c22cf56c7c0f?pvs=105"
+-                           className="px-8 py-4 rounded-full hover:-translate-y-0.5"
+-            >
+-              Become a Partner
+-              <ArrowIcon className="ml-2 w-5 h-5" />
+-            </Button>
++          <div className="mt-10 rounded-2xl bg-white border border-surface-200 p-6 md:p-8">
++            <PartnerApplicationForm />
+           </div>
+         </div>
+       </SectionContainer>
++
++      {/* ─── SECTION 11: Final CTA ─── */}
++      <CTA
++        variant="dark"
++        title="Have a B2B SaaS client we should meet?"
++        subtitle="If you're advising B2B SaaS companies on growth, this conversation is worth having."
++        ctaText="Apply to the Partner Program"
++        ctaHref="#apply"
++      />
++
++      <MobileStickyCTA />
+     </>
+   );
+ }
+
+--- /dev/null
++++ b/src/app/(site)/partners/_components/PartnerApplicationForm.tsx
+@@ -0,0 +1,376 @@
++'use client';
++
++import { useState, useSyncExternalStore, type FormEvent } from 'react';
++
++const subscribeHydration = () => () => {};
++const getHydratedSnapshot = () => true;
++const getServerHydrationSnapshot = () => false;
++
++/**
++ * PartnerApplicationForm
++ *
++ * Fields are aligned 1:1 with the Notion "LoudFace Partner Applications" DB
++ * (database_id c597d4c9-817a-458a-b5b0-92dc4c9db147). If you change a field
++ * here, update the Notion property mapping in `/api/partner-apply/route.ts`
++ * AND in the Notion DB schema — or submission will fail.
++ */
++
++// Notion: Industry (multi_select). Order matches the DB option order.
++const INDUSTRIES = ['B2B SaaS', 'B2B Product', 'D2C'] as const;
++
++// Notion: Avg ACV of Clients (select)
++const ACV_BUCKETS = [
++  '$100 - $1K',
++  '$1K - $5K',
++  '$5K - $10K',
++  '$10K - $50K',
++  '$50K+',
++] as const;
++
++// Notion: Open to Social Media Promotion? / Open to Speaking at Webinars? (select)
++const YES_NO_MAYBE = ['Yes', 'No', 'Maybe'] as const;
++
++export function PartnerApplicationForm() {
++  const hydrated = useSyncExternalStore(
++    subscribeHydration,
++    getHydratedSnapshot,
++    getServerHydrationSnapshot,
++  );
++
++  const [fullName, setFullName] = useState('');
++  const [email, setEmail] = useState('');
++  const [linkedin, setLinkedin] = useState('');
++  const [website, setWebsite] = useState('');
++  const [industry, setIndustry] = useState<string[]>([]);
++  const [acv, setAcv] = useState('');
++  const [socialPromo, setSocialPromo] = useState('');
++  const [webinar, setWebinar] = useState('');
++  const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
++  const [errorMsg, setErrorMsg] = useState('');
++
++  function toggleIndustry(value: string) {
++    setIndustry((prev) =>
++      prev.includes(value) ? prev.filter((v) => v !== value) : [...prev, value],
++    );
++  }
++
++  async function handleSubmit(e: FormEvent) {
++    e.preventDefault();
++    if (!hydrated || status === 'loading') return;
++
++    // Client-side guard: at least one industry must be selected.
++    if (industry.length === 0) {
++      setStatus('error');
++      setErrorMsg('Please select at least one industry.');
++      return;
++    }
++
++    setStatus('loading');
++    setErrorMsg('');
++
++    const trimmedEmail = email.trim().toLowerCase();
++
++    try {
++      const res = await fetch('/api/partner-apply', {
++        method: 'POST',
++        headers: { 'Content-Type': 'application/json' },
++        body: JSON.stringify({
++          fullName: fullName.trim(),
++          email: trimmedEmail,
++          linkedin: linkedin.trim(),
++          website: website.trim(),
++          industry,
++          acv,
++          socialPromo: socialPromo || null,
++          webinar: webinar || null,
++        }),
++      });
++
++      const data = await res.json();
++
++      if (!res.ok || !data.success) {
++        setStatus('error');
++        setErrorMsg(data.message || 'Something went wrong. Please try again.');
++        return;
++      }
++
++      // PostHog: track partner application submission.
++      // Dynamic import matches the lazy-load pattern in PostHogProvider —
++      // keeps posthog-js out of the form's initial bundle.
++      const emailDomain = trimmedEmail.split('@')[1] ?? '';
++      void import('posthog-js').then(({ default: posthog }) => {
++        if (!posthog.__loaded) return;
++        posthog.identify(trimmedEmail);
++        posthog.capture('partner_application_submitted', {
++          email_domain: emailDomain,
++          industries: industry,
++          acv_bucket: acv,
++          has_website: website.trim().length > 0,
++          open_to_social_promo: socialPromo || 'unanswered',
++          open_to_webinars: webinar || 'unanswered',
++        });
++      });
++
++      setStatus('success');
++    } catch {
++      setStatus('error');
++      setErrorMsg('Network error — please try again.');
++    }
++  }
++
++  const inputClass =
++    'w-full rounded-lg border border-surface-200 bg-white px-4 py-3 text-surface-900 placeholder:text-surface-400 focus-visible:outline-2 focus-visible:outline-primary-500 focus-visible:outline-offset-2 transition-colors text-sm';
++
++  const labelClass = 'block text-sm font-medium text-surface-900 mb-1.5';
++  const helperClass = 'mt-1 text-xs text-surface-500';
++  const requiredMark = <span className="text-error">*</span>;
++
++  if (status === 'success') {
++    return (
++      <div className="rounded-lg bg-success-light text-success-dark p-6 text-center">
++        <h3 className="text-lg font-medium">Application received.</h3>
++        <p className="mt-2 text-sm">
++          We review every application personally. You&apos;ll hear from us
++          within 5–7 business days at <strong>{email.trim()}</strong>.
++        </p>
++      </div>
++    );
++  }
++
++  return (
++    <form onSubmit={handleSubmit} className="space-y-5" noValidate>
++      <div>
++        <label htmlFor="partner-name" className={labelClass}>
++          Full Name {requiredMark}
++        </label>
++        <input
++          id="partner-name"
++          type="text"
++          required
++          maxLength={120}
++          autoComplete="name"
++          value={fullName}
++          onChange={(e) => setFullName(e.target.value)}
++          className={inputClass}
++        />
++      </div>
++
++      <div>
++        <label htmlFor="partner-email" className={labelClass}>
++          Email Address {requiredMark}
++        </label>
++        <input
++          id="partner-email"
++          type="email"
++          required
++          maxLength={256}
++          autoComplete="email"
++          placeholder="you@yourpractice.com"
++          value={email}
++          onChange={(e) => setEmail(e.target.value)}
++          className={inputClass}
++        />
++      </div>
++
++      <div>
++        <label htmlFor="partner-linkedin" className={labelClass}>
++          LinkedIn Profile URL {requiredMark}
++        </label>
++        <input
++          id="partner-linkedin"
++          type="url"
++          required
++          maxLength={256}
++          placeholder="https://www.linkedin.com/in/yourname"
++          value={linkedin}
++          onChange={(e) => setLinkedin(e.target.value)}
++          className={inputClass}
++        />
++        <p className={helperClass}>
++          Your personal LinkedIn profile (e.g. linkedin.com/in/yourname).
++        </p>
++      </div>
++
++      <div>
++        <label htmlFor="partner-website" className={labelClass}>
++          Website or Portfolio <span className="text-surface-400">(optional)</span>
++        </label>
++        <input
++          id="partner-website"
++          type="url"
++          maxLength={256}
++          placeholder="https://"
++          value={website}
++          onChange={(e) => setWebsite(e.target.value)}
++          className={inputClass}
++        />
++        <p className={helperClass}>
++          Any website, portfolio, newsletter, or content page you&apos;d like
++          us to review.
++        </p>
++      </div>
++
++      <fieldset>
++        <legend className={labelClass}>
++          Industry {requiredMark}
++        </legend>
++        <p className={helperClass}>Select all that apply.</p>
++        <div className="mt-2 space-y-2">
++          {INDUSTRIES.map((opt) => (
++            <label
++              key={opt}
++              className="flex items-center gap-3 text-sm text-surface-700 cursor-pointer"
++            >
++              <input
++                type="checkbox"
++                name="industry"
++                value={opt}
++                checked={industry.includes(opt)}
++                onChange={() => toggleIndustry(opt)}
++                className="w-4 h-4 rounded border-surface-300 text-primary-600 focus:ring-primary-500"
++              />
++              {opt}
++            </label>
++          ))}
++        </div>
++      </fieldset>
++
++      <fieldset>
++        <legend className={labelClass}>
++          What&apos;s the average ACV of the clients you work with? {requiredMark}
++        </legend>
++        <div className="mt-2 space-y-2">
++          {ACV_BUCKETS.map((opt) => (
++            <label
++              key={opt}
++              className="flex items-center gap-3 text-sm text-surface-700 cursor-pointer"
++            >
++              <input
++                type="radio"
++                name="acv"
++                required
++                value={opt}
++                checked={acv === opt}
++                onChange={(e) => setAcv(e.target.value)}
++                className="w-4 h-4 border-surface-300 text-primary-600 focus:ring-primary-500"
++              />
++              {opt}
++            </label>
++          ))}
++        </div>
++      </fieldset>
++
++      <fieldset>
++        <legend className={labelClass}>
++          Are you open to promoting LoudFace on your social channels?{' '}
++          <span className="text-surface-400">(optional)</span>
++        </legend>
++        <p className={helperClass}>
++          This includes sharing posts, creating content, or recommending
++          LoudFace to your audience.
++        </p>
++        <div className="mt-2 flex flex-wrap gap-4">
++          {YES_NO_MAYBE.map((opt) => (
++            <label
++              key={opt}
++              className="flex items-center gap-2 text-sm text-surface-700 cursor-pointer"
++            >
++              <input
++                type="radio"
++                name="socialPromo"
++                value={opt}
++                checked={socialPromo === opt}
++                onChange={(e) => setSocialPromo(e.target.value)}
++                className="w-4 h-4 border-surface-300 text-primary-600 focus:ring-primary-500"
++              />
++              {opt}
++            </label>
++          ))}
++        </div>
++      </fieldset>
++
++      <fieldset>
++        <legend className={labelClass}>
++          Are you open to speaking at our webinar series?{' '}
++          <span className="text-surface-400">(optional)</span>
++        </legend>
++        <p className={helperClass}>
++          We run invite-only roundtables and webinars for B2B growth leaders.
++          We&apos;d love to feature the right partners as guest speakers.
++        </p>
++        <div className="mt-2 flex flex-wrap gap-4">
++          {YES_NO_MAYBE.map((opt) => (
++            <label
++              key={opt}
++              className="flex items-center gap-2 text-sm text-surface-700 cursor-pointer"
++            >
++              <input
++                type="radio"
++                name="webinar"
++                value={opt}
++                checked={webinar === opt}
++                onChange={(e) => setWebinar(e.target.value)}
++                className="w-4 h-4 border-surface-300 text-primary-600 focus:ring-primary-500"
++              />
++              {opt}
++            </label>
++          ))}
++        </div>
++      </fieldset>
++
++      {status === 'error' && (
++        <p className="text-sm text-error" role="alert">
++          {errorMsg}
++        </p>
++      )}
++
++      <button
++        type="submit"
++        disabled={!hydrated || status === 'loading'}
++        className="w-full rounded-full bg-primary-600 px-6 py-3.5 text-base font-medium text-white transition-colors hover:bg-primary-500 focus-visible:outline-2 focus-visible:outline-primary-500 focus-visible:outline-offset-2 active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed"
++      >
++        {status === 'loading' ? (
++          <span className="inline-flex items-center justify-center gap-2">
++            <svg className="animate-spin h-5 w-5" viewBox="0 0 24 24" fill="none">
++              <circle
++                className="opacity-25"
++                cx="12"
++                cy="12"
++                r="10"
++                stroke="currentColor"
++                strokeWidth="4"
++              />
++              <path
++                className="opacity-75"
++                fill="currentColor"
++                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
++              />
++            </svg>
++            Submitting…
++          </span>
++        ) : (
++          <span className="inline-flex items-center justify-center gap-2">
++            Apply
++            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
++              <path
++                strokeLinecap="round"
++                strokeLinejoin="round"
++                strokeWidth="2"
++                d="M17 8l4 4m0 0l-4 4m4-4H3"
++              />
++            </svg>
++          </span>
++        )}
++      </button>
++
++      <p className="text-xs text-surface-500 text-center">
++        By submitting, you agree to our{' '}
++        <a href="/privacy" className="underline underline-offset-2 hover:text-surface-700">
++          Privacy Policy
++        </a>
++        . We review every application personally and reply within 5–7 business
++        days.
++      </p>
++    </form>
++  );
++}
+
+--- /dev/null
++++ b/src/app/(site)/partners/_components/MobileStickyCTA.tsx
+@@ -0,0 +1,23 @@
++/**
++ * MobileStickyCTA — fixed floating "Apply" button visible only on <768px.
++ * Anchors to #apply on the partners page.
++ */
++export function MobileStickyCTA() {
++  return (
++    <a
++      href="#apply"
++      aria-label="Apply to the Partner Program"
++      className="md:hidden fixed bottom-4 right-4 z-50 inline-flex items-center gap-2 rounded-full bg-primary-600 text-white px-5 py-3 text-sm font-medium shadow-lg shadow-primary-900/20 transition-colors hover:bg-primary-500 focus-visible:outline-2 focus-visible:outline-primary-500 focus-visible:outline-offset-2 active:scale-[0.98]"
++    >
++      Apply
++      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
++        <path
++          strokeLinecap="round"
++          strokeLinejoin="round"
++          strokeWidth="2"
++          d="M17 8l4 4m0 0l-4 4m4-4H3"
++        />
++      </svg>
++    </a>
++  );
++}
+
+--- /dev/null
++++ b/src/app/api/partner-apply/route.ts
+@@ -0,0 +1,279 @@
++import { NextRequest, NextResponse } from 'next/server';
++
++/**
++ * POST /api/partner-apply
++ *
++ * Two destinations on success (both fire in parallel; failures are logged but
++ * never block the user-facing response — submissions still feel instant):
++ *
++ *   1. Notion DB "LoudFace Partner Applications"
++ *      database_id: NOTION_PARTNER_DB_ID (env)
++ *      auth: NOTION_API_KEY (Bearer)
++ *
++ *   2. Slack incoming webhook
++ *      url: SLACK_PARTNER_WEBHOOK_URL (env)
++ *      Configure this in Slack to DM Chandana or post to a dedicated channel.
++ *
++ * Field mapping mirrors the Notion DB schema. If you add a property to the
++ * Notion DB, add it here + in PartnerApplicationForm.tsx — otherwise that
++ * property stays blank on every row.
++ */
++
++const NOTION_API_VERSION = '2022-06-28';
++const NOTION_DB_ID = process.env.NOTION_PARTNER_DB_ID ?? '';
++const NOTION_API_KEY = process.env.NOTION_API_KEY ?? '';
++const SLACK_WEBHOOK_URL = process.env.SLACK_PARTNER_WEBHOOK_URL ?? '';
++
++const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
++const INDUSTRY_VALUES = new Set(['B2B SaaS', 'B2B Product', 'D2C']);
++const ACV_VALUES = new Set([
++  '$100 - $1K',
++  '$1K - $5K',
++  '$5K - $10K',
++  '$10K - $50K',
++  '$50K+',
++]);
++const YES_NO_MAYBE = new Set(['Yes', 'No', 'Maybe']);
++
++interface PartnerApplicationPayload {
++  fullName: string;
++  email: string;
++  linkedin: string;
++  website: string;
++  industry: string[];
++  acv: string;
++  socialPromo: string | null;
++  webinar: string | null;
++}
++
++export async function POST(request: NextRequest) {
++  try {
++    const body = await request.json();
++    const {
++      fullName,
++      email,
++      linkedin,
++      website,
++      industry,
++      acv,
++      socialPromo,
++      webinar,
++    } = body ?? {};
++
++    // ─── Validation ───────────────────────────────────────────────
++    if (
++      typeof fullName !== 'string' ||
++      typeof email !== 'string' ||
++      typeof linkedin !== 'string' ||
++      typeof acv !== 'string' ||
++      !Array.isArray(industry)
++    ) {
++      return NextResponse.json(
++        { success: false, message: 'Missing required fields.' },
++        { status: 400 },
++      );
++    }
++
++    if (!fullName.trim() || !linkedin.trim()) {
++      return NextResponse.json(
++        { success: false, message: 'Missing required fields.' },
++        { status: 400 },
++      );
++    }
++
++    if (!EMAIL_REGEX.test(email)) {
++      return NextResponse.json(
++        { success: false, message: 'Please enter a valid email address.' },
++        { status: 400 },
++      );
++    }
++
++    if (industry.length === 0 || !industry.every((i) => INDUSTRY_VALUES.has(i))) {
++      return NextResponse.json(
++        { success: false, message: 'Invalid industry selection.' },
++        { status: 400 },
++      );
++    }
++
++    if (!ACV_VALUES.has(acv)) {
++      return NextResponse.json(
++        { success: false, message: 'Invalid ACV selection.' },
++        { status: 400 },
++      );
++    }
++
++    if (socialPromo && !YES_NO_MAYBE.has(socialPromo)) {
++      return NextResponse.json(
++        { success: false, message: 'Invalid social promo selection.' },
++        { status: 400 },
++      );
++    }
++    if (webinar && !YES_NO_MAYBE.has(webinar)) {
++      return NextResponse.json(
++        { success: false, message: 'Invalid webinar selection.' },
++        { status: 400 },
++      );
++    }
++
++    const submission: PartnerApplicationPayload = {
++      fullName: fullName.trim(),
++      email: email.trim().toLowerCase(),
++      linkedin: linkedin.trim(),
++      website: typeof website === 'string' ? website.trim() : '',
++      industry,
++      acv,
++      socialPromo: socialPromo ?? null,
++      webinar: webinar ?? null,
++    };
++
++    // ─── Fire-and-log both destinations in parallel ───────────────
++    // Errors are logged but never thrown — we don't want a Notion outage
++    // to surface as a form error for the applicant.
++    const tasks: Promise<unknown>[] = [];
++    if (NOTION_API_KEY && NOTION_DB_ID) {
++      tasks.push(
++        sendToNotion(submission).catch((err) =>
++          console.error('[partner-apply] Notion error:', err),
++        ),
++      );
++    } else {
++      console.warn('[partner-apply] Notion env not configured — skipping Notion write.');
++    }
++
++    if (SLACK_WEBHOOK_URL) {
++      tasks.push(
++        sendToSlack(submission).catch((err) =>
++          console.error('[partner-apply] Slack error:', err),
++        ),
++      );
++    } else {
++      console.warn('[partner-apply] Slack env not configured — skipping Slack ping.');
++    }
++
++    // Don't block the user. Both calls are quick (<1s typical) so we await,
++    // but errors are already swallowed above.
++    await Promise.all(tasks);
++
++    return NextResponse.json(
++      { success: true, message: 'Application received.' },
++      { status: 200 },
++    );
++  } catch (error) {
++    console.error('[partner-apply] Unexpected error:', error);
++    return NextResponse.json(
++      { success: false, message: 'An error occurred. Please try again.' },
++      { status: 500 },
++    );
++  }
++}
++
++/* ─── Notion ────────────────────────────────────────────────────── */
++
++async function sendToNotion(s: PartnerApplicationPayload): Promise<void> {
++  const properties: Record<string, unknown> = {
++    'Full Name': {
++      title: [{ type: 'text', text: { content: s.fullName } }],
++    },
++    Email: { email: s.email },
++    'LinkedIn Profile': { url: s.linkedin },
++    Industry: {
++      multi_select: s.industry.map((name) => ({ name })),
++    },
++    'Avg ACV of Clients': { select: { name: s.acv } },
++    'Application Status': { select: { name: 'Pending Review' } },
++  };
++
++  if (s.website) {
++    properties['Website / Portfolio'] = { url: s.website };
++  }
++  if (s.socialPromo) {
++    properties['Open to Social Media Promotion?'] = {
++      select: { name: s.socialPromo },
++    };
++  }
++  if (s.webinar) {
++    properties['Open to Speaking at Webinars?'] = {
++      select: { name: s.webinar },
++    };
++  }
++
++  const res = await fetch('https://api.notion.com/v1/pages', {
++    method: 'POST',
++    headers: {
++      Authorization: `Bearer ${NOTION_API_KEY}`,
++      'Notion-Version': NOTION_API_VERSION,
++      'Content-Type': 'application/json',
++    },
++    body: JSON.stringify({
++      parent: { database_id: NOTION_DB_ID },
++      properties,
++    }),
++  });
++
++  if (!res.ok) {
++    const errBody = await res.text();
++    throw new Error(`Notion API ${res.status}: ${errBody.slice(0, 500)}`);
++  }
++}
++
++/* ─── Slack ─────────────────────────────────────────────────────── */
++
++async function sendToSlack(s: PartnerApplicationPayload): Promise<void> {
++  const industries = s.industry.join(', ');
++  const social = s.socialPromo ?? '—';
++  const web = s.webinar ?? '—';
++  const website = s.website || '—';
++
++  const payload = {
++    text: `🤝 New partner application: ${s.fullName}`,
++    blocks: [
++      {
++        type: 'header',
++        text: {
++          type: 'plain_text',
++          text: `🤝 New partner application: ${s.fullName}`,
++        },
++      },
++      {
++        type: 'section',
++        fields: [
++          { type: 'mrkdwn', text: `*Email*\n${s.email}` },
++          { type: 'mrkdwn', text: `*LinkedIn*\n<${s.linkedin}|View profile>` },
++          { type: 'mrkdwn', text: `*Industry*\n${industries}` },
++          { type: 'mrkdwn', text: `*Avg ACV*\n${s.acv}` },
++        ],
++      },
++      {
++        type: 'section',
++        fields: [
++          {
++            type: 'mrkdwn',
++            text: `*Website*\n${website === '—' ? '—' : `<${website}|Link>`}`,
++          },
++          { type: 'mrkdwn', text: `*Social promo?*\n${social}` },
++          { type: 'mrkdwn', text: `*Webinars?*\n${web}` },
++        ],
++      },
++      {
++        type: 'context',
++        elements: [
++          {
++            type: 'mrkdwn',
++            text: '_Logged to Notion → LoudFace Partner Applications._',
++          },
++        ],
++      },
++    ],
++  };
++
++  const res = await fetch(SLACK_WEBHOOK_URL, {
++    method: 'POST',
++    headers: { 'Content-Type': 'application/json' },
++    body: JSON.stringify(payload),
++  });
++
++  if (!res.ok) {
++    const errBody = await res.text();
++    throw new Error(`Slack webhook ${res.status}: ${errBody.slice(0, 500)}`);
++  }
++}
+
+--- /dev/null
++++ b/src/app/(site)/partners/opengraph-image.tsx
+@@ -0,0 +1,85 @@
++import { ImageResponse } from 'next/og';
++
++export const runtime = 'edge';
++export const alt = '10% lifetime commission — LoudFace Partner Program';
++export const size = { width: 1200, height: 630 };
++export const contentType = 'image/png';
++
++export default async function Image() {
++  return new ImageResponse(
++    (
++      <div
++        style={{
++          background: 'linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 100%)',
++          width: '100%',
++          height: '100%',
++          display: 'flex',
++          flexDirection: 'column',
++          alignItems: 'flex-start',
++          justifyContent: 'center',
++          padding: '80px',
++          position: 'relative',
++        }}
++      >
++        <div
++          style={{
++            position: 'absolute',
++            top: 40,
++            left: 80,
++            fontSize: 24,
++            color: '#888',
++            letterSpacing: '0.1em',
++          }}
++        >
++          LOUDFACE
++        </div>
++        <div
++          style={{
++            fontSize: 88,
++            fontWeight: 700,
++            color: '#fff',
++            lineHeight: 1.05,
++            maxWidth: '88%',
++            letterSpacing: '-0.02em',
++          }}
++        >
++          10% lifetime commission
++        </div>
++        <div
++          style={{
++            fontSize: 32,
++            color: '#c4b5fd',
++            marginTop: 28,
++            maxWidth: '85%',
++            lineHeight: 1.4,
++          }}
++        >
++          Refer one B2B SaaS client. Earn for as long as they stay.
++        </div>
++        <div
++          style={{
++            position: 'absolute',
++            bottom: 40,
++            left: 80,
++            display: 'flex',
++            alignItems: 'center',
++            gap: 12,
++            fontSize: 20,
++            color: '#666',
++          }}
++        >
++          <span
++            style={{
++              width: 8,
++              height: 8,
++              borderRadius: 999,
++              background: '#a78bfa',
++            }}
++          />
++          loudface.co/partners
++        </div>
++      </div>
++    ),
++    { ...size },
++  );
++}
