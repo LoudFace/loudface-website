@@ -1,0 +1,23 @@
+/**
+ * MobileStickyCTA — fixed floating "Apply" button visible only on <768px.
+ * Anchors to #apply on the partners page.
+ */
+export function MobileStickyCTA() {
+  return (
+    <a
+      href="#apply"
+      aria-label="Apply to the Partner Program"
+      className="md:hidden fixed bottom-4 right-4 z-50 inline-flex items-center gap-2 rounded-full bg-primary-600 text-white px-5 py-3 text-sm font-medium shadow-lg shadow-primary-900/20 transition-colors hover:bg-primary-500 focus-visible:outline-2 focus-visible:outline-primary-500 focus-visible:outline-offset-2 active:scale-[0.98]"
+    >
+      Apply
+      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          strokeWidth="2"
+          d="M17 8l4 4m0 0l-4 4m4-4H3"
+        />
+      </svg>
+    </a>
+  );
+}
