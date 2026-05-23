@@ -27,7 +27,7 @@ export function BlogCTACard() {
           Available for Q2
         </span>
         <h4 className="text-lg font-medium text-white leading-snug tracking-tight mb-2">
-          Book a free Webflow teardown
+          Book a free SEO/AEO audit
         </h4>
         <p className="text-xs text-white/60 leading-relaxed mb-5">
           15 minutes. We review your site the way a YC partner would. No pitch, no follow-up sequence.
