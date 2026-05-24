@@ -2,8 +2,18 @@
  * Sidebar CTA card — dark surface with an availability dot and a Cal-modal
  * booking button. The `href="#book-modal"` is intercepted by CalHandler.tsx
  * to open the booking flow without page navigation.
+ *
+ * The availability badge computes the current quarter server-side so it
+ * never goes stale. With Next.js ISR + the Sanity revalidate webhook, the
+ * displayed quarter updates on the next revalidation after a quarter rolls
+ * (worst case ~1-2 weeks of staleness at year boundary, acceptable).
  */
+function currentQuarterLabel(now: Date = new Date()): string {
+  return `Q${Math.floor(now.getUTCMonth() / 3) + 1}`;
+}
+
 export function BlogCTACard() {
+  const quarter = currentQuarterLabel();
   return (
     <a
       href="#book-modal"
@@ -24,7 +34,7 @@ export function BlogCTACard() {
             <span className="absolute inline-flex h-full w-full rounded-full bg-success opacity-75 animate-ping motion-reduce:hidden" />
             <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-success" />
           </span>
-          Available for Q2
+          Available for {quarter}
         </span>
         <h4 className="text-lg font-medium text-white leading-snug tracking-tight mb-2">
           Book a free SEO/AEO audit
