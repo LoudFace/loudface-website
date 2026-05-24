@@ -185,6 +185,22 @@ const nextConfig: NextConfig = {
         destination: '/services/seo-aeo',
         permanent: true,
       },
+      // AI-bot 404 hygiene (surfaced via Cloudflare AI Crawl Control 2026-05-24).
+      // Bots and models occasionally pattern-match `/post/<slug>` (a Webflow-era
+      // URL prefix) instead of our current `/blog/<slug>`. Catch-all 301.
+      {
+        source: '/post/:slug*',
+        destination: '/blog/:slug*',
+        permanent: true,
+      },
+      // AI Crawler extrapolated a 2026-year-stamped CMS-for-marketers URL that
+      // doesn't exist. Closest topical match is the existing piece (which is
+      // already 2026-relevant in content + title).
+      {
+        source: '/blog/cms-for-marketers-2026',
+        destination: '/blog/webflow-best-cms-for-marketers',
+        permanent: true,
+      },
       // Broken blog slugs → closest matching live posts
       {
         source: '/blog/webflow-vs-framer',
