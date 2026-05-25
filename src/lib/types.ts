@@ -110,6 +110,7 @@ export interface BlogPost {
   "meta-description"?: string;
   thumbnail?: CmsImage;
   excerpt?: string;
+  "direct-answer"?: string;
   content?: string;
   "time-to-read"?: string;
   featured?: boolean;

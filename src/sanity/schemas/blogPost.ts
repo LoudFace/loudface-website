@@ -47,6 +47,14 @@ export const blogPost = defineType({
       title: 'Excerpt',
       type: 'text',
       rows: 3,
+      description: 'Short subtitle shown below the H1 and used in cards. ~140-160 chars.',
+    }),
+    defineField({
+      name: 'directAnswer',
+      title: 'Direct Answer (TL;DR)',
+      type: 'text',
+      rows: 4,
+      description: 'The AEO citation surface — a self-contained 40-60 word direct answer block rendered above the body content. Marked with Speakable schema for AI engine extraction. Keep tight: this is what ChatGPT, Perplexity, Claude, and Google AI Overviews will quote.',
     }),
     defineField({
       name: 'content',

@@ -374,6 +374,22 @@ export default async function BlogPostPage({ params }: PageProps) {
           <div className="grid grid-cols-1 lg:grid-cols-[1fr_280px] gap-10 lg:gap-16">
             {/* Article Body */}
             <article className="min-w-0">
+              {/* Direct Answer (TL;DR) — the AEO citation surface.
+                  Renders above body content when present. Tagged with
+                  data-speakable so the Speakable JSON-LD picks it up
+                  alongside the H1. This is what AI engines extract
+                  when citing the page in answers. */}
+              {post['direct-answer'] && (
+                <div className="mb-10 not-prose border-l-4 border-primary-500 bg-primary-50 px-5 py-4 sm:px-6 sm:py-5 rounded-r-lg">
+                  <p
+                    className="text-base sm:text-lg text-surface-900 leading-relaxed m-0"
+                    data-speakable
+                  >
+                    {post['direct-answer']}
+                  </p>
+                </div>
+              )}
+
               {linkedContent ? (
                 <BlogContent html={linkedContent} visuals={post.visuals} />
               ) : (
