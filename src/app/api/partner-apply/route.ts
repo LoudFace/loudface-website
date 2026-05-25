@@ -3,26 +3,23 @@ import { NextRequest, NextResponse } from 'next/server';
 /**
  * POST /api/partner-apply
  *
- * Two destinations on success (both fire in parallel; failures are logged but
- * never block the user-facing response — submissions still feel instant):
+ * Writes applications to the Notion DB "LoudFace Partner Applications"
+ * (database_id hardcoded below — it's a stable identifier, not a secret).
  *
- *   1. Notion DB "LoudFace Partner Applications"
- *      database_id: NOTION_PARTNER_DB_ID (env)
- *      auth: NOTION_API_KEY (Bearer)
+ * Env vars required:
+ *   - NOTION_API_KEY (Bearer auth for the Notion integration)
  *
- *   2. Slack incoming webhook
- *      url: SLACK_PARTNER_WEBHOOK_URL (env)
- *      Configure this in Slack to DM Chandana or post to a dedicated channel.
+ * Defensive: if NOTION_API_KEY is missing we log a warning and still return
+ * success to the applicant. A Notion outage will not surface as a form error.
  *
- * Field mapping mirrors the Notion DB schema. If you add a property to the
- * Notion DB, add it here + in PartnerApplicationForm.tsx — otherwise that
- * property stays blank on every row.
+ * If you add a property to the Notion DB, add it here AND in
+ * PartnerApplicationForm.tsx — otherwise that property stays blank on every row.
  */
 
 const NOTION_API_VERSION = '2022-06-28';
-const NOTION_DB_ID = process.env.NOTION_PARTNER_DB_ID ?? '';
+// Notion DB "LoudFace Partner Applications" — not a secret, fine to hardcode.
+const NOTION_DB_ID = 'c597d4c9-817a-458a-b5b0-92dc4c9db147';
 const NOTION_API_KEY = process.env.NOTION_API_KEY ?? '';
-const SLACK_WEBHOOK_URL = process.env.SLACK_PARTNER_WEBHOOK_URL ?? '';
 
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const INDUSTRY_VALUES = new Set(['B2B SaaS', 'B2B Product', 'D2C']);
@@ -126,33 +123,18 @@ export async function POST(request: NextRequest) {
       webinar: webinar ?? null,
     };
 
-    // ─── Fire-and-log both destinations in parallel ───────────────
-    // Errors are logged but never thrown — we don't want a Notion outage
-    // to surface as a form error for the applicant.
-    const tasks: Promise<unknown>[] = [];
-    if (NOTION_API_KEY && NOTION_DB_ID) {
-      tasks.push(
-        sendToNotion(submission).catch((err) =>
-          console.error('[partner-apply] Notion error:', err),
-        ),
-      );
+    // ─── Write to Notion ─────────────────────────────────────────
+    // Errors are logged but never surfaced to the applicant — a Notion outage
+    // should not look like a form failure. Submissions feel instant.
+    if (NOTION_API_KEY) {
+      try {
+        await sendToNotion(submission);
+      } catch (err) {
+        console.error('[partner-apply] Notion error:', err);
+      }
     } else {
-      console.warn('[partner-apply] Notion env not configured — skipping Notion write.');
+      console.warn('[partner-apply] NOTION_API_KEY not set — skipping Notion write.');
     }
-
-    if (SLACK_WEBHOOK_URL) {
-      tasks.push(
-        sendToSlack(submission).catch((err) =>
-          console.error('[partner-apply] Slack error:', err),
-        ),
-      );
-    } else {
-      console.warn('[partner-apply] Slack env not configured — skipping Slack ping.');
-    }
-
-    // Don't block the user. Both calls are quick (<1s typical) so we await,
-    // but errors are already swallowed above.
-    await Promise.all(tasks);
 
     return NextResponse.json(
       { success: true, message: 'Application received.' },
@@ -213,67 +195,5 @@ async function sendToNotion(s: PartnerApplicationPayload): Promise<void> {
   if (!res.ok) {
     const errBody = await res.text();
     throw new Error(`Notion API ${res.status}: ${errBody.slice(0, 500)}`);
-  }
-}
-
-/* ─── Slack ─────────────────────────────────────────────────────── */
-
-async function sendToSlack(s: PartnerApplicationPayload): Promise<void> {
-  const industries = s.industry.join(', ');
-  const social = s.socialPromo ?? '—';
-  const web = s.webinar ?? '—';
-  const website = s.website || '—';
-
-  const payload = {
-    text: `🤝 New partner application: ${s.fullName}`,
-    blocks: [
-      {
-        type: 'header',
-        text: {
-          type: 'plain_text',
-          text: `🤝 New partner application: ${s.fullName}`,
-        },
-      },
-      {
-        type: 'section',
-        fields: [
-          { type: 'mrkdwn', text: `*Email*\n${s.email}` },
-          { type: 'mrkdwn', text: `*LinkedIn*\n<${s.linkedin}|View profile>` },
-          { type: 'mrkdwn', text: `*Industry*\n${industries}` },
-          { type: 'mrkdwn', text: `*Avg ACV*\n${s.acv}` },
-        ],
-      },
-      {
-        type: 'section',
-        fields: [
-          {
-            type: 'mrkdwn',
-            text: `*Website*\n${website === '—' ? '—' : `<${website}|Link>`}`,
-          },
-          { type: 'mrkdwn', text: `*Social promo?*\n${social}` },
-          { type: 'mrkdwn', text: `*Webinars?*\n${web}` },
-        ],
-      },
-      {
-        type: 'context',
-        elements: [
-          {
-            type: 'mrkdwn',
-            text: '_Logged to Notion → LoudFace Partner Applications._',
-          },
-        ],
-      },
-    ],
-  };
-
-  const res = await fetch(SLACK_WEBHOOK_URL, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(payload),
-  });
-
-  if (!res.ok) {
-    const errBody = await res.text();
-    throw new Error(`Slack webhook ${res.status}: ${errBody.slice(0, 500)}`);
   }
 }
