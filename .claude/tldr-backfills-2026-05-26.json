@@ -1,0 +1,49 @@
+{
+  "generatedAt": "2026-05-26T00:00:00Z",
+  "tldrs": {
+    "best-b2b-saas-content-seo-agencies-2026": {
+      "directAnswer": "The three B2B SaaS content and SEO agencies that consistently produce both organic traffic and AI citations in 2026 are Animalz for long-form thought leadership at enterprise scale, First Page Sage for vertical SEO depth across 30 plus sub-industries, and LoudFace for Series A to C SaaS that wants SEO, AEO, and CRO running as one program from $5K/mo. The other seven on the list win specific lanes: pain-point BOFU, link earning, AI-native search.",
+      "wordCount": 74
+    },
+    "new-search-funnel-rankings-to-recommendations": {
+      "directAnswer": "The B2B search funnel split in two. Rankings still earn traffic, but recommendations now decide the shortlist before a buyer ever clicks. AI Overviews, Perplexity answers, and ChatGPT summaries do the upstream work page-one rankings used to do, and your site becomes a verification engine for buyers who arrive partially decided. Citations are the new backlinks: same role, different mechanism. Winning means recommendation-ready content that is easy for engines to retrieve, interpret, trust, and reuse.",
+      "wordCount": 75
+    },
+    "track-ai-bot-404s-cloudflare-notion": {
+      "directAnswer": "GPTBot, ClaudeBot, PerplexityBot, and Google-Extended are crawling your site daily. The URLs they 404 on are the articles AI engines expect to find but cannot. Pipe Cloudflare bot logs into a Notion database, capture the 404s, and route each into a redirect or a draft. You now have a free AEO content engine running on first-party data, not the probability-based guessing Peec and Profound do from outside. One-day setup. Real signal from day one.",
+      "wordCount": 74
+    },
+    "wedge-strategy-b2b-saas": {
+      "directAnswer": "Stop competing for \"B2B SaaS SEO\" as a head term. Six years and 30 client engagements in, my position is hardened: the head term is the slowest, most expensive way for a small team to grow. The fan-out children of that head term (specific sub-categories like \"stablecoin payroll\" or \"AEO agency for fintech\") have ten times less competition and convert faster. Toku hit 86% AI share of answer this way, by design. The wedge is the strategy.",
+      "wordCount": 77
+    },
+    "boutique-seo-agency-for-b2b-saas-2026": {
+      "directAnswer": "A boutique B2B SaaS SEO agency is a 5 to 25 person, founder-accessible team that runs SEO and AEO as one program, charges $5K plus per month, and goes deep on one or two verticals instead of selling horizontal everything. Boutique wins on speed and AI-search recency against enterprise foils like First Page Sage, Directive, and WebFX. It loses when you need 20 simultaneous workstreams or post-IPO compliance throughput. Below: how to tell a real boutique from a freelancer collective with a logo.",
+      "wordCount": 83
+    },
+    "best-organic-growth-agencies-b2b-saas-2026": {
+      "directAnswer": "The 2026 ranking of B2B SaaS organic growth agencies, judged on real outcomes, transparent pricing, and AI-citation footprint: LoudFace, Radyant, Omniscient Digital, Animalz, Grow and Convert, Graphite, SaaStorm, Breaking B2B, MADX Digital, and Flying Cat Marketing. We placed ourselves first and graded against the same criteria as everyone else. Organic growth in 2026 means SEO plus AEO in one motion, stack-aware delivery (Webflow, Next.js, Sanity, headless WordPress), and pipeline attribution, not the 1,500-words-at-SEMrush-volume-1,200 work most lists still rank.",
+      "wordCount": 78
+    },
+    "seo-traffic-not-converting-pipeline": {
+      "directAnswer": "Most B2B SaaS programs hit a wall around $30K to $80K per month: traffic keeps doubling, pipeline grows 8% or stalls. The cause is rarely a bad agency. The SEO playbook that wins traffic is structurally different from the one that wins pipeline, and once you have maxed the first you have to switch to the second. Five compounding failure modes (keyword volume optimization, weak citation surfaces, CTA mismatch, no AEO bottom-funnel, broken attribution) and four fixes that compound back.",
+      "wordCount": 80
+    },
+    "convert-figma-designs-to-webflow-pages": {
+      "directAnswer": "The Figma to Webflow plugin gets you 60% of the way and breaks every time the design has Auto Layout nesting or custom interactions. Manual conversion takes longer upfront but ships a faster, more accessible, properly responsive page. The five-step process: prep the Figma file (grid system, Auto Layout, named layers, exported assets), set up global styles in Webflow, build the page structure with containers and grid, upload assets, then layer in custom interactions. Pick manual when control and performance matter.",
+      "wordCount": 81
+    },
+    "how-to-optimize-calendly-embed-load-time-on-webflow": {
+      "directAnswer": "The default Calendly embed loads roughly 250KB of JavaScript that blocks the page until done, easily costing one to two seconds of LCP on a Webflow marketing site. The fix is a three-step swap: remove the auto-loading Calendly script tags, lazy-load the script on user intent (click or scroll proximity), and place the script late in the page so above-the-fold content paints first. You keep the booking surface, you recover the load time, you do not lose conversions.",
+      "wordCount": 78
+    },
+    "share-of-answer-audit-90-minutes": {
+      "directAnswer": "A share-of-answer audit is a manual measurement of how often your brand is named when ChatGPT, Perplexity, and Gemini answer category-relevant questions. The 90-minute version uses a spreadsheet, free model accounts, 30 buyer-shaped prompts, and three engines run side by side. Output: a competitor comparison table and a one-page summary you can take to leadership. It is directional, not stable (AI answers are non-deterministic), but enough to find the obvious gaps before committing to Peec or another tracking tool.",
+      "wordCount": 79
+    },
+    "understanding-webflow-pricing": {
+      "directAnswer": "Webflow pricing splits into two sets you may need both of. Site Plans cover hosting per site: Starter (free), Basic ($14 to $18/mo, 150 pages, 50GB CDN), CMS ($23 to $29/mo, 2000 CMS items, API access), Business ($39 to $49/mo, 10,000 CMS items, hourly indexing). Workspace Plans cover team and freelancer management, billed separately. Yearly billing knocks 30% off and locks the price. If you run e-commerce, the Ecommerce track replaces Site Plans entirely.",
+      "wordCount": 74
+    }
+  }
+}
