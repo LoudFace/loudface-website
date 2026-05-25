@@ -1,0 +1,99 @@
+# LoudFace disavow file — baseline 2026-05-26
+#
+# Generated from Ahrefs ref-domain audit (top-100-by-first_seen-desc, mode=subdomains).
+# Status at baseline: COMPROMISED — active negative SEO campaign in progress.
+#  - 68 live ref domains, 1,758 live backlinks
+#  - ~85% of recent 100 ref domains are spam-pattern PBNs or scraper shells
+#  - Brand impersonation in progress: getloudface.org, tryloudface.net, etc.
+#  - Location-spam injection: 4,463 dofollow links from DR-6 sources
+#
+# Upload at: https://search.google.com/search-console/disavow-links
+# Google takes 4-6 weeks to reprocess.
+#
+# Quarterly check procedure: see seo/DISAVOW-PROCEDURE.md
+# Cadence: Jan 1, Apr 1, Jul 1, Oct 1. Run interim if is_spam count in
+# most-recent-100 ref domains exceeds 30.
+
+# === PBN domain cluster (*.shop link-farm pattern) ===
+domain:rankxlinks.shop
+domain:ranklinkpro.shop
+domain:toplinkranker.shop
+domain:linkrankboost.shop
+domain:authoritybacklinks.shop
+domain:ranklinkx.shop
+domain:seolinkpro.shop
+domain:premiumseolinks.shop
+domain:pbnseolinks.shop
+domain:buyseobacklinks.shop
+domain:linkrankseo.shop
+domain:linkseopro.shop
+
+# === DR-padded expired-domain shells (itxoft / fiverr clusters) ===
+domain:itxoft-cost-effective-seo-services.site
+domain:itxoft-seo-for-modern-business.site
+domain:itxoft-proven-seo-strategies.site
+domain:itxoft-reliable-seo-services.site
+domain:itxoft-results-focused-seo.site
+domain:itxoft-seo-for-higher-rankings.site
+domain:fiverr-seo-for-small-businesses.site
+domain:fiverr-cost-effective-seo.site
+domain:fiverr-affordable-seo-services.site
+domain:fiverr-quality-seo-at-affordable-rates.site
+
+# === "Grow/boost-website" expired-domain shells ===
+domain:grow-fast.website
+domain:boost-instant.website
+domain:grow-your.website
+domain:grow-your.site
+
+# === Scrapers / DR-padded shells (Ahrefs is_spam=true confirmed) ===
+domain:c99.nl
+domain:klazify.com
+domain:wonvision.com
+domain:judilinkpro.com
+domain:findit.co.in
+domain:thinkbeat.uk
+domain:tunca.org
+domain:allinone.co.in
+domain:domain.com.lc
+domain:read.org.in
+domain:acquire.co.in
+domain:wallpapers.pro
+domain:domainanalysis.org
+domain:ycm.info
+domain:newsblogsports.site
+domain:indians.cc
+domain:way2check.cv
+domain:silvercrest.uk
+domain:allwebsitesdirectory.com
+domain:bestwebstats.com
+domain:goooogla.com
+domain:moscowtimes.top
+domain:alljobs.info
+domain:ready.pro
+domain:rankvanceagency.info
+domain:domainsc.com
+domain:bizhorizone.com
+domain:pudhe.com
+domain:outreachdeskpro.com
+domain:dailymusings.top
+domain:egyptiandirectory.com
+domain:seowriter360.com
+domain:linksnatcher.com
+domain:blogsphere.top
+domain:rankvancelinks.online
+domain:globalecommerce.org
+domain:booksreadr.org
+domain:primeseo.xyz
+domain:backlinkmasters.online
+domain:musweb.org
+domain:obmain.com
+domain:blueinblue.com
+domain:kgzxkf.com
+domain:hzdlpq.com
+domain:byteshort.xyz
+domain:seo-backlink.agency
+domain:sporstcenter.com
+domain:backlinkbuilding.io
+domain:allare.io
+domain:marathiladies.com

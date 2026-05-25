@@ -429,6 +429,21 @@ const nextConfig: NextConfig = {
         destination: '/blog/aeo-agency-pricing-b2b-saas-2026',
         permanent: true,
       },
+      // ─── Webflow-era kill list (2026-05-26 structural audit) ─────────
+      // Two old Webflow posts from the structural audit. Both fail the
+      // KEEP threshold (<100 imps/mo for vs-alternatives, ~108 imps but
+      // tiny addressable volume for preview-cms). Consolidate into the
+      // canonical destinations that already cover the same intent.
+      {
+        source: '/blog/webflow-vs-popular-alternatives',
+        destination: '/blog/webflow-vendors-compared',
+        permanent: true,
+      },
+      {
+        source: '/blog/preview-cms-pages-blog-posts',
+        destination: '/blog/understanding-webflows-cms-guide',
+        permanent: true,
+      },
     ];
   },
 };
