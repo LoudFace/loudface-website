@@ -97,7 +97,12 @@ export function truncateSeoDescription(
   }
 
   // Strip trailing punctuation that looks incomplete
-  truncated = truncated.replace(/[,;:\u2014\u2013\-]$/, '').trim();
+  truncated = truncated.replace(/[,;:\u2014\u2013\-&]$/, '').trim();
+
+  // Strip dangling short connective words ("...the" \u2192 "...").
+  truncated = truncated
+    .replace(/\s+(?:and|or|the|a|an|of|to|in|on|at|for|with|&)$/i, '')
+    .trim();
 
   return truncated;
 }

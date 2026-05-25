@@ -6,7 +6,7 @@
 
 import { describe, it } from 'node:test';
 import assert from 'node:assert/strict';
-import { truncateSeoTitle } from '../seo-utils';
+import { truncateSeoTitle, truncateSeoDescription } from '../seo-utils';
 
 describe('truncateSeoTitle', () => {
   it('strips trailing & when truncation lands on an ampersand', () => {
@@ -83,5 +83,39 @@ describe('truncateSeoTitle', () => {
       truncateSeoTitle('Webflow SEO Guide | LoudFace'),
       'Webflow SEO Guide',
     );
+  });
+});
+
+describe('truncateSeoDescription', () => {
+  // Long enough to exceed MIN_META_DESCRIPTION (120) so the function actually runs.
+  const long = (suffix: string) =>
+    'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua ' +
+    suffix;
+
+  it('strips trailing & when truncation lands on it', () => {
+    const input = long('with extras & more bonus content that pushes well past the budget so we definitely truncate this');
+    const result = truncateSeoDescription(input, 150);
+    assert.ok(result, 'expected non-null result');
+    assert.ok(!result.endsWith('&'), `expected not to end with "&", got "${result}"`);
+  });
+
+  it('strips trailing connective word', () => {
+    const input = long('and definitely much more text that pushes us well over whatever sensible limit we chose for this test');
+    const result = truncateSeoDescription(input, 150);
+    assert.ok(result, 'expected non-null result');
+    assert.ok(
+      !/\b(and|or|the|a|an|of|to|in|on|at|for|with)$/i.test(result),
+      `expected not to end with a connective word, got "${result}"`,
+    );
+  });
+
+  it('returns null when description is too short to be useful', () => {
+    assert.equal(truncateSeoDescription('Too short.'), null);
+  });
+
+  it('returns description as-is when under the limit', () => {
+    const input = long('and that is the end of the line right here').slice(0, 155).trim();
+    const result = truncateSeoDescription(input, 160);
+    assert.equal(result, input);
   });
 });
