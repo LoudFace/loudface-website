@@ -50,7 +50,14 @@ export function truncateSeoTitle(
   }
 
   // Strip trailing punctuation that looks incomplete
-  truncated = truncated.replace(/[,;:\u2014\u2013\-]$/, '').trim();
+  truncated = truncated.replace(/[,;:\u2014\u2013\-&]$/, '').trim();
+
+  // Strip dangling short connective words ("Strategies and" \u2192 "Strategies").
+  // Without this, SERP titles end with orphaned conjunctions/prepositions
+  // (real incident 2026-05-26: a title ended with "&" \u2192 0.01% CTR at pos 9).
+  truncated = truncated
+    .replace(/\s+(?:and|or|the|a|an|of|to|in|on|at|for|with|&)$/i, '')
+    .trim();
 
   return truncated;
 }
