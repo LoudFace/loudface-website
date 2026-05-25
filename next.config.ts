@@ -369,6 +369,66 @@ const nextConfig: NextConfig = {
         destination: '/services/webflow',
         permanent: true,
       },
+      // ─── AI-crawl 404 hygiene (Peec agent analytics 2026-05-25) ──────────
+      // Surfaced via Cloudflare AI agent traffic logs (May 13–25).
+      // AI models are pattern-matching these slugs from training data or
+      // hallucinating plausible URL structures. All returning 404 to real
+      // AI-driven users. 7+ lost visits in 12 days for TradeMomentum alone.
+      //
+      // TradeMomentum — 7 distinct wrong-slug guesses across 6 bots.
+      {
+        source: '/case-studies/trademomentum',
+        destination: '/case-studies/trademomentum-niche-aeo-organic-growth',
+        permanent: true,
+      },
+      {
+        source: '/case-studies/trade-momentum',
+        destination: '/case-studies/trademomentum-niche-aeo-organic-growth',
+        permanent: true,
+      },
+      {
+        source: '/case-studies/tradeMomentum',
+        destination: '/case-studies/trademomentum-niche-aeo-organic-growth',
+        permanent: true,
+      },
+      {
+        source: '/case-studies/trademomentum-aeo',
+        destination: '/case-studies/trademomentum-niche-aeo-organic-growth',
+        permanent: true,
+      },
+      {
+        source: '/case-studies/trademomentum-ai-bootcamp-aeo',
+        destination: '/case-studies/trademomentum-niche-aeo-organic-growth',
+        permanent: true,
+      },
+      {
+        source: '/case-studies/how-trademomentum-became-the-ais-pick-for-60-day-trading-bootcamps',
+        destination: '/case-studies/trademomentum-niche-aeo-organic-growth',
+        permanent: true,
+      },
+      {
+        source: '/case-studies/how-trademomentum-became-the-ai-pick-for-60-day-trading-bootcamps',
+        destination: '/case-studies/trademomentum-niche-aeo-organic-growth',
+        permanent: true,
+      },
+      // Outbound Specialist — AI guessing longer descriptive slug
+      {
+        source: '/case-studies/outbound-specialist-high-converting-landing-page',
+        destination: '/case-studies/outbound-specialist',
+        permanent: true,
+      },
+      // Arnel team page — AI routing to /about/ prefix instead of /team/
+      {
+        source: '/about/arnel-bukva',
+        destination: '/team/arnel-bukva',
+        permanent: true,
+      },
+      // AEO pricing post — AI citing a slightly different slug variant
+      {
+        source: '/blog/aeo-agency-pricing-for-b2b-saas-2026',
+        destination: '/blog/aeo-agency-pricing-b2b-saas-2026',
+        permanent: true,
+      },
     ];
   },
 };
