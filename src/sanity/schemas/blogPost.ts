@@ -61,6 +61,23 @@ export const blogPost = defineType({
       title: 'Content',
       type: 'text',
       description: 'Rich text content stored as HTML',
+      // Guard against the duplicate-FAQ bug first seen 2026-05-26 on the
+      // LLM SEO listicle. The page template renders the `faq` array as
+      // its own FAQ section. If the body content ALSO contains an inline
+      // "Frequently Asked Questions" H2, readers see the FAQ twice.
+      // This validator surfaces the conflict in Studio AND on any API
+      // mutation that goes through Sanity's validation layer.
+      validation: (rule) =>
+        rule.custom((content, context) => {
+          if (typeof content !== 'string' || !content) return true;
+          const inlineFaqPattern =
+            /<h2[^>]*>\s*(?:FAQ|FAQs|Frequently\s+Asked\s+Questions?|Common\s+Questions?)\s*<\/h2>/i;
+          if (!inlineFaqPattern.test(content)) return true;
+          const doc = context.document as { faq?: unknown[] } | undefined;
+          const faqCount = Array.isArray(doc?.faq) ? doc!.faq!.length : 0;
+          if (faqCount === 0) return true;
+          return `Content contains an inline "Frequently Asked Questions" H2, AND the FAQ field has ${faqCount} items. The page template renders the FAQ array as its own section, so this article will show the FAQ twice. Either remove the inline H2 (plus its Q&A markup) from Content, or clear the FAQ field.`;
+        }),
     }),
     defineField({
       name: 'timeToRead',
