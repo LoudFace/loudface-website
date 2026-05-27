@@ -12,7 +12,6 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import { fetchHomepageData } from '@/lib/cms-data';
 import { thumbnailImage } from '@/lib/image-utils';
-import { asset } from '@/lib/assets';
 import { Pagination, SectionContainer, SectionHeader } from '@/components/ui';
 import { CTA } from '@/components/sections';
 import type { Category, TeamMember } from '@/lib/types';
@@ -147,21 +146,23 @@ export default async function BlogPage({
                   <Link
                     key={post.slug}
                     href={`/blog/${post.slug}`}
-                    className="group block bg-white rounded-xl border border-surface-200 overflow-hidden transition-all duration-300 hover:shadow-lg hover:-translate-y-1 focus-visible:outline-2 focus-visible:outline-primary-500 focus-visible:outline-offset-4"
+                    className="group flex flex-col h-full bg-white rounded-xl border border-surface-200 overflow-hidden transition-all duration-300 hover:shadow-lg hover:-translate-y-1 focus-visible:outline-2 focus-visible:outline-primary-500 focus-visible:outline-offset-4"
                   >
-                    <div className="aspect-video overflow-hidden">
-                      <img
-                        src={thumbnailImage(post.thumbnail?.url) || asset('/images/placeholder.webp')}
-                        alt={post.thumbnail?.alt || post.name}
-                        width="800"
-                        height="450"
-                        loading={index < 3 ? 'eager' : 'lazy'}
-                        fetchPriority={index === 0 ? 'high' : undefined}
-                        className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-                      />
-                    </div>
+                    {post.thumbnail?.url && (
+                      <div className="aspect-video overflow-hidden">
+                        <img
+                          src={thumbnailImage(post.thumbnail.url)}
+                          alt={post.thumbnail.alt || post.name}
+                          width="800"
+                          height="450"
+                          loading={index < 3 ? 'eager' : 'lazy'}
+                          fetchPriority={index === 0 ? 'high' : undefined}
+                          className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                        />
+                      </div>
+                    )}
 
-                    <div className="p-5">
+                    <div className="p-5 flex-1 flex flex-col">
                       <div className="flex items-center gap-3 mb-3">
                         {category && (
                           <span className="px-2.5 py-1 bg-primary-50 text-primary-700 rounded-full text-xs font-medium">
@@ -178,12 +179,12 @@ export default async function BlogPage({
                       </h3>
 
                       {post.excerpt && (
-                        <p className="mt-2 text-sm text-surface-600 line-clamp-2">
+                        <p className={`mt-2 text-sm text-surface-600 ${post.thumbnail?.url ? 'line-clamp-2' : 'line-clamp-6'}`}>
                           {post.excerpt}
                         </p>
                       )}
 
-                      <div className="mt-4 pt-4 border-t border-surface-100 flex items-center justify-between">
+                      <div className="mt-auto pt-4 border-t border-surface-100 flex items-center justify-between">
                         <span className="text-xs text-surface-500">
                           By {author?.name || 'LoudFace'}
                         </span>
