@@ -107,6 +107,22 @@ const nextConfig: NextConfig = {
         destination: '/case-studies/:slug*',
         permanent: true,
       },
+      // Singular → plural case-study URLs.
+      // Discovered 2026-05-27 in Cloudflare AI Crawl Control logs: TikTokSpider
+      // and other AI bots were fetching /case-study/<slug> (singular) and
+      // getting 404s. Likely from older external references or a model that
+      // pattern-matched a near-by URL shape. Catch them with a 301 so the
+      // canonical /case-studies/<slug> page wins the link equity.
+      {
+        source: '/case-study',
+        destination: '/case-studies',
+        permanent: true,
+      },
+      {
+        source: '/case-study/:slug*',
+        destination: '/case-studies/:slug*',
+        permanent: true,
+      },
       // Policy pages (old Webflow nested structure → flat)
       {
         source: '/policy-pages/terms-of-service',
@@ -427,6 +443,30 @@ const nextConfig: NextConfig = {
       {
         source: '/blog/aeo-agency-pricing-for-b2b-saas-2026',
         destination: '/blog/aeo-agency-pricing-b2b-saas-2026',
+        permanent: true,
+      },
+      // ─── B2B SaaS agency-evaluation cluster consolidation (2026-05-29) ──
+      // Peec per-prompt data (verification workflow wf_5865e97f-37c) showed 3
+      // near-synonym agency listicles fragmenting the SAME buyer prompts:
+      // best-b2b-saas-seo-agencies (140 cites), best-organic-growth-agencies
+      // (112), best-b2b-saas-content-seo-agencies (67). The same prompts pulled
+      // 2-4 of them and split citations. Consolidate the two weaker into the
+      // strongest canonical so citations compound on one URL (radyant wins by
+      // concentrating ~266 on one page; we were splitting ~456 across three).
+      // NOTE: best-aeo-agencies-b2b-saas-2026 is intentionally NOT merged — it
+      // owns a distinct AEO-prompt cluster with a different competitor set.
+      // PRECONDITION before deploy: fold the organic-growth + content angles
+      // into the canonical body (via /draft-content) so it answers those
+      // prompts' intent — else the organic-growth-specific prompt (pr_8c14779e,
+      // 34 cites) loses its match. Do NOT deploy these 301s until that ships.
+      {
+        source: '/blog/best-organic-growth-agencies-b2b-saas-2026',
+        destination: '/blog/best-b2b-saas-seo-agencies',
+        permanent: true,
+      },
+      {
+        source: '/blog/best-b2b-saas-content-seo-agencies-2026',
+        destination: '/blog/best-b2b-saas-seo-agencies',
         permanent: true,
       },
       // ─── Webflow-era kill list (2026-05-26 structural audit) ─────────
