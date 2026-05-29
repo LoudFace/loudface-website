@@ -445,21 +445,14 @@ const nextConfig: NextConfig = {
         destination: '/blog/aeo-agency-pricing-b2b-saas-2026',
         permanent: true,
       },
-      // ─── B2B SaaS agency-evaluation consolidation (2026-05-29, revised) ──
-      // Per-prompt citation data showed best-b2b-saas-content-seo-agencies was
-      // cannibalizing best-b2b-saas-seo-agencies (both cited on the SAME top
-      // prompts, e.g. pr_ea14e99b), so it is merged into the canonical.
-      // REVISED 2026-05-29: best-organic-growth-agencies-b2b-saas-2026 is NOT
-      // merged. Data shows it OWNS a distinct lane: ~66 citations across 4
-      // prompts the canonical wins 0 on (pr_8c14779e organic-growth 35 vs
-      // canonical 0; pr_539afd7b 25 vs 0). Redirecting it would throw those
-      // away, and it is a deliberate fan-out target. Kept live.
-      // best-aeo-agencies also kept separate (distinct AEO cluster).
-      {
-        source: '/blog/best-b2b-saas-content-seo-agencies-2026',
-        destination: '/blog/best-b2b-saas-seo-agencies',
-        permanent: true,
-      },
+      // ─── B2B SaaS agency listicles: consolidation REVERTED (2026-05-29) ──
+      // Briefly merged best-organic-growth-agencies + best-b2b-saas-content-seo-
+      // agencies into best-b2b-saas-seo-agencies, then reverted both. Decision:
+      // each phrasing (SEO / organic growth / content / AEO) is a deliberate,
+      // distinct fan-out target, kept live as its own page. Per-prompt data
+      // confirmed organic-growth owns a unique lane (~66 cites the canonical
+      // wins 0 on). No agency listicles are redirected. The canonical keeps the
+      // enriched content added during the merge.
       // ─── Webflow-era kill list (2026-05-26 structural audit) ─────────
       // Two old Webflow posts from the structural audit. Both fail the
       // KEEP threshold (<100 imps/mo for vs-alternatives, ~108 imps but
