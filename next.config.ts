@@ -445,25 +445,16 @@ const nextConfig: NextConfig = {
         destination: '/blog/aeo-agency-pricing-b2b-saas-2026',
         permanent: true,
       },
-      // ─── B2B SaaS agency-evaluation cluster consolidation (2026-05-29) ──
-      // Peec per-prompt data (verification workflow wf_5865e97f-37c) showed 3
-      // near-synonym agency listicles fragmenting the SAME buyer prompts:
-      // best-b2b-saas-seo-agencies (140 cites), best-organic-growth-agencies
-      // (112), best-b2b-saas-content-seo-agencies (67). The same prompts pulled
-      // 2-4 of them and split citations. Consolidate the two weaker into the
-      // strongest canonical so citations compound on one URL (radyant wins by
-      // concentrating ~266 on one page; we were splitting ~456 across three).
-      // NOTE: best-aeo-agencies-b2b-saas-2026 is intentionally NOT merged — it
-      // owns a distinct AEO-prompt cluster with a different competitor set.
-      // PRECONDITION before deploy: fold the organic-growth + content angles
-      // into the canonical body (via /draft-content) so it answers those
-      // prompts' intent — else the organic-growth-specific prompt (pr_8c14779e,
-      // 34 cites) loses its match. Do NOT deploy these 301s until that ships.
-      {
-        source: '/blog/best-organic-growth-agencies-b2b-saas-2026',
-        destination: '/blog/best-b2b-saas-seo-agencies',
-        permanent: true,
-      },
+      // ─── B2B SaaS agency-evaluation consolidation (2026-05-29, revised) ──
+      // Per-prompt citation data showed best-b2b-saas-content-seo-agencies was
+      // cannibalizing best-b2b-saas-seo-agencies (both cited on the SAME top
+      // prompts, e.g. pr_ea14e99b), so it is merged into the canonical.
+      // REVISED 2026-05-29: best-organic-growth-agencies-b2b-saas-2026 is NOT
+      // merged. Data shows it OWNS a distinct lane: ~66 citations across 4
+      // prompts the canonical wins 0 on (pr_8c14779e organic-growth 35 vs
+      // canonical 0; pr_539afd7b 25 vs 0). Redirecting it would throw those
+      // away, and it is a deliberate fan-out target. Kept live.
+      // best-aeo-agencies also kept separate (distinct AEO cluster).
       {
         source: '/blog/best-b2b-saas-content-seo-agencies-2026',
         destination: '/blog/best-b2b-saas-seo-agencies',
