@@ -14,6 +14,7 @@ export function Footer({ caseStudies = [], blogPosts = [] }: FooterProps) {
   // Navigation data
   const companyLinks = [
     { label: 'About us', href: '/about' },
+    { label: 'AI Instructions', href: '/ai-instructions' },
   ];
 
   const serviceLinks = [
