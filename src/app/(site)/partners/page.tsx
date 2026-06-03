@@ -93,7 +93,7 @@ const STEPS = [
   {
     number: '04',
     title: 'Get paid every month they stay',
-    body: '10% of their retainer, paid by the 5th of every month, for as long as they're a client. Not 6 months. Not 12 months. Lifetime.',
+    body: '10% of their retainer, paid by the 5th of every month, for as long as they’re a client. Not 6 months. Not 12 months. Lifetime.',
     detail: 'First payment lands 30 days after their first invoice is paid.',
   },
 ];
@@ -103,7 +103,7 @@ const RIGHT_FIT = [
   'Your clients are businesses that need growth execution',
   "You advise on strategy but don't run growth execution in-house",
   "You're confident enough in your recommendations to put your name behind them",
-  'You make 1–3 client recommendations per quarter where LoudFace's service would be a real solve',
+  'You make 1–3 client recommendations per quarter where LoudFace’s service would be a real solve',
 ];
 
 const NOT_FIT = [
@@ -131,7 +131,7 @@ const FAQ_ITEMS = [
   {
     question: 'Do I have to sign anything formal?',
     answer:
-      'Yes — a 1-page partner agreement covering commission terms, payout cadence, and confidentiality. Takes 2 minutes to read. We'll send it on approval.',
+      'Yes — a 1-page partner agreement covering commission terms, payout cadence, and confidentiality. Takes 2 minutes to read. We’ll send it on approval.',
   },
   {
     question: 'How do you track who referred who?',
@@ -141,22 +141,22 @@ const FAQ_ITEMS = [
   {
     question: 'When do I get paid?',
     answer:
-      'Monthly. First payout lands 30 days after your referral's first invoice is paid. After that, by the 5th of every month, as long as they're an active client. Paid via Wise, PayPal, or bank transfer (international friendly).',
+      'Monthly. First payout lands 30 days after your referral’s first invoice is paid. After that, by the 5th of every month, as long as they’re an active client. Paid via Wise, PayPal, or bank transfer (international friendly).',
   },
   {
     question: 'What happens if my referral cancels in month 1?',
     answer:
-      'If the client churns within the first 60 days, the commission is clawed back from your next payout. After 60 days, no clawback — it's yours.',
+      'If the client churns within the first 60 days, the commission is clawed back from your next payout. After 60 days, no clawback — it’s yours.',
   },
   {
-    question: 'Can I refer someone I'm currently advising?',
+    question: 'Can I refer someone I’m currently advising?',
     answer:
-      'Yes. That's our ideal partner setup — you advise on strategy, we run execution. Just be transparent with your client that you're earning a referral fee. We'll never disclose it without your sign-off.',
+      'Yes. That’s our ideal partner setup — you advise on strategy, we run execution. Just be transparent with your client that you’re earning a referral fee. We’ll never disclose it without your sign-off.',
   },
   {
     question: 'What if my referral wants to negotiate scope or pricing?',
     answer:
-      'We handle all that. Your job ends at the intro. We'll keep you looped in on the deal status (lost / won / paused) within 5 business days of close or no-go.',
+      'We handle all that. Your job ends at the intro. We’ll keep you looped in on the deal status (lost / won / paused) within 5 business days of close or no-go.',
   },
   {
     question: 'Is there a cap on how many referrals I can make?',
@@ -165,7 +165,7 @@ const FAQ_ITEMS = [
   {
     question: 'Why 10% lifetime and not a one-time fee?',
     answer:
-      'Because a one-time fee turns referrals into a transaction. Lifetime payouts mean we both win when the client wins, and we both lose when they churn. It keeps our incentives aligned with yours and your client's.',
+      'Because a one-time fee turns referrals into a transaction. Lifetime payouts mean we both win when the client wins, and we both lose when they churn. It keeps our incentives aligned with yours and your client’s.',
   },
   {
     question: 'What does the partner agreement actually cover?',

@@ -153,7 +153,7 @@ export function PartnerApplicationForm() {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-5" noValidate>
+    <form onSubmit={handleSubmit} onFocus={handleFirstFocus} className="space-y-5" noValidate>
       <div>
         <label htmlFor="partner-name" className={labelClass}>
           Full Name {requiredMark}
@@ -166,7 +166,6 @@ export function PartnerApplicationForm() {
           autoComplete="name"
           value={fullName}
           onChange={(e) => setFullName(e.target.value)}
-          onFocus={handleFirstFocus}
           className={inputClass}
         />
       </div>
