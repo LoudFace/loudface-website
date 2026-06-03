@@ -29,18 +29,19 @@ import {
 } from '@/components';
 import { PartnerApplicationForm } from './_components/PartnerApplicationForm';
 import { MobileStickyCTA } from './_components/MobileStickyCTA';
+import { PartnersCTALink } from './_components/PartnersCTALink';
 
 export const metadata: Metadata = {
   title: 'fCMO Partner Program — 10% Lifetime Commission',
   description:
-    'Partner program for fractional CMOs and growth advisors. Refer B2B SaaS clients, earn 10% of their retainer every month they stay. No caps, no expiry.',
+    'Partner program for fractional CMOs and growth advisors. Refer clients, earn 10% of their retainer every month they stay. No caps, no expiry.',
   alternates: {
     canonical: '/partners',
   },
   openGraph: {
     title: 'fCMO Partner Program — 10% Lifetime Commission | LoudFace',
     description:
-      'Refer one B2B SaaS client. Earn 10% of their retainer for as long as they stay. No caps. No expiry.',
+      'Refer a client. Earn 10% of their retainer for as long as they stay. No caps. No expiry.',
     type: 'website',
     url: '/partners',
     siteName: 'LoudFace',
@@ -59,7 +60,7 @@ export const metadata: Metadata = {
     site: '@loudface',
     title: 'fCMO Partner Program — 10% Lifetime Commission | LoudFace',
     description:
-      'Refer one B2B SaaS client. Earn 10% of their retainer for as long as they stay. No caps. No expiry.',
+      'Refer a client. Earn 10% of their retainer for as long as they stay. No caps. No expiry.',
     images: ['/partners/opengraph-image'],
   },
 };
@@ -85,24 +86,24 @@ const STEPS = [
   },
   {
     number: '03',
-    title: 'Refer a B2B SaaS client',
+    title: 'Refer a client',
     body: 'Send them your link, or introduce us over email. We handle discovery, scoping, proposal, and onboarding. You stay in your advisory seat.',
     detail: null,
   },
   {
     number: '04',
     title: 'Get paid every month they stay',
-    body: '10% of their retainer, paid by the 5th of every month, for as long as they’re a client. Not 6 months. Not 12 months. Lifetime.',
+    body: '10% of their retainer, paid by the 5th of every month, for as long as they're a client. Not 6 months. Not 12 months. Lifetime.',
     detail: 'First payment lands 30 days after their first invoice is paid.',
   },
 ];
 
 const RIGHT_FIT = [
   "You're a fractional CMO, growth advisor, or marketing consultant",
-  'Your clients are B2B SaaS, fintech, AI, or tech companies at $1M–$50M ARR',
+  'Your clients are businesses that need growth execution',
   "You advise on strategy but don't run growth execution in-house",
   "You're confident enough in your recommendations to put your name behind them",
-  'You make 1–3 client recommendations per quarter where LoudFace’s service would be a real solve',
+  'You make 1–3 client recommendations per quarter where LoudFace's service would be a real solve',
 ];
 
 const NOT_FIT = [
@@ -113,7 +114,6 @@ const NOT_FIT = [
 ];
 
 const WHY_ITEMS = [
-  'B2B SaaS only. No generalist client mix.',
   'SEO + AEO + CRO as one integrated system. One team, one strategy, one accountability.',
   'We report on pipeline and revenue. Not vanity metrics.',
   'We work as an extension of your advisory, not a replacement.',
@@ -131,7 +131,7 @@ const FAQ_ITEMS = [
   {
     question: 'Do I have to sign anything formal?',
     answer:
-      'Yes — a 1-page partner agreement covering commission terms, payout cadence, and confidentiality. Takes 2 minutes to read. We’ll send it on approval.',
+      'Yes — a 1-page partner agreement covering commission terms, payout cadence, and confidentiality. Takes 2 minutes to read. We'll send it on approval.',
   },
   {
     question: 'How do you track who referred who?',
@@ -141,22 +141,22 @@ const FAQ_ITEMS = [
   {
     question: 'When do I get paid?',
     answer:
-      'Monthly. First payout lands 30 days after your referral’s first invoice is paid. After that, by the 5th of every month, as long as they’re an active client. Paid via Wise, PayPal, or bank transfer (international friendly).',
+      'Monthly. First payout lands 30 days after your referral's first invoice is paid. After that, by the 5th of every month, as long as they're an active client. Paid via Wise, PayPal, or bank transfer (international friendly).',
   },
   {
     question: 'What happens if my referral cancels in month 1?',
     answer:
-      'If the client churns within the first 60 days, the commission is clawed back from your next payout. After 60 days, no clawback — it’s yours.',
+      'If the client churns within the first 60 days, the commission is clawed back from your next payout. After 60 days, no clawback — it's yours.',
   },
   {
-    question: 'Can I refer someone I’m currently advising?',
+    question: 'Can I refer someone I'm currently advising?',
     answer:
-      'Yes. That’s our ideal partner setup — you advise on strategy, we run execution. Just be transparent with your client that you’re earning a referral fee. We’ll never disclose it without your sign-off.',
+      'Yes. That's our ideal partner setup — you advise on strategy, we run execution. Just be transparent with your client that you're earning a referral fee. We'll never disclose it without your sign-off.',
   },
   {
     question: 'What if my referral wants to negotiate scope or pricing?',
     answer:
-      'We handle all that. Your job ends at the intro. We’ll keep you looped in on the deal status (lost / won / paused) within 5 business days of close or no-go.',
+      'We handle all that. Your job ends at the intro. We'll keep you looped in on the deal status (lost / won / paused) within 5 business days of close or no-go.',
   },
   {
     question: 'Is there a cap on how many referrals I can make?',
@@ -165,12 +165,7 @@ const FAQ_ITEMS = [
   {
     question: 'Why 10% lifetime and not a one-time fee?',
     answer:
-      'Because a one-time fee turns referrals into a transaction. Lifetime payouts mean we both win when the client wins, and we both lose when they churn. It keeps our incentives aligned with yours and your client’s.',
-  },
-  {
-    question: 'Can I refer non-SaaS clients?',
-    answer:
-      'We can only pay commission on B2B SaaS, fintech, AI, or tech clients at $10K+/month retainer. If you have a great client outside that ICP, tell us anyway — we may know someone better suited and we’ll make the intro for goodwill.',
+      'Because a one-time fee turns referrals into a transaction. Lifetime payouts mean we both win when the client wins, and we both lose when they churn. It keeps our incentives aligned with yours and your client's.',
   },
   {
     question: 'What does the partner agreement actually cover?',
@@ -235,24 +230,24 @@ export default async function PartnersPage() {
           </span>
 
           <h1 className="font-heading font-medium text-white leading-[1.1] tracking-tight text-3xl sm:text-4xl md:text-5xl lg:text-6xl text-balance">
-            Refer one B2B SaaS client. Earn 10% of their retainer for as long as
-            they stay with us.
+            Refer a client. Earn 10% of their retainer for as long as they stay
+            with us.
           </h1>
 
           <p className="mt-8 text-lg md:text-xl text-surface-300 max-w-2xl leading-relaxed">
             No caps. No expiry. The LoudFace Partner Program is built for
-            fractional CMOs, growth advisors, and consultants who advise B2B SaaS
-            teams but don&apos;t want to run execution.
+            fractional CMOs, growth advisors, and consultants who advise clients
+            but don&apos;t want to run execution.
           </p>
 
           <div className="mt-10">
-            <a
-              href="#apply"
+            <PartnersCTALink
+              source="hero"
               className="inline-flex items-center justify-center px-8 py-4 rounded-full bg-primary-600 text-white font-medium text-base transition-colors hover:bg-primary-500 focus-visible:outline-2 focus-visible:outline-primary-500 focus-visible:outline-offset-2"
             >
               Apply in 2 minutes
               <ArrowIcon className="ml-2 w-5 h-5" />
-            </a>
+            </PartnersCTALink>
           </div>
         </div>
       </SectionContainer>
@@ -400,21 +395,20 @@ export default async function PartnersPage() {
               retainer.
             </h2>
             <p className="mt-6 text-surface-300 leading-relaxed">
-              Referrals must be B2B SaaS, fintech, AI, or tech companies at
-              $1M–$50M ARR with a retainer of at least $10K/month. Anything
-              below isn&apos;t a fit — for them or for us.
+              Referrals must have a minimum retainer of at least $10K/month.
+              Anything below isn&apos;t a fit — for them or for us.
             </p>
           </div>
         </div>
 
         <div className="mt-10">
-          <a
-            href="#apply"
+          <PartnersCTALink
+            source="earn_section"
             className="inline-flex items-center justify-center px-8 py-4 rounded-full bg-primary-600 text-white font-medium text-base transition-colors hover:bg-primary-500 focus-visible:outline-2 focus-visible:outline-primary-500 focus-visible:outline-offset-2"
           >
             Apply in 2 minutes
             <ArrowIcon className="ml-2 w-5 h-5" />
-          </a>
+          </PartnersCTALink>
         </div>
       </SectionContainer>
 
@@ -526,8 +520,8 @@ export default async function PartnersPage() {
       {/* ─── SECTION 11: Final CTA ─── */}
       <CTA
         variant="dark"
-        title="Have a B2B SaaS client we should meet?"
-        subtitle="If you're advising B2B SaaS companies on growth, this conversation is worth having."
+        title="Have a client we should meet?"
+        subtitle="If you're advising clients on growth and want to refer execution, this conversation is worth having."
         ctaText="Apply to the Partner Program"
         ctaHref="#apply"
       />

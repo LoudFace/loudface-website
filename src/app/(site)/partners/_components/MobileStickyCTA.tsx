@@ -1,11 +1,23 @@
+'use client';
+
 /**
  * MobileStickyCTA — fixed floating "Apply" button visible only on <768px.
  * Anchors to #apply on the partners page.
+ *
+ * Fires PostHog `partners_cta_clicked` with source "mobile_sticky" on click.
  */
 export function MobileStickyCTA() {
+  function handleClick() {
+    void import('posthog-js').then(({ default: posthog }) => {
+      if (!posthog.__loaded) return;
+      posthog.capture('partners_cta_clicked', { source: 'mobile_sticky' });
+    });
+  }
+
   return (
     <a
       href="#apply"
+      onClick={handleClick}
       aria-label="Apply to the Partner Program"
       className="md:hidden fixed bottom-4 right-4 z-50 inline-flex items-center gap-2 rounded-full bg-primary-600 text-white px-5 py-3 text-sm font-medium shadow-lg shadow-primary-900/20 transition-colors hover:bg-primary-500 focus-visible:outline-2 focus-visible:outline-primary-500 focus-visible:outline-offset-2 active:scale-[0.98]"
     >

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useSyncExternalStore, type FormEvent } from 'react';
+import { useState, useRef, useSyncExternalStore, type FormEvent } from 'react';
 
 const subscribeHydration = () => () => {};
 const getHydratedSnapshot = () => true;
@@ -13,10 +13,14 @@ const getServerHydrationSnapshot = () => false;
  * (database_id c597d4c9-817a-458a-b5b0-92dc4c9db147). If you change a field
  * here, update the Notion property mapping in `/api/partner-apply/route.ts`
  * AND in the Notion DB schema — or submission will fail.
+ *
+ * PostHog events fired here:
+ * - `partners_form_started`  — once, on first field focus
+ * - `partner_application_submitted` — on successful POST
  */
 
 // Notion: Industry (multi_select). Order matches the DB option order.
-const INDUSTRIES = ['B2B SaaS', 'B2B Product', 'D2C'] as const;
+const INDUSTRIES = ['B2B Product', 'D2C'] as const;
 
 // Notion: Avg ACV of Clients (select)
 const ACV_BUCKETS = [
@@ -47,6 +51,17 @@ export function PartnerApplicationForm() {
   const [webinar, setWebinar] = useState('');
   const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
   const [errorMsg, setErrorMsg] = useState('');
+
+  // Fire `partners_form_started` exactly once per page load, on first field focus.
+  const formStartedRef = useRef(false);
+  function handleFirstFocus() {
+    if (formStartedRef.current) return;
+    formStartedRef.current = true;
+    void import('posthog-js').then(({ default: posthog }) => {
+      if (!posthog.__loaded) return;
+      posthog.capture('partners_form_started');
+    });
+  }
 
   function toggleIndustry(value: string) {
     setIndustry((prev) =>
@@ -151,6 +166,7 @@ export function PartnerApplicationForm() {
           autoComplete="name"
           value={fullName}
           onChange={(e) => setFullName(e.target.value)}
+          onFocus={handleFirstFocus}
           className={inputClass}
         />
       </div>
