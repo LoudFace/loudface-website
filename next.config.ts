@@ -95,6 +95,21 @@ const nextConfig: NextConfig = {
   },
   async redirects() {
     return [
+      // ─── Agency-evaluation cluster fold (301) — re-applied 2026-06-03 ───
+      // Concentrate near-synonym agency pages onto one canonical entity page
+      // to stop citation fragmentation (KB: "Concentrate, don't narrow").
+      // Canonical /blog/best-b2b-saas-seo-agencies already absorbed the
+      // organic-growth angle (grafted 2026-05-28, confirmed live).
+      {
+        source: '/blog/best-organic-growth-agencies-b2b-saas-2026',
+        destination: '/blog/best-b2b-saas-seo-agencies',
+        permanent: true,
+      },
+      {
+        source: '/blog/best-b2b-saas-content-seo-agencies-2026',
+        destination: '/blog/best-b2b-saas-seo-agencies',
+        permanent: true,
+      },
       // Old Webflow → New Next.js URL mapping
       // Case studies (base + wildcard for any deep links)
       {
