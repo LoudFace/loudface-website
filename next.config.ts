@@ -445,14 +445,26 @@ const nextConfig: NextConfig = {
         destination: '/blog/aeo-agency-pricing-b2b-saas-2026',
         permanent: true,
       },
-      // ─── B2B SaaS agency listicles: consolidation REVERTED (2026-05-29) ──
-      // Briefly merged best-organic-growth-agencies + best-b2b-saas-content-seo-
-      // agencies into best-b2b-saas-seo-agencies, then reverted both. Decision:
-      // each phrasing (SEO / organic growth / content / AEO) is a deliberate,
-      // distinct fan-out target, kept live as its own page. Per-prompt data
-      // confirmed organic-growth owns a unique lane (~66 cites the canonical
-      // wins 0 on). No agency listicles are redirected. The canonical keeps the
-      // enriched content added during the merge.
+      // ─── B2B SaaS agency listicles: partial fold 3→2 (2026-06-06) ──────
+      // After the 2026-05-29 full revert, a cross-channel validation (GSC +
+      // Peec per-prompt + live AI transcripts) split the three near-synonym
+      // listicles into two distinct calls rather than one:
+      //   • KEEP best-organic-growth-agencies-b2b-saas-2026 — it is the
+      //     STRONGEST of the three on BOTH channels (GSC ~1,161 imp/7d at avg
+      //     pos 7.1; ~128 Peec mentions) and owns "organic growth agency"
+      //     prompts the SEO canonical wins 0 citations on (e.g. pr_7c52b3cc:
+      //     62 vs 0, pr_539afd7b: 35 vs 0). Folding it would 301 a page-1 URL
+      //     into a page-4 one — real fan-out, not fragmentation.
+      //   • FOLD best-b2b-saas-content-seo-agencies-2026 — weakest on both
+      //     channels (GSC ~57 imp/7d; ~38 Peec mentions); its AI citations
+      //     overlap the canonical, which already co-cites on its one owned
+      //     prompt. Consolidating weak→strong concentrates without real loss.
+      // best-aeo-agencies-b2b-saas-2026 stays separate (distinct AEO cluster).
+      {
+        source: '/blog/best-b2b-saas-content-seo-agencies-2026',
+        destination: '/blog/best-b2b-saas-seo-agencies',
+        permanent: true,
+      },
       // ─── Webflow-era kill list (2026-05-26 structural audit) ─────────
       // Two old Webflow posts from the structural audit. Both fail the
       // KEEP threshold (<100 imps/mo for vs-alternatives, ~108 imps but
