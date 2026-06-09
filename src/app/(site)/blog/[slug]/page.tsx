@@ -230,6 +230,12 @@ export default async function BlogPostPage({ params }: PageProps) {
 
   // FAQ: prefer hand-written CMS FAQ, fall back to auto-extracted from H2 headings
   const faqItems = post.faq?.length ? post.faq : extractFAQFromHTML(post.content);
+  // The FAQ renders below as its own component, not as a content H2, so the
+  // TOC builder above misses it. Surface it in the TOC (and anchor it below)
+  // whenever the FAQ block actually renders (same >= 2 threshold).
+  if (faqItems.length >= 2) {
+    toc.push({ id: 'faq', text: 'Frequently asked questions' });
+  }
   const faqSchema = buildFAQSchema(faqItems);
   const speakableSchema = buildSpeakableSchema(post.name, canonicalUrl);
 
@@ -439,16 +445,20 @@ export default async function BlogPostPage({ params }: PageProps) {
         </div>
       </SectionContainer>
 
-      {/* FAQ — open layout from auto-extracted H2 headings */}
+      {/* FAQ — open layout from auto-extracted H2 headings. Wrapped in an
+          anchor target so the TOC "Frequently asked questions" link scrolls
+          here; scroll-mt offsets the sticky site header. */}
       {faqItems.length >= 2 && (
-        <FAQ
-          title="Frequently Asked Questions"
-          subtitle={`Key takeaways from this article on ${post.name.length > 50 ? post.name.slice(0, 47) + '…' : post.name}.`}
-          items={faqItems}
-          showFooter={false}
-          skipSchema
-          variant="open"
-        />
+        <div id="faq" className="scroll-mt-28">
+          <FAQ
+            title="Frequently Asked Questions"
+            subtitle={`Key takeaways from this article on ${post.name.length > 50 ? post.name.slice(0, 47) + '…' : post.name}.`}
+            items={faqItems}
+            showFooter={false}
+            skipSchema
+            variant="open"
+          />
+        </div>
       )}
 
       {/* Comparison Cross-Links */}
