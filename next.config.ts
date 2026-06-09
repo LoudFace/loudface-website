@@ -480,6 +480,51 @@ const nextConfig: NextConfig = {
         destination: '/blog/understanding-webflows-cms-guide',
         permanent: true,
       },
+      // ─── Crawler-equity cleanup (2026-06-10 Cloudflare 404 audit) ─────
+      // Verified live before adding: every source returned 404, every
+      // destination returned 200 (curl checks 2026-06-10).
+      // Two long-standing commitments from the 2026-06-01 AI-bot 404 log:
+      {
+        source: '/blog/citation-authority-is-the-new-backlink-strategy',
+        destination: '/blog/how-to-become-a-trusted-llm-source',
+        permanent: true,
+      },
+      {
+        source: '/case-studies/toku-ai-cited',
+        destination: '/case-studies/toku-ai-cited-pipeline',
+        permanent: true,
+      },
+      // Literal "null" URLs — bots (meta-external et al.) request these
+      // 90+ times/week; no null-slug post exists in Sanity, so the links
+      // are external/hallucinated. Catch the equity instead of 404ing.
+      {
+        source: '/blog/null',
+        destination: '/blog',
+        permanent: true,
+      },
+      {
+        source: '/case-studies/null',
+        destination: '/case-studies',
+        permanent: true,
+      },
+      // Removed Webflow-era case studies still crawled (41 + 5 hits/7d)
+      {
+        source: '/case-studies/beautify',
+        destination: '/case-studies',
+        permanent: true,
+      },
+      {
+        source: '/case-studies/huntsworth',
+        destination: '/case-studies',
+        permanent: true,
+      },
+      // Killed Webflow guide still requested by Bing/meta crawlers;
+      // nearest live intent match per the don't-410 rule.
+      {
+        source: '/blog/webflow-seo-optimization-guide',
+        destination: '/blog/is-webflow-good-for-seo',
+        permanent: true,
+      },
     ];
   },
 };

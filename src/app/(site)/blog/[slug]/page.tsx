@@ -27,6 +27,7 @@ import { buildNoIndexMetadata, buildPageMetadata, truncateSeoTitle, truncateSeoD
 import {
   extractFAQFromHTML,
   buildFAQSchema,
+  buildItemListSchema,
   buildSpeakableSchema,
   buildArticleAuthorSchema,
   buildOrganizationPublisher,
@@ -121,7 +122,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const description = truncateSeoDescription(post['meta-description'])
     || truncateSeoDescription(post.excerpt)
     || '';
-  const imageUrl = post.thumbnail?.url || '/images/og-image.jpg';
+  const imageUrl = post.thumbnail?.url || '/opengraph-image';
 
   return buildPageMetadata({
     title,
@@ -231,6 +232,8 @@ export default async function BlogPostPage({ params }: PageProps) {
   // FAQ: prefer hand-written CMS FAQ, fall back to auto-extracted from H2 headings
   const faqItems = post.faq?.length ? post.faq : extractFAQFromHTML(post.content);
   const faqSchema = buildFAQSchema(faqItems);
+  // ItemList: only fires on ranked listicles (3+ numbered <h3> entries)
+  const itemListSchema = buildItemListSchema(post.content, post.name, canonicalUrl);
   const speakableSchema = buildSpeakableSchema(post.name, canonicalUrl);
 
   return (
@@ -248,6 +251,12 @@ export default async function BlogPostPage({ params }: PageProps) {
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
+        />
+      )}
+      {itemListSchema && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(itemListSchema) }}
         />
       )}
       <script

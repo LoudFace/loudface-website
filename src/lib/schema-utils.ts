@@ -231,6 +231,55 @@ export function buildFAQSchema(items: FAQItem[]): object | null {
   };
 }
 
+/* ─── Ranked-List Extraction (listicles) ───────────────────────── */
+
+/**
+ * Extract ranked entries from listicle HTML: <h3> headings that start
+ * with "N. " (e.g. "3. Omniscient Digital"). Fires only when the page
+ * has 3+ numbered headings, so regular posts never get an ItemList.
+ */
+export function extractRankedListFromHTML(html: string | undefined): string[] {
+  if (!html) return [];
+  const entries: { pos: number; name: string }[] = [];
+  const h3 = /<h3[^>]*>([\s\S]*?)<\/h3>/gi;
+  let m: RegExpExecArray | null;
+  while ((m = h3.exec(html))) {
+    const text = stripHtml(m[1]).trim();
+    const numbered = text.match(/^(\d{1,2})[.)]\s+(.+)/);
+    if (numbered) entries.push({ pos: parseInt(numbered[1], 10), name: numbered[2].trim() });
+  }
+  if (entries.length < 3) return [];
+  entries.sort((a, b) => a.pos - b.pos);
+  return entries.map((e) => e.name);
+}
+
+/**
+ * Build ItemList JSON-LD for ranked listicles. Returns null when the
+ * page isn't list-shaped (fewer than 3 numbered <h3> entries).
+ */
+export function buildItemListSchema(
+  html: string | undefined,
+  name: string,
+  url: string,
+): object | null {
+  const entries = extractRankedListFromHTML(html);
+  if (!entries.length) return null;
+
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'ItemList',
+    name,
+    url,
+    itemListOrder: 'https://schema.org/ItemListOrderAscending',
+    numberOfItems: entries.length,
+    itemListElement: entries.map((entryName, i) => ({
+      '@type': 'ListItem',
+      position: i + 1,
+      name: entryName,
+    })),
+  };
+}
+
 /**
  * Build WebPage + SpeakableSpecification JSON-LD.
  * Matches the pattern used on homepage and service pages.
