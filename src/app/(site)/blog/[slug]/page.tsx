@@ -22,7 +22,7 @@ import {
   BlogCTACard,
   BlogShareRow,
 } from '@/components/blog';
-import { CTA, FAQ, RelatedComparisons } from '@/components/sections';
+import { CTA, RelatedComparisons } from '@/components/sections';
 import { buildNoIndexMetadata, buildPageMetadata, truncateSeoTitle, truncateSeoDescription, rewriteLegacyUrls } from '@/lib/seo-utils';
 import {
   extractFAQFromHTML,
@@ -231,6 +231,10 @@ export default async function BlogPostPage({ params }: PageProps) {
 
   // FAQ: prefer hand-written CMS FAQ, fall back to auto-extracted from H2 headings
   const faqItems = post.faq?.length ? post.faq : extractFAQFromHTML(post.content);
+  const showFaq = faqItems.length >= 2;
+  if (showFaq) {
+    toc.push({ id: 'faq', text: 'Frequently Asked Questions' });
+  }
   const faqSchema = buildFAQSchema(faqItems);
   // ItemList: only fires on ranked listicles (3+ numbered <h3> entries)
   const itemListSchema = buildItemListSchema(post.content, post.name, canonicalUrl);
@@ -404,6 +408,20 @@ export default async function BlogPostPage({ params }: PageProps) {
               ) : (
                 <p className="text-surface-500">No content available for this post.</p>
               )}
+
+              {/* FAQ — rendered as part of the article body so it reads as a
+                  normal H2 section and is reachable from the TOC */}
+              {showFaq && (
+                <section className="blog-prose">
+                  <h2 id="faq">Frequently Asked Questions</h2>
+                  {faqItems.map((item, index) => (
+                    <div key={index}>
+                      <h3>{item.question}</h3>
+                      <p dangerouslySetInnerHTML={{ __html: item.answer }} />
+                    </div>
+                  ))}
+                </section>
+              )}
             </article>
 
             {/* Sidebar */}
@@ -414,14 +432,11 @@ export default async function BlogPostPage({ params }: PageProps) {
               <BlogShareRow articleUrl={canonicalUrl} articleTitle={post.name} />
 
               {author && (
-                <Link
-                  href={`/team/${author.slug}`}
-                  className="block group"
-                >
+                <div>
                   <span className="block text-[11px] font-medium text-surface-500 uppercase tracking-[0.08em] mb-3">
                     Written by
                   </span>
-                  <div className="flex items-center gap-3">
+                  <Link href={`/team/${author.slug}`} className="flex items-center gap-3 group">
                     {author['profile-picture']?.url && (
                       <img
                         src={avatarImage(author['profile-picture'].url)}
@@ -440,25 +455,32 @@ export default async function BlogPostPage({ params }: PageProps) {
                         <div className="text-xs text-surface-500">{author['job-title']}</div>
                       )}
                     </div>
-                  </div>
-                </Link>
+                  </Link>
+                  {author['bio-summary'] && (
+                    <p className="mt-3 text-xs leading-relaxed text-surface-500 line-clamp-3">
+                      {author['bio-summary']}
+                    </p>
+                  )}
+                  {author['linkedin-url'] && (
+                    <a
+                      href={author['linkedin-url']}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="mt-2.5 inline-flex items-center gap-1.5 text-xs font-medium text-surface-600 hover:text-primary-600 transition-colors"
+                      aria-label={`${author.name} on LinkedIn`}
+                    >
+                      <svg viewBox="0 0 24 24" fill="currentColor" className="w-3.5 h-3.5" aria-hidden="true">
+                        <path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z" />
+                      </svg>
+                      LinkedIn
+                    </a>
+                  )}
+                </div>
               )}
             </aside>
           </div>
         </div>
       </SectionContainer>
-
-      {/* FAQ — open layout from auto-extracted H2 headings */}
-      {faqItems.length >= 2 && (
-        <FAQ
-          title="Frequently Asked Questions"
-          subtitle={`Key takeaways from this article on ${post.name.length > 50 ? post.name.slice(0, 47) + '…' : post.name}.`}
-          items={faqItems}
-          showFooter={false}
-          skipSchema
-          variant="open"
-        />
-      )}
 
       {/* Comparison Cross-Links */}
       {isComparisonPost && <RelatedComparisons currentSlug={slug} />}

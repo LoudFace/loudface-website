@@ -8,7 +8,9 @@
       "port": 3005,
       "autoPort": true,
       "env": {
-        "PATH": "/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin"
+        "PATH": "/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin",
+        "NEXT_PUBLIC_SANITY_PROJECT_ID": "xjjjqhgt",
+        "NEXT_PUBLIC_SANITY_DATASET": "production"
       }
     }
   ]
