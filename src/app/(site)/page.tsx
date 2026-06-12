@@ -11,6 +11,7 @@
 export const revalidate = 60;
 
 import type { Metadata } from 'next';
+import Link from 'next/link';
 import { fetchHomepageData, assertCmsData } from '@/lib/cms-data';
 import { getHomepageContent } from '@/lib/content-utils';
 
@@ -273,6 +274,15 @@ export default async function HomePage() {
                   </span>
                 ))}
               </div>
+              <Link
+                href="/services/seo-aeo"
+                className="mt-6 inline-flex items-center gap-2 text-sm font-medium text-primary-400 hover:text-primary-300 transition-colors focus-visible:outline-2 focus-visible:outline-primary-500 focus-visible:outline-offset-4"
+              >
+                Explore our AEO agency services for B2B SaaS
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7" />
+                </svg>
+              </Link>
             </div>
           </Card>
         </div>
