@@ -307,6 +307,17 @@ export default async function SaaSPage() {
           {content.system.body}
         </p>
 
+        <p className="mt-4 text-lg text-surface-600 max-w-3xl leading-relaxed">
+          Want the search layer on its own? Explore our{' '}
+          <Link
+            href="/services/seo-aeo"
+            className="font-medium text-primary-600 hover:text-primary-700 underline underline-offset-4"
+          >
+            AEO agency services for B2B SaaS
+          </Link>
+          .
+        </p>
+
         <div className="mt-12 grid grid-cols-1 lg:grid-cols-3 gap-8">
           {content.system.layers.map((layer) => (
             <div
