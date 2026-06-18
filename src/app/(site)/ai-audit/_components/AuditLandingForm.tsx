@@ -65,6 +65,21 @@ export function AuditLandingForm() {
         return;
       }
 
+      // Dynamic import matches PostHogProvider's lazy-load pattern — keeps posthog-js out of the initial bundle.
+      const trimmedEmail = email.trim().toLowerCase();
+      const emailDomain = trimmedEmail.split('@')[1] ?? '';
+      void import('posthog-js').then(({ default: posthog }) => {
+        if (!posthog.__loaded) return;
+        posthog.identify(trimmedEmail);
+        posthog.capture('audit_form_submitted', {
+          audit_id: data.id,
+          email_domain: emailDomain,
+          company_name: companyName,
+          buyer_persona: persona.trim(),
+          has_competitors: competitors.trim().length > 0,
+        });
+      });
+
       router.push(`/audit/${data.id}`);
     } catch {
       setStatus('error');
