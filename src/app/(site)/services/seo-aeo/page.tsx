@@ -149,7 +149,7 @@ export default async function SeoAeoServicePage() {
     '@type': 'BreadcrumbList',
     itemListElement: [
       { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://www.loudface.co' },
-      { '@type': 'ListItem', position: 2, name: 'Services', item: 'https://www.loudface.co/services/seo-aeo' },
+      { '@type': 'ListItem', position: 2, name: 'Services', item: 'https://www.loudface.co/services' },
       { '@type': 'ListItem', position: 3, name: 'AEO Agency for B2B SaaS' },
     ],
   };
