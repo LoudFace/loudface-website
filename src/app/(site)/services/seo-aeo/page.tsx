@@ -33,28 +33,29 @@ const AICitationVisual = dynamic(
 );
 
 export const metadata: Metadata = {
-  title: 'SEO & AI Engine Optimization Services',
+  // Root layout applies `template: "%s | LoudFace"`, so do NOT add the suffix here.
+  title: 'AEO Agency for B2B SaaS | SEO, AEO & GEO',
   description:
-    'Get cited by ChatGPT, Perplexity, and Google AI Mode. Hands-free SEO and AEO programs that build authority across every engine your buyers use.',
+    'LoudFace is an AEO agency for B2B SaaS. We run SEO, AEO and GEO as one program so you rank on Google and get cited by ChatGPT, Perplexity and AI Overviews.',
   alternates: {
     canonical: '/services/seo-aeo',
   },
   openGraph: {
-    title: 'SEO & AI Engine Optimization Services | LoudFace',
+    title: 'AEO Agency for B2B SaaS | SEO, AEO & GEO | LoudFace',
     description:
-      'Get cited by ChatGPT, Perplexity, and Google AI Mode. Hands-free SEO and AEO programs that build authority across every engine your buyers use.',
+      'LoudFace is an AEO agency for B2B SaaS. We run SEO, AEO and GEO as one program so you rank on Google and get cited by ChatGPT, Perplexity and AI Overviews.',
     type: 'website',
     url: '/services/seo-aeo',
     siteName: 'LoudFace',
     locale: 'en_US',
-    images: [{ url: '/opengraph-image', width: 1200, height: 630, alt: 'LoudFace SEO & AEO Services' }],
+    images: [{ url: '/opengraph-image', width: 1200, height: 630, alt: 'LoudFace AEO Agency for B2B SaaS' }],
   },
   twitter: {
     card: 'summary_large_image',
     site: '@loudface',
-    title: 'SEO & AI Engine Optimization Services | LoudFace',
+    title: 'AEO Agency for B2B SaaS | SEO, AEO & GEO | LoudFace',
     description:
-      'Get cited by ChatGPT, Perplexity, and Google AI Mode. Hands-free SEO and AEO programs that build authority across every engine your buyers use.',
+      'LoudFace is an AEO agency for B2B SaaS. We run SEO, AEO and GEO as one program so you rank on Google and get cited by ChatGPT, Perplexity and AI Overviews.',
     images: ['/opengraph-image'],
   },
 };
@@ -127,16 +128,20 @@ export default async function SeoAeoServicePage() {
   const serviceSchema = {
     '@context': 'https://schema.org',
     '@type': 'Service',
-    name: 'SEO & AI Engine Optimization Services',
+    name: 'AEO Agency for B2B SaaS: SEO, AEO and GEO',
     description:
-      'Get cited by ChatGPT, Perplexity, and Google AI Mode. Hands-free SEO and AEO programs that build authority across every engine your buyers use.',
+      'LoudFace is an AEO agency for B2B SaaS. We run SEO, AEO and GEO as one program so you rank on Google and get cited by ChatGPT, Perplexity and AI Overviews.',
     provider: {
       '@type': 'Organization',
       name: 'LoudFace',
       url: 'https://www.loudface.co',
     },
     areaServed: 'Worldwide',
-    serviceType: ['Search Engine Optimization', 'AI Engine Optimization'],
+    serviceType: [
+      'Answer Engine Optimization',
+      'Search Engine Optimization',
+      'Generative Engine Optimization',
+    ],
   };
 
   const breadcrumbSchema = {
@@ -144,7 +149,8 @@ export default async function SeoAeoServicePage() {
     '@type': 'BreadcrumbList',
     itemListElement: [
       { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://www.loudface.co' },
-      { '@type': 'ListItem', position: 2, name: 'SEO & AEO' },
+      { '@type': 'ListItem', position: 2, name: 'Services', item: 'https://www.loudface.co/services' },
+      { '@type': 'ListItem', position: 3, name: 'AEO Agency for B2B SaaS' },
     ],
   };
 
@@ -204,7 +210,11 @@ export default async function SeoAeoServicePage() {
               dangerouslySetInnerHTML={{ __html: content.hero.headline }}
             />
 
-            <p className="mt-6 text-lg text-surface-600 max-w-xl">
+            <p className="mt-4 text-xl md:text-2xl font-medium text-primary-600">
+              {content.hero.subheadline}
+            </p>
+
+            <p className="mt-5 text-lg text-surface-600 max-w-xl" data-speakable>
               {content.hero.description}
             </p>
 
@@ -230,20 +240,106 @@ export default async function SeoAeoServicePage() {
         {/* Stats Strip */}
         <div className="mt-12 pt-8 border-t border-surface-200">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-8">
-            {content.stats.map((stat: { value: string; label: string }, i: number) => (
-              <div key={i} className="text-center">
-                <span className="text-2xl md:text-3xl font-mono font-medium text-surface-900">
-                  {stat.value}
-                </span>
-                <p className="mt-1 text-sm text-surface-500">{stat.label}</p>
-              </div>
-            ))}
+            {content.stats.map((stat: { value: string; label: string; href?: string }, i: number) => {
+              const inner = (
+                <>
+                  <span className="text-2xl md:text-3xl font-mono font-medium text-surface-900">
+                    {stat.value}
+                  </span>
+                  <p className="mt-1 text-sm text-surface-500">{stat.label}</p>
+                </>
+              );
+              return stat.href ? (
+                <Link
+                  key={i}
+                  href={stat.href}
+                  className="group text-center rounded-xl -m-2 p-2 transition-colors hover:bg-surface-50 focus-visible:outline-2 focus-visible:outline-primary-500 focus-visible:outline-offset-2"
+                >
+                  <span className="text-2xl md:text-3xl font-mono font-medium text-surface-900 group-hover:text-primary-600 transition-colors">
+                    {stat.value}
+                  </span>
+                  <p className="mt-1 text-sm text-surface-500">{stat.label}</p>
+                </Link>
+              ) : (
+                <div key={i} className="text-center">{inner}</div>
+              );
+            })}
           </div>
         </div>
       </SectionContainer>
 
       {/* ─── Social Proof: stars + headshots + tagline + logos ─── */}
       <Partners testimonials={allTestimonials} clients={allClients} />
+
+      {/* ─── Answer block: What is AEO? (AEO-critical, answer-first) ─── */}
+      <SectionContainer>
+        <div className="max-w-3xl">
+          <BulletLabel>{content.whatIsAeo.eyebrow}</BulletLabel>
+          <h2 className="mt-4 text-2xl sm:text-3xl md:text-4xl font-medium text-surface-900 leading-tight tracking-tight">
+            {content.whatIsAeo.title}
+          </h2>
+          <p className="mt-6 text-lg text-surface-800 font-medium leading-relaxed" data-speakable>
+            {content.whatIsAeo.answer}
+          </p>
+          <p className="mt-4 text-lg text-surface-600 leading-relaxed">
+            {content.whatIsAeo.body}
+          </p>
+          <Link
+            href={content.whatIsAeo.linkHref}
+            className="mt-6 inline-flex items-center gap-2 font-medium text-primary-600 hover:text-primary-700 focus-visible:outline-2 focus-visible:outline-primary-500 focus-visible:outline-offset-4"
+          >
+            {content.whatIsAeo.linkText}
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7" />
+            </svg>
+          </Link>
+        </div>
+      </SectionContainer>
+
+      {/* ─── Comparison: SEO vs AEO vs GEO (semantic table — AI-extractable) ─── */}
+      <SectionContainer>
+        <div className="max-w-3xl">
+          <SectionHeader
+            title={content.comparison.title}
+            highlightWord={content.comparison.highlightWord}
+            subtitle={content.comparison.intro}
+          />
+        </div>
+
+        <div className="mt-8 lg:mt-12 overflow-x-auto rounded-2xl border border-surface-200">
+          <table className="w-full border-collapse text-left">
+            <thead>
+              <tr className="bg-surface-50">
+                {content.comparison.columns.map((col: string) => (
+                  <th
+                    key={col}
+                    className="px-6 py-4 text-sm font-medium text-surface-500 border-b border-surface-200"
+                  >
+                    {col}
+                  </th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {content.comparison.rows.map(
+                (row: { discipline: string; optimizesFor: string; whereWeShowUp: string }) => (
+                  <tr key={row.discipline} className="border-b border-surface-200 last:border-0">
+                    <th scope="row" className="px-6 py-5 align-top">
+                      <Badge variant="outline" size="md">{row.discipline}</Badge>
+                    </th>
+                    <td className="px-6 py-5 align-top text-surface-700">{row.optimizesFor}</td>
+                    <td className="px-6 py-5 align-top text-surface-700">{row.whereWeShowUp}</td>
+                  </tr>
+                )
+              )}
+            </tbody>
+          </table>
+        </div>
+
+        <p className="mt-6 text-lg text-surface-600 max-w-3xl leading-relaxed">
+          {content.comparison.note}
+        </p>
+      </SectionContainer>
 
       {/* ─── Section 2: Problem ─── */}
       <SectionContainer>
@@ -520,12 +616,36 @@ export default async function SeoAeoServicePage() {
         </div>
       </SectionContainer>
 
-      {/* ─── Section 6: SEO by Industry ─── */}
+      {/* ─── Pricing signal: How much does an AEO agency cost? (NEW) ─── */}
+      <SectionContainer>
+        <div className="max-w-3xl">
+          <h2 className="text-2xl sm:text-3xl md:text-4xl font-medium text-surface-900 leading-tight tracking-tight">
+            {content.pricing.title}
+          </h2>
+          <p className="mt-6 text-lg text-surface-800 font-medium leading-relaxed" data-speakable>
+            {content.pricing.answer}
+          </p>
+          <p className="mt-4 text-lg text-surface-600 leading-relaxed">
+            {content.pricing.body}
+          </p>
+          <Link
+            href={content.pricing.linkHref}
+            className="mt-6 inline-flex items-center gap-2 font-medium text-primary-600 hover:text-primary-700 focus-visible:outline-2 focus-visible:outline-primary-500 focus-visible:outline-offset-4"
+          >
+            {content.pricing.linkText}
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7" />
+            </svg>
+          </Link>
+        </div>
+      </SectionContainer>
+
+      {/* ─── Section 6: SEO & AEO by Industry ─── */}
       <SectionContainer>
         <SectionHeader
-          title="SEO by Industry"
+          title="SEO & AEO by Industry"
           highlightWord="Industry"
-          subtitle="Every vertical has unique search dynamics. We build strategies around yours."
+          subtitle="Every vertical has its own search dynamics and its own AI prompts. We build the SEO and AEO strategy around yours."
         />
         <div className="mt-8 lg:mt-12 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {[

@@ -328,11 +328,28 @@ export interface ServicesSeoAeoContent {
   hero: {
     eyebrow: string;
     headline: string;
+    subheadline: string;
     description: string;
     primaryCta: string;
     secondaryCta: string;
   };
-  stats: { value: string; label: string }[];
+  stats: { value: string; label: string; href?: string }[];
+  whatIsAeo: {
+    eyebrow: string;
+    title: string;
+    answer: string;
+    body: string;
+    linkText: string;
+    linkHref: string;
+  };
+  comparison: {
+    title: string;
+    highlightWord: string;
+    intro: string;
+    columns: string[];
+    rows: { discipline: string; optimizesFor: string; whereWeShowUp: string }[];
+    note: string;
+  };
   problems: {
     title: string;
     highlightWord: string;
@@ -359,6 +376,13 @@ export interface ServicesSeoAeoContent {
     title: string;
     highlightWord: string;
     items: { title: string; description: string }[];
+  };
+  pricing: {
+    title: string;
+    answer: string;
+    body: string;
+    linkText: string;
+    linkHref: string;
   };
   faq: {
     title: string;

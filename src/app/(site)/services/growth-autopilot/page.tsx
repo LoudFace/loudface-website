@@ -5,6 +5,7 @@
  * - JSON: services-growth-autopilot.json (via content layer)
  */
 import type { Metadata } from 'next';
+import Link from 'next/link';
 import { getServicesGrowthAutopilotContent } from '@/lib/content-utils';
 import { fetchCollection } from '@/lib/cms-data';
 import type { Client, Testimonial } from '@/lib/types';
@@ -196,6 +197,17 @@ export default async function GrowthAutopilotPage() {
 
         <p className="mt-6 text-lg text-surface-300 max-w-3xl">
           {content.approach.intro}
+        </p>
+
+        <p className="mt-4 text-lg text-surface-300 max-w-3xl">
+          The search and AI-visibility layer is a full program in its own right. See our{' '}
+          <Link
+            href="/services/seo-aeo"
+            className="font-medium text-primary-400 hover:text-primary-300 underline underline-offset-4"
+          >
+            AEO agency services for B2B SaaS
+          </Link>
+          .
         </p>
 
         {/* Layers Flow — Desktop: 3 columns with connecting arrows */}

@@ -1,63 +1,96 @@
 {
   "hero": {
     "eyebrow": "SEO + AEO + GEO for B2B SaaS",
-    "headline": "Get cited —<br>not just ranked",
-    "description": "We run SEO, AEO, and GEO as one integrated program. Your brand ranks on Google, gets cited by AI engines, and appears consistently across every generative AI surface your buyers use.",
+    "headline": "SEO &amp; AEO Agency for B2B SaaS",
+    "subheadline": "Get cited, not just ranked.",
+    "description": "LoudFace is an AEO agency for B2B SaaS. We run SEO, AEO, and GEO as one program, so you rank on Google and get cited inside ChatGPT, Perplexity, and Google AI Overviews when buyers ask which vendor to pick. Same program that grew TradeMomentum's organic impressions roughly 7x in six months and made Toku the answer AI engines name for stablecoin payroll.",
     "primaryCta": "Free AI Visibility Audit",
     "secondaryCta": "See how it works"
   },
   "stats": [
-    { "value": "$200K", "label": "Generated in 30 days from a single SEO-optimised page" },
-    { "value": "288%", "label": "Conversion rate increase for a B2B SaaS health-tech brand" },
-    { "value": "200+", "label": "B2B brands grown across SaaS, fintech, and AI verticals" },
-    { "value": "7+", "label": "AI engines monitored — ChatGPT, Perplexity, Gemini, Claude, Google AI Mode, Copilot, Grok" }
+    { "value": "0 → 86%", "label": "Toku's AI visibility on its core stablecoin-payroll prompt, from a standing start", "href": "/case-studies/toku-ai-cited-pipeline" },
+    { "value": "~7×", "label": "TradeMomentum's organic impressions growth in six months", "href": "/case-studies/trademomentum-niche-aeo-organic-growth" },
+    { "value": "200+", "label": "B2B brands grown across SaaS, fintech, and AI" },
+    { "value": "7+", "label": "AI engines monitored: ChatGPT, Perplexity, Gemini, Claude, Google AI Mode, Copilot, Grok" }
   ],
+  "whatIsAeo": {
+    "eyebrow": "Start here",
+    "title": "What is answer engine optimization (AEO)?",
+    "answer": "Answer engine optimization (AEO) is the practice of structuring your content so AI answer engines like ChatGPT, Perplexity, and Google AI Overviews cite your brand when they reply to a buyer's question. Where SEO competes for a ranked link, AEO competes for the answer itself.",
+    "body": "The mechanics differ from classic SEO. AI engines pull from a wider knowledge graph, reward content they can parse and quote cleanly, and weigh entity signals and structured data more heavily than backlinks alone. SEO still earns the Google ranking. GEO, generative engine optimization, keeps your brand consistent across every generative surface. AEO is the layer in between: being the cited answer, not a link the buyer might scroll to.",
+    "linkText": "How to choose a B2B SaaS SEO and AEO agency",
+    "linkHref": "/blog/how-to-choose-b2b-saas-seo-aeo-agency"
+  },
+  "comparison": {
+    "title": "SEO vs AEO vs GEO: what's the difference?",
+    "highlightWord": "difference?",
+    "intro": "Three disciplines, three jobs. Most agencies sell one and rebrand it as all three. Here is the honest split.",
+    "columns": ["Discipline", "What it optimizes for", "Where you show up"],
+    "rows": [
+      {
+        "discipline": "SEO",
+        "optimizesFor": "Ranking in Google's classic results and earning organic clicks",
+        "whereWeShowUp": "Page one of Google, map packs, and featured snippets"
+      },
+      {
+        "discipline": "AEO",
+        "optimizesFor": "Being cited as the answer when buyers ask an AI engine a question",
+        "whereWeShowUp": "ChatGPT, Perplexity, Google AI Overviews, and Gemini answers"
+      },
+      {
+        "discipline": "GEO",
+        "optimizesFor": "A consistent brand entity across every generative surface",
+        "whereWeShowUp": "Copilot, Grok, Google AI Mode, and anywhere a model retrieves you"
+      }
+    ],
+    "note": "Run apart, each discipline leaves pipeline on the table. The authority that ranks you on Google is what teaches an AI engine to trust you, so a single well-built page can rank in search and get quoted in an answer at the same time. GEO then holds the story together wherever a model picks you up. We build all three into one program instead of three invoices."
+  },
   "problems": {
-    "title": "Search has changed. So have the strategies.",
-    "highlightWord": "changed",
-    "subtitle": "Outdated SEO strategies result in empty pipelines.",
+    "title": "Why B2B SaaS brands disappear in AI search",
+    "highlightWord": "disappear",
+    "subtitle": "Outdated SEO still wins rankings, and still leaves the pipeline empty.",
     "items": [
       {
         "number": "01",
         "title": "You're ranking. Your pipeline isn't moving.",
-        "description": "You're on page #1 for a handful of keywords. Traffic is ticking up, but demo requests aren't. Monthly reports full of impressions and backlink counts with no clear line to revenue."
+        "description": "You hold page one for a handful of keywords. Traffic ticks up, demo requests don't. Monthly reports fill with impressions and backlink counts and never draw a line to revenue."
       },
       {
         "number": "02",
-        "title": "Your brand doesn't show up in AI searches.",
-        "description": "When a buyer asks ChatGPT, Perplexity, Gemini, or any AI engine, your competitors come up. You don't. AI engines don't just scrape Google. They pull from a wider knowledge graph, and if you're not in it, you're invisible to a growing share of customers."
+        "title": "Your brand never shows up in AI answers.",
+        "description": "A buyer asks ChatGPT, Perplexity, Gemini, or Google AI Overviews which vendor to pick, and your competitors get named. You don't. AI engines pull from a wider knowledge graph than Google's index, and if you're not in it, you're invisible to a fast-growing share of the market."
       },
       {
         "number": "03",
         "title": "You have tactics. Not a system.",
-        "description": "You're optimising for Google while your buyers are asking AI. Blog posts without an entity strategy. No presence in the knowledge graph AI engines pull from. Nothing connecting your content to citations, answers, or pipeline."
+        "description": "You optimize for Google while your buyers interrogate AI. Blog posts without an entity strategy. No presence in the knowledge graph the engines read from. Nothing tying your content to citations, answers, or booked meetings."
       }
     ]
   },
   "approach": {
-    "title": "How we work: The Autopilot model",
-    "highlightWord": "Autopilot",
-    "intro": "We don't wait for tickets or send monthly recommendation decks. We own the roadmap, execute the work, and show up every week with measurable progress tied to your business goals.",
+    "title": "How our SEO, AEO and GEO program works",
+    "highlightWord": "program",
+    "intro": "We don't wait for tickets or mail you a monthly deck of recommendations. We own the roadmap, ship the work, and show up every week with progress tied to your business goals.",
     "steps": [
       {
         "number": "1",
         "title": "Foundation audit",
-        "description": "We map technical health, content gaps, entity coverage, GEO surface presence, and AI engine visibility. Every opportunity is scored against business impact, not keyword difficulty or domain authority vanity scores."
+        "description": "We map technical health, content gaps, entity coverage, and where you stand inside AI answers across ChatGPT, Perplexity, and Google AI Overviews. Every opportunity is scored against pipeline impact, not keyword difficulty or vanity domain-authority scores."
       },
       {
         "number": "2",
         "title": "90-day roadmap",
-        "description": "3–5 measurable goals tied directly to pipeline outcomes. A shared scoreboard you can check anytime. Clear ownership so nothing stalls waiting for someone to make a call."
+        "description": "Three to five measurable goals tied straight to pipeline, split across the SEO, AEO, and GEO tracks. A shared scoreboard you can check any time, with clear ownership so nothing stalls waiting on a decision."
       },
       {
         "number": "3",
         "title": "Continuous execution",
-        "description": "SEO, AEO, and GEO work ships weekly — content, technical improvements, link building, and cross-platform entity signals. One point of contact. Zero task management on your end."
+        "description": "The AEO program ships weekly: entity-first content, technical fixes, structured data, link building, and the cross-platform GEO signals that keep your brand story consistent. One point of contact. Zero task management on your side."
       },
       {
         "number": "4",
         "title": "Weekly check-in",
-        "description": "A live walkthrough of what shipped, how metrics moved, and what's next. Every number tied to outcomes your leadership team actually cares about. Not vanity dashboards."
+        "description": "A live walkthrough of what shipped, how AI visibility and rankings moved, and what's next. Every number tied to outcomes your leadership actually tracks, not a vanity dashboard."
       }
     ]
   },
@@ -65,7 +98,7 @@
     "title": "Three disciplines. One integrated system.",
     "highlightWord": "integrated",
     "headline": "SEO gets you found. AEO gets you cited. GEO makes you the answer everywhere.",
-    "description": "Most agencies bolt AEO onto an existing SEO retainer as an afterthought. We built the program so both disciplines feed each other from day one.",
+    "description": "Our answer engine optimization services aren't bolted onto an SEO retainer as an afterthought. We built SEO, AEO, and GEO into one program so each discipline feeds the others from day one.",
     "bridge": "SEO builds the authority that makes you rankable. AEO makes sure AI engines know about it and recommend you. GEO makes sure they tell the same story about you everywhere.",
     "seo": {
       "label": "SEO",
@@ -96,7 +129,7 @@
     "geo": {
       "label": "GEO",
       "title": "Generative Engine Optimisation",
-      "description": "The full surface area — consistent brand presence across every generative AI system your buyers use.",
+      "description": "The full surface area: consistent brand presence across every generative AI system your buyers use.",
       "items": [
         "GEO across ChatGPT, Gemini, Perplexity, Claude, Copilot",
         "Google Discover content optimisation",
@@ -108,8 +141,8 @@
     }
   },
   "capabilities": {
-    "title": "Full program scope",
-    "highlightWord": "scope",
+    "title": "What's included in our SEO & AEO services",
+    "highlightWord": "services",
     "items": [
       {
         "title": "Technical foundation",
@@ -117,54 +150,77 @@
       },
       {
         "title": "Content systems",
-        "description": "Topical clusters, comparison pages, FAQ compilations, programmatic SEO, and Google Discover content optimisation. Built for Google, AI engines, and Discover feeds — structured so models can parse it, humans can act on it."
+        "description": "Topical clusters, comparison pages, FAQ compilations, programmatic SEO, and Google Discover optimisation. Built for Google, the AI engines, and Discover feeds at once, structured so models can parse it and humans can act on it."
       },
       {
         "title": "Off-page + distribution",
-        "description": "Guest posts on high-DR publications, G2 and Capterra presence, Reddit and Quora strategy, community engagement. LinkedIn entity signals, Google Discover content optimisation, and consistent cross-platform framing so AI systems encounter the same brand narrative regardless of where they retrieve it."
+        "description": "Guest posts on high-authority publications, G2 and Capterra presence, Reddit and Quora strategy, community engagement. Plus the LinkedIn entity signals and consistent cross-platform framing that make AI systems encounter the same brand story wherever they retrieve it."
       },
       {
         "title": "E-E-A-T + authority signals",
-        "description": "Author credentials, expert quotes, thought leadership placement. The trust signals Google and AI engines weigh when deciding who to cite — and who to skip. Author credentials and expert quotes also improve how AI models assess source credibility when forming answers."
+        "description": "Author credentials, expert quotes, thought leadership placement. The trust signals Google and AI engines weigh when deciding who to cite and who to skip when they assemble an answer."
       },
       {
         "title": "LLM visibility monitoring",
-        "description": "We track how your brand appears across ChatGPT, Perplexity, Gemini, Claude, Google AI Mode, Copilot, and Grok. Citation frequency, mention quality, competitive positioning — reported weekly, not quarterly."
+        "description": "We track how your brand shows up across ChatGPT, Perplexity, Gemini, Claude, Google AI Mode, Copilot, and Grok. Citation frequency, mention quality, and competitive position, reported weekly instead of quarterly."
       }
     ]
+  },
+  "pricing": {
+    "title": "How much does an AEO agency cost?",
+    "answer": "Most B2B SaaS SEO and AEO programs at LoudFace start from $5k per month on a three-month minimum. The exact figure tracks how much ground you need covered: technical debt, content velocity, how many AI engines and prompts you're targeting, and how fast you want to move.",
+    "body": "No setup fee, no long lock-in past the first quarter. After the foundation audit you get a fixed monthly proposal scoped to the goals in your 90-day roadmap, so the price maps to outcomes instead of billable hours. More pages, more competitive prompts, and more surface area push you into a higher tier. We'll tell you which one fits on the first call.",
+    "linkText": "See full pricing and tiers",
+    "linkHref": "/pricing"
   },
   "faq": {
     "title": "Common questions about our SEO/AEO program",
     "items": [
       {
-        "question": "How is this different from traditional SEO?",
-        "answer": "Most SEO agencies optimise for rankings. We optimise for pipeline. That means every content decision, technical fix, and link target is scored against business impact — not keyword difficulty. And we layer AEO from day one so you're not invisible in AI search while you wait for Google to move."
+        "question": "What is the difference between an AEO agency and a traditional SEO agency?",
+        "answer": "A traditional SEO agency optimises for Google rankings. An AEO agency also optimises for being cited inside AI answers on ChatGPT, Perplexity, and Google AI Overviews. We do both, scoring every content decision, technical fix, and link target against pipeline impact rather than keyword difficulty, and layering AEO from day one so you're not invisible in AI search while Google catches up."
       },
       {
         "question": "What AI engines do you optimise for?",
-        "answer": "ChatGPT, Perplexity, Google AI Mode, Gemini, Claude, and Grok. We monitor citation frequency, mention quality, and competitive positioning across all of them — reported weekly."
+        "answer": "ChatGPT, Perplexity, Google AI Mode and AI Overviews, Gemini, Claude, Copilot, and Grok. We monitor citation frequency, mention quality, and competitive position across all of them and report it weekly, not once a quarter."
+      },
+      {
+        "question": "What is GEO (generative engine optimization)?",
+        "answer": "Generative engine optimization (GEO) is the work of keeping your brand described the same way across every generative AI surface, so a model tells a consistent story about you whether it pulls from ChatGPT, Gemini, Copilot, or Grok. SEO earns the ranking and AEO earns the citation. GEO makes sure the entity behind both stays coherent everywhere a model encounters it."
+      },
+      {
+        "question": "Is AEO replacing SEO?",
+        "answer": "No. AEO sits on top of SEO. The domain authority and content quality that rank you on Google are the same signals that teach an AI engine to trust and cite you. Drop SEO and your AEO loses its foundation. The shift is that ranking alone no longer captures the buyer, because a growing share of them ask an AI engine before they ever click a blue link."
+      },
+      {
+        "question": "How do you measure AI visibility?",
+        "answer": "We track a set of buyer prompts across the major AI engines and measure how often your brand is cited, at what position, and against which competitors. The core metrics are visibility (how often you appear), share of voice (your slice of all brand mentions), and average position inside the answer. We report the trend weekly and tie it back to branded search and pipeline."
+      },
+      {
+        "question": "Is an AEO agency better than hiring in-house?",
+        "answer": "It depends on speed and surface area. An in-house hire gives you dedicated focus but takes months to ramp and rarely covers SEO, AEO, GEO, technical, and content at once. An agency brings the full stack and the tooling on day one. We break down the real build-versus-buy cost in our guide on <a href=\"/blog/aeo-agency-vs-in-house-b2b-saas\">AEO agency vs in-house for B2B SaaS</a>."
       },
       {
         "question": "Do I need to manage the work?",
-        "answer": "No. One point of contact. We own the roadmap and execution. You review progress weekly, make decisions when they matter, and skip the project management overhead."
+        "answer": "No. One point of contact. We own the roadmap and the execution. You review progress weekly, make the calls that matter, and skip the project management overhead."
       },
       {
         "question": "How long before I see results?",
-        "answer": "Technical fixes and AEO improvements move fast — often within the first 30–60 days. Content authority and organic rankings compound over 90–180 days. We set 90-day goals and report against them honestly — no inflated projections."
+        "answer": "Technical fixes and early AEO wins often move inside the first 30 to 60 days. Content authority and organic rankings compound over 90 to 180 days. We set 90-day goals and report against them honestly, with no inflated projections."
       },
       {
         "question": "Can you work alongside our existing team?",
-        "answer": "Yes. We integrate with your content, product marketing, and web teams where it makes sense. We can run fully autonomous or in close collaboration — depending on what your team needs."
+        "answer": "Yes. We plug into your content, product marketing, and web teams where it makes sense. We can run fully autonomous or in close collaboration, depending on what your team needs."
       },
       {
         "question": "What does the weekly check-in cover?",
-        "answer": "What shipped that week, how key metrics moved, what's coming next, and any decisions we need from you. Tied to your 90-day goals — not a vanity dashboard."
+        "answer": "What shipped that week, how AI visibility and rankings moved, what's next, and any decisions we need from you. Always tied to your 90-day goals, never a vanity dashboard."
       }
     ]
   },
   "cta": {
     "title": "Find out if your brand shows up where your buyers are looking.",
-    "subtitle": "We'll check your AI search presence across ChatGPT, Perplexity, Gemini, Google AI Mode, and Copilot — and show you exactly where the gaps are.",
+    "subtitle": "We'll check your AI search presence across ChatGPT, Perplexity, Gemini, Google AI Mode, and Copilot, and show you exactly where the gaps are.",
     "primaryCta": "Free AI Visibility Audit",
     "secondaryCta": "Or book a strategy call",
     "disclaimer": "No automated sequences. No pitch before the audit. We do the work first."

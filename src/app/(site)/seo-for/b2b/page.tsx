@@ -195,6 +195,17 @@ export default async function B2bPage() {
           {content.howWeBuild.body}
         </p>
 
+        <p className="mt-4 text-lg text-surface-300 max-w-3xl leading-relaxed">
+          Need the search and AI-visibility layer on its own? See our{' '}
+          <Link
+            href="/services/seo-aeo"
+            className="font-medium text-primary-400 hover:text-primary-300 underline underline-offset-4"
+          >
+            AEO agency services for B2B SaaS
+          </Link>
+          .
+        </p>
+
         {/* Desktop: horizontal timeline */}
         <div className="hidden lg:block mt-16">
           <div className="relative">
