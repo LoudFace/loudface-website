@@ -66,6 +66,7 @@ export function AuditProgress({ id, initialProgress, initialPhase }: AuditProgre
   const [progress, setProgress] = useState(initialProgress);
   const [phase, setPhase] = useState(initialPhase);
   const [failed, setFailed] = useState(false);
+  const [errorMsg, setErrorMsg] = useState('');
   const [taglineIdx, setTaglineIdx] = useState(0);
 
   const poll = useCallback(async () => {
@@ -83,6 +84,7 @@ export function AuditProgress({ id, initialProgress, initialPhase }: AuditProgre
       }
       if (data.status === 'failed') {
         setFailed(true);
+        setErrorMsg(data.error || '');
         return true;
       }
     } catch {
@@ -128,7 +130,7 @@ export function AuditProgress({ id, initialProgress, initialPhase }: AuditProgre
             Audit Failed
           </h1>
           <p className="text-surface-400 mb-8">
-            Something went wrong while running your audit. This is usually temporary.
+            {errorMsg || 'Something went wrong while running your audit. This is usually temporary.'}
           </p>
           <button
             onClick={() => router.push('/audit')}

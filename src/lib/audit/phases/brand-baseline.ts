@@ -25,12 +25,14 @@ export async function runBrandBaseline(
     const platformResults = await queryAllPlatforms(prompt, 'brand-baseline', tracer);
 
     const results: PlatformResult[] = Object.entries(platformResults).map(
-      ([platform, result]) =>
+      ([platform, outcome]) =>
         parseResponse(
           platform as PlatformResult['platform'],
-          result,
+          outcome.result,
           companyName,
           domain,
+          outcome.status,
+          outcome.errorMessage,
         ),
     );
 
@@ -43,10 +45,10 @@ export async function runBrandBaseline(
   });
 
   const allResults = queries.flatMap((q) => q.results);
-  const totalResponses = allResults.length;
-  const mentionedCount = allResults.filter((r) => r.mentioned).length;
-  const brandRecognitionScore = totalResponses > 0
-    ? Math.round((mentionedCount / totalResponses) * 100)
+  const measuredResponses = allResults.filter((r) => r.responseStatus !== 'error' && r.responseStatus !== 'empty');
+  const mentionedCount = measuredResponses.filter((r) => r.mentioned).length;
+  const brandRecognitionScore = measuredResponses.length > 0
+    ? Math.round((mentionedCount / measuredResponses.length) * 100)
     : 0;
 
   return {

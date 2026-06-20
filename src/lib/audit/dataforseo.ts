@@ -3,6 +3,7 @@ import type {
   ApiCallTrace,
   DFSLLMResponseResult,
   DFSCompetitorResult,
+  PlatformResponseStatus,
 } from './types';
 import { isDirectLLMPlatform, queryDirectLLM } from './direct-llm';
 
@@ -76,6 +77,12 @@ export class TraceCollector {
       totalDurationMs: totalDuration,
     };
   }
+}
+
+export interface LLMQueryOutcome {
+  result: DFSLLMResponseResult | null;
+  status: PlatformResponseStatus;
+  errorMessage?: string;
 }
 
 // ─── Generic Fetch ──────────────────────────────────────────────────
@@ -168,8 +175,8 @@ export async function queryLLM(
   prompt: string,
   tag?: string,
   tracer?: TraceCollector,
-): Promise<DFSLLMResponseResult | null> {
-  // ChatGPT and Gemini go through direct API calls (AI Gateway) — DataForSEO's
+): Promise<LLMQueryOutcome> {
+  // ChatGPT and Gemini go through direct OpenRouter calls — DataForSEO's
   // scrapers for those platforms omit citations and have poor recall. Claude
   // and Perplexity stay on DataForSEO since their scrapers work reliably.
   if (isDirectLLMPlatform(platform)) {
@@ -226,7 +233,7 @@ export async function queryLLM(
         durationMs,
       });
     }
-    return null;
+    return { result: null, status: 'error', errorMessage };
   }
 
   // Check if we got a response but it had no actual content
@@ -251,7 +258,15 @@ export async function queryLLM(
     console.warn(`[DFS] ${platform} returned result but no text content for: "${prompt.slice(0, 60)}..."`);
   }
 
-  return result;
+  if (!hasContent) {
+    return {
+      result,
+      status: 'empty',
+      errorMessage: 'Provider returned no text content',
+    };
+  }
+
+  return { result, status: 'success' };
 }
 
 /**
@@ -262,14 +277,14 @@ export async function queryAllPlatforms(
   prompt: string,
   tag?: string,
   tracer?: TraceCollector,
-): Promise<Record<AIPlatform, DFSLLMResponseResult | null>> {
+): Promise<Record<AIPlatform, LLMQueryOutcome>> {
   const entries = await Promise.all(
     ALL_PLATFORMS.map(async (platform) => {
-      const result = await queryLLM(platform, prompt, tag, tracer);
-      return [platform, result] as const;
+      const outcome = await queryLLM(platform, prompt, tag, tracer);
+      return [platform, outcome] as const;
     }),
   );
-  return Object.fromEntries(entries) as Record<AIPlatform, DFSLLMResponseResult | null>;
+  return Object.fromEntries(entries) as Record<AIPlatform, LLMQueryOutcome>;
 }
 
 // ─── Competitor Discovery ───────────────────────────────────────────

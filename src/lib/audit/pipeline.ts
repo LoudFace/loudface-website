@@ -103,7 +103,7 @@ export async function runAudit(id: string): Promise<void> {
     return;
   }
 
-  const { companyName, url } = record.input;
+  const { companyName, url, userCompetitors = [], buyerPersona } = record.input;
   const domain = url
     .replace(/^https?:\/\//, '')
     .replace(/^www\./, '')
@@ -153,14 +153,19 @@ export async function runAudit(id: string): Promise<void> {
       tracer,
     });
 
-    // Fall back to conservative defaults if extraction fails entirely.
+    if (!phase1) {
+      throw new Error('Could not extract enough brand and category context to produce a reliable audit.');
+    }
+
+    // Keep the remaining phases grounded in a real category. Generic fallbacks
+    // made previous reports look complete while producing low-signal queries.
     const category = sanitizeCategory(
-      phase1?.categorization.specific_category
-        || phase1?.categorization.broad_category
+      phase1.categorization.specific_category
+        || phase1.categorization.broad_category
         || 'business',
     );
-    const inferredIndustry = sanitizeCategory(phase1?.categorization.industry || 'business');
-    const richEntityType = phase1?.categorization.entity_type || 'other';
+    const inferredIndustry = sanitizeCategory(phase1.categorization.industry || 'business');
+    const richEntityType = phase1.categorization.entity_type || 'other';
     // Downstream phases take a narrow 'product' | 'service' | 'brand' trio (query-template selector).
     // - 'service': agencies/publishers → "Best X agencies/providers"
     // - 'brand': consumer-brand/ecommerce/marketplace → "Best X brands" (no "software/tools/platforms")
@@ -171,32 +176,29 @@ export async function runAudit(id: string): Promise<void> {
         : richEntityType === 'consumer-brand' || richEntityType === 'ecommerce' || richEntityType === 'marketplace'
           ? 'brand'
           : 'product';
-    const categoryConfidence = phase1?.entity_disambiguation.confidence ?? 'low';
+    const categoryConfidence = phase1.entity_disambiguation.confidence ?? 'low';
     const lowEntityConfidence =
-      !phase1
-      || phase1.entity_disambiguation.is_correct_entity === false
+      phase1.entity_disambiguation.is_correct_entity === false
       || (brandBaseline.brandRecognitionScore < 10 && categoryConfidence === 'low');
 
     if (lowEntityConfidence) {
       console.log(
-        `[Audit] Low entity confidence: ${phase1?.entity_disambiguation.wrong_entity_description || 'extraction unavailable'}`,
+        `[Audit] Low entity confidence: ${phase1.entity_disambiguation.wrong_entity_description || 'extraction unavailable'}`,
       );
     }
 
     // Overwrite the regex-derived findings with the structured extraction.
     // accurate/inaccurate/gaps become plain strings for UI compatibility —
     // the richer objects live on the extraction result if we want them later.
-    if (phase1) {
-      brandBaseline.accurateInfo = phase1.brand_knowledge.accurate_claims.map((c) => c.claim);
-      brandBaseline.inaccuracies = phase1.brand_knowledge.inaccurate_claims.map(
-        (c) => `${c.claim} (${c.why_wrong})`,
-      );
-      brandBaseline.gaps = phase1.brand_knowledge.knowledge_gaps.map((g) => g.gap);
-      brandBaseline.gapsWithSuggestions = phase1.brand_knowledge.knowledge_gaps.map((g) => ({
-        gap: g.gap,
-        suggestedPath: normalizeSuggestedPath(g.suggested_page_path),
-      }));
-    }
+    brandBaseline.accurateInfo = phase1.brand_knowledge.accurate_claims.map((c) => c.claim);
+    brandBaseline.inaccuracies = phase1.brand_knowledge.inaccurate_claims.map(
+      (c) => `${c.claim} (${c.why_wrong})`,
+    );
+    brandBaseline.gaps = phase1.brand_knowledge.knowledge_gaps.map((g) => g.gap);
+    brandBaseline.gapsWithSuggestions = phase1.brand_knowledge.knowledge_gaps.map((g) => ({
+      gap: g.gap,
+      suggestedPath: normalizeSuggestedPath(g.suggested_page_path),
+    }));
 
     // Competitors extracted from Phase 1 responses, used by Phase 2 as cross-validation.
     const aiCompetitors = (phase1?.competitors_mentioned ?? []).map((c) => ({
@@ -225,6 +227,7 @@ export async function runAudit(id: string): Promise<void> {
       entityType,
       tracer,
       aiCompetitors,
+      userCompetitors,
     );
 
     // Extract competitorSource for diagnostics, pass the rest as CompetitorContextData
@@ -247,6 +250,7 @@ export async function runAudit(id: string): Promise<void> {
       },
       entityType,
       tracer,
+      buyerPersona,
     );
 
     // ─── Phase 3 SoV Population ───────────────────────────────────
@@ -256,7 +260,9 @@ export async function runAudit(id: string): Promise<void> {
     //
     // Important: we use mentionsBrand() (not substring match) so short names
     // like "Slack" don't match "slackers" and domain roots match as whole tokens.
-    const allPhase3Results = categoryVisibility.queries.flatMap((q) => q.results);
+    const allPhase3Results = categoryVisibility.queries
+      .flatMap((q) => q.results)
+      .filter((r) => r.responseStatus !== 'error' && r.responseStatus !== 'empty');
     const phase3Total = allPhase3Results.length;
 
     if (phase3Total > 0) {
@@ -446,12 +452,16 @@ function buildSlideDataQuality(
   const allCompResults = competitorContext.queries.flatMap((q) => q.results);
   const allCatResults = categoryVisibility.queries.flatMap((q) => q.results);
 
-  const brandMentioned = allBrandResults.filter((r) => r.mentioned).length;
-  const brandTotal = allBrandResults.length;
-  const compMentioned = allCompResults.filter((r) => r.mentioned).length;
-  const compTotal = allCompResults.length;
-  const catMentioned = allCatResults.filter((r) => r.mentioned).length;
-  const catTotal = allCatResults.length;
+  const measuredBrandResults = allBrandResults.filter((r) => r.responseStatus !== 'error' && r.responseStatus !== 'empty');
+  const measuredCompResults = allCompResults.filter((r) => r.responseStatus !== 'error' && r.responseStatus !== 'empty');
+  const measuredCatResults = allCatResults.filter((r) => r.responseStatus !== 'error' && r.responseStatus !== 'empty');
+
+  const brandMentioned = measuredBrandResults.filter((r) => r.mentioned).length;
+  const brandTotal = measuredBrandResults.length;
+  const compMentioned = measuredCompResults.filter((r) => r.mentioned).length;
+  const compTotal = measuredCompResults.length;
+  const catMentioned = measuredCatResults.filter((r) => r.mentioned).length;
+  const catTotal = measuredCatResults.length;
 
   return {
     'Slide 1 – Scorecard': {
@@ -469,7 +479,7 @@ function buildSlideDataQuality(
     'Slide 3 – Brand Baseline': {
       hasData: brandTotal > 0,
       status: `${brandMentioned}/${brandTotal} responses mention the brand (${brandBaseline.brandRecognitionScore}%). ${brandBaseline.queries.length} queries × 4 platforms.`,
-      source: 'Phase 1: 10 branded queries via DataForSEO LLM Responses Live',
+      source: 'Phase 1: 6 branded queries via LLM response providers',
       metrics: {
         queries: brandBaseline.queries.length,
         totalResponses: brandTotal,
@@ -502,7 +512,11 @@ function buildSlideDataQuality(
       status: `${competitorContext.competitors.length} competitors tracked (source: ${competitorSource}). ${compMentioned}/${compTotal} competitor query responses mention the brand.`,
       source: competitorSource === 'dataforseo-labs'
         ? 'DataForSEO Labs Competitors Domain API → LLM Responses'
-        : `Hardcoded competitor list → Phase 2: ${competitorContext.queries.length} queries via LLM Responses`,
+        : competitorSource === 'user-provided'
+          ? `User-provided competitors → Phase 2: ${competitorContext.queries.length} queries via LLM Responses`
+          : competitorSource === 'ai-extracted'
+            ? `AI-extracted competitors → Phase 2: ${competitorContext.queries.length} queries via LLM Responses`
+            : `Hardcoded competitor list → Phase 2: ${competitorContext.queries.length} queries via LLM Responses`,
       metrics: {
         competitors: competitorContext.competitors.length,
         competitorSource,

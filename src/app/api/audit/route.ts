@@ -4,7 +4,10 @@ import { nanoid } from 'nanoid';
 import { setAuditRecord, getRedis } from '@/lib/audit/pipeline';
 import { runAudit } from '@/lib/audit/pipeline';
 import { extractBrandFromUrl, normalizeBrandName } from '@/lib/audit/extract-brand';
-import type { AuditRecord } from '@/lib/audit/types';
+import type { AuditRecord, UserCompetitor } from '@/lib/audit/types';
+
+export const runtime = 'nodejs';
+export const maxDuration = 600;
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const URL_RE = /^(https?:\/\/)?[\w.-]+\.[a-z]{2,}(\/.*)?$/i;
@@ -14,6 +17,76 @@ const PER_IP_LIMIT = 3;       // audits per IP per window
 const PER_IP_WINDOW = 86400;  // 24 hours in seconds
 const GLOBAL_LIMIT = 50;      // audits per global window
 const GLOBAL_WINDOW = 3600;   // 1 hour in seconds
+
+function cleanText(value: unknown, maxLength: number): string | undefined {
+  if (typeof value !== 'string') return undefined;
+  const cleaned = value.trim().replace(/\s+/g, ' ').slice(0, maxLength);
+  return cleaned || undefined;
+}
+
+function titleCaseDomainRoot(root: string): string {
+  return root
+    .split(/[-_\s]+/)
+    .filter(Boolean)
+    .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
+    .join(' ');
+}
+
+function parseCompetitorToken(rawToken: string): UserCompetitor | null {
+  const raw = rawToken.trim();
+  if (!raw) return null;
+
+  let domain = '';
+  let name = raw.replace(/^https?:\/\//i, '').replace(/^www\./i, '').replace(/\/.*$/, '');
+
+  try {
+    const withProtocol = /^https?:\/\//i.test(raw) ? raw : `https://${raw}`;
+    const parsed = new URL(withProtocol);
+    if (parsed.hostname.includes('.')) {
+      domain = parsed.hostname.replace(/^www\./i, '').toLowerCase();
+      name = titleCaseDomainRoot(domain.split('.')[0] ?? domain);
+    }
+  } catch {
+    if (/^[a-z0-9.-]+\.[a-z]{2,}$/i.test(name)) {
+      domain = name.toLowerCase();
+      name = titleCaseDomainRoot(domain.split('.')[0] ?? domain);
+    } else {
+      domain = raw.toLowerCase().replace(/\s+/g, '').replace(/[^a-z0-9-]/g, '');
+      name = titleCaseDomainRoot(raw);
+    }
+  }
+
+  if (!name || !domain) return null;
+  return { raw, name: name.slice(0, 80), domain: domain.slice(0, 120) };
+}
+
+function parseUserCompetitors(input: unknown): UserCompetitor[] {
+  if (typeof input !== 'string') return [];
+  const seen = new Set<string>();
+  const competitors: UserCompetitor[] = [];
+
+  for (const token of input.split(/[\n,;]+/)) {
+    const parsed = parseCompetitorToken(token);
+    if (!parsed) continue;
+    const key = parsed.domain || parsed.name.toLowerCase();
+    if (seen.has(key)) continue;
+    seen.add(key);
+    competitors.push(parsed);
+    if (competitors.length >= 5) break;
+  }
+
+  return competitors;
+}
+
+function getMissingAuditConfig(): string[] {
+  const required = [
+    'REDIS_URL',
+    'DATAFORSEO_LOGIN',
+    'DATAFORSEO_PASSWORD',
+    'OPENROUTER_API_KEY',
+  ];
+  return required.filter((key) => !process.env[key]);
+}
 
 /**
  * Check rate limits against Redis. Returns null if OK, or an error message string.
@@ -52,8 +125,21 @@ async function checkRateLimit(ip: string): Promise<string | null> {
 
 export async function POST(request: Request) {
   try {
+    const missingConfig = getMissingAuditConfig();
+    if (missingConfig.length > 0) {
+      console.error('[API] Audit service missing runtime config:', missingConfig.join(', '));
+      return NextResponse.json(
+        { error: 'Audit service is not configured yet. Please try again later.' },
+        { status: 503 },
+      );
+    }
+
     const body = await request.json();
     const { url, email } = body;
+    const contactName = cleanText(body.contactName, 100);
+    const submittedCompanyName = cleanText(body.companyName, 100);
+    const buyerPersona = cleanText(body.buyerPersona, 200);
+    const userCompetitors = parseUserCompetitors(body.competitors);
 
     // ─── Validation ───────────────────────────────────────────────
     if (!url || !email) {
@@ -125,6 +211,10 @@ export async function POST(request: Request) {
         url: normalizedUrl,
         email: email.trim().toLowerCase(),
         companyName: extracted.name,
+        contactName,
+        submittedCompanyName,
+        userCompetitors,
+        buyerPersona,
         brandSource: extracted.source,
       },
       status: 'processing',

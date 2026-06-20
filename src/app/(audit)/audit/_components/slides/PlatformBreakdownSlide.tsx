@@ -33,7 +33,7 @@ export function PlatformBreakdownSlide({ data, totalSlides }: PlatformBreakdownS
           Per-Platform Performance
         </h2>
         <p className="text-surface-400 text-sm mb-8 max-w-xl">
-          How each AI platform perceives your brand across all audit queries.
+          How each AI platform responds to direct branded queries about your company.
         </p>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

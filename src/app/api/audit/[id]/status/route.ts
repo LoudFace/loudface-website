@@ -21,6 +21,7 @@ export async function GET(
       status: record.status,
       progress: record.progress,
       currentPhase: record.currentPhase,
+      error: record.error,
     },
     {
       headers: { 'Cache-Control': 'no-store' },

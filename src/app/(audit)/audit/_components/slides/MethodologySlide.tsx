@@ -67,11 +67,10 @@ export function MethodologySlide({ totalSlides }: MethodologySlideProps) {
             A note on platform coverage
           </p>
           <p className="text-xs sm:text-sm text-surface-400 leading-relaxed">
-            ChatGPT&apos;s scraped responses sometimes omit source URLs, so its citation
-            rate can appear lower than its actual on-screen behavior. Gemini has
-            limited recall on emerging brands and may return empty responses for some
-            queries. Claude and Perplexity reliably return both full text and
-            citations across all 4 phases.
+            ChatGPT and Gemini are queried through direct web-enabled calls.
+            Claude and Perplexity are queried through DataForSEO. Provider
+            errors and empty responses are marked separately, so a failed call
+            is not counted as a real non-mention.
           </p>
         </div>
       </div>

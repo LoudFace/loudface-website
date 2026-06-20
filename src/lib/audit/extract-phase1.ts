@@ -187,7 +187,7 @@ export async function extractPhase1Insights(args: {
     '=== GROUND TRUTH (from the brand\'s own website) ===',
     groundTruthBlock,
     '',
-    '=== RAW AI RESPONSES (Phase 1: 10 branded queries × 4 platforms) ===',
+    '=== RAW AI RESPONSES (Phase 1: 6 branded queries × 4 platforms) ===',
     responsesBlock || '[no text responses]',
     '',
     '=== TASK ===',

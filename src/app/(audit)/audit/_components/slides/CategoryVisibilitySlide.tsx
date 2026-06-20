@@ -49,6 +49,8 @@ export function CategoryVisibilitySlide({ data, companyName, totalSlides, entity
               results: q.results.map((r) => ({
                 platform: r.platform,
                 mentioned: r.mentioned,
+                responseStatus: r.responseStatus,
+                errorMessage: r.errorMessage,
               })),
             }))}
           />

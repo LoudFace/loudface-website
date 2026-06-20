@@ -5,10 +5,24 @@ export interface AuditInput {
   email: string;
   /** Extracted server-side from URL metadata (JSON-LD → og:site_name → title → domain). */
   companyName: string;
+  /** Optional name submitted on the public lead form. */
+  contactName?: string;
+  /** Company name inferred client-side from the submitted domain. Kept only as a fallback/debug hint. */
+  submittedCompanyName?: string;
+  /** Competitors submitted by the visitor, parsed into names/domains and trusted over auto-discovery. */
+  userCompetitors?: UserCompetitor[];
+  /** Buyer persona submitted by the visitor, used to shape category prompts. */
+  buyerPersona?: string;
   /** Source of the extracted brand name, for diagnostics. */
   brandSource?: 'json-ld' | 'og-site-name' | 'title' | 'domain-fallback';
   /** Deprecated — no longer user-provided; may exist on legacy records. */
   industry?: string;
+}
+
+export interface UserCompetitor {
+  raw: string;
+  name: string;
+  domain: string;
 }
 
 export type AuditStatus = 'processing' | 'complete' | 'failed';
@@ -47,7 +61,7 @@ export interface AuditDiagnostics {
   totalCostUsd: number;
   totalDurationMs: number;
   traces: ApiCallTrace[];
-  competitorSource: 'dataforseo-labs' | 'ai-extracted' | 'hardcoded';
+  competitorSource: CompetitorSource;
   inferredCategory: string;
   inferredEntityType: string;
   /** Confidence in the inferred category (based on keyword density across Phase 1) */
@@ -67,6 +81,8 @@ export interface AuditDiagnostics {
   /** Per-slide data quality: maps slide name to its data status */
   slideData: Record<string, SlideDataQuality>;
 }
+
+export type CompetitorSource = 'user-provided' | 'dataforseo-labs' | 'ai-extracted' | 'hardcoded';
 
 export interface SlideDataQuality {
   /** Whether this slide has enough data to render meaningfully */
@@ -170,6 +186,10 @@ export type Sentiment = 'positive' | 'neutral' | 'negative';
 
 export interface PlatformResult {
   platform: AIPlatform;
+  /** Whether the platform returned usable text, returned no usable text, or failed. */
+  responseStatus?: PlatformResponseStatus;
+  /** Provider/runtime error shown only in diagnostics/UI data-quality states. */
+  errorMessage?: string;
   mentioned: boolean;
   cited: boolean;
   sentiment: Sentiment;
@@ -177,6 +197,8 @@ export interface PlatformResult {
   sources: SourceCitation[];
   rawResponse?: string;
 }
+
+export type PlatformResponseStatus = 'success' | 'empty' | 'error';
 
 export interface SourceCitation {
   url: string;

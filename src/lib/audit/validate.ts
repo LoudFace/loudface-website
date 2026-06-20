@@ -74,6 +74,10 @@ export interface ValidationReport {
 
 const ALL_PLATFORMS: AIPlatform[] = ['chatgpt', 'claude', 'gemini', 'perplexity'];
 
+function isMeasured(result: PlatformResult): boolean {
+  return result.responseStatus !== 'error' && result.responseStatus !== 'empty';
+}
+
 // ─── Main Validator ─────────────────────────────────────────────────
 
 /**
@@ -140,8 +144,9 @@ function validateBrandBaseline(
   const allResults = data.queries.flatMap((q) => q.results);
 
   // 1. Brand Recognition Score
-  const mentioned = allResults.filter((r) => r.mentioned).length;
-  const total = allResults.length;
+  const measuredResults = allResults.filter(isMeasured);
+  const mentioned = measuredResults.filter((r) => r.mentioned).length;
+  const total = measuredResults.length;
   const expectedRecognition = total > 0 ? Math.round((mentioned / total) * 100) : 0;
 
   const recognitionMetric: MetricValidation = {
@@ -181,13 +186,13 @@ function validateBrandBaseline(
   }
 
   // Check for empty/error responses
-  const emptyResponses = allResults.filter((r) => !r.rawResponse && !r.mentioned);
-  if (emptyResponses.length > total * 0.3) {
+  const unavailableResponses = allResults.filter((r) => !isMeasured(r));
+  if (unavailableResponses.length > allResults.length * 0.3) {
     const issue: ValidationIssue = {
       metric: 'Brand Recognition Score',
       severity: 'warning',
-      message: `${emptyResponses.length}/${total} responses are empty (no raw text)`,
-      explanation: 'A high number of empty responses indicates API failures, which deflates the recognition score.',
+      message: `${unavailableResponses.length}/${allResults.length} platform calls did not return usable text`,
+      explanation: 'A high number of failed or empty responses means this score is based on partial provider data.',
       suggestion: 'Check diagnostics.traces for failed API calls.',
     };
     recognitionMetric.issues.push(issue);
@@ -199,18 +204,18 @@ function validateBrandBaseline(
   // 2. Query count
   const queryCountMetric: MetricValidation = {
     name: 'Phase 1 Query Count',
-    description: 'Number of branded queries sent (should be 10 per the prompt template).',
-    formula: `getBrandQueries() returns 10 prompts`,
+    description: 'Number of branded queries sent.',
+    formula: `getBrandQueries() returns 6 prompts`,
     value: data.queries.length,
-    expectedRange: '10',
-    valid: data.queries.length === 10,
+    expectedRange: '6',
+    valid: data.queries.length === 6,
     issues: [],
   };
-  if (data.queries.length !== 10) {
+  if (data.queries.length !== 6) {
     const issue: ValidationIssue = {
       metric: 'Phase 1 Query Count',
       severity: 'warning',
-      message: `Expected 10 queries, got ${data.queries.length}`,
+      message: `Expected 6 queries, got ${data.queries.length}`,
       explanation: 'Each branded query should hit 4 platforms. Missing queries mean incomplete data.',
     };
     queryCountMetric.issues.push(issue);
@@ -320,15 +325,16 @@ function validateCompetitorContext(
 ): MetricValidation[] {
   const metrics: MetricValidation[] = [];
   const allResults = data.queries.flatMap((q) => q.results);
+  const measuredResults = allResults.filter(isMeasured);
 
   // 1. Competitor Source
   const source = diagnostics?.competitorSource ?? 'unknown';
   const competitorSourceMetric: MetricValidation = {
     name: 'Competitor Source',
-    description: 'How competitors were identified. "dataforseo-labs" = keyword overlap API (best), "ai-extracted" = mined from Phase 1 AI responses (good), "hardcoded" = fallback list (only for known domains).',
-    formula: 'Three-tier resolution: filtered DataForSEO Labs → AI-extracted from Phase 1 → hardcoded fallback',
+    description: 'How competitors were identified. "user-provided" is preferred, followed by DataForSEO keyword overlap, AI-extracted competitors, and hardcoded fallback.',
+    formula: 'Four-tier resolution: user-provided → filtered DataForSEO Labs → AI-extracted from Phase 1 → hardcoded fallback',
     value: source,
-    expectedRange: '"dataforseo-labs" or "ai-extracted"',
+    expectedRange: '"user-provided", "dataforseo-labs", or "ai-extracted"',
     valid: source !== 'hardcoded',
     issues: [],
   };
@@ -408,8 +414,8 @@ function validateCompetitorContext(
   metrics.push(compRelevanceMetric);
 
   // 4. Competitive Recommendation Rate
-  const brandMentions = allResults.filter((r) => r.mentioned).length;
-  const totalResults = allResults.length;
+  const brandMentions = measuredResults.filter((r) => r.mentioned).length;
+  const totalResults = measuredResults.length;
   const expectedRate = totalResults > 0 ? Math.round((brandMentions / totalResults) * 100) : 0;
 
   const recRateMetric: MetricValidation = {
@@ -451,10 +457,10 @@ function validateCompetitorContext(
   // 5. Share of Voice by Competitor
   const sovMetric: MetricValidation = {
     name: 'Share of Voice by Competitor',
-    description: 'For each competitor, what percentage of "alternative to [competitor]" responses mention that competitor. This is the COMPETITOR\'s mention rate in their own queries, not the audited brand\'s.',
-    formula: '(responses mentioning competitor name/domain in their "alternative to" queries / total responses for that competitor) * 100',
+    description: 'For each competitor, what percentage of Phase 3 unbranded category responses mention that competitor. This keeps brand and competitors on identical prompts.',
+    formula: '(Phase 3 responses mentioning competitor name/domain / usable Phase 3 responses) * 100',
     value: JSON.stringify(data.shareOfVoiceByCompetitor),
-    expectedRange: '30-90% per competitor (competitors should appear in their own alternative queries)',
+    expectedRange: '0-60% per competitor, depending on category maturity',
     valid: true,
     issues: [],
   };
@@ -464,9 +470,9 @@ function validateCompetitorContext(
     const issue: ValidationIssue = {
       metric: 'Share of Voice by Competitor',
       severity: 'warning',
-      message: 'All competitors have 0% share of voice in their own queries',
-      explanation: 'When asking "alternatives to X", none of the responses mention X itself. This could mean: (1) the competitor name matching is too strict (check if AI uses a different name/spelling), (2) the competitor names are wrong, or (3) all API calls for this phase failed.',
-      suggestion: 'Inspect rawResponse text for Phase 2 queries — do the responses discuss these competitors under different names?',
+      message: 'All competitors have 0% share of voice in category queries',
+      explanation: 'None of the unbranded category responses mention the tracked competitors. This can be a real category finding, but it can also mean the category is too broad, competitor names are wrong, or provider calls failed.',
+      suggestion: 'Inspect Phase 3 rawResponse text and the inferred category before trusting this comparison.',
     };
     sovMetric.issues.push(issue);
     issues.push(issue);
@@ -510,26 +516,27 @@ function validateCategoryVisibility(
 ): MetricValidation[] {
   const metrics: MetricValidation[] = [];
   const allResults = data.queries.flatMap((q) => q.results);
+  const measuredResults = allResults.filter(isMeasured);
 
   // 1. Inferred Category
   const categoryMetric: MetricValidation = {
     name: 'Inferred Category',
-    description: 'The product/service category used for unbranded "best X" queries. First tries extractSpecificCategory() (from "X is a [description]" patterns), falls back to inferCategory() (keyword bucket matching).',
-    formula: 'extractSpecificCategory(Phase1 responses) || inferCategory(Phase1 responses)',
+    description: 'The product/service category used for unbranded "best X" queries. It comes from structured Phase 1 extraction grounded in site copy and AI responses.',
+    formula: 'structuredExtraction.specific_category || structuredExtraction.broad_category',
     value: data.inferredCategory,
     expectedRange: 'A specific, searchable category (e.g., "crypto payroll", "Webflow agency", "CRM software")',
     valid: true,
     issues: [],
   };
 
-  // 'uncertain' is the explicit fallback when density-based inferCategory()
-  // can't find enough keyword signal — treat it as an error, not a warning.
+  // "uncertain" should only appear on legacy records. Current audits fail
+  // before Phase 3 if structured extraction cannot produce a category.
   if (data.inferredCategory.toLowerCase() === 'uncertain') {
     const issue: ValidationIssue = {
       metric: 'Inferred Category',
       severity: 'error',
       message: 'Category could not be inferred from Phase 1 responses',
-      explanation: 'inferCategory() returned "uncertain" — keyword density across all Phase 1 responses was below the threshold. This usually means the brand is too niche for AI platforms to describe consistently, or the brand name matches an unrelated entity. Phase 3 queries will fall back to generic "software" queries and produce low-signal results.',
+      explanation: 'The audit did not have enough trustworthy category context. This usually means the brand is too niche for AI platforms to describe consistently, or the brand name matches an unrelated entity.',
       suggestion: 'Check Phase 1 responses for brand recognition. If low, flag lowEntityConfidence in diagnostics.',
     };
     categoryMetric.valid = false;
@@ -538,14 +545,14 @@ function validateCategoryVisibility(
   }
 
   // Check for overly broad categories (fallback warning)
-  const broadCategories = ['software', 'saas', 'fintech', 'technology', 'marketing', 'design', 'AI'];
+  const broadCategories = ['software', 'saas', 'fintech', 'technology', 'marketing', 'design', 'ai', 'business', 'other'];
   if (broadCategories.includes(data.inferredCategory.toLowerCase())) {
     const issue: ValidationIssue = {
       metric: 'Inferred Category',
       severity: 'warning',
       message: `Category "${data.inferredCategory}" is too broad`,
       explanation: `Broad categories like "${data.inferredCategory}" produce generic queries ("Best ${data.inferredCategory} software in 2026") that won't mention niche brands. This typically deflates Discovery Visibility to 0%.`,
-      suggestion: 'Check if extractSpecificCategory() found a description but it was filtered out. The fallback inferCategory() only has broad buckets.',
+      suggestion: 'Check Phase 1 extraction inputs. The specific category may need stronger website copy, user persona context, or tighter extraction examples.',
     };
     categoryMetric.issues.push(issue);
     issues.push(issue);
@@ -567,8 +574,8 @@ function validateCategoryVisibility(
   metrics.push(categoryMetric);
 
   // 2. Category Discovery Rate
-  const mentions = allResults.filter((r) => r.mentioned).length;
-  const total = allResults.length;
+  const mentions = measuredResults.filter((r) => r.mentioned).length;
+  const total = measuredResults.length;
   const expectedRate = total > 0 ? Math.round((mentions / total) * 100) : 0;
 
   const discoveryMetric: MetricValidation = {
@@ -633,7 +640,7 @@ function validateCategoryVisibility(
   const queriesSentMetric: MetricValidation = {
     name: 'Phase 3 Queries Sent',
     description: 'The actual unbranded queries that were sent. If the category is wrong, these queries won\'t be relevant.',
-    formula: 'getCategoryQueries(inferredCategory, inferredIndustry, entityType)',
+    formula: 'getCategoryQueries(inferredCategory, inferredIndustry, entityType, buyerPersona)',
     value: data.queries.map((q) => q.prompt).join(' | '),
     expectedRange: 'Queries that a potential customer would actually search',
     valid: true,
@@ -654,7 +661,7 @@ function validateScores(
   const metrics: MetricValidation[] = [];
 
   // 1. Discovery Visibility (recalculate to verify)
-  const catResults = results.categoryVisibility.queries.flatMap((q) => q.results);
+  const catResults = results.categoryVisibility.queries.flatMap((q) => q.results).filter(isMeasured);
   const catMentions = catResults.filter((r) => r.mentioned).length;
   const expectedDV = catResults.length > 0 ? Math.round((catMentions / catResults.length) * 100) : 0;
 
@@ -682,14 +689,19 @@ function validateScores(
   metrics.push(dvMetric);
 
   // 2. Share of Voice (recalculate)
-  const compResults = results.competitorContext.queries.flatMap((q) => q.results);
-  const brandInComp = compResults.filter((r) => r.mentioned).length;
-  const expectedSoV = compResults.length > 0 ? Math.round((brandInComp / compResults.length) * 100) : 0;
+  const competitorSoVMap = results.competitorContext.shareOfVoiceByCompetitor;
+  const totalCompetitorSoV = Object.values(competitorSoVMap).reduce((sum, n) => sum + n, 0);
+  const hasCompetitors = results.competitorContext.competitors.length > 0;
+  const expectedSoV = !hasCompetitors
+    ? 0
+    : totalCompetitorSoV + scores.discoveryVisibility > 0
+      ? Math.round((scores.discoveryVisibility / (totalCompetitorSoV + scores.discoveryVisibility)) * 100)
+      : 0;
 
   const sovMetric: MetricValidation = {
     name: 'Share of Voice Score',
-    description: 'Executive scorecard metric. Percentage of Phase 2 (competitor "alternative to") responses where the AUDITED BRAND appears. Measures how often AI recommends this brand in competitive contexts.',
-    formula: `(brand mentions in competitor queries / total competitor responses) * 100 = (${brandInComp} / ${compResults.length}) * 100`,
+    description: 'Executive scorecard metric. Brand share of all brand + competitor mentions in Phase 3 unbranded category responses.',
+    formula: `brand visibility / (brand visibility + competitor visibility) = ${scores.discoveryVisibility} / (${scores.discoveryVisibility} + ${totalCompetitorSoV})`,
     value: scores.shareOfVoice,
     expectedRange: '0-50% typical, 0% common for niche brands',
     valid: scores.shareOfVoice === expectedSoV,
@@ -749,7 +761,7 @@ function validateScores(
   const platformsMentioning = new Set<string>();
   for (const query of results.brandBaseline.queries) {
     for (const result of query.results) {
-      if (result.mentioned) platformsMentioning.add(result.platform);
+      if (isMeasured(result) && result.mentioned) platformsMentioning.add(result.platform);
     }
   }
 
@@ -780,16 +792,16 @@ function validateScores(
   const expectedGrade = (() => {
     const v = scores.discoveryVisibility;
     const s = scores.shareOfVoice;
-    if (v >= 70 && s >= 40) return 'A';
-    if (v >= 50 && s >= 25) return 'B';
-    if (v >= 30 && s >= 15) return 'C';
-    if (v >= 15) return 'D';
+    if (v >= 55 && s >= 30) return 'A';
+    if (v >= 35 && s >= 18) return 'B';
+    if (v >= 18 && s >= 8) return 'C';
+    if (v >= 5 || s >= 3) return 'D';
     return 'F';
   })();
 
   const gradeMetric: MetricValidation = {
     name: 'Overall Grade',
-    description: 'Letter grade based on Discovery Visibility and Share of Voice thresholds. A: DV>=70 & SoV>=40, B: DV>=50 & SoV>=25, C: DV>=30 & SoV>=15, D: DV>=15, F: everything else.',
+    description: 'Letter grade based on Discovery Visibility and Share of Voice thresholds. A: DV>=55 & SoV>=30, B: DV>=35 & SoV>=18, C: DV>=18 & SoV>=8, D: DV>=5 or SoV>=3, F: everything else.',
     formula: `calculateGrade(discoveryVisibility=${scores.discoveryVisibility}, shareOfVoice=${scores.shareOfVoice})`,
     value: scores.overallGrade,
     expectedRange: 'A, B, C, D, or F',
@@ -826,15 +838,16 @@ function validatePlatformBreakdown(
 
   for (const platform of ALL_PLATFORMS) {
     const platformResults = allBrandResults.filter((r) => r.platform === platform);
-    const expectedMentions = platformResults.filter((r) => r.mentioned).length;
-    const expectedRate = platformResults.length > 0
-      ? Math.round((expectedMentions / platformResults.length) * 100)
+    const measuredPlatformResults = platformResults.filter(isMeasured);
+    const expectedMentions = measuredPlatformResults.filter((r) => r.mentioned).length;
+    const expectedRate = measuredPlatformResults.length > 0
+      ? Math.round((expectedMentions / measuredPlatformResults.length) * 100)
       : 0;
 
     const metric: MetricValidation = {
       name: `Platform: ${platform} Mention Rate`,
       description: `Percentage of Phase 1 branded queries where ${platform} mentions the brand. Based only on branded queries (not competitor/category queries).`,
-      formula: `(${platform} mentions / ${platform} total in Phase 1) * 100 = (${expectedMentions} / ${platformResults.length}) * 100`,
+      formula: `(${platform} mentions / ${platform} usable Phase 1 responses) * 100 = (${expectedMentions} / ${measuredPlatformResults.length}) * 100`,
       value: breakdown[platform].mentionRate,
       expectedRange: '0-100%',
       valid: breakdown[platform].mentionRate === expectedRate,
@@ -853,11 +866,11 @@ function validatePlatformBreakdown(
       issues.push(issue);
     }
 
-    if (platformResults.length === 0) {
+    if (measuredPlatformResults.length === 0) {
       const issue: ValidationIssue = {
         metric: `Platform: ${platform}`,
         severity: 'warning',
-        message: `No responses from ${platform} in Phase 1`,
+        message: `No usable responses from ${platform} in Phase 1`,
         explanation: `All ${platform} API calls failed or returned empty. This platform's data is completely missing.`,
       };
       metric.issues.push(issue);
@@ -879,7 +892,7 @@ function validateActionItems(
   const metric: MetricValidation = {
     name: 'Action Items',
     description: 'Prioritized recommendations generated based on score thresholds and gaps. Rule-based: each rule checks a specific metric threshold.',
-    formula: 'If inaccuracies > 0 → "Correct Inaccurate AI Information" (high). If platformCoverage < 3 → "Increase Platform Coverage" (high). If gaps > 0 → "Fill Knowledge Gaps" (high). If discoveryVisibility < 40 → "Improve Category Visibility" (medium). If shareOfVoice < 25 → "Boost Competitive Share of Voice" (medium). If mentionedButNotCited > 5 → "Improve Source Attribution" (medium). If grade === F → "Build AI Visibility From Scratch" (high). Max 6 items.',
+    formula: 'If inaccuracies > 0 → "Correct Inaccurate AI Information" (high). If measured silent platforms exist → "Increase Platform Coverage" (high). If gaps > 0 → "Fill Knowledge Gaps" (high). If discoveryVisibility < 40 → "Improve Category Visibility" (medium). If shareOfVoice < 25 → "Boost Competitive Share of Voice" (medium). If mentionedButNotCited > 5 → "Improve Source Attribution" (medium). If grade === F → "Build AI Visibility From Scratch" (high). Max 6 items.',
     value: `${results.actionItems.length} items (${results.actionItems.filter((i) => i.priority === 'high').length} high, ${results.actionItems.filter((i) => i.priority === 'medium').length} medium)`,
     expectedRange: '1-6 items',
     valid: results.actionItems.length > 0,
@@ -942,11 +955,11 @@ function validateCrossPhaseConsistency(
   if (entityType) {
     const entityMetric: MetricValidation = {
       name: 'Entity Type',
-      description: 'Whether the company is classified as a "product" (software/SaaS) or "service" (agency/consulting). Affects prompt templates used in Phase 2 and 3.',
-      formula: 'Scored from Phase 1 responses: service signals (agency, consulting, studio) vs product signals (software, platform, tool, SaaS)',
+      description: 'Business model classification from structured Phase 1 extraction. The pipeline maps this into product/service/brand prompt templates.',
+      formula: 'Structured extraction grounded in site copy and Phase 1 platform responses',
       value: entityType,
-      expectedRange: '"product" or "service"',
-      valid: entityType === 'product' || entityType === 'service',
+      expectedRange: '"agency", "saas", "ecommerce", "consumer-brand", "marketplace", "publisher", or "other"',
+      valid: ['agency', 'saas', 'ecommerce', 'consumer-brand', 'marketplace', 'publisher', 'other'].includes(entityType),
       issues: [],
     };
     metrics.push(entityMetric);
@@ -956,15 +969,18 @@ function validateCrossPhaseConsistency(
   const totalP1 = results.brandBaseline.queries.flatMap((q) => q.results).length;
   const totalP2 = results.competitorContext.queries.flatMap((q) => q.results).length;
   const totalP3 = results.categoryVisibility.queries.flatMap((q) => q.results).length;
+  const usableP1 = results.brandBaseline.queries.flatMap((q) => q.results).filter(isMeasured).length;
+  const usableP2 = results.competitorContext.queries.flatMap((q) => q.results).filter(isMeasured).length;
+  const usableP3 = results.categoryVisibility.queries.flatMap((q) => q.results).filter(isMeasured).length;
   const expectedP1 = results.brandBaseline.queries.length * 4; // 4 platforms per query
   const expectedP2 = results.competitorContext.queries.length * 4;
   const expectedP3 = results.categoryVisibility.queries.length * 4;
 
   const responseCountMetric: MetricValidation = {
     name: 'Response Completeness',
-    description: 'Verify that each query produced 4 platform responses (no missing platforms).',
-    formula: 'queries * 4 platforms = expected responses',
-    value: `P1: ${totalP1}/${expectedP1}, P2: ${totalP2}/${expectedP2}, P3: ${totalP3}/${expectedP3}`,
+    description: 'Verify that each query produced 4 platform records and count how many returned usable text.',
+    formula: 'queries * 4 platforms = expected platform records; usable excludes provider errors and empty responses',
+    value: `records P1: ${totalP1}/${expectedP1}, P2: ${totalP2}/${expectedP2}, P3: ${totalP3}/${expectedP3}; usable P1: ${usableP1}, P2: ${usableP2}, P3: ${usableP3}`,
     expectedRange: 'All ratios should be equal (no missing responses)',
     valid: totalP1 === expectedP1 && totalP2 === expectedP2 && totalP3 === expectedP3,
     issues: [],
@@ -1005,7 +1021,7 @@ function validateApiHealth(
 
   const apiMetric: MetricValidation = {
     name: 'API Call Success Rate',
-    description: 'Percentage of DataForSEO API calls that returned a valid response.',
+    description: 'Percentage of provider calls that returned a valid response across DataForSEO and OpenRouter.',
     formula: `(successful / total) * 100 = (${diagnostics.successfulCalls} / ${diagnostics.totalApiCalls}) * 100`,
     value: `${100 - failRate}% (${diagnostics.successfulCalls}/${diagnostics.totalApiCalls} succeeded, ${diagnostics.failedCalls} failed, ${diagnostics.emptyCalls} empty)`,
     expectedRange: '>90% success rate',
@@ -1018,7 +1034,7 @@ function validateApiHealth(
       metric: 'API Health',
       severity: 'error',
       message: `${failRate}% API failure rate (${diagnostics.failedCalls}/${diagnostics.totalApiCalls} calls failed)`,
-      explanation: 'High failure rate significantly degrades data quality. Check DataForSEO account status, credentials, and rate limits.',
+      explanation: 'High failure rate significantly degrades data quality. Check DataForSEO/OpenRouter credentials, account status, and rate limits.',
     };
     apiMetric.issues.push(issue);
     issues.push(issue);
@@ -1049,7 +1065,7 @@ function validateApiHealth(
   // Cost sanity check
   const costMetric: MetricValidation = {
     name: 'Audit Cost',
-    description: 'Total DataForSEO API cost for this audit.',
+    description: 'Total tracked provider cost for this audit.',
     formula: 'Sum of all API call costs',
     value: `$${diagnostics.totalCostUsd.toFixed(2)}`,
     expectedRange: '$1-5 per audit',

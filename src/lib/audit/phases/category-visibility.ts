@@ -16,20 +16,23 @@ export async function runCategoryVisibility(
   onProgress?: (pct: number) => Promise<void>,
   entityType: 'product' | 'service' | 'brand' = 'product',
   tracer?: TraceCollector,
+  buyerPersona?: string,
 ): Promise<CategoryVisibilityData> {
-  const prompts = getCategoryQueries(category, industry, entityType);
+  const prompts = getCategoryQueries(category, industry, entityType, buyerPersona);
   const queries: CategoryQuery[] = [];
 
   await withConcurrency(prompts, 2, async (prompt) => {
     const platformResults = await queryAllPlatforms(prompt, 'category-visibility', tracer);
 
     const results: PlatformResult[] = Object.entries(platformResults).map(
-      ([platform, result]) =>
+      ([platform, outcome]) =>
         parseResponse(
           platform as PlatformResult['platform'],
-          result,
+          outcome.result,
           companyName,
           domain,
+          outcome.status,
+          outcome.errorMessage,
         ),
     );
 
@@ -43,9 +46,10 @@ export async function runCategoryVisibility(
 
   // Category Discovery Rate: % of responses that mention the brand
   const allResults = queries.flatMap((q) => q.results);
-  const mentions = allResults.filter((r) => r.mentioned).length;
-  const categoryDiscoveryRate = allResults.length > 0
-    ? Math.round((mentions / allResults.length) * 100)
+  const measuredResults = allResults.filter((r) => r.responseStatus !== 'error' && r.responseStatus !== 'empty');
+  const mentions = measuredResults.filter((r) => r.mentioned).length;
+  const categoryDiscoveryRate = measuredResults.length > 0
+    ? Math.round((mentions / measuredResults.length) * 100)
     : 0;
 
   return {

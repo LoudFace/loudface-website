@@ -28,6 +28,7 @@ import type {
   DFSLLMResponseResult,
   DFSResponseItem,
   DFSAnnotation,
+  PlatformResponseStatus,
 } from './types';
 import type { TraceCollector } from './dataforseo';
 
@@ -47,6 +48,12 @@ const MODEL_IDS: Record<'chatgpt' | 'gemini', string> = {
 };
 
 const OPENROUTER_BASE = 'https://openrouter.ai/api/v1';
+
+export interface DirectLLMOutcome {
+  result: DFSLLMResponseResult | null;
+  status: PlatformResponseStatus;
+  errorMessage?: string;
+}
 
 // ─── OpenRouter response types ─────────────────────────────────────
 
@@ -100,24 +107,27 @@ export async function queryDirectLLM(
   prompt: string,
   tag?: string,
   tracer?: TraceCollector,
-): Promise<DFSLLMResponseResult | null> {
-  if (platform !== 'chatgpt' && platform !== 'gemini') return null;
+): Promise<DirectLLMOutcome> {
+  if (platform !== 'chatgpt' && platform !== 'gemini') {
+    return { result: null, status: 'error', errorMessage: 'Unsupported direct LLM platform' };
+  }
   const phase = (tag ?? 'unknown') as ApiCallTrace['phase'];
   const start = Date.now();
   const modelId = MODEL_IDS[platform];
 
   const apiKey = process.env.OPENROUTER_API_KEY;
   if (!apiKey) {
+    const errorMessage = 'OPENROUTER_API_KEY not set';
     console.error('[DirectLLM] OPENROUTER_API_KEY not set — cannot query', platform);
     tracer?.add({
       platform,
       prompt: prompt.slice(0, 100),
       phase,
       status: 'error',
-      errorMessage: 'OPENROUTER_API_KEY not set',
+      errorMessage,
       durationMs: 0,
     });
-    return null;
+    return { result: null, status: 'error', errorMessage };
   }
 
   try {
@@ -198,7 +208,11 @@ export async function queryDirectLLM(
       durationMs,
     });
 
-    return adapted;
+    return {
+      result: adapted,
+      status: hasContent ? 'success' : 'empty',
+      errorMessage: hasContent ? undefined : 'Provider returned no text content',
+    };
   } catch (err) {
     const durationMs = Date.now() - start;
     const errorMessage = err instanceof Error ? err.message : 'Unknown error';
@@ -213,6 +227,6 @@ export async function queryDirectLLM(
       durationMs,
     });
 
-    return null;
+    return { result: null, status: 'error', errorMessage };
   }
 }

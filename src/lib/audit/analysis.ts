@@ -2,6 +2,7 @@ import type {
   AIPlatform,
   DFSLLMResponseResult,
   PlatformResult,
+  PlatformResponseStatus,
   Sentiment,
   SourceCitation,
 } from './types';
@@ -43,10 +44,14 @@ export function parseResponse(
   result: DFSLLMResponseResult | null,
   brandName: string,
   brandDomain: string,
+  responseStatus: PlatformResponseStatus = result ? 'success' : 'empty',
+  errorMessage?: string,
 ): PlatformResult {
   if (!result) {
     return {
       platform,
+      responseStatus,
+      errorMessage,
       mentioned: false,
       cited: false,
       sentiment: 'neutral',
@@ -96,6 +101,8 @@ export function parseResponse(
 
   return {
     platform,
+    responseStatus,
+    errorMessage,
     mentioned,
     cited,
     sentiment,

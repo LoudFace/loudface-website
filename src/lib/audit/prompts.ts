@@ -56,10 +56,13 @@ export function getCategoryQueries(
   category: string,
   industry: string,
   entityType: 'product' | 'service' | 'brand' = 'product',
+  buyerPersona?: string,
 ): string[] {
   // Avoid "for agency" style duplication when the industry word already appears in the category.
   const catLower = category.toLowerCase();
   const industryNeeded = industry && !catLower.includes(industry.toLowerCase());
+  const persona = buyerPersona?.trim();
+  const targetAudience = persona || (entityType === 'service' ? 'B2B SaaS companies' : 'businesses');
 
   // 5 queries per entity type × 4 platforms = 20 calls. Trimmed from 8 —
   // the dropped queries were lower-intent ("how do I pick", "enterprise X
@@ -67,9 +70,13 @@ export function getCategoryQueries(
   // the shortlisting + buyer-persona variety, which drives most of the
   // useful discovery signal.
   if (entityType === 'service') {
+    const providerCategory = /\b(agencies|agency|providers?|consultanc(?:y|ies)|services?)\b/i.test(category)
+      ? category
+      : `${category} providers`;
+
     return [
-      `Best ${category} for B2B SaaS companies`,
-      `Top ${category} providers in 2026`,
+      `Best ${category} for ${targetAudience}`,
+      `Top ${providerCategory} in 2026`,
       `Which ${category} should I hire?`,
       industryNeeded
         ? `Recommended ${category} for ${industry} clients`
@@ -96,11 +103,22 @@ export function getCategoryQueries(
       sustainabilityQuery,
     ];
   }
+
+  const hasProductNoun = /\b(software|platform|tools?|app|solution|suite)\b/i.test(category);
+  const softwareCategory = hasProductNoun ? category : `${category} software`;
+  const toolsCategory = hasProductNoun ? category : `${category} tools`;
+  const platformCategory = hasProductNoun ? category : `${category} platforms`;
+  const solutionQuestion = hasProductNoun
+    ? `Which ${category} should I use?`
+    : `What ${category} solution should I use?`;
+
   return [
-    `Best ${category} software in 2026`,
-    industryNeeded ? `Top ${category} tools for ${industry}` : `Top ${category} tools`,
-    `What ${category} solution should I use?`,
-    `Recommended ${category} platforms for businesses`,
+    `Best ${softwareCategory} in 2026`,
+    persona
+      ? `Top ${toolsCategory} for ${persona}`
+      : industryNeeded ? `Top ${toolsCategory} for ${industry}` : `Top ${toolsCategory}`,
+    solutionQuestion,
+    `Recommended ${platformCategory} for ${targetAudience}`,
     `Best ${category} for early-stage startups`,
   ];
 }

@@ -24,7 +24,7 @@ export function BrandBaselineSlide({ data, companyName, totalSlides, entityConfi
             Direct Brand Queries
           </h2>
           <p className="text-surface-400 text-sm max-w-xl">
-            Based on 10 direct brand queries, here is how AI platforms currently
+            Based on 6 direct brand queries, here is how AI platforms currently
             perceive and represent {companyName}.
           </p>
         </div>
@@ -50,6 +50,8 @@ export function BrandBaselineSlide({ data, companyName, totalSlides, entityConfi
               results: q.results.map((r) => ({
                 platform: r.platform,
                 mentioned: r.mentioned,
+                responseStatus: r.responseStatus,
+                errorMessage: r.errorMessage,
               })),
             }))}
           />

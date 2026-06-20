@@ -1,5 +1,4 @@
 import type {
-  AuditResults,
   AuditScores,
   OverallGrade,
   TrafficLight,
@@ -24,7 +23,9 @@ export function calculateScores(
   categoryVisibility: CategoryVisibilityData,
 ): AuditScores {
   // Discovery Visibility: % of category queries where brand appears (Phase 3).
-  const totalCatResults = categoryVisibility.queries.flatMap((q) => q.results);
+  const totalCatResults = categoryVisibility.queries
+    .flatMap((q) => q.results)
+    .filter((r) => r.responseStatus !== 'error' && r.responseStatus !== 'empty');
   const catMentions = totalCatResults.filter((r) => r.mentioned).length;
   const discoveryVisibility = totalCatResults.length > 0
     ? Math.round((catMentions / totalCatResults.length) * 100)
@@ -62,7 +63,9 @@ export function calculateScores(
   const platformsMentioning = new Set<string>();
   for (const query of brandBaseline.queries) {
     for (const result of query.results) {
-      if (result.mentioned) platformsMentioning.add(result.platform);
+      if (result.responseStatus !== 'error' && result.responseStatus !== 'empty' && result.mentioned) {
+        platformsMentioning.add(result.platform);
+      }
     }
   }
   const platformCoverage = platformsMentioning.size;
@@ -137,21 +140,29 @@ function calculatePlatformScore(
   results: PlatformResult[],
   brandDomain: string,
 ): PlatformScore {
-  if (results.length === 0) {
-    return { mentionRate: 0, citationRate: 0, sentiment: 'neutral', topMentions: [] };
+  const measuredResults = results.filter((r) => r.responseStatus !== 'error' && r.responseStatus !== 'empty');
+
+  if (measuredResults.length === 0) {
+    return {
+      mentionRate: 0,
+      citationRate: 0,
+      sentiment: 'neutral',
+      topMentions: [],
+      insight: 'No usable responses returned for this platform.',
+    };
   }
 
-  const mentions = results.filter((r) => r.mentioned).length;
-  const citations = results.filter((r) => r.cited).length;
-  const mentionRate = Math.round((mentions / results.length) * 100);
-  const citationRate = Math.round((citations / results.length) * 100);
+  const mentions = measuredResults.filter((r) => r.mentioned).length;
+  const citations = measuredResults.filter((r) => r.cited).length;
+  const mentionRate = Math.round((mentions / measuredResults.length) * 100);
+  const citationRate = Math.round((citations / measuredResults.length) * 100);
 
   const sentimentCounts: Record<Sentiment, number> = {
     positive: 0,
     neutral: 0,
     negative: 0,
   };
-  for (const r of results) {
+  for (const r of measuredResults) {
     sentimentCounts[r.sentiment]++;
   }
 
@@ -160,7 +171,7 @@ function calculatePlatformScore(
   ).sort(([, a], [, b]) => b - a)[0][0];
 
   const topMentions = results
-    .filter((r) => r.mentioned && r.snippet)
+    .filter((r) => r.responseStatus !== 'error' && r.responseStatus !== 'empty' && r.mentioned && r.snippet)
     .slice(0, 3)
     .map((r) => r.snippet);
 
@@ -168,7 +179,7 @@ function calculatePlatformScore(
   // Multiple annotations from the same domain in one response still count once
   // so we measure breadth of sources, not raw link count.
   const domainCountMap = new Map<string, number>();
-  for (const r of results) {
+  for (const r of measuredResults) {
     const seen = new Set<string>();
     for (const s of r.sources) {
       const d = normalizeCitationDomain(s.url);
@@ -192,7 +203,7 @@ function calculatePlatformScore(
     citationRate,
     topCitedDomains,
     sentiment: dominantSentiment,
-    sampleSize: results.length,
+    sampleSize: measuredResults.length,
   });
 
   return {
@@ -279,13 +290,15 @@ export function generateActionItems(
   // Platform coverage gap — name the silent platforms.
   if (scores.platformCoverage < 3) {
     const silent = identifySilentPlatforms(brandBaseline);
-    const silentList = silent.length ? silent.join(', ') : 'most platforms';
-    items.push({
-      priority: 'high',
-      title: `Get into ${silentList}`,
-      description: `${silentList} ${silent.length === 1 ? 'does not recognize' : 'do not recognize'} your brand at all. The fastest path in is earning mentions on the sources those platforms cite: Reddit, review sites, industry editorial, and authoritative directories.`,
-      linkedService: '/services/seo-aeo',
-    });
+    if (silent.length > 0) {
+      const silentList = silent.join(', ');
+      items.push({
+        priority: 'high',
+        title: `Get into ${silentList}`,
+        description: `${silentList} ${silent.length === 1 ? 'does not recognize' : 'do not recognize'} your brand at all. The fastest path in is earning mentions on the sources those platforms cite: Reddit, review sites, industry editorial, and authoritative directories.`,
+        linkedService: '/services/seo-aeo',
+      });
+    }
   }
 
   // Knowledge gap — quote the biggest gap AND name the specific page to create.
@@ -312,8 +325,9 @@ export function generateActionItems(
 
   // Not cited — AI mentions you but doesn't cite you.
   const branded = brandBaseline.queries.flatMap((q) => q.results);
-  const mentionedCount = branded.filter((r) => r.mentioned).length;
-  const citedCount = branded.filter((r) => r.cited).length;
+  const measuredBranded = branded.filter((r) => r.responseStatus !== 'error' && r.responseStatus !== 'empty');
+  const mentionedCount = measuredBranded.filter((r) => r.mentioned).length;
+  const citedCount = measuredBranded.filter((r) => r.cited).length;
   const uncitedCount = mentionedCount - citedCount;
   if (mentionedCount > 0 && uncitedCount / mentionedCount > 0.5) {
     items.push({
@@ -383,10 +397,18 @@ function identifySilentPlatforms(brandBaseline: BrandBaselineData): string[] {
   const mentionedSet = new Set<AIPlatform>();
   for (const query of brandBaseline.queries) {
     for (const result of query.results) {
-      if (result.mentioned) mentionedSet.add(result.platform);
+      if (result.responseStatus !== 'error' && result.responseStatus !== 'empty' && result.mentioned) {
+        mentionedSet.add(result.platform);
+      }
     }
   }
   return ALL_PLATFORMS
-    .filter((p) => !mentionedSet.has(p))
+    .filter((p) => {
+      const platformResults = brandBaseline.queries
+        .flatMap((q) => q.results)
+        .filter((r) => r.platform === p);
+      const hasMeasuredResponse = platformResults.some((r) => r.responseStatus !== 'error' && r.responseStatus !== 'empty');
+      return hasMeasuredResponse && !mentionedSet.has(p);
+    })
     .map((p) => displayNames[p]);
 }

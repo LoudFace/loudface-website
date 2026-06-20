@@ -4,7 +4,7 @@ import { getAuditRecord } from '@/lib/audit/pipeline';
 /**
  * GET /api/audit/{id}/diagnostics
  * Returns full API call tracing data for debugging.
- * Shows every DataForSEO call: success/failure, tokens, cost, timing.
+ * Shows every provider call: success/failure, tokens, cost, timing.
  *
  * Only available in development — disabled in production to avoid leaking
  * API cost data, prompts, and internal architecture details.

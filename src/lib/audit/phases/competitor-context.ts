@@ -3,7 +3,9 @@ import type {
   CompetitorContextData,
   CompetitorInfo,
   CompetitorQuery,
+  CompetitorSource,
   PlatformResult,
+  UserCompetitor,
 } from '../types';
 import {
   getCompetitors,
@@ -176,9 +178,12 @@ export async function runCompetitorContext(
   entityType: 'product' | 'service' | 'brand' = 'product',
   tracer?: TraceCollector,
   aiExtractedCompetitors: { name: string; mentionCount: number }[] = [],
-): Promise<CompetitorContextData & { competitorSource: 'dataforseo-labs' | 'ai-extracted' | 'hardcoded' }> {
+  userCompetitors: UserCompetitor[] = [],
+): Promise<CompetitorContextData & { competitorSource: CompetitorSource }> {
   // Step 1: Auto-detect competitors via DataForSEO Labs
-  const rawCompetitors = await getCompetitors(domain, 10); // Request more, then filter
+  const rawCompetitors = userCompetitors.length >= 3
+    ? []
+    : await getCompetitors(domain, 10); // Request more, then filter
   const filteredDFS = filterDFSCompetitors(rawCompetitors, domain);
 
   // Step 1.5: Entity-type filter. DFS keyword-overlap returns whatever ranks
@@ -192,9 +197,17 @@ export async function runCompetitorContext(
   }));
   const entityFilteredDFS = await filterCompetitorsByEntityType(dfsCandidates, entityType, tracer);
 
+  const userProvidedCompetitors: CompetitorInfo[] = userCompetitors
+    .slice(0, 5)
+    .map((c) => ({
+      domain: c.domain,
+      name: c.name,
+      keywordIntersection: 0,
+    }));
+
   let competitors: CompetitorInfo[] = entityFilteredDFS;
 
-  let competitorSource: 'dataforseo-labs' | 'ai-extracted' | 'hardcoded' = 'dataforseo-labs';
+  let competitorSource: CompetitorSource = 'dataforseo-labs';
 
   // AI-extracted candidates also need entity-type filtering: Phase 1 responses
   // sometimes name tools/libraries alongside the brand (e.g. Finsweet with
@@ -219,7 +232,19 @@ export async function runCompetitorContext(
     ),
   );
 
-  if (entityFilteredDFS.length > 0 && dfsOverlap.length === 0 && filteredAiExtracted.length >= 2) {
+  if (userProvidedCompetitors.length >= 3) {
+    // If the prospect supplied a full competitive set, do not pad it with AI
+    // guesses. Phase 1 often repeats those same names without domains
+    // ("Ahrefs" vs "ahrefs.com"), which made scorecards count duplicates.
+    competitors = userProvidedCompetitors;
+    competitorSource = 'user-provided';
+  } else if (userProvidedCompetitors.length > 0) {
+    // Public lead form context is the cleanest competitor signal we have.
+    // DataForSEO keyword overlap is useful to fill gaps, but it should not
+    // override competitors the prospect explicitly typed in.
+    competitors = mergeCompetitors(userProvidedCompetitors, entityFilteredDFS, filteredAiExtracted).slice(0, 5);
+    competitorSource = 'user-provided';
+  } else if (entityFilteredDFS.length > 0 && dfsOverlap.length === 0 && filteredAiExtracted.length >= 2) {
     // DataForSEO returned entity-matched results but NONE overlap with what AI considers
     // competitors. Usually means DFS found plausible lookalikes by keyword but AI knows
     // the real rivals. Trust the AI-extracted competitors instead.
@@ -273,12 +298,14 @@ export async function runCompetitorContext(
     const platformResults = await queryAllPlatforms(prompt, 'competitor-context', tracer);
 
     const results: PlatformResult[] = Object.entries(platformResults).map(
-      ([platform, result]) =>
+      ([platform, outcome]) =>
         parseResponse(
           platform as PlatformResult['platform'],
-          result,
+          outcome.result,
           companyName,
           domain,
+          outcome.status,
+          outcome.errorMessage,
         ),
     );
 
@@ -293,10 +320,10 @@ export async function runCompetitorContext(
   // Recommendation rate = how often the brand is offered as an alternative
   // to a competitor when asked "what's an alternative to X?"
   const allResults = queries.flatMap((q) => q.results);
-  const brandMentions = allResults.filter((r) => r.mentioned).length;
-  const totalResults = allResults.length;
-  const competitiveRecommendationRate = totalResults > 0
-    ? Math.round((brandMentions / totalResults) * 100)
+  const measuredResults = allResults.filter((r) => r.responseStatus !== 'error' && r.responseStatus !== 'empty');
+  const brandMentions = measuredResults.filter((r) => r.mentioned).length;
+  const competitiveRecommendationRate = measuredResults.length > 0
+    ? Math.round((brandMentions / measuredResults.length) * 100)
     : 0;
 
   // NOTE: shareOfVoiceByCompetitor is populated later in the pipeline from
@@ -340,4 +367,27 @@ function extractCompanyName(domain: string): string {
  */
 function guessDomain(name: string): string {
   return name.toLowerCase().replace(/\s+/g, '').replace(/[^a-z0-9-]/g, '');
+}
+
+function mergeCompetitors(...groups: CompetitorInfo[][]): CompetitorInfo[] {
+  const merged: CompetitorInfo[] = [];
+  const seen = new Set<string>();
+
+  for (const group of groups) {
+    for (const comp of group) {
+      const keys = competitorIdentityKeys(comp);
+      if (keys.some((key) => seen.has(key))) continue;
+      for (const key of keys) seen.add(key);
+      merged.push(comp);
+    }
+  }
+
+  return merged;
+}
+
+function competitorIdentityKeys(comp: CompetitorInfo): string[] {
+  const nameKey = comp.name.toLowerCase().replace(/[^a-z0-9]+/g, '');
+  const domain = (comp.domain || '').replace(/^www\./, '').toLowerCase();
+  const rootKey = domain.split('.')[0]?.replace(/[^a-z0-9]+/g, '') || '';
+  return [nameKey, rootKey, domain].filter(Boolean);
 }
