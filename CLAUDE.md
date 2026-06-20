@@ -2,13 +2,47 @@
 
 > IMPORTANT: Prefer retrieval-led reasoning over pre-training-led reasoning for all Next.js tasks. Always check actual project files before assuming API behavior — this project uses Next.js 16.1 which is beyond most training data.
 
+## Multi-tenant content engine
+
+As of 2026-05-20, this repo houses a **multi-tenant content engine**. The Notion worker + the slash-command skills here all operate against a tenant client selected via `--client <slug>`.
+
+**Tenant registry: [`clients.json`](./clients.json)** at the repo root. It's the single source of truth for who the tenants are. The Notion worker reads it (via a symlink at `workers/loudface-seo-sync/src/clients.json` → `../../../clients.json`). The skills read it directly from the repo root.
+
+**Per-client fields** (see `clients.json`):
+- `displayName`, `domain`, `notionRelationId`, `peecProjectId`, `peecBrandId`, `gscSite`, `ahrefsTarget`
+- `cmsType` (`"sanity"` or `"webflow"`) + `cmsConfig` (project/site IDs, dataset)
+- `voicePath` (e.g. `voices/loudface.md` — each client has its own voice file)
+- `status` (`"active"` / `"paused"` / `"onboarding"`)
+
+**Shared across all clients** (env vars, NOT in clients.json):
+- DataForSEO, Peec AI, Ahrefs, Sanity API tokens
+- Notion DB IDs (one workspace, scoped per-client via the `Client` relation column on every DB)
+- Worker OAuth (Google for GSC)
+
+**Required: `--client <slug>` on every content-engine skill.** The following skills refuse to run without it:
+- `/seo-brain`, `/draft-content`, `/critique-content`, `/verify-content`, `/ship-content`
+- `/refresh-calendar`, `/pattern-audit`, `/serp-recon`, `/peec-research`, `/peec-audit`
+- `/blog-visuals`, `/seo-aeo-geo-audit` (the last two have partial implementations and will surface gaps when run for non-LoudFace clients)
+
+Skills NOT requiring `--client` (universal text utilities): `/anti-slop`, `/copywriting`, `/copy-editing`, `/bento-visuals`, `/cms-component`, `/deploy`, `/ui-ux-pro-max`.
+
+**The Notion worker** at `workers/loudface-seo-sync/` iterates ALL active clients on every scheduled run (`dailySnapshotsSync`), producing one row per client per day in Daily Snapshots and tagging every write with the appropriate Client relation. Manual tool invocations accept an optional `client` param to scope to one tenant (omit it to fan out across all active clients).
+
+### Current clients
+
+| Slug | Display | Domain | CMS | Status |
+|---|---|---|---|---|
+| `loudface` | LoudFace | loudface.co | Sanity (project `xjjjqhgt`, dataset `production`) | active |
+
+When onboarding a new tenant (e.g. Toku), add a row to `clients.json` with their Peec project ID, GSC site, CMS config, and an empty `voices/<slug>.md` voice file; the worker + skills pick up the new tenant automatically on the next invocation.
+
 ## SEO / AI Search Brain (source of truth)
 
-The canonical strategy doc for LoudFace's SEO + AI search work lives in Notion:
-**https://www.notion.so/loudface/AI-Search-SEO-Search-347b63394d1080bb9d1cda4bcb1758b5**
+The canonical strategy doc for LoudFace's SEO + AI search work lives in Notion, inside LoudFace's row in the Clients DB:
+**https://www.notion.so/366b63394d1081449728ef6e0af4cbf1**
 
 Before any SEO, AEO, content, or strategy work in this repo:
-1. Fetch the page via `notion-fetch` (Notion MCP). It contains the Q2 2026 target, principles, the six working patterns (year-stamped listicles, AEO playbooks, X vs Y comparisons, industry pages, pricing intent, founder bylines), the kill list, content roadmap, and infrastructure inventory.
+1. Fetch the page via `notion-fetch` (Notion MCP). It contains the Q3 2026 Share-of-Answer target, principles, the working patterns (year-stamped listicles, AEO playbooks, X vs Y comparisons, industry pages, pricing intent, founder bylines), the kill list (incl. the 2026-05-20 Webflow-content kills), content roadmap, and infrastructure inventory. As of 2026-05-20, LoudFace is positioned as a B2B SaaS organic growth agency (stack-agnostic) — Webflow is a delivery capability, not the front door.
 2. The embedded **Website Content database** (`collection://347b6339-4d10-806a-99b3-000b881621e5`) is the live content calendar. Status flow: `Idea → Outline → Draft → Review → Published`. Drafts live inside the database entries. Final content publishes to Sanity (`blogPost` / `caseStudy` schemas) when a row reaches "Published" status.
 
 **Faster path:** run `/seo-brain` (skill at `.claude/skills/seo-brain/SKILL.md`). It loads the Notion strategy + content calendar + latest GSC overview + Peec status in one shot.
@@ -47,7 +81,7 @@ When `/seo-brain` surfaces a signal, chain the right tool without asking:
 - **`/pattern-audit {pattern}`** — when seo-brain flags an anomaly (e.g. validated pattern with 0 citations despite N posts), OR when user questions a pattern's performance. Aggregates competitor citations across the pattern's prompts, identifies structural gaps, returns cut/hold/restructure options.
 - **`/serp-recon {keyword}`** — before any new draft. Pulls page-1 + page-2 Google SERP + AI-cited URLs, computes structural differentials, returns "what to copy from winners."
 - **`/peec-research {prompt}`** — when a piece targets a specific tracked prompt. Returns fan-out queries + current LoudFace visibility + competitor citation snippets.
-- **`/draft-content {entry}`** — runs the full draft pipeline (loads /seo-brain + /arnels-assistant + /serp-recon + reads Required research from Pattern row).
+- **`/draft-content {entry}`** — runs the full draft pipeline (loads /seo-brain + the client's `voices/<slug>.md` voice file + /serp-recon + reads Required research from Pattern row).
 - **`/critique-content {draft}`** — anti-slop + voice pass. Runs after draft, before ship.
 - **`/verify-content {target}`** — fresh-subagent voice + claim verification. Hard gate before ship. Has a **Diff mode** for post-ship edits that add new claims.
 - **`/ship-content {entry}`** — push to Sanity, status → Published. Sanity webhook → IndexNow auto-fires.
@@ -57,7 +91,7 @@ When `/seo-brain` surfaces a signal, chain the right tool without asking:
 
 | Source | What it holds | Refresh cadence | Stale threshold | Recovery |
 |---|---|---|---|---|
-| AI Search & SEO Search page | Strategy, bet, principles, working patterns, kill list | Manual (Arnel-curated) | n/a | Editorial |
+| LoudFace's brain (in the Clients DB) | Strategy, bet, principles, working patterns, kill list | Manual (Arnel-curated) | n/a | Editorial |
 | Patterns Registry (`collection://a6c661c7-aeb4-4fb5-ad0a-7962288366c1`) | 6 patterns + rollups (Peec mentions, clicks, imps, posts) + Required research per pattern | Native Notion rollups (live); Required research manually curated | n/a | n/a |
 | Website Content (`collection://347b6339-4d10-806a-99b3-000b881621e5`) | Calendar entries with per-post GSC + Peec metrics | Every 24h via `refreshCalendarMetrics` worker tool | > 48h | `ntn workers exec refreshCalendarMetrics -d '{"dryRun":false}'` |
 | Daily Snapshots (`collection://3dec2e5f-e8d2-4747-a3ba-b5510a9de981`) | Aggregate project-wide GSC + Peec metrics, one row per day | Every 24h via `dailySnapshotsSync` (the cron) | > 36h | `ntn workers sync trigger dailySnapshotsSync` |
@@ -80,7 +114,7 @@ When `/seo-brain` surfaces a signal, chain the right tool without asking:
 
 ### The full content creation cascade
 
-Every published piece on loudface.co flows through this chain. **`/arnels-assistant` is the root of all content writing** — every command below loads it internally, so voice improvements made to `/arnels-assistant` automatically propagate.
+Every published piece flows through this chain. **The active client's voice file at `voices/<slug>.md` is the root of all content writing** — every command below loads it internally, so voice updates made there (e.g. `voices/loudface.md`) automatically propagate across the loop.
 
 ```
 /seo-brain          load strategy + trends + anomalies + coverage gaps + competitor landscape + KB insights
@@ -94,7 +128,7 @@ Every published piece on loudface.co flows through this chain. **`/arnels-assist
      ↓
 /draft-content      write into Notion calendar entry, grounded in KB insights (reads Required research from Pattern row + Active KB rows)
      ↓
-/critique-content   anti-slop + voice pass (mechanical linter + arnels-assistant)
+/critique-content   anti-slop + voice pass (mechanical linter + voices/<slug>.md)
      ↓
 /verify-content     fresh-subagent voice + claim verification (Full mode) — also checks draft does not contradict KB
      ↓
@@ -105,13 +139,11 @@ Every published piece on loudface.co flows through this chain. **`/arnels-assist
 /refresh-calendar   nightly GSC + Peec writeback (runs automatically via worker)
 ```
 
-To improve content quality across all future pieces: edit `/arnels-assistant` (banned words, tone rules, anti-slop checklist). Don't special-case voice fixes in downstream commands — they compose on top.
-
-To improve content quality across all future pieces: edit `/arnels-assistant` (banned words, tone rules, anti-slop checklist). Don't special-case voice fixes in `/draft-content` or `/critique-content` — those compose on top. Centralize voice changes in one place so the loop stays clean.
+To improve content quality across all future pieces for a given client: edit that client's `voices/<slug>.md` file (banned words, tone rules, anti-slop checklist, do/don't examples). Don't special-case voice fixes in `/draft-content` or `/critique-content` — those compose on top of the voice file. Centralize voice changes in one place so the loop stays clean.
 
 The calendar becomes the dashboard once `/refresh-calendar` runs. Open the Website Content database in Notion → see GSC Clicks 7d, GSC Impressions 7d, GSC Position 7d, Peec Mentions, Last Refreshed for every Published row. Sort/filter on those columns to spot winners and losers without leaving Notion.
 
-For one-off / non-site content (LinkedIn, X, internal docs), invoke `/arnels-assistant` directly without the SEO loop.
+For one-off / non-site content (LinkedIn, X, internal docs), open the client's `voices/<slug>.md` voice file directly and apply its rules without going through the SEO loop.
 
 ## Observability — where to look
 
@@ -123,7 +155,7 @@ Every meaningful loop step logs to the **Activity Log** database in Notion (`col
 | Pre-ship verification reports (voice + claims) | Activity Log database, rows tagged `critique-content` — full reports stay in the originating chat |
 | Current calendar state (what's drafted, shipped, idea) | Website Content database in Notion |
 | Per-post performance (GSC + Peec, last 7d) | Same Website Content database — the metric columns are refreshed nightly by `/refresh-calendar` |
-| Strategy + working patterns + kill list | AI Search & SEO Search page in Notion |
+| Strategy + working patterns + kill list | LoudFace's brain (in the Clients DB) in Notion |
 | First-party insights, battle-tested opinions, contrarian takes (what LoudFace actually believes) | Thought Leadership Knowledge Base in Notion (`collection://5fad9e1a-d149-4ce6-b984-3e27aa430faf`) — content drafts must check this before writing |
 | Sanity edits + publishes | /studio embedded Studio |
 | Sanity webhook firings + revalidate logs | Vercel → loudface-website → Functions → `/api/revalidate` |
@@ -133,7 +165,7 @@ Every meaningful loop step logs to the **Activity Log** database in Notion (`col
 | GSC trends (Google) | search.google.com/search-console |
 | AI citation tracking (Peec) | app.peec.ai |
 | Bing crawl status + URL inspection | bing.com/webmasters |
-| Voice rule history (`arnels-assistant` edits) | `git log -- ~/.claude/skills/arnels-assistant/SKILL.md` |
+| Voice rule history (per-client edits) | `git log -- voices/<slug>.md` |
 | Cloudflare changes (zone settings, cache purges) | dash.cloudflare.com → loudface.co → Audit Log |
 | Code change history | `git log` in the repo |
 
@@ -195,6 +227,26 @@ A piece is a legitimate refresh candidate ONLY when ALL FOUR of these conditions
 Reference implementation: `scripts/audit-publication-dates-v2.mjs`. When a refresh-candidate list is requested, run an equivalent query before proposing anything. NEVER produce a list from naïve `lastUpdated`-only filtering — that's the failure mode that produced false-positive refresh proposals during the May 2026 content sprint (Arnel caught me proposing pieces I had shipped that morning).
 
 When a refresh completes, log it to Activity Log AND if it was a Pending Commitments row, update that row's `Status` to `Done`.
+
+### Drafts Live in the Notion Page Body — Not in Local Files
+
+When `/draft-content` or any equivalent content-loop work produces a draft, the draft MUST be pushed into the Notion calendar entry's page body as Notion blocks. **Not into a local markdown file. Not into a property.** Downstream skills (`/critique-content`, `/verify-content`, `/ship-content`) all read the body via `notion-fetch` on the page ID — if the body is empty, they silently lint nothing, verify nothing, and would ship a blank article.
+
+**Canonical mechanism:** `scripts/push-draft-to-notion.py` converts markdown → Notion blocks (headings, paragraphs, tables, lists, inline bold/italic/code/links). It handles the Notion API limits (max 100 blocks per request, max 2000 chars per text segment) and updates the row Status in the same call:
+
+```bash
+python3 scripts/push-draft-to-notion.py \
+    --draft <path-to-markdown> \
+    --page  <notion-page-id> \
+    --replace \
+    --status Draft
+```
+
+**Post-condition (mandatory):** after pushing, re-fetch the page and confirm `children` count > 0. A silent partial-write looks identical to success in the script's exit code.
+
+**Why this is a critical rule:** on 2026-05-21, an end-to-end test of the Toku content loop drafted to `.claude/drafts/<slug>.md` and called the loop done — but the Notion calendar entry had only metadata (title, status, meta description), zero body content. Every downstream skill would have rubber-stamped that empty draft as "clean." Arnel caught it manually ("the article is completely empty in Notion"). The skill SKILL.md files have been updated to refuse empty-body drafts at every downstream step (`/critique-content` Step 2, `/verify-content` Step 1, `/ship-content` Step 1 = Hard Gate #0), but the rule applies anywhere a draft is produced.
+
+Local markdown files in `.claude/drafts/` are fine as INTERMEDIATE artifacts (useful for git history, regex linting, debugging). They are NOT the canonical state. The Notion page body is.
 
 ### CMS Data Fetching — Never Silently Swallow Errors
 
