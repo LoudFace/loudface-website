@@ -64,3 +64,19 @@ competitive-research/
 __pycache__/
 scripts/internal-links/inventory.json
 scripts/internal-links/patches/
+
+# Local operational artifacts (not source — generated/working state)
+/data/
+/.agents/
+scripts/notion-workers/
+.claude/audit/
+.claude/plans/
+.claude/drafts/
+.claude/*.html
+
+# Transient script outputs (data snapshots, batch/plan files)
+scripts/*-snapshot*.json
+scripts/*-batch.json
+scripts/*-batch-*.json
+scripts/*-plan.json
+scripts/notion-current-state.json
