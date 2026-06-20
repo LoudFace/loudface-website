@@ -3,6 +3,7 @@ import { structureTool } from 'sanity/structure';
 import { presentationTool, defineLocations } from 'sanity/presentation';
 import { visionTool } from '@sanity/vision';
 import { schemaTypes } from './src/sanity/schemas';
+import { generateVisualsAction } from './src/sanity/actions/generateVisuals';
 
 /**
  * Sanity Studio config — runs at /studio.
@@ -89,5 +90,16 @@ export default defineConfig({
   ],
   schema: {
     types: schemaTypes,
+  },
+  document: {
+    // Adds the "Generate visuals" button next to Publish on blogPost +
+    // caseStudy documents. Opens loudface-visuals in a new tab with the
+    // doc info as query params; the visuals tool handles the rest.
+    actions: (prev, { schemaType }) => {
+      if (schemaType === 'blogPost' || schemaType === 'caseStudy') {
+        return [...prev, generateVisualsAction];
+      }
+      return prev;
+    },
   },
 });
