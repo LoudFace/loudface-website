@@ -232,6 +232,67 @@ export function buildFAQSchema(items: FAQItem[]): object | null {
 }
 
 /**
+ * Build HowTo JSON-LD by detecting time-coded H3 steps in body HTML.
+ *
+ * Triggers when a post has three or more H3 headings shaped like
+ * `0–15: Build the prompt set` (an integer range followed by colon and
+ * a step name). This pattern is how we structure how-to-style posts at
+ * LoudFace, and it's distinct enough that we won't false-positive on
+ * regular blog posts.
+ *
+ * Pairing HowTo with FAQPage + BlogPosting on the same page is the
+ * highest-impact AEO move for step-by-step content — Google AI Overview
+ * selection rates climb meaningfully when the schema stack matches the
+ * content shape.
+ *
+ * Returns null when the pattern doesn't match so the caller can omit
+ * the script tag entirely (cleaner than emitting an invalid schema).
+ */
+export function buildHowToSchema(
+  html: string | undefined,
+  name: string,
+  url: string,
+  description?: string,
+): object | null {
+  if (!html) return null;
+
+  // Match `<h3 ...>0–15: Step name</h3>` — handles both ASCII hyphen and
+  // en-dash, and captures everything until the next h2/h3 as step body.
+  const stepRegex =
+    /<h3[^>]*>\s*(\d+)\s*[-–]\s*(\d+)\s*:\s*([^<]+?)\s*<\/h3>([\s\S]*?)(?=<h[23]|$)/gi;
+  const matches = Array.from(html.matchAll(stepRegex));
+
+  if (matches.length < 3) return null;
+
+  // Total runtime = end-minute of the last step. Encoded as ISO-8601
+  // duration ("PT90M") because Schema.org requires that format.
+  const lastEnd = Number.parseInt(matches[matches.length - 1][2], 10);
+
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'HowTo',
+    name,
+    url,
+    ...(description ? { description } : {}),
+    ...(Number.isFinite(lastEnd) ? { totalTime: `PT${lastEnd}M` } : {}),
+    step: matches.map((m, i) => {
+      const startMin = m[1];
+      const endMin = m[2];
+      const stepName = `${startMin}–${endMin}: ${m[3].trim()}`;
+      // First ~300 chars of the step body keeps the schema lean while
+      // still giving AI engines enough text to extract a meaningful chunk.
+      const stepText = stripHtml(m[4]).slice(0, 300).trim();
+      return {
+        '@type': 'HowToStep',
+        position: i + 1,
+        name: stepName,
+        text: stepText,
+      };
+    }),
+  };
+}
+
+/**
  * Build WebPage + SpeakableSpecification JSON-LD.
  * Matches the pattern used on homepage and service pages.
  */
@@ -245,6 +306,58 @@ export function buildSpeakableSchema(name: string, url: string): object {
       cssSelector: ['h1', '[data-speakable]'],
     },
     url,
+  };
+}
+
+/**
+ * Build ItemList JSON-LD for ranked "Best X (Ranked)" listicles.
+ *
+ * Detects numbered H2 headings ("<h2>1. LoudFace: best for…</h2>",
+ * "<h2>2. …") — the shape every LoudFace agency listicle uses — and emits
+ * an ordered ItemList so AI engines and Google parse the ranking as
+ * structured data rather than guessing it from prose. None of the
+ * competitors in our tracked set expose ItemList, so this is a cheap
+ * differentiator that applies to every ranked listicle at once.
+ *
+ * Requires at least 3 sequentially-numbered entries starting at 1 (guards
+ * against numbered headings that aren't a ranking). Returns null otherwise
+ * so the caller can omit the script tag.
+ */
+export function buildItemListSchema(
+  html: string | undefined,
+  name: string,
+  url: string,
+): object | null {
+  if (!html) return null;
+
+  // Match `<h2 ...>1. Agency Name: best for …</h2>` — capture the rank plus
+  // the heading text. The agency name is the label up to the first colon.
+  const itemRegex = /<h2[^>]*>\s*(\d+)\.\s+([^<]+?)\s*<\/h2>/gi;
+  const items: { position: number; nameText: string }[] = [];
+  for (const m of html.matchAll(itemRegex)) {
+    const position = Number.parseInt(m[1], 10);
+    const nameText = stripHtml(m[2]).split(':')[0].trim();
+    if (Number.isFinite(position) && nameText) {
+      items.push({ position, nameText });
+    }
+  }
+
+  // Need a real ranked list: 3+ entries, starting at 1, sequential.
+  if (items.length < 3 || items[0].position !== 1) return null;
+  if (!items.every((it, i) => it.position === i + 1)) return null;
+
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'ItemList',
+    name,
+    url,
+    numberOfItems: items.length,
+    itemListOrder: 'https://schema.org/ItemListOrderDescending',
+    itemListElement: items.map((it) => ({
+      '@type': 'ListItem',
+      position: it.position,
+      name: it.nameText,
+    })),
   };
 }
 

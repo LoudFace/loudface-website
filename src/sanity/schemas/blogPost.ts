@@ -54,7 +54,7 @@ export const blogPost = defineType({
       title: 'Direct Answer (TL;DR)',
       type: 'text',
       rows: 4,
-      description: 'The AEO citation surface — a self-contained 40-60 word direct answer block rendered above the body content. Marked with Speakable schema for AI engine extraction. Keep tight: this is what ChatGPT, Perplexity, Claude, and Google AI Overviews will quote.',
+      description: 'The AEO citation surface — a self-contained 40-80 word direct answer block (200-500 chars) rendered above the body content. Marked with Speakable schema for AI engine extraction. Keep tight: this is what ChatGPT, Perplexity, Claude, and Google AI Overviews will quote. Range widened from 40-60 to 40-80 on 2026-05-27 after a directAnswer audit showed 60+ articles wrote at 60-80 words and the longer length reads well — entity-first, definitive, no padding.',
     }),
     defineField({
       name: 'content',

@@ -27,6 +27,7 @@ import { buildNoIndexMetadata, buildPageMetadata, truncateSeoTitle, truncateSeoD
 import {
   extractFAQFromHTML,
   buildFAQSchema,
+  buildItemListSchema,
   buildSpeakableSchema,
   buildArticleAuthorSchema,
   buildOrganizationPublisher,
@@ -232,6 +233,9 @@ export default async function BlogPostPage({ params }: PageProps) {
   const faqItems = post.faq?.length ? post.faq : extractFAQFromHTML(post.content);
   const faqSchema = buildFAQSchema(faqItems);
   const speakableSchema = buildSpeakableSchema(post.name, canonicalUrl);
+  // Ranked listicles ("Best X … Ranked") emit an ItemList so the ranking is
+  // machine-readable. Returns null for non-listicle posts (no script then).
+  const itemListSchema = buildItemListSchema(post.content, post.name, canonicalUrl);
 
   return (
     <>
@@ -248,6 +252,12 @@ export default async function BlogPostPage({ params }: PageProps) {
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
+        />
+      )}
+      {itemListSchema && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(itemListSchema) }}
         />
       )}
       <script
