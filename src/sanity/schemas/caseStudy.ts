@@ -144,6 +144,20 @@ export const caseStudy = defineType({
       initialValue: false,
     }),
     defineField({
+      name: 'discipline',
+      title: 'Discipline',
+      description: 'Primary service category. Groups this case study on the work page.',
+      type: 'string',
+      options: {
+        list: [
+          { title: 'AI Search & Organic Growth', value: 'AI Search & Organic Growth' },
+          { title: 'Conversion Optimization', value: 'Conversion Optimization' },
+          { title: 'Web Design & Branding', value: 'Web Design & Branding' },
+        ],
+        layout: 'radio',
+      },
+    }),
+    defineField({
       name: 'client',
       title: 'Client',
       type: 'reference',

@@ -73,6 +73,7 @@ const CASE_STUDY_PROJECTION = `{
   "result-3---number": result3Number,
   "result-3---title": result3Title,
   featured,
+  discipline,
   "client": client._ref,
   "industry": industry._ref,
   "industries": industries[]._ref,

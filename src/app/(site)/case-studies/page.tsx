@@ -1,74 +1,59 @@
 /**
  * Case Studies Gallery Page
  *
- * Paginated listing (12 per page) to keep HTML size under 256 KB.
- * Featured studies always appear first.
+ * Studies are grouped by discipline (AI Search & Organic Growth, Conversion
+ * Optimization, Web Design & Branding) and filterable via tabs. The default
+ * "All" view renders every group server-side, so all studies stay in the HTML
+ * for SEO / AI-citation discovery; the tabs filter the view client-side.
  */
 export const revalidate = 60;
 
 import type { Metadata } from 'next';
-import Link from 'next/link';
 import { fetchHomepageData } from '@/lib/cms-data';
 import { getWorkContent } from '@/lib/content-utils';
 import { asset } from '@/lib/assets';
 import { getContrastColors } from '@/lib/color-utils';
 import { caseStudyThumbnail, logoImage } from '@/lib/image-utils';
-import { Pagination, SectionContainer, SectionHeader } from '@/components/ui';
+import { SectionContainer, SectionHeader } from '@/components/ui';
 import { CTA } from '@/components/sections';
 import type { CaseStudy, Client, Industry, Technology } from '@/lib/types';
+import { CaseStudyGallery, type GalleryCard } from './CaseStudyGallery';
 
-const ITEMS_PER_PAGE = 12;
+// Display order: lead with current offering, web design & branding last.
+const DISCIPLINE_ORDER = [
+  'AI Search & Organic Growth',
+  'Conversion Optimization',
+  'Web Design & Branding',
+];
+const FALLBACK_DISCIPLINE = 'Web Design & Branding';
 
-export async function generateMetadata({
-  searchParams,
-}: {
-  searchParams: Promise<{ page?: string }>;
-}): Promise<Metadata> {
-  const { page } = await searchParams;
-  const currentPage = parseInt(page || '1', 10);
+export const metadata: Metadata = {
+  title: 'Our Work | Case Studies & Portfolio',
+  description:
+    "LoudFace case studies across AI search & organic growth, conversion optimization, and web design & branding — real results: AI citations, conversion lifts, and launches.",
+  alternates: { canonical: '/case-studies' },
+  openGraph: {
+    title: 'Case Studies & Portfolio | LoudFace',
+    description:
+      "LoudFace case studies across AI search & organic growth, conversion optimization, and web design & branding.",
+    type: 'website',
+    url: '/case-studies',
+    siteName: 'LoudFace',
+    locale: 'en_US',
+    images: [{ url: '/opengraph-image', width: 1200, height: 630, alt: 'LoudFace Case Studies' }],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    site: '@loudface',
+    title: 'Case Studies & Portfolio | LoudFace',
+    description:
+      "LoudFace case studies across AI search & organic growth, conversion optimization, and web design & branding.",
+    images: ['/opengraph-image'],
+  },
+};
 
-  const base: Metadata = {
-    title: 'Our Work | Case Studies & Portfolio',
-    description: "Explore LoudFace's portfolio of successful Webflow projects. See real results including traffic growth, conversion improvements, and business transformations.",
-    alternates: {
-      canonical: '/case-studies',
-    },
-    openGraph: {
-      title: 'Case Studies & Portfolio | LoudFace',
-      description: "Explore LoudFace's portfolio of successful Webflow projects. See real results including traffic growth, conversion improvements, and business transformations.",
-      type: 'website',
-      url: '/case-studies',
-      siteName: 'LoudFace',
-      locale: 'en_US',
-      images: [{ url: '/opengraph-image', width: 1200, height: 630, alt: 'LoudFace Case Studies' }],
-    },
-    twitter: {
-      card: 'summary_large_image',
-      site: '@loudface',
-      title: 'Case Studies & Portfolio | LoudFace',
-      description: "Explore LoudFace's portfolio of successful Webflow projects. See real results including traffic growth, conversion improvements, and business transformations.",
-      images: ['/opengraph-image'],
-    },
-  };
-
-  // Paginated pages should not be indexed — canonical points to page 1
-  if (currentPage > 1) {
-    base.robots = { index: false, follow: true };
-  }
-
-  return base;
-}
-
-export default async function WorkPage({
-  searchParams,
-}: {
-  searchParams: Promise<{ page?: string }>;
-}) {
-  const { page: pageParam } = await searchParams;
-  const currentPage = Math.max(1, parseInt(pageParam || '1', 10));
-
+export default async function WorkPage() {
   const content = getWorkContent();
-
   const cmsData = await fetchHomepageData();
 
   const {
@@ -80,52 +65,71 @@ export default async function WorkPage({
 
   const caseStudies = rawCaseStudies as (CaseStudy & { id: string })[];
 
-  // Helpers
-  function getClient(id: string | undefined): Client | undefined {
-    if (!id) return undefined;
-    return clientsMap.get(id);
-  }
+  const getClient = (id?: string): Client | undefined => (id ? clientsMap.get(id) : undefined);
+  const getIndustry = (id?: string): Industry | undefined => (id ? industriesMap.get(id) : undefined);
+  const getTechnologies = (techIds?: string[]): Technology[] =>
+    !techIds || !Array.isArray(techIds)
+      ? []
+      : techIds.map((id) => technologiesMap.get(id)).filter((t): t is Technology => t !== undefined);
 
-  function getIndustry(id: string | undefined): Industry | undefined {
-    if (!id) return undefined;
-    return industriesMap.get(id);
-  }
+  const disciplineRank = (d: string) => {
+    const i = DISCIPLINE_ORDER.indexOf(d);
+    return i === -1 ? DISCIPLINE_ORDER.length : i;
+  };
 
-  function getTechnologies(techIds: string[] | undefined): Technology[] {
-    if (!techIds || !Array.isArray(techIds)) return [];
-    return techIds
-      .map(id => technologiesMap.get(id))
-      .filter((tech): tech is Technology => tech !== undefined);
-  }
+  // Resolve + order: by discipline (current offering first), then featured-first.
+  const cards: GalleryCard[] = caseStudies
+    .filter((s) => s.slug)
+    .map((study) => {
+      const client = getClient(study.client);
+      const industry = getIndustry(study.industry);
+      const technologies = getTechnologies(study.technologies as string[] | undefined);
+      const clientColor = study['client-color'] || 'var(--color-primary-500)';
+      const { textColor: statTextColor } = getContrastColors(clientColor);
+      const thumb = caseStudyThumbnail(study['main-project-image-thumbnail']?.url);
+      const discipline = study.discipline || FALLBACK_DISCIPLINE;
 
-  // Show all case studies with slugs, featured first
-  const withSlug = caseStudies.filter(s => s.slug);
-  const featuredStudies = withSlug.filter(s => s.featured);
-  const regularStudies = withSlug.filter(s => !s.featured);
-  const sortedStudies = [...featuredStudies, ...regularStudies];
+      return {
+        slug: study.slug,
+        title: study['project-title'] || study.name,
+        summary: study['paragraph-summary'],
+        discipline,
+        thumbSrc: thumb.src || asset('/images/placeholder.webp'),
+        thumbSrcset: thumb.srcset,
+        thumbAlt: study['main-project-image-thumbnail']?.alt || study['project-title'] || study.name,
+        industryName: industry?.name,
+        technologies: technologies.map((t) => ({ id: t.id, name: t.name })),
+        clientColor,
+        statTextColor,
+        result1Number: study['result-1---number'],
+        result1Title: study['result-1---title'],
+        result2Number: study['result-2---number'],
+        result2Title: study['result-2---title'],
+        clientLogoSrc: client?.['colored-logo']?.url ? logoImage(client['colored-logo'].url) : undefined,
+        clientName: client?.name,
+        featured: study.featured,
+      };
+    })
+    .sort((a, b) => {
+      const byDiscipline = disciplineRank(a.discipline) - disciplineRank(b.discipline);
+      if (byDiscipline !== 0) return byDiscipline;
+      return Number(Boolean(b.featured)) - Number(Boolean(a.featured));
+    });
 
-  // Pagination
-  const totalPages = Math.ceil(sortedStudies.length / ITEMS_PER_PAGE);
-  const safePage = Math.min(currentPage, Math.max(1, totalPages));
-  const paginatedStudies = sortedStudies.slice(
-    (safePage - 1) * ITEMS_PER_PAGE,
-    safePage * ITEMS_PER_PAGE
-  );
-
-  // Structured Data — includes all studies for SEO discovery
+  // Structured data — every study, in display order.
   const collectionSchema = {
     '@context': 'https://schema.org',
     '@type': 'CollectionPage',
     name: 'Case Studies',
-    description: "Explore LoudFace's portfolio of successful Webflow projects.",
+    description: "LoudFace's portfolio across AI search, conversion, and web design & branding.",
     url: 'https://www.loudface.co/case-studies',
     mainEntity: {
       '@type': 'ItemList',
-      itemListElement: sortedStudies.map((study, index) => ({
+      itemListElement: cards.map((card, index) => ({
         '@type': 'ListItem',
         position: index + 1,
-        url: `https://www.loudface.co/case-studies/${study.slug}`,
-        name: study['project-title'] || study.name,
+        url: `https://www.loudface.co/case-studies/${card.slug}`,
+        name: card.title,
       })),
     },
   };
@@ -141,17 +145,10 @@ export default async function WorkPage({
 
   return (
     <>
-      {/* CollectionPage structured data — native script for SSR visibility to crawlers */}
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(collectionSchema) }}
-      />
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
-      />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(collectionSchema) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }} />
 
-      {/* Hero Section */}
+      {/* Hero */}
       <SectionContainer padding="none" className="pt-4">
         <div className="relative border border-surface-200 bg-surface-50 rounded-2xl overflow-hidden">
           <div className="p-8 md:p-12 lg:p-16 text-center">
@@ -160,18 +157,13 @@ export default async function WorkPage({
               <span className="text-primary-600">{content.highlightWord}</span>
               {content.headline.split(content.highlightWord)[1] || ''}
             </h1>
-
-            <p className="mt-4 text-lg text-surface-600 max-w-2xl mx-auto">
-              {content.description}
-            </p>
+            <p className="mt-4 text-lg text-surface-600 max-w-2xl mx-auto">{content.description}</p>
 
             <div className="mt-10 pt-8 border-t border-surface-200">
               <div className="grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-8">
                 {content.stats.map((stat, i) => (
                   <div key={i} className="text-center">
-                    <span className="text-2xl md:text-3xl lg:text-4xl font-medium text-surface-900">
-                      {stat.number}
-                    </span>
+                    <span className="text-2xl md:text-3xl lg:text-4xl font-medium text-surface-900">{stat.number}</span>
                     <p className="mt-1 text-sm text-surface-600">{stat.label}</p>
                   </div>
                 ))}
@@ -181,7 +173,7 @@ export default async function WorkPage({
         </div>
       </SectionContainer>
 
-      {/* Gallery Section */}
+      {/* Gallery */}
       <SectionContainer padding="lg">
         <SectionHeader
           title={content.galleryTitle}
@@ -189,167 +181,20 @@ export default async function WorkPage({
           subtitle={content.gallerySubtitle}
         />
 
-        {paginatedStudies.length === 0 ? (
+        {cards.length === 0 ? (
           <div className="mt-12 text-center py-16">
             <p className="text-surface-600">No case studies found. Check back soon!</p>
           </div>
         ) : (
-          <>
-            <div className="mt-12 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {paginatedStudies.map((study, index) => {
-                const client = getClient(study.client);
-                const industry = getIndustry(study.industry);
-                const technologies = getTechnologies(study.technologies as string[] | undefined);
-                const clientColor = study['client-color'] || 'var(--color-primary-500)';
-                const { textColor: statTextColor } = getContrastColors(clientColor);
-                const hasStats = study['result-1---number'] || study['result-2---number'];
-
-                return (
-                  <Link
-                    key={study.slug}
-                    href={`/case-studies/${study.slug}`}
-                    className="group relative bg-white rounded-2xl border border-surface-200 overflow-hidden transition-all duration-300 hover:shadow-xl hover:border-surface-300 hover:-translate-y-1 focus-visible:outline-2 focus-visible:outline-primary-500 focus-visible:outline-offset-4"
-                  >
-                    {/* Image Section */}
-                    <div className="relative aspect-[16/10] overflow-hidden">
-                      {(() => {
-                        const thumb = caseStudyThumbnail(study['main-project-image-thumbnail']?.url);
-                        return (
-                          <img
-                            src={thumb.src || asset('/images/placeholder.webp')}
-                            srcSet={thumb.srcset}
-                            sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
-                            alt={study['main-project-image-thumbnail']?.alt || study['project-title'] || study.name}
-                            width="800"
-                            height="500"
-                            loading={index < 3 ? 'eager' : 'lazy'}
-                            fetchPriority={index === 0 ? 'high' : undefined}
-                            className="w-full h-full object-cover object-top transition-transform duration-500 group-hover:scale-105"
-                          />
-                        );
-                      })()}
-
-                      {industry && (
-                        <span className="absolute top-3 left-3 px-2.5 py-1 bg-white/90 backdrop-blur-sm rounded-full text-xs font-medium text-surface-700 shadow-sm">
-                          {industry.name}
-                        </span>
-                      )}
-                    </div>
-
-                    {/* Content Section */}
-                    <div className="p-5">
-                      {technologies.length > 0 && (
-                        <div className="flex flex-wrap gap-1.5 mb-3">
-                          {technologies.slice(0, 3).map((tech) => (
-                            <span key={tech.id} className="inline-flex items-center gap-1 px-2 py-0.5 bg-surface-100 rounded text-2xs font-medium text-surface-600">
-                              {tech.name}
-                            </span>
-                          ))}
-                          {technologies.length > 3 && (
-                            <span className="px-2 py-0.5 bg-surface-100 rounded text-2xs font-medium text-surface-500">
-                              +{technologies.length - 3}
-                            </span>
-                          )}
-                        </div>
-                      )}
-
-                      <h3 className="font-medium text-lg text-surface-900 line-clamp-2 group-hover:text-primary-600 transition-colors">
-                        {study['project-title'] || study.name}
-                      </h3>
-
-                      {study['paragraph-summary'] && (
-                        <p className="mt-2 text-sm text-surface-600 line-clamp-2">
-                          {study['paragraph-summary']}
-                        </p>
-                      )}
-
-                      {hasStats && (() => {
-                        const hasBothStats = study['result-1---number'] && study['result-2---number'];
-                        return (
-                          <div className={`mt-4 ${hasBothStats ? 'grid grid-cols-2 gap-2' : ''}`}>
-                            {study['result-1---number'] && (
-                              <div
-                                className="rounded-lg p-3"
-                                style={{ backgroundColor: clientColor, color: statTextColor }}
-                              >
-                                <span className="block text-xl font-medium">
-                                  {study['result-1---number']}
-                                </span>
-                                <span className="text-xs opacity-75 line-clamp-1">
-                                  {study['result-1---title']}
-                                </span>
-                              </div>
-                            )}
-                            {study['result-2---number'] && (
-                              <div
-                                className="rounded-lg p-3"
-                                style={{ backgroundColor: clientColor, color: statTextColor }}
-                              >
-                                <span className="block text-xl font-medium">
-                                  {study['result-2---number']}
-                                </span>
-                                <span className="text-xs opacity-75 line-clamp-1">
-                                  {study['result-2---title']}
-                                </span>
-                              </div>
-                            )}
-                          </div>
-                        );
-                      })()}
-
-                      <div className="mt-4 pt-4 border-t border-surface-100 flex items-center justify-between">
-                        <div className="flex-shrink-0">
-                          {client?.['colored-logo']?.url ? (
-                            <img
-                              src={logoImage(client['colored-logo'].url)}
-                              alt={client.name || 'Client'}
-                              width="120"
-                              height="20"
-                              className="h-5 w-auto max-w-[100px] object-contain opacity-60 group-hover:opacity-100 transition-opacity origin-left"
-                              loading="lazy"
-                            />
-                          ) : (
-                            <span className="text-sm font-medium text-surface-400">
-                              {client?.name || ''}
-                            </span>
-                          )}
-                        </div>
-
-                        <span className="flex items-center gap-1.5 text-sm font-medium text-surface-500 group-hover:text-primary-600 transition-colors">
-                          {content.viewProjectText}
-                          <svg
-                            className="w-4 h-4 transform group-hover:translate-x-1 transition-transform"
-                            viewBox="0 0 16 16"
-                            fill="none"
-                          >
-                            <path
-                              d="M3 8h10M9 4l4 4-4 4"
-                              stroke="currentColor"
-                              strokeWidth="1.5"
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                            />
-                          </svg>
-                        </span>
-                      </div>
-                    </div>
-                  </Link>
-                );
-              })}
-            </div>
-
-            <Pagination
-              currentPage={safePage}
-              totalPages={totalPages}
-              basePath="/case-studies"
-            />
-          </>
+          <CaseStudyGallery
+            cards={cards}
+            disciplineOrder={DISCIPLINE_ORDER}
+            viewProjectText={content.viewProjectText}
+          />
         )}
       </SectionContainer>
 
-      {/* CTA */}
       <CTA />
-
     </>
   );
 }
