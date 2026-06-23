@@ -465,6 +465,19 @@ const nextConfig: NextConfig = {
         destination: '/blog/best-b2b-saas-seo-agencies',
         permanent: true,
       },
+      // ─── AEO cluster: fold the redundant LLM-SEO near-synonym (2026-06-23) ──
+      // best-llm-seo-aeo-agencies-b2b-saas-2026 has ZERO unique Peec prompt
+      // wins (~12 cites, every prompt dominated by best-aeo-agencies-b2b-saas-
+      // 2026: 66 vs 3, 23 vs 3, 22 vs 4). The canonical already covers the
+      // "LLM SEO / LLMO" synonym (its "AEO vs GEO vs LLMO" section), so no
+      // content is lost. Pure fragmentation → fold weak into strong; 301 (not
+      // 410) preserves URL equity. The other two AEO listicles stay separate —
+      // each owns distinct prompts the others win 0 on (verified per-prompt).
+      {
+        source: '/blog/best-llm-seo-aeo-agencies-b2b-saas-2026',
+        destination: '/blog/best-aeo-agencies-b2b-saas-2026',
+        permanent: true,
+      },
       // ─── Webflow-era kill list (2026-05-26 structural audit) ─────────
       // Two old Webflow posts from the structural audit. Both fail the
       // KEEP threshold (<100 imps/mo for vs-alternatives, ~108 imps but
