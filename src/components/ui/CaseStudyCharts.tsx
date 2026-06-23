@@ -165,6 +165,88 @@ function HorizontalGroupedBarChart({
   );
 }
 
+/* ── Growth Curve (SVG area + line, axis-free) ───────────────── */
+/* Shows the SHAPE of a trend (up-and-to-the-right) with no y-axis numbers,
+   so a client's exact growth rate stays private. x-labels (e.g. months) only. */
+
+function GrowthCurveChart({
+  data,
+  accentColor,
+  gradientId,
+}: {
+  data: CaseStudyChart['data'];
+  accentColor: string;
+  gradientId: string;
+}) {
+  const W = 600;
+  const H = 200;
+  const padX = 12;
+  const padTop = 20;
+  const padBottom = 26;
+  const baselineY = H - padBottom;
+  const n = data.length;
+
+  const values = data.map((d) => d.value);
+  const vmin = Math.min(...values);
+  const vmax = Math.max(...values);
+  const span = vmax - vmin || 1;
+
+  const pts = data.map((d, i) => {
+    const x = n > 1 ? padX + (i * (W - 2 * padX)) / (n - 1) : W / 2;
+    const t = (d.value - vmin) / span;
+    const y = baselineY - t * (baselineY - padTop);
+    return { x, y };
+  });
+
+  // Catmull-Rom → cubic bezier for a smooth curve
+  let linePath = pts.length ? `M ${pts[0].x.toFixed(1)} ${pts[0].y.toFixed(1)}` : '';
+  for (let i = 0; i < pts.length - 1; i++) {
+    const p0 = pts[i - 1] || pts[i];
+    const p1 = pts[i];
+    const p2 = pts[i + 1];
+    const p3 = pts[i + 2] || p2;
+    const c1x = p1.x + (p2.x - p0.x) / 6;
+    const c1y = p1.y + (p2.y - p0.y) / 6;
+    const c2x = p2.x - (p3.x - p1.x) / 6;
+    const c2y = p2.y - (p3.y - p1.y) / 6;
+    linePath += ` C ${c1x.toFixed(1)} ${c1y.toFixed(1)}, ${c2x.toFixed(1)} ${c2y.toFixed(1)}, ${p2.x.toFixed(1)} ${p2.y.toFixed(1)}`;
+  }
+  const areaPath = pts.length
+    ? `${linePath} L ${pts[n - 1].x.toFixed(1)} ${baselineY} L ${pts[0].x.toFixed(1)} ${baselineY} Z`
+    : '';
+
+  return (
+    <div role="img" aria-label={`Growth curve trending upward${data[0]?.label ? ` from ${data[0].label} to ${data[n - 1].label}` : ''}`}>
+      <svg viewBox={`0 0 ${W} ${H}`} className="w-full h-auto" preserveAspectRatio="xMidYMid meet">
+        <defs>
+          <linearGradient id={gradientId} x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stopColor={accentColor} stopOpacity="0.28" />
+            <stop offset="100%" stopColor={accentColor} stopOpacity="0" />
+          </linearGradient>
+        </defs>
+        <line x1={padX} y1={baselineY} x2={W - padX} y2={baselineY} stroke="#e5e7eb" strokeWidth="1" />
+        {areaPath && <path d={areaPath} fill={`url(#${gradientId})`} />}
+        {linePath && (
+          <path d={linePath} fill="none" stroke={accentColor} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
+        )}
+        {pts.map((p, i) => {
+          const last = i === pts.length - 1;
+          return (
+            <circle key={i} cx={p.x} cy={p.y} r={last ? 5 : 3} fill={accentColor} stroke="#ffffff" strokeWidth={last ? 2 : 0} />
+          );
+        })}
+        {data.map((d, i) =>
+          d.label ? (
+            <text key={`l${i}`} x={pts[i].x} y={H - 8} textAnchor="middle" fill="#6b7280" style={{ fontSize: '11px' }}>
+              {d.label}
+            </text>
+          ) : null
+        )}
+      </svg>
+    </div>
+  );
+}
+
 /* ── Main export ───────────────────────────────────────────── */
 
 export function CaseStudyCharts({
@@ -175,26 +257,36 @@ export function CaseStudyCharts({
 
   return (
     <div className="grid gap-4 sm:grid-cols-2">
-      {charts.map((chart, i) => (
-        <div
-          key={i}
-          className="rounded-xl border border-surface-200 bg-white p-4 sm:p-6"
-        >
-          <h3 className="text-sm font-medium text-surface-900 mb-4">
-            {chart.title}
-          </h3>
-          {chart.chartType === 'horizontalBar' ? (
-            <HorizontalBarChart data={chart.data} accentColor={accentColor} />
-          ) : (
-            <HorizontalGroupedBarChart
-              data={chart.data}
-              legendPrimary={chart.legendPrimary}
-              legendSecondary={chart.legendSecondary}
-              accentColor={accentColor}
-            />
-          )}
-        </div>
-      ))}
+      {charts.map((chart, i) => {
+        const isCurve = chart.chartType === 'growthCurve';
+        return (
+          <div
+            key={i}
+            className={`rounded-xl border border-surface-200 bg-white p-4 sm:p-6 ${isCurve ? 'sm:col-span-2' : ''}`}
+          >
+            <h3 className="text-sm font-medium text-surface-900 mb-4">
+              {chart.title}
+            </h3>
+            {isCurve ? (
+              <>
+                <GrowthCurveChart data={chart.data} accentColor={accentColor} gradientId={`gc-grad-${i}`} />
+                {chart.legendPrimary && (
+                  <p className="mt-2 text-2xs sm:text-xs text-surface-400 italic">{chart.legendPrimary}</p>
+                )}
+              </>
+            ) : chart.chartType === 'horizontalBar' ? (
+              <HorizontalBarChart data={chart.data} accentColor={accentColor} />
+            ) : (
+              <HorizontalGroupedBarChart
+                data={chart.data}
+                legendPrimary={chart.legendPrimary}
+                legendSecondary={chart.legendSecondary}
+                accentColor={accentColor}
+              />
+            )}
+          </div>
+        );
+      })}
     </div>
   );
 }

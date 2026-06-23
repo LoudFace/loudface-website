@@ -216,6 +216,7 @@ export const caseStudy = defineType({
                 list: [
                   { title: 'Bar Comparison (two series)', value: 'barComparison' },
                   { title: 'Horizontal Bar (single series)', value: 'horizontalBar' },
+                  { title: 'Growth Curve (area / line, no axis numbers)', value: 'growthCurve' },
                 ],
               },
               validation: (rule) => rule.required(),
@@ -224,7 +225,7 @@ export const caseStudy = defineType({
               name: 'legendPrimary',
               title: 'Legend Primary',
               type: 'string',
-              description: 'Label for first series (bar comparison only)',
+              description: 'Label for first series (bar comparison). For a growth curve, used as the caption under the chart, e.g. "Organic impressions — directional".',
             }),
             defineField({
               name: 'legendSecondary',

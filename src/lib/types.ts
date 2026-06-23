@@ -97,7 +97,7 @@ export interface ChartDataPoint {
 
 export interface CaseStudyChart {
   title: string;
-  chartType: 'barComparison' | 'horizontalBar';
+  chartType: 'barComparison' | 'horizontalBar' | 'growthCurve';
   legendPrimary?: string;
   legendSecondary?: string;
   data: ChartDataPoint[];
