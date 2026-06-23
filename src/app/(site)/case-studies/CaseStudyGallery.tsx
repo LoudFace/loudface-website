@@ -53,9 +53,9 @@ export function CaseStudyGallery({
   const visibleGroups = groups.filter((d) => active === 'all' || active === d);
 
   return (
-    <div className="mt-10">
+    <div>
       {/* Filter tabs */}
-      <div role="tablist" aria-label="Filter case studies by discipline" className="flex flex-wrap gap-2 justify-center">
+      <div role="tablist" aria-label="Filter case studies by discipline" className="flex flex-wrap gap-2 justify-start">
         {tabs.map((t) => {
           const isActive = active === t.value;
           return (

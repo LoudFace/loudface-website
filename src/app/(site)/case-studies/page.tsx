@@ -14,7 +14,7 @@ import { getWorkContent } from '@/lib/content-utils';
 import { asset } from '@/lib/assets';
 import { getContrastColors } from '@/lib/color-utils';
 import { caseStudyThumbnail, logoImage } from '@/lib/image-utils';
-import { SectionContainer, SectionHeader } from '@/components/ui';
+import { SectionContainer } from '@/components/ui';
 import { CTA } from '@/components/sections';
 import type { CaseStudy, Client, Industry, Technology } from '@/lib/types';
 import { CaseStudyGallery, type GalleryCard } from './CaseStudyGallery';
@@ -175,12 +175,6 @@ export default async function WorkPage() {
 
       {/* Gallery */}
       <SectionContainer padding="lg">
-        <SectionHeader
-          title={content.galleryTitle}
-          highlightWord={content.galleryHighlightWord}
-          subtitle={content.gallerySubtitle}
-        />
-
         {cards.length === 0 ? (
           <div className="mt-12 text-center py-16">
             <p className="text-surface-600">No case studies found. Check back soon!</p>
