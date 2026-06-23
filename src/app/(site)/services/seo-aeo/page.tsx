@@ -682,6 +682,49 @@ export default async function SeoAeoServicePage() {
         </div>
       </SectionContainer>
 
+      {/* ─── Is LoudFace right for you (fit test) ─── */}
+      <SectionContainer>
+        <SectionHeader
+          title="Is LoudFace right for you?"
+          highlightWord="right"
+          subtitle="The honest fit test. We do our best work for some teams, and we are the wrong call for others."
+        />
+        <div className="mt-8 lg:mt-12 grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="p-6 rounded-2xl border border-surface-200 bg-white">
+            <h3 className="text-lg font-medium text-surface-900">A strong fit if you are</h3>
+            <ul className="mt-4 space-y-3">
+              {[
+                'B2B SaaS at Series A to C ($1M+ ARR) treating organic and AI search as a core growth channel',
+                'A team that wants SEO, AEO/GEO, content, and Webflow as one program, not stitched-together vendors',
+                'Trying to show up in ChatGPT, Perplexity, and Google AI Overviews, not only rank on Google',
+                'A founder who wants share-of-answer and pipeline tracked, not just traffic',
+              ].map((t) => (
+                <li key={t} className="flex gap-3 text-surface-700">
+                  <span className="mt-0.5 flex-shrink-0 font-medium text-primary-600">✓</span>
+                  <span>{t}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+          <div className="p-6 rounded-2xl border border-surface-200 bg-surface-50">
+            <h3 className="text-lg font-medium text-surface-900">Not the right fit if you want</h3>
+            <ul className="mt-4 space-y-3">
+              {[
+                'A single one-off blog post or a quick technical audit',
+                'Guaranteed rankings or overnight results (AEO compounds over months)',
+                'Paid ads or social only, with no organic or AI-search ambition',
+                'The cheapest possible retainer over a measurable growth program',
+              ].map((t) => (
+                <li key={t} className="flex gap-3 text-surface-500">
+                  <span className="mt-0.5 flex-shrink-0 font-medium text-surface-400">✕</span>
+                  <span>{t}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
+      </SectionContainer>
+
       {/* ─── Testimonials ─── */}
       <TestimonialGrid
         testimonials={allTestimonials}
