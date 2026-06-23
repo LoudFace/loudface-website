@@ -87,13 +87,16 @@ export default async function WorkPage() {
       const clientColor = study['client-color'] || 'var(--color-primary-500)';
       const { textColor: statTextColor } = getContrastColors(clientColor);
       const thumb = caseStudyThumbnail(study['main-project-image-thumbnail']?.url);
-      const discipline = study.discipline || FALLBACK_DISCIPLINE;
+      const disciplines =
+        Array.isArray(study.disciplines) && study.disciplines.length
+          ? study.disciplines
+          : [FALLBACK_DISCIPLINE];
 
       return {
         slug: study.slug,
         title: study['project-title'] || study.name,
         summary: study['paragraph-summary'],
-        discipline,
+        disciplines,
         thumbSrc: thumb.src || asset('/images/placeholder.webp'),
         thumbSrcset: thumb.srcset,
         thumbAlt: study['main-project-image-thumbnail']?.alt || study['project-title'] || study.name,
@@ -111,7 +114,8 @@ export default async function WorkPage() {
       };
     })
     .sort((a, b) => {
-      const byDiscipline = disciplineRank(a.discipline) - disciplineRank(b.discipline);
+      // group by PRIMARY discipline (first tag), then featured-first
+      const byDiscipline = disciplineRank(a.disciplines[0]) - disciplineRank(b.disciplines[0]);
       if (byDiscipline !== 0) return byDiscipline;
       return Number(Boolean(b.featured)) - Number(Boolean(a.featured));
     });

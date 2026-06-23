@@ -39,7 +39,7 @@ export interface CaseStudy {
   "result-3---number"?: string;
   "result-3---title"?: string;
   featured?: boolean;
-  discipline?: string;
+  disciplines?: string[];
   client: string;
   industry?: string;
   industries?: string[];

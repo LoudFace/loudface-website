@@ -16,7 +16,7 @@ export type GalleryCard = {
   slug: string;
   title: string;
   summary?: string;
-  discipline: string;
+  disciplines: string[];
   thumbSrc: string;
   thumbSrcset?: string;
   thumbAlt: string;
@@ -44,8 +44,9 @@ export function CaseStudyGallery({
 }) {
   const [active, setActive] = useState<string>('all');
 
+  // a study counts toward every discipline it is tagged with (so tab badges reflect the filtered set)
   const counts: Record<string, number> = {};
-  for (const c of cards) counts[c.discipline] = (counts[c.discipline] || 0) + 1;
+  for (const c of cards) for (const d of c.disciplines) counts[d] = (counts[d] || 0) + 1;
 
   const groups = disciplineOrder.filter((d) => (counts[d] || 0) > 0);
   const tabs = [{ label: 'All', value: 'all', count: cards.length }, ...groups.map((d) => ({ label: d, value: d, count: counts[d] }))];
@@ -79,7 +80,12 @@ export function CaseStudyGallery({
 
       {/* Discipline sections */}
       {visibleGroups.map((discipline) => {
-        const groupCards = cards.filter((c) => c.discipline === discipline);
+        // "All" view groups each study once under its PRIMARY (first) discipline — no duplicates.
+        // A specific tab shows every study tagged with that discipline (multi-tagged studies appear under each).
+        const groupCards =
+          active === 'all'
+            ? cards.filter((c) => c.disciplines[0] === discipline)
+            : cards.filter((c) => c.disciplines.includes(discipline));
         return (
           <section key={discipline} aria-label={discipline} className="mt-12 first:mt-10">
             <div className="flex items-baseline justify-between gap-4 border-b border-surface-200 pb-3">
