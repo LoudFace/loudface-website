@@ -178,11 +178,11 @@ function GrowthCurveChart({
   accentColor: string;
   gradientId: string;
 }) {
-  const W = 600;
-  const H = 200;
-  const padX = 12;
-  const padTop = 20;
-  const padBottom = 26;
+  const W = 680;
+  const H = 300;
+  const padX = 30;
+  const padTop = 58;
+  const padBottom = 48;
   const baselineY = H - padBottom;
   const n = data.length;
 
@@ -215,56 +215,83 @@ function GrowthCurveChart({
     ? `${linePath} L ${pts[n - 1].x.toFixed(1)} ${baselineY} L ${pts[0].x.toFixed(1)} ${baselineY} Z`
     : '';
 
+  const shadowId = `${gradientId}-sh`;
+  const clamp = (v: number, lo: number, hi: number) => Math.max(lo, Math.min(hi, v));
+
+  // Endpoint labels as pills — the pill's fill masks the line behind it, so the
+  // start label never visually collides with the curve. Only render where a real
+  // value exists (start = muted "baseline"/value, end = bold delta).
+  const startDv = n > 1 ? data[0]?.displayValue : undefined;
+  const endDv = n > 1 ? data[n - 1]?.displayValue : undefined;
+  const PH = 28;
+  const startW = startDv ? startDv.length * 7 + 22 : 0;
+  const endW = endDv ? endDv.length * 10 + 26 : 0;
+  const startX = startDv ? clamp(pts[0].x - startW / 2, 4, W - startW - 4) : 0;
+  const endX = endDv ? clamp(pts[n - 1].x - endW / 2, 4, W - endW - 4) : 0;
+  const startY = baselineY - 42;
+  const endY = clamp(pts[n - 1].y - 44, 6, baselineY - 40);
+
   return (
-    <div role="img" aria-label={`Growth curve trending upward${data[0]?.label ? ` from ${data[0].label} to ${data[n - 1].label}` : ''}${data[0]?.displayValue && data[n - 1]?.displayValue ? `, indexed ${data[0].displayValue} to ${data[n - 1].displayValue}` : ''}`}>
+    <div role="img" aria-label={`Growth curve trending upward${data[0]?.label ? ` from ${data[0].label} to ${data[n - 1].label}` : ''}${startDv && endDv ? `, ${startDv} to ${endDv}` : ''}`}>
       <svg viewBox={`0 0 ${W} ${H}`} className="w-full h-auto" preserveAspectRatio="xMidYMid meet">
         <defs>
           <linearGradient id={gradientId} x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stopColor={accentColor} stopOpacity="0.28" />
+            <stop offset="0%" stopColor={accentColor} stopOpacity="0.22" />
+            <stop offset="55%" stopColor={accentColor} stopOpacity="0.07" />
             <stop offset="100%" stopColor={accentColor} stopOpacity="0" />
           </linearGradient>
+          <filter id={shadowId} x="-10%" y="-20%" width="120%" height="155%">
+            <feDropShadow dx="0" dy="3" stdDeviation="4" floodColor={accentColor} floodOpacity="0.20" />
+          </filter>
         </defs>
-        <line x1={padX} y1={baselineY} x2={W - padX} y2={baselineY} stroke="#e5e7eb" strokeWidth="1" />
+
+        {/* faint baseline */}
+        <line x1={padX} y1={baselineY} x2={W - padX} y2={baselineY} stroke="#eceef0" strokeWidth="1.5" />
+
         {areaPath && <path d={areaPath} fill={`url(#${gradientId})`} />}
         {linePath && (
-          <path d={linePath} fill="none" stroke={accentColor} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
+          <path d={linePath} fill="none" stroke={accentColor} strokeWidth="3.25" strokeLinecap="round" strokeLinejoin="round" filter={`url(#${shadowId})`} />
         )}
+
+        {/* points + native (zero-JS) tooltips; only real-value points get one,
+            so smoothed/illustrative points show no invented number on hover */}
         {pts.map((p, i) => {
           const last = i === pts.length - 1;
           const dv = data[i]?.displayValue;
           return (
             <g key={i}>
-              {/* Native SVG tooltip — zero JS, in-DOM (readable by AI + screen readers).
-                  Only points with a real displayValue get one; smoothed/illustrative
-                  points are left without, so no invented data is shown on hover. */}
               {dv ? <title>{`${data[i].label ? `${data[i].label}: ` : ''}${dv}`}</title> : null}
-              <circle cx={p.x} cy={p.y} r={last ? 5 : 3} fill={accentColor} stroke="#ffffff" strokeWidth={last ? 2 : 0} />
+              {last && <circle cx={p.x} cy={p.y} r="13" fill={accentColor} opacity="0.12" />}
+              <circle cx={p.x} cy={p.y} r={last ? 6.5 : 4} fill={accentColor} stroke="#ffffff" strokeWidth={last ? 3 : 1.5} />
             </g>
           );
         })}
-        {/* Visible endpoint index values (only where provided) — anchors the curve
-            with real start/end numbers so it reads as data, not decoration. */}
-        {n > 1 &&
-          [0, n - 1].map((idx) =>
-            data[idx]?.displayValue ? (
-              <text
-                key={`v${idx}`}
-                x={pts[idx].x}
-                y={Math.max(pts[idx].y - 9, 13)}
-                textAnchor={idx === 0 ? 'start' : 'end'}
-                fill={accentColor}
-                style={{ fontSize: '12px', fontWeight: 600 }}
-              >
-                {data[idx].displayValue}
-              </text>
-            ) : null
-          )}
+
+        {/* x-axis labels */}
         {data.map((d, i) =>
           d.label ? (
-            <text key={`l${i}`} x={pts[i].x} y={H - 8} textAnchor="middle" fill="#6b7280" style={{ fontSize: '11px' }}>
+            <text key={`l${i}`} x={pts[i].x} y={H - 16} textAnchor="middle" fill="#9aa0a6" style={{ fontSize: '13px', fontWeight: 500 }}>
               {d.label}
             </text>
           ) : null
+        )}
+
+        {/* endpoint pills (fill masks the line → no overlap) */}
+        {startDv && (
+          <g>
+            <rect x={startX} y={startY} width={startW} height={PH} rx={PH / 2} fill="#ffffff" stroke={accentColor} strokeOpacity="0.22" />
+            <text x={startX + startW / 2} y={startY + PH / 2 + 1} textAnchor="middle" dominantBaseline="central" fill="#6b7280" style={{ fontSize: '12.5px', fontWeight: 600 }}>
+              {startDv}
+            </text>
+          </g>
+        )}
+        {endDv && (
+          <g>
+            <rect x={endX} y={endY} width={endW} height={PH} rx={PH / 2} fill={accentColor} fillOpacity="0.12" />
+            <text x={endX + endW / 2} y={endY + PH / 2 + 1} textAnchor="middle" dominantBaseline="central" fill={accentColor} style={{ fontSize: '16px', fontWeight: 700, letterSpacing: '-0.01em' }}>
+              {endDv}
+            </text>
+          </g>
         )}
       </svg>
     </div>
@@ -286,7 +313,7 @@ export function CaseStudyCharts({
         return (
           <div
             key={i}
-            className={`rounded-xl border border-surface-200 bg-white p-4 sm:p-6 ${isCurve ? 'sm:col-span-2' : ''}`}
+            className={`rounded-xl border border-surface-200 bg-white p-4 shadow-sm ${isCurve ? 'sm:col-span-2 sm:p-7' : 'sm:p-6'}`}
           >
             <h3 className="text-sm font-medium text-surface-900 mb-4">
               {chart.title}
