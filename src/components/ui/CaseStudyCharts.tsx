@@ -216,7 +216,7 @@ function GrowthCurveChart({
     : '';
 
   return (
-    <div role="img" aria-label={`Growth curve trending upward${data[0]?.label ? ` from ${data[0].label} to ${data[n - 1].label}` : ''}`}>
+    <div role="img" aria-label={`Growth curve trending upward${data[0]?.label ? ` from ${data[0].label} to ${data[n - 1].label}` : ''}${data[0]?.displayValue && data[n - 1]?.displayValue ? `, indexed ${data[0].displayValue} to ${data[n - 1].displayValue}` : ''}`}>
       <svg viewBox={`0 0 ${W} ${H}`} className="w-full h-auto" preserveAspectRatio="xMidYMid meet">
         <defs>
           <linearGradient id={gradientId} x1="0" y1="0" x2="0" y2="1">
@@ -231,10 +231,34 @@ function GrowthCurveChart({
         )}
         {pts.map((p, i) => {
           const last = i === pts.length - 1;
+          const dv = data[i]?.displayValue;
           return (
-            <circle key={i} cx={p.x} cy={p.y} r={last ? 5 : 3} fill={accentColor} stroke="#ffffff" strokeWidth={last ? 2 : 0} />
+            <g key={i}>
+              {/* Native SVG tooltip — zero JS, in-DOM (readable by AI + screen readers).
+                  Only points with a real displayValue get one; smoothed/illustrative
+                  points are left without, so no invented data is shown on hover. */}
+              {dv ? <title>{`${data[i].label ? `${data[i].label}: ` : ''}${dv}`}</title> : null}
+              <circle cx={p.x} cy={p.y} r={last ? 5 : 3} fill={accentColor} stroke="#ffffff" strokeWidth={last ? 2 : 0} />
+            </g>
           );
         })}
+        {/* Visible endpoint index values (only where provided) — anchors the curve
+            with real start/end numbers so it reads as data, not decoration. */}
+        {n > 1 &&
+          [0, n - 1].map((idx) =>
+            data[idx]?.displayValue ? (
+              <text
+                key={`v${idx}`}
+                x={pts[idx].x}
+                y={Math.max(pts[idx].y - 9, 13)}
+                textAnchor={idx === 0 ? 'start' : 'end'}
+                fill={accentColor}
+                style={{ fontSize: '12px', fontWeight: 600 }}
+              >
+                {data[idx].displayValue}
+              </text>
+            ) : null
+          )}
         {data.map((d, i) =>
           d.label ? (
             <text key={`l${i}`} x={pts[i].x} y={H - 8} textAnchor="middle" fill="#6b7280" style={{ fontSize: '11px' }}>
