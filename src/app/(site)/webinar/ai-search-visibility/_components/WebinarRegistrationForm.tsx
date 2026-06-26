@@ -43,15 +43,19 @@ export function WebinarRegistrationForm() {
         throw new Error(json.message || 'Something went wrong. Please try again.');
       }
 
-      // PostHog event
-      if (typeof window !== 'undefined' && (window as any).posthog) {
-        (window as any).posthog.capture('webinar_registered', {
-          email: data.email,
+      // PostHog event — dynamic import matches the site-wide lazy-load pattern
+      // (keeps posthog-js out of the initial bundle). Send email_domain, not the
+      // raw email, in event props; reserve the raw email for identify().
+      void import('posthog-js').then(({ default: posthog }) => {
+        if (!posthog.__loaded) return;
+        posthog.identify(data.email.toLowerCase());
+        posthog.capture('webinar_registered', {
+          email_domain: data.email.split('@')[1] ?? '',
           company: data.company,
           job_title: data.jobTitle,
           webinar: 'ai-search-visibility-july-2026',
         });
-      }
+      });
 
       setState('success');
     } catch (err) {
@@ -66,7 +70,8 @@ export function WebinarRegistrationForm() {
         <div className="mb-5 text-4xl">🎉</div>
         <h2 className="mb-3 text-2xl font-medium text-surface-900">You&apos;re in.</h2>
         <p className="mb-8 text-surface-600">
-          Check your inbox for confirmation. See you Thursday, July 9 at 11:00 AM EST.
+          We&apos;ll email your join link before the session — Thursday, July 9 at 11:00 AM ET.
+          Add it to your calendar so you don&apos;t miss it.
         </p>
         <div className="flex flex-col gap-3 sm:flex-row sm:justify-center">
           <a
@@ -86,7 +91,7 @@ export function WebinarRegistrationForm() {
     <div className="mx-auto max-w-md">
       <div className="rounded-2xl border border-primary-100 bg-white p-8 shadow-sm">
         <h2 className="mb-1 text-2xl font-medium text-surface-900">Save your seat</h2>
-        <p className="mb-6 text-sm text-surface-500">Thursday, July 9 · 11:00 AM EST</p>
+        <p className="mb-6 text-sm text-surface-500">Thursday, July 9 · 11:00 AM ET</p>
 
         <form onSubmit={handleSubmit} noValidate className="space-y-4">
           <div>
@@ -173,7 +178,12 @@ export function WebinarRegistrationForm() {
           </div>
 
           {state === 'error' && (
-            <p className="rounded-lg bg-red-50 px-4 py-3 text-sm text-red-600">{errorMsg}</p>
+            <p
+              role="alert"
+              className="rounded-lg bg-error-light px-4 py-3 text-sm text-error-dark"
+            >
+              {errorMsg}
+            </p>
           )}
 
           <Button

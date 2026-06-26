@@ -1,24 +1,24 @@
 import type { Metadata } from 'next';
-import Image from 'next/image';
-import { SectionContainer, SectionHeader, Button } from '@/components/ui';
+import { SectionContainer, SectionHeader, Button, Card } from '@/components/ui';
 import { asset } from '@/lib/assets';
 import { WebinarRegistrationForm } from './_components/WebinarRegistrationForm';
 
 export const metadata: Metadata = {
   title: 'Why Your Website Is Invisible in AI Search — Live Masterclass | LoudFace',
   description:
-    'A 50-minute live breakdown of the exact content architecture, on-page changes, and platform decisions that took Toku from 0 to 86% AI visibility. Thursday, July 9 · 11:00 AM EST.',
+    'A 50-minute live breakdown of the exact content architecture, on-page changes, and platform decisions that took Toku from 0 to 86% AI visibility. Thursday, July 9 · 11:00 AM ET.',
   alternates: {
     canonical: '/webinar/ai-search-visibility',
   },
   openGraph: {
     title: 'Why Your Website Is Invisible in AI Search — Live Masterclass',
     description:
-      'See the exact strategy that took Toku from 0 to 86% AI visibility on its core buyer search prompt. Live + Q&A · July 9, 11:00 AM EST.',
+      'See the exact strategy that took Toku from 0 to 86% AI visibility on its core buyer search prompt. Live + Q&A · July 9, 11:00 AM ET.',
     type: 'website',
     url: '/webinar/ai-search-visibility',
     siteName: 'LoudFace',
     locale: 'en_US',
+    images: ['https://www.loudface.co/opengraph-image'],
   },
 };
 
@@ -28,10 +28,21 @@ const EVENT_JSON_LD = {
   name: 'Why Your Website Is Invisible in AI Search — and How to Fix It',
   description:
     'A 50-minute live masterclass with LoudFace founder Arnel Bukva and Natalie Sangkagalo, Head of Marketing at Toku — covering the exact strategy that took Toku from 0 to 86% AI visibility.',
-  startDate: '2026-07-09T11:00:00-05:00',
-  endDate: '2026-07-09T12:00:00-05:00',
+  // July 9, 2026 is EDT (UTC-4) — must match the calendar link (15:00 UTC).
+  startDate: '2026-07-09T11:00:00-04:00',
+  endDate: '2026-07-09T12:00:00-04:00',
   eventStatus: 'https://schema.org/EventScheduled',
   eventAttendanceMode: 'https://schema.org/OnlineEventAttendanceMode',
+  // Required by Google for online events.
+  location: {
+    '@type': 'VirtualLocation',
+    url: 'https://loudface.co/webinar/ai-search-visibility',
+  },
+  image: ['https://www.loudface.co/images/speakers/arnel-bukva.jpg'],
+  performer: [
+    { '@type': 'Person', name: 'Arnel Bukva' },
+    { '@type': 'Person', name: 'Natalie Sangkagalo' },
+  ],
   organizer: {
     '@type': 'Organization',
     name: 'LoudFace',
@@ -110,7 +121,7 @@ export default function WebinarPage() {
         </p>
 
         <p className="mb-8 text-lg font-medium text-surface-700">
-          Thursday, July 9, 2026 &nbsp;·&nbsp; 11:00 AM EST &nbsp;·&nbsp; Live + Q&amp;A
+          Thursday, July 9, 2026 &nbsp;·&nbsp; 11:00 AM ET &nbsp;·&nbsp; Live + Q&amp;A
         </p>
 
         <Button variant="secondary" size="lg" href="#register">
@@ -120,11 +131,12 @@ export default function WebinarPage() {
         {/* Proof bar */}
         <div className="mx-auto mt-12 flex max-w-2xl flex-wrap items-center justify-center gap-6 rounded-2xl border border-surface-200 bg-white px-8 py-5">
           <div className="flex items-center gap-3">
-            <Image
+            <img
               src={asset('/images/toku-logo.png')}
               alt="Toku"
               width={52}
               height={20}
+              loading="lazy"
               className="h-5 w-auto"
             />
             <span className="text-sm text-surface-600">
@@ -148,15 +160,12 @@ export default function WebinarPage() {
         />
         <div className="grid gap-4 sm:grid-cols-2">
           {TAKEAWAYS.map((item, i) => (
-            <div
-              key={i}
-              className="rounded-2xl border border-surface-200 bg-white p-7"
-            >
+            <Card key={i} padding="lg" hover={false}>
               <p className="mb-3 font-mono text-xs font-bold text-primary-600">
                 {String(i + 1).padStart(2, '0')}
               </p>
               <p className="text-sm leading-relaxed text-surface-600">{item}</p>
-            </div>
+            </Card>
           ))}
         </div>
       </SectionContainer>
@@ -171,21 +180,19 @@ export default function WebinarPage() {
         />
         <div className="mx-auto grid max-w-3xl gap-6 sm:grid-cols-2">
           {SPEAKERS.map((speaker) => (
-            <div
-              key={speaker.name}
-              className="rounded-2xl border border-surface-200 bg-white p-8"
-            >
-              <Image
+            <Card key={speaker.name} padding="lg" hover={false}>
+              <img
                 src={asset(speaker.image)}
                 alt={speaker.name}
                 width={72}
                 height={72}
+                loading="lazy"
                 className="mb-5 h-18 w-18 rounded-full object-cover"
               />
               <p className="text-lg font-medium text-surface-900">{speaker.name}</p>
               <p className="mb-4 text-sm font-semibold text-primary-600">{speaker.title}</p>
               <p className="text-sm leading-relaxed text-surface-600">{speaker.bio}</p>
-            </div>
+            </Card>
           ))}
         </div>
       </SectionContainer>
@@ -198,7 +205,11 @@ export default function WebinarPage() {
           align="center"
           className="mb-10"
         />
-        <div className="mx-auto max-w-lg divide-y divide-surface-200 rounded-2xl border border-surface-200 bg-white">
+        <Card
+          padding="none"
+          hover={false}
+          className="mx-auto max-w-lg divide-y divide-surface-200"
+        >
           {AGENDA.map((item, i) => (
             <div key={i} className="flex items-center gap-4 px-6 py-4">
               <span className="w-14 text-right font-mono text-xs text-surface-400">
@@ -210,7 +221,7 @@ export default function WebinarPage() {
               <span className="text-sm text-surface-800">{item.title}</span>
             </div>
           ))}
-        </div>
+        </Card>
       </SectionContainer>
 
       {/* Registration form */}
