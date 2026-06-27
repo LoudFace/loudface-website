@@ -12,6 +12,7 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import { fetchHomepageData } from '@/lib/cms-data';
 import { thumbnailImage } from '@/lib/image-utils';
+import { formatReadTime } from '@/lib/blog-utils';
 import { Pagination, SectionContainer, SectionHeader } from '@/components/ui';
 import { CTA } from '@/components/sections';
 import type { Category, TeamMember } from '@/lib/types';
@@ -170,7 +171,7 @@ export default async function BlogPage({
                           </span>
                         )}
                         <span className="text-xs text-surface-500">
-                          {post['time-to-read'] ? `${post['time-to-read']} min read` : '5 min read'}
+                          {formatReadTime(post['time-to-read'])}
                         </span>
                       </div>
 

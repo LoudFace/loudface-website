@@ -2,7 +2,7 @@
   "hero": {
     "badge": "A team that was built to help your team",
     "badgeIcon": "/images/handshake-emoji.webp",
-    "headline": "Building better ways to marketing products and services",
+    "headline": "Building better ways to market products and services",
     "highlightWords": ["better", "services"],
     "description": "LoudFace is a B2B SaaS web design, SEO, and growth agency that delivers tangible results - from launch to lead generation. Based in Dubai, serving global SaaS teams.",
     "ctaText": "Book an intro call"
@@ -29,7 +29,7 @@
   },
   "journey": {
     "badge": "Our journey",
-    "headline": "Marketing agency on search for leverages in helping our clients grow",
+    "headline": "A marketing agency in search of leverage to help our clients grow",
     "description": "Founded with a passion for design and numbers, LoudFace has become a leader in Webflow, and design-first marketing agencies. With a team of experienced professionals, we've helped hundreds of businesses achieve their online goals. From small startups to large enterprises, we've worked with a diverse range of clients, each with unique challenges and opportunities.",
     "image": "/images/our-journey_1.webp"
   },
@@ -97,7 +97,7 @@
         "answer": "Our pricing varies based on project scope and requirements. We offer both project-based and retainer arrangements. During our initial call, we'll discuss your needs and provide a custom quote tailored to your specific goals and budget."
       }
     ],
-    "footerText": "Still have questions?",
+    "footerText": "We're here to help with anything you're still weighing up.",
     "footerCtaText": "Book an intro call"
   },
   "finalCta": {
