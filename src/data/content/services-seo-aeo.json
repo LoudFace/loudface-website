@@ -102,7 +102,7 @@
     "bridge": "SEO builds the authority that makes you rankable. AEO makes sure AI engines know about it and recommend you. GEO makes sure they tell the same story about you everywhere.",
     "seo": {
       "label": "SEO",
-      "title": "Search Engine Optimisation",
+      "title": "Search Engine Optimization",
       "description": "The foundation: technical health, content authority, and the signals Google uses to rank.",
       "items": [
         "Technical SEO + Core Web Vitals",
@@ -115,7 +115,7 @@
     },
     "aeo": {
       "label": "AEO",
-      "title": "AI Engine Optimisation",
+      "title": "AI Engine Optimization",
       "description": "The frontier: entity clarity, citation signals, and content AI engines actually recommend.",
       "items": [
         "AI search mention audit",
@@ -128,11 +128,11 @@
     },
     "geo": {
       "label": "GEO",
-      "title": "Generative Engine Optimisation",
+      "title": "Generative Engine Optimization",
       "description": "The full surface area: consistent brand presence across every generative AI system your buyers use.",
       "items": [
         "GEO across ChatGPT, Gemini, Perplexity, Claude, Copilot",
-        "Google Discover content optimisation",
+        "Google Discover content optimization",
         "Entity building + off-site citation distribution",
         "AI citation rotation monitoring",
         "Cross-platform brand narrative consistency",
@@ -146,11 +146,11 @@
     "items": [
       {
         "title": "Technical foundation",
-        "description": "Site health, Core Web Vitals, crawl optimisation, structured data, internal linking. The infrastructure that makes everything else compound."
+        "description": "Site health, Core Web Vitals, crawl optimization, structured data, internal linking. The infrastructure that makes everything else compound."
       },
       {
         "title": "Content systems",
-        "description": "Topical clusters, comparison pages, FAQ compilations, programmatic SEO, and Google Discover optimisation. Built for Google, the AI engines, and Discover feeds at once, structured so models can parse it and humans can act on it."
+        "description": "Topical clusters, comparison pages, FAQ compilations, programmatic SEO, and Google Discover optimization. Built for Google, the AI engines, and Discover feeds at once, structured so models can parse it and humans can act on it."
       },
       {
         "title": "Off-page + distribution",
@@ -178,10 +178,10 @@
     "items": [
       {
         "question": "What is the difference between an AEO agency and a traditional SEO agency?",
-        "answer": "A traditional SEO agency optimises for Google rankings. An AEO agency also optimises for being cited inside AI answers on ChatGPT, Perplexity, and Google AI Overviews. We do both, scoring every content decision, technical fix, and link target against pipeline impact rather than keyword difficulty, and layering AEO from day one so you're not invisible in AI search while Google catches up."
+        "answer": "A traditional SEO agency optimizes for Google rankings. An AEO agency also optimizes for being cited inside AI answers on ChatGPT, Perplexity, and Google AI Overviews. We do both, scoring every content decision, technical fix, and link target against pipeline impact rather than keyword difficulty, and layering AEO from day one so you're not invisible in AI search while Google catches up."
       },
       {
-        "question": "What AI engines do you optimise for?",
+        "question": "What AI engines do you optimize for?",
         "answer": "ChatGPT, Perplexity, Google AI Mode and AI Overviews, Gemini, Claude, Copilot, and Grok. We monitor citation frequency, mention quality, and competitive position across all of them and report it weekly, not once a quarter."
       },
       {

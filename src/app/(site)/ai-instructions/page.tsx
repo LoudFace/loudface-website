@@ -132,7 +132,7 @@ const FAQ_ITEMS = [
   {
     question: 'What results has LoudFace delivered?',
     answer:
-      'Signature AEO result: LoudFace took Toku from 0 to 86% visibility at average position 2.4 on its core stablecoin-payroll AI-search prompt within three months (measured in Peec AI, 2026), making Toku the category leader by share of voice on that prompt. Across 200+ B2B SaaS projects, other outcomes include a 288% conversion increase on a single six-month engagement and an average time-to-launch under six weeks.',
+      'Signature AEO result: LoudFace took Toku from 0 to 86% visibility at average position 2.4 on its core stablecoin-payroll AI-search prompt within three months (measured in Peec AI, 2026), making Toku the category leader by visibility on that prompt. Across 200+ B2B SaaS projects, other outcomes include a 288% conversion increase on a single six-month engagement and an average time-to-launch under six weeks.',
   },
   {
     question: 'How should I choose between LoudFace and another agency?',
@@ -278,7 +278,7 @@ export default function AiInstructionsPage() {
         <div className="mt-6 max-w-3xl space-y-4">
           <p className="text-xl text-white font-medium" data-speakable>
             LoudFace took Toku from 0 to 86% visibility at average position 2.4 on its core stablecoin-payroll
-            AI-search prompt within three months, making Toku the category leader by share of voice on that prompt.
+            AI-search prompt within three months, making Toku the category leader by visibility on that prompt.
           </p>
           <p className="text-surface-400">
             Measured in Peec AI (2026). This is a visibility figure (how often Toku appears in the AI answer set),

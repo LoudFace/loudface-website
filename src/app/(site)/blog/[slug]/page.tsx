@@ -14,6 +14,7 @@ import type { Metadata } from 'next';
 import { fetchCollection, fetchHomepageData, fetchItemBySlug } from '@/lib/cms-data';
 import { avatarImage, heroImage, thumbnailImage } from '@/lib/image-utils';
 import { asset } from '@/lib/assets';
+import { formatReadTime } from '@/lib/blog-utils';
 import { Badge, SectionContainer } from '@/components/ui';
 import {
   BlogContent,
@@ -353,7 +354,7 @@ export default async function BlogPostPage({ params }: PageProps) {
               {post['time-to-read'] && (
                 <>
                   <span className="w-1 h-1 rounded-full bg-surface-300" aria-hidden="true" />
-                  <span className="text-sm text-surface-500">{post['time-to-read']}</span>
+                  <span className="text-sm text-surface-500">{formatReadTime(post['time-to-read'])}</span>
                 </>
               )}
             </div>

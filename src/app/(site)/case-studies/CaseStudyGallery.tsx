@@ -44,9 +44,12 @@ export function CaseStudyGallery({
 }) {
   const [active, setActive] = useState<string>('all');
 
-  // a study counts toward every discipline it is tagged with (so tab badges reflect the filtered set)
+  // each study counts once, under its PRIMARY (first) discipline — so tab badges match the section counts
   const counts: Record<string, number> = {};
-  for (const c of cards) for (const d of c.disciplines) counts[d] = (counts[d] || 0) + 1;
+  for (const c of cards) {
+    const primary = c.disciplines[0];
+    if (primary) counts[primary] = (counts[primary] || 0) + 1;
+  }
 
   const groups = disciplineOrder.filter((d) => (counts[d] || 0) > 0);
   const tabs = [{ label: 'All', value: 'all', count: cards.length }, ...groups.map((d) => ({ label: d, value: d, count: counts[d] }))];
@@ -80,12 +83,9 @@ export function CaseStudyGallery({
 
       {/* Discipline sections */}
       {visibleGroups.map((discipline) => {
-        // "All" view groups each study once under its PRIMARY (first) discipline — no duplicates.
-        // A specific tab shows every study tagged with that discipline (multi-tagged studies appear under each).
-        const groupCards =
-          active === 'all'
-            ? cards.filter((c) => c.disciplines[0] === discipline)
-            : cards.filter((c) => c.disciplines.includes(discipline));
+        // Every study appears once, under its PRIMARY (first) discipline — in the "All" view and when a
+        // discipline tab is selected. Tab badges therefore match these section counts exactly.
+        const groupCards = cards.filter((c) => c.disciplines[0] === discipline);
         return (
           <section key={discipline} aria-label={discipline} className="mt-12 first:mt-10">
             <div className="flex items-baseline justify-between gap-4 border-b border-surface-200 pb-3">

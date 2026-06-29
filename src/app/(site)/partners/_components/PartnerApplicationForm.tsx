@@ -146,7 +146,7 @@ export function PartnerApplicationForm() {
         <h3 className="text-lg font-medium">Application received.</h3>
         <p className="mt-2 text-sm">
           We review every application personally. You&apos;ll hear from us
-          within 5–7 business days at <strong>{email.trim()}</strong>.
+          within 48 hours at <strong>{email.trim()}</strong>.
         </p>
       </div>
     );
@@ -383,8 +383,7 @@ export function PartnerApplicationForm() {
         <a href="/privacy" className="underline underline-offset-2 hover:text-surface-700">
           Privacy Policy
         </a>
-        . We review every application personally and reply within 5–7 business
-        days.
+        . We review every application personally and reply within 48 hours.
       </p>
     </form>
   );

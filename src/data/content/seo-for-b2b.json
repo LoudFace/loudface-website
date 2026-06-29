@@ -16,7 +16,7 @@
       {
         "number": "01",
         "title": "You're marketing to one person, but the buying committee has six.",
-        "subtitle": "The average B2B purchase involves 3\u20137 decision makers, each with different priorities, search behaviour, and objections.",
+        "subtitle": "The average B2B purchase involves 3\u20137 decision makers, each with different priorities, search behavior, and objections.",
         "body": "Your CFO is Googling ROI calculators. Your CTO is searching security certifications. Your end user is comparing alternatives. One campaign, one landing page, and one content strategy can't reach all of them."
       },
       {
@@ -41,7 +41,7 @@
       {
         "number": "01",
         "title": "We map how your buyers actually research",
-        "description": "Before we write a word or fix a technical issue, we map the full search behaviour of every decision maker in your typical deal. The CFO's queries. The CTO's queries. The end user's queries. The late-stage comparison queries that happen right before a vendor gets shortlisted. This becomes the architecture everything else is built on."
+        "description": "Before we write a word or fix a technical issue, we map the full search behavior of every decision maker in your typical deal. The CFO's queries. The CTO's queries. The end user's queries. The late-stage comparison queries that happen right before a vendor gets shortlisted. This becomes the architecture everything else is built on."
       },
       {
         "number": "02",
@@ -51,7 +51,7 @@
       {
         "number": "03",
         "title": "We make your brand the answer before buyers reach your website",
-        "description": "B2B buyers increasingly start on AI search, asking ChatGPT or Perplexity which vendor is best positioned to solve their specific problem. We get your brand into those answers through entity optimisation, structured content, and citation presence on the sources AI engines pull from."
+        "description": "B2B buyers increasingly start on AI search, asking ChatGPT or Perplexity which vendor is best positioned to solve their specific problem. We get your brand into those answers through entity optimization, structured content, and citation presence on the sources AI engines pull from."
       },
       {
         "number": "04",
@@ -133,8 +133,8 @@
         "answer": "That's one of the first things we fix. We map actual search queries from each decision maker role \u2014 not the language your internal team uses to describe your product. The CFO searching \"reduce operational overhead\" and your sales team calling it \"efficiency gains\" are the same problem \u2014 but they need different content to rank and convert."
       },
       {
-        "question": "What does AI search optimisation mean for a B2B company specifically?",
-        "answer": "It means when a procurement lead or a CTO asks ChatGPT which vendor is best positioned for their specific use case \u2014 your brand comes up as a credible option. We get you there through entity optimisation, structured content, and citation building on the B2B sources AI engines weight most heavily \u2014 analyst sites, industry publications, G2, and peer review platforms."
+        "question": "What does AI search optimization mean for a B2B company specifically?",
+        "answer": "It means when a procurement lead or a CTO asks ChatGPT which vendor is best positioned for their specific use case \u2014 your brand comes up as a credible option. We get you there through entity optimization, structured content, and citation building on the B2B sources AI engines weight most heavily \u2014 analyst sites, industry publications, G2, and peer review platforms."
       },
       {
         "question": "How quickly will we see pipeline impact?",
@@ -142,7 +142,7 @@
       },
       {
         "question": "How is this different from our current SEO agency?",
-        "answer": "Your current SEO agency is likely optimising for rankings and traffic. We optimise for qualified pipeline across a multi-stakeholder buying journey. That means content built for buying committees, attribution that survives a 9-month sales cycle, and CRO that converts the traffic when it arrives. Most SEO agencies don't own any of that \u2014 we own all of it."
+        "answer": "Your current SEO agency is likely optimizing for rankings and traffic. We optimize for qualified pipeline across a multi-stakeholder buying journey. That means content built for buying committees, attribution that survives a 9-month sales cycle, and CRO that converts the traffic when it arrives. Most SEO agencies don't own any of that \u2014 we own all of it."
       }
     ]
   },
@@ -163,7 +163,7 @@
       {
         "title": "Machine-to-Machine Marketing: Why Your 2026 Strategy Needs to Target AI Systems, Not Just Humans",
         "slug": "machine-to-machine-marketing",
-        "description": "Your next buyer's first touchpoint isn't a human \u2014 it's an AI model summarising your category."
+        "description": "Your next buyer's first touchpoint isn't a human \u2014 it's an AI model summarizing your category."
       }
     ]
   }
