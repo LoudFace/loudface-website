@@ -1,7 +1,9 @@
 import type { Metadata } from 'next';
 import { SectionContainer, SectionHeader, Button, Card } from '@/components/ui';
 import { asset } from '@/lib/assets';
-import { WebinarRegistrationForm } from './_components/WebinarRegistrationForm';
+
+const RIVERSIDE_REGISTRATION_URL =
+  'https://riverside.com/webinar/registration/eyJldmVudElkIjoiNmE0Mjk3NTkxYjZiYzMyYWRkOTZkZjg1Iiwic2x1ZyI6ImNoYW5kYW5hcy1zdHVkaW8tMXByZ1gifQ==';
 
 export const metadata: Metadata = {
   title: 'Why Your Website Is Invisible in AI Search — Live Masterclass | LoudFace',
@@ -124,7 +126,7 @@ export default function WebinarPage() {
           Thursday, July 9, 2026 &nbsp;·&nbsp; 11:00 AM ET &nbsp;·&nbsp; Live + Q&amp;A
         </p>
 
-        <Button variant="secondary" size="lg" href="#register">
+        <Button variant="secondary" size="lg" href={RIVERSIDE_REGISTRATION_URL} target="_blank" rel="noopener noreferrer">
           Save my seat
         </Button>
 
@@ -224,13 +226,33 @@ export default function WebinarPage() {
         </Card>
       </SectionContainer>
 
-      {/* Registration form */}
+      {/* Registration */}
       <SectionContainer
         id="register"
         padding="lg"
-        className="bg-primary-50"
+        className="bg-primary-50 text-center"
       >
-        <WebinarRegistrationForm />
+        <p className="mb-2 text-xs font-bold uppercase tracking-widest text-primary-600">
+          Register
+        </p>
+        <h2 className="mb-3 text-2xl font-medium text-surface-900 sm:text-3xl">
+          Save your seat
+        </h2>
+        <p className="mx-auto mb-8 max-w-sm text-base text-surface-600">
+          Thursday, July 9, 2026 &middot; 11:00 AM ET &middot; Live + Q&amp;A
+        </p>
+        <Button
+          variant="secondary"
+          size="lg"
+          href={RIVERSIDE_REGISTRATION_URL}
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          Save my seat
+        </Button>
+        <p className="mt-4 text-xs text-surface-400">
+          You&apos;ll receive a calendar invite and join link from Riverside.
+        </p>
       </SectionContainer>
 
       {/* AI Audit CTA */}
