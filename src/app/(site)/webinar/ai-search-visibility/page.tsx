@@ -38,9 +38,12 @@ const EVENT_JSON_LD = {
   // Required by Google for online events.
   location: {
     '@type': 'VirtualLocation',
-    url: 'https://loudface.co/webinar/ai-search-visibility',
+    url: 'https://www.loudface.co/webinar/ai-search-visibility',
   },
-  image: ['https://www.loudface.co/images/speakers/arnel-bukva.jpg'],
+  image: [
+    'https://www.loudface.co/images/speakers/arnel-bukva.jpg',
+    'https://www.loudface.co/images/speakers/natalie-sangkagalo.jpg',
+  ],
   performer: [
     { '@type': 'Person', name: 'Arnel Bukva' },
     { '@type': 'Person', name: 'Natalie Sangkagalo' },
@@ -48,7 +51,16 @@ const EVENT_JSON_LD = {
   organizer: {
     '@type': 'Organization',
     name: 'LoudFace',
-    url: 'https://loudface.co',
+    url: 'https://www.loudface.co',
+  },
+  // Registration is handled off-site by Riverside; surface it to Google as a free offer.
+  offers: {
+    '@type': 'Offer',
+    url: RIVERSIDE_REGISTRATION_URL,
+    price: '0',
+    priceCurrency: 'USD',
+    availability: 'https://schema.org/InStock',
+    validFrom: '2026-06-26T00:00:00-04:00',
   },
 };
 
@@ -126,7 +138,7 @@ export default function WebinarPage() {
           Thursday, July 9, 2026 &nbsp;·&nbsp; 11:00 AM ET &nbsp;·&nbsp; Live + Q&amp;A
         </p>
 
-        <Button variant="secondary" size="lg" href={RIVERSIDE_REGISTRATION_URL} target="_blank" rel="noopener noreferrer">
+        <Button variant="secondary" size="lg" href={RIVERSIDE_REGISTRATION_URL}>
           Save my seat
         </Button>
 
@@ -245,8 +257,6 @@ export default function WebinarPage() {
           variant="secondary"
           size="lg"
           href={RIVERSIDE_REGISTRATION_URL}
-          target="_blank"
-          rel="noopener noreferrer"
         >
           Save my seat
         </Button>
