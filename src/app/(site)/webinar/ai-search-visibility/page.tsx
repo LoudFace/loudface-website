@@ -42,10 +42,12 @@ const EVENT_JSON_LD = {
   },
   image: [
     'https://www.loudface.co/images/speakers/arnel-bukva.jpg',
+    'https://www.loudface.co/images/speakers/ella-theisinger.png',
     'https://www.loudface.co/images/speakers/natalie-sangkagalo.jpg',
   ],
   performer: [
     { '@type': 'Person', name: 'Arnel Bukva' },
+    { '@type': 'Person', name: 'Ella Theisinger' },
     { '@type': 'Person', name: 'Natalie Sangkagalo' },
   ],
   organizer: {
@@ -70,6 +72,12 @@ const SPEAKERS = [
     title: 'Founder, LoudFace',
     image: '/images/speakers/arnel-bukva.jpg',
     bio: 'Founder of LoudFace, a Webflow Premium Partner agency specialising in SEO, AEO, and CRO for B2B SaaS. Led the strategy that took Toku from 0 to 86% AI visibility on its core buyer search prompt.',
+  },
+  {
+    name: 'Ella Theisinger',
+    title: 'Senior Solutions Engineer, Webflow',
+    image: '/images/speakers/ella-theisinger.png',
+    bio: "Ella Theisinger is a Senior Solutions Engineer at Webflow, where she helps teams design and build high-performing, scalable sites on the platform. Based in the UK, she works closely with partners and customers to turn Webflow's capabilities into real growth and conversion outcomes.",
   },
   {
     name: 'Natalie Sangkagalo',
@@ -158,9 +166,13 @@ export default function WebinarPage() {
             </span>
           </div>
           <div className="hidden h-6 w-px bg-surface-200 sm:block" />
-          <span className="rounded-md border border-primary-200 px-3 py-1 text-xs font-semibold text-primary-600">
-            Webflow Premium Partner
-          </span>
+          <img
+            src={asset('/images/webflow-partner-badge.svg')}
+            alt="Webflow Premium Partner"
+            height={28}
+            loading="lazy"
+            className="h-7 w-auto"
+          />
         </div>
       </SectionContainer>
 
@@ -192,7 +204,7 @@ export default function WebinarPage() {
           align="center"
           className="mb-10"
         />
-        <div className="mx-auto grid max-w-3xl gap-6 sm:grid-cols-2">
+        <div className="mx-auto grid max-w-5xl gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {SPEAKERS.map((speaker) => (
             <Card key={speaker.name} padding="lg" hover={false}>
               <img
@@ -262,6 +274,29 @@ export default function WebinarPage() {
         </Button>
         <p className="mt-4 text-xs text-surface-400">
           You&apos;ll receive a calendar invite and join link from Riverside.
+        </p>
+        <p className="mx-auto mt-5 max-w-lg text-[11px] italic leading-relaxed text-surface-400">
+          I agree to receive marketing communications from Webflow and LoudFace regarding
+          products, services and events. I understand the information I submit will be handled by
+          Webflow as described in the{' '}
+          <a
+            href="https://webflow.com/legal/privacy"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="underline underline-offset-2 hover:text-surface-600"
+          >
+            Privacy Policy
+          </a>
+          , and by LoudFace as described in the{' '}
+          <a
+            href="https://www.loudface.co/privacy"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="underline underline-offset-2 hover:text-surface-600"
+          >
+            Privacy Policy
+          </a>
+          . I understand that I can unsubscribe at any time.
         </p>
       </SectionContainer>
 
