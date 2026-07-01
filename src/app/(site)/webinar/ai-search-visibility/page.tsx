@@ -138,8 +138,9 @@ export default function WebinarPage() {
 
         <p className="mx-auto mb-6 max-w-xl text-lg text-surface-600">
           A 50-minute live breakdown of the exact content architecture, on-page changes, and
-          platform decisions that took Toku from invisible to dominant in AI search. Every step,
-          no theory.
+          platform decisions that took Toku from 0 → 86% on AI visibility.{' '}
+          <br className="hidden sm:block" />
+          Every step, no theory.
         </p>
 
         <p className="mb-8 text-lg font-medium text-surface-700">
@@ -149,6 +150,15 @@ export default function WebinarPage() {
         <Button variant="secondary" size="lg" href={RIVERSIDE_REGISTRATION_URL}>
           Save my seat
         </Button>
+        <p className="mx-auto mt-4 max-w-lg text-[11px] italic leading-relaxed text-surface-400">
+          I agree to receive marketing communications from Webflow and LoudFace regarding products,
+          services and events. I understand the information I submit will be handled by Webflow as
+          described in the{' '}
+          <a href="https://webflow.com/legal/privacy" target="_blank" rel="noopener noreferrer" className="underline underline-offset-2 hover:text-surface-600">Privacy Policy</a>
+          , and by LoudFace as described in the{' '}
+          <a href="https://www.loudface.co/privacy" target="_blank" rel="noopener noreferrer" className="underline underline-offset-2 hover:text-surface-600">Privacy Policy</a>
+          . I understand that I can unsubscribe at any time.
+        </p>
 
         {/* Proof bar */}
         <div className="mx-auto mt-12 flex max-w-2xl flex-wrap items-center justify-center gap-6 rounded-2xl border border-surface-200 bg-white px-8 py-5">
@@ -167,11 +177,11 @@ export default function WebinarPage() {
           </div>
           <div className="hidden h-6 w-px bg-surface-200 sm:block" />
           <img
-            src={asset('/images/webflow-partner-badge.svg')}
-            alt="Webflow Premium Partner"
-            height={28}
+            src={asset('/images/webflow-logo.png')}
+            alt="Webflow"
+            height={24}
             loading="lazy"
-            className="h-7 w-auto"
+            className="h-6 w-auto"
           />
         </div>
       </SectionContainer>
