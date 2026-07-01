@@ -42,7 +42,7 @@ const EVENT_JSON_LD = {
   },
   image: [
     'https://www.loudface.co/images/speakers/arnel-bukva.jpg',
-    'https://www.loudface.co/images/speakers/ella-theisinger.png',
+    'https://www.loudface.co/images/speakers/ella-theisinger.jpg',
     'https://www.loudface.co/images/speakers/natalie-sangkagalo.jpg',
   ],
   performer: [
@@ -76,7 +76,7 @@ const SPEAKERS = [
   {
     name: 'Ella Theisinger',
     title: 'Senior Solutions Engineer, Webflow',
-    image: '/images/speakers/ella-theisinger.png',
+    image: '/images/speakers/ella-theisinger.jpg',
     bio: "Ella Theisinger is a Senior Solutions Engineer at Webflow, where she helps teams design and build high-performing, scalable sites on the platform. Based in the UK, she works closely with partners and customers to turn Webflow's capabilities into real growth and conversion outcomes.",
   },
   {
@@ -102,6 +102,34 @@ const AGENDA = [
   { duration: '5 min', title: 'Your AI visibility audit framework' },
   { duration: '10 min', title: 'Live Q&A' },
 ];
+
+function GdprFinePrint({ className = '' }: { className?: string }) {
+  return (
+    <p className={`mx-auto max-w-lg text-[11px] italic leading-relaxed text-surface-400 ${className}`}>
+      I agree to receive marketing communications from Webflow and LoudFace regarding products,
+      services and events. I understand the information I submit will be handled by Webflow as
+      described in the{' '}
+      <a
+        href="https://webflow.com/legal/privacy"
+        target="_blank"
+        rel="noopener noreferrer"
+        className="underline underline-offset-2 hover:text-surface-600"
+      >
+        Webflow Privacy Policy
+      </a>
+      , and by LoudFace as described in the{' '}
+      <a
+        href="https://www.loudface.co/privacy"
+        target="_blank"
+        rel="noopener noreferrer"
+        className="underline underline-offset-2 hover:text-surface-600"
+      >
+        LoudFace Privacy Policy
+      </a>
+      . I understand that I can unsubscribe at any time.
+    </p>
+  );
+}
 
 export default function WebinarPage() {
   return (
@@ -150,15 +178,7 @@ export default function WebinarPage() {
         <Button variant="secondary" size="lg" href={RIVERSIDE_REGISTRATION_URL}>
           Save my seat
         </Button>
-        <p className="mx-auto mt-4 max-w-lg text-[11px] italic leading-relaxed text-surface-400">
-          I agree to receive marketing communications from Webflow and LoudFace regarding products,
-          services and events. I understand the information I submit will be handled by Webflow as
-          described in the{' '}
-          <a href="https://webflow.com/legal/privacy" target="_blank" rel="noopener noreferrer" className="underline underline-offset-2 hover:text-surface-600">Privacy Policy</a>
-          , and by LoudFace as described in the{' '}
-          <a href="https://www.loudface.co/privacy" target="_blank" rel="noopener noreferrer" className="underline underline-offset-2 hover:text-surface-600">Privacy Policy</a>
-          . I understand that I can unsubscribe at any time.
-        </p>
+        <GdprFinePrint className="mt-4" />
 
         {/* Proof bar */}
         <div className="mx-auto mt-12 flex max-w-2xl flex-wrap items-center justify-center gap-6 rounded-2xl border border-surface-200 bg-white px-8 py-5">
@@ -179,6 +199,7 @@ export default function WebinarPage() {
           <img
             src={asset('/images/webflow-logo.png')}
             alt="Webflow"
+            width={143}
             height={24}
             loading="lazy"
             className="h-6 w-auto"
@@ -285,29 +306,7 @@ export default function WebinarPage() {
         <p className="mt-4 text-xs text-surface-400">
           You&apos;ll receive a calendar invite and join link from Riverside.
         </p>
-        <p className="mx-auto mt-5 max-w-lg text-[11px] italic leading-relaxed text-surface-400">
-          I agree to receive marketing communications from Webflow and LoudFace regarding
-          products, services and events. I understand the information I submit will be handled by
-          Webflow as described in the{' '}
-          <a
-            href="https://webflow.com/legal/privacy"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="underline underline-offset-2 hover:text-surface-600"
-          >
-            Privacy Policy
-          </a>
-          , and by LoudFace as described in the{' '}
-          <a
-            href="https://www.loudface.co/privacy"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="underline underline-offset-2 hover:text-surface-600"
-          >
-            Privacy Policy
-          </a>
-          . I understand that I can unsubscribe at any time.
-        </p>
+        <GdprFinePrint className="mt-5" />
       </SectionContainer>
 
       {/* AI Audit CTA */}
