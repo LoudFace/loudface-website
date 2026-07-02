@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import { SectionContainer, SectionHeader, Button, Card } from '@/components/ui';
 import { asset } from '@/lib/assets';
+import { WebinarConsentGate } from './_components/WebinarConsentGate';
 
 const RIVERSIDE_REGISTRATION_URL =
   'https://riverside.com/webinar/registration/eyJldmVudElkIjoiNmE0Mjk3NTkxYjZiYzMyYWRkOTZkZjg1Iiwic2x1ZyI6ImNoYW5kYW5hcy1zdHVkaW8tMXByZ1gifQ==';
@@ -147,18 +148,7 @@ export default function WebinarPage() {
           Thursday, July 9, 2026 &nbsp;·&nbsp; 11:00 AM ET &nbsp;·&nbsp; Live + Q&amp;A
         </p>
 
-        <Button variant="secondary" size="lg" href={RIVERSIDE_REGISTRATION_URL}>
-          Save my seat
-        </Button>
-        <p className="mx-auto mt-4 max-w-lg text-[11px] italic leading-relaxed text-surface-400">
-          I agree to receive marketing communications from Webflow and LoudFace regarding products,
-          services and events. I understand the information I submit will be handled by Webflow as
-          described in the{' '}
-          <a href="https://webflow.com/legal/privacy" target="_blank" rel="noopener noreferrer" className="underline underline-offset-2 hover:text-surface-600">Privacy Policy</a>
-          , and by LoudFace as described in the{' '}
-          <a href="https://www.loudface.co/privacy" target="_blank" rel="noopener noreferrer" className="underline underline-offset-2 hover:text-surface-600">Privacy Policy</a>
-          . I understand that I can unsubscribe at any time.
-        </p>
+        <WebinarConsentGate />
 
         {/* Proof bar */}
         <div className="mx-auto mt-12 flex max-w-2xl flex-wrap items-center justify-center gap-6 rounded-2xl border border-surface-200 bg-white px-8 py-5">
@@ -275,39 +265,7 @@ export default function WebinarPage() {
         <p className="mx-auto mb-8 max-w-sm text-base text-surface-600">
           Thursday, July 9, 2026 &middot; 11:00 AM ET &middot; Live + Q&amp;A
         </p>
-        <Button
-          variant="secondary"
-          size="lg"
-          href={RIVERSIDE_REGISTRATION_URL}
-        >
-          Save my seat
-        </Button>
-        <p className="mt-4 text-xs text-surface-400">
-          You&apos;ll receive a calendar invite and join link from Riverside.
-        </p>
-        <p className="mx-auto mt-5 max-w-lg text-[11px] italic leading-relaxed text-surface-400">
-          I agree to receive marketing communications from Webflow and LoudFace regarding
-          products, services and events. I understand the information I submit will be handled by
-          Webflow as described in the{' '}
-          <a
-            href="https://webflow.com/legal/privacy"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="underline underline-offset-2 hover:text-surface-600"
-          >
-            Privacy Policy
-          </a>
-          , and by LoudFace as described in the{' '}
-          <a
-            href="https://www.loudface.co/privacy"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="underline underline-offset-2 hover:text-surface-600"
-          >
-            Privacy Policy
-          </a>
-          . I understand that I can unsubscribe at any time.
-        </p>
+        <WebinarConsentGate />
       </SectionContainer>
 
       {/* AI Audit CTA */}
