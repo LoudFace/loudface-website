@@ -2,9 +2,7 @@ import type { Metadata } from 'next';
 import { SectionContainer, SectionHeader, Button, Card } from '@/components/ui';
 import { asset } from '@/lib/assets';
 import { WebinarConsentGate } from './_components/WebinarConsentGate';
-
-const RIVERSIDE_REGISTRATION_URL =
-  'https://riverside.com/webinar/registration/eyJldmVudElkIjoiNmE0Mjk3NTkxYjZiYzMyYWRkOTZkZjg1Iiwic2x1ZyI6ImNoYW5kYW5hcy1zdHVkaW8tMXByZ1gifQ==';
+import { RIVERSIDE_REGISTRATION_URL } from './_components/config';
 
 export const metadata: Metadata = {
   title: 'Why Your Website Is Invisible in AI Search — Live Masterclass | LoudFace',
