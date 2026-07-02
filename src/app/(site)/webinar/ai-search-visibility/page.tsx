@@ -146,7 +146,7 @@ export default function WebinarPage() {
           Thursday, July 9, 2026 &nbsp;·&nbsp; 11:00 AM ET &nbsp;·&nbsp; Live + Q&amp;A
         </p>
 
-        <WebinarConsentGate />
+        <WebinarConsentGate source="hero" />
 
         {/* Proof bar */}
         <div className="mx-auto mt-12 flex max-w-2xl flex-wrap items-center justify-center gap-6 rounded-2xl border border-surface-200 bg-white px-8 py-5">
@@ -264,7 +264,7 @@ export default function WebinarPage() {
         <p className="mx-auto mb-8 max-w-sm text-base text-surface-600">
           Thursday, July 9, 2026 &middot; 11:00 AM ET &middot; Live + Q&amp;A
         </p>
-        <WebinarConsentGate />
+        <WebinarConsentGate source="register" />
       </SectionContainer>
 
       {/* AI Audit CTA */}

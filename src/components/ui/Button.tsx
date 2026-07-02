@@ -82,6 +82,7 @@ export function Button({
           data-cal-trigger={isCta ? '' : undefined}
           target="_blank"
           rel="noopener noreferrer"
+          onClick={onClick}
         >
           {children}
         </a>
@@ -94,6 +95,7 @@ export function Button({
         className={classes}
         aria-label={ariaLabel}
         data-cal-trigger={isCta ? '' : undefined}
+        onClick={onClick}
       >
         {children}
       </Link>
