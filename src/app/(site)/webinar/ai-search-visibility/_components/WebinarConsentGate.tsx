@@ -4,8 +4,19 @@ import { useState } from 'react';
 import { Button } from '@/components/ui';
 import { RIVERSIDE_REGISTRATION_URL } from './config';
 
-export function WebinarConsentGate() {
+export function WebinarConsentGate({ source }: { source: 'hero' | 'register' }) {
   const [consented, setConsented] = useState(false);
+
+  // Named funnel event on the real click-through (only fires when consented —
+  // the disabled <button> swallows the click). Matches the site's lazy-import
+  // PostHog pattern (see PartnersCTALink). Autocapture also records the raw
+  // click; this gives us a clean, named event with the CTA placement.
+  function handleRegisterClick() {
+    void import('posthog-js').then(({ default: posthog }) => {
+      if (!posthog.__loaded) return;
+      posthog.capture('webinar_cta_clicked', { source, webinar: 'ai-search-visibility' });
+    });
+  }
 
   return (
     <div className="flex flex-col items-center gap-6">
@@ -53,6 +64,7 @@ export function WebinarConsentGate() {
           size="lg"
           href={consented ? RIVERSIDE_REGISTRATION_URL : undefined}
           disabled={!consented}
+          onClick={handleRegisterClick}
         >
           Save my seat
         </Button>

@@ -66,7 +66,7 @@ Multi-variant button that renders as `<button>`, `<Link>`, or `<a>` depending on
 | `href` | `string` | — | Makes it a link (internal = `<Link>`, external = `<a target="_blank" rel="noopener noreferrer">`) |
 | `calTrigger` | `boolean` | — | Marks as Cal.com booking trigger |
 | `type` | `'button' \| 'submit' \| 'reset'` | `'button'` | HTML button type (ignored when `href` is set) |
-| `onClick` | `() => void` | — | Click handler (ignored when `href` is set) |
+| `onClick` | `() => void` | — | Click handler. Fires in all render modes (`<button>`, `<Link>`, and external `<a>`) — e.g. for analytics on a link CTA |
 | `fullWidth` | `boolean` | `false` | Stretches to fill container |
 | `disabled` | `boolean` | `false` | Disables interaction |
 | `ariaLabel` | `string` | — | Accessible label for icon-only buttons |
