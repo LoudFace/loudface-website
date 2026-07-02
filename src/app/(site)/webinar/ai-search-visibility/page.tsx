@@ -78,7 +78,7 @@ const SPEAKERS = [
     name: 'Ella Theisinger',
     title: 'Senior Solutions Engineer, Webflow',
     image: '/images/speakers/ella-theisinger.png',
-    bio: "Ella Theisinger is a Senior Solutions Engineer at Webflow, where she helps teams design and build high-performing, scalable sites on the platform. Based in the UK, she works closely with partners and customers to turn Webflow's capabilities into real growth and conversion outcomes.",
+    bio: "Ella Theisinger is a Solutions Engineer at Webflow based in London, working with businesses across EMEA. She brings a customer-facing perspective on how platform choices shape a website's ability to perform in an AI-driven search landscape.",
   },
   {
     name: 'Natalie Sangkagalo',
