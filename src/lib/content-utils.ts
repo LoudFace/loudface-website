@@ -24,6 +24,7 @@ import workContent from "@/data/content/work.json";
 import aboutContent from "@/data/content/about.json";
 import servicesWebflowContent from "@/data/content/services-webflow.json";
 import servicesSeoAeoContent from "@/data/content/services-seo-aeo.json";
+import servicesGeoContent from "@/data/content/services-geo.json";
 import servicesCroContent from "@/data/content/services-cro.json";
 import servicesCopywritingContent from "@/data/content/services-copywriting.json";
 import servicesUxUiDesignContent from "@/data/content/services-ux-ui-design.json";
@@ -917,6 +918,7 @@ const contentRegistry: Record<string, unknown> = {
   about: aboutContent,
   "services-webflow": servicesWebflowContent,
   "services-seo-aeo": servicesSeoAeoContent,
+  "services-geo": servicesGeoContent,
   "services-cro": servicesCroContent,
   "services-copywriting": servicesCopywritingContent,
   "services-ux-ui-design": servicesUxUiDesignContent,
@@ -1039,6 +1041,15 @@ export function getServicesWebflowContent(): ServicesWebflowContent {
  */
 export function getServicesSeoAeoContent(): ServicesSeoAeoContent {
   return servicesSeoAeoContent as ServicesSeoAeoContent;
+}
+
+/**
+ * Get Services GEO (Generative Engine Optimization) page content
+ * Reuses the ServicesSeoAeoContent shape — same section keys, GEO copy;
+ * the `tracks` seo/aeo/geo slots carry per-engine labels (ChatGPT / Perplexity / AIO+Gemini).
+ */
+export function getServicesGeoContent(): ServicesSeoAeoContent {
+  return servicesGeoContent as ServicesSeoAeoContent;
 }
 
 /**

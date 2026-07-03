@@ -1,0 +1,232 @@
+{
+  "hero": {
+    "eyebrow": "Generative Engine Optimization for B2B SaaS",
+    "headline": "Generative Engine Optimization (GEO) Agency",
+    "subheadline": "Become the answer AI engines give.",
+    "description": "LoudFace is an AI-native generative engine optimization (GEO) agency for B2B SaaS. We get your brand cited and recommended inside ChatGPT, Perplexity, Gemini, and Google AI Overviews, and we measure the result as share of answer, not just traffic. The same program took Toku from 0 to 86% AI-search visibility at position 2.4 on its core buyer prompt.",
+    "primaryCta": "Free AI Visibility Audit",
+    "secondaryCta": "See the GEO process"
+  },
+  "stats": [
+    { "value": "0 → 86%", "label": "Toku's AI-search visibility on its core stablecoin-payroll prompt, at average position 2.4", "href": "/case-studies/toku-ai-cited-pipeline" },
+    { "value": "+49%", "label": "CodeOp's organic traffic in four months" },
+    { "value": "200+", "label": "B2B brands grown across SaaS, fintech, and AI" },
+    { "value": "7+", "label": "AI engines monitored: ChatGPT, Perplexity, Gemini, Claude, Google AI Mode, Copilot, Grok" }
+  ],
+  "whatIsAeo": {
+    "eyebrow": "Start here",
+    "title": "What does a generative engine optimization agency do?",
+    "answer": "A generative engine optimization (GEO) agency gets your brand retrieved, cited, and recommended by AI engines like ChatGPT, Perplexity, Gemini, and Google AI Overviews. Where an SEO agency competes for a ranked link, a GEO agency competes for the answer itself: when a buyer asks which vendor to pick, yours is the brand the engine names.",
+    "body": "GEO is the head term the models themselves use. Answer engine optimization (AEO), LLM SEO, AI SEO, and AI search optimization all describe the same discipline. One disambiguation, because the acronym collides: GEO here has nothing to do with geospatial tools or local geo-targeting. It is the practice of engineering your content, entity signals, and citation surfaces so generative engines treat your brand as a source worth quoting.",
+    "linkText": "What 160,000+ AI citations taught us about getting quoted",
+    "linkHref": "/blog/ai-citation-benchmark-b2b-saas-2026"
+  },
+  "comparison": {
+    "title": "GEO vs AEO vs SEO: what's the difference?",
+    "highlightWord": "difference?",
+    "intro": "Buyers and models use the terms interchangeably, and agencies sell them as separate line items. Here is the honest split, and why we run them as one program.",
+    "columns": ["Discipline", "What it optimizes for", "Where you show up"],
+    "rows": [
+      {
+        "discipline": "GEO",
+        "optimizesFor": "Being named and recommended when generative engines answer a buyer's question. The umbrella discipline.",
+        "whereWeShowUp": "ChatGPT, Perplexity, Gemini, Google AI Overviews, Copilot, Grok"
+      },
+      {
+        "discipline": "AEO",
+        "optimizesFor": "The answer layer inside GEO: structuring pages so engines can lift and quote them cleanly",
+        "whereWeShowUp": "Cited-source lists and inline citations inside AI answers"
+      },
+      {
+        "discipline": "SEO",
+        "optimizesFor": "Ranking in Google's classic results, which feeds the retrieval sets AI engines read from",
+        "whereWeShowUp": "Page one of Google, featured snippets, and the index AI Overviews runs on"
+      }
+    ],
+    "note": "The stack compounds. The authority that ranks you on Google feeds what generative engines retrieve, and a page structured for lifting gets quoted instead of skipped. We build GEO, AEO, and SEO as one system with one scoreboard: share of answer."
+  },
+  "problems": {
+    "title": "Why B2B SaaS brands are invisible in generative engines",
+    "highlightWord": "invisible",
+    "subtitle": "Your buyers ask AI before they ever type into Google. The engines answer with somebody.",
+    "items": [
+      {
+        "number": "01",
+        "title": "Buyers ask AI first. It names your competitors.",
+        "description": "A founder asks ChatGPT for the best vendor in your category. The model reads a corpus of rosters, comparisons, and reviews that you are absent from, then answers with confidence. The answer sounds definitive. You are simply not in it."
+      },
+      {
+        "number": "02",
+        "title": "You get retrieved, then skipped.",
+        "description": "Engines fetch far more pages than they quote. They cite the ones that hand them a liftable answer: a ranked roster, a hard-number table, a tight TL;DR. Prose gets read and never cited. We measured this across 160,000+ AI citations to learn exactly what gets quoted."
+      },
+      {
+        "number": "03",
+        "title": "Your \"GEO agency\" is an SEO retainer with a new label.",
+        "description": "Most shops renamed the same deliverables. No per-engine tracking, no share-of-answer number, no view of what the models actually say about you. If the monthly report has rankings but no citations, it is not GEO."
+      }
+    ]
+  },
+  "approach": {
+    "title": "How our GEO program works",
+    "highlightWord": "GEO",
+    "intro": "We own the roadmap and ship from week one. Every move is scored against one metric: your share of answer on the prompts your buyers actually ask.",
+    "steps": [
+      {
+        "number": "1",
+        "title": "AI visibility baseline",
+        "description": "We map how every major engine answers your buyers' prompts today: who gets named, who gets cited, at what position, and which pages the models pull from. Your starting share of answer, engine by engine."
+      },
+      {
+        "number": "2",
+        "title": "Citation-surface foundation",
+        "description": "Entity language, structured data, and answer blocks engineered so models can parse and quote you. Every cornerstone page gets a liftable artifact: a TL;DR, a hard-number table, or a ranked roster. Deployment starts in week one. No quarter-long setup phase."
+      },
+      {
+        "number": "3",
+        "title": "Citable asset engine",
+        "description": "New rosters, comparisons, and decision pages matched to the tracked buyer prompts you are losing, plus placement in the third-party lists and communities each engine reads from. On-page format and off-page corpus run together, because engines only cite what they retrieve."
+      },
+      {
+        "number": "4",
+        "title": "Per-engine measurement",
+        "description": "Weekly share-of-answer reporting split by engine, never blended. ChatGPT, Perplexity, and Google AI Overviews reward different formats, so we track and tune each one separately."
+      }
+    ]
+  },
+  "tracks": {
+    "title": "Three engines. Three different games.",
+    "highlightWord": "engines.",
+    "headline": "ChatGPT lifts one page. Perplexity blends many. Google AI Overviews rewards entities.",
+    "description": "We track thousands of AI answers a month across our clients' buyer prompts. The engines behave differently, and a GEO program that treats them as one surface loses on all three.",
+    "bridge": "No single format wins all three engines. The program pairs liftable on-page artifacts with entity authority and off-page presence, so each engine finds the shape it wants to cite.",
+    "seo": {
+      "label": "ChatGPT",
+      "title": "The verbatim lifter",
+      "description": "Selective. It picks one or two authoritative pages, quotes them almost word for word, and leans heavily on third-party vendor lists.",
+      "items": [
+        "Canonical roster and comparison pages built to be lifted",
+        "Verdict-and-proof entity language models repeat back",
+        "Placement in the vendor-list corpus ChatGPT retrieves",
+        "Direct-answer TL;DRs at the top of every page",
+        "Citation tracking against named competitors",
+        "Retrieval-to-citation conversion monitoring"
+      ]
+    },
+    "aeo": {
+      "label": "Perplexity",
+      "title": "The blender",
+      "description": "Citation-dense. It pulls many sources per answer and rewards pages that ship liftable units: tables, checklists, hard numbers.",
+      "items": [
+        "Hard-number comparison tables",
+        "Numbered checklists and decision frameworks",
+        "Evaluation-criteria content engines reuse",
+        "FAQ blocks matched to fan-out queries",
+        "Dense internal linking between cluster pages",
+        "Freshness updates on already-cited pages"
+      ]
+    },
+    "geo": {
+      "label": "AI Overviews + Gemini",
+      "title": "The entity engine",
+      "description": "Mention-rich and link-poor. It runs on Google's live index and entity graph, and it is the fastest AI surface to move.",
+      "items": [
+        "Entity building and schema depth (Service, FAQPage, ItemList)",
+        "One consistent brand description across every surface",
+        "Structured data AI Overviews can parse",
+        "Google index health, the SEO foundation layer",
+        "Branded-search and knowledge-graph signals",
+        "Speakable and answer-block markup"
+      ]
+    }
+  },
+  "capabilities": {
+    "title": "What's included in our GEO services",
+    "highlightWord": "services",
+    "items": [
+      {
+        "title": "AI visibility audit + prompt tracking",
+        "description": "A tracked panel of the prompts your buyers actually ask, measured across ChatGPT, Perplexity, Gemini, and Google AI Overviews. Visibility, share of answer, sentiment, and position, per engine, every week."
+      },
+      {
+        "title": "Citation-ready content",
+        "description": "Rosters, comparisons, pricing pages, and decision guides built around the exact unit engines lift, formatted so a model can quote it without rewriting a word. The same format work took our own site from invisible to a top-10 share-of-answer position in its category in one quarter."
+      },
+      {
+        "title": "Entity + schema engineering",
+        "description": "Service, FAQPage, and ItemList markup, consistent entity language, and the knowledge-graph signals that make Google AI Overviews and Gemini trust who you are."
+      },
+      {
+        "title": "Off-page citation corpus",
+        "description": "Engines only cite what they retrieve. We place your brand in the third-party rosters, review platforms, and communities each engine reads from, so the corpus answers with you in it."
+      },
+      {
+        "title": "Share-of-answer reporting",
+        "description": "Per engine, per prompt, weekly. Citation counts, position when cited, sentiment, and the competitor split. One number your board can track quarter over quarter."
+      }
+    ]
+  },
+  "pricing": {
+    "title": "How much does a GEO agency cost?",
+    "answer": "GEO programs at LoudFace start from $5k per month on a three-month initial engagement. Published generative engine optimization retainers across the market run roughly $2k to $25k per month depending on scope, engine coverage, and content velocity.",
+    "body": "No setup fee, and no lock-in past the first quarter. After the AI visibility baseline you get a fixed monthly proposal scoped to your 90-day share-of-answer goals, so the price maps to outcomes instead of billable hours.",
+    "linkText": "See full pricing and tiers",
+    "linkHref": "/pricing"
+  },
+  "faq": {
+    "title": "Common questions about generative engine optimization",
+    "items": [
+      {
+        "question": "What is generative engine optimization (GEO)?",
+        "answer": "Generative engine optimization (GEO) is the practice of getting your brand retrieved, cited, and recommended by generative AI engines like ChatGPT, Perplexity, Gemini, and Google AI Overviews. It covers content structured so models can quote it, entity and schema signals that establish who you are, and presence in the third-party sources engines read. The outcome metric is share of answer: how often the engines name you when buyers ask."
+      },
+      {
+        "question": "Is GEO the same as AEO or LLM SEO?",
+        "answer": "In practice, yes. GEO (generative engine optimization), AEO (answer engine optimization), LLM SEO, AI SEO, and AI search optimization all describe the same discipline, and the models themselves treat GEO as the head term. Some practitioners use AEO for the on-page answer layer and GEO for the whole program. We run one program that covers both and report one scoreboard."
+      },
+      {
+        "question": "Does GEO mean local or geospatial optimization?",
+        "answer": "No. In search marketing, GEO stands for generative engine optimization: getting cited by AI engines. It has nothing to do with geospatial data tools or local geo-targeted ads, even though the acronym collides with both."
+      },
+      {
+        "question": "Which AI engines do you optimize for?",
+        "answer": "ChatGPT, Perplexity, Google AI Overviews and AI Mode, Gemini, Claude, Copilot, and Grok. We track and report each engine separately because they select sources differently: ChatGPT lifts one or two pages, Perplexity blends many citation-dense sources, and AI Overviews rewards entity clarity on Google's live index."
+      },
+      {
+        "question": "How long until AI engines cite my brand?",
+        "answer": "Three speeds. First citation pickup on an open prompt can land within days, and Google AI Overviews is usually the fastest surface because it runs on the live index. Earning a consistent slot in the cited-source set takes weeks of re-evaluation. Dominant share of answer on a competitive prompt cluster takes months. We set 90-day goals and report against them honestly."
+      },
+      {
+        "question": "How do you measure GEO results?",
+        "answer": "A tracked panel of buyer prompts, measured across every major engine: visibility (how often you appear), share of answer (your slice of all brand mentions), average position when cited, and sentiment (how the engines frame you). Reported weekly, per engine, and tied back to branded search lift and pipeline."
+      },
+      {
+        "question": "How much does generative engine optimization cost?",
+        "answer": "LoudFace GEO programs start from $5k per month on a three-month initial engagement, with no setup fee. Published GEO retainers across the market run roughly $2k to $25k per month depending on scope. The full tier breakdown is on our <a href=\"/pricing\">pricing page</a>."
+      },
+      {
+        "question": "Do I still need SEO if I invest in GEO?",
+        "answer": "Yes. Generative engines retrieve heavily from Google's index, so the technical health and authority that rank you are the same signals that get you retrieved and cited. Dropping SEO cuts the ground out from under GEO. We run them as one program because separating them leaves pipeline on the table."
+      },
+      {
+        "question": "Can you guarantee citations in ChatGPT?",
+        "answer": "No, and you should walk away from anyone who does. What we control: the liftable format of every page, your entity and schema signals, and your presence in the corpus each engine retrieves from. What that control has produced: Toku at 86% AI-search visibility at position 2.4 on its core prompt, and our own site moving from invisible to a top-10 share-of-answer position in its category in a quarter."
+      },
+      {
+        "question": "How is LoudFace different from other GEO agencies?",
+        "answer": "We run GEO on ourselves and publish the data, including a benchmark of 160,000+ AI citations across three engines. The program is AI-native: SEO, AEO/GEO, content, and Webflow as one system on a single retainer, deployed in week one, measured as share of answer. Most agencies in this category sell a relabeled SEO retainer with no per-engine citation tracking."
+      },
+      {
+        "question": "Do you only work with B2B SaaS?",
+        "answer": "B2B SaaS is the focus, including fintech, payments, and AI companies inside it. The focus is deliberate: the prompt panels, competitor corpora, and content patterns we have already mapped compound with every program in the same category. We take on a limited number of programs so each gets senior attention."
+      }
+    ]
+  },
+  "cta": {
+    "title": "Find out what AI engines say about your brand right now.",
+    "subtitle": "We'll run your buyer prompts across ChatGPT, Perplexity, Gemini, and Google AI Overviews and show you your share of answer, who's beating you, and why.",
+    "primaryCta": "Free AI Visibility Audit",
+    "secondaryCta": "Or book a strategy call",
+    "disclaimer": "No automated sequences. No pitch before the audit. We do the work first."
+  }
+}
