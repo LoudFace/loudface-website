@@ -145,6 +145,13 @@ const nextConfig: NextConfig = {
         permanent: true,
       },
       // Renamed/removed pages
+      // Andrej Vidovic left the team (2026-07-05); his /team page was indexed,
+      // so 301 the old URL to /about rather than let it 404.
+      {
+        source: '/team/andrej-vidovic',
+        destination: '/about',
+        permanent: true,
+      },
       {
         source: '/about-us',
         destination: '/about',

@@ -247,7 +247,7 @@ export default async function AboutPage() {
                 <h3 className="mt-4 text-xl font-medium text-surface-900 group-hover:text-primary-600 transition-colors">{member.name}</h3>
                 <p className="mt-1 text-surface-600">{member['job-title'] || ''}</p>
                 {member['bio-summary'] && (
-                  <p className="mt-3 text-surface-600 text-sm leading-relaxed">{member['bio-summary']}</p>
+                  <p className="mt-3 text-surface-600 text-sm leading-relaxed line-clamp-4">{member['bio-summary']}</p>
                 )}
               </Link>
             ))}
