@@ -2,6 +2,7 @@
 
 import { useState, type FormEvent } from 'react';
 import { useRouter } from 'next/navigation';
+import { identifyAndCapture } from '@/lib/posthog-form-tracking';
 
 export function AuditForm() {
   const router = useRouter();
@@ -32,6 +33,18 @@ export function AuditForm() {
         setErrorMsg(data.error || 'Something went wrong');
         return;
       }
+
+      const trimmedEmail = email.trim().toLowerCase();
+      identifyAndCapture(
+        trimmedEmail,
+        { email: trimmedEmail },
+        'audit_form_submitted',
+        {
+          audit_id: data.id,
+          email_domain: trimmedEmail.split('@')[1] ?? '',
+          form_variant: 'audit-classic',
+        },
+      );
 
       router.push(`/audit/${data.id}`);
     } catch {

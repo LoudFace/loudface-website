@@ -1,6 +1,8 @@
 'use client';
 
 import { useState, useRef, useSyncExternalStore, type FormEvent } from 'react';
+import { ensurePostHog } from '@/lib/posthog-client';
+import { identifyAndCapture } from '@/lib/posthog-form-tracking';
 
 const subscribeHydration = () => () => {};
 const getHydratedSnapshot = () => true;
@@ -57,9 +59,8 @@ export function PartnerApplicationForm() {
   function handleFirstFocus() {
     if (formStartedRef.current) return;
     formStartedRef.current = true;
-    void import('posthog-js').then(({ default: posthog }) => {
-      if (!posthog.__loaded) return;
-      posthog.capture('partners_form_started');
+    void ensurePostHog().then((posthog) => {
+      posthog?.capture('partners_form_started');
     });
   }
 
@@ -110,21 +111,19 @@ export function PartnerApplicationForm() {
       }
 
       // PostHog: track partner application submission.
-      // Dynamic import matches the lazy-load pattern in PostHogProvider —
-      // keeps posthog-js out of the form's initial bundle.
-      const emailDomain = trimmedEmail.split('@')[1] ?? '';
-      void import('posthog-js').then(({ default: posthog }) => {
-        if (!posthog.__loaded) return;
-        posthog.identify(trimmedEmail);
-        posthog.capture('partner_application_submitted', {
-          email_domain: emailDomain,
+      identifyAndCapture(
+        trimmedEmail,
+        { email: trimmedEmail, name: fullName.trim() },
+        'partner_application_submitted',
+        {
+          email_domain: trimmedEmail.split('@')[1] ?? '',
           industries: industry,
           acv_bucket: acv,
           has_website: website.trim().length > 0,
           open_to_social_promo: socialPromo || 'unanswered',
           open_to_webinars: webinar || 'unanswered',
-        });
-      });
+        },
+      );
 
       setStatus('success');
     } catch {
