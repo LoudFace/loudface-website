@@ -2,7 +2,7 @@
 
 import { useState, type FormEvent } from 'react';
 import { useRouter } from 'next/navigation';
-import { ensurePostHog } from '@/lib/posthog-client';
+import { identifyAndCapture } from '@/lib/posthog-form-tracking';
 
 export function AuditForm() {
   const router = useRouter();
@@ -34,19 +34,17 @@ export function AuditForm() {
         return;
       }
 
-      // ensurePostHog initializes on demand — this page lives outside the
-      // (site) layout, so the interaction-deferred provider may not have run.
       const trimmedEmail = email.trim().toLowerCase();
-      const emailDomain = trimmedEmail.split('@')[1] ?? '';
-      void ensurePostHog().then((posthog) => {
-        if (!posthog) return;
-        posthog.identify(trimmedEmail, { email: trimmedEmail });
-        posthog.capture('audit_form_submitted', {
+      identifyAndCapture(
+        trimmedEmail,
+        { email: trimmedEmail },
+        'audit_form_submitted',
+        {
           audit_id: data.id,
-          email_domain: emailDomain,
+          email_domain: trimmedEmail.split('@')[1] ?? '',
           form_variant: 'audit-classic',
-        });
-      });
+        },
+      );
 
       router.push(`/audit/${data.id}`);
     } catch {

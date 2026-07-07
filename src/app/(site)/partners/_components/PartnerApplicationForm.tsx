@@ -2,6 +2,7 @@
 
 import { useState, useRef, useSyncExternalStore, type FormEvent } from 'react';
 import { ensurePostHog } from '@/lib/posthog-client';
+import { identifyAndCapture } from '@/lib/posthog-form-tracking';
 
 const subscribeHydration = () => () => {};
 const getHydratedSnapshot = () => true;
@@ -110,24 +111,19 @@ export function PartnerApplicationForm() {
       }
 
       // PostHog: track partner application submission.
-      // ensurePostHog initializes on demand, so the event survives even if the
-      // interaction-deferred provider load hasn't happened yet (e.g. autofill).
-      const emailDomain = trimmedEmail.split('@')[1] ?? '';
-      void ensurePostHog().then((posthog) => {
-        if (!posthog) return;
-        posthog.identify(trimmedEmail, {
-          email: trimmedEmail,
-          name: fullName.trim(),
-        });
-        posthog.capture('partner_application_submitted', {
-          email_domain: emailDomain,
+      identifyAndCapture(
+        trimmedEmail,
+        { email: trimmedEmail, name: fullName.trim() },
+        'partner_application_submitted',
+        {
+          email_domain: trimmedEmail.split('@')[1] ?? '',
           industries: industry,
           acv_bucket: acv,
           has_website: website.trim().length > 0,
           open_to_social_promo: socialPromo || 'unanswered',
           open_to_webinars: webinar || 'unanswered',
-        });
-      });
+        },
+      );
 
       setStatus('success');
     } catch {

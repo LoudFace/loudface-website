@@ -2,7 +2,7 @@
 
 import { useState, useSyncExternalStore, type FormEvent } from 'react';
 import { useRouter } from 'next/navigation';
-import { ensurePostHog } from '@/lib/posthog-client';
+import { identifyAndCapture } from '@/lib/posthog-form-tracking';
 
 const subscribeHydration = () => () => {};
 const getHydratedSnapshot = () => true;
@@ -66,25 +66,20 @@ export function AuditLandingForm() {
         return;
       }
 
-      // ensurePostHog initializes on demand, so the event survives even if the
-      // interaction-deferred provider load hasn't happened yet (e.g. autofill).
       const trimmedEmail = email.trim().toLowerCase();
-      const emailDomain = trimmedEmail.split('@')[1] ?? '';
-      void ensurePostHog().then((posthog) => {
-        if (!posthog) return;
-        posthog.identify(trimmedEmail, {
-          email: trimmedEmail,
-          name: name.trim(),
-        });
-        posthog.capture('audit_form_submitted', {
+      identifyAndCapture(
+        trimmedEmail,
+        { email: trimmedEmail, name: name.trim() },
+        'audit_form_submitted',
+        {
           audit_id: data.id,
-          email_domain: emailDomain,
+          email_domain: trimmedEmail.split('@')[1] ?? '',
           company_name: companyName,
           buyer_persona: persona.trim(),
           has_competitors: competitors.trim().length > 0,
           form_variant: 'ai-audit-landing',
-        });
-      });
+        },
+      );
 
       router.push(`/audit/${data.id}`);
     } catch {
