@@ -2,6 +2,7 @@
 
 import { useState, useSyncExternalStore, type FormEvent } from 'react';
 import { useRouter } from 'next/navigation';
+import { ensurePostHog } from '@/lib/posthog-client';
 
 const subscribeHydration = () => () => {};
 const getHydratedSnapshot = () => true;
@@ -65,11 +66,12 @@ export function AuditLandingForm() {
         return;
       }
 
-      // Dynamic import matches PostHogProvider's lazy-load pattern — keeps posthog-js out of the initial bundle.
+      // ensurePostHog initializes on demand, so the event survives even if the
+      // interaction-deferred provider load hasn't happened yet (e.g. autofill).
       const trimmedEmail = email.trim().toLowerCase();
       const emailDomain = trimmedEmail.split('@')[1] ?? '';
-      void import('posthog-js').then(({ default: posthog }) => {
-        if (!posthog.__loaded) return;
+      void ensurePostHog().then((posthog) => {
+        if (!posthog) return;
         posthog.identify(trimmedEmail, {
           email: trimmedEmail,
           name: name.trim(),

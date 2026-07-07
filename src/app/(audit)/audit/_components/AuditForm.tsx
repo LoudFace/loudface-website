@@ -2,6 +2,7 @@
 
 import { useState, type FormEvent } from 'react';
 import { useRouter } from 'next/navigation';
+import { ensurePostHog } from '@/lib/posthog-client';
 
 export function AuditForm() {
   const router = useRouter();
@@ -33,11 +34,12 @@ export function AuditForm() {
         return;
       }
 
-      // Dynamic import matches PostHogProvider's lazy-load pattern — keeps posthog-js out of the initial bundle.
+      // ensurePostHog initializes on demand — this page lives outside the
+      // (site) layout, so the interaction-deferred provider may not have run.
       const trimmedEmail = email.trim().toLowerCase();
       const emailDomain = trimmedEmail.split('@')[1] ?? '';
-      void import('posthog-js').then(({ default: posthog }) => {
-        if (!posthog.__loaded) return;
+      void ensurePostHog().then((posthog) => {
+        if (!posthog) return;
         posthog.identify(trimmedEmail, { email: trimmedEmail });
         posthog.capture('audit_form_submitted', {
           audit_id: data.id,

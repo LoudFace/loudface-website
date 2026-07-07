@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useRef, useSyncExternalStore, type FormEvent } from 'react';
+import { ensurePostHog } from '@/lib/posthog-client';
 
 const subscribeHydration = () => () => {};
 const getHydratedSnapshot = () => true;
@@ -57,9 +58,8 @@ export function PartnerApplicationForm() {
   function handleFirstFocus() {
     if (formStartedRef.current) return;
     formStartedRef.current = true;
-    void import('posthog-js').then(({ default: posthog }) => {
-      if (!posthog.__loaded) return;
-      posthog.capture('partners_form_started');
+    void ensurePostHog().then((posthog) => {
+      posthog?.capture('partners_form_started');
     });
   }
 
@@ -110,12 +110,15 @@ export function PartnerApplicationForm() {
       }
 
       // PostHog: track partner application submission.
-      // Dynamic import matches the lazy-load pattern in PostHogProvider —
-      // keeps posthog-js out of the form's initial bundle.
+      // ensurePostHog initializes on demand, so the event survives even if the
+      // interaction-deferred provider load hasn't happened yet (e.g. autofill).
       const emailDomain = trimmedEmail.split('@')[1] ?? '';
-      void import('posthog-js').then(({ default: posthog }) => {
-        if (!posthog.__loaded) return;
-        posthog.identify(trimmedEmail);
+      void ensurePostHog().then((posthog) => {
+        if (!posthog) return;
+        posthog.identify(trimmedEmail, {
+          email: trimmedEmail,
+          name: fullName.trim(),
+        });
         posthog.capture('partner_application_submitted', {
           email_domain: emailDomain,
           industries: industry,

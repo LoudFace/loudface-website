@@ -2,11 +2,11 @@
 
 import { usePathname, useSearchParams } from 'next/navigation';
 import { Suspense, useEffect, useRef } from 'react';
+import { ensurePostHog, isPostHogRequested } from '@/lib/posthog-client';
 
 function PostHogPageView() {
   const pathname = usePathname();
   const searchParams = useSearchParams();
-  const initialized = useRef(false);
   const pendingPageview = useRef<string | null>(null);
 
   useEffect(() => {
@@ -16,10 +16,11 @@ function PostHogPageView() {
     const search = searchParams.toString();
     if (search) url += '?' + search;
 
-    // If PostHog already loaded (user interacted), capture immediately
-    if (initialized.current) {
-      import('posthog-js').then(({ default: posthog }) => {
-        posthog.capture('$pageview', { $current_url: url });
+    // If PostHog init was already requested (user interacted, or a form
+    // submit initialized it on demand), capture immediately.
+    if (isPostHogRequested()) {
+      void ensurePostHog().then((posthog) => {
+        posthog?.capture('$pageview', { $current_url: url });
       });
       return;
     }
@@ -28,24 +29,9 @@ function PostHogPageView() {
     pendingPageview.current = url;
 
     function loadPostHog() {
-      if (initialized.current) return;
-
-      // Dynamic import keeps posthog-js out of the main bundle (~56 KB gzipped).
-      // Deferred to user interaction to avoid competing with hydration for main thread.
-      import('posthog-js').then(({ default: posthog }) => {
-        if (initialized.current) return;
-        posthog.init(process.env.NEXT_PUBLIC_POSTHOG_KEY!, {
-          api_host: process.env.NEXT_PUBLIC_POSTHOG_HOST || 'https://us.i.posthog.com',
-          ui_host: 'https://us.posthog.com',
-          capture_pageview: false,
-          capture_pageleave: true,
-          person_profiles: 'identified_only',
-          disable_session_recording: true,
-        });
-        initialized.current = true;
-
+      void ensurePostHog().then((posthog) => {
         // Fire the pageview that was pending during initial load
-        if (pendingPageview.current) {
+        if (posthog && pendingPageview.current) {
           posthog.capture('$pageview', { $current_url: pendingPageview.current });
           pendingPageview.current = null;
         }
