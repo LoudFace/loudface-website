@@ -128,16 +128,13 @@ window.addEventListener(e,loadCal,{once:true,passive:true});});})();`}
             published content. */}
         {isDraftMode && <VisualEditing />}
 
-        {/* Leadsy.ai visitor identification pixel — afterInteractive so it
-            fires on fast-bouncing sessions (lazyOnload missed them). Tag is
-            already async so it won't block rendering. */}
-        <Script
-          id="vtag-ai-js"
-          src="https://r2.leadsy.ai/tag.js"
-          strategy="afterInteractive"
-          data-pid="svBdk8PfDCJmCF4z"
-          data-version="062024"
-        />
+        {/* RB2B visitor identification pixel — replaces Leadsy (a white-label
+            of the same RB2B engine; both guard on window.reb2b so they block
+            each other and can't coexist). afterInteractive so it fires on
+            fast-bouncing sessions; loader is async so it won't block rendering. */}
+        <Script id="reb2b" strategy="afterInteractive">
+          {`!function(key){if(window.reb2b)return;window.reb2b={loaded:true};var s=document.createElement("script");s.async=true;s.src="https://ddwl4m2hdecbv.cloudfront.net/b/"+key+"/"+key+".js.gz";document.getElementsByTagName("script")[0].parentNode.insertBefore(s,document.getElementsByTagName("script")[0]);}("5NRP9H7R3PO1");`}
+        </Script>
       </PostHogProvider>
     </div>
   );
