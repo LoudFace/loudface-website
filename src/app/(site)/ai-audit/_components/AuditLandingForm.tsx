@@ -70,13 +70,17 @@ export function AuditLandingForm() {
       const emailDomain = trimmedEmail.split('@')[1] ?? '';
       void import('posthog-js').then(({ default: posthog }) => {
         if (!posthog.__loaded) return;
-        posthog.identify(trimmedEmail);
+        posthog.identify(trimmedEmail, {
+          email: trimmedEmail,
+          name: name.trim(),
+        });
         posthog.capture('audit_form_submitted', {
           audit_id: data.id,
           email_domain: emailDomain,
           company_name: companyName,
           buyer_persona: persona.trim(),
           has_competitors: competitors.trim().length > 0,
+          form_variant: 'ai-audit-landing',
         });
       });
 
