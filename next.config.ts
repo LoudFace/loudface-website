@@ -485,6 +485,23 @@ const nextConfig: NextConfig = {
         destination: '/blog/best-aeo-agencies-b2b-saas-2026',
         permanent: true,
       },
+      // ─── GEO cluster: fold the 07-08 head-term duplicate (2026-07-10) ──
+      // best-generative-engine-optimization-agencies-2026 (shipped 07-08 by
+      // the daily loop) duplicated the "Best GEO Agencies 2026" head term the
+      // established page already owns. Evidence at fold time:
+      //   • KEEP best-geo-agencies-b2b-saas-2026 — 77 Peec citations/30d
+      //     (cite-rate 1.4), 2,044 GSC imp/14d incl. pos 1.0 queries, 12.7k
+      //     words. The equity page.
+      //   • FOLD best-generative-engine-optimization-agencies-2026 — 2 days
+      //     live, 2 citations, zero GSC history. Its unique scored-rubric
+      //     elements were grafted into the survivor before this 301.
+      // Root cause tracked as the P1 cannibalization flag (Pending
+      // Commitments, 2026-07-09); collision-gate fix is a separate P2.
+      {
+        source: '/blog/best-generative-engine-optimization-agencies-2026',
+        destination: '/blog/best-geo-agencies-b2b-saas-2026',
+        permanent: true,
+      },
       // ─── Webflow-era kill list (2026-05-26 structural audit) ─────────
       // Two old Webflow posts from the structural audit. Both fail the
       // KEEP threshold (<100 imps/mo for vs-alternatives, ~108 imps but
