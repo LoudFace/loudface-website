@@ -60,7 +60,7 @@ export function CoverCTA() {
               Book a strategy call
             </a>
             <span className="slots">
-              <span className="dot"></span>2 client slots open for Q3
+              <span className="dot"></span>2h response time, every tier
             </span>
           </div>
         </div>

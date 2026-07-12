@@ -70,7 +70,7 @@ export function CoverCTA() {
           </div>
         </div>
         <div className="cover-credit rv">
-          <span>Cover &mdash; LIQID, built by LoudFace</span>
+          <span>Cover &mdash; Montblanc, built by LoudFace</span>
           <span>loudface.co</span>
         </div>
       </div>

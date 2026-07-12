@@ -12,9 +12,29 @@ alternating with **crisp-light** sections (FlowNinja-style color-blocking), Neue
 Geist Mono, blueprint-figure diagrams. The **homepage is the reference build** and is DONE + LIVE at `/`.
 Now migrating the other pages to match. `DESIGN.md` §0–10 is the authority.
 
-## Status (2026-07-08)
+## Status (2026-07-12)
 
 **DONE:**
+- **/services = v3, fully componentized + NET-NEW hub (2026-07-12).**
+  `src/app/(site)/services/page.tsx` composes `src/app/services-v3/*` (HeroServices
+  "work is the pitch" electric-recipe stage + counter-drifting work wall, LogosMarquee
+  indigo strip, Exhibits — the signature: LIQID/Toku/Eraser each crediting the services
+  that shipped it via chips routing to child pages, stat interlude, ServicesIndex
+  Build|Growth two-track directory, Clarifier SEO/AEO-vs-GEO, Faq, CoverCTA, shared
+  FooterV3). Port of the approved `services-v3/proof-stack.html` concept. Bespoke CSS
+  scoped `:where(.svv3)` (same pattern as `.hpv3`/`.abv3`/`.prv3`); hero pulled under the
+  sticky header with `margin-top:-64px`. **The `/services` → `/services/webflow` 301 in
+  `next.config.ts` was REMOVED** so the hub resolves (do NOT re-add; browsers that cached
+  the old 301 clear only by time/hard-reload — nothing to do server-side). Header
+  dark-variant + shared-footer suppression extended to `/services` in `(site)/layout.tsx`;
+  `/services` added to `sitemap.ts`. Live Sanity: hero work-wall + exhibit screenshots via
+  `getHomeV3Images()` (same helper/slugs as homepage SelectedWork, hardcoded fallback);
+  logo marquee reuses `home-v3/_logos.ts`. SEO: canonical `/services`, BreadcrumbList +
+  ItemList (7 services → child URLs) + FAQPage JSON-LD (FAQ single-sourced with the
+  accordion). QA (P12+P7) folded in: decorative mono cleanup (`.track-num`, `.svc-both
+  .glyph`, `.ex-tag`, `.ex-out em` → Satoshi/sentence-case); mono kept on citation chip,
+  browser-bar URLs, and the $5k/mo pill. Child routes (`/services/webflow` etc.) untouched
+  and still 200. Only dollar figure: $5k/mo (once).
 - **/pricing = v3, fully componentized (2026-07-08).** `src/app/(site)/pricing/page.tsx` composes
   `src/app/pricing-v3/*` (HeroPricing tier-deck stage, LogosMarquee, HowItWorks stepper plate, Tracks,
   Compare table, Includes + SpecialArrangements, Exhibits testimonials, Faq, CoverCTA, shared FooterV3).
@@ -47,16 +67,22 @@ Now migrating the other pages to match. `DESIGN.md` §0–10 is the authority.
 **NOT done / important:**
 - **NOTHING is deployed.** All changes are in the working tree, **not committed, not pushed.** Production
   changes only on `git push` (Vercel auto-deploys). Old homepage is in git history if a revert is wanted.
-- **Other pages are still pre-v3** (old light design): `/services/*`, `/seo-for/*`,
-  `/work` + `/work/[slug]`, `/blog` + `/blog/[slug]`, `/contact`. Their headers still show the old white
-  bar + green CTA. These are the rollout.
+- **Other pages are still pre-v3** (old light design): the **child** service pages
+  `/services/webflow` · `/services/seo-aeo` · `/services/geo` · `/services/cro` ·
+  `/services/ux-ui-design` · `/services/copywriting` · `/services/growth-autopilot` (the
+  `/services` HUB is now v3 — see DONE), `/seo-for/*`, `/work` + `/work/[slug]`,
+  `/blog` + `/blog/[slug]`, `/contact`. Their headers still show the old white bar +
+  green CTA. These are the rollout.
+- **`services-v3/*` components live in a route folder** (like `home-v3`/`about-v3`/`pricing-v3`),
+  not `src/components/sections/` — deliberately unregistered in COMPONENTS.md, matching the
+  established v3-route-folder precedent.
 - The `home-v3/*` components live in a route folder, not `src/components/sections/`. Move + register in
   COMPONENTS.md when convenient (update `/` imports on the move).
 
 ## Next steps (the page rollout)
 Redesign each page to v3 **through the design loop** (`/design` → it routes to the `design-loop` skill;
 it anchors on `DESIGN.md` + the taste-rulebook + rejections). Agreed order: **1) /about (DONE 2026-07-06)
-→ 2) /pricing (DONE 2026-07-08) → 3) /services → 4) /work → 5) /blog.**
+→ 2) /pricing (DONE 2026-07-08) → 3) /services (DONE 2026-07-12) → 4) /work (NEXT) → 5) /blog.**
 
 ### /about — planned v3 mapping (current sections → v3 treatments)
 Current `/about` (`src/app/(site)/about/page.tsx`, ~341 lines): intro + SectionHeaders + a **wine-palette**

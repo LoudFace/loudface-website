@@ -149,7 +149,10 @@ export function Story({ team }: { team: TeamPerson[] }) {
           </li>
           <li>
             <b>2024</b>
-            <span>Team grows to six. Webflow names LoudFace an Enterprise Partner.</span>
+            <span>
+              Team grows to six. Already a Webflow Enterprise Partner &mdash; one of a small
+              number of agencies worldwide.
+            </span>
           </li>
           <li>
             <b>2026</b>

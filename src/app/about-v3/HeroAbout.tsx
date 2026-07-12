@@ -33,7 +33,7 @@ export function HeroAbout({ team }: { team: TeamPerson[] }) {
               Book an intro call
             </a>
             <span className="slots">
-              <i className="dot"></i>2 client slots open for Q3
+              <i className="dot"></i>2h response time
             </span>
             <span className="hero-cta-div" aria-hidden="true"></span>
             <a className="hero-meta" href="#team">

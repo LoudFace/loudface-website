@@ -162,11 +162,11 @@ const nextConfig: NextConfig = {
         destination: '/',
         permanent: true,
       },
-      {
-        source: '/services',
-        destination: '/services/webflow',
-        permanent: true,
-      },
+      // NOTE: the permanent 301 /services → /services/webflow was REMOVED
+      // (2026-07-12) so the net-new /services hub page can resolve. Do NOT
+      // re-add it. Browsers that cached the old 301 will keep redirecting until
+      // their cache expires; nothing to do server-side (a permanent redirect
+      // can't be un-cached remotely — only time/hard-reload clears it).
       {
         source: '/why-webflow',
         destination: '/services/webflow',

@@ -49,6 +49,13 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       changeFrequency: 'weekly',
       priority: 0.8,
     },
+    // Services hub (net-new v3 page; previously 301'd to /services/webflow)
+    {
+      url: `${baseUrl}/services`,
+      lastModified: staticLastModified,
+      changeFrequency: 'monthly',
+      priority: 0.9,
+    },
     // Service pages
     {
       url: `${baseUrl}/services/seo-aeo`,
