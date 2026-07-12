@@ -115,10 +115,26 @@ const industriesDropdown: Dropdown = {
   ctaText: "View all industries →",
 };
 
-export function Header() {
+// Clean line-icons for the v3 (deep-indigo) dropdown — indigo-300 stroke, keyed by item href.
+const DROPDOWN_ICON: Record<string, string> = {
+  "/services/webflow": '<path d="M8 6 3 12l5 6"/><path d="m16 6 5 6-5 6"/>',
+  "/services/seo-aeo": '<circle cx="11" cy="11" r="6"/><path d="m20 20-3.5-3.5"/><path d="m8.5 12 2 2 3.5-4"/>',
+  "/services/ux-ui-design": '<rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 9h18M9 9v11"/>',
+  "/services/cro": '<path d="M3 5h18l-7 8v6l-4 2v-8Z"/>',
+  "/services/copywriting": '<path d="M4 20h4L20 8l-4-4L4 16v4Z"/><path d="m14 6 4 4"/>',
+  "/services/growth-autopilot": '<path d="M4 18a8 8 0 1 1 16 0"/><path d="M12 18 16 9"/><circle cx="12" cy="18" r="1.4" fill="currentColor" stroke="none"/>',
+  "/seo-for/saas": '<path d="M7 18a4 4 0 0 1-.5-8 5.5 5.5 0 0 1 10.6 1.2A3.5 3.5 0 0 1 16 18Z"/>',
+  "/seo-for/b2b": '<rect x="3" y="7" width="18" height="13" rx="2"/><path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><path d="M3 12h18"/>',
+  "/seo-for/ecommerce": '<circle cx="9" cy="20" r="1.4"/><circle cx="18" cy="20" r="1.4"/><path d="M3 4h2l2.4 12h11l2-8H6"/>',
+  "/seo-for/healthcare": '<path d="M12 21s-7-4.6-9.2-9A4.6 4.6 0 0 1 12 6a4.6 4.6 0 0 1 9.2 6c-2.2 4.4-9.2 9-9.2 9Z"/>',
+};
+const DEFAULT_DROPDOWN_ICON = '<circle cx="12" cy="12" r="8"/>';
+
+export function Header({ heroTheme }: { heroTheme?: 'dark' } = {}) {
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [mobileAccordion, setMobileAccordion] = useState<string | null>(null);
+  const [scrolled, setScrolled] = useState(false);
   const dropdownRefs = useRef<Record<string, HTMLDivElement | null>>({});
   const closeTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -163,6 +179,20 @@ export function Header() {
       }
     };
   }, []);
+
+  // Dark-hero variant: transparent + light over the hero, flips to solid glass
+  // once scrolled off it. Only wired when heroTheme="dark"; no-op otherwise.
+  useEffect(() => {
+    if (heroTheme !== "dark") return;
+    const hero = document.querySelector<HTMLElement>(".hero");
+    const onScroll = () => {
+      const past = hero ? window.scrollY > hero.offsetHeight - 72 : window.scrollY > 600;
+      setScrolled(past);
+    };
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, [heroTheme]);
 
   const handleDropdownEnter = (name: string) => {
     if (closeTimeoutRef.current) {
@@ -229,43 +259,47 @@ export function Header() {
         role="menu"
       >
         <div
-          className={`bg-white rounded-2xl shadow-xl ring-1 ring-black/5 overflow-hidden transition-transform duration-200 ${
+          className={`bg-[linear-gradient(180deg,#171445_0%,#191552_100%)] rounded-2xl shadow-2xl ring-1 ring-white/10 overflow-hidden transition-transform duration-200 ${
             openDropdown === name ? "scale-100" : "scale-[0.98]"
           }`}
         >
           <div className="p-6">
             <div className="pb-4">
-              <span className="block text-sm font-semibold text-surface-900">
+              <span className="block text-sm font-medium text-white">
                 {dropdown.label}
               </span>
-              <p className="text-2xs text-surface-500 mt-1">
+              <p className="text-xs text-white/70 mt-1.5">
                 {dropdown.description}
               </p>
             </div>
-            <div className="h-px bg-surface-100 -mx-6 mb-4" />
+            <div className="h-px bg-white/10 -mx-6 mb-4" />
             <div className="grid gap-1">
               {dropdown.items.map((item) => (
                 <Link
                   key={item.title}
                   href={item.href}
-                  className="group flex items-start gap-3 p-2.5 -mx-1 rounded-xl hover:bg-surface-50 transition-colors duration-150 no-underline"
+                  className="group flex items-start gap-3 p-2.5 -mx-1 rounded-xl hover:bg-white/6 transition-colors duration-150 no-underline"
                   role="menuitem"
                   onClick={() => setOpenDropdown(null)}
                 >
-                  <div className="flex-shrink-0 flex items-center justify-center w-9 h-9 bg-surface-100 group-hover:bg-surface-200 rounded-lg transition-colors duration-150">
-                    <Image
-                      src={item.icon}
-                      alt={`${item.title} icon`}
-                      width={20}
-                      height={20}
-                      className="w-5 h-5"
+                  <div className="flex-shrink-0 flex items-center justify-center w-9 h-9 bg-white/6 group-hover:bg-white/10 ring-1 ring-white/10 rounded-lg transition-colors duration-150">
+                    <svg
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth={1.6}
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      className="w-[18px] h-[18px] text-primary-300 group-hover:text-primary-200 transition-colors"
+                      aria-hidden="true"
+                      dangerouslySetInnerHTML={{ __html: DROPDOWN_ICON[item.href] || DEFAULT_DROPDOWN_ICON }}
                     />
                   </div>
                   <div className="flex-1 min-w-0 pt-0.5">
-                    <span className="block text-sm font-medium text-surface-900">
+                    <span className="block text-sm font-medium text-white">
                       {item.title}
                     </span>
-                    <span className="block text-2xs text-surface-500 mt-0.5 leading-snug">
+                    <span className="block text-2xs text-white/60 mt-0.5 leading-snug">
                       {item.description}
                     </span>
                   </div>
@@ -274,14 +308,14 @@ export function Header() {
             </div>
             {dropdown.ctaText && (
               <>
-                <div className="h-px bg-surface-100 -mx-6 mt-4 mb-4" />
+                <div className="h-px bg-white/10 -mx-6 mt-4 mb-4" />
                 <button
                   type="button"
                   data-cal-trigger
-                  className="w-full text-2xs py-2.5 px-4 rounded-lg bg-surface-900 hover:bg-surface-800 transition-colors duration-150 inline-flex items-center justify-center gap-1 font-medium border-none cursor-pointer"
+                  className="w-full text-2xs py-2.5 px-4 rounded-lg bg-white/6 hover:bg-white/10 ring-1 ring-white/10 transition-colors duration-150 inline-flex items-center justify-between gap-1 font-medium border-none cursor-pointer"
                   onClick={() => setOpenDropdown(null)}
                 >
-                  <span className="text-surface-400">
+                  <span className="text-white/60">
                     Looking for a new agency partner?
                   </span>
                   <span className="text-white">Get in touch →</span>
@@ -295,7 +329,11 @@ export function Header() {
   );
 
   return (
-    <header className="sticky top-0 z-50 bg-white/95 backdrop-blur-md border-b border-surface-100/80">
+    <header
+      data-hero-theme={heroTheme}
+      data-hero-scrolled={heroTheme === "dark" && scrolled ? "" : undefined}
+      className="sticky top-0 z-50 bg-white/95 backdrop-blur-md border-b border-surface-100/80"
+    >
       {/* Accepting Bookings — square tab attached just below the navbar's bottom border */}
       <div className="hidden lg:block absolute top-full right-0">
         <div className="inline-flex items-center gap-2 px-4 py-2 bg-white/95 backdrop-blur-md border border-surface-100/80 border-t-0 border-r-0 rounded-bl-lg">
@@ -350,6 +388,7 @@ export function Header() {
               <button
                 type="button"
                 data-cal-trigger
+                data-nav-cta=""
                 className="hidden lg:inline-flex items-center justify-center px-5 py-2 bg-surface-900 text-white text-sm font-sans font-medium rounded-full hover:bg-surface-800 active:scale-[0.98] transition-all duration-150 border-none cursor-pointer focus-visible:outline-2 focus-visible:outline-primary-500 focus-visible:outline-offset-2"
               >
                 Book an intro call

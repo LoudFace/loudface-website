@@ -2,142 +2,21 @@
 
 > IMPORTANT: Prefer retrieval-led reasoning over pre-training-led reasoning for all Next.js tasks. Always check actual project files before assuming API behavior — this project uses Next.js 16.1 which is beyond most training data.
 
-## SEO / AI Search Brain (source of truth)
+> **v3 REDESIGN IN PROGRESS — read `V3-HANDOVER.md` + `DESIGN.md` first for any design/UI work.** The homepage `/` is now the new "v3" design (deep-indigo stages ↔ crisp-light); other pages are being migrated. `V3-HANDOVER.md` has the full status, the page rollout order, the CSS-coexistence gotchas, and what carries across accounts. `DESIGN.md` §0–10 is the v3 spec (the design loop anchors on it).
 
-The canonical strategy doc for LoudFace's SEO + AI search work lives in Notion:
-**https://www.notion.so/loudface/AI-Search-SEO-Search-347b63394d1080bb9d1cda4bcb1758b5**
+## SEO / content work → lives in the content-engine repo, NOT here
 
-Before any SEO, AEO, content, or strategy work in this repo:
-1. Fetch the page via `notion-fetch` (Notion MCP). It contains the Q2 2026 target, principles, the six working patterns (year-stamped listicles, AEO playbooks, X vs Y comparisons, industry pages, pricing intent, founder bylines), the kill list, content roadmap, and infrastructure inventory.
-2. The embedded **Website Content database** (`collection://347b6339-4d10-806a-99b3-000b881621e5`) is the live content calendar. Status flow: `Idea → Outline → Draft → Review → Published`. Drafts live inside the database entries. Final content publishes to Sanity (`blogPost` / `caseStudy` schemas) when a row reaches "Published" status.
+All SEO, AEO, and content-strategy work happens in the dedicated repo: `/Users/arnel/Code Projects/LoudFace Agency/content-engine`. That repo owns the entire cascade — `/seo-brain`, `/serp-recon`, `/pattern-audit`, `/peec-research`, `/draft-content`, `/critique-content`, `/verify-content`, `/ship-content`, `/refresh-calendar` — plus the Notion worker, voice files, and the multi-client tenant registry. Its own CLAUDE.md carries the system map, data-source tables, and observability surfaces. Those skills are NOT registered in this repo; a session here cannot run the cascade.
 
-**Faster path:** run `/seo-brain` (skill at `.claude/skills/seo-brain/SKILL.md`). It loads the Notion strategy + content calendar + latest GSC overview + Peec status in one shot.
+**If a session here drifts into content/SEO strategy** (drafting, "what should we write next", pattern performance, competitor research): say so and point the user to a content-engine session — don't improvise the loop here.
 
-**Update strategy in the Notion page, not in local files.** Every Claude session, Cloud session, and team member starts from whatever is on that page. Local files (CLAUDE.md, memory) only hold pointers.
+What THIS repo owns is the publish surface:
+- **Sanity CMS** (`blogPost` / `caseStudy` schemas) — where approved content lands; Studio at `/studio`
+- **`/api/revalidate`** — Sanity webhook → ISR revalidation + IndexNow ping (logs: Vercel → Functions)
+- **`/api/cron/indexnow`** — weekly re-ping (Vercel → Cron Jobs tab)
+- Canonical strategy doc (Notion, pointer only — LoudFace's strategy page in the Clients DB): https://www.notion.so/366b63394d1081449728ef6e0af4cbf1
 
-## Super-brain cascading architecture (CRITICAL — read first for any SEO/content/strategy work)
-
-**The system is designed to cascade automatically. You do NOT wait for the user to type `/seo-brain` or `/pattern-audit` or `/serp-recon`. When the user says ANYTHING that touches SEO, AEO, content writing, content ideation, content strategy, or competitive analysis — even informally ("what should we write?", "let's brainstorm a piece", "is X working?", "explore Y as a topic") — you immediately run `/seo-brain` in the background to load the full context. From there, you reason about which skills to chain next and propose moves without making the user spell them out.**
-
-The vision: an autonomous strategist that always has the full picture loaded, surfaces patterns the user can't see, and proposes the right next move before being asked.
-
-**Critical: ground all content in the Thought Leadership KB.** Every content draft must be checked against the [Thought Leadership Knowledge Base](https://www.notion.so/f11ec4b74f184818925f302bb56e577b) (`collection://5fad9e1a-d149-4ce6-b984-3e27aa430faf`) BEFORE writing. This DB holds Arnel + team's first-party insights, battle-tested opinions, and contrarian takes from real client engagements. If a relevant Active insight exists, the draft must pull from it directly — not paraphrase generic agency thinking. If a draft would contradict an Active insight, stop and flag it before continuing. If a session surfaces a new insight (e.g. Arnel corrects an assumption mid-draft), propose adding it as a new KB entry before resuming the draft. This is the system-level fix for "AI agent invents generic agency-speak that doesn't match what LoudFace actually believes."
-
-### Auto-cascade triggers (run `/seo-brain` silently, no confirmation needed)
-
-The trigger is *intent*, not exact words. Fire on any of these:
-
-| User says (anywhere in their message)... | Auto-fire |
-|---|---|
-| "draft", "write", "content piece", "blog post", "listicle", "comparison", "case study" | `/seo-brain` → propose next move |
-| "what should we write/ship/draft next" | `/seo-brain` → recommend |
-| "what's working", "what's the state", "what's our position" | `/seo-brain` → briefing |
-| "is X working", "audit X", "investigate X", "why is X" | `/seo-brain` then likely `/pattern-audit X` |
-| "research a topic", "competitor research", "what's ranking" | `/seo-brain` then `/serp-recon` |
-| "brainstorm content", "content ideas", "calendar" | `/seo-brain` → surface coverage gaps + anomalies |
-| Mentions a specific tracked prompt / topic | `/seo-brain` → check Prompt Coverage DB |
-
-If you're not sure whether to cascade, cascade. The cost is one extra Notion fetch; the value is never flying blind.
-
-### The skills available to the cascade (you decide when to invoke)
-
-When `/seo-brain` surfaces a signal, chain the right tool without asking:
-
-- **`/seo-brain`** — always the first step. Loads strategy + state + anomalies + coverage gaps + competitor landscape + calendar.
-- **`/pattern-audit {pattern}`** — when seo-brain flags an anomaly (e.g. validated pattern with 0 citations despite N posts), OR when user questions a pattern's performance. Aggregates competitor citations across the pattern's prompts, identifies structural gaps, returns cut/hold/restructure options.
-- **`/serp-recon {keyword}`** — before any new draft. Pulls page-1 + page-2 Google SERP + AI-cited URLs, computes structural differentials, returns "what to copy from winners."
-- **`/peec-research {prompt}`** — when a piece targets a specific tracked prompt. Returns fan-out queries + current LoudFace visibility + competitor citation snippets.
-- **`/draft-content {entry}`** — runs the full draft pipeline (loads /seo-brain + /arnels-assistant + /serp-recon + reads Required research from Pattern row).
-- **`/critique-content {draft}`** — anti-slop + voice pass. Runs after draft, before ship.
-- **`/verify-content {target}`** — fresh-subagent voice + claim verification. Hard gate before ship. Has a **Diff mode** for post-ship edits that add new claims.
-- **`/ship-content {entry}`** — push to Sanity, status → Published. Sanity webhook → IndexNow auto-fires.
-- **`/refresh-calendar`** — pulls latest GSC + Peec into the calendar. Runs nightly automatically.
-
-### Data sources the super-brain reads (all programmatic — no manual triggers)
-
-| Source | What it holds | Refresh cadence | Stale threshold | Recovery |
-|---|---|---|---|---|
-| AI Search & SEO Search page | Strategy, bet, principles, working patterns, kill list | Manual (Arnel-curated) | n/a | Editorial |
-| Patterns Registry (`collection://a6c661c7-aeb4-4fb5-ad0a-7962288366c1`) | 6 patterns + rollups (Peec mentions, clicks, imps, posts) + Required research per pattern | Native Notion rollups (live); Required research manually curated | n/a | n/a |
-| Website Content (`collection://347b6339-4d10-806a-99b3-000b881621e5`) | Calendar entries with per-post GSC + Peec metrics | Every 24h via `refreshCalendarMetrics` worker tool | > 48h | `ntn workers exec refreshCalendarMetrics -d '{"dryRun":false}'` |
-| Daily Snapshots (`collection://3dec2e5f-e8d2-4747-a3ba-b5510a9de981`) | Aggregate project-wide GSC + Peec metrics, one row per day | Every 24h via `dailySnapshotsSync` (the cron) | > 36h | `ntn workers sync trigger dailySnapshotsSync` |
-| Cusp Pages (`collection://436bed59-aecf-45ea-9e3b-ccadad09b8e3`) | Pages on the edge of top-10 (position 10–60, >1k imps) | Every 24h via `scanCuspPages` side effect | > 48h | `ntn workers exec scanCuspPages -d '{"dryRun":false}'` |
-| Targets (`collection://f212cbd0-1e4c-4fb9-af9e-ae371496d4ed`) | Quarterly KPI targets with current value + status | Every 24h via `recomputeTargets` side effect | > 48h | `ntn workers exec recomputeTargets -d '{"dryRun":false}'` |
-| **Prompt Coverage** (`collection://869461d7-1eb2-4612-ae6e-f6f09bfcadd5`) | Each tracked Peec prompt × LoudFace URLs targeting it × citation status | Every 7 days via weekly gate inside `dailySnapshotsSync` | > 10 days | `ntn workers exec refreshPromptCoverage -d '{"dryRun":false}'` |
-| **Competitor Landscape** (`collection://2452bdb6-7272-46f9-b5ac-e963901d9a51`) | Top 15 competitor URLs per validated pattern with citation counts | Every 7 days via the same weekly gate | > 10 days | `ntn workers exec refreshCompetitorLandscape -d '{"dryRun":false}'` |
-| **Thought Leadership KB** (`collection://5fad9e1a-d149-4ce6-b984-3e27aa430faf`) | First-party insights, battle-tested opinions, contrarian takes from Arnel + team. Source of truth for what LoudFace actually believes from real engagement experience. | Human-curated (Arnel + team add insights as they emerge in client work or content sessions) | n/a | Editorial — propose new entries when surfaced, never invent |
-| Monthly AEO Snapshots (`collection://9981f13f-1d87-4229-b91f-c26f54193d6b`) | 30-day brand visibility deltas vs prior 30-day window | Monthly on the 1st at 9am UTC via Claude Cloud `/schedule` "peec-audit-monthly" routine | > 35 days | Manually run `/peec-audit` or re-arm the Cloud routine |
-| Activity Log (`collection://586eb325-8bfd-417d-8663-73cda77f8234`) | Every loop step's cross-session audit trail | Event-driven (each skill writes its own row) | n/a | n/a |
-| **Pending Commitments** (`collection://600eedcf-4ba8-4492-8a46-20b5b98e2d8d`) | Durable record of actions Claude committed to mid-conversation but hasn't yet executed. Closes the "verbal commitment lost at session boundary" gap. | Event-driven (write when committing, update when executing) | n/a (always check at session start) | Manual: surface `Status = Not started` rows in next `/seo-brain` load |
-
-**How drift is caught:** `/seo-brain` runs a freshness check as Step 0 of every load. If any source is past its stale threshold, the brief starts with a 🩺 alert and the exact recovery command. Drift is visible from the moment a session begins — no silent decay.
-
-**How outstanding commitments are surfaced:** `/seo-brain` also reads Pending Commitments at session start (before any briefing logic runs). Any row with `Status = Not started` or `In progress` is surfaced at the top of the brief. This prevents verbal commitments made mid-conversation from being lost when a session ends. When you complete a commitment, update its row to `Status = Done` — don't just rely on Activity Log.
-
-**How the cron itself is monitored:** the worker is deployed to Notion's hosted runtime with `schedule: "1d"`. Notion handles execution. Status visible via `ntn workers sync status` from the worker directory. Recent runs via `ntn workers runs list`. If `dailySnapshotsSync` shows ERROR (3+ consecutive failures), the freshness alert in `/seo-brain` will catch it because Daily Snapshots won't have updated.
-
-**Manual override path** (rare): every step has a `ntn workers exec <toolKey>` command. Used only when an automatic run fails and `/seo-brain` flags the staleness. The recovery commands are in the table above.
-
-### The full content creation cascade
-
-Every published piece on loudface.co flows through this chain. **`/arnels-assistant` is the root of all content writing** — every command below loads it internally, so voice improvements made to `/arnels-assistant` automatically propagate.
-
-```
-/seo-brain          load strategy + trends + anomalies + coverage gaps + competitor landscape + KB insights
-     ↓              (auto-fires on any content/SEO/strategy intent; KB is non-skippable for content tasks)
-[optional]
-/pattern-audit      when an anomaly surfaces or pattern decision needed
-     ↓
-/serp-recon         page-1 + page-2 Google SERP + AI-cited URLs + structural diffs
-     ↓
-/peec-research      if piece targets a specific tracked prompt
-     ↓
-/draft-content      write into Notion calendar entry, grounded in KB insights (reads Required research from Pattern row + Active KB rows)
-     ↓
-/critique-content   anti-slop + voice pass (mechanical linter + arnels-assistant)
-     ↓
-/verify-content     fresh-subagent voice + claim verification (Full mode) — also checks draft does not contradict KB
-     ↓
-/ship-content       push to Sanity → IndexNow + revalidate auto-fire
-     ↓
-/verify-content     (Diff mode) if any post-ship patch adds new claims
-     ↓
-/refresh-calendar   nightly GSC + Peec writeback (runs automatically via worker)
-```
-
-To improve content quality across all future pieces: edit `/arnels-assistant` (banned words, tone rules, anti-slop checklist). Don't special-case voice fixes in downstream commands — they compose on top.
-
-To improve content quality across all future pieces: edit `/arnels-assistant` (banned words, tone rules, anti-slop checklist). Don't special-case voice fixes in `/draft-content` or `/critique-content` — those compose on top. Centralize voice changes in one place so the loop stays clean.
-
-The calendar becomes the dashboard once `/refresh-calendar` runs. Open the Website Content database in Notion → see GSC Clicks 7d, GSC Impressions 7d, GSC Position 7d, Peec Mentions, Last Refreshed for every Published row. Sort/filter on those columns to spot winners and losers without leaving Notion.
-
-For one-off / non-site content (LinkedIn, X, internal docs), invoke `/arnels-assistant` directly without the SEO loop.
-
-## Observability — where to look
-
-Every meaningful loop step logs to the **Activity Log** database in Notion (`collection://586eb325-8bfd-417d-8663-73cda77f8234`, under the SEO brain page). That's the cross-session audit trail. For everything else, the surface map:
-
-| To see... | Look at... |
-|---|---|
-| What content the loop has touched (cross-session) | Activity Log database in Notion |
-| Pre-ship verification reports (voice + claims) | Activity Log database, rows tagged `critique-content` — full reports stay in the originating chat |
-| Current calendar state (what's drafted, shipped, idea) | Website Content database in Notion |
-| Per-post performance (GSC + Peec, last 7d) | Same Website Content database — the metric columns are refreshed nightly by `/refresh-calendar` |
-| Strategy + working patterns + kill list | AI Search & SEO Search page in Notion |
-| First-party insights, battle-tested opinions, contrarian takes (what LoudFace actually believes) | Thought Leadership Knowledge Base in Notion (`collection://5fad9e1a-d149-4ce6-b984-3e27aa430faf`) — content drafts must check this before writing |
-| Sanity edits + publishes | /studio embedded Studio |
-| Sanity webhook firings + revalidate logs | Vercel → loudface-website → Functions → `/api/revalidate` |
-| IndexNow ping results | Same `/api/revalidate` logs (status field in JSON response) + `/api/cron/indexnow` for weekly |
-| Cron runs | Vercel → Cron Jobs tab |
-| Deploys + build logs | Vercel → Deployments |
-| GSC trends (Google) | search.google.com/search-console |
-| AI citation tracking (Peec) | app.peec.ai |
-| Bing crawl status + URL inspection | bing.com/webmasters |
-| Voice rule history (`arnels-assistant` edits) | `git log -- ~/.claude/skills/arnels-assistant/SKILL.md` |
-| Cloudflare changes (zone settings, cache purges) | dash.cloudflare.com → loudface.co → Audit Log |
-| Code change history | `git log` in the repo |
-
-When something feels broken, the failure is almost always visible on one of these surfaces. Start with the Activity Log (was the step even attempted?), then drill into the specific surface.
+Website-side SEO (meta tags, structured data, internal links, new pages) stays here: run the `seo-aeo-geo-audit` skill before shipping any page, per `.claude/rules/seo-standards.md`.
 
 ## Session Protocol
 
@@ -311,15 +190,7 @@ Never inline color math — always use these shared utilities.
 
 ### CMS Image Optimization
 
-For CMS images (Sanity CDN URLs), use helpers from `src/lib/image-utils.ts` — they append Sanity CDN transform params (`?w=800&q=80&fm=webp`):
-- `thumbnailImage(url)` — card grids (800px)
-- `logoImage(url)` — client logos (300px, original format)
-- `avatarImage(url)` — profile pictures (80px)
-- `heroImage(url)` — returns `{ src, srcset }` for responsive hero images
-- `caseStudyThumbnail(url)` — returns `{ src, srcset }` for case study cards
-- `optimizeImage(url, width)` — custom width
-
-Only for remote CMS URLs — local static images use `asset()` instead.
+For CMS images (Sanity CDN URLs), use the helpers from `src/lib/image-utils.ts` — full helper list + usage examples live in `.claude/rules/component-patterns.md`. Local static images use `asset()` instead.
 
 ## Dev & Deploy
 
@@ -331,13 +202,7 @@ git push origin main # Triggers Vercel deployment (auto-deploys)
 
 ## Frontend Aesthetics
 
-You tend to converge toward generic "AI slop" aesthetics. Avoid this.
-- Typography: Never use Inter, Roboto, Arial. Use distinctive fonts from Google Fonts.
-- Color: Commit to a cohesive aesthetic. Dominant colors with sharp accents, not timid evenly-distributed palettes.
-- Motion: Use animations and micro-interactions. Staggered reveals on page load.
-- Backgrounds: Create depth with layered gradients and patterns, not solid colors.
-- Avoid purple gradients on white backgrounds, cookie-cutter layouts.
-Think outside the box. Make unexpected choices.
+Design authority is `DESIGN.md` (the v3 spec, §0–10) + the `/design` skill loop — anchor every design/UI decision there instead of generic taste. Never use Inter/Roboto/Arial; fonts and tokens live in `globals.css`.
 
 ## Sanity Studio
 
@@ -382,3 +247,20 @@ These defaults are optimized for AI coding agents (and humans) working on apps t
   needed. Always curl https://ai-gateway.vercel.sh/v1/models first; never trust model IDs from memory
 - For durable agent loops or untrusted code: use Workflow (pause/resume/state) + Sandbox; use Vercel MCP for secure infra access
 <!-- VERCEL BEST PRACTICES END -->
+
+## Model Orchestration (portable core — applies in cloud sessions too)
+
+The full policy lives in each machine's global `~/.claude/CLAUDE.md`; this section is the portable core so cloud sessions, other accounts, and teammates follow the same routing.
+
+**Scope: top-level sessions only.** Subagents (spawned via the Agent tool or workflows) are executors: do your brief directly with your own tools, never spawn further agents unless the brief explicitly authorizes it.
+
+**Objective:** maximize output quality per unit of subscription limit. Quality floor first, token efficiency second — efficiency comes from routing work to the right model, never from skipping verification, review, or the taste gate.
+
+- Orchestrator delegates; executors execute. Reading/search across more than ~3 files → Explore/Sonnet subagents that return conclusions, never file dumps. Parallelizable work → concurrent Sonnet agents in one message. Tiny single-file edits and judgment/taste calls → the orchestrator does directly (delegation overhead ≈ 10–30k tokens).
+- Ladder: `sonnet` = default executor (search, read, spec'd implementation, drafts, bulk) → `opus` = hard implementation, deep debugging, high-stakes review → `fable` = orchestration, judgment, synthesis, final quality gate only. `haiku` = throwaway mechanical sweeps, never user-facing output.
+- Never omit `model` on an Agent call (never "inherit") — an inherited model runs the subagent on the orchestrator's own tier and silently burns top-tier limits. Always name an explicit tier.
+- Grind detector: orchestrator about to make >~10 direct edits, or past ~3 rounds of an iterate loop (screenshot→fix, build→fix)? That's executor work — brief it out and keep only the accept/reject call.
+- Standing permission to escalate: if output misses the bar once, redo on a smarter model without asking. Retry the same tier only for transient flakes, never quality misses.
+- Anything user-facing (UI, copy, API design) → Sonnet minimum + an Opus/Fable review pass before ship.
+- Subagent briefs must be self-contained (exact paths, constraints, applicable project rules, expected output shape). The orchestrator verifies everything — build/tests/spot-read — and never relays subagent claims unchecked.
+- The OpenAI/Codex lane (GPT-5.6 family — `gpt-5.6-sol` flagship, `-terra` balanced/default, `-luna` cheapest; separate rate-limit pool) exists ONLY on Arnel's Mac (local sessions); cloud sessions skip that lane and route its workloads to Sonnet. Pick the cheapest 5.6 tier that clears the task.

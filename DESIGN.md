@@ -1,4 +1,145 @@
-# Design System — LoudFace
+# Design System — LoudFace (v3)
+
+The authority for LoudFace's visual language, established by the **v3 homepage** (live on `/`,
+`src/app/(site)/page.tsx` composing `src/app/home-v3/*`). Every other page migrates to this.
+Read this before any UI work — it is the source of truth the design loop anchors on.
+
+> **COMPONENTS.md** is the component *registry* (props, imports). **This** is the *design system*
+> (aesthetic, palette, patterns, do/don't). Legacy §1–9 further down remain valid for tokens,
+> spacing, and component conventions; where their **aesthetic** conflicts with §0–10 here, **v3 wins.**
+
+## 0. How to read this — TWO TIERS
+- **Invariants — follow religiously (correctness, not taste):** north star, who-it's-for, voice,
+  tones-for-meaning (red = error), the anti-slop bans in §9, accessibility/contrast. Breaking one is a bug.
+- **Defaults — the creative starting line, not a cage:** exact spacing rhythm, per-section composition,
+  which stage type a section uses. Push with declared intent when a bolder choice is genuinely better.
+
+## 1. North star & voice
+LoudFace builds and grows B2B SaaS websites (Series A+): one partner from **launch → growth** (Webflow
+build + SEO/AEO/CRO). The site reads as a **confident, high-craft agency** — premium and immersive,
+never a quiet template.
+- **Copy is plain, factual, humanized — never AI-slop.** No "Elevate / Seamless / Unleash / Next-Gen,"
+  no aphoristic verdict headlines in client-facing copy. Exact labels ("Book a strategy call"). Real,
+  messy numbers — never invented round/near-perfect stats.
+- Lead with **the work** (client screenshots / results / logos), never the founder's portrait.
+
+## 2. The v3 visual language — DEEP-INDIGO STAGES ↔ CRISP LIGHT
+The page is a **rhythm of two stage types** (FlowNinja-style color-blocking). Immersion comes from
+per-section, hero-level craft — NOT from recoloring a ground flat pastel.
+- **DEEP STAGES — two tonalities, by role (hero law, Arnel 2026-07-12, pixel-verified):**
+  - **ELECTRIC stage** — vivid indigo field (**`#4f46e5` family / `primary-600→500` gradient**, the
+    approved homepage + proof-stack hero treatment, luminance ~0.3+). **This is the HERO tonality** —
+    pages OPEN electric. Energy + first impression; white-on-color type, floating framed browser cards.
+  - **NIGHT stage** — rich night gradient (**`#171445 → #191552`**, or `primary-950`/`primary-900`)
+    with single-hue tonal atmosphere. **Mid-page depth only**: "what we do" phase cards, process
+    runway, cover CTA, footer, nav-on-scroll + dropdowns — never the opening hero.
+  Both: focal objects **float** (framed browser cards, glass pills, layered elevation), white-on-color type.
+- **CRISP LIGHT** — true-white / `surface-50` grounds, art-directed: saturated focal panels,
+  client-brand color plates under work screenshots, **hairline indigo** structure (`primary-100`), real
+  layered shadows. → problem section (blueprint plates), selected work, numbers, FAQ list.
+
+**Never:** all-white one-accent pages · flat mid-tone **pastel/lavender slab** grounds ("cheap /
+washed-out") · plain type on a pastel wash · a quiet editorial type-on-white hero (where agency pages
+die). White is for **cards on a stage**, not the whole ground — keep < ~40% plain-white ground per scroll.
+
+## 3. Palette & roles
+Tinted neutrals carry most of every screen; color appears only for **categorical meaning** or a **stage
+field**. No pure `#000`/`#fff` — this rule governs **text colors and non-stage surfaces** (cards, panels,
+borders). It does not apply to stage grounds: pure `#ffffff` (`--paper`) is the sanctioned CRISP LIGHT
+stage ground for v3 (§2) — deliberate, not drift.
+- **Primary indigo:** `50 #eef2ff · 100 #e0e7ff · 200 #c7d2fe · 300 #a5b4fc · 400 #818cf8 · 500 #6366f1
+  · 600 #4f46e5 · 700 #4338ca · 900 #312e81 · 950 #1e1b4b`. Fills = light steps (50–300); CTA/link/focus
+  = 600; deep stages = 950 or the night gradient; line-icons on dark = `primary-300`.
+- **⚠️ `surface-900` (#22302e) has a green-teal undertone.** Fine as a rare deep container, but **NEVER a
+  CTA/accent on the indigo v3 site** (green clashes with indigo — logged rejection). CTAs = `primary-600`,
+  or a **white pill on a dark stage**.
+- **Semantic** (`success/warning/error/info`) — meaning only, never decoration.
+
+## 4. Typography
+Weight + spacing carry hierarchy, not tone color.
+- **Neue Montreal** — all headings, weight 500 (size makes hierarchy, not boldness).
+- **Satoshi** — body, descriptions, nav links, UI labels.
+- **Geist Mono** — **TECHNICAL ONLY: stats, blueprint-plate labels/annotations, code.** NEVER a
+  nav/dropdown kicker or decorative mono-caps micro-label ("deviates from our chosen fonts" — logged
+  rejection). No dash/rule eyebrow, no `LABEL // YEAR`.
+  - **Carve-out:** display-scale marketing numerals (`.r-value`, `.fstat b` — the big hero-sized proof
+    numbers) intentionally set in **Neue Montreal**, not mono — they read as headline typography, not a
+    technical readout. Geist Mono remains for inline/technical readouts: chips (`.rpill b`, `.tag b`),
+    blueprint-plate labels, and code.
+
+## 5. Motion
+Calm-operator: `--ease-out` (`cubic-bezier(.16,1,.3,1)`), no overshoot/bounce/glow/spinner.
+- **Reveal-on-scroll** `.rv → .in` (opacity + 10px rise) via IntersectionObserver. **Marching-ants + one
+  flicker** on blueprint plates. Respect `prefers-reduced-motion`; every interactive gets `active:scale-[0.98]`.
+
+## 6. Navigation (v3) — one deep-indigo system
+- **Over hero (top):** transparent bar, white wordmark + nav + white pill CTA.
+- **Scrolled off hero:** solidifies into the **deep night-indigo bar** (`rgba(23,20,69,.92)` glass) — nav/
+  logo/CTA stay white, only the bg flips. (`heroTheme="dark"` + `data-hero-scrolled`, `Header.tsx`/`globals.css`.)
+- **Dropdown mega-menus:** night-indigo gradient panel, `white/6` glass rows, `primary-300` line-icons,
+  Neue Montreal titles, glass CTA. No mono. (Non-homepage headers are still pre-v3 → migrate to this.)
+
+## 7. Section & component patterns (the homepage IS the reference build — `src/app/home-v3/*`)
+| Section | Treatment |
+|---|---|
+| **Hero** | full-bleed indigo stage · headline + humanized sub + indigo CTA · dual-column **work-screenshot marquee** (structured columns — NEVER a floating overlap collage) · AI-answer chips |
+| **Logo ticker** | saturated indigo full-bleed strip, grayscale→hover client logos |
+| **Problem / explainer** | crisp light · each item gets a **blueprint-figure plate** (§8), never walls of text |
+| **What we do** | two **deep floating phase cards** (electric-indigo + night-indigo) w/ frosted chips — not one overlapping stage + connector (slop) |
+| **Selected work** | bento of client tiles, color-plate framing, glass metric pills |
+| **Numbers** | stat tiles (big indigo numerals) + testimonial tiles |
+| **Process** | night-runway: dashed rail + gates (Week 0 … Month 3+), one "live" node |
+| **FAQ** | deep focal panel (eyebrow, lede, CTA, stat row) beside a light `<details>` accordion |
+| **Final CTA** | one dark "cover-stack" — full-bleed cover image + floating client card + the call |
+| **Footer** | giant lowercase `loudface` wordmark, nav columns, AI-answer links |
+
+**Client logo band = saturated indigo strip** (`primary-700` ground, inverted white logos) — the light/
+grayscale variant is deprecated.
+
+**One focal composition per section** (crowded multi-focal = "cognitive overload," rejected). Orientation
+devices (sticky TOC) must be earned by content length.
+
+**Hero proof-objects sit outside the 4-part hero-copy budget.** A hero's copy is eyebrow + H1 + sub + CTA-row
+— four parts, no more. A separate floating object paired next to that copy (the homepage's "AI-answer
+chips"; `/pricing`'s "$5k/mo" `.hero-anchor` pill) does **not** count against that budget — it's a
+structurally distinct focal object, not additional copy stacked in the text column, and it's allowed to
+repeat later in the page as a recurring anchor (on `/pricing`: hero `.hero-anchor` pill → closing FAQ
+`.fstat` row — the "$5k/mo" fact reinforced at a minimum of 2 coordinated placements, not a one-off).
+
+## 8. Blueprint-figure plates (house explanatory-graphic style)
+Any explanatory graphic (problem items, service diagrams, case-study process, "explain X") uses the
+**blueprint-figures** skill — engineering-manual SVG plates: single indigo ramp, dotted paper, mono
+uppercase leader-line labels, marching-ants, exactly one flicker, FIG furniture. Real drawings, not
+decorative icons. **Invoke the skill; do not freehand the style.** (The ONE place mono-caps labels are correct.)
+
+## 9. Do / Don't
+**DO:** deep-stage ↔ crisp-light rhythm · structured hero visuals (columns/grids) · items-with-figures ·
+real media · plain factual copy · indigo CTAs · layered shadow + hairline indigo ring.
+**DON'T (invariants + logged rejections):** all-white one-accent page · pastel/lavender slab grounds ·
+quiet type-on-white hero · crowded multi-focal sections · floating overlap-collage hero visuals · problem
+sections as pure text · `surface-900` (green) as CTA/accent · **mono in nav/dropdowns** · dash/rule
+eyebrow · `01/02/03` markers · `LABEL // YEAR` · gradient text · glow/halo · spinner-as-alive ·
+side-stripe border · founder portrait as hero · clever/aphoristic client copy · invented metrics ·
+Inter/Roboto · Fraunces/Instrument-Serif by reflex.
+
+## 10. Spacing · radius · shadows (defaults)
+Section padding `py-16 md:py-20 lg:py-24` (std) / `lg:py-32` (hero-adjacent); gutters `px-4 md:px-8
+lg:px-12` inside `max-w-7xl` (use `SectionContainer`). Radius: `rounded-xl`/`rounded-2xl` cards,
+`rounded-lg` buttons, `rounded-full` pills. Elevation = **layered shadow + hairline ring**
+(`ring-primary-100` light / `ring-white/10` dark), never flat-drop + 1px border. Focus `2px primary-500`
+@ `2px` offset. 8px grid; project tokens only.
+
+## Changelog
+- **2026-07-12:** spec reconciled to approved build (display numerals, #fff stages, $5k placements) + logo-band canon = saturated indigo strip.
+
+---
+
+# Legacy detailed reference (pre-v3)
+
+> The tokens, spacing, radius, responsive rules, and component conventions below (SectionContainer /
+> Card / asset / Link / barrels) remain valid. Where the **aesthetic** below conflicts with §0–10
+> above — `surface-900` CTA fills, borders-over-shadows depth, light↔`surface-900` alternation, the
+> old white two-column hero — **the v3 sections above win.**
 
 ## 1. Visual Theme & Atmosphere
 

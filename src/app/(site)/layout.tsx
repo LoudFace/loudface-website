@@ -64,11 +64,12 @@ export default async function SiteLayout({
           Skip to main content
         </a>
 
-        <Header />
+        <Header heroTheme={pathname === "/" || pathname === "/home-preview" || pathname === "/about" || pathname === "/pricing" ? "dark" : undefined} />
 
         <main id="main-content">{children}</main>
 
-        <Footer caseStudies={caseStudies} blogPosts={blogPosts} />
+        {/* Homepage + About + Pricing ship their own v3 footers; every other page uses the shared one. */}
+        {pathname !== "/" && pathname !== "/about" && pathname !== "/pricing" && <Footer caseStudies={caseStudies} blogPosts={blogPosts} />}
 
         {/* Webflow Enterprise Partner Badge — site-wide */}
         <a

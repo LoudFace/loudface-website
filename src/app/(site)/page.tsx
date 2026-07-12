@@ -1,38 +1,35 @@
 /**
- * Homepage
+ * Homepage — v3 design (componentized).
  *
- * Data Sources:
- * - CMS: case-studies, clients, testimonials, blog, categories, team-members, industries
- * - JSON: homepage.json (via content layer)
+ * The client-approved v3 redesign, composed from the home-v3 section components
+ * inside the (site) group so it inherits the shared Header/Footer + PostHog/GTM/
+ * Cal chrome. The shared Header renders in its dark-hero variant on `/` (wired in
+ * (site)/layout.tsx). Bespoke styling is home-v3.css, imported route-scoped here
+ * (it does NOT load on other (site) pages). Case-study screenshots come from
+ * Sanity by slug (getHomeV3Images) with hardcoded fallbacks, so the page never
+ * blanks even if the CMS is unreachable — which is why the old assertCmsData
+ * build-guard is no longer needed on this route.
  *
- * Components: Hero, Partners, ProblemCheckerA, CaseStudySlider, Results,
- *             Knowledge, FAQ, CTA
+ * SEO metadata + the speakable JSON-LD below are preserved verbatim from the
+ * previous homepage. Previous implementation is in git history if a revert is
+ * needed.
  */
-export const revalidate = 60;
-
 import type { Metadata } from 'next';
-import Link from 'next/link';
-import { fetchHomepageData, assertCmsData } from '@/lib/cms-data';
-import { getHomepageContent } from '@/lib/content-utils';
+import '../home-v3/home-v3.css';
+import { HeroV3 } from '../home-v3/HeroV3';
+import { LogosTicker } from '../home-v3/LogosTicker';
+import { ProblemSection } from '../home-v3/ProblemSection';
+import { WhatWeDo } from '../home-v3/WhatWeDo';
+import { SelectedWork } from '../home-v3/SelectedWork';
+import { ResultsNumbers } from '../home-v3/ResultsNumbers';
+import { ProcessSteps } from '../home-v3/ProcessSteps';
+import { FaqSection } from '../home-v3/FaqSection';
+import { CoverCTA } from '../home-v3/CoverCTA';
+import { FooterV3 } from '../home-v3/FooterV3';
+import { HomepageV3Scripts } from '../homepage-v3/Scripts';
+import { getHomeV3Images } from '../home-v3/data';
 
-import type { CaseStudy } from '@/lib/types';
-import {
-  Hero,
-  Partners,
-  ProblemCheckerA,
-  Results,
-  FAQ,
-  CTA,
-} from '@/components';
-import {
-  SectionContainer,
-  Card,
-} from '@/components/ui';
-
-import {
-  DeferredCaseStudySlider,
-  DeferredKnowledge,
-} from '@/components/sections/DeferredSections';
+export const revalidate = 60;
 
 export const metadata: Metadata = {
   title: 'B2B SaaS Web Design, SEO & Growth Agency',
@@ -61,130 +58,19 @@ export const metadata: Metadata = {
   },
 };
 
+const speakableSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'WebPage',
+  name: 'LoudFace - B2B SaaS Web Design, SEO & Growth Agency',
+  speakable: {
+    '@type': 'SpeakableSpecification',
+    cssSelector: ['h1', '[data-speakable]'],
+  },
+  url: 'https://www.loudface.co',
+};
+
 export default async function HomePage() {
-  const content = getHomepageContent();
-
-  // CMS Data Fetching — errors propagate to fail the build (no silent empty pages)
-  const cmsData = await fetchHomepageData();
-
-  // Homepage guardrail: fail the build if critical CMS data is empty.
-  // Other pages (blog, case studies, services) degrade gracefully instead.
-  if (process.env.NODE_ENV === 'production') {
-    assertCmsData(cmsData);
-  }
-
-  const {
-    caseStudies,
-    clients,
-    allClients,
-    testimonials,
-    allTestimonials,
-    blogPosts,
-    categories,
-    teamMembers,
-    industries,
-  } = cmsData;
-
-  // Minimize data sent to client components (CaseStudySlider, Knowledge).
-  // Next.js serializes all client-component props into inline <script> tags.
-  // Only include fields each component actually reads — every extra field
-  // inflates the HTML and adds to main-thread parse time (TBT).
-
-  // Hero only needs featured studies with minimal fields
-  const heroCaseStudies = caseStudies
-    .filter(s => s.featured)
-    .slice(0, 4)
-    .map(s => ({
-      id: s.id,
-      slug: s.slug,
-      name: s.name,
-      featured: s.featured,
-      client: s.client,
-      'project-title': s['project-title'],
-      'main-project-image-thumbnail': s['main-project-image-thumbnail'],
-      'result-1---number': s['result-1---number'],
-      'result-1---title': s['result-1---title'],
-    })) as CaseStudy[];
-
-  // CaseStudySlider needs studies with testimonials, minimal fields
-  const sliderCaseStudies = caseStudies
-    .filter(s => testimonials.has(s.id))
-    .map(s => ({
-      id: s.id,
-      slug: s.slug,
-      name: s.name,
-      client: s.client,
-      'project-title': s['project-title'],
-      'paragraph-summary': s['paragraph-summary'],
-      'client-color': s['client-color'],
-      'main-project-image-thumbnail': s['main-project-image-thumbnail'],
-      'result-1---number': s['result-1---number'],
-      'result-1---title': s['result-1---title'],
-    })) as CaseStudy[];
-
-  // Slim testimonials for CaseStudySlider (client component — serialized to HTML)
-  const slimTestimonials = new Map(
-    Array.from(testimonials.entries()).map(([id, t]) => [id, {
-      id: t.id,
-      slug: t.slug,
-      name: t.name,
-      role: t.role,
-      'case-study': t['case-study'],
-      'testimonial-body': t['testimonial-body'],
-    }])
-  );
-
-  // Knowledge carousel only needs a handful of recent posts with minimal fields
-  const lightBlogPosts = blogPosts
-    .slice(0, 6)
-    .map(post => ({
-      id: post.id,
-      slug: post.slug,
-      name: post.name,
-      excerpt: post.excerpt,
-      category: post.category,
-      author: post.author,
-      thumbnail: post.thumbnail,
-    }));
-
-  // Slim categories and authors for Knowledge (client component)
-  const lightCategories = Array.from(categories.values()).map(c => ({
-    id: c.id,
-    name: c.name,
-    slug: c.slug,
-  }));
-
-  const lightAuthors = Array.from(teamMembers.values()).map(a => ({
-    id: a.id,
-    name: a.name,
-  }));
-
-  // Results bento grid needs studies with result stats + testimonial ref
-  const resultsCaseStudies = caseStudies.map(s => ({
-    id: s.id,
-    slug: s.slug,
-    name: s.name,
-    featured: s.featured,
-    client: s.client,
-    testimonial: s.testimonial,
-    'project-title': s['project-title'],
-    'paragraph-summary': s['paragraph-summary'],
-    'result-1---number': s['result-1---number'],
-    'result-1---title': s['result-1---title'],
-  })) as CaseStudy[];
-
-  const currentQuarter = `Q${Math.ceil((new Date().getMonth() + 1) / 3)}`;
-
-  const speakableSchema = {
-    '@context': 'https://schema.org',
-    '@type': 'WebPage',
-    name: 'LoudFace - B2B SaaS Web Design, SEO & Growth Agency',
-    speakable: {
-      '@type': 'SpeakableSpecification',
-      cssSelector: ['h1', '[data-speakable]'],
-    },
-    url: 'https://www.loudface.co',
-  };
+  const images = await getHomeV3Images();
 
   return (
     <>
@@ -193,252 +79,22 @@ export default async function HomePage() {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(speakableSchema) }}
       />
 
-      {/* Hero */}
-      <Hero
-        headline={content.hero.headline}
-        description={content.hero.description}
-        ctaText={content.hero.ctaText}
-        scarcityText={`2 client slots open for ${currentQuarter}`}
-        aiLinksLabel={content.hero.aiLinksLabel}
-        caseStudies={heroCaseStudies}
-        clients={clients}
-        industries={industries}
-      />
+      {/* .hpv3 scopes the bespoke resets so they can't touch the shared Header/Footer.
+          Fonts + tokens live (global) in home-v3.css now — no separate brand.css link. */}
+      <div className="hpv3">
+        <HeroV3 images={images} />
+        <LogosTicker />
+        <ProblemSection />
+        <WhatWeDo />
+        <SelectedWork images={images} />
+        <ResultsNumbers />
+        <ProcessSteps />
+        <FaqSection />
+        <CoverCTA />
+        <FooterV3 />
+      </div>
 
-      {/* Partners */}
-      <Partners
-        tagline={content.partners.tagline}
-        testimonials={allTestimonials}
-        clients={allClients}
-      />
-
-      {/* Problem Checker */}
-      <ProblemCheckerA
-        heading={content.problem.heading}
-        items={content.problem.items}
-      />
-
-      {/* Two Tracks: Build + Grow */}
-      <SectionContainer padding="lg" className="bg-surface-900 text-surface-300">
-        <div className="max-w-3xl">
-          <h2 className="text-2xl sm:text-3xl md:text-4xl font-medium text-white">
-            {content.tracks.heading}
-          </h2>
-          <div className="h-4" />
-          <p className="text-lg text-surface-300">
-            {content.tracks.intro}
-          </p>
-        </div>
-
-        <div className="mt-12 lg:mt-16 grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8">
-          {/* Build Track */}
-          <Card variant="glass" padding="lg">
-            <div className="flex items-center gap-3 mb-6">
-              <span className="text-sm font-mono text-primary-400">{content.tracks.build.label}</span>
-              <h3 className="text-2xl font-medium text-white">{content.tracks.build.title}</h3>
-            </div>
-            <p className="text-primary-400 font-medium mb-4">{content.tracks.build.subtitle}</p>
-            <p className="text-surface-300 leading-relaxed mb-6">{content.tracks.build.body}</p>
-            <p className="text-sm text-surface-400 italic mb-6">{content.tracks.build.detail}</p>
-            <div className="border-t border-white/10 pt-6">
-              <div className="flex flex-wrap gap-2">
-                {content.tracks.build.capabilities.map((cap, i) => (
-                  <span
-                    key={i}
-                    className="inline-block px-3 py-1.5 text-sm bg-white/5 text-surface-300 rounded-lg"
-                  >
-                    {cap}
-                  </span>
-                ))}
-              </div>
-            </div>
-          </Card>
-
-          {/* Grow Track */}
-          <Card variant="glass" padding="lg">
-            <div className="flex items-center gap-3 mb-6">
-              <span className="text-sm font-mono text-primary-400">{content.tracks.grow.label}</span>
-              <h3 className="text-2xl font-medium text-white">{content.tracks.grow.title}</h3>
-            </div>
-            <p className="text-primary-400 font-medium mb-4">{content.tracks.grow.subtitle}</p>
-            <p className="text-surface-300 leading-relaxed mb-6">{content.tracks.grow.body}</p>
-            <p className="text-sm text-surface-400 italic mb-6">{content.tracks.grow.detail}</p>
-            <div className="border-t border-white/10 pt-6">
-              <div className="flex flex-wrap gap-2">
-                {content.tracks.grow.capabilities.map((cap, i) => (
-                  <span
-                    key={i}
-                    className="inline-block px-3 py-1.5 text-sm bg-white/5 text-surface-300 rounded-lg"
-                  >
-                    {cap}
-                  </span>
-                ))}
-              </div>
-              <Link
-                href="/services/seo-aeo"
-                className="mt-6 inline-flex items-center gap-2 text-sm font-medium text-primary-400 hover:text-primary-300 transition-colors focus-visible:outline-2 focus-visible:outline-primary-500 focus-visible:outline-offset-4"
-              >
-                Explore our AEO agency services for B2B SaaS
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7" />
-                </svg>
-              </Link>
-            </div>
-          </Card>
-        </div>
-
-        {/* Connector line */}
-        <div className="mt-10 md:mt-12 text-center">
-          <p className="text-surface-400 text-lg italic max-w-2xl mx-auto">
-            {content.tracks.connector}
-          </p>
-        </div>
-      </SectionContainer>
-
-      {/* Case Study Slider */}
-      <DeferredCaseStudySlider
-        title="The work speaks. Specifically."
-        caseStudies={sliderCaseStudies}
-        testimonials={slimTestimonials}
-      />
-
-      {/* Results (Bento Grid) */}
-      <Results
-        title={content.results.heading}
-        subtitle={content.results.subtitle}
-        caseStudies={(() => {
-          const targetSlugs = ['viaduct', 'dimer-health'];
-          const picked = targetSlugs
-            .map((slug) => resultsCaseStudies.find((s) => s.slug === slug))
-            .filter(Boolean) as CaseStudy[];
-          return picked.length === 2
-            ? picked
-            : resultsCaseStudies.filter((s) => s.featured && s.testimonial).slice(0, 2);
-        })()}
-        testimonial={
-          (() => {
-            const viaduct = resultsCaseStudies.find((s) => s.slug === 'viaduct');
-            const studyWithTestimonial = viaduct?.testimonial
-              ? viaduct
-              : resultsCaseStudies.find((s) => s.featured && s.testimonial);
-            return studyWithTestimonial?.testimonial
-              ? slimTestimonials.get(studyWithTestimonial.testimonial)
-              : allTestimonials[0];
-          })()
-        }
-        clients={clients}
-      />
-
-      {/* How We Work (Process Timeline) */}
-      <SectionContainer>
-        <div className="text-center max-w-3xl mx-auto">
-          <h2 className="text-2xl sm:text-3xl md:text-4xl font-medium text-surface-900">
-            {content.process.heading}
-          </h2>
-          <div className="h-4" />
-          <p className="text-lg text-surface-600">
-            {content.process.subtitle}
-          </p>
-        </div>
-
-        <div className="mt-12 lg:mt-16">
-          {/* Desktop: horizontal timeline */}
-          <div className="hidden md:block">
-            {/* Timeline bar */}
-            <div className="relative flex items-start justify-between mb-12">
-              <div className="absolute top-4 left-0 right-0 h-px bg-surface-200" />
-              {content.process.steps.map((step) => (
-                <div key={step.number} className="relative flex flex-col items-center w-1/4 px-2">
-                  <div className="w-8 h-8 rounded-full bg-surface-900 text-white flex items-center justify-center text-sm font-mono font-medium z-10">
-                    {step.number}
-                  </div>
-                  <span className="mt-2 text-xs font-mono text-surface-500 uppercase tracking-wider">
-                    {step.timeline}
-                  </span>
-                </div>
-              ))}
-            </div>
-            {/* Step cards */}
-            <div className="grid grid-cols-4 gap-6">
-              {content.process.steps.map((step) => (
-                <Card key={step.number} hover={false}>
-                  <h3 className="text-lg font-medium text-surface-900">{step.title}</h3>
-                  <div className="h-3" />
-                  <p className="text-surface-600 text-sm leading-relaxed">{step.body}</p>
-                </Card>
-              ))}
-            </div>
-          </div>
-
-          {/* Mobile: vertical timeline */}
-          <div className="md:hidden space-y-8">
-            {content.process.steps.map((step) => (
-              <div key={step.number} className="flex gap-4">
-                <div className="flex flex-col items-center">
-                  <div className="w-8 h-8 rounded-full bg-surface-900 text-white flex items-center justify-center text-sm font-mono font-medium shrink-0">
-                    {step.number}
-                  </div>
-                  <div className="w-px flex-1 bg-surface-200 mt-2" />
-                </div>
-                <div className="pb-6">
-                  <span className="text-xs font-mono text-surface-500 uppercase tracking-wider">
-                    {step.timeline}
-                  </span>
-                  <h3 className="text-lg font-medium text-surface-900 mt-1">{step.title}</h3>
-                  <p className="text-surface-600 mt-2 leading-relaxed">{step.body}</p>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </SectionContainer>
-
-      {/* Stats */}
-      <SectionContainer padding="sm" className="bg-surface-50">
-        <div className="text-center mb-10 md:mb-12">
-          <h2 className="text-2xl sm:text-3xl md:text-4xl font-medium text-surface-900">
-            {content.stats.heading}
-          </h2>
-        </div>
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8">
-          {content.stats.items.map((stat, i) => (
-            <div key={i} className="text-center">
-              <div className="text-3xl md:text-4xl font-medium font-mono text-surface-900">
-                {stat.value}
-              </div>
-              <div className="mt-2 text-sm font-medium text-surface-600 uppercase tracking-wider">
-                {stat.label}
-              </div>
-              <div className="mt-2 text-sm text-surface-500">
-                {stat.description}
-              </div>
-            </div>
-          ))}
-        </div>
-      </SectionContainer>
-
-      {/* Knowledge/Blog */}
-      <DeferredKnowledge
-        title="Playbooks for SaaS marketing teams"
-        highlightWord="Playbooks"
-        description={content.blog.subtitle}
-        posts={lightBlogPosts}
-        categories={lightCategories}
-        authors={lightAuthors}
-      />
-
-      {/* FAQ */}
-      <FAQ
-        title="Common questions about working with us"
-        items={content.faq}
-      />
-
-      {/* CTA */}
-      <CTA
-        title={content.cta.title}
-        subtitle={content.cta.subtitle}
-        ctaText={content.cta.ctaText}
-      />
+      <HomepageV3Scripts />
     </>
   );
 }

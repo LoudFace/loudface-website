@@ -1122,3 +1122,44 @@ html {
   }
 
 }
+
+/* ── Dark-hero Header variant (homepage) ─────────────────────────────────────
+   Opt-in via <Header heroTheme="dark" />. Light nav / logo / CTA in BOTH states;
+   only the BACKGROUND changes on scroll: transparent over the hero, then it
+   solidifies into the deep night-indigo v3 bar once scrolled off it. Gated on
+   the data attribute, so pages that don't opt in are byte-identical. */
+header[data-hero-theme="dark"] a[aria-label="LoudFace Home"] img {
+  filter: brightness(0) invert(1);
+}
+header[data-hero-theme="dark"] .nav-link {
+  color: #fff;
+}
+header[data-hero-theme="dark"] .nav-link:hover {
+  color: #fff;
+  background: rgba(255, 255, 255, 0.12);
+}
+header[data-hero-theme="dark"] [data-nav-cta] {
+  background: #fff;
+  color: #0a0a0a;
+}
+header[data-hero-theme="dark"] .nav-burger span {
+  background: #fff;
+}
+/* hide only the "Accepting Bookings" tab (a direct child of <header>) — NOT the
+   nested dropdown panels, which are also .absolute.top-full deeper in the nav. */
+header[data-hero-theme="dark"] > .absolute.top-full {
+  display: none;
+}
+/* over the hero: fully transparent */
+header[data-hero-theme="dark"]:not([data-hero-scrolled]) {
+  background: transparent;
+  border-bottom-color: transparent;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+/* scrolled off the hero: solidify into the deep night-indigo v3 bar (treatment B) */
+header[data-hero-theme="dark"][data-hero-scrolled] {
+  background: rgba(23, 20, 69, 0.92);
+  border-bottom-color: rgba(255, 255, 255, 0.1);
+}
+/* dark-hero variant v3 */
