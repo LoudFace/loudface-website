@@ -24,7 +24,7 @@ import workContent from "@/data/content/work.json";
 import aboutContent from "@/data/content/about.json";
 import servicesWebflowContent from "@/data/content/services-webflow.json";
 import servicesSeoAeoContent from "@/data/content/services-seo-aeo.json";
-import servicesGeoContent from "@/data/content/services-geo.json";
+import servicesGeoAgencyContent from "@/data/content/services-geo-agency.json";
 import servicesCroContent from "@/data/content/services-cro.json";
 import servicesCopywritingContent from "@/data/content/services-copywriting.json";
 import servicesUxUiDesignContent from "@/data/content/services-ux-ui-design.json";
@@ -395,6 +395,73 @@ export interface ServicesSeoAeoContent {
     primaryCta: string;
     secondaryCta: string;
     disclaimer: string;
+  };
+}
+
+export interface ServicesGeoAgencyScorecardRow {
+  capability: string;
+  requires: string;
+  delivers: string;
+}
+
+export interface ServicesGeoAgencyContent {
+  hero: {
+    eyebrow: string;
+    headline: string;
+    subheadline: string;
+    definition: string;
+    proof: string;
+    primaryCta: string;
+    secondaryCta: string;
+  };
+  scorecard: {
+    intro: string;
+    columns: string[];
+    rows: ServicesGeoAgencyScorecardRow[];
+  };
+  whatIsGeo: {
+    title: string;
+    paragraphs: string[]; // may contain inline <a> HTML
+  };
+  comparison: {
+    title: string;
+    intro: string;
+    columns: string[];
+    rows: { discipline: string; optimizesFor: string; whereWeShowUp: string }[];
+    notes: string[];
+  };
+  howWeWork: {
+    intro: string; // contains inline <a> HTML
+    steps: { number: string; title: string; description: string }[];
+  };
+  proof: {
+    intro: string;
+    items: string[]; // each a <strong>Label.</strong> + prose HTML string
+  };
+  timeline: {
+    title: string;
+    intro: string;
+    speeds: { label: string; body: string }[];
+    outro: string; // contains inline <a> HTML
+  };
+  pricing: {
+    title: string;
+    paragraphs: string[]; // first contains inline <a> HTML
+  };
+  measurement: {
+    title: string;
+    paragraphs: string[];
+    questionsIntro: string;
+    questions: string[];
+  };
+  faq: {
+    items: FAQItem[];
+  };
+  cta: {
+    title: string;
+    body: string;
+    primaryCta: string;
+    secondaryCta: string;
   };
 }
 
@@ -918,7 +985,7 @@ const contentRegistry: Record<string, unknown> = {
   about: aboutContent,
   "services-webflow": servicesWebflowContent,
   "services-seo-aeo": servicesSeoAeoContent,
-  "services-geo": servicesGeoContent,
+  "services-geo-agency": servicesGeoAgencyContent,
   "services-cro": servicesCroContent,
   "services-copywriting": servicesCopywritingContent,
   "services-ux-ui-design": servicesUxUiDesignContent,
@@ -1044,12 +1111,13 @@ export function getServicesSeoAeoContent(): ServicesSeoAeoContent {
 }
 
 /**
- * Get Services GEO (Generative Engine Optimization) page content
- * Reuses the ServicesSeoAeoContent shape — same section keys, GEO copy;
- * the `tracks` seo/aeo/geo slots carry per-engine labels (ChatGPT / Perplexity / AIO+Gemini).
+ * Get Services GEO Agency (/services/geo-agency) page content.
+ * Dedicated shape — dual-verified approved body (content-engine loop, 2026-07-13):
+ * hero + first-screen scorecard + what-is-GEO + GEO/AEO/SEO comparison + program
+ * steps + proof + timeline + pricing + measurement (+ 7 questions) + FAQ + CTA.
  */
-export function getServicesGeoContent(): ServicesSeoAeoContent {
-  return servicesGeoContent as ServicesSeoAeoContent;
+export function getServicesGeoAgencyContent(): ServicesGeoAgencyContent {
+  return servicesGeoAgencyContent as ServicesGeoAgencyContent;
 }
 
 /**

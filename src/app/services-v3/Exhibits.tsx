@@ -69,7 +69,7 @@ const EXHIBITS: Exhibit[] = [
     what: 'An answer-engine program aimed at the buying question — when someone asks an AI which vendor to use, Toku had to be in the answer. We built the pages and signals that get a brand cited by name.',
     credits: [
       { label: <>SEO &amp; AEO</>, href: '/services/seo-aeo' },
-      { label: 'GEO', href: '/services/geo' },
+      { label: 'GEO', href: '/services/geo-agency' },
       { label: 'Growth Autopilot', href: '/services/growth-autopilot' },
     ],
     out: (

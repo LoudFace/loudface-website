@@ -20,7 +20,7 @@ export function Values() {
             <p className="a-vlabel">Grow</p>
             <p>
               SEO, conversion optimization, and{' '}
-              <Link href="/services/geo">AI-search visibility</Link>, run month after month.
+              <Link href="/services/geo-agency">AI-search visibility</Link>, run month after month.
             </p>
           </div>
           <div className="a-vcell">

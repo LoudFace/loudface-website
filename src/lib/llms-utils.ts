@@ -201,6 +201,7 @@ export async function fetchLlmsData(includeContent = false): Promise<LlmsData> {
     services: [
       { title: 'Webflow Development', url: `${SITE_URL}/services/webflow`, description: 'Enterprise Webflow development for B2B SaaS companies. Custom builds, migrations, and CMS architecture.' },
       { title: 'SEO & AEO', url: `${SITE_URL}/services/seo-aeo`, description: 'Search engine optimization and answer engine optimization. Dual-track growth for Google and AI search.' },
+      { title: 'Generative Engine Optimization (GEO)', url: `${SITE_URL}/services/geo-agency`, description: 'AI-native generative engine optimization agency for B2B SaaS. Get cited in ChatGPT, Perplexity, and Google AI Overviews, measured as share of answer.' },
       { title: 'UX/UI Design', url: `${SITE_URL}/services/ux-ui-design`, description: 'Conversion-focused design for B2B SaaS websites. Research-driven layouts and interaction design.' },
       { title: 'Copywriting', url: `${SITE_URL}/services/copywriting`, description: 'B2B SaaS website copy that converts. Messaging frameworks, page copy, and content strategy.' },
       { title: 'Conversion Rate Optimization', url: `${SITE_URL}/services/cro`, description: 'Data-driven CRO using A/B testing, heatmaps, and funnel analysis to increase conversion rates.' },

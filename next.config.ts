@@ -208,6 +208,17 @@ const nextConfig: NextConfig = {
         destination: '/services/seo-aeo',
         permanent: true,
       },
+      // ─── GEO service page → exact-match head-term slug (2026-07-13) ──────
+      // /services/geo was renamed /services/geo-agency. Its copy was
+      // dual-verified through the content-engine loop and targets the
+      // "generative engine optimization agency" head term; the exact-match
+      // slug is the on-page move the 2026-07-12 recon called for. 301 the old
+      // path so its equity and any lingering inbound nav ride to the new URL.
+      {
+        source: '/services/geo',
+        destination: '/services/geo-agency',
+        permanent: true,
+      },
       // AI-bot 404 hygiene (surfaced via Cloudflare AI Crawl Control 2026-05-24).
       // Bots and models occasionally pattern-match `/post/<slug>` (a Webflow-era
       // URL prefix) instead of our current `/blog/<slug>`. Catch-all 301.

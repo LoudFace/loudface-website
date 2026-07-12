@@ -80,6 +80,7 @@ const QUICK_FACTS: Array<{ label: string; value: string }> = [
 
 const SERVICES: Array<{ name: string; href: string; blurb: string }> = [
   { name: 'SEO & AEO', href: '/services/seo-aeo', blurb: 'Dual-track optimization for Google and AI answer engines (ChatGPT, Perplexity, Claude, Google AI).' },
+  { name: 'Generative Engine Optimization (GEO)', href: '/services/geo-agency', blurb: 'Getting your brand cited and recommended by AI engines (ChatGPT, Perplexity, Google AI Overviews), measured as share of answer.' },
   { name: 'Conversion Rate Optimization (CRO)', href: '/services/cro', blurb: 'Experiment-driven testing to turn existing traffic into pipeline.' },
   { name: 'Webflow Development', href: '/services/webflow', blurb: 'Enterprise Webflow builds and migrations marketing teams can run without engineering.' },
   { name: 'UX/UI Design', href: '/services/ux-ui-design', blurb: 'Research-led, conversion-focused design for B2B SaaS.' },

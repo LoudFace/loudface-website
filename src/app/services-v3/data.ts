@@ -63,6 +63,6 @@ export const SERVICES: ServiceEntry[] = [
   { slug: 'cro', name: 'Conversion rate optimization', blurb: 'Data-driven optimization that converts', track: 'build' },
   { slug: 'copywriting', name: 'Copywriting', blurb: 'Persuasive content that connects', track: 'build' },
   { slug: 'seo-aeo', name: 'SEO & AEO', blurb: 'Visibility across search and AI engines', track: 'grow' },
-  { slug: 'geo', name: 'Generative Engine Optimization', blurb: 'Get cited by ChatGPT, Perplexity & AI Overviews', track: 'grow' },
+  { slug: 'geo-agency', name: 'Generative Engine Optimization', blurb: 'Get cited by ChatGPT, Perplexity & AI Overviews', track: 'grow' },
   { slug: 'growth-autopilot', name: 'Growth Autopilot', blurb: 'SEO, AEO & CRO as one integrated system', track: 'grow' },
 ];

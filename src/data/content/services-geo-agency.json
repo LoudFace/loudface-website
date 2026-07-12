@@ -1,0 +1,205 @@
+{
+  "hero": {
+    "eyebrow": "Generative engine optimization · Answer engine optimization · AI search optimization",
+    "headline": "Generative Engine Optimization (GEO) & AEO Agency for B2B SaaS",
+    "subheadline": "Become the answer ChatGPT, Perplexity, and Google AI Overviews give.",
+    "definition": "A generative engine optimization agency gets your brand cited and recommended inside AI answers. LoudFace does it for B2B SaaS. We engineer your content, entity signals, and third-party presence so ChatGPT, Perplexity, and Google AI Overviews name you when a buyer asks which vendor to pick, and we score the result as share of answer, not just traffic.",
+    "proof": "Toku, our client, appears in 86% of AI answers on its core buyer prompt, a rolling 30-day snapshot taken eighteen months into the program, at average position 2.4.",
+    "primaryCta": "Free AI Visibility Audit",
+    "secondaryCta": "See how the program works"
+  },
+  "scorecard": {
+    "intro": "What a real GEO program actually delivers, and how we deliver each piece.",
+    "columns": ["Capability", "What it actually requires", "How LoudFace delivers"],
+    "rows": [
+      {
+        "capability": "AI citation tracking",
+        "requires": "A tracked panel of the exact prompts your buyers ask, sampled repeatedly across each engine, so one noisy answer never reads as a trend.",
+        "delivers": "A live Peec panel across ChatGPT, Perplexity, and Google AI Overviews, reported per engine every week. It is the panel behind Toku's 86%-of-answers snapshot on its core prompt, position 2.4, measured over 30 days, eighteen months into the program."
+      },
+      {
+        "capability": "Content built for extraction",
+        "requires": "Answer-first pages that hand the engine a liftable unit: a ranked roster, a hard-number table, a tight TL;DR. Engines quote pre-formatted units; prose-only pages tend to get retrieved and passed over.",
+        "delivers": "Every priority page ships a named, copy-pasteable artifact in the first screen. We shipped that format across loudface.co as it went from 0.18% to 9.4% AI visibility between March and June 2026."
+      },
+      {
+        "capability": "Entity and schema structuring",
+        "requires": "Consistent entity language plus Service, FAQPage, and ItemList schema, so engines resolve who you are and what you sell.",
+        "delivers": "We map your brand to knowledge-graph entities and mark up every liftable unit, the signal layer AI engines read to resolve who you are and whether to trust you."
+      },
+      {
+        "capability": "Third-party corpus presence",
+        "requires": "Placement in the rosters, reviews, and communities each engine retrieves from. An engine can only cite a page that reaches its retrieved set.",
+        "delivers": "We get you into the vendor lists and community threads the models pull. In our 160,240-citation benchmark, corporate websites alone took 50.7% of every AI citation."
+      },
+      {
+        "capability": "AI-crawler access",
+        "requires": "The citation crawlers (OAI-SearchBot, PerplexityBot, ClaudeBot) must reach your pages. Legacy robots rules and Cloudflare Bot Fight Mode block them silently.",
+        "delivers": "We audit crawler access first, separate the search crawlers you want from the training crawlers you may not, and clear the blocks keeping you out of the retrieved set."
+      },
+      {
+        "capability": "Reporting and attribution",
+        "requires": "Share of answer per engine and per prompt, tied to branded search and pipeline instead of one blended vanity number.",
+        "delivers": "One scoreboard: visibility, position when cited, sentiment, and competitor split, weekly and per engine. The number your board tracks quarter to quarter."
+      }
+    ]
+  },
+  "whatIsGeo": {
+    "title": "What does a generative engine optimization agency do?",
+    "paragraphs": [
+      "A generative engine optimization (GEO) agency gets your brand retrieved, cited, and recommended by AI engines like ChatGPT, Perplexity, Gemini, and Google AI Overviews. Where an SEO agency competes for a ranked link, a GEO agency competes for the answer itself. When a buyer asks which vendor to pick, yours is the brand the engine names and links.",
+      "The reason this is its own job now is buyer behavior. Gartner predicted in February 2024 that traditional search volume would drop 25% by 2026 as buyers move to AI chatbots. Whether or not that exact number lands, the shift is already measurable: Pew Research Center's March 2025 data found that when Google shows an AI summary, users click a traditional result in just 8% of searches, versus 15% without one, and click a link inside the summary in only 1% of visits. Your buyers are getting answers rather than link lists, and someone is being named in those answers.",
+      "The term GEO is not marketing coinage. It comes from a 2023 research paper, \"GEO: Generative Engine Optimization,\" by researchers at Princeton, IIT Delhi, Georgia Tech, and the Allen Institute for AI, published at the KDD conference in August 2024. Their benchmark found that adding statistics, quotable statements, and cited sources to a page raised how often generative engines included it in answers, by up to 40%. That finding is still the spine of the work.",
+      "GEO is the head term the models themselves use. <a href='https://www.loudface.co/blog/answer-engine-optimization-guide-2026'>Answer engine optimization (AEO)</a>, LLM SEO, AI SEO, and AI search optimization all describe the same discipline, with a soft nuance: AEO emphasizes direct answers, GEO emphasizes generative synthesis. Google treats them as one thing. Its own search ads lead, Brendon Kraham, put it plainly in June 2026: good SEO is good GEO.",
+      "One disambiguation, because the acronym collides. GEO here has nothing to do with geospatial tools or local geo-targeting. It is the practice of engineering your content, entity signals, and citation surfaces so generative engines treat your brand as a source worth quoting.",
+      "The category is real and getting crowded. Agencies like Directive Consulting, First Page Sage, iPullRank, Siege Media, and Omniscient Digital all run <a href='https://www.loudface.co/blog/best-geo-agencies-b2b-saas-2026'>serious GEO practices</a>. What separates programs is not whether they claim the label. It is whether they can show a per-engine share-of-answer number and the pages that earned it."
+    ]
+  },
+  "comparison": {
+    "title": "GEO vs AEO vs SEO: what's the difference?",
+    "intro": "Buyers and models use the terms interchangeably, and agencies sell them as separate line items. Here is the honest split, and why we run them as one program.",
+    "columns": ["Discipline", "What it optimizes for", "Where you show up"],
+    "rows": [
+      {
+        "discipline": "GEO",
+        "optimizesFor": "Being named and recommended when generative engines answer a buyer's question. The umbrella discipline.",
+        "whereWeShowUp": "ChatGPT, Perplexity, Gemini, Google AI Overviews, Copilot"
+      },
+      {
+        "discipline": "AEO",
+        "optimizesFor": "The answer layer inside GEO: structuring pages so engines can lift and quote them cleanly.",
+        "whereWeShowUp": "Cited-source lists and inline citations inside AI answers"
+      },
+      {
+        "discipline": "SEO",
+        "optimizesFor": "Ranking in Google's classic results, which feed the retrieval sets AI engines read from.",
+        "whereWeShowUp": "Page one of Google, featured snippets, the index AI Overviews runs on"
+      }
+    ],
+    "notes": [
+      "The mechanism is different underneath. Classic search crawls, indexes, ranks, and returns a list of links you click. Generative engines run retrieval-augmented generation: they retrieve a subset of documents, then synthesize one answer with citations. A page still has to be retrieved and ranked before it can be cited, which is why SEO fundamentals still feed the pool, and why Google says its AI Overviews run on the same core ranking systems as organic search.",
+      "What does not carry over is the citation set itself. SiteUp's 2026 citation comparison found ChatGPT and Google AI Overviews share only 13.7% of their citation sources, and GroMach's analysis of 680 million citations found just 11% of domains cited by both ChatGPT and Perplexity. Ranking first on Google does not hand you the ChatGPT answer. That gap is the entire reason GEO is a distinct program and not a rename of your SEO retainer."
+    ]
+  },
+  "howWeWork": {
+    "intro": "We own the roadmap and ship from week one. LoudFace is a full-stack organic growth agency for B2B SaaS: one cohesive program across <a href='https://www.loudface.co/services/seo-aeo'>SEO, AEO/GEO</a>, content, and Webflow, built for the AI-era answer engine, not classic SEO silos. One retainer, one senior team, one scoreboard. Every move is scored against a single metric, your share of answer on the prompts your buyers actually ask.",
+    "steps": [
+      {
+        "number": "1",
+        "title": "Generative visibility audit.",
+        "description": "We map how every major engine answers your buyers' prompts today: who gets named, who gets cited, at what position, and which pages the models pull from. You get your starting share of answer, engine by engine, plus the crawler-access check most audits skip, because a page blocked to OAI-SearchBot or PerplexityBot cannot be cited no matter how good it is."
+      },
+      {
+        "number": "2",
+        "title": "Citation-surface foundation.",
+        "description": "Entity language, structured data, and answer blocks engineered so models can parse and quote you. Every priority page gets a liftable artifact in the first screen: a TL;DR, a hard-number table, or a ranked roster. We treat clean, extractable structure as table stakes rather than a magic lever. Ramp's 2026 test found markdown-clean formatting was the one format that reliably surfaced in AI answers; a larger controlled study by Profound found no standalone traffic effect. So we ship clean format because engines cannot quote what they cannot parse, then do the real work on the page and in the corpus. Deployment starts in week one. No quarter-long setup phase."
+      },
+      {
+        "number": "3",
+        "title": "Citable asset engine.",
+        "description": "New rosters, comparisons, and decision pages matched to the tracked buyer prompts you are losing, plus placement in the third-party lists and communities each engine reads from. Google's own AI Overviews use query fan-out, breaking one question into many sub-queries at once, so a cluster that answers the sub-questions wins retrieval slots a single keyword page never could. On-page format and off-page corpus run together, because engines only cite what they retrieve."
+      },
+      {
+        "number": "4",
+        "title": "Per-engine measurement.",
+        "description": "Weekly share-of-answer reporting split by engine, never blended. In our tracking, ChatGPT tends to lift one or two pages almost verbatim, Perplexity blends many citation-dense sources, and Google AI Overviews leans hardest on entity clarity in its live index. A program that treats them as one surface loses on all three, so we track and tune each one separately."
+      }
+    ]
+  },
+  "proof": {
+    "intro": "We run GEO on our own book and on our clients, and we publish the data.",
+    "items": [
+      "<strong>Toku.</strong> We have been <a href='https://www.loudface.co/case-studies/toku-ai-cited-pipeline'>Toku's growth partner</a> for eighteen months. On its core crypto-payroll prompt, Toku currently appears in 86% of AI answers at average position 2.4. Read that number carefully, because most agencies would sell it as speed. It is not. It is a 30-day visibility snapshot: how often the brand shows up when the prompt is sampled repeatedly over a month. First-citation pickup traces back to Toku's 2024 site rebuild, almost two years ago. On the core prompt it is cited in 86% of answers; across all 75 tracked prompts against twelve competitors it holds roughly 8% share of voice, the stricter cross-prompt metric, and sits fourth on the category leaderboard. One page, its token-compensation primer, recorded an 800% jump in Google clicks between February and April 2026.",
+      "<strong>The benchmark.</strong> <a href='https://www.loudface.co/blog/ai-citation-benchmark-b2b-saas-2026'>Our 2026 study</a> sampled 23,545 AI conversations and 160,240 citations across ChatGPT, Perplexity, and Google AI Overviews, for five B2B SaaS brands, in the 30 days ending June 1, 2026. Corporate websites took 50.7% of every citation. Owned pages earned 2.04 citations for every retrieval, the best rate of any source type we measured. And the engines diverged hard: 80.5% of Reddit's citations came from ChatGPT, while Google AI Overviews leaned 53.4% corporate. SiteUp's separate engine comparison puts Perplexity at about 22 sources per answer to ChatGPT's roughly 8, so Perplexity offers more slots for brands still building authority. The three engines reward different things, and the program has to respect that.",
+      "<strong>Our own site.</strong> The format work compounds. Between March and June 2026, loudface.co went from 0.18% to 9.4% AI-search visibility in its own category. Our domain authority score stayed flat at 30 to 31 the entire time. The lever was not an authority number. It was shipping liftable pages and getting into the third-party corpus the engines retrieve from. Anyone selling you a domain-rating fix as the path to AI citations is selling the wrong number."
+    ]
+  },
+  "timeline": {
+    "title": "How fast does GEO work?",
+    "intro": "Three speeds, and they answer three different questions. Attach the outcome to the number or it means nothing.",
+    "speeds": [
+      {
+        "label": "Hours to a day.",
+        "body": "A well-structured page, published today, on a brand with even modest existing authority, can show up in Google AI Overviews within hours and in Perplexity within a day. AI Overviews is usually the fastest surface because it runs on Google's live index."
+      },
+      {
+        "label": "Weeks.",
+        "body": "Earning a consistent slot in the cited-source set on a prompt that matters, as the engines re-evaluate and your entity signals settle. In practice our programs land first citations on competitive priority prompts inside two to four weeks."
+      },
+      {
+        "label": "Months.",
+        "body": "Dominant share of answer on a competitive prompt cluster, and the pipeline that follows. Measurable lift typically lands in three to four months."
+      }
+    ],
+    "outro": "The industry likes a flat \"<a href='https://www.loudface.co/blog/how-long-do-ai-citations-take'>AI citations take six months</a>,\" because same-day pickup sounds like a content tweak, and a tweak does not justify a retainer. Both ends are real. What matters is which outcome a timeline is attached to: first citation, consistent slot, or dominant share. We set 90-day goals against each and report honestly."
+  },
+  "pricing": {
+    "title": "How much does a GEO agency cost?",
+    "paragraphs": [
+      "GEO programs at LoudFace start <a href='https://www.loudface.co/pricing'>from $5,000 per month</a> on a three-month initial engagement. No setup fee, no lock-in past the first quarter. After the visibility baseline you get a fixed monthly proposal scoped to your 90-day share-of-answer goals, so the price maps to outcomes instead of billable hours.",
+      "For context, published GEO and AEO retainers cluster in a consistent band in 2026. 2026 pricing guides put most serious programs at $3,000 to $15,000 per month; Digital Elevator's own published tiers name $3,000 to $8,000 a month as where most serious programs sit. Standalone audits run $1,500 to $5,000. Enterprise and category-leadership programs reach $10,000 to $30,000 and up. LoudFace runs from $5,000 to around $18,000 per month depending on engine coverage, content velocity, and how many prompt clusters you are contesting, spanning the serious-program band into early enterprise."
+    ]
+  },
+  "measurement": {
+    "title": "What we measure, and what we can't promise.",
+    "paragraphs": [
+      "The headline metric is share of answer: the percentage of AI answers, across your tracked prompts and models, that name your brand. It is the closest analog to classic share of voice, and it is the number we put in front of your board. LSEO's 2026 measurement guide puts B2B software leaders at 8 to 20% share of answer.",
+      "We track it with Peec, sampling your prompts daily across ChatGPT, Perplexity, and Google AI Overviews. One caveat we state up front: those are the three engines we track through Peec. Gemini, Copilot, and Claude are not yet in that panel, so we read them through server logs and manual checks rather than the tracker.",
+      "Most agencies skip the next part. AI visibility tools are probabilistic sampling. They cannot observe how real users phrase prompts inside ChatGPT, so they approximate with synthetic prompts run on a schedule. That is why a single-run \"ranking\" is noise. The most rigorous public study on this, SparkToro's late-2025 test, 12 prompts run a combined 2,961 times, found AI tools return a different brand-recommendation list more than 99% of the time on repeat runs of the same prompt. Rand Fishkin's verdict on single-run readings: any tool that gives a \"ranking position in AI\" is, in his words, \"full of baloney.\"",
+      "The same study found the layer that is stable: the consideration set. Across 994 answers to differently worded versions of one prompt, the same four brands appeared 55 to 77% of the time. That is what a real GEO program sells. Not a guaranteed slot in tomorrow's answer, which nobody can promise, but membership in the small pool of brands the engine keeps drawing from, measured as a visibility rate over many samples.",
+      "The highest-fidelity signal is your own server logs, where you watch the citation crawlers arrive and read what they take. One team, Glasp, grew ChatGPT referral traffic from 517 daily sessions in January 2026 to 19,129 by early May, about 37 times in four months, and credited the method plainly: most tools query the models from outside, they read their own logs instead. We pair the probabilistic tracker with log-level observation for exactly that reason."
+    ],
+    "questionsIntro": "Seven questions to ask any GEO agency, including us:",
+    "questions": [
+      "Ask for your share of answer today. A real GEO agency shows a per-engine baseline on the first call. A rankings report with no citation data is a red flag.",
+      "Ask whether they report per engine or blended. A blended number hides the engine you are losing. ChatGPT, Perplexity, and AI Overviews move independently.",
+      "Ask what liftable artifact each page ships. If the answer is \"high-quality content\" with no roster, table, or TL;DR, the pages can get retrieved and skipped.",
+      "Ask how they handle off-page. Engines cite third-party lists and communities heavily. On-page work alone cannot close a corpus gap.",
+      "Ask for named, numbered outcomes. Vague \"AI visibility improved\" claims hide weak programs. Ours: Toku, cited in 86% of AI answers on its core prompt, a 30-day snapshot eighteen months in, at position 2.4.",
+      "Ask for the honest timeline. First citations can land in days on open prompts. A consistent slot takes weeks. Dominant share takes months. Anyone promising the third on the first timeline is selling.",
+      "Ask for the pricing floor in writing. Ours is public: from $5,000 per month."
+    ]
+  },
+  "faq": {
+    "items": [
+      {
+        "question": "What does a GEO agency do?",
+        "answer": "It gets your brand retrieved, cited, and recommended by AI engines like ChatGPT, Perplexity, and Google AI Overviews. The work spans a visibility audit, content formatted so engines can quote it, entity and schema signals, placement in the third-party sources engines read, and per-engine measurement. The outcome metric is share of answer: how often the engines name you when buyers ask."
+      },
+      {
+        "question": "Is AEO the same as GEO?",
+        "answer": "In practice, yes. GEO (generative engine optimization), AEO (answer engine optimization), LLM SEO, and AI search optimization describe one discipline, and the models treat GEO as the head term. The soft nuance: AEO emphasizes direct answers, GEO emphasizes generative synthesis. The term GEO comes from a 2023 Princeton-led research paper published at the KDD conference in 2024."
+      },
+      {
+        "question": "How much does GEO cost?",
+        "answer": "LoudFace GEO programs start from $5,000 per month on a three-month initial engagement, with no setup fee. Across the market, 2026 pricing guides put most serious GEO and AEO retainers at $3,000 to $15,000 per month. Standalone audits run $1,500 to $5,000, and enterprise programs reach $10,000 to $30,000 and up."
+      },
+      {
+        "question": "How long until AI engines cite my brand?",
+        "answer": "Three speeds. First pickup on an open prompt can land within hours in Google AI Overviews and within a day in Perplexity, if your brand already has modest authority. A consistent slot in the cited set takes weeks. Dominant share of answer on a competitive prompt cluster takes months. We set 90-day goals and report against them."
+      },
+      {
+        "question": "Can you guarantee citations in ChatGPT?",
+        "answer": "No, and walk away from anyone who does. The strongest public study found AI answers return a different brand list more than 99% of the time on repeat runs, so tomorrow's exact citation is never guaranteed. What we control and grow is your consideration-set membership and your visibility rate over many samples. We measure it. We do not promise it."
+      },
+      {
+        "question": "How is GEO different from SEO?",
+        "answer": "SEO competes to rank a link you click. GEO competes to be the answer the engine synthesizes and cites. The citation sets barely overlap: SiteUp's 2026 comparison found ChatGPT and Google AI Overviews share only 13.7% of their citation sources, and GroMach's 680-million-citation analysis found just 11% of domains cited by both ChatGPT and Perplexity. Ranking first on Google does not hand you the AI answer."
+      },
+      {
+        "question": "Do I still need SEO if I invest in GEO?",
+        "answer": "Yes. Google's AI Overviews run on the same core ranking systems as organic Search, and every generative engine retrieves before it cites, so the technical health and authority that rank you keep feeding the retrieval pools the engines draw from. Dropping SEO cuts the ground out from under GEO, which is why we run them as one program."
+      },
+      {
+        "question": "How do you measure GEO success?",
+        "answer": "A tracked panel of your buyer prompts, sampled across each engine: visibility (how often you appear), share of answer (your slice of brand mentions), average position when cited, and sentiment (how engines frame you). Reported weekly, per engine, never blended, and tied back to branded search and pipeline. We track with Peec and confirm against server logs."
+      }
+    ]
+  },
+  "cta": {
+    "title": "Find out what AI engines say about your brand right now.",
+    "body": "We'll run your buyer prompts across ChatGPT, Perplexity, and Google AI Overviews and show you your share of answer, who is beating you to the citation, and the format and corpus gaps keeping you out. No automated sequences. No pitch before the audit. We do the work first.",
+    "primaryCta": "Free AI Visibility Audit",
+    "secondaryCta": "Book a strategy call"
+  }
+}

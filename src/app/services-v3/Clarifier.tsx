@@ -75,7 +75,7 @@ export function Clarifier() {
               <i></i>How we took Toku from unranked to cited by name — that’s the exhibit above.
             </p>
             <div className="cw-foot">
-              <a className="cw-link" href="/services/geo">
+              <a className="cw-link" href="/services/geo-agency">
                 Explore GEO{' '}
                 <svg viewBox="0 0 24 24" aria-hidden="true">
                   <path d="M5 12h14M13 6l6 6-6 6" />
