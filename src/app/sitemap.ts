@@ -4,6 +4,7 @@ import {
   fetchHomepageData,
   fetchSeoPages,
 } from '@/lib/cms-data';
+import nextConfig from '../../next.config';
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = 'https://www.loudface.co';
@@ -187,5 +188,15 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 0.5,
     }));
 
-  return [...staticPages, ...caseStudyPages, ...blogPostPages, ...seoPageEntries, ...teamMemberPages];
+  const allPages = [...staticPages, ...caseStudyPages, ...blogPostPages, ...seoPageEntries, ...teamMemberPages];
+
+  // Folded/301'd URLs must never surface in the sitemap even while their
+  // Sanity doc is still published — next.config.ts redirects is the single
+  // source of truth for "this URL no longer canonically exists" (incident:
+  // best-generative-engine-optimization-agencies-2026 stayed published after
+  // its fold and lingered in the sitemap, 2026-07-12).
+  const redirectRules = (await nextConfig.redirects?.()) ?? [];
+  const redirectedPaths = new Set(redirectRules.map((rule) => rule.source));
+
+  return allPages.filter((page) => !redirectedPaths.has(page.url.replace(baseUrl, '')));
 }
