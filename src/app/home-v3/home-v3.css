@@ -10,8 +10,6 @@
 @font-face { font-family:"Satoshi"; src:url("/homepage-v3/fonts/Satoshi-Regular.woff2") format("woff2"); font-weight:400; font-style:normal; font-display:swap; }
 @font-face { font-family:"Satoshi"; src:url("/homepage-v3/fonts/Satoshi-Medium.woff2") format("woff2"); font-weight:500; font-style:normal; font-display:swap; }
 @font-face { font-family:"Satoshi"; src:url("/homepage-v3/fonts/Satoshi-Bold.woff2") format("woff2"); font-weight:700; font-style:normal; font-display:swap; }
-@font-face { font-family:"Geist Mono"; src:url("/homepage-v3/fonts/GeistMono-Regular.woff2") format("woff2"); font-weight:400; font-style:normal; font-display:swap; }
-@font-face { font-family:"Geist Mono"; src:url("/homepage-v3/fonts/GeistMono-Medium.woff2") format("woff2"); font-weight:500; font-style:normal; font-display:swap; }
 
 /* ---- Design tokens (from DESIGN.md) ---- */
 :root{
@@ -30,7 +28,6 @@
   /* type */
   --font-heading:"Neue Montreal", system-ui, sans-serif;
   --font-sans:"Satoshi", system-ui, sans-serif;
-  --font-mono:"Geist Mono", ui-monospace, monospace;
   /* motion — exponential ease-out only, calm */
   --ease-out:cubic-bezier(.16,1,.3,1);
   --ease-smooth:cubic-bezier(.4,0,.2,1);
@@ -50,7 +47,7 @@
 :where(.hpv3) h1,:where(.hpv3) h2,:where(.hpv3) h3,:where(.hpv3) h4{ font-family:var(--font-heading); font-weight:500; line-height:1.08; letter-spacing:-.02em; }
 :where(.hpv3) a{ color:inherit; text-decoration:none; }
 :where(.hpv3) img,:where(.hpv3) svg{ display:block; max-width:100%; }
-.mono{ font-family:var(--font-mono); }
+.mono{ font-family:var(--font-sans); }
 :where(.hpv3) button{ font:inherit; cursor:pointer; border:none; background:none; }
 :where(.hpv3) :focus-visible{ outline:2px solid var(--primary-500); outline-offset:2px; }
 @media (prefers-reduced-motion:reduce){ *{ animation:none!important; transition:none!important; scroll-behavior:auto!important; } }
@@ -93,7 +90,7 @@
 :where(.hpv3){background:var(--foot);}
 :where(.hpv3){font-size:16px;color:var(--ink);background:var(--paper);}
 .container{max-width:1200px;margin:0 auto;padding-left:var(--gutter);padding-right:var(--gutter);}
-.mono-label{font-family:var(--font-mono);font-size:11px;font-weight:500;letter-spacing:.1em;text-transform:uppercase;color:var(--mut);}
+.mono-label{font-family:var(--font-sans);font-size:11px;font-weight:500;letter-spacing:.1em;text-transform:uppercase;color:var(--mut);}
 :where(.hpv3) ::selection{background:var(--primary-100);color:var(--ink);}
 /* finish: numerals sit in fixed-width cells so stats never wobble; anchors clear the sticky header */
 .rpill b,.tag b,.fstat b,.r-value,.gate,.hero-eyebrow em{font-variant-numeric:tabular-nums;}
@@ -213,7 +210,7 @@
   box-shadow:0 2px 4px rgba(20,16,60,.20),0 34px 60px -22px rgba(15,10,50,.62),inset 0 0 0 1px rgba(255,255,255,.5);}
 .wcard .bar{display:flex;align-items:center;gap:5px;height:28px;padding:0 12px;border-bottom:1px solid var(--surface-100);background:#fff;}
 .wcard .bar b{width:7px;height:7px;border-radius:50%;background:var(--surface-200);flex:none;}
-.wcard .bar span{margin-left:8px;font-family:var(--font-mono);font-size:9.5px;letter-spacing:.04em;color:var(--surface-500);
+.wcard .bar span{margin-left:8px;font-family:var(--font-sans);font-size:9px;letter-spacing:.05em;color:var(--surface-500);
   overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
 .wcard .shot{aspect-ratio:6/7;overflow:hidden;}
 .wcard .shot img{width:100%;height:100%;object-fit:cover;object-position:top;display:block;}
@@ -222,13 +219,13 @@
   border-radius:999px;background:rgba(18,16,52,.52);box-shadow:inset 0 0 0 1px rgba(255,255,255,.28),0 6px 16px -6px rgba(10,8,40,.5);
   -webkit-backdrop-filter:blur(9px) saturate(1.3);backdrop-filter:blur(9px) saturate(1.3);white-space:nowrap;}
 .rpill i{width:6px;height:6px;border-radius:50%;background:#a5b4fc;flex:none;box-shadow:0 0 0 3px rgba(165,180,252,.25);}
-.rpill b{font-family:var(--font-mono);font-size:10.5px;font-weight:500;letter-spacing:.04em;color:#fff;}
+.rpill b{font-family:var(--font-sans);font-size:10.5px;font-weight:600;letter-spacing:.02em;color:#fff;}
 .rpill span{font-size:11.5px;font-weight:500;color:rgba(255,255,255,.82);padding-left:9px;border-left:1px solid rgba(255,255,255,.28);}
 
 /* ---------- logo TICKER — saturated indigo full-bleed strip (Option 2, client-requested).
    Deep indigo field (same single-hue tonal recipe as the hero stage, one shade deeper so it reads
    as a hard band under the hero, not a second hero). White/mono client logos scroll continuously
-   with a masked fade at both edges. A glassy mono label pill sits at the head. FlowNinja color-block
+   with a masked fade at both edges. A glassy label pill sits at the head. FlowNinja color-block
    #1, but LOUD not quiet — the client explicitly asked for the saturated logo bar on this option. */
 .logos{position:relative;overflow:hidden;padding:34px 0 36px;
   background:var(--primary-700);
@@ -241,7 +238,7 @@
 .logos-label{display:inline-flex;align-items:center;gap:10px;height:32px;padding:0 16px 0 14px;border-radius:999px;
   background:rgba(255,255,255,.09);box-shadow:inset 0 0 0 1px rgba(255,255,255,.18);
   -webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);
-  font-family:var(--font-mono);font-size:11px;font-weight:500;letter-spacing:.11em;text-transform:uppercase;
+  font-family:var(--font-sans);font-size:11px;font-weight:600;letter-spacing:.11em;text-transform:uppercase;
   color:rgba(255,255,255,.9);white-space:nowrap;}
 .logos-label i{width:6px;height:6px;border-radius:50%;background:var(--primary-300);flex:none;box-shadow:0 0 0 4px rgba(165,180,252,.22);}
 /* the moving rail — masked fade at both edges */
@@ -268,10 +265,10 @@
 .problem{position:relative;padding:118px 0 128px;background:var(--paper);}
 .problem .container{position:relative;z-index:1;}
 /* section eyebrow — ONE repeated page-wide pattern: indigo pill on light grounds,
-   the light-ground counterpart of the hero's glassy pill. Same radius (999), same mono label type. */
+   the light-ground counterpart of the hero's glassy pill. Same radius (999), same label type. */
 .eyebrow{display:inline-flex;align-items:center;gap:9px;height:30px;padding:0 15px 0 13px;border-radius:999px;
   background:var(--primary-50);box-shadow:inset 0 0 0 1px var(--primary-200);
-  font-family:var(--font-mono);font-size:11px;font-weight:500;letter-spacing:.11em;text-transform:uppercase;
+  font-family:var(--font-sans);font-size:11px;font-weight:600;letter-spacing:.11em;text-transform:uppercase;
   color:var(--primary-700);white-space:nowrap;margin-bottom:22px;}
 .eyebrow i{width:6px;height:6px;border-radius:50%;background:var(--primary-500);flex:none;box-shadow:0 0 0 3px rgba(99,102,241,.16);}
 /* on-color counterpart — glassy translucent pill (the hero's on-field vocabulary) for deep stages */
@@ -282,7 +279,7 @@
 .display .ghost{color:var(--primary-600);}
 /* hairline rule closing the header — crisp structure on the light stage */
 .light-rule{position:relative;margin-top:40px;border-top:1px solid var(--paper-line);}
-.rule-tag{position:absolute;right:0;bottom:10px;font-family:var(--font-mono);font-size:10px;font-weight:500;
+.rule-tag{position:absolute;right:0;bottom:10px;font-family:var(--font-sans);font-size:10px;font-weight:600;
   letter-spacing:.12em;text-transform:uppercase;color:var(--mut);white-space:nowrap;}
 /* the figure catalog: five plates, two columns, the funnel cut runs full width */
 .figgrid{margin-top:52px;display:grid;grid-template-columns:1fr 1fr;gap:56px 24px;}
@@ -290,13 +287,13 @@
 .fig.wide{grid-column:1/-1;}
 /* the plate: paper ground = ONE small repeating SVG texture tile (measured mechanic from the
    reference capture — bg-repeat data-URI, never hand-drawn dot grids) + ONE inherited annotation
-   voice: every label on every plate inherits mono / 10px / uppercase / 60%-alpha ink from this
+   voice: every label on every plate inherits Satoshi / 10px / uppercase / 60%-alpha ink from this
    wrapper. Emphasized labels opt into full line-work ink via .tk. */
 .plate{position:relative;border-radius:12px;background-color:#fdfdff;
   background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12'%3E%3Crect width='1' height='1' fill='%234f46e5' fill-opacity='.13'/%3E%3C/svg%3E");
   background-repeat:repeat;background-position:50% 50%;
   box-shadow:inset 0 0 0 1px var(--primary-100);
-  font-family:var(--font-mono);font-weight:500;font-size:10px;letter-spacing:.06em;text-transform:uppercase;
+  font-family:var(--font-sans);font-weight:600;font-size:10px;letter-spacing:.08em;text-transform:uppercase;
   color:rgba(10,10,10,.6);}
 .plate svg{display:block;width:100%;height:auto;}
 .plate text{fill:currentColor;}          /* annotations inherit the wrapper voice — one rule */
@@ -362,11 +359,11 @@ h2.sec{font-size:clamp(1.9rem,2.9vw,2.55rem);letter-spacing:-.025em;color:var(--
 .tpanel.grow{background-image:
   radial-gradient(85% 62% at 85% -6%, rgba(99,102,241,.38) 0%, rgba(99,102,241,0) 58%),
   linear-gradient(165deg, var(--night-hi) 0%, var(--night) 55%, #110e36 100%);}
-/* phase label — the page's glass mono label-pill vocabulary */
+/* phase label — the page's glass label-pill vocabulary */
 .tphase{display:inline-flex;align-items:center;gap:8px;height:28px;padding:0 13px 0 11px;border-radius:999px;
   background:rgba(255,255,255,.10);box-shadow:inset 0 0 0 1px rgba(255,255,255,.2);
   -webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);
-  font-family:var(--font-mono);font-size:10.5px;font-weight:500;letter-spacing:.09em;text-transform:uppercase;color:rgba(255,255,255,.9);}
+  font-family:var(--font-sans);font-size:10.5px;font-weight:600;letter-spacing:.09em;text-transform:uppercase;color:rgba(255,255,255,.9);}
 .tphase i{width:6px;height:6px;border-radius:50%;background:rgba(255,255,255,.85);flex:none;}
 .tword{font-family:var(--font-heading);font-weight:500;font-size:clamp(2.9rem,5.4vw,5rem);line-height:.92;letter-spacing:-.04em;color:#fff;margin-left:-.03em;}
 .tbody{font-size:15px;line-height:1.65;color:rgba(255,255,255,.8);max-width:56ch;}
@@ -416,13 +413,13 @@ h2.sec{font-size:clamp(1.9rem,2.9vw,2.55rem);letter-spacing:-.025em;color:var(--
   display:flex;flex-direction:column;transition:transform .45s var(--ease-out),box-shadow .45s var(--ease-out);}
 .tile:hover{transform:translateY(-4px);box-shadow:0 2px 4px rgba(18,16,50,.12),0 40px 68px -24px rgba(18,16,50,.4);}
 /* the screenshot now sits inside the SAME browser-frame treatment as the hero cards:
-   a white chrome bar (3 dots + mono url), 14px card radius, layered shadow + white inset ring.
+   a white chrome bar (3 dots + url), 14px card radius, layered shadow + white inset ring.
    The brand --field breathes as a mat around the framed browser card — client identity + hero language. */
 .tile-frame{position:relative;margin:18px 18px 0;border-radius:14px;overflow:hidden;background:#fff;
   box-shadow:0 2px 4px rgba(10,8,30,.22),0 26px 46px -20px rgba(8,6,28,.5),inset 0 0 0 1px rgba(255,255,255,.5);}
 .tile-bar{display:flex;align-items:center;gap:5px;height:28px;padding:0 12px;border-bottom:1px solid var(--surface-100);background:#fff;}
 .tile-bar b{width:7px;height:7px;border-radius:50%;background:var(--surface-200);flex:none;}
-.tile-bar span{margin-left:8px;font-family:var(--font-mono);font-size:9.5px;letter-spacing:.04em;color:var(--surface-500);
+.tile-bar span{margin-left:8px;font-family:var(--font-sans);font-size:9px;letter-spacing:.05em;color:var(--surface-500);
   overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
 .tile-media{overflow:hidden;}
 .tile-media img{width:100%;height:100%;object-fit:cover;object-position:top;transition:transform .7s var(--ease-out);}
@@ -430,7 +427,7 @@ h2.sec{font-size:clamp(1.9rem,2.9vw,2.55rem);letter-spacing:-.025em;color:var(--
 /* ---- the ONE result-pill vocabulary, page-wide (mirrors the hero .rpill exactly) ---- */
 .tag{display:inline-flex;align-items:center;gap:8px;white-space:nowrap;}
 .tag i{flex:none;}
-.tag b{font-family:var(--font-mono);font-size:11px;font-weight:500;letter-spacing:.03em;}
+.tag b{font-family:var(--font-sans);font-size:11px;font-weight:600;letter-spacing:.01em;}
 .tag span{padding-left:9px;margin-left:1px;border-left:1px solid;font-size:11.5px;font-weight:500;}
 /* glassy result pill — IDENTICAL vocabulary to the hero .rpill, docked on the brand field below the frame */
 .tile-foot{position:relative;padding:16px 20px 18px;display:flex;align-items:center;margin-top:auto;}
@@ -481,7 +478,7 @@ h2.sec{font-size:clamp(1.9rem,2.9vw,2.55rem);letter-spacing:-.025em;color:var(--
 .r-quote{grid-column:span 5;}
 .r-quote.wide{grid-column:span 7;}
 .r-quote blockquote{font-size:19px;font-weight:500;line-height:1.5;color:#fff;letter-spacing:-.01em;}
-.r-quote .who{margin-top:22px;font-family:var(--font-mono);font-size:10.5px;font-weight:500;letter-spacing:.09em;text-transform:uppercase;color:rgba(255,255,255,.92);}
+.r-quote .who{margin-top:22px;font-family:var(--font-sans);font-size:10.5px;font-weight:600;letter-spacing:.09em;text-transform:uppercase;color:rgba(255,255,255,.92);}
 /* the ONE pill vocabulary applied to result-tile tags: full radius, same paddings/dot as .tile-foot .tag */
 .tag.static{position:static;display:inline-flex;height:auto;padding:9px 14px;border-radius:999px;}
 .tag.static i{width:6px;height:6px;border-radius:50%;}
@@ -526,11 +523,11 @@ h2.sec{font-size:clamp(1.9rem,2.9vw,2.55rem);letter-spacing:-.025em;color:var(--
 .node{position:relative;z-index:1;display:block;width:15px;height:15px;border-radius:50%;flex:none;
   background:var(--primary-800);border:1.5px solid rgba(255,255,255,.55);margin-bottom:16px;}
 .step.live .node{background:#fff;border-color:#fff;box-shadow:0 0 0 4px rgba(255,255,255,.22);}
-/* gates — the page's glass mono pill vocabulary on the night field */
+/* gates — the page's glass pill vocabulary on the night field */
 .gate{display:inline-flex;align-items:center;height:30px;padding:0 13px;border-radius:999px;
   background:rgba(255,255,255,.08);box-shadow:inset 0 0 0 1px rgba(255,255,255,.2);
   -webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);
-  font-family:var(--font-mono);font-size:11px;font-weight:500;letter-spacing:.05em;color:rgba(255,255,255,.9);white-space:nowrap;}
+  font-family:var(--font-sans);font-size:11px;font-weight:600;letter-spacing:.05em;color:rgba(255,255,255,.9);white-space:nowrap;}
 .step.live .gate{color:var(--primary-900);background:#fff;box-shadow:none;}
 /* step cards — frosted glass objects staged on the night, equal-height across the row */
 .step article{margin-top:16px;flex:1;width:100%;border-radius:14px;padding:24px 24px 26px;
@@ -609,7 +606,7 @@ h2.sec{font-size:clamp(1.9rem,2.9vw,2.55rem);letter-spacing:-.025em;color:var(--
   box-shadow:0 2px 4px rgba(8,6,30,.42),0 44px 84px -30px rgba(0,0,0,.72),inset 0 0 0 1px rgba(255,255,255,.5);}
 .cover-card .bar{display:flex;align-items:center;gap:5px;height:28px;padding:0 12px;border-bottom:1px solid var(--surface-100);background:#fff;}
 .cover-card .bar b{width:7px;height:7px;border-radius:50%;background:var(--surface-200);}
-.cover-card .bar span{margin-left:8px;font-family:var(--font-mono);font-size:9.5px;letter-spacing:.04em;color:var(--surface-500);}
+.cover-card .bar span{margin-left:8px;font-family:var(--font-sans);font-size:9px;letter-spacing:.05em;color:var(--surface-500);}
 .cover-card .shot{height:238px;overflow:hidden;}
 .cover-card .shot img{width:100%;height:100%;object-fit:cover;object-position:top;display:block;}
 .cover-obj .rpill{left:14px;bottom:14px;}

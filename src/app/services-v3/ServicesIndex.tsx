@@ -7,7 +7,8 @@ import { SERVICES, type ServiceEntry } from './data';
  * single-sourced from SERVICES in ./data (which also feeds the ItemList JSON-LD).
  *
  * QA (P12): the track eyebrow ("Track A/B") and the "A + B" glyph render in
- * Satoshi sentence-case, not Geist Mono — mono is reserved for the $5k/mo pill.
+ * Satoshi sentence-case, not Geist Mono. 2026-07-12 two-font law: the $5k/mo
+ * pill (.amt) is Satoshi too now — Geist Mono is banned site-wide, no exceptions.
  */
 const GoIcon = () => (
   <svg viewBox="0 0 24 24">

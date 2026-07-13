@@ -1,6 +1,6 @@
 ---
 name: blueprint-figures
-description: Draw LoudFace's house technical-diagram style — "blueprint plates" — indigo engineering-manual SVG figures on dotted-grid paper with mono leader-line annotations, marching-ants motion, and one flickering live element. Use this skill whenever a LoudFace surface needs ANY explanatory graphic, diagram, illustration, figure, or visual — homepage/service/landing sections, blog post diagrams, case-study process visuals, "explain X with a graphic", "add a visual to this section", "makingsoftware style", or when content reads as walls of text and needs figures. Also use when asked to REVIEW or fix an existing blueprint figure. Do not freehand diagram styles from memory — this skill carries the client-approved system and its accumulated feedback.
+description: Draw LoudFace's house technical-diagram style — "blueprint plates" — indigo engineering-manual SVG figures on dotted-grid paper with Satoshi uppercase leader-line annotations, marching-ants motion, and one flickering live element. Use this skill whenever a LoudFace surface needs ANY explanatory graphic, diagram, illustration, figure, or visual — homepage/service/landing sections, blog post diagrams, case-study process visuals, "explain X with a graphic", "add a visual to this section", "makingsoftware style", or when content reads as walls of text and needs figures. Also use when asked to REVIEW or fix an existing blueprint figure. Do not freehand diagram styles from memory — this skill carries the client-approved system and its accumulated feedback.
 ---
 
 # Blueprint figures — the LoudFace technical plate system
@@ -64,9 +64,12 @@ Why each piece matters:
 - **The paper is a mechanism, not decoration**: one 12px repeating SVG dot-tile as
   `background-image` on `.plate` — never hand-drawn dot grids inside the SVG (measured from
   the reference; keeps every plate's paper identical and cheap).
-- **One annotation voice, one CSS rule**: `.plate` sets mono / 10px / uppercase / 60%-alpha
-  ink; every `<text>` inherits it (`fill:currentColor`). Emphasized labels opt into full ink
-  with class `tk`. Per-label font styling is a smell.
+- **One annotation voice, one CSS rule**: `.plate` sets Satoshi (semibold) / 10px / uppercase /
+  letterspaced / 60%-alpha ink; every `<text>` inherits it (`fill:currentColor`). Emphasized
+  labels opt into full ink with class `tk`. Per-label font styling is a smell. (2026-07-12:
+  the plate voice was Geist Mono until the site-wide two-font law banned it — Neue Montreal
+  headings + Satoshi body/UI, nothing else. Uppercase + letterspacing carries the "technical
+  readout" feel that the mono family used to.)
 - **Plate furniture** (FIG number, bracketed object meta, year stamp) makes it read as a
   manual page. Genuine figure numbering is sanctioned here — it IS the idiom; the decorative
   01/02/03 ban applies to section headers, not figure plates.
@@ -130,7 +133,7 @@ Map to the host brand's color ramp. LoudFace: the `--primary-*` indigo scale.
    icon-blob — the failure mode this skill exists to prevent; density of *meaningful* detail is
    the cure, in flat OR dimensional. When the archetype IS dimensional, use the ramp for depth
    (front faces light, side/top one step darker) so the eye reads 3-D.
-3. **Annotations are content**: uppercase mono, ≤4 words, saying something TRUE — part names,
+3. **Annotations are content**: uppercase Satoshi (letterspaced), ≤4 words, saying something TRUE — part names,
    states ("LOCKED", "NEVER RETRIEVED"), real numbers from the project's kit, or neutral
    qualitative labels ("NO LIFT", "GROWING"). **STRUCTURAL numbers are fine and often needed** —
    a chart's axis scale (6K/4K/2K/0), an axis range (−6…+6), a real duration ("2–6 WEEKS"): the
@@ -296,10 +299,21 @@ its location) — the calibration set should grow from real wins.
 
 The mechanics are portable; the ramp is not. Map `--primary-*` to the host brand's scale
 (reference-site original was a cobalt ramp — see measured-spec), keep the discipline
-identical: light fills, single stroke color, mono annotations, one flicker.
+identical: light fills, single stroke color, uppercase letterspaced annotations (in whatever
+the host brand's UI/body font is — LoudFace uses Satoshi, not mono), one flicker.
 
 ## Changelog
 
+- 2026-07-12: Two-font law (taste-rulebook.md, dated 2026-07-12) banned Geist Mono site-wide —
+  LoudFace now uses exactly Neue Montreal (headings) + Satoshi (everything else), no third
+  family. Plate annotations move from Geist Mono to Satoshi (semibold, uppercase, letterspaced
+  ~.08em) — same voice, same rule (`.plate` sets it once, every `<text>` inherits via
+  `fill:currentColor`), just a different family. Updated the description, "Anatomy of a plate,"
+  drawing-method rule #3, and "Reusing outside this repo." Also swept `references/plate-css.md`
+  (the canonical CSS this skill tells you to copy verbatim — it still had the old
+  `font-family:var(--font-mono)` declarations), `references/measured-spec.md`, and
+  `references/source-svg-techniques.md` for the same stale prescription, so the next invocation
+  doesn't silently re-introduce mono via copy-paste.
 - 2026-07-04 (k): Attacked the META-limit the FIG.E hatch leak exposed — the verify checklist only
   catches classes already on it, so a NEW quirk class slips through until a human names it. Two
   structural fixes, not another reactive checklist line. (1) verify step **2e** — an adversarial

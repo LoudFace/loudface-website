@@ -59,13 +59,13 @@ stage ground for v3 (§2) — deliberate, not drift.
 Weight + spacing carry hierarchy, not tone color.
 - **Neue Montreal** — all headings, weight 500 (size makes hierarchy, not boldness).
 - **Satoshi** — body, descriptions, nav links, UI labels.
-- **Geist Mono** — **TECHNICAL ONLY: stats, blueprint-plate labels/annotations, code.** NEVER a
-  nav/dropdown kicker or decorative mono-caps micro-label ("deviates from our chosen fonts" — logged
-  rejection). No dash/rule eyebrow, no `LABEL // YEAR`.
-  - **Carve-out:** display-scale marketing numerals (`.r-value`, `.fstat b` — the big hero-sized proof
-    numbers) intentionally set in **Neue Montreal**, not mono — they read as headline typography, not a
-    technical readout. Geist Mono remains for inline/technical readouts: chips (`.rpill b`, `.tag b`),
-    blueprint-plate labels, and code.
+- **TWO FONTS ONLY — Geist Mono is BANNED site-wide** (Arnel, 2026-07-12: "We don't want to use any
+  Mono fonts anywhere"). Former mono roles restyle as **Satoshi**: small labels/eyebrows/chips =
+  uppercase + letter-spacing (.08–.12em); stats/numerals = `font-variant-numeric: tabular-nums` where
+  alignment matters. Display-scale marketing numerals (`.r-value`, `.fstat b`) stay **Neue Montreal**.
+  Sole exception: literal `<pre>/<code>` inside blog rich-text content renders browser-mono (content,
+  not design chrome). Still banned: dash/rule eyebrows, `LABEL // YEAR`, decorative micro-labels
+  pretending to be a third typographic voice.
 
 ## 5. Motion
 Calm-operator: `--ease-out` (`cubic-bezier(.16,1,.3,1)`), no overshoot/bounce/glow/spinner.
@@ -108,9 +108,10 @@ repeat later in the page as a recurring anchor (on `/pricing`: hero `.hero-ancho
 
 ## 8. Blueprint-figure plates (house explanatory-graphic style)
 Any explanatory graphic (problem items, service diagrams, case-study process, "explain X") uses the
-**blueprint-figures** skill — engineering-manual SVG plates: single indigo ramp, dotted paper, mono
-uppercase leader-line labels, marching-ants, exactly one flicker, FIG furniture. Real drawings, not
-decorative icons. **Invoke the skill; do not freehand the style.** (The ONE place mono-caps labels are correct.)
+**blueprint-figures** skill — engineering-manual SVG plates: single indigo ramp, dotted paper,
+**Satoshi uppercase leader-line labels (letterspaced — NOT mono; the 2026-07-12 two-font law applies
+inside figures too)**, marching-ants, exactly one flicker, FIG furniture. Real drawings, not
+decorative icons. **Invoke the skill; do not freehand the style.**
 
 ## 9. Do / Don't
 **DO:** deep-stage ↔ crisp-light rhythm · structured hero visuals (columns/grids) · items-with-figures ·

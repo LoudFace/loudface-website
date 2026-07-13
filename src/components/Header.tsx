@@ -137,6 +137,7 @@ export function Header({ heroTheme }: { heroTheme?: 'dark' } = {}) {
   const [scrolled, setScrolled] = useState(false);
   const dropdownRefs = useRef<Record<string, HTMLDivElement | null>>({});
   const closeTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const mobileDialogRef = useRef<HTMLDialogElement>(null);
 
   // Close dropdown on outside click
   useEffect(() => {
@@ -170,6 +171,43 @@ export function Header({ heroTheme }: { heroTheme?: 'dark' } = {}) {
       document.body.style.overflow = "";
     };
   }, [mobileMenuOpen]);
+
+  // Mobile menu — native <dialog> (showModal/close): focus trap, Escape-to-close,
+  // and an inert background all come from the browser, mirroring the about-v3
+  // TeamModals pattern (src/app/about-v3/TeamModals.tsx). This effect keeps the
+  // dialog's real open state in sync with React state; the `close` listener below
+  // syncs the other direction (Escape key, or any future close path) back into
+  // state, so aria-expanded and the burger icon never drift from what's on screen.
+  useEffect(() => {
+    const dialog = mobileDialogRef.current;
+    if (!dialog) return;
+    if (mobileMenuOpen && !dialog.open) {
+      dialog.showModal();
+    } else if (!mobileMenuOpen && dialog.open) {
+      dialog.close();
+    }
+  }, [mobileMenuOpen]);
+
+  useEffect(() => {
+    const dialog = mobileDialogRef.current;
+    if (!dialog) return;
+    const handleClose = () => setMobileMenuOpen(false);
+    dialog.addEventListener("close", handleClose);
+    return () => dialog.removeEventListener("close", handleClose);
+  }, []);
+
+  // Close the dialog if the viewport grows past the breakpoint where its
+  // trigger (the burger button) is hidden — otherwise a modal <dialog> can be
+  // left open with an inert background and no visible way to dismiss it.
+  useEffect(() => {
+    const onResize = () => {
+      if (window.innerWidth >= 1024 && mobileDialogRef.current?.open) {
+        setMobileMenuOpen(false);
+      }
+    };
+    window.addEventListener("resize", onResize);
+    return () => window.removeEventListener("resize", onResize);
+  }, []);
 
   // Clean up hover timeout on unmount
   useEffect(() => {
@@ -400,6 +438,7 @@ export function Header({ heroTheme }: { heroTheme?: 'dark' } = {}) {
                 onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
                 className="nav-burger lg:hidden relative flex items-center justify-center w-10 h-10 -mr-1 bg-transparent border-none cursor-pointer rounded-xl hover:bg-surface-100 active:bg-surface-200 transition-colors duration-150"
                 aria-label="Toggle menu"
+                aria-haspopup="dialog"
                 aria-expanded={mobileMenuOpen}
               >
                 <div className="relative w-[18px] h-3">
@@ -424,10 +463,12 @@ export function Header({ heroTheme }: { heroTheme?: 'dark' } = {}) {
         </div>
       </div>
 
-      {/* Mobile Menu */}
-      <div
-        className={`${mobileMenuOpen ? "block" : "hidden"} fixed top-[61px] inset-x-0 h-[calc(100dvh-61px)] bg-white overflow-y-auto z-40 lg:!hidden`}
-        aria-hidden={!mobileMenuOpen}
+      {/* Mobile Menu — native <dialog>; open state is driven imperatively via
+          mobileDialogRef in the effects above, not by conditional classes. */}
+      <dialog
+        ref={mobileDialogRef}
+        aria-label="Mobile menu"
+        className="m-0 w-full max-w-none h-[calc(100dvh-61px)] max-h-none fixed top-[61px] inset-x-0 border-0 p-0 bg-white overflow-y-auto z-40 lg:!hidden backdrop:bg-transparent"
       >
         <nav className="p-6" aria-label="Mobile navigation">
           {navLinks.map((link) => (
@@ -541,7 +582,7 @@ export function Header({ heroTheme }: { heroTheme?: 'dark' } = {}) {
             </button>
           </div>
         </nav>
-      </div>
+      </dialog>
     </header>
   );
 }

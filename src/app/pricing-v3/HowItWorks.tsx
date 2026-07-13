@@ -1,7 +1,8 @@
 /**
  * HowItWorks — light two-column section: reading column (H2 + lede + Cal CTA)
  * beside the blueprint stepper plate. Each step carries a small blueprint-style
- * SVG figure (mono labels, marching-ants flow line, one flickering live node).
+ * SVG figure (Satoshi uppercase labels, marching-ants flow line, one flickering
+ * live node).
  */
 const d = (v: string) => ({ ['--d' as string]: v });
 

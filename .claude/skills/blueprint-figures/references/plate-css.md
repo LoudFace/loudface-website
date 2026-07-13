@@ -2,22 +2,23 @@
 
 Tokens expected on `:root` (map to the host project's brand ramp; these are LoudFace's):
 `--primary-50..800` (the ramp), `--paper #fdfdff`, `--paper-line`, `--ink`, `--body`, `--mut`,
-`--font-heading/--font-sans/--font-mono`, `--ease-out`.
+`--font-heading/--font-sans`, `--ease-out`. (2026-07-12: `--font-mono` dropped — the two-font
+law banned Geist Mono site-wide. Annotations below use `--font-sans` uppercase+letterspaced.)
 
 ```css
 /* ---------- problem : FIELD-MANUAL FIGURE CATALOG on the crisp light stage. The five failure
    modes are ENGINEERING PLATES (FIG.001–005) in the makingsoftware reference-manual idiom,
    reskinned to LoudFace indigo: dotted-grid paper panels, 1–1.5px line drawings, light tint
-   fills + one solid accent, mono UPPERCASE annotations on leader arrows, vertical FIG labels
-   and bracketed plate meta. Captions are one title + one consequence line — figures do the
-   talking. The catalog closes on the saturated indigo band (the one loud object).          --- */
+   fills + one solid accent, uppercase letterspaced annotations on leader arrows, vertical FIG
+   labels and bracketed plate meta. Captions are one title + one consequence line — figures do
+   the talking. The catalog closes on the saturated indigo band (the one loud object).      --- */
 .problem{position:relative;padding:118px 0 128px;background:var(--paper);}
 .problem .container{position:relative;z-index:1;}
 /* section eyebrow — ONE repeated page-wide pattern: indigo pill on light grounds,
-   the light-ground counterpart of the hero's glassy pill. Same radius (999), same mono label type. */
+   the light-ground counterpart of the hero's glassy pill. Same radius (999), same label type. */
 .eyebrow{display:inline-flex;align-items:center;gap:9px;height:30px;padding:0 15px 0 13px;border-radius:999px;
   background:var(--primary-50);box-shadow:inset 0 0 0 1px var(--primary-200);
-  font-family:var(--font-mono);font-size:11px;font-weight:500;letter-spacing:.11em;text-transform:uppercase;
+  font-family:var(--font-sans);font-size:11px;font-weight:600;letter-spacing:.11em;text-transform:uppercase;
   color:var(--primary-700);white-space:nowrap;margin-bottom:22px;}
 .eyebrow i{width:6px;height:6px;border-radius:50%;background:var(--primary-500);flex:none;box-shadow:0 0 0 3px rgba(99,102,241,.16);}
 /* on-color counterpart — glassy translucent pill (the hero's on-field vocabulary) for deep stages */
@@ -28,7 +29,7 @@ Tokens expected on `:root` (map to the host project's brand ramp; these are Loud
 .display .ghost{color:var(--primary-600);}
 /* hairline rule closing the header — crisp structure on the light stage */
 .light-rule{position:relative;margin-top:40px;border-top:1px solid var(--paper-line);}
-.rule-tag{position:absolute;right:0;bottom:10px;font-family:var(--font-mono);font-size:10px;font-weight:500;
+.rule-tag{position:absolute;right:0;bottom:10px;font-family:var(--font-sans);font-size:10px;font-weight:600;
   letter-spacing:.12em;text-transform:uppercase;color:var(--mut);white-space:nowrap;}
 /* the figure catalog: five plates, two columns, the funnel cut runs full width */
 .figgrid{margin-top:52px;display:grid;grid-template-columns:1fr 1fr;gap:56px 24px;}
@@ -36,13 +37,13 @@ Tokens expected on `:root` (map to the host project's brand ramp; these are Loud
 .fig.wide{grid-column:1/-1;}
 /* the plate: paper ground = ONE small repeating SVG texture tile (measured mechanic from the
    reference capture — bg-repeat data-URI, never hand-drawn dot grids) + ONE inherited annotation
-   voice: every label on every plate inherits mono / 10px / uppercase / 60%-alpha ink from this
+   voice: every label on every plate inherits Satoshi / 10px / uppercase / 60%-alpha ink from this
    wrapper. Emphasized labels opt into full line-work ink via .tk. */
 .plate{position:relative;border-radius:12px;background-color:#fdfdff;
   background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12'%3E%3Crect width='1' height='1' fill='%234f46e5' fill-opacity='.13'/%3E%3C/svg%3E");
   background-repeat:repeat;background-position:50% 50%;
   box-shadow:inset 0 0 0 1px var(--primary-100);
-  font-family:var(--font-mono);font-weight:500;font-size:10px;letter-spacing:.06em;text-transform:uppercase;
+  font-family:var(--font-sans);font-weight:600;font-size:10px;letter-spacing:.08em;text-transform:uppercase;
   color:rgba(10,10,10,.6);}
 .plate svg{display:block;width:100%;height:auto;}
 .plate text{fill:currentColor;}          /* annotations inherit the wrapper voice — one rule */

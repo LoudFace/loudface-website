@@ -145,9 +145,10 @@ parts — parts arrive in sequence, not all at once. CSS: step `animation-delay`
 
 The reference bakes its mono labels as **filled-rectangle glyph paths** (each letter is a
 `<path fill=primary-600 d="M…h…v…">`), which is why they're pixel-crisp at any scale. We use
-real `<text>` in Geist Mono (brand font) at ~10–11px uppercase — simpler, on-brand, good
+real `<text>` in Satoshi (brand font, semibold) at ~10–11px uppercase — simpler, on-brand, good
 enough. Only reach for glyph-paths if a *hero* label must stay razor-crisp when the plate is
-scaled way up; never worth it for ordinary annotations.
+scaled way up; never worth it for ordinary annotations. (2026-07-12: this was Geist Mono until
+the site-wide two-font law banned it — Neue Montreal + Satoshi only, no third family.)
 
 ## 6. The recipe, end to end (how a dimensional plate actually gets built)
 

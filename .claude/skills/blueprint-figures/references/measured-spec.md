@@ -29,8 +29,15 @@ Ground truth extracted from two captured figure SVGs on https://www.makingsoftwa
 - Their impl = SVG SMIL <animate>; OUR impl = CSS animations (SMIL ignores prefers-reduced-motion; CSS respects it via media query kill).
 
 ## Type in figures
-- Their labels are drawn as pixel-font paths (departureMono glyphs). WE use real Geist Mono <text>/HTML labels instead (brand font) at the same optical size (~10-11px, uppercase, 50-60% alpha ink for secondary, full primary-600 for emphasized).
+- Their labels are drawn as pixel-font paths (departureMono glyphs). WE use real `<text>`/HTML
+  labels instead at the same optical size (~10-11px, uppercase, 50-60% alpha ink for secondary,
+  full primary-600 for emphasized), in the brand's body font — Satoshi (semibold), not mono.
+  (2026-07-12: this used to be Geist Mono; the site-wide two-font law banned it — see
+  taste-rulebook.md 2026-07-12. Uppercase + letterspacing carries the "technical readout" feel
+  the mono family used to.)
 - FIG numbers rotated vertical beside plates; bracket meta right side, e.g. "[ 3.5" FLOPPY DISK ]" "( 1986 )".
 
 ## Body context (theirs; do NOT copy fonts)
-- Serif body ("arizona"), pixel display font for the site title — LoudFace keeps Neue Montreal/Satoshi/Geist Mono.
+- Serif body ("arizona"), pixel display font for the site title — LoudFace keeps exactly two
+  fonts: Neue Montreal (headings) + Satoshi (everything else, including figure annotations).
+  No third family, mono included.
