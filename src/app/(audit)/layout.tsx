@@ -1,6 +1,8 @@
 import "../globals.css";
 import type { Metadata } from 'next';
+import { headers } from 'next/headers';
 import { PostHogProvider } from '@/components/PostHogProvider';
+import { countryRequiresConsent } from '@/lib/consent';
 
 /**
  * (audit) Layout
@@ -27,17 +29,29 @@ export const metadata: Metadata = {
   },
 };
 
-export default function AuditLayout({
+export default async function AuditLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  // Consent region flag (data-lf-cr) — read by posthog-client's consent gate.
+  // Without it the gate assumes opt-in and PostHog would stay off for every
+  // /audit visitor, including the US ones. There's deliberately no consent
+  // banner in this fullscreen workspace: opt-in-region visitors simply go
+  // untracked here, which is the safe direction. display:contents keeps the
+  // wrapper out of layout.
+  const requestHeaders = await headers();
+  const country = requestHeaders.get('cf-ipcountry') ?? requestHeaders.get('x-vercel-ip-country');
+  const consentRequired = countryRequiresConsent(country);
+
   return (
     <PostHogProvider>
       <style>{`
         body { background-color: var(--color-surface-950); color: var(--color-surface-300); overflow: hidden; }
       `}</style>
-      {children}
+      <div data-lf-cr={consentRequired ? '1' : '0'} style={{ display: 'contents' }}>
+        {children}
+      </div>
     </PostHogProvider>
   );
 }

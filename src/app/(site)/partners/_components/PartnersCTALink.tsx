@@ -1,6 +1,7 @@
 'use client';
 
 import type { ReactNode } from 'react';
+import { ensurePostHog } from '@/lib/posthog-client';
 
 interface PartnersCTALinkProps {
   /** Identifies which CTA was clicked in PostHog. */
@@ -21,9 +22,8 @@ interface PartnersCTALinkProps {
  */
 export function PartnersCTALink({ source, className, children }: PartnersCTALinkProps) {
   function handleClick() {
-    void import('posthog-js').then(({ default: posthog }) => {
-      if (!posthog.__loaded) return;
-      posthog.capture('partners_cta_clicked', { source });
+    void ensurePostHog().then((posthog) => {
+      posthog?.capture('partners_cta_clicked', { source });
     });
   }
 

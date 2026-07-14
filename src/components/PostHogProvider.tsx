@@ -3,6 +3,7 @@
 import { usePathname, useSearchParams } from 'next/navigation';
 import { Suspense, useEffect, useRef } from 'react';
 import { ensurePostHog, isPostHogRequested } from '@/lib/posthog-client';
+import { CONSENT_EVENT } from '@/lib/consent';
 
 function PostHogPageView() {
   const pathname = usePathname();
@@ -46,10 +47,16 @@ function PostHogPageView() {
       window.addEventListener(e, loadPostHog, { once: true, passive: true });
     });
 
+    // Consent granted mid-page (banner or /cookies prefs): the one-shot
+    // interaction listeners may already be spent from before the grant, when
+    // ensurePostHog() was still a no-op — retry so the pending pageview fires.
+    window.addEventListener(CONSENT_EVENT, loadPostHog);
+
     return () => {
       events.forEach((e) => {
         window.removeEventListener(e, loadPostHog);
       });
+      window.removeEventListener(CONSENT_EVENT, loadPostHog);
     };
   }, [pathname, searchParams]);
 

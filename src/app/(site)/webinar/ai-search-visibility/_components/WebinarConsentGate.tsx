@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { Button } from '@/components/ui';
+import { ensurePostHog } from '@/lib/posthog-client';
 import { RIVERSIDE_REGISTRATION_URL } from './config';
 
 export function WebinarConsentGate({ source }: { source: 'hero' | 'register' }) {
@@ -12,9 +13,8 @@ export function WebinarConsentGate({ source }: { source: 'hero' | 'register' }) 
   // PostHog pattern (see PartnersCTALink). Autocapture also records the raw
   // click; this gives us a clean, named event with the CTA placement.
   function handleRegisterClick() {
-    void import('posthog-js').then(({ default: posthog }) => {
-      if (!posthog.__loaded) return;
-      posthog.capture('webinar_cta_clicked', { source, webinar: 'ai-search-visibility' });
+    void ensurePostHog().then((posthog) => {
+      posthog?.capture('webinar_cta_clicked', { source, webinar: 'ai-search-visibility' });
     });
   }
 

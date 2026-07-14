@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
+import { ensurePostHog } from "@/lib/posthog-client";
 
 /**
  * CalHandler Component
@@ -72,9 +73,8 @@ export function CalHandler() {
             const email = attendee?.email?.toLowerCase().trim();
             if (!email) return;
 
-            import("posthog-js").then(({ default: posthog }) => {
-              if (!posthog.__loaded) return;
-              posthog.identify(email, {
+            void ensurePostHog().then((posthog) => {
+              posthog?.identify(email, {
                 email,
                 name: attendee?.name,
               });

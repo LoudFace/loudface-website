@@ -55,8 +55,9 @@ export function FooterV3() {
         <div className="ft-legal">
           <p>© 2026 LoudFace. All rights reserved.</p>
           <div>
-            <a href="#">Privacy</a>
-            <a href="#">Terms</a>
+            <a href="/privacy">Privacy</a>
+            <a href="/terms">Terms</a>
+            <a href="/cookies">Cookies</a>
           </div>
         </div>
       </div>

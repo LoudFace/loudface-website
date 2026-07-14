@@ -10,15 +10,18 @@ import { Footer } from "@/components/Footer";
 import { asset } from "@/lib/assets";
 import { fetchFooterData } from "@/lib/cms-data";
 import { PostHogProvider } from "@/components/PostHogProvider";
+import { ConsentManager } from "@/components/ConsentManager";
+import { countryRequiresConsent } from "@/lib/consent";
 import { SanityLive } from "@/lib/sanity.live";
 
 const SITE_ORIGIN = "https://www.loudface.co";
 
 /**
  * (site) Layout
- * Holds the public website chrome: Header, Footer, Webflow badge, PostHog,
- * GTM, Cal.com booking, and the Leadsy visitor tracker. Anything that belongs
- * to "the marketing site" lives here.
+ * Holds the public website chrome: Header, Footer, Webflow badge, Cal.com
+ * booking, and the consent-managed trackers (PostHog, GTM, RB2B — all gated
+ * behind ConsentManager). Anything that belongs to "the marketing site"
+ * lives here.
  *
  * The route group is *not* part of the URL — `(site)/about/page.tsx`
  * still resolves to `/about`. The reason this layout exists is so that
@@ -37,26 +40,25 @@ export default async function SiteLayout({
 
   // hreflang URL — middleware sets x-pathname on every (site) request so we can
   // emit the correct per-page alternate links from this single layout.
-  const pathname = (await headers()).get("x-pathname") ?? "/";
+  const requestHeaders = await headers();
+  const pathname = requestHeaders.get("x-pathname") ?? "/";
   const hreflangHref = pathname === "/" ? SITE_ORIGIN : `${SITE_ORIGIN}${pathname}`;
 
+  // Cookie-consent region: EEA/UK/CH visitors must opt in before any tracker
+  // loads. Cloudflare fronts the site so cf-ipcountry is authoritative;
+  // x-vercel-ip-country covers direct-to-Vercel traffic. Missing header
+  // (local dev) → opt-in, the safe default. data-lf-cr exposes the verdict
+  // to client code (see src/lib/consent.ts).
+  const country = requestHeaders.get("cf-ipcountry") ?? requestHeaders.get("x-vercel-ip-country");
+  const consentRequired = countryRequiresConsent(country);
+
   return (
-    <div className="font-sans antialiased overflow-x-clip">
+    <div className="font-sans antialiased overflow-x-clip" data-lf-cr={consentRequired ? "1" : "0"}>
       {/* hreflang — single-language English site. Next.js hoists <link>
           tags from any component into <head>. x-default doubles as the fallback
           for AI engines unsure of locale targeting. */}
       <link rel="alternate" hrefLang="en" href={hreflangHref} />
       <link rel="alternate" hrefLang="x-default" href={hreflangHref} />
-
-      {/* Google Tag Manager (noscript) */}
-      <noscript>
-        <iframe
-          src="https://www.googletagmanager.com/ns.html?id=GTM-T53LKJXQ"
-          height="0"
-          width="0"
-          style={{ display: 'none', visibility: 'hidden' }}
-        />
-      </noscript>
 
       <PostHogProvider>
         {/* Skip link for keyboard accessibility */}
@@ -89,21 +91,9 @@ export default async function SiteLayout({
           />
         </a>
 
-        {/* Google Tag Manager — both containers deferred until user interaction.
-            This keeps TBT near zero — GTM scripts are ~170KB + ~120KB and create
-            long tasks that block the main thread if loaded during page lifecycle. */}
-        <Script id="gtm-deferred" strategy="lazyOnload">
-          {`(function(){var loaded=false;function loadGTM(){if(loaded)return;loaded=true;
-var w=window,d=document,s='script',l='dataLayer';
-w[l]=w[l]||[];
-['GTM-T53LKJXQ','GTM-PDCXVZX'].forEach(function(i){
-w[l].push({'gtm.start':new Date().getTime(),event:'gtm.js'});
-var f=d.getElementsByTagName(s)[0],j=d.createElement(s);j.async=true;
-j.src='https://www.googletagmanager.com/gtm.js?id='+i;f.parentNode.insertBefore(j,f);
-});}
-['scroll','touchstart','mousemove','keydown'].forEach(function(e){
-window.addEventListener(e,loadGTM,{once:true,passive:true});});})();`}
-        </Script>
+        {/* GTM + RB2B live in ConsentManager below — consent-gated AND still
+            deferred to first interaction, so the TBT-near-zero behavior the
+            old gtm-deferred snippet provided is preserved. */}
 
         {/* Cal.com embed — deferred until user interaction (only needed for booking clicks) */}
         <Script id="cal-embed" strategy="lazyOnload">
@@ -129,15 +119,13 @@ window.addEventListener(e,loadCal,{once:true,passive:true});});})();`}
             published content. */}
         {isDraftMode && <VisualEditing />}
 
-        {/* RB2B visitor identification pixel — replaces Leadsy (a white-label
-            of the same RB2B engine; both guard on window.reb2b so they block
-            each other and can't coexist). afterInteractive so it fires on
-            fast-bouncing sessions; loader is async so it won't block rendering. */}
-        {/* id must NOT be "reb2b": element ids become window globals, which
-            would trip the snippet's own `if (window.reb2b) return` guard. */}
-        <Script id="rb2b-pixel" strategy="afterInteractive">
-          {`!function(key){if(window.reb2b)return;window.reb2b={loaded:true};var s=document.createElement("script");s.async=true;s.src="https://ddwl4m2hdecbv.cloudfront.net/b/"+key+"/"+key+".js.gz";document.getElementsByTagName("script")[0].parentNode.insertBefore(s,document.getElementsByTagName("script")[0]);}("5NRP9H7R3PO1");`}
-        </Script>
+        {/* Consent banner + consent-gated trackers (GTM ×2, RB2B; PostHog
+            reacts to the same consent state via posthog-client). EEA/UK/CH
+            visitors see the banner and nothing loads until they accept;
+            elsewhere trackers load on first interaction with opt-out via
+            /cookies. Replaces the old unconditional gtm-deferred and
+            rb2b-pixel script tags. */}
+        <ConsentManager requiresConsent={consentRequired} />
       </PostHogProvider>
     </div>
   );

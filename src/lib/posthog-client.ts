@@ -1,4 +1,5 @@
 import type { PostHog } from 'posthog-js';
+import { isTrackingAllowed } from './consent';
 
 /**
  * Single source of truth for client-side PostHog initialization.
@@ -24,6 +25,13 @@ export function isPostHogRequested(): boolean {
  */
 export function ensurePostHog(): Promise<PostHog | null> {
   if (typeof window === 'undefined' || !process.env.NEXT_PUBLIC_POSTHOG_KEY) {
+    return Promise.resolve(null);
+  }
+
+  // Consent gate — every caller (provider, form submits) funnels through
+  // here, so this one check covers them all. Deliberately NOT cached:
+  // the next call after the visitor grants consent initializes normally.
+  if (!posthogPromise && !isTrackingAllowed()) {
     return Promise.resolve(null);
   }
 

@@ -1,5 +1,7 @@
 'use client';
 
+import { ensurePostHog } from '@/lib/posthog-client';
+
 /**
  * MobileStickyCTA — fixed floating "Apply" button visible only on <768px.
  * Anchors to #apply on the partners page.
@@ -8,9 +10,8 @@
  */
 export function MobileStickyCTA() {
   function handleClick() {
-    void import('posthog-js').then(({ default: posthog }) => {
-      if (!posthog.__loaded) return;
-      posthog.capture('partners_cta_clicked', { source: 'mobile_sticky' });
+    void ensurePostHog().then((posthog) => {
+      posthog?.capture('partners_cta_clicked', { source: 'mobile_sticky' });
     });
   }
 

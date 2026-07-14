@@ -328,6 +328,8 @@ Components specific to blog post pages. Imported from `@/components/blog`.
 | `Footer` | `Footer.tsx` | Site footer with nav, newsletter, socials |
 | `CalHandler` | `CalHandler.tsx` | Cal.com booking modal integration |
 | `NewsletterForm` | `NewsletterForm.tsx` | Email signup form |
+| `ConsentManager` | `ConsentManager.tsx` | Cookie-consent banner + consent-gated loader for GTM/RB2B (client). Props: `requiresConsent: boolean` (server-derived from geo headers). Mounted once in `(site)/layout.tsx`; PostHog gates itself via `@/lib/consent`. |
+| `CookiePreferences` | `CookiePreferences.tsx` | Analytics/tracking on-off control embedded on `/cookies` (client, no props). Standing opt-out for visitors who never see the banner. |
 
 ---
 
