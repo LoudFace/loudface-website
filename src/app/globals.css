@@ -333,6 +333,42 @@ html {
     overflow-x: hidden;
   }
 
+  /* --- Scroll lock (mobile drawer) ---
+   * Toggled by Header.tsx while the mobile <dialog> is open.
+   *
+   * Why this isn't just `body { overflow: hidden }`: the base layer sets
+   * `html { overflow-x: hidden }`, so html's computed overflow is `hidden auto`
+   * — not `visible`. The CSS viewport-propagation rule only forwards *body's*
+   * overflow to the viewport when the root element's overflow IS `visible`, so
+   * here html itself stays the scrollport and locking body is a silent no-op.
+   * The page then scrolls behind the open drawer and takes the sticky header
+   * (and its close control) off-screen with it.
+   *
+   * Two layers, both load-bearing:
+   *   1. html { overflow: hidden } — locks the real scrollport. Fixes the root
+   *      cause and keeps window.scrollY intact.
+   *   2. body { position: fixed }  — iOS Safari has a long history of ignoring
+   *      (1); taking body out of flow is the lock it always honours. This is
+   *      what forces window.scrollY to 0 while locked, so Header.tsx saves the
+   *      offset on lock and restores it on unlock.
+   *
+   * --scroll-lock-gutter backfills the width of a classic scrollbar when one
+   * disappears (narrow desktop windows), so the page underneath can't jump
+   * sideways on open. It's 0 wherever scrollbars are overlaid, i.e. on mobile.
+   */
+  html.is-scroll-locked {
+    overflow: hidden;
+  }
+
+  html.is-scroll-locked body {
+    position: fixed;
+    top: calc(var(--scroll-lock-offset, 0px) * -1);
+    left: 0;
+    right: 0;
+    width: 100%;
+    padding-right: var(--scroll-lock-gutter, 0px);
+  }
+
   .sr-only {
     position: absolute;
     width: 1px;

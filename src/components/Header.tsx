@@ -130,6 +130,51 @@ const DROPDOWN_ICON: Record<string, string> = {
 };
 const DEFAULT_DROPDOWN_ICON = '<circle cx="12" cy="12" r="8"/>';
 
+// --- Page scroll lock --------------------------------------------------------
+// Applied while the mobile drawer is open. The technique (and why locking <body>
+// alone does nothing on this site) is documented on `.is-scroll-locked` in
+// globals.css — in short, `html { overflow-x: hidden }` makes <html> the
+// scrollport, so body's overflow is never propagated to the viewport.
+//
+// State lives at module scope, not in the component: the lock mutates
+// document-level style, so it must be tracked per-document. `scrollLocked`
+// keeps lock/unlock idempotent, which matters because a second lock() while
+// already locked would read window.scrollY as 0 (body is fixed by then) and
+// clobber the saved offset, teleporting the reader to the top of the page on
+// close. React StrictMode's dev-only effect double-invoke does exactly that.
+let scrollLocked = false;
+let savedScrollY = 0;
+
+function lockScroll() {
+  if (scrollLocked) return;
+  scrollLocked = true;
+  savedScrollY = window.scrollY;
+
+  // >0 only when a classic (space-consuming) scrollbar is present.
+  const gutter = Math.max(0, window.innerWidth - document.documentElement.clientWidth);
+
+  const html = document.documentElement;
+  html.style.setProperty("--scroll-lock-offset", `${savedScrollY}px`);
+  html.style.setProperty("--scroll-lock-gutter", `${gutter}px`);
+  html.classList.add("is-scroll-locked");
+}
+
+function unlockScroll() {
+  if (!scrollLocked) return;
+  scrollLocked = false;
+
+  const html = document.documentElement;
+  html.classList.remove("is-scroll-locked");
+  html.style.removeProperty("--scroll-lock-offset");
+  html.style.removeProperty("--scroll-lock-gutter");
+
+  // `behavior: "instant"` is load-bearing: html sets `scroll-behavior: smooth`,
+  // so a default scrollTo would animate the restore — the reader would watch the
+  // page glide back, and anything reading scrollY right after would see a stale
+  // mid-animation value.
+  window.scrollTo({ top: savedScrollY, left: 0, behavior: "instant" });
+}
+
 export function Header({ heroTheme }: { heroTheme?: 'dark' } = {}) {
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -164,12 +209,13 @@ export function Header({ heroTheme }: { heroTheme?: 'dark' } = {}) {
     };
   }, [openDropdown]);
 
-  // Prevent body scroll when mobile menu is open
+  // Lock the page behind the mobile drawer. The cleanup covers every close path
+  // (X, backdrop, Escape, nav link, resize-to-desktop) and unmount-while-open,
+  // because they all funnel through mobileMenuOpen going false.
   useEffect(() => {
-    document.body.style.overflow = mobileMenuOpen ? "hidden" : "";
-    return () => {
-      document.body.style.overflow = "";
-    };
+    if (!mobileMenuOpen) return;
+    lockScroll();
+    return unlockScroll;
   }, [mobileMenuOpen]);
 
   // Mobile menu — native <dialog> (showModal/close): focus trap, Escape-to-close,
