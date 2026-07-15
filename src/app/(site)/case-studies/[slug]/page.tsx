@@ -47,7 +47,7 @@ import {
   buildImageObject,
   buildOrganizationPublisher,
 } from '@/lib/schema-utils';
-import { autoLinkServiceMentions } from '@/lib/html-utils';
+import { autoLinkServiceMentions, buildHeadingWithId } from '@/lib/html-utils';
 import type {
   CaseStudy,
   Client,
@@ -124,7 +124,10 @@ function extractTocAndAddIds(html: string | undefined): { toc: { id: string; tex
     const text = content.replace(/<[^>]*>/g, '').trim();
     const id = `section-${index++}-${text.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '')}`;
     toc.push({ id, text });
-    return `<h2${attrs} id="${id}">${content}</h2>`;
+    // buildHeadingWithId strips the id the CMS export already carries. Appending
+    // ours without that emitted `<h2 id="" id="section-0-x">`; the parser keeps the
+    // FIRST id, so every TOC anchor on this page silently resolved to nothing.
+    return buildHeadingWithId('h2', attrs, id, content);
   });
 
   return { toc, html: processedHtml };

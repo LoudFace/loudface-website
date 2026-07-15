@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import { Button } from '@/components/ui';
 import {
@@ -15,6 +15,8 @@ import {
 const GTM_IDS = ['GTM-T53LKJXQ', 'GTM-PDCXVZX'];
 const RB2B_KEY = '5NRP9H7R3PO1';
 const INTERACTION_EVENTS = ['scroll', 'touchstart', 'mousemove', 'keydown'] as const;
+/** Ties the mobile expand toggle to the detail copy it reveals. */
+const CONSENT_DETAIL_ID = 'lf-consent-detail';
 
 // Module-level so a remount (route change) can't double-inject.
 let trackersLoaded = false;
@@ -89,10 +91,20 @@ interface ConsentManagerProps {
  *   a stored denial or a Global Privacy Control signal says otherwise.
  * - Listens for consent changes from anywhere (e.g. the /cookies preferences
  *   control) and starts trackers live on a grant.
+ *
+ * Layout note (below 640px): the bar is a compact single-line strip pinned flush
+ * to the bottom edge, with the detail copy behind a toggle. It has to stay short
+ * — every v3 hero puts its primary CTA in the bottom band, and a tall bar there
+ * turns the site's main conversion path into a dead tap on a first visit. Both
+ * consent choices stay visible and one-tap in the collapsed state; only the
+ * explanatory copy collapses. See the bottom-band contract below and the
+ * matching rules in globals.css.
  */
 export function ConsentManager({ requiresConsent }: ConsentManagerProps) {
   const [choice, setChoice] = useState<ConsentValue | null>(null);
   const [mounted, setMounted] = useState(false);
+  const [expanded, setExpanded] = useState(false);
+  const bannerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     setChoice(getStoredConsent());
@@ -140,15 +152,59 @@ export function ConsentManager({ requiresConsent }: ConsentManagerProps) {
   // GPC visitors in opt-out regions get their signal honored silently;
   // in opt-in regions the banner still shows so they can grant if they want.
   const showBanner = mounted && requiresConsent && choice === null;
+
+  /**
+   * Fixed-bottom-chrome contract.
+   *
+   * While the bar is up it owns the bottom band of the viewport, so it publishes
+   * that fact on <html>:
+   *   data-lf-consent-open="1"  — the bar is up
+   *   --lf-consent-h: <px>      — how much of the bottom band it occupies
+   *
+   * Other fixed bottom-anchored chrome reacts via globals.css (search
+   * "consent bottom-band contract"): decorative chrome yields, conversion
+   * chrome lifts above the bar. Before this existed, the Webflow badge and the
+   * banner were both z-50 and their stacking was decided by DOM order alone —
+   * nothing declared who owned the space, so they silently overlapped.
+   */
+  useEffect(() => {
+    const root = document.documentElement;
+    const el = bannerRef.current;
+    if (!showBanner || !el) return;
+
+    root.setAttribute('data-lf-consent-open', '1');
+    const publish = () =>
+      root.style.setProperty('--lf-consent-h', `${Math.round(el.getBoundingClientRect().height)}px`);
+    publish();
+    // Height changes when the detail copy expands or the bar reflows on rotate.
+    const observer = new ResizeObserver(publish);
+    observer.observe(el);
+
+    return () => {
+      observer.disconnect();
+      root.removeAttribute('data-lf-consent-open');
+      root.style.removeProperty('--lf-consent-h');
+    };
+  }, [showBanner]);
+
   if (!showBanner) return null;
 
   return (
     <div
+      ref={bannerRef}
       role="region"
       aria-label="Cookie consent"
-      className="fixed bottom-4 left-4 right-4 sm:bottom-6 sm:left-6 sm:right-auto sm:max-w-md z-50 rounded-2xl bg-surface-900 p-5 shadow-xl motion-safe:animate-fade-in"
+      className="fixed z-50 bottom-0 left-0 right-0 border-t border-white/10 bg-surface-900 px-3 py-2.5 shadow-xl sm:bottom-6 sm:left-6 sm:right-auto sm:max-w-md sm:rounded-2xl sm:border-0 sm:p-5 motion-safe:animate-fade-in"
     >
-      <p className="text-sm text-surface-300 leading-relaxed">
+      {/* Detail copy. Always present on >=sm; below sm it is the second layer of
+          a layered notice — the collapsed bar names the purpose, this carries
+          the vendors and the policy link. */}
+      <p
+        id={CONSENT_DETAIL_ID}
+        className={`text-sm text-surface-300 leading-relaxed sm:block ${
+          expanded ? 'mb-3 sm:mb-0' : 'hidden'
+        }`}
+      >
         We use cookies for analytics and to see which companies visit this site
         (PostHog, Google Tag Manager, RB2B). Essential cookies stay on either way.
         Details in the{' '}
@@ -157,15 +213,43 @@ export function ConsentManager({ requiresConsent }: ConsentManagerProps) {
         </Link>
         {hasGPCSignal() ? ' — we also honor your browser’s Global Privacy Control signal.' : '.'}
       </p>
-      <div className="mt-4 flex flex-wrap gap-3">
-        <Button variant="secondary" size="sm" onClick={accept}>
+      <div className="flex items-center gap-2 sm:mt-4 sm:flex-wrap sm:gap-3">
+        {/* Below sm only: names the purpose and reveals the detail copy above.
+            Keeps the collapsed bar to one line without hiding what it is for. */}
+        <button
+          type="button"
+          onClick={() => setExpanded((v) => !v)}
+          aria-expanded={expanded}
+          aria-controls={CONSENT_DETAIL_ID}
+          className="sm:hidden flex min-h-11 min-w-0 flex-1 items-center gap-1 text-left text-2xs text-surface-300 hover:text-white transition-colors"
+        >
+          <span className="truncate">Cookies &amp; analytics</span>
+          <svg
+            className={`w-3 h-3 shrink-0 transition-transform duration-200 ${expanded ? 'rotate-180' : ''}`}
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            aria-hidden="true"
+          >
+            <path strokeLinecap="round" strokeLinejoin="round" d="M18 15l-6-6-6 6" />
+          </svg>
+        </button>
+        {/* min-h-11 = the 44px house tap-target floor, applied locally: the
+            global Button `sm` variant is 38px and is used broadly elsewhere. */}
+        <Button
+          variant="secondary"
+          size="sm"
+          onClick={accept}
+          className="min-h-11 shrink-0 max-sm:px-3 max-sm:text-2xs"
+        >
           Accept all
         </Button>
         <Button
           variant="ghost"
           size="sm"
           onClick={decline}
-          className="border border-white/20 text-white hover:bg-white/[0.08] hover:text-white"
+          className="min-h-11 shrink-0 max-sm:px-3 max-sm:text-2xs border border-white/20 text-white hover:bg-white/[0.08] hover:text-white"
         >
           Essential only
         </Button>

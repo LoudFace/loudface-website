@@ -347,8 +347,25 @@ Components specific to blog post pages. Imported from `@/components/blog`.
 | `Footer` | `Footer.tsx` | Site footer with nav, newsletter, socials |
 | `CalHandler` | `CalHandler.tsx` | Cal.com booking modal integration |
 | `NewsletterForm` | `NewsletterForm.tsx` | Email signup form |
-| `ConsentManager` | `ConsentManager.tsx` | Cookie-consent banner + consent-gated loader for GTM/RB2B (client). Props: `requiresConsent: boolean` (server-derived from geo headers). Mounted once in `(site)/layout.tsx`; PostHog gates itself via `@/lib/consent`. |
+| `ConsentManager` | `ConsentManager.tsx` | Cookie-consent banner + consent-gated loader for GTM/RB2B (client). Props: `requiresConsent: boolean` (server-derived from geo headers). Mounted once in `(site)/layout.tsx`; PostHog gates itself via `@/lib/consent`. **Below 640px it renders as a compact ~65px single-line bar flush to the bottom edge** (detail copy behind a toggle; both consent choices stay visible and one-tap) — it must stay short because every v3 hero puts its primary CTA in the bottom band. Unchanged floating card at >=640px. **Owns the bottom band — see the contract below.** |
 | `CookiePreferences` | `CookiePreferences.tsx` | Analytics/tracking on-off control embedded on `/cookies` (client, no props). Standing opt-out for visitors who never see the banner. |
+
+### Fixed bottom chrome — the consent bottom-band contract
+
+**Any new `position: fixed` bottom-anchored element MUST take one of these two classes.** Skipping this is how the Webflow badge ended up rendering on top of the consent banner (both `z-50`, so DOM order silently decided the winner), and how the banner ended up covering every v3 hero's primary CTA on phones — a dead tap on the site's main conversion path.
+
+While the consent bar is up, `ConsentManager` publishes on `<html>`:
+- `data-lf-consent-open="1"` — the bar is up
+- `--lf-consent-h: <px>` — how much of the bottom band it occupies (kept live by a `ResizeObserver`, so it tracks the expand toggle)
+
+Consumers react via unlayered rules in `globals.css` (search *"consent bottom-band contract"*):
+
+| Class | Policy | Use for | Current user |
+|---|---|---|---|
+| `lf-yields-to-consent` | Disappears while the bar is up (`visibility` + `pointer-events`, not just `opacity` — a transparent element still swallows taps) | Decorative chrome | Webflow badge, `(site)/layout.tsx` |
+| `lf-lifts-for-consent` | Lifts to `calc(1rem + var(--lf-consent-h))` below 640px | Conversion chrome that must stay reachable | `MobileStickyCTA` (`/partners`) |
+
+Pick `yields` for decoration, `lifts` for anything a user needs to click. Note `lifts` is the wrong choice for tall chrome on short viewports — lifting the Webflow badge by the bar's height would have landed it straight on the hero CTA, which is why it yields instead.
 
 ---
 

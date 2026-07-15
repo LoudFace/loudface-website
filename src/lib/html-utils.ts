@@ -19,6 +19,57 @@ export interface DeliverableItem {
   description: string;
 }
 
+/** An `id="…"` / `id='…'` / bare `id=x` attribute, including its leading whitespace. */
+const ID_ATTRIBUTE = /\s+id\s*=\s*(?:"[^"]*"|'[^']*'|[^\s>]+)/gi;
+
+/** Strips every id attribute out of a tag's raw attribute string. */
+export function stripIdAttributes(attrs: string): string {
+  return attrs.replace(ID_ATTRIBUTE, '');
+}
+
+/** Counts id attributes in a raw open tag. The well-formedness check for id injection. */
+export function countIdAttributes(openTag: string): number {
+  return (openTag.match(/\sid\s*=/gi) ?? []).length;
+}
+
+/**
+ * Builds a heading tag carrying exactly one id.
+ *
+ * Why this exists: the CMS rich-text export ships many headings with a stray
+ * `id=""`. The TOC pipelines (blog + case studies) appended their generated id to
+ * the heading's existing attributes without stripping that one first, emitting:
+ *
+ *     <h2 id="" id="section-0-background">
+ *
+ * An HTML parser keeps the FIRST id on a tag and discards the rest, so every
+ * anchor targeting the injected id resolved to nothing: a completely dead table
+ * of contents on 20 of 26 case studies and 16 blog posts, on every viewport.
+ *
+ * The systemic lesson, which is the real reason this is a shared function rather
+ * than two inline fixes: regex post-processing of CMS HTML has no well-formedness
+ * invariant. Nothing downstream re-parses the output, so an invalid tag ships
+ * silently — it looked correct in the source, in review, and in the rendered page,
+ * and only the anchors were dead. Any codepath that injects an attribute into CMS
+ * HTML should assert its result instead of trusting the concatenation.
+ *
+ * Honest limitation: `stripIdAttributes` is itself a regex, so a pathological
+ * attribute value (`title=" id=x "`) could defeat it. The count check below is the
+ * cheap invariant that catches the duplicate case; when it trips we drop the
+ * source attrs rather than ship a tag the parser will silently mis-read.
+ */
+export function buildHeadingWithId(tag: string, attrs: string, id: string, content: string): string {
+  let openTag = `<${tag}${stripIdAttributes(attrs)} id="${id}">`;
+
+  if (countIdAttributes(openTag) !== 1) {
+    console.error(
+      `[html-utils] id injection produced a malformed tag, dropping source attrs: ${openTag}`,
+    );
+    openTag = `<${tag} id="${id}">`;
+  }
+
+  return `${openTag}${content}</${tag}>`;
+}
+
 /**
  * Extracts the first <p> from an HTML string.
  * Returns the paragraph text (tags stripped) as `summary`,

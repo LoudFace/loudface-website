@@ -266,17 +266,30 @@ export function Header({ heroTheme }: { heroTheme?: 'dark' } = {}) {
 
   // Dark-hero variant: transparent + light over the hero, flips to solid glass
   // once scrolled off it. Only wired when heroTheme="dark"; no-op otherwise.
+  //
+  // The mobileMenuOpen guard is load-bearing. lockScroll() fixes <body>, which
+  // necessarily pins window.scrollY to 0 for as long as the drawer is open — that
+  // is the correct lock technique, not a bug (see `.is-scroll-locked` in
+  // globals.css). Without the guard this handler recomputed `past` from that 0 the
+  // moment the menu opened and reverted the header to its transparent over-hero
+  // treatment while the reader was hundreds of px down the page. Freezing
+  // `scrolled` for the duration of the lock keeps its last real value.
+  //
+  // mobileMenuOpen must stay in the dep array: it re-subscribes on close, after
+  // unlockScroll (declared above, so its cleanup runs first) has restored the
+  // offset — so the onScroll() below recomputes from the true position.
   useEffect(() => {
     if (heroTheme !== "dark") return;
     const hero = document.querySelector<HTMLElement>(".hero");
     const onScroll = () => {
+      if (mobileMenuOpen) return;
       const past = hero ? window.scrollY > hero.offsetHeight - 72 : window.scrollY > 600;
       setScrolled(past);
     };
     onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
-  }, [heroTheme]);
+  }, [heroTheme, mobileMenuOpen]);
 
   const handleDropdownEnter = (name: string) => {
     if (closeTimeoutRef.current) {

@@ -83,12 +83,17 @@ export default async function SiteLayout({
         {/* Homepage + About + Pricing + Services + Contact + Case Studies (gallery + detail) + Blog (index + posts) ship their own v3 footers; every other page uses the shared one. */}
         {pathname !== "/" && pathname !== "/about" && pathname !== "/pricing" && pathname !== "/services" && !isServiceChild && pathname !== "/contact" && !pathname.startsWith("/case-studies") && !isBlog && <Footer caseStudies={caseStudies} blogPosts={blogPosts} />}
 
-        {/* Webflow Enterprise Partner Badge — site-wide */}
+        {/* Webflow Enterprise Partner Badge — site-wide.
+            lf-yields-to-consent: decorative chrome, so it steps aside entirely
+            while the consent bar owns the bottom band (see the bottom-band
+            contract in globals.css) and returns once consent is resolved.
+            It yields rather than lifting because lifting it by the bar's height
+            lands it straight on the hero CTA on short viewports. */}
         <a
           href="https://webflow.com/@loudface"
           target="_blank"
           rel="noopener noreferrer"
-          className="fixed bottom-6 right-6 z-50 transition-opacity hover:opacity-80"
+          className="lf-yields-to-consent fixed bottom-6 right-6 z-50 transition-opacity hover:opacity-80"
           aria-label="Webflow Enterprise Partner"
         >
           <img

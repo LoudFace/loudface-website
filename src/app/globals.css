@@ -1194,3 +1194,40 @@ header[data-hero-theme="dark"][data-hero-scrolled] {
   border-bottom-color: rgba(255, 255, 255, 0.1);
 }
 /* dark-hero variant v3 */
+
+/* ── Consent bottom-band contract ───────────────────────────────────────────
+   While the cookie bar is up, ConsentManager sets data-lf-consent-open="1" on
+   <html> and publishes the bar's height as --lf-consent-h. The bar owns the
+   bottom band of the viewport; anything else that is position:fixed and
+   bottom-anchored must declare how it yields, by taking one of the two classes
+   below.
+
+   This exists because "both are z-50" is not a layout contract — it resolves to
+   whichever element happens to sit later in the DOM. That is how the Webflow
+   badge ended up rendering on top of the consent banner, and how the banner
+   ended up on top of every v3 hero's primary CTA: three fixed elements, no
+   shared notion of who owns the bottom band.
+
+     .lf-yields-to-consent  decorative chrome — disappears while the bar is up.
+                            visibility + pointer-events, not just opacity: a
+                            transparent element still swallows taps.
+     .lf-lifts-for-consent  conversion chrome — lifts above the bar rather than
+                            vanishing. Scoped to <40rem, where the bar is
+                            full-bleed; at >=40rem it is a left-anchored card
+                            and the bottom-right corner is free.
+
+   Unlayered on purpose: these must beat the Tailwind utilities they override
+   (bottom-*, opacity-*), same as the header[data-hero-theme] rules above. */
+.lf-yields-to-consent {
+  transition: opacity 0.2s, visibility 0.2s;
+}
+:root[data-lf-consent-open="1"] .lf-yields-to-consent {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+@media (width < 40rem) {
+  :root[data-lf-consent-open="1"] .lf-lifts-for-consent {
+    bottom: calc(1rem + var(--lf-consent-h, 0px));
+  }
+}
