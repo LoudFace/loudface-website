@@ -404,6 +404,8 @@
 @media (max-width:768px){
   .ctv3 .cover-in{ min-height:0; padding-top:1.5rem; padding-bottom:1.375rem; }
   .ctv3 .cover-mid{ padding:3.5rem 0; }
+  /* mobile type step — see the note in home-v3.css's max-width:768 block. */
+  .ctv3 .cover-mid h2{ max-width:100%; font-size:clamp(1.9rem,8vw,2.4rem); }
   .ctv3 .cover-meta span:last-child, .ctv3 .cover-credit span:last-child{ display:none; }
 }
 
@@ -435,7 +437,6 @@
   .ctv3 .ft-cols{ grid-template-columns:repeat(2,1fr); }
   .ctv3 .ft-col a{ padding:10px 0; }
   .ctv3 .ft-badge img{ width:180px; }
-  .ctv3 .ft-mark{ max-width:390px; margin-left:0; margin-right:auto; }
   .ctv3 .ft-legal a{ margin-left:0; margin-right:20px; padding:10px 0; }
 }
 
@@ -448,7 +449,10 @@
   .ctv3 .faq__grid{ grid-template-columns:1fr; }
 }
 @media(max-width:560px){
-  .ctv3 .hero h1{ font-size:2.55rem; }
+  /* was a flat font-size:2.55rem — LARGER than the base clamp's 2.5rem floor, so the "mobile
+     step" stepped UP and every phone rendered the biggest h1 on the site (40.8px). Now a real
+     curve: ~30-33px at 375-412, still 40.8px by ~510px, so 510-560 is unchanged. */
+  .ctv3 .hero h1{ font-size:clamp(1.9rem,8vw,2.55rem); }
   .ctv3 .ecard h2{ font-size:1.85rem; }
   .ctv3 .tile__num{ font-size:1.75rem; }
   .ctv3 .founder{ flex-direction:column; align-items:flex-start; gap:0.75rem; }

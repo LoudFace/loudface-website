@@ -430,16 +430,19 @@
   .wkv3 .cover-obj{display:none;}
 }
 @media (max-width:768px){
-  .wkv3 .container{max-width:390px;margin-left:0;margin-right:auto;}
+  /* the retired screenshot tool's 390px crop-safe cap used to sit here (see home-v3.css) —
+     removed: it capped .container at 390px on every device up to 768. */
   .wkv3 .hero{padding:96px 0 60px;}
-  .wkv3 .hero h1{font-size:clamp(2.3rem,10vw,3rem);max-width:100%;}
+  /* mobile type step — see the note in home-v3.css's max-width:768 block. The old floor here
+     was 2.3rem (36.8px), which still read as a desktop headline on a 390px phone. */
+  .wkv3 .display{font-size:clamp(1.5rem,6vw,1.95rem);}
+  .wkv3 .hero h1{font-size:clamp(1.9rem,8vw,3rem);max-width:100%;}
   .wkv3 .hero-sub{max-width:100%;}
   .wkv3 .now-tab{height:44px;}
   .wkv3 .fbtn{height:44px;}
   .wkv3 .now-tabs{gap:8px;}
   .wkv3 .mat-cap{gap:14px;}
   .wkv3 .mat-view{width:100%;justify-content:center;}
-  .wkv3 .logos-lead{max-width:390px;margin-left:0;margin-right:auto;}
   .wkv3 .arch-big{font-size:clamp(2rem,9vw,2.5rem);}
   .wkv3 .fbar{top:0;gap:8px;padding:12px 0;overflow-x:auto;flex-wrap:nowrap;-webkit-overflow-scrolling:touch;
     scrollbar-width:none;margin-left:calc(var(--gutter)*-1);margin-right:calc(var(--gutter)*-1);padding-left:var(--gutter);padding-right:var(--gutter);}
@@ -467,6 +470,5 @@
   .wkv3 .ft-cols{grid-template-columns:repeat(2,1fr);}
   .wkv3 .ft-col a{padding:10px 0;}
   .wkv3 .ft-badge img{width:180px;}
-  .wkv3 .ft-mark{max-width:390px;margin-left:0;margin-right:auto;}
   .wkv3 .ft-legal a{margin-left:0;margin-right:20px;padding:10px 0;}
 }

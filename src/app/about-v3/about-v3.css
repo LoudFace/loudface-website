@@ -190,10 +190,14 @@
   .abv3 .a-wcol{display:contents;}
   .abv3 .a-wcol:nth-child(2),.abv3 .a-wcol:nth-child(3){transform:none;}
   .abv3 .a-wcard{flex:none;aspect-ratio:1/1;}
+  /* .a-wcol goes display:contents above, so the 7 .a-wcard figures become the grid items
+     directly (2+3+2). 7 into 2 columns leaves the last one stranded alone in row 4 — span it
+     as a wide closer instead, landscape so a full-width square doesn't swallow the viewport. */
+  .abv3 .a-wcol:nth-child(3) .a-wcard:last-child{grid-column:1/-1;aspect-ratio:16/9;}
 }
 @media (max-width:520px){
-  .abv3 .container{max-width:390px;margin-left:0;margin-right:auto;}
-  .abv3 .hero-grid{max-width:390px;margin-left:0;margin-right:auto;}
+  /* the retired screenshot tool's 390px crop-safe cap used to sit here (see home-v3.css) —
+     removed: it was a no-op at <=390 and threw away width at 391-520. */
   .abv3 .hero-cta-div{display:none;}
 }
 
@@ -230,6 +234,13 @@
   .abv3 .lrow::before{display:none;}
   .abv3 .lname .leader{display:none;}
   .abv3 .lrow p{margin-top:0;}
+  /* the leader dots are gone here, so h3 no longer needs nowrap to keep them on one line —
+     and holding nowrap made long names ("Sales in the first 30 days") shoot past their grid
+     track into the figure column at 320-412px. Let them wrap.
+     white-space alone is NOT enough: the base rule also sets flex:none (= flex:0 0 auto), which
+     pins the h3 at its max-content width and refuses to shrink, so it would keep overflowing a
+     narrow track even while wrapping is allowed. It has to be shrinkable too. */
+  .abv3 .lname h3{white-space:normal;flex:0 1 auto;min-width:0;}
 }
 
 /* =================== STORY (A) — "Straight from the founder." light stage =================== */
@@ -346,9 +357,14 @@
   .abv3 .a-lcol{display:contents;}
   .abv3 .a-lcol:nth-child(2),.abv3 .a-lcol:nth-child(3){transform:none;}
   .abv3 .a-lcol .a-tcard img{aspect-ratio:1/1;object-position:center 24%;}
-  /* 7 cards in 2 cols → the 7th spans the row as a wide closer, not a dangler */
-  .abv3 .a-lcol:nth-child(3) .a-tcard:last-child{grid-column:1/-1;}
-  .abv3 .a-lcol:nth-child(3) .a-tcard:last-child img{aspect-ratio:16/9;object-position:center 30%;}
+  /* 7 cards in 2 cols → the 7th spans the row as a wide closer, not a dangler.
+     MUST target .a-tcard-link, not .a-tcard: .a-lcol goes display:contents above, which makes
+     the <button class="a-tcard-link"> wrappers the grid items — the <figure class="a-tcard">
+     inside is NOT a grid item, so grid-column on it computed to 1/-1 and did nothing. That
+     selector also matched BOTH cards in the column (each figure is the only child of its own
+     button, so each one is a :last-child), which is why the 16/9 crop leaked onto card 6. */
+  .abv3 .a-lcol:nth-child(3) .a-tcard-link:last-child{grid-column:1/-1;}
+  .abv3 .a-lcol:nth-child(3) .a-tcard-link:last-child img{aspect-ratio:16/9;object-position:center 30%;}
 }
 
 /* =================== VALUES (A) — oversized statement on crisp white =================== */
@@ -464,8 +480,12 @@
 .abv3 .cover-credit span{font-size:12.5px;font-weight:500;color:rgba(199,210,254,.75);}
 @media (max-width:1080px){.abv3 .cover-obj{display:none;}}
 @media (max-width:768px){
+  /* mobile type step — see the note in home-v3.css's max-width:768 block. MAX is pinned to the
+     value the base clamp already produced here, so >=~500px is unchanged and only phones step. */
+  .abv3 .display{font-size:clamp(1.5rem,6vw,1.9rem);}
   .abv3 .cover-in{min-height:0;padding-top:24px;padding-bottom:22px;}
   .abv3 .cover-mid{padding:56px 0;}
+  .abv3 .cover-mid h2{max-width:100%;font-size:clamp(1.9rem,8vw,2.4rem);}
   .abv3 .cover-meta span:last-child,.abv3 .cover-credit span:last-child{display:none;}
 }
 
@@ -505,7 +525,6 @@
   .abv3 .ft-cols{grid-template-columns:repeat(2,1fr);}
   .abv3 .ft-col a{padding:10px 0;}
   .abv3 .ft-badge img{width:180px;}
-  .abv3 .ft-mark{max-width:390px;margin-left:0;margin-right:auto;}
   .abv3 .ft-legal a{margin-left:0;margin-right:20px;padding:10px 0;}
 }
 

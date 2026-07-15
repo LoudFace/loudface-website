@@ -458,13 +458,15 @@
   .svv3 .cover-obj{display:none;}
 }
 @media (max-width:768px){
-  /* crop-safe cap (matches home-v3.css: shot tool lays out ~500px then crops to 390) */
-  .svv3 .container{max-width:390px;margin-left:0;margin-right:auto;}
-  .svv3 .hero-grid{max-width:390px;margin-left:0;margin-right:auto;}
+  /* the retired screenshot tool's 390px crop-safe cap used to sit here (see home-v3.css) —
+     removed: it capped .container/.hero-grid at 390px on every device up to 768. */
   .svv3 .btn-hd{height:38px;padding:0 16px;font-size:13.5px;}
   .svv3 .hero{padding:96px 0 64px;}
   .svv3 .hero-copy{padding:0;}
-  .svv3 .hero h1{font-size:clamp(2.3rem,10vw,3rem);max-width:100%;}
+  /* mobile type step — see the note in home-v3.css's max-width:768 block. The old floor here
+     was 2.3rem (36.8px), which still read as a desktop headline on a 390px phone. */
+  .svv3 .display{font-size:clamp(1.5rem,6vw,1.95rem);}
+  .svv3 .hero h1{font-size:clamp(1.9rem,8vw,3rem);max-width:100%;}
   .svv3 .wall{position:relative;height:auto;max-width:none;display:block;overflow:visible;-webkit-mask-image:none;mask-image:none;}
   .svv3 .wcol{height:auto;}
   .svv3 .wcol.b{display:none;}
@@ -473,7 +475,6 @@
   .svv3 .wcard{margin-bottom:18px;}
   .svv3 .wcard:nth-child(2){margin-bottom:0;}
   .svv3 .wcard .shot{aspect-ratio:16/10;}
-  .svv3 .logos-lead{max-width:390px;margin-left:0;margin-right:auto;}
   .svv3 .ex-head{padding-bottom:28px;}
   .svv3 .ex-note{display:none;}
   .svv3 .exlist{margin-top:44px;gap:64px;}
@@ -490,14 +491,15 @@
   .svv3 .clarify-big{font-size:clamp(2.4rem,13vw,3.4rem);}
   .svv3 .cover-in{min-height:0;padding-top:24px;padding-bottom:22px;}
   .svv3 .cover-mid{padding:56px 0;}
-  /* mobile-only floor drop so the longer services headline holds 2 lines at 390px */
-  .svv3 .cover-mid h2{max-width:100%;font-size:clamp(2.1rem,4.4vw,4rem);}
+  /* mobile-only floor drop so the longer services headline holds 2 lines at 390px.
+     Was clamp(2.1rem,4.4vw,4rem) — the 4.4vw term was copied from the base rule without
+     steepening, so it never left its 33.6px floor on any phone and the drop did nothing. */
+  .svv3 .cover-mid h2{max-width:100%;font-size:clamp(1.9rem,8vw,2.4rem);}
   .svv3 .cover-meta span:last-child,.svv3 .cover-credit span:last-child{display:none;}
   .svv3 .ft{padding-top:64px;}
   .svv3 .ft-top{grid-template-columns:1fr;gap:44px;padding-bottom:52px;}
   .svv3 .ft-cols{grid-template-columns:repeat(2,1fr);}
   .svv3 .ft-col a{padding:10px 0;}
   .svv3 .ft-badge img{width:180px;}
-  .svv3 .ft-mark{max-width:390px;margin-left:0;margin-right:auto;}
   .svv3 .ft-legal a{margin-left:0;margin-right:20px;padding:10px 0;}
 }

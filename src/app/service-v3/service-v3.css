@@ -451,15 +451,16 @@
   .svcv3 .cover-obj{display:none;}
 }
 @media (max-width:768px){
-  .svcv3 .container{max-width:390px;margin-left:0;margin-right:auto;}
-  .svcv3 .hero-grid{max-width:390px;margin-left:0;margin-right:auto;}
+  /* the retired screenshot tool's 390px crop-safe cap used to sit here (see home-v3.css) —
+     removed: it capped .container/.hero-grid at 390px on every device up to 768. */
   .svcv3 .hero{padding:94px 0 72px;}
   .svcv3 .hero-copy{padding:0;}
+  /* mobile type step — see the note in home-v3.css's max-width:768 block. */
+  .svcv3 .display{font-size:clamp(1.5rem,6vw,1.95rem);}
   .svcv3 .hero h1{font-size:clamp(2rem,8.5vw,2.6rem);max-width:100%;}
   .svcv3 .stage-main{width:100%;}
   .svcv3 .stage-sub{position:relative;left:auto;bottom:auto;width:60%;margin:16px 0 0 auto;}
   .svcv3 .stage-chip{position:relative;right:auto;top:auto;margin:0 0 16px;}
-  .svcv3 .logos-lead{max-width:390px;margin-left:0;margin-right:auto;}
   .svcv3 .wall-grid{gap:14px;}
   .svcv3 .dtile.wide{flex-direction:column;}
   .svcv3 .dt-frag{width:100%;max-width:320px;align-self:flex-start;order:-1;margin-bottom:4px;}
@@ -479,13 +480,14 @@
   .svcv3 .rel-note .amt{padding-left:0;padding-top:14px;border-left:none;border-top:1px solid rgba(255,255,255,.16);width:100%;}
   .svcv3 .cover-in{min-height:0;padding-top:24px;padding-bottom:22px;}
   .svcv3 .cover-mid{padding:56px 0;}
-  .svcv3 .cover-mid h2{max-width:100%;font-size:clamp(2.1rem,4.4vw,4rem);}
+  /* was clamp(2.1rem,4.4vw,4rem) — the 4.4vw term was copied from the base rule without
+     steepening, so it stayed flat at its 33.6px floor across every phone. */
+  .svcv3 .cover-mid h2{max-width:100%;font-size:clamp(1.9rem,8vw,2.4rem);}
   .svcv3 .cover-meta span:last-child,.svcv3 .cover-credit span:last-child{display:none;}
   .svcv3 .ft{padding-top:64px;}
   .svcv3 .ft-top{grid-template-columns:1fr;gap:44px;padding-bottom:52px;}
   .svcv3 .ft-cols{grid-template-columns:repeat(2,1fr);}
   .svcv3 .ft-col a{padding:10px 0;}
   .svcv3 .ft-badge img{width:180px;}
-  .svcv3 .ft-mark{max-width:390px;margin-left:0;margin-right:auto;}
   .svcv3 .ft-legal a{margin-left:0;margin-right:20px;padding:10px 0;}
 }

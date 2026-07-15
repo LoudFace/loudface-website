@@ -383,7 +383,10 @@
 .prv3 .inc-cell .tico svg{width:19px;height:19px;stroke:var(--primary-600);fill:none;stroke-width:1.8;}
 .prv3 .inc-cell h3{margin-top:16px;font-size:15px;font-weight:600;letter-spacing:-.01em;color:var(--ink);font-family:var(--font-sans);}
 .prv3 .inc-cell p{margin-top:6px;font-size:13px;line-height:1.5;color:var(--body);}
-@media (max-width:920px){.prv3 .inc-band{grid-template-columns:repeat(2,1fr);}.prv3 .inc-cell,.prv3 .inc-cell:nth-child(n+5){grid-column:span 1;}}
+@media (max-width:920px){.prv3 .inc-band{grid-template-columns:repeat(2,1fr);}.prv3 .inc-cell,.prv3 .inc-cell:nth-child(n+5){grid-column:span 1;}
+  /* 7 cells into 2 columns strands the last one alone in row 4 — span it as a wide closer.
+     Harmless below 460px, where .inc-band collapses to a single column and 1/-1 == span 1. */
+  .prv3 .inc-cell:last-child{grid-column:1/-1;}}
 @media (max-width:460px){.prv3 .inc-band{grid-template-columns:1fr;}}
 
 /* =================== SPECIAL ARRANGEMENTS — editorial strip =================== */
@@ -502,8 +505,12 @@
 .prv3 .cover-credit span{font-size:12.5px;font-weight:500;color:rgba(199,210,254,.75);}
 @media (max-width:1080px){.prv3 .cover-obj{display:none;}}
 @media (max-width:768px){
+  /* mobile type step — see the note in home-v3.css's max-width:768 block. MAX is pinned to the
+     value the base clamp already produced here, so >=~500px is unchanged and only phones step. */
+  .prv3 .display{font-size:clamp(1.5rem,6vw,1.9rem);}
   .prv3 .cover-in{min-height:0;padding-top:24px;padding-bottom:22px;}
   .prv3 .cover-mid{padding:56px 0;}
+  .prv3 .cover-mid h2{max-width:100%;font-size:clamp(1.9rem,8vw,2.4rem);}
   .prv3 .cover-meta span:last-child,.prv3 .cover-credit span:last-child{display:none;}
 }
 
@@ -535,6 +542,5 @@
   .prv3 .ft-cols{grid-template-columns:repeat(2,1fr);}
   .prv3 .ft-col a{padding:10px 0;}
   .prv3 .ft-badge img{width:180px;}
-  .prv3 .ft-mark{max-width:390px;margin-left:0;margin-right:auto;}
   .prv3 .ft-legal a{margin-left:0;margin-right:20px;padding:10px 0;}
 }

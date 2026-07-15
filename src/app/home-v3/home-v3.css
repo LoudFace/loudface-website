@@ -676,22 +676,25 @@ h2.sec{font-size:clamp(1.9rem,2.9vw,2.55rem);letter-spacing:-.025em;color:var(--
   .logos-grid{grid-template-columns:1fr;gap:36px;}
 }
 @media (max-width:768px){
-  /* CROP-SAFE WIDTH (matches the pattern proven on index.html): the headless screenshot tool
-     lays the page out at a ~500px logical viewport and then crops the image to 390px, so any
-     content that legitimately fills a 452px column (452 = 500 − 48 gutters) is sliced off at the
-     390 frame edge even though NOTHING overflows a real 390 viewport (verified: true-390 emulation
-     gives scrollWidth==390, zero overflowing elements). Fix: cap every section's inner content to a
-     342px content-box so it wraps inside 390 regardless of the tool's inflated layout pass.
-     Non-structural — caps width only; the bento and Build/Grow directory keep their layout.
-     LEFT-aligned (margin-right:auto, not centered): the crop keeps the left 390px, so the content
-     must start at x=0's gutter and fill to ~390, not sit centered in the 500 layout (which would
-     push its right half past the 390 crop line and leave a huge left margin). */
-  .container{max-width:390px;margin-left:0;margin-right:auto;}
-  .hero-grid{max-width:390px;margin-left:0;margin-right:auto;}
+  /* NOTE: a `max-width:390px` crop-safe cap used to live here (and on .hero-grid/.ft-mark).
+     It existed only to satisfy a headless screenshot tool that laid the page out at a ~500px
+     logical viewport and then cropped the image to 390px. That tool is retired — we verify with
+     Playwright real-device emulation now — and the cap was actively harmful: this block matches
+     every real device from 391px to 768px, so an iPad Mini rendered every .container at 390px
+     (50.8% of the viewport, 378px of dead background). The cap could never help: at <=390 it is a
+     no-op, and above 390 it only ever throws away width. Do not reintroduce it. Real-device
+     overflow is guarded by the assertion walk in the responsive spec, not by capping width. */
   .hd-nav{display:none;}
   /* nav links hide here but the CTA pill still needs to fit next to the wordmark —
      a smaller mobile variant instead of the desktop btn-lg-adjacent sizing. */
   .btn-hd{height:38px;padding:0 16px;font-size:13.5px;}
+  /* MOBILE TYPE STEP. The base curves are clamp(FLOOR,Nvw,MAX) with a floor so high that the
+     vw term only overtakes it around ~1050px — i.e. the floor WAS the desktop minimum and the
+     scale never stepped down for phones (h1 measured an identical 39.2px at 375/390/412/768).
+     Each override below re-enters the curve with a steeper vw term, and pins MAX to the value
+     the base clamp already produced here, so >=~500px renders byte-identically to before and
+     only phones change. Keep that property when tuning. */
+  .hero h1{font-size:clamp(1.9rem,8vw,2.45rem);}
   .hero{padding:96px 0 64px;}
   .hero-copy{padding:0;}
   /* wall: collapse to a single clean strip below the copy — column A's first two cards
@@ -708,9 +711,10 @@ h2.sec{font-size:clamp(1.9rem,2.9vw,2.55rem);letter-spacing:-.025em;color:var(--
   .wcard:nth-child(2){margin-bottom:0;}
   .wcard .shot{aspect-ratio:16/10;}
   .chip{height:44px;padding:0 18px;}
-  /* ticker: tighter per-logo padding so more logos read within the 390 crop */
+  /* ticker: tighter per-logo padding so more logos read per pass on a phone */
   .logo-cell{padding:0 28px;}
   .problem{padding:84px 0 88px;}
+  .display,h2.sec{font-size:clamp(1.5rem,6vw,1.9rem);}
   .display{text-wrap:balance;max-width:none;}
   .light-rule{margin-top:32px;}
   .figgrid{grid-template-columns:1fr;gap:40px;margin-top:40px;}
@@ -737,22 +741,18 @@ h2.sec{font-size:clamp(1.9rem,2.9vw,2.55rem);letter-spacing:-.025em;color:var(--
   .tile-foot{flex-wrap:wrap;row-gap:10px;padding-bottom:15px;}
   .cover-in{min-height:0;padding-top:24px;padding-bottom:22px;}
   .cover-mid{padding:56px 0;}
+  .cover-mid h2{max-width:100%;font-size:clamp(1.9rem,8vw,2.4rem);}
   .cover-meta span:last-child,.cover-credit span:last-child{display:none;}
   .ft{padding-top:64px;}
   .ft-top{grid-template-columns:1fr;gap:44px;padding-bottom:52px;}
   .ft-cols{grid-template-columns:repeat(2,1fr);}
   .ft-col a{padding:10px 0;}
   .ft-badge img{width:180px;}
-  /* the giant footer wordmark SVG is a direct <footer> child (not inside .container), so the
-     crop-safe .container cap above doesn't reach it — cap + left-align it here too, else its
-     100%-width span at the tool's inflated 500px layout crops the trailing "e." off at x=390. */
-  .ft-mark{max-width:390px;margin-left:0;margin-right:auto;}
   .ft-legal a{margin-left:0;margin-right:20px;padding:10px 0;}
-  /* logo-strip eyebrow: the full label ("The B2B SaaS teams we've built and grown
-     for") doesn't fit one line at 390 under nowrap — .container's crop-safe cap above
-     doesn't reach this pill (it isn't width-bound by .container), so it clips mid-word
-     instead of wrapping. Let it wrap to 2 lines with an auto height instead of the
-     fixed 32px pill height. */
+  /* logo-strip eyebrow: the full label ("The B2B SaaS teams we've built and grown for")
+     doesn't fit one line on a narrow phone under nowrap, and it isn't width-bound by
+     .container, so it clips mid-word instead of wrapping. Let it wrap to 2 lines with an
+     auto height instead of the fixed 32px pill height. */
   .logos-label{white-space:normal;height:auto;min-height:32px;align-items:flex-start;text-align:left;line-height:1.5;padding:7px 16px 7px 14px;}
   .logos-label i{margin-top:5px;}
 }
