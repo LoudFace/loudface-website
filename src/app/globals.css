@@ -1145,11 +1145,6 @@ header[data-hero-theme="dark"] [data-nav-cta] {
 header[data-hero-theme="dark"] .nav-burger span {
   background: #fff;
 }
-/* hide only the "Accepting Bookings" tab (a direct child of <header>) — NOT the
-   nested dropdown panels, which are also .absolute.top-full deeper in the nav. */
-header[data-hero-theme="dark"] > .absolute.top-full {
-  display: none;
-}
 /* over the hero: fully transparent */
 header[data-hero-theme="dark"]:not([data-hero-scrolled]) {
   background: transparent;

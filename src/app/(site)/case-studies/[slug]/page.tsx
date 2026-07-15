@@ -1,26 +1,44 @@
 /**
- * Case Study Detail Page
+ * Case Study Detail Page — v3 design (componentized).
  *
- * Structure:
- * - Hero with client branding
- * - Results strip
- * - Main content (body + sidebar)
- * - Testimonial
- * - Related work
- * - CTA
+ * Faithful port of the approved "before-after" detail concept, rebuilt as a
+ * DYNAMIC template that renders all live studies from their Sanity fields.
+ * Structure: electric hero (two-state OR single-state result object) → results
+ * ledger → build story (article + sticky sidebar) → night charts act →
+ * testimonial proof → key-insights FAQ → related marquee + cards → cover CTA →
+ * FooterV3. Composed inside the (site) group so it inherits the shared Header
+ * (dark-hero variant, wired in (site)/layout.tsx for /case-studies/*) + PostHog/
+ * GTM/Cal chrome; the shared Footer is suppressed there so only FooterV3 renders.
+ *
+ * Bespoke styling is case-detail-v3.css, route-scoped here and isolated under
+ * `.csv3` via :where() so it can't leak onto the shared chrome. Every section
+ * binds to Sanity fields and degrades cleanly when a field is sparse (2nd/3rd
+ * stat, charts, testimonial, tech pills, industry badge all optional).
+ *
+ * CLAIMS: every stat shown comes from the study's own Sanity result fields with
+ * the client named — no invented numbers, no hardcoded per-study copy. The
+ * two-state hero only appears when the lead result itself encodes a before→after
+ * transition (e.g. "0 → 86%"); otherwise it degrades to a single-state card.
+ *
+ * SEO: generateMetadata truncates title ≤60 / description ≤160 via seo-utils;
+ * BreadcrumbList + Article + FAQPage + Speakable + Review JSON-LD are all
+ * preserved from the previous template; exactly one <h1> (the hero).
  */
 export const revalidate = 60;
 
 import { notFound } from 'next/navigation';
-import Link from 'next/link';
 import type { Metadata } from 'next';
+import '../../../case-detail-v3/case-detail-v3.css';
 import { fetchCollection, fetchHomepageData, fetchItemBySlug } from '@/lib/cms-data';
-import { asset } from '@/lib/assets';
-import { avatarImage, thumbnailImage, optimizeImage } from '@/lib/image-utils';
-import { getContrastColor } from '@/lib/color-utils';
-import { Button, SectionContainer, CaseStudyCharts } from '@/components/ui';
-import { CTA, FAQ } from '@/components/sections';
-import { buildNoIndexMetadata, buildPageMetadata, truncateSeoTitle, truncateSeoDescription, rewriteLegacyUrls, resolveServiceSlug } from '@/lib/seo-utils';
+import { avatarImage, optimizeImage } from '@/lib/image-utils';
+import {
+  buildNoIndexMetadata,
+  buildPageMetadata,
+  truncateSeoTitle,
+  truncateSeoDescription,
+  rewriteLegacyUrls,
+  resolveServiceSlug,
+} from '@/lib/seo-utils';
 import {
   extractFAQFromHTML,
   buildFAQSchema,
@@ -38,6 +56,16 @@ import type {
   Technology,
   ServiceCategory,
 } from '@/lib/types';
+import { FooterV3 } from '../../../home-v3/FooterV3';
+import { HeroDetail } from '../../../case-detail-v3/HeroDetail';
+import { ResultsLedger } from '../../../case-detail-v3/ResultsLedger';
+import { BuildStory, type Fact, type Pill } from '../../../case-detail-v3/BuildStory';
+import { NightCharts } from '../../../case-detail-v3/NightCharts';
+import { ProofQuote } from '../../../case-detail-v3/ProofQuote';
+import { FaqDetail } from '../../../case-detail-v3/FaqDetail';
+import { RelatedWork, type RelatedCard } from '../../../case-detail-v3/RelatedWork';
+import { CoverCTADetail } from '../../../case-detail-v3/CoverCTADetail';
+import { parseResultTransition, collectResults, stripTags, type ResultStat } from '../../../case-detail-v3/helpers';
 
 interface PageProps {
   params: Promise<{ slug: string }>;
@@ -52,7 +80,9 @@ export async function generateStaticParams() {
     }));
 }
 
-// Extract TOC from main-body HTML
+// Extract TOC from main-body HTML (H2 ids for anchor links). Structurally the
+// same normalization the old template used, incl. stripping a redundant lead
+// <figure> since the hero already carries the visual header.
 function extractTocAndAddIds(html: string | undefined): { toc: { id: string; text: string }[]; html: string } {
   if (!html) return { toc: [], html: '' };
 
@@ -66,8 +96,8 @@ function extractTocAndAddIds(html: string | undefined): { toc: { id: string; tex
   normalized = rewriteLegacyUrls(normalized);
 
   // Replace curly/smart quotes with straight quotes in HTML attributes
-  normalized = normalized.replace(/[\u201C\u201D]/g, '"');
-  normalized = normalized.replace(/[\u2018\u2019]/g, "'");
+  normalized = normalized.replace(/[“”]/g, '"');
+  normalized = normalized.replace(/[‘’]/g, "'");
 
   // Escape <script> tags in CMS rich text so they display as code, not execute
   normalized = normalized.replace(/<script\b/gi, '&lt;script');
@@ -115,7 +145,6 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   // Truncate CMS summary to SERP limits; if too short, extend with contextual suffix
   let description = truncateSeoDescription(summary);
   if (!description) {
-    // Summary missing or under 80 chars — build a longer description with context
     const base = summary
       ? `${summary} See how LoudFace helped ${study.name} achieve measurable results with our design and development approach.`
       : `See how LoudFace helped ${study.name} achieve measurable results. Full case study with approach, metrics, and outcomes.`;
@@ -155,35 +184,21 @@ export default async function CaseStudyPage({ params }: PageProps) {
     notFound();
   }
 
-  // Helpers
-  function getClient(id: string | undefined): Client | undefined {
-    return id ? clientsMap.get(id) : undefined;
-  }
-
-  function getIndustry(id: string | undefined): Industry | undefined {
-    return id ? industriesMap.get(id) : undefined;
-  }
-
-  function getTechnologies(ids: string[] | undefined): Technology[] {
-    if (!ids) return [];
-    return ids.map(id => technologiesMap.get(id)).filter((t): t is Technology => !!t);
-  }
-
-  function getServices(ids: string[] | undefined): ServiceCategory[] {
-    if (!ids) return [];
-    return ids.map(id => serviceCategoriesMap.get(id)).filter((s): s is ServiceCategory => !!s);
-  }
-
-  function getTestimonial(caseStudyId: string): Testimonial | undefined {
+  // ── Resolvers ──────────────────────────────────────────────
+  const getClient = (id: string | undefined): Client | undefined => (id ? clientsMap.get(id) : undefined);
+  const getIndustry = (id: string | undefined): Industry | undefined => (id ? industriesMap.get(id) : undefined);
+  const getTechnologies = (ids: string[] | undefined): Technology[] =>
+    !ids ? [] : ids.map((id) => technologiesMap.get(id)).filter((t): t is Technology => !!t);
+  const getServices = (ids: string[] | undefined): ServiceCategory[] =>
+    !ids ? [] : ids.map((id) => serviceCategoriesMap.get(id)).filter((s): s is ServiceCategory => !!s);
+  const getTestimonial = (caseStudyId: string): Testimonial | undefined => {
     const indexed = testimonialsMap.get(caseStudyId);
     if (indexed) return indexed;
-    if (study?.testimonial) {
-      return allTestimonials.find((t) => t.id === study.testimonial);
-    }
+    if (study?.testimonial) return allTestimonials.find((t) => t.id === study.testimonial);
     return undefined;
-  }
+  };
 
-  // Data
+  // ── Resolved data ──────────────────────────────────────────
   const client = getClient(study.client);
   const industry = getIndustry(study.industry);
   const technologies = getTechnologies(study.technologies);
@@ -191,55 +206,83 @@ export default async function CaseStudyPage({ params }: PageProps) {
   const testimonial = getTestimonial(study.id);
 
   const clientColor = study['client-color'] || 'var(--color-primary-500)';
-  const textColor = getContrastColor(clientColor);
+  const projectTitle = study['project-title'] || study.name;
 
-  const results = [
-    { number: study['result-1---number'], title: study['result-1---title'] },
-    { number: study['result-2---number'], title: study['result-2---title'] },
-    { number: study['result-3---number'], title: study['result-3---title'] },
-  ].filter(r => r.number);
+  // Hero object binding: two-state when the lead result encodes a transition.
+  const results = collectResults(study);
+  const transition = parseResultTransition(study['result-1---number']);
+  const result1: ResultStat = { number: study['result-1---number'], title: study['result-1---title'] };
+  const result2: ResultStat | undefined = study['result-2---number']
+    ? { number: study['result-2---number'], title: study['result-2---title'] ?? '' }
+    : undefined;
 
-  // Smart related case studies: prioritize same industry, then shared services, then recency
-  const relatedStudies = (() => {
-    const others = caseStudies.filter(s => s.slug !== slug);
-    if (others.length <= 3) return others;
+  const clientLogoUrl = client?.['light-logo']?.url ? optimizeImage(client['light-logo'].url, 120) : undefined;
 
-    // Score each case study by relevance
-    const studyIndustries = study.industries || (study.industry ? [study.industry] : []);
-    const studyServices = study['services-provided'] || [];
+  // Sidebar bindings — services link to real pages; tech pills link to the
+  // gallery (the old ?tech= querystring was a dead link target, so drop it).
+  const servicePills: Pill[] = services.map((s) => ({ name: s.name, href: `/services/${resolveServiceSlug(s.slug)}` }));
+  const techPills: Pill[] = technologies.map((t) => ({ name: t.name, href: '/case-studies' }));
+  const facts: Fact[] = [];
+  if (client?.name) facts.push({ k: 'Client', v: client.name });
+  if (industry?.name) facts.push({ k: 'Industry', v: industry.name });
+  if (study.country) facts.push({ k: 'Country', v: study.country });
+  if (study['company-size']) facts.push({ k: 'Team size', v: `${study['company-size']} employees` });
 
-    const scored = others.map(s => {
-      let score = 0;
-      const sIndustries = s.industries || (s.industry ? [s.industry] : []);
-      const sServices = s['services-provided'] || [];
-
-      // Industry match: +3 per shared industry
-      for (const ind of sIndustries) {
-        if (studyIndustries.includes(ind)) score += 3;
-      }
-      // Service match: +2 per shared service
-      for (const svc of sServices) {
-        if (studyServices.includes(svc)) score += 2;
-      }
-      return { study: s, score };
-    });
-
-    return scored
-      .sort((a, b) => b.score - a.score)
-      .slice(0, 3)
-      .map(s => s.study);
-  })();
+  // Article body → processed HTML + TOC ids, then auto-link first service mentions.
   const { toc, html: processedBody } = (() => {
     let body = study['main-body'] || '';
-    // Strip the first <figure> if it appears before or right after the first paragraph —
-    // the hero section already provides the visual header, so this image is redundant.
     body = body.replace(/^(\s*(?:<p[^>]*>.*?<\/p>\s*)?)<figure[^>]*>[\s\S]*?<\/figure>/, '$1');
     return extractTocAndAddIds(body);
   })();
-  // Add internal service links to first AEO / CRO / Webflow mentions.
   const linkedBody = autoLinkServiceMentions(processedBody);
 
-  const projectTitle = study['project-title'] || study.name;
+  // Charts (night act) — only when present; growth curve stays axis-free.
+  const charts = study.charts ?? [];
+  const hasGrowthCurve = charts.some((c) => c.chartType === 'growthCurve');
+
+  // Testimonial (proof) — only when a resolvable quote body exists.
+  const testimonialQuote = testimonial?.['testimonial-body'];
+  const avatarUrl = testimonial?.['profile-image']?.url ? avatarImage(testimonial['profile-image'].url) : undefined;
+
+  // Related work — reuse the industry(+3)/service(+2) scoring util.
+  const relatedStudies = (() => {
+    const others = caseStudies.filter((s) => s.slug !== slug);
+    if (others.length <= 3) return others.slice(0, 3);
+    const studyIndustries = study.industries || (study.industry ? [study.industry] : []);
+    const studyServices = study['services-provided'] || [];
+    return others
+      .map((s) => {
+        let score = 0;
+        const sIndustries = s.industries || (s.industry ? [s.industry] : []);
+        const sServices = s['services-provided'] || [];
+        for (const ind of sIndustries) if (studyIndustries.includes(ind)) score += 3;
+        for (const svc of sServices) if (studyServices.includes(svc)) score += 2;
+        return { study: s, score };
+      })
+      .sort((a, b) => b.score - a.score)
+      .slice(0, 3)
+      .map((s) => s.study);
+  })();
+
+  const relatedCards: RelatedCard[] = relatedStudies.map((r) => {
+    const rClient = getClient(r.client);
+    const rIndustry = getIndustry(r.industry);
+    return {
+      slug: r.slug,
+      title: r['project-title'] || r.name,
+      clientName: rClient?.name,
+      clientColor: r['client-color'] || 'var(--color-primary-500)',
+      resultNumber: r['result-1---number'],
+      resultTitle: r['result-1---title'],
+      tag: rIndustry?.name || r.disciplines?.[0],
+    };
+  });
+
+  const marqueeNames = Array.from(
+    new Set(caseStudies.map((s) => getClient(s.client)?.name).filter(Boolean) as string[]),
+  ).slice(0, 12);
+
+  // ── Structured data (BreadcrumbList + Article + FAQPage + Speakable + Review) ──
   const canonicalUrl = `https://www.loudface.co/case-studies/${slug}`;
 
   const breadcrumbSchema = {
@@ -272,10 +315,9 @@ export default async function CaseStudyPage({ params }: PageProps) {
   const faqSchema = buildFAQSchema(faqItems);
   const speakableSchema = buildSpeakableSchema(projectTitle, canonicalUrl);
 
-  // Review schema from testimonial (trust signal for AI and traditional search)
-  const reviewSchema = testimonial?.['testimonial-body']
+  const reviewSchema = testimonialQuote
     ? buildReviewSchema(
-        { name: testimonial.name, role: testimonial.role, quote: testimonial['testimonial-body'] },
+        { name: testimonial!.name, role: testimonial!.role, quote: testimonialQuote },
         client?.name || study.name,
       )
     : null;
@@ -283,345 +325,48 @@ export default async function CaseStudyPage({ params }: PageProps) {
   return (
     <>
       {/* Structured Data — native script tags for SSR visibility to crawlers */}
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
-      />
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(articleSchema) }}
-      />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(articleSchema) }} />
       {faqSchema && (
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
-        />
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }} />
       )}
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(speakableSchema) }}
-      />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(speakableSchema) }} />
       {reviewSchema && (
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(reviewSchema) }}
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(reviewSchema) }} />
+      )}
+
+      {/* .csv3 scopes the bespoke resets so they can't touch the shared Header/Footer/Cal chrome. */}
+      <div className="csv3">
+        <HeroDetail
+          projectTitle={projectTitle}
+          summary={study['paragraph-summary']}
+          clientName={client?.name}
+          clientLogoUrl={clientLogoUrl}
+          industryName={industry?.name}
+          country={study.country}
+          transition={transition}
+          result1={result1}
+          result2={result2}
         />
-      )}
 
-      {/* Hero */}
-      <section
-        className="pt-24 pb-12"
-        style={{ background: clientColor }}
-      >
-        <div className="px-4 md:px-8 lg:px-12">
-          <div className="max-w-5xl mx-auto">
-            <nav className="mb-6" aria-label="Breadcrumb">
-              <ol className="flex items-center gap-2 text-sm opacity-70" style={{ color: textColor }}>
-                <li className="shrink-0"><Link href="/case-studies" className="hover:opacity-100">Case Studies</Link></li>
-                <li className="shrink-0"><span className="mx-1">/</span></li>
-                <li className="opacity-100 min-w-0 truncate">{projectTitle}</li>
-              </ol>
-            </nav>
+        <ResultsLedger results={results} />
 
-            {client?.['light-logo']?.url && (
-              <img
-                src={optimizeImage(client['light-logo'].url, 120)}
-                alt={client.name}
-                width="120"
-                height="24"
-                loading="eager"
-                className="h-6 mb-4 opacity-80"
-              />
-            )}
+        <BuildStory bodyHtml={linkedBody} toc={toc} services={servicePills} technologies={techPills} facts={facts} />
 
-            <h1
-              className="text-3xl md:text-4xl lg:text-5xl font-medium leading-tight"
-              style={{ color: textColor }}
-            >
-              {projectTitle}
-            </h1>
+        {charts.length > 0 && <NightCharts charts={charts} accentColor={clientColor} hasGrowthCurve={hasGrowthCurve} />}
 
-            {study['paragraph-summary'] && (
-              <p
-                className="mt-4 text-lg max-w-2xl opacity-90"
-                style={{ color: textColor }}
-              >
-                {study['paragraph-summary']}
-              </p>
-            )}
+        {testimonialQuote && (
+          <ProofQuote quoteHtml={testimonialQuote} name={testimonial?.name} role={testimonial?.role} avatarUrl={avatarUrl} />
+        )}
 
-            <div className="mt-6 flex flex-wrap items-center gap-3">
-              {industry && (
-                <span className="px-3 py-1 text-sm rounded-full bg-white/15" style={{ color: textColor }}>
-                  {industry.name}
-                </span>
-              )}
-              {study.country && (
-                <span className="px-3 py-1 text-sm rounded-full bg-white/15" style={{ color: textColor }}>
-                  {study.country}
-                </span>
-              )}
-              {study._createdAt && (
-                <time
-                  dateTime={study._createdAt}
-                  className="text-sm opacity-70"
-                  style={{ color: textColor }}
-                >
-                  {new Date(study._createdAt).toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}
-                </time>
-              )}
-              {/* TODO: Re-enable Visit site button when ready */}
-              {/* {websiteUrl && (
-                <a
-                  href={websiteUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center gap-1.5 px-3 py-1 text-sm font-medium rounded-full bg-white/20 hover:bg-white/30 transition-colors"
-                  style={{ color: textColor }}
-                >
-                  Visit site
-                  <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
-                  </svg>
-                </a>
-              )} */}
-            </div>
-          </div>
-        </div>
-      </section>
+        {faqItems.length >= 2 && <FaqDetail items={faqItems} clientName={client?.name} />}
 
+        <RelatedWork cards={relatedCards} marqueeNames={marqueeNames} />
 
-      {/* Main Content */}
-      <SectionContainer className="bg-white" padding="sm">
-        <div className="max-w-5xl mx-auto">
-          {/* Results & TOC Header */}
-          <div className="mb-10 pb-8 border-b border-surface-200">
-            {/* Key Results */}
-            {results.length > 0 && (
-              <div className="mb-8">
-                <h2 className="text-sm font-medium text-surface-500 uppercase tracking-wide mb-4">Key Results</h2>
-                <div className={`grid gap-4 ${
-                  results.length === 1 ? 'grid-cols-1' :
-                  results.length === 2 ? 'grid-cols-2' :
-                  'grid-cols-1 sm:grid-cols-3'
-                }`}>
-                  {results.map((result, i) => (
-                    <div key={i} className="p-5 rounded-lg bg-surface-50">
-                      <span className="block text-2xl md:text-3xl font-medium text-surface-900">{result.number}</span>
-                      <span className="block mt-1 text-sm text-surface-600 leading-snug">{result.title}</span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
+        <CoverCTADetail clientName={client?.name} />
 
-            {/* Charts */}
-            {study.charts && study.charts.length > 0 && (
-              <div className="mb-8">
-                <CaseStudyCharts charts={study.charts} accentColor={clientColor} />
-              </div>
-            )}
-
-            {/* Table of Contents - Mobile only */}
-            {toc.length > 0 && (
-              <nav className="toc lg:hidden">
-                <span className="block text-sm font-medium text-surface-500 uppercase tracking-wide mb-4">On this page</span>
-                <ul className="flex flex-wrap gap-x-6 gap-y-2">
-                  {toc.map((item) => (
-                    <li key={item.id}>
-                      <a
-                        href={`#${item.id}`}
-                        className="toc-link text-sm text-surface-600 hover:text-primary-600 transition-colors"
-                      >
-                        {item.text}
-                      </a>
-                    </li>
-                  ))}
-                </ul>
-              </nav>
-            )}
-          </div>
-
-          <div className="grid grid-cols-1 lg:grid-cols-[1fr_280px] lg:items-start gap-8 lg:gap-12">
-            {/* Article Body */}
-            <article className="min-w-0">
-              {linkedBody ? (
-                <div className="case-study-prose" dangerouslySetInnerHTML={{ __html: linkedBody }} />
-              ) : (
-                <p className="text-surface-500">No content available for this case study.</p>
-              )}
-            </article>
-
-            {/* Sidebar */}
-            <aside className="hidden lg:block lg:sticky lg:top-24 lg:self-start space-y-8">
-              {/* Table of Contents */}
-              {toc.length > 0 && (
-                <nav className="toc">
-                  <span className="block text-sm font-medium text-surface-500 uppercase tracking-wide mb-3">On this page</span>
-                  <ul className="space-y-2">
-                    {toc.map((item) => (
-                      <li key={item.id}>
-                        <a
-                          href={`#${item.id}`}
-                          className="toc-link block text-sm text-surface-600 hover:text-primary-600 transition-colors py-1 border-l-2 border-surface-200 hover:border-primary-500 pl-3"
-                        >
-                          {item.text}
-                        </a>
-                      </li>
-                    ))}
-                  </ul>
-                </nav>
-              )}
-
-              {/* Services */}
-              {services.length > 0 && (
-                <div>
-                  <span className="block text-sm font-medium text-surface-500 uppercase tracking-wide mb-3">Services</span>
-                  <div className="flex flex-wrap gap-2">
-                    {services.map(svc => (
-                      <Link key={svc.id} href={`/services/${resolveServiceSlug(svc.slug)}`} className="px-3 py-1 bg-surface-100 hover:bg-surface-200 rounded text-sm text-surface-700 transition-colors">
-                        {svc.name}
-                      </Link>
-                    ))}
-                  </div>
-                </div>
-              )}
-
-              {/* Technologies */}
-              {technologies.length > 0 && (
-                <div>
-                  <span className="block text-sm font-medium text-surface-500 uppercase tracking-wide mb-3">Technologies</span>
-                  <div className="flex flex-wrap gap-2">
-                    {technologies.map(tech => (
-                      <Link key={tech.id} href={`/case-studies?tech=${tech.slug}`} className="px-3 py-1 bg-surface-100 hover:bg-surface-200 rounded text-sm text-surface-700 transition-colors">
-                        {tech.name}
-                      </Link>
-                    ))}
-                  </div>
-                </div>
-              )}
-
-              {/* Client Info */}
-              {(study.country || study['company-size']) && (
-                <div>
-                  <span className="block text-sm font-medium text-surface-500 uppercase tracking-wide mb-3">Client</span>
-                  <div className="space-y-2 text-sm text-surface-700">
-                    {client?.name && <div>{client.name}</div>}
-                    {study.country && <div>{study.country}</div>}
-                    {study['company-size'] && <div>{study['company-size']} employees</div>}
-                  </div>
-                </div>
-              )}
-
-              {/* CTA */}
-              <Button variant="primary" fullWidth calTrigger>
-                Book an intro call
-              </Button>
-            </aside>
-          </div>
-        </div>
-      </SectionContainer>
-
-      {/* Testimonial */}
-      {testimonial && testimonial['testimonial-body'] && (
-        <section className="bg-surface-50 py-16 md:py-24">
-          <div className="px-4 md:px-8 lg:px-12">
-            <div className="max-w-3xl mx-auto text-center">
-              <svg className="w-8 h-8 mx-auto mb-6 text-surface-300" fill="currentColor" viewBox="0 0 24 24">
-                <path d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10h-9.983zm-14.017 0v-7.391c0-5.704 3.748-9.57 9-10.609l.996 2.151c-2.433.917-3.996 3.638-3.996 5.849h3.983v10h-9.983z" />
-              </svg>
-              <blockquote
-                className="text-xl md:text-2xl text-surface-800 leading-relaxed [&>p]:m-0"
-                dangerouslySetInnerHTML={{ __html: testimonial['testimonial-body'] }}
-              />
-              <div className="mt-6 flex items-center justify-center gap-3">
-                {testimonial['profile-image']?.url && (
-                  <img
-                    src={avatarImage(testimonial['profile-image'].url)}
-                    alt={testimonial.name}
-                    width="80"
-                    height="80"
-                    loading="lazy"
-                    className="w-10 h-10 rounded-full object-cover"
-                  />
-                )}
-                <div className="text-left">
-                  <div className="font-medium text-surface-900">{testimonial.name}</div>
-                  {testimonial.role && (
-                    <div className="text-sm text-surface-500">{testimonial.role}</div>
-                  )}
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
-      )}
-
-      {/* FAQ — visible accordion from auto-extracted H2 headings */}
-      {faqItems.length >= 2 && (
-        <FAQ
-          title="Frequently Asked Questions"
-          subtitle={`Key insights from the ${client?.name || study.name} case study.`}
-          items={faqItems}
-          showFooter={false}
-          skipSchema
-        />
-      )}
-
-      {/* Related Work */}
-      {relatedStudies.length > 0 && (
-        <SectionContainer>
-          <div className="flex items-center justify-between mb-8">
-            <h2 className="text-2xl md:text-3xl font-medium text-surface-900">More work</h2>
-            <Link href="/case-studies" className="text-sm font-medium text-surface-600 hover:text-primary-600 transition-colors">
-              All case studies
-            </Link>
-          </div>
-
-          <div className="grid md:grid-cols-3 gap-6">
-            {relatedStudies.map((related) => {
-              const relatedClient = getClient(related.client);
-              const relatedColor = related['client-color'] || 'var(--color-primary-500)';
-
-              return (
-                <Link
-                  key={related.slug}
-                  href={`/case-studies/${related.slug}`}
-                  className="group block bg-white rounded-xl border border-surface-200 overflow-hidden hover:shadow-lg hover:-translate-y-1 transition-all duration-200"
-                >
-                  <div className="h-1" style={{ background: relatedColor }} />
-                  <div className="aspect-[16/10] overflow-hidden">
-                    <img
-                      src={thumbnailImage(related['main-project-image-thumbnail']?.url) || asset('/images/placeholder.webp')}
-                      alt={related['project-title'] || related.name}
-                      width="800"
-                      height="500"
-                      className="w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-300"
-                      loading="lazy"
-                    />
-                  </div>
-                  <div className="p-4">
-                    <h3 className="font-medium text-surface-900 group-hover:text-primary-600 transition-colors">
-                      {related['project-title'] || related.name}
-                    </h3>
-                    {relatedClient?.name && (
-                      <p className="mt-1 text-sm text-surface-500">{relatedClient.name}</p>
-                    )}
-                  </div>
-                </Link>
-              );
-            })}
-          </div>
-        </SectionContainer>
-      )}
-
-      {/* CTA */}
-      <CTA
-        variant="dark"
-        title="Want similar results?"
-        subtitle="Let's talk about your project."
-        ctaText="Book a call"
-      />
+        <FooterV3 />
+      </div>
     </>
   );
 }

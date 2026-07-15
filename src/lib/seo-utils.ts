@@ -122,7 +122,8 @@ const LEGACY_URL_MAP: Record<string, string> = {
   '/services/seo-62e9c': '/services/seo-aeo',
   // Renamed pages
   '/about-us': '/about',
-  '/contact': '/',
+  // '/contact' was removed from this map 2026-07-15 — it is a real page now
+  // (net-new v3 route). Do NOT re-add a '/contact' rewrite.
   '/why-webflow': '/services/webflow',
   '/services': '/services/webflow',
   // Old blog slugs

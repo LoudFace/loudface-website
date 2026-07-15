@@ -50,6 +50,13 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       changeFrequency: 'weekly',
       priority: 0.8,
     },
+    // Contact (net-new v3 page; previously 301'd to /)
+    {
+      url: `${baseUrl}/contact`,
+      lastModified: staticLastModified,
+      changeFrequency: 'monthly',
+      priority: 0.7,
+    },
     // Services hub (net-new v3 page; previously 301'd to /services/webflow)
     {
       url: `${baseUrl}/services`,

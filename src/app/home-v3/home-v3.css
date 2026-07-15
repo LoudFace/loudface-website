@@ -748,4 +748,11 @@ h2.sec{font-size:clamp(1.9rem,2.9vw,2.55rem);letter-spacing:-.025em;color:var(--
      100%-width span at the tool's inflated 500px layout crops the trailing "e." off at x=390. */
   .ft-mark{max-width:390px;margin-left:0;margin-right:auto;}
   .ft-legal a{margin-left:0;margin-right:20px;padding:10px 0;}
+  /* logo-strip eyebrow: the full label ("The B2B SaaS teams we've built and grown
+     for") doesn't fit one line at 390 under nowrap — .container's crop-safe cap above
+     doesn't reach this pill (it isn't width-bound by .container), so it clips mid-word
+     instead of wrapping. Let it wrap to 2 lines with an auto height instead of the
+     fixed 32px pill height. */
+  .logos-label{white-space:normal;height:auto;min-height:32px;align-items:flex-start;text-align:left;line-height:1.5;padding:7px 16px 7px 14px;}
+  .logos-label i{margin-top:5px;}
 }

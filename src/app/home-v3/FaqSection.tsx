@@ -5,7 +5,7 @@
  */
 const STATS = [
   { b: '200+', s: 'Projects completed' },
-  { b: '288%', s: 'Increase in conversions' },
+  { b: '288%', s: 'Increase in conversions, Dimer Health' },
   { b: '4+', s: 'Years as Webflow Enterprise Partner' },
   { b: '4–6 wks', s: 'Average time to launch' },
 ];
@@ -50,7 +50,7 @@ export function FaqSection() {
           </p>
           <div className="faq-cta">
             <a href="#book" data-cal-trigger="" className="btn btn-white btn-lg">Book a strategy call</a>
-            <span className="slots"><span className="dot"></span>2 client slots open for Q3</span>
+            <span className="slots"><i className="dot"></i>2h response time</span>
           </div>
           <div className="fstats" aria-label="LoudFace in numbers">
             {STATS.map((st) => (

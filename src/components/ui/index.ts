@@ -10,6 +10,7 @@ export { LogoImage } from './LogoImage';
 export { CopyFirstVisual } from './CopyFirstVisual';
 export { ConversionSplitVisual } from './ConversionSplitVisual';
 export { DesignSystemVisual } from './DesignSystemVisual';
+export { LadderRail } from './LadderRail';
 export { PixelBreakpointAnimation } from './PixelBreakpointAnimation';
 export { ScalableGridAnimation } from './ScalableGridAnimation';
 export { Pagination } from './Pagination';

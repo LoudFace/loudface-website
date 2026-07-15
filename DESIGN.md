@@ -106,6 +106,13 @@ structurally distinct focal object, not additional copy stacked in the text colu
 repeat later in the page as a recurring anchor (on `/pricing`: hero `.hero-anchor` pill → closing FAQ
 `.fstat` row — the "$5k/mo" fact reinforced at a minimum of 2 coordinated placements, not a one-off).
 
+**Article/post headers run a 5-part budget, not 4 — this is a distinct archetype, not a marketing hero.**
+`/blog/[slug]`'s post-hero is breadcrumb + category/read-time tag-row + H1 + excerpt + byline/date
+meta-row — five parts. The tag-row and meta-row are wayfinding and attribution (what section, who wrote
+it, when), the job a marketing hero's CTA-row does for conversion instead, not discretionary copy stacked
+for persuasion. This is the standard shape of an article header site-wide in the category (Stripe,
+Intercom, Ghost-style blogs), so judge it against that convention, not the 4-part hero-copy budget above.
+
 ## 8. Blueprint-figure plates (house explanatory-graphic style)
 Any explanatory graphic (problem items, service diagrams, case-study process, "explain X") uses the
 **blueprint-figures** skill — engineering-manual SVG plates: single indigo ramp, dotted paper,
@@ -131,6 +138,7 @@ lg:px-12` inside `max-w-7xl` (use `SectionContainer`). Radius: `rounded-xl`/`rou
 @ `2px` offset. 8px grid; project tokens only.
 
 ## Changelog
+- **2026-07-14:** added the article/post-header 5-part hero-copy exception (§7) — `/blog/[slug]` archetype (breadcrumb+tag+H1+excerpt+meta) judged against the article-header convention, not the 4-part marketing-hero budget.
 - **2026-07-12:** spec reconciled to approved build (display numerals, #fff stages, $5k placements) + logo-band canon = saturated indigo strip.
 
 ---

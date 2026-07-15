@@ -157,11 +157,10 @@ const nextConfig: NextConfig = {
         destination: '/about',
         permanent: true,
       },
-      {
-        source: '/contact',
-        destination: '/',
-        permanent: true,
-      },
+      // NOTE: the permanent 301 /contact → / was REMOVED (2026-07-15) so the
+      // net-new v3 /contact page can resolve. Do NOT re-add it. Browsers that
+      // cached the old 301 will keep redirecting until their cache expires;
+      // nothing to do server-side.
       // NOTE: the permanent 301 /services → /services/webflow was REMOVED
       // (2026-07-12) so the net-new /services hub page can resolve. Do NOT
       // re-add it. Browsers that cached the old 301 will keep redirecting until

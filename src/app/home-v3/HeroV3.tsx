@@ -80,7 +80,7 @@ export function HeroV3({ images }: { images?: HomeImages } = {}) {
           </p>
           <div className="hero-cta rv" style={{ transitionDelay: '.18s' }}>
             <a href="#book" data-cal-trigger="" className="btn btn-white btn-lg">Book a strategy call</a>
-            <span className="slots"><span className="dot"></span>2 client slots open for Q3</span>
+            <span className="slots"><i className="dot"></i>2h response time</span>
           </div>
           <div className="ai-row rv" style={{ transitionDelay: '.24s' }}>
             <span className="ai-row-label">See what AI says about us</span>

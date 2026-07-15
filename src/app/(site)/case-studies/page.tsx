@@ -1,23 +1,51 @@
 /**
- * Case Studies Gallery Page
+ * Case Studies Gallery Page — v3 design (componentized).
  *
- * Studies are grouped by discipline (AI Search & Organic Growth, Conversion
- * Optimization, Web Design & Branding) and filterable via tabs. The default
- * "All" view renders every group server-side, so all studies stay in the HTML
- * for SEO / AI-citation discovery; the tabs filter the view client-side.
+ * Faithful port of the approved work-v3 "marquee-stage" concept. Composed from
+ * the work-v3 section components inside the (site) group so it inherits the
+ * shared Header/Footer + PostHog/GTM/Cal chrome. The shared Header renders in
+ * its dark-hero variant on /case-studies (wired in (site)/layout.tsx), and the
+ * shared Footer is suppressed there so only the v3 FooterV3 (same component as
+ * the homepage/About/Pricing/Services) renders. Bespoke styling is work-v3.css,
+ * imported route-scoped here and scoped under .wkv3 via :where() so it can't
+ * leak onto shared chrome.
+ *
+ * DATA: the HERO marquee tabs are the four curated flagships (Toku, Dimer, LIQID,
+ * Eraser), screenshots resolved from Sanity by slug (getWorkImages) with CDN
+ * fallbacks. Everything BELOW the hero — the archive grid + discipline filters —
+ * is driven entirely by LIVE Sanity data via fetchHomepageData(), which already
+ * filters HIDDEN_CASE_STUDY_SLUGS. Every study still renders server-side in the
+ * default "All" view, so crawlers / AI engines see the full gallery; the filter
+ * toggles group visibility client-side.
+ *
+ * CLAIMS: the hero + proof chrome carry only sourced/safe stats (200+, Toku
+ * 0 → 86%, Dimer 288%, 4+ yrs, ~2h). The old page's unsourced hero stats
+ * (147% / 3.2x from work.json) are gone. Per-card stats come from Sanity exactly
+ * as they render on the live gallery today (source of truth is Studio).
+ *
+ * SEO: metadata/canonical preserved from the previous gallery page; the
+ * CollectionPage + ItemList and BreadcrumbList JSON-LD are ported and driven by
+ * the resolved cards; one <h1> (the hero).
  */
 export const revalidate = 60;
 
 import type { Metadata } from 'next';
+import '../../work-v3/work-v3.css';
 import { fetchHomepageData } from '@/lib/cms-data';
-import { getWorkContent } from '@/lib/content-utils';
 import { asset } from '@/lib/assets';
-import { getContrastColors } from '@/lib/color-utils';
-import { caseStudyThumbnail, logoImage } from '@/lib/image-utils';
-import { SectionContainer } from '@/components/ui';
-import { CTA } from '@/components/sections';
+import { caseStudyThumbnail } from '@/lib/image-utils';
 import type { CaseStudy, Client, Industry, Technology } from '@/lib/types';
-import { CaseStudyGallery, type GalleryCard } from './CaseStudyGallery';
+import { getWorkImages } from '../../work-v3/data';
+import { HeroWork } from '../../work-v3/HeroWork';
+import { LogosMarquee } from '../../work-v3/LogosMarquee';
+import { Archive, type ArchiveCard } from '../../work-v3/Archive';
+import { Proof } from '../../work-v3/Proof';
+import { Receipts } from '../../work-v3/Receipts';
+import { CoverCTA } from '../../work-v3/CoverCTA';
+import { FooterV3 } from '../../home-v3/FooterV3';
+import { WorkV3Scripts } from '../../work-v3/Scripts';
+
+const SITE = 'https://www.loudface.co';
 
 // Display order: lead with current offering, web design & branding last.
 const DISCIPLINE_ORDER = [
@@ -52,9 +80,27 @@ export const metadata: Metadata = {
   },
 };
 
+const disciplineRank = (d: string) => {
+  const i = DISCIPLINE_ORDER.indexOf(d);
+  return i === -1 ? DISCIPLINE_ORDER.length : i;
+};
+
+/** Decorative fake-browser-bar label: prefer the real domain, else the client, else the slug. */
+function barLabel(link: string | undefined, clientName: string | undefined, slug: string): string {
+  if (link) {
+    try {
+      const u = new URL(link.startsWith('http') ? link : `https://${link}`);
+      return u.hostname.replace(/^www\./, '');
+    } catch {
+      /* fall through */
+    }
+  }
+  if (clientName) return clientName.toLowerCase().replace(/[^a-z0-9]+/g, '');
+  return slug;
+}
+
 export default async function WorkPage() {
-  const content = getWorkContent();
-  const cmsData = await fetchHomepageData();
+  const [cmsData, images] = await Promise.all([fetchHomepageData(), getWorkImages()]);
 
   const {
     caseStudies: rawCaseStudies,
@@ -72,25 +118,19 @@ export default async function WorkPage() {
       ? []
       : techIds.map((id) => technologiesMap.get(id)).filter((t): t is Technology => t !== undefined);
 
-  const disciplineRank = (d: string) => {
-    const i = DISCIPLINE_ORDER.indexOf(d);
-    return i === -1 ? DISCIPLINE_ORDER.length : i;
-  };
-
   // Resolve + order: by discipline (current offering first), then featured-first.
-  const cards: GalleryCard[] = caseStudies
+  const cards: ArchiveCard[] = caseStudies
     .filter((s) => s.slug)
     .map((study) => {
       const client = getClient(study.client);
       const industry = getIndustry(study.industry);
       const technologies = getTechnologies(study.technologies as string[] | undefined);
-      const clientColor = study['client-color'] || 'var(--color-primary-500)';
-      const { textColor: statTextColor } = getContrastColors(clientColor);
       const thumb = caseStudyThumbnail(study['main-project-image-thumbnail']?.url);
       const disciplines =
         Array.isArray(study.disciplines) && study.disciplines.length
           ? study.disciplines
           : [FALLBACK_DISCIPLINE];
+      const websiteLink = (study as { 'website-link'?: string })['website-link'];
 
       return {
         slug: study.slug,
@@ -101,24 +141,24 @@ export default async function WorkPage() {
         thumbSrcset: thumb.srcset,
         thumbAlt: study['main-project-image-thumbnail']?.alt || study['project-title'] || study.name,
         industryName: industry?.name,
-        technologies: technologies.map((t) => ({ id: t.id, name: t.name })),
-        clientColor,
-        statTextColor,
+        technologies: technologies.map((t) => t.name),
+        barLabel: barLabel(websiteLink, client?.name, study.slug),
+        clientName: client?.name,
         result1Number: study['result-1---number'],
         result1Title: study['result-1---title'],
         result2Number: study['result-2---number'],
         result2Title: study['result-2---title'],
-        clientLogoSrc: client?.['colored-logo']?.url ? logoImage(client['colored-logo'].url) : undefined,
-        clientName: client?.name,
         featured: study.featured,
-      };
+      } satisfies ArchiveCard;
     })
     .sort((a, b) => {
-      // group by PRIMARY discipline (first tag), then featured-first
       const byDiscipline = disciplineRank(a.disciplines[0]) - disciplineRank(b.disciplines[0]);
       if (byDiscipline !== 0) return byDiscipline;
       return Number(Boolean(b.featured)) - Number(Boolean(a.featured));
     });
+
+  const total = cards.length;
+  const namedClients = cards.filter((c) => c.clientName).length;
 
   // Structured data — every study, in display order.
   const collectionSchema = {
@@ -126,13 +166,13 @@ export default async function WorkPage() {
     '@type': 'CollectionPage',
     name: 'Case Studies',
     description: "LoudFace's portfolio across AI search, conversion, and web design & branding.",
-    url: 'https://www.loudface.co/case-studies',
+    url: `${SITE}/case-studies`,
     mainEntity: {
       '@type': 'ItemList',
       itemListElement: cards.map((card, index) => ({
         '@type': 'ListItem',
         position: index + 1,
-        url: `https://www.loudface.co/case-studies/${card.slug}`,
+        url: `${SITE}/case-studies/${card.slug}`,
         name: card.title,
       })),
     },
@@ -142,7 +182,7 @@ export default async function WorkPage() {
     '@context': 'https://schema.org',
     '@type': 'BreadcrumbList',
     itemListElement: [
-      { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://www.loudface.co' },
+      { '@type': 'ListItem', position: 1, name: 'Home', item: SITE },
       { '@type': 'ListItem', position: 2, name: 'Case Studies' },
     ],
   };
@@ -152,47 +192,28 @@ export default async function WorkPage() {
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(collectionSchema) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }} />
 
-      {/* Hero */}
-      <SectionContainer padding="none" className="pt-4">
-        <div className="relative border border-surface-200 bg-surface-50 rounded-2xl overflow-hidden">
-          <div className="p-8 md:p-12 lg:p-16 text-center">
-            <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-hero font-medium text-surface-900">
-              {content.headline.split(content.highlightWord)[0]}
-              <span className="text-primary-600">{content.highlightWord}</span>
-              {content.headline.split(content.highlightWord)[1] || ''}
-            </h1>
-            <p className="mt-4 text-lg text-surface-600 max-w-2xl mx-auto">{content.description}</p>
-
-            <div className="mt-10 pt-8 border-t border-surface-200">
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-8">
-                {content.stats.map((stat, i) => (
-                  <div key={i} className="text-center">
-                    <span className="text-2xl md:text-3xl lg:text-4xl font-medium text-surface-900">{stat.number}</span>
-                    <p className="mt-1 text-sm text-surface-600">{stat.label}</p>
-                  </div>
-                ))}
-              </div>
+      {/* .wkv3 scopes the bespoke resets so they can't touch the shared Header/Footer/Cal chrome. */}
+      <div className="wkv3">
+        <HeroWork images={images} total={total} />
+        <LogosMarquee />
+        {total === 0 ? (
+          <section className="arch" id="archive" aria-label="All case studies">
+            <div className="container">
+              <p className="arch-sub">No case studies found. Check back soon.</p>
             </div>
-          </div>
-        </div>
-      </SectionContainer>
-
-      {/* Gallery */}
-      <SectionContainer padding="lg">
-        {cards.length === 0 ? (
-          <div className="mt-12 text-center py-16">
-            <p className="text-surface-600">No case studies found. Check back soon!</p>
-          </div>
+          </section>
         ) : (
-          <CaseStudyGallery
-            cards={cards}
-            disciplineOrder={DISCIPLINE_ORDER}
-            viewProjectText={content.viewProjectText}
-          />
+          <Archive cards={cards} disciplineOrder={DISCIPLINE_ORDER} total={total} />
         )}
-      </SectionContainer>
+        <Proof />
+        <Receipts total={total} namedClients={namedClients} />
+        <CoverCTA images={images} />
+        {/* Shared v3 footer — rendered inside .wkv3 so the re-scoped .ft footer CSS
+            in work-v3.css applies with full isolation (home-v3.css is NOT imported here). */}
+        <FooterV3 />
+      </div>
 
-      <CTA />
+      <WorkV3Scripts />
     </>
   );
 }

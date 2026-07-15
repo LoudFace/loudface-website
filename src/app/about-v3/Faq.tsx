@@ -71,11 +71,6 @@ export function Faq({ teamCount }: { teamCount: number }) {
           <a className="btn btn-pill btn-white btn-md" href="#book" data-cal-trigger="">
             Book a strategy call
           </a>
-          <div>
-            <span className="accepting">
-              <i></i>Accepting new clients
-            </span>
-          </div>
           <div className="fstats">
             <div className="fstat">
               <b className="tab">100+</b>

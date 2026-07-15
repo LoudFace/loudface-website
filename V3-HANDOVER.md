@@ -12,9 +12,127 @@ alternating with **crisp-light** sections (FlowNinja-style color-blocking), Neue
 Geist Mono, blueprint-figure diagrams. The **homepage is the reference build** and is DONE + LIVE at `/`.
 Now migrating the other pages to match. `DESIGN.md` §0–10 is the authority.
 
-## Status (2026-07-12)
+## Status (2026-07-14)
 
 **DONE:**
+- **/contact = v3, NET-NEW page, fully componentized (2026-07-15).**
+  `src/app/(site)/contact/page.tsx` composes `src/app/contact-v3/*` (HeroContact
+  electric hero + "engagement card" booking panel, LogosMarquee indigo strip,
+  NextSteps 4-step engagement thread + decorative calendar companion, OfficesBand
+  SF+Dubai tiles with live local clocks + fact tiles + founder quote with the REAL
+  Sanity headshot (arnel-bukva, initials fallback), Faq accordion, CoverCTA compact
+  close, shared FooterV3, Scripts for reveals+clocks). Port of the approved
+  `contact-v3/first-move.html` concept. **This route never existed before** — the
+  `/contact → /` 301 was REMOVED from `next.config.ts` AND the `LEGACY_URL_MAP`
+  in `seo-utils.ts` (do-not-re-add comments left in both, same playbook as
+  /services 2026-07-12). Bespoke CSS scoped `:where(.ctv3)`, keyframes
+  ctv3-prefixed, hero pulled under the sticky header `margin-top:-64px`, carries
+  `.hero` so the shared dark Header keys its scroll flip off it. Header
+  dark-variant + shared-footer suppression extended to `/contact` in
+  `(site)/layout.tsx`; `/contact` added to `sitemap.ts`. Every booking CTA is
+  `href="#book-modal"` + `data-cal-trigger` (CalHandler modal — no second booking
+  mechanism), plus a `mailto:hello@loudface.co` escape hatch. NO contact form and
+  NO newsletter form (the newsletter API is a silent no-op — do not add a form
+  posting to it). Claims: safe set only (200+, 4+ years, 2h response, 30-min
+  call); no slots/scarcity. JSON-LD: BreadcrumbList + **ContactPage carrying BOTH
+  office PostalAddresses** (first machine-readable SF address anywhere on the
+  site) + contactPoint/email + FAQPage (single-sourced with the accordion) +
+  WebPage/Speakable. Verified: 200 (redirect gone), one h1, all sections SSR'd,
+  20 Cal triggers, all JSON-LD parses, founder headshot loads from Sanity, other
+  pages still 200; tsc + build clean.
+- **/blog (index) + /blog/[slug] (post template) = v3, fully componentized (2026-07-14).**
+  `src/app/(site)/blog/page.tsx` + `.../blog/[slug]/page.tsx` compose `src/app/blog-v3/*`
+  (Lead electric band, AnswerCard citation surface, BlogBodyV3 prose+visuals, MobileToc,
+  ReadingRail, Faq, AuthorBento, RelatedGallery/PostCard night exhibit cards, CoverCTA,
+  Scripts, shared FooterV3). Port of the approved `blog-v3/answer-first.html` concept as a
+  DYNAMIC template over all 108 live posts. **Signature move:** the AEO `direct-answer` is
+  lifted into an elevated white citation card straddling the electric→light seam
+  (`.answer-wrap` negative margin), `data-speakable` on the answer `<p>` (94% of posts;
+  degrades to plain header flow + no empty card on the 6% without one — verified on
+  `60-word-block-ai-overviews`). Bespoke CSS scoped `:where(.blogv3)`, all vars + fonts
+  declared here (loads ONLY on blog); the electric band carries `.hero` so the shared dark
+  Header keys its scroll flip off it; hero pulled under the sticky header `margin-top:-64px`;
+  keyframes blg-prefixed; `.ft` FooterV3 skin re-scoped under `.blogv3`. Body renders into a
+  FRESH `.prose` class (never `.blog-prose`) so the old template's global blog-prose rules
+  can't bleed in; the visuals[] splice pipeline is preserved (verified on the 7-visual
+  share-of-answer post). **Reveal is gated on `@media (scripting: enabled)`** (NOT a
+  pre-hydration DOM class) → zero hydration mismatch + no-JS crawlers see full opacity.
+  **Must-keeps carried:** TOC (mobile `<details>` + sticky rail w/ scroll-spy), embedded
+  `faq[]` accordion + FAQPage schema (≥2 items), author block, existing two-tier related
+  selection, share row (X/copy/LinkedIn), H2-anchor structure, and all 5 JSON-LD
+  (BlogPosting + BreadcrumbList + FAQPage + WebPage/Speakable always; ItemList fires only on
+  ranked listicles — verified present on `top-10-webflow-agency-templates`, absent otherwise).
+  generateMetadata title ≤60 / desc ≤160 pipeline preserved verbatim; one h1. **Judge-nit
+  fix:** wide tables get a CSS scroll-shadow (Lea-Verou 4-layer trick) + a mobile "Scroll for
+  the full table" cue. The 13%-no-thumbnail case: index + related cards fall to an indigo
+  gradient plate w/ faint monogram (never a gray box); the post's featured-image block is
+  simply omitted (clean text-only hero — verified on `aeo-consultant-vs-agency-2026`). The
+  concept's bespoke mid-article "night takeaway stage" (hand-authored quote + 30/3/1 facts,
+  specific to one post) is NOT ported — no per-post data source across the archive; rhythm is
+  carried by electric lead → night related → night cover. Header dark-variant + shared-footer
+  suppression extended to `/blog` + `/blog/*` in `(site)/layout.tsx`. Verified: `/blog` + 3
+  posts (with-answer+faq+thumb / no-answer / no-thumb) all 200, one h1 each, citation card
+  present/absent correctly, console clean, other pages still 200. Build compiles clean; tsc clean.
+- **/case-studies/[slug] (case-study DETAIL template) = v3, fully componentized (2026-07-14).**
+  `src/app/(site)/case-studies/[slug]/page.tsx` composes `src/app/case-detail-v3/*`
+  (HeroDetail electric split-screen with the signature two-state answer object,
+  ResultsLedger, BuildStory article + sticky sidebar, NightCharts, ProofQuote,
+  FaqDetail, RelatedWork marquee+cards, CoverCTADetail, shared FooterV3). Port of
+  the approved `case-detail-v3/before-after.html` concept, rebuilt as a DYNAMIC
+  template that renders all 26 live studies from their Sanity fields. Bespoke CSS
+  scoped `:where(.csv3)` with ALL vars declared under `.csv3` (NOT :root) so a
+  client-nav between the `.wkv3` gallery and a `.csv3` detail can't clobber the
+  other file's `--ink`/`--acc`; keyframes csd-prefixed (`csdpulse`/`csdslide`);
+  hero pulled under the sticky header with `margin-top:-64px`; the `.ft` FooterV3
+  skin is ported/re-scoped here (FooterV3 renders inside `.csv3`). Header
+  dark-variant + shared-footer suppression extended to `/case-studies/*` (startsWith)
+  in `(site)/layout.tsx`. **Signature binding:** the two-state hero (BEFORE→NOW +
+  delta) only appears when `result-1-number` itself encodes a transition (parsed on
+  `→`/`->`; live = Toku "0 → 86%", LoudFace "0.18% → 10.4%" — the only 2 of 26);
+  every other study degrades to a single-state result card (same glass family, one
+  column). **Sparse-degradation (all verified live):** ledger is cols-1/2/3 by how
+  many result fields are populated; NightCharts renders only when `charts.length>0`
+  (growthCurve stays axis-free — the reused `CaseStudyCharts` must-keep — with a
+  privacy note); ProofQuote only when a testimonial body resolves; FaqDetail when
+  ≥2 items (100% today); industry badge/tech pills optional. **Must-keeps carried:**
+  TOC anchors (H2-id injection, mobile pills + sticky sidebar), services/tech pills
+  (tech `?tech=` dead link fixed → points at gallery), project facts, related-work
+  industry(+3)/service(+2) scoring util, and BreadcrumbList+Article+FAQPage+Speakable
+  (+Review when testimonial) JSON-LD. generateMetadata truncation (title ≤60 / desc
+  ≤160 via seo-utils) preserved; one h1 (data-speakable). Dead fields NOT rendered
+  (clientLogo/clientLogoInversed/secondaryClientColor); the broken "Visit site"
+  button (undefined `websiteUrl`) stays gone. Zero page-level client JS — every
+  section is a Server Component; the dark→scrolled nav flip is owned by the shared
+  Header. Verified live: Toku (richest, two-state, 3 charts/8 FAQ), CodeOp (medium,
+  2 stats+charts), LIQID (sparse, single-state, 1 stat, no charts/testimonial) — all
+  200, correct data, one h1, JSON-LD present, no empty sections; gallery + other
+  pages still 200. Build: 188/188 static pages, tsc clean.
+- **/case-studies (Our Work gallery) = v3, fully componentized (2026-07-14).**
+  `src/app/(site)/case-studies/page.tsx` composes `src/app/work-v3/*` (HeroWork
+  electric-marquee stage — a "now showing" tab-switcher cycling the 4 flagships
+  Toku/Dimer/LIQID/Eraser on a shared night mat; LogosMarquee crisp-white band;
+  Archive discipline-filtered grid — the AI group leads with a full-width showcase
+  card + big cards, CRO/Web as standard cards; Proof night stat band; Receipts;
+  CoverCTA; shared FooterV3). Port of the approved `work-v3/marquee-stage.html`
+  concept. Bespoke CSS scoped `:where(.wkv3)` (same pattern as `.hpv3`/`.svv3`);
+  hero pulled under the sticky header with `margin-top:-64px`; keyframes wk-prefixed
+  (`wkmarq`/`wklivedot`/`wkpfade`) to avoid cross-route collision. Header dark-variant
+  + shared-footer suppression extended to `/case-studies` in `(site)/layout.tsx`.
+  **LIVE Sanity:** hero flagship screenshots via `getWorkImages()` (= homepage
+  `getHomeV3Images`, hardcoded CDN fallback); the ARCHIVE is the full gallery-reachable
+  set via `fetchHomepageData()` (respects `HIDDEN_CASE_STUDY_SLUGS`) — 26 studies,
+  grouped by discipline, filter buttons + counts computed from live data; every study
+  stays SSR'd in the default "All" view for crawlers/AI engines. Card links →
+  `/case-studies/[slug]` (detail routes untouched, still 200). SEO: metadata/canonical
+  preserved + CollectionPage/ItemList + BreadcrumbList JSON-LD ported; one h1. Claims:
+  hero + proof carry ONLY safe stats (200+, 4+ yrs, ~2h, Toku 0→86%, Dimer 288%); the
+  old work.json hero stats (147%/3.2x) are gone; per-card stats come straight from
+  Sanity as they do on the live gallery today. Old `CaseStudyGallery.tsx` removed.
+  Client components: HeroWork (tabs) + Archive (filters); everything else server.
+  **Client-boundary gotcha (cost a build):** pure content + types live in
+  `work-v3/content.ts` (imports nothing server-only) so the `'use client'` components
+  don't drag `next/headers` into the browser bundle; `work-v3/data.ts` (getWorkImages)
+  is server-only — import it ONLY from Server Components.
 - **/services = v3, fully componentized + NET-NEW hub (2026-07-12).**
   `src/app/(site)/services/page.tsx` composes `src/app/services-v3/*` (HeroServices
   "work is the pitch" electric-recipe stage + counter-drifting work wall, LogosMarquee
@@ -68,11 +186,14 @@ Now migrating the other pages to match. `DESIGN.md` §0–10 is the authority.
 - **NOTHING is deployed.** All changes are in the working tree, **not committed, not pushed.** Production
   changes only on `git push` (Vercel auto-deploys). Old homepage is in git history if a revert is wanted.
 - **Other pages are still pre-v3** (old light design): the **child** service pages
-  `/services/webflow` · `/services/seo-aeo` · `/services/geo` · `/services/cro` ·
+  `/services/webflow` · `/services/seo-aeo` · `/services/geo-agency` · `/services/cro` ·
   `/services/ux-ui-design` · `/services/copywriting` · `/services/growth-autopilot` (the
-  `/services` HUB is now v3 — see DONE), `/seo-for/*`, `/work` + `/work/[slug]`,
-  `/blog` + `/blog/[slug]`, `/contact`. Their headers still show the old white bar +
-  green CTA. These are the rollout.
+  `/services` HUB is now v3 — see DONE) and `/seo-for/*` (the `/case-studies`
+  gallery + `/case-studies/[slug]` detail, `/blog` + `/blog/[slug]`, AND the net-new
+  `/contact` are now v3 — see DONE).
+  Their headers still show the old white bar + green CTA. These are the rollout.
+- **`case-detail-v3/*` components live in a route folder** (like `work-v3`/`home-v3`/`services-v3`),
+  deliberately unregistered in COMPONENTS.md, matching the established v3-route-folder precedent.
 - **`services-v3/*` components live in a route folder** (like `home-v3`/`about-v3`/`pricing-v3`),
   not `src/components/sections/` — deliberately unregistered in COMPONENTS.md, matching the
   established v3-route-folder precedent.
@@ -82,7 +203,8 @@ Now migrating the other pages to match. `DESIGN.md` §0–10 is the authority.
 ## Next steps (the page rollout)
 Redesign each page to v3 **through the design loop** (`/design` → it routes to the `design-loop` skill;
 it anchors on `DESIGN.md` + the taste-rulebook + rejections). Agreed order: **1) /about (DONE 2026-07-06)
-→ 2) /pricing (DONE 2026-07-08) → 3) /services (DONE 2026-07-12) → 4) /work (NEXT) → 5) /blog.**
+→ 2) /pricing (DONE 2026-07-08) → 3) /services (DONE 2026-07-12) → 4) /case-studies gallery
+(DONE 2026-07-14) → 5) case-study detail template `/case-studies/[slug]` (DONE 2026-07-14) → 6) /blog index + /blog/[slug] post template (DONE 2026-07-14) → 7) /contact (DONE 2026-07-15, net-new) → 8) the /services child pages (NEXT).**
 
 ### /about — planned v3 mapping (current sections → v3 treatments)
 Current `/about` (`src/app/(site)/about/page.tsx`, ~341 lines): intro + SectionHeaders + a **wine-palette**

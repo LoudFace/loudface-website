@@ -1,21 +1,28 @@
 /**
- * Blog Index Page
+ * Blog Index Page — v3, derived from the "answer-first" concept vocabulary:
+ * an electric compact hero → a light gallery of night exhibit cards (the concept's
+ * related-post card language, with indigo gradient plates for the 13% of posts
+ * with no thumbnail) → cover CTA → FooterV3.
  *
- * Paginated blog listing (12 posts per page) to keep HTML size under 256 KB.
+ * Category badges are read-only (no filter UI existed on the old index and none is
+ * invented). Pagination (12/page), metadata, and the Blog + BreadcrumbList JSON-LD
+ * are preserved from the previous index verbatim.
  *
- * ISR: revalidates every 60s so new posts and thumbnail changes surface on
- * the index without needing a Vercel redeploy.
+ * ISR: revalidates every 60s so new posts and thumbnail changes surface.
  */
 export const revalidate = 60;
 
 import type { Metadata } from 'next';
-import Link from 'next/link';
 import { fetchHomepageData } from '@/lib/cms-data';
-import { thumbnailImage } from '@/lib/image-utils';
 import { formatReadTime } from '@/lib/blog-utils';
-import { Pagination, SectionContainer, SectionHeader } from '@/components/ui';
-import { CTA } from '@/components/sections';
-import type { Category, TeamMember } from '@/lib/types';
+import { Pagination } from '@/components/ui';
+import type { Category } from '@/lib/types';
+
+import '../../blog-v3/blog-v3.css';
+import { PostCard } from '../../blog-v3/PostCard';
+import { CoverCTA } from '../../blog-v3/CoverCTA';
+import { BlogV3Scripts } from '../../blog-v3/Scripts';
+import { FooterV3 } from '../../home-v3/FooterV3';
 
 const POSTS_PER_PAGE = 12;
 
@@ -52,29 +59,22 @@ export default async function BlogPage({
   const currentPage = Math.max(1, parseInt(pageParam || '1', 10));
 
   const cmsData = await fetchHomepageData();
-
-  const { blogPosts, categories, teamMembers } = cmsData;
+  const { blogPosts, categories } = cmsData;
 
   // Pagination
   const totalPages = Math.ceil(blogPosts.length / POSTS_PER_PAGE);
   const safePage = Math.min(currentPage, Math.max(1, totalPages));
   const paginatedPosts = blogPosts.slice(
     (safePage - 1) * POSTS_PER_PAGE,
-    safePage * POSTS_PER_PAGE
+    safePage * POSTS_PER_PAGE,
   );
 
-  // Helper functions
   function getCategory(id: string | undefined): Category | undefined {
     if (!id) return undefined;
     return categories.get(id);
   }
 
-  function getAuthor(id: string | undefined): TeamMember | undefined {
-    if (!id) return undefined;
-    return teamMembers.get(id);
-  }
-
-  // Structured Data — only include current page's posts
+  // Structured Data — only include current page's posts (verbatim).
   const blogSchema = {
     '@context': 'https://schema.org',
     '@type': 'Blog',
@@ -100,119 +100,69 @@ export default async function BlogPage({
 
   return (
     <>
-      {/* Blog structured data — native script for SSR visibility to crawlers */}
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(blogSchema) }}
-      />
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
-      />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(blogSchema) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }} />
 
-      {/* Hero Section */}
-      <SectionContainer padding="none" className="pt-4">
-        <div className="relative border border-surface-200 bg-surface-50 rounded-2xl overflow-hidden">
-          <div className="p-8 md:p-12 lg:p-16 text-center">
-            <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-hero font-medium text-surface-900">
-              Our <span className="text-primary-600">Blog</span>
-            </h1>
-            <p className="mt-4 text-lg text-surface-600 max-w-2xl mx-auto">
-              Insights on Webflow development, SEO, AEO, and design best practices from our team.
+      <div className="blogv3">
+        {/* Electric compact hero (HERO LAW; carries .hero for the dark Header flip) */}
+        <section className="lead hero idx-lead" aria-label="Blog">
+          <div className="container lead-in">
+            <div className="lead-cat rv"><span className="eyebrow glass"><i></i>Insights &amp; guides</span></div>
+            <h1 className="rv" style={{ ['--d' as string]: '.06s' }}>The LoudFace Blog</h1>
+            <p className="lead-sub rv" style={{ ['--d' as string]: '.12s' }}>
+              Actionable insights on Webflow development, SEO, AEO, and conversion design for B2B SaaS —
+              guides, tutorials, and deep-dives from our team.
             </p>
+            {blogPosts.length > 0 && (
+              <span className="idx-count rv" style={{ ['--d' as string]: '.18s' }}>
+                <i></i>{blogPosts.length} article{blogPosts.length === 1 ? '' : 's'} and counting
+              </span>
+            )}
           </div>
-        </div>
-      </SectionContainer>
+        </section>
 
-      {/* Blog Posts Grid */}
-      <SectionContainer padding="lg">
-        <SectionHeader
-          title="Latest Articles"
-          highlightWord="Articles"
-          subtitle="Stay updated with our latest insights and resources."
-        />
-
-        {paginatedPosts.length === 0 ? (
-          <div className="mt-12 text-center py-16">
-            <p className="text-surface-600">No blog posts found. Check back soon!</p>
-          </div>
-        ) : (
-          <>
-            <div className="mt-12 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {paginatedPosts.map((post, index) => {
-                const category = getCategory(post.category);
-                const author = getAuthor(post.author);
-
-                return (
-                  <Link
-                    key={post.slug}
-                    href={`/blog/${post.slug}`}
-                    className="group flex flex-col h-full bg-white rounded-xl border border-surface-200 overflow-hidden transition-all duration-300 hover:shadow-lg hover:-translate-y-1 focus-visible:outline-2 focus-visible:outline-primary-500 focus-visible:outline-offset-4"
-                  >
-                    {post.thumbnail?.url && (
-                      <div className="aspect-video overflow-hidden">
-                        <img
-                          src={thumbnailImage(post.thumbnail.url)}
-                          alt={post.thumbnail.alt || post.name}
-                          width="800"
-                          height="450"
-                          loading={index < 3 ? 'eager' : 'lazy'}
-                          fetchPriority={index === 0 ? 'high' : undefined}
-                          className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-                        />
-                      </div>
-                    )}
-
-                    <div className="p-5 flex-1 flex flex-col">
-                      <div className="flex items-center gap-3 mb-3">
-                        {category && (
-                          <span className="px-2.5 py-1 bg-primary-50 text-primary-700 rounded-full text-xs font-medium">
-                            {category.name}
-                          </span>
-                        )}
-                        <span className="text-xs text-surface-500">
-                          {formatReadTime(post['time-to-read'])}
-                        </span>
-                      </div>
-
-                      <h3 className="font-medium text-lg text-surface-900 line-clamp-2 group-hover:text-primary-600 transition-colors">
-                        {post.name}
-                      </h3>
-
-                      {post.excerpt && (
-                        <p className={`mt-2 text-sm text-surface-600 ${post.thumbnail?.url ? 'line-clamp-2' : 'line-clamp-6'}`}>
-                          {post.excerpt}
-                        </p>
-                      )}
-
-                      <div className="mt-auto pt-4 border-t border-surface-100 flex items-center justify-between">
-                        <span className="text-xs text-surface-500">
-                          By {author?.name || 'LoudFace'}
-                        </span>
-                        <span className="flex items-center gap-1.5 text-sm font-medium text-surface-500 group-hover:text-primary-600 transition-colors">
-                          Read more
-                          <svg className="w-4 h-4 transform group-hover:translate-x-1 transition-transform" viewBox="0 0 16 16" fill="none">
-                            <path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-                          </svg>
-                        </span>
-                      </div>
-                    </div>
-                  </Link>
-                );
-              })}
+        {/* Light gallery of exhibit cards */}
+        <section className="index-body">
+          <div className="container">
+            <div className="idx-head">
+              <h2 className="rv">Latest <span className="hot">articles</span></h2>
+              <p className="rv" style={{ ['--d' as string]: '.06s' }}>Stay updated with our latest insights and resources.</p>
             </div>
 
-            <Pagination
-              currentPage={safePage}
-              totalPages={totalPages}
-              basePath="/blog"
-            />
-          </>
-        )}
-      </SectionContainer>
+            {paginatedPosts.length === 0 ? (
+              <p className="idx-empty">No blog posts found. Check back soon.</p>
+            ) : (
+              <>
+                <div className="idx-grid">
+                  {paginatedPosts.map((post, i) => {
+                    const category = getCategory(post.category);
+                    return (
+                      <PostCard
+                        key={post.slug}
+                        href={`/blog/${post.slug}`}
+                        title={post.name}
+                        categoryName={category?.name}
+                        thumbnailUrl={post.thumbnail?.url}
+                        readTime={formatReadTime(post['time-to-read'])}
+                        delay={`${(Math.min(i, 5) * 0.05).toFixed(2)}s`}
+                      />
+                    );
+                  })}
+                </div>
 
-      {/* CTA */}
-      <CTA />
+                <div className="idx-pagination">
+                  <Pagination currentPage={safePage} totalPages={totalPages} basePath="/blog" />
+                </div>
+              </>
+            )}
+          </div>
+        </section>
+
+        <CoverCTA />
+        <FooterV3 />
+      </div>
+
+      <BlogV3Scripts />
     </>
   );
 }

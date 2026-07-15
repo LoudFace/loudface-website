@@ -41,7 +41,7 @@ export function CoverCTA() {
           </p>
           <div className="cover-cta rv" style={{ transitionDelay: '.16s' }}>
             <a href="#book-modal" data-cal-trigger="" className="btn btn-white btn-lg">Book a strategy call</a>
-            <span className="slots"><span className="dot"></span>2 client slots open for Q3</span>
+            <span className="slots"><i className="dot"></i>2h response time</span>
           </div>
         </div>
         <div className="cover-credit rv">

@@ -52,6 +52,16 @@ export default async function SiteLayout({
   const country = requestHeaders.get("cf-ipcountry") ?? requestHeaders.get("x-vercel-ip-country");
   const consentRequired = countryRequiresConsent(country);
 
+  // Blog (index + posts) is v3: electric-hero dark Header + its own in-page
+  // FooterV3, so the shared Footer is suppressed just like the other v3 routes.
+  const isBlog = pathname === "/blog" || pathname.startsWith("/blog/");
+
+  // Service child pages (/services/<slug>) are v3: electric dark-hero Header +
+  // their own in-page FooterV3, same as the /services hub. `startsWith("/services/")`
+  // matches only the children; the hub itself is handled by the `=== "/services"`
+  // checks below.
+  const isServiceChild = pathname.startsWith("/services/");
+
   return (
     <div className="font-sans antialiased overflow-x-clip" data-lf-cr={consentRequired ? "1" : "0"}>
       {/* hreflang — single-language English site. Next.js hoists <link>
@@ -66,12 +76,12 @@ export default async function SiteLayout({
           Skip to main content
         </a>
 
-        <Header heroTheme={pathname === "/" || pathname === "/home-preview" || pathname === "/about" || pathname === "/pricing" || pathname === "/services" ? "dark" : undefined} />
+        <Header heroTheme={pathname === "/" || pathname === "/home-preview" || pathname === "/about" || pathname === "/pricing" || pathname === "/services" || isServiceChild || pathname === "/contact" || pathname.startsWith("/case-studies") || isBlog ? "dark" : undefined} />
 
         <main id="main-content">{children}</main>
 
-        {/* Homepage + About + Pricing + Services ship their own v3 footers; every other page uses the shared one. */}
-        {pathname !== "/" && pathname !== "/about" && pathname !== "/pricing" && pathname !== "/services" && <Footer caseStudies={caseStudies} blogPosts={blogPosts} />}
+        {/* Homepage + About + Pricing + Services + Contact + Case Studies (gallery + detail) + Blog (index + posts) ship their own v3 footers; every other page uses the shared one. */}
+        {pathname !== "/" && pathname !== "/about" && pathname !== "/pricing" && pathname !== "/services" && !isServiceChild && pathname !== "/contact" && !pathname.startsWith("/case-studies") && !isBlog && <Footer caseStudies={caseStudies} blogPosts={blogPosts} />}
 
         {/* Webflow Enterprise Partner Badge — site-wide */}
         <a

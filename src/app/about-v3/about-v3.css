@@ -402,8 +402,6 @@
 .abv3 .faq-panel h3 .soft-em{font-weight:400;font-style:italic;color:var(--primary-100);padding-right:.12em;}
 .abv3 .faq-panel .pl{margin-top:12px;font-size:14.5px;line-height:1.6;color:var(--primary-100);}
 .abv3 .faq-panel .btn{margin-top:22px;}
-.abv3 .faq-panel .accepting{margin-top:14px;display:inline-flex;align-items:center;gap:8px;font-size:13px;font-weight:500;color:rgba(255,255,255,.85);}
-.abv3 .faq-panel .accepting i{width:7px;height:7px;border-radius:50%;background:var(--success);box-shadow:0 0 0 3px rgba(34,197,94,.25);}
 .abv3 .fstats{margin-top:24px;padding-top:6px;border-top:1px solid rgba(255,255,255,.2);display:grid;grid-template-columns:1fr 1fr;}
 .abv3 .fstat{padding:16px 0 6px;}
 .abv3 .fstat:nth-child(odd){padding-right:18px;}

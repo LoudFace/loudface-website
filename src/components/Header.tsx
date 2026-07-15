@@ -372,15 +372,6 @@ export function Header({ heroTheme }: { heroTheme?: 'dark' } = {}) {
       data-hero-scrolled={heroTheme === "dark" && scrolled ? "" : undefined}
       className="sticky top-0 z-50 bg-white/95 backdrop-blur-md border-b border-surface-100/80"
     >
-      {/* Accepting Bookings — square tab attached just below the navbar's bottom border */}
-      <div className="hidden lg:block absolute top-full right-0">
-        <div className="inline-flex items-center gap-2 px-4 py-2 bg-white/95 backdrop-blur-md border border-surface-100/80 border-t-0 border-r-0 rounded-bl-lg">
-            <div className="w-1.5 h-1.5 bg-success rounded-full animate-pulse" />
-            <span className="text-2xs font-medium text-surface-600">
-              Accepting Bookings
-            </span>
-        </div>
-      </div>
       <div className="py-3.5 px-4 md:px-8 lg:px-12">
         <div className="max-w-7xl mx-auto">
           <div className="flex items-center justify-between gap-8">
@@ -468,6 +459,14 @@ export function Header({ heroTheme }: { heroTheme?: 'dark' } = {}) {
       <dialog
         ref={mobileDialogRef}
         aria-label="Mobile menu"
+        // Light dismiss: a click landing on the dialog itself (the empty area
+        // below the menu, i.e. the backdrop) closes it. Clicks on the nav or its
+        // links bubble from descendants, so target !== currentTarget and they're
+        // unaffected. Native <dialog> already gives us the focus trap, ESC-close,
+        // and inert background; this adds the outside-click-close semantics.
+        onClick={(e) => {
+          if (e.target === e.currentTarget) setMobileMenuOpen(false);
+        }}
         className="m-0 w-full max-w-none h-[calc(100dvh-61px)] max-h-none fixed top-[61px] inset-x-0 border-0 p-0 bg-white overflow-y-auto z-40 lg:!hidden backdrop:bg-transparent"
       >
         <nav className="p-6" aria-label="Mobile navigation">
@@ -575,7 +574,7 @@ export function Header({ heroTheme }: { heroTheme?: 'dark' } = {}) {
             <button
               type="button"
               data-cal-trigger
-              className="w-full inline-flex items-center justify-center px-5 py-2.5 bg-surface-900 text-white text-sm font-medium rounded-lg hover:bg-surface-800 transition-colors border-none cursor-pointer focus-visible:outline-2 focus-visible:outline-primary-500 focus-visible:outline-offset-2"
+              className="w-full inline-flex items-center justify-center px-5 py-2.5 bg-primary-600 text-white text-sm font-medium rounded-lg hover:bg-primary-700 transition-colors border-none cursor-pointer focus-visible:outline-2 focus-visible:outline-white focus-visible:outline-offset-2"
               onClick={() => setMobileMenuOpen(false)}
             >
               Book an intro call
