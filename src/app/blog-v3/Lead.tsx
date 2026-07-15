@@ -6,6 +6,7 @@
  * downgrades: no category → no eyebrow; author with no photo → monogram; no
  * `last-updated` (or equal to published) → no "Updated" chip.
  */
+import Image from 'next/image';
 import Link from 'next/link';
 import { avatarImage } from '@/lib/image-utils';
 import { formatShortDate, initials } from './helpers';
@@ -34,7 +35,7 @@ export function Lead({ title, categoryName, excerpt, author, publishedDate, last
   const avatar = author ? (
     author.avatarUrl ? (
       <span className="by-av">
-        <img src={avatarImage(author.avatarUrl)} alt={author.name} width={80} height={80} loading="lazy" />
+        <Image src={avatarImage(author.avatarUrl) ?? author.avatarUrl} alt={author.name} width={80} height={80} quality={82} loading="lazy" />
       </span>
     ) : (
       <span className="by-av" aria-hidden="true">{initials(author.name)}</span>

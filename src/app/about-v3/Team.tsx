@@ -12,7 +12,12 @@
  * IMAGE GOTCHA: width/height attrs are presentational hints that would override
  * the CSS aspect-ratio crops — the CSS carries `height:auto` on `.a-tcard img`
  * to defeat that while keeping the attrs for CLS. Do not strip either side.
+ * This survives the next/image migration intact: without `fill`, next/image
+ * injects NO layout styles (only `color:transparent`), so `.a-tcard img`'s
+ * `height:auto` + per-column `aspect-ratio` (4/5, 3/2) still win. Never switch
+ * these to `fill` — that WOULD inline width/height/position and break the crops.
  */
+import Image from 'next/image';
 import Link from 'next/link';
 import { splitColumns, teamPhoto, type TeamPerson } from './data';
 import { TeamModals } from './TeamModals';
@@ -27,10 +32,11 @@ function Tcard({ p, delay }: { p: TeamPerson; delay: number }) {
       aria-label={`More about ${p.name}, ${p.role}`}
     >
       <figure className="a-tcard rv" style={{ ['--d' as string]: `${delay.toFixed(2)}s` }}>
-        <img
+        <Image
           src={teamPhoto(p.photoBase, 640, 640)}
           width={640}
           height={640}
+          quality={82}
           alt={`${p.name}, ${p.role}`}
         />
         <figcaption className="a-tmeta">
@@ -57,10 +63,11 @@ function TeamDialog({ p }: { p: TeamPerson }) {
           &#10005;
         </button>
         <div className="tmodal-media">
-          <img
+          <Image
             src={teamPhoto(p.photoBase, 760, 900)}
             width={760}
             height={900}
+            quality={82}
             alt={`${p.name}, ${p.role}`}
           />
         </div>

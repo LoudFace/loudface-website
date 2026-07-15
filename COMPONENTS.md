@@ -388,7 +388,51 @@ src/components/blog/index.ts   → BlogChart, BlogIllustration, BlogVisual, Blog
 4. **Import from barrels** — use `@/components/ui` or `@/components`, not individual file paths
 5. **Server by default** — only add `'use client'` when hooks or event handlers are needed
 6. **Use `asset()`** for all static image paths (see `@/lib/assets`)
-7. **Use `<Link>`** for all internal navigation (client-side transitions and prefetching)
-8. **Use `Card`** for all card surfaces — never write raw card markup with `bg-white rounded-xl border...`
-9. **Follow the page archetype** in `component-patterns.md` when creating new pages
-10. **Follow the text color hierarchy** in `styling.md` — don't freestyle text colors
+7. **Use `<Image>` (next/image) for every `cdn.sanity.io` image — never a raw `<img>`** (see the Sanity image rule below)
+8. **Use `<Link>`** for all internal navigation (client-side transitions and prefetching)
+9. **Use `Card`** for all card surfaces — never write raw card markup with `bg-white rounded-xl border...`
+10. **Follow the page archetype** in `component-patterns.md` when creating new pages
+11. **Follow the text color hierarchy** in `styling.md` — don't freestyle text colors
+
+### Sanity images MUST go through next/image (bandwidth rule)
+
+A raw `<img src="https://cdn.sanity.io/…">` makes every visitor's browser fetch
+from Sanity directly, so Vercel never caches it and the same library gets re-sent
+on every pageview. That is what put the project **101.6 GB over a 100 GB plan in
+July 2026 and hard-402'd everything — the image CDN *and* the GROQ API** (blog
+rendered empty, images broken, `next build` failed collecting page data). 319 MB
+of assets had been served ~320×. Re-introducing one raw `<img>` on a hot page
+quietly reopens that.
+
+**The contract:**
+
+- **`<Image>` from `next/image` for every Sanity URL.** Visitors hit
+  `/_next/image`; Vercel fetches each source once and serves it from its own
+  cache for 31 days (`images.minimumCacheTTL` in `next.config.ts`).
+- **Keep Sanity's `fit=crop&crop=top` params on the source URL.** Sanity does the
+  CROP (next/image cannot crop); Vercel does the resize/format/caching. Never
+  strip the crop to "let next/image handle it".
+- **`quality={82}`.** The default 75 re-compresses already-lossy sources and
+  measurably mushes text-heavy screenshots. `images.qualities` is an allowlist
+  (`[75, 82]`) — a value not listed makes the optimizer **400**, not fall back.
+- **Never `fill`.** Without it next/image injects no layout styles (only
+  `color:transparent`), so the hand-written v3 CSS keeps owning the box. `fill`
+  inlines `position/width/height/inset` and will break the aspect-ratio crops
+  (`.a-tcard img`), the marquee tracks, and the cover stacks.
+- **`width`/`height` are the SOURCE dims, not the display box**, wherever CSS
+  pins the box (`.facepile img`, `.a-fnote figcaption img`). They only pick the
+  srcset; using the display size emits a too-small pair and goes soft on retina.
+- **`sizes` only for genuinely fluid images, and always round UP.** Overestimating
+  is free (the source `w=` caps the output and next/image never upscales);
+  underestimating ships a blurry image. Fixed-size images want NO `sizes` — the
+  default 1x/2x pair is both correct and cheapest (a `vw` in `sizes` expands the
+  srcset to ~10 widths).
+- **`priority` on the one LCP image per page only.**
+
+**Known exceptions (deliberate, do not "fix" without reading this):**
+`case-detail-v3/HeroDetail.tsx`'s client-logo chip and
+`components/blog/BlogIllustration|BlogScreenshot` stay raw `<img>` because they
+size from the image's NATURAL aspect ratio and no GROQ projection exposes asset
+dimensions (every projection in `cms-data.ts` is `{ "url": asset->url, "alt": alt }`).
+Migrating them requires adding `asset->metadata.dimensions` to the projection
+first — otherwise you are guessing a ratio and will cause CLS.

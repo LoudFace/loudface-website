@@ -1,3 +1,4 @@
+import Image from 'next/image';
 import type { ExhibitTestimonial } from './data';
 
 /**
@@ -30,7 +31,7 @@ export function Exhibits({ testimonials }: { testimonials: ExhibitTestimonial[] 
                   <i></i>
                   <b>{t.brand}</b>
                 </span>
-                <img src={t.photo} width={720} height={900} alt={`${t.name} portrait`} loading="lazy" />
+                <Image src={t.photo} width={720} height={900} quality={82} alt={`${t.name} portrait`} loading="lazy" />
               </div>
               <p className="exh-quote">&ldquo;{t.quote}&rdquo;</p>
               <div className="exh-cap">

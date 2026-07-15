@@ -14,6 +14,7 @@
  * only FooterV3 (same component as home/About/Pricing) renders inside .svcv3.
  */
 import type { ReactNode } from 'react';
+import Image from 'next/image';
 import Link from 'next/link';
 import { LOGOS } from '../home-v3/_logos';
 import { FooterV3 } from '../home-v3/FooterV3';
@@ -166,7 +167,7 @@ function Frag({ art, images }: { art: Artifact; images?: HomeImages }) {
             <span>{art.domain}</span>
           </div>
           <div className="shot">
-            <img src={artifactSrc(art, images, CROP_FRAG)} alt="" width={640} height={424} loading="lazy" />
+            <Image src={artifactSrc(art, images, CROP_FRAG)} alt="" width={640} height={424} quality={82} loading="lazy" />
           </div>
         </div>
       </div>
@@ -223,13 +224,13 @@ export function ServicePageV3({ config, images }: { config: ServiceConfig; image
                     <span>{c.hero.main.domain}</span>
                   </div>
                   <div className="shot">
-                    <img
+                    <Image
                       src={artifactSrc(c.hero.main, images, CROP_HERO)}
                       alt={c.hero.main.alt}
                       width={1080}
                       height={836}
-                      loading="eager"
-                      fetchPriority="high"
+                      quality={82}
+                      priority
                     />
                   </div>
                   <span className="rpill">
@@ -248,7 +249,7 @@ export function ServicePageV3({ config, images }: { config: ServiceConfig; image
                     <span>{c.hero.frag.domain}</span>
                   </div>
                   <div className="shot">
-                    <img src={artifactSrc(c.hero.frag, images, CROP_SUB)} alt="" width={760} height={522} loading="eager" />
+                    <Image src={artifactSrc(c.hero.frag, images, CROP_SUB)} alt="" width={760} height={522} quality={82} loading="eager" />
                   </div>
                 </div>
               </div>
@@ -263,12 +264,12 @@ export function ServicePageV3({ config, images }: { config: ServiceConfig; image
             <div className="marq-track">
               {LOGOS.map((l) => (
                 <span className="marq-logo" key={l.alt}>
-                  <img src={l.src} alt={l.alt} loading="lazy" width={l.w} height={l.h} />
+                  <Image src={l.src} alt={l.alt} loading="lazy" width={l.w} height={l.h} quality={82} />
                 </span>
               ))}
               {LOGOS.map((l) => (
                 <span className="marq-logo" key={`${l.alt}-dup`}>
-                  <img src={l.src} alt="" aria-hidden="true" loading="lazy" width={l.w} height={l.h} />
+                  <Image src={l.src} alt="" aria-hidden="true" loading="lazy" width={l.w} height={l.h} quality={82} />
                 </span>
               ))}
             </div>
@@ -362,12 +363,15 @@ export function ServicePageV3({ config, images }: { config: ServiceConfig; image
 
         {/* ============ FEATURED EXHIBIT — cinematic stage ============ */}
         <section className="exhibit" id="featured" aria-label={`Featured work — ${c.exhibit.h2}`}>
-          <img
+          {/* Full-bleed cinematic canvas ⇒ sizes="100vw". The w=1800 source caps it. */}
+          <Image
             className="ex-canvas"
             src={artifactSrc(c.exhibit.art, images, CROP_CANVAS)}
             alt={c.exhibit.art.alt}
             width={1800}
             height={1000}
+            sizes="100vw"
+            quality={82}
             loading="lazy"
           />
           <div className="ex-veil" aria-hidden="true"></div>
@@ -545,13 +549,16 @@ export function ServicePageV3({ config, images }: { config: ServiceConfig; image
 
       {/* ============ COVER CTA — cover-stack ============ */}
       <section className="cover" id="book">
-        <img
+        {/* Full-bleed ⇒ sizes="100vw"; the w=1600 source caps the output. */}
+        <Image
           className="cover-img"
           src={artifactSrc(c.cover.obj, images, CROP_COVER_BG)}
           alt=""
           aria-hidden="true"
           width={1600}
           height={1000}
+          sizes="100vw"
+          quality={82}
           loading="lazy"
         />
         <div className="cover-veil" aria-hidden="true"></div>
@@ -571,7 +578,7 @@ export function ServicePageV3({ config, images }: { config: ServiceConfig; image
                     <span>{c.cover.obj.domain}</span>
                   </div>
                   <div className="shot">
-                    <img src={artifactSrc(c.cover.obj, images, CROP_COVER_OBJ)} alt="" width={1000} height={640} loading="lazy" />
+                    <Image src={artifactSrc(c.cover.obj, images, CROP_COVER_OBJ)} alt="" width={1000} height={640} quality={82} loading="lazy" />
                   </div>
                   <span className="rpill">
                     <i></i>

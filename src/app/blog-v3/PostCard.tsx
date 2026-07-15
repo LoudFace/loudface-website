@@ -6,6 +6,7 @@
  * overlay link (.rel-link) for a large hit target; the visible arrow is a hover
  * affordance only.
  */
+import Image from 'next/image';
 import Link from 'next/link';
 import { thumbnailImage } from '@/lib/image-utils';
 
@@ -25,7 +26,10 @@ export function PostCard({ href, title, categoryName, thumbnailUrl, readTime, de
     <article className="rel-card rv" style={delay ? { ['--d' as string]: delay } : undefined}>
       {thumb ? (
         <div className="rel-media">
-          <img src={thumb} alt={title} width={800} height={726} loading="lazy" />
+          {/* The local monogram fallback below stays a plain <img>: it's an SVG served
+              from our own origin, it isn't Sanity bandwidth, and next/image refuses
+              SVG unless dangerouslyAllowSVG is enabled. */}
+          <Image src={thumb} alt={title} width={800} height={726} quality={82} loading="lazy" />
         </div>
       ) : (
         <div className="rel-plate">

@@ -1,3 +1,4 @@
+import Image from 'next/image';
 import type { HomeImages } from '../home-v3/data';
 
 /**
@@ -45,11 +46,15 @@ function Card({ c, dup, images }: { c: WallCard; dup?: boolean; images?: HomeIma
         <span>{c.domain}</span>
       </div>
       <div className="shot">
-        <img
+        {/* `.wcard .shot img` is width/height:100% + object-fit:cover — CSS owns the
+            box. No `sizes`: fixed-size card, and the w=900 source caps the output to
+            today's exact bytes. */}
+        <Image
           src={src}
           alt={dup ? '' : c.alt}
           width={900}
           height={1050}
+          quality={82}
           loading={c.eager && !dup ? 'eager' : 'lazy'}
           {...(c.eager && !dup ? { fetchPriority: 'high' as const } : {})}
         />

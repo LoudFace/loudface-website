@@ -33,7 +33,7 @@ import type { Metadata } from 'next';
 import '../../work-v3/work-v3.css';
 import { fetchHomepageData } from '@/lib/cms-data';
 import { asset } from '@/lib/assets';
-import { caseStudyThumbnail } from '@/lib/image-utils';
+import { optimizeImage } from '@/lib/image-utils';
 import type { CaseStudy, Client, Industry, Technology } from '@/lib/types';
 import { getWorkImages } from '../../work-v3/data';
 import { HeroWork } from '../../work-v3/HeroWork';
@@ -125,7 +125,19 @@ export default async function WorkPage() {
       const client = getClient(study.client);
       const industry = getIndustry(study.industry);
       const technologies = getTechnologies(study.technologies as string[] | undefined);
-      const thumb = caseStudyThumbnail(study['main-project-image-thumbnail']?.url);
+      // next/image now builds the srcset, so hand it the LARGEST crop rather than
+      // caseStudyThumbnail().src (w=800). That 800 was only ever the fallback `src`;
+      // the hand-rolled srcset it shipped alongside went up to w=1200, which is what
+      // retina desktop actually loads today. Feeding next/image the 800 would cap
+      // delivery at 800 and render BLURRIER than today on those screens — the
+      // optimizer never upscales. Same 16:10 crop box, just the top rung of it.
+      const thumbMax = optimizeImage(
+        study['main-project-image-thumbnail']?.url,
+        1200,
+        80,
+        'webp',
+        750,
+      );
       const disciplines =
         Array.isArray(study.disciplines) && study.disciplines.length
           ? study.disciplines
@@ -137,8 +149,7 @@ export default async function WorkPage() {
         title: study['project-title'] || study.name,
         summary: study['paragraph-summary'],
         disciplines,
-        thumbSrc: thumb.src || asset('/images/placeholder.webp'),
-        thumbSrcset: thumb.srcset,
+        thumbSrc: thumbMax || asset('/images/placeholder.webp'),
         thumbAlt: study['main-project-image-thumbnail']?.alt || study['project-title'] || study.name,
         industryName: industry?.name,
         technologies: technologies.map((t) => t.name),

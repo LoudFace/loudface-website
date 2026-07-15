@@ -5,6 +5,7 @@
  * transparent over this hero (heroTheme="dark" wired in (site)/layout.tsx), so
  * this section carries NO nav of its own.
  */
+import Image from 'next/image';
 import { splitColumns, teamPhoto, type TeamPerson } from './data';
 
 export function HeroAbout({ team }: { team: TeamPerson[] }) {
@@ -38,12 +39,18 @@ export function HeroAbout({ team }: { team: TeamPerson[] }) {
             <span className="hero-cta-div" aria-hidden="true"></span>
             <a className="hero-meta" href="#team">
               <span className="facepile" aria-hidden="true">
+                {/* w/h are the SOURCE dims (180), not the 30px display box —
+                    `.facepile img` pins width/height:30px in CSS, so these only
+                    choose the srcset. At 30 next/image would emit a 32/64px pair
+                    and go soft on a DPR3 phone (which needs ~90); at 180 both
+                    candidates cap back to the 180px source = today's exact bytes. */}
                 {team.map((p) => (
-                  <img
+                  <Image
                     key={p.slug}
                     src={teamPhoto(p.photoBase, 180, 180)}
-                    width={30}
-                    height={30}
+                    width={180}
+                    height={180}
+                    quality={82}
                     alt=""
                   />
                 ))}
@@ -65,10 +72,13 @@ export function HeroAbout({ team }: { team: TeamPerson[] }) {
                   key={p.slug}
                   style={{ ['--d' as string]: `${(ci * 0.14 + pi * 0.08).toFixed(2)}s` }}
                 >
-                  <img
+                  {/* `.a-wcard img` is width/height:100% + object-fit:cover — CSS owns
+                      the box; the w=640 source caps the output to today's bytes. */}
+                  <Image
                     src={teamPhoto(p.photoBase, 640, 640)}
                     width={640}
                     height={640}
+                    quality={82}
                     alt={`${p.name}, ${p.role}`}
                   />
                 </figure>

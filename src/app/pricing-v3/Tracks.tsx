@@ -4,6 +4,7 @@
  * Growth carries the abstract "growth scoreboard" SVG (relative bars only —
  * no invented numeric claims).
  */
+import Image from 'next/image';
 const CDN = 'https://cdn.sanity.io/images/xjjjqhgt/production/';
 const d = (v: string) => ({ ['--d' as string]: v });
 
@@ -37,11 +38,12 @@ export function Tracks() {
               <span className="tk-tag">UI iteration</span>
             </div>
             <div className="tk-shot" aria-hidden="true">
-              <img
+              <Image
                 src={`${CDN}5f21404454406eee90732e4e1c8655e0c8c6013b-3024x3629.webp?w=1000&h=540&fit=crop&crop=top&fm=webp&q=82`}
                 alt=""
                 width={1000}
                 height={540}
+                quality={82}
                 loading="lazy"
               />
               <span className="rpill">

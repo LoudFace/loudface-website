@@ -1,9 +1,17 @@
+import Image from 'next/image';
 import { LOGOS } from '../home-v3/_logos';
 
 /**
  * LogosMarquee — full-width light marquee band under the hero. Uses the same
  * real Sanity client-logo set as the homepage LogosTicker (home-v3/_logos.ts);
  * the set renders twice (second copy aria-hidden) for the seamless -50% loop.
+ */
+/**
+ * next/image note: width/height stay the logo's INTRINSIC dims. `.marq-track` is
+ * width:max-content and each logo is height-locked with width:auto, so the rendered
+ * width comes from the aspect ratio — change w/h and the track width (and therefore
+ * the seamless -50% loop) breaks. No `sizes`: fixed-size ⇒ the default 1x/2x srcset
+ * is both correct and cheapest, and the w=300 source caps the output.
  */
 export function LogosMarquee() {
   return (
@@ -13,12 +21,12 @@ export function LogosMarquee() {
         <div className="marq-track">
           {LOGOS.map((l) => (
             <span className="marq-logo" key={l.alt}>
-              <img src={l.src} alt={l.alt} loading="lazy" width={l.w} height={l.h} />
+              <Image src={l.src} alt={l.alt} loading="lazy" width={l.w} height={l.h} quality={82} />
             </span>
           ))}
           {LOGOS.map((l) => (
             <span className="marq-logo" key={`${l.alt}-dup`}>
-              <img src={l.src} alt="" aria-hidden="true" loading="lazy" width={l.w} height={l.h} />
+              <Image src={l.src} alt="" aria-hidden="true" loading="lazy" width={l.w} height={l.h} quality={82} />
             </span>
           ))}
         </div>

@@ -49,6 +49,14 @@ export function HeroDetail({
           <span className="sep" aria-hidden="true">/</span>
           {clientLogoUrl && (
             <span className="client-chip">
+              {/* DELIBERATELY NOT next/image. `.client-chip img` is `height:15px;
+                  width:auto`, so the rendered width comes from the image's NATURAL
+                  aspect ratio — which is why this tag carries height with no width.
+                  next/image requires both width and height, and any value we invented
+                  here would impose a wrong ratio and mis-size the chip. The intrinsic
+                  dims aren't known at build time (clientLogoUrl is a live Sanity URL).
+                  Cost of the exception: one ~120px-wide logo (optimizeImage(...,120))
+                  per case-study view — negligible next to the pages we did migrate. */}
               <img src={clientLogoUrl} alt={clientName ? `${clientName} logo` : 'Client logo'} height={15} loading="eager" />
             </span>
           )}

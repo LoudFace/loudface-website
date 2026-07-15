@@ -6,6 +6,7 @@
  *  then: the real timeline strip.
  * The blueprint plate SVG is the canonical house recipe, ported verbatim.
  */
+import Image from 'next/image';
 import { teamPhoto, type TeamPerson } from './data';
 
 const SANITY_CDN = 'https://cdn.sanity.io/images/xjjjqhgt/production/';
@@ -41,9 +42,13 @@ export function Story({ team }: { team: TeamPerson[] }) {
                 the same team, not in separate agencies handing off a brief. Seven years later
                 that&rsquo;s still the whole bet.
               </blockquote>
+              {/* Founder avatar: w/h are the SOURCE dims (96), not the 44px display
+                  box — `.a-fnote figcaption img` pins width/height:44px in CSS, so
+                  these only pick the srcset (both candidates cap back to the 96px
+                  source = today's exact bytes). */}
               <figcaption>
                 {founder && (
-                  <img src={teamPhoto(founder.photoBase, 96, 96)} width={44} height={44} alt="" />
+                  <Image src={teamPhoto(founder.photoBase, 96, 96)} width={96} height={96} quality={82} alt="" />
                 )}
                 <span>
                   <b>Arnel Bukva</b>
@@ -120,7 +125,9 @@ export function Story({ team }: { team: TeamPerson[] }) {
             <p className="a-lp-sub">A few of the companies we&rsquo;ve built and grown for.</p>
             <div className="a-lp-grid">
               {CLIENT_LOGOS.map((l) => (
-                <img key={l.alt} src={logo(l.asset, 300)} width={300} height={l.h} alt={l.alt} loading="lazy" />
+                // `.a-lp-grid img` pins height:20px;width:100% in CSS, so w/h only
+                // pick the srcset; the w=300 source caps both candidates.
+                <Image key={l.alt} src={logo(l.asset, 300)} width={300} height={l.h} alt={l.alt} loading="lazy" quality={82} />
               ))}
             </div>
           </figure>

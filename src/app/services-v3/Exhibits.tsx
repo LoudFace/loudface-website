@@ -10,6 +10,7 @@ import type { HomeImages } from '../home-v3/data';
  * slug (images prop) with a hardcoded CDN fallback — same images the homepage
  * SelectedWork uses.
  */
+import Image from 'next/image';
 const CDN = 'https://cdn.sanity.io/images/xjjjqhgt/production/';
 const CROP = '?w=1200&h=780&fit=crop&crop=top&fm=webp&q=82';
 
@@ -114,7 +115,9 @@ function ExhibitBlock({ ex, images }: { ex: Exhibit; images?: HomeImages }) {
             <span>{ex.domain}</span>
           </div>
           <div className="ex-shot">
-            <img src={src} alt={ex.alt} width={1200} height={780} loading="lazy" />
+            {/* sizes rounds UP (overestimating caps at the w=1200 source; underestimating
+                would blur). Container maxes at 1200px ⇒ the shot never exceeds ~560px. */}
+            <Image src={src} alt={ex.alt} width={1200} height={780} sizes="(max-width:1080px) 92vw, 560px" quality={82} loading="lazy" />
           </div>
         </div>
         <span className="rpill">

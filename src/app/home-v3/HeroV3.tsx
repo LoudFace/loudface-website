@@ -1,3 +1,4 @@
+import Image from 'next/image';
 import { CHIPS_HTML } from './_chips';
 import type { HomeImages } from './data';
 
@@ -39,13 +40,19 @@ function Wcard({ c, images, dup = false }: { c: Card; images?: HomeImages; dup?:
         <b></b><b></b><b></b><span>{c.domain}</span>
       </div>
       <div className="shot">
-        <img
+        {/* `.wcard .shot img{width:100%;height:100%;object-fit:cover}` — CSS owns the
+            box, so w/h here only carry the aspect ratio + pick the srcset widths.
+            No `sizes`: the card is fixed-size, and the w=900 source caps the output
+            anyway, so the default 1x/2x pair delivers exactly today's bytes. */}
+        <Image
           src={srcFor(c, images)}
           alt={dup ? '' : `${c.client} website built by LoudFace`}
           width={900}
           height={1050}
-          loading={c.eager && !dup ? 'eager' : 'lazy'}
-          {...(c.priority && !dup ? { fetchPriority: 'high' as const } : {})}
+          quality={82}
+          {...(c.priority && !dup
+            ? { priority: true }
+            : { loading: c.eager && !dup ? ('eager' as const) : ('lazy' as const) })}
         />
       </div>
       <span className="rpill"><i></i><b>{c.metric}</b><span>{c.client}</span></span>

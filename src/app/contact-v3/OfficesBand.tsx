@@ -1,3 +1,4 @@
+import Image from 'next/image';
 import type { ContactFounder } from './data';
 import { OFFICES } from './data';
 
@@ -74,7 +75,7 @@ export function OfficesBand({ founder }: { founder: ContactFounder }) {
         <div className="founder rv" style={{ ['--d' as string]: '.1s' }}>
           <div className="founder__avatar">
             {founder.photoUrl ? (
-              <img src={founder.photoUrl} alt={`${founder.name}, founder of LoudFace`} width={92} height={92} loading="lazy" />
+              <Image src={founder.photoUrl} alt={`${founder.name}, founder of LoudFace`} width={92} height={92} quality={82} loading="lazy" />
             ) : (
               initials
             )}

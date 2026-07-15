@@ -15,6 +15,7 @@
  * cards; the other groups use the standard three-up grid.
  */
 import { useState } from 'react';
+import Image from 'next/image';
 import Link from 'next/link';
 import { DISCIPLINE_COPY } from './content';
 
@@ -26,7 +27,6 @@ export type ArchiveCard = {
   summary?: string;
   disciplines: string[];
   thumbSrc: string;
-  thumbSrcset?: string;
   thumbAlt: string;
   industryName?: string;
   technologies: string[];
@@ -58,13 +58,26 @@ function Card({ c, big, eager }: { c: ArchiveCard; big?: boolean; eager?: boolea
           <span>{c.barLabel}</span>
         </div>
         <div className="cs-shot">
-          <img
+          {/* srcSet is gone on purpose: next/image generates it from `src`, which is
+              now the w=1200 crop (see (site)/case-studies/page.tsx).
+              `sizes` must track the variant: this component renders BOTH the 3-up
+              grid card (~367px ≈ 25vw @1440) and the 2-up `cs-big` card (~563px ≈
+              39vw @1440). The original shipped one string ("…33vw") for both, which
+              under-describes cs-big. That was harmless when the hand-rolled srcset
+              only offered [400,600,800,1200] — 33vw still rounded up to 1200 — but
+              next/image's finer width ladder lets an under-described slot settle on
+              1080 for a 1126px need. 40vw keeps cs-big rounding up to 1200. */}
+          <Image
             src={c.thumbSrc}
-            srcSet={c.thumbSrcset}
-            sizes="(max-width:768px) 100vw, (max-width:1080px) 50vw, 33vw"
+            sizes={
+              big
+                ? '(max-width:768px) 100vw, (max-width:1080px) 50vw, 40vw'
+                : '(max-width:768px) 100vw, (max-width:1080px) 50vw, 33vw'
+            }
             alt={c.thumbAlt}
             width={800}
             height={500}
+            quality={82}
             loading={eager ? 'eager' : 'lazy'}
           />
         </div>
@@ -122,13 +135,13 @@ function LeadCard({ c }: { c: ArchiveCard }) {
             <span>{c.barLabel}</span>
           </div>
           <div className="cs-shot">
-            <img
+            <Image
               src={c.thumbSrc}
-              srcSet={c.thumbSrcset}
               sizes="(max-width:1080px) 100vw, 55vw"
               alt={c.thumbAlt}
               width={800}
               height={500}
+              quality={82}
               loading="eager"
             />
           </div>

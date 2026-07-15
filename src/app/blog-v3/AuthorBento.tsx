@@ -5,6 +5,7 @@
  * time — all from real fields, no fabricated stats). Rendered by the caller only
  * when an author is resolved; every sub-field degrades independently.
  */
+import Image from 'next/image';
 import Link from 'next/link';
 import { avatarImage } from '@/lib/image-utils';
 import { formatShortDate, initials } from './helpers';
@@ -30,7 +31,7 @@ export function AuthorBento({ author, publishedDate, lastUpdated, categoryName, 
           <span className="au-kicker">Written by</span>
           <div className="au-top">
             {author.avatarUrl ? (
-              <span className="au-av"><img src={avatarImage(author.avatarUrl)} alt={author.name} width={80} height={80} loading="lazy" /></span>
+              <span className="au-av"><Image src={avatarImage(author.avatarUrl) ?? author.avatarUrl} alt={author.name} width={80} height={80} quality={82} loading="lazy" /></span>
             ) : (
               <span className="au-av" aria-hidden="true">{initials(author.name)}</span>
             )}

@@ -1,3 +1,4 @@
+import Image from 'next/image';
 import type { HomeImages } from './data';
 
 /**
@@ -53,7 +54,20 @@ export function SelectedWork({ images }: { images?: HomeImages } = {}) {
               <div className="tile-frame">
                 <div className="tile-bar" aria-hidden="true"><b></b><b></b><b></b><span>{t.domain}</span></div>
                 <div className="tile-media">
-                  <img src={(images?.[t.slug] ?? CDN + t.asset) + t.crop} alt={t.alt} width={t.w} height={t.h} loading="lazy" />
+                  {/* `sizes` always rounds UP: overestimating costs nothing (the
+                      w=1280/1600 source caps the output, and next/image never
+                      upscales), whereas underestimating would ship a blurry tile.
+                      At ≤1080 the montblanc/liqid tiles go span-12 while t-sm goes
+                      span-6, so 92vw covers the widest case for both. */}
+                  <Image
+                    src={(images?.[t.slug] ?? CDN + t.asset) + t.crop}
+                    alt={t.alt}
+                    width={t.w}
+                    height={t.h}
+                    sizes="(max-width:1080px) 92vw, 640px"
+                    quality={82}
+                    loading="lazy"
+                  />
                 </div>
               </div>
               <div className="tile-foot">

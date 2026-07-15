@@ -1,3 +1,4 @@
+import Image from 'next/image';
 import { WORK_CDN, type WorkImages } from './content';
 
 /**
@@ -16,7 +17,8 @@ export function CoverCTA({ images }: { images?: WorkImages } = {}) {
 
   return (
     <section className="cover" id="book">
-      <img className="cover-img" src={coverSrc} alt="" aria-hidden="true" width={1280} height={800} loading="lazy" />
+      {/* Full-bleed ⇒ sizes="100vw"; the w=1280 source caps the output. */}
+      <Image className="cover-img" src={coverSrc} alt="" aria-hidden="true" width={1280} height={800} sizes="100vw" quality={82} loading="lazy" />
       <div className="cover-veil" aria-hidden="true"></div>
       <div className="container cover-in">
         <div className="cover-meta rv">
@@ -33,7 +35,7 @@ export function CoverCTA({ images }: { images?: WorkImages } = {}) {
                 <span>toku.com</span>
               </div>
               <div className="shot">
-                <img src={cardSrc} alt="" width={760} height={486} loading="lazy" />
+                <Image src={cardSrc} alt="" width={760} height={486} quality={82} loading="lazy" />
               </div>
               <span className="rpill">
                 <i></i>

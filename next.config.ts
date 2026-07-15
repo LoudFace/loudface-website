@@ -17,6 +17,36 @@ const nextConfig: NextConfig = {
         hostname: "cdn.sanity.io",
       },
     ],
+    // ─── Sanity CDN bandwidth: cache hard at the Vercel edge ─────────
+    // Every Sanity image is routed through next/image (see the *-v3
+    // components). Vercel fetches each source ONCE and serves the
+    // optimized copy from its own cache; visitors never touch
+    // cdn.sanity.io. This is what keeps us off Sanity's bandwidth meter
+    // (101.6 GB / 100 GB blew the free plan in July 2026 and hard-402'd
+    // the whole project — GROQ *and* images — until the cycle reset).
+    //
+    // Next 16 raised the minimumCacheTTL default 60s → 14400 (4h), but 4h
+    // still means Vercel re-pulls every image from Sanity 6x/day, which
+    // alone would NOT fix the bill. 2678400 = 31 days.
+    //
+    // Expiry = MAX(minimumCacheTTL, upstream Cache-Control), so this is a
+    // floor, not a cap.
+    //
+    // Safe because Sanity asset URLs are CONTENT-ADDRESSED — the filename
+    // embeds the asset hash (…-3024x1890.jpg), so re-uploading an image
+    // yields a NEW url and thus a new cache entry. There is no staleness
+    // risk and nothing to invalidate. (The docs' "keep the TTL low"
+    // caveat is aimed at mutable upstreams; ours are immutable.)
+    minimumCacheTTL: 2678400,
+    // Next 16 made `qualities` a strict ALLOWLIST that defaults to [75];
+    // the optimizer hard-400s ("q parameter (quality) of 82 is not
+    // allowed") on any value not listed. 82 is what our <Image>s request:
+    // the Sanity sources are already encoded at q=82, and re-encoding
+    // those to the default q=75 measurably compounds generation loss on
+    // text-heavy client screenshots (RMSE vs master: 1.73 today → 2.63 at
+    // q=75 → 2.06 at q=82) while saving only ~7 KB/image. 75 stays listed
+    // so any un-annotated <Image> still renders instead of 400ing.
+    qualities: [75, 82],
   },
   async headers() {
     return [

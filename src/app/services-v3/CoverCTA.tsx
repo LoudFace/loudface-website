@@ -1,3 +1,4 @@
+import Image from 'next/image';
 import type { HomeImages } from '../home-v3/data';
 
 /**
@@ -17,7 +18,8 @@ export function CoverCTA({ images }: { images?: HomeImages } = {}) {
 
   return (
     <section className="cover" id="book">
-      <img className="cover-img" src={coverSrc} alt="" aria-hidden="true" width={1600} height={1000} loading="lazy" />
+      {/* Full-bleed ⇒ sizes="100vw"; the w=1600 source caps the output. */}
+      <Image className="cover-img" src={coverSrc} alt="" aria-hidden="true" width={1600} height={1000} sizes="100vw" quality={82} loading="lazy" />
       <div className="cover-veil" aria-hidden="true"></div>
       <div className="container cover-in">
         <div className="cover-meta rv">
@@ -34,7 +36,7 @@ export function CoverCTA({ images }: { images?: HomeImages } = {}) {
                 <span>liqid.de</span>
               </div>
               <div className="shot">
-                <img src={cardSrc} alt="" width={1000} height={640} loading="lazy" />
+                <Image src={cardSrc} alt="" width={1000} height={640} quality={82} loading="lazy" />
               </div>
               <span className="rpill">
                 <i></i>

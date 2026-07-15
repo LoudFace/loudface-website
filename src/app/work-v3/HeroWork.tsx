@@ -17,6 +17,7 @@ import { useState } from 'react';
 import Link from 'next/link';
 import { FLAGSHIPS, WORK_CDN, type WorkImages } from './content';
 
+import Image from 'next/image';
 const CROP = '?w=1120&h=672&fit=crop&crop=top&fm=webp&q=80';
 
 const ArrowIcon = () => (
@@ -106,11 +107,12 @@ export function HeroWork({ images, total }: { images?: WorkImages; total: number
                         <span>{f.domain}</span>
                       </div>
                       <div className="mat-shot">
-                        <img
+                        <Image
                           src={src}
                           alt={f.alt}
                           width={1280}
                           height={768}
+                          quality={82}
                           loading={f.eager ? 'eager' : 'lazy'}
                           {...(f.eager ? { fetchPriority: 'high' as const } : {})}
                         />
