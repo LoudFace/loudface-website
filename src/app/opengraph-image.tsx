@@ -1,6 +1,11 @@
 import { ImageResponse } from 'next/og';
 
-export const runtime = 'edge';
+// Node runtime (not edge): the image uses no external fonts/assets, and only the
+// Node runtime honors `revalidate` for ISR caching. Under `runtime = 'edge'` the
+// route is always dynamic and `revalidate` is silently ignored (regenerated per
+// request). On Node it's generated once and cached ~31 days.
+// Static content — regenerate at most once every ~31 days instead of per request.
+export const revalidate = 2678400;
 export const alt = 'LoudFace - B2B SaaS Websites That Convert';
 export const size = { width: 1200, height: 630 };
 export const contentType = 'image/png';

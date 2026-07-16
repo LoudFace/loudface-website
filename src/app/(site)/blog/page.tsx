@@ -13,7 +13,7 @@
 export const revalidate = 60;
 
 import type { Metadata } from 'next';
-import { fetchHomepageData } from '@/lib/cms-data';
+import { fetchBlogIndexData } from '@/lib/cms-data';
 import { formatReadTime } from '@/lib/blog-utils';
 import { Pagination } from '@/components/ui';
 import type { Category } from '@/lib/types';
@@ -58,8 +58,7 @@ export default async function BlogPage({
   const { page: pageParam } = await searchParams;
   const currentPage = Math.max(1, parseInt(pageParam || '1', 10));
 
-  const cmsData = await fetchHomepageData();
-  const { blogPosts, categories } = cmsData;
+  const { blogPosts, categories } = await fetchBlogIndexData();
 
   // Pagination
   const totalPages = Math.ceil(blogPosts.length / POSTS_PER_PAGE);

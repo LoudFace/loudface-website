@@ -12,11 +12,11 @@ export function FooterV3() {
         <div className="ft-top">
           <div className="ft-brand">
             <a href="#" className="wordmark">
-              <img src="/homepage-v3/assets/loudface-inversed.svg" alt="LoudFace" width={133} height={27} style={{ height: '24px' }} />
+              <img src="/images/loudface-inversed.svg" alt="LoudFace" width={133} height={27} style={{ height: '24px' }} />
             </a>
             <p>The conversion and organic growth team behind 200+ B2B SaaS websites.</p>
             <div className="ft-badge">
-              <img src="/homepage-v3/assets/Enterprise-Blue-Badge.webp" alt="Webflow Enterprise Partner badge" width={660} height={85} loading="lazy" />
+              <img src="/images/Enterprise-Blue-Badge.webp" alt="Webflow Enterprise Partner badge" width={660} height={85} loading="lazy" />
               <span>Webflow Enterprise Partner — 4+ years</span>
             </div>
           </div>
@@ -50,7 +50,7 @@ export function FooterV3() {
           </div>
         </div>
       </div>
-      <img className="ft-mark" src="/homepage-v3/assets/loudface-inversed.svg" alt="loudface" width={133} height={27} loading="lazy" />
+      <img className="ft-mark" src="/images/loudface-inversed.svg" alt="loudface" width={133} height={27} loading="lazy" />
       <div className="container">
         <div className="ft-legal">
           <p>© 2026 LoudFace. All rights reserved.</p>

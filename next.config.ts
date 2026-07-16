@@ -96,21 +96,11 @@ const nextConfig: NextConfig = {
         source: '/opengraph-image',
         headers: [{ key: 'X-Robots-Tag', value: 'noindex' }],
       },
-      // Per-page OG image generators (Next.js auto-generates these from
-      // src/app/.../opengraph-image.tsx files). Path shape:
-      //   /blog/[slug]/opengraph-image-:hash
-      //   /case-studies/[slug]/opengraph-image-:hash
-      //   /team/[slug]/opengraph-image-:hash
+      // Partners is the only remaining per-page OG generator (blog / case-study
+      // / team per-slug routes were removed — their parent generateMetadata
+      // always sets openGraph.images, so the file-based routes were dead).
       {
-        source: '/blog/:slug/opengraph-image-:hash',
-        headers: [{ key: 'X-Robots-Tag', value: 'noindex' }],
-      },
-      {
-        source: '/case-studies/:slug/opengraph-image-:hash',
-        headers: [{ key: 'X-Robots-Tag', value: 'noindex' }],
-      },
-      {
-        source: '/team/:slug/opengraph-image-:hash',
+        source: '/partners/opengraph-image-:hash',
         headers: [{ key: 'X-Robots-Tag', value: 'noindex' }],
       },
       // ─── Long-lived cache for static assets served from public/ ──────

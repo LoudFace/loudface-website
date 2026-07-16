@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import Image from 'next/image';
 import { SectionContainer, SectionHeader, Button, Card } from '@/components/ui';
 import { asset } from '@/lib/assets';
 import { WebinarConsentGate } from './_components/WebinarConsentGate';
@@ -206,12 +207,12 @@ export default function WebinarPage() {
         <div className="mx-auto grid max-w-5xl gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {SPEAKERS.map((speaker) => (
             <Card key={speaker.name} padding="lg" hover={false}>
-              <img
+              <Image
                 src={asset(speaker.image)}
                 alt={speaker.name}
                 width={72}
                 height={72}
-                loading="lazy"
+                quality={82}
                 className="mb-5 h-18 w-18 rounded-full object-cover"
               />
               <p className="text-lg font-medium text-surface-900">{speaker.name}</p>

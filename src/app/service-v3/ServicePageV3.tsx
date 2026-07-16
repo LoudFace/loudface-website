@@ -467,7 +467,7 @@ export function ServicePageV3({ config, images }: { config: ServiceConfig; image
                 <article className="pcard pc-partner rv" style={{ ['--d' as string]: '.06s' }}>
                   <span className="pk">4+ years</span>
                   <img
-                    src="/homepage-v3/assets/Enterprise-Blue-Badge.webp"
+                    src="/images/Enterprise-Blue-Badge.webp"
                     alt="Webflow Enterprise Partner badge"
                     width={660}
                     height={85}

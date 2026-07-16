@@ -1,7 +1,6 @@
 'use client';
 
 import { useState, FormEvent } from 'react';
-import { getNewsletterContent } from '@/lib/content-utils';
 
 interface NewsletterFormProps {
   className?: string;
@@ -14,6 +13,20 @@ interface NewsletterFormProps {
   networkErrorMessage?: string;
 }
 
+// Copy defaults. Kept inline so this client component never imports the
+// server-only content layer (content-utils) — importing it would drag the
+// entire JSON content graph into this client chunk. The server parent
+// (Footer) passes the canonical values from newsletter.json via props;
+// these literals are only a defensive fallback if a caller omits them.
+const NEWSLETTER_DEFAULTS = {
+  placeholder: 'Enter your email...',
+  buttonText: 'Subscribe',
+  loadingText: 'Submitting...',
+  successMessage: 'Thank you! Your submission has been received!',
+  errorMessage: 'Oops! Something went wrong while submitting the form.',
+  networkErrorMessage: 'Network error. Please try again.',
+} as const;
+
 export function NewsletterForm({
   className = '',
   variant = 'dark',
@@ -24,15 +37,13 @@ export function NewsletterForm({
   errorMessage,
   networkErrorMessage,
 }: NewsletterFormProps) {
-  const content = getNewsletterContent();
-
-  // Use props or fall back to content defaults
-  const finalPlaceholder = placeholder ?? content.placeholder;
-  const finalButtonText = buttonText ?? content.buttonText;
-  const finalLoadingText = loadingText ?? content.loadingText;
-  const finalSuccessMessage = successMessage ?? content.successMessage;
-  const finalErrorMessage = errorMessage ?? content.errorMessage;
-  const finalNetworkErrorMessage = networkErrorMessage ?? content.networkErrorMessage;
+  // Use props or fall back to inline copy defaults
+  const finalPlaceholder = placeholder ?? NEWSLETTER_DEFAULTS.placeholder;
+  const finalButtonText = buttonText ?? NEWSLETTER_DEFAULTS.buttonText;
+  const finalLoadingText = loadingText ?? NEWSLETTER_DEFAULTS.loadingText;
+  const finalSuccessMessage = successMessage ?? NEWSLETTER_DEFAULTS.successMessage;
+  const finalErrorMessage = errorMessage ?? NEWSLETTER_DEFAULTS.errorMessage;
+  const finalNetworkErrorMessage = networkErrorMessage ?? NEWSLETTER_DEFAULTS.networkErrorMessage;
 
   const [email, setEmail] = useState('');
   const [isLoading, setIsLoading] = useState(false);

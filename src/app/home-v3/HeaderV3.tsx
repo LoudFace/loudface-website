@@ -17,8 +17,8 @@ export function HeaderV3() {
     <header className="hd at-top">
       <div className="container hd-in">
         <a href="#" className="wordmark" aria-label="LoudFace home">
-          <img className="lm-dark" src="/homepage-v3/assets/loudface.svg" alt="LoudFace" width={133} height={28} />
-          <img className="lm-light" src="/homepage-v3/assets/loudface-inversed.svg" alt="LoudFace" width={133} height={27} />
+          <img className="lm-dark" src="/images/loudface.svg" alt="LoudFace" width={133} height={28} />
+          <img className="lm-light" src="/images/loudface-inversed.svg" alt="LoudFace" width={133} height={27} />
         </a>
         <nav className="hd-nav" aria-label="Main">
           {NAV.map((n) => (

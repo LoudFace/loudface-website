@@ -15,7 +15,7 @@ export const revalidate = 60;
 
 import { notFound } from 'next/navigation';
 import type { Metadata } from 'next';
-import { fetchCollection, fetchHomepageData, fetchItemBySlug } from '@/lib/cms-data';
+import { fetchCollection, fetchBlogPostData, fetchItemBySlug } from '@/lib/cms-data';
 import { formatReadTime } from '@/lib/blog-utils';
 import { RelatedComparisons } from '@/components/sections';
 import { buildNoIndexMetadata, buildPageMetadata, truncateSeoTitle, truncateSeoDescription, rewriteLegacyUrls } from '@/lib/seo-utils';
@@ -142,7 +142,7 @@ export default async function BlogPostPage({ params }: PageProps) {
   const { slug } = await params;
 
   const [cmsData, post] = await Promise.all([
-    fetchHomepageData(),
+    fetchBlogPostData(),
     fetchItemBySlug<BlogPost>('blog', slug),
   ]);
   const { blogPosts, categories, teamMembers } = cmsData;

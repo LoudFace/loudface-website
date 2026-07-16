@@ -1,4 +1,4 @@
-import { avatarImage } from '@/lib/image-utils';
+import Image from 'next/image';
 import { SectionContainer, SectionHeader } from '@/components/ui';
 import type { Testimonial } from '@/lib/types';
 
@@ -50,12 +50,12 @@ export function TestimonialGrid({
               dangerouslySetInnerHTML={{ __html: t['testimonial-body'] || '' }}
             />
             <div className="mt-6 flex items-center gap-3">
-              <img
-                src={avatarImage(t['profile-image']!.url)}
+              <Image
+                src={t['profile-image']!.url}
                 alt={t.name}
-                width="40"
-                height="40"
-                loading="lazy"
+                width={40}
+                height={40}
+                quality={82}
                 className="w-10 h-10 rounded-full object-cover"
               />
               <div>

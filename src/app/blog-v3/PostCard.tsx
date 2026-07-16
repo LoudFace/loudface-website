@@ -33,7 +33,7 @@ export function PostCard({ href, title, categoryName, thumbnailUrl, readTime, de
         </div>
       ) : (
         <div className="rel-plate">
-          <img className="mk" src="/homepage-v3/assets/loudface-inversed.svg" alt="" aria-hidden="true" width={126} height={26} />
+          <img className="mk" src="/images/loudface-inversed.svg" alt="" aria-hidden="true" width={126} height={26} />
         </div>
       )}
       {categoryName && <span className="rel-tag"><i></i>{categoryName}</span>}

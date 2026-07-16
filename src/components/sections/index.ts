@@ -1,8 +1,6 @@
 export { Hero } from './Hero';
 export { Partners } from './Partners';
-export { CaseStudySlider } from './CaseStudySlider';
 export { Results } from './Results';
-export { Knowledge } from './Knowledge';
 export { FAQ } from './FAQ';
 export { CTA } from './CTA';
 export { TestimonialGrid } from './TestimonialGrid';

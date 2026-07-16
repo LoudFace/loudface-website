@@ -13,8 +13,8 @@
  * DATA: the HERO marquee tabs are the four curated flagships (Toku, Dimer, LIQID,
  * Eraser), screenshots resolved from Sanity by slug (getWorkImages) with CDN
  * fallbacks. Everything BELOW the hero — the archive grid + discipline filters —
- * is driven entirely by LIVE Sanity data via fetchHomepageData(), which already
- * filters HIDDEN_CASE_STUDY_SLUGS. Every study still renders server-side in the
+ * is driven entirely by LIVE Sanity data via fetchCaseStudyIndexData(), which
+ * already filters HIDDEN_CASE_STUDY_SLUGS. Every study still renders server-side in the
  * default "All" view, so crawlers / AI engines see the full gallery; the filter
  * toggles group visibility client-side.
  *
@@ -31,7 +31,7 @@ export const revalidate = 60;
 
 import type { Metadata } from 'next';
 import '../../work-v3/work-v3.css';
-import { fetchHomepageData } from '@/lib/cms-data';
+import { fetchCaseStudyIndexData } from '@/lib/cms-data';
 import { asset } from '@/lib/assets';
 import { optimizeImage } from '@/lib/image-utils';
 import type { CaseStudy, Client, Industry, Technology } from '@/lib/types';
@@ -100,7 +100,7 @@ function barLabel(link: string | undefined, clientName: string | undefined, slug
 }
 
 export default async function WorkPage() {
-  const [cmsData, images] = await Promise.all([fetchHomepageData(), getWorkImages()]);
+  const [cmsData, images] = await Promise.all([fetchCaseStudyIndexData(), getWorkImages()]);
 
   const {
     caseStudies: rawCaseStudies,

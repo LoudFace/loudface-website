@@ -12,9 +12,9 @@ export const revalidate = 60;
 
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
+import Image from 'next/image';
 import type { Metadata } from 'next';
 import { fetchCollection, fetchHomepageData } from '@/lib/cms-data';
-import { avatarImage, thumbnailImage } from '@/lib/image-utils';
 import { asset } from '@/lib/assets';
 import { Badge, SectionContainer } from '@/components/ui';
 import { CTA } from '@/components/sections';
@@ -163,14 +163,14 @@ export default async function TeamMemberPage({ params }: PageProps) {
 
             <div className="flex flex-col sm:flex-row items-start gap-6">
               {member['profile-picture']?.url ? (
-                <img
-                  src={avatarImage(member['profile-picture'].url)}
+                <Image
+                  src={member['profile-picture'].url}
                   alt={member.name}
-                  width="120"
-                  height="120"
+                  width={120}
+                  height={120}
+                  quality={82}
                   className="w-24 h-24 sm:w-28 sm:h-28 rounded-full object-cover ring-4 ring-surface-100"
-                  loading="eager"
-                  fetchPriority="high"
+                  priority
                 />
               ) : (
                 <div className="w-24 h-24 sm:w-28 sm:h-28 rounded-full bg-surface-200 flex items-center justify-center ring-4 ring-surface-100">
@@ -249,13 +249,14 @@ export default async function TeamMemberPage({ params }: PageProps) {
                     className="group block bg-white rounded-xl border border-surface-200 overflow-hidden hover:shadow-lg hover:-translate-y-1 transition-all duration-200"
                   >
                     <div className="aspect-video overflow-hidden">
-                      <img
-                        src={thumbnailImage(post.thumbnail?.url) || asset('/images/placeholder.webp')}
+                      <Image
+                        src={post.thumbnail?.url || asset('/images/placeholder.webp')}
                         alt={post.name}
-                        width="800"
-                        height="450"
+                        width={800}
+                        height={450}
+                        quality={82}
+                        sizes="(min-width: 1024px) 288px, (min-width: 640px) 45vw, 90vw"
                         className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                        loading="lazy"
                       />
                     </div>
                     <div className="p-4">

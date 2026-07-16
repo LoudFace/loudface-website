@@ -6,7 +6,16 @@
  *
  * NOTE: This is separate from Sanity CMS. The CMS handles dynamic data
  * via GROQ queries. This module handles static component defaults from JSON.
+ *
+ * SERVER-ONLY (safe-by-construction). The module-level `contentRegistry`
+ * eagerly references all ~26 JSON files, and that live binding defeats
+ * tree-shaking — any *client* component importing even a single getter from
+ * here would drag the entire content graph (~200KB raw) into its client
+ * chunk. The `server-only` import makes that a hard build error instead of a
+ * silent bundle bloat. Client components must receive their copy as props
+ * from a Server Component parent (see NewsletterForm ← Footer).
  */
+import 'server-only';
 
 // Content file imports - add new content files here as they're created
 import ctaContent from "@/data/content/cta.json";

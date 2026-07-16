@@ -303,9 +303,7 @@ All section components are exported from `@/components/sections` (or `@/componen
 |-----------|------|-------------|---------|
 | `Hero` | `Hero.tsx` | Homepage hero with scrolling case study cards | No |
 | `Partners` | `Partners.tsx` | Client logos marquee + testimonials | Yes |
-| `CaseStudySlider` | `CaseStudySlider.tsx` | Embla carousel of case study cards | Yes |
 | `Results` | `Results.tsx` | Bento grid of results/metrics | No |
-| `Knowledge` | `Knowledge.tsx` | Blog post carousel | Yes |
 | `FAQ` | `FAQ.tsx` | FAQ section. `variant="accordion"` (default) = collapsed `<details>` toggles, `variant="open"` = all answers visible. Props: `title?`, `subtitle?`, `items`, `showFooter?`, `footerTitle?`, `footerText?`, `footerCtaText?`, `skipSchema?`, `variant?` | No |
 | `CTA` | `CTA.tsx` | Final call-to-action section | No |
 | `TestimonialGrid` | `TestimonialGrid.tsx` | 3-card testimonial section (quote + avatar + name + role). Filters internally to only show testimonials with profile-image and body. Props: `testimonials`, `title?`, `highlightWord?`, `subtitle?`, `variant?` (`'gray'` default = section bg-surface-50 + white cards, `'light'` = white section + gray cards), `limit?` (default 3). Renders nothing when no testimonials qualify. | No |
@@ -374,7 +372,7 @@ Pick `yields` for decoration, `lifts` for anything a user needs to click. Note `
 ```
 src/components/index.ts        → re-exports everything
 src/components/ui/index.ts     → AICitationVisual, Badge, BulletLabel, Button, Card, CarouselNav, ComponentAssemblyVisual, CopyFirstVisual, ConversionSplitVisual, DesignSystemVisual, LogoImage, PixelBreakpointAnimation, ScalableGridAnimation, Pagination, SectionContainer, SectionHeader, VideoFacade
-src/components/sections/index.ts → Hero, Partners, CaseStudySlider, Results, Knowledge, FAQ, CTA, TestimonialGrid, EditorialProse, DeliverablesGrid, RelatedServices, RelatedComparisons, RelatedArticles, ProblemChecker, ProblemCheckerA, ProblemCheckerC
+src/components/sections/index.ts → Hero, Partners, Results, FAQ, CTA, TestimonialGrid, EditorialProse, DeliverablesGrid, RelatedServices, RelatedComparisons, RelatedArticles, ProblemChecker, ProblemCheckerA, ProblemCheckerC
 src/components/blog/index.ts   → BlogChart, BlogIllustration, BlogVisual, BlogContent, BlogTOC, BlogExploreWithAI, BlogCTACard, BlogShareRow
 ```
 

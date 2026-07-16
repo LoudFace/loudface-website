@@ -149,7 +149,7 @@ html {
 
   /* Body typography */
   body {
-    font-family: Satoshi, system-ui, sans-serif;
+    font-family: var(--font-sans);
     line-height: inherit;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
@@ -558,7 +558,7 @@ html {
   /* --- Case Study Prose --- */
 
   .case-study-prose {
-    font-family: Satoshi, system-ui, sans-serif;
+    font-family: var(--font-sans);
     font-size: 1.125rem;
     line-height: 1.75;
     color: var(--color-surface-600);
@@ -785,7 +785,7 @@ html {
    * compete with the article title at the top of the page. */
 
   .blog-prose {
-    font-family: Satoshi, system-ui, sans-serif;
+    font-family: var(--font-sans);
     /* 16 → 18px */
     font-size: clamp(1rem, 0.95rem + 0.25vw, 1.125rem);
     line-height: 1.65;
@@ -1048,7 +1048,7 @@ html {
 
   /* Prose styling for CMS RichText on service/landing pages */
   .prose-surface {
-    font-family: Satoshi, system-ui, sans-serif;
+    font-family: var(--font-sans);
     font-size: 1.125rem;
     line-height: 1.75;
     color: var(--color-surface-600);

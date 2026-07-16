@@ -1,5 +1,6 @@
+import Image from 'next/image';
 import { asset } from '@/lib/assets';
-import { avatarImage, logoImage } from '@/lib/image-utils';
+import { logoImage } from '@/lib/image-utils';
 import { getPartnersContent } from '@/lib/content-utils';
 import { LogoImage } from '@/components/ui';
 import type { Testimonial, Client } from '@/lib/types';
@@ -56,11 +57,11 @@ export function Partners({
                 {testimonials.filter((t) => t['profile-image']?.url).map((testimonial) => (
                   <div key={testimonial.id} className="relative z-20 -ml-2 first:ml-0">
                     <div className="testimonial-headshot relative cursor-pointer z-20 group">
-                      <img
-                        src={avatarImage(testimonial['profile-image']!.url)}
-                        loading="lazy"
-                        width="40"
-                        height="40"
+                      <Image
+                        src={testimonial['profile-image']!.url}
+                        width={40}
+                        height={40}
+                        quality={82}
                         alt={testimonial.name}
                         className="w-10 h-10 rounded-full object-cover border-2 border-white shadow-sm transition-all duration-200 hover:scale-110 hover:shadow-lg"
                       />

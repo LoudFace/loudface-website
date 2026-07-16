@@ -3,6 +3,7 @@ import { NewsletterForm } from './NewsletterForm';
 import { FooterLocations } from './FooterLocations';
 import { asset } from '@/lib/assets';
 import { getAIPlatformsWithIcons, getSocialLinksWithIcons } from '@/lib/icons';
+import { getNewsletterContent } from '@/lib/content-utils';
 import type { CaseStudy, BlogPost } from '@/lib/types';
 
 interface FooterProps {
@@ -11,6 +12,11 @@ interface FooterProps {
 }
 
 export function Footer({ caseStudies = [], blogPosts = [] }: FooterProps) {
+  // Newsletter copy — resolved server-side and passed to the client
+  // NewsletterForm as props, so the client chunk never imports the
+  // server-only content layer.
+  const newsletter = getNewsletterContent();
+
   // Navigation data
   const companyLinks = [
     { label: 'About us', href: '/about' },
@@ -72,7 +78,14 @@ export function Footer({ caseStudies = [], blogPosts = [] }: FooterProps) {
                     Join our newsletter to stay up to date on industry news and strategies
                   </p>
                   <div className="h-6" />
-                  <NewsletterForm />
+                  <NewsletterForm
+                    placeholder={newsletter.placeholder}
+                    buttonText={newsletter.buttonText}
+                    loadingText={newsletter.loadingText}
+                    successMessage={newsletter.successMessage}
+                    errorMessage={newsletter.errorMessage}
+                    networkErrorMessage={newsletter.networkErrorMessage}
+                  />
                 </div>
 
                 {/* Navigation Columns */}

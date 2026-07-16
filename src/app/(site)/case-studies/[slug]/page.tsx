@@ -29,7 +29,7 @@ export const revalidate = 60;
 import { notFound } from 'next/navigation';
 import type { Metadata } from 'next';
 import '../../../case-detail-v3/case-detail-v3.css';
-import { fetchCollection, fetchHomepageData, fetchItemBySlug } from '@/lib/cms-data';
+import { fetchCollection, fetchCaseStudyDetailData, fetchItemBySlug } from '@/lib/cms-data';
 import { avatarImage, optimizeImage } from '@/lib/image-utils';
 import {
   buildNoIndexMetadata,
@@ -169,7 +169,7 @@ export default async function CaseStudyPage({ params }: PageProps) {
   const { slug } = await params;
 
   const [cmsData, study] = await Promise.all([
-    fetchHomepageData(),
+    fetchCaseStudyDetailData(),
     fetchItemBySlug<CaseStudy>('case-studies', slug),
   ]);
 

@@ -5,7 +5,7 @@ import Script from "next/script";
 import { draftMode, headers } from "next/headers";
 import { VisualEditing } from "next-sanity/visual-editing";
 import { CalHandler } from "@/components/CalHandler";
-import { Header } from "@/components/Header";
+import { SiteHeader, SiteFooter } from "@/components/SiteChrome";
 import { Footer } from "@/components/Footer";
 import { asset } from "@/lib/assets";
 import { fetchFooterData } from "@/lib/cms-data";
@@ -13,8 +13,6 @@ import { PostHogProvider } from "@/components/PostHogProvider";
 import { ConsentManager } from "@/components/ConsentManager";
 import { countryRequiresConsent } from "@/lib/consent";
 import { SanityLive } from "@/lib/sanity.live";
-
-const SITE_ORIGIN = "https://www.loudface.co";
 
 /**
  * (site) Layout
@@ -38,50 +36,36 @@ export default async function SiteLayout({
   const blogPosts = footerData.blogPosts;
   const isDraftMode = (await draftMode()).isEnabled;
 
-  // hreflang URL — middleware sets x-pathname on every (site) request so we can
-  // emit the correct per-page alternate links from this single layout.
-  const requestHeaders = await headers();
-  const pathname = requestHeaders.get("x-pathname") ?? "/";
-  const hreflangHref = pathname === "/" ? SITE_ORIGIN : `${SITE_ORIGIN}${pathname}`;
-
   // Cookie-consent region: EEA/UK/CH visitors must opt in before any tracker
   // loads. Cloudflare fronts the site so cf-ipcountry is authoritative;
   // x-vercel-ip-country covers direct-to-Vercel traffic. Missing header
   // (local dev) → opt-in, the safe default. data-lf-cr exposes the verdict
   // to client code (see src/lib/consent.ts).
+  const requestHeaders = await headers();
   const country = requestHeaders.get("cf-ipcountry") ?? requestHeaders.get("x-vercel-ip-country");
   const consentRequired = countryRequiresConsent(country);
 
-  // Blog (index + posts) is v3: electric-hero dark Header + its own in-page
-  // FooterV3, so the shared Footer is suppressed just like the other v3 routes.
-  const isBlog = pathname === "/blog" || pathname.startsWith("/blog/");
-
-  // Service child pages (/services/<slug>) are v3: electric dark-hero Header +
-  // their own in-page FooterV3, same as the /services hub. `startsWith("/services/")`
-  // matches only the children; the hub itself is handled by the `=== "/services"`
-  // checks below.
-  const isServiceChild = pathname.startsWith("/services/");
-
+  // Route-dependent chrome (Header hero-theme, hreflang, shared-Footer
+  // suppression) is resolved client-side in SiteChrome via usePathname(),
+  // so this layout no longer reads x-pathname. The shared Footer is passed
+  // as a server-rendered child to SiteFooter, which hides it on the v3 routes
+  // that carry their own FooterV3.
   return (
     <div className="font-sans antialiased overflow-x-clip" data-lf-cr={consentRequired ? "1" : "0"}>
-      {/* hreflang — single-language English site. Next.js hoists <link>
-          tags from any component into <head>. x-default doubles as the fallback
-          for AI engines unsure of locale targeting. */}
-      <link rel="alternate" hrefLang="en" href={hreflangHref} />
-      <link rel="alternate" hrefLang="x-default" href={hreflangHref} />
-
       <PostHogProvider>
         {/* Skip link for keyboard accessibility */}
         <a href="#main-content" className="skip-link">
           Skip to main content
         </a>
 
-        <Header heroTheme={pathname === "/" || pathname === "/home-preview" || pathname === "/about" || pathname === "/pricing" || pathname === "/services" || isServiceChild || pathname === "/contact" || pathname.startsWith("/case-studies") || isBlog ? "dark" : undefined} />
+        <SiteHeader />
 
         <main id="main-content">{children}</main>
 
         {/* Homepage + About + Pricing + Services + Contact + Case Studies (gallery + detail) + Blog (index + posts) ship their own v3 footers; every other page uses the shared one. */}
-        {pathname !== "/" && pathname !== "/about" && pathname !== "/pricing" && pathname !== "/services" && !isServiceChild && pathname !== "/contact" && !pathname.startsWith("/case-studies") && !isBlog && <Footer caseStudies={caseStudies} blogPosts={blogPosts} />}
+        <SiteFooter>
+          <Footer caseStudies={caseStudies} blogPosts={blogPosts} />
+        </SiteFooter>
 
         {/* Webflow Enterprise Partner Badge — site-wide.
             lf-yields-to-consent: decorative chrome, so it steps aside entirely
