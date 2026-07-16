@@ -282,7 +282,7 @@ export default async function BlogPostPage({ params }: PageProps) {
           />
 
           {/* SIGNATURE move — degrades to the plain header flow when absent (no empty card). */}
-          {post['direct-answer'] && <AnswerCard answer={post['direct-answer']} articleUrl={canonicalUrl} />}
+          {post['direct-answer'] && <AnswerCard answer={post['direct-answer']} />}
 
           <section className="read">
             <div className="container read-grid">

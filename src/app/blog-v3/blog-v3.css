@@ -165,35 +165,14 @@
   font-size:12px;font-weight:600;color:#fff;letter-spacing:.01em;}
 .blogv3 .by-upd i{width:5px;height:5px;border-radius:50%;background:var(--primary-300);flex:none;box-shadow:0 0 0 3px rgba(165,180,252,.25);}
 
-/* ============ ANSWER-FIRST — the citation card (SIGNATURE, straddles seam) ============ */
+/* ============ ANSWER-FIRST — the TL;DR block (straddles seam; chrome stripped 2026-07-16) ============ */
 .blogv3 .answer-wrap{position:relative;z-index:5;margin-top:-104px;}
 .blogv3 .answer{position:relative;background:#fff;border-radius:20px;overflow:hidden;box-shadow:var(--elev-hi);
-  padding:clamp(26px,3vw,40px) clamp(24px,3vw,44px) clamp(24px,2.6vw,34px);max-width:900px;margin:0 auto;}
-.blogv3 .answer::before{content:"";position:absolute;left:0;top:0;bottom:0;width:4px;
-  background:linear-gradient(180deg,var(--primary-500),var(--primary-600));}
-.blogv3 .answer-head{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;
-  padding-bottom:18px;margin-bottom:20px;border-bottom:1px solid var(--paper-line);}
-.blogv3 .answer-tag{display:inline-flex;align-items:center;gap:10px;}
-.blogv3 .answer-tag .qm{width:30px;height:30px;border-radius:9px;flex:none;display:flex;align-items:center;justify-content:center;
-  background:var(--primary-50);box-shadow:inset 0 0 0 1px var(--primary-200);color:var(--primary-600);}
-.blogv3 .answer-tag .qm svg{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round;}
-.blogv3 .answer-tag b{font-family:var(--font-sans);font-size:11.5px;font-weight:600;letter-spacing:.13em;text-transform:uppercase;color:var(--primary-700);}
-.blogv3 .answer-tag em{display:block;font-style:normal;font-size:11px;font-weight:500;letter-spacing:.02em;text-transform:none;color:var(--mut);margin-top:2px;}
-.blogv3 .answer-read{display:inline-flex;align-items:center;gap:8px;font-size:12.5px;font-weight:500;color:var(--mut);white-space:nowrap;}
-.blogv3 .answer-read svg{width:14px;height:14px;stroke:var(--primary-500);fill:none;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round;flex:none;}
+  padding:clamp(26px,3vw,40px) clamp(24px,3vw,44px) clamp(26px,3vw,40px);max-width:900px;margin:0 auto;}
+.blogv3 .answer-tag{display:block;font-family:var(--font-sans);font-size:11.5px;font-weight:600;letter-spacing:.13em;
+  text-transform:uppercase;color:var(--mut);margin-bottom:14px;}
 .blogv3 .answer p{font-family:var(--font-sans);font-size:clamp(1.12rem,1.5vw,1.32rem);line-height:1.6;letter-spacing:-.006em;color:var(--surface-800);text-wrap:pretty;}
 .blogv3 .answer p b, .blogv3 .answer p strong{font-weight:600;color:var(--ink);}
-.blogv3 .answer-foot{margin-top:24px;padding-top:20px;border-top:1px solid var(--paper-line);display:flex;align-items:center;justify-content:space-between;gap:16px 20px;flex-wrap:wrap;}
-.blogv3 .answer-note{display:inline-flex;align-items:center;gap:9px;font-size:12.5px;font-weight:500;color:var(--mut);}
-.blogv3 .answer-note i{width:7px;height:7px;border-radius:50%;background:var(--primary-500);flex:none;box-shadow:0 0 0 3px rgba(99,102,241,.14);}
-.blogv3 .ask{display:inline-flex;align-items:center;gap:7px;flex-wrap:wrap;}
-.blogv3 .ask span{font-size:12px;font-weight:500;color:var(--mut);margin-right:2px;}
-.blogv3 .ask a{display:inline-flex;align-items:center;gap:7px;height:32px;padding:0 13px;border-radius:999px;
-  background:var(--surface-50);box-shadow:inset 0 0 0 1px var(--surface-200);
-  font-size:12.5px;font-weight:600;color:var(--surface-700);transition:background-color .18s var(--ease-out),color .18s,box-shadow .18s;}
-.blogv3 .ask a:hover,.blogv3 .ask a:focus-visible{background:var(--primary-50);color:var(--primary-700);box-shadow:inset 0 0 0 1px var(--primary-200);}
-.blogv3 .ask a:focus-visible{outline:2px solid var(--primary-500);outline-offset:2px;}
-.blogv3 .ask a svg,.blogv3 .ask a img{width:14px;height:14px;flex:none;}
 
 /* ============ READING ZONE — body + sticky rail ============ */
 .blogv3 .read{background:var(--paper);padding:clamp(40px,5vw,64px) 0 clamp(60px,7vw,92px);}
