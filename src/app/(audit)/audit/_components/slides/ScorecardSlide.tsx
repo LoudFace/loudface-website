@@ -39,8 +39,10 @@ export function ScorecardSlide({ scores, companyName, totalSlides, entityConfide
           category searches.
           {scores.competitiveStandingAvailable && (
             <>
+              {/* Rank is within {brand + tracked competitors}, so the set size is
+                  competitorsTracked + 1 — "#3 of 2" read as a bug in prod. */}
               {' '}Competitive standing is {scores.competitiveStanding} of{' '}
-              {scores.competitorsTracked} tracked brands.
+              {scores.competitorsTracked + 1} tracked brands.
             </>
           )}
         </p>
