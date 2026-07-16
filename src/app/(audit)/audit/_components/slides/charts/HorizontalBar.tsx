@@ -24,7 +24,7 @@ export function HorizontalBar({ items, maxValue = 100 }: HorizontalBarProps) {
                 {item.value}%
               </span>
             </div>
-            <div className="h-2 bg-surface-800 rounded-full overflow-hidden">
+            <div className="h-2 bg-white/10 rounded-full overflow-hidden">
               <div
                 className={`h-full rounded-full transition-all duration-700 ease-out ${
                   item.highlight ? 'bg-primary-500' : 'bg-surface-600'

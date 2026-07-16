@@ -1139,7 +1139,11 @@ html {
     margin: 0;
   }
 
-  /* --- AI Audit: Stacking Card Deck --- */
+  /* --- AI Audit: Stacking Card Deck ---
+     v3 reskin (2026-07-16): the deck now runs the site's two deep-stage
+     tonalities (DESIGN.md §2 hero-tonality law) instead of neutral
+     near-black. Two slide backgrounds, cloned verbatim from the approved
+     siblings rather than invented: */
 
   .audit-deck {
     height: 100dvh;
@@ -1153,8 +1157,31 @@ html {
     scroll-snap-align: start;
     scroll-snap-stop: always;
     overflow-y: auto;
-    /* Each slide gets a subtle inset shadow at top so you see the "stack" edge */
-    box-shadow: 0 -1px 0 0 var(--color-surface-800);
+    /* Each slide gets a subtle inset shadow at top so you see the "stack" edge.
+       Hairline white (the dark-stage ring convention, DESIGN.md §10) instead
+       of surface-800 — a neutral gray hairline would read as a seam against
+       the indigo grounds below. */
+    box-shadow: 0 -1px 0 0 rgba(255, 255, 255, 0.1);
+  }
+
+  /* NIGHT stage — the 13 content slides + closing CTA. Same gradient as the
+     nav mega-dropdown panel (Header.tsx `bg-[linear-gradient(180deg,#171445_0%,#191552_100%)]`)
+     and the About team-modal panel (about-v3.css `.tmodal-panel`) — cloned
+     verbatim, not reinvented. Exact stops per DESIGN.md §2: #171445 → #191552. */
+  .audit-slide-night {
+    background: linear-gradient(180deg, #171445 0%, #191552 100%);
+  }
+
+  /* ELECTRIC stage — cover slide only (hero-tonality law: pages OPEN electric).
+     Identical 3-layer treatment to the homepage hero (home-v3.css `.hero`) and
+     the services hero (service-v3.css `.svcv3 .hero`, labeled "electric stage"
+     in that file): a broad radial bloom over the primary-700→600→500 field. */
+  .audit-slide-electric {
+    background: var(--color-primary-600);
+    background-image:
+      radial-gradient(120% 92% at 50% 116%, rgba(129, 140, 248, 0.55) 0%, rgba(99, 102, 241, 0) 58%),
+      radial-gradient(90% 70% at 84% -8%, rgba(165, 180, 252, 0.3) 0%, rgba(99, 102, 241, 0) 46%),
+      linear-gradient(158deg, var(--color-primary-700) 0%, var(--color-primary-600) 44%, var(--color-primary-500) 100%);
   }
 
 }

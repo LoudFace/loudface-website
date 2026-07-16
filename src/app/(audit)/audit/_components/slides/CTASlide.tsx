@@ -8,7 +8,7 @@ interface CTASlideProps {
 
 export function CTASlide({ companyName, totalSlides }: CTASlideProps) {
   return (
-    <SlideShell index={14} totalSlides={totalSlides} variant="darker">
+    <SlideShell index={14} totalSlides={totalSlides} variant="night">
       <div className="flex-1 flex flex-col items-center justify-center text-center">
         {/* Decorative line */}
         <div className="w-12 h-px bg-primary-600 mb-8" />

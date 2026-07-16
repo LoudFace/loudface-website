@@ -12,12 +12,13 @@ export async function runCategoryVisibility(
   companyName: string,
   domain: string,
   category: string,
+  aliases: string[],
   industry: string,
   onProgress?: (pct: number) => Promise<void>,
   entityType: 'product' | 'service' | 'brand' = 'product',
   tracer?: TraceCollector,
 ): Promise<CategoryVisibilityData> {
-  const prompts = getCategoryQueries(category, industry, entityType);
+  const prompts = getCategoryQueries(category, aliases, industry, entityType);
   const queries: CategoryQuery[] = [];
 
   await withConcurrency(prompts, 2, async (prompt) => {

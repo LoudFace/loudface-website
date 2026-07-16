@@ -44,37 +44,39 @@ export function calculateScores(
   // misleading perfect score.
   const competitorSoVMap = competitorContext.shareOfVoiceByCompetitor;
   const totalCompetitorSoV = Object.values(competitorSoVMap).reduce((s, n) => s + n, 0);
-  const brandMentionRatePhase3 = discoveryVisibility; // same denominator
+  const brandRateP3 = discoveryVisibility; // brand's own Phase-3 rate (same denominator as competitor SoV) — reused below to rank competitive standing
   const hasCompetitors = competitorContext.competitors.length > 0;
   const shareOfVoice = !hasCompetitors
     ? 0
-    : totalCompetitorSoV + brandMentionRatePhase3 > 0
-      ? Math.round((brandMentionRatePhase3 / (totalCompetitorSoV + brandMentionRatePhase3)) * 100)
+    : totalCompetitorSoV + brandRateP3 > 0
+      ? Math.round((brandRateP3 / (totalCompetitorSoV + brandRateP3)) * 100)
       : 0;
 
   // Competitive Standing: rank brand vs competitors using Phase 3 rates.
   //
-  // If competitors are tracked but the SoV map is empty (e.g. Phase 3 failed
-  // outright, or the pipeline hit its overall deadline before Phase 3 could
-  // populate it — see pipeline.ts), `competitiveStanding` previously stayed
-  // at its init value of 1 (best possible rank), which falsely flattered the
-  // audit: "you're #1" when we actually measured nothing. We can't return
-  // `null` here without widening `AuditScores.competitiveStanding` beyond
-  // `number` (types.ts + the ScorecardSlide/validate.ts consumers of that
-  // field are outside this pass's scope), so instead we fall back to the
-  // WORST plausible rank — last place among all tracked competitors — which
-  // errs conservative instead of flattering. This is a stopgap: the correct
-  // fix is a nullable `competitiveStanding` plus an explicit
-  // `competitiveStandingAvailable` flag the slide renders as "insufficient
-  // data", which needs a coordinated types.ts + frontend change.
-  const sovDataMissing = hasCompetitors && Object.keys(competitorSoVMap).length === 0;
+  // `competitiveStandingAvailable` is false when there's no real category
+  // signal to rank on — the brand AND every tracked competitor scored 0 in
+  // Phase 3, or Phase 3 produced no SoV data at all (it failed outright, or
+  // the pipeline hit its overall deadline before Phase 3 could populate
+  // shareOfVoiceByCompetitor — see pipeline.ts). Previously this case left
+  // `competitiveStanding` at its loop init value of 1 (best possible rank),
+  // which falsely flattered the audit — "you're #1" when nothing was
+  // actually measured. The UI now keys off `competitiveStandingAvailable`
+  // and renders "Unranked" instead of a misleading "#1 · Strong".
+  const competitorRates = Object.values(competitorSoVMap);
+  const anyCategorySignal = brandRateP3 > 0 || competitorRates.some((r) => r > 0);
+  const competitiveStandingAvailable =
+    hasCompetitors && Object.keys(competitorSoVMap).length > 0 && anyCategorySignal;
   let competitiveStanding = 1;
-  if (sovDataMissing) {
-    competitiveStanding = competitorContext.competitors.length + 1;
-  } else {
-    for (const rate of Object.values(competitorSoVMap)) {
-      if (rate > brandMentionRatePhase3) competitiveStanding++;
+  if (competitiveStandingAvailable) {
+    for (const rate of competitorRates) {
+      if (rate > brandRateP3) competitiveStanding++;
     }
+  } else {
+    // No real signal to rank on — set the worst plausible rank as a safe
+    // numeric default; the UI keys off `competitiveStandingAvailable` and
+    // shows "Unranked" rather than this number.
+    competitiveStanding = competitorContext.competitors.length + 1;
   }
 
   // Platform Coverage: how many platforms mention the brand in Phase 1
@@ -86,12 +88,19 @@ export function calculateScores(
   }
   const platformCoverage = platformsMentioning.size;
 
-  const overallGrade = calculateGrade(discoveryVisibility, shareOfVoice);
+  const overallGrade = calculateGrade(
+    brandBaseline.brandRecognitionScore,
+    discoveryVisibility,
+    shareOfVoice,
+    platformCoverage,
+  );
 
   return {
+    brandRecognition: brandBaseline.brandRecognitionScore,
     discoveryVisibility,
     shareOfVoice,
     competitiveStanding,
+    competitiveStandingAvailable,
     competitorsTracked: competitorContext.competitors.length,
     platformCoverage,
     overallGrade,
@@ -99,16 +108,42 @@ export function calculateScores(
 }
 
 /**
- * Grade thresholds are calibrated to real-world AI visibility distributions.
- * Category leaders often hit 40-60% Phase-3 visibility and 30-40% SoV.
- * Niche/emerging brands typically land at 5-20% visibility, 5-15% SoV.
- * The old thresholds (A: 70/40) were unreachable — almost nothing graded above D.
+ * Overall grade is a weighted composite (0-100) across all four measured
+ * dimensions, then banded into a letter grade.
+ *
+ * Earlier versions graded off discoveryVisibility + shareOfVoice alone (and,
+ * before that, a flat 70/40 A-threshold that was unreachable — almost
+ * nothing graded above D). That meant a brand with 100% branded recognition
+ * (Phase 1), full 4/4 platform coverage, and positive sentiment — but 0%
+ * unbranded-category visibility — graded a flat F. That's wrong: being
+ * well-known when asked about directly is real signal, just a different
+ * dimension than showing up unprompted in category searches.
+ *
+ * The composite weights discovery visibility heaviest (0.35 — the
+ * hardest-won dimension, showing up without being named), then brand
+ * recognition (0.30 — being known when named), share of voice (0.20 —
+ * competitive share of category mentions), and platform coverage (0.15 —
+ * breadth across the 4 tracked platforms). Bands are calibrated so a
+ * fully-invisible brand (all zeros) lands F, a recognized-but-undiscovered
+ * brand (recognition + coverage only, e.g. loudface.co: 100/0/0/4 → 45)
+ * lands C, and a true category leader (100/55/35/4 → ~71) lands A.
  */
-function calculateGrade(visibility: number, sov: number): OverallGrade {
-  if (visibility >= 55 && sov >= 30) return 'A';
-  if (visibility >= 35 && sov >= 18) return 'B';
-  if (visibility >= 18 && sov >= 8) return 'C';
-  if (visibility >= 5 || sov >= 3) return 'D';
+function calculateGrade(
+  brandRecognition: number,
+  discovery: number,
+  sov: number,
+  platformCoverage: number,
+): OverallGrade {
+  const coveragePct = (platformCoverage / 4) * 100;
+  const composite =
+    0.30 * brandRecognition +
+    0.35 * discovery +
+    0.20 * sov +
+    0.15 * coveragePct;
+  if (composite >= 70) return 'A';
+  if (composite >= 52) return 'B';
+  if (composite >= 34) return 'C';
+  if (composite >= 18) return 'D';
   return 'F';
 }
 

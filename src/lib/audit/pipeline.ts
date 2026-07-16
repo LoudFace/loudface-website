@@ -217,6 +217,10 @@ export async function runAudit(id: string): Promise<void> {
     let phase1: Awaited<ReturnType<typeof extractPhase1Insights>> | null = null;
     let aiCompetitors: { name: string; mentionCount: number }[] = [];
     let category = 'business';
+    // 2-4 alternate category framings (e.g. "web design agency", "SEO agency"
+    // for a "Webflow agency") — broadens Phase 3's unbranded query sampling
+    // beyond the single specific_category string. See extractPhase1Insights.
+    let categoryAliases: string[] = [];
     let inferredIndustry = 'business';
     let richEntityType = 'other';
     // Downstream phases take a narrow 'product' | 'service' | 'brand' trio (query-template selector).
@@ -263,6 +267,10 @@ export async function runAudit(id: string): Promise<void> {
           || phase1?.categorization.broad_category
           || 'business',
       );
+      categoryAliases = (phase1?.categorization.category_aliases ?? [])
+        .map((a) => sanitizeCategory(a))
+        .filter(Boolean)
+        .slice(0, 4); // cap enforced here since the schema can't use maxItems (Azure)
       inferredIndustry = sanitizeCategory(phase1?.categorization.industry || 'business');
       richEntityType = phase1?.categorization.entity_type || 'other';
       entityType =
@@ -350,6 +358,7 @@ export async function runAudit(id: string): Promise<void> {
         companyName,
         domain,
         category,
+        categoryAliases,
         inferredIndustry,
         async (pct) => {
           await updateProgress(
@@ -587,7 +596,7 @@ function buildSlideDataQuality(
     'Slide 3 – Brand Baseline': {
       hasData: brandTotal > 0,
       status: `${brandMentioned}/${brandTotal} responses mention the brand (${brandBaseline.brandRecognitionScore}%). ${brandBaseline.queries.length} queries × 4 platforms.`,
-      source: 'Phase 1: 10 branded queries via DataForSEO LLM Responses Live',
+      source: 'Phase 1: 6 branded queries via DataForSEO LLM Responses Live',
       metrics: {
         queries: brandBaseline.queries.length,
         totalResponses: brandTotal,

@@ -56,7 +56,7 @@ export default async function AuditLayout({
   return (
     <PostHogProvider>
       <style>{`
-        body { background-color: var(--color-surface-950); color: var(--color-surface-300); overflow: hidden; }
+        body { background-color: #171445; color: var(--color-surface-300); overflow: hidden; }
       `}</style>
       <div data-lf-cr={consentRequired ? '1' : '0'} style={{ display: 'contents' }}>
         {children}

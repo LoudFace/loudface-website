@@ -53,7 +53,7 @@ export function MethodologySlide({ totalSlides }: MethodologySlideProps) {
                 <h3 className="text-lg font-medium text-white mb-1">{phase.title}</h3>
                 <p className="text-sm text-surface-400 mb-2">{phase.description}</p>
                 <div className="flex items-center gap-3 text-2xs text-surface-500">
-                  <span className="px-2 py-0.5 rounded bg-surface-800">{phase.queries}</span>
+                  <span className="px-2 py-0.5 rounded bg-white/10">{phase.queries}</span>
                   <span>{phase.detail}</span>
                 </div>
               </div>

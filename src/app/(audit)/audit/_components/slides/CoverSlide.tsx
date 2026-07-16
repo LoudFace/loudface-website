@@ -19,7 +19,7 @@ export function CoverSlide({ companyName, auditDate, totalSlides, entityConfiden
   });
 
   return (
-    <SlideShell index={0} totalSlides={totalSlides} variant="darker">
+    <SlideShell index={0} totalSlides={totalSlides} variant="electric">
       <div className="flex-1 flex flex-col items-center justify-center text-center">
         {/* LoudFace logo */}
         <img
@@ -30,10 +30,13 @@ export function CoverSlide({ companyName, auditDate, totalSlides, entityConfiden
           className="h-6 w-auto opacity-40 mb-12"
         />
 
-        {/* Decorative line */}
-        <div className="w-12 h-px bg-primary-600 mb-8" />
+        {/* Decorative line — primary-300 (not primary-600): on the electric
+            stage the ground itself is primary-500/600/700, so a primary-600
+            line would disappear into it. Line/accent = primary-300 per the
+            v3 palette rules. */}
+        <div className="w-12 h-px bg-primary-300 mb-8" />
 
-        <p className="text-sm text-primary-400 font-medium tracking-wider uppercase mb-4">
+        <p className="text-sm text-primary-100 font-medium tracking-wider uppercase mb-4">
           AI Visibility Audit
         </p>
 
@@ -41,7 +44,7 @@ export function CoverSlide({ companyName, auditDate, totalSlides, entityConfiden
           {companyName}
         </h1>
 
-        <p className="text-surface-500 text-sm">
+        <p className="text-white/70 text-sm">
           {formattedDate}
         </p>
 
@@ -54,7 +57,7 @@ export function CoverSlide({ companyName, auditDate, totalSlides, entityConfiden
 
         {/* Scroll hint */}
         <div className="mt-auto pt-12 animate-bounce">
-          <svg className="w-6 h-6 text-surface-600 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+          <svg className="w-6 h-6 text-white/60 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
             <path strokeLinecap="round" strokeLinejoin="round" d="M19 14l-7 7m0 0l-7-7m7 7V3" />
           </svg>
         </div>

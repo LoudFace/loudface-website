@@ -48,7 +48,15 @@ const Phase1Schema = z.object({
   categorization: z.object({
     specific_category: z
       .string()
-      .describe('The most specific category that fits the brand. 2-5 words, must read as a complete noun phrase, never ending in a preposition, article, or conjunction (that, for, of, with, and, the). Examples: "Webflow agency", "crypto payroll platform", "mental-health app". Derived from the ground truth, not from AI responses.'),
+      .describe('The SINGLE strongest category that fits the brand — ONE clean 2-4 word noun phrase, NOT a compound joined by "and" (e.g. "Webflow agency", NOT "web design and growth agency"). Must read as a complete noun phrase, never ending in a preposition, article, or conjunction (that, for, of, with, and, the). Examples: "Webflow agency", "crypto payroll platform", "mental-health app". Derived from the ground truth, not from AI responses.'),
+    category_aliases: z
+      // No `.max()` here — it emits JSON-schema `maxItems`, which Azure (where
+      // OpenRouter routes some Anthropic models) rejects outright, silently
+      // failing the whole Phase 1 extraction. Same constraint as `mention_count`
+      // below. The item cap is enforced in the description text instead, and the
+      // pipeline slices defensively.
+      .array(z.string())
+      .describe('2-4 ALTERNATE category framings a real buyer would type that this brand genuinely competes in — broader or adjacent to specific_category, each a clean 2-4 word noun phrase. Example for a Webflow agency: ["web design agency","SEO agency","Webflow developer"]. Purpose: broaden unbranded discovery sampling. Return at most 4; return [] if the specific category already captures it.'),
     broad_category: z
       .string()
       .describe('The broader industry the specific category belongs to. 1-3 words, complete noun phrase. Examples: "marketing agency", "fintech", "consumer health".'),
@@ -74,7 +82,7 @@ const Phase1Schema = z.object({
           platforms: z.array(z.enum(PLATFORMS)),
         }),
       )
-      .describe('Statements the AI made that contradict the ground truth. Max 4 items.'),
+      .describe('Statements that DIRECTLY CONTRADICT the ground truth. Absence of a fact from the ground truth is NOT contradiction — never flag a claim just because the ground truth is silent on it. Max 4 items.'),
     knowledge_gaps: z
       .array(
         z.object({
@@ -176,7 +184,7 @@ export async function extractPhase1Insights(args: {
     '',
     'Writing quality — this matters:',
     '5. Accurate claims read as specific differentiating facts (what this brand is known for, what it does that others do not, measurable things), not generic category descriptions. "Mailchimp is an email marketing platform" is weak. "Mailchimp is best known for serving small businesses and offering a generous free tier that competitors like HubSpot do not match" is strong.',
-    '6. Inaccuracies include *why it is wrong* from the ground truth, not just "this is wrong". Each why_wrong is one concrete sentence contrasting AI claim vs reality.',
+    '6. An inaccuracy is a claim that DIRECTLY CONTRADICTS the ground truth. Absence is not contradiction — do NOT flag a claim as inaccurate merely because the ground truth doesn\'t mention it (the ground truth is a partial snapshot, not the full truth). Only flag claims the ground truth actively contradicts (e.g. AI says "founded 2010" but the site says "since 2015"). When in doubt, treat it as accurate or as a gap, not an inaccuracy. Each why_wrong is one concrete sentence contrasting the AI\'s claim against what the ground truth actually says.',
     '7. Knowledge gaps are things a well-informed person WOULD expect AI to know about the brand but didn\'t say — pricing, target customer, signature product, recent milestones, leadership. Not vague "AI could say more".',
     '8. If the ground truth is empty or low-confidence, still produce opinions — but draw only from patterns in the AI responses themselves, and err toward fewer claims over inventing them.',
   ].join('\n');
@@ -187,7 +195,7 @@ export async function extractPhase1Insights(args: {
     '=== GROUND TRUTH (from the brand\'s own website) ===',
     groundTruthBlock,
     '',
-    '=== RAW AI RESPONSES (Phase 1: 10 branded queries × 4 platforms) ===',
+    '=== RAW AI RESPONSES (Phase 1: 6 branded queries × 4 platforms) ===',
     responsesBlock || '[no text responses]',
     '',
     '=== TASK ===',
