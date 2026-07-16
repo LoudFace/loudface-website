@@ -12,7 +12,7 @@ export function RadialProgress({
   size = 120,
   strokeWidth = 8,
   color = 'var(--color-primary-500)',
-  trackColor = 'var(--color-surface-800)',
+  trackColor = 'rgba(255, 255, 255, 0.1)',
   label,
 }: RadialProgressProps) {
   const radius = (size - strokeWidth) / 2;

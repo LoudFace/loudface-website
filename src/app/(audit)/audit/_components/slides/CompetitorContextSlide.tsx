@@ -45,7 +45,7 @@ export function CompetitorContextSlide({ data, companyName, totalSlides, entityC
         <div className="grid gap-3 sm:grid-cols-2">
           {data.competitors.map((comp) => (
             <div key={comp.domain} className="flex items-center gap-3 rounded-lg bg-white/5 p-3">
-              <div className="w-8 h-8 rounded bg-surface-800 flex items-center justify-center text-2xs text-surface-400 tabular-nums shrink-0">
+              <div className="w-8 h-8 rounded bg-white/10 flex items-center justify-center text-2xs text-surface-400 tabular-nums shrink-0">
                 {comp.name.charAt(0)}
               </div>
               <div className="min-w-0">

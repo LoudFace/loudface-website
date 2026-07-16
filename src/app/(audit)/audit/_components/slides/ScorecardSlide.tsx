@@ -34,9 +34,15 @@ export function ScorecardSlide({ scores, companyName, totalSlides, entityConfide
           AI Market Position Snapshot
         </h2>
         <p className="text-surface-400 mb-8 sm:mb-10 text-sm max-w-xl">
-          {companyName} currently holds {scores.discoveryVisibility}% discovery visibility
-          with {scores.shareOfVoice}% share of voice. Competitive standing
-          is {scores.competitiveStanding} of {scores.competitorsTracked} tracked brands.
+          {companyName} is recognized by {scores.brandRecognition}% of AI platforms when
+          asked directly, but appears in only {scores.discoveryVisibility}% of unbranded
+          category searches.
+          {scores.competitiveStandingAvailable && (
+            <>
+              {' '}Competitive standing is {scores.competitiveStanding} of{' '}
+              {scores.competitorsTracked} tracked brands.
+            </>
+          )}
         </p>
 
         {benchmarkContext && <BenchmarkStrip context={benchmarkContext} />}
@@ -51,12 +57,17 @@ export function ScorecardSlide({ scores, companyName, totalSlides, entityConfide
           </div>
           <div>
             <p className="text-white font-medium">Overall Grade</p>
-            <p className="text-surface-500 text-sm">Based on visibility, share of voice &amp; platform coverage</p>
+            <p className="text-surface-500 text-sm">Based on brand recognition, category discovery, share of voice &amp; platform coverage</p>
           </div>
         </div>
 
         {/* Metric cards */}
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="grid grid-cols-2 lg:grid-cols-5 gap-4">
+          <MetricCard
+            label="Brand Recognition"
+            value={`${scores.brandRecognition}%`}
+            status={getTrafficLight(scores.brandRecognition, 'discoveryVisibility')}
+          />
           <MetricCard
             label="Discovery Visibility"
             value={`${scores.discoveryVisibility}%`}
@@ -69,12 +80,17 @@ export function ScorecardSlide({ scores, companyName, totalSlides, entityConfide
           />
           <MetricCard
             label="Competitive Standing"
-            value={`#${scores.competitiveStanding}`}
-            status={getTrafficLight(
-              scores.competitorsTracked > 0
-                ? 100 - (scores.competitiveStanding / scores.competitorsTracked) * 100
-                : 0,
-            )}
+            value={scores.competitiveStandingAvailable ? `#${scores.competitiveStanding}` : 'Unranked'}
+            status={
+              scores.competitiveStandingAvailable
+                ? getTrafficLight(
+                    scores.competitorsTracked > 0
+                      ? 100 - (scores.competitiveStanding / scores.competitorsTracked) * 100
+                      : 0,
+                  )
+                : 'amber'
+            }
+            note={scores.competitiveStandingAvailable ? undefined : 'Not enough category signal to rank yet'}
           />
           <MetricCard
             label="Platform Coverage"
@@ -136,16 +152,20 @@ function MetricCard({
   label,
   value,
   status,
+  note,
 }: {
   label: string;
   value: string;
   status: ReturnType<typeof getTrafficLight>;
+  /** Optional muted one-liner shown below the traffic light — used when a metric can't be measured normally (e.g. competitive standing with no category signal). */
+  note?: string;
 }) {
   return (
     <div className="rounded-xl bg-white/5 p-4 sm:p-5">
       <p className="text-2xs text-surface-500 mb-2">{label}</p>
       <p className="text-2xl sm:text-3xl font-heading font-medium text-white mb-2">{value}</p>
       <TrafficLight status={status} size="sm" />
+      {note && <p className="text-2xs text-surface-500 mt-2">{note}</p>}
     </div>
   );
 }

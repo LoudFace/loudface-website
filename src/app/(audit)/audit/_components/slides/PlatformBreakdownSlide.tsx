@@ -46,7 +46,7 @@ export function PlatformBreakdownSlide({ data, totalSlides }: PlatformBreakdownS
               <div key={platform} className="rounded-xl bg-white/5 p-4 sm:p-5">
                 <div className="flex items-start gap-4">
                   <div className="shrink-0">
-                    <div className="w-10 h-10 rounded-lg bg-surface-800 flex items-center justify-center text-sm text-surface-400 tabular-nums mb-2">
+                    <div className="w-10 h-10 rounded-lg bg-white/10 flex items-center justify-center text-sm text-surface-400 tabular-nums mb-2">
                       {info.icon}
                     </div>
                     <RadialProgress value={score.mentionRate} size={72} strokeWidth={5} />

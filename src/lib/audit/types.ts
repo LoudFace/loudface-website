@@ -94,9 +94,17 @@ export type TrafficLight = 'green' | 'amber' | 'red';
 export type OverallGrade = 'A' | 'B' | 'C' | 'D' | 'F';
 
 export interface AuditScores {
-  discoveryVisibility: number; // 0-100
+  brandRecognition: number; // 0-100 — Phase 1 branded-query mention rate (how well AI knows the brand when asked by name)
+  discoveryVisibility: number; // 0-100 — Phase 3 unbranded category mention rate
   shareOfVoice: number; // 0-100
-  competitiveStanding: number; // rank (1 = best)
+  competitiveStanding: number; // rank (1 = best). Only meaningful when competitiveStandingAvailable is true.
+  /**
+   * False when there's no category signal to rank on — i.e. the brand AND every
+   * tracked competitor scored 0 in Phase 3 (or Phase 3 produced no SoV data at
+   * all). In that case `competitiveStanding` is not a real rank and the UI must
+   * render "Unranked / insufficient data", never a flattering "#1".
+   */
+  competitiveStandingAvailable: boolean;
   competitorsTracked: number;
   platformCoverage: number; // 0-4
   overallGrade: OverallGrade;

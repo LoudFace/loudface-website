@@ -8,12 +8,14 @@ export const metadata: Metadata = {
 
 const MOCK_RESULTS: AuditResults = {
   scores: {
+    brandRecognition: 88,
     discoveryVisibility: 35,
     shareOfVoice: 18,
     competitiveStanding: 3,
+    competitiveStandingAvailable: true,
     competitorsTracked: 5,
     platformCoverage: 3,
-    overallGrade: 'C',
+    overallGrade: 'B',
   },
   brandBaseline: {
     queries: [

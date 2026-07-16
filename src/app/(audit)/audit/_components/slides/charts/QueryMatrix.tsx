@@ -25,7 +25,7 @@ export function QueryMatrix({
     <div className="overflow-x-auto -mx-2">
       <table className="w-full text-sm">
         <thead>
-          <tr className="border-b border-surface-800">
+          <tr className="border-b border-white/10">
             <th className="text-left text-surface-500 font-normal pb-3 pr-4 pl-2">Query</th>
             {platforms.map((p) => (
               <th key={p} className="text-center text-surface-500 font-normal pb-3 px-2 whitespace-nowrap">
@@ -36,7 +36,7 @@ export function QueryMatrix({
         </thead>
         <tbody>
           {queries.map((q, i) => (
-            <tr key={i} className="border-b border-surface-800/50">
+            <tr key={i} className="border-b border-white/5">
               <td className="py-3 pr-4 pl-2 text-surface-300 max-w-[200px] truncate text-2xs sm:text-sm">
                 {q.prompt}
               </td>
