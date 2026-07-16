@@ -296,9 +296,20 @@ export async function runAudit(id: string): Promise<void> {
       // the richer objects live on the extraction result if we want them later.
       if (phase1) {
         brandBaseline.accurateInfo = phase1.brand_knowledge.accurate_claims.map((c) => c.claim);
-        brandBaseline.inaccuracies = phase1.brand_knowledge.inaccurate_claims.map(
-          (c) => `${c.claim} (${c.why_wrong})`,
-        );
+        // Deterministic enforcement of the "absence is not contradiction" rule.
+        // The extraction prompt forbids absence-based inaccuracies, but the model
+        // still slips (a live audit flagged LoudFace's real $5k/mo pricing as an
+        // "error" because the homepage ground truth doesn't state pricing). If
+        // why_wrong is phrased as "the ground truth doesn't mention X" rather
+        // than an actual contradiction, it's a gap, not an inaccuracy — drop it
+        // here (the gaps list already covers missing-info coaching).
+        const ABSENCE_ONLY =
+          /ground truth (?:contains no|does not (?:mention|state|include|specify|provide|list|confirm)|has no|provides no|makes no mention|is silent)|no (?:mention|information) (?:of|about)|not (?:mentioned|stated|confirmed) (?:in|by) the ground truth/i;
+        const CONTRADICTION =
+          /(?:contradict|actually|in fact|whereas|but the (?:site|ground truth)|the (?:site|ground truth) (?:says|states|describes|shows|lists))|not the|instead of|rather than/i;
+        brandBaseline.inaccuracies = phase1.brand_knowledge.inaccurate_claims
+          .filter((c) => !ABSENCE_ONLY.test(c.why_wrong) || CONTRADICTION.test(c.why_wrong))
+          .map((c) => `${c.claim} (${c.why_wrong})`);
         brandBaseline.gaps = phase1.brand_knowledge.knowledge_gaps.map((g) => g.gap);
         brandBaseline.gapsWithSuggestions = phase1.brand_knowledge.knowledge_gaps.map((g) => ({
           gap: g.gap,

@@ -66,15 +66,12 @@ const ClassificationSchema = z.object({
  * the TOOLS they write about (Webflow, Zapier, Figma), not actual rival
  * agencies. A single batched LLM call classifies all candidates in one pass.
  *
- * Two soft-fail behaviors:
- * 1. If the LLM errors or times out, return the unfiltered list.
- * 2. If the filter would drop the list below MIN_KEEP items, pad with the
- *    dropped candidates to preserve SOME competitive signal. The LLM
- *    classifier isn't perfect (e.g. it may read "flow.ninja" as a SaaS
- *    name) — a ruthless filter that blanks out the whole list is worse
- *    than one that keeps some imperfect matches as a baseline.
+ * Soft-fail behavior: if the LLM errors or times out, return the unfiltered
+ * list. Explicit rejections are FINAL — we never pad rejected candidates back
+ * in (see the note at the bottom of this function); a short real list beats
+ * a padded fake one now that downstream scoring/UI degrade honestly.
  */
-const MIN_KEEP = 3;
+const MIN_KEEP = 3; // threshold for the "list is thin" log only
 async function filterCompetitorsByEntityType(
   candidates: CompetitorInfo[],
   entityType: 'product' | 'service' | 'brand',
@@ -137,23 +134,17 @@ async function filterCompetitorsByEntityType(
     );
   }
 
-  // If the filter was too aggressive and we'd end up below MIN_KEEP, pad
-  // back from the dropped list. Preserves at least a minimum competitive
-  // set even when the LLM is uncertain or over-rejects.
-  if (kept.length < MIN_KEEP && dropped.length > 0) {
-    const droppedDomains = new Set(dropped.map((d) => d.domain.toLowerCase()));
-    const padded = candidates.filter((c) =>
-      droppedDomains.has(c.domain.toLowerCase()) && !kept.some((k) => k.domain === c.domain),
+  // Do NOT pad back from the dropped list. We used to re-add rejected
+  // candidates to preserve MIN_KEEP, but that re-injects entities the
+  // classifier explicitly judged wrong-type — a live prod audit ranked an
+  // agency "#3" against HubSpot and Webflow (both correctly rejected as
+  // SaaS platforms, then padded back in). A short-but-real competitor list
+  // degrades honestly downstream (shareOfVoice guards, `Unranked` standing,
+  // per-slide empty states); a padded list produces confident nonsense.
+  if (kept.length < MIN_KEEP) {
+    console.log(
+      `[Audit] Entity-type filter kept only ${kept.length}/${candidates.length} candidates — proceeding without padding (rejected candidates stay rejected).`,
     );
-    const needed = MIN_KEEP - kept.length;
-    const padding = padded.slice(0, needed);
-    if (padding.length) {
-      console.log(
-        `[Audit] Padding with ${padding.length} dropped candidates to preserve minimum competitive set:`,
-        padding.map((p) => p.domain).join(', '),
-      );
-      kept.push(...padding);
-    }
   }
 
   return kept;
