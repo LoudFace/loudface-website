@@ -183,12 +183,18 @@ export async function getBenchmarkContext(
 }
 
 /**
- * Return the percentile rank of `value` within `peers`, using the standard
- * "percent of values strictly below" definition. Tied peers don't count
- * against you, so 100% is reachable for category leaders.
+ * Return the percentile rank of `value` within `peers`, using the midrank
+ * definition: (count strictly below + half the count tied) / total. Using
+ * only "strictly below" (the previous implementation) meant every audit in
+ * a tied cohort — including category leaders sharing the top score — landed
+ * at the 0th percentile, since none of them had anyone strictly below a
+ * value equal to their own. Midrank splits the credit for ties down the
+ * middle, which is the standard fix and still lets a genuinely untied
+ * leader reach the 100th percentile.
  */
 function percentileOf(value: number, peers: number[]): number {
   if (peers.length === 0) return 50;
   const below = peers.filter((p) => p < value).length;
-  return Math.round((below / peers.length) * 100);
+  const equal = peers.filter((p) => p === value).length;
+  return Math.round(((below + equal / 2) / peers.length) * 100);
 }

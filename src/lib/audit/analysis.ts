@@ -6,11 +6,44 @@ import type {
   SourceCitation,
 } from './types';
 
+function escapeRegex(raw: string): string {
+  return raw.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
+
+/**
+ * Context words that suggest a bare word match is naming a company/product
+ * rather than using the word generically. Used only for common-word brand
+ * names (see `isGenericWordName`).
+ */
+const BRAND_CONTEXT_WORDS = [
+  'app', 'platform', 'company', 'tool', 'software', 'vendor', 'brand',
+  'startup', 'service', 'product', 'saas', 'website',
+];
+
+/**
+ * A single short, all-alphabetic word ("Linear", "Ramp", "Notion") is the
+ * shape that produces false positives on a bare word-boundary match — "a
+ * linear workflow", "up the ramp". Multi-word names, names with digits/
+ * punctuation, or longer names are distinctive enough that a plain match is
+ * safe. 8 chars is a rough cutoff for "reads like an ordinary English word".
+ */
+function isGenericWordName(name: string): boolean {
+  return /^[a-z]+$/i.test(name) && name.length <= 8;
+}
+
 /**
  * Does the text mention the brand?
- * - Domain match is always a whole-token match (avoids "Toku" matching "tokusatsu").
+ * - Domain match is a boundary-aware match against the normalized domain —
+ *   not a raw substring — so `ramp.com` doesn't match inside `offramp.com`.
  * - Brand name match is word-boundary-aware so short names don't match
  *   substrings ("test" must not match "testing" / "contestant").
+ * - For common-word brand names (see `isGenericWordName`), a bare match is
+ *   not enough on its own — we additionally require the match to look like
+ *   a proper noun (capitalized in the source text), to sit near a company/
+ *   product context word, or for the brand's domain to also appear in the
+ *   text. This stops generic-word inflation ("a linear workflow" counting
+ *   as a mention of Linear) without dropping real mentions of distinctive
+ *   names, which skip this extra check entirely.
  */
 export function mentionsBrand(
   text: string,
@@ -20,18 +53,43 @@ export function mentionsBrand(
   if (!text) return false;
   const lowerText = text.toLowerCase();
 
-  // Domain check: match the root (strip www and TLD) and the full domain
+  // Domain check: boundary-anchored match against the normalized domain
+  // (strip www). A plain `.includes()` would also match `ramp.com` inside
+  // `offramp.com` or `notramp.com` — anchor so the char before the match
+  // isn't itself a domain/hostname character.
   const cleanedDomain = brandDomain.toLowerCase().replace(/^www\./, '');
-  if (cleanedDomain && lowerText.includes(cleanedDomain)) {
-    return true;
+  if (cleanedDomain) {
+    const domainRe = new RegExp(
+      `(?:^|[^a-z0-9.-])${escapeRegex(cleanedDomain)}(?=$|[^a-z0-9-])`,
+      'i',
+    );
+    if (domainRe.test(lowerText)) return true;
   }
 
   if (!brandName) return false;
 
   // Use word-boundary match for the brand name
-  const escaped = brandName.toLowerCase().replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-  const re = new RegExp(`(?:^|[^a-z0-9])${escaped}(?=$|[^a-z0-9])`, 'i');
-  return re.test(text);
+  const escaped = escapeRegex(brandName.toLowerCase());
+  const re = new RegExp(`(?:^|[^a-z0-9])(${escaped})(?=$|[^a-z0-9])`, 'gi');
+
+  if (!isGenericWordName(brandName)) {
+    return re.test(text);
+  }
+
+  // Common-word brand name — require a proximity/context signal per-match.
+  let match: RegExpExecArray | null;
+  while ((match = re.exec(text)) !== null) {
+    const matched = match[1];
+    if (/^[A-Z]/.test(matched)) return true; // looks like a proper noun in context
+
+    const windowStart = Math.max(0, match.index - 60);
+    const windowEnd = Math.min(text.length, match.index + matched.length + 60);
+    const window = lowerText.slice(windowStart, windowEnd);
+    if (BRAND_CONTEXT_WORDS.some((w) => window.includes(w))) return true;
+
+    if (match.index === re.lastIndex) re.lastIndex++; // guard against zero-length matches
+  }
+  return false;
 }
 
 /**
@@ -67,6 +125,20 @@ export function parseResponse(
   const lowerDomain = brandDomain.toLowerCase().replace(/^www\./, '');
   const mentioned = mentionsBrand(fullText, brandName, brandDomain);
 
+  // Own-domain citation check needs an exact (or subdomain) hostname match —
+  // a raw substring test would count `notbrand.com/x` as a citation for
+  // `brand.com`. Parse each citation URL's hostname and compare it against
+  // the normalized registrable domain.
+  function isOwnDomainCitation(url: string): boolean {
+    if (!lowerDomain) return false;
+    try {
+      const host = new URL(url).hostname.replace(/^www\./, '').toLowerCase();
+      return host === lowerDomain || host.endsWith(`.${lowerDomain}`);
+    } catch {
+      return false;
+    }
+  }
+
   const sources: SourceCitation[] = [];
   for (const item of result.items) {
     if (item.annotations) {
@@ -90,7 +162,7 @@ export function parseResponse(
     }
   }
 
-  const cited = sources.some((s) => s.url.toLowerCase().includes(lowerDomain));
+  const cited = sources.some((s) => isOwnDomainCitation(s.url));
   const snippet = extractSnippet(fullText, brandName);
   const sentiment = analyzeSentiment(fullText, brandName);
 
@@ -107,11 +179,31 @@ export function parseResponse(
 
 function findBrandIndex(text: string, brandName: string): number {
   if (!text || !brandName) return -1;
-  const escaped = brandName.toLowerCase().replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  const escaped = escapeRegex(brandName.toLowerCase());
   const re = new RegExp(`(?:^|[^a-z0-9])(${escaped})(?=$|[^a-z0-9])`, 'i');
   const match = re.exec(text);
   if (!match) return -1;
   return match.index + match[0].toLowerCase().indexOf(brandName.toLowerCase());
+}
+
+/**
+ * Like `findBrandIndex`, but returns every mention index instead of just the
+ * first. Used by `analyzeSentiment` so multi-mention responses aren't judged
+ * on their first mention alone (e.g. a response that opens neutrally on the
+ * brand but turns negative three paragraphs later).
+ */
+function findAllBrandIndices(text: string, brandName: string): number[] {
+  if (!text || !brandName) return [];
+  const escaped = escapeRegex(brandName.toLowerCase());
+  const re = new RegExp(`(?:^|[^a-z0-9])(${escaped})(?=$|[^a-z0-9])`, 'gi');
+  const lowerBrand = brandName.toLowerCase();
+  const indices: number[] = [];
+  let match: RegExpExecArray | null;
+  while ((match = re.exec(text)) !== null) {
+    indices.push(match.index + match[0].toLowerCase().indexOf(lowerBrand));
+    if (match.index === re.lastIndex) re.lastIndex++; // guard against zero-length matches
+  }
+  return indices;
 }
 
 function extractSnippet(text: string, brandName: string): string {
@@ -127,30 +219,67 @@ function extractSnippet(text: string, brandName: string): string {
   return snippet;
 }
 
+const SENTIMENT_POSITIVE_SIGNALS = [
+  'excellent', 'great', 'best', 'top', 'leading', 'popular',
+  'highly rated', 'well-known', 'trusted', 'reliable', 'innovative',
+  'recommended', 'strong', 'impressive', 'standout', 'powerful',
+];
+const SENTIMENT_NEGATIVE_SIGNALS = [
+  'limited', 'lacks', 'expensive', 'criticism', 'drawback',
+  'downside', 'weakness', 'concern', 'issue', 'problem',
+  'behind', 'outdated', 'struggle', 'complaint', 'poor',
+];
+/** Negators that flip a signal word's polarity when they appear shortly before it. */
+const SENTIMENT_NEGATORS = [
+  'not', 'no', 'never', "isn't", "aren't", "wasn't", "weren't",
+  "doesn't", "don't", "didn't", "won't", "wouldn't", 'no longer',
+];
+
+/**
+ * Does a negator appear within ~3 tokens (approximated as ~20 chars, which
+ * covers "is not really", "does not seem") immediately before this signal
+ * word's position in the window?
+ */
+function isNegatedAt(window: string, matchIndex: number): boolean {
+  const before = window.slice(Math.max(0, matchIndex - 20), matchIndex);
+  // Word-boundary test, not substring — a bare `.includes('no')` would false-
+  // positive inside ordinary words like "known" or "no longer" inside "known".
+  return SENTIMENT_NEGATORS.some((n) => new RegExp(`\\b${escapeRegex(n)}\\b`, 'i').test(before));
+}
+
+/** Sum +1/-1 per signal-word occurrence in a window, flipping polarity when negated. */
+function scoreWindow(window: string, signals: string[], polarity: 1 | -1): number {
+  let score = 0;
+  for (const word of signals) {
+    let idx = window.indexOf(word);
+    while (idx !== -1) {
+      score += isNegatedAt(window, idx) ? -polarity : polarity;
+      idx = window.indexOf(word, idx + word.length);
+    }
+  }
+  return score;
+}
+
+/**
+ * Aggregates signal words across every mention of the brand in the response
+ * (not just the first), with a lightweight negation flip so "not a great
+ * fit" doesn't count as a positive hit.
+ */
 function analyzeSentiment(text: string, brandName: string): Sentiment {
-  const idx = findBrandIndex(text, brandName);
-  if (idx === -1) return 'neutral';
+  const indices = findAllBrandIndices(text, brandName);
+  if (indices.length === 0) return 'neutral';
 
   const lowerText = text.toLowerCase();
-  const context = lowerText.slice(
-    Math.max(0, idx - 200),
-    Math.min(lowerText.length, idx + brandName.length + 200),
-  );
-
-  const positiveSignals = [
-    'excellent', 'great', 'best', 'top', 'leading', 'popular',
-    'highly rated', 'well-known', 'trusted', 'reliable', 'innovative',
-    'recommended', 'strong', 'impressive', 'standout', 'powerful',
-  ];
-  const negativeSignals = [
-    'limited', 'lacks', 'expensive', 'criticism', 'drawback',
-    'downside', 'weakness', 'concern', 'issue', 'problem',
-    'behind', 'outdated', 'struggle', 'complaint', 'poor',
-  ];
 
   let score = 0;
-  for (const word of positiveSignals) if (context.includes(word)) score++;
-  for (const word of negativeSignals) if (context.includes(word)) score--;
+  for (const idx of indices) {
+    const window = lowerText.slice(
+      Math.max(0, idx - 200),
+      Math.min(lowerText.length, idx + brandName.length + 200),
+    );
+    score += scoreWindow(window, SENTIMENT_POSITIVE_SIGNALS, 1);
+    score += scoreWindow(window, SENTIMENT_NEGATIVE_SIGNALS, -1);
+  }
 
   if (score >= 2) return 'positive';
   if (score <= -2) return 'negative';

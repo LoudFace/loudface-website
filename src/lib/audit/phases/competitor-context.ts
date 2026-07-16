@@ -23,7 +23,9 @@ import { extractStructured } from '../extract-structured';
  * to guess competitors, which returns generic industry players.
  */
 const KNOWN_COMPETITORS: Record<string, CompetitorInfo[]> = {
-  'loudface.com': [
+  // LoudFace's own domain is loudface.co, not loudface.com — the wrong key
+  // meant this fallback never actually matched a self-audit.
+  'loudface.co': [
     { domain: 'npdigital.com', name: 'NP Digital', keywordIntersection: 0 },
     { domain: 'flowninja.co', name: 'FlowNinja', keywordIntersection: 0 },
     { domain: 'vezadigital.com', name: 'Veza Digital', keywordIntersection: 0 },

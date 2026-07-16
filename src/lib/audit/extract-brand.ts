@@ -18,6 +18,167 @@ export interface ExtractedBrand {
 
 const FETCH_TIMEOUT_MS = 8000;
 
+// ─── SSRF guard ──────────────────────────────────────────────────────
+// The target URL is user-supplied and fetched server-side, so it must never
+// be allowed to reach loopback/private/link-local addresses (including cloud
+// metadata endpoints like 169.254.169.254). Wildcard-DNS services such as
+// `*.nip.io` resolve arbitrary-looking hostnames straight to those ranges,
+// so the check has to happen against the RESOLVED IP, not the hostname text,
+// and has to be repeated on every redirect hop (DNS can rebind between the
+// initial lookup and a later hop).
+
+import { lookup } from 'node:dns/promises';
+import net from 'node:net';
+
+const MAX_RESPONSE_BYTES = 1024 * 1024; // 1 MiB cap on fetched HTML
+const MAX_REDIRECTS = 3;
+
+/** True if `ip` (a literal, already-resolved address) is loopback, link-local,
+ *  private, or otherwise non-routable and therefore unsafe to fetch. */
+export function isPrivateAddress(ip: string): boolean {
+  const version = net.isIP(ip);
+
+  if (version === 4) {
+    const parts = ip.split('.').map(Number);
+    if (parts.length !== 4 || parts.some((p) => Number.isNaN(p) || p < 0 || p > 255)) return true;
+    const [a, b] = parts;
+    if (a === 0) return true; // 0.0.0.0/8 — "this network" / unspecified
+    if (a === 10) return true; // 10.0.0.0/8 private
+    if (a === 127) return true; // 127.0.0.0/8 loopback
+    if (a === 169 && b === 254) return true; // 169.254.0.0/16 link-local (cloud metadata: 169.254.169.254)
+    if (a === 172 && b >= 16 && b <= 31) return true; // 172.16.0.0/12 private
+    if (a === 192 && b === 168) return true; // 192.168.0.0/16 private
+    if (a === 100 && b >= 64 && b <= 127) return true; // 100.64.0.0/10 carrier-grade NAT
+    if (a >= 224) return true; // 224.0.0.0/4 multicast + 240.0.0.0/4 reserved
+    return false;
+  }
+
+  if (version === 6) {
+    const normalized = ip.toLowerCase();
+    if (normalized === '::1' || normalized === '::') return true; // loopback / unspecified
+    if (/^fe[89ab][0-9a-f]:/.test(normalized)) return true; // fe80::/10 link-local
+    if (/^f[cd][0-9a-f]{2}:/.test(normalized)) return true; // fc00::/7 unique local
+    const mapped = normalized.match(/^::ffff:(\d+\.\d+\.\d+\.\d+)$/); // IPv4-mapped IPv6
+    if (mapped) return isPrivateAddress(mapped[1]);
+    return false;
+  }
+
+  return true; // not a recognizable IP — fail closed
+}
+
+/** Resolve `hostname` (or accept it directly if it's already an IP literal)
+ *  and reject if any candidate address is private/reserved. */
+async function isHostnameSafe(hostname: string): Promise<boolean> {
+  const bare = hostname.replace(/^\[|\]$/g, ''); // strip IPv6 brackets, e.g. "[::1]"
+  if (net.isIP(bare)) return !isPrivateAddress(bare);
+
+  try {
+    const records = await lookup(hostname, { all: true, verbatim: true });
+    if (records.length === 0) return false;
+    return records.every((r) => !isPrivateAddress(r.address));
+  } catch {
+    return false; // couldn't resolve — treat as unsafe rather than retry-loop
+  }
+}
+
+/** Full destination check for a fetch hop: scheme + resolved-address safety. */
+async function isUrlSafe(target: URL): Promise<boolean> {
+  if (target.protocol !== 'http:' && target.protocol !== 'https:') return false;
+  return isHostnameSafe(target.hostname);
+}
+
+/** Read a fetch Response body, aborting once it exceeds `maxBytes`. Returns
+ *  `null` (not a truncated string) if the cap is hit, so callers never
+ *  silently work off a partial page. */
+async function readBodyCapped(res: Response, maxBytes: number): Promise<string | null> {
+  if (!res.body) {
+    // No streamable body in this environment — content-length was already
+    // checked by the caller, so this is bounded best-effort.
+    return await res.text();
+  }
+
+  const reader = res.body.getReader();
+  const chunks: Uint8Array[] = [];
+  let total = 0;
+  try {
+    for (;;) {
+      const { done, value } = await reader.read();
+      if (done) break;
+      if (value) {
+        total += value.byteLength;
+        if (total > maxBytes) {
+          await reader.cancel();
+          return null;
+        }
+        chunks.push(value);
+      }
+    }
+  } catch {
+    return null;
+  }
+
+  return Buffer.concat(chunks.map((c) => Buffer.from(c))).toString('utf-8');
+}
+
+/**
+ * Fetch a single URL with SSRF guards: validates the destination (and every
+ * redirect hop, manually followed) against private/reserved IP ranges, and
+ * caps the response body size. Returns `null` on any rejection or failure.
+ */
+async function fetchGuarded(initialUrl: string, timeoutMs: number): Promise<string | null> {
+  let current: URL;
+  try {
+    current = new URL(initialUrl);
+  } catch {
+    return null;
+  }
+
+  for (let hop = 0; hop <= MAX_REDIRECTS; hop++) {
+    if (!(await isUrlSafe(current))) return null;
+
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), timeoutMs);
+    let res: Response;
+    try {
+      res = await fetch(current.toString(), {
+        signal: controller.signal,
+        redirect: 'manual', // re-validate the destination ourselves on every hop
+        headers: {
+          'User-Agent': BROWSER_UA,
+          Accept: BROWSER_ACCEPT,
+          'Accept-Language': 'en-US,en;q=0.9',
+        },
+      });
+    } catch {
+      return null;
+    } finally {
+      clearTimeout(timeout);
+    }
+
+    if (res.status >= 300 && res.status < 400) {
+      const location = res.headers.get('location');
+      if (!location) return null;
+      try {
+        current = new URL(location, current); // resolve relative redirects
+      } catch {
+        return null;
+      }
+      continue; // loop re-validates the new destination before following it
+    }
+
+    if (!res.ok) return null;
+    const contentType = res.headers.get('content-type') ?? '';
+    if (!/text\/html|application\/xhtml/i.test(contentType)) return null;
+
+    const contentLength = res.headers.get('content-length');
+    if (contentLength && Number(contentLength) > MAX_RESPONSE_BYTES) return null;
+
+    return await readBodyCapped(res, MAX_RESPONSE_BYTES);
+  }
+
+  return null; // too many redirects
+}
+
 /**
  * Bot-flagged User-Agents are rejected by Cloudflare/Akamai-fronted sites
  * (e.g. warbyparker.com returns 403). Pretend to be a desktop Chrome so we
@@ -37,29 +198,7 @@ const BROWSER_ACCEPT =
  * Returns `null` if both attempts fail.
  */
 export async function fetchHtml(url: string, timeoutMs = FETCH_TIMEOUT_MS): Promise<string | null> {
-  const tryOnce = async (target: string): Promise<string | null> => {
-    const controller = new AbortController();
-    const timeout = setTimeout(() => controller.abort(), timeoutMs);
-    try {
-      const res = await fetch(target, {
-        signal: controller.signal,
-        redirect: 'follow',
-        headers: {
-          'User-Agent': BROWSER_UA,
-          Accept: BROWSER_ACCEPT,
-          'Accept-Language': 'en-US,en;q=0.9',
-        },
-      });
-      if (!res.ok) return null;
-      const contentType = res.headers.get('content-type') ?? '';
-      if (!/text\/html|application\/xhtml/i.test(contentType)) return null;
-      return await res.text();
-    } catch {
-      return null;
-    } finally {
-      clearTimeout(timeout);
-    }
-  };
+  const tryOnce = (target: string): Promise<string | null> => fetchGuarded(target, timeoutMs);
 
   const html = await tryOnce(url);
   if (html) return html;

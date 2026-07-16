@@ -32,13 +32,15 @@ export default async function AuditResultsPage({
     );
   }
 
-  // Failed
+  // Failed — seed the failed state directly so the progress/polling UI
+  // never flashes while the first poll resolves.
   if (record.status === 'failed') {
     return (
       <AuditProgress
         id={id}
         initialProgress={record.progress}
         initialPhase={record.currentPhase}
+        initialFailed
       />
     );
   }
