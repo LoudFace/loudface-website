@@ -1,13 +1,22 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 
 interface AuditProgressProps {
   id: string;
   initialProgress: number;
   initialPhase: string;
+  /** Seed the failed state directly from the server record so a known-failed
+   * audit doesn't flash the in-progress UI while the first poll resolves. */
+  initialFailed?: boolean;
 }
+
+// Ceiling on how long we'll keep polling before giving up and telling the
+// user to expect an email instead. Real audits run ~2-5 minutes; 8 minutes
+// gives generous headroom before we assume something's stuck.
+const MAX_POLL_MS = 8 * 60 * 1000;
+const POLL_INTERVAL_MS = 3000;
 
 const PHASE_ICONS: Record<string, string> = {
   'Starting audit...': '01',
@@ -61,51 +70,80 @@ const PHASE_TAGLINES: Record<string, string[]> = {
   ],
 };
 
-export function AuditProgress({ id, initialProgress, initialPhase }: AuditProgressProps) {
+export function AuditProgress({ id, initialProgress, initialPhase, initialFailed = false }: AuditProgressProps) {
   const router = useRouter();
   const [progress, setProgress] = useState(initialProgress);
   const [phase, setPhase] = useState(initialPhase);
-  const [failed, setFailed] = useState(false);
+  const [failed, setFailed] = useState(initialFailed);
+  const [timedOut, setTimedOut] = useState(false);
   const [taglineIdx, setTaglineIdx] = useState(0);
 
-  const poll = useCallback(async () => {
-    try {
-      const res = await fetch(`/api/audit/${id}/status`, { cache: 'no-store' });
-      if (!res.ok) return;
-
-      const data = await res.json();
-      setProgress(data.progress);
-      setPhase(data.currentPhase);
-
-      if (data.status === 'complete') {
-        router.refresh();
-        return true;
-      }
-      if (data.status === 'failed') {
-        setFailed(true);
-        return true;
-      }
-    } catch {
-      // Silently retry on next poll
-    }
-    return false;
-  }, [id, router]);
-
+  // Polling loop — a recursive setTimeout (not setInterval) so a slow response
+  // can never overlap with the next request, plus an AbortController per
+  // request and an `active` flag checked AFTER the await so a response that
+  // resolves post-unmount (or post-completion) never calls setState.
   useEffect(() => {
+    if (initialFailed) return;
+
     let active = true;
-    const interval = setInterval(async () => {
+    let timeoutId: ReturnType<typeof setTimeout> | undefined;
+    let controller: AbortController | null = null;
+    const startedAt = Date.now();
+
+    const scheduleNext = () => {
       if (!active) return;
-      const done = await poll();
-      if (done) {
-        clearInterval(interval);
+      timeoutId = setTimeout(runPoll, POLL_INTERVAL_MS);
+    };
+
+    const runPoll = async () => {
+      if (!active) return;
+
+      if (Date.now() - startedAt > MAX_POLL_MS) {
+        if (active) setTimedOut(true);
+        return;
       }
-    }, 3000);
+
+      controller = new AbortController();
+      try {
+        const res = await fetch(`/api/audit/${id}/status`, {
+          cache: 'no-store',
+          signal: controller.signal,
+        });
+        if (!active) return;
+        if (!res.ok) {
+          scheduleNext();
+          return;
+        }
+
+        const data = await res.json();
+        if (!active) return;
+
+        setProgress(data.progress);
+        setPhase(data.currentPhase);
+
+        if (data.status === 'complete') {
+          router.refresh();
+          return;
+        }
+        if (data.status === 'failed') {
+          setFailed(true);
+          return;
+        }
+      } catch {
+        // Aborted or network error — silently retry on next poll.
+      }
+
+      scheduleNext();
+    };
+
+    scheduleNext();
 
     return () => {
       active = false;
-      clearInterval(interval);
+      controller?.abort();
+      if (timeoutId) clearTimeout(timeoutId);
     };
-  }, [poll]);
+  }, [id, router, initialFailed]);
 
   // Rotate the sub-tagline every 2.5s to communicate live work.
   useEffect(() => {
@@ -131,7 +169,33 @@ export function AuditProgress({ id, initialProgress, initialPhase }: AuditProgre
             Something went wrong while running your audit. This is usually temporary.
           </p>
           <button
-            onClick={() => router.push('/audit')}
+            onClick={() => router.push('/ai-audit')}
+            className="rounded-lg bg-primary-600 px-6 py-3 text-white font-medium hover:bg-primary-500 transition-colors"
+          >
+            Try Again
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  if (timedOut) {
+    return (
+      <div className="flex min-h-dvh items-center justify-center bg-surface-950 px-4">
+        <div className="text-center max-w-md">
+          <div className="w-16 h-16 rounded-full bg-warning/10 flex items-center justify-center mx-auto mb-6">
+            <svg className="w-8 h-8 text-warning" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v3.75m9-.75a9 9 0 11-18 0 9 9 0 0118 0zm-9 3.75h.008v.008H12v-.008z" />
+            </svg>
+          </div>
+          <h1 className="text-2xl font-heading font-medium text-white mb-3">
+            This is taking longer than expected
+          </h1>
+          <p className="text-surface-400 mb-8">
+            We&apos;ll follow up by email once your audit is ready, or you can try again now.
+          </p>
+          <button
+            onClick={() => router.push('/ai-audit')}
             className="rounded-lg bg-primary-600 px-6 py-3 text-white font-medium hover:bg-primary-500 transition-colors"
           >
             Try Again
@@ -148,11 +212,12 @@ export function AuditProgress({ id, initialProgress, initialPhase }: AuditProgre
   return (
     <div className="flex min-h-dvh items-center justify-center bg-surface-950 px-4">
       <div className="text-center max-w-lg w-full">
-        {/* Animated radar-like pulse */}
+        {/* Animated radar-like pulse — gated behind motion-safe so
+            prefers-reduced-motion users don't get perpetual pulsing rings. */}
         <div className="relative w-32 h-32 mx-auto mb-10">
-          <div className="absolute inset-0 rounded-full border border-primary-600/20 animate-ping" style={{ animationDuration: '2s' }} />
-          <div className="absolute inset-3 rounded-full border border-primary-600/30 animate-ping" style={{ animationDuration: '2s', animationDelay: '0.3s' }} />
-          <div className="absolute inset-6 rounded-full border border-primary-600/40 animate-ping" style={{ animationDuration: '2s', animationDelay: '0.6s' }} />
+          <div className="absolute inset-0 rounded-full border border-primary-600/20 motion-safe:animate-ping" style={{ animationDuration: '2s' }} />
+          <div className="absolute inset-3 rounded-full border border-primary-600/30 motion-safe:animate-ping" style={{ animationDuration: '2s', animationDelay: '0.3s' }} />
+          <div className="absolute inset-6 rounded-full border border-primary-600/40 motion-safe:animate-ping" style={{ animationDuration: '2s', animationDelay: '0.6s' }} />
           <div className="absolute inset-0 flex items-center justify-center">
             <span className="text-3xl font-heading font-medium text-white">
               {phaseNum}
@@ -160,15 +225,21 @@ export function AuditProgress({ id, initialProgress, initialPhase }: AuditProgre
           </div>
         </div>
 
-        {/* Phase description */}
-        <p className="text-lg text-surface-300 mb-2 min-h-[1.75rem]">
+        {/* Phase description — announced to screen readers only when the
+            text actually changes (React bails on identical-string re-renders,
+            so this doesn't chatter every 3s poll). */}
+        <p
+          role="status"
+          aria-live="polite"
+          className="text-lg text-surface-300 mb-2 min-h-[1.75rem]"
+        >
           {phase}
         </p>
 
         {/* Rotating sub-tagline — communicates active work */}
         <p
           key={tagline}
-          className="text-2xs text-surface-500 mb-8 min-h-[1rem] font-mono motion-safe:animate-fade-in"
+          className="text-2xs text-surface-500 mb-8 min-h-[1rem] uppercase tracking-[0.1em] motion-safe:animate-fade-in"
         >
           {tagline}
         </p>
@@ -177,9 +248,15 @@ export function AuditProgress({ id, initialProgress, initialPhase }: AuditProgre
         <div className="w-full max-w-xs mx-auto">
           <div className="flex items-center justify-between text-sm text-surface-500 mb-2">
             <span>Progress</span>
-            <span>{progress}%</span>
+            <span className="tabular-nums">{progress}%</span>
           </div>
-          <div className="h-1.5 bg-surface-800 rounded-full overflow-hidden">
+          <div
+            role="progressbar"
+            aria-valuenow={progress}
+            aria-valuemin={0}
+            aria-valuemax={100}
+            className="h-1.5 bg-surface-800 rounded-full overflow-hidden"
+          >
             <div
               className="h-full bg-primary-600 rounded-full transition-all duration-700 ease-out"
               style={{ width: `${progress}%` }}
@@ -189,7 +266,7 @@ export function AuditProgress({ id, initialProgress, initialPhase }: AuditProgre
 
         {/* Reassurance */}
         <p className="text-2xs text-surface-500 mt-8">
-          This typically takes 1-3 minutes. You can bookmark this page and come back.
+          This typically takes 2-5 minutes. You can bookmark this page and come back.
         </p>
       </div>
     </div>

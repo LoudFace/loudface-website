@@ -30,6 +30,15 @@ import type { TraceCollector } from './dataforseo';
 const DEFAULT_MODEL = 'anthropic/claude-haiku-4.5';
 
 /**
+ * Hard cap on a single structured-extraction call. These calls previously had
+ * no timeout at all — a hung OpenRouter/Anthropic call could sit on
+ * `generateObject` indefinitely and burn the whole Vercel function budget.
+ * 45s (vs 60s for direct-llm chat calls) because extraction prompts are
+ * shorter and don't carry web-search latency.
+ */
+const EXTRACT_TIMEOUT_MS = 45_000;
+
+/**
  * Singleton OpenRouter provider. Constructed lazily so the module loads
  * even when OPENROUTER_API_KEY isn't set (build time, tests).
  */
@@ -87,6 +96,8 @@ export async function extractStructured<T>(
 ): Promise<StructuredExtractionResult<T>> {
   const modelId = opts.model ?? DEFAULT_MODEL;
   const start = Date.now();
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), EXTRACT_TIMEOUT_MS);
 
   try {
     const { object, usage } = await generateObject({
@@ -96,6 +107,7 @@ export async function extractStructured<T>(
       system: opts.system,
       maxOutputTokens: opts.maxOutputTokens ?? 2048,
       temperature: opts.temperature ?? 0.1,
+      abortSignal: controller.signal,
     });
 
     // Record in diagnostics so extraction cost shows up alongside DataForSEO calls
@@ -118,7 +130,9 @@ export async function extractStructured<T>(
       },
     };
   } catch (err) {
-    const message = err instanceof Error ? err.message : 'Unknown extraction error';
+    const message = err instanceof Error
+      ? (err.name === 'AbortError' ? `Timed out after ${EXTRACT_TIMEOUT_MS}ms` : err.message)
+      : 'Unknown extraction error';
     console.error(`[extractStructured] Failed (${modelId}):`, message);
 
     if (opts.tracer && opts.tag) {
@@ -133,5 +147,7 @@ export async function extractStructured<T>(
     }
 
     return { value: null, error: message };
+  } finally {
+    clearTimeout(timer);
   }
 }

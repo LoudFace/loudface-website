@@ -44,9 +44,11 @@ async function checkRateLimit(ip: string): Promise<string | null> {
 
     return null;
   } catch (err) {
-    // If Redis is down, allow the request (fail open) but log the error
-    console.error('[RateLimit] Redis error, allowing request:', err);
-    return null;
+    // Redis is the only thing standing between us and uncapped paid-pipeline
+    // spend, so an outage must fail CLOSED for the cost-relevant path — never
+    // silently allow unlimited runs while we can't count them.
+    console.error('[RateLimit] Redis error, failing closed:', err);
+    return 'Service temporarily unavailable. Please try again shortly.';
   }
 }
 
@@ -59,6 +61,13 @@ export async function POST(request: Request) {
     if (!url || !email) {
       return NextResponse.json(
         { error: 'url and email are required' },
+        { status: 400 },
+      );
+    }
+
+    if (typeof url !== 'string' || typeof email !== 'string' || url.length > 2048 || email.length > 320) {
+      return NextResponse.json(
+        { error: 'Invalid website URL' },
         { status: 400 },
       );
     }
@@ -78,8 +87,15 @@ export async function POST(request: Request) {
     }
 
     // ─── Rate Limiting ──────────────────────────────────────────
+    // Prefer Vercel's own non-spoofable client-IP header. `x-forwarded-for` is
+    // attacker-controlled at the FRONT of the chain (Vercel appends the real
+    // client IP at the end), so reading the first entry lets anyone bypass
+    // the per-IP cap by sending a fake header.
+    const vercelForwarded = request.headers.get('x-vercel-forwarded-for');
+    const realIp = request.headers.get('x-real-ip');
     const forwarded = request.headers.get('x-forwarded-for');
-    const ip = forwarded?.split(',')[0]?.trim() ?? 'unknown';
+    const forwardedLast = forwarded?.split(',').pop()?.trim();
+    const ip = vercelForwarded?.split(',')[0]?.trim() || realIp?.trim() || forwardedLast || 'unknown';
 
     const rateLimitError = await checkRateLimit(ip);
     if (rateLimitError) {
@@ -93,6 +109,30 @@ export async function POST(request: Request) {
     let normalizedUrl = url.trim();
     if (!/^https?:\/\//i.test(normalizedUrl)) {
       normalizedUrl = `https://${normalizedUrl}`;
+    }
+    const normalizedEmail = email.trim().toLowerCase();
+
+    // ─── Idempotency (double-submit / retry guard) ─────────────────
+    // A fresh nanoid + full paid pipeline runs on every POST, so a network
+    // retry or a double-click would otherwise kick off two audits for the
+    // same url+email. Claim a short-lived lock keyed on the normalized
+    // input; if someone already claimed it in the last ~2 minutes, hand back
+    // their audit id instead of starting a new run. Fails OPEN here only —
+    // this is a cost nicety, not a security control, so a Redis hiccup
+    // should never block a real submission.
+    const idempotencyKey = `audit:idempotency:${normalizedUrl.toLowerCase()}:${normalizedEmail}`;
+    const id = nanoid(12);
+    try {
+      const redis = await getRedis();
+      const lockAcquired = await redis.set(idempotencyKey, id, { NX: true, EX: 120 });
+      if (!lockAcquired) {
+        const existingId = await redis.get(idempotencyKey);
+        if (existingId) {
+          return NextResponse.json({ id: existingId }, { status: 200 });
+        }
+      }
+    } catch (err) {
+      console.warn('[API] Idempotency check failed, proceeding normally:', err);
     }
 
     // ─── Extract brand from the URL ───────────────────────────────
@@ -118,12 +158,12 @@ export async function POST(request: Request) {
     }
 
     // ─── Create Audit Record ──────────────────────────────────────
-    const id = nanoid(12);
+    // `id` was already generated above to seed the idempotency lock.
     const record: AuditRecord = {
       id,
       input: {
         url: normalizedUrl,
-        email: email.trim().toLowerCase(),
+        email: normalizedEmail,
         companyName: extracted.name,
         brandSource: extracted.source,
       },

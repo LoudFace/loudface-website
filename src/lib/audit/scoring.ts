@@ -53,9 +53,28 @@ export function calculateScores(
       : 0;
 
   // Competitive Standing: rank brand vs competitors using Phase 3 rates.
+  //
+  // If competitors are tracked but the SoV map is empty (e.g. Phase 3 failed
+  // outright, or the pipeline hit its overall deadline before Phase 3 could
+  // populate it — see pipeline.ts), `competitiveStanding` previously stayed
+  // at its init value of 1 (best possible rank), which falsely flattered the
+  // audit: "you're #1" when we actually measured nothing. We can't return
+  // `null` here without widening `AuditScores.competitiveStanding` beyond
+  // `number` (types.ts + the ScorecardSlide/validate.ts consumers of that
+  // field are outside this pass's scope), so instead we fall back to the
+  // WORST plausible rank — last place among all tracked competitors — which
+  // errs conservative instead of flattering. This is a stopgap: the correct
+  // fix is a nullable `competitiveStanding` plus an explicit
+  // `competitiveStandingAvailable` flag the slide renders as "insufficient
+  // data", which needs a coordinated types.ts + frontend change.
+  const sovDataMissing = hasCompetitors && Object.keys(competitorSoVMap).length === 0;
   let competitiveStanding = 1;
-  for (const rate of Object.values(competitorSoVMap)) {
-    if (rate > brandMentionRatePhase3) competitiveStanding++;
+  if (sovDataMissing) {
+    competitiveStanding = competitorContext.competitors.length + 1;
+  } else {
+    for (const rate of Object.values(competitorSoVMap)) {
+      if (rate > brandMentionRatePhase3) competitiveStanding++;
+    }
   }
 
   // Platform Coverage: how many platforms mention the brand in Phase 1
@@ -95,7 +114,37 @@ function calculateGrade(visibility: number, sov: number): OverallGrade {
 
 // ─── Traffic Light ──────────────────────────────────────────────────
 
-export function getTrafficLight(score: number): TrafficLight {
+/**
+ * Which grade-defining metric a traffic light represents. `calculateGrade`
+ * uses different A/C boundaries for discovery visibility vs share of voice
+ * (55/30 vs 18/8) — a flat 70/40 threshold contradicted both, so an audit
+ * sitting right on the A boundary rendered amber/red tiles next to a Grade A
+ * badge. 'generic' covers scores that aren't part of the grade formula at
+ * all (e.g. platform coverage as a %) and keeps the original flat scale.
+ */
+export type TrafficLightMetric = 'discoveryVisibility' | 'shareOfVoice' | 'generic';
+
+/**
+ * NOTE for callers: passing no `metric` (or 'generic') preserves the old
+ * flat 70/40 thresholds for backward compatibility. To actually fix the
+ * grade/traffic-light contradiction described above, callers scoring
+ * `discoveryVisibility` or `shareOfVoice` need to pass the matching metric —
+ * e.g. `ScorecardSlide.tsx` (outside this pass's file scope) should update
+ * its two calls to `getTrafficLight(scores.discoveryVisibility,
+ * 'discoveryVisibility')` and `getTrafficLight(scores.shareOfVoice,
+ * 'shareOfVoice')`.
+ */
+export function getTrafficLight(score: number, metric: TrafficLightMetric = 'generic'): TrafficLight {
+  if (metric === 'discoveryVisibility') {
+    if (score >= 55) return 'green'; // matches calculateGrade's A boundary
+    if (score >= 18) return 'amber'; // matches calculateGrade's C boundary
+    return 'red';
+  }
+  if (metric === 'shareOfVoice') {
+    if (score >= 30) return 'green'; // matches calculateGrade's A boundary
+    if (score >= 8) return 'amber'; // matches calculateGrade's C boundary
+    return 'red';
+  }
   if (score >= 70) return 'green';
   if (score >= 40) return 'amber';
   return 'red';

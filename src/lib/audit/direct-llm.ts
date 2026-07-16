@@ -48,6 +48,16 @@ const MODEL_IDS: Record<'chatgpt' | 'gemini', string> = {
 
 const OPENROUTER_BASE = 'https://openrouter.ai/api/v1';
 
+/**
+ * Hard cap on a single OpenRouter chat/completions call. Without this, a
+ * hung upstream call (observed on `:online` web-search models occasionally
+ * stalling) blocks on `fetch` indefinitely and can consume the entire
+ * Vercel function budget (~300s) by itself, starving every other phase.
+ * 60s matches the DataForSEO Live-endpoint budget in dataforseo.ts, since
+ * these calls carry similar web-search latency.
+ */
+const DIRECT_LLM_TIMEOUT_MS = 60_000;
+
 // ─── OpenRouter response types ─────────────────────────────────────
 
 interface OpenRouterUrlCitation {
@@ -120,6 +130,9 @@ export async function queryDirectLLM(
     return null;
   }
 
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), DIRECT_LLM_TIMEOUT_MS);
+
   try {
     const res = await fetch(`${OPENROUTER_BASE}/chat/completions`, {
       method: 'POST',
@@ -135,6 +148,7 @@ export async function queryDirectLLM(
         messages: [{ role: 'user', content: prompt }],
         max_tokens: 1024,
       }),
+      signal: controller.signal,
     });
 
     if (!res.ok) {
@@ -201,7 +215,11 @@ export async function queryDirectLLM(
     return adapted;
   } catch (err) {
     const durationMs = Date.now() - start;
-    const errorMessage = err instanceof Error ? err.message : 'Unknown error';
+    // AbortController.abort() throws a DOMException/Error named 'AbortError' —
+    // surface it as a clear timeout message rather than the generic "aborted".
+    const errorMessage = err instanceof Error
+      ? (err.name === 'AbortError' ? `Timed out after ${DIRECT_LLM_TIMEOUT_MS}ms` : err.message)
+      : 'Unknown error';
     console.error(`[DirectLLM] ${platform} query failed:`, errorMessage);
 
     tracer?.add({
@@ -214,5 +232,7 @@ export async function queryDirectLLM(
     });
 
     return null;
+  } finally {
+    clearTimeout(timer);
   }
 }

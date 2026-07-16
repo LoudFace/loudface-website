@@ -60,12 +60,12 @@ export function ScorecardSlide({ scores, companyName, totalSlides, entityConfide
           <MetricCard
             label="Discovery Visibility"
             value={`${scores.discoveryVisibility}%`}
-            status={getTrafficLight(scores.discoveryVisibility)}
+            status={getTrafficLight(scores.discoveryVisibility, 'discoveryVisibility')}
           />
           <MetricCard
             label="Share of Voice"
             value={`${scores.shareOfVoice}%`}
-            status={getTrafficLight(scores.shareOfVoice)}
+            status={getTrafficLight(scores.shareOfVoice, 'shareOfVoice')}
           />
           <MetricCard
             label="Competitive Standing"

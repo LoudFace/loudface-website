@@ -120,7 +120,7 @@ export function AuditForm() {
       </button>
 
       <p className="text-2xs text-surface-500 text-center">
-        Takes 1-3 minutes. We&apos;ll analyze your brand across ChatGPT, Claude, Gemini &amp; Perplexity.
+        Takes 2-5 minutes. We&apos;ll analyze your brand across ChatGPT, Claude, Gemini &amp; Perplexity.
       </p>
     </form>
   );

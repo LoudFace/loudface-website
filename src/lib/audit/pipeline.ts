@@ -1,5 +1,14 @@
 import { createClient, type RedisClientType } from 'redis';
-import type { AuditRecord, AuditResults, AuditDiagnostics, SlideDataQuality, ApiCallTrace } from './types';
+import type {
+  AuditRecord,
+  AuditResults,
+  AuditDiagnostics,
+  SlideDataQuality,
+  ApiCallTrace,
+  BrandBaselineData,
+  CompetitorContextData,
+  CategoryVisibilityData,
+} from './types';
 import { runBrandBaseline } from './phases/brand-baseline';
 import { runCompetitorContext } from './phases/competitor-context';
 import { runCategoryVisibility } from './phases/category-visibility';
@@ -51,6 +60,47 @@ function sanitizeCategory(raw: string): string {
   return out;
 }
 
+// ─── Deadline Skip Defaults ─────────────────────────────────────────
+// Used when a phase is skipped because runAudit's overall deadline has
+// already elapsed. Shapes must satisfy the same types the real phase
+// functions return so downstream scoring/diagnostics code doesn't need to
+// know a phase was skipped.
+
+function emptyBrandBaseline(): BrandBaselineData {
+  return {
+    queries: [],
+    brandRecognitionScore: 0,
+    accurateInfo: [],
+    inaccuracies: [],
+    gaps: [],
+    gapsWithSuggestions: [],
+  };
+}
+
+function emptyCompetitorContext(): CompetitorContextData {
+  return {
+    competitors: [],
+    queries: [],
+    competitiveRecommendationRate: 0,
+    shareOfVoiceByCompetitor: {},
+  };
+}
+
+function emptyCategoryVisibility(category: string, inferredIndustry: string): CategoryVisibilityData {
+  return {
+    queries: [],
+    categoryDiscoveryRate: 0,
+    inferredCategory: category,
+    inferredIndustry,
+  };
+}
+
+/** Combine the trace-derived partial-data reason with a deadline-triggered one, if any. */
+function combinePartialReasons(traceReason?: string, deadlineReason?: string): string | undefined {
+  if (traceReason && deadlineReason) return `${deadlineReason} ${traceReason}`;
+  return traceReason ?? deadlineReason;
+}
+
 // ─── Redis Client (reuse across invocations in warm lambdas) ─────────
 
 let redisClient: RedisClientType | null = null;
@@ -78,6 +128,19 @@ export async function setAuditRecord(record: AuditRecord): Promise<void> {
   await redis.set(`audit:${record.id}`, JSON.stringify(record), { EX: AUDIT_TTL });
 }
 
+/**
+ * Whole-record GET→mutate→SET. Two concurrent per-phase workers (the
+ * onProgress callbacks passed into runBrandBaseline/runCompetitorContext/
+ * runCategoryVisibility) both call this, so a stale read can land after a
+ * newer one. Two guards keep that race from doing real damage without a
+ * full atomic (Lua) rewrite:
+ *   1. Never write over a terminal status — a slow stale write landing
+ *      after 'complete'/'failed' was already persisted would silently flip
+ *      the UI back to "processing" forever.
+ *   2. Never let progress regress — a stale write from an earlier phase
+ *      finishing after a later phase already reported higher progress would
+ *      make the progress bar visibly jump backwards.
+ */
 async function updateProgress(
   id: string,
   progress: number,
@@ -85,6 +148,8 @@ async function updateProgress(
 ): Promise<void> {
   const record = await getAuditRecord(id);
   if (!record) return;
+  if (record.status === 'complete' || record.status === 'failed') return;
+  if (progress < record.progress) return;
   record.progress = progress;
   record.currentPhase = currentPhase;
   await setAuditRecord(record);
@@ -113,6 +178,28 @@ export async function runAudit(id: string): Promise<void> {
   const tracer = new TraceCollector();
   const auditStart = Date.now();
 
+  /**
+   * Soft overall deadline for the pipeline. Vercel Pro functions cap at
+   * ~300s; 230s leaves ~70s of headroom to finish scoring, build
+   * diagnostics, and persist even if the check fires deep into a phase.
+   * Without this, a run that's slow-but-not-failing (every DFS call
+   * succeeding, just each taking 15-20s across 3 phases × several
+   * platforms) could exhaust the function budget mid-phase and never reach
+   * either the success path or the catch block — leaving the record stuck
+   * in 'processing' forever with no way for the UI to know it's dead.
+   */
+  const AUDIT_DEADLINE_MS = 230_000;
+  let deadlineReason: string | undefined;
+  /** Checked before starting each phase. Returns true (and skips ahead) once. */
+  function checkDeadline(phaseLabel: string): boolean {
+    if (Date.now() - auditStart <= AUDIT_DEADLINE_MS) return false;
+    if (!deadlineReason) {
+      deadlineReason = `Audit hit its time budget before ${phaseLabel} could run — showing results from what completed in time.`;
+      console.warn(`[Audit] Deadline exceeded before ${phaseLabel} (${id})`);
+    }
+    return true;
+  }
+
   try {
     // ─── Ground Truth Scrape ──────────────────────────────────────
     // One fetch of the target site, used to anchor every downstream LLM
@@ -126,155 +213,186 @@ export async function runAudit(id: string): Promise<void> {
     }
 
     // ─── Phase 1: Brand Baseline ──────────────────────────────────
-    await updateProgress(id, 3, 'Analyzing brand recognition across AI platforms...');
-
-    const brandBaseline = await runBrandBaseline(
-      companyName,
-      domain,
-      async (pct) => {
-        await updateProgress(
-          id,
-          pct,
-          'Testing how AI platforms perceive your brand...',
-        );
-      },
-      tracer,
-    );
-
-    // ─── Phase 1 Structured Extraction ────────────────────────────
-    // Replaces ~900 lines of regex analysis with a single schema-constrained
-    // LLM call grounded on the ground-truth scrape.
-    await updateProgress(id, 38, 'Synthesizing Phase 1 findings...');
-    const phase1 = await extractPhase1Insights({
-      companyName,
-      domain,
-      groundTruth,
-      brandBaseline,
-      tracer,
-    });
-
-    // Fall back to conservative defaults if extraction fails entirely.
-    const category = sanitizeCategory(
-      phase1?.categorization.specific_category
-        || phase1?.categorization.broad_category
-        || 'business',
-    );
-    const inferredIndustry = sanitizeCategory(phase1?.categorization.industry || 'business');
-    const richEntityType = phase1?.categorization.entity_type || 'other';
+    let brandBaseline: BrandBaselineData;
+    let phase1: Awaited<ReturnType<typeof extractPhase1Insights>> | null = null;
+    let aiCompetitors: { name: string; mentionCount: number }[] = [];
+    let category = 'business';
+    let inferredIndustry = 'business';
+    let richEntityType = 'other';
     // Downstream phases take a narrow 'product' | 'service' | 'brand' trio (query-template selector).
     // - 'service': agencies/publishers → "Best X agencies/providers"
     // - 'brand': consumer-brand/ecommerce/marketplace → "Best X brands" (no "software/tools/platforms")
     // - 'product': saas/other → "Best X software/tools"
-    const entityType: 'product' | 'service' | 'brand' =
-      richEntityType === 'agency' || richEntityType === 'publisher'
-        ? 'service'
-        : richEntityType === 'consumer-brand' || richEntityType === 'ecommerce' || richEntityType === 'marketplace'
-          ? 'brand'
-          : 'product';
-    const categoryConfidence = phase1?.entity_disambiguation.confidence ?? 'low';
-    const lowEntityConfidence =
-      !phase1
-      || phase1.entity_disambiguation.is_correct_entity === false
-      || (brandBaseline.brandRecognitionScore < 10 && categoryConfidence === 'low');
+    let entityType: 'product' | 'service' | 'brand' = 'product';
+    let categoryConfidence: 'high' | 'medium' | 'low' = 'low';
+    let lowEntityConfidence = true;
 
-    if (lowEntityConfidence) {
-      console.log(
-        `[Audit] Low entity confidence: ${phase1?.entity_disambiguation.wrong_entity_description || 'extraction unavailable'}`,
-      );
-    }
+    if (checkDeadline('brand recognition analysis (Phase 1)')) {
+      brandBaseline = emptyBrandBaseline();
+    } else {
+      await updateProgress(id, 3, 'Analyzing brand recognition across AI platforms...');
 
-    // Overwrite the regex-derived findings with the structured extraction.
-    // accurate/inaccurate/gaps become plain strings for UI compatibility —
-    // the richer objects live on the extraction result if we want them later.
-    if (phase1) {
-      brandBaseline.accurateInfo = phase1.brand_knowledge.accurate_claims.map((c) => c.claim);
-      brandBaseline.inaccuracies = phase1.brand_knowledge.inaccurate_claims.map(
-        (c) => `${c.claim} (${c.why_wrong})`,
+      brandBaseline = await runBrandBaseline(
+        companyName,
+        domain,
+        async (pct) => {
+          await updateProgress(
+            id,
+            pct,
+            'Testing how AI platforms perceive your brand...',
+          );
+        },
+        tracer,
       );
-      brandBaseline.gaps = phase1.brand_knowledge.knowledge_gaps.map((g) => g.gap);
-      brandBaseline.gapsWithSuggestions = phase1.brand_knowledge.knowledge_gaps.map((g) => ({
-        gap: g.gap,
-        suggestedPath: normalizeSuggestedPath(g.suggested_page_path),
+
+      // ─── Phase 1 Structured Extraction ────────────────────────────
+      // Replaces ~900 lines of regex analysis with a single schema-constrained
+      // LLM call grounded on the ground-truth scrape.
+      await updateProgress(id, 38, 'Synthesizing Phase 1 findings...');
+      phase1 = await extractPhase1Insights({
+        companyName,
+        domain,
+        groundTruth,
+        brandBaseline,
+        tracer,
+      });
+
+      // Fall back to conservative defaults if extraction fails entirely.
+      category = sanitizeCategory(
+        phase1?.categorization.specific_category
+          || phase1?.categorization.broad_category
+          || 'business',
+      );
+      inferredIndustry = sanitizeCategory(phase1?.categorization.industry || 'business');
+      richEntityType = phase1?.categorization.entity_type || 'other';
+      entityType =
+        richEntityType === 'agency' || richEntityType === 'publisher'
+          ? 'service'
+          : richEntityType === 'consumer-brand' || richEntityType === 'ecommerce' || richEntityType === 'marketplace'
+            ? 'brand'
+            : 'product';
+      categoryConfidence = phase1?.entity_disambiguation.confidence ?? 'low';
+      lowEntityConfidence =
+        !phase1
+        || phase1.entity_disambiguation.is_correct_entity === false
+        || (brandBaseline.brandRecognitionScore < 10 && categoryConfidence === 'low');
+
+      if (lowEntityConfidence) {
+        console.log(
+          `[Audit] Low entity confidence: ${phase1?.entity_disambiguation.wrong_entity_description || 'extraction unavailable'}`,
+        );
+      }
+
+      // Overwrite the regex-derived findings with the structured extraction.
+      // accurate/inaccurate/gaps become plain strings for UI compatibility —
+      // the richer objects live on the extraction result if we want them later.
+      if (phase1) {
+        brandBaseline.accurateInfo = phase1.brand_knowledge.accurate_claims.map((c) => c.claim);
+        brandBaseline.inaccuracies = phase1.brand_knowledge.inaccurate_claims.map(
+          (c) => `${c.claim} (${c.why_wrong})`,
+        );
+        brandBaseline.gaps = phase1.brand_knowledge.knowledge_gaps.map((g) => g.gap);
+        brandBaseline.gapsWithSuggestions = phase1.brand_knowledge.knowledge_gaps.map((g) => ({
+          gap: g.gap,
+          suggestedPath: normalizeSuggestedPath(g.suggested_page_path),
+        }));
+      }
+
+      // Competitors extracted from Phase 1 responses, used by Phase 2 as cross-validation.
+      aiCompetitors = (phase1?.competitors_mentioned ?? []).map((c) => ({
+        name: c.name,
+        mentionCount: c.mention_count,
       }));
+
+      console.log(
+        `[Audit] Phase 1 extraction: category="${category}", entityType="${entityType}", confidence="${categoryConfidence}", correctEntity=${phase1?.entity_disambiguation.is_correct_entity}, competitors=${aiCompetitors.map((c) => `${c.name}(${c.mentionCount})`).join(', ') || '(none)'}`,
+      );
     }
-
-    // Competitors extracted from Phase 1 responses, used by Phase 2 as cross-validation.
-    const aiCompetitors = (phase1?.competitors_mentioned ?? []).map((c) => ({
-      name: c.name,
-      mentionCount: c.mention_count,
-    }));
-
-    console.log(
-      `[Audit] Phase 1 extraction: category="${category}", entityType="${entityType}", confidence="${categoryConfidence}", correctEntity=${phase1?.entity_disambiguation.is_correct_entity}, competitors=${aiCompetitors.map((c) => `${c.name}(${c.mentionCount})`).join(', ') || '(none)'}`,
-    );
 
     // ─── Phase 2: Competitor Context ──────────────────────────────
-    await updateProgress(id, 41, 'Identifying your competitors...');
+    let competitorContext: CompetitorContextData;
+    let competitorSource: 'dataforseo-labs' | 'ai-extracted' | 'hardcoded' = 'hardcoded';
 
-    const competitorResult = await runCompetitorContext(
-      companyName,
-      domain,
-      category,
-      async (pct) => {
-        await updateProgress(
-          id,
-          pct,
-          'Measuring competitive recommendation rates...',
-        );
-      },
-      entityType,
-      tracer,
-      aiCompetitors,
-    );
+    if (checkDeadline('competitor context analysis (Phase 2)')) {
+      competitorContext = emptyCompetitorContext();
+    } else {
+      await updateProgress(id, 41, 'Identifying your competitors...');
 
-    // Extract competitorSource for diagnostics, pass the rest as CompetitorContextData
-    const { competitorSource, ...competitorContext } = competitorResult;
+      const competitorResult = await runCompetitorContext(
+        companyName,
+        domain,
+        category,
+        async (pct) => {
+          await updateProgress(
+            id,
+            pct,
+            'Measuring competitive recommendation rates...',
+          );
+        },
+        entityType,
+        tracer,
+        aiCompetitors,
+      );
+
+      // Extract competitorSource for diagnostics, pass the rest as CompetitorContextData
+      ({ competitorSource, ...competitorContext } = competitorResult);
+    }
 
     // ─── Phase 3: Category Visibility ─────────────────────────────
-    await updateProgress(id, 71, 'Testing category discovery queries...');
+    let categoryVisibility: CategoryVisibilityData;
 
-    const categoryVisibility = await runCategoryVisibility(
-      companyName,
-      domain,
-      category,
-      inferredIndustry,
-      async (pct) => {
-        await updateProgress(
-          id,
-          pct,
-          'Checking your visibility in unbranded searches...',
-        );
-      },
-      entityType,
-      tracer,
-    );
+    if (checkDeadline('category visibility analysis (Phase 3)')) {
+      categoryVisibility = emptyCategoryVisibility(category, inferredIndustry);
+    } else {
+      await updateProgress(id, 71, 'Testing category discovery queries...');
 
-    // ─── Phase 3 SoV Population ───────────────────────────────────
-    // For each competitor, count how many Phase 3 (unbranded category) responses
-    // mention them. This is the only place brand + competitors are measured on
-    // identical prompts, so it's the only fair Share of Voice comparison.
-    //
-    // Important: we use mentionsBrand() (not substring match) so short names
-    // like "Slack" don't match "slackers" and domain roots match as whole tokens.
-    const allPhase3Results = categoryVisibility.queries.flatMap((q) => q.results);
-    const phase3Total = allPhase3Results.length;
+      categoryVisibility = await runCategoryVisibility(
+        companyName,
+        domain,
+        category,
+        inferredIndustry,
+        async (pct) => {
+          await updateProgress(
+            id,
+            pct,
+            'Checking your visibility in unbranded searches...',
+          );
+        },
+        entityType,
+        tracer,
+      );
 
-    if (phase3Total > 0) {
-      for (const comp of competitorContext.competitors) {
-        let mentions = 0;
-        for (const r of allPhase3Results) {
-          if (!r.rawResponse) continue;
-          if (mentionsBrand(r.rawResponse, comp.name, comp.domain)) {
-            mentions++;
+      // ─── Phase 3 SoV Population ───────────────────────────────────
+      // For each competitor, count how many Phase 3 (unbranded category) responses
+      // mention them. This is the only place brand + competitors are measured on
+      // identical prompts, so it's the only fair Share of Voice comparison.
+      //
+      // Important: we use mentionsBrand() (not substring match) so short names
+      // like "Slack" don't match "slackers" and domain roots match as whole tokens.
+      const allPhase3Results = categoryVisibility.queries.flatMap((q) => q.results);
+      const phase3Total = allPhase3Results.length;
+
+      if (phase3Total > 0) {
+        for (const comp of competitorContext.competitors) {
+          let mentions = 0;
+          for (const r of allPhase3Results) {
+            if (!r.rawResponse) continue;
+            if (mentionsBrand(r.rawResponse, comp.name, comp.domain)) {
+              mentions++;
+            }
           }
+          competitorContext.shareOfVoiceByCompetitor[comp.name] = Math.round(
+            (mentions / phase3Total) * 100,
+          );
         }
-        competitorContext.shareOfVoiceByCompetitor[comp.name] = Math.round(
-          (mentions / phase3Total) * 100,
-        );
       }
     }
 
     // ─── Scoring ──────────────────────────────────────────────────
+    // Always run scoring, even if the deadline has already tripped above —
+    // it's pure computation over whatever data made it this far, and running
+    // it is how we guarantee the pipeline lands on a terminal 'complete'
+    // state instead of stopping mid-flight.
     await updateProgress(id, 91, 'Calculating your audit scores...');
 
     const scores = calculateScores(
@@ -312,7 +430,7 @@ export async function runAudit(id: string): Promise<void> {
     const wrongEntityDescription = phase1?.entity_disambiguation.is_correct_entity === false
       ? phase1.entity_disambiguation.wrong_entity_description
       : undefined;
-    const partialDataReason = detectPartialData(tracer.getTraces());
+    const partialDataReason = combinePartialReasons(detectPartialData(tracer.getTraces()), deadlineReason);
 
     const diagnostics: AuditDiagnostics = {
       ...traceSummary,

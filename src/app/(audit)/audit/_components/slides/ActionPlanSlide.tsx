@@ -32,7 +32,7 @@ export function ActionPlanSlide({ actionItems, totalSlides }: ActionPlanSlidePro
             return (
               <div key={i} className="flex gap-4 rounded-xl bg-white/5 p-4 sm:p-5">
                 <div className="shrink-0">
-                  <span className={`inline-flex items-center justify-center w-7 h-7 rounded-lg text-sm font-mono font-medium ${style.badge}`}>
+                  <span className={`inline-flex items-center justify-center w-7 h-7 rounded-lg text-sm tabular-nums font-medium ${style.badge}`}>
                     {i + 1}
                   </span>
                 </div>

@@ -20,7 +20,7 @@ export function SlideShell({
       <div className="h-full flex flex-col px-4 sm:px-8 py-8 sm:py-12">
         {/* Top bar: slide number + progress dots */}
         <div className="flex items-center justify-between mb-6 sm:mb-8 shrink-0">
-          <span className="text-2xs text-surface-600 font-mono">
+          <span className="text-2xs text-surface-400 tabular-nums tracking-[0.1em]">
             {String(index).padStart(2, '0')} / {String(totalSlides - 1).padStart(2, '0')}
           </span>
           <div className="flex items-center gap-1">

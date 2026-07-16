@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useSyncExternalStore, type FormEvent } from 'react';
+import { useId, useState, useSyncExternalStore, type FormEvent } from 'react';
 import { useRouter } from 'next/navigation';
 import { identifyAndCapture } from '@/lib/posthog-form-tracking';
 
@@ -10,6 +10,7 @@ const getServerHydrationSnapshot = () => false;
 
 export function AuditLandingForm() {
   const router = useRouter();
+  const uid = useId();
   const hydrated = useSyncExternalStore(
     subscribeHydration,
     getHydratedSnapshot,
@@ -18,8 +19,6 @@ export function AuditLandingForm() {
   const [url, setUrl] = useState('');
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
-  const [competitors, setCompetitors] = useState('');
-  const [persona, setPersona] = useState('');
   const [status, setStatus] = useState<'idle' | 'loading' | 'error'>('idle');
   const [errorMsg, setErrorMsg] = useState('');
 
@@ -51,10 +50,8 @@ export function AuditLandingForm() {
           url: url.trim(),
           email: email.trim(),
           companyName,
-          // Extra fields for follow-up context
+          // Extra field for follow-up context
           contactName: name.trim(),
-          competitors: competitors.trim(),
-          buyerPersona: persona.trim(),
         }),
       });
 
@@ -75,8 +72,6 @@ export function AuditLandingForm() {
           audit_id: data.id,
           email_domain: trimmedEmail.split('@')[1] ?? '',
           company_name: companyName,
-          buyer_persona: persona.trim(),
-          has_competitors: competitors.trim().length > 0,
           form_variant: 'ai-audit-landing',
         },
       );
@@ -89,37 +84,43 @@ export function AuditLandingForm() {
   }
 
   const inputClass =
-    'w-full rounded-lg border border-surface-200 bg-white px-4 py-3 text-surface-900 placeholder:text-surface-400 focus-visible:outline-2 focus-visible:outline-primary-500 focus-visible:outline-offset-2 transition-colors text-sm';
+    'w-full rounded-lg border border-surface-200 bg-white px-4 py-3 text-surface-900 placeholder:text-surface-400 focus-visible:outline-2 focus-visible:outline-primary-500 focus-visible:outline-offset-2 transition-colors text-base sm:text-sm';
+
+  const urlId = `${uid}-url`;
+  const nameId = `${uid}-name`;
+  const emailId = `${uid}-email`;
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
       <div>
         <label
-          htmlFor="audit-url"
+          htmlFor={urlId}
           className="block text-sm font-medium text-surface-900 mb-1.5"
         >
           Your website URL <span className="text-error">*</span>
         </label>
         <input
-          id="audit-url"
+          id={urlId}
           type="text"
           required
           placeholder="acme.com"
           value={url}
           onChange={(e) => setUrl(e.target.value)}
           className={inputClass}
+          autoComplete="url"
+          inputMode="url"
         />
       </div>
 
       <div>
         <label
-          htmlFor="audit-name"
+          htmlFor={nameId}
           className="block text-sm font-medium text-surface-900 mb-1.5"
         >
           Your name <span className="text-error">*</span>
         </label>
         <input
-          id="audit-name"
+          id={nameId}
           type="text"
           required
           maxLength={100}
@@ -127,62 +128,26 @@ export function AuditLandingForm() {
           value={name}
           onChange={(e) => setName(e.target.value)}
           className={inputClass}
+          autoComplete="name"
         />
       </div>
 
       <div>
         <label
-          htmlFor="audit-email"
+          htmlFor={emailId}
           className="block text-sm font-medium text-surface-900 mb-1.5"
         >
           Work email <span className="text-error">*</span>
         </label>
         <input
-          id="audit-email"
+          id={emailId}
           type="email"
           required
           placeholder="jane@acme.com"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           className={inputClass}
-        />
-      </div>
-
-      <div>
-        <label
-          htmlFor="audit-competitors"
-          className="block text-sm font-medium text-surface-900 mb-1.5"
-        >
-          Your top 3 competitors <span className="text-error">*</span>
-        </label>
-        <input
-          id="audit-competitors"
-          type="text"
-          required
-          maxLength={200}
-          placeholder="competitor1.com, competitor2.com, competitor3.com"
-          value={competitors}
-          onChange={(e) => setCompetitors(e.target.value)}
-          className={inputClass}
-        />
-      </div>
-
-      <div>
-        <label
-          htmlFor="audit-persona"
-          className="block text-sm font-medium text-surface-900 mb-1.5"
-        >
-          Your primary buyer persona <span className="text-error">*</span>
-        </label>
-        <input
-          id="audit-persona"
-          type="text"
-          required
-          maxLength={200}
-          placeholder='e.g. "VP Engineering at B2B SaaS"'
-          value={persona}
-          onChange={(e) => setPersona(e.target.value)}
-          className={inputClass}
+          autoComplete="email"
         />
       </div>
 
