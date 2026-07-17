@@ -31,25 +31,34 @@ export default async function SiteLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const footerData = await fetchFooterData();
-  const caseStudies = footerData.caseStudies;
-  const blogPosts = footerData.blogPosts;
-  const isDraftMode = (await draftMode()).isEnabled;
-
   // Cookie-consent region: EEA/UK/CH visitors must opt in before any tracker
   // loads. Cloudflare fronts the site so cf-ipcountry is authoritative;
   // x-vercel-ip-country covers direct-to-Vercel traffic. Missing header
   // (local dev) → opt-in, the safe default. data-lf-cr exposes the verdict
   // to client code (see src/lib/consent.ts).
   const requestHeaders = await headers();
+  const pathname = requestHeaders.get("x-pathname") ?? "/";
   const country = requestHeaders.get("cf-ipcountry") ?? requestHeaders.get("x-vercel-ip-country");
   const consentRequired = countryRequiresConsent(country);
 
+  const isBlog = pathname === "/blog" || pathname.startsWith("/blog/");
+  const isServiceChild = pathname.startsWith("/services/");
+  const suppressSharedFooter =
+    pathname === "/" ||
+    pathname === "/about" ||
+    pathname === "/pricing" ||
+    pathname === "/services" ||
+    isServiceChild ||
+    pathname === "/contact" ||
+    pathname.startsWith("/case-studies") ||
+    isBlog;
+  const footerData = suppressSharedFooter ? null : await fetchFooterData();
+  const isDraftMode = (await draftMode()).isEnabled;
+
   // Route-dependent chrome (Header hero-theme, hreflang, shared-Footer
-  // suppression) is resolved client-side in SiteChrome via usePathname(),
-  // so this layout no longer reads x-pathname. The shared Footer is passed
-  // as a server-rendered child to SiteFooter, which hides it on the v3 routes
-  // that carry their own FooterV3.
+  // suppression) is resolved client-side in SiteChrome via usePathname(). The
+  // request pathname is used here only to skip footer data on routes that carry
+  // their own FooterV3.
   return (
     <div className="font-sans antialiased overflow-x-clip" data-lf-cr={consentRequired ? "1" : "0"}>
       <PostHogProvider>
@@ -64,7 +73,7 @@ export default async function SiteLayout({
 
         {/* Homepage + About + Pricing + Services + Contact + Case Studies (gallery + detail) + Blog (index + posts) ship their own v3 footers; every other page uses the shared one. */}
         <SiteFooter>
-          <Footer caseStudies={caseStudies} blogPosts={blogPosts} />
+          <Footer caseStudies={footerData?.caseStudies} blogPosts={footerData?.blogPosts} />
         </SiteFooter>
 
         {/* Webflow Enterprise Partner Badge — site-wide.

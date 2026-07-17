@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { asset } from "@/lib/assets";
 
 interface NavLink {
@@ -176,6 +177,7 @@ function unlockScroll() {
 }
 
 export function Header({ heroTheme }: { heroTheme?: 'dark' } = {}) {
+  const pathname = usePathname();
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [mobileAccordion, setMobileAccordion] = useState<string | null>(null);
@@ -289,7 +291,7 @@ export function Header({ heroTheme }: { heroTheme?: 'dark' } = {}) {
     onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
-  }, [heroTheme, mobileMenuOpen]);
+  }, [heroTheme, mobileMenuOpen, pathname]);
 
   const handleDropdownEnter = (name: string) => {
     if (closeTimeoutRef.current) {

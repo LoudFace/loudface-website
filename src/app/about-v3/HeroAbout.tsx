@@ -26,7 +26,7 @@ export function HeroAbout({ team }: { team: TeamPerson[] }) {
           </h1>
           <p className="hero-sub rv" data-speakable style={{ ['--d' as string]: '.12s' }}>
             We build the site on Webflow: positioning, copy, design, code. Then we run the SEO,
-            conversion, and AI-search work that grows it. Seven of us, fully remote, based in
+            conversion, and AI-search work that grows it. {team.length} of us, fully remote, based in
             Dubai, serving global SaaS teams.
           </p>
           <div className="hero-cta rv" style={{ ['--d' as string]: '.18s' }}>

@@ -68,6 +68,8 @@ function TeamDialog({ p }: { p: TeamPerson }) {
             width={760}
             height={900}
             quality={82}
+            loading="lazy"
+            decoding="async"
             alt={`${p.name}, ${p.role}`}
           />
         </div>
