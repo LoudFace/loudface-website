@@ -3,6 +3,7 @@ import { structureTool } from 'sanity/structure';
 import { presentationTool, defineLocations } from 'sanity/presentation';
 import { visionTool } from '@sanity/vision';
 import { schemaTypes } from './src/sanity/schemas';
+import { structure } from './src/sanity/structure';
 
 /**
  * Sanity Studio config — runs at /studio.
@@ -34,7 +35,7 @@ export default defineConfig({
   dataset: 'production',
   basePath: '/studio',
   plugins: [
-    structureTool(),
+    structureTool({ structure }),
     presentationTool({
       previewUrl: {
         initial: SITE_URL,
