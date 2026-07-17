@@ -13,9 +13,8 @@
  * fact and omits the quote line.
  */
 import { fetchHomepageData } from '@/lib/cms-data';
+import { asset } from '@/lib/assets';
 import type { TeamMember } from '@/lib/types';
-
-const SANITY_CDN = 'https://cdn.sanity.io/images/xjjjqhgt/production/';
 
 /** Curated display order — matches the composite's mosaic + ladder placement. */
 export const TEAM_ORDER: string[] = [
@@ -111,9 +110,9 @@ export async function getAboutTeam(): Promise<TeamPerson[]> {
 
 /** Build a Sanity image URL with the composite's crop params, or a neutral fallback. */
 export function teamPhoto(base: string | null, w = 640, h = 640): string {
-  const src = base ?? `${SANITY_CDN}placeholder`;
-  const sep = src.includes('?') ? '&' : '?';
-  return `${src}${sep}w=${w}&h=${h}&fit=crop&fm=webp&q=82`;
+  if (!base) return asset('/images/placeholder.webp');
+  const sep = base.includes('?') ? '&' : '?';
+  return `${base}${sep}w=${w}&h=${h}&fit=crop&fm=webp&q=82`;
 }
 
 /**

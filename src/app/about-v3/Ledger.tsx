@@ -33,7 +33,7 @@ export function Ledger({ teamCount }: { teamCount: number }) {
             </div>
             <p>
               Designers, developers, and marketers. Every engagement is staffed from the same
-              seven-person bench: the people below are the people on your project.
+              {teamCount}-person bench: the people below are the people on your project.
             </p>
             <div className="lfig">
               <div className="fig tab">{teamCount}</div>
