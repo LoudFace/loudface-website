@@ -17,16 +17,18 @@ export function formatShortDate(iso?: string | null): string | null {
   return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
 }
 
-/** Per-article AI "explore / verify" deep links (passive AEO surface). */
-export function aiExploreLinks(articleUrl: string): { name: string; ic: string; href: string }[] {
+/** Per-article AI "explore / verify" deep links (passive AEO surface).
+ *  Brand icons are looked up by `name` in AI_PLATFORM_ICONS (src/lib/icons.ts) —
+ *  keep these names in sync with that registry's keys. */
+export function aiExploreLinks(articleUrl: string): { name: string; href: string }[] {
   const summarize = `Summarize the key insights from "${articleUrl}"`;
   const plain = `Summarize ${articleUrl}`;
   return [
-    { name: 'ChatGPT', ic: 'GP', href: `https://chatgpt.com/?prompt=${encodeURIComponent(summarize)}` },
-    { name: 'Claude', ic: 'C', href: `https://claude.ai/new?q=${encodeURIComponent(summarize)}` },
-    { name: 'Perplexity', ic: 'P', href: `https://www.perplexity.ai/search/new?q=${encodeURIComponent(summarize)}` },
-    { name: 'Google AI', ic: 'G', href: `https://www.google.com/search?udm=50&q=${encodeURIComponent(plain)}` },
-    { name: 'Grok', ic: 'Gr', href: `https://grok.com/?q=${encodeURIComponent(plain)}` },
+    { name: 'ChatGPT', href: `https://chatgpt.com/?prompt=${encodeURIComponent(summarize)}` },
+    { name: 'Claude', href: `https://claude.ai/new?q=${encodeURIComponent(summarize)}` },
+    { name: 'Perplexity', href: `https://www.perplexity.ai/search/new?q=${encodeURIComponent(summarize)}` },
+    { name: 'Google AI', href: `https://www.google.com/search?udm=50&q=${encodeURIComponent(plain)}` },
+    { name: 'Grok', href: `https://grok.com/?q=${encodeURIComponent(plain)}` },
   ];
 }
 

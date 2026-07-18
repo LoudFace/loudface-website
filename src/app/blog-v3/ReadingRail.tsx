@@ -7,6 +7,7 @@
  *   4. Audit CTA card (dark) — Cal trigger, "2h response time".
  */
 import { aiExploreLinks } from './helpers';
+import { AI_PLATFORM_ICONS, SOCIAL_ICONS } from '@/lib/icons';
 
 interface ReadingRailProps {
   toc: { id: string; text: string }[];
@@ -37,28 +38,37 @@ export function ReadingRail({ toc, articleUrl, articleTitle }: ReadingRailProps)
 
         <div className="rail-card">
           <div className="rail-h"><i></i>Explore with AI</div>
-          <div className="ai-links">
-            {aiLinks.map((l) => (
-              <a key={l.name} target="_blank" rel="noopener" href={l.href}>
-                <span className="ic">{l.ic}</span>{l.name}
-                <svg className="go" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 17L17 7M9 7h8v8" /></svg>
-              </a>
-            ))}
+          <div className="ai-grid">
+            {aiLinks.map((l) => {
+              const icon = AI_PLATFORM_ICONS[l.name];
+              return (
+                <a
+                  key={l.name}
+                  target="_blank"
+                  rel="noopener"
+                  href={l.href}
+                  aria-label={`Explore this article in ${l.name}`}
+                >
+                  <span className="ic">
+                    {icon && (
+                      <svg viewBox={icon.viewBox} aria-hidden="true" dangerouslySetInnerHTML={{ __html: icon.path }} />
+                    )}
+                  </span>
+                  <span className="nm">{l.name}</span>
+                </a>
+              );
+            })}
           </div>
         </div>
 
         <div className="rail-card">
           <div className="rail-h"><i></i>Share</div>
           <div className="share-row">
-            <a href={shareX} target="_blank" rel="noopener" aria-label="Share on X">
-              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4l16 16M20 4L4 20" /></svg>
-            </a>
+            <a href={shareX} target="_blank" rel="noopener" aria-label="Share on X" dangerouslySetInnerHTML={{ __html: SOCIAL_ICONS.Twitter }} />
             <button type="button" aria-label="Copy link" data-copy-url={articleUrl}>
               <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 14a5 5 0 007 0l2-2a5 5 0 00-7-7l-1 1" /><path d="M14 10a5 5 0 00-7 0l-2 2a5 5 0 007 7l1-1" /></svg>
             </button>
-            <a href={shareLinkedIn} target="_blank" rel="noopener" aria-label="Share on LinkedIn">
-              <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="2" /><path d="M7 10v7M7 7v.01M11 17v-4a2 2 0 014 0v4" /></svg>
-            </a>
+            <a href={shareLinkedIn} target="_blank" rel="noopener" aria-label="Share on LinkedIn" dangerouslySetInnerHTML={{ __html: SOCIAL_ICONS.LinkedIn }} />
             <span className="share-lab">Cite this article</span>
           </div>
         </div>

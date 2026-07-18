@@ -266,13 +266,41 @@
 .blogv3 .aside-key p{margin-top:.625rem;font-family:var(--font-heading);font-weight:500;font-size:1.24rem;line-height:1.34;letter-spacing:-.015em;color:var(--ink);}
 
 /* ---------- sticky rail ---------- */
-.blogv3 .rail{position:relative;}
+/* align-self:stretch makes this grid column fill the full row height (the tall article
+   column), giving .rail-sticky room to actually travel — without it the rail shrinks to
+   content height under the grid's align-items:start and position:sticky never sticks. */
+.blogv3 .rail{position:relative;align-self:stretch;}
 .blogv3 .rail-sticky{position:sticky;top:88px;display:flex;flex-direction:column;gap:16px;}
+/* Keep each card at its natural height so an overflowing rail SCROLLS instead of
+   flex-shrinking the last/tallest card (the audit CTA) and clipping its button + badge. */
+.blogv3 .rail-sticky>*{flex:none;}
+/* Very short viewports only: if even a floored TOC + the fixed cards can't fit, let the
+   whole rail scroll (clear scrollbar) so the audit CTA stays reachable. Above this height
+   the TOC cap makes everything fit, so the rail has no overflow (no clipped card shadows). */
+@media (max-height:884px){
+  .blogv3 .rail-sticky{max-height:calc(100dvh - 104px);overflow-y:auto;
+    scrollbar-width:thin;scrollbar-color:var(--surface-300) transparent;}
+  .blogv3 .rail-sticky::-webkit-scrollbar{width:8px;}
+  .blogv3 .rail-sticky::-webkit-scrollbar-thumb{background:var(--surface-300);border-radius:4px;}
+  .blogv3 .rail-sticky::-webkit-scrollbar-track{background:transparent;}
+  /* Single scroll container on short viewports: the whole rail scrolls, so uncap the
+     TOC (full height) — no nested TOC scroll inside the scrolling rail. Extra .rail-sticky
+     in the selector outranks the base .toc ol rule that follows it in source order. */
+  .blogv3 .rail-sticky .toc ol{max-height:none;overflow:visible;}
+}
 .blogv3 .toc{border:1px solid var(--paper-line);border-radius:16px;background:#fff;box-shadow:var(--elev);padding:18px 16px 14px;}
 .blogv3 .toc-h{display:flex;align-items:center;gap:9px;padding:0 6px 12px;margin-bottom:6px;border-bottom:1px solid var(--paper-line);
   font-family:var(--font-sans);font-size:11px;font-weight:600;letter-spacing:.13em;text-transform:uppercase;color:var(--mut);}
 .blogv3 .toc-h i{width:6px;height:6px;border-radius:50%;background:var(--primary-500);flex:none;box-shadow:0 0 0 3px rgba(99,102,241,.14);}
-.blogv3 .toc ol{list-style:none;counter-reset:tc;}
+/* Cap the variable-length TOC so the fixed AI / Share / audit-CTA cards below it
+   always stay on-screen. 765px = the measured height of everything else in the rail
+   (≈655px of fixed cards) + the 88px top pin + breathing room. Long TOCs scroll
+   internally instead of pushing the audit CTA off the fold. Inline padding/negative
+   margin give the active item's focus ring room without clipping. */
+.blogv3 .toc ol{list-style:none;counter-reset:tc;max-height:clamp(120px, calc(100dvh - 765px), 70vh);overflow-y:auto;
+  padding-inline:4px;margin-inline:-4px;scrollbar-width:thin;scrollbar-color:var(--surface-300) transparent;}
+.blogv3 .toc ol::-webkit-scrollbar{width:6px;}
+.blogv3 .toc ol::-webkit-scrollbar-thumb{background:var(--surface-200);border-radius:3px;}
 .blogv3 .toc li{counter-increment:tc;}
 .blogv3 .toc a{display:flex;gap:11px;padding:8px 8px;border-radius:9px;font-size:13.5px;line-height:1.4;font-weight:500;color:var(--body);
   transition:background-color .16s var(--ease-out),color .16s;}
@@ -287,16 +315,16 @@
 .blogv3 .rail-card>.rail-h{font-family:var(--font-sans);font-size:11px;font-weight:600;letter-spacing:.13em;text-transform:uppercase;color:var(--mut);display:flex;align-items:center;gap:9px;}
 .blogv3 .rail-card>.rail-h i{width:6px;height:6px;border-radius:50%;background:var(--primary-500);flex:none;box-shadow:0 0 0 3px rgba(99,102,241,.14);}
 /* explore-with-AI (passive AEO surface) */
-.blogv3 .ai-links{margin-top:14px;display:flex;flex-direction:column;gap:2px;}
-.blogv3 .ai-links a{display:flex;align-items:center;gap:11px;padding:9px 10px;border-radius:10px;font-size:14px;font-weight:500;color:var(--surface-700);
-  transition:background-color .16s var(--ease-out),color .16s;}
-.blogv3 .ai-links a:hover,.blogv3 .ai-links a:focus-visible{background:var(--surface-50);color:var(--ink);}
-.blogv3 .ai-links a:focus-visible{outline:2px solid var(--primary-500);outline-offset:1px;}
-.blogv3 .ai-links .ic{width:26px;height:26px;border-radius:7px;flex:none;display:flex;align-items:center;justify-content:center;
-  background:var(--surface-50);box-shadow:inset 0 0 0 1px var(--surface-200);color:var(--surface-600);font-size:12px;font-weight:700;}
-.blogv3 .ai-links a:hover .ic{color:var(--primary-600);}
-.blogv3 .ai-links .go{margin-left:auto;width:14px;height:14px;stroke:var(--surface-300);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;transition:stroke .16s,transform .16s;}
-.blogv3 .ai-links a:hover .go{stroke:var(--primary-500);transform:translateX(2px);}
+.blogv3 .ai-grid{margin-top:14px;display:grid;grid-template-columns:1fr 1fr;gap:6px;}
+.blogv3 .ai-grid a{display:flex;align-items:center;gap:9px;min-width:0;padding:8px 10px;border-radius:10px;font-size:13px;font-weight:500;color:var(--surface-700);
+  background:var(--surface-50);box-shadow:inset 0 0 0 1px var(--surface-200);
+  transition:background-color .16s var(--ease-out),color .16s,box-shadow .16s;}
+.blogv3 .ai-grid a:hover,.blogv3 .ai-grid a:focus-visible{background:var(--primary-50);color:var(--primary-700);box-shadow:inset 0 0 0 1px var(--primary-200);}
+.blogv3 .ai-grid a:focus-visible{outline:2px solid var(--primary-500);outline-offset:2px;}
+.blogv3 .ai-grid .ic{flex:none;width:18px;height:18px;display:flex;align-items:center;justify-content:center;color:var(--surface-500);}
+.blogv3 .ai-grid a:hover .ic{color:var(--primary-600);}
+.blogv3 .ai-grid .ic svg{width:16px;height:16px;fill:currentColor;}
+.blogv3 .ai-grid .nm{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
 /* share row */
 .blogv3 .share-row{margin-top:14px;display:flex;align-items:center;gap:8px;}
 .blogv3 .share-row a,.blogv3 .share-row button{width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;
@@ -304,7 +332,9 @@
   transition:background-color .16s var(--ease-out),color .16s,box-shadow .16s;}
 .blogv3 .share-row a:hover,.blogv3 .share-row button:hover,.blogv3 .share-row a:focus-visible,.blogv3 .share-row button:focus-visible{background:var(--primary-50);color:var(--primary-700);box-shadow:inset 0 0 0 1px var(--primary-200);}
 .blogv3 .share-row a:focus-visible,.blogv3 .share-row button:focus-visible{outline:2px solid var(--primary-500);outline-offset:2px;}
-.blogv3 .share-row svg{width:17px;height:17px;stroke:currentColor;fill:none;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round;}
+.blogv3 .share-row svg{width:17px;height:17px;}
+.blogv3 .share-row a svg{width:16px;height:16px;fill:currentColor;stroke:none;}
+.blogv3 .share-row button svg{fill:none;stroke:currentColor;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round;}
 .blogv3 .share-lab{margin-left:4px;font-size:12.5px;font-weight:500;color:var(--mut);}
 /* audit CTA card (dark) */
 .blogv3 .rail-cta{border-radius:16px;background:var(--night);background-image:radial-gradient(120% 100% at 88% -10%,var(--night-hi) 0%,var(--night) 60%);
