@@ -127,6 +127,19 @@ const nextConfig: NextConfig = {
         destination: '/case-studies/:slug*',
         permanent: true,
       },
+      // Unpublished Finnrick case studies: were 410 Gone in middleware, but both
+      // URLs had been indexed — indexed URLs 301 to the nearest live alternative
+      // instead of 410 (see /blog/stop-410-url-decay-decision-tree). 2026-07-19.
+      {
+        source: '/case-studies/finnrick-analytics',
+        destination: '/case-studies',
+        permanent: true,
+      },
+      {
+        source: '/case-studies/finnrick-peptide-testing',
+        destination: '/case-studies',
+        permanent: true,
+      },
       // Singular → plural case-study URLs.
       // Discovered 2026-05-27 in Cloudflare AI Crawl Control logs: TikTokSpider
       // and other AI bots were fetching /case-study/<slug> (singular) and

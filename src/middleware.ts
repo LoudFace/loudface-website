@@ -5,8 +5,9 @@ import { NextResponse, type NextRequest } from 'next/server';
 // the URL in flux for months. Add to this list when a case study or blog post
 // is unpublished and won't redirect to a relevant alternative.
 const GONE_URLS = new Set<string>([
-  '/case-studies/finnrick-analytics',
-  '/case-studies/finnrick-peptide-testing',
+  // finnrick-* moved to 301s in next.config.ts 2026-07-19 — they were indexed,
+  // and indexed URLs get a 301 to the nearest alternative, not a 410
+  // (per /blog/stop-410-url-decay-decision-tree).
   '/case-studies/mycryptoguide',
   '/case-studies/draw-things',
 ]);
