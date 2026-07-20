@@ -487,6 +487,48 @@ export function ServicePageV3({ config, images }: { config: ServiceConfig; image
           </div>
         </section>
 
+        {c.comparison ? (
+          <section className="comparison" aria-labelledby="service-comparison-title">
+            <div className="container">
+              <div className="comparison-head rv">
+                <h2 className="display" id="service-comparison-title">
+                  {c.comparison.highlightWord && c.comparison.title.endsWith(c.comparison.highlightWord) ? (
+                    <>
+                      {c.comparison.title.slice(0, -c.comparison.highlightWord.length)}
+                      <span className="ghost">{c.comparison.highlightWord}</span>
+                    </>
+                  ) : (
+                    c.comparison.title
+                  )}
+                </h2>
+                <p className="lede">{c.comparison.intro}</p>
+              </div>
+              <div className="comparison-table-wrap rv">
+                <table className="comparison-table">
+                  <thead>
+                    <tr>
+                      {c.comparison.columns.map((column) => (
+                        <th scope="col" key={column}>
+                          {column}
+                        </th>
+                      ))}
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {c.comparison.rows.map((row) => (
+                      <tr key={row.discipline}>
+                        <th scope="row">{row.discipline}</th>
+                        <td>{row.optimizesFor}</td>
+                        <td>{row.whereWeShowUp}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </section>
+        ) : null}
+
         {/* ============ FAQ ============ */}
         <section className="faq" aria-label="Frequently asked questions">
           <div className="container">

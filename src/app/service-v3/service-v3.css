@@ -312,6 +312,22 @@
 .svcv3 .pc-badges img{height:36px;width:auto;opacity:.72;filter:grayscale(.2);transition:opacity .2s var(--ease-out),filter .2s var(--ease-out);}
 .svcv3 .pc-badges img:hover{opacity:1;filter:none;}
 
+/* ============ COMPARISON TABLE ============ */
+.svcv3 .comparison{background:var(--paper);border-bottom:1px solid var(--paper-line);padding:clamp(80px,9vw,116px) 0;}
+.svcv3 .comparison-head{max-width:720px;}
+.svcv3 .comparison-head .display{margin-top:0;max-width:22ch;}
+.svcv3 .comparison-head .lede{margin-top:16px;}
+.svcv3 .comparison-table-wrap{max-width:100%;margin-top:clamp(40px,5vw,56px);overflow-x:auto;overscroll-behavior-inline:contain;
+  -webkit-overflow-scrolling:touch;border-radius:16px;box-shadow:var(--elev);}
+.svcv3 .comparison-table{width:100%;min-width:760px;border-collapse:collapse;background:#fff;}
+.svcv3 .comparison-table th,.svcv3 .comparison-table td{text-align:left;padding:18px 22px;vertical-align:top;}
+.svcv3 .comparison-table thead th{background:var(--color-primary-50);border-bottom:1px solid var(--paper-line);
+  font-family:var(--font-sans);font-size:13px;font-weight:600;line-height:1.4;color:var(--color-primary-800);}
+.svcv3 .comparison-table tbody th{border-top:1px solid var(--paper-line);font-family:var(--font-sans);font-size:14px;
+  font-weight:600;color:var(--color-surface-700);white-space:nowrap;}
+.svcv3 .comparison-table tbody td{border-top:1px solid var(--paper-line);font-size:14px;line-height:1.55;color:var(--body);}
+.svcv3 .comparison-table tbody tr:hover th,.svcv3 .comparison-table tbody tr:hover td{background:var(--color-primary-50);}
+
 /* ============ FAQ ============ */
 .svcv3 .faq{background:var(--paper);padding:clamp(80px,9vw,116px) 0;}
 .svcv3 .faq-in{max-width:860px;margin:0 auto;}
