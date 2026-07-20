@@ -114,6 +114,13 @@ export interface ServiceConfig {
     hero: { num: string; label: string; src?: string };
     extra: { num: string; label: string }; // one track-specific supporting stat
   };
+  comparison?: {
+    title: string;
+    highlightWord?: string;
+    intro: string;
+    columns: [string, string, string];
+    rows: { discipline: string; optimizesFor: string; whereWeShowUp: string }[];
+  };
   faq: { title: ReactNode; items: FaqItem[] };
   rel: { title: ReactNode; note: string };
   cover: {
@@ -720,6 +727,29 @@ export const SERVICE_CONFIGS: Record<string, ServiceConfig> = {
       hero: { num: '0 → 86%', label: 'Toku’s AI visibility on its core stablecoin-payroll prompt, from a standing start', src: 'Toku · SEO/AEO' },
       extra: { num: '7+', label: 'AI engines monitored — ChatGPT, Perplexity, Gemini, Claude, and more' },
     },
+    comparison: {
+      title: "SEO vs AEO vs GEO: what's the difference?",
+      highlightWord: 'difference?',
+      intro: 'Three disciplines, three jobs. Most agencies sell one and rebrand it as all three. Here is the honest split.',
+      columns: ['Discipline', 'What it optimizes for', 'Where you show up'],
+      rows: [
+        {
+          discipline: 'SEO',
+          optimizesFor: "Ranking in Google's classic results and earning organic clicks",
+          whereWeShowUp: 'Page one of Google, map packs, and featured snippets',
+        },
+        {
+          discipline: 'AEO',
+          optimizesFor: 'Being cited as the answer when buyers ask an AI engine a question',
+          whereWeShowUp: 'ChatGPT, Perplexity, Google AI Overviews, and Gemini answers',
+        },
+        {
+          discipline: 'GEO',
+          optimizesFor: 'A consistent brand entity across every generative surface',
+          whereWeShowUp: 'Copilot, Grok, Google AI Mode, and anywhere a model retrieves you',
+        },
+      ],
+    },
     faq: {
       title: (
         <>
@@ -727,6 +757,7 @@ export const SERVICE_CONFIGS: Record<string, ServiceConfig> = {
         </>
       ),
       items: [
+        { q: 'What is AEO (answer engine optimization)?', aHtml: "Answer engine optimization (AEO) is the practice of structuring your content so AI answer engines like ChatGPT, Perplexity, and Google AI Overviews cite your brand when they reply to a buyer's question. Where SEO competes for a ranked link, AEO competes for the answer itself." },
         { q: 'What is the difference between an AEO agency and a traditional SEO agency?', aHtml: 'A traditional SEO agency optimizes for Google rankings. An AEO agency also optimizes for being cited inside AI answers on ChatGPT, Perplexity, and Google AI Overviews. We do both, scoring every content decision, technical fix, and link target against pipeline impact rather than keyword difficulty, and layering AEO from day one so you’re not invisible in AI search while Google catches up.' },
         { q: 'What AI engines do you optimize for?', aHtml: 'ChatGPT, Perplexity, Google AI Mode and AI Overviews, Gemini, Claude, Copilot, and Grok. We monitor citation frequency, mention quality, and competitive position across all of them and report it weekly, not once a quarter.' },
         { q: 'What is GEO (generative engine optimization)?', aHtml: 'Generative engine optimization (GEO) is the work of keeping your brand described the same way across every generative AI surface. SEO earns the ranking and AEO earns the citation. GEO makes sure the entity behind both stays coherent everywhere a model encounters it.' },
