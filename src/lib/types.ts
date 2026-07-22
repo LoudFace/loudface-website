@@ -113,7 +113,9 @@ export interface BlogPost {
   excerpt?: string;
   "direct-answer"?: string;
   content?: string;
-  "time-to-read"?: string;
+  // Declared `string` in the Sanity schema, but migrated documents can store a
+  // number — typed as both so callers coerce rather than assume (see formatReadTime).
+  "time-to-read"?: string | number;
   featured?: boolean;
   "published-date"?: string;
   "last-updated"?: string;
