@@ -653,13 +653,13 @@ export const SERVICE_CONFIGS: Record<string, ServiceConfig> = {
       eyebrow: 'SEO + AEO + GEO for B2B SaaS',
       h1: (
         <>
-          SEO &amp; AEO agency for B2B SaaS. <span className="soft">Get cited, not just ranked.</span>
+          AEO &amp; SEO agency for B2B SaaS. <span className="soft">Get cited, not just ranked.</span>
         </>
       ),
       blurb:
-        'We run SEO, AEO, and GEO as one program, so you rank on Google and get cited inside ChatGPT, Perplexity, and Google AI Overviews when buyers ask which vendor to pick.',
+        'We run SEO, AEO, and GEO as one program, so you can rank on Google and get cited inside ChatGPT, Perplexity, and Google AI Overviews when buyers ask which vendor to pick. We ran the playbook on our own site: 0.18% to 10.35% of our category’s AI answers in 90 days.',
       secondary: AUDIT,
-      chip: { value: '0 → 86%', label: 'Toku AI visibility' },
+      chip: { value: '0.18% → 10.35%', label: 'LoudFace’s own site: share of category AI answers, 90 days' },
       main: { ...shot('toku', 'Toku website grown by LoudFace for AI visibility'), rpillLabel: 'SEO & AEO', rpillClient: 'Toku' },
       frag: shot('hoxhunt', ''),
     },
@@ -671,13 +671,13 @@ export const SERVICE_CONFIGS: Record<string, ServiceConfig> = {
         </>
       ),
       lede:
-        'The infrastructure that makes everything compound — built for Google, the AI engines, and Discover feeds at once, structured so models can parse it and humans can act on it.',
+        'The infrastructure that makes everything compound: built for Google, the AI engines, and Discover feeds at once, structured so models can parse it and humans can act on it.',
       tiles: [
-        { title: 'Technical foundation', desc: 'Site health, Core Web Vitals, crawl optimization, structured data, internal linking. The infrastructure that makes everything else compound.' },
-        { title: 'Content systems', desc: 'Topical clusters, comparison pages, FAQ compilations, programmatic SEO, and Google Discover optimization. Built for Google, the AI engines, and Discover feeds at once — structured so models can parse it and humans can act on it.' },
+        { title: 'Technical foundation', desc: 'Site health, Core Web Vitals, crawl optimization, structured data, internal linking. We read your server logs to see what AI crawlers actually fetch, instead of guessing from probability tools. The infrastructure that makes everything else compound.' },
+        { title: 'Content systems', desc: 'Topical clusters, comparison pages, FAQ compilations, programmatic SEO, and Google Discover optimization. Built for Google, the AI engines, and Discover feeds at once, and structured so a model can lift the answer straight from the page.' },
         { title: 'Off-page + distribution', desc: 'Guest posts on high-authority publications, G2 and Capterra presence, Reddit and Quora strategy, community engagement. Plus the LinkedIn entity signals and cross-platform framing that make AI systems encounter the same brand story wherever they retrieve it.' },
         { title: 'E-E-A-T + authority signals', desc: 'Author credentials, expert quotes, thought leadership placement. The trust signals Google and AI engines weigh when deciding who to cite and who to skip when they assemble an answer.' },
-        { title: 'LLM visibility monitoring', desc: 'We track how your brand shows up across ChatGPT, Perplexity, Gemini, Claude, Google AI Mode, Copilot, and Grok. Citation frequency, mention quality, and competitive position, reported weekly instead of quarterly.' },
+        { title: 'LLM visibility monitoring, with receipts', desc: 'Your buyer prompts run daily on the three surfaces answering B2B buying questions today: ChatGPT, Perplexity, and Google AI Overviews. Visibility, share of voice, and position per prompt, reported weekly with the actual answers linked.' },
       ],
     },
     runway: {
@@ -689,10 +689,10 @@ export const SERVICE_CONFIGS: Record<string, ServiceConfig> = {
       lede:
         'We don’t wait for tickets or mail you a monthly deck of recommendations. We own the roadmap, ship the work, and show up every week with progress tied to your business goals.',
       pillars: [
-        { kind: 'row', fig: 0, title: 'Foundation audit', desc: 'We map technical health, content gaps, entity coverage, and where you stand inside AI answers across ChatGPT, Perplexity, and Google AI Overviews. Every opportunity scored against pipeline impact, not keyword difficulty or vanity domain-authority scores.' },
-        { kind: 'card', title: '90-day roadmap', desc: 'Three to five measurable goals tied straight to pipeline, split across the SEO, AEO, and GEO tracks. A shared scoreboard you can check any time, with clear ownership so nothing stalls waiting on a decision.' },
+        { kind: 'row', fig: 0, title: 'Foundation audit', desc: 'We map technical health, content gaps, entity coverage, and where you stand inside AI answers across ChatGPT, Perplexity, and Google AI Overviews. Every opportunity scored against pipeline impact instead of keyword difficulty or vanity domain-authority scores.' },
+        { kind: 'card', title: '90-day roadmap', desc: 'Three to five measurable goals tied straight to pipeline, split across the SEO, AEO, and GEO tracks. The same 90-day window we measured on ourselves. A shared scoreboard you can check any time, with clear ownership so nothing stalls.' },
         { kind: 'row', fig: 2, title: 'Continuous execution', desc: 'The AEO program ships weekly: entity-first content, technical fixes, structured data, link building, and the cross-platform GEO signals that keep your brand story consistent. One point of contact. Zero task management on your side.' },
-        { kind: 'card', title: 'Weekly check-in', desc: 'A live walkthrough of what shipped, how AI visibility and rankings moved, and what’s next. Every number tied to outcomes your leadership actually tracks, not a vanity dashboard.' },
+        { kind: 'card', title: 'Weekly check-in', desc: 'A live walkthrough of what shipped, how AI visibility and rankings moved, and what’s next. Every number tied to outcomes your leadership actually tracks rather than a vanity dashboard.' },
       ],
     },
     exhibit: {
@@ -705,13 +705,13 @@ export const SERVICE_CONFIGS: Record<string, ServiceConfig> = {
         </>
       ),
       what:
-        'An answer-engine program aimed at the buying question — when someone asks an AI which vendor to use, Toku had to be in the answer. We built the pages and signals that get a brand cited by name.',
+        'An answer-engine program aimed at the buying question: when someone asks an AI which vendor to use, Toku had to be in the answer. We built the pages and signals that get a brand cited by name.',
       annots: [
         { em: 'Entity-first content', span: 'Pages engines can parse and quote' },
-        { em: 'Cited, not just ranked', span: 'In the answer, not scrolled past' },
-        { em: '7+ engines tracked', span: 'Reported weekly, not quarterly' },
+        { em: 'Built to be cited', span: 'In the answer instead of scrolled past' },
+        { em: 'Prompts tracked daily', span: 'ChatGPT, Perplexity, AI Overviews' },
       ],
-      out: { num: '0 → 86%', label: 'Toku AI visibility on its core prompt', src: 'Toku · SEO/AEO · from a standing start' },
+      out: { num: '86%', label: 'Toku AI visibility on its core prompt (30-day Peec reading, position 2.4)', src: 'Toku · SEO/AEO' },
       ctaLabel: 'See the full case study',
       ctaHref: TOKU_HREF,
     },
@@ -724,8 +724,8 @@ export const SERVICE_CONFIGS: Record<string, ServiceConfig> = {
       ),
       lede:
         'The authority that ranks you on Google is what teaches an AI engine to trust you. We build SEO, AEO, and GEO into one program instead of three invoices.',
-      hero: { num: '0 → 86%', label: 'Toku’s AI visibility on its core stablecoin-payroll prompt, from a standing start', src: 'Toku · SEO/AEO' },
-      extra: { num: '7+', label: 'AI engines monitored — ChatGPT, Perplexity, Gemini, Claude, and more' },
+      hero: { num: '0.18% → 10.35%', label: 'of our category’s AI answers in 90 days, running the same playbook on our own site', src: 'LoudFace · first-party study' },
+      extra: { num: '86%', label: 'Toku AI visibility on its core stablecoin-payroll prompt (30-day Peec reading, position 2.4)' },
     },
     comparison: {
       title: "SEO vs AEO vs GEO: what's the difference?",
@@ -758,13 +758,17 @@ export const SERVICE_CONFIGS: Record<string, ServiceConfig> = {
       ),
       items: [
         { q: 'What is AEO (answer engine optimization)?', aHtml: "Answer engine optimization (AEO) is the practice of structuring your content so AI answer engines like ChatGPT, Perplexity, and Google AI Overviews cite your brand when they reply to a buyer's question. Where SEO competes for a ranked link, AEO competes for the answer itself." },
-        { q: 'What is the difference between an AEO agency and a traditional SEO agency?', aHtml: 'A traditional SEO agency optimizes for Google rankings. An AEO agency also optimizes for being cited inside AI answers on ChatGPT, Perplexity, and Google AI Overviews. We do both, scoring every content decision, technical fix, and link target against pipeline impact rather than keyword difficulty, and layering AEO from day one so you’re not invisible in AI search while Google catches up.' },
-        { q: 'What AI engines do you optimize for?', aHtml: 'ChatGPT, Perplexity, Google AI Mode and AI Overviews, Gemini, Claude, Copilot, and Grok. We monitor citation frequency, mention quality, and competitive position across all of them and report it weekly, not once a quarter.' },
-        { q: 'What is GEO (generative engine optimization)?', aHtml: 'Generative engine optimization (GEO) is the work of keeping your brand described the same way across every generative AI surface. SEO earns the ranking and AEO earns the citation. GEO makes sure the entity behind both stays coherent everywhere a model encounters it.' },
+        { q: 'What is the difference between an answer engine optimization (AEO) agency and a traditional SEO agency?', aHtml: 'A traditional SEO agency optimizes for Google rankings. An AEO agency also optimizes for being cited inside AI answers on ChatGPT, Perplexity, and Google AI Overviews. We do both, scoring every content decision, technical fix, and link target against pipeline impact rather than keyword difficulty, and layering AEO from day one so you’re not invisible in AI search while Google catches up.' },
+        { q: 'What AI engines do you optimize for?', aHtml: 'AEO principles travel across generative surfaces, ChatGPT, Claude, Gemini, Copilot, and Grok among them. We track results where B2B buying answers happen today: ChatGPT, Perplexity, and Google AI Overviews, with your buyer prompts running daily on all three and visibility, share of voice, and position reported weekly. Buyers sometimes call this AI search optimization; the work is the same. When a new engine starts answering your buyers’ questions, it joins the tracking set.' },
+        { q: 'What is GEO (generative engine optimization)?', aHtml: 'Generative engine optimization (GEO) is the work of keeping your brand described the same way across every generative AI surface. SEO earns the ranking and AEO earns the citation. GEO makes sure the entity behind both stays coherent everywhere a model encounters it. <a href="/services/geo-agency">We run a dedicated GEO service.</a>' },
         { q: 'Is AEO replacing SEO?', aHtml: 'No. AEO sits on top of SEO. The domain authority and content quality that rank you on Google are the same signals that teach an AI engine to trust and cite you. Drop SEO and your AEO loses its foundation.' },
-        { q: 'How do you measure AI visibility?', aHtml: 'We track a set of buyer prompts across the major AI engines and measure how often your brand is cited, at what position, and against which competitors. The core metrics are visibility, share of voice, and average position inside the answer — reported weekly and tied back to branded search and pipeline.' },
+        { q: 'How do you measure AI visibility?', aHtml: 'We track a set of buyer prompts across the engines and measure how often your brand is cited, at what position, and against which competitors. The core metrics are visibility, share of voice, and average position inside the answer, reported weekly and tied back to branded search and pipeline. The methodology is public: <a href="/blog/we-ran-aeo-on-ourselves">we published the 90-day study we ran on our own site</a>.' },
+        { q: 'How fast can AI citations land?', aHtml: 'Faster than most agencies admit and slower than most vendors promise, depending on the surface. Google AI Overviews can pick up a well-structured page within days because it rides Google’s index. ChatGPT and Perplexity citations usually take weeks of consistent publishing. Dominant visibility on a competitive prompt cluster takes a quarter or more. We set expectations by surface instead of quoting one blended number.' },
         { q: 'How much does an AEO agency cost?', aHtml: 'Most B2B SaaS SEO and AEO programs at LoudFace start <strong>from $5k per month</strong> on a three-month minimum. No setup fee, no long lock-in past the first quarter. After the foundation audit you get a fixed monthly proposal scoped to the goals in your 90-day roadmap. <a href="/pricing">See full pricing and tiers.</a>' },
-        { q: 'How long before I see results?', aHtml: 'Technical fixes and early AEO wins often move inside the first 30 to 60 days. Content authority and organic rankings compound over 90 to 180 days. We set 90-day goals and report against them honestly, with no inflated projections.' },
+        { q: 'How long before I see results?', aHtml: 'Technical fixes and early AEO wins often move inside the first 30 to 60 days. Content authority and organic rankings compound over 90 to 180 days. We set 90-day goals and report against them honestly, with no inflated projections. Running this program on our own site moved us from 0.18% to 10.35% of our category’s AI answers between April and June 2026.' },
+        { q: 'Do you only work with Webflow sites?', aHtml: 'No. Webflow is a delivery capability we happen to be deep in rather than a requirement. The program runs the same on Next.js, Sanity, WordPress, or whatever your marketing site is built on. If you are on Webflow, the same team ships the site changes without a handoff.' },
+        { q: 'What happens in the first 90 days of an AEO engagement?', aHtml: 'Weeks one to two: the foundation audit maps technical health, entity coverage, and where you stand inside AI answers today. Week three: a 90-day roadmap with three to five measurable goals. From there the program ships weekly: entity-first content, technical fixes, structured data, and distribution, with a live weekly walkthrough of what moved.' },
+        { q: 'What results should an AEO agency show you?', aHtml: 'Receipts, not decks. Per-prompt visibility with position, the actual AI answers your buyers see, and movement tied to a named measurement window. If an agency cannot show which prompts it moved and when, it is reporting activity rather than results.' },
       ],
     },
     rel: {
@@ -773,13 +777,13 @@ export const SERVICE_CONFIGS: Record<string, ServiceConfig> = {
           Search rarely wins <span className="ghost">alone.</span>
         </>
       ),
-      note: 'SEO, AEO, and GEO feed each other — and the same team builds and converts the pages they earn. Nothing gets re-briefed between the people who rank you and the people who ship your site.',
+      note: 'SEO, AEO, and GEO feed each other, and the same team builds and converts the pages they earn. Nothing gets re-briefed between the people who rank you and the people who ship your site.',
     },
     cover: {
       h2: 'Find out if your brand shows up where your buyers are looking.',
-      p: 'We’ll check your AI search presence across ChatGPT, Perplexity, Gemini, Google AI Mode, and Copilot, and show you exactly where the gaps are.',
+      p: 'We’ll check your AI search presence across ChatGPT, Perplexity, and Google AI Overviews, and show you exactly where the gaps are.',
       metaRight: 'B2B SaaS only',
-      creditLeft: 'Cover — Toku, grown by LoudFace',
+      creditLeft: 'Cover · Toku, grown by LoudFace',
       obj: { ...shot('toku', ''), rpillLabel: 'SEO & AEO', rpillClient: 'Toku' },
     },
   },
@@ -896,7 +900,7 @@ export const SERVICE_CONFIGS: Record<string, ServiceConfig> = {
       h2: 'Find out what AI engines say about your brand right now.',
       p: 'We’ll run your buyer prompts across ChatGPT, Perplexity, and Google AI Overviews and show you your share of answer, who’s beating you to the citation, and the format and corpus gaps keeping you out.',
       metaRight: 'B2B SaaS only',
-      creditLeft: 'Cover — Toku, grown by LoudFace',
+      creditLeft: 'Cover · Toku, grown by LoudFace',
       obj: { ...shot('toku', ''), rpillLabel: 'GEO program', rpillClient: 'Toku' },
     },
   },
@@ -1007,7 +1011,7 @@ export const SERVICE_CONFIGS: Record<string, ServiceConfig> = {
       h2: 'Pipeline that compounds.',
       p: 'If your growth metrics and your pipeline don’t match, the system is broken. Let’s fix the system — starting with a free AI Visibility Audit.',
       metaRight: 'B2B SaaS only',
-      creditLeft: 'Cover — Toku, grown by LoudFace',
+      creditLeft: 'Cover · Toku, grown by LoudFace',
       obj: { ...shot('toku', ''), rpillLabel: 'Growth system', rpillClient: 'Toku' },
     },
   },
