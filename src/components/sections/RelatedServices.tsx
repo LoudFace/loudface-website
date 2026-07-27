@@ -15,6 +15,7 @@ interface ServiceLink {
 
 const ALL_SERVICES: ServiceLink[] = [
   { href: '/services/seo-aeo', label: 'SEO & AEO', description: 'Visibility across search and AI engines' },
+  { href: '/services/organic-growth', label: 'Organic Growth Program', description: 'The full category program: search, answer engines, content, conversion' },
   { href: '/services/geo-agency', label: 'Generative Engine Optimization', description: 'Get cited by ChatGPT, Perplexity & AI Overviews' },
   { href: '/services/webflow', label: 'Webflow Development', description: 'Scalable builds optimized for performance' },
   { href: '/services/cro', label: 'Conversion Rate Optimization', description: 'Data-driven optimization that converts' },

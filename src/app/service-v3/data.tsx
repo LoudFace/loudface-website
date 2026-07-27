@@ -764,7 +764,7 @@ export const SERVICE_CONFIGS: Record<string, ServiceConfig> = {
         { q: 'Is AEO replacing SEO?', aHtml: 'No. AEO sits on top of SEO. The domain authority and content quality that rank you on Google are the same signals that teach an AI engine to trust and cite you. Drop SEO and your AEO loses its foundation.' },
         { q: 'How do you measure AI visibility?', aHtml: 'We track a set of buyer prompts across the engines and measure how often your brand is cited, at what position, and against which competitors. The core metrics are visibility, share of voice, and average position inside the answer, reported weekly and tied back to branded search and pipeline. The methodology is public: <a href="/blog/we-ran-aeo-on-ourselves">we published the 90-day study we ran on our own site</a>.' },
         { q: 'How fast can AI citations land?', aHtml: 'Faster than most agencies admit and slower than most vendors promise, depending on the surface. Google AI Overviews can pick up a well-structured page within days because it rides Google’s index. ChatGPT and Perplexity citations usually take weeks of consistent publishing. Dominant visibility on a competitive prompt cluster takes a quarter or more. We set expectations by surface instead of quoting one blended number.' },
-        { q: 'How much does an AEO agency cost?', aHtml: 'Most B2B SaaS SEO and AEO programs at LoudFace start <strong>from $5k per month</strong> on a three-month minimum. No setup fee, no long lock-in past the first quarter. After the foundation audit you get a fixed monthly proposal scoped to the goals in your 90-day roadmap. <a href="/pricing">See full pricing and tiers.</a>' },
+        { q: 'How much does an AEO agency cost?', aHtml: 'Most B2B SaaS SEO and AEO programs at LoudFace start <strong>from $5k per month</strong> as a continuous Autopilot retainer; fixed-scope engagements run inside a retainer with a three-month minimum. After the foundation audit you get a fixed monthly proposal scoped to the goals in your 90-day roadmap. <a href="/pricing">See full pricing and tiers.</a>' },
         { q: 'How long before I see results?', aHtml: 'Technical fixes and early AEO wins often move inside the first 30 to 60 days. Content authority and organic rankings compound over 90 to 180 days. We set 90-day goals and report against them honestly, with no inflated projections. Running this program on our own site moved us from 0.18% to 10.35% of our category’s AI answers between April and June 2026.' },
         { q: 'Do you only work with Webflow sites?', aHtml: 'No. Webflow is a delivery capability we happen to be deep in rather than a requirement. The program runs the same on Next.js, Sanity, WordPress, or whatever your marketing site is built on. If you are on Webflow, the same team ships the site changes without a handoff.' },
         { q: 'What happens in the first 90 days of an AEO engagement?', aHtml: 'Weeks one to two: the foundation audit maps technical health, entity coverage, and where you stand inside AI answers today. Week three: a 90-day roadmap with three to five measurable goals. From there the program ships weekly: entity-first content, technical fixes, structured data, and distribution, with a live weekly walkthrough of what moved.' },
@@ -785,6 +785,147 @@ export const SERVICE_CONFIGS: Record<string, ServiceConfig> = {
       metaRight: 'B2B SaaS only',
       creditLeft: 'Cover · Toku, grown by LoudFace',
       obj: { ...shot('toku', ''), rpillLabel: 'SEO & AEO', rpillClient: 'Toku' },
+    },
+  },
+
+  /* ========================= ORGANIC GROWTH (pillar) ========================= */
+  'organic-growth': {
+    slug: 'organic-growth',
+    ariaLabel: 'Organic growth agency for B2B SaaS',
+    hero: {
+      eyebrow: 'Organic Growth · SEO + AEO + Content + CRO',
+      h1: (
+        <>
+          Organic growth agency for B2B SaaS. <span className="soft">Compounding pipeline, not rented traffic.</span>
+        </>
+      ),
+      blurb:
+        'One senior team runs SEO, AEO and GEO, content, and CRO as a single organic growth program. We ran the same playbook on our own site: 0.18% to 10.35% of our category’s AI answers in 90 days.',
+      secondary: AUDIT,
+      chip: { value: '0.18% → 10.35%', label: 'LoudFace’s own site, 90 days' },
+      main: { ...shot('hoxhunt', 'Hoxhunt website, a LoudFace client engagement'), rpillLabel: 'Organic growth', rpillClient: 'Hoxhunt' },
+      frag: shot('dimer', ''),
+    },
+    logosLead: 'Compounding organic programs for B2B SaaS teams',
+    deliver: {
+      title: (
+        <>
+          What’s inside the <span className="ghost">organic growth program.</span>
+        </>
+      ),
+      lede:
+        'Four delivery tracks plus the measurement layer, run by one team on one roadmap: search visibility to bring the visit, content built to be cited, and conversion work to turn attention into pipeline.',
+      tiles: [
+        { title: 'Search + answer engines', desc: 'SEO and AEO/GEO run as one motion: technical foundation, entity coverage, structured data, and pages engineered to be cited by ChatGPT, Perplexity, and Google AI Overviews as well as ranked by Google.' },
+        { title: 'Content engine', desc: 'Topical clusters, comparison pages, FAQ compilations, and first-party research shipped weekly. Written to be quoted: a model should be able to lift the answer straight from the page.' },
+        { title: 'Conversion (CRO)', desc: 'The layer built to turn visits into pipeline: pricing pages buyers can act on, versus pages that clarify honestly, demo paths without friction, and testing that compounds page by page.' },
+        { title: 'Authority + distribution', desc: 'Guest placements, G2 and Capterra presence, community and Reddit strategy, and the cross-platform entity signals that make every surface describe the same brand.' },
+        { title: 'Measurement with receipts', desc: 'Share of answer tracked daily on ChatGPT, Perplexity, and Google AI Overviews, Search Console for organic, first-touch attribution for pipeline. Reported weekly against the roadmap.' },
+      ],
+    },
+    runway: {
+      title: (
+        <>
+          How the organic growth <span className="ghost">program runs.</span>
+        </>
+      ),
+      lede:
+        'No ticket queues and no monthly recommendation decks. We own the roadmap, ship the work, and walk you through the numbers every week.',
+      pillars: [
+        { kind: 'row', fig: 0, title: 'Growth audit', desc: 'Where you stand on Google, inside AI answers, and on conversion. Technical health, entity coverage, content gaps, and funnel leaks, each scored by pipeline impact so the roadmap starts where the money is.' },
+        { kind: 'card', title: '90-day roadmap', desc: 'Three to five measurable goals across the four tracks, with a shared scoreboard and clear ownership. The same window we used to measure the program on our own site.' },
+        { kind: 'row', fig: 2, title: 'Weekly shipping', desc: 'Content, technical fixes, structured data, conversion tests, and distribution, shipped every week by one team. One point of contact, and the task management stays on our side.' },
+        { kind: 'card', title: 'Numbers, weekly', desc: 'A live walkthrough of what shipped and what moved: share of answer, rankings, conversion, pipeline. Tied to the goals on the roadmap rather than a vanity dashboard.' },
+      ],
+    },
+    exhibit: {
+      art: shot('toku', 'Toku website grown by LoudFace for AI visibility'),
+      eyebrow: 'Featured program',
+      h2: 'Built to get a brand named in the answer.',
+      domLine: (
+        <>
+          <b>Toku</b> · toku.com · Payroll &amp; compliance
+        </>
+      ),
+      what:
+        'A full organic program with Webflow as the delivery layer: entity-first content, technical foundation, and the signals designed to get a vendor cited by name when buyers ask an AI what to use.',
+      annots: [
+        { em: 'One team, four tracks', span: 'Search, content, conversion, authority' },
+        { em: 'Built to be cited', span: 'Pages engines can parse and quote' },
+        { em: 'Tracked daily', span: 'ChatGPT, Perplexity, Google AI Overviews' },
+      ],
+      out: { num: '86%', label: 'AI visibility for Toku on its core prompt (30-day Peec reading, position 2.4)', src: 'Toku · Organic growth' },
+      ctaLabel: 'See the full case study',
+      ctaHref: TOKU_HREF,
+    },
+    proof: {
+      track: 'grow',
+      title: (
+        <>
+          Growth you keep, <span className="ghost">on channels you own.</span>
+        </>
+      ),
+      lede:
+        'Paid stops the day the budget stops. An organic program keeps compounding: every cited page makes the next citation easier, and every ranking feeds the next one.',
+      hero: { num: '0.18% → 10.35%', label: 'of our category’s AI answers in 90 days, running the same playbook on our own site', src: 'LoudFace · first-party study' },
+      extra: { num: '+49%', label: 'CodeOp organic clicks up 49% and impressions up 43% in four months' },
+    },
+    comparison: {
+      title: 'Organic growth vs performance marketing: which do you need?',
+      highlightWord: 'need?',
+      intro: 'Different jobs, different cost curves. The honest answer for most B2B SaaS is a sequence, and the order matters.',
+      columns: ['Approach', 'What it optimizes for', 'What happens when you stop paying'],
+      rows: [
+        {
+          discipline: 'Performance marketing',
+          optimizesFor: 'Immediate demand capture: paid search, paid social, retargeting against in-market buyers in ever-pricier auctions',
+          whereWeShowUp: 'Traffic stops with the budget. The traffic does not carry over.',
+        },
+        {
+          discipline: 'Organic growth',
+          optimizesFor: 'Durable visibility: rankings, AI citations, content assets, and conversion paths that keep working',
+          whereWeShowUp: 'The assets stay yours. Citations and rankings can keep compounding rather than resetting to zero.',
+        },
+        {
+          discipline: 'Both together',
+          optimizesFor: 'Paid captures demand this quarter while organic builds the channel that lowers blended CAC',
+          whereWeShowUp: 'Paid spend can taper as organic pipeline grows. The mix shifts while the assets keep working.',
+        },
+      ],
+    },
+    faq: {
+      title: (
+        <>
+          Common questions about the <span className="ghost">organic growth program.</span>
+        </>
+      ),
+      items: [
+        { q: 'What is an organic growth agency?', aHtml: 'An organic growth agency grows your pipeline through compounding channels: search rankings, AI-engine citations, content assets, and conversion paths, rather than rented attention like paid ads. At LoudFace that means SEO, AEO/GEO, content, and CRO run as one program by one senior team. If you are comparing agencies, <a href="/blog/best-organic-growth-agencies-b2b-saas-2026">see our ranked list of B2B SaaS organic growth agencies</a>.' },
+        { q: 'What is the difference between organic growth and performance marketing?', aHtml: 'Performance marketing buys demand while the budget runs: paid search, paid social, retargeting. Organic growth builds assets that keep working after they ship: pages that rank, get cited by AI engines, and convert. Most B2B SaaS needs both for a while, with paid tapering as the organic channel compounds.' },
+        { q: 'What does the program include?', aHtml: 'Four tracks on one roadmap: search and answer engines (SEO plus AEO/GEO), a weekly content engine, conversion optimization, and authority building. One team ships all four, so work does not queue between agencies. The deep dives live on the <a href="/services/seo-aeo">SEO &amp; AEO</a>, <a href="/services/geo-agency">GEO</a>, and <a href="/services/cro">CRO</a> pages, and the delivery system behind the program is <a href="/services/growth-autopilot">Growth Autopilot</a>.' },
+        { q: 'How is this different from hiring an SEO agency?', aHtml: 'A pure SEO retainer optimizes one channel. An organic growth program treats rankings as one input to pipeline: it adds AI-engine citations, the content that earns them, and the conversion layer built to turn visits into booked calls. You get one roadmap and one accountable team instead of three vendors pointing at each other.' },
+        { q: 'How long until organic growth shows results?', aHtml: 'Early technical and AEO wins move inside the first 30 to 60 days. Content authority and rankings compound over 90 to 180 days. Running this program on our own site moved us from 0.18% to 10.35% of our category’s AI answers between April and June 2026, and the <a href="/blog/we-ran-aeo-on-ourselves">full study is public</a>.' },
+        { q: 'How much does an organic growth agency cost?', aHtml: 'LoudFace programs start <strong>from $5k per month</strong> as a continuous Autopilot retainer; fixed-scope engagements run inside a retainer with a three-month minimum. After the growth audit you get a fixed monthly proposal scoped to your 90-day roadmap. <a href="/pricing">See full pricing and tiers.</a>' },
+        { q: 'Should we stop running paid ads?', aHtml: 'Usually no. Paid captures demand you cannot reach organically yet, and it is the fastest way to test messaging. The goal is sequencing: keep paid where it pays back while the organic program builds the channel that lowers blended acquisition cost over time.' },
+        { q: 'Who is the program for?', aHtml: 'B2B SaaS from Series A to Series C, roughly $1M ARR and up, that wants pipeline from search and AI answers without hiring a four-person in-house team. If you are earlier than that, the honest advice is founder-led content first.' },
+        { q: 'How do you measure organic growth?', aHtml: 'Share of answer across ChatGPT, Perplexity, and Google AI Overviews, tracked daily per buyer prompt. Organic rankings and clicks in Search Console. First-touch attribution on demo requests. All of it reported weekly against the roadmap goals, with the receipts linked.' },
+        { q: 'Why one team instead of separate agencies?', aHtml: 'Because the tracks feed each other. The page that earns a citation needs conversion paths to produce pipeline, and the content calendar needs to know what the SERP and the AI answers reward this month. When one team owns all four tracks, that loop runs weekly instead of quarterly.' },
+      ],
+    },
+    rel: {
+      title: (
+        <>
+          One program, <span className="ghost">four disciplines.</span>
+        </>
+      ),
+      note: 'SEO, AEO/GEO, content, and CRO compound fastest when the same team runs them on one roadmap. That is the whole thesis of this program, and it is how we run our own site.',
+    },
+    cover: {
+      h2: 'Find out what organic growth could look like for your brand.',
+      p: 'We’ll check where you stand on Google and across ChatGPT, Perplexity, and Google AI Overviews, and show you exactly where the gaps are.',
+      metaRight: 'B2B SaaS only',
+      creditLeft: 'Cover · Hoxhunt, a LoudFace client',
+      obj: { ...shot('hoxhunt', ''), rpillLabel: 'Organic growth', rpillClient: 'Hoxhunt' },
     },
   },
 
