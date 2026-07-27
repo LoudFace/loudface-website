@@ -659,7 +659,7 @@ export const SERVICE_CONFIGS: Record<string, ServiceConfig> = {
       blurb:
         'We run SEO, AEO, and GEO as one program, so you can rank on Google and get cited inside ChatGPT, Perplexity, and Google AI Overviews when buyers ask which vendor to pick. We ran the playbook on our own site: 0.18% to 10.35% of our category’s AI answers in 90 days.',
       secondary: AUDIT,
-      chip: { value: '0.18% → 10.35%', label: 'LoudFace’s own site: share of category AI answers, 90 days' },
+      chip: { value: '0.18% → 10.35%', label: 'LoudFace’s own site, 90 days' },
       main: { ...shot('toku', 'Toku website grown by LoudFace for AI visibility'), rpillLabel: 'SEO & AEO', rpillClient: 'Toku' },
       frag: shot('hoxhunt', ''),
     },
