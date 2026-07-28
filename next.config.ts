@@ -115,6 +115,15 @@ const nextConfig: NextConfig = {
   },
   async redirects() {
     return [
+      // Crawlers probe the WordPress/Yoast sitemap convention even though we
+      // never published it — ~10 404s/day (Cloudflare analytics, 2026-07-28),
+      // Meta's and other AI crawlers among them. Point it at the real sitemap
+      // rather than spending those hits on a 404.
+      {
+        source: '/sitemap_index.xml',
+        destination: '/sitemap.xml',
+        permanent: true,
+      },
       // Old Webflow → New Next.js URL mapping
       // Case studies (base + wildcard for any deep links)
       {
