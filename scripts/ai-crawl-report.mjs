@@ -288,10 +288,16 @@ async function main() {
       unknown.set(ua, (unknown.get(ua) || 0) + n);
       continue;
     }
-    const cur = bots.get(hit.bot) || { ...hit, total: 0, ok: 0, bad: 0, uas: new Set() };
+    const cur = bots.get(hit.bot) || { ...hit, total: 0, ok: 0, bad: 0, aborted: 0, uas: new Set() };
     cur.total += n;
-    // "Unsuccessful" mirrors the AI Crawl Control dashboard: 4xx/5xx.
-    if (status >= 400) cur.bad += n;
+    // 499 is NOT a failure of ours: it means the CLIENT hung up before we sent a
+    // byte. Lumping it into "unsuccessful" reads as a broken site — it made
+    // Meta-ExternalAgent look like a 61% failure rate on 2026-07-28 when its real
+    // error rate was 4.5% and we had transferred 0 bytes on every abort. Meta
+    // aborts ~59% of its own requests (browsers 0.8%, other bots 0.1%), so the
+    // number is worth SEEING — just not as a site fault.
+    if (status === 499) cur.aborted += n;
+    else if (status >= 400) cur.bad += n;
     else cur.ok += n;
     cur.uas.add(ua);
     bots.set(hit.bot, cur);
@@ -384,10 +390,11 @@ async function main() {
           b.operator,
           b.total.toLocaleString(),
           b.ok.toLocaleString(),
+          b.aborted.toLocaleString(),
           b.bad.toLocaleString(),
           pct(b.total, totalAI),
         ]),
-        ["Bot", "Operator", "Requests", "Allowed", "Unsuccessful", "Share of AI"]
+        ["Bot", "Operator", "Requests", "Served", "Aborted", "Errors", "Share of AI"]
       )
     );
   }
@@ -421,7 +428,11 @@ async function main() {
 
   // Volume measures requests CLAIMING to be a bot. Verification needs
   // Cloudflare's botManagement dimension, which is paid-plan only.
-  console.log(`\n_User-agents are self-reported; spoofing is not filtered (verification is a paid-plan field)._`);
+  console.log(
+    `\n_**Aborted** = HTTP 499: the crawler closed the connection before we sent any bytes — its behaviour, not a site fault` +
+      ` (Meta's crawler runs ~59% aborts; browsers ~0.8%). **Errors** = real 4xx/5xx, the column worth acting on._`
+  );
+  console.log(`_User-agents are self-reported; spoofing is not filtered (verification is a paid-plan field)._`);
 }
 
 main().catch((err) => {
