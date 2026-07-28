@@ -143,6 +143,61 @@ export const blogPost = defineType({
         },
       ],
     }),
+    defineField({
+      name: 'datasetMeta',
+      title: 'Dataset (Original Research)',
+      type: 'object',
+      description:
+        'OPT-IN. Fill this in ONLY for first-party data studies / original research. When present (with at least a name + description) the page emits Dataset JSON-LD so Google Dataset Search and AI engines label the piece as original research. Leave empty on ordinary posts.',
+      options: { collapsible: true, collapsed: true },
+      fields: [
+        defineField({
+          name: 'name',
+          title: 'Dataset Name',
+          type: 'string',
+          description: 'Full title of the study/dataset. Required for the schema to emit.',
+        }),
+        defineField({
+          name: 'description',
+          title: 'Dataset Description',
+          type: 'text',
+          rows: 3,
+          description: 'What the dataset measures and how it was collected. Required for the schema to emit.',
+        }),
+        defineField({
+          name: 'temporalCoverage',
+          title: 'Temporal Coverage',
+          type: 'string',
+          description: 'ISO-8601 interval the data covers, e.g. "2026-06-28/2026-07-28".',
+        }),
+        defineField({
+          name: 'variableMeasured',
+          title: 'Variables Measured',
+          type: 'array',
+          of: [{ type: 'string' }],
+          description: 'The metrics the study tracks, e.g. "AI answer citation visibility (share of AI answers a brand is cited in)".',
+        }),
+        defineField({
+          name: 'measurementTechnique',
+          title: 'Measurement Technique',
+          type: 'string',
+          description: 'How the variables were measured, e.g. "Peec AEO tracking across ChatGPT, Perplexity, and Google AI Overviews".',
+        }),
+        defineField({
+          name: 'keywords',
+          title: 'Keywords',
+          type: 'array',
+          of: [{ type: 'string' }],
+          description: 'Topical keywords for dataset discovery.',
+        }),
+        defineField({
+          name: 'license',
+          title: 'License URL',
+          type: 'url',
+          description: 'Optional. URL of the license the study is published under, if any.',
+        }),
+      ],
+    }),
   ],
   preview: {
     select: {

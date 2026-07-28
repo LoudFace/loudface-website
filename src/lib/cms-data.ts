@@ -157,6 +157,15 @@ const BLOG_POST_PROJECTION = `{
   "category": category._ref,
   "categories": categories[]._ref,
   "faq": faq[]{ question, answer },
+  "dataset-meta": datasetMeta{
+    name,
+    description,
+    temporalCoverage,
+    variableMeasured,
+    measurementTechnique,
+    keywords,
+    license
+  },
   "visuals": visuals[]{
     _key,
     position,

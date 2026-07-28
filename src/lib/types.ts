@@ -103,6 +103,24 @@ export interface CaseStudyChart {
   data: ChartDataPoint[];
 }
 
+/**
+ * Opt-in metadata that flags a blog post as a first-party data study and
+ * feeds the `Dataset` JSON-LD (see `buildDatasetSchema`). Absent on ordinary
+ * posts — only original-research pieces fill this in. `name` + `description`
+ * are the minimum required to emit the schema.
+ */
+export interface DatasetMeta {
+  name?: string;
+  description?: string;
+  /** ISO-8601 interval, e.g. "2026-06-28/2026-07-28". */
+  temporalCoverage?: string;
+  variableMeasured?: string[];
+  measurementTechnique?: string;
+  keywords?: string[];
+  /** License URL, if the study is published under a standard one. */
+  license?: string;
+}
+
 export interface BlogPost {
   id: string;
   name: string;
@@ -124,6 +142,7 @@ export interface BlogPost {
   categories?: string[];
   faq?: FAQItem[];
   visuals?: BlogVisual[];
+  "dataset-meta"?: DatasetMeta;
 }
 
 export interface BlogVisualPosition {

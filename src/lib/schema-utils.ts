@@ -7,7 +7,7 @@
  */
 
 import { splitProseByH2 } from './html-utils';
-import type { TeamMember } from './types';
+import type { BlogPost, TeamMember } from './types';
 
 /* ─── Types ────────────────────────────────────────────────────── */
 
@@ -294,6 +294,47 @@ export function buildSpeakableSchema(name: string, url: string): object {
       cssSelector: ['h1', '[data-speakable]'],
     },
     url,
+  };
+}
+
+/**
+ * Build Dataset JSON-LD for first-party data studies.
+ *
+ * Opt-in only: emits nothing unless the post carries a `dataset-meta` object
+ * with at least a `name` and `description` (set in Studio on original-research
+ * posts). Regular blog posts leave the field empty and get no Dataset schema,
+ * so this never mislabels an opinion piece as a dataset.
+ *
+ * Labels the study as original research for Google Dataset Search and AI
+ * engines. Every prop is a well-supported schema.org/Dataset property; the
+ * editor supplies the research-specific fields (temporalCoverage, the measured
+ * variables, the measurement technique) while `creator`, `url`, and
+ * `datePublished` are derived from LoudFace + the post so they can't drift.
+ */
+export function buildDatasetSchema(
+  post: BlogPost,
+  url: string,
+): object | null {
+  const meta = post['dataset-meta'];
+  if (!meta?.name || !meta?.description) return null;
+
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'Dataset',
+    name: meta.name,
+    description: meta.description,
+    url,
+    creator: {
+      '@type': 'Organization',
+      name: 'LoudFace',
+      url: SITE_URL,
+    },
+    ...(meta.temporalCoverage && { temporalCoverage: meta.temporalCoverage }),
+    ...(meta.variableMeasured?.length && { variableMeasured: meta.variableMeasured }),
+    ...(meta.measurementTechnique && { measurementTechnique: meta.measurementTechnique }),
+    ...(meta.keywords?.length && { keywords: meta.keywords }),
+    ...(post['published-date'] && { datePublished: post['published-date'] }),
+    ...(meta.license && { license: meta.license }),
   };
 }
 
