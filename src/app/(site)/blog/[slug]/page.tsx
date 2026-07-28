@@ -24,6 +24,7 @@ import {
   buildFAQSchema,
   buildItemListSchema,
   buildSpeakableSchema,
+  buildDatasetSchema,
   buildArticleAuthorSchema,
   buildOrganizationPublisher,
   buildImageObject,
@@ -237,6 +238,8 @@ export default async function BlogPostPage({ params }: PageProps) {
   const faqSchema = buildFAQSchema(faqItems);
   const itemListSchema = buildItemListSchema(post.content, post.name, canonicalUrl);
   const speakableSchema = buildSpeakableSchema(post.name, canonicalUrl);
+  // Dataset schema — only emits on opt-in first-party data studies (datasetMeta set).
+  const datasetSchema = buildDatasetSchema(post, canonicalUrl);
 
   const readTime = formatReadTime(post['time-to-read']);
   const leadAuthor = author
@@ -266,6 +269,9 @@ export default async function BlogPostPage({ params }: PageProps) {
       )}
       {itemListSchema && (
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(itemListSchema) }} />
+      )}
+      {datasetSchema && (
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(datasetSchema) }} />
       )}
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(speakableSchema) }} />
 
