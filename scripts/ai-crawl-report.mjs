@@ -27,6 +27,17 @@ import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 
 const ZONE_ID = "4b257ce477819eaf51db086503ee796b"; // loudface.co
+// The zone serves more than the marketing site — api.peec.ai rides on it too
+// (943 requests in a sample 24h window, 2026-07-28). An unfiltered zone query
+// therefore reports traffic that is NOT loudface.co under a "loudface.co"
+// heading, so we scope to the site's own hosts by default. --all-hosts opts out.
+const SITE_HOSTS = ["www.loudface.co", "loudface.co", "www.loudface.co:443", "loudface.co:443"];
+// Cloudflare returns at most `limit` GROUPS (userAgent x status combos) and does
+// NOT paginate analytics groups. Hitting the ceiling silently truncates the
+// totals, so we ask for the max and shout if we land on it.
+// Overridable ONLY so the truncation guard itself is testable
+// (AI_CRAWL_GROUP_LIMIT=10 makes any real window trip it).
+const GROUP_LIMIT = Number(process.env.AI_CRAWL_GROUP_LIMIT || 10000);
 const GRAPHQL = "https://api.cloudflare.com/client/v4/graphql";
 const TOKEN_VAR = "CLOUDFLARE_ANALYTICS_TOKEN";
 
@@ -77,7 +88,7 @@ function classify(ua) {
 }
 
 function parseArgs(argv) {
-  const a = { hours: 24, paths: false, json: false, allBots: false };
+  const a = { hours: 24, paths: false, json: false, allBots: false, hosts: [...SITE_HOSTS], allHosts: false };
   for (let i = 0; i < argv.length; i++) {
     const v = argv[i];
     if (v === "--hours") a.hours = Number(argv[++i]);
@@ -85,6 +96,9 @@ function parseArgs(argv) {
     else if (v === "--paths") a.paths = true;
     else if (v === "--json") a.json = true;
     else if (v === "--all-bots") a.allBots = true;
+    else if (v === "--all-hosts") a.allHosts = true;
+    else if (v === "--host") a.hosts = [argv[++i]];
+    else if (v.startsWith("--host=")) a.hosts = [v.split("=")[1]];
     else if (v === "--help" || v === "-h") a.help = true;
     else {
       console.error(`Unknown flag: ${v}`);
@@ -101,6 +115,9 @@ const HELP = `ai-crawl-report — AI crawler traffic for loudface.co (read-only)
   --paths       also show the top crawled paths for the top 5 bots
   --json        raw JSON instead of the markdown table
   --all-bots    also list the top UNCLASSIFIED user-agents (spot new bots)
+  --host H      count only this host (default: the loudface.co apex + www)
+  --all-hosts   count EVERY host on the zone — includes non-site hosts such as
+                api.peec.ai, so totals stop being "loudface.co"
   -h, --help    this text`;
 
 // The token lives in loudface-website/.env.local, deliberately NOT in Infisical
@@ -166,12 +183,12 @@ async function gql(token, query, variables) {
 }
 
 const BOT_QUERY = `
-query BotTraffic($zoneTag: String!, $since: Time!, $until: Time!) {
+query BotTraffic($zoneTag: String!, $since: Time!, $until: Time!, $filter: ZoneHttpRequestsAdaptiveGroupsFilter_InputObject!, $limit: Int!) {
   viewer {
     zones(filter: { zoneTag: $zoneTag }) {
       httpRequestsAdaptiveGroups(
-        filter: { datetime_geq: $since, datetime_leq: $until }
-        limit: 5000
+        filter: $filter
+        limit: $limit
         orderBy: [count_DESC]
       ) {
         count
@@ -182,12 +199,12 @@ query BotTraffic($zoneTag: String!, $since: Time!, $until: Time!) {
 }`;
 
 const PATH_QUERY = `
-query BotPaths($zoneTag: String!, $since: Time!, $until: Time!) {
+query BotPaths($zoneTag: String!, $since: Time!, $until: Time!, $filter: ZoneHttpRequestsAdaptiveGroupsFilter_InputObject!, $limit: Int!) {
   viewer {
     zones(filter: { zoneTag: $zoneTag }) {
       httpRequestsAdaptiveGroups(
-        filter: { datetime_geq: $since, datetime_leq: $until }
-        limit: 5000
+        filter: $filter
+        limit: $limit
         orderBy: [count_DESC]
       ) {
         count
@@ -240,7 +257,9 @@ async function main() {
   const now = Date.now();
   const until = new Date(now - 1000).toISOString();
   const since = new Date(now - hours * 3600 * 1000).toISOString();
-  const vars = { zoneTag: ZONE_ID, since, until };
+  const filter = { datetime_geq: since, datetime_leq: until };
+  if (!args.allHosts) filter.clientRequestHTTPHost_in = args.hosts;
+  const vars = { zoneTag: ZONE_ID, since, until, filter, limit: GROUP_LIMIT };
 
   const data = await gql(token, BOT_QUERY, vars);
   const zone = data?.viewer?.zones?.[0];
@@ -253,9 +272,14 @@ async function main() {
     return;
   }
 
+  const groups = zone.httpRequestsAdaptiveGroups ?? [];
+  // Cloudflare caps GROUPS, not requests, and never says it truncated — landing
+  // on the ceiling means every number below is a FLOOR. Say so loudly.
+  const truncated = groups.length >= GROUP_LIMIT;
+
   const bots = new Map(); // bot -> {operator, bot, total, ok, bad, uas:Set}
   const unknown = new Map(); // ua -> count
-  for (const g of zone.httpRequestsAdaptiveGroups ?? []) {
+  for (const g of groups) {
     const ua = g.dimensions.userAgent || "";
     const status = Number(g.dimensions.edgeResponseStatus);
     const n = g.count;
@@ -275,7 +299,7 @@ async function main() {
 
   const ranked = [...bots.values()].sort((a, b) => b.total - a.total);
   const totalAI = ranked.reduce((s, b) => s + b.total, 0);
-  const totalAll = (zone.httpRequestsAdaptiveGroups ?? []).reduce((s, g) => s + g.count, 0);
+  const totalAll = groups.reduce((s, g) => s + g.count, 0);
 
   let paths = null;
   if (args.paths && ranked.length) {
@@ -307,6 +331,8 @@ async function main() {
       JSON.stringify(
         {
           zone: "loudface.co",
+          scope: args.allHosts ? "ALL hosts on the zone (includes non-site hosts)" : args.hosts,
+          truncated,
           window: { since, until, hours, clamped },
           totals: { aiRequests: totalAI, allRequests: totalAll },
           bots: ranked.map(({ uas, ...b }) => ({ ...b, userAgents: [...uas] })),
@@ -322,6 +348,17 @@ async function main() {
 
   console.log(`# AI crawler traffic — loudface.co`);
   console.log(`\nWindow: last ${hours}h (${since} → ${until})`);
+  console.log(
+    args.allHosts
+      ? `Scope:  ALL hosts on the zone — includes non-site hosts (e.g. api.peec.ai); these totals are NOT just loudface.co.`
+      : `Scope:  ${args.hosts.join(", ")}`
+  );
+  if (truncated) {
+    console.log(
+      `\n⚠ TRUNCATED: Cloudflare returned the maximum ${GROUP_LIMIT.toLocaleString()} groups, so every` +
+        ` number below is a FLOOR, not a total. Re-run with a shorter --hours to get complete counts.`
+    );
+  }
   if (clamped) console.log(`> --hours was clamped to 24 (Free-plan limit of 1 day per query).`);
   console.log(
     `\n**${totalAI.toLocaleString()}** AI-crawler requests of ${totalAll.toLocaleString()} total (${pct(
