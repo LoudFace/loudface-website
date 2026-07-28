@@ -302,10 +302,15 @@ async function main() {
   const totalAll = groups.reduce((s, g) => s + g.count, 0);
 
   let paths = null;
+  // The paths query groups by userAgent x path — far higher cardinality than the
+  // main userAgent x status query (5,413 vs 805 in a sample 24h window), so it
+  // reaches the ceiling FIRST. It needs its own truncation check.
+  let pathsTruncated = false;
   if (args.paths && ranked.length) {
     const top5 = new Set(ranked.slice(0, 5).map((b) => b.bot));
     const pdata = await gql(token, PATH_QUERY, vars);
     const pgroups = pdata?.viewer?.zones?.[0]?.httpRequestsAdaptiveGroups ?? [];
+    pathsTruncated = pgroups.length >= GROUP_LIMIT;
     const byBot = new Map();
     for (const g of pgroups) {
       const hit = classify(g.dimensions.userAgent || "");
@@ -336,7 +341,7 @@ async function main() {
           window: { since, until, hours, clamped },
           totals: { aiRequests: totalAI, allRequests: totalAll },
           bots: ranked.map(({ uas, ...b }) => ({ ...b, userAgents: [...uas] })),
-          ...(paths ? { paths } : {}),
+          ...(paths ? { paths, pathsTruncated } : {}),
           ...(args.allBots ? { unclassified: unknownTop } : {}),
         },
         null,
@@ -389,6 +394,13 @@ async function main() {
 
   if (paths) {
     console.log(`\n## Top paths (top 5 bots)`);
+    if (pathsTruncated) {
+      console.log(
+        `\n⚠ TRUNCATED: the path query hit the ${GROUP_LIMIT.toLocaleString()}-group ceiling, so these` +
+          ` are the top paths OF WHAT WAS RETURNED — a genuinely busier path may be missing.` +
+          ` Re-run with a shorter --hours.`
+      );
+    }
     for (const p of paths) {
       console.log(`\n**${p.bot}**`);
       for (const { path, count } of p.top) console.log(`- ${count.toLocaleString()}  ${path}`);
