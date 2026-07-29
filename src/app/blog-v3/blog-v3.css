@@ -243,11 +243,26 @@
     radial-gradient(farthest-side at 0 50%, rgba(20,16,60,.16), rgba(20,16,60,0)) 0 0 / 20px 100% no-repeat,
     radial-gradient(farthest-side at 100% 50%, rgba(20,16,60,.16), rgba(20,16,60,0)) 100% 0 / 20px 100% no-repeat;
   background-attachment:local, local, scroll, scroll;}
-.blogv3 .prose table{width:100%;border-collapse:collapse;font-size:15px;background:#fff;min-width:440px;}
+/* BUGFIX (2026-07-29): cells must WRAP. `white-space:nowrap` used to sit on both
+   `thead th` and `tbody td:first-child`. On any decision table whose first column
+   carries a full condition sentence (~50+ chars) that turned the first column's
+   max-content width into the table's floor: the ROI-math post rendered a 2225px-wide
+   table inside a 698px wrap — column 1 alone was 1663px, columns 2-4 got crushed to
+   115-223px (so rows ran 230-567px tall) and the reader saw one clipped line of
+   column 1 with the other three columns scrolled out of view. The sibling
+   seo-vs-aeo post was overflowing the same way at 1212px, just less visibly.
+   Cells now wrap; the first column takes a ~30% share so it reads as 2-3 lines
+   instead of being squeezed to its header width; `min-width` gives a 4-column
+   table breathing room on mobile, where .blog-table-wrap still scrolls on its own
+   (the page body never does). */
+.blogv3 .prose table{width:100%;border-collapse:collapse;font-size:15px;background:#fff;min-width:520px;}
 .blogv3 .prose thead th{position:sticky;top:0;z-index:1;text-align:left;font-family:var(--font-sans);font-size:11px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--mut);
-  padding:14px 18px;background:var(--surface-50);border-bottom:1px solid var(--paper-line);white-space:nowrap;}
+  padding:14px 18px;background:var(--surface-50);border-bottom:1px solid var(--paper-line);}
 .blogv3 .prose tbody td{padding:13px 18px;border-bottom:1px solid var(--paper-line);color:var(--surface-700);line-height:1.5;vertical-align:top;}
-.blogv3 .prose tbody td:first-child{font-weight:600;color:var(--ink);white-space:nowrap;}
+/* break-word so an unbroken token (URL, schema ref) can't reintroduce the overflow */
+.blogv3 .prose thead th,.blogv3 .prose tbody td{overflow-wrap:break-word;}
+.blogv3 .prose thead th:first-child,.blogv3 .prose tbody td:first-child{width:30%;}
+.blogv3 .prose tbody td:first-child{font-weight:600;color:var(--ink);}
 .blogv3 .prose tbody tr:last-child td{border-bottom:none;}
 .blogv3 .prose tbody tr:hover{background:var(--surface-50);}
 /* subtle "scroll for more" cue on mobile — sits under the wide table, fades with the shadow above */
