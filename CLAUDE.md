@@ -247,20 +247,3 @@ These defaults are optimized for AI coding agents (and humans) working on apps t
   needed. Always curl https://ai-gateway.vercel.sh/v1/models first; never trust model IDs from memory
 - For durable agent loops or untrusted code: use Workflow (pause/resume/state) + Sandbox; use Vercel MCP for secure infra access
 <!-- VERCEL BEST PRACTICES END -->
-
-## Model Orchestration (portable core — applies in cloud sessions too)
-
-The full policy lives in each machine's global `~/.claude/CLAUDE.md`; this section is the portable core so cloud sessions, other accounts, and teammates follow the same routing.
-
-**Scope: top-level sessions only.** Subagents (spawned via the Agent tool or workflows) are executors: do your brief directly with your own tools, never spawn further agents unless the brief explicitly authorizes it.
-
-**Objective:** maximize output quality per unit of subscription limit. Quality floor first, token efficiency second — efficiency comes from routing work to the right model, never from skipping verification, review, or the taste gate.
-
-- Orchestrator delegates; executors execute. Reading/search across more than ~3 files → Explore/Sonnet subagents that return conclusions, never file dumps. Parallelizable work needing session context or Claude tools → concurrent Sonnet agents in one message (self-contained parallel work on Arnel's Mac → the codex lane below). Tiny single-file edits and judgment/taste calls → the orchestrator does directly (delegation overhead ≈ 10–30k tokens).
-- Ladder: `sonnet` = context-bound executor (search/read, drafts, and work needing session context or Claude tools; on Arnel's Mac, spec'd self-contained implementation defaults to the codex lane instead — see below) → `opus` = hard implementation, deep debugging, high-stakes review → `fable` = orchestration, judgment, synthesis, final quality gate only. `haiku` = throwaway mechanical sweeps, never user-facing output.
-- Never omit `model` on an Agent call (never "inherit") — an inherited model runs the subagent on the orchestrator's own tier and silently burns top-tier limits. Always name an explicit tier.
-- Grind detector: orchestrator about to make >~10 direct edits, or past ~3 rounds of an iterate loop (screenshot→fix, build→fix)? That's executor work — brief it out and keep only the accept/reject call.
-- Standing permission to escalate: if output misses the bar once, redo on a smarter model without asking. Retry the same tier only for transient flakes, never quality misses.
-- Anything user-facing (UI, copy, API design) → Sonnet minimum + an Opus/Fable review pass before ship.
-- Subagent briefs must be self-contained (exact paths, constraints, applicable project rules, expected output shape). The orchestrator verifies everything — build/tests/spot-read — and never relays subagent claims unchecked.
-- The OpenAI/Codex lane (GPT-5.6 family — `gpt-5.6-sol` flagship, `-terra` balanced/default, `-luna` cheapest; separate rate-limit pool) exists ONLY on Arnel's Mac (local sessions); cloud sessions skip that lane and route its workloads to Sonnet. On Arnel's Mac, codex is the DEFAULT implementation executor (2026-07-19): spec'd self-contained work → codex write-mode on a branch (Claude diff-reviews + builds before accept); when unsure → codex; sonnet only for work needing session context, Claude tools, or per-part verification. Pick the cheapest 5.6 tier that clears the task; codex rate-limit error → fall back to sonnet once.
