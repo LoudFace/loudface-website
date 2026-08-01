@@ -1,0 +1,70 @@
+/**
+ * legal-v3 — the thin visual layer for LoudFace's policy pages
+ * (/privacy, and the /terms + /cookies siblings when they migrate).
+ *
+ * These pages sit on the approved v3 shell: service-v3.css supplies the tokens,
+ * the ELECTRIC `.hero` stage and the FooterV3 skin; seo-for-v3.css supplies the
+ * `.sf-prose` light stage and the `.sf-body` rich-text rules. Only the genuinely
+ * new furniture lives here, and every rule is scoped `:where(.svcv3)` +
+ * `.lgv3` so it can never leak onto the shared Tailwind chrome
+ * (V3-HANDOVER.md "CSS coexistence" gotcha — zero-specificity `:where()` so
+ * these resets confine to the wrapper but never override component classes).
+ *
+ * A policy page is a READING surface, not a pitch: the hero is compact, there
+ * is no floating artifact, no stat chip, and no cover-stack CTA. DESIGN.md's
+ * "pages OPEN electric" still holds — the opening band is electric, the body is
+ * crisp light.
+ */
+
+/* ── compact electric hero ─────────────────────────────────────────────── */
+.svcv3 :where(.lgv3-hero){padding:150px 0 76px;}
+.svcv3 :where(.lgv3-hero) h1{max-width:18ch;font-size:clamp(2.25rem,3.4vw,3.4rem);}
+
+/* "Last updated" — Satoshi uppercase micro-label, never a mono eyebrow
+   (DESIGN.md §4: two fonts only, Geist Mono is banned site-wide). */
+.svcv3 :where(.lgv3-stamp){
+  margin-top:22px;display:inline-flex;align-items:center;gap:9px;height:30px;
+  padding:0 14px;border-radius:999px;background:rgba(255,255,255,.14);
+  border:1px solid rgba(255,255,255,.24);color:#fff;
+  font-family:var(--font-sans);font-size:11.5px;font-weight:500;
+  text-transform:uppercase;letter-spacing:.1em;
+}
+.svcv3 :where(.lgv3-stamp) i{
+  width:6px;height:6px;border-radius:999px;background:#fff;
+  box-shadow:0 0 0 4px rgba(255,255,255,.18);
+}
+
+/* ── body: prose column + sticky contents rail ─────────────────────────── */
+.svcv3 :where(.lgv3-wrap){
+  display:grid;grid-template-columns:minmax(0,1fr) 232px;
+  gap:56px;align-items:start;max-width:1000px;margin:0 auto;
+}
+.svcv3 :where(.lgv3-main){min-width:0;max-width:68ch;}
+
+.svcv3 :where(.lgv3-toc){position:sticky;top:96px;display:grid;gap:11px;}
+.svcv3 :where(.lgv3-toc) span{
+  font-family:var(--font-sans);font-size:11.5px;font-weight:500;
+  text-transform:uppercase;letter-spacing:.1em;color:var(--mut);
+}
+.svcv3 :where(.lgv3-toc) ol{display:grid;gap:7px;list-style:none;padding:0;margin:0;counter-reset:lgv3;}
+.svcv3 :where(.lgv3-toc) a{
+  display:block;font-size:13.6px;line-height:1.4;color:var(--body);
+  text-decoration:none;padding:3px 0 3px 13px;
+  border-left:1px solid var(--paper-line);
+  /* Literal ease — service-v3.css does not declare --ease-out (see the note in
+     the migration report); the DESIGN.md §5 calm-operator curve is inlined. */
+  transition:color .18s cubic-bezier(.16,1,.3,1),border-color .18s cubic-bezier(.16,1,.3,1);
+}
+.svcv3 :where(.lgv3-toc) a:hover{color:var(--color-primary-600);border-left-color:var(--color-primary-500);}
+
+/* Each numbered clause is its own scroll target with a hairline indigo rule. */
+.svcv3 :where(.lgv3-sec){scroll-margin-top:96px;}
+.svcv3 :where(.lgv3-sec) + :where(.lgv3-sec){
+  margin-top:42px;padding-top:38px;border-top:1px solid var(--paper-line);
+}
+
+@media (max-width:900px){
+  .svcv3 :where(.lgv3-wrap){grid-template-columns:1fr;gap:0;}
+  .svcv3 :where(.lgv3-toc){display:none;}
+  .svcv3 :where(.lgv3-hero){padding:110px 0 64px;}
+}

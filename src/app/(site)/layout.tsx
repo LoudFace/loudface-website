@@ -43,13 +43,24 @@ export default async function SiteLayout({
 
   const isBlog = pathname === "/blog" || pathname.startsWith("/blog/");
   const isServiceChild = pathname.startsWith("/services/");
+  // Keep this list in sync with deriveRouteChrome() in SiteChrome.tsx.
+  // Every /seo-for/<industry> route — programmatic and bespoke — now renders
+  // the v3 template with its own FooterV3. (/seo-for/saas was the last holdout;
+  // migrated 2026-08-01.)
+  const isSeoForIndustry = pathname.startsWith("/seo-for/");
+  const isTeamProfile = pathname.startsWith("/team/");
   const suppressSharedFooter =
     pathname === "/" ||
     pathname === "/about" ||
     pathname === "/pricing" ||
     pathname === "/services" ||
     isServiceChild ||
+    isSeoForIndustry ||
+    isTeamProfile ||
     pathname === "/contact" ||
+    pathname === "/ai-instructions" ||
+    // Policy pages on LegalPageV3 (/terms + /cookies join when they migrate).
+    pathname === "/privacy" ||
     pathname.startsWith("/case-studies") ||
     isBlog;
   const footerData = suppressSharedFooter ? null : await fetchFooterData();

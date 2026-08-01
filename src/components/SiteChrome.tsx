@@ -27,6 +27,11 @@ function deriveRouteChrome(pathname: string): RouteChrome {
   const isBlog = pathname === "/blog" || pathname.startsWith("/blog/");
   // Service child pages (/services/<slug>) are v3, same treatment as the hub.
   const isServiceChild = pathname.startsWith("/services/");
+  // Every /seo-for/<industry> page is v3 — programmatic and both bespoke
+  // siblings (/seo-for/saas migrated 2026-08-01). The /seo-for hub is separate.
+  const isSeoForIndustry = pathname.startsWith("/seo-for/");
+  // Team profile pages (/team/<slug>) are v3.
+  const isTeamProfile = pathname.startsWith("/team/");
 
   const isV3 =
     pathname === "/" ||
@@ -34,7 +39,12 @@ function deriveRouteChrome(pathname: string): RouteChrome {
     pathname === "/pricing" ||
     pathname === "/services" ||
     isServiceChild ||
+    isSeoForIndustry ||
+    isTeamProfile ||
+    pathname === "/ai-instructions" ||
     pathname === "/contact" ||
+    // Policy pages on LegalPageV3 (/terms + /cookies join when they migrate).
+    pathname === "/privacy" ||
     pathname.startsWith("/case-studies") ||
     isBlog;
 
