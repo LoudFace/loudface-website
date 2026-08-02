@@ -313,6 +313,7 @@ export function HeroMonolith() {
         aria-hidden="true"
         camera={{ fov: 30, position: [1.1, 0.5, 5] }}
         dpr={[1, 2]}
+        frameloop={reducedMotion ? "demand" : "always"}
         gl={{ alpha: true, antialias: true }}
       >
         <HeroMonolithScene pointer={pointer} reducedMotion={reducedMotion} />

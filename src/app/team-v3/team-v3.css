@@ -79,5 +79,5 @@
 .svcv3 .tm-card h3{font-family:var(--font-heading);font-weight:500;font-size:1.06rem;line-height:1.35;
   letter-spacing:-.015em;color:var(--ink);text-wrap:pretty;}
 .svcv3 .tm-card time{display:block;margin-top:10px;font-family:var(--font-sans);font-size:13px;
-  color:var(--muted,#6b6a86);font-variant-numeric:tabular-nums;}
+  color:var(--mut);font-variant-numeric:tabular-nums;}
 .svcv3 .tm-empty{font-family:var(--font-sans);font-size:15.5px;line-height:1.6;color:var(--body);}
