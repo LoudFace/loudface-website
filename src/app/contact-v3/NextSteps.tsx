@@ -109,7 +109,7 @@ export function NextSteps() {
               <span>11:30 AM</span>
               <span className="cal__check">
                 <svg viewBox="0 0 12 12" fill="none">
-                  <path d="M2.5 6.2 5 8.7l4.5-5" stroke="#fff" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
+                  <path d="M2.5 6.2 5 8.7l4.5-5" stroke="var(--color-white)" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
                 </svg>
               </span>
             </div>

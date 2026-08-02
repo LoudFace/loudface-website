@@ -78,8 +78,10 @@ const RC_GLYPHS: ReactNode[] = [
   <path key="r2" d="M4 17l6-6 4 4 6-8" />,
 ];
 
-/* three reusable blueprint figures (aria-hidden, decorative) */
-function Blueprint({ v }: { v: 0 | 1 | 2 }) {
+/* three reusable blueprint figures (aria-hidden, decorative).
+   Exported so seo-for-v3 can reuse the house plate style rather than
+   freehanding it (DESIGN.md §8). */
+export function Blueprint({ v }: { v: 0 | 1 | 2 }) {
   if (v === 0) {
     return (
       <svg viewBox="0 0 460 268" role="img">
@@ -417,7 +419,7 @@ export function ServicePageV3({ config, images }: { config: ServiceConfig; image
                   </span>
                 </div>
               ) : c.exhibit.outText ? (
-                <p className="ex-what rv" style={{ ['--d' as string]: '.18s', color: '#fff', fontWeight: 600 }}>
+                <p className="ex-what rv" style={{ ['--d' as string]: '.18s', color: 'var(--color-white)', fontWeight: 600 }}>
                   {c.exhibit.outText}
                 </p>
               ) : null}

@@ -297,7 +297,7 @@ export default function SyntaxSkyline({ gridUrl, className = "" }: SyntaxSkyline
     <div
       ref={containerRef}
       className={`absolute inset-0 overflow-hidden ${className}`}
-      style={{ background: "#060a12" }}
+      style={{ background: "var(--color-surface-950)" }}
     >
       <canvas ref={canvasRef} className="w-full h-full block cursor-crosshair" />
     </div>

@@ -1,7 +1,8 @@
-import { revalidatePath } from 'next/cache';
+import { revalidatePath, revalidateTag } from 'next/cache';
 import { NextResponse } from 'next/server';
 import crypto from 'node:crypto';
 import { pingIndexNow } from '@/lib/indexnow';
+import { cmsDocTag, cmsTypeTag } from '@/lib/cms-data';
 
 /**
  * Sanity webhook → on-demand ISR.
@@ -105,6 +106,19 @@ export async function POST(request: Request) {
 
   for (const p of paths) revalidatePath(p);
 
+  const purgedTags: string[] = [];
+  if (body._type) {
+    const typeTag = cmsTypeTag(body._type);
+    revalidateTag(typeTag, { expire: 0 });
+    purgedTags.push(typeTag);
+
+    if (slug) {
+      const docTag = cmsDocTag(body._type, slug);
+      revalidateTag(docTag, { expire: 0 });
+      purgedTags.push(docTag);
+    }
+  }
+
   // Push the changed paths to IndexNow so Bing/Yandex/ChatGPT-search re-crawl
   // within minutes. Excludes the LLM index files (they're not in any sitemap).
   const indexable = paths.filter((p) => !p.startsWith('/llms') && !p.startsWith('/sitemap'));
@@ -115,6 +129,7 @@ export async function POST(request: Request) {
     type: body._type ?? null,
     slug: slug ?? null,
     paths,
+    purgedTags,
     indexNowStatus,
   });
 }

@@ -44,7 +44,7 @@ import { Hero, Partners, CaseStudySlider } from '@/components/sections';
 | Dot-prefixed label | `BulletLabel` | Create a `<span>` with a dot character |
 | Category/tag pill | `Badge` | Build a custom pill with inline styles |
 | Any button or link-button | `Button` | Use raw `<button>` or `<a>` for CTAs |
-| Carousel navigation | `CarouselNav` | Build custom prev/next arrow buttons |
+| Carousel navigation | `SliderNav` | Build custom prev/next arrow buttons |
 | Color contrast on dynamic bg | `getContrastColors()` from `@/lib/color-utils` | Inline luminance/contrast math |
 
 ## After Changing Components

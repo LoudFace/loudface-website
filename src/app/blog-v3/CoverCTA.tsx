@@ -12,6 +12,7 @@ const COVER = `${SANITY}a9110ec997f7a351bb9b90347bef4abf6b6b02fc-3024x1890.jpg?w
 const CARD = `${SANITY}5f21404454406eee90732e4e1c8655e0c8c6013b-3024x3629.webp?w=1000&h=640&fit=crop&crop=top&fm=webp&q=82`;
 
 export function CoverCTA() {
+
   return (
     <section className="cover" id="book">
       {/* Full-bleed ⇒ sizes="100vw"; the w=1600 source caps the output. */}

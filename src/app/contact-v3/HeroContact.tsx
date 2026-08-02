@@ -11,7 +11,7 @@ import { CONTACT_EMAIL } from './data';
 const tick = (
   <span className="tick" aria-hidden="true">
     <svg viewBox="0 0 12 12" fill="none">
-      <path d="M2.5 6.2 5 8.7l4.5-5" stroke="#818cf8" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M2.5 6.2 5 8.7l4.5-5" stroke="var(--color-primary-400)" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
     </svg>
   </span>
 );

@@ -31,13 +31,11 @@ const sizeClasses = {
 
 // Color variants
 const variantClasses = {
-  primary: 'bg-surface-900 text-white hover:bg-surface-800 focus-visible:outline-surface-900',
-  secondary:
-    'bg-primary-600 text-white hover:bg-primary-700 focus-visible:outline-primary-500',
-  ghost:
-    'bg-transparent text-surface-700 hover:bg-surface-100 hover:text-surface-900 focus-visible:outline-surface-500',
+  primary: 'bg-surface-900 text-white hover:bg-surface-800',
+  secondary: 'bg-primary-600 text-white hover:bg-primary-700',
+  ghost: 'bg-transparent text-surface-700 hover:bg-surface-100 hover:text-surface-900',
   outline:
-    'border border-surface-200 bg-transparent text-surface-900 hover:bg-surface-100 focus-visible:outline-surface-500',
+    'border border-surface-200 bg-transparent text-surface-900 hover:bg-surface-100',
 };
 
 export function Button({
@@ -57,7 +55,7 @@ export function Button({
   const baseClasses = [
     'inline-flex items-center justify-center font-medium rounded-lg',
     'transition-colors duration-200',
-    'focus-visible:outline-2 focus-visible:outline-offset-2',
+    'focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-500',
     'disabled:opacity-50 disabled:cursor-not-allowed',
     fullWidth ? 'w-full' : '',
   ]

@@ -13,6 +13,7 @@ import { PostHogProvider } from "@/components/PostHogProvider";
 import { ConsentManager } from "@/components/ConsentManager";
 import { countryRequiresConsent } from "@/lib/consent";
 import { SanityLive } from "@/lib/sanity.live";
+import { getNavContent } from "@/lib/content-utils";
 
 /**
  * (site) Layout
@@ -64,6 +65,7 @@ export default async function SiteLayout({
     pathname.startsWith("/case-studies") ||
     isBlog;
   const footerData = suppressSharedFooter ? null : await fetchFooterData();
+  const navContent = getNavContent();
   const isDraftMode = (await draftMode()).isEnabled;
 
   // Route-dependent chrome (Header hero-theme, hreflang, shared-Footer
@@ -78,7 +80,7 @@ export default async function SiteLayout({
           Skip to main content
         </a>
 
-        <SiteHeader />
+        <SiteHeader navContent={navContent} />
 
         <main id="main-content">{children}</main>
 

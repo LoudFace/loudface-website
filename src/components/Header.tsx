@@ -13,6 +13,7 @@ interface NavLink {
 
 interface DropdownItem {
   icon: string;
+  iconAlt: string;
   title: string;
   description: string;
   href: string;
@@ -22,99 +23,31 @@ interface Dropdown {
   label: string;
   description: string;
   items: DropdownItem[];
-  ctaText?: string;
 }
 
-const navLinks: NavLink[] = [
-  { label: "Our Work", href: "/case-studies" },
-  { label: "Blog", href: "/blog" },
-  { label: "About us", href: "/about" },
-  { label: "Pricing", href: "/pricing" },
-];
+interface HeaderContent {
+  links: NavLink[];
+  dropdowns: {
+    services: Dropdown;
+    industries: Dropdown;
+  };
+  dropdownCta: {
+    prompt: string;
+    action: string;
+  };
+  ctaText: string;
+  logoAriaLabel: string;
+  logoAlt: string;
+  mainNavigationAriaLabel: string;
+  menuToggleAriaLabel: string;
+  mobileMenuAriaLabel: string;
+  mobileNavigationAriaLabel: string;
+}
 
-const servicesDropdown: Dropdown = {
-  label: "Services",
-  description: "Everything you need to design, build, and grow in Webflow.",
-  items: [
-    {
-      icon: "/images/Frame-1321316759.svg",
-      title: "Webflow Development",
-      description:
-        "Scalable, AI-enhanced Webflow builds optimized for visibility and performance.",
-      href: "/services/webflow",
-    },
-    {
-      icon: "/images/stair-group.svg",
-      title: "SEO/AEO",
-      description:
-        "Visibility strategies that future-proof your search performance.",
-      href: "/services/seo-aeo",
-    },
-    {
-      icon: "/images/Frame-1321316760.svg",
-      title: "UX/UI Design",
-      description: "Conversion-focused design systems built for CRO and search.",
-      href: "/services/ux-ui-design",
-    },
-    {
-      icon: "/images/Frame-1321316762-1.svg",
-      title: "CRO",
-      description: "Data-driven optimization that turns visitors into customers.",
-      href: "/services/cro",
-    },
-    {
-      icon: "/images/Frame-1321316761.svg",
-      title: "Copywriting",
-      description:
-        "Persuasive, SEO-optimized content that connects and converts.",
-      href: "/services/copywriting",
-    },
-    {
-      icon: "/images/growth-autopilot-icon.svg",
-      title: "Growth Autopilot",
-      description:
-        "SEO, AEO, and CRO as one integrated system for B2B SaaS.",
-      href: "/services/growth-autopilot",
-    },
-  ],
-  ctaText: "Looking for a new agency partner? Get in touch",
-};
-
-const industriesDropdown: Dropdown = {
-  label: "Industries",
-  description: "Specialized SEO strategies for your sector.",
-  items: [
-    {
-      icon: "/images/arcticons_app-saasu.svg",
-      title: "SaaS",
-      description:
-        "High-performance SEO strategies that scale with your product.",
-      href: "/seo-for/saas",
-    },
-    {
-      icon: "/images/arcticons_studysmarter.svg",
-      title: "B2B",
-      description:
-        "Authority-driven SEO strategies that capture high-intent B2B search demand.",
-      href: "/seo-for/b2b",
-    },
-    {
-      icon: "/images/arcticons_shopify.svg",
-      title: "E-commerce",
-      description:
-        "Conversion-first SEO built for speed, performance, and measurable ROI.",
-      href: "/seo-for/ecommerce",
-    },
-    {
-      icon: "/images/Vector.svg",
-      title: "Healthcare",
-      description:
-        "SEO strategies that communicate care and compliance.",
-      href: "/seo-for/healthcare",
-    },
-  ],
-  ctaText: "View all industries →",
-};
+export interface HeaderProps {
+  heroTheme?: "dark";
+  content: HeaderContent;
+}
 
 // Clean line-icons for the v3 (deep-indigo) dropdown — indigo-300 stroke, keyed by item href.
 const DROPDOWN_ICON: Record<string, string> = {
@@ -176,8 +109,13 @@ function unlockScroll() {
   window.scrollTo({ top: savedScrollY, left: 0, behavior: "instant" });
 }
 
-export function Header({ heroTheme }: { heroTheme?: 'dark' } = {}) {
+export function Header({ heroTheme, content }: HeaderProps) {
   const pathname = usePathname();
+  const {
+    links: navLinks,
+    dropdowns: { services: servicesDropdown, industries: industriesDropdown },
+    dropdownCta,
+  } = content;
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [mobileAccordion, setMobileAccordion] = useState<string | null>(null);
@@ -358,7 +296,7 @@ export function Header({ heroTheme }: { heroTheme?: 'dark' } = {}) {
         role="menu"
       >
         <div
-          className={`bg-[linear-gradient(180deg,#171445_0%,#191552_100%)] rounded-2xl shadow-2xl ring-1 ring-white/10 overflow-hidden transition-transform duration-200 ${
+          className={`bg-[linear-gradient(180deg,var(--color-night)_0%,var(--color-night-hi)_100%)] rounded-2xl shadow-2xl ring-1 ring-white/10 overflow-hidden transition-transform duration-200 ${
             openDropdown === name ? "scale-100" : "scale-[0.98]"
           }`}
         >
@@ -405,22 +343,16 @@ export function Header({ heroTheme }: { heroTheme?: 'dark' } = {}) {
                 </Link>
               ))}
             </div>
-            {dropdown.ctaText && (
-              <>
-                <div className="h-px bg-white/10 -mx-6 mt-4 mb-4" />
-                <button
-                  type="button"
-                  data-cal-trigger
-                  className="w-full text-2xs py-2.5 px-4 rounded-lg bg-white/6 hover:bg-white/10 ring-1 ring-white/10 transition-colors duration-150 inline-flex items-center justify-between gap-1 font-medium border-none cursor-pointer"
-                  onClick={() => setOpenDropdown(null)}
-                >
-                  <span className="text-white/60">
-                    Looking for a new agency partner?
-                  </span>
-                  <span className="text-white">Get in touch →</span>
-                </button>
-              </>
-            )}
+            <div className="h-px bg-white/10 -mx-6 mt-4 mb-4" />
+            <button
+              type="button"
+              data-cal-trigger
+              className="w-full text-2xs py-2.5 px-4 rounded-lg bg-white/6 hover:bg-white/10 ring-1 ring-white/10 transition-colors duration-150 inline-flex items-center justify-between gap-1 font-medium border-none cursor-pointer"
+              onClick={() => setOpenDropdown(null)}
+            >
+              <span className="text-white/60">{dropdownCta.prompt}</span>
+              <span className="text-white">{dropdownCta.action}</span>
+            </button>
           </div>
         </div>
       </div>
@@ -441,13 +373,13 @@ export function Header({ heroTheme }: { heroTheme?: 'dark' } = {}) {
               <Link
                 href="/"
                 className="flex items-center flex-shrink-0 cursor-pointer"
-                aria-label="LoudFace Home"
+                aria-label={content.logoAriaLabel}
               >
                 <Image
                   src={asset('/images/loudface.svg')}
                   width={133}
                   height={26}
-                  alt="LoudFace"
+                  alt={content.logoAlt}
                   className="h-6.5 w-auto"
                   priority
                 />
@@ -456,7 +388,7 @@ export function Header({ heroTheme }: { heroTheme?: 'dark' } = {}) {
               {/* Desktop Navigation */}
               <nav
                 className="hidden lg:flex items-center gap-2"
-                aria-label="Main navigation"
+                aria-label={content.mainNavigationAriaLabel}
               >
                 {navLinks.map((link) => (
                   <Link
@@ -481,7 +413,7 @@ export function Header({ heroTheme }: { heroTheme?: 'dark' } = {}) {
                 data-nav-cta=""
                 className="hidden lg:inline-flex items-center justify-center px-5 py-2 bg-surface-900 text-white text-sm font-sans font-medium rounded-full hover:bg-surface-800 active:scale-[0.98] transition-all duration-150 border-none cursor-pointer focus-visible:outline-2 focus-visible:outline-primary-500 focus-visible:outline-offset-2"
               >
-                Book an intro call
+                {content.ctaText}
               </button>
 
               {/* Mobile Menu Button */}
@@ -489,7 +421,7 @@ export function Header({ heroTheme }: { heroTheme?: 'dark' } = {}) {
                 type="button"
                 onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
                 className="nav-burger lg:hidden relative flex items-center justify-center w-10 h-10 -mr-1 bg-transparent border-none cursor-pointer rounded-xl hover:bg-surface-100 active:bg-surface-200 transition-colors duration-150"
-                aria-label="Toggle menu"
+                aria-label={content.menuToggleAriaLabel}
                 aria-haspopup="dialog"
                 aria-expanded={mobileMenuOpen}
               >
@@ -519,7 +451,7 @@ export function Header({ heroTheme }: { heroTheme?: 'dark' } = {}) {
           mobileDialogRef in the effects above, not by conditional classes. */}
       <dialog
         ref={mobileDialogRef}
-        aria-label="Mobile menu"
+        aria-label={content.mobileMenuAriaLabel}
         // Light dismiss: a click landing on the dialog itself (the empty area
         // below the menu, i.e. the backdrop) closes it. Clicks on the nav or its
         // links bubble from descendants, so target !== currentTarget and they're
@@ -530,7 +462,7 @@ export function Header({ heroTheme }: { heroTheme?: 'dark' } = {}) {
         }}
         className="m-0 w-full max-w-none h-[calc(100dvh-61px)] max-h-none fixed top-[61px] inset-x-0 border-0 p-0 bg-white overflow-y-auto z-40 lg:!hidden backdrop:bg-transparent"
       >
-        <nav className="p-6" aria-label="Mobile navigation">
+        <nav className="p-6" aria-label={content.mobileNavigationAriaLabel}>
           {navLinks.map((link) => (
             <Link
               key={link.label}
@@ -550,7 +482,7 @@ export function Header({ heroTheme }: { heroTheme?: 'dark' } = {}) {
               className="flex items-center justify-between w-full py-4 text-lg font-medium text-surface-900 bg-transparent border-none cursor-pointer text-left"
               aria-expanded={mobileAccordion === "services"}
             >
-              <span>Services</span>
+              <span>{servicesDropdown.label}</span>
               <svg
                 className={`w-4 h-4 transition-transform duration-200 ${mobileAccordion === "services" ? "rotate-180" : ""}`}
                 viewBox="0 0 16 16"
@@ -576,7 +508,7 @@ export function Header({ heroTheme }: { heroTheme?: 'dark' } = {}) {
                 >
                   <Image
                     src={item.icon}
-                    alt={`${item.title} icon`}
+                    alt={item.iconAlt}
                     width={20}
                     height={20}
                     className="w-5 h-5"
@@ -594,7 +526,7 @@ export function Header({ heroTheme }: { heroTheme?: 'dark' } = {}) {
               className="flex items-center justify-between w-full py-4 text-lg font-medium text-surface-900 bg-transparent border-none cursor-pointer text-left"
               aria-expanded={mobileAccordion === "industries"}
             >
-              <span>Industries</span>
+              <span>{industriesDropdown.label}</span>
               <svg
                 className={`w-4 h-4 transition-transform duration-200 ${mobileAccordion === "industries" ? "rotate-180" : ""}`}
                 viewBox="0 0 16 16"
@@ -620,7 +552,7 @@ export function Header({ heroTheme }: { heroTheme?: 'dark' } = {}) {
                 >
                   <Image
                     src={item.icon}
-                    alt={`${item.title} icon`}
+                    alt={item.iconAlt}
                     width={20}
                     height={20}
                     className="w-5 h-5"
@@ -638,7 +570,7 @@ export function Header({ heroTheme }: { heroTheme?: 'dark' } = {}) {
               className="w-full inline-flex items-center justify-center px-5 py-2.5 bg-primary-600 text-white text-sm font-medium rounded-lg hover:bg-primary-700 transition-colors border-none cursor-pointer focus-visible:outline-2 focus-visible:outline-white focus-visible:outline-offset-2"
               onClick={() => setMobileMenuOpen(false)}
             >
-              Book an intro call
+              {content.ctaText}
             </button>
           </div>
         </nav>

@@ -8,6 +8,8 @@ const AI_LINKS = [
 ];
 
 export function FooterV3() {
+  const currentYear = new Date().getFullYear();
+
   return (
     <footer className="ft">
       <div className="container">
@@ -55,7 +57,7 @@ export function FooterV3() {
       <img className="ft-mark" src="/images/loudface-inversed.svg" alt="loudface" width={133} height={27} loading="lazy" />
       <div className="container">
         <div className="ft-legal">
-          <p>© 2026 LoudFace. All rights reserved.</p>
+          <p>© {currentYear} LoudFace. All rights reserved.</p>
           <div>
             <Link href="/privacy">Privacy</Link>
             <Link href="/terms">Terms</Link>

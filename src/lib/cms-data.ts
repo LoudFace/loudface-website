@@ -6,7 +6,8 @@
  */
 
 import { cache } from 'react';
-import { client, getServerClient } from './sanity.client';
+import { draftMode } from 'next/headers';
+import { cachedReadClient, client, getServerClient } from './sanity.client';
 import type {
   CaseStudy,
   Client,
@@ -179,6 +180,38 @@ const BLOG_POST_PROJECTION = `{
   }
 }`;
 
+/**
+ * Card-level blog projection - every field the LIST surfaces read, and nothing
+ * they don't.
+ *
+ * The full BLOG_POST_PROJECTION above carries `content` (the entire article
+ * HTML) plus `visuals`, `faq` and `dataset-meta`. Across the corpus that is
+ * ~3 MB of JSON. Every list fetch pulled all of it: the blog index renders 12
+ * cards, the blog post page pulls the corpus only to pick 3 related posts, and
+ * the footer shows 5 links - none of them read a single body byte.
+ *
+ * Measured against production Sanity (120 posts): full projection 3061 KB /
+ * 442 ms, card projection 91 KB / 73 ms.
+ *
+ * A field belongs here only if a list consumer reads it. Body-level fields stay
+ * in BLOG_POST_PROJECTION, which fetchItemBySlug uses for the one post being
+ * rendered. Adding `content` back here re-creates the regression.
+ */
+const BLOG_POST_CARD_PROJECTION = `{
+  "id": _id,
+  name,
+  "slug": slug.current,
+  "thumbnail": thumbnail { "url": asset->url, "alt": alt },
+  excerpt,
+  "time-to-read": timeToRead,
+  featured,
+  "published-date": publishedDate,
+  "last-updated": lastUpdated,
+  "author": author._ref,
+  "category": category._ref,
+  "categories": categories[]._ref
+}`;
+
 const CATEGORY_PROJECTION = `{
   "id": _id,
   name,
@@ -328,35 +361,105 @@ export function getEmptyHomepageData(): HomepageData {
 // withRetry(Promise.all): a transient blip now retries per-collection
 // instead of re-running the whole batch; persistent failure still rejects,
 // which the resilient composers below turn into empty data.
+//
+// React `cache()` only deduplicates within one server render. The (site) route
+// group is dynamic because its layout calls `headers()`, so route-level
+// revalidation cannot persist these results between requests. Sanity's `next`
+// fetch options use Next's Data Cache, which remains available to dynamic routes.
+// These reads deliberately bypass Sanity's CDN so a webhook-triggered refill
+// cannot pin a stale CDN response in Next's cache for the revalidation window.
+
+const CMS_REVALIDATE_SECONDS = 60;
+export const cmsTypeTag = (sanityType: string) => `sanity:${sanityType}`;
+export const cmsDocTag = (sanityType: string, slug: string) => `sanity:${sanityType}:${slug}`;
+const cacheFor = (...tags: string[]) => ({
+  next: { revalidate: CMS_REVALIDATE_SECONDS, tags },
+});
 
 const fetchCaseStudies = cache((): Promise<CaseStudy[]> =>
-  withRetry(() => client.fetch<CaseStudy[]>(`*[_type == "caseStudy"] ${CASE_STUDY_PROJECTION}`)),
+  withRetry(() =>
+    cachedReadClient.fetch<CaseStudy[]>(
+      `*[_type == "caseStudy"] ${CASE_STUDY_PROJECTION}`,
+      {},
+      cacheFor(cmsTypeTag('caseStudy')),
+    ),
+  ),
 );
 const fetchClients = cache((): Promise<Client[]> =>
-  withRetry(() => client.fetch<Client[]>(`*[_type == "client"] ${CLIENT_PROJECTION}`)),
+  withRetry(() =>
+    cachedReadClient.fetch<Client[]>(
+      `*[_type == "client"] ${CLIENT_PROJECTION}`,
+      {},
+      cacheFor(cmsTypeTag('client')),
+    ),
+  ),
 );
 const fetchTestimonials = cache((): Promise<Testimonial[]> =>
-  withRetry(() => client.fetch<Testimonial[]>(`*[_type == "testimonial"] ${TESTIMONIAL_PROJECTION}`)),
+  withRetry(() =>
+    cachedReadClient.fetch<Testimonial[]>(
+      `*[_type == "testimonial"] ${TESTIMONIAL_PROJECTION}`,
+      {},
+      cacheFor(cmsTypeTag('testimonial')),
+    ),
+  ),
 );
+// Card projection only. Every consumer of this fetcher renders a list (index
+// grid, related posts, footer links, author archive, sitemap), so the article
+// bodies it used to carry were pure waste on every request. A page that needs
+// one full post calls fetchItemBySlug, which still uses BLOG_POST_PROJECTION.
 const fetchBlogPosts = cache((): Promise<BlogPost[]> =>
   withRetry(() =>
-    client.fetch<BlogPost[]>(`*[_type == "blogPost"] | order(publishedDate desc) ${BLOG_POST_PROJECTION}`),
+    cachedReadClient.fetch<BlogPost[]>(
+      `*[_type == "blogPost"] | order(publishedDate desc) ${BLOG_POST_CARD_PROJECTION}`,
+      {},
+      cacheFor(cmsTypeTag('blogPost')),
+    ),
   ),
 );
 const fetchCategories = cache((): Promise<Category[]> =>
-  withRetry(() => client.fetch<Category[]>(`*[_type == "category"] ${CATEGORY_PROJECTION}`)),
+  withRetry(() =>
+    cachedReadClient.fetch<Category[]>(
+      `*[_type == "category"] ${CATEGORY_PROJECTION}`,
+      {},
+      cacheFor(cmsTypeTag('category')),
+    ),
+  ),
 );
 const fetchTeamMembers = cache((): Promise<TeamMember[]> =>
-  withRetry(() => client.fetch<TeamMember[]>(`*[_type == "teamMember"] ${TEAM_MEMBER_PROJECTION}`)),
+  withRetry(() =>
+    cachedReadClient.fetch<TeamMember[]>(
+      `*[_type == "teamMember"] ${TEAM_MEMBER_PROJECTION}`,
+      {},
+      cacheFor(cmsTypeTag('teamMember')),
+    ),
+  ),
 );
 const fetchIndustries = cache((): Promise<Industry[]> =>
-  withRetry(() => client.fetch<Industry[]>(`*[_type == "industry"] ${INDUSTRY_PROJECTION}`)),
+  withRetry(() =>
+    cachedReadClient.fetch<Industry[]>(
+      `*[_type == "industry"] ${INDUSTRY_PROJECTION}`,
+      {},
+      cacheFor(cmsTypeTag('industry')),
+    ),
+  ),
 );
 const fetchTechnologies = cache((): Promise<Technology[]> =>
-  withRetry(() => client.fetch<Technology[]>(`*[_type == "technology"] ${TECHNOLOGY_PROJECTION}`)),
+  withRetry(() =>
+    cachedReadClient.fetch<Technology[]>(
+      `*[_type == "technology"] ${TECHNOLOGY_PROJECTION}`,
+      {},
+      cacheFor(cmsTypeTag('technology')),
+    ),
+  ),
 );
 const fetchServiceCategories = cache((): Promise<ServiceCategory[]> =>
-  withRetry(() => client.fetch<ServiceCategory[]>(`*[_type == "serviceCategory"] ${SERVICE_CATEGORY_PROJECTION}`)),
+  withRetry(() =>
+    cachedReadClient.fetch<ServiceCategory[]>(
+      `*[_type == "serviceCategory"] ${SERVICE_CATEGORY_PROJECTION}`,
+      {},
+      cacheFor(cmsTypeTag('serviceCategory')),
+    ),
+  ),
 );
 
 // ── Shared shaping helpers ───────────────────────────────────────────
@@ -521,16 +624,25 @@ export const fetchItemBySlug = cache(
 
     const projection = TYPE_PROJECTIONS[sanityType] || `{ "id": _id, ... }`;
 
-    // Draft-aware: when Next.js draft mode is on, returns the draft document
-    // with stega encoding so VisualEditing can map text → field in Studio.
-    // When off, returns the public published document.
-    const fetchClient = await getServerClient();
-    const result = await withRetry(() =>
-      fetchClient.fetch<T | null>(
-        `*[_type == $type && slug.current == $slug][0] ${projection}`,
-        { type: sanityType, slug }
-      )
-    );
+    // Draft-aware: when Next.js draft mode is on, getServerClient returns the
+    // draft document with stega encoding so VisualEditing can map text → field
+    // in Studio, and no cache options are attached. When off, the published
+    // document comes from the source-of-truth client and is cached by Next.
+    const isDraft = (await draftMode()).isEnabled;
+    const query = `*[_type == $type && slug.current == $slug][0] ${projection}`;
+    const params = { type: sanityType, slug };
+    const result = await withRetry(async () => {
+      if (isDraft) {
+        const draftClient = await getServerClient();
+        return draftClient.fetch<T | null>(query, params);
+      }
+
+      return cachedReadClient.fetch<T | null>(
+        query,
+        params,
+        cacheFor(cmsTypeTag(sanityType), cmsDocTag(sanityType, slug)),
+      );
+    });
 
     return result;
   }
@@ -544,9 +656,10 @@ export async function fetchCollection<T>(collectionKey: string): Promise<T[]> {
   const projection = TYPE_PROJECTIONS[sanityType] || `{ "id": _id, ... }`;
 
   const items = await withRetry(() =>
-    client.fetch<T[]>(
+    cachedReadClient.fetch<T[]>(
       `*[_type == $type] ${projection}`,
-      { type: sanityType }
+      { type: sanityType },
+      cacheFor(cmsTypeTag(sanityType)),
     )
   );
 
@@ -557,6 +670,35 @@ export async function fetchCollection<T>(collectionKey: string): Promise<T[]> {
   }
 
   return items;
+}
+
+/**
+ * Fetch just the slugs of a collection.
+ *
+ * generateStaticParams only ever needs slugs, but fetchCollection returns the
+ * full projection - for blog posts that meant pulling every article body to
+ * build a list of URL segments. This asks Sanity for the one field it uses.
+ */
+export async function fetchSlugs(collectionKey: string): Promise<string[]> {
+  const sanityType = COLLECTION_TO_TYPE[collectionKey] || collectionKey;
+
+  const rows = await withRetry(() =>
+    cachedReadClient.fetch<Array<{ slug?: string }>>(
+      `*[_type == $type && defined(slug.current)] { "slug": slug.current }`,
+      { type: sanityType },
+      cacheFor(cmsTypeTag(sanityType)),
+    ),
+  );
+
+  const slugs = (rows || [])
+    .map((row) => row.slug)
+    .filter((slug): slug is string => !!slug);
+
+  if (sanityType === 'caseStudy') {
+    return slugs.filter((slug) => !isHiddenCaseStudySlug(slug));
+  }
+
+  return slugs;
 }
 
 /**

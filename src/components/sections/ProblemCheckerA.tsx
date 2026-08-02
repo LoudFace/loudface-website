@@ -72,7 +72,7 @@ export function ProblemCheckerA({ heading, items }: ProblemCheckerAProps) {
           light: {
             'cal-bg': 'transparent',
             'cal-bg-muted': 'transparent',
-            'cal-border-booker': '#e5e5e5',
+            'cal-border-booker': 'var(--color-surface-200)',
             'cal-border-booker-width': '1px',
             'cal-spacing-4': '0px',
             'cal-spacing-5': '0px',
@@ -81,7 +81,7 @@ export function ProblemCheckerA({ heading, items }: ProblemCheckerAProps) {
           dark: {
             'cal-bg': 'transparent',
             'cal-bg-muted': 'transparent',
-            'cal-border-booker': '#e5e5e5',
+            'cal-border-booker': 'var(--color-surface-200)',
             'cal-border-booker-width': '1px',
             'cal-spacing-4': '0px',
             'cal-spacing-5': '0px',

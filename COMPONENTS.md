@@ -4,7 +4,7 @@ Quick-reference for every reusable component. **Check here before writing any ma
 
 Import all UI primitives from the barrel:
 ```tsx
-import { AICitationVisual, Badge, BulletLabel, Button, Card, CaseStudyCharts, CarouselNav, ComponentAssemblyVisual, CopyFirstVisual, ConversionSplitVisual, DesignSystemVisual, LogoImage, PixelBreakpointAnimation, ScalableGridAnimation, SectionContainer, SectionHeader } from '@/components/ui';
+import { AICitationVisual, Badge, BulletLabel, Button, Card, CaseStudyCharts, SliderNav, ComponentAssemblyVisual, CopyFirstVisual, ConversionSplitVisual, DesignSystemVisual, LogoImage, PixelBreakpointAnimation, ScalableGridAnimation, SectionContainer, SectionHeader } from '@/components/ui';
 ```
 
 ---
@@ -113,7 +113,7 @@ Consistent card surface for content containers. Use instead of writing raw card 
 <Card padding="lg" hover={false}>Static large card</Card>
 ```
 
-### CarouselNav
+### SliderNav
 
 Prev/next arrow buttons for Embla carousels.
 
@@ -125,7 +125,7 @@ Prev/next arrow buttons for Embla carousels.
 | `className` | `string` | — | Additional classes |
 
 ```tsx
-<CarouselNav variant="light" onPrevClick={scrollPrev} onNextClick={scrollNext} />
+<SliderNav variant="light" onPrevClick={scrollPrev} onNextClick={scrollNext} />
 ```
 
 ### LogoImage
@@ -341,7 +341,7 @@ Components specific to blog post pages. Imported from `@/components/blog`.
 
 | Component | File | Description |
 |-----------|------|-------------|
-| `Header` | `Header.tsx` | Site navigation with dropdowns (client component) |
+| `Header` | `Header.tsx` | Site navigation with dropdowns (client component). Props: `content` (server-provided nav copy/links), `heroTheme?` (`"dark"`) |
 | `Footer` | `Footer.tsx` | Site footer with nav, newsletter, socials |
 | `CalHandler` | `CalHandler.tsx` | Cal.com booking modal integration |
 | `NewsletterForm` | `NewsletterForm.tsx` | Email signup form |
@@ -371,7 +371,7 @@ Pick `yields` for decoration, `lifts` for anything a user needs to click. Note `
 
 ```
 src/components/index.ts        → re-exports everything
-src/components/ui/index.ts     → AICitationVisual, Badge, BulletLabel, Button, Card, CarouselNav, ComponentAssemblyVisual, CopyFirstVisual, ConversionSplitVisual, DesignSystemVisual, LogoImage, PixelBreakpointAnimation, ScalableGridAnimation, Pagination, SectionContainer, SectionHeader, VideoFacade
+src/components/ui/index.ts     → AICitationVisual, Badge, BulletLabel, Button, Card, SliderNav, ComponentAssemblyVisual, CopyFirstVisual, ConversionSplitVisual, DesignSystemVisual, LogoImage, PixelBreakpointAnimation, ScalableGridAnimation, Pagination, SectionContainer, SectionHeader, VideoFacade
 src/components/sections/index.ts → Hero, Partners, Results, FAQ, CTA, TestimonialGrid, EditorialProse, DeliverablesGrid, RelatedServices, RelatedComparisons, RelatedArticles, ProblemChecker, ProblemCheckerA, ProblemCheckerC
 src/components/blog/index.ts   → BlogChart, BlogIllustration, BlogVisual, BlogContent, BlogTOC, BlogExploreWithAI, BlogCTACard, BlogShareRow
 ```

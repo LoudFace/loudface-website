@@ -28,6 +28,7 @@ import knowledgeContent from "@/data/content/knowledge.json";
 import resultsContent from "@/data/content/results.json";
 import auditContent from "@/data/content/audit.json";
 import caseStudySliderContent from "@/data/content/case-study-slider.json";
+import navContent from "@/data/content/nav.json";
 import newsletterContent from "@/data/content/newsletter.json";
 import workContent from "@/data/content/work.json";
 import aboutContent from "@/data/content/about.json";
@@ -154,6 +155,48 @@ export interface AuditContent {
 export interface CaseStudySliderContent {
   title: string;
   ctaText: string;
+}
+
+export interface NavContent {
+  links: Array<{
+    label: string;
+    href: string;
+  }>;
+  dropdowns: {
+    services: {
+      label: string;
+      description: string;
+      items: Array<{
+        icon: string;
+        iconAlt: string;
+        title: string;
+        description: string;
+        href: string;
+      }>;
+    };
+    industries: {
+      label: string;
+      description: string;
+      items: Array<{
+        icon: string;
+        iconAlt: string;
+        title: string;
+        description: string;
+        href: string;
+      }>;
+    };
+  };
+  dropdownCta: {
+    prompt: string;
+    action: string;
+  };
+  ctaText: string;
+  logoAriaLabel: string;
+  logoAlt: string;
+  mainNavigationAriaLabel: string;
+  menuToggleAriaLabel: string;
+  mobileMenuAriaLabel: string;
+  mobileNavigationAriaLabel: string;
 }
 
 export interface NewsletterContent {
@@ -989,6 +1032,7 @@ const contentRegistry: Record<string, unknown> = {
   results: resultsContent,
   audit: auditContent,
   "case-study-slider": caseStudySliderContent,
+  nav: navContent,
   newsletter: newsletterContent,
   work: workContent,
   about: aboutContent,
@@ -1082,6 +1126,13 @@ export function getAuditContent(): AuditContent {
  */
 export function getCaseStudySliderContent(): CaseStudySliderContent {
   return caseStudySliderContent as CaseStudySliderContent;
+}
+
+/**
+ * Get navigation content
+ */
+export function getNavContent(): NavContent {
+  return navContent as NavContent;
 }
 
 /**

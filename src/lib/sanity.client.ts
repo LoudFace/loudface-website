@@ -24,6 +24,20 @@ export const client = createClient({
 });
 
 /**
+ * Read-only client for queries already cached by Next's Data Cache.
+ * `useCdn` is false ON PURPOSE so a webhook-triggered refetch reads Sanity's
+ * source of truth instead of repopulating our cache with a stale CDN response.
+ * Adding `useCdn: true` back here re-creates the stale-cache bug.
+ */
+export const cachedReadClient = createClient({
+  projectId,
+  dataset,
+  apiVersion,
+  useCdn: false,
+  perspective: 'published',
+});
+
+/**
  * Server-only client with write permissions. Bypasses CDN.
  * Use for: migrations, webhook handlers, anything that needs to mutate data.
  */

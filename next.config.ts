@@ -103,6 +103,25 @@ const nextConfig: NextConfig = {
         source: '/partners/opengraph-image-:hash',
         headers: [{ key: 'X-Robots-Tag', value: 'noindex' }],
       },
+      // ─── Client design previews: /preview/* is NEVER indexable ───────
+      // Staged design links we share with a client before the design is
+      // public. Drop a self-contained .html into public/preview/ (see the
+      // README there) and share loudface.co/preview/<slug>. This header is
+      // the SOLE mechanism that keeps these URLs out of Google — and it only
+      // works because Googlebot is deliberately NOT disallowed from /preview/
+      // in robots.txt (a disallow would block the crawl, so this header would
+      // never be seen and the bare URL could still be indexed — see the long
+      // note in src/app/robots.ts). Do not remove this, and do not "also"
+      // add a Googlebot disallow thinking it's safer — it's the opposite.
+      // NOTE: noindex ≠ private — anyone with the link can open it (/preview/*
+      // is public by default). Vercel's built-in Deployment Protection can't
+      // gate one path (it's domain-level — would lock all of loudface.co), but
+      // /preview/* CAN be gated with an auth check in src/proxy.ts (Basic
+      // Auth / token — not wired yet). Details: public/preview/README.md.
+      {
+        source: '/preview/:path*',
+        headers: [{ key: 'X-Robots-Tag', value: 'noindex, nofollow' }],
+      },
       // ─── Long-lived cache for static assets served from public/ ──────
       // (next/font assets in _next/static/ already get immutable from Vercel)
       {
@@ -110,6 +129,19 @@ const nextConfig: NextConfig = {
         headers: [
           { key: 'Cache-Control', value: 'public, max-age=31536000, stale-while-revalidate=86400' },
         ],
+      },
+    ];
+  },
+  async rewrites() {
+    return [
+      // Clean client-preview URLs: loudface.co/preview/<slug> serves the
+      // self-contained file at public/preview/<slug>.html — no ".html" in
+      // the link we hand a client. This is an `afterFiles` rewrite (plain
+      // array), so a direct hit on /preview/<slug>.html still serves the
+      // file first and this only fires for the extension-less URL.
+      {
+        source: '/preview/:slug',
+        destination: '/preview/:slug.html',
       },
     ];
   },

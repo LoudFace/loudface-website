@@ -72,7 +72,7 @@ export function CoverCTA() {
               <span className="dot"></span>Or explore our work&nbsp;
               <a
                 href="/case-studies"
-                style={{ color: '#fff', borderBottom: '1px solid rgba(255,255,255,.4)', paddingBottom: '1px' }}
+                style={{ color: 'var(--color-white)', borderBottom: '1px solid rgba(255,255,255,.4)', paddingBottom: '1px' }}
               >
                 case studies &rarr;
               </a>

@@ -536,7 +536,7 @@ Dark sections (`bg-surface-800` or `bg-surface-900`) break up the page and give 
 - "Build a dark section. `SectionContainer padding='lg' className='bg-surface-800 text-surface-300'`. `SectionHeader variant='dark'` for the heading. Cards use `Card variant='glass'` with `text-white` titles. Body text inherits `text-surface-300` from the container."
 - "Create a CTA block. `SectionContainer padding='lg' className='bg-surface-50'`. Centered title at `text-2xl sm:text-3xl md:text-4xl font-medium text-surface-900 tracking-tight`. Subtitle `mt-6 text-lg text-surface-600`. `Button variant='primary' size='lg'` with `calTrigger` for booking."
 - "Design a stat counter grid. `grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8`. Each stat: number in `text-3xl md:text-4xl font-medium font-mono text-surface-900`, label below in `text-sm text-surface-500`."
-- "Build a badge row. Use `Badge` component with `variant='subtle'` and `size='sm'`. Tags wrap in `flex flex-wrap gap-2`. Each badge gets `rounded-full` pill shape automatically."
+- "Build a pill row. Use `Badge` component with `variant='subtle'` and `size='sm'`. Tags wrap in `flex flex-wrap gap-2`. Each pill gets `rounded-full` pill shape automatically."
 
 ### Iteration Guide
 1. Every section uses `SectionContainer` — never write manual padding/max-width wrappers

@@ -1,0 +1,466 @@
+/* ============================================================================
+   AI INSTRUCTIONS v3 — additive furniture for the canonical-facts route.
+
+   service-v3.css owns the shared page world, electric hero, logo strip,
+   blueprint figures, FAQ, cover stack, footer, buttons, and reveal motion.
+   This file only supplies the facts-page layouts that do not exist in the
+   service template. Every selector is route-scoped through a zero-specificity
+   :where(.svcv3) wrapper.
+   ========================================================================== */
+
+:where(.svcv3) .hero-grid.ai-hero-grid {
+  grid-template-columns: minmax(0, 52rem);
+  padding-right: max(var(--gutter), calc((100vw - 1200px) / 2 + var(--gutter)));
+}
+
+:where(.svcv3) .ai-hero-copy {
+  max-width: 52rem;
+}
+
+:where(.svcv3) .ai-hero-copy .hero-sub {
+  max-width: 58ch;
+}
+
+:where(.svcv3) .ai-section {
+  background: var(--paper);
+  padding: clamp(76px, 8vw, 112px) 0;
+}
+
+:where(.svcv3) .ai-section-head {
+  display: grid;
+  gap: 16px;
+  max-width: 48rem;
+  margin-bottom: clamp(32px, 4vw, 50px);
+}
+
+:where(.svcv3) .ai-section-head .display {
+  max-width: 24ch;
+}
+
+:where(.svcv3) .ai-maintained,
+:where(.svcv3) .ai-body,
+:where(.svcv3) .ai-canonical {
+  color: var(--body);
+  font-size: 16.5px;
+  line-height: 1.68;
+  text-wrap: pretty;
+}
+
+:where(.svcv3) .ai-maintained strong,
+:where(.svcv3) .ai-canonical strong {
+  color: var(--ink);
+  font-weight: 600;
+}
+
+/* Quick-facts table: preserved table semantics inside a v3 elevated plate. */
+:where(.svcv3) .ai-table-shell {
+  overflow: hidden;
+  border-radius: 18px;
+  background: var(--paper);
+  box-shadow: var(--elev-hi);
+}
+
+:where(.svcv3) .ai-table {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed;
+  text-align: left;
+}
+
+:where(.svcv3) .ai-table tr:nth-child(even) {
+  background: var(--color-surface-50);
+}
+
+:where(.svcv3) .ai-table th,
+:where(.svcv3) .ai-table td {
+  padding: 18px 22px;
+  vertical-align: top;
+  border-bottom: 1px solid var(--paper-line);
+  font-family: var(--font-sans);
+  font-size: 14px;
+  line-height: 1.55;
+}
+
+:where(.svcv3) .ai-table tr:last-child th,
+:where(.svcv3) .ai-table tr:last-child td {
+  border-bottom: 0;
+}
+
+:where(.svcv3) .ai-table th {
+  width: 31%;
+  color: var(--ink);
+  font-weight: 600;
+}
+
+:where(.svcv3) .ai-table td {
+  color: var(--body);
+  font-variant-numeric: tabular-nums;
+}
+
+:where(.svcv3) .ai-source {
+  margin-top: 14px;
+  color: var(--mut);
+  font-size: 12.5px;
+  line-height: 1.5;
+}
+
+/* Explanatory copy uses the exported house blueprint plate, not a new diagram. */
+:where(.svcv3) .ai-split {
+  display: grid;
+  grid-template-columns: minmax(0, 6fr) minmax(360px, 5fr);
+  align-items: center;
+  gap: clamp(44px, 7vw, 92px);
+}
+
+:where(.svcv3) .ai-copy .display {
+  margin-bottom: 22px;
+}
+
+:where(.svcv3) .ai-body {
+  max-width: 62ch;
+}
+
+:where(.svcv3) .ai-body p + p {
+  margin-top: 16px;
+}
+
+:where(.svcv3) .ai-blueprint {
+  overflow: hidden;
+  border-radius: 18px;
+  background-color: var(--color-primary-50);
+  background-image: radial-gradient(var(--color-primary-200) 1px, transparent 1px);
+  background-position: -1px -1px;
+  background-size: 18px 18px;
+  box-shadow: var(--elev);
+}
+
+:where(.svcv3) .ai-blueprint svg {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+:where(.svcv3) .ai-blueprint .bp-label {
+  fill: var(--color-primary-700);
+}
+
+:where(.svcv3) .ai-blueprint .bp-stroke {
+  stroke: var(--color-primary-500);
+}
+
+:where(.svcv3) .ai-blueprint .bp-stroke.dim {
+  stroke: var(--color-primary-300);
+}
+
+:where(.svcv3) .ai-blueprint .bp-stroke.dash {
+  stroke: var(--color-primary-400);
+}
+
+:where(.svcv3) .ai-blueprint .bp-fill {
+  fill: rgba(99, 102, 241, .12);
+  stroke: var(--color-primary-500);
+}
+
+:where(.svcv3) .ai-blueprint .bp-node,
+:where(.svcv3) .ai-blueprint .bp-live {
+  fill: var(--color-primary-600);
+}
+
+/* Toku proof: the required mid-page night-indigo depth stage. */
+:where(.svcv3) .runway.ai-proof {
+  background: linear-gradient(180deg, var(--color-night) 0%, var(--color-night-hi) 100%);
+}
+
+:where(.svcv3) .ai-proof-layout {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 6fr) minmax(360px, 5fr);
+  align-items: center;
+  gap: clamp(44px, 7vw, 92px);
+}
+
+:where(.svcv3) .ai-proof-copy .display {
+  max-width: 20ch;
+}
+
+:where(.svcv3) .ai-proof-lead {
+  max-width: 55ch;
+  margin-top: 24px;
+  color: var(--color-white);
+  font-family: var(--font-heading);
+  font-size: clamp(1.2rem, 2vw, 1.5rem);
+  font-weight: 500;
+  line-height: 1.45;
+  letter-spacing: -.015em;
+  text-wrap: pretty;
+}
+
+:where(.svcv3) .ai-proof-note {
+  max-width: 58ch;
+  margin-top: 18px;
+  color: var(--color-primary-200);
+  font-size: 15px;
+  line-height: 1.65;
+  text-wrap: pretty;
+}
+
+:where(.svcv3) .ai-proof-copy > p:last-child {
+  margin-top: 24px;
+}
+
+:where(.svcv3) .ai-link {
+  color: var(--color-primary-700);
+  font-weight: 600;
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 3px;
+  transition: color .2s var(--ease-out);
+}
+
+:where(.svcv3) .ai-link:hover,
+:where(.svcv3) .ai-link:focus-visible {
+  color: var(--color-primary-600);
+}
+
+:where(.svcv3) .ai-link.on-dark {
+  color: var(--color-white);
+}
+
+:where(.svcv3) .ai-link.on-dark:hover,
+:where(.svcv3) .ai-link.on-dark:focus-visible {
+  color: var(--color-primary-200);
+}
+
+:where(.svcv3) .ai-link:focus-visible,
+:where(.svcv3) .ai-canonical a:focus-visible,
+:where(.svcv3) .ai-service a:focus-visible {
+  outline: 2px solid var(--color-primary-500);
+  outline-offset: 3px;
+  border-radius: 3px;
+}
+
+:where(.svcv3) .ai-link.on-dark:focus-visible {
+  outline-color: var(--color-white);
+}
+
+/* Long canary copy gets one composed focal panel instead of a plain text wall. */
+:where(.svcv3) .ai-feature {
+  display: grid;
+  grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+  align-items: start;
+  gap: clamp(36px, 7vw, 90px);
+}
+
+:where(.svcv3) .ai-feature .ai-section-head {
+  margin-bottom: 0;
+}
+
+:where(.svcv3) .ai-feature-copy {
+  border-radius: 18px;
+  background: var(--color-primary-50);
+  padding: clamp(26px, 3.5vw, 42px);
+  color: var(--ink);
+  box-shadow: var(--elev);
+  font-family: var(--font-heading);
+  font-size: clamp(1.08rem, 1.8vw, 1.28rem);
+  font-weight: 500;
+  line-height: 1.55;
+  letter-spacing: -.012em;
+  text-wrap: pretty;
+}
+
+/* Fit / not-fit */
+:where(.svcv3) .ai-fit-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 20px;
+}
+
+:where(.svcv3) .ai-fit-card {
+  border-radius: 18px;
+  background: var(--paper);
+  padding: clamp(24px, 3vw, 34px);
+  box-shadow: var(--elev);
+}
+
+:where(.svcv3) .ai-fit-card h3,
+:where(.svcv3) .ai-criterion h3,
+:where(.svcv3) .ai-service h3 {
+  color: var(--ink);
+  font-family: var(--font-heading);
+  font-size: 1.12rem;
+  font-weight: 500;
+  line-height: 1.35;
+  letter-spacing: -.015em;
+  text-wrap: balance;
+}
+
+:where(.svcv3) .ai-list {
+  display: grid;
+  gap: 14px;
+  margin-top: 20px;
+  padding: 0;
+  list-style: none;
+}
+
+:where(.svcv3) .ai-list li {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  color: var(--body);
+  font-size: 14.5px;
+  line-height: 1.55;
+}
+
+:where(.svcv3) .ai-list-mark {
+  flex: none;
+  color: var(--color-surface-400);
+  font-weight: 700;
+}
+
+:where(.svcv3) .ai-list-mark.fit {
+  color: var(--color-success);
+}
+
+/* Buying criteria + services share one crisp-light decision stage. */
+:where(.svcv3) .ai-decisions {
+  border-top: 1px solid var(--paper-line);
+}
+
+:where(.svcv3) .ai-decision-block + .ai-decision-block {
+  margin-top: clamp(72px, 9vw, 118px);
+  padding-top: clamp(64px, 8vw, 96px);
+  border-top: 1px solid var(--paper-line);
+}
+
+:where(.svcv3) .ai-criteria-grid,
+:where(.svcv3) .ai-services-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0 40px;
+}
+
+:where(.svcv3) .ai-criterion,
+:where(.svcv3) .ai-service {
+  padding: 24px 0;
+  border-top: 1px solid var(--paper-line);
+}
+
+:where(.svcv3) .ai-criterion p,
+:where(.svcv3) .ai-service p {
+  margin-top: 9px;
+  color: var(--body);
+  font-size: 14.5px;
+  line-height: 1.6;
+  text-wrap: pretty;
+}
+
+:where(.svcv3) .ai-service a {
+  transition: color .2s var(--ease-out);
+}
+
+:where(.svcv3) .ai-service a:hover,
+:where(.svcv3) .ai-service a:focus-visible {
+  color: var(--color-primary-600);
+}
+
+/* Canonical AI facts: light tint, never lavender slab. */
+:where(.svcv3) .ai-tint {
+  background: var(--color-surface-50);
+  border-top: 1px solid var(--paper-line);
+  border-bottom: 1px solid var(--paper-line);
+}
+
+:where(.svcv3) .ai-canonical {
+  max-width: 52rem;
+}
+
+:where(.svcv3) .ai-canonical ul {
+  display: grid;
+  gap: 12px;
+  margin-top: 20px;
+  padding-left: 1.25rem;
+  list-style: disc;
+}
+
+:where(.svcv3) .ai-canonical li::marker {
+  color: var(--color-primary-500);
+}
+
+:where(.svcv3) .ai-canonical a {
+  color: var(--color-primary-700);
+  font-weight: 600;
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 3px;
+  transition: color .2s var(--ease-out);
+}
+
+:where(.svcv3) .ai-canonical a:hover,
+:where(.svcv3) .ai-canonical a:focus-visible {
+  color: var(--color-primary-600);
+}
+
+/* Closing cover uses the night-indigo role; no legacy green surface enters. */
+:where(.svcv3) .cover.ai-cover {
+  background: linear-gradient(180deg, var(--color-night) 0%, var(--color-night-hi) 100%);
+}
+
+:where(.svcv3) .ai-cover .cover-in {
+  min-height: 560px;
+}
+
+@media (max-width: 900px) {
+  :where(.svcv3) .ai-split,
+  :where(.svcv3) .ai-proof-layout,
+  :where(.svcv3) .ai-feature {
+    grid-template-columns: 1fr;
+  }
+
+  :where(.svcv3) .ai-blueprint,
+  :where(.svcv3) .ai-proof-figure {
+    width: min(100%, 35rem);
+  }
+}
+
+@media (max-width: 768px) {
+  :where(.svcv3) .hero-grid.ai-hero-grid {
+    padding-right: var(--gutter);
+  }
+
+  :where(.svcv3) .ai-fit-grid,
+  :where(.svcv3) .ai-criteria-grid,
+  :where(.svcv3) .ai-services-grid {
+    grid-template-columns: 1fr;
+  }
+
+  :where(.svcv3) .ai-table th,
+  :where(.svcv3) .ai-table td {
+    padding: 15px 14px;
+    font-size: 13px;
+  }
+
+  :where(.svcv3) .ai-table th {
+    width: 38%;
+  }
+}
+
+@media (max-width: 520px) {
+  :where(.svcv3) .ai-hero-copy .hero-eyebrow {
+    width: fit-content;
+    max-width: 100%;
+    height: auto;
+    min-height: 34px;
+    padding-top: 8px;
+    padding-bottom: 8px;
+    white-space: normal;
+  }
+
+  :where(.svcv3) .ai-table {
+    table-layout: auto;
+  }
+
+  :where(.svcv3) .ai-table th {
+    width: 42%;
+  }
+}

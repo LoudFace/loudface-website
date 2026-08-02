@@ -4,7 +4,7 @@ export { BulletLabel } from './BulletLabel';
 export { Button } from './Button';
 export { Card } from './Card';
 export { CaseStudyCharts } from './CaseStudyCharts';
-export { CarouselNav } from './CarouselNav';
+export { SliderNav } from './SliderNav';
 export { ComponentAssemblyVisual } from './ComponentAssemblyVisual';
 export { LogoImage } from './LogoImage';
 export { CopyFirstVisual } from './CopyFirstVisual';

@@ -325,13 +325,13 @@ Use this pattern — not the `Card` component — when the entire card is a link
 
 ## Carousel Components
 
-For carousels using Embla, use the `CarouselNav` component and `useCarousel` hook:
+For carousels using Embla, use the `SliderNav` component and `useCarousel` hook:
 
 ```tsx
 'use client';
 
 import { useCarousel } from '@/hooks/useCarousel';
-import { CarouselNav } from '@/components/ui';
+import { SliderNav } from '@/components/ui';
 
 export function MyCarousel({ items }) {
   const { emblaRef, scrollPrev, scrollNext } = useCarousel({ loop: true });
@@ -347,13 +347,13 @@ export function MyCarousel({ items }) {
           ))}
         </div>
       </div>
-      <CarouselNav variant="light" onPrevClick={scrollPrev} onNextClick={scrollNext} />
+      <SliderNav variant="light" onPrevClick={scrollPrev} onNextClick={scrollNext} />
     </div>
   );
 }
 ```
 
-**CarouselNav variants:**
+**SliderNav variants:**
 - `light` - For light backgrounds
 - `dark` - For dark backgrounds
 

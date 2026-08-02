@@ -1,30 +1,47 @@
 /**
- * SEO for [Industry] — Dynamic Route Template
+ * SEO for [Industry] — programmatic route, v3 "electric stage" template.
  *
- * Programmatic SEO hub page targeting "SEO for [industry]" keywords.
- * Sections: Hero, Pain Points, Strategy (dark), Results, FAQ, CTA
+ * Composes `src/app/seo-for-v3/*` (SeoForPageV3), which borrows the approved
+ * `/services/*` visual layer (service-v3.css, rendered inside a `.svcv3`
+ * wrapper) so these pages are pixel-consistent with the rest of the v3 site
+ * instead of forking a second stylesheet. Every section slot degrades
+ * independently — a thin Sanity `seoPage` still renders a complete page.
+ *
+ * Migrated from the pre-v3 light template (SectionContainer/Card/CTA) on
+ * 2026-08-01. Metadata, generateStaticParams, and the Breadcrumb + Service
+ * JSON-LD are preserved verbatim; FAQPage schema is new (the accordion now
+ * single-sources it).
  */
+export const revalidate = 60;
+
 import { notFound } from 'next/navigation';
-import Link from 'next/link';
 import type { Metadata } from 'next';
+import '../../../service-v3/service-v3.css';
+import '../../../seo-for-v3/seo-for-v3.css';
+import { fetchItemBySlug, fetchSeoPages, fetchHomepageData } from '@/lib/cms-data';
 import {
-  fetchItemBySlug,
-  fetchSeoPages,
-  fetchHomepageData,
-} from '@/lib/cms-data';
-import { buildNoIndexMetadata, buildPageMetadata, truncateSeoTitle, truncateSeoDescription } from '@/lib/seo-utils';
+  buildNoIndexMetadata,
+  buildPageMetadata,
+  truncateSeoTitle,
+  truncateSeoDescription,
+} from '@/lib/seo-utils';
+import { SeoForPageV3 } from '../../../seo-for-v3/SeoForPageV3';
+import type {
+  Deliverable,
+  RelatedCard,
+  QuoteSource,
+  SeoForView,
+} from '../../../seo-for-v3/SeoForPageV3';
 import {
-  Button,
-  BulletLabel,
-  Card,
-  LogoImage,
-  SectionContainer,
-  SectionHeader,
-} from '@/components/ui';
-import { FAQ, CTA, EditorialProse, DeliverablesGrid } from '@/components/sections';
-import { avatarImage, logoImage, thumbnailImage } from '@/lib/image-utils';
-import { asset } from '@/lib/assets';
-import type { SeoPage, CaseStudy, BlogPost, Testimonial } from '@/lib/types';
+  CLIENT_DOMAINS,
+  extractFaqItems,
+  extractPainPoints,
+  extractStats,
+  extractStrategySteps,
+  getSeoForImages,
+  toPlainText,
+} from '../../../seo-for-v3/data';
+import type { SeoPage, BlogPost, CaseStudy, Testimonial } from '@/lib/types';
 
 interface PageProps {
   params: Promise<{ slug: string }>;
@@ -41,79 +58,44 @@ export async function generateStaticParams() {
     .map((page) => ({ slug: page.slug }));
 }
 
-// --- Helper extractors ---
-
-function extractFaqItems(page: SeoPage) {
-  const items: { question: string; answer: string }[] = [];
-  for (let i = 1; i <= 5; i++) {
-    const q = page[`faq-${i}-question` as keyof SeoPage] as string | undefined;
-    const a = page[`faq-${i}-answer` as keyof SeoPage] as string | undefined;
-    if (q && a) items.push({ question: q, answer: a });
-  }
-  return items;
-}
-
-function extractPainPoints(page: SeoPage) {
-  const points: { title: string; desc: string }[] = [];
-  for (let i = 1; i <= 3; i++) {
-    const title = page[`pain-point-${i}-title` as keyof SeoPage] as string | undefined;
-    const desc = page[`pain-point-${i}-desc` as keyof SeoPage] as string | undefined;
-    if (title && desc) points.push({ title, desc });
-  }
-  return points;
-}
-
-function extractStrategySteps(page: SeoPage) {
-  const steps: { title: string; desc: string }[] = [];
-  for (let i = 1; i <= 4; i++) {
-    const title = page[`strategy-step-${i}-title` as keyof SeoPage] as string | undefined;
-    const desc = page[`strategy-step-${i}-desc` as keyof SeoPage] as string | undefined;
-    if (title && desc) steps.push({ title, desc });
-  }
-  return steps;
-}
-
-function extractStats(page: SeoPage) {
-  const stats: { value: string; label: string }[] = [];
-  for (let i = 1; i <= 3; i++) {
-    const value = page[`stat-${i}-value` as keyof SeoPage] as string | undefined;
-    const label = page[`stat-${i}-label` as keyof SeoPage] as string | undefined;
-    if (value && label) stats.push({ value, label });
-  }
-  return stats;
-}
-
-// --- Metadata ---
+/* ── metadata (unchanged from the pre-v3 template) ───────────────────── */
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { slug } = await params;
-
   const page = await fetchItemBySlug<SeoPage>('seo-pages', slug);
-
-  if (!page) {
-    return buildNoIndexMetadata('SEO Services');
-  }
+  if (!page) return buildNoIndexMetadata('SEO Services');
 
   const title = truncateSeoTitle(page['meta-title'] || page['hero-headline'] || page.name);
   const rawDescription =
     page['meta-description'] ||
     page['hero-description'] ||
     `Professional SEO services for ${page.name}. Get found by your ideal customers with our data-driven SEO and AEO programs.`;
-  // If CMS description is too short, extend it with contextual suffix before truncating
   let description = truncateSeoDescription(rawDescription);
   if (!description) {
     const extended = `${rawDescription} We build hands-free SEO programs that drive organic traffic and qualified leads for ${page.name} companies.`;
     description = truncateSeoDescription(extended) || extended;
   }
 
-  return buildPageMetadata({
-    title,
-    description,
-    canonicalPath: `/seo-for/${slug}`,
-  });
+  return buildPageMetadata({ title, description, canonicalPath: `/seo-for/${slug}` });
 }
 
-// --- Page ---
+/* ── deliverables: the CMS stores them as an HTML list ───────────────── */
+
+function parseDeliverables(html: string): Deliverable[] {
+  const items = html.match(/<li[^>]*>([\s\S]*?)<\/li>/gi) ?? [];
+  const out: Deliverable[] = [];
+  for (const item of items) {
+    const text = toPlainText(item);
+    if (!text) continue;
+    // "Title: description" splits into a titled tile; otherwise the whole
+    // line is the title (the template renders description-less tiles fine).
+    const split = text.match(/^([^:]{3,60}):\s*(.+)$/);
+    out.push(split ? { title: split[1].trim(), description: split[2].trim() } : { title: text });
+  }
+  return out.slice(0, 8);
+}
+
+/* ── page ────────────────────────────────────────────────────────────── */
 
 export default async function SeoForIndustryPage({ params }: PageProps) {
   const { slug } = await params;
@@ -124,91 +106,138 @@ export default async function SeoForIndustryPage({ params }: PageProps) {
   ]);
   if (!page) notFound();
 
-  const faqItems = extractFaqItems(page);
   const painPoints = extractPainPoints(page);
   const strategySteps = extractStrategySteps(page);
   const stats = extractStats(page);
+  const faqItems = extractFaqItems(page);
 
-  // Get related case studies filtered by matching industry
+  const industryName = page.industry ? cmsData.industries.get(page.industry)?.name : undefined;
+
+  /* related case studies — industry match, else the general reel */
   const relatedStudies: CaseStudy[] = page.industry
     ? cmsData.caseStudies
-        .filter(
-          (cs) =>
-            cs.industry === page.industry ||
-            cs.industries?.includes(page.industry!)
-        )
+        .filter((cs) => cs.industry === page.industry || cs.industries?.includes(page.industry!))
         .slice(0, 3)
     : cmsData.caseStudies.slice(0, 3);
+  const fallbackStudies =
+    relatedStudies.length > 0 ? relatedStudies : cmsData.caseStudies.slice(0, 3);
 
-  const industryName =
-    page.industry && cmsData.industries.get(page.industry)?.name;
+  const images = await getSeoForImages(fallbackStudies.map((s) => s.slug));
 
-  // Client logos for trust bar
-  const showcaseClients = cmsData.allClients.filter(
-    (c) => c['showcase-logo']
-  );
-
-  // Testimonial: prefer one from a related case study, fall back to any with body + image
-  let testimonial: Testimonial | undefined;
-  for (const study of relatedStudies) {
-    if (study.testimonial) {
-      const t = cmsData.testimonials.get(study.id);
-      if (t?.['testimonial-body'] && t['profile-image']?.url) {
-        testimonial = t;
-        break;
+  /* hero/cover artifact — first related study that has BOTH a screenshot and a
+     hand-verified domain. No match → the template renders its solo hero. */
+  const artifactStudy = fallbackStudies.find((s) => images[s.slug] && CLIENT_DOMAINS[s.slug]);
+  const artifactClient = artifactStudy?.client
+    ? cmsData.clients.get(artifactStudy.client)?.name
+    : undefined;
+  const heroShot = artifactStudy
+    ? {
+        url: images[artifactStudy.slug],
+        domain: CLIENT_DOMAINS[artifactStudy.slug],
+        alt: `${artifactStudy['project-title'] || artifactStudy.name} — a LoudFace client site`,
+        client: artifactClient,
       }
+    : undefined;
+
+  /* testimonial — prefer one attached to a related study */
+  let testimonial: Testimonial | undefined;
+  for (const study of fallbackStudies) {
+    if (!study.testimonial) continue;
+    const t = cmsData.testimonials.get(study.id);
+    if (t?.['testimonial-body']) {
+      testimonial = t;
+      break;
     }
   }
   if (!testimonial) {
-    testimonial = cmsData.allTestimonials.find(
-      (t) => t['testimonial-body'] && t['profile-image']?.url
-    );
+    testimonial = cmsData.allTestimonials.find((t) => t['testimonial-body']);
   }
+  const quote: QuoteSource | undefined = testimonial?.['testimonial-body']
+    ? {
+        bodyHtml: testimonial['testimonial-body'],
+        name: testimonial.name,
+        role: testimonial.role,
+        avatarUrl: testimonial['profile-image']?.url,
+      }
+    : undefined;
 
-  // Related blog posts: match by industry category, fall back to recent featured
+  /* related insights — industry category, else featured, else recent */
   let relatedPosts: BlogPost[] = [];
   if (industryName) {
-    const industryLower = industryName.toLowerCase();
+    const needle = industryName.toLowerCase();
     relatedPosts = cmsData.blogPosts
       .filter((p) => {
-        const cat = p.category
-          ? cmsData.categories.get(p.category)
-          : undefined;
-        return cat?.name.toLowerCase().includes(industryLower);
+        const cat = p.category ? cmsData.categories.get(p.category) : undefined;
+        return cat?.name.toLowerCase().includes(needle);
       })
       .slice(0, 3);
   }
-  if (relatedPosts.length === 0) {
-    relatedPosts = cmsData.blogPosts
-      .filter((p) => p.featured)
-      .slice(0, 3);
-  }
-  if (relatedPosts.length === 0) {
-    relatedPosts = cmsData.blogPosts.slice(0, 3);
-  }
+  if (relatedPosts.length === 0) relatedPosts = cmsData.blogPosts.filter((p) => p.featured).slice(0, 3);
+  if (relatedPosts.length === 0) relatedPosts = cmsData.blogPosts.slice(0, 3);
 
-  // --- Structured Data ---
+  const relatedWork: RelatedCard[] = fallbackStudies.map((study) => ({
+    href: `/case-studies/${study.slug}`,
+    title: study['project-title'] || study.name,
+    meta: study.client ? cmsData.clients.get(study.client)?.name : undefined,
+    imageUrl: images[study.slug],
+  }));
+
+  const relatedInsights: RelatedCard[] = relatedPosts.map((post) => ({
+    href: `/blog/${post.slug}`,
+    title: post.name,
+    meta: post.category ? cmsData.categories.get(post.category)?.name : undefined,
+    imageUrl: post.thumbnail?.url,
+  }));
+
+  const deliverables = page['deliverables'] ? parseDeliverables(page['deliverables']) : [];
+  const label = industryName || page.name;
+
+  const view: SeoForView = {
+    eyebrow: industryName ? `SEO for ${industryName}` : 'Industry SEO',
+    eyebrowTag: page['hero-subtitle'] || undefined,
+    h1: page['hero-headline'] || page.name,
+    sub: page['hero-description'] || page['hero-subtitle'] || undefined,
+    heroShot,
+    logosLead: `Trusted by leading ${industryName ? `${industryName} ` : ''}companies`,
+    painTitle: page['pain-points-title'] || 'Common SEO challenges',
+    painLede: `Why ${label} companies struggle to rank.`,
+    painPoints,
+    proseTitle: industryName ? `SEO for ${industryName}, in detail` : undefined,
+    proseHtml: page['main-body'] || undefined,
+    strategyTitle: page['strategy-title'] || 'Our SEO approach',
+    strategyLede: page['strategy-intro'] || undefined,
+    strategySteps,
+    deliverables,
+    resultsTitle: page['results-title'] || 'Real results',
+    resultsLede: `What we deliver for ${label} companies.`,
+    stats,
+    quote,
+    relatedWork,
+    relatedWorkTitle: industryName ? `${industryName} case studies` : 'Related case studies',
+    relatedPosts: relatedInsights,
+    faqTitle: `SEO for ${label}: your questions answered`,
+    faqItems,
+    ctaTitle: page['cta-title'] || `Ready to grow ${label} search?`,
+    ctaSubtitle:
+      page['cta-subtitle'] ||
+      "Book a free SEO audit and we'll show you exactly what's holding your site back.",
+    coverShot: heroShot,
+  };
+
+  /* ── structured data ───────────────────────────────────────────────── */
+
   const breadcrumbSchema = {
     '@context': 'https://schema.org',
     '@type': 'BreadcrumbList',
     itemListElement: [
-      {
-        '@type': 'ListItem',
-        position: 1,
-        name: 'Home',
-        item: 'https://www.loudface.co',
-      },
+      { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://www.loudface.co' },
       {
         '@type': 'ListItem',
         position: 2,
         name: 'SEO Services by Industry',
         item: 'https://www.loudface.co/seo-for',
       },
-      {
-        '@type': 'ListItem',
-        position: 3,
-        name: page['hero-headline'] || page.name,
-      },
+      { '@type': 'ListItem', position: 3, name: page['hero-headline'] || page.name },
     ],
   };
 
@@ -217,352 +246,37 @@ export default async function SeoForIndustryPage({ params }: PageProps) {
     '@type': 'Service',
     name: page['hero-headline'] || page.name,
     description: page['meta-description'] || page['hero-description'],
-    provider: {
-      '@type': 'Organization',
-      name: 'LoudFace',
-      url: 'https://www.loudface.co',
-    },
+    provider: { '@type': 'Organization', name: 'LoudFace', url: 'https://www.loudface.co' },
     areaServed: 'Worldwide',
     serviceType: 'Search Engine Optimization',
   };
 
-  return (
-    <>
-      {/* Structured Data — native script for SSR visibility to crawlers */}
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
-      />
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(serviceSchema) }}
-      />
-
-      {/* 1. Hero (unchanged) */}
-      <SectionContainer padding="lg">
-        <div className="max-w-3xl">
-          <BulletLabel>
-            {industryName
-              ? `SEO for ${industryName}`
-              : 'Industry SEO'}
-          </BulletLabel>
-
-          <h1 className="mt-4 text-2xl sm:text-3xl md:text-4xl lg:text-hero font-medium text-surface-900 leading-tight">
-            {page['hero-headline'] || page.name}
-          </h1>
-
-          {page['hero-subtitle'] && (
-            <p className="mt-4 text-lg md:text-xl text-primary-600 font-medium">
-              {page['hero-subtitle']}
-            </p>
-          )}
-
-          {page['hero-description'] && (
-            <p className="mt-4 text-lg text-surface-600 leading-relaxed">
-              {page['hero-description']}
-            </p>
-          )}
-
-          <div className="mt-8 flex flex-wrap gap-4">
-            <Button variant="primary" size="lg" calTrigger>
-              Get a free SEO audit
-            </Button>
-            <Button variant="outline" size="lg" href="#approach">
-              See our approach
-            </Button>
-          </div>
-        </div>
-      </SectionContainer>
-
-      {/* 2. Client Logos Bar */}
-      {showcaseClients.length > 0 && (
-        <SectionContainer padding="sm" className="bg-surface-50">
-          <p className="text-center text-sm text-surface-500 mb-6">
-            Trusted by leading {industryName ? `${industryName} ` : ''}companies
-          </p>
-          <div className="flex flex-wrap justify-center items-center gap-4 sm:gap-6 md:gap-x-12 md:gap-y-8">
-            {showcaseClients.map((client) => (
-              <LogoImage
-                key={client.id}
-                src={
-                  logoImage(client['colored-logo']?.url) ||
-                  asset('/images/placeholder-logo.svg')
-                }
-                alt={client.name}
-                imgClassName="grayscale opacity-60 transition-all duration-200 hover:grayscale-0 hover:opacity-100"
-              />
-            ))}
-          </div>
-        </SectionContainer>
-      )}
-
-      {/* 3. Pain Points */}
-      {painPoints.length > 0 && (
-        <SectionContainer>
-          <SectionHeader
-            title={page['pain-points-title'] || 'Common SEO Challenges'}
-            highlightWord="Challenges"
-            subtitle={`Why ${industryName || 'your industry'} companies struggle to rank.`}
-          />
-
-          <div className="mt-8 lg:mt-12 grid grid-cols-1 md:grid-cols-3 gap-6">
-            {painPoints.map((point, i) => (
-              <Card key={i}>
-                <div className="flex items-start gap-3">
-                  <span className="flex-shrink-0 w-8 h-8 rounded-lg bg-error/10 text-error flex items-center justify-center text-sm font-medium">
-                    {i + 1}
-                  </span>
-                  <div>
-                    <h3 className="text-lg font-medium text-surface-900">
-                      {point.title}
-                    </h3>
-                    <p className="mt-2 text-surface-600">{point.desc}</p>
-                  </div>
-                </div>
-              </Card>
-            ))}
-          </div>
-        </SectionContainer>
-      )}
-
-      {/* 4. Editorial Prose — split at H2 boundaries with alternating sections */}
-      {page['main-body'] && (
-        <EditorialProse html={page['main-body']} industryName={industryName} />
-      )}
-
-      {/* 5. Strategy / Approach (dark section) */}
-      {strategySteps.length > 0 && (
-        <SectionContainer
-          id="approach"
-          padding="lg"
-          className="bg-surface-800 text-surface-300"
-        >
-          <SectionHeader
-            title={page['strategy-title'] || 'Our SEO Approach'}
-            highlightWord="Approach"
-            subtitle={page['strategy-intro']}
-            variant="dark"
-          />
-
-          <div className="mt-8 lg:mt-12 grid grid-cols-1 md:grid-cols-2 gap-6">
-            {strategySteps.map((step, i) => (
-              <Card key={i} variant="glass">
-                <div className="flex items-start gap-4">
-                  <span className="flex-shrink-0 w-10 h-10 rounded-full bg-primary-500/20 text-primary-400 flex items-center justify-center text-sm font-medium">
-                    {i + 1}
-                  </span>
-                  <div>
-                    <h3 className="text-lg font-medium text-white">
-                      {step.title}
-                    </h3>
-                    <p className="mt-2">{step.desc}</p>
-                  </div>
-                </div>
-              </Card>
-            ))}
-          </div>
-        </SectionContainer>
-      )}
-
-      {/* 6. Deliverables — parsed into a card grid */}
-      {page['deliverables'] && (
-        <DeliverablesGrid html={page['deliverables']} industryName={industryName} />
-      )}
-
-      {/* 7. Results */}
-      {(stats.length > 0 || relatedStudies.length > 0) && (
-        <SectionContainer padding="lg">
-          <SectionHeader
-            title={page['results-title'] || 'Real Results'}
-            highlightWord="Results"
-            subtitle={
-              industryName
-                ? `What we deliver for ${industryName} companies.`
-                : 'What we deliver for our clients.'
-            }
-          />
-
-          {/* Stats */}
-          {stats.length > 0 && (
-            <div className="mt-8 lg:mt-12 grid grid-cols-1 sm:grid-cols-3 gap-6">
-              {stats.map((stat, i) => (
-                <div
-                  key={i}
-                  className="text-center p-6 rounded-xl bg-surface-50 border border-surface-200"
-                >
-                  <div className="text-3xl md:text-4xl font-medium text-primary-600">
-                    {stat.value}
-                  </div>
-                  <div className="mt-2 text-sm text-surface-500">
-                    {stat.label}
-                  </div>
-                </div>
-              ))}
-            </div>
-          )}
-
-          {/* Related Case Studies */}
-          {relatedStudies.length > 0 && (
-            <div className="mt-12">
-              <h3 className="text-lg font-medium text-surface-900 mb-6">
-                {industryName
-                  ? `${industryName} Case Studies`
-                  : 'Related Case Studies'}
-              </h3>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                {relatedStudies.map((study) => {
-                  const client = study.client
-                    ? cmsData.clients.get(study.client)
-                    : undefined;
-                  return (
-                    <Link
-                      key={study.slug}
-                      href={`/case-studies/${study.slug}`}
-                      className="group block bg-white rounded-xl border border-surface-200 overflow-hidden
-                        transition-all duration-200 hover:border-surface-300 hover:shadow-md
-                        focus-visible:outline-2 focus-visible:outline-primary-500 focus-visible:outline-offset-4"
-                    >
-                      <div className="aspect-video overflow-hidden">
-                        <img
-                          src={
-                            thumbnailImage(
-                              study['main-project-image-thumbnail']?.url
-                            ) || asset('/images/placeholder.webp')
-                          }
-                          alt={study['project-title'] || study.name}
-                          width="800"
-                          height="450"
-                          className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-                          loading="lazy"
-                        />
-                      </div>
-                      <div className="p-4">
-                        <h4 className="font-medium text-surface-900 group-hover:text-primary-600 transition-colors">
-                          {study['project-title'] || study.name}
-                        </h4>
-                        {client?.name && (
-                          <p className="mt-1 text-sm text-surface-500">
-                            {client.name}
-                          </p>
-                        )}
-                      </div>
-                    </Link>
-                  );
-                })}
-              </div>
-            </div>
-          )}
-        </SectionContainer>
-      )}
-
-      {/* 8. Testimonial */}
-      {testimonial && testimonial['testimonial-body'] && (
-        <section className="bg-surface-50 py-16 md:py-24">
-          <div className="px-4 md:px-8 lg:px-12">
-            <div className="max-w-3xl mx-auto text-center">
-              <svg className="w-8 h-8 mx-auto mb-6 text-surface-300" fill="currentColor" viewBox="0 0 24 24">
-                <path d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10h-9.983zm-14.017 0v-7.391c0-5.704 3.748-9.57 9-10.609l.996 2.151c-2.433.917-3.996 3.638-3.996 5.849h3.983v10h-9.983z" />
-              </svg>
-              <blockquote
-                className="text-xl md:text-2xl text-surface-800 leading-relaxed [&>p]:m-0"
-                dangerouslySetInnerHTML={{ __html: testimonial['testimonial-body'] }}
-              />
-              <div className="mt-6 flex items-center justify-center gap-3">
-                {testimonial['profile-image']?.url && (
-                  <img
-                    src={avatarImage(testimonial['profile-image'].url)}
-                    alt={testimonial.name}
-                    width="80"
-                    height="80"
-                    className="w-10 h-10 rounded-full object-cover"
-                    loading="lazy"
-                  />
-                )}
-                <div className="text-left">
-                  <div className="font-medium text-surface-900">{testimonial.name}</div>
-                  {testimonial.role && (
-                    <div className="text-sm text-surface-500">{testimonial.role}</div>
-                  )}
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
-      )}
-
-      {/* 9. FAQ */}
-      {faqItems.length > 0 && (
-        <FAQ
-          title={`SEO for ${industryName || page.name}: Your Questions Answered`}
-          items={faqItems}
-        />
-      )}
-
-      {/* 10. Related Blog Posts */}
-      {relatedPosts.length > 0 && (
-        <SectionContainer>
-          <div className="flex items-center justify-between mb-8">
-            <h2 className="text-2xl md:text-3xl font-medium text-surface-900">
-              Related insights
-            </h2>
-            <Link
-              href="/blog"
-              className="text-sm font-medium text-surface-600 hover:text-primary-600 transition-colors"
-            >
-              All blog posts
-            </Link>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {relatedPosts.map((post) => {
-              const postCategory = post.category
-                ? cmsData.categories.get(post.category)
-                : undefined;
-              return (
-                <Link
-                  key={post.slug}
-                  href={`/blog/${post.slug}`}
-                  className="group block bg-white rounded-xl border border-surface-200 overflow-hidden
-                    transition-all duration-200 hover:border-surface-300 hover:shadow-md
-                    focus-visible:outline-2 focus-visible:outline-primary-500 focus-visible:outline-offset-4"
-                >
-                  <div className="aspect-video overflow-hidden">
-                    <img
-                      src={
-                        thumbnailImage(post.thumbnail?.url) ||
-                        asset('/images/placeholder.webp')
-                      }
-                      alt={post.name}
-                      width="800"
-                      height="450"
-                      className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-                      loading="lazy"
-                    />
-                  </div>
-                  <div className="p-4">
-                    {postCategory && (
-                      <span className="inline-block px-2 py-0.5 bg-surface-100 text-surface-600 rounded text-xs font-medium mb-2">
-                        {postCategory.name}
-                      </span>
-                    )}
-                    <h3 className="font-medium text-surface-900 line-clamp-2 group-hover:text-primary-600 transition-colors">
-                      {post.name}
-                    </h3>
-                  </div>
-                </Link>
-              );
-            })}
-          </div>
-        </SectionContainer>
-      )}
-
-      {/* 11. CTA */}
-      <CTA
-        title={page['cta-title'] || `Ready to Dominate ${industryName || 'Your'} Search Results?`}
-        subtitle={
-          page['cta-subtitle'] ||
-          "Book a free SEO audit and we'll show you exactly what's holding your site back."
+  // Single-sourced with the rendered accordion — only emitted when it renders.
+  const faqSchema =
+    faqItems.length >= 2
+      ? {
+          '@context': 'https://schema.org',
+          '@type': 'FAQPage',
+          mainEntity: faqItems.map((item) => ({
+            '@type': 'Question',
+            name: item.question,
+            acceptedAnswer: { '@type': 'Answer', text: toPlainText(item.answer) },
+          })),
         }
-      />
-    </>
+      : null;
+
+  const schemas = [breadcrumbSchema, serviceSchema, ...(faqSchema ? [faqSchema] : [])];
+
+  return (
+    <div className="svcv3">
+      {schemas.map((schema, i) => (
+        <script
+          key={i}
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }}
+        />
+      ))}
+      <SeoForPageV3 view={view} />
+    </div>
   );
 }

@@ -246,7 +246,7 @@ function GrowthCurveChart({
         </defs>
 
         {/* faint baseline */}
-        <line x1={padX} y1={baselineY} x2={W - padX} y2={baselineY} stroke="#eceef0" strokeWidth="1.5" />
+        <line x1={padX} y1={baselineY} x2={W - padX} y2={baselineY} stroke="var(--color-surface-100)" strokeWidth="1.5" />
 
         {areaPath && <path d={areaPath} fill={`url(#${gradientId})`} />}
         {linePath && (
@@ -262,7 +262,7 @@ function GrowthCurveChart({
             <g key={i}>
               {dv ? <title>{`${data[i].label ? `${data[i].label}: ` : ''}${dv}`}</title> : null}
               {last && <circle cx={p.x} cy={p.y} r="13" fill={accentColor} opacity="0.12" />}
-              <circle cx={p.x} cy={p.y} r={last ? 6.5 : 4} fill={accentColor} stroke="#ffffff" strokeWidth={last ? 3 : 1.5} />
+              <circle cx={p.x} cy={p.y} r={last ? 6.5 : 4} fill={accentColor} stroke="var(--color-white)" strokeWidth={last ? 3 : 1.5} />
             </g>
           );
         })}
@@ -270,7 +270,7 @@ function GrowthCurveChart({
         {/* x-axis labels */}
         {data.map((d, i) =>
           d.label ? (
-            <text key={`l${i}`} x={pts[i].x} y={H - 16} textAnchor="middle" fill="#9aa0a6" style={{ fontSize: '13px', fontWeight: 500 }}>
+            <text key={`l${i}`} x={pts[i].x} y={H - 16} textAnchor="middle" fill="var(--color-surface-400)" style={{ fontSize: '13px', fontWeight: 500 }}>
               {d.label}
             </text>
           ) : null
@@ -279,8 +279,8 @@ function GrowthCurveChart({
         {/* endpoint pills (fill masks the line → no overlap) */}
         {startDv && (
           <g>
-            <rect x={startX} y={startY} width={startW} height={PH} rx={PH / 2} fill="#ffffff" stroke={accentColor} strokeOpacity="0.22" />
-            <text x={startX + startW / 2} y={startY + PH / 2 + 1} textAnchor="middle" dominantBaseline="central" fill="#6b7280" style={{ fontSize: '12.5px', fontWeight: 600 }}>
+            <rect x={startX} y={startY} width={startW} height={PH} rx={PH / 2} fill="var(--color-white)" stroke={accentColor} strokeOpacity="0.22" />
+            <text x={startX + startW / 2} y={startY + PH / 2 + 1} textAnchor="middle" dominantBaseline="central" fill="var(--color-surface-500)" style={{ fontSize: '12.5px', fontWeight: 600 }}>
               {startDv}
             </text>
           </g>

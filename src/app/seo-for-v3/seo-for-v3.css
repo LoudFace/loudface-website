@@ -1,0 +1,146 @@
+/* ============================================================================
+   SEO-FOR v3 — ADDITIVE furniture for /seo-for and /seo-for/<industry>.
+
+   These routes render inside a `.svcv3` wrapper and import
+   `service-v3/service-v3.css` FIRST. That file owns the whole v3 language the
+   approved /services/* build established: .hero, .logos, .deliver/.wall-grid/
+   .dtile, .runway, .exhibit, .proof, .faq, .cover, .ft and every token
+   (--paper, --ink, --night, --elev …). Those class names are generic to v3, not
+   service-specific, so reusing them keeps these pages visually identical to the
+   approved build instead of forking a second 40KB stylesheet.
+
+   This file adds ONLY the slots the industry pages need that no /services/*
+   page has: a copy-only hero fallback, the CMS long-form prose block, the
+   challenges band, the testimonial band, and the related work/insight cards.
+   Every rule is `.svcv3 .sf-*` so it can never collide with service-v3.css.
+   ========================================================================== */
+
+/* ---------- hero: copy-only fallback (no related screenshot resolved) ---------- */
+.svcv3 .hero-grid.sf-solo{grid-template-columns:1fr;}
+.svcv3 .hero-grid.sf-solo .hero-copy{max-width:44rem;}
+
+/* ---------- challenges band (crisp light, tinted) ---------- */
+.svcv3 .sf-pain{background:var(--color-surface-50);border-top:1px solid var(--paper-line);
+  border-bottom:1px solid var(--paper-line);padding:clamp(76px,8vw,110px) 0;}
+.svcv3 .sf-pain-head{display:grid;gap:14px;margin-bottom:clamp(34px,4vw,52px);}
+.svcv3 .sf-pain-list{display:grid;gap:18px;}
+@media (min-width:860px){.svcv3 .sf-pain-list{grid-template-columns:repeat(3,1fr);gap:22px;}}
+.svcv3 .sf-pain-row{position:relative;background:var(--paper);border-radius:16px;padding:26px 24px 24px;
+  box-shadow:var(--elev);transition:box-shadow .3s var(--ease-out),transform .3s var(--ease-out);}
+.svcv3 .sf-pain-row:hover{box-shadow:var(--elev-hi);transform:translateY(-2px);}
+.svcv3 .sf-pain-k{display:inline-flex;align-items:center;justify-content:center;width:30px;height:30px;
+  border-radius:9px;background:var(--color-primary-50);box-shadow:inset 0 0 0 1px var(--color-primary-200);
+  font-family:var(--font-sans);font-size:12.5px;font-weight:600;color:var(--color-primary-700);
+  font-variant-numeric:tabular-nums;margin-bottom:14px;}
+.svcv3 .sf-pain-row h3{font-family:var(--font-heading);font-weight:500;font-size:1.12rem;line-height:1.3;
+  letter-spacing:-.015em;color:var(--ink);}
+.svcv3 .sf-pain-row p{margin-top:9px;font-size:15px;line-height:1.6;color:var(--body);text-wrap:pretty;}
+
+/* ---------- long-form CMS prose (crisp light) ---------- */
+.svcv3 .sf-prose{background:var(--paper);padding:clamp(76px,8vw,112px) 0;}
+.svcv3 .sf-prose-in{max-width:68ch;margin:0 auto;}
+.svcv3 .sf-prose-head{margin-bottom:clamp(28px,3.4vw,44px);display:grid;gap:13px;}
+.svcv3 .sf-body{font-size:16.6px;line-height:1.72;color:var(--body);}
+.svcv3 .sf-body > * + *{margin-top:1.05em;}
+.svcv3 .sf-body h2{font-family:var(--font-heading);font-weight:500;font-size:clamp(1.42rem,2.1vw,1.78rem);
+  line-height:1.22;letter-spacing:-.022em;color:var(--ink);margin-top:2.1em;text-wrap:balance;
+  padding-top:1.05em;border-top:1px solid var(--paper-line);}
+.svcv3 .sf-body h2:first-child{margin-top:0;padding-top:0;border-top:0;}
+.svcv3 .sf-body h3{font-family:var(--font-heading);font-weight:500;font-size:1.14rem;line-height:1.32;
+  letter-spacing:-.015em;color:var(--ink);margin-top:1.7em;}
+.svcv3 .sf-body p{text-wrap:pretty;}
+.svcv3 .sf-body a{color:var(--color-primary-600);text-decoration:underline;text-underline-offset:2px;
+  text-decoration-thickness:1px;}
+.svcv3 .sf-body a:hover{color:var(--color-primary-700);}
+.svcv3 .sf-body strong{font-weight:600;color:var(--ink);}
+.svcv3 .sf-body ul,.svcv3 .sf-body ol{padding-left:1.25em;display:grid;gap:.5em;}
+.svcv3 .sf-body ul{list-style:disc;}
+.svcv3 .sf-body ol{list-style:decimal;}
+.svcv3 .sf-body li::marker{color:var(--color-primary-500);}
+.svcv3 .sf-body blockquote{margin:1.5em 0;padding:18px 22px;background:var(--color-surface-50);
+  border-radius:14px;box-shadow:inset 3px 0 0 var(--color-primary-500);color:var(--ink);}
+.svcv3 .sf-body blockquote p{margin:0;}
+.svcv3 .sf-body img{max-width:100%;height:auto;border-radius:14px;box-shadow:var(--elev);}
+.svcv3 .sf-body table{width:100%;border-collapse:collapse;font-size:14.6px;}
+.svcv3 .sf-body th,.svcv3 .sf-body td{text-align:left;padding:11px 13px;border-bottom:1px solid var(--paper-line);
+  vertical-align:top;}
+.svcv3 .sf-body th{font-weight:600;color:var(--ink);}
+.svcv3 .sf-tablewrap{overflow-x:auto;}
+
+/* ---------- deliverables fallback list (when the wall has no tiles) ---------- */
+.svcv3 .sf-dlist{display:grid;gap:12px;}
+@media (min-width:760px){.svcv3 .sf-dlist{grid-template-columns:repeat(2,1fr);gap:14px;}}
+.svcv3 .sf-ditem{display:flex;gap:12px;align-items:flex-start;background:var(--paper);border-radius:13px;
+  padding:16px 18px;box-shadow:var(--elev);}
+.svcv3 .sf-ditem svg{flex:none;width:19px;height:19px;margin-top:1px;color:var(--color-primary-500);}
+.svcv3 .sf-ditem b{display:block;font-family:var(--font-heading);font-weight:500;font-size:15.4px;
+  letter-spacing:-.012em;color:var(--ink);}
+.svcv3 .sf-ditem span{display:block;margin-top:4px;font-size:14.4px;line-height:1.55;color:var(--body);}
+
+/* ---------- testimonial band (night stage) ---------- */
+.svcv3 .sf-quote{position:relative;background:linear-gradient(180deg,var(--night) 0%,var(--color-primary-950) 100%);
+  color:var(--color-white);padding:clamp(76px,8.5vw,116px) 0;}
+.svcv3 .sf-quote-in{max-width:56rem;margin:0 auto;text-align:center;}
+.svcv3 .sf-quote blockquote{font-family:var(--font-heading);font-weight:500;
+  font-size:clamp(1.25rem,2.5vw,1.72rem);line-height:1.38;letter-spacing:-.02em;color:var(--color-white);text-wrap:balance;}
+.svcv3 .sf-quote blockquote p{margin:0;}
+.svcv3 .sf-quote blockquote p + p{margin-top:.6em;}
+.svcv3 .sf-cite{margin-top:26px;display:inline-flex;align-items:center;gap:12px;padding:9px 18px 9px 9px;
+  border-radius:999px;background:rgba(255,255,255,.08);box-shadow:inset 0 0 0 1px rgba(255,255,255,.16);
+  -webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);}
+.svcv3 .sf-cite img{width:38px;height:38px;border-radius:50%;object-fit:cover;flex:none;}
+.svcv3 .sf-cite b{display:block;font-size:14.4px;font-weight:600;color:var(--color-white);text-align:left;}
+.svcv3 .sf-cite span{display:block;font-size:13px;color:var(--color-primary-200);text-align:left;}
+
+/* ---------- related work / insight cards (crisp light) ---------- */
+.svcv3 .sf-rel{background:var(--paper);padding:clamp(76px,8vw,112px) 0;}
+.svcv3 .sf-rel.tint{background:var(--color-surface-50);border-top:1px solid var(--paper-line);
+  border-bottom:1px solid var(--paper-line);}
+.svcv3 .sf-rel-head{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:18px;
+  margin-bottom:clamp(30px,3.6vw,46px);}
+.svcv3 .sf-rel-head > div{display:grid;gap:12px;}
+.svcv3 .sf-rel-all{display:inline-flex;align-items:center;gap:7px;font-size:14.4px;font-weight:600;
+  color:var(--color-primary-600);white-space:nowrap;}
+.svcv3 .sf-rel-all svg{width:17px;height:17px;fill:none;stroke:currentColor;stroke-width:1.9;
+  stroke-linecap:round;stroke-linejoin:round;transition:transform .3s var(--ease-out);}
+.svcv3 .sf-rel-all:hover svg{transform:translateX(3px);}
+.svcv3 .sf-cards{display:grid;gap:20px;}
+@media (min-width:760px){.svcv3 .sf-cards{grid-template-columns:repeat(3,1fr);}}
+.svcv3 .sf-card{display:block;background:var(--paper);border-radius:16px;overflow:hidden;box-shadow:var(--elev);
+  transition:box-shadow .3s var(--ease-out),transform .3s var(--ease-out);}
+.svcv3 .sf-card:hover{box-shadow:var(--elev-hi);transform:translateY(-3px);}
+.svcv3 .sf-card-shot{position:relative;aspect-ratio:16/10;overflow:hidden;background:var(--color-primary-950);}
+.svcv3 .sf-card-shot img{width:100%;height:100%;object-fit:cover;object-position:top;
+  transition:transform .6s var(--ease-out);}
+.svcv3 .sf-card:hover .sf-card-shot img{transform:scale(1.04);}
+/* no-thumbnail fallback: indigo plate w/ faint monogram (never a gray box) */
+.svcv3 .sf-card-plate{position:absolute;inset:0;display:grid;place-items:center;
+  background:linear-gradient(150deg,var(--color-primary-900) 0%,var(--color-primary-950) 100%);}
+.svcv3 .sf-card-plate span{font-family:var(--font-heading);font-weight:500;font-size:2.1rem;
+  letter-spacing:-.03em;color:rgba(255,255,255,.13);}
+.svcv3 .sf-card-body{padding:18px 20px 20px;}
+.svcv3 .sf-card-tag{display:inline-block;margin-bottom:9px;padding:3px 10px;border-radius:999px;
+  background:var(--color-primary-50);box-shadow:inset 0 0 0 1px var(--color-primary-200);
+  font-size:11.5px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;color:var(--color-primary-700);}
+.svcv3 .sf-card-body h3{font-family:var(--font-heading);font-weight:500;font-size:1.04rem;line-height:1.34;
+  letter-spacing:-.015em;color:var(--ink);
+  display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}
+.svcv3 .sf-card:hover .sf-card-body h3{color:var(--color-primary-600);}
+.svcv3 .sf-card-body p{margin-top:6px;font-size:13.6px;color:var(--mut);}
+
+/* ---------- industry index grid (/seo-for) ---------- */
+.svcv3 .sf-ix{display:grid;gap:16px;}
+@media (min-width:680px){.svcv3 .sf-ix{grid-template-columns:repeat(2,1fr);}}
+@media (min-width:1000px){.svcv3 .sf-ix{grid-template-columns:repeat(3,1fr);}}
+.svcv3 .sf-ix-row{display:flex;align-items:center;justify-content:space-between;gap:14px;
+  background:var(--paper);border-radius:15px;padding:20px 22px;box-shadow:var(--elev);
+  transition:box-shadow .3s var(--ease-out),transform .3s var(--ease-out);}
+.svcv3 .sf-ix-row:hover{box-shadow:var(--elev-hi);transform:translateY(-2px);}
+.svcv3 .sf-ix-row b{display:block;font-family:var(--font-heading);font-weight:500;font-size:1.05rem;
+  letter-spacing:-.015em;color:var(--ink);}
+.svcv3 .sf-ix-row span{display:block;margin-top:5px;font-size:14.2px;line-height:1.55;color:var(--body);}
+.svcv3 .sf-ix-go{flex:none;width:32px;height:32px;border-radius:50%;display:grid;place-items:center;
+  background:var(--color-primary-50);box-shadow:inset 0 0 0 1px var(--color-primary-200);}
+.svcv3 .sf-ix-go svg{width:16px;height:16px;fill:none;stroke:var(--color-primary-600);stroke-width:2;
+  stroke-linecap:round;stroke-linejoin:round;transition:transform .3s var(--ease-out);}
+.svcv3 .sf-ix-row:hover .sf-ix-go svg{transform:translateX(2px);}

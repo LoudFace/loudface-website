@@ -1,3 +1,4 @@
+
 const NAV = [
   { label: 'Work', href: '#work' },
   { label: 'Services', href: '#tracks' },
@@ -13,6 +14,7 @@ const NAV = [
  * light-only) is a later, deliberate step before the / swap.
  */
 export function HeaderV3() {
+
   return (
     <header className="hd at-top">
       <div className="container hd-in">

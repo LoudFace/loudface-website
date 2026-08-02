@@ -15,7 +15,7 @@ export const revalidate = 60;
 
 import { notFound } from 'next/navigation';
 import type { Metadata } from 'next';
-import { fetchCollection, fetchBlogPostData, fetchItemBySlug } from '@/lib/cms-data';
+import { fetchSlugs, fetchBlogPostData, fetchItemBySlug } from '@/lib/cms-data';
 import { formatReadTime } from '@/lib/blog-utils';
 import { RelatedComparisons } from '@/components/sections';
 import { buildNoIndexMetadata, buildPageMetadata, truncateSeoTitle, truncateSeoDescription, rewriteLegacyUrls } from '@/lib/seo-utils';
@@ -50,10 +50,10 @@ interface PageProps {
 }
 
 export async function generateStaticParams() {
-  const items = await fetchCollection<Record<string, unknown>>('blog');
-  return items
-    .filter((item) => item.slug)
-    .map((item) => ({ slug: item.slug as string }));
+  // Slugs only. This used to call fetchCollection('blog'), which pulled every
+  // article body just to read the URL segment off each one.
+  const slugs = await fetchSlugs('blog');
+  return slugs.map((slug) => ({ slug }));
 }
 
 // Extract TOC from content — identical normalization pipeline to the previous template.

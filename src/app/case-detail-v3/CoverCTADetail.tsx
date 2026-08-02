@@ -3,6 +3,7 @@
  * lightly personalized with the client name where present; the booking button
  * routes through the shared Cal.com handler via data-cal-trigger.
  */
+
 const ArrowIcon = () => (
   <svg className="arrow" width="15" height="12" viewBox="0 0 15 12" fill="none" aria-hidden="true">
     <path d="M9 1l5 5-5 5M14 6H1" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
@@ -10,6 +11,7 @@ const ArrowIcon = () => (
 );
 
 export function CoverCTADetail({ clientName }: { clientName?: string }) {
+
   return (
     <section className="cta" aria-label="Book a call">
       <div className="container-wide">

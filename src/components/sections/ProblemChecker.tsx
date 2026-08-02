@@ -71,7 +71,7 @@ export function ProblemChecker({ heading, items }: ProblemCheckerProps) {
       ? 'var(--color-surface-500)'
       : count <= 2
         ? 'var(--color-primary-500)'
-        : 'var(--color-error, #ef4444)';
+        : 'var(--color-error)';
 
   return (
     <SectionContainer>

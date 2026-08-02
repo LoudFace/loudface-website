@@ -3,13 +3,13 @@
 import { UI_ICONS } from '@/lib/icons';
 
 /**
- * CarouselNav Component
+ * SliderNav Component
  *
  * Reusable carousel navigation buttons for Embla carousels.
  * Provides prev/next buttons with light and dark variants.
  */
 
-interface CarouselNavProps {
+interface SliderNavProps {
   /** Visual variant: 'light' for light backgrounds, 'dark' for dark backgrounds */
   variant?: 'light' | 'dark';
   /** Additional classes for the container */
@@ -19,12 +19,12 @@ interface CarouselNavProps {
   onNextClick?: () => void;
 }
 
-export function CarouselNav({
+export function SliderNav({
   variant = 'light',
   className = '',
   onPrevClick,
   onNextClick,
-}: CarouselNavProps) {
+}: SliderNavProps) {
   // Variant-specific button classes
   const buttonClasses =
     variant === 'dark'

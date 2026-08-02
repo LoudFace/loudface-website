@@ -106,14 +106,14 @@ export default async function BlogPage({
         {/* Electric compact hero (HERO LAW; carries .hero for the dark Header flip) */}
         <section className="lead hero idx-lead" aria-label="Blog">
           <div className="container lead-in">
-            <div className="lead-cat rv"><span className="eyebrow glass"><i></i>Insights &amp; guides</span></div>
-            <h1 className="rv" style={{ ['--d' as string]: '.06s' }}>The LoudFace Blog</h1>
-            <p className="lead-sub rv" style={{ ['--d' as string]: '.12s' }}>
+            <div className="lead-cat rvi"><span className="eyebrow glass"><i></i>Insights &amp; guides</span></div>
+            <h1 className="rvi" style={{ ['--d' as string]: '.06s' }}>The LoudFace Blog</h1>
+            <p className="lead-sub rvi" style={{ ['--d' as string]: '.12s' }}>
               Actionable insights on Webflow development, SEO, AEO, and conversion design for B2B SaaS —
               guides, tutorials, and deep-dives from our team.
             </p>
             {blogPosts.length > 0 && (
-              <span className="idx-count rv" style={{ ['--d' as string]: '.18s' }}>
+              <span className="idx-count rvi" style={{ ['--d' as string]: '.18s' }}>
                 <i></i>{blogPosts.length} article{blogPosts.length === 1 ? '' : 's'} and counting
               </span>
             )}

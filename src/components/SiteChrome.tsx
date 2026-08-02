@@ -1,7 +1,7 @@
 "use client";
 
 import { usePathname } from "next/navigation";
-import { Header } from "@/components/Header";
+import { Header, type HeaderProps } from "@/components/Header";
 
 const SITE_ORIGIN = "https://www.loudface.co";
 
@@ -43,8 +43,10 @@ function deriveRouteChrome(pathname: string): RouteChrome {
     isTeamProfile ||
     pathname === "/ai-instructions" ||
     pathname === "/contact" ||
-    // Policy pages on LegalPageV3 (/terms + /cookies join when they migrate).
+    // Policy pages on the shared LegalPageV3 template.
     pathname === "/privacy" ||
+    pathname === "/terms" ||
+    pathname === "/cookies" ||
     pathname.startsWith("/case-studies") ||
     isBlog;
 
@@ -61,7 +63,7 @@ function deriveRouteChrome(pathname: string): RouteChrome {
  * Renders the hreflang alternates + the Header in its correct hero-theme
  * variant for the current route. React hoists the <link> tags into <head>.
  */
-export function SiteHeader() {
+export function SiteHeader({ navContent }: { navContent: HeaderProps["content"] }) {
   const pathname = usePathname();
   const { heroTheme } = deriveRouteChrome(pathname);
   const hreflangHref = pathname === "/" ? SITE_ORIGIN : `${SITE_ORIGIN}${pathname}`;
@@ -72,7 +74,7 @@ export function SiteHeader() {
           fallback for AI engines unsure of locale targeting. */}
       <link rel="alternate" hrefLang="en" href={hreflangHref} />
       <link rel="alternate" hrefLang="x-default" href={hreflangHref} />
-      <Header heroTheme={heroTheme} />
+      <Header heroTheme={heroTheme} content={navContent} />
     </>
   );
 }

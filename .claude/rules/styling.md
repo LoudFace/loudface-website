@@ -64,6 +64,10 @@ Consistent text colors across the site. Pick from this table — don't freestyle
 | Caption | `text-sm text-surface-500` |
 | Small UI | `text-2xs` (13px) or `text-xs` (12px) |
 
+### Text wrapping
+
+Headings get `text-wrap: balance`. Body copy gets `text-wrap: pretty`. Never leave a single word alone on a heading's last line — an orphan is the fastest tell that nobody looked at the page.
+
 ### Standard Section H2 Pattern
 
 All section headings use the same responsive scale:
@@ -217,6 +221,12 @@ Pick one per section — don't mix both.
 | `rounded-xl` | Medium cards |
 | `rounded-2xl` | Large cards, sections |
 | `rounded-full` | Pill buttons, avatars |
+
+### Nested radius
+
+When a shape sits inside another and the gap between them is under 32px, the inner radius is `outer radius − gap`. Apply only when the result is above 2px; below that leave the inner shape square.
+
+A `rounded-2xl` card (16px) with 8px padding gives the inner element 8px — `rounded-lg`. Concentric radii read as machined; equal radii read as pasted.
 
 ## Responsive Breakpoints
 

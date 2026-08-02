@@ -67,7 +67,7 @@ export function Lead({ title, categoryName, excerpt, author, publishedDate, last
   return (
     <section className="lead hero" aria-label="Article header">
       <div className="container lead-in">
-        <nav className="crumb rv" aria-label="Breadcrumb">
+        <nav className="crumb rvi" aria-label="Breadcrumb">
           <Link href="/">Home</Link>
           <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6" /></svg>
           <Link href="/blog">Blog</Link>
@@ -76,21 +76,21 @@ export function Lead({ title, categoryName, excerpt, author, publishedDate, last
         </nav>
 
         {categoryName && (
-          <div className="lead-cat rv" style={{ ['--d' as string]: '.04s' }}>
+          <div className="lead-cat rvi" style={{ ['--d' as string]: '.04s' }}>
             <span className="eyebrow glass"><i></i>{categoryName}</span>
           </div>
         )}
 
-        <h1 className={`rv${title.length > 40 ? ' wide' : ''}`} style={{ ['--d' as string]: '.08s' }}>
+        <h1 className={`rvi${title.length > 40 ? ' wide' : ''}`} style={{ ['--d' as string]: '.08s' }}>
           {title}
         </h1>
 
         {excerpt && (
-          <p className="lead-sub rv" style={{ ['--d' as string]: '.12s' }}>{excerpt}</p>
+          <p className="lead-sub rvi" style={{ ['--d' as string]: '.12s' }}>{excerpt}</p>
         )}
 
         {(who || published || updated || readTime) && (
-          <div className="byline rv" style={{ ['--d' as string]: '.16s' }}>
+          <div className="byline rvi" style={{ ['--d' as string]: '.16s' }}>
             {who}
             <span className="by-meta">
               {published && (

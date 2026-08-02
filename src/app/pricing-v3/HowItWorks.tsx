@@ -44,11 +44,11 @@ export function HowItWorks() {
             </div>
             <div className="step-fig" role="img" aria-label="Diagram: your goals mapped to the right tier">
               <svg viewBox="0 0 150 62" xmlns="http://www.w3.org/2000/svg">
-                <rect x="2" y="18" width="52" height="26" rx="5" fill="none" stroke="#4f46e5" strokeOpacity=".4" />
+                <rect x="2" y="18" width="52" height="26" rx="5" fill="none" stroke="var(--color-primary-600)" strokeOpacity=".4" />
                 <text x="28" y="34" textAnchor="middle" className="tk">GOALS</text>
-                <line className="ants" x1="56" y1="31" x2="92" y2="31" stroke="#4f46e5" strokeOpacity=".55" />
-                <circle className="flick" cx="74" cy="31" r="2.6" fill="#4f46e5" />
-                <rect x="94" y="18" width="54" height="26" rx="5" fill="#4f46e5" fillOpacity=".08" stroke="#4f46e5" strokeOpacity=".4" />
+                <line className="ants" x1="56" y1="31" x2="92" y2="31" stroke="var(--color-primary-600)" strokeOpacity=".55" />
+                <circle className="flick" cx="74" cy="31" r="2.6" fill="var(--color-primary-600)" />
+                <rect x="94" y="18" width="54" height="26" rx="5" fill="var(--color-primary-600)" fillOpacity=".08" stroke="var(--color-primary-600)" strokeOpacity=".4" />
                 <text x="121" y="34" textAnchor="middle" className="tk">TIER</text>
               </svg>
             </div>
@@ -69,11 +69,11 @@ export function HowItWorks() {
             </div>
             <div className="step-fig" role="img" aria-label="Diagram: initiatives compiled into a fixed monthly proposal">
               <svg viewBox="0 0 150 62" xmlns="http://www.w3.org/2000/svg">
-                <rect x="2" y="6" width="60" height="13" rx="3" fill="none" stroke="#4f46e5" strokeOpacity=".35" />
-                <rect x="2" y="24" width="60" height="13" rx="3" fill="none" stroke="#4f46e5" strokeOpacity=".35" />
-                <rect x="2" y="42" width="44" height="13" rx="3" fill="none" stroke="#4f46e5" strokeOpacity=".35" />
-                <line className="ants" x1="68" y1="31" x2="92" y2="31" stroke="#4f46e5" strokeOpacity=".5" />
-                <rect x="94" y="16" width="54" height="30" rx="5" fill="#4f46e5" fillOpacity=".08" stroke="#4f46e5" strokeOpacity=".4" />
+                <rect x="2" y="6" width="60" height="13" rx="3" fill="none" stroke="var(--color-primary-600)" strokeOpacity=".35" />
+                <rect x="2" y="24" width="60" height="13" rx="3" fill="none" stroke="var(--color-primary-600)" strokeOpacity=".35" />
+                <rect x="2" y="42" width="44" height="13" rx="3" fill="none" stroke="var(--color-primary-600)" strokeOpacity=".35" />
+                <line className="ants" x1="68" y1="31" x2="92" y2="31" stroke="var(--color-primary-600)" strokeOpacity=".5" />
+                <rect x="94" y="16" width="54" height="30" rx="5" fill="var(--color-primary-600)" fillOpacity=".08" stroke="var(--color-primary-600)" strokeOpacity=".4" />
                 <text x="121" y="29" textAnchor="middle" className="tk">FIXED</text>
                 <text x="121" y="40" textAnchor="middle" className="tk">MONTHLY</text>
               </svg>
@@ -92,12 +92,12 @@ export function HowItWorks() {
             </div>
             <div className="step-fig" role="img" aria-label="Diagram: Scoreboard goes live at kickoff">
               <svg viewBox="0 0 150 62" xmlns="http://www.w3.org/2000/svg">
-                <rect x="24" y="6" width="102" height="50" rx="6" fill="none" stroke="#4f46e5" strokeOpacity=".4" />
-                <line x1="24" y1="22" x2="126" y2="22" stroke="#4f46e5" strokeOpacity=".3" />
-                <circle className="flick" cx="33" cy="14" r="2.6" fill="#4f46e5" />
+                <rect x="24" y="6" width="102" height="50" rx="6" fill="none" stroke="var(--color-primary-600)" strokeOpacity=".4" />
+                <line x1="24" y1="22" x2="126" y2="22" stroke="var(--color-primary-600)" strokeOpacity=".3" />
+                <circle className="flick" cx="33" cy="14" r="2.6" fill="var(--color-primary-600)" />
                 <text x="41" y="17" className="tk">SCOREBOARD</text>
-                <rect x="32" y="30" width="52" height="7" rx="2" fill="#4f46e5" fillOpacity=".18" />
-                <rect x="32" y="43" width="72" height="7" rx="2" fill="#4f46e5" fillOpacity=".1" />
+                <rect x="32" y="30" width="52" height="7" rx="2" fill="var(--color-primary-600)" fillOpacity=".18" />
+                <rect x="32" y="43" width="72" height="7" rx="2" fill="var(--color-primary-600)" fillOpacity=".1" />
               </svg>
             </div>
           </div>
@@ -114,15 +114,15 @@ export function HowItWorks() {
             </div>
             <div className="step-fig" role="img" aria-label="Diagram: weekly showcase, approve, ship loop">
               <svg viewBox="0 0 150 62" xmlns="http://www.w3.org/2000/svg">
-                <rect x="2" y="20" width="38" height="22" rx="4" fill="#4f46e5" fillOpacity=".08" stroke="#4f46e5" strokeOpacity=".4" />
-                <rect x="56" y="20" width="38" height="22" rx="4" fill="none" stroke="#4f46e5" strokeOpacity=".4" />
-                <rect x="110" y="20" width="38" height="22" rx="4" fill="none" stroke="#4f46e5" strokeOpacity=".4" />
-                <line className="ants" x1="42" y1="31" x2="54" y2="31" stroke="#4f46e5" strokeOpacity=".55" />
-                <line className="ants" x1="96" y1="31" x2="108" y2="31" stroke="#4f46e5" strokeOpacity=".55" />
+                <rect x="2" y="20" width="38" height="22" rx="4" fill="var(--color-primary-600)" fillOpacity=".08" stroke="var(--color-primary-600)" strokeOpacity=".4" />
+                <rect x="56" y="20" width="38" height="22" rx="4" fill="none" stroke="var(--color-primary-600)" strokeOpacity=".4" />
+                <rect x="110" y="20" width="38" height="22" rx="4" fill="none" stroke="var(--color-primary-600)" strokeOpacity=".4" />
+                <line className="ants" x1="42" y1="31" x2="54" y2="31" stroke="var(--color-primary-600)" strokeOpacity=".55" />
+                <line className="ants" x1="96" y1="31" x2="108" y2="31" stroke="var(--color-primary-600)" strokeOpacity=".55" />
                 <text x="21" y="34" textAnchor="middle" className="tk">WK 01</text>
                 <text x="75" y="34" textAnchor="middle" className="tk">WK 02</text>
                 <text x="129" y="34" textAnchor="middle" className="tk">WK 03</text>
-                <circle className="flick" cx="21" cy="13" r="2.6" fill="#4f46e5" />
+                <circle className="flick" cx="21" cy="13" r="2.6" fill="var(--color-primary-600)" />
                 <text x="28" y="16">SHIPPED</text>
               </svg>
             </div>
