@@ -12,7 +12,7 @@ const GONE_URLS = new Set<string>([
   '/case-studies/draw-things',
 ]);
 
-export function middleware(request: NextRequest) {
+export default function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
   if (GONE_URLS.has(pathname)) {
