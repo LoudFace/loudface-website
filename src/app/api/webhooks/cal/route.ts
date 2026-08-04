@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import crypto from 'node:crypto';
+import { sendMetaScheduleEvent } from '@/lib/meta-capi';
 import { getPostHogServer } from '@/lib/posthog-server';
 
 type CalAttendee = {
@@ -72,6 +73,11 @@ function verifySignature(rawBody: string, header: string | null, secret: string)
   return crypto.timingSafeEqual(Buffer.from(expected), Buffer.from(received));
 }
 
+function toEventTime(timestamp: string | undefined): number {
+  const parsed = timestamp ? Date.parse(timestamp) : Number.NaN;
+  return Number.isFinite(parsed) ? Math.floor(parsed / 1000) : Math.floor(Date.now() / 1000);
+}
+
 export async function POST(request: Request) {
   const secret = process.env.CAL_WEBHOOK_SECRET;
   if (!secret) {
@@ -106,9 +112,21 @@ export async function POST(request: Request) {
     return NextResponse.json({ received: true, warning: 'no email' });
   }
 
+  const sendMetaSchedule = async () => {
+    if (event !== 'call_booked' || !body.payload?.uid) return;
+
+    await sendMetaScheduleEvent({
+      bookingUid: body.payload.uid,
+      email,
+      name: attendee?.name,
+      eventTime: toEventTime(body.createdAt),
+    });
+  };
+
   const posthog = getPostHogServer();
   if (!posthog) {
     console.warn('[cal-webhook] PostHog not configured, skipping capture');
+    await sendMetaSchedule();
     return NextResponse.json({ received: true });
   }
 
@@ -144,6 +162,8 @@ export async function POST(request: Request) {
   });
 
   await posthog.shutdown();
+
+  await sendMetaSchedule();
 
   return NextResponse.json({ received: true, event });
 }

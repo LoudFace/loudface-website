@@ -14,6 +14,7 @@ import {
 
 const GTM_IDS = ['GTM-T53LKJXQ', 'GTM-PDCXVZX'];
 const RB2B_KEY = '5NRP9H7R3PO1';
+const META_PIXEL_ID = process.env.NEXT_PUBLIC_META_PIXEL_ID;
 const INTERACTION_EVENTS = ['scroll', 'touchstart', 'mousemove', 'keydown'] as const;
 /** Ties the mobile expand toggle to the detail copy it reveals. */
 const CONSENT_DETAIL_ID = 'lf-consent-detail';
@@ -21,8 +22,16 @@ const CONSENT_DETAIL_ID = 'lf-consent-detail';
 // Module-level so a remount (route change) can't double-inject.
 let trackersLoaded = false;
 
+type MetaPixel = ((...args: unknown[]) => void) & {
+  callMethod?: (...args: unknown[]) => void;
+  push?: MetaPixel;
+  queue: unknown[][];
+  loaded?: boolean;
+  version?: string;
+};
+
 /**
- * Injects GTM (both containers) and the RB2B visitor-identification pixel.
+ * Injects GTM (both containers), RB2B, and the Meta Pixel.
  * Only ever called once tracking is allowed, so Google Consent Mode defaults
  * are signalled as granted before gtm.js evaluates. PostHog is not loaded
  * here — PostHogProvider owns it and reacts to the same consent event.
@@ -34,7 +43,12 @@ function loadTrackers() {
   if (!isTrackingAllowed()) return;
   trackersLoaded = true;
 
-  const w = window as typeof window & { dataLayer?: unknown[]; reb2b?: { loaded: boolean } };
+  const w = window as typeof window & {
+    dataLayer?: unknown[];
+    fbq?: MetaPixel;
+    _fbq?: MetaPixel;
+    reb2b?: { loaded: boolean };
+  };
 
   // Google Tag Manager — deferred variant of the standard snippet.
   w.dataLayer = w.dataLayer || [];
@@ -58,6 +72,33 @@ function loadTrackers() {
     el.src = `https://www.googletagmanager.com/gtm.js?id=${id}`;
     firstScript.parentNode?.insertBefore(el, firstScript);
   });
+
+  // Meta Pixel — only initialised when its public ID is configured.
+  if (META_PIXEL_ID) {
+    if (!w.fbq) {
+      const fbq = ((...args: unknown[]) => {
+        if (fbq.callMethod) {
+          fbq.callMethod(...args);
+        } else {
+          fbq.queue.push(args);
+        }
+      }) as MetaPixel;
+      if (!w._fbq) w._fbq = fbq;
+      fbq.push = fbq;
+      fbq.queue = [];
+      fbq.loaded = true;
+      fbq.version = '2.0';
+      w.fbq = fbq;
+
+      const el = document.createElement('script');
+      el.async = true;
+      el.src = 'https://connect.facebook.net/en_US/fbevents.js';
+      firstScript.parentNode?.insertBefore(el, firstScript);
+    }
+
+    w.fbq('init', META_PIXEL_ID);
+    w.fbq('track', 'PageView');
+  }
 
   // RB2B — same guard as the official snippet (window.reb2b blocks re-init).
   if (!w.reb2b) {
@@ -206,7 +247,7 @@ export function ConsentManager({ requiresConsent }: ConsentManagerProps) {
         }`}
       >
         We use cookies for analytics and to see which companies visit this site
-        (PostHog, Google Tag Manager, RB2B). Essential cookies stay on either way.
+        (PostHog, Google Tag Manager, RB2B, Meta Pixel). Essential cookies stay on either way.
         Details in the{' '}
         <Link href="/cookies" className="text-white underline underline-offset-2 hover:text-surface-300 transition-colors">
           Cookie Policy
