@@ -270,13 +270,21 @@
   .quote { background:var(--white); border:1px solid var(--rule); border-radius:16px;
            padding:2.1rem 2.2rem; position:relative; overflow:hidden;
            box-shadow:0 1px 2px rgba(17,24,39,.03), 0 20px 48px -34px rgba(17,24,39,.45); }
-  /* SOCIAL PROOF — slot decided: card TIGHTENED.
-     The drawn stars + hand-drawn G2 tile went. Reasons: the G2 mark was an approximation
-     rather than the official asset, and its red (#FF492C) was a second accent hue on a
-     one-accent brand (DESIGN.md §3: "Blue is the ONLY accent"). No claim is lost — the
-     rating stays as verified text in .attr. Swap in the real G2 badge when we hold it. */
-  .quote blockquote { font-size:clamp(1.1rem,2.1vw,1.35rem); line-height:1.55; color:var(--ink);
-                      letter-spacing:-.016em; font-weight:500; }
+  /* SOCIAL PROOF — slot decided: rating row IN, at the operator's call.
+     A review-platform mark is a citation, not a brand accent, so G2's own red is correct
+     here and does not break the one-accent rule. The tile is still DRAWN, not the official
+     asset — swap in the real badge when we hold the file. */
+  .rating { display:flex; align-items:center; gap:.7rem; margin-bottom:1.35rem; flex-wrap:wrap; }
+  .stars { color:var(--brand); font-size:.95rem; letter-spacing:.14em; }
+  .divider { width:1px; height:1rem; background:var(--rule); }
+  .g2 { display:inline-flex; align-items:center; gap:.45rem; }
+  .g2 svg { display:block; flex:none; }
+  .g2-txt { font-size:.6875rem; font-weight:700; letter-spacing:.08em; text-transform:uppercase;
+            color:var(--mut-2); }
+  /* the UA default is margin:1em 40px — inside a 285px card on mobile that left the quote
+     only 133px wide, which is the empty gutter flagged in review */
+  .quote blockquote { margin:0; font-size:clamp(1.1rem,2.1vw,1.35rem); line-height:1.55;
+                      color:var(--ink); letter-spacing:-.016em; font-weight:500; }
   .quote .attr { margin-top:1.35rem; padding-top:1.15rem; border-top:1px solid var(--rule);
                  font-size:.8125rem; color:var(--mut-2); line-height:1.6; }
 
@@ -349,7 +357,12 @@
   @media (max-width:52rem) {
     .glance, .grid3, .steps, .versus, .shift { grid-template-columns:1fr; }
   }
-  @media (max-width:34rem) { .band { grid-template-columns:1fr; } }
+  @media (max-width:34rem) {
+    .band { grid-template-columns:1fr; }
+    /* the rating row wraps here, which left the separator dangling after the stars */
+    .rating .divider { display:none; }
+    .rating { gap:.55rem .7rem; }
+  }
   @media (max-width:46rem) {
     .nav { gap:.9rem; padding:.9rem 1.25rem; }
     .navlinks { display:none; }
@@ -377,7 +390,7 @@
     <span><b>Saturated blue now means one thing: Toku wins.</b> Step numbers, the FAQ plus signs and the grey card bars went neutral, and six of the ten small uppercase kickers were cut so the headings lead. Four kickers remain, on the sections where the label carries real information.</span>
     <span><b>Shape and tone.</b> Content cards moved to the site's 16px radius; the compact number tiles went to 8px, so the two families read as different objects. Three grounds now step properly: white, near-white, pale blue. The fairness note lost its left stripe for the standard tinted fill, the money-flow arrows became dotted brand connectors with real arrowheads, and text-heavy sections gained one larger opening line.</span>
     <span><b>The logo is real.</b> The header used a bolded "TOKU" text stub; it now carries the actual logo file from the site's own component.</span>
-    <span><b>Social proof: card tightened.</b> The drawn stars and the hand-made G2 tile are out — the mark was an approximation, and its red was a second accent colour on a one-colour brand. Nothing is claimed less: "5 out of 5 on G2, April 2026" still sits under the quote as text. Drop in the official G2 badge and the client logo row when we hold those assets.</span>
+    <span><b>Social proof: the G2 mark and rating stay,</b> at the top left of the quote card. A review-platform logo is a citation rather than a brand colour, so G2's red is right there. Two notes: the tile is still drawn by hand, not the official G2 asset, so swap it when we hold the file — and the quote itself was being squeezed into a narrow column on phones by a browser default, which is now fixed. The customer logo row is still an open slot.</span>
     <span><b>Unchanged:</b> every word, every claim, both disclaimers, the "Not published" footnote, and the reduced-motion behaviour.</span>
   </div>
 
@@ -673,6 +686,19 @@
           <h2>Payroll software is judged on the day something goes wrong</h2>
         </div>
         <div class="quote">
+          <div class="rating">
+            <span class="g2">
+              <svg width="22" height="22" viewBox="0 0 22 22" role="img" aria-label="G2">
+                <rect width="22" height="22" rx="5.5" fill="#FF492C"></rect>
+                <text x="11" y="15.4" text-anchor="middle" fill="#FFFFFF"
+                      font-family="-apple-system, Helvetica, Arial, sans-serif"
+                      font-size="11" font-weight="700" letter-spacing="-0.3">G2</text>
+              </svg>
+              <span class="g2-txt">Verified review</span>
+            </span>
+            <span class="divider"></span>
+            <span class="stars" role="img" aria-label="5 out of 5">★★★★★</span>
+          </div>
           <blockquote>"With some providers, the experience can feel very ticket-based: you submit
             something through a dashboard, it gets assigned to whoever is available, and the level of
             expertise or urgency can vary. Toku feels much more relationship-driven."</blockquote>
