@@ -1,0 +1,852 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Toku vs Bitwage — page preview</title>
+</head>
+<body>
+
+<style>
+  /* ============ FRAME (adapts to the viewer's theme) ============ */
+  :root {
+    --f-bg:#F2F3F5; --f-panel:#FFFFFF; --f-ink:#1A1D21; --f-mut:#6B7176; --f-rule:#DCDFE3;
+    --f-mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root { --f-bg:#0E1013; --f-panel:#171A1E; --f-ink:#E8EBEE; --f-mut:#8B9196; --f-rule:#2A2F35; }
+  }
+  :root[data-theme="dark"]  { --f-bg:#0E1013; --f-panel:#171A1E; --f-ink:#E8EBEE; --f-mut:#8B9196; --f-rule:#2A2F35; }
+  :root[data-theme="light"] { --f-bg:#F2F3F5; --f-panel:#FFFFFF; --f-ink:#1A1D21; --f-mut:#6B7176; --f-rule:#DCDFE3; }
+
+  body { background:var(--f-bg); color:var(--f-ink); font-family:var(--f-mono); }
+  .frame { max-width:78rem; margin:0 auto; padding:2rem 1rem 4rem; display:flex; flex-direction:column; gap:1.25rem; }
+  .frame-head { display:flex; flex-direction:column; gap:.5rem; }
+  .frame-head h1 { font-size:1rem; font-weight:600; letter-spacing:.02em; }
+  .frame-head p { font-size:.78rem; line-height:1.7; color:var(--f-mut); max-width:62ch; }
+  .frame-note {
+    font-size:.72rem; line-height:1.7; color:var(--f-mut);
+    border-left:2px solid var(--f-rule); padding-left:.85rem;
+    display:flex; flex-direction:column; gap:.35rem;
+  }
+  .frame-note b { color:var(--f-ink); font-weight:600; }
+  .chrome {
+    display:flex; align-items:center; gap:.5rem; background:var(--f-panel);
+    border:1px solid var(--f-rule); border-bottom:0; border-radius:8px 8px 0 0;
+    padding:.6rem .85rem; font-size:.7rem; color:var(--f-mut);
+  }
+  .dot { width:9px; height:9px; border-radius:50%; background:var(--f-rule); flex:none; }
+  .bar { flex:1; background:var(--f-bg); border:1px solid var(--f-rule); border-radius:4px;
+         padding:.2rem .5rem; text-align:center; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+
+  /* ============ CANVAS (locked to toku.com's light brand — deliberate) ============ */
+  .canvas {
+    --brand:#1646CE; --brand-lift:#2F5FE8; --brand-tint:#EEF2FE; --brand-faint:#F5F8FF;
+    --navy:#0B2367; --navy-deep:#071842;
+    --ink:#111827; --ink-2:#374151; --mut:#4B5563; --mut-2:#6B7280;
+    --rule:#E5E7EB; --white:#FFFFFF; --hero:#EEF1FA; --gray50:#F9FAFB;
+    --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+    background:var(--white); color:var(--ink); font-family:var(--sans);
+    border:1px solid var(--f-rule); border-radius:0 0 8px 8px; overflow:hidden;
+    font-size:16px; line-height:1.6; color-scheme:light;
+  }
+  .canvas * { font-family:inherit; }
+
+  .annc { background:var(--navy); color:#fff; font-size:.8125rem; text-align:center;
+          padding:.6rem 2.5rem .6rem 1rem; position:relative; }
+  .annc a { color:#fff; text-decoration:underline; font-weight:600; }
+  .annc .x { position:absolute; right:1rem; top:50%; transform:translateY(-50%); opacity:.7; }
+
+  .nav { display:flex; align-items:center; gap:1.6rem; padding:1rem 2rem;
+         border-bottom:1px solid var(--rule); background:var(--white); flex-wrap:wrap; }
+  .wordmark { font-size:1.4rem; font-weight:800; letter-spacing:-.02em; color:var(--brand); }
+  .navlinks { display:flex; gap:1.35rem; font-size:.875rem; color:var(--ink); flex-wrap:wrap; }
+  .navlinks span { display:inline-flex; align-items:center; gap:.25rem; }
+  .navlinks .cv { color:var(--mut-2); font-size:.7rem; font-style:normal; }
+  .navcta { margin-left:auto; display:flex; gap:.6rem; }
+  .btn { display:inline-block; font-size:.875rem; font-weight:600; padding:.6rem 1.1rem;
+         border-radius:8px; text-decoration:none; white-space:nowrap; transition:transform .15s ease; }
+  .btn-solid { background:var(--brand); color:#fff; }
+  .btn-ghost { background:#fff; color:var(--ink); border:1px solid var(--rule); }
+  .btn:hover { transform:translateY(-1px); }
+
+  /* HERO — pale ground, faint dot grid + one soft glow for texture */
+  .hero {
+    background:
+      radial-gradient(60rem 26rem at 78% -10%, rgba(47,95,232,.16), transparent 65%),
+      radial-gradient(circle at 1px 1px, rgba(17,24,39,.075) 1px, transparent 0) 0 0/22px 22px,
+      var(--hero);
+    padding:3.5rem 2rem 4rem; position:relative;
+  }
+  .sect { padding:3.5rem 2rem; }
+  .sect-gray { background:var(--gray50); }
+  .inner { max-width:70rem; margin:0 auto; position:relative; }
+
+  .crumb { font-size:.8125rem; color:var(--mut-2); margin-bottom:1.35rem; }
+  .crumb b { color:var(--ink); font-weight:400; }
+
+  .canvas h1 { font-size:clamp(2.1rem,5.2vw,3.75rem); font-weight:600; letter-spacing:-.035em;
+               line-height:1.04; color:var(--ink); text-wrap:balance; max-width:24ch; }
+  .canvas h1 em { font-style:normal; color:var(--brand); }
+  .canvas h2 { font-size:clamp(1.45rem,2.9vw,2.1rem); font-weight:600; letter-spacing:-.024em;
+               line-height:1.18; color:var(--ink); text-wrap:balance; max-width:30ch; }
+  .canvas h3 { font-size:1.0625rem; font-weight:600; letter-spacing:-.01em; color:var(--ink); }
+  .canvas p { font-size:1rem; line-height:1.7; color:var(--mut); max-width:42rem; }
+  .canvas p + p { margin-top:.95rem; }
+  .canvas a.inline { color:var(--brand); text-decoration:underline; text-underline-offset:2px; }
+  .lead { font-size:1.0625rem; color:var(--ink-2); }
+
+  .eyebrow { font-size:.6875rem; font-weight:600; letter-spacing:.11em; text-transform:uppercase;
+             color:var(--brand); margin-bottom:.85rem; display:flex; align-items:center; gap:.5rem; }
+  .eyebrow::before { content:""; width:1.4rem; height:2px; background:var(--brand); flex:none; }
+  .sect-head { margin-bottom:1.75rem; }
+  .sect-head p { margin-top:.9rem; }
+
+  /* hero decision strip — now cards that lift */
+  .glance { display:grid; grid-template-columns:repeat(3,1fr); gap:.85rem; margin-top:2.5rem; }
+  .glance > div {
+    background:var(--white); border:1px solid var(--rule); border-radius:12px;
+    padding:1.3rem 1.35rem; position:relative; overflow:hidden;
+    box-shadow:0 1px 2px rgba(17,24,39,.04), 0 12px 28px -22px rgba(17,24,39,.3);
+  }
+  .glance > div::before { content:""; position:absolute; inset:0 0 auto 0; height:3px; background:var(--rule); }
+  .glance > div.pick::before { background:linear-gradient(90deg, var(--brand), var(--brand-lift)); }
+  .glance .k { font-size:.6875rem; font-weight:600; letter-spacing:.1em; text-transform:uppercase;
+               color:var(--mut-2); }
+  .glance strong { display:block; margin-top:.5rem; font-size:1.0625rem; font-weight:600;
+                   letter-spacing:-.015em; color:var(--ink); line-height:1.35; }
+
+  /* ===== DARK THESIS SECTION (the mid-page beat) ===== */
+  .dark {
+    background:
+      radial-gradient(48rem 24rem at 15% 0%, rgba(47,95,232,.30), transparent 62%),
+      linear-gradient(180deg, var(--navy) 0%, var(--navy-deep) 100%);
+    color:#fff; padding:4rem 2rem;
+  }
+  .dark .eyebrow { color:#8FB0FF; }
+  .dark .eyebrow::before { background:#8FB0FF; }
+  .dark h2 { color:#fff; }
+  .dark > .inner > p { color:#B9C6E6; }
+  .versus { display:grid; grid-template-columns:repeat(2,1fr); gap:1.25rem; margin-top:.5rem; }
+  .panel { border-radius:14px; padding:1.75rem 1.85rem; display:flex; flex-direction:column; gap:1.1rem; }
+  .panel.own {
+    background:linear-gradient(165deg, rgba(47,95,232,.26), rgba(47,95,232,.06));
+    border:1px solid rgba(143,176,255,.45);
+    box-shadow:0 0 0 1px rgba(47,95,232,.15) inset, 0 24px 60px -34px rgba(47,95,232,.9);
+  }
+  .panel.rival { background:rgba(255,255,255,.045); border:1px solid rgba(255,255,255,.12); }
+  .panel .who { font-size:.6875rem; font-weight:700; letter-spacing:.12em; text-transform:uppercase; }
+  .panel.own .who { color:#A9C2FF; }
+  .panel.rival .who { color:#8A97B8; }
+  .panel h3 { font-size:1.3rem; letter-spacing:-.02em; color:#fff; }
+  .panel dl { display:flex; flex-direction:column; gap:.8rem; }
+  .panel dl > div { display:flex; gap:.7rem; align-items:flex-start; font-size:.9375rem;
+                    line-height:1.55; }
+  .panel.own dl > div { color:#DCE5FA; }
+  .panel.rival dl > div { color:#9EAAC6; }
+  .panel dl .m { flex:none; width:1.15rem; text-align:center; font-weight:700; }
+  .panel.own dl .m { color:#7FA5FF; }
+  .panel.rival dl .m { color:#6D7B9C; }
+
+  /* display pull-quote */
+  .pull { margin-top:2.5rem; padding-top:2rem; border-top:1px solid rgba(255,255,255,.14); }
+  .pull q { quotes:none; display:block; font-size:clamp(1.3rem,2.8vw,1.95rem); font-weight:600;
+            letter-spacing:-.024em; line-height:1.25; color:#fff; max-width:30ch; text-wrap:balance; }
+  .pull q b { color:#8FB0FF; font-weight:600; }
+
+  /* ===== MONEY-FLOW DIAGRAM ===== */
+  .flow { margin-top:2rem; }
+  .flow-rail { display:flex; align-items:stretch; gap:0; flex-wrap:nowrap; }
+  .node {
+    flex:1 1 0; min-width:0; background:var(--white); border:1px solid var(--rule);
+    border-radius:14px; padding:1.35rem 1.3rem; display:flex; flex-direction:column; gap:.4rem;
+    box-shadow:0 1px 2px rgba(17,24,39,.04), 0 14px 32px -26px rgba(17,24,39,.35);
+  }
+  .node.hub { border-color:#C7D4F7; background:linear-gradient(180deg,var(--brand-tint),var(--white)); }
+  .node .n-k { font-size:.6875rem; font-weight:700; letter-spacing:.11em; text-transform:uppercase;
+               color:var(--mut-2); }
+  .node.hub .n-k { color:var(--brand); }
+  .node .n-t { font-size:1.0625rem; font-weight:600; letter-spacing:-.015em; color:var(--ink); }
+  .node .n-d { font-size:.8125rem; line-height:1.55; color:var(--mut); }
+  .link {
+    flex:0 0 auto; width:clamp(4.5rem,9vw,8rem); display:flex; flex-direction:column;
+    align-items:center; justify-content:center; gap:.3rem; padding:0 .35rem;
+  }
+  .link .cap { font-size:.6875rem; line-height:1.35; text-align:center; color:var(--mut-2); }
+  .link .cap b { color:var(--ink-2); font-weight:600; }
+  .link .arrow { width:100%; height:2px; background:linear-gradient(90deg,var(--rule),var(--brand)); position:relative; }
+  .link .arrow::after {
+    content:""; position:absolute; right:-1px; top:-3px;
+    border-left:7px solid var(--brand); border-top:4px solid transparent; border-bottom:4px solid transparent;
+  }
+  .flow-note { margin-top:1.15rem; font-size:.8125rem; color:var(--mut-2); max-width:46rem; }
+  .yield-badge {
+    display:inline-flex; align-items:center; gap:.45rem; margin-top:1rem;
+    font-size:.75rem; font-weight:600; letter-spacing:.03em;
+    background:var(--brand-tint); color:var(--brand); border:1px solid #C7D4F7;
+    border-radius:999px; padding:.35rem .8rem;
+  }
+
+  /* three cards */
+  .grid3 { display:grid; grid-template-columns:repeat(3,1fr); gap:1.25rem; }
+  .card { background:var(--white); border:1px solid var(--rule); border-radius:14px;
+          padding:1.6rem; display:flex; flex-direction:column; gap:.55rem;
+          box-shadow:0 1px 2px rgba(17,24,39,.03); transition:box-shadow .2s ease, transform .2s ease; }
+  .card:hover { transform:translateY(-2px); box-shadow:0 1px 2px rgba(17,24,39,.04), 0 18px 40px -28px rgba(17,24,39,.4); }
+  .card .k { font-size:2rem; font-weight:600; letter-spacing:-.03em; color:var(--brand); line-height:1; }
+  .card .k small { display:block; font-size:.6875rem; font-weight:700; letter-spacing:.11em;
+                   text-transform:uppercase; color:var(--mut-2); margin-top:.4rem; }
+  .card p { font-size:.9375rem; margin:0; max-width:none; }
+
+  /* before / after */
+  .shift { display:grid; grid-template-columns:repeat(2,1fr); gap:1.25rem; }
+  .shift > div { background:var(--white); border:1px solid var(--rule); border-radius:14px;
+                 padding:1.6rem 1.7rem; display:flex; flex-direction:column; gap:.6rem; position:relative; }
+  .shift > div:last-child { border-color:#C7D4F7; background:linear-gradient(170deg,var(--brand-faint),var(--white)); }
+  .shift .when { font-size:.6875rem; font-weight:700; letter-spacing:.1em; text-transform:uppercase;
+                 color:var(--mut-2); }
+  .shift > div:last-child .when { color:var(--brand); }
+  .shift .what { font-size:1.0625rem; font-weight:600; letter-spacing:-.015em; color:var(--ink); line-height:1.4; }
+  .shift p { font-size:.9375rem; margin:0; max-width:none; }
+
+  /* chips */
+  .chips { display:flex; flex-wrap:wrap; gap:.5rem; margin-top:1.15rem; }
+  .chip { font-size:.8125rem; padding:.4rem .8rem; border:1px solid var(--rule);
+          border-radius:999px; background:var(--white); color:var(--ink-2); font-weight:500; }
+  .chip span { color:var(--mut-2); font-weight:400; }
+
+  /* steps */
+  .steps { display:grid; grid-template-columns:repeat(3,1fr); gap:1.25rem; counter-reset:s; }
+  .step { display:flex; flex-direction:column; gap:.6rem; padding-top:1.1rem;
+          border-top:2px solid var(--rule); position:relative; }
+  .step:first-child { border-top-color:var(--brand); }
+  .step .n { font-size:.6875rem; font-weight:700; letter-spacing:.11em; text-transform:uppercase;
+             color:var(--brand); }
+  .step p { font-size:.9375rem; margin:0; max-width:none; }
+
+  /* table */
+  .scroll { overflow-x:auto; border:1px solid var(--rule); border-radius:14px; background:var(--white);
+            box-shadow:0 1px 2px rgba(17,24,39,.03); }
+  table { border-collapse:collapse; width:100%; min-width:40rem; }
+  th, td { text-align:left; padding:.78rem 1.15rem; border-bottom:1px solid var(--rule); font-size:.9375rem; }
+  thead th { font-size:.6875rem; font-weight:700; letter-spacing:.09em; text-transform:uppercase;
+             color:var(--mut-2); background:var(--gray50); position:sticky; top:0; z-index:2; }
+  thead th.t { color:var(--brand); background:var(--brand-tint); }
+  /* the Toku column reads as a tinted lane running down the table */
+  tbody td:nth-child(2) { background:var(--brand-faint); }
+  tr.group th { background:var(--white); font-size:.625rem; font-weight:700; letter-spacing:.14em;
+                text-transform:uppercase; color:var(--brand); padding-top:1.4rem; padding-bottom:.5rem;
+                position:static; }
+  tbody td:first-child { color:var(--ink-2); }
+  td.y  { color:var(--brand); font-weight:700; }
+  td.v  { color:var(--ink); font-weight:600; }
+  td.r  { color:var(--mut); }
+  td.np { color:var(--mut-2); font-style:italic; font-size:.875rem; }
+  tbody tr:last-child td { border-bottom:0; }
+  .tnote { font-size:.8125rem; line-height:1.65; color:var(--mut-2); margin-top:1rem; max-width:48rem; }
+  .fair { margin-top:1.35rem; padding:1.1rem 1.35rem; border-left:3px solid var(--brand);
+          background:var(--brand-faint); border-radius:0 10px 10px 0; }
+  .fair p { font-size:.9375rem; margin:0; }
+
+  /* quote */
+  .quote { background:var(--white); border:1px solid var(--rule); border-radius:14px;
+           padding:2.1rem 2.2rem; position:relative; overflow:hidden;
+           box-shadow:0 1px 2px rgba(17,24,39,.03), 0 20px 48px -34px rgba(17,24,39,.45); }
+  .quote::before { content:""; position:absolute; inset:0 0 auto 0; height:3px;
+                   background:linear-gradient(90deg,var(--brand),var(--brand-lift)); }
+  .quote blockquote { font-size:clamp(1.1rem,2.1vw,1.35rem); line-height:1.55; color:var(--ink);
+                      letter-spacing:-.016em; font-weight:500; }
+  .quote .attr { margin-top:1.35rem; font-size:.8125rem; color:var(--mut-2); line-height:1.6; }
+  .rating { display:flex; align-items:center; gap:.7rem; margin-bottom:1.2rem; flex-wrap:wrap; }
+  .stars { color:var(--brand); font-size:.95rem; letter-spacing:.14em; }
+  .divider { width:1px; height:1rem; background:var(--rule); }
+  .g2 { display:flex; align-items:center; gap:.4rem; }
+  .g2 svg { display:block; }
+  .g2-txt { font-size:.6875rem; font-weight:700; letter-spacing:.08em; text-transform:uppercase;
+            color:var(--mut-2); }
+
+  /* pricing band — big numerals */
+  .band { display:grid; grid-template-columns:repeat(4,1fr); gap:.85rem; }
+  .band > div { background:var(--white); border:1px solid var(--rule); border-radius:14px;
+                padding:1.5rem 1.35rem; }
+  .band b { display:block; font-size:2.4rem; font-weight:600; letter-spacing:-.04em; color:var(--brand);
+            line-height:1; font-variant-numeric:tabular-nums; }
+  .band span { display:block; margin-top:.55rem; font-size:.8125rem; color:var(--mut); line-height:1.5; }
+
+  /* faq */
+  .faq { max-width:52rem; border:1px solid var(--rule); border-radius:14px; overflow:hidden;
+         background:var(--white); }
+  details { border-bottom:1px solid var(--rule); }
+  details:last-child { border-bottom:0; }
+  summary { padding:1.15rem 3rem 1.15rem 1.4rem; cursor:pointer; list-style:none; font-size:1.0625rem;
+            font-weight:600; letter-spacing:-.012em; color:var(--ink); position:relative;
+            transition:background .15s ease; }
+  summary:hover { background:var(--brand-faint); }
+  summary::-webkit-details-marker { display:none; }
+  summary::after { content:"+"; position:absolute; right:1.3rem; top:1.05rem; font-size:1.4rem;
+                   font-weight:400; color:var(--brand); line-height:1; }
+  details[open] summary { background:var(--brand-faint); }
+  details[open] summary::after { content:"\2013"; }
+  details p { padding:0 3rem 1.35rem 1.4rem; font-size:.9375rem; }
+  summary:focus-visible { outline:2px solid var(--brand); outline-offset:-2px; }
+
+  /* cta */
+  .cta {
+    background:
+      radial-gradient(44rem 22rem at 50% 0%, rgba(47,95,232,.34), transparent 64%),
+      linear-gradient(180deg,var(--navy) 0%, var(--navy-deep) 100%);
+    color:#fff; padding:4rem 2rem; text-align:center;
+  }
+  .cta h2 { color:#fff; margin:0 auto; max-width:26ch; }
+  .cta p { color:#C7D0E8; margin:1.15rem auto 0; max-width:38rem; }
+  .cta .row { margin-top:1.9rem; display:flex; gap:.75rem; justify-content:center; flex-wrap:wrap; }
+  .cta .btn-solid { background:#fff; color:var(--navy); }
+  .cta .btn-ghost { background:transparent; color:#fff; border:1px solid rgba(255,255,255,.35); }
+  .cta .links { margin-top:2rem; font-size:.8125rem; color:#9FB0D6; }
+  .cta .links a { color:#fff; text-decoration:underline; text-underline-offset:2px; }
+
+  .disc { background:var(--gray50); padding:2.4rem 2rem; border-top:1px solid var(--rule); }
+  .disc p { font-size:.8125rem; line-height:1.7; color:var(--mut-2); max-width:52rem; }
+  .disc p + p { margin-top:.85rem; }
+
+  /* one restrained reveal, off for anyone who asked for less motion */
+  .rise { opacity:0; transform:translateY(14px); transition:opacity .55s ease, transform .55s ease; }
+  .rise.in { opacity:1; transform:none; }
+  @media (prefers-reduced-motion:reduce) {
+    .rise { opacity:1; transform:none; transition:none; }
+    .btn, .card { transition:none; }
+    .btn:hover, .card:hover { transform:none; }
+  }
+
+  @media (max-width:62rem) { .band { grid-template-columns:repeat(2,1fr); } }
+  @media (max-width:56rem) {
+    .flow-rail { flex-direction:column; }
+    .link { width:100%; flex-direction:row; padding:.7rem 0; gap:.6rem; }
+    .link .arrow { width:2px; height:1.6rem; background:linear-gradient(180deg,var(--rule),var(--brand)); }
+    .link .arrow::after { right:-3px; top:auto; bottom:-1px;
+      border-left:4px solid transparent; border-right:4px solid transparent;
+      border-top:7px solid var(--brand); border-bottom:0; }
+    .link .cap { text-align:left; }
+  }
+  @media (max-width:52rem) {
+    .glance, .grid3, .steps, .versus, .shift { grid-template-columns:1fr; }
+  }
+  @media (max-width:34rem) { .band { grid-template-columns:1fr; } }
+  @media (max-width:46rem) {
+    .nav { gap:.9rem; padding:.9rem 1.25rem; }
+    .navlinks { display:none; }
+    .hero { padding:2.5rem 1.25rem 3rem; }
+    .sect, .dark { padding:2.75rem 1.25rem; }
+    .cta, .disc { padding:2.75rem 1.25rem; }
+    .panel { padding:1.4rem 1.45rem; }
+  }
+</style>
+
+<div class="frame">
+
+  <div class="frame-head">
+    <h1>Toku vs Bitwage — page preview, version 3</h1>
+    <p>Same approved copy. The visual treatment is now pushed toward the "sleek, tech-forward,
+      Warp-inspired" direction in Toku's own brand brief.</p>
+  </div>
+
+  <div class="frame-note">
+    <b>What's new visually</b>
+    <span>A dark navy section now carries the page's core argument, so the middle of the page has a real beat instead of eleven white blocks in a row. It picks up the "inspired by Warp" line from Toku's brand brief.</span>
+    <span>A money-flow diagram was added. It shows both directions in and out, which Toku's content rules require stating anyway, and it is the most on-topic visual a payroll page can carry.</span>
+    <span>The Toku column in the comparison table is now a tinted lane, so the asymmetry reads without you having to read a single word.</span>
+    <span>Bigger numerals on pricing and on earn/pay/spend, the closing line set at display size, cards that lift on hover, and one gentle reveal on scroll that switches itself off if you have reduced motion turned on.</span>
+    <span>Unchanged: every word, every claim, both disclaimers, and the two empty slots (no star rating, no customer logos). The G2 mark is still drawn rather than the official asset.</span>
+  </div>
+
+  <div class="chrome">
+    <span class="dot"></span><span class="dot"></span><span class="dot"></span>
+    <span class="bar">www.toku.com/competitor-comparison/toku-vs-bitwage</span>
+  </div>
+
+  <!-- ============================== CANVAS ============================== -->
+  <div class="canvas">
+
+    <div class="annc">
+      ✨ Referred customers receive a 10% discount on all core offerings and solutions, up to $5,000.
+      <a href="#">Contact us now!</a><span class="x">✕</span>
+    </div>
+
+    <nav class="nav">
+      <span class="wordmark">TOKU</span>
+      <span class="navlinks">
+        <span>Products <i class="cv">▾</i></span>
+        <span>Solutions <i class="cv">▾</i></span>
+        <span>Resources <i class="cv">▾</i></span>
+        <span>Company <i class="cv">▾</i></span>
+        <span>Pricing</span>
+        <span>Contact Us</span>
+      </span>
+      <span class="navcta">
+        <a class="btn btn-ghost" href="#">Log In</a>
+        <a class="btn btn-solid" href="#">Book a Demo</a>
+      </span>
+    </nav>
+
+    <!-- HERO -->
+    <section class="hero">
+      <div class="inner">
+        <p class="crumb">Compare Toku &nbsp;/&nbsp; <b>Toku vs Bitwage</b></p>
+        <h1>Toku vs Bitwage: which platform actually <em>employs</em> your team?</h1>
+        <p class="lead" style="margin-top:1.4rem;">Both pay workers in stablecoins. Only one becomes the
+          legal employer. Since Paystand acquired Bitwage in April 2026, that is the difference that
+          decides the shortlist.</p>
+        <div style="margin-top:2rem; display:flex; gap:.75rem; flex-wrap:wrap;">
+          <a class="btn btn-solid" href="#">Book a Demo</a>
+          <a class="btn btn-ghost" href="#">Get Pricing</a>
+        </div>
+
+        <div class="glance">
+          <div>
+            <span class="k">If you only need to pay</span>
+            <strong>Either works. Both send stablecoins or local currency.</strong>
+          </div>
+          <div class="pick">
+            <span class="k">If you need to employ</span>
+            <strong>Only Toku. It becomes the legal employer in 100+ countries.</strong>
+          </div>
+          <div>
+            <span class="k">If you need the widest reach</span>
+            <strong>Bitwage. Nearly 200 countries, and it pays in Bitcoin.</strong>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- THESIS, DARK -->
+    <section class="dark">
+      <div class="inner rise">
+        <p class="eyebrow">The difference in one screen</p>
+        <h2>One platform moves money. The other takes on the employment.</h2>
+        <div class="versus">
+          <div class="panel own">
+            <span class="who">Toku</span>
+            <h3>Employment infrastructure</h3>
+            <dl>
+              <div><span class="m">✓</span><span>Becomes the legal employer through a local entity, in 100+ countries</span></div>
+              <div><span class="m">✓</span><span>Withholds and remits local tax, files the statutory returns</span></div>
+              <div><span class="m">✓</span><span>US co-employment across all 50 states, plus agent of record</span></div>
+              <div><span class="m">✓</span><span>Administers token grants, vesting and tokenized equity</span></div>
+            </dl>
+          </div>
+          <div class="panel rival">
+            <span class="who">Bitwage (Paystand)</span>
+            <h3>A payout engine</h3>
+            <dl>
+              <div><span class="m">→</span><span>Moves money you have already decided to send</span></div>
+              <div><span class="m">→</span><span>Reaches nearly 200 countries, in more assets than Toku</span></div>
+              <div><span class="m">→</span><span>Sits inside Paystand's accounts payable and receivable network</span></div>
+              <div><span class="m">→</span><span>Does not describe employer of record services publicly</span></div>
+            </dl>
+          </div>
+        </div>
+        <div class="pull">
+          <q>Paying someone correctly and <b>employing someone correctly</b> are two different jobs.</q>
+        </div>
+      </div>
+    </section>
+
+    <!-- MONEY FLOW -->
+    <section class="sect">
+      <div class="inner rise">
+        <div class="sect-head">
+          <p class="eyebrow">How the money moves</p>
+          <h2>Funded either way, paid out either way</h2>
+        </div>
+        <div class="flow">
+          <div class="flow-rail">
+            <div class="node">
+              <span class="n-k">You</span>
+              <span class="n-t">Fund payroll</span>
+              <span class="n-d">From your treasury or bank, in whichever form you hold.</span>
+            </div>
+            <div class="link">
+              <span class="cap"><b>Fiat</b> or <b>stablecoins</b></span>
+              <span class="arrow"></span>
+            </div>
+            <div class="node hub">
+              <span class="n-k">Toku</span>
+              <span class="n-t">Converts and employs</span>
+              <span class="n-d">Handles the conversion in either direction, withholds local tax, files the returns.</span>
+            </div>
+            <div class="link">
+              <span class="cap"><b>Stablecoins</b> or <b>local currency</b></span>
+              <span class="arrow"></span>
+            </div>
+            <div class="node">
+              <span class="n-k">Your team</span>
+              <span class="n-t">Gets paid, then spends</span>
+              <span class="n-d">Each worker picks what they receive, and can spend it on a Visa-enabled Rain Card.</span>
+            </div>
+          </div>
+          <span class="yield-badge">◆ Payroll float earns yield until the moment of disbursement</span>
+          <p class="flow-note">Card issuance varies by country, so check availability for your team's
+            locations. Yield is variable and not guaranteed; see the notice at the foot of this page.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- WHAT CHANGED -->
+    <section class="sect sect-gray">
+      <div class="inner rise">
+        <div class="sect-head">
+          <p class="eyebrow">April 2026</p>
+          <h2>What changed when Paystand acquired Bitwage?</h2>
+          <p>Bitwage still runs and the product did not disappear into the deal. What changed is the
+            question a buyer is asking.</p>
+        </div>
+        <div class="shift">
+          <div>
+            <span class="when">Before April 2026</span>
+            <span class="what">A crypto payroll specialist</span>
+            <p>Bitwage sold paying people in cryptocurrency as its own product, to its own buyers.</p>
+          </div>
+          <div>
+            <span class="when">After April 2026</span>
+            <span class="what">The stablecoin rail inside a business payments platform</span>
+            <p>Paystand said it would use Bitwage's payout engine for settlement and foreign exchange
+              across its accounts payable and receivable network, which it puts at more than one million
+              businesses. The named new capabilities are mass payouts, vendor payments and supplier
+              payments. Employment is not among them.</p>
+          </div>
+        </div>
+        <p style="margin-top:1.6rem;">That is a category shift, not a criticism. Paystand is a serious
+          operator and the deal made obvious sense for both sides.</p>
+      </div>
+    </section>
+
+    <!-- EARN PAY SPEND -->
+    <section class="sect">
+      <div class="inner rise">
+        <div class="sect-head">
+          <p class="eyebrow">Why teams choose Toku</p>
+          <h2>Earn, pay, spend</h2>
+        </div>
+        <div class="grid3">
+          <div class="card">
+            <span class="k">01<small>Earn</small></span>
+            <h3>Yield on payroll float</h3>
+            <p>Payroll is pre-funded, so capital sits idle between funding and payday. Toku earns yield on
+              that float right up to the moment of disbursement.</p>
+          </div>
+          <div class="card">
+            <span class="k">02<small>Pay</small></span>
+            <h3>Fast payouts in 100+ countries</h3>
+            <p>Fund payroll in fiat or stablecoins. Each worker receives stablecoins or their local
+              currency. Toku handles the conversion in either direction.</p>
+          </div>
+          <div class="card">
+            <span class="k">03<small>Spend</small></span>
+            <h3>A Visa-enabled Rain Card</h3>
+            <p>Recipients spend the balance directly rather than routing it to a local bank account first.
+              Card issuance varies by country.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- TABLE -->
+    <section class="sect sect-gray">
+      <div class="inner rise">
+        <div class="sect-head">
+          <p class="eyebrow">Side by side</p>
+          <h2>How do the two compare, capability by capability?</h2>
+        </div>
+        <div class="scroll">
+          <table>
+            <thead>
+              <tr><th>Capability</th><th class="t">Toku</th><th>Bitwage (Paystand)</th></tr>
+            </thead>
+            <tbody>
+              <tr class="group"><th colspan="3">Payments</th></tr>
+              <tr><td>Fund payroll in fiat</td><td class="y">✓</td><td class="r">✓</td></tr>
+              <tr><td>Fund payroll in stablecoins</td><td class="y">✓</td><td class="r">✓</td></tr>
+              <tr><td>Worker paid in stablecoins</td><td class="y">✓</td><td class="r">✓</td></tr>
+              <tr><td>Worker paid in local currency</td><td class="y">✓</td><td class="r">✓</td></tr>
+              <tr><td>Worker paid in Bitcoin or Ethereum</td><td class="np">Stablecoins and local currency</td><td class="r">✓</td></tr>
+              <tr><td>Countries covered</td><td class="v">100+</td><td class="r">Nearly 200</td></tr>
+
+              <tr class="group"><th colspan="3">Employment</th></tr>
+              <tr><td>Employer of record</td><td class="v">✓ &nbsp;100+ countries</td><td class="np">Not published</td></tr>
+              <tr><td>US co-employment (PEO)</td><td class="v">✓ &nbsp;All 50 states</td><td class="np">Not published</td></tr>
+              <tr><td>Agent of record</td><td class="y">✓</td><td class="np">Not published</td></tr>
+              <tr><td>Local tax withholding and year-end filings</td><td class="y">✓</td><td class="np">Not published</td></tr>
+
+              <tr class="group"><th colspan="3">Compensation</th></tr>
+              <tr><td>Token grant vesting and withholding</td><td class="y">✓</td><td class="np">Not published</td></tr>
+              <tr><td>Tokenized equities and RSUs</td><td class="y">✓</td><td class="np">Not published</td></tr>
+              <tr><td>Yield earned on payroll float</td><td class="y">✓</td><td class="np">Not published</td></tr>
+              <tr><td>Visa-enabled spending card for recipients</td><td class="v">✓ &nbsp;Rain Card</td><td class="np">Not published</td></tr>
+
+              <tr class="group"><th colspan="3">Platform</th></tr>
+              <tr><td>Payout or payroll API</td><td class="v">Headless payroll API</td><td class="r">API-first payout engine</td></tr>
+              <tr><td>Accounts payable and receivable automation</td><td class="np">Payroll only</td><td class="r">✓ &nbsp;Through Paystand</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p class="tnote">"Not published" means Bitwage does not describe that capability on its website,
+          and it did not appear in the April 2026 acquisition announcements, as checked on 3 August 2026.
+          It is not a statement that the capability is absent. Confirm current scope with each vendor
+          before you sign anything.</p>
+        <div class="fair">
+          <p>Bitwage covers more countries than Toku does, and pays in more assets. If raw currency reach
+            is your requirement, that is a real advantage and this page is not going to pretend
+            otherwise.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- CLASSIFICATION -->
+    <section class="sect">
+      <div class="inner rise">
+        <div class="sect-head">
+          <p class="eyebrow">The risk nobody prices in</p>
+          <h2>What happens the first time you hire where you have no entity?</h2>
+          <p>Through an employer of record, that person is employed under a local entity, on a local
+            contract, with local contributions paid. Through a payout platform, that person is a
+            contractor of your home entity, and the classification question sits on your side of the
+            table.</p>
+          <p>For one early hire in a low-risk country, the contractor route is often fine. Once headcount
+            grows, or the work starts to look like employment under local law, the structure matters more
+            than the payment rail. These are the tests that decide it:</p>
+        </div>
+        <div class="chips">
+          <span class="chip">IR35 <span>· United Kingdom</span></span>
+          <span class="chip">URSSAF subordination tests <span>· France</span></span>
+          <span class="chip">Scheinselbständigkeit <span>· Germany</span></span>
+          <span class="chip">AB5 <span>· California</span></span>
+        </div>
+        <p style="margin-top:1.35rem; font-size:.9375rem;">Consult your legal counsel on your specific
+          arrangement.</p>
+      </div>
+    </section>
+
+    <!-- PRICING -->
+    <section class="sect sect-gray">
+      <div class="inner rise">
+        <div class="sect-head">
+          <p class="eyebrow">Pricing</p>
+          <h2>What does Toku cost?</h2>
+        </div>
+        <div class="band">
+          <div><b>$0</b><span>Foreign exchange markup</span></div>
+          <div><b>$0</b><span>Withdrawal fees</span></div>
+          <div><b>$0</b><span>Per-seat fees</span></div>
+          <div><b>Flat</b><span>Monthly price per worker</span></div>
+        </div>
+        <p style="margin-top:1.75rem;">Pricing covers platform fees, employer costs and on-chain fees,
+          itemised so you can see them. Stablecoin payroll, token payouts, vesting logic, tax-aware
+          reporting and invoice settlement sit in the core platform, not behind a premium tier.</p>
+        <p>This page does not publish Bitwage's prices, because a stale competitor number is worse than
+          no number. Read both pricing pages on the day you decide. Toku's is at
+          <a class="inline" href="#">toku.com/pricing</a>.</p>
+      </div>
+    </section>
+
+    <!-- PROOF -->
+    <section class="sect">
+      <div class="inner rise">
+        <div class="sect-head">
+          <p class="eyebrow">What customers say</p>
+          <h2>Payroll software is judged on the day something goes wrong</h2>
+        </div>
+        <div class="quote">
+          <div class="rating">
+            <span class="stars">★★★★★</span>
+            <span class="divider"></span>
+            <span class="g2">
+              <svg width="22" height="22" viewBox="0 0 22 22" role="img" aria-label="G2">
+                <rect width="22" height="22" rx="5.5" fill="#FF492C"></rect>
+                <text x="11" y="15.4" text-anchor="middle" fill="#FFFFFF"
+                      font-family="-apple-system, Helvetica, Arial, sans-serif"
+                      font-size="11" font-weight="700" letter-spacing="-0.3">G2</text>
+              </svg>
+              <span class="g2-txt">Verified review</span>
+            </span>
+          </div>
+          <blockquote>"With some providers, the experience can feel very ticket-based: you submit
+            something through a dashboard, it gets assigned to whoever is available, and the level of
+            expertise or urgency can vary. Toku feels much more relationship-driven."</blockquote>
+          <p class="attr">Verified reviewer, mid-market software company (51 to 1,000 employees)<br>
+            "Toku is a true partner for HR teams" &nbsp;·&nbsp; 5 out of 5 on G2, April 2026</p>
+        </div>
+        <p style="margin-top:1.6rem;">The same reviewer ran both a global reduction in force and an
+          acquisition through Toku inside a few months, and closed by recommending Toku to teams unhappy
+          with their current employer of record.</p>
+      </div>
+    </section>
+
+    <!-- MIGRATION -->
+    <section class="sect sect-gray">
+      <div class="inner rise">
+        <div class="sect-head">
+          <p class="eyebrow">Switching</p>
+          <h2>Nobody wants to break payroll</h2>
+          <p>It is the first objection Toku's team hears, and it is a fair one. Toku runs in parallel with
+            your existing provider, so the move is a sequence of small verifiable steps.</p>
+        </div>
+        <div class="steps">
+          <div class="step">
+            <span class="n">Step 1</span>
+            <h3>Move one batch</h3>
+            <p>Pick a small group of workers and run them through Toku while your current provider keeps
+              running everyone else.</p>
+          </div>
+          <div class="step">
+            <span class="n">Step 2</span>
+            <h3>Confirm it landed</h3>
+            <p>Check the payments arrived, the documents are right, and the reporting matches what your
+              finance team expects.</p>
+          </div>
+          <div class="step">
+            <span class="n">Step 3</span>
+            <h3>Move the rest</h3>
+            <p>Migrate the remainder on your own timeline. Nobody misses a payment while you are
+              deciding.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- DECISION -->
+    <section class="sect">
+      <div class="inner rise">
+        <div class="sect-head">
+          <p class="eyebrow">The call</p>
+          <h2>Which platform fits your team?</h2>
+          <p>It compresses into one question. Are you moving money, or are you employing people?</p>
+        </div>
+        <div class="scroll">
+          <table>
+            <thead><tr><th>If your team looks like this</th><th class="t">The better fit</th></tr></thead>
+            <tbody>
+              <tr><td>You want the widest currency list, including Bitcoin</td><td class="r">Bitwage (Paystand)</td></tr>
+              <tr><td>You already use Paystand for accounts payable</td><td class="r">Bitwage (Paystand)</td></tr>
+              <tr><td>You need vendor and supplier payouts more than payroll</td><td class="r">Bitwage (Paystand)</td></tr>
+              <tr><td>You employ people where you have no legal entity</td><td class="v">Toku</td></tr>
+              <tr><td>You need local tax withholding and year-end filings</td><td class="v">Toku</td></tr>
+              <tr><td>You pay any part of compensation in tokens or tokenized equity</td><td class="v">Toku</td></tr>
+              <tr><td>You want payroll float to earn yield until disbursement</td><td class="v">Toku</td></tr>
+              <tr><td>You want recipients to spend on a Visa-enabled card</td><td class="v">Toku</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- FAQ -->
+    <section class="sect sect-gray">
+      <div class="inner rise">
+        <div class="sect-head"><h2>Frequently asked questions</h2></div>
+        <div class="faq">
+          <details open>
+            <summary>Did Paystand acquire Bitwage?</summary>
+            <p>Yes. Paystand announced the acquisition of Bitwage in April 2026 for an undisclosed sum.
+              Bitwage continues to operate. Paystand said it would use Bitwage's API-first payout engine
+              to power stablecoin settlement and foreign exchange across its accounts receivable and
+              accounts payable network, including mass payouts and vendor payments.</p>
+          </details>
+          <details>
+            <summary>Can Bitwage act as an employer of record?</summary>
+            <p>Bitwage does not describe employer of record services on its website, and none appeared in
+              the April 2026 acquisition announcements. An employer of record becomes the legal employer
+              of your worker through a local entity and takes on local payroll, withholding and filings.
+              Toku provides employer of record in 100+ countries. Confirm current scope directly with
+              each vendor.</p>
+          </details>
+          <details>
+            <summary>Does Toku pay workers in Bitcoin?</summary>
+            <p>Toku's payroll stack settles in stablecoins and local currency. Companies fund payroll in
+              fiat or stablecoins, and each worker chooses which of the two they receive. Toku handles
+              the conversion in either direction. Bitwage's published asset list is wider and includes
+              Bitcoin and Ethereum, so a team that specifically needs those assets should compare on that
+              basis.</p>
+          </details>
+          <details>
+            <summary>How many countries does each platform cover?</summary>
+            <p>Toku publishes coverage in 100+ countries for employer of record and global payroll.
+              Bitwage publishes coverage in nearly 200 countries for payments. The two numbers are not
+              measuring the same thing: paying into a country is a smaller undertaking than employing
+              someone in it compliantly. Check the specific country list for your team with each
+              vendor.</p>
+          </details>
+          <details>
+            <summary>Can Toku run alongside our current payroll provider?</summary>
+            <p>Yes. Toku runs in parallel, so you can migrate one batch of workers, confirm the payments
+              landed, then move the rest at your own pace. There is no requirement to switch everyone at
+              once, and no gap in pay while you evaluate.</p>
+          </details>
+          <details>
+            <summary>Does Toku handle token grants and tokenized equities?</summary>
+            <p>Yes. Toku administers token grants, including vesting schedules, per-jurisdiction
+              withholding and audit-ready grant reporting, alongside tokenized equities and RSUs. Toku
+              also runs a free calculator at tokencomp.toku.com that shows after-tax outcomes by
+              jurisdiction, with no signup required. Bitwage does not describe token grant administration
+              on its website.</p>
+          </details>
+          <details>
+            <summary>What happens to payroll money before it is paid out?</summary>
+            <p>Payroll is pre-funded, so capital sits between funding and disbursement. Toku earns yield
+              on that float until the moment of disbursement, which turns idle payroll capital into a
+              return. Bitwage does not describe yield on balances. Yield is variable and not guaranteed,
+              and the disclosure below applies.</p>
+          </details>
+        </div>
+      </div>
+    </section>
+
+    <!-- CTA -->
+    <section class="cta">
+      <h2>Ready to see what your payroll actually costs?</h2>
+      <p>If your team is employed in more than one country, or any part of compensation is in tokens, the
+        payment rail is not the decision. The employment layer underneath it is.</p>
+      <div class="row">
+        <a class="btn btn-solid" href="#">Book a Demo</a>
+        <a class="btn btn-ghost" href="#">Talk to Sales</a>
+      </div>
+      <p class="links">Read more on <a href="#">how settlement works</a>, <a href="#">yield on payroll
+        float</a>, <a href="#">the Rain Card</a>, <a href="#">tokenized equities</a> and
+        <a href="#">the headless payroll API</a>.</p>
+    </section>
+
+    <!-- DISCLAIMERS -->
+    <section class="disc">
+      <p><em>Toku provides compliance infrastructure and is not a law firm. This content is for
+        informational purposes only and does not constitute legal or tax advice. Consult your legal
+        counsel for jurisdiction-specific guidance.</em></p>
+      <p><em>Yield is variable and not guaranteed. Past performance is not indicative of future results.
+        Toku is not a bank, broker-dealer, or investment adviser. Funds held in yield-bearing instruments
+        are not FDIC-insured and may lose value. Consult your financial adviser before making decisions
+        based on yield projections.</em></p>
+      <p><em>Competitor capabilities described on this page are based on publicly available product
+        information as of 3 August 2026. Verify current vendor scope and pricing independently.</em></p>
+    </section>
+
+  </div>
+  <!-- ============================ /CANVAS ============================ -->
+
+</div>
+
+<script>
+  (function () {
+    var items = document.querySelectorAll('.rise');
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches || !('IntersectionObserver' in window)) {
+      items.forEach(function (el) { el.classList.add('in'); });
+      return;
+    }
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) {
+        if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); }
+      });
+    }, { rootMargin: '0px 0px -8% 0px', threshold: 0.05 });
+    items.forEach(function (el) { io.observe(el); });
+  })();
+</script>
+</body>
+</html>
