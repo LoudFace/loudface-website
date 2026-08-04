@@ -1,12 +1,42 @@
+'use client';
+
 import Link from 'next/link';
+import { useEffect, useRef } from 'react';
 
 interface PaginationProps {
   currentPage: number;
   totalPages: number;
   basePath: string;
+  /**
+   * `id` of the element to bring into view when the page changes — normally the
+   * list section, so the reader lands on the results rather than back on the
+   * hero. Falls back to the top of the document when omitted.
+   */
+  scrollTargetId?: string;
 }
 
-export function Pagination({ currentPage, totalPages, basePath }: PaginationProps) {
+export function Pagination({ currentPage, totalPages, basePath, scrollTargetId }: PaginationProps) {
+  const shownPage = useRef(currentPage);
+
+  // The router's own scroll reset never lands here: `html` sets
+  // `scroll-behavior: smooth` (globals.css), which turns the reset into an
+  // animation the router then abandons. The reader stays parked at the old
+  // offset — staring at the footer while the new page's cards sit thousands of
+  // pixels above the viewport. So the links opt out of the router's reset and we
+  // move the reader ourselves. `behavior: 'instant'` is load-bearing for the
+  // same reason it is in Header.tsx: a default scrollTo would animate.
+  useEffect(() => {
+    if (shownPage.current === currentPage) return;
+    shownPage.current = currentPage;
+
+    const target = scrollTargetId ? document.getElementById(scrollTargetId) : null;
+    if (target) {
+      target.scrollIntoView({ behavior: 'instant', block: 'start' });
+    } else {
+      window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
+    }
+  }, [currentPage, scrollTargetId]);
+
   if (totalPages <= 1) return null;
 
   function pageHref(page: number) {
@@ -28,6 +58,7 @@ export function Pagination({ currentPage, totalPages, basePath }: PaginationProp
       {currentPage > 1 && (
         <Link
           href={pageHref(currentPage - 1)}
+          scroll={false}
           className="px-3 py-2 text-sm font-medium text-surface-600 hover:text-surface-900 transition-colors"
           aria-label="Previous page"
         >
@@ -44,6 +75,7 @@ export function Pagination({ currentPage, totalPages, basePath }: PaginationProp
           <Link
             key={page}
             href={pageHref(page)}
+            scroll={false}
             aria-current={page === currentPage ? 'page' : undefined}
             className={`min-w-[36px] h-9 flex items-center justify-center rounded-lg text-sm font-medium transition-colors ${
               page === currentPage
@@ -59,6 +91,7 @@ export function Pagination({ currentPage, totalPages, basePath }: PaginationProp
       {currentPage < totalPages && (
         <Link
           href={pageHref(currentPage + 1)}
+          scroll={false}
           className="px-3 py-2 text-sm font-medium text-surface-600 hover:text-surface-900 transition-colors"
           aria-label="Next page"
         >

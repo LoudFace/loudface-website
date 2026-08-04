@@ -218,16 +218,17 @@ Requires each target section to carry a matching `id` and the page to include at
 
 ### Pagination
 
-URL-based pagination nav for listing pages (blog, case studies). Renders page numbers with prev/next arrows, ellipsis for large ranges, and highlights the current page.
+URL-based pagination nav for listing pages (blog, case studies). Renders page numbers with prev/next arrows, ellipsis for large ranges, and highlights the current page. Client component — it owns the scroll reset on page change, because `html { scroll-behavior: smooth }` breaks the router's own reset and would leave the reader parked at the previous scroll offset. The links therefore pass `scroll={false}`.
 
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
 | `currentPage` | `number` | — | Active page number (1-indexed) |
 | `totalPages` | `number` | — | Total number of pages |
 | `basePath` | `string` | — | Base URL for page links (e.g. `/blog`) |
+| `scrollTargetId` | `string` | top of document | `id` of the element to scroll into view on page change — pass the list section so the reader lands on the results, not the hero |
 
 ```tsx
-<Pagination currentPage={2} totalPages={6} basePath="/blog" />
+<Pagination currentPage={2} totalPages={6} basePath="/blog" scrollTargetId="articles" />
 ```
 
 ### VideoFacade

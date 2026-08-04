@@ -121,7 +121,7 @@ export default async function BlogPage({
         </section>
 
         {/* Light gallery of exhibit cards */}
-        <section className="index-body">
+        <section className="index-body" id="articles">
           <div className="container">
             <div className="idx-head">
               <h2 className="rv">Latest <span className="hot">articles</span></h2>
@@ -150,7 +150,12 @@ export default async function BlogPage({
                 </div>
 
                 <div className="idx-pagination">
-                  <Pagination currentPage={safePage} totalPages={totalPages} basePath="/blog" />
+                  <Pagination
+                    currentPage={safePage}
+                    totalPages={totalPages}
+                    basePath="/blog"
+                    scrollTargetId="articles"
+                  />
                 </div>
               </>
             )}

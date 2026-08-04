@@ -6,6 +6,9 @@ import { useEffect } from 'react';
  * BlogV3Scripts — the three progressive-enhancement behaviours the answer-first
  * concept ships, scoped to the `.blogv3` subtree:
  *   1. Reveal-on-scroll: `.rv` elements gain `.in` when they enter the viewport.
+ *      A MutationObserver re-wires `.rv` nodes that mount after this effect ran
+ *      (the paginated index swaps its whole card grid), so they cannot get
+ *      stranded at the CSS initial `opacity:0`.
  *      The reveal is `.js`-gated in CSS (html.js …), and `<html class="js">` is
  *      set by a synchronous inline script in the page BEFORE first paint, so a
  *      no-JS crawler sees the AEO citation card + body at full opacity. A short
@@ -25,13 +28,10 @@ export function BlogV3Scripts() {
 
     // ---- 1. reveal-on-scroll ----
     const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    const revealEls = Array.from(root.querySelectorAll<HTMLElement>('.rv'));
     let io: IntersectionObserver | null = null;
-    let fallbackTimer: ReturnType<typeof setTimeout> | null = null;
+    const revealTimers: ReturnType<typeof setTimeout>[] = [];
 
-    if (reduced || !('IntersectionObserver' in window)) {
-      revealEls.forEach((el) => el.classList.add('in'));
-    } else {
+    if (!reduced && 'IntersectionObserver' in window) {
       io = new IntersectionObserver(
         (entries) => {
           entries.forEach((e) => {
@@ -43,13 +43,41 @@ export function BlogV3Scripts() {
         },
         { threshold: 0.08, rootMargin: '0px 0px -6% 0px' },
       );
-      revealEls.forEach((el) => {
+    }
+
+    function wireReveal(els: HTMLElement[]) {
+      if (!els.length) return;
+      if (!io) {
+        els.forEach((el) => el.classList.add('in'));
+        return;
+      }
+      els.forEach((el) => {
         const r = el.getBoundingClientRect();
         if (r.top < window.innerHeight * 0.92) el.classList.add('in');
         else io?.observe(el);
       });
-      fallbackTimer = setTimeout(() => revealEls.forEach((el) => el.classList.add('in')), 900);
+      revealTimers.push(setTimeout(() => els.forEach((el) => el.classList.add('in')), 900));
     }
+
+    wireReveal(Array.from(root.querySelectorAll<HTMLElement>('.rv')));
+
+    // Paginating the blog index swaps in brand-new `.rv` cards — React keys the
+    // cards by slug, so every card unmounts and a fresh one mounts. The observer
+    // above only ever saw the cards present at mount, so without this the next
+    // page's cards keep the CSS initial `opacity:0` forever: the reader gets an
+    // empty white page and reasonably concludes the articles failed to load.
+    const mo = new MutationObserver((records) => {
+      const fresh: HTMLElement[] = [];
+      records.forEach((rec) => {
+        rec.addedNodes.forEach((node) => {
+          if (!(node instanceof HTMLElement)) return;
+          if (node.matches('.rv:not(.in)')) fresh.push(node);
+          node.querySelectorAll<HTMLElement>('.rv:not(.in)').forEach((el) => fresh.push(el));
+        });
+      });
+      wireReveal(fresh);
+    });
+    mo.observe(root, { childList: true, subtree: true });
 
     // ---- 2. TOC scroll-spy ----
     const tocLinks = Array.from(root.querySelectorAll<HTMLAnchorElement>('.toc a'));
@@ -96,8 +124,9 @@ export function BlogV3Scripts() {
 
     return () => {
       io?.disconnect();
+      mo.disconnect();
       spy?.disconnect();
-      if (fallbackTimer) clearTimeout(fallbackTimer);
+      revealTimers.forEach(clearTimeout);
       copyBtn?.removeEventListener('click', onCopy);
     };
   }, []);
