@@ -36,16 +36,26 @@ export async function sendMetaScheduleEvent({
   name,
   eventTime,
 }: MetaScheduleEvent): Promise<void> {
-  const pixelId = process.env.META_PIXEL_ID;
-  const accessToken = process.env.META_CAPI_ACCESS_TOKEN;
-  if (!pixelId || !accessToken) return;
-
-  const endpoint = new URL(
-    `https://graph.facebook.com/${META_GRAPH_API_VERSION}/${encodeURIComponent(pixelId)}/events`
-  );
-  endpoint.searchParams.set('access_token', accessToken);
-
   try {
+    const pixelId = process.env.META_PIXEL_ID;
+    const accessToken = process.env.META_CAPI_ACCESS_TOKEN;
+    if (!pixelId || !accessToken) {
+      const missingVariables: string[] = [];
+      if (!pixelId) missingVariables.push('META_PIXEL_ID');
+      if (!accessToken) missingVariables.push('META_CAPI_ACCESS_TOKEN');
+
+      console.warn(
+        `[meta-capi] skipped: missing ${missingVariables.join(', ')}; ` +
+          `access_token_present=${Boolean(accessToken)} access_token_length=${accessToken?.length ?? 0}`
+      );
+      return;
+    }
+
+    const endpoint = new URL(
+      `https://graph.facebook.com/${META_GRAPH_API_VERSION}/${encodeURIComponent(pixelId)}/events`
+    );
+    endpoint.searchParams.set('access_token', accessToken);
+
     const response = await fetch(endpoint, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -66,10 +76,24 @@ export async function sendMetaScheduleEvent({
       }),
     });
 
+    const responseText = await response.text();
     if (!response.ok) {
-      console.error('[meta-capi] Schedule delivery failed', response.status, response.statusText);
+      console.error(
+        `[meta-capi] failed: status=${response.status} statusText=${JSON.stringify(response.statusText)} ` +
+          `body=${responseText}`
+      );
+      return;
     }
+
+    let responseBody: unknown;
+    try {
+      responseBody = JSON.parse(responseText);
+    } catch {
+      responseBody = responseText;
+    }
+
+    console.log(`[meta-capi] sent: status=${response.status} body=${JSON.stringify(responseBody)}`);
   } catch {
-    console.error('[meta-capi] Schedule delivery failed');
+    console.error('[meta-capi] failed: request threw before a response was received');
   }
 }

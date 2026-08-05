@@ -113,10 +113,23 @@ export async function POST(request: Request) {
   }
 
   const sendMetaSchedule = async () => {
-    if (event !== 'call_booked' || !body.payload?.uid) return;
+    const bookingUid = body.payload?.uid;
+    if (event !== 'call_booked' || !bookingUid) {
+      const skipReasons: string[] = [];
+      if (event !== 'call_booked') {
+        skipReasons.push(`mapped event is ${JSON.stringify(event)}, expected "call_booked"`);
+      }
+      if (!bookingUid) skipReasons.push('body.payload.uid is absent');
+
+      console.warn(
+        `[meta-capi] skipped: ${skipReasons.join('; ')}; mapped_event=${JSON.stringify(event)} ` +
+          `payload_uid_present=${Boolean(bookingUid)} raw_trigger_event=${JSON.stringify(body.triggerEvent)}`
+      );
+      return;
+    }
 
     await sendMetaScheduleEvent({
-      bookingUid: body.payload.uid,
+      bookingUid,
       email,
       name: attendee?.name,
       eventTime: toEventTime(body.createdAt),
