@@ -569,6 +569,18 @@ const nextConfig: NextConfig = {
         destination: '/blog/best-aeo-agencies-b2b-saas-2026',
         permanent: true,
       },
+      // ─── boutique retirement (2026-08-05 listicle consolidation, Tier 1) ──
+      // boutique-seo-agency-for-b2b-saas-2026: 0 Peec citations/30d, 0 GSC
+      // clicks/28d, and the worst "boutique" self-label offender (voices/
+      // loudface.md) — the exact framing AI engines lift as the low-sentiment
+      // "boutique / less-enterprise" verdict. A generic AI-native-agency
+      // explainer whose topics the SEO canonical already covers; nothing
+      // unique to fold. 301 (not 410) preserves URL equity.
+      {
+        source: '/blog/boutique-seo-agency-for-b2b-saas-2026',
+        destination: '/blog/best-b2b-saas-seo-agencies',
+        permanent: true,
+      },
       // ─── GEO cluster: fold the 07-08 head-term duplicate (2026-07-10) ──
       // best-generative-engine-optimization-agencies-2026 (shipped 07-08 by
       // the daily loop) duplicated the "Best GEO Agencies 2026" head term the
