@@ -143,12 +143,12 @@ export function Story({ team }: { team: TeamPerson[] }) {
 
         <ol className="a-timeline rv" style={{ ['--d' as string]: '.06s' }}>
           <li>
-            <b>2017</b>
-            <span>Arnel starts LoudFace, betting on Webflow before most agencies had heard of it.</span>
-          </li>
-          <li>
             <b>2019</b>
-            <span>First enterprise engagement. The design-plus-code model starts to prove itself at scale.</span>
+            <span>
+              Arnel starts LoudFace, betting on Webflow before most agencies had heard of it.
+              The first enterprise engagement lands, and the design-plus-code model starts to
+              prove itself at scale.
+            </span>
           </li>
           <li>
             <b>2022</b>

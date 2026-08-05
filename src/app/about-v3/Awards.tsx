@@ -30,7 +30,7 @@ export function Awards() {
               />
             </div>
             <h3>Webflow Enterprise Partner</h3>
-            <p>Building on Webflow since 2017. Early adopters then, Enterprise-tier partners now.</p>
+            <p>Building on Webflow since 2019. Early adopters then, Enterprise-tier partners now.</p>
           </article>
           <article className="acard rv" style={{ ['--d' as string]: '.07s' }}>
             <div className="acard-badges">

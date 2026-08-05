@@ -19,7 +19,7 @@ export function HeroAbout({ team }: { team: TeamPerson[] }) {
         <div className="hero-copy">
           <span className="hero-eyebrow rv">
             <b>About LoudFace</b>
-            <em>since 2017</em>
+            <em>since 2019</em>
           </span>
           <h1 className="rv" data-speakable style={{ ['--d' as string]: '.06s' }}>
             The team behind <span className="soft">200+ B2B SaaS websites.</span>

@@ -45,7 +45,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: 'About LoudFace | Meet the Team Behind Your Growth',
     description:
-      'The team behind 200+ B2B SaaS websites. We build the site on Webflow, then run the SEO, conversion, and AI-search work that grows it. Webflow Enterprise Partners since 2017.',
+      'The team behind 200+ B2B SaaS websites. We build on Webflow, then run the SEO, conversion, and AI-search work that grows it. Webflow Enterprise Partners.',
     type: 'website',
     url: '/about',
     siteName: 'LoudFace',
@@ -57,7 +57,7 @@ export const metadata: Metadata = {
     site: '@loudface',
     title: 'About LoudFace | Meet the Team Behind Your Growth',
     description:
-      'The team behind 200+ B2B SaaS websites. We build the site on Webflow, then run the SEO, conversion, and AI-search work that grows it. Webflow Enterprise Partners since 2017.',
+      'The team behind 200+ B2B SaaS websites. We build on Webflow, then run the SEO, conversion, and AI-search work that grows it. Webflow Enterprise Partners.',
     images: ['/opengraph-image'],
   },
 };
@@ -98,7 +98,7 @@ export default async function AboutPage() {
       url: 'https://www.loudface.co',
       description:
         'B2B SaaS web design, SEO, AEO, and growth agency. Webflow Enterprise Partners with 7+ years of experience.',
-      foundingDate: '2017',
+      foundingDate: '2019',
       address: {
         '@type': 'PostalAddress',
         addressLocality: 'Dubai',

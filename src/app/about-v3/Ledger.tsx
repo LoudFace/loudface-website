@@ -19,7 +19,7 @@ export function Ledger({ teamCount }: { teamCount: number }) {
             </h2>
             <p className="lede">
               Every engagement leaves a paper trail. This is ours: pulled from real client work
-              between 2017 and today. Where a number has a client, the client is named.
+              between 2019 and today. Where a number has a client, the client is named.
             </p>
           </div>
         </div>
@@ -58,7 +58,7 @@ export function Ledger({ teamCount }: { teamCount: number }) {
               <span className="leader" aria-hidden="true"></span>
             </div>
             <p>
-              Early adopters in 2017, back when it was the risky choice. Webflow Enterprise
+              Early adopters in 2019, back when it was the risky choice. Webflow Enterprise
               Partner today.
             </p>
             <div className="lfig">

@@ -30,7 +30,7 @@ export const TEAM_ORDER: string[] = [
 /** Per-person fact + quote (editorial, not in CMS). Keyed by slug. */
 export const TEAM_COPY: Record<string, { fact: string; quote?: string }> = {
   'arnel-bukva': {
-    fact: 'Started LoudFace on Webflow in 2017, back when almost no agency would touch it.',
+    fact: 'Started LoudFace on Webflow in 2019, back when almost no agency would touch it.',
     quote: 'Design and numbers, one team, no handoffs.',
   },
   'abhay-tyagi': {
