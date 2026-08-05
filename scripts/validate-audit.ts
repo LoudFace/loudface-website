@@ -71,7 +71,7 @@ async function main() {
     const raw = await redis.get(`audit:${auditId}`);
     if (!raw) {
       console.error(`Error: No audit found with ID "${auditId}"`);
-      await redis.quit();
+      await redis.close();
       process.exit(1);
     }
 
@@ -141,7 +141,7 @@ async function main() {
       }
     }
   } finally {
-    await redis.quit();
+    await redis.close();
   }
 }
 
