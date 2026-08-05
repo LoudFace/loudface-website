@@ -9,6 +9,8 @@ type MetaScheduleEvent = {
   email: string;
   name?: string;
   eventTime: number;
+  fbp?: string;
+  fbc?: string;
 };
 
 function hashUserData(value: string | undefined): string | undefined {
@@ -35,7 +37,11 @@ export async function sendMetaScheduleEvent({
   email,
   name,
   eventTime,
+  fbp,
+  fbc,
 }: MetaScheduleEvent): Promise<void> {
+  const matchDataPresence = `fbp_present=${Boolean(fbp)} fbc_present=${Boolean(fbc)}`;
+
   try {
     const pixelId = process.env.META_PIXEL_ID;
     const accessToken = process.env.META_CAPI_ACCESS_TOKEN;
@@ -46,7 +52,8 @@ export async function sendMetaScheduleEvent({
 
       console.warn(
         `[meta-capi] skipped: missing ${missingVariables.join(', ')}; ` +
-          `access_token_present=${Boolean(accessToken)} access_token_length=${accessToken?.length ?? 0}`
+          `access_token_present=${Boolean(accessToken)} access_token_length=${accessToken?.length ?? 0} ` +
+          matchDataPresence
       );
       return;
     }
@@ -70,6 +77,8 @@ export async function sendMetaScheduleEvent({
             user_data: {
               em: hashUserData(email),
               ...hashName(name),
+              ...(fbp ? { fbp } : {}),
+              ...(fbc ? { fbc } : {}),
             },
           },
         ],
@@ -80,7 +89,7 @@ export async function sendMetaScheduleEvent({
     if (!response.ok) {
       console.error(
         `[meta-capi] failed: status=${response.status} statusText=${JSON.stringify(response.statusText)} ` +
-          `body=${responseText}`
+          `body=${responseText} ${matchDataPresence}`
       );
       return;
     }
@@ -92,8 +101,13 @@ export async function sendMetaScheduleEvent({
       responseBody = responseText;
     }
 
-    console.log(`[meta-capi] sent: status=${response.status} body=${JSON.stringify(responseBody)}`);
+    console.log(
+      `[meta-capi] sent: status=${response.status} body=${JSON.stringify(responseBody)} ` +
+        matchDataPresence
+    );
   } catch {
-    console.error('[meta-capi] failed: request threw before a response was received');
+    console.error(
+      `[meta-capi] failed: request threw before a response was received ${matchDataPresence}`
+    );
   }
 }

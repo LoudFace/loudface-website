@@ -3,6 +3,19 @@
 import { useEffect } from "react";
 import { ensurePostHog } from "@/lib/posthog-client";
 
+const CAL_METADATA_VALUE_LIMIT = 500;
+
+function readCookie(name: string): string | undefined {
+  const prefix = `${name}=`;
+  const cookie = document.cookie
+    .split(";")
+    .map((part) => part.trim())
+    .find((part) => part.startsWith(prefix));
+  const value = cookie?.slice(prefix.length);
+
+  return value ? value.slice(0, CAL_METADATA_VALUE_LIMIT) : undefined;
+}
+
 /**
  * CalHandler Component
  *
@@ -34,6 +47,14 @@ export function CalHandler() {
         e.stopPropagation();
 
         if (typeof window.Cal === "function") {
+          const fbp = readCookie("_fbp");
+          const fbclid = new URLSearchParams(window.location.search).get("fbclid");
+          const fbc =
+            readCookie("_fbc") ??
+            (fbclid
+              ? `fb.1.${Date.now()}.${fbclid}`.slice(0, CAL_METADATA_VALUE_LIMIT)
+              : undefined);
+
           window.Cal("modal", {
             calLink: "arnelbukva/loudface-intro-call",
             config: {
@@ -42,6 +63,8 @@ export function CalHandler() {
               utm_medium: "embed",
               utm_campaign: "intro_call",
               utm_content: window.location.pathname,
+              ...(fbp ? { "metadata[fbp]": fbp } : {}),
+              ...(fbc ? { "metadata[fbc]": fbc } : {}),
             },
           });
         }
@@ -62,31 +85,18 @@ export function CalHandler() {
     const registerBookingListener = () => {
       if (registered || !window.Cal) return;
       registered = true;
+      // Deliberately the deprecated `bookingSuccessful`, not `bookingSuccessfulV2`.
+      // V2's documented payload carries uid/title/times but NOT attendees, and the
+      // attendee email is the only thing this callback needs. Revisit if Cal.com
+      // ever exposes attendees on V2 or retires the old event.
       window.Cal("on", {
         action: "bookingSuccessful",
         callback: (e: unknown) => {
           try {
             const detail = (e as { detail?: { data?: unknown } })?.detail?.data as
-              | {
-                  booking?: {
-                    uid?: string;
-                    attendees?: Array<{ email?: string; name?: string }>;
-                  };
-                }
+              | { booking?: { attendees?: Array<{ email?: string; name?: string }> } }
               | undefined;
-            const booking = detail?.booking;
-            const bookingUid = booking?.uid;
-            if (!bookingUid) {
-              console.warn("[meta-capi] skipped browser Schedule event: missing booking uid");
-            } else {
-              const fbq = (
-                window as typeof window & { fbq?: (...args: unknown[]) => void }
-              ).fbq;
-              // Must match src/lib/meta-capi.ts so Meta deduplicates browser and server events.
-              fbq?.("track", "Schedule", {}, { eventID: `cal_booking_${bookingUid}` });
-            }
-
-            const attendee = booking?.attendees?.[0];
+            const attendee = detail?.booking?.attendees?.[0];
             const email = attendee?.email?.toLowerCase().trim();
             if (!email) return;
 

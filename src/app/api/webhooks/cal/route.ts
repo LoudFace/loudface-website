@@ -78,6 +78,10 @@ function toEventTime(timestamp: string | undefined): number {
   return Number.isFinite(parsed) ? Math.floor(parsed / 1000) : Math.floor(Date.now() / 1000);
 }
 
+function nonEmptyString(value: unknown): string | undefined {
+  return typeof value === 'string' && value.trim() ? value : undefined;
+}
+
 export async function POST(request: Request) {
   const secret = process.env.CAL_WEBHOOK_SECRET;
   if (!secret) {
@@ -112,6 +116,10 @@ export async function POST(request: Request) {
     return NextResponse.json({ received: true, warning: 'no email' });
   }
 
+  // Direct cal.com bookings do not carry embed metadata, so browser match IDs are optional.
+  const fbp = nonEmptyString(body.payload?.metadata?.fbp);
+  const fbc = nonEmptyString(body.payload?.metadata?.fbc);
+
   const sendMetaSchedule = async () => {
     const bookingUid = body.payload?.uid;
     if (event !== 'call_booked' || !bookingUid) {
@@ -123,7 +131,8 @@ export async function POST(request: Request) {
 
       console.warn(
         `[meta-capi] skipped: ${skipReasons.join('; ')}; mapped_event=${JSON.stringify(event)} ` +
-          `payload_uid_present=${Boolean(bookingUid)} raw_trigger_event=${JSON.stringify(body.triggerEvent)}`
+          `payload_uid_present=${Boolean(bookingUid)} raw_trigger_event=${JSON.stringify(body.triggerEvent)} ` +
+          `fbp_present=${Boolean(fbp)} fbc_present=${Boolean(fbc)}`
       );
       return;
     }
@@ -133,6 +142,8 @@ export async function POST(request: Request) {
       email,
       name: attendee?.name,
       eventTime: toEventTime(body.createdAt),
+      fbp,
+      fbc,
     });
   };
 
