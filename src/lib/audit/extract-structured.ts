@@ -62,8 +62,11 @@ export interface StructuredExtractionOptions<T> {
   schema: ZodType<T>;
   /** The full prompt, including any source material (ground truth, raw responses, etc.). */
   prompt: string;
-  /** Optional system prompt — use to pin the task role. */
-  system?: string;
+  /**
+   * Optional instructions — use to pin the task role. Named after AI SDK 7's
+   * `instructions` parameter, which replaced the old top-level `system`.
+   */
+  instructions?: string;
   /**
    * Gateway model ID. Defaults to claude-haiku-4.5.
    * For harder entity reasoning, pass 'anthropic/claude-sonnet-4.6'.
@@ -104,7 +107,7 @@ export async function extractStructured<T>(
       model: getOpenRouter().chat(modelId),
       schema: opts.schema,
       prompt: opts.prompt,
-      system: opts.system,
+      instructions: opts.instructions,
       maxOutputTokens: opts.maxOutputTokens ?? 2048,
       temperature: opts.temperature ?? 0.1,
       abortSignal: controller.signal,

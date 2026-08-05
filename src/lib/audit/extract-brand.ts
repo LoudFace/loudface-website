@@ -500,7 +500,7 @@ export async function normalizeBrandName(extracted: ExtractedBrand): Promise<Ext
 
   const result = await extractStructured({
     schema: BrandNormalizationSchema,
-    system:
+    instructions:
       'You are a brand-name normalizer. Given a concatenated domain name, return the real-world brand as humans write it. Only answer if you are reasonably sure. If the domain is obscure or ambiguous, return the input unchanged and set confidence to low.',
     prompt: [
       `Domain: ${extracted.domain}`,

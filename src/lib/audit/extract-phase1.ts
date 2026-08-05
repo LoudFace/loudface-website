@@ -205,7 +205,7 @@ export async function extractPhase1Insights(args: {
   const result = await extractStructured({
     schema: Phase1Schema,
     prompt,
-    system,
+    instructions: system,
     tag: 'brand-baseline',
     tracer,
     maxOutputTokens: 2048,

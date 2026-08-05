@@ -93,7 +93,7 @@ async function filterCompetitorsByEntityType(
   const result = await extractStructured({
     schema: ClassificationSchema,
     prompt,
-    system:
+    instructions:
       'You classify domains by business type. Return structured judgments — be strict about type matching.',
     model: 'anthropic/claude-haiku-4.5',
     maxOutputTokens: 512,
