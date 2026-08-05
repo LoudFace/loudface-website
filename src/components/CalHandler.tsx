@@ -67,9 +67,26 @@ export function CalHandler() {
         callback: (e: unknown) => {
           try {
             const detail = (e as { detail?: { data?: unknown } })?.detail?.data as
-              | { booking?: { attendees?: Array<{ email?: string; name?: string }> } }
+              | {
+                  booking?: {
+                    uid?: string;
+                    attendees?: Array<{ email?: string; name?: string }>;
+                  };
+                }
               | undefined;
-            const attendee = detail?.booking?.attendees?.[0];
+            const booking = detail?.booking;
+            const bookingUid = booking?.uid;
+            if (!bookingUid) {
+              console.warn("[meta-capi] skipped browser Schedule event: missing booking uid");
+            } else {
+              const fbq = (
+                window as typeof window & { fbq?: (...args: unknown[]) => void }
+              ).fbq;
+              // Must match src/lib/meta-capi.ts so Meta deduplicates browser and server events.
+              fbq?.("track", "Schedule", {}, { eventID: `cal_booking_${bookingUid}` });
+            }
+
+            const attendee = booking?.attendees?.[0];
             const email = attendee?.email?.toLowerCase().trim();
             if (!email) return;
 
