@@ -311,12 +311,12 @@ const nextConfig: NextConfig = {
       // Broken blog slugs → closest matching live posts
       {
         source: '/blog/webflow-vs-framer',
-        destination: '/blog/webflow-vs-popular-alternatives',
+        destination: '/blog/webflow-vendors-compared',
         permanent: true,
       },
       {
         source: '/blog/the-future-of-webflow',
-        destination: '/blog/how-to-future-proof-your-webflow-website-for-search-and-ai-agents',
+        destination: '/blog/answer-engine-optimization-guide-2026',
         permanent: true,
       },
       {
@@ -392,7 +392,7 @@ const nextConfig: NextConfig = {
       // much longer URL. Merge the long-URL version into the canonical.
       {
         source: '/blog/is-webflow-good-for-ecommerce-the-honest-2026-review-features-costs-alternatives',
-        destination: '/blog/webflow-for-ecommerce',
+        destination: '/services/webflow',
         permanent: true,
       },
       // Webflow brand overhaul news piece (2024-10) — topical, thin (3K chars),
@@ -465,7 +465,7 @@ const nextConfig: NextConfig = {
         // "Webflow Zapier Integration" — thin integration post.
         // The broader tools+integrations listicle covers this.
         source: '/blog/webflow-zapier-integration',
-        destination: '/blog/best-webflow-tools-and-integrations',
+        destination: '/services/webflow',
         permanent: true,
       },
       {
@@ -610,7 +610,7 @@ const nextConfig: NextConfig = {
       },
       {
         source: '/blog/preview-cms-pages-blog-posts',
-        destination: '/blog/understanding-webflows-cms-guide',
+        destination: '/blog/webflow-best-cms-for-marketers',
         permanent: true,
       },
       // ─── Crawler-equity cleanup (2026-06-10 Cloudflare 404 audit) ─────
@@ -655,7 +655,141 @@ const nextConfig: NextConfig = {
       // nearest live intent match per the don't-410 rule.
       {
         source: '/blog/webflow-seo-optimization-guide',
-        destination: '/blog/is-webflow-good-for-seo',
+        destination: '/blog/seo-vs-aeo-for-webflow',
+        permanent: true,
+      },
+      // Content prune 2026-08-06: 26 Webflow-era pages with zero Google clicks and
+      // zero AI citations over 6 months. 301 to the nearest topically relevant live
+      // page per /blog/stop-410-url-decay-decision-tree — no 410s, every one of these
+      // was indexed. Full audit: content-engine/.claude/docs/2026-08-06-loudface-content-prune.html
+      {
+        source: '/blog/webflow-vs-squarespace',
+        destination: '/blog/webflow-vendors-compared',
+        permanent: true,
+      },
+      {
+        source: '/blog/webflow-vs-hubspot',
+        destination: '/blog/webflow-vendors-compared',
+        permanent: true,
+      },
+      {
+        source: '/blog/webflow-vs-wordpress-com',
+        destination: '/blog/webflow-vendors-compared',
+        permanent: true,
+      },
+      {
+        source: '/blog/webflow-vs-wordpress-org',
+        destination: '/blog/webflow-vendors-compared',
+        permanent: true,
+      },
+      {
+        source: '/blog/webflow-vs-editorx',
+        destination: '/blog/webflow-vendors-compared',
+        permanent: true,
+      },
+      {
+        source: '/blog/webflow-vs-wix-comparison',
+        destination: '/blog/webflow-vs-wix-studio',
+        permanent: true,
+      },
+      {
+        source: '/blog/webflow-vs-framer-ultimate-showdown',
+        destination: '/blog/webflow-vs-framer-for-b2b-saas-2026',
+        permanent: true,
+      },
+      {
+        source: '/blog/webflow-no-code-agencies',
+        destination: '/blog/best-webflow-agencies',
+        permanent: true,
+      },
+      {
+        source: '/blog/webflow-success-story',
+        destination: '/blog/best-webflow-agencies',
+        permanent: true,
+      },
+      {
+        source: '/blog/pitfalls-of-choosing-wrong-webflow-vendor',
+        destination: '/blog/best-webflow-agencies',
+        permanent: true,
+      },
+      {
+        source: '/blog/is-webflow-good-for-seo',
+        destination: '/blog/seo-vs-aeo-for-webflow',
+        permanent: true,
+      },
+      {
+        source: '/blog/understanding-webflows-cms-guide',
+        destination: '/blog/webflow-best-cms-for-marketers',
+        permanent: true,
+      },
+      {
+        source: '/blog/ab-testing-setup-using-delta-reference-and-confidence-intervals',
+        destination: '/blog/webflow-split-testing-setup',
+        permanent: true,
+      },
+      {
+        source: '/blog/building-custom-apps-in-webflow',
+        destination: '/blog/ai-enhanced-webflow-development',
+        permanent: true,
+      },
+      {
+        source: '/blog/webflow-for-ecommerce',
+        destination: '/services/webflow',
+        permanent: true,
+      },
+      {
+        source: '/blog/webflow-for-healthcare',
+        destination: '/services/webflow',
+        permanent: true,
+      },
+      {
+        source: '/blog/webflow-for-fintech-why-it-outperforms-traditional-cms-platforms',
+        destination: '/services/webflow',
+        permanent: true,
+      },
+      {
+        source: '/blog/is-webflow-good-for-small-businesses-heres-what-you-need-to-know',
+        destination: '/services/webflow',
+        permanent: true,
+      },
+      {
+        source: '/blog/why-loudface-builds-ai-enhanced-seo-aeo-driven-webflow-systems-not-just-websites',
+        destination: '/services/webflow',
+        permanent: true,
+      },
+      {
+        source: '/blog/best-webflow-tools-and-integrations',
+        destination: '/services/webflow',
+        permanent: true,
+      },
+      {
+        source: '/blog/top-10-saas-tools-for-webflow',
+        destination: '/services/webflow',
+        permanent: true,
+      },
+      {
+        source: '/blog/how-to-use-figma-to-webflow-plugin',
+        destination: '/services/webflow',
+        permanent: true,
+      },
+      {
+        source: '/blog/convert-figma-designs-to-webflow-pages',
+        destination: '/services/webflow',
+        permanent: true,
+      },
+      {
+        source: '/blog/webflow-connection-guide-google-analytics-and-search-console',
+        destination: '/services/webflow',
+        permanent: true,
+      },
+      {
+        source: '/blog/use-webflow-as-your-marketing-funnel',
+        destination: '/services/webflow',
+        permanent: true,
+      },
+      {
+        source: '/blog/mastering-webflow-guide',
+        destination: '/services/webflow',
         permanent: true,
       },
     ];
