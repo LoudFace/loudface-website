@@ -194,7 +194,7 @@
       },
       {
         "question": "How do you measure AI visibility?",
-        "answer": "We track a set of buyer prompts across the major AI engines and measure how often your brand is cited, at what position, and against which competitors. The core metrics are visibility (how often you appear), share of voice (your slice of all brand mentions), and average position inside the answer. We report the trend weekly and tie it back to branded search and pipeline."
+        "answer": "We track a set of buyer prompts across the major AI engines and measure how often your brand is cited, at what position, and against which competitors. The core metrics are visibility (how often you appear), share of answer (your slice of all brand mentions in AI answers), and average position inside the answer. We report the trend weekly and tie it back to branded search and pipeline."
       },
       {
         "question": "Is an AEO agency better than hiring in-house?",
