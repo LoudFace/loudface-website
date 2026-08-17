@@ -44,7 +44,9 @@ export function ensurePostHog(): Promise<PostHog | null> {
           capture_pageview: false,
           capture_pageleave: true,
           person_profiles: 'identified_only',
-          disable_session_recording: true,
+          // Session recording is deliberately NOT configured here. PostHog's own
+          // project settings own that policy — duplicating the switch in code made
+          // the dashboard lie about whether recording was running.
         });
       }
       return posthog;
