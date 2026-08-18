@@ -16,16 +16,7 @@
  */
 import type { Metadata } from 'next';
 import '../home-v3/home-v3.css';
-import { HeroV3 } from '../home-v3/HeroV3';
-import { LogosTicker } from '../home-v3/LogosTicker';
-import { ProblemSection } from '../home-v3/ProblemSection';
-import { WhatWeDo } from '../home-v3/WhatWeDo';
-import { SelectedWork } from '../home-v3/SelectedWork';
-import { ResultsNumbers } from '../home-v3/ResultsNumbers';
-import { ProcessSteps } from '../home-v3/ProcessSteps';
-import { FaqSection } from '../home-v3/FaqSection';
-import { CoverCTA } from '../home-v3/CoverCTA';
-import { FooterV3 } from '../home-v3/FooterV3';
+import { HomeV3Body } from '../home-v3/HomeV3Body';
 import { HomepageV3Scripts } from '../homepage-v3/Scripts';
 import { getHomeV3Images } from '../home-v3/data';
 
@@ -81,18 +72,7 @@ export default async function HomePage() {
 
       {/* .hpv3 scopes the bespoke resets so they can't touch the shared Header/Footer.
           Fonts + tokens live (global) in home-v3.css now — no separate brand.css link. */}
-      <div className="hpv3">
-        <HeroV3 images={images} />
-        <LogosTicker />
-        <ProblemSection />
-        <WhatWeDo />
-        <SelectedWork images={images} />
-        <ResultsNumbers />
-        <ProcessSteps />
-        <FaqSection />
-        <CoverCTA />
-        <FooterV3 />
-      </div>
+      <HomeV3Body images={images} />
 
       <HomepageV3Scripts />
     </>

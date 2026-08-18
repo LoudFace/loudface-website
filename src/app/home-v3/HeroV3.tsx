@@ -1,3 +1,4 @@
+import type { ReactNode } from 'react';
 import Image from 'next/image';
 import { CHIPS_HTML } from './_chips';
 import type { HomeImages } from './data';
@@ -32,6 +33,50 @@ const COL_B: Card[] = [
 function srcFor(c: Card, images?: HomeImages) {
   return (images?.[c.slug] ?? CDN + c.asset) + CROP;
 }
+
+/**
+ * Hero copy, one entry per experiment variant.
+ *
+ * `control` is the live capability-led argument. `test` swaps the argument to the
+ * AI-search shift, led by the Toku citation result. The CTA label and the
+ * response-time line are deliberately identical across variants so a measured
+ * difference is attributable to the argument and nothing else.
+ *
+ * Only the copy varies — the client-work marquee is shared.
+ */
+export type HeroVariant = 'control' | 'test';
+
+const HERO_COPY: Record<HeroVariant, {
+  eyebrowLabel: string;
+  eyebrowNote: string;
+  headline: ReactNode;
+  sub: ReactNode;
+}> = {
+  control: {
+    eyebrowLabel: 'Webflow Enterprise Partner',
+    eyebrowNote: '4+ years',
+    headline: <>Sites that convert.<br />Traffic that <span className="soft">compounds.</span></>,
+    sub: (
+      <>
+        We&rsquo;re the team behind 200+ B2B SaaS websites. We build the site on Webflow &mdash; positioning, copy,
+        design, code &mdash; then run the SEO, conversion, and AI-search work that grows it. Same team, first draft
+        to compounding traffic.
+      </>
+    ),
+  },
+  test: {
+    eyebrowLabel: 'B2B SaaS',
+    eyebrowNote: '200+ sites shipped',
+    headline: <>Your buyers ask AI first.<br />Make sure it <span className="soft">names you.</span></>,
+    sub: (
+      <>
+        We rebuild B2B SaaS websites to win the answer, not just the ranking. Toku went from invisible to cited in
+        86% of AI answers in their category. Same team does the positioning, the site, and the growth work after
+        launch.
+      </>
+    ),
+  },
+};
 
 function Wcard({ c, images, dup = false }: { c: Card; images?: HomeImages; dup?: boolean }) {
   return (
@@ -71,19 +116,19 @@ function Wcol({ cards, variant, images }: { cards: Card[]; variant: 'a' | 'b'; i
   );
 }
 
-export function HeroV3({ images }: { images?: HomeImages } = {}) {
+export function HeroV3({ images, variant = 'control' }: { images?: HomeImages; variant?: HeroVariant } = {}) {
+  const copy = HERO_COPY[variant] ?? HERO_COPY.control;
+
   return (
-    <section className="hero">
+    <section className="hero" data-hero-variant={variant}>
       <div className="hero-grid">
         <div className="hero-copy">
-          <span className="hero-eyebrow rv"><b>Webflow Enterprise Partner</b><em>4+ years</em></span>
+          <span className="hero-eyebrow rv"><b>{copy.eyebrowLabel}</b><em>{copy.eyebrowNote}</em></span>
           <h1 className="rv" style={{ transitionDelay: '.06s' }}>
-            Sites that convert.<br />Traffic that <span className="soft">compounds.</span>
+            {copy.headline}
           </h1>
           <p className="hero-sub rv" style={{ transitionDelay: '.12s' }}>
-            We&rsquo;re the team behind 200+ B2B SaaS websites. We build the site on Webflow &mdash; positioning, copy,
-            design, code &mdash; then run the SEO, conversion, and AI-search work that grows it. Same team, first draft
-            to compounding traffic.
+            {copy.sub}
           </p>
           <div className="hero-cta rv" style={{ transitionDelay: '.18s' }}>
             <a href="#book" data-cal-trigger="" className="btn btn-white btn-lg">Book a strategy call</a>
