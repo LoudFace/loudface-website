@@ -369,7 +369,25 @@ export function getEmptyHomepageData(): HomepageData {
 // These reads deliberately bypass Sanity's CDN so a webhook-triggered refill
 // cannot pin a stale CDN response in Next's cache for the revalidation window.
 
-const CMS_REVALIDATE_SECONDS = 60;
+// 86400 (24h), not the 60 it was until 2026-08-18. This constant is the ONLY
+// lever on Sanity read volume here: it is passed as an explicit `next.revalidate`
+// on every CMS fetch, and an explicit per-fetch value overrides the segment's
+// `export const revalidate` — which is inert anyway, per the note above.
+//
+// The reason is Sanity's Free-plan API-request quota, and it is a hard cap
+// rather than an overage: at 100% the Content Lake returns 402
+// plan_limit_reached and the site can no longer load content at all. These
+// reads go through `cachedReadClient` (useCdn: false, deliberately), so they
+// land on the smaller 250k/month API-request allowance, not the 1m/month CDN
+// one. At 60s each cached query could be refilled 1440 times a day; at 86400
+// it is refilled once. Toku hit 80% of this same quota on a 1h timer — 24x
+// gentler than this was (toku-website 45d62ba, 2026-08-18).
+//
+// Freshness does not suffer. /api/revalidate calls revalidateTag on these exact
+// tags the moment Sanity publishes, so an edit still reaches the site in
+// seconds. This timer only governs how long a value can stay stale when a
+// webhook delivery is *dropped*; the manual remedy is republishing the document.
+const CMS_REVALIDATE_SECONDS = 86400;
 export const cmsTypeTag = (sanityType: string) => `sanity:${sanityType}`;
 export const cmsDocTag = (sanityType: string, slug: string) => `sanity:${sanityType}:${slug}`;
 const cacheFor = (...tags: string[]) => ({
