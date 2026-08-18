@@ -15,12 +15,14 @@
  * needed.
  */
 import type { Metadata } from 'next';
+import { cookies, headers } from 'next/headers';
 import '../home-v3/home-v3.css';
 import { HomeV3Body } from '../home-v3/HomeV3Body';
+import type { HeroVariant } from '../home-v3/HeroV3';
 import { HomepageV3Scripts } from '../homepage-v3/Scripts';
 import { getHomeV3Images } from '../home-v3/data';
-
-export const revalidate = 60;
+import { CONSENT_COOKIE, isTrackingAllowedServer, POSTHOG_DISTINCT_ID_COOKIE } from '@/lib/consent';
+import { getHomepageHeroVariant } from '@/lib/posthog-server';
 
 export const metadata: Metadata = {
   title: 'B2B SaaS Web Design, SEO & Growth Agency',
@@ -61,7 +63,19 @@ const speakableSchema = {
 };
 
 export default async function HomePage() {
-  const images = await getHomeV3Images();
+  // Resolve consent and the stable visitor ID before PostHog is touched. This
+  // keeps denied and not-yet-consented visitors out of both evaluation and
+  // exposure tracking, while allowed visitors get their hero in the first HTML.
+  const [requestCookies, requestHeaders] = await Promise.all([cookies(), headers()]);
+  const country = requestHeaders.get('cf-ipcountry') ?? requestHeaders.get('x-vercel-ip-country');
+  const consentValue = requestCookies.get(CONSENT_COOKIE)?.value;
+  const distinctId = requestCookies.get(POSTHOG_DISTINCT_ID_COOKIE)?.value;
+  const trackingAllowed = isTrackingAllowedServer(consentValue, country);
+
+  const [images, heroVariant]: [Awaited<ReturnType<typeof getHomeV3Images>>, HeroVariant] = await Promise.all([
+    getHomeV3Images(),
+    trackingAllowed && distinctId ? getHomepageHeroVariant(distinctId) : Promise.resolve('control' as const),
+  ]);
 
   return (
     <>
@@ -72,7 +86,7 @@ export default async function HomePage() {
 
       {/* .hpv3 scopes the bespoke resets so they can't touch the shared Header/Footer.
           Fonts + tokens live (global) in home-v3.css now — no separate brand.css link. */}
-      <HomeV3Body images={images} />
+      <HomeV3Body images={images} heroVariant={heroVariant} />
 
       <HomepageV3Scripts />
     </>

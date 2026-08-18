@@ -2,7 +2,7 @@ export const revalidate = 60;
 
 import "../globals.css";
 import Script from "next/script";
-import { draftMode, headers } from "next/headers";
+import { cookies, draftMode, headers } from "next/headers";
 import { VisualEditing } from "next-sanity/visual-editing";
 import { CalHandler } from "@/components/CalHandler";
 import { SiteHeader, SiteFooter } from "@/components/SiteChrome";
@@ -11,7 +11,7 @@ import { asset } from "@/lib/assets";
 import { fetchFooterData } from "@/lib/cms-data";
 import { PostHogProvider } from "@/components/PostHogProvider";
 import { ConsentManager } from "@/components/ConsentManager";
-import { countryRequiresConsent } from "@/lib/consent";
+import { countryRequiresConsent, POSTHOG_DISTINCT_ID_COOKIE } from "@/lib/consent";
 import { SanityLive } from "@/lib/sanity.live";
 import { getNavContent } from "@/lib/content-utils";
 
@@ -36,11 +36,13 @@ export default async function SiteLayout({
   // loads. Cloudflare fronts the site so cf-ipcountry is authoritative;
   // x-vercel-ip-country covers direct-to-Vercel traffic. Missing header
   // (local dev) → opt-in, the safe default. data-lf-cr exposes the verdict
-  // to client code (see src/lib/consent.ts).
-  const requestHeaders = await headers();
+  // to client code (see src/lib/consent.ts). data-lf-did carries the proxy's
+  // first-party ID so posthog-js uses the same visitor as server experiments.
+  const [requestHeaders, requestCookies] = await Promise.all([headers(), cookies()]);
   const pathname = requestHeaders.get("x-pathname") ?? "/";
   const country = requestHeaders.get("cf-ipcountry") ?? requestHeaders.get("x-vercel-ip-country");
   const consentRequired = countryRequiresConsent(country);
+  const postHogDistinctId = requestCookies.get(POSTHOG_DISTINCT_ID_COOKIE)?.value;
 
   const isBlog = pathname === "/blog" || pathname.startsWith("/blog/");
   const isServiceChild = pathname.startsWith("/services/");
@@ -73,7 +75,11 @@ export default async function SiteLayout({
   // request pathname is used here only to skip footer data on routes that carry
   // their own FooterV3.
   return (
-    <div className="font-sans antialiased overflow-x-clip" data-lf-cr={consentRequired ? "1" : "0"}>
+    <div
+      className="font-sans antialiased overflow-x-clip"
+      data-lf-cr={consentRequired ? "1" : "0"}
+      data-lf-did={postHogDistinctId}
+    >
       <PostHogProvider>
         {/* Skip link for keyboard accessibility */}
         <a href="#main-content" className="skip-link">

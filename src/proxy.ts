@@ -1,4 +1,7 @@
 import { NextResponse, type NextRequest } from 'next/server';
+import { POSTHOG_DISTINCT_ID_COOKIE } from './lib/consent';
+
+const DISTINCT_ID_MAX_AGE = 60 * 60 * 24 * 365; // 12 months
 
 // URLs that were once published and are now permanently removed. 410 Gone tells
 // Google/Bing to drop the URL from their index immediately — a plain 404 leaves
@@ -27,11 +30,32 @@ export default function proxy(request: NextRequest) {
     );
   }
 
+  // A first-party ID lets the server choose the hero before React renders and
+  // lets posthog-js keep later browser events on the same visitor. The browser
+  // cannot return a new response cookie during this request, so also put the ID
+  // into the forwarded request cookie header for the homepage and layout to read.
+  const existingDistinctId = request.cookies.get(POSTHOG_DISTINCT_ID_COOKIE)?.value;
+  const distinctId = existingDistinctId ?? crypto.randomUUID();
+  if (!existingDistinctId) {
+    request.cookies.set(POSTHOG_DISTINCT_ID_COOKIE, distinctId);
+  }
+
   // Forward the request pathname so server components (notably (site)/layout.tsx)
   // can build per-page canonical/hreflang URLs without needing client-side hooks.
   const requestHeaders = new Headers(request.headers);
   requestHeaders.set('x-pathname', pathname);
-  return NextResponse.next({ request: { headers: requestHeaders } });
+  const response = NextResponse.next({ request: { headers: requestHeaders } });
+
+  if (!existingDistinctId) {
+    response.cookies.set(POSTHOG_DISTINCT_ID_COOKIE, distinctId, {
+      maxAge: DISTINCT_ID_MAX_AGE,
+      path: '/',
+      sameSite: 'lax',
+      secure: request.nextUrl.protocol === 'https:',
+    });
+  }
+
+  return response;
 }
 
 export const config = {

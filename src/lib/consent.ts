@@ -19,6 +19,7 @@
 export type ConsentValue = 'granted' | 'denied';
 
 export const CONSENT_COOKIE = 'lf_consent';
+export const POSTHOG_DISTINCT_ID_COOKIE = 'lf_did';
 /** Fired on window whenever the stored choice changes. detail: { value } */
 export const CONSENT_EVENT = 'lf-consent-change';
 
@@ -39,6 +40,21 @@ export function countryRequiresConsent(country: string | null | undefined): bool
   // Either could be an EEA visitor, so both fail closed.
   if (code === 'XX' || code === 'T1') return true;
   return CONSENT_COUNTRIES.has(code);
+}
+
+/**
+ * Server equivalent of isTrackingAllowed(). The server cannot read browser GPC,
+ * so the shared consent cookie wins first and the shared country policy supplies
+ * the default. Keeping this beside countryRequiresConsent() prevents the server
+ * experiment from drifting away from the client tracker gate.
+ */
+export function isTrackingAllowedServer(
+  cookieValue: string | null | undefined,
+  country: string | null | undefined,
+): boolean {
+  if (cookieValue === 'granted') return true;
+  if (cookieValue === 'denied') return false;
+  return !countryRequiresConsent(country);
 }
 
 export function getStoredConsent(): ConsentValue | null {
