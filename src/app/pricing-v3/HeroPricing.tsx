@@ -112,8 +112,7 @@ export function HeroPricing() {
               </ul>
               <p className="tier-hint">{t.hint ?? ' '}</p>
               <a
-                className={`btn ${t.featured ? 'btn-brand' : 'btn-outline'} btn-md btn-full tier-cta`}
-                style={t.featured ? undefined : { borderColor: 'rgba(255,255,255,.28)', color: 'var(--color-white)' }}
+                className={`btn ${t.featured ? 'btn-brand' : 'btn-ghost'} btn-md btn-full tier-cta`}
                 href="#book-modal"
                 data-cal-trigger=""
               >

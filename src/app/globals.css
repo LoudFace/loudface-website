@@ -1302,6 +1302,15 @@ header[data-hero-theme="dark"] [data-nav-cta] {
 header[data-hero-theme="dark"] .nav-burger span {
   background: var(--color-white);
 }
+/* The burger's Tailwind hover/active are light-surface tints, which on the dark
+   bar render a near-white pill under white bars — the icon vanishes on hover.
+   Restate them as translucent white, matching the .nav-link hover above. */
+header[data-hero-theme="dark"] .nav-burger:hover {
+  background: rgba(255, 255, 255, 0.12);
+}
+header[data-hero-theme="dark"] .nav-burger:active {
+  background: rgba(255, 255, 255, 0.18);
+}
 /* over the hero: fully transparent */
 header[data-hero-theme="dark"]:not([data-hero-scrolled]) {
   background: transparent;
