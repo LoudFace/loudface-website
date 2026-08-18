@@ -1299,6 +1299,12 @@ header[data-hero-theme="dark"] [data-nav-cta] {
   background: var(--color-white);
   color: var(--color-surface-950);
 }
+/* This block is unlayered, so it also outranks the CTA's own layered
+   `hover:bg-surface-800` — without restating hover the button is inert on the
+   dark bar. Darken slightly on hover; the label stays surface-950. */
+header[data-hero-theme="dark"] [data-nav-cta]:hover {
+  background: var(--color-surface-100);
+}
 header[data-hero-theme="dark"] .nav-burger span {
   background: var(--color-white);
 }
