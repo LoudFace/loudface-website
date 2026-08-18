@@ -13,10 +13,10 @@ import type { HomeImages } from './data';
 /**
  * The homepage body, shared by the real homepage and the variant-preview route.
  *
- * Extracted so a hero experiment can be reviewed on the real page composition
- * without the homepage itself having to read request-time input. `/` keeps
- * rendering statically with the control hero; only the preview route passes a
- * different variant.
+ * Extracted so the live homepage can pass its request-time server assignment
+ * and the review route can pass a fixed variant without duplicating the page.
+ * This component only renders the supplied choice; it never swaps copy after
+ * hydration, so the initial HTML remains the experiment source of truth.
  */
 export function HomeV3Body({
   images,

@@ -38,9 +38,13 @@ export function ensurePostHog(): Promise<PostHog | null> {
   if (!posthogPromise) {
     posthogPromise = import('posthog-js').then(({ default: posthog }) => {
       if (!posthog.__loaded) {
+        // The proxy creates this ID before the server renders the homepage.
+        // Bootstrap prevents browser events from splitting onto a second user.
+        const distinctId = document.querySelector('[data-lf-did]')?.getAttribute('data-lf-did') || undefined;
         posthog.init(process.env.NEXT_PUBLIC_POSTHOG_KEY!, {
           api_host: process.env.NEXT_PUBLIC_POSTHOG_HOST || 'https://us.i.posthog.com',
           ui_host: 'https://us.posthog.com',
+          bootstrap: distinctId ? { distinctID: distinctId } : undefined,
           capture_pageview: false,
           capture_pageleave: true,
           person_profiles: 'identified_only',
