@@ -167,6 +167,11 @@ const BLOG_POST_PROJECTION = `{
     keywords,
     license
   },
+  "ranked-list": rankedList{
+    items,
+    ordered,
+    title
+  },
   "visuals": visuals[]{
     _key,
     position,

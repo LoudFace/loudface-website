@@ -254,23 +254,47 @@ export function extractRankedListFromHTML(html: string | undefined): string[] {
 }
 
 /**
- * Build ItemList JSON-LD for ranked listicles. Returns null when the
- * page isn't list-shaped (fewer than 3 numbered <h3> entries).
+ * Build ItemList JSON-LD for ranked listicles, leaderboards and rosters.
+ *
+ * Two sources, in priority order:
+ *   1. The opt-in `ranked-list` field (set in Studio). Use this for leaderboard
+ *      or roster posts whose ranking lives in a TABLE — numbered <h3> extraction
+ *      can't see a table, and auto-reading table columns is unsafe (an explainer
+ *      table or a category map would emit the wrong entities). The editor names
+ *      the entities and declares whether the list is ordered.
+ *   2. Fallback: numbered <h3> headings (classic listicles). `ordered` is always
+ *      true here — the headings carry an explicit rank.
+ *
+ * Returns null when neither source yields 3+ entries.
  */
 export function buildItemListSchema(
-  html: string | undefined,
-  name: string,
+  post: BlogPost,
   url: string,
 ): object | null {
-  const entries = extractRankedListFromHTML(html);
-  if (!entries.length) return null;
+  const ranked = post['ranked-list'];
+  const explicit = (ranked?.items ?? [])
+    .map((s) => (typeof s === 'string' ? s.trim() : ''))
+    .filter(Boolean);
+
+  let entries: string[];
+  let ordered: boolean;
+  if (explicit.length >= 3) {
+    entries = explicit;
+    ordered = ranked?.ordered === true;
+  } else {
+    entries = extractRankedListFromHTML(post.content);
+    ordered = true; // numbered <h3> headings are an explicit ranking
+  }
+  if (entries.length < 3) return null;
 
   return {
     '@context': 'https://schema.org',
     '@type': 'ItemList',
-    name,
+    name: ranked?.title?.trim() || post.name,
     url,
-    itemListOrder: 'https://schema.org/ItemListOrderAscending',
+    itemListOrder: ordered
+      ? 'https://schema.org/ItemListOrderAscending'
+      : 'https://schema.org/ItemListUnordered',
     numberOfItems: entries.length,
     itemListElement: entries.map((entryName, i) => ({
       '@type': 'ListItem',
