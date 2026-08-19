@@ -73,14 +73,20 @@ function normalizeQuestion(text: string): string {
   return text.toLowerCase().replace(/[^a-z0-9]/g, '');
 }
 
+// The visible label is authoritative: Cal.com keeps a field's internal name
+// when its label is edited, so a repurposed question could keep a matching
+// name while asking something else entirely. The name is trusted only when
+// the payload carries no label at all.
+function matchesAttributionQuestion(key: string, label: string | undefined): boolean {
+  if (typeof label === 'string' && label.trim()) {
+    return normalizeQuestion(label) === ATTRIBUTION_QUESTION_NORMALIZED;
+  }
+  return normalizeQuestion(key) === ATTRIBUTION_QUESTION_NORMALIZED;
+}
+
 function extractLeadSource(payload: CalWebhookPayload['payload']): string | undefined {
   for (const [key, resp] of Object.entries(payload?.responses ?? {})) {
-    if (
-      normalizeQuestion(key) !== ATTRIBUTION_QUESTION_NORMALIZED &&
-      normalizeQuestion(resp?.label ?? '') !== ATTRIBUTION_QUESTION_NORMALIZED
-    ) {
-      continue;
-    }
+    if (!matchesAttributionQuestion(key, resp?.label)) continue;
     const value = resp?.value;
     const asString =
       typeof value === 'string'
