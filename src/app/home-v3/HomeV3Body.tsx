@@ -21,12 +21,14 @@ import type { HomeImages } from './data';
 export function HomeV3Body({
   images,
   heroVariant = 'control',
+  exposeHeroVariant = false,
 }: {
   images?: HomeImages;
   heroVariant?: HeroVariant;
+  exposeHeroVariant?: boolean;
 }) {
   return (
-    <div className="hpv3">
+    <div className="hpv3" data-lf-hv={exposeHeroVariant ? heroVariant : undefined}>
       <HeroV3 images={images} variant={heroVariant} />
       <LogosTicker />
       <ProblemSection />

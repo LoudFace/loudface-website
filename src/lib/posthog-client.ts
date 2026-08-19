@@ -1,6 +1,8 @@
 import type { PostHog } from 'posthog-js';
 import { isTrackingAllowed } from './consent';
 
+const HOMEPAGE_HERO_FLAG = 'homepage-hero-argument';
+
 /**
  * Single source of truth for client-side PostHog initialization.
  *
@@ -40,11 +42,25 @@ export function ensurePostHog(): Promise<PostHog | null> {
       if (!posthog.__loaded) {
         // The proxy creates this ID before the server renders the homepage.
         // Bootstrap prevents browser events from splitting onto a second user.
+        // The homepage also exposes the exact variant from its initial HTML so
+        // the browser records the server's choice instead of evaluating again.
         const distinctId = document.querySelector('[data-lf-did]')?.getAttribute('data-lf-did') || undefined;
+        const heroVariantValue = document.querySelector('[data-lf-hv]')?.getAttribute('data-lf-hv');
+        const heroVariant =
+          heroVariantValue === 'control' || heroVariantValue === 'test' ? heroVariantValue : undefined;
+        const bootstrappedHeroVariant = distinctId && heroVariant ? heroVariant : undefined;
+
         posthog.init(process.env.NEXT_PUBLIC_POSTHOG_KEY!, {
           api_host: process.env.NEXT_PUBLIC_POSTHOG_HOST || 'https://us.i.posthog.com',
           ui_host: 'https://us.posthog.com',
-          bootstrap: distinctId ? { distinctID: distinctId } : undefined,
+          bootstrap: distinctId
+            ? {
+                distinctID: distinctId,
+                featureFlags: bootstrappedHeroVariant
+                  ? { [HOMEPAGE_HERO_FLAG]: bootstrappedHeroVariant }
+                  : undefined,
+              }
+            : undefined,
           capture_pageview: false,
           capture_pageleave: true,
           person_profiles: 'identified_only',
@@ -52,6 +68,13 @@ export function ensurePostHog(): Promise<PostHog | null> {
           // project settings own that policy — duplicating the switch in code made
           // the dashboard lie about whether recording was running.
         });
+
+        // Reading the bootstrapped flag once emits the browser-side exposure.
+        // posthog-js refuses to initialize for user agents on its maintained bot
+        // blocklist, which keeps crawlers out of the experiment participant count.
+        if (bootstrappedHeroVariant) {
+          posthog.getFeatureFlag(HOMEPAGE_HERO_FLAG);
+        }
       }
       return posthog;
     });

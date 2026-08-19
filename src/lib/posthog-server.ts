@@ -1,5 +1,5 @@
 import 'server-only';
-import { after } from 'next/server';
+import { isBlockedUA } from '@posthog/core/utils';
 import { PostHog } from 'posthog-node';
 
 const HOMEPAGE_HERO_FLAG = 'homepage-hero-argument';
@@ -20,8 +20,9 @@ export function getPostHogServer(): PostHog | null {
 
 /**
  * The homepage evaluates its flag on every request so the chosen copy is in the
- * initial HTML. Keep one process-level client because the SDK uses that client
- * to deduplicate repeated exposure calls for the same visitor and flag value.
+ * initial HTML. Keep one process-level client so evaluation does not create a
+ * new SDK client for every request. Exposure now belongs to posthog-js because
+ * its maintained bot blocklist prevents crawlers from becoming participants.
  */
 function getHomepageExperimentClient(): PostHog | null {
   if (homepageExperimentClient !== undefined) return homepageExperimentClient;
@@ -47,29 +48,26 @@ function getHomepageExperimentClient(): PostHog | null {
 
 /**
  * Remote evaluation deliberately fails closed to the proven control argument.
- * The SDK timeout bounds the request and its default flag-call event records the
- * exposure only after the consent gate in the homepage has allowed this call.
+ * The SDK timeout bounds the request. Search crawlers never reach PostHog and
+ * always receive control, using the same maintained blocklist as posthog-js.
  *
- * WHY THE EXPLICIT FLUSH: getFeatureFlag ENQUEUES the `$feature_flag_called`
- * exposure event and returns — it never awaits delivery. On a serverless host the
- * function can be frozen the moment the response is sent, so that queued event is
- * lost and PostHog sees a running experiment with no exposures to attribute
- * results to. `after()` runs the flush once the response has been sent, so we pay
- * no latency for it and still deliver the exposure. A failed flush must never
- * surface to the visitor — a dropped analytics event is not a broken homepage.
+ * WHY NO SERVER EXPOSURE OR FLUSH: server evaluation used to enqueue the
+ * `$feature_flag_called` event for every request, including crawlers. The browser
+ * now records that event after its bot check. `sendFeatureFlagEvents: false`
+ * leaves this client with nothing to flush after evaluation.
  */
-export async function getHomepageHeroVariant(distinctId: string): Promise<'control' | 'test'> {
+export async function getHomepageHeroVariant(
+  distinctId: string,
+  userAgent: string | null,
+): Promise<'control' | 'test'> {
+  if (isBlockedUA(userAgent ?? undefined)) return 'control';
+
   const posthog = getHomepageExperimentClient();
   if (!posthog) return 'control';
 
   try {
-    const value = await posthog.getFeatureFlag(HOMEPAGE_HERO_FLAG, distinctId);
-    after(async () => {
-      try {
-        await posthog.flush();
-      } catch {
-        // Exposure delivery is best-effort; never let it break the request.
-      }
+    const value = await posthog.getFeatureFlag(HOMEPAGE_HERO_FLAG, distinctId, {
+      sendFeatureFlagEvents: false,
     });
     return value === 'test' ? 'test' : 'control';
   } catch {

@@ -70,11 +70,14 @@ export default async function HomePage() {
   const country = requestHeaders.get('cf-ipcountry') ?? requestHeaders.get('x-vercel-ip-country');
   const consentValue = requestCookies.get(CONSENT_COOKIE)?.value;
   const distinctId = requestCookies.get(POSTHOG_DISTINCT_ID_COOKIE)?.value;
+  const userAgent = requestHeaders.get('user-agent');
   const trackingAllowed = isTrackingAllowedServer(consentValue, country);
 
   const [images, heroVariant]: [Awaited<ReturnType<typeof getHomeV3Images>>, HeroVariant] = await Promise.all([
     getHomeV3Images(),
-    trackingAllowed && distinctId ? getHomepageHeroVariant(distinctId) : Promise.resolve('control' as const),
+    trackingAllowed && distinctId
+      ? getHomepageHeroVariant(distinctId, userAgent)
+      : Promise.resolve('control' as const),
   ]);
 
   return (
@@ -86,7 +89,7 @@ export default async function HomePage() {
 
       {/* .hpv3 scopes the bespoke resets so they can't touch the shared Header/Footer.
           Fonts + tokens live (global) in home-v3.css now — no separate brand.css link. */}
-      <HomeV3Body images={images} heroVariant={heroVariant} />
+      <HomeV3Body images={images} heroVariant={heroVariant} exposeHeroVariant />
 
       <HomepageV3Scripts />
     </>
