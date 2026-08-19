@@ -59,31 +59,36 @@ function extractUtm(payload: CalWebhookPayload['payload']): CalTracking {
   return out;
 }
 
-// Booking-form answers already captured elsewhere: UTM keys are mapped by
-// extractUtm, name/email become the PostHog person, guests/location carry no
-// analytics value.
-const SKIPPED_RESPONSE_KEYS = new Set<string>([...UTM_KEYS, 'name', 'email', 'guests', 'location']);
+// Allowlist: only the attribution question ("How did you hear about us?")
+// crosses to PostHog. Everything else a visitor types into the booking form
+// (notes, phone numbers, free text) stays in Cal.com — analytics never needs
+// it and must not leak it. Matched against the question's field name AND its
+// visible label because Cal.com's auto-generated field names are not stable
+// across question edits.
+const FORWARDED_QUESTION_PATTERN = /hear|referr|lead.?source/i;
+const MAX_ANSWER_LENGTH = 200;
 
-// Forward the visible booking-form answers (e.g. "How did you hear about us?")
-// as form_<question-slug> properties. Values arrive as string, number, boolean,
-// or string[] (multi-select); anything else is dropped.
-function extractFormResponses(
-  payload: CalWebhookPayload['payload']
-): Record<string, string | number | boolean> {
-  const out: Record<string, string | number | boolean> = {};
+function extractFormResponses(payload: CalWebhookPayload['payload']): Record<string, string> {
+  const out: Record<string, string> = {};
   for (const [key, resp] of Object.entries(payload?.responses ?? {})) {
-    if (SKIPPED_RESPONSE_KEYS.has(key)) continue;
-    const value = resp?.value;
-    if (typeof value === 'string') {
-      if (value.trim()) out[`form_${key}`] = value;
-    } else if (typeof value === 'number' || typeof value === 'boolean') {
-      out[`form_${key}`] = value;
-    } else if (Array.isArray(value)) {
-      const items = value.filter(
-        (item): item is string => typeof item === 'string' && Boolean(item.trim())
-      );
-      if (items.length) out[`form_${key}`] = items.join(', ');
+    // utm_source matches the pattern but is already mapped by extractUtm.
+    if ((UTM_KEYS as readonly string[]).includes(key)) continue;
+    if (!FORWARDED_QUESTION_PATTERN.test(key) && !FORWARDED_QUESTION_PATTERN.test(resp?.label ?? '')) {
+      continue;
     }
+    const value = resp?.value;
+    const asString =
+      typeof value === 'string'
+        ? value
+        : Array.isArray(value)
+          ? value
+              .filter((item): item is string => typeof item === 'string' && Boolean(item.trim()))
+              .join(', ')
+          : typeof value === 'number' || typeof value === 'boolean'
+            ? String(value)
+            : '';
+    const trimmed = asString.trim().slice(0, MAX_ANSWER_LENGTH);
+    if (trimmed) out[`form_${key}`] = trimmed;
   }
   return out;
 }
