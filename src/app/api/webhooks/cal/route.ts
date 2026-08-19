@@ -59,21 +59,26 @@ function extractUtm(payload: CalWebhookPayload['payload']): CalTracking {
   return out;
 }
 
-// Allowlist: only the attribution question ("How did you hear about us?")
-// crosses to PostHog. Everything else a visitor types into the booking form
-// (notes, phone numbers, free text) stays in Cal.com — analytics never needs
-// it and must not leak it. Matched against the question's field name AND its
-// visible label because Cal.com's auto-generated field names are not stable
-// across question edits.
-const FORWARDED_QUESTION_PATTERN = /hear|referr|lead.?source/i;
+// Allowlist: exactly ONE booking question crosses to PostHog — the attribution
+// question, whose live label is "How did you hear about us?" (verified against
+// the 2026-08-19 booking notification email). Every other answer (notes, phone
+// numbers, budget, free text) stays in Cal.com — analytics never needs it and
+// must not leak it. Matched after normalization against the field name AND the
+// visible label, because Cal.com auto-generates field names from labels and we
+// hold no Cal.com API key to pin the generated name.
+const ATTRIBUTION_QUESTION_NORMALIZED = 'howdidyouhearaboutus';
 const MAX_ANSWER_LENGTH = 200;
 
-function extractFormResponses(payload: CalWebhookPayload['payload']): Record<string, string> {
-  const out: Record<string, string> = {};
+function normalizeQuestion(text: string): string {
+  return text.toLowerCase().replace(/[^a-z0-9]/g, '');
+}
+
+function extractLeadSource(payload: CalWebhookPayload['payload']): string | undefined {
   for (const [key, resp] of Object.entries(payload?.responses ?? {})) {
-    // utm_source matches the pattern but is already mapped by extractUtm.
-    if ((UTM_KEYS as readonly string[]).includes(key)) continue;
-    if (!FORWARDED_QUESTION_PATTERN.test(key) && !FORWARDED_QUESTION_PATTERN.test(resp?.label ?? '')) {
+    if (
+      normalizeQuestion(key) !== ATTRIBUTION_QUESTION_NORMALIZED &&
+      normalizeQuestion(resp?.label ?? '') !== ATTRIBUTION_QUESTION_NORMALIZED
+    ) {
       continue;
     }
     const value = resp?.value;
@@ -84,13 +89,11 @@ function extractFormResponses(payload: CalWebhookPayload['payload']): Record<str
           ? value
               .filter((item): item is string => typeof item === 'string' && Boolean(item.trim()))
               .join(', ')
-          : typeof value === 'number' || typeof value === 'boolean'
-            ? String(value)
-            : '';
+          : '';
     const trimmed = asString.trim().slice(0, MAX_ANSWER_LENGTH);
-    if (trimmed) out[`form_${key}`] = trimmed;
+    if (trimmed) return trimmed;
   }
-  return out;
+  return undefined;
 }
 
 const EVENT_MAP: Record<string, string> = {
@@ -202,7 +205,7 @@ export async function POST(request: Request) {
     attendee_name: attendee?.name,
     attendee_timezone: attendee?.timeZone,
     organizer_email: body.payload?.organizer?.email,
-    ...extractFormResponses(body.payload),
+    lead_source: extractLeadSource(body.payload),
     ...utm,
   };
 
