@@ -67,6 +67,9 @@ function extractUtm(payload: CalWebhookPayload['payload']): CalTracking {
 // visible label, because Cal.com auto-generates field names from labels and we
 // hold no Cal.com API key to pin the generated name.
 const ATTRIBUTION_QUESTION_NORMALIZED = 'howdidyouhearaboutus';
+// The field's internal name in Cal.com is plain "source" — confirmed against
+// the live booking API (bookingFieldsResponses.source) on 2026-08-19.
+const ATTRIBUTION_FIELD_NAMES = new Set(['source', ATTRIBUTION_QUESTION_NORMALIZED]);
 const MAX_ANSWER_LENGTH = 200;
 
 function normalizeQuestion(text: string): string {
@@ -81,7 +84,7 @@ function matchesAttributionQuestion(key: string, label: string | undefined): boo
   if (typeof label === 'string' && label.trim()) {
     return normalizeQuestion(label) === ATTRIBUTION_QUESTION_NORMALIZED;
   }
-  return normalizeQuestion(key) === ATTRIBUTION_QUESTION_NORMALIZED;
+  return ATTRIBUTION_FIELD_NAMES.has(normalizeQuestion(key));
 }
 
 function extractLeadSource(payload: CalWebhookPayload['payload']): string | undefined {
@@ -198,6 +201,7 @@ export async function POST(request: Request) {
   }
 
   const utm = extractUtm(body.payload);
+  const leadSource = extractLeadSource(body.payload);
 
   const properties = {
     booking_uid: body.payload?.uid,
@@ -211,15 +215,18 @@ export async function POST(request: Request) {
     attendee_name: attendee?.name,
     attendee_timezone: attendee?.timeZone,
     organizer_email: body.payload?.organizer?.email,
-    lead_source: extractLeadSource(body.payload),
+    lead_source: leadSource,
     ...utm,
   };
 
+  // lead_source also lives on the person so person-level breakdowns work —
+  // same shape the 2026-08-19 backfill wrote for historical bookings.
   posthog.identify({
     distinctId: email,
     properties: {
       email,
       name: attendee?.name,
+      ...(leadSource ? { lead_source: leadSource } : {}),
     },
   });
 
