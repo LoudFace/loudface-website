@@ -60,7 +60,7 @@ import { FooterV3 } from '../../../home-v3/FooterV3';
 import { HeroDetail } from '../../../case-detail-v3/HeroDetail';
 import { ResultsLedger } from '../../../case-detail-v3/ResultsLedger';
 import { BuildStory, type Fact, type Pill } from '../../../case-detail-v3/BuildStory';
-import { NightCharts } from '../../../case-detail-v3/NightCharts';
+import { ResultsInstruments } from '../../../case-detail-v3/ResultsInstruments';
 import { ProofQuote } from '../../../case-detail-v3/ProofQuote';
 import { FaqDetail } from '../../../case-detail-v3/FaqDetail';
 import { RelatedWork, type RelatedCard } from '../../../case-detail-v3/RelatedWork';
@@ -239,9 +239,9 @@ export default async function CaseStudyPage({ params }: PageProps) {
   })();
   const linkedBody = autoLinkServiceMentions(processedBody);
 
-  // Charts (night act) — only when present; growth curve stays axis-free.
+  // Charts — when present they fuse with the results ledger directly after the
+  // hero (2026-08-19 redesign); the growth curve stays axis-free.
   const charts = study.charts ?? [];
-  const hasGrowthCurve = charts.some((c) => c.chartType === 'growthCurve');
 
   // Testimonial (proof) — only when a resolvable quote body exists.
   const testimonialQuote = testimonial?.['testimonial-body'];
@@ -352,11 +352,13 @@ export default async function CaseStudyPage({ params }: PageProps) {
           result2={result2}
         />
 
-        <ResultsLedger results={results} />
+        {charts.length > 0 ? (
+          <ResultsInstruments results={results} charts={charts} />
+        ) : (
+          <ResultsLedger results={results} />
+        )}
 
         <BuildStory bodyHtml={linkedBody} toc={toc} services={servicePills} technologies={techPills} facts={facts} />
-
-        {charts.length > 0 && <NightCharts charts={charts} accentColor={clientColor} hasGrowthCurve={hasGrowthCurve} />}
 
         {testimonialQuote && (
           <ProofQuote quoteHtml={testimonialQuote} name={testimonial?.name} role={testimonial?.role} avatarUrl={avatarUrl} />

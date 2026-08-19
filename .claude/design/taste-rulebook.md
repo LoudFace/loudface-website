@@ -12,3 +12,4 @@
 - 2026-07-14: Numbered pins/markers stay banned even when functionally keyed to screenshot regions - do not relitigate the 01/02/03 ban via 'earned' exceptions. (/case-studies/[slug])
 - 2026-07-14: Blog/article surfaces: the AEO answer block is the hero object, not a body callout - design compositions around the citable element. (/blog/[slug])
 - 2026-07-15: Templated surfaces: prefer signature moves that bind to per-page ARTIFACTS (screenshots, figures) over per-page NARRATIVES (day-by-day cadences) - narratives multiply invented-claim surface across instances. (/services/[service])
+- 2026-08-19: Case-study data sections: chart ink is house indigo (primary-600) NEVER the client brand color; instruments are card-less on dotted paper; the growth curve is the lead instrument (first, full-width); no LABEL·YEAR stamps beside section heads. (/case-studies/[slug])

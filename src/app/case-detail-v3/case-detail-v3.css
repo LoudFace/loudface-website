@@ -236,16 +236,125 @@
 .csv3 .toc-mobile a:hover,.csv3 .toc-mobile a:focus-visible{ color:var(--acc); border-color:var(--acc-100); background:var(--acc-50); }
 .csv3 .facts-mobile{ display:none; flex-direction:column; gap:22px; margin-top:40px; }
 
-/* ================= NIGHT ACT — charts stage ================= */
-.csv3 .night{ background:var(--night); color:var(--snow); padding:clamp(64px,9vw,116px) 0; overflow:hidden; }
-.csv3 .night::before{ content:""; position:absolute; inset:0; pointer-events:none; opacity:.5;
-  background:radial-gradient(50% 40% at 84% 14%, rgba(129,140,248,.14), transparent 62%); }
-.csv3 .night-head{ max-width:44rem; margin-bottom:clamp(2rem,4vw,3rem); position:relative; }
-.csv3 .night-head h2{ color:var(--paper); margin-top:18px; }
-.csv3 .night-head p{ margin-top:16px; color:var(--snow-soft); }
-.csv3 .night-charts{ position:relative; }
-.csv3 .privacy-note{ margin-top:1.5rem; font-size:.78rem; color:var(--snow-mute); display:inline-flex; align-items:center; gap:.5rem; }
-.csv3 .privacy-note svg{ opacity:.7; flex:none; }
+/* ================= BY THE NUMBERS — fused ledger + instruments =================
+   Design-loop pick 2026-08-19 (concept C): card-less charts on dotted drafting
+   paper, hairline rules, ONE indigo ink mark per chart — never the client color.
+   Sits directly after the hero; replaces the old bottom "night" charts stage. */
+.csv3 .nmx{
+  --acc:#4f46e5; --acc-100:#e0e7ff; --acc-200:#c7d2fe; --acc-300:#a5b4fc; --acc-400:#818cf8;
+  --guide:rgba(79,70,229,.22); --labw:172px; --valw:52px; --cgap:16px;
+  background-color:var(--paper);
+  background-image:radial-gradient(circle at 1px 1px, rgba(79,70,229,.085) 1px, transparent 0);
+  background-size:22px 22px;
+  padding:clamp(52px,6.4vw,84px) 0 clamp(50px,6vw,78px);
+  border-bottom:1px solid var(--line);
+}
+.csv3 .nmx .nm-head{ display:flex; flex-wrap:wrap; align-items:flex-end; justify-content:space-between;
+  gap:16px 48px; padding-bottom:clamp(20px,2.4vw,28px); border-bottom:1px solid var(--line); }
+.csv3 .nmx .nm-head h2{ font-size:clamp(1.95rem,3.3vw,2.7rem); letter-spacing:-.028em; text-wrap:balance; }
+.csv3 .nmx .nm-head .lede{ font-size:clamp(.95rem,1.2vw,1.04rem); line-height:1.55; color:var(--ink-soft);
+  max-width:46ch; text-wrap:pretty; padding-bottom:.2rem; }
+.csv3 .nmx .ch-h{ font-size:clamp(1rem,1.15vw,1.08rem); letter-spacing:-.015em; line-height:1.2; text-wrap:balance; }
+.csv3 .nmx .ch-d{ margin-top:.5rem; font-size:.85rem; line-height:1.5; color:var(--ink-mute); max-width:92ch; text-wrap:pretty; }
+.csv3 .nmx .curve{ margin-top:clamp(34px,4vw,50px); }
+.csv3 .nmx .curve-plot{ position:relative; height:clamp(236px,26vw,340px); margin-top:clamp(28px,3.2vw,42px); }
+.csv3 .nmx .curve-svg{ position:absolute; inset:0; width:100%; height:100%; display:block; }
+.csv3 .nmx .nodes{ position:absolute; inset:0; pointer-events:none; }
+.csv3 .nmx .node{ position:absolute; left:var(--x); bottom:var(--y); width:7px; height:7px; background:var(--paper);
+  border:1.5px solid var(--acc); border-radius:1px; transform:translate(-50%,50%); }
+.csv3 .nmx .node.end{ background:var(--acc); }
+.csv3 .nmx .dlab{ position:absolute; left:var(--x); bottom:calc(var(--y) + 15px); transform:translate(-50%,0);
+  white-space:nowrap; font-weight:500; font-size:.67rem; letter-spacing:.02em; color:var(--ink-mute); }
+.csv3 .nmx .dlab.end{ color:var(--acc); letter-spacing:.01em; }
+.csv3 .nmx .dlab.base{ letter-spacing:.13em; text-transform:uppercase; font-size:.63rem; }
+.csv3 .nmx .tick-lead{ display:none; position:absolute; left:var(--x); bottom:calc(var(--y) + 4px);
+  width:0; height:33px; border-left:1px solid var(--acc-300); }
+.csv3 .nmx .curve-x{ display:grid; margin-top:12px; padding-top:11px; border-top:1px solid var(--line); }
+.csv3 .nmx .curve-x span{ text-align:center; font-size:.68rem; font-weight:500; letter-spacing:.14em;
+  text-transform:uppercase; color:var(--ink-mute); }
+.csv3 .nmx .nm-privacy{ display:flex; align-items:flex-start; gap:.5625rem; margin-top:clamp(20px,2.2vw,26px);
+  font-size:.8rem; line-height:1.5; color:var(--ink-mute); max-width:74ch; }
+.csv3 .nmx .nm-privacy svg{ flex:0 0 auto; margin-top:.18rem; color:var(--acc-300); }
+.csv3 .nmx .nm-grid{ display:grid; grid-template-columns:minmax(0,376px) minmax(0,1fr); align-items:stretch;
+  margin-top:clamp(38px,4.4vw,58px); border-top:1px solid var(--line); }
+.csv3 .nmx .nm-grid.ledger-only{ grid-template-columns:1fr; }
+.csv3 .nmx .nm-grid.ledger-only .ldgr{ flex-direction:row; border-right:none; padding-right:0; gap:clamp(24px,4vw,56px); }
+.csv3 .nmx .nm-grid.ledger-only .stat + .stat{ border-top:none; border-left:1px solid var(--line); padding-left:clamp(24px,4vw,56px); }
+.csv3 .nmx .ldgr{ padding-right:clamp(28px,3.4vw,52px); border-right:1px solid var(--line);
+  display:flex; flex-direction:column; justify-content:space-between; }
+.csv3 .nmx .instr{ padding-left:clamp(28px,3.4vw,52px); min-width:0; }
+.csv3 .nmx .stat{ padding:clamp(28px,3.4vw,38px) 0; }
+.csv3 .nmx .stat + .stat{ border-top:1px solid var(--line); }
+.csv3 .nmx .stat-n{ font-family:var(--font-heading); font-weight:500; color:var(--acc);
+  font-size:clamp(3rem,5vw,4.3rem); line-height:.92; letter-spacing:-.04em;
+  font-variant-numeric:tabular-nums; display:flex; align-items:center; flex-wrap:nowrap; }
+.csv3 .nmx .stat-n .u{ font-size:.56em; letter-spacing:-.01em; color:var(--acc-400); margin-left:.06em; }
+.csv3 .nmx .stat-n .arw{ flex:0 0 auto; width:.64em; height:auto; margin:0 .3em; color:var(--acc); }
+.csv3 .nmx .stat-t{ margin-top:1.0625rem; font-size:.93rem; line-height:1.45; color:var(--ink-soft);
+  max-width:27ch; text-wrap:pretty; }
+.csv3 .nmx .chart{ padding-top:clamp(26px,3vw,34px); }
+.csv3 .nmx .chart + .chart{ margin-top:clamp(26px,3vw,34px); padding-top:clamp(26px,3vw,34px); border-top:1px solid var(--line); }
+.csv3 .nmx .plot-wrap{ position:relative; margin-top:clamp(20px,2.2vw,26px); }
+.csv3 .nmx .bar-legend{ display:flex; gap:1.25rem; margin-bottom:14px; font-size:.78rem; color:var(--ink-mute); }
+.csv3 .nmx .bar-legend .swatch{ display:inline-block; width:10px; height:10px; border-radius:2px; vertical-align:-1px; margin-right:.375rem; }
+.csv3 .nmx .bar-legend .swatch.was{ background:var(--acc-200); }
+.csv3 .nmx .bar-legend .swatch.now{ background:var(--acc); }
+.csv3 .nmx .guides{ position:absolute; top:0; bottom:0; left:calc(var(--labw) + var(--cgap));
+  right:calc(var(--valw) + var(--cgap)); pointer-events:none; }
+.csv3 .nmx .guides i{ position:absolute; top:-4px; bottom:-4px; width:0; border-left:1px dashed var(--guide); }
+.csv3 .nmx .guides i.solid{ border-left-style:solid; border-left-color:var(--line); }
+.csv3 .nmx .plot{ position:relative; display:grid; grid-template-columns:var(--labw) minmax(0,1fr) var(--valw);
+  column-gap:var(--cgap); row-gap:14px; align-items:center; }
+.csv3 .nmx .brow{ display:contents; }
+.csv3 .nmx .bar-lab{ font-size:.82rem; line-height:1.3; color:var(--ink-soft); }
+.csv3 .nmx .brow.lead .bar-lab{ color:var(--ink); font-weight:500; }
+.csv3 .nmx .bar-track{ position:relative; height:20px; }
+.csv3 .nmx .bar-track.two{ height:26px; }
+.csv3 .nmx .bar-fill{ position:absolute; left:0; top:0; bottom:0; background:var(--acc-200); border-radius:2px; }
+.csv3 .nmx .bar-track.two .bar-fill.was{ top:0; bottom:auto; height:10px; background:var(--acc-200); }
+.csv3 .nmx .bar-track.two .bar-fill{ top:auto; bottom:0; height:10px; background:var(--acc); }
+.csv3 .nmx .brow.lead .bar-fill{ background:var(--acc); }
+.csv3 .nmx .brow.lead .bar-track.two .bar-fill.was{ background:var(--acc-200); }
+.csv3 .nmx .bar-val{ font-family:var(--font-heading); font-weight:500; font-size:.95rem; text-align:right;
+  color:var(--ink-soft); font-variant-numeric:tabular-nums; letter-spacing:-.01em; }
+.csv3 .nmx .brow.lead .bar-val{ color:var(--ink); }
+@media (max-width:900px){
+  .csv3 .nmx{ --labw:152px; --valw:48px; --cgap:14px; }
+  .csv3 .nmx .nm-grid{ grid-template-columns:1fr; }
+  .csv3 .nmx .ldgr{ padding-right:0; border-right:none; }
+  .csv3 .nmx .instr{ padding-left:0; border-top:1px solid var(--line); }
+  .csv3 .nmx .nm-grid.ledger-only .ldgr{ flex-direction:column; gap:0; }
+  .csv3 .nmx .nm-grid.ledger-only .stat + .stat{ border-left:none; border-top:1px solid var(--line); padding-left:0; }
+}
+@media (max-width:768px){
+  .csv3 .nmx .nm-head{ align-items:flex-start; }
+  .csv3 .nmx .nm-head .lede{ padding-bottom:0; max-width:60ch; }
+}
+@media (max-width:640px){
+  .csv3 .nmx .guides{ display:none; }
+  .csv3 .nmx .plot{ display:block; }
+  .csv3 .nmx .brow{ display:grid; grid-template-columns:minmax(0,1fr) auto;
+    grid-template-areas:"lab val" "track track"; column-gap:12px; row-gap:8px; align-items:baseline; }
+  .csv3 .nmx .brow + .brow{ margin-top:19px; }
+  .csv3 .nmx .bar-lab{ grid-area:lab; font-size:.86rem; line-height:1.32; overflow-wrap:anywhere;
+    display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; }
+  .csv3 .nmx .bar-val{ grid-area:val; font-size:.95rem; white-space:nowrap; }
+  .csv3 .nmx .bar-track{ grid-area:track; height:17px;
+    background:linear-gradient(90deg,var(--line-2),var(--line-2)) no-repeat 0 100% / 100% 1px; }
+  .csv3 .nmx .curve-plot{ height:236px; }
+  .csv3 .nmx .dlab{ display:none; }
+  .csv3 .nmx .dlab.keep{ display:block; font-size:.7rem; }
+  .csv3 .nmx .dlab.base.keep{ left:0; transform:none; font-size:.7rem; letter-spacing:.1em; bottom:calc(var(--y) + 40px); }
+  .csv3 .nmx .tick-lead{ display:block; }
+  .csv3 .nmx .dlab.end.keep{ left:100%; transform:translate(-100%,0); }
+  .csv3 .nmx .curve-x span{ font-size:.65rem; letter-spacing:.05em; }
+  .csv3 .nmx .stat-n{ font-size:3.05rem; }
+  .csv3 .nmx .stat-t{ max-width:36ch; }
+}
+@media (max-width:380px){
+  .csv3 .nmx .stat-n{ font-size:2.75rem; }
+  .csv3 .nmx .curve-x span{ font-size:.6rem; letter-spacing:.03em; }
+}
 
 /* ================= PROOF — testimonial pull-quote ================= */
 .csv3 .proof{ background:var(--paper-2); padding:clamp(64px,8vw,108px) 0; border-top:1px solid var(--line); border-bottom:1px solid var(--line); }

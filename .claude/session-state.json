@@ -1,6 +1,6 @@
 {
   "$schema": "https://schemas.loudface.co/session-state-v1.json",
-  "_doc": "Cross-session memory for Claude. Updated by skills as they work. Read by /seo-brain at session start (Step 0c). Git-tracked so it survives machines. Schema is intentionally minimal — Pending Commitments + Activity Log carry the heavier per-action audit trail; this file is just the 'where we are' pointer.",
+  "_doc": "Cross-session memory for Claude. Updated by skills as they work. Read by /seo-brain at session start (Step 0c). Git-tracked so it survives machines. Schema is intentionally minimal \u2014 Pending Commitments + Activity Log carry the heavier per-action audit trail; this file is just the 'where we are' pointer.",
   "lastSession": {
     "endedAt": "2026-07-02T17:00:00Z",
     "endedReason": "awaiting-user-go",
@@ -27,5 +27,8 @@
     "auditLogicVersion": "v2-4-stage-filter",
     "pendingCommitmentsDb": "collection://600eedcf-4ba8-4492-8a46-20b5b98e2d8d",
     "contentRoadmapSubpage": "https://www.notion.so/362b63394d1081cf82fde48fbf90aed9"
-  }
+  },
+  "lastSkillRun": "site-engineering Launch Gate (full loop) + qa-loop",
+  "lastCommit": "7c6a633 (main) - v3 legacy-tail migration shipped to production 2026-08-02",
+  "nextPlannedAction": "Fast-follows via task chips: TOC anchor scroll fix, Cal.com first-click fallback, breadcrumb contrast, cookies table affordance"
 }
