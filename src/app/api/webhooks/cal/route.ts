@@ -59,6 +59,35 @@ function extractUtm(payload: CalWebhookPayload['payload']): CalTracking {
   return out;
 }
 
+// Booking-form answers already captured elsewhere: UTM keys are mapped by
+// extractUtm, name/email become the PostHog person, guests/location carry no
+// analytics value.
+const SKIPPED_RESPONSE_KEYS = new Set<string>([...UTM_KEYS, 'name', 'email', 'guests', 'location']);
+
+// Forward the visible booking-form answers (e.g. "How did you hear about us?")
+// as form_<question-slug> properties. Values arrive as string, number, boolean,
+// or string[] (multi-select); anything else is dropped.
+function extractFormResponses(
+  payload: CalWebhookPayload['payload']
+): Record<string, string | number | boolean> {
+  const out: Record<string, string | number | boolean> = {};
+  for (const [key, resp] of Object.entries(payload?.responses ?? {})) {
+    if (SKIPPED_RESPONSE_KEYS.has(key)) continue;
+    const value = resp?.value;
+    if (typeof value === 'string') {
+      if (value.trim()) out[`form_${key}`] = value;
+    } else if (typeof value === 'number' || typeof value === 'boolean') {
+      out[`form_${key}`] = value;
+    } else if (Array.isArray(value)) {
+      const items = value.filter(
+        (item): item is string => typeof item === 'string' && Boolean(item.trim())
+      );
+      if (items.length) out[`form_${key}`] = items.join(', ');
+    }
+  }
+  return out;
+}
+
 const EVENT_MAP: Record<string, string> = {
   BOOKING_CREATED: 'call_booked',
   BOOKING_RESCHEDULED: 'call_rescheduled',
@@ -168,6 +197,7 @@ export async function POST(request: Request) {
     attendee_name: attendee?.name,
     attendee_timezone: attendee?.timeZone,
     organizer_email: body.payload?.organizer?.email,
+    ...extractFormResponses(body.payload),
     ...utm,
   };
 
