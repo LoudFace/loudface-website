@@ -198,6 +198,38 @@ export const blogPost = defineType({
         }),
       ],
     }),
+    defineField({
+      name: 'rankedList',
+      title: 'Ranked List / Roster (ItemList schema)',
+      type: 'object',
+      description:
+        'OPT-IN. Fill this in for leaderboard or roster posts where the ranking lives in a TABLE (not numbered H3 headings). When present with 3+ items the page emits ItemList JSON-LD so AI engines can extract the entities in order. Classic numbered-heading listicles do NOT need this — they auto-emit. Leave empty on ordinary posts.',
+      options: { collapsible: true, collapsed: true },
+      fields: [
+        defineField({
+          name: 'items',
+          title: 'Entries (in order)',
+          type: 'array',
+          of: [{ type: 'string' }],
+          description:
+            'The ranked/rostered entities exactly as named on the page, top to bottom. 3+ required for the schema to emit. Order matters — it becomes the ItemList position.',
+        }),
+        defineField({
+          name: 'ordered',
+          title: 'This is a true ranking',
+          type: 'boolean',
+          description:
+            'ON = the list is rank-ordered (a leaderboard: #1 beats #2). OFF = an unordered roster (a directory with no ranking). Controls itemListOrder in the schema. Defaults to OFF.',
+          initialValue: false,
+        }),
+        defineField({
+          name: 'title',
+          title: 'List Name (optional)',
+          type: 'string',
+          description: 'Display name for the list in the schema. Falls back to the post title if empty.',
+        }),
+      ],
+    }),
   ],
   preview: {
     select: {
