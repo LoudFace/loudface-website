@@ -178,6 +178,7 @@
    track is exactly one card-set (margin-right on EVERY card, no flex `gap`), so -50%
    lands seamlessly; a `gap` would leave half a gap unaccounted and the loop would jump. */
 @keyframes wall-left{from{transform:translateX(0);}to{transform:translateX(-50%);}}
+@keyframes wall-right{from{transform:translateX(-50%);}to{transform:translateX(0);}}
 @media (prefers-reduced-motion:reduce){.wtrack{animation:none;}}
 /* every card: the designed 16:10 case-study composite, shown WHOLE (2026-08-20).
    No chrome bar of our own — each composite already carries its own browser plates,
@@ -646,9 +647,13 @@
     display:block;overflow:hidden;
     -webkit-mask-image:linear-gradient(90deg,transparent 0,var(--color-black) 5%,var(--color-black) 95%,transparent 100%);
     mask-image:linear-gradient(90deg,transparent 0,var(--color-black) 5%,var(--color-black) 95%,transparent 100%);}
+  /* BOTH columns stay: each becomes its own horizontal row, counter-scrolling like
+     the desktop pair. Column B carries four of the eight clients, so hiding it here
+     silently dropped half the work from every non-desktop width. */
   :where(.hpv3) .wcol{height:auto;}
-  :where(.hpv3) .wcol.b{display:none;}
+  :where(.hpv3) .wcol + .wcol{margin-top:18px;}
   :where(.hpv3) .wtrack{display:flex;width:max-content;margin-top:0;animation:wall-left 46s linear infinite;}
+  :where(.hpv3) .wcol.b .wtrack{animation:wall-right 52s linear infinite;margin-top:0;}
   :where(.hpv3) .wcard{flex:0 0 clamp(300px,42vw,400px);margin:0 18px 0 0;}
   :where(.hpv3) .faq-grid{grid-template-columns:1fr;}
   :where(.hpv3) .faq-panel{position:static;}
@@ -691,6 +696,8 @@
      size here: it is the only thing on the card a thumb-distance reader can actually
      read, since the artwork's own stat card is sub-pixel at this width. */
   :where(.hpv3) .wtrack{animation-duration:34s;}
+  :where(.hpv3) .wcol.b .wtrack{animation-duration:38s;}
+  :where(.hpv3) .wcol + .wcol{margin-top:14px;}
   :where(.hpv3) .wcard{flex:0 0 76vw;margin-right:14px;}
   :where(.hpv3) .rpill{height:46px;padding:0 14px 12px;}
   :where(.hpv3) .rpill b{font-size:13.5px;}
