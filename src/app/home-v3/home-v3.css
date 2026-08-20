@@ -174,6 +174,10 @@
 :where(.hpv3) .wcol.b .wtrack{animation-name:wall-down;animation-duration:60s;margin-top:-110px;}
 @keyframes wall-up{from{transform:translateY(0);}to{transform:translateY(-50%);}}
 @keyframes wall-down{from{transform:translateY(-50%);}to{transform:translateY(0);}}
+/* below 1080px the wall turns on its side — one horizontal marquee. Each half of the
+   track is exactly one card-set (margin-right on EVERY card, no flex `gap`), so -50%
+   lands seamlessly; a `gap` would leave half a gap unaccounted and the loop would jump. */
+@keyframes wall-left{from{transform:translateX(0);}to{transform:translateX(-50%);}}
 @media (prefers-reduced-motion:reduce){.wtrack{animation:none;}}
 /* every card: the designed 16:10 case-study composite, shown WHOLE (2026-08-20).
    No chrome bar of our own — each composite already carries its own browser plates,
@@ -629,11 +633,23 @@
 @media (max-width:1080px){
   :where(.hpv3) .hero{padding:120px 0 84px;}
   :where(.hpv3) .hero-grid{grid-template-columns:1fr;padding-right:var(--gutter);gap:52px;}
-  :where(.hpv3) .hero h1{max-width:min(20ch,100%);}
-  /* wall: drop the absolute bleed — a fixed-height masked window in flow under the copy,
-     both columns still scrolling */
+  /* stacked hero: the copy is no longer sharing the row with the wall, so the
+     desktop measure (19ch / 42ch) left a dead third of the row empty on its right.
+     Widen both to a comfortable stacked measure — still inside a readable line length. */
+  :where(.hpv3) .hero h1{max-width:min(26ch,100%);}
+  :where(.hpv3) .hero-sub{max-width:min(62ch,100%);}
+  /* wall: the two-column vertical stage only works beside the copy. Once the grid
+     stacks, it becomes ONE horizontal marquee spanning the full container — the old
+     fixed 640px window left a dead gap on the right of a stacked row. */
   :where(.hpv3) .wall-zone{align-self:auto;}
-  :where(.hpv3) .wall{position:relative;top:auto;bottom:auto;right:auto;height:560px;max-width:640px;}
+  :where(.hpv3) .wall{position:relative;top:auto;bottom:auto;right:auto;height:auto;width:auto;max-width:none;
+    display:block;overflow:hidden;
+    -webkit-mask-image:linear-gradient(90deg,transparent 0,var(--color-black) 5%,var(--color-black) 95%,transparent 100%);
+    mask-image:linear-gradient(90deg,transparent 0,var(--color-black) 5%,var(--color-black) 95%,transparent 100%);}
+  :where(.hpv3) .wcol{height:auto;}
+  :where(.hpv3) .wcol.b{display:none;}
+  :where(.hpv3) .wtrack{display:flex;width:max-content;margin-top:0;animation:wall-left 46s linear infinite;}
+  :where(.hpv3) .wcard{flex:0 0 clamp(300px,42vw,400px);margin:0 18px 0 0;}
   :where(.hpv3) .faq-grid{grid-template-columns:1fr;}
   :where(.hpv3) .faq-panel{position:static;}
   :where(.hpv3) .tpanels{grid-template-columns:1fr;}
@@ -670,19 +686,15 @@
   :where(.hpv3) .hero h1{font-size:clamp(1.9rem,8vw,2.45rem);}
   :where(.hpv3) .hero{padding:96px 0 64px;}
   :where(.hpv3) .hero-copy{padding:0;}
-  /* wall: collapse to a single clean strip below the copy — column A's first two cards
-     in normal flow (landscape-cropped by the aspect box), no animation, no mask.
-     min-width:0 on every flex/grid child guards against the tool's inflated layout pass
-     (same guard propagated to .hero-copy/.ai-row/.ai-chips etc. in base rules). */
-  :where(.hpv3) .wall{position:relative;height:auto;max-width:none;display:block;overflow:visible;
-    -webkit-mask-image:none;mask-image:none;}
-  :where(.hpv3) .wcol{height:auto;}
-  :where(.hpv3) .wcol.b{display:none;}
-  :where(.hpv3) .wtrack{animation:none;margin-top:0;}
-  :where(.hpv3) .wcol.a .wcard:nth-child(n+3){display:none;}
-  :where(.hpv3) .wcard{margin-bottom:18px;}
-  :where(.hpv3) .wcard:nth-child(2){margin-bottom:0;}
-  :where(.hpv3) .wcard .shot{aspect-ratio:16/10;}
+  /* wall: the same horizontal marquee, phone-tuned — one card plus a peek of the next,
+     so it reads as a moving reel rather than a cropped grid. The caption steps UP in
+     size here: it is the only thing on the card a thumb-distance reader can actually
+     read, since the artwork's own stat card is sub-pixel at this width. */
+  :where(.hpv3) .wtrack{animation-duration:34s;}
+  :where(.hpv3) .wcard{flex:0 0 76vw;margin-right:14px;}
+  :where(.hpv3) .rpill{height:46px;padding:0 14px 12px;}
+  :where(.hpv3) .rpill b{font-size:13.5px;}
+  :where(.hpv3) .rpill span{font-size:13.5px;padding-left:10px;}
   :where(.hpv3) .chip{height:44px;padding:0 18px;}
   /* ticker: tighter per-logo padding so more logos read per pass on a phone */
   :where(.hpv3) .logo-cell{padding:0 28px;}
