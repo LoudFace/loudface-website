@@ -39,7 +39,7 @@ export function CoverCTA({ images }: { images?: WorkImages } = {}) {
               </div>
               <span className="rpill">
                 <i></i>
-                <b>0 &rarr; 86%</b>
+                <b>0 &rarr; 97.8%</b>
                 <span>Toku</span>
               </span>
             </div>

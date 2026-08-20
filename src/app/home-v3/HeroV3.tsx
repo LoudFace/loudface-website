@@ -12,22 +12,25 @@ import type { HomeImages } from './data';
  * and order stay curated (editorial).
  */
 const CDN = 'https://cdn.sanity.io/images/xjjjqhgt/production/';
-const CROP = '?w=900&h=1050&fit=crop&crop=top&fm=webp&q=82';
+/* The thumbnails are designed 16:10 composites (2026-08-20 rebuild), so the card
+   shows the WHOLE image — no crop params. The old `h=1050&crop=top` portrait crop
+   sliced their stat card and layering off. */
+const CROP = '?w=1000&fm=webp&q=82';
 
-type Card = { slug: string; domain: string; asset: string; metric: string; client: string; eager?: boolean; priority?: boolean };
+type Card = { slug: string; asset: string; metric: string; client: string; eager?: boolean; priority?: boolean };
 
 const COL_A: Card[] = [
-  { slug: 'dimer-health', domain: 'dimerhealth.com', asset: 'a0f4750b896ced6ffca9c5869623b15614f312ba-1440x10131.webp', metric: '288% conversion lift', client: 'Dimer Health', eager: true, priority: true },
-  { slug: 'montblanc', domain: 'montblanc.com', asset: 'a9110ec997f7a351bb9b90347bef4abf6b6b02fc-3024x1890.jpg', metric: '5+ microsite pages', client: 'Montblanc', eager: true },
-  { slug: 'hoxhunt', domain: 'hoxhunt.com', asset: '3ac92e2393c7a26dc96f737c27d7faf49fbe6243-1440x8455.jpg', metric: '20+ pages', client: 'Hoxhunt' },
-  { slug: 'outbound-specialist', domain: 'outboundspecialist.com', asset: 'd90a9cec8351f259afd300dcbc51641ed9b40c3d-1440x1845.webp', metric: '$200K sales in 30 days', client: 'Outbound' },
+  { slug: 'dimer-health', asset: '467a77e9756e7890f1c62874d3388937727c4c6e-2880x1800.png', metric: '288% conversion lift', client: 'Dimer Health', eager: true, priority: true },
+  { slug: 'montblanc', asset: '9416b17af4983a14f8102906196363075cfd07ba-2880x1800.png', metric: '5+ microsite pages', client: 'Montblanc', eager: true },
+  { slug: 'hoxhunt', asset: 'ca8e0b9ee7bb6c5010f367586ed22def265a27a1-2880x1800.png', metric: '20+ pages', client: 'Hoxhunt' },
+  { slug: 'outbound-specialist', asset: '357651c0add5b9c0f1df95b591021decce87a8bc-2880x1800.png', metric: '$200K sales in 30 days', client: 'Outbound' },
 ];
 
 const COL_B: Card[] = [
-  { slug: 'toku-ai-cited-pipeline', domain: 'toku.com', asset: 'bd1c09b494f7074c268f5b964d0c77dc1b1ef965-2880x1620.webp', metric: '0 → 86% AI visibility', client: 'Toku', eager: true },
-  { slug: 'radisson-hotels-group', domain: 'radissonhotels.com', asset: '7d8ef15a548457e46a262f4ef9617e3260d10722-1440x1845.jpg', metric: '2+ complex platforms', client: 'Radisson', eager: true },
-  { slug: 'liqid', domain: 'liqid.de', asset: '5f21404454406eee90732e4e1c8655e0c8c6013b-3024x3629.webp', metric: '100+ pages launched', client: 'LIQID' },
-  { slug: 'eraser', domain: 'eraser.io', asset: '2a7d29fdc9302c8482d70b73041e6c58ec9229a6-1440x1845.webp', metric: '6+ pages', client: 'Eraser' },
+  { slug: 'toku-ai-cited-pipeline', asset: 'cafcfa6fadc9ea6d1d38391eda626fd12ff5e5a0-2880x1800.png', metric: '0 → 97.8% AI visibility', client: 'Toku', eager: true },
+  { slug: 'radisson-hotels-group', asset: 'd7f6c041eab8e04c794c591227b7c4d9dfb94e86-2880x1800.png', metric: '2+ complex platforms', client: 'Radisson', eager: true },
+  { slug: 'liqid', asset: 'cafa9a84713495ea606a6b37badcc5691efac5a4-2880x1800.png', metric: '100+ pages launched', client: 'LIQID' },
+  { slug: 'eraser', asset: 'f6e208a93b76d3fe7ed1fe83a7d8ea1dc29e5962-2880x1800.png', metric: '6+ pages', client: 'Eraser' },
 ];
 
 function srcFor(c: Card, images?: HomeImages) {
@@ -71,8 +74,8 @@ const HERO_COPY: Record<HeroVariant, {
     sub: (
       <>
         We rebuild B2B SaaS websites to win the answer, not just the ranking. Toku went from invisible to cited in
-        86% of AI answers in their category. Same team does the positioning, the site, and the growth work after
-        launch.
+        97.8% of AI answers on its category&rsquo;s top prompt. Same team does the positioning, the site, and the
+        growth work after launch.
       </>
     ),
   },
@@ -81,19 +84,22 @@ const HERO_COPY: Record<HeroVariant, {
 function Wcard({ c, images, dup = false }: { c: Card; images?: HomeImages; dup?: boolean }) {
   return (
     <article className="wcard" aria-hidden={dup || undefined}>
-      <div className="bar" aria-hidden="true">
-        <b></b><b></b><b></b><span>{c.domain}</span>
-      </div>
+      {/* No browser chrome bar here: every composite already contains its own
+          framed browser plates, so a second frame around them read as nested chrome. */}
       <div className="shot">
         {/* `.wcard .shot img{width:100%;height:100%;object-fit:cover}` — CSS owns the
             box, so w/h here only carry the aspect ratio + pick the srcset widths.
-            No `sizes`: the card is fixed-size, and the w=900 source caps the output
-            anyway, so the default 1x/2x pair delivers exactly today's bytes. */}
+            No `sizes`: the card is fixed-size, and the w=1000 source caps the output
+            anyway, so the default 1x/2x pair delivers exactly today's bytes.
+
+            The duplicate wrap-cards keep the SAME alt as the original: crawlers
+            ignore aria-hidden and flag an empty alt as missing, so `dup` may only
+            affect loading/priority — never alt. */}
         <Image
           src={srcFor(c, images)}
-          alt={dup ? '' : `${c.client} website built by LoudFace`}
-          width={900}
-          height={1050}
+          alt={`${c.client} website built by LoudFace`}
+          width={1000}
+          height={625}
           quality={82}
           {...(c.priority && !dup
             ? { priority: true }

@@ -163,35 +163,37 @@
    the entries/exits so the loop reads intentional. Frozen at any moment it reads as a
    deliberate 2-column grid with a slight vertical offset between columns.          ---- */
 :where(.hpv3) .wall-zone{position:relative;align-self:stretch;min-width:0;}
-:where(.hpv3) .wall{position:absolute;top:-132px;bottom:-96px;right:0;width:min(100%,620px);
-  display:flex;gap:20px;overflow:hidden;
+:where(.hpv3) .wall{position:absolute;top:-132px;bottom:-96px;right:0;width:min(100%,780px);
+  display:flex;gap:18px;overflow:hidden;
   -webkit-mask-image:linear-gradient(180deg,transparent 0,var(--color-black) 9%,var(--color-black) 91%,transparent 100%);
   mask-image:linear-gradient(180deg,transparent 0,var(--color-black) 9%,var(--color-black) 91%,transparent 100%);}
 :where(.hpv3) .wcol{flex:1;min-width:0;height:100%;}
 /* flow-root contains the card margins so translateY(-50%) lands exactly one stack —
    seamless wrap (each column carries its stack twice). Slow + linear + calm. */
 :where(.hpv3) .wtrack{display:flow-root;will-change:transform;animation:wall-up 52s linear infinite;}
-:where(.hpv3) .wcol.b .wtrack{animation-name:wall-down;animation-duration:60s;margin-top:-150px;}
+:where(.hpv3) .wcol.b .wtrack{animation-name:wall-down;animation-duration:60s;margin-top:-110px;}
 @keyframes wall-up{from{transform:translateY(0);}to{transform:translateY(-50%);}}
 @keyframes wall-down{from{transform:translateY(-50%);}to{transform:translateY(0);}}
 @media (prefers-reduced-motion:reduce){.wtrack{animation:none;}}
-/* every card: the SAME crisp browser-frame recipe used page-wide (chrome bar, 14px
-   radius, one layered-shadow recipe) — identical structure per card, zero scatter */
-:where(.hpv3) .wcard{position:relative;background:var(--paper);border-radius:14px;overflow:hidden;margin-bottom:20px;
+/* every card: the designed 16:10 case-study composite, shown WHOLE (2026-08-20).
+   No chrome bar of our own — each composite already carries its own browser plates,
+   so a wrapper frame read as nested chrome. One layered-shadow recipe, zero scatter. */
+:where(.hpv3) .wcard{position:relative;background:var(--paper);border-radius:13px;overflow:hidden;margin-bottom:18px;
   box-shadow:0 2px 4px rgba(20,16,60,.20),0 34px 60px -22px rgba(15,10,50,.62),inset 0 0 0 1px rgba(255,255,255,.5);}
-:where(.hpv3) .wcard .bar{display:flex;align-items:center;gap:5px;height:28px;padding:0 12px;border-bottom:1px solid var(--surface-100);background:var(--paper);}
-:where(.hpv3) .wcard .bar b{width:7px;height:7px;border-radius:50%;background:var(--surface-200);flex:none;}
-:where(.hpv3) .wcard .bar span{margin-left:8px;font-family:var(--font-sans);font-size:9px;letter-spacing:.05em;color:var(--surface-500);
-  overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
-:where(.hpv3) .wcard .shot{aspect-ratio:6/7;overflow:hidden;}
+:where(.hpv3) .wcard .shot{aspect-ratio:16/10;overflow:hidden;}
 :where(.hpv3) .wcard .shot img{width:100%;height:100%;object-fit:cover;object-position:top;display:block;}
-/* glassy result pill docked bottom-left on EVERY card — one consistent position */
-:where(.hpv3) .rpill{position:absolute;z-index:3;left:14px;bottom:14px;display:inline-flex;align-items:center;gap:8px;height:30px;padding:0 13px;
-  border-radius:999px;background:rgba(18,16,52,.52);box-shadow:inset 0 0 0 1px rgba(255,255,255,.28),0 6px 16px -6px rgba(10,8,40,.5);
-  -webkit-backdrop-filter:blur(9px) saturate(1.3);backdrop-filter:blur(9px) saturate(1.3);white-space:nowrap;}
-:where(.hpv3) .rpill i{width:6px;height:6px;border-radius:50%;background:var(--color-primary-300);flex:none;box-shadow:0 0 0 3px rgba(165,180,252,.25);}
-:where(.hpv3) .rpill b{font-family:var(--font-sans);font-size:10.5px;font-weight:600;letter-spacing:.02em;color:var(--paper);}
-:where(.hpv3) .rpill span{font-size:11.5px;font-weight:500;color:rgba(255,255,255,.82);padding-left:9px;border-left:1px solid rgba(255,255,255,.28);}
+/* result CAPTION docked across the card's foot on EVERY card. The composite carries
+   the number as artwork; at hero scale that reads as texture, so this caption is what
+   actually tells a visitor whose site it is and what the work returned. A gradient
+   scrim keeps it legible over any artwork underneath. */
+:where(.hpv3) .rpill{position:absolute;z-index:3;left:0;right:0;bottom:0;display:flex;align-items:flex-end;gap:9px;
+  height:42px;padding:0 14px 11px;white-space:nowrap;
+  background:linear-gradient(180deg,rgba(12,10,40,0) 0%,rgba(12,10,40,.72) 42%,rgba(12,10,40,.88) 100%);
+  -webkit-backdrop-filter:blur(3px);backdrop-filter:blur(3px);}
+:where(.hpv3) .rpill i{width:6px;height:6px;border-radius:50%;background:var(--color-primary-300);flex:none;margin-bottom:4px;
+  box-shadow:0 0 0 3px rgba(165,180,252,.25);}
+:where(.hpv3) .rpill b{font-family:var(--font-sans);font-size:12px;font-weight:600;letter-spacing:.02em;color:var(--paper);}
+:where(.hpv3) .rpill span{font-size:12px;font-weight:500;color:rgba(255,255,255,.82);padding-left:9px;border-left:1px solid rgba(255,255,255,.28);}
 
 /* ---------- logo TICKER — saturated indigo full-bleed strip (Option 2, client-requested).
    Deep indigo field (same single-hue tonal recipe as the hero stage, one shade deeper so it reads

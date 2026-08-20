@@ -34,7 +34,7 @@ export interface Flagship {
  * from Sanity by slug (getWorkImages) with these hardcoded CDN fallbacks — all
  * four slugs are inside the homepage HOME_SLUGS set, so the single homepage image
  * fetch already covers them. Every rpill stat is in the sourced/safe set: Toku
- * 0 → 86% and Dimer 288% are the client-attributed headline outcomes; LIQID
+ * 0 → 97.8% and Dimer 288% are the client-attributed headline outcomes; LIQID
  * "100+ pages" and Eraser "V3" are factual build facts matching the studies' copy.
  */
 export const FLAGSHIPS: Flagship[] = [
@@ -45,7 +45,7 @@ export const FLAGSHIPS: Flagship[] = [
     domain: 'toku.com',
     asset: 'bd1c09b494f7074c268f5b964d0c77dc1b1ef965-2880x1620.webp',
     alt: 'Toku website grown by LoudFace',
-    rNum: '0 → 86%',
+    rNum: '0 → 97.8%',
     rLabel: 'AI visibility',
     headline: 'The name AI gives for stablecoin payroll.',
     meta: 'Toku · FinTech · AI Search & Organic Growth',

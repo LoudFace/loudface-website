@@ -1,6 +1,6 @@
 /**
  * Proof — the night stage. Five tiles: three "how we operate" facts and two
- * client-attributed headline outcomes (Toku 0 → 86%, Dimer 288%). Every number
+ * client-attributed headline outcomes (Toku 0 → 97.8%, Dimer 288%). Every number
  * here is in the sourced/safe set; the two attributed ones carry a source pill
  * (client · discipline). Static by design — these are agency-level claims, not
  * per-card stats, so they never drift with the archive.
@@ -34,7 +34,7 @@ export function Proof() {
             <span className="pl">Response during working hours</span>
           </div>
           <div className="pf hot">
-            <b>0 &rarr; 86%</b>
+            <b>0 &rarr; 97.8%</b>
             <span className="pl">Toku AI visibility on its core prompt</span>
             <span className="psrc">
               <i></i>Toku · GEO

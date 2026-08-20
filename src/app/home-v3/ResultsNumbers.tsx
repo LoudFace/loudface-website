@@ -16,7 +16,7 @@ export function ResultsNumbers() {
             <div className="r-foot"><span className="tag static"><i></i><b>Dimer Health</b><span>CRO</span></span></div>
           </article>
           <article className="r-tile r-num narrow tinted rv" style={{ transitionDelay: '.08s' }}>
-            <p className="r-value">{'0 → 86%'}</p>
+            <p className="r-value">{'0 → 97.8%'}</p>
             <p className="r-label">AI visibility on the core prompt</p>
             <p className="r-desc">From absent to cited on the answer that matters in Toku’s category.</p>
             <div className="r-foot"><span className="tag static"><i></i><b>Toku</b><span>AEO</span></span></div>
