@@ -268,19 +268,24 @@
 .wkv3 .cs-big .cs-body{padding:24px 26px 22px;}
 
 /* lead showcase (flagship) — full-width horizontal exhibit */
-.wkv3 .ld{grid-column:1/-1;display:grid;grid-template-columns:minmax(0,6.4fr) minmax(0,5.6fr);gap:clamp(28px,4vw,56px);align-items:center;
-  background:var(--paper);border-radius:22px;padding:clamp(20px,2.4vw,30px);box-shadow:var(--elev);
+/* Same anatomy as a grid card (.cs), laid out horizontally: ONE white card with the
+   media flush to its edge and the copy padded beside it. It used to add two extra
+   layers the grid cards never had — a padded white inset AND a dark navy mat — so the
+   thumbnail read as a card floating inside another card. */
+.wkv3 .ld{grid-column:1/-1;display:grid;grid-template-columns:minmax(0,6.4fr) minmax(0,5.6fr);gap:0;align-items:center;
+  background:var(--paper);border-radius:18px;overflow:hidden;box-shadow:var(--elev);
   transition:box-shadow .3s var(--ease-out),transform .3s var(--ease-out);}
 .wkv3 .ld:hover{box-shadow:var(--elev-hi);transform:translateY(-4px);}
 .wkv3 .ld:focus-visible{outline:2px solid var(--primary-500);outline-offset:3px;}
-.wkv3 .ld-media{position:relative;border-radius:16px;padding:clamp(14px,1.8vw,20px);
-  background:var(--primary-950);background-image:radial-gradient(130% 110% at 82% 120%, var(--primary-900) 0%, var(--primary-950) 62%);
-  box-shadow:0 1px 2px rgba(18,16,50,.1),0 30px 56px -26px rgba(18,16,50,.42);}
-.wkv3 .ld-frame{box-shadow:0 2px 4px rgba(10,8,30,.22),0 22px 40px -18px rgba(8,6,28,.5),inset 0 0 0 1px rgba(255,255,255,.5);}
-.wkv3 .ld-frame .cs-shot{aspect-ratio:16/10.1;}
-.wkv3 .ld-frame .cs-shot img{aspect-ratio:16/10.1;transition:none;}
+.wkv3 .ld-media{position:relative;}
+.wkv3 .ld-frame{border-right:1px solid var(--surface-100);}
+/* the composite keeps its own 16:10 ratio — filling the column instead would crop it
+   hard (the column is far taller than the artwork), and the whole point of the rebuild
+   was to stop slicing these. */
+.wkv3 .ld-frame .cs-shot{aspect-ratio:16/10;}
+.wkv3 .ld-frame .cs-shot img{aspect-ratio:16/10;transition:none;}
 .wkv3 .ld:hover .ld-frame .cs-shot img{transform:none;}
-.wkv3 .ld-label{min-width:0;}
+.wkv3 .ld-label{min-width:0;align-self:center;padding:clamp(24px,3.2vw,44px);}
 .wkv3 .ld-tag{display:inline-flex;align-items:center;gap:8px;height:26px;padding:0 13px 0 11px;border-radius:999px;background:var(--primary-50);box-shadow:inset 0 0 0 1px var(--primary-200);
   font-family:var(--font-sans);font-size:10px;font-weight:500;letter-spacing:.07em;text-transform:uppercase;color:var(--primary-700);}
 .wkv3 .ld-tag i{width:6px;height:6px;border-radius:50%;background:var(--primary-500);flex:none;}
@@ -401,7 +406,9 @@
   .wkv3 .hero-copy{max-width:640px;}
   .wkv3 .stage{max-width:720px;}
   .wkv3 .cgrid,.wkv3 .cgrid.two{grid-template-columns:repeat(2,minmax(0,1fr));}
-  .wkv3 .ld{grid-template-columns:1fr;gap:26px;}
+  .wkv3 .ld{grid-template-columns:1fr;gap:0;}
+  .wkv3 .ld-frame{border-right:none;border-bottom:1px solid var(--surface-100);}
+  .wkv3 .ld-label{padding:clamp(22px,4vw,30px);}
   .wkv3 .proof-grid{grid-template-columns:repeat(3,1fr);}
   .wkv3 .pf:nth-child(4),.wkv3 .pf:nth-child(5){grid-column:span 1;}
   .wkv3 .rcpt-grid{grid-template-columns:1fr;gap:28px;}
@@ -429,7 +436,8 @@
   .wkv3 .fbtn{flex:none;}
   .wkv3 .cgrid,.wkv3 .cgrid.two{grid-template-columns:1fr;gap:20px;}
   .wkv3 .grp-head{padding-bottom:20px;margin-bottom:26px;}
-  .wkv3 .ld-frame .cs-shot,.wkv3 .ld-frame .cs-shot img{aspect-ratio:16/11;}
+  .wkv3 .ld-frame .cs-shot{aspect-ratio:16/10;min-height:0;}
+  .wkv3 .ld-frame .cs-shot img{aspect-ratio:16/10;height:auto;}
   .wkv3 .proof-big{font-size:clamp(1.9rem,8.5vw,2.3rem);}
   .wkv3 .proof-grid{grid-template-columns:1fr;gap:12px;}
   .wkv3 .pf{flex-direction:row;align-items:baseline;gap:14px;padding:20px;}
