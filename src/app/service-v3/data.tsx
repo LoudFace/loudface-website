@@ -1004,11 +1004,11 @@ export const SERVICE_CONFIGS: Record<string, ServiceConfig> = {
       track: 'grow',
       title: (
         <>
-          Share of answer, <span className="ghost">not just traffic.</span>
+          AI visibility, <span className="ghost">not just traffic.</span>
         </>
       ),
       lede:
-        'What separates GEO programs isn’t whether they claim the label — it’s whether they can show a per-engine share-of-answer number and the pages that earned it. Ours is public.',
+        'What separates GEO programs isn’t whether they claim the label — it’s whether they can show a per-engine visibility number and the pages that earned it. Ours is public.',
       hero: { num: '97.8%', label: 'Toku’s AI visibility on its core prompt — a 30-day snapshot, avg position 3.1', src: 'Toku · GEO' },
       extra: { num: '7+', label: 'AI engines monitored — ChatGPT, Perplexity, Gemini, and more' },
     },
