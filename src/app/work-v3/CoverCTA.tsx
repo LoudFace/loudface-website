@@ -9,7 +9,7 @@ import { WORK_CDN, type WorkImages } from './content';
  * images come from Sanity by slug (images prop) with hardcoded fallbacks.
  */
 const COVER_ASSET = 'a9110ec997f7a351bb9b90347bef4abf6b6b02fc-3024x1890.jpg';
-const CARD_ASSET = 'bd1c09b494f7074c268f5b964d0c77dc1b1ef965-2880x1620.webp';
+const CARD_ASSET = 'cafcfa6fadc9ea6d1d38391eda626fd12ff5e5a0-2880x1800.png';
 
 export function CoverCTA({ images }: { images?: WorkImages } = {}) {
   const coverSrc = (images?.['montblanc'] ?? WORK_CDN + COVER_ASSET) + '?w=1280&h=800&fit=crop&crop=top&fm=webp&q=72';

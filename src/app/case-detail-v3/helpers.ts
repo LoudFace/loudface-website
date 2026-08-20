@@ -4,7 +4,7 @@
  * The signature hero object has two variants driven ENTIRELY by the study's own
  * `result-1-number` (safe claim: per-study stat, client named, nothing invented):
  *   - TWO-STATE (before → after): when the lead result encodes a transition
- *     (e.g. Toku "0 → 86%", LoudFace "0.18% → 10.4%"), split it into a before
+ *     (e.g. Toku "0 → 97.8%", LoudFace "0.18% → 10.4%"), split it into a before
  *     state and an after state and render the answer card.
  *   - SINGLE-STATE: any single-value lead result (e.g. "288%", "$200K", "20+")
  *     degrades to a one-column result card in the same glass family.

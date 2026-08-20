@@ -43,7 +43,7 @@ export const FLAGSHIPS: Flagship[] = [
     tab: 'Toku',
     slug: 'toku-ai-cited-pipeline',
     domain: 'toku.com',
-    asset: 'bd1c09b494f7074c268f5b964d0c77dc1b1ef965-2880x1620.webp',
+    asset: 'cafcfa6fadc9ea6d1d38391eda626fd12ff5e5a0-2880x1800.png',
     alt: 'Toku website grown by LoudFace',
     rNum: '0 → 97.8%',
     rLabel: 'AI visibility',

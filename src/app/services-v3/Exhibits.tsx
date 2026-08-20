@@ -61,9 +61,9 @@ const EXHIBITS: Exhibit[] = [
   {
     slug: 'toku-ai-cited-pipeline',
     domain: 'toku.com',
-    asset: 'bd1c09b494f7074c268f5b964d0c77dc1b1ef965-2880x1620.webp',
+    asset: 'cafcfa6fadc9ea6d1d38391eda626fd12ff5e5a0-2880x1800.png',
     alt: 'Toku website grown by LoudFace for AI visibility',
-    rpill: '0 → 86% AI VISIBILITY',
+    rpill: '0 → 97.8% AI VISIBILITY',
     tag: 'Growth track',
     name: 'Toku',
     dom: 'toku.com · Payroll & compliance',
@@ -75,7 +75,7 @@ const EXHIBITS: Exhibit[] = [
     ],
     out: (
       <>
-        <span className="hot">0 → 86% AI visibility</span> — cited by name when buyers ask AI who to hire.
+        <span className="hot">0 → 97.8% AI visibility</span> — cited by name when buyers ask AI who to hire.
       </>
     ),
   },

@@ -89,7 +89,7 @@ export function Ledger({ teamCount }: { teamCount: number }) {
             </div>
             <p>From absent to cited on the answer that matters in Toku&rsquo;s category.</p>
             <div className="lfig">
-              <div className="fig tab">0&thinsp;&rarr;&thinsp;86%</div>
+              <div className="fig tab">0&thinsp;&rarr;&thinsp;97.8%</div>
               <span className="lchip">
                 <i></i>
                 <b>Toku</b>

@@ -10,7 +10,7 @@
  * fallbacks, so a fetch failure or asset re-upload can never blank an image.
  *
  * CLAIMS DISCIPLINE (per the rollout brief): only the safe, attributed set rides
- * the chrome — 200+, 4+ yrs, 2h, Toku 0→86% (attributed, 30-day snapshot), 288%
+ * the chrome — 200+, 4+ yrs, 2h, Toku 0→97.8% (attributed, 30-day snapshot), 288%
  * (Dimer Health · CRO · six-month optimization — the site's pre-approved canon),
  * 7+ engines, and one optional "$5k/mo" as plain text. Dropped everywhere:
  * unlabeled 288% variants, "$200K in 30 days", the "10 Best Website Creator
@@ -41,7 +41,7 @@ const SHOTS = {
   liqid: { slug: 'liqid', asset: '5f21404454406eee90732e4e1c8655e0c8c6013b-3024x3629.webp', domain: 'liqid.de' },
   eraser: { slug: 'eraser', asset: '2a7d29fdc9302c8482d70b73041e6c58ec9229a6-1440x1845.webp', domain: 'eraser.io' },
   dimer: { slug: 'dimer-health', asset: 'a0f4750b896ced6ffca9c5869623b15614f312ba-1440x10131.webp', domain: 'dimerhealth.com' },
-  toku: { slug: 'toku-ai-cited-pipeline', asset: 'bd1c09b494f7074c268f5b964d0c77dc1b1ef965-2880x1620.webp', domain: 'toku.com' },
+  toku: { slug: 'toku-ai-cited-pipeline', asset: 'cafcfa6fadc9ea6d1d38391eda626fd12ff5e5a0-2880x1800.png', domain: 'toku.com' },
   hoxhunt: { slug: 'hoxhunt', asset: '3ac92e2393c7a26dc96f737c27d7faf49fbe6243-1440x8455.jpg', domain: 'hoxhunt.com' },
   montblanc: { slug: 'montblanc', asset: 'a9110ec997f7a351bb9b90347bef4abf6b6b02fc-3024x1890.jpg', domain: 'montblanc.com' },
   outbound: { slug: 'outbound-specialist', asset: 'd90a9cec8351f259afd300dcbc51641ed9b40c3d-1440x1845.webp', domain: 'outboundspecialist.com' },
@@ -711,7 +711,7 @@ export const SERVICE_CONFIGS: Record<string, ServiceConfig> = {
         { em: 'Built to be cited', span: 'In the answer instead of scrolled past' },
         { em: 'Prompts tracked daily', span: 'ChatGPT, Perplexity, AI Overviews' },
       ],
-      out: { num: '86%', label: 'Toku AI visibility on its core prompt (30-day Peec reading, position 2.4)', src: 'Toku · SEO/AEO' },
+      out: { num: '97.8%', label: 'Toku AI visibility on its core prompt (30-day Peec reading, position 3.1)', src: 'Toku · SEO/AEO' },
       ctaLabel: 'See the full case study',
       ctaHref: TOKU_HREF,
     },
@@ -725,7 +725,7 @@ export const SERVICE_CONFIGS: Record<string, ServiceConfig> = {
       lede:
         'The authority that ranks you on Google is what teaches an AI engine to trust you. We build SEO, AEO, and GEO into one program instead of three invoices.',
       hero: { num: '0.18% → 10.35%', label: 'of our category’s AI answers in 90 days, running the same playbook on our own site', src: 'LoudFace · first-party study' },
-      extra: { num: '86%', label: 'Toku AI visibility on its core stablecoin-payroll prompt (30-day Peec reading, position 2.4)' },
+      extra: { num: '97.8%', label: 'Toku AI visibility on its core stablecoin-payroll prompt (30-day Peec reading, position 3.1)' },
     },
     comparison: {
       title: "SEO vs AEO vs GEO: what's the difference?",
@@ -854,7 +854,7 @@ export const SERVICE_CONFIGS: Record<string, ServiceConfig> = {
         { em: 'Built to be cited', span: 'Pages engines can parse and quote' },
         { em: 'Tracked daily', span: 'ChatGPT, Perplexity, Google AI Overviews' },
       ],
-      out: { num: '86%', label: 'AI visibility for Toku on its core prompt (30-day Peec reading, position 2.4)', src: 'Toku · Organic growth' },
+      out: { num: '97.8%', label: 'AI visibility for Toku on its core prompt (30-day Peec reading, position 3.1)', src: 'Toku · Organic growth' },
       ctaLabel: 'See the full case study',
       ctaHref: TOKU_HREF,
     },
@@ -943,7 +943,7 @@ export const SERVICE_CONFIGS: Record<string, ServiceConfig> = {
       blurb:
         'We engineer your content, entity signals, and third-party presence so ChatGPT, Perplexity, and Google AI Overviews name you when a buyer asks which vendor to pick — measured as share of answer, not just traffic.',
       secondary: AUDIT,
-      chip: { value: '86%', label: 'Toku share of answer, core prompt' },
+      chip: { value: '97.8%', label: 'Toku share of answer, core prompt' },
       main: { ...shot('toku', 'Toku, cited by AI engines after LoudFace’s GEO program'), rpillLabel: 'GEO program', rpillClient: 'Toku' },
       frag: shot('montblanc', ''),
     },
@@ -983,20 +983,20 @@ export const SERVICE_CONFIGS: Record<string, ServiceConfig> = {
     exhibit: {
       art: shot('toku', 'Toku, cited by AI engines after LoudFace’s GEO program'),
       eyebrow: 'Featured program',
-      h2: 'Cited in 86% of AI answers on the core prompt.',
+      h2: 'Cited in 97.8% of AI answers on the core prompt.',
       domLine: (
         <>
           <b>Toku</b> · toku.com · Payroll &amp; compliance
         </>
       ),
       what:
-        'On Toku’s core crypto-payroll prompt, the brand appears in 86% of AI answers at average position 2.4 — a 30-day visibility snapshot, eighteen months into the program. Share of answer, tracked per engine, not a one-run ranking.',
+        'On Toku’s core crypto-payroll prompt, the brand appears in 97.8% of AI answers at average position 3.1 — a 30-day visibility snapshot, eighteen months into the program. Share of answer, tracked per engine, not a one-run ranking.',
       annots: [
         { em: 'Answer-first artifacts', span: 'A liftable unit in the first screen' },
         { em: 'Per-engine tracking', span: 'ChatGPT, Perplexity, AI Overviews' },
         { em: 'Corpus placement', span: 'In the lists the models retrieve' },
       ],
-      out: { num: '86%', label: 'Of AI answers on Toku’s core prompt', src: 'Toku · GEO · 30-day snapshot, avg position 2.4' },
+      out: { num: '97.8%', label: 'Of AI answers on Toku’s core prompt', src: 'Toku · GEO · 30-day snapshot, avg position 3.1' },
       ctaLabel: 'See the full case study',
       ctaHref: TOKU_HREF,
     },
@@ -1009,7 +1009,7 @@ export const SERVICE_CONFIGS: Record<string, ServiceConfig> = {
       ),
       lede:
         'What separates GEO programs isn’t whether they claim the label — it’s whether they can show a per-engine share-of-answer number and the pages that earned it. Ours is public.',
-      hero: { num: '86%', label: 'Toku’s share of answer on its core prompt — a 30-day snapshot, avg position 2.4', src: 'Toku · GEO' },
+      hero: { num: '97.8%', label: 'Toku’s share of answer on its core prompt — a 30-day snapshot, avg position 3.1', src: 'Toku · GEO' },
       extra: { num: '7+', label: 'AI engines monitored — ChatGPT, Perplexity, Gemini, and more' },
     },
     faq: {
@@ -1026,7 +1026,7 @@ export const SERVICE_CONFIGS: Record<string, ServiceConfig> = {
         { q: 'Can you guarantee citations in ChatGPT?', aHtml: 'No, and walk away from anyone who does. The strongest public study found AI answers return a different brand list more than 99% of the time on repeat runs, so tomorrow’s exact citation is never guaranteed. What we control and grow is your consideration-set membership and your visibility rate over many samples. We measure it. We don’t promise it.' },
         { q: 'How is GEO different from SEO?', aHtml: 'SEO competes to rank a link you click. GEO competes to be the answer the engine synthesizes and cites. The citation sets barely overlap — ranking first on Google does not hand you the AI answer. That gap is the entire reason GEO is a distinct program and not a rename of your SEO retainer.' },
         { q: 'Do I still need SEO if I invest in GEO?', aHtml: 'Yes. Google’s AI Overviews run on the same core ranking systems as organic Search, and every generative engine retrieves before it cites, so the technical health and authority that rank you keep feeding the retrieval pools. Dropping SEO cuts the ground out from under GEO, which is why we run them as one program.' },
-        { q: 'Seven questions to ask any GEO agency (including us)', aHtml: '<strong>1.</strong> Ask for your share of answer today — a real agency shows a per-engine baseline on the first call. <strong>2.</strong> Ask whether they report per engine or blended; a blended number hides the engine you’re losing. <strong>3.</strong> Ask what liftable artifact each page ships. <strong>4.</strong> Ask how they handle off-page — engines cite third-party lists heavily. <strong>5.</strong> Ask for named, numbered outcomes (ours: Toku, cited in 86% of AI answers on its core prompt, a 30-day snapshot, position 2.4). <strong>6.</strong> Ask for the honest timeline. <strong>7.</strong> Ask for the pricing floor in writing — ours is public: from $5,000 per month.' },
+        { q: 'Seven questions to ask any GEO agency (including us)', aHtml: '<strong>1.</strong> Ask for your share of answer today — a real agency shows a per-engine baseline on the first call. <strong>2.</strong> Ask whether they report per engine or blended; a blended number hides the engine you’re losing. <strong>3.</strong> Ask what liftable artifact each page ships. <strong>4.</strong> Ask how they handle off-page — engines cite third-party lists heavily. <strong>5.</strong> Ask for named, numbered outcomes (ours: Toku, cited in 97.8% of AI answers on its core prompt, a 30-day snapshot, position 3.1). <strong>6.</strong> Ask for the honest timeline. <strong>7.</strong> Ask for the pricing floor in writing — ours is public: from $5,000 per month.' },
       ],
     },
     rel: {
@@ -1096,7 +1096,7 @@ export const SERVICE_CONFIGS: Record<string, ServiceConfig> = {
     exhibit: {
       art: shot('toku', 'Toku grown by LoudFace’s integrated growth system'),
       eyebrow: 'Featured system',
-      h2: 'One system took Toku to 86% AI visibility.',
+      h2: 'One system took Toku to 97.8% AI visibility.',
       domLine: (
         <>
           <b>Toku</b> · toku.com · Payroll &amp; compliance
@@ -1109,7 +1109,7 @@ export const SERVICE_CONFIGS: Record<string, ServiceConfig> = {
         { em: 'AEO feeds CRO', span: 'Cited pages convert the traffic' },
         { em: 'One team, one scoreboard', span: 'No vendor fragmentation' },
       ],
-      out: { num: '0 → 86%', label: 'Toku AI visibility on its core prompt', src: 'Toku · integrated growth · from a standing start' },
+      out: { num: '0 → 97.8%', label: 'Toku AI visibility on its core prompt', src: 'Toku · integrated growth · from a standing start' },
       ctaLabel: 'See the full case study',
       ctaHref: TOKU_HREF,
     },
@@ -1122,7 +1122,7 @@ export const SERVICE_CONFIGS: Record<string, ServiceConfig> = {
       ),
       lede:
         'Three vendors running three separate playbooks means nothing connects and nothing compounds. Growth Autopilot integrates SEO, AEO, and CRO into a single system, run by one team.',
-      hero: { num: '0 → 86%', label: 'Toku’s AI visibility on its core prompt, from a standing start', src: 'Toku · integrated growth' },
+      hero: { num: '0 → 97.8%', label: 'Toku’s AI visibility on its core prompt, from a standing start', src: 'Toku · integrated growth' },
       extra: { num: '1 team', label: 'For SEO, AEO, and CRO — no vendor fragmentation' },
     },
     faq: {

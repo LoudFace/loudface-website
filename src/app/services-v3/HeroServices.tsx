@@ -29,7 +29,7 @@ const COL_A: WallCard[] = [
 ];
 
 const COL_B: WallCard[] = [
-  { slug: 'toku-ai-cited-pipeline', domain: 'toku.com', asset: 'bd1c09b494f7074c268f5b964d0c77dc1b1ef965-2880x1620.webp', label: '0 → 86% AI VISIBILITY', client: 'Toku', alt: 'Toku website grown by LoudFace', eager: true },
+  { slug: 'toku-ai-cited-pipeline', domain: 'toku.com', asset: 'cafcfa6fadc9ea6d1d38391eda626fd12ff5e5a0-2880x1800.png', label: '0 → 97.8% AI VISIBILITY', client: 'Toku', alt: 'Toku website grown by LoudFace', eager: true },
   { slug: 'radisson-hotels-group', domain: 'radissonhotels.com', asset: '7d8ef15a548457e46a262f4ef9617e3260d10722-1440x1845.jpg', label: 'BUILD', client: 'Radisson', alt: 'Radisson Hotels Group platform built by LoudFace' },
   { slug: 'liqid', domain: 'liqid.de', asset: '5f21404454406eee90732e4e1c8655e0c8c6013b-3024x3629.webp', label: 'BUILD', client: 'LIQID', alt: 'LIQID website built by LoudFace' },
   { slug: 'eraser', domain: 'eraser.io', asset: '2a7d29fdc9302c8482d70b73041e6c58ec9229a6-1440x1845.webp', label: 'BUILD', client: 'Eraser', alt: 'Eraser website built by LoudFace' },

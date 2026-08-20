@@ -18,7 +18,7 @@
  * CLAIMS: every stat shown comes from the study's own Sanity result fields with
  * the client named — no invented numbers, no hardcoded per-study copy. The
  * two-state hero only appears when the lead result itself encodes a before→after
- * transition (e.g. "0 → 86%"); otherwise it degrades to a single-state card.
+ * transition (e.g. "0 → 97.8%"); otherwise it degrades to a single-state card.
  *
  * SEO: generateMetadata truncates title ≤60 / description ≤160 via seo-utils;
  * BreadcrumbList + Article + FAQPage + Speakable + Review JSON-LD are all

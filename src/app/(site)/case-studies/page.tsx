@@ -19,7 +19,7 @@
  * toggles group visibility client-side.
  *
  * CLAIMS: the hero + proof chrome carry only sourced/safe stats (200+, Toku
- * 0 → 86%, Dimer 288%, 4+ yrs, ~2h). The old page's unsourced hero stats
+ * 0 → 97.8%, Dimer 288%, 4+ yrs, ~2h). The old page's unsourced hero stats
  * (147% / 3.2x from work.json) are gone. Per-card stats come from Sanity exactly
  * as they render on the live gallery today (source of truth is Studio).
  *
