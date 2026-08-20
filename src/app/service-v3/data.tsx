@@ -943,7 +943,7 @@ export const SERVICE_CONFIGS: Record<string, ServiceConfig> = {
       blurb:
         'We engineer your content, entity signals, and third-party presence so ChatGPT, Perplexity, and Google AI Overviews name you when a buyer asks which vendor to pick — measured as share of answer, not just traffic.',
       secondary: AUDIT,
-      chip: { value: '97.8%', label: 'Toku share of answer, core prompt' },
+      chip: { value: '97.8%', label: 'Toku AI visibility, core prompt' },
       main: { ...shot('toku', 'Toku, cited by AI engines after LoudFace’s GEO program'), rpillLabel: 'GEO program', rpillClient: 'Toku' },
       frag: shot('montblanc', ''),
     },
@@ -990,7 +990,7 @@ export const SERVICE_CONFIGS: Record<string, ServiceConfig> = {
         </>
       ),
       what:
-        'On Toku’s core crypto-payroll prompt, the brand appears in 97.8% of AI answers at average position 3.1 — a 30-day visibility snapshot, eighteen months into the program. Share of answer, tracked per engine, not a one-run ranking.',
+        'On Toku’s core crypto-payroll prompt, the brand appears in 97.8% of AI answers at average position 3.1 — a 30-day visibility snapshot, eighteen months into the program. Visibility, tracked per engine, not a one-run ranking.',
       annots: [
         { em: 'Answer-first artifacts', span: 'A liftable unit in the first screen' },
         { em: 'Per-engine tracking', span: 'ChatGPT, Perplexity, AI Overviews' },
@@ -1009,7 +1009,7 @@ export const SERVICE_CONFIGS: Record<string, ServiceConfig> = {
       ),
       lede:
         'What separates GEO programs isn’t whether they claim the label — it’s whether they can show a per-engine share-of-answer number and the pages that earned it. Ours is public.',
-      hero: { num: '97.8%', label: 'Toku’s share of answer on its core prompt — a 30-day snapshot, avg position 3.1', src: 'Toku · GEO' },
+      hero: { num: '97.8%', label: 'Toku’s AI visibility on its core prompt — a 30-day snapshot, avg position 3.1', src: 'Toku · GEO' },
       extra: { num: '7+', label: 'AI engines monitored — ChatGPT, Perplexity, Gemini, and more' },
     },
     faq: {
