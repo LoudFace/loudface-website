@@ -148,9 +148,9 @@ function LeadCard({ c }: { c: ArchiveCard }) {
         </div>
       </div>
       <div className="ld-label">
-        <span className="ld-tag">
-          <i></i>Flagship · {c.disciplines[0]}
-        </span>
+        {/* No "Flagship · <discipline>" pill: the discipline is already the heading of
+            the group this card sits in, and "Flagship" is our label for ourselves, not
+            information a visitor can use. */}
         <div className="ld-name">
           <h3>{c.title}</h3>
         </div>
