@@ -57,7 +57,18 @@ function tidy(markdown: string): string {
 }
 
 /**
- * Markdown for a page path, or null when the path isn't a real page.
+ * The three outcomes a Markdown render can have. The caller must be able to
+ * tell "this page does not exist" from "rendering it failed just now": the
+ * first is a cacheable 404, the second must not be cached at all, or one
+ * Sanity blip pins a 404 on a perfectly good page for the next hour.
+ */
+export type MarkdownResult =
+  | { status: 'ok'; markdown: string }
+  | { status: 'not-found' }
+  | { status: 'error' };
+
+/**
+ * Markdown for a page path.
  *
  * `origin` is the origin to self-fetch from — the live deployment in
  * production, localhost in dev — so a preview deploy renders its own content
@@ -66,10 +77,17 @@ function tidy(markdown: string): string {
 export async function renderPageMarkdown(
   path: string,
   origin: string = SITE_URL
-): Promise<string | null> {
+): Promise<MarkdownResult> {
   // 1. Purpose-built Markdown from the CMS (blog posts, case studies).
-  const authored = await generatePageMarkdown(path);
-  if (authored) return tidy(authored);
+  // A CMS outage throws here rather than returning nothing, so a dropped
+  // Sanity connection is reported as an error, not as a missing page.
+  let authored: string | null;
+  try {
+    authored = await generatePageMarkdown(path);
+  } catch {
+    return { status: 'error' };
+  }
+  if (authored) return { status: 'ok', markdown: tidy(authored) };
 
   // 2. Fall back to the page's own HTML.
   let response: Response;
@@ -79,20 +97,27 @@ export async function renderPageMarkdown(
         Accept: 'text/html',
         [MARKDOWN_RENDER_HEADER]: '1',
       },
-      next: { revalidate: 3600 },
+      // Not cached: a failed render must not be stored and replayed. The
+      // route's own response is CDN-cached for an hour, so this re-renders
+      // only on a cache miss.
+      cache: 'no-store',
     });
   } catch {
-    return null;
+    // The page never answered — a network fault, not a missing page.
+    return { status: 'error' };
   }
 
-  if (!response.ok) return null;
+  // 5xx means the page exists but failed to render this time. Anything else
+  // that isn't OK (404, 410) means there is genuinely no page here.
+  if (response.status >= 500) return { status: 'error' };
+  if (!response.ok) return { status: 'not-found' };
 
   const html = await response.text();
   const main = extractMain(html);
-  if (!main) return null;
+  if (!main) return { status: 'not-found' };
 
   const body = tidy(htmlToMarkdown(main));
-  if (body.length < 200) return null;
+  if (body.length < 200) return { status: 'not-found' };
 
   const title = extractTitle(html);
   const canonical = new URL(path, SITE_URL).toString();
@@ -108,7 +133,7 @@ export async function renderPageMarkdown(
     .filter((line) => line !== null)
     .join('\n');
 
-  return tidy(`${header}\n\n${body}`);
+  return { status: 'ok', markdown: tidy(`${header}\n\n${body}`) };
 }
 
 /**
