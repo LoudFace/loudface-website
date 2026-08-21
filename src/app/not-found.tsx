@@ -39,6 +39,15 @@ export default function NotFound() {
             <Link href="/services/webflow" className="text-sm text-surface-600 hover:text-primary-600 transition-colors">Webflow</Link>
           </div>
         </div>
+
+        {/* A dead end for a person, but an AI crawler can recover from it —
+            these are the two files that list every URL on the site. */}
+        <p className="mt-8 text-xs text-surface-400">
+          Looking for a full index?{' '}
+          <a href="/sitemap.xml" className="underline hover:text-surface-600 transition-colors">sitemap.xml</a>
+          {' · '}
+          <a href="/llms.txt" className="underline hover:text-surface-600 transition-colors">llms.txt</a>
+        </p>
       </div>
     </SectionContainer>
   );

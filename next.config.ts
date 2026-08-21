@@ -57,6 +57,12 @@ const nextConfig: NextConfig = {
           { key: 'X-Frame-Options', value: 'DENY' },
           { key: 'Referrer-Policy', value: 'strict-origin-when-cross-origin' },
           { key: 'Permissions-Policy', value: 'camera=(), microphone=(), geolocation=()' },
+          // Every page URL answers in HTML or Markdown depending on the
+          // Accept header (see src/proxy.ts). Without Vary: Accept a CDN can
+          // hand whichever variant it cached first to everyone — an agent
+          // gets HTML, or a browser gets Markdown. Set here rather than in
+          // the proxy: Next.js overwrites the proxy's Vary on HTML responses.
+          { key: 'Vary', value: 'Accept' },
         ],
       },
       // ─── X-Robots-Tag: noindex on non-page assets ────────────────────

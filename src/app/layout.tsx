@@ -143,6 +143,25 @@ const organizationSchema = {
     addressLocality: "Dubai",
     addressCountry: "AE",
   },
+  email: "hello@loudface.co",
+  contactPoint: [
+    {
+      "@type": "ContactPoint",
+      contactType: "sales",
+      email: "hello@loudface.co",
+      url: "https://www.loudface.co/contact",
+      areaServed: "Worldwide",
+      availableLanguage: ["English"],
+    },
+    {
+      "@type": "ContactPoint",
+      contactType: "customer support",
+      email: "hello@loudface.co",
+      url: "https://www.loudface.co/contact",
+      areaServed: "Worldwide",
+      availableLanguage: ["English"],
+    },
+  ],
   sameAs: [
     "https://www.instagram.com/loudface.co",
     "https://www.linkedin.com/company/loudface",
