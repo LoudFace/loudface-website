@@ -107,17 +107,26 @@ export async function renderPageMarkdown(
     return { status: 'error' };
   }
 
-  // 5xx means the page exists but failed to render this time. Anything else
-  // that isn't OK (404, 410) means there is genuinely no page here.
-  if (response.status >= 500) return { status: 'error' };
-  if (!response.ok) return { status: 'not-found' };
+  // Only 404 and 410 actually assert "there is no page here". Every other
+  // unhappy status — 5xx, 429, 403, anything — is the site failing to answer,
+  // and must not be cached as a missing page.
+  if (response.status === 404 || response.status === 410) {
+    return { status: 'not-found' };
+  }
+  if (!response.ok) return { status: 'error' };
 
   const html = await response.text();
+
+  // The page answered 200 but we couldn't get readable content out of it: no
+  // <main>, or almost nothing inside it. That is a half-rendered page far more
+  // often than a real one (an error boundary, a CMS query that came back
+  // empty), and we cannot tell the two apart from here. Treat it as a failure
+  // rather than caching a 404 over a page that exists.
   const main = extractMain(html);
-  if (!main) return { status: 'not-found' };
+  if (!main) return { status: 'error' };
 
   const body = tidy(htmlToMarkdown(main));
-  if (body.length < 200) return { status: 'not-found' };
+  if (body.length < 200) return { status: 'error' };
 
   const title = extractTitle(html);
   const canonical = new URL(path, SITE_URL).toString();
