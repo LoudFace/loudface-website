@@ -212,6 +212,7 @@ export interface Category {
  * Team Member CMS item
  */
 export interface TeamMember {
+  _updatedAt?: string;
   id: string;
   name: string;
   slug: string;
@@ -256,6 +257,7 @@ export interface ServiceCategory {
  * SEO Page CMS item (programmatic SEO hub)
  */
 export interface SeoPage {
+  _updatedAt?: string;
   id: string;
   name: string;
   slug: string;

@@ -6,148 +6,141 @@ import {
 } from '@/lib/cms-data';
 import nextConfig from '../../next.config';
 
+/**
+ * A sitemap <lastmod> is only useful while it is ACCURATE. Google uses it while
+ * it stays consistently accurate and ignores it site-wide once it doesn't —
+ * including on the pages where it was honest. A build-time `new Date()` is
+ * therefore worse than no date at all: it claims every page changed on every
+ * deploy, which trained Google to ignore this sitemap's dates (2026-08-21 audit:
+ * 65 of 147 URLs shared one date). Emit a date only when a real per-page
+ * modification date exists; omit it otherwise. Omitting beats guessing.
+ */
+function lastMod(candidate?: string | null): { lastModified?: Date } {
+  if (!candidate) return {};
+  const date = new Date(candidate);
+  if (Number.isNaN(date.getTime())) return {};
+  // A page cannot have been modified after today.
+  if (date.getTime() > Date.now()) return {};
+  return { lastModified: date };
+}
+
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = 'https://www.loudface.co';
-  const lastModified = new Date();
-  // Use current build time for static pages — avoids stale hardcoded dates
-  const staticLastModified = lastModified;
 
   // Static pages
   const staticPages: MetadataRoute.Sitemap = [
     {
       url: baseUrl,
-      lastModified,
       changeFrequency: 'weekly',
       priority: 1,
     },
     {
       url: `${baseUrl}/case-studies`,
-      lastModified,
       changeFrequency: 'weekly',
       priority: 0.9,
     },
     {
       url: `${baseUrl}/blog`,
-      lastModified,
       changeFrequency: 'daily',
       priority: 0.8,
     },
     {
       url: `${baseUrl}/about`,
-      lastModified: staticLastModified,
       changeFrequency: 'monthly',
       priority: 0.7,
     },
     {
       url: `${baseUrl}/ai-instructions`,
-      lastModified: staticLastModified,
       changeFrequency: 'monthly',
       priority: 0.6,
     },
     {
       url: `${baseUrl}/seo-for`,
-      lastModified,
       changeFrequency: 'weekly',
       priority: 0.8,
     },
     // Contact (net-new v3 page; previously 301'd to /)
     {
       url: `${baseUrl}/contact`,
-      lastModified: staticLastModified,
       changeFrequency: 'monthly',
       priority: 0.7,
     },
     // Services hub (net-new v3 page; previously 301'd to /services/webflow)
     {
       url: `${baseUrl}/services`,
-      lastModified: staticLastModified,
       changeFrequency: 'monthly',
       priority: 0.9,
     },
     // Service pages
     {
       url: `${baseUrl}/services/seo-aeo`,
-      lastModified: staticLastModified,
       changeFrequency: 'monthly',
       priority: 0.9,
     },
     {
       url: `${baseUrl}/services/organic-growth`,
-      lastModified: staticLastModified,
       changeFrequency: 'monthly',
       priority: 0.9,
     },
     {
       url: `${baseUrl}/services/geo-agency`,
-      lastModified: staticLastModified,
       changeFrequency: 'monthly',
       priority: 0.9,
     },
     {
       url: `${baseUrl}/services/webflow`,
-      lastModified: staticLastModified,
       changeFrequency: 'monthly',
       priority: 0.9,
     },
     {
       url: `${baseUrl}/services/cro`,
-      lastModified: staticLastModified,
       changeFrequency: 'monthly',
       priority: 0.9,
     },
     {
       url: `${baseUrl}/services/ux-ui-design`,
-      lastModified: staticLastModified,
       changeFrequency: 'monthly',
       priority: 0.9,
     },
     {
       url: `${baseUrl}/services/copywriting`,
-      lastModified: staticLastModified,
       changeFrequency: 'monthly',
       priority: 0.9,
     },
     {
       url: `${baseUrl}/services/growth-autopilot`,
-      lastModified: staticLastModified,
       changeFrequency: 'monthly',
       priority: 0.9,
     },
     // Commercial pages
     {
       url: `${baseUrl}/pricing`,
-      lastModified: staticLastModified,
       changeFrequency: 'monthly',
       priority: 0.9,
     },
     // Lead-gen / programmatic
     {
       url: `${baseUrl}/ai-audit`,
-      lastModified: staticLastModified,
       changeFrequency: 'monthly',
       priority: 0.8,
     },
     {
       url: `${baseUrl}/partners`,
-      lastModified: staticLastModified,
       changeFrequency: 'monthly',
       priority: 0.7,
     },
     {
       url: `${baseUrl}/privacy`,
-      lastModified: staticLastModified,
       changeFrequency: 'yearly',
       priority: 0.3,
     },
     {
       url: `${baseUrl}/terms`,
-      lastModified: staticLastModified,
       changeFrequency: 'yearly',
       priority: 0.3,
     },
     {
       url: `${baseUrl}/cookies`,
-      lastModified: staticLastModified,
       changeFrequency: 'yearly',
       priority: 0.3,
     },
@@ -170,7 +163,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     .filter((study) => study.slug)
     .map((study) => ({
       url: `${baseUrl}/case-studies/${study.slug}`,
-      lastModified,
+      ...lastMod(study._updatedAt),
       changeFrequency: 'monthly' as const,
       priority: 0.7,
     }));
@@ -178,7 +171,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   // Blog post pages
   const blogPostPages: MetadataRoute.Sitemap = blogPosts.map((post) => ({
     url: `${baseUrl}/blog/${post.slug}`,
-    lastModified: post['published-date'] ? new Date(post['published-date']) : lastModified,
+    // A refresh writes `last-updated`; fall back to first publish, never the build.
+    ...lastMod(post['last-updated'] ?? post['published-date']),
     changeFrequency: 'monthly' as const,
     priority: 0.6,
   }));
@@ -186,7 +180,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   // SEO industry pages
   const seoPageEntries: MetadataRoute.Sitemap = seoPages.map((page) => ({
     url: `${baseUrl}/seo-for/${page.slug}`,
-    lastModified,
+    ...lastMod(page._updatedAt),
     changeFrequency: 'monthly' as const,
     priority: 0.7,
   }));
@@ -196,7 +190,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     .filter((member) => member.slug)
     .map((member) => ({
       url: `${baseUrl}/team/${member.slug}`,
-      lastModified: staticLastModified,
+      ...lastMod(member._updatedAt),
       changeFrequency: 'monthly' as const,
       priority: 0.5,
     }));

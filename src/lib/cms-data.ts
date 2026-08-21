@@ -228,7 +228,8 @@ const TEAM_MEMBER_PROJECTION = `{
   "job-title": jobTitle,
   "linkedin-url": linkedinUrl,
   "twitter-url": twitterUrl,
-  skills
+  skills,
+  "_updatedAt": _updatedAt
 }`;
 
 const INDUSTRY_PROJECTION = `{
@@ -300,7 +301,8 @@ const SEO_PAGE_PROJECTION = `{
   "main-body": mainBody,
   "deliverables": deliverables,
   "cta-title": ctaTitle,
-  "cta-subtitle": ctaSubtitle
+  "cta-subtitle": ctaSubtitle,
+  "_updatedAt": _updatedAt
 }`;
 
 const BLOG_FAQ_PROJECTION = `{
