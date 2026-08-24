@@ -236,7 +236,7 @@ export default async function BlogPostPage({ params }: PageProps) {
     toc.push({ id: 'faq', text: 'Frequently Asked Questions' });
   }
   const faqSchema = buildFAQSchema(faqItems);
-  const itemListSchema = buildItemListSchema(post.content, post.name, canonicalUrl);
+  const itemListSchema = buildItemListSchema(post, canonicalUrl);
   const speakableSchema = buildSpeakableSchema(post.name, canonicalUrl);
   // Dataset schema — only emits on opt-in first-party data studies (datasetMeta set).
   const datasetSchema = buildDatasetSchema(post, canonicalUrl);

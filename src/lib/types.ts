@@ -121,6 +121,22 @@ export interface DatasetMeta {
   license?: string;
 }
 
+/**
+ * Opt-in ranked-list / roster metadata, set in Studio on leaderboard posts
+ * whose ranking lives in a TABLE rather than numbered <h3> headings. When
+ * present with 3+ `items`, it drives the ItemList JSON-LD (see
+ * `buildItemListSchema`). Classic numbered-heading listicles leave this empty
+ * and auto-emit from their headings instead.
+ */
+export interface RankedList {
+  /** The rostered/ranked entities, in page order. 3+ required to emit. */
+  items?: string[];
+  /** true = a true ranking (ItemListOrderAscending); false/absent = an unordered roster. */
+  ordered?: boolean;
+  /** Optional display name for the list; falls back to the post title. */
+  title?: string;
+}
+
 export interface BlogPost {
   id: string;
   name: string;
@@ -143,6 +159,7 @@ export interface BlogPost {
   faq?: FAQItem[];
   visuals?: BlogVisual[];
   "dataset-meta"?: DatasetMeta;
+  "ranked-list"?: RankedList;
 }
 
 export interface BlogVisualPosition {
