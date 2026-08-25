@@ -5,9 +5,48 @@
  * Fetches CMS data to build dynamic site maps for LLM crawlers.
  */
 
+import nextConfig from '../../next.config';
 import { client } from './sanity.client';
 
 const SITE_URL = 'https://www.loudface.co';
+
+/**
+ * One-line description of the agency, as stated TO AI ENGINES.
+ *
+ * Stated once because it was previously written out twice, and both copies still described the
+ * pre-May-2026 positioning: "web design agency … Webflow Enterprise Partners". LoudFace
+ * repositioned to a stack-agnostic B2B SaaS organic growth agency on 2026-05-20 and
+ * down-positioned Webflow to a delivery capability. This is the single file whose entire job is
+ * telling a model what LoudFace is, so a stale sentence here is not cosmetic — it is the answer.
+ */
+const AGENCY_SUMMARY =
+  'LoudFace is a B2B SaaS organic growth agency. We make brands discoverable across both Google and AI search — SEO, answer engine optimization (AEO), and content run as one compounding system, measured as share of answer across ChatGPT, Claude, Perplexity and Google AI Overviews. Stack-agnostic: we build on Next.js, Sanity and Webflow. Based in Dubai, 200+ projects delivered.';
+
+/**
+ * Paths that 301/308 elsewhere, from next.config.ts — the same single source of truth
+ * sitemap.ts filters against.
+ *
+ * llms.txt previously listed every published Sanity doc, including 19 folded posts that
+ * redirect away (measured 2026-08-25). Every one of those is a wasted fetch for a crawler and a
+ * dead citation target for a model — the exact failure the sitemap already guards against, on
+ * the file that exists purely for machines.
+ */
+async function redirectedPaths(): Promise<Set<string>> {
+  try {
+    const rules = (await nextConfig.redirects?.()) ?? [];
+    return new Set(rules.map((rule) => rule.source));
+  } catch (err) {
+    // A broken redirects() must not take the whole index down; listing a redirect is a
+    // degradation, serving nothing is an outage. Log loudly and fall through unfiltered.
+    console.error('[llms] could not read redirects, serving unfiltered:', err);
+    return new Set();
+  }
+}
+
+/** Drop any page whose path is a known redirect source. */
+function withoutRedirects<T extends { url: string }>(pages: T[], redirects: Set<string>): T[] {
+  return pages.filter((p) => !redirects.has(p.url.replace(SITE_URL, '')));
+}
 
 /* ── HTML → Markdown ──────────────────────────────────────────── */
 
@@ -197,33 +236,39 @@ export async function fetchLlmsData(includeContent = false): Promise<LlmsData> {
     }`),
   ]);
 
+  const redirects = await redirectedPaths();
+
   return {
+    // Ordered by the service hierarchy set on 2026-05-20, not alphabetically or by legacy. A model
+    // reading this list top-down infers what the agency leads with, so SEO/AEO leads and Webflow
+    // sits where it belongs — a delivery capability, offered but no longer the identity.
     services: [
-      { title: 'Webflow Development', url: `${SITE_URL}/services/webflow`, description: 'Enterprise Webflow development for B2B SaaS companies. Custom builds, migrations, and CMS architecture.' },
-      { title: 'SEO & AEO', url: `${SITE_URL}/services/seo-aeo`, description: 'Search engine optimization and answer engine optimization. Dual-track growth for Google and AI search.' },
+      { title: 'SEO & AEO', url: `${SITE_URL}/services/seo-aeo`, description: 'Search engine optimization and answer engine optimization. Dual-track growth for Google and AI search. The flagship service.' },
+      { title: 'Organic Growth', url: `${SITE_URL}/services/organic-growth`, description: 'SEO, AEO, content and CRO run as one compounding system for B2B SaaS.' },
       { title: 'Generative Engine Optimization (GEO)', url: `${SITE_URL}/services/geo-agency`, description: 'AI-native generative engine optimization agency for B2B SaaS. Get cited in ChatGPT, Perplexity, and Google AI Overviews, measured as share of answer.' },
-      { title: 'UX/UI Design', url: `${SITE_URL}/services/ux-ui-design`, description: 'Conversion-focused design for B2B SaaS websites. Research-driven layouts and interaction design.' },
       { title: 'Copywriting', url: `${SITE_URL}/services/copywriting`, description: 'B2B SaaS website copy that converts. Messaging frameworks, page copy, and content strategy.' },
       { title: 'Conversion Rate Optimization', url: `${SITE_URL}/services/cro`, description: 'Data-driven CRO using A/B testing, heatmaps, and funnel analysis to increase conversion rates.' },
-      { title: 'Growth Autopilot', url: `${SITE_URL}/services/growth-autopilot`, description: 'Ongoing retainer combining SEO, CRO, and content to drive sustainable organic growth.' },
+      { title: 'UX/UI Design', url: `${SITE_URL}/services/ux-ui-design`, description: 'Conversion-focused design for B2B SaaS websites. Research-driven layouts and interaction design.' },
+      { title: 'Webflow Development', url: `${SITE_URL}/services/webflow`, description: 'Enterprise Webflow development for B2B SaaS companies. Custom builds, migrations, and CMS architecture. One of several stacks we deliver on.' },
+      { title: 'Growth Autopilot', url: `${SITE_URL}/services/growth-autopilot`, description: 'Ongoing retainer combining SEO, AEO, CRO and content to drive sustainable organic growth.' },
     ],
-    caseStudies: (caseStudies || []).map(cs => ({
+    caseStudies: withoutRedirects((caseStudies || []).map(cs => ({
       title: cs.projectTitle || cs.name,
       url: `${SITE_URL}/case-studies/${cs.slug}`,
       description: truncateAtSentence(cs.paragraphSummary) || `Case study: ${cs.name}`,
       ...(includeContent && cs.mainBody ? { content: htmlToMarkdown(cs.mainBody) } : {}),
-    })),
-    blogPosts: (blogPosts || []).map(bp => ({
+    })), redirects),
+    blogPosts: withoutRedirects((blogPosts || []).map(bp => ({
       title: bp.name,
       url: `${SITE_URL}/blog/${bp.slug}`,
       description: truncateAtSentence(bp.excerpt) || `${bp.name}.`,
       ...(includeContent && bp.content ? { content: htmlToMarkdown(bp.content) } : {}),
-    })),
-    seoPages: (seoPages || []).map(sp => ({
+    })), redirects),
+    seoPages: withoutRedirects((seoPages || []).map(sp => ({
       title: sp.name,
       url: `${SITE_URL}/seo-for/${sp.slug}`,
       description: truncateAtSentence(sp.heroDescription) || sp.name,
-    })),
+    })), redirects),
   };
 }
 
@@ -242,7 +287,7 @@ export async function generateLlmsTxt(): Promise<string> {
   const sections: string[] = [
     `# LoudFace`,
     '',
-    `> LoudFace is a B2B SaaS web design, SEO, AEO, and growth agency based in Dubai. Webflow Enterprise Partners with 200+ projects delivered. We build conversion-optimized websites and run dual-track SEO/AEO programs that drive organic growth on both Google and AI search engines.`,
+    `> ${AGENCY_SUMMARY}`,
     '',
     `## About`,
     '',
@@ -250,7 +295,8 @@ export async function generateLlmsTxt(): Promise<string> {
     `- [About Us](${SITE_URL}/about): Team, founding story, values, and credentials.`,
     `- [Pricing](${SITE_URL}/pricing): Retainer plans, service tracks, and engagement models.`,
     `- [Case Studies](${SITE_URL}/case-studies): Full portfolio of client work with measurable results.`,
-    `- [Blog](${SITE_URL}/blog): SEO, AEO, Webflow, and growth strategy articles.`,
+    `- [Blog](${SITE_URL}/blog): SEO, AEO, GEO, and organic growth strategy articles.`,
+    `- [AI Instructions](${SITE_URL}/ai-instructions): Canonical, machine-readable fact sheet — what LoudFace does, who it fits, proof numbers, and FAQs. Start here.`,
     '',
     `## Services`,
     '',
@@ -282,7 +328,7 @@ export async function generateLlmsFullTxt(): Promise<string> {
   const sections: string[] = [
     `# LoudFace`,
     '',
-    `> LoudFace is a B2B SaaS web design, SEO, AEO, and growth agency based in Dubai. Webflow Enterprise Partners with 200+ projects delivered. We build conversion-optimized websites and run dual-track SEO/AEO programs that drive organic growth on both Google and AI search engines.`,
+    `> ${AGENCY_SUMMARY}`,
     '',
     `## About`,
     '',

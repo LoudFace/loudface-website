@@ -6,6 +6,17 @@ import {
 } from '@/lib/cms-data';
 import nextConfig from '../../next.config';
 
+// Without this the sitemap is generated ONCE at build time and then frozen: every post
+// published between deploys is absent from it, so Google never learns the URL exists.
+// Measured 2026-08-25 — Sanity held 103 published posts, the live sitemap listed 83, and
+// /blog/ai-cites-you-wrong-fix-stale-facts (published 24 Aug, HTTP 200, self-canonical) was
+// simply missing. /llms.txt carried it correctly, because that route already sets this.
+//
+// The Sanity webhook does call revalidatePath('/sitemap.xml'), but a metadata route is not a
+// page route and that purge does not reliably reach it — so this is the load-bearing control,
+// not a backstop. One hour matches llms.txt so the two indexes cannot drift far apart.
+export const revalidate = 3600;
+
 /**
  * A sitemap <lastmod> is only useful while it is ACCURATE. Google uses it while
  * it stays consistently accurate and ignores it site-wide once it doesn't —
