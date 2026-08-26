@@ -63,7 +63,29 @@ export function ensurePostHog(): Promise<PostHog | null> {
             : undefined,
           capture_pageview: false,
           capture_pageleave: true,
-          person_profiles: 'identified_only',
+          // 'always', not 'identified_only'. Under identified_only PostHog creates a
+          // person profile only once someone identifies (a form submit), so every
+          // anonymous visitor carries no person properties at all — including
+          // $initial_referring_domain, the field that records where someone first
+          // arrived from. Measured 2026-08-26: only 1,738 of 44,713 events over 90
+          // days carried it, 3.9%. Everything without it defaults to "direct", which
+          // is why the channel breakdown reported ~12,400 visitors as direct while
+          // the per-event referrer showed 11,227 arriving from Google.
+          //
+          // Two things depended on that field and both were wrong because of this:
+          // "which channel produced a booked call" (it answered 1 of 57 from AI, an
+          // artifact of the empty field), and the "where your visitors came from"
+          // panel on the client reports we send.
+          //
+          // This is the mechanism PostHog provides for the question, not a
+          // workaround: $initial_referring_domain and the rest of the $initial_*
+          // family are PostHog-managed person properties that populate on first
+          // touch and persist across sessions. Cost note: PostHog charges more for
+          // events with person processing, so this raises analytics spend by design.
+          // Consent is unaffected — posthog-js still only loads after consent and
+          // first interaction (see PostHogProvider), so no profile exists for anyone
+          // who has not already opted in.
+          person_profiles: 'always',
           // Session recording is deliberately NOT configured here. PostHog's own
           // project settings own that policy — duplicating the switch in code made
           // the dashboard lie about whether recording was running.
