@@ -52,6 +52,8 @@ export default async function SiteLayout({
   // migrated 2026-08-01.)
   const isSeoForIndustry = pathname.startsWith("/seo-for/");
   const isTeamProfile = pathname.startsWith("/team/");
+  // /careers ships its own FooterV3.
+  const isCareers = pathname === "/careers";
   const suppressSharedFooter =
     pathname === "/" ||
     pathname === "/about" ||
@@ -60,6 +62,7 @@ export default async function SiteLayout({
     isServiceChild ||
     isSeoForIndustry ||
     isTeamProfile ||
+    isCareers ||
     pathname === "/contact" ||
     pathname === "/ai-instructions" ||
     // Policy pages on LegalPageV3 (/terms + /cookies join when they migrate).

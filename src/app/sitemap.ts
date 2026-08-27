@@ -77,6 +77,14 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       changeFrequency: 'monthly',
       priority: 0.7,
     },
+    // Careers index. ONLY /careers goes in the sitemap — /careers/apply is
+    // deliberately noindex and is reached from job postings we place, so it
+    // must never be listed here.
+    {
+      url: `${baseUrl}/careers`,
+      changeFrequency: 'monthly',
+      priority: 0.5,
+    },
     // Services hub (net-new v3 page; previously 301'd to /services/webflow)
     {
       url: `${baseUrl}/services`,

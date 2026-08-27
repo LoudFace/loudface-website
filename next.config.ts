@@ -254,11 +254,14 @@ const nextConfig: NextConfig = {
         destination: '/services/webflow',
         permanent: true,
       },
-      {
-        source: '/careers',
-        destination: '/about',
-        permanent: true,
-      },
+      // The /careers → /about redirect was REMOVED (2026-08-27) so the net-new
+      // /careers page can resolve — same playbook as /contact (2026-07-15) and
+      // /services (2026-07-12). Do NOT re-add it. Because it was a PERMANENT
+      // redirect, browsers and crawlers that already cached it will keep
+      // sending /careers to /about until that cache expires; there is nothing
+      // to do server-side (a permanent redirect cannot be un-cached remotely —
+      // only time or a hard reload clears it). Request reindexing of /careers
+      // in Search Console to shorten that for Google.
       // Old Webflow service pages with random suffixes → current service pages
       {
         source: '/services/webflow-development-pnkr2',
