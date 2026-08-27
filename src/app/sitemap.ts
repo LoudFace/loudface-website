@@ -5,6 +5,7 @@ import {
   fetchSeoPages,
 } from '@/lib/cms-data';
 import nextConfig from '../../next.config';
+import { TEAM_HIDDEN } from './about-v3/data';
 
 // Without this the sitemap is generated ONCE at build time and then frozen: every post
 // published between deploys is absent from it, so Google never learns the URL exists.
@@ -197,8 +198,10 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   }));
 
   // Team member / author pages — E-E-A-T signals
+  // TEAM_HIDDEN drives both the listing and this sitemap. If they diverge, a
+  // hidden member survives here as an indexed page nothing links to.
   const teamMemberPages: MetadataRoute.Sitemap = Array.from(teamMembers.values())
-    .filter((member) => member.slug)
+    .filter((member) => member.slug && !TEAM_HIDDEN.has(member.slug))
     .map((member) => ({
       url: `${baseUrl}/team/${member.slug}`,
       ...lastMod(member._updatedAt),
