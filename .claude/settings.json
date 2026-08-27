@@ -1,0 +1,13 @@
+{
+  "extraKnownMarketplaces": {
+    "loudface": {
+      "source": {
+        "source": "github",
+        "repo": "LoudFace/LoudFace-Claude-Skills"
+      }
+    }
+  },
+  "enabledPlugins": {
+    "loudface-skills@loudface": true
+  }
+}
