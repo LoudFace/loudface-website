@@ -11,10 +11,13 @@ import { NextRequest, NextResponse } from 'next/server';
  *     partner-apply route uses). The integration must ALSO be connected to the
  *     Candidates database in Notion, or every write 404s.
  *
- * Defensive, same contract as /api/partner-apply: a Notion outage must never
- * look like a form error to the applicant. On failure we log the full
- * submission under [careers-apply] RECOVERY so it can be replayed from the
- * Vercel function logs, and still return success.
+ * DELIBERATELY UNLIKE /api/partner-apply, which returns success even when its
+ * Notion write fails. This endpoint does not: it retries once, and if the
+ * application still is not stored it says so and points the applicant at
+ * hello@loudface.co with their answers still on screen. Telling a candidate
+ * "received" when nothing was stored means they wait for a reply that can
+ * never come, and we never learn they existed. The full submission is also
+ * logged under [careers-apply] RECOVERY for replay from the Vercel logs.
  *
  * If you add a property to the Notion DB, add it here AND in
  * CareersApplicationForm.tsx — otherwise that property stays blank on every row.
@@ -176,17 +179,28 @@ export async function POST(request: NextRequest) {
     };
 
     // ─── Write to Notion ─────────────────────────────────────────
+    let stored = false;
+
     if (NOTION_API_KEY) {
-      try {
-        await sendToNotion(submission);
-      } catch (err) {
-        console.error('[careers-apply] Notion error:', err);
-        // Recoverable record — replay this from the Vercel function logs.
-        console.error('[careers-apply] RECOVERY %s', JSON.stringify(submission));
-      }
+      stored = await sendToNotionWithRetry(submission);
     } else {
-      console.warn('[careers-apply] NOTION_API_KEY not set — skipping Notion write.');
+      console.error('[careers-apply] NOTION_API_KEY not set — cannot store application.');
+    }
+
+    if (!stored) {
+      // Never tell someone their application was received when it was not
+      // stored. A silent swallow here means the candidate waits for a reply
+      // that can never come, and we never learn they existed. The full
+      // submission is logged so it can still be recovered from Vercel logs.
       console.error('[careers-apply] RECOVERY %s', JSON.stringify(submission));
+      return NextResponse.json(
+        {
+          success: false,
+          message:
+            "We couldn't save your application just now — that's on us, not you. Your answers are still on this page: please copy them into an email to hello@loudface.co and we'll pick it up from there.",
+        },
+        { status: 502 },
+      );
     }
 
     return NextResponse.json(
@@ -203,6 +217,36 @@ export async function POST(request: NextRequest) {
 }
 
 /* ─── Notion ────────────────────────────────────────────────────── */
+
+class NotionWriteError extends Error {
+  constructor(message: string, readonly retryable: boolean) {
+    super(message);
+    this.name = 'NotionWriteError';
+  }
+}
+
+/**
+ * One retry, and only for failures a retry can actually fix (network blips,
+ * 429s, 5xx). A 4xx is a configuration or schema mistake — most often the
+ * integration not being connected to the Candidates database — and retrying
+ * it just doubles the latency before the same failure.
+ *
+ * Returns true only when the application is genuinely stored.
+ */
+async function sendToNotionWithRetry(s: CareersApplicationPayload): Promise<boolean> {
+  for (let attempt = 1; attempt <= 2; attempt++) {
+    try {
+      await sendToNotion(s);
+      return true;
+    } catch (err) {
+      const retryable = err instanceof NotionWriteError ? err.retryable : true;
+      console.error('[careers-apply] Notion write failed (attempt %d):', attempt, err);
+      if (!retryable || attempt === 2) return false;
+      await new Promise((resolve) => setTimeout(resolve, 400));
+    }
+  }
+  return false;
+}
 
 /** Only send a URL property Notion will accept — it rejects malformed values. */
 function urlProp(value: string): { url: string } | null {
@@ -291,6 +335,12 @@ async function sendToNotion(s: CareersApplicationPayload): Promise<void> {
 
   if (!res.ok) {
     const errBody = await res.text();
-    throw new Error(`Notion API ${res.status}: ${errBody.slice(0, 500)}`);
+    // 429 and 5xx are worth another go; a 404 means the integration is not
+    // connected to the database, and no number of retries will change that.
+    const retryable = res.status === 429 || res.status >= 500;
+    throw new NotionWriteError(
+      `Notion API ${res.status}: ${errBody.slice(0, 500)}`,
+      retryable,
+    );
   }
 }
