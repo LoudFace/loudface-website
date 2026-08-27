@@ -20,11 +20,7 @@
 // Read-only. No Notion, no Sanity, no Cloudflare config writes.
 //
 // Usage:
-//   node scripts/ai-crawl-report.mjs [--hours N] [--paths] [--json] [--all-bots]
-
-import { readFileSync } from "node:fs";
-import { dirname, resolve } from "node:path";
-import { fileURLToPath } from "node:url";
+//   bash scripts/with-secrets.sh node scripts/ai-crawl-report.mjs [--hours N] [--paths] [--json] [--all-bots]
 
 const ZONE_ID = "4b257ce477819eaf51db086503ee796b"; // loudface.co
 // The zone serves more than the marketing site — api.peec.ai rides on it too
@@ -120,35 +116,18 @@ const HELP = `ai-crawl-report — AI crawler traffic for loudface.co (read-only)
                 api.peec.ai, so totals stop being "loudface.co"
   -h, --help    this text`;
 
-// The token lives in loudface-website/.env.local, deliberately NOT in Infisical
-// (owner-local, read-only, zone-scoped). Env var wins if already exported.
 function loadToken() {
-  if (process.env[TOKEN_VAR]) return process.env[TOKEN_VAR];
-  const envPath = resolve(dirname(fileURLToPath(import.meta.url)), "..", ".env.local");
-  let raw;
-  try {
-    raw = readFileSync(envPath, "utf8");
-  } catch {
-    return null;
-  }
-  for (const line of raw.split("\n")) {
-    const m = line.match(/^\s*(?:export\s+)?CLOUDFLARE_ANALYTICS_TOKEN\s*=\s*(.*)$/);
-    if (m) return m[1].trim().replace(/^["']|["']$/g, "");
-  }
-  return null;
+  return process.env[TOKEN_VAR] || null;
 }
 
 const SETUP = `Missing ${TOKEN_VAR}.
 
-Create a read-only, zone-scoped token:
-  1. https://dash.cloudflare.com/profile/api-tokens
-  2. Create Token -> Custom token
-  3. Permissions:    Zone -> Analytics -> Read
-  4. Zone Resources: Include -> Specific zone -> loudface.co
-  5. Add to loudface-website/.env.local:
-       ${TOKEN_VAR}="<the-token>"
+Run this command through the repository's 1Password wrapper:
+  bash scripts/with-secrets.sh node scripts/ai-crawl-report.mjs
 
-Keep it separate from the MCP-managed Cloudflare token (that one is for writes).`;
+The shared vault item is CLOUDFLARE_ANALYTICS_TOKEN_dev. It is read-only and
+zone-scoped to loudface.co. If the wrapper cannot resolve it, open the 1Password
+app and sign in with your own LoudFace account.`;
 
 async function gql(token, query, variables) {
   const res = await fetch(GRAPHQL, {
