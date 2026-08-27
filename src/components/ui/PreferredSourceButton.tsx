@@ -68,7 +68,7 @@ export function PreferredSourceButton({ className = '' }: PreferredSourceButtonP
         type="button"
         onClick={openPreferredSourceFlow}
         aria-label="Add LoudFace as a preferred source in Google Search"
-        className="group inline-flex min-h-14 w-full cursor-pointer items-center gap-3 rounded-xl bg-white/[0.06] px-3 py-2.5 text-left text-white ring-1 ring-inset ring-white/15 transition-[background-color,box-shadow,transform] duration-200 ease-[var(--ease-out)] hover:bg-white/[0.1] hover:ring-primary-300/40 active:scale-[0.98] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-300"
+        className="group inline-flex min-h-14 w-full cursor-pointer items-center gap-3 rounded-xl bg-white/[0.06] px-4! py-2.5! text-left text-white ring-1 ring-inset ring-white/15 transition-[background-color,box-shadow,transform] duration-200 ease-[var(--ease-out)] hover:bg-white/[0.1] hover:ring-primary-300/40 active:scale-[0.98] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-300"
       >
         <span
           aria-hidden="true"
