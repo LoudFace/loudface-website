@@ -4,7 +4,7 @@ Quick-reference for every reusable component. **Check here before writing any ma
 
 Import all UI primitives from the barrel:
 ```tsx
-import { AICitationVisual, Badge, BulletLabel, Button, Card, CaseStudyCharts, SliderNav, ComponentAssemblyVisual, CopyFirstVisual, ConversionSplitVisual, DesignSystemVisual, LogoImage, PixelBreakpointAnimation, ScalableGridAnimation, SectionContainer, SectionHeader } from '@/components/ui';
+import { AICitationVisual, Badge, BulletLabel, Button, Card, CaseStudyCharts, SliderNav, ComponentAssemblyVisual, CopyFirstVisual, ConversionSplitVisual, DesignSystemVisual, LogoImage, PixelBreakpointAnimation, PreferredSourceButton, ScalableGridAnimation, SectionContainer, SectionHeader } from '@/components/ui';
 ```
 
 ---
@@ -187,6 +187,18 @@ Animated pixel grid that morphs between mobile / tablet / desktop layout represe
 
 ```tsx
 <PixelBreakpointAnimation />
+```
+
+### PreferredSourceButton
+
+LoudFace-styled trigger for Google's Preferred Sources confirmation flow. It uses Google's current multicolor G asset without recoloring it. Loads the official publisher SDK after the page becomes idle and uses its manual control API. Google owns the confirmation flow; LoudFace owns the visible button. Client component.
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `className` | `string` | `''` | Classes on the control wrapper |
+
+```tsx
+<PreferredSourceButton className="mt-4 w-[240px] max-w-full" />
 ```
 
 ### ScalableGridAnimation
@@ -372,7 +384,7 @@ Pick `yields` for decoration, `lifts` for anything a user needs to click. Note `
 
 ```
 src/components/index.ts        → re-exports everything
-src/components/ui/index.ts     → AICitationVisual, Badge, BulletLabel, Button, Card, SliderNav, ComponentAssemblyVisual, CopyFirstVisual, ConversionSplitVisual, DesignSystemVisual, LogoImage, PixelBreakpointAnimation, ScalableGridAnimation, Pagination, SectionContainer, SectionHeader, VideoFacade
+src/components/ui/index.ts     → AICitationVisual, Badge, BulletLabel, Button, Card, SliderNav, ComponentAssemblyVisual, CopyFirstVisual, ConversionSplitVisual, DesignSystemVisual, LogoImage, PixelBreakpointAnimation, PreferredSourceButton, ScalableGridAnimation, Pagination, SectionContainer, SectionHeader, VideoFacade
 src/components/sections/index.ts → Hero, Partners, Results, FAQ, CTA, TestimonialGrid, EditorialProse, DeliverablesGrid, RelatedServices, RelatedComparisons, RelatedArticles, ProblemChecker, ProblemCheckerA, ProblemCheckerC
 src/components/blog/index.ts   → BlogChart, BlogIllustration, BlogVisual, BlogContent, BlogTOC, BlogExploreWithAI, BlogCTACard, BlogShareRow
 ```

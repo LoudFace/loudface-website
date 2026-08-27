@@ -4,6 +4,7 @@ import { FooterLocations } from './FooterLocations';
 import { asset } from '@/lib/assets';
 import { getAIPlatformsWithIcons, getSocialLinksWithIcons } from '@/lib/icons';
 import { getNewsletterContent } from '@/lib/content-utils';
+import { PreferredSourceButton } from '@/components/ui';
 import type { CaseStudy, BlogPost } from '@/lib/types';
 
 interface FooterProps {
@@ -253,6 +254,7 @@ export function Footer({ caseStudies = [], blogPosts = [] }: FooterProps) {
                       </a>
                     ))}
                   </div>
+                  <PreferredSourceButton className="mt-4 w-[240px] max-w-full" />
                 </div>
 
                 {/* Social Links */}

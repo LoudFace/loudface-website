@@ -12,6 +12,7 @@ export { ConversionSplitVisual } from './ConversionSplitVisual';
 export { DesignSystemVisual } from './DesignSystemVisual';
 export { LadderRail } from './LadderRail';
 export { PixelBreakpointAnimation } from './PixelBreakpointAnimation';
+export { PreferredSourceButton } from './PreferredSourceButton';
 export { ScalableGridAnimation } from './ScalableGridAnimation';
 export { Pagination } from './Pagination';
 export { SectionContainer } from './SectionContainer';
