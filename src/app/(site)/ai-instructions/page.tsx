@@ -264,7 +264,10 @@ export default function AiInstructionsPage() {
             ))}
             {LOGOS.map((logo) => (
               <span className="marq-logo" key={`${logo.alt}-dup`}>
-                <Image src={logo.src} alt="" aria-hidden="true" width={logo.w} height={logo.h} quality={82} />
+                {/* The loop duplicate keeps aria-hidden so screen readers do not hear the
+                    client list twice, but it MUST carry the same alt as the original:
+                    crawlers ignore aria-hidden and read empty alt as a missing description. */}
+                <Image src={logo.src} alt={logo.alt} aria-hidden="true" width={logo.w} height={logo.h} quality={82} />
               </span>
             ))}
           </div>

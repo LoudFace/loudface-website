@@ -135,7 +135,7 @@ export function Story({ team }: { team: TeamPerson[] }) {
             <h2>From small startups to large enterprises.</h2>
             <p>
               We&rsquo;ve helped hundreds of businesses reach their online goals, each with
-              different challenges and opportunities. Today we&rsquo;re a remote team of seven,
+              different challenges and opportunities. Today we&rsquo;re a small remote team
               based in Dubai, working with SaaS companies around the world.
             </p>
           </div>
