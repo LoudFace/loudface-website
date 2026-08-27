@@ -38,6 +38,9 @@ export function FooterV3() {
               <ul>
                 <li><Link href="/about">About</Link></li>
                 <li><Link href="/blog">Blog</Link></li>
+                {/* /careers, never /careers/apply — the apply form is noindex
+                    and is reached from job postings, not site navigation. */}
+                <li><Link href="/careers">Careers</Link></li>
                 <li><Link href="#book">Book a call</Link></li>
               </ul>
             </div>

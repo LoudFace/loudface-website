@@ -20,6 +20,9 @@ export function Footer({ caseStudies = [], blogPosts = [] }: FooterProps) {
   // Navigation data
   const companyLinks = [
     { label: 'About us', href: '/about' },
+    // Links to /careers, never /careers/apply — the apply form is noindex and
+    // is reached from job postings we place, not from site navigation.
+    { label: 'Careers', href: '/careers' },
     { label: 'AI Instructions', href: '/ai-instructions' },
   ];
 
