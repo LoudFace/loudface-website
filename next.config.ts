@@ -153,6 +153,9 @@ const nextConfig: NextConfig = {
   },
   async redirects() {
     return [
+      // Team page hidden via TEAM_HIDDEN (src/app/about-v3/data.ts). 301 rather
+      // than 404 so any inbound link or existing index entry lands somewhere real.
+      { source: '/team/chandana-pitta', destination: '/about', permanent: true },
       // Crawlers probe the WordPress/Yoast sitemap convention even though we
       // never published it — ~10 404s/day (Cloudflare analytics, 2026-07-28),
       // Meta's and other AI crawlers among them. Point it at the real sitemap

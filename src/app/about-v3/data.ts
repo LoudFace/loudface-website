@@ -22,10 +22,22 @@ export const TEAM_ORDER: string[] = [
   'abhay-tyagi',
   'tamara-pavlovic',
   'rezwan-nahid',
-  'chandana-pitta',
   'david-dobrijevic',
   'andrea-van-wyk',
 ];
+
+/**
+ * Slugs to omit from the team listing entirely.
+ *
+ * Removing a slug from TEAM_ORDER is NOT enough: getAboutTeam() appends any CMS
+ * member missing from that list, so a removed person reappears at the end. This
+ * set is the actual exclusion. It also drives the sitemap (src/app/sitemap.ts),
+ * so a hidden member cannot survive as an indexed orphan page.
+ *
+ * Keep the CMS record. Hiding is reversible; deleting loses the history and
+ * breaks any byline or case-study reference pointing at it.
+ */
+export const TEAM_HIDDEN: ReadonlySet<string> = new Set(['chandana-pitta']);
 
 /** Per-person fact + quote (editorial, not in CMS). Keyed by slug. */
 export const TEAM_COPY: Record<string, { fact: string; quote?: string }> = {
@@ -81,7 +93,7 @@ function firstSentence(text?: string): string {
  * Fetch team from the CMS and shape it for the page.
  * Ordered by TEAM_ORDER; any CMS member not in that list is appended (future
  * members). Members in TEAM_ORDER but absent from the CMS are dropped
- * (removed member handled gracefully).
+ * (removed member handled gracefully). Anyone in TEAM_HIDDEN is omitted.
  */
 export async function getAboutTeam(): Promise<TeamPerson[]> {
   const data = await fetchHomepageData();
@@ -91,7 +103,7 @@ export async function getAboutTeam(): Promise<TeamPerson[]> {
   const orderedSlugs = [
     ...TEAM_ORDER.filter((s) => bySlug.has(s)),
     ...members.map((m) => m.slug).filter((s) => !TEAM_ORDER.includes(s)),
-  ];
+  ].filter((s) => !TEAM_HIDDEN.has(s));
 
   return orderedSlugs.map((slug) => {
     const m = bySlug.get(slug)!;
