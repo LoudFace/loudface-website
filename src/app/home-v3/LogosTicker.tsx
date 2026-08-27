@@ -29,7 +29,10 @@ export function LogosTicker() {
           ))}
           {LOGOS.map((l) => (
             <div className="logo-cell" key={`${l.alt}-dup`}>
-              <Image src={l.src} alt="" aria-hidden="true" width={l.w} height={l.h} loading="lazy" quality={82} />
+              {/* The loop duplicate keeps aria-hidden so screen readers do not hear the
+                  client list twice, but it MUST carry the same alt as the original:
+                  crawlers ignore aria-hidden and read empty alt as a missing description. */}
+              <Image src={l.src} alt={l.alt} aria-hidden="true" width={l.w} height={l.h} loading="lazy" quality={82} />
             </div>
           ))}
         </div>
