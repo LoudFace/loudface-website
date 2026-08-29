@@ -1,4 +1,5 @@
 import Image from 'next/image';
+import Link from 'next/link';
 import type { HomeImages } from './data';
 
 /**
@@ -51,7 +52,7 @@ export function SelectedWork({ images }: { images?: HomeImages } = {}) {
         </div>
         <div className="bento">
           {TILES.map((t) => (
-            <article key={t.client} className={`tile ${t.cls} rv`} style={t.delay ? { transitionDelay: t.delay } : undefined}>
+            <Link key={t.client} href={`/case-studies/${t.slug}`} className={`tile ${t.cls} rv`} style={t.delay ? { transitionDelay: t.delay } : undefined}>
               <div className="tile-frame">
                 <div className="tile-bar" aria-hidden="true"><b></b><b></b><b></b><span>{t.domain}</span></div>
                 <div className="tile-media">
@@ -74,7 +75,7 @@ export function SelectedWork({ images }: { images?: HomeImages } = {}) {
               <div className="tile-foot">
                 <span className="tag"><i></i><b>{t.metric}</b><span>{t.client}</span></span>
               </div>
-            </article>
+            </Link>
           ))}
         </div>
       </div>

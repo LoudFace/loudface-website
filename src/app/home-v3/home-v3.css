@@ -390,6 +390,7 @@
   box-shadow:0 1px 2px rgba(18,16,50,.10),0 30px 56px -22px rgba(18,16,50,.32);
   display:flex;flex-direction:column;transition:transform .45s var(--ease-out),box-shadow .45s var(--ease-out);}
 :where(.hpv3) .tile:hover{transform:translateY(-4px);box-shadow:0 2px 4px rgba(18,16,50,.12),0 40px 68px -24px rgba(18,16,50,.4);}
+:where(.hpv3) .tile:focus-visible{outline:2px solid var(--primary-500);outline-offset:4px;}
 /* the screenshot now sits inside the SAME browser-frame treatment as the hero cards:
    a white chrome bar (3 dots + url), 14px card radius, layered shadow + white inset ring.
    The brand --field breathes as a mat around the framed browser card — client identity + hero language. */
