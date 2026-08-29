@@ -3,7 +3,7 @@ import type { HomeImages } from './data';
 
 /**
  * SelectedWork — the "case grid / shelves" bento of client tiles. Each tile's
- * class (t-montblanc, t-sm t-hoxhunt, …) drives its bento span; data maps from
+ * class (t-montblanc, t-sm t-tm, …) drives its bento span; data maps from
  * TILES. Screenshots come from Sanity by slug (images prop) with a hardcoded
  * CDN fallback; metric strings + layout stay curated.
  */
@@ -25,9 +25,10 @@ type Tile = {
 
 const TILES: Tile[] = [
   { slug: 'montblanc', cls: 't-montblanc', domain: 'montblanc.com', asset: 'a9110ec997f7a351bb9b90347bef4abf6b6b02fc-3024x1890.jpg', crop: '?w=1600&h=1000&fit=crop&crop=top&fm=webp&q=82', w: 1600, h: 1000, alt: 'Montblanc microsite built by LoudFace', metric: '5+ microsite pages launched', client: 'Montblanc' },
-  { slug: 'liqid', cls: 't-liqid', domain: 'liqid.de', asset: '5f21404454406eee90732e4e1c8655e0c8c6013b-3024x3629.webp', crop: '?w=1280&h=1000&fit=crop&crop=top&fm=webp&q=82', w: 1280, h: 1000, alt: 'LIQID website built by LoudFace', metric: '100+ pages launched', client: 'LIQID', delay: '.08s' },
-  { slug: 'hoxhunt', cls: 't-sm t-hoxhunt', domain: 'hoxhunt.com', asset: '3ac92e2393c7a26dc96f737c27d7faf49fbe6243-1440x8455.jpg', crop: '?w=1280&h=800&fit=crop&crop=top&fm=webp&q=82', w: 1280, h: 800, alt: 'Hoxhunt website built by LoudFace', metric: '20+ pages', client: 'Hoxhunt' },
-  { slug: 'eraser', cls: 't-sm t-eraser', domain: 'eraser.io', asset: '2a7d29fdc9302c8482d70b73041e6c58ec9229a6-1440x1845.webp', crop: '?w=1280&h=800&fit=crop&crop=top&fm=webp&q=82', w: 1280, h: 800, alt: 'Eraser website built by LoudFace', metric: '6+ pages', client: 'Eraser', delay: '.08s' },
+  { slug: 'toku-ai-cited-pipeline', cls: 't-toku', domain: 'toku.com', asset: 'cafcfa6fadc9ea6d1d38391eda626fd12ff5e5a0-2880x1800.png', crop: '?w=1600&h=1000&fit=crop&crop=top&fm=webp&q=82', w: 1600, h: 1000, alt: 'Toku AI search visibility case study by LoudFace', metric: '0 → 97.8% AI visibility', client: 'Toku', delay: '.08s' },
+  { slug: 'genie-teacher-organic-growth', cls: 't-genie', domain: 'genieteacher.com', asset: '21db9f63b8c898d5ac57015bd2617156ad61091b-2880x1800.png', crop: '?w=1600&h=1000&fit=crop&crop=top&fm=webp&q=82', w: 1600, h: 1000, alt: 'Genie Teacher organic visibility case study by LoudFace', metric: '5x organic impressions', client: 'Genie Teacher', delay: '.16s' },
+  { slug: 'trademomentum-niche-aeo-organic-growth', cls: 't-sm t-tm', domain: 'trademomentum.org', asset: '3d31a25d5ec584328e198c4617f7e9fd7f3ccaed-2880x1800.png', crop: '?w=1280&h=800&fit=crop&crop=top&fm=webp&q=82', w: 1280, h: 800, alt: 'TradeMomentum organic growth case study by LoudFace', metric: '11.7x organic impressions', client: 'TradeMomentum' },
+  { slug: 'delshad-legal-content-engine', cls: 't-sm t-delshad', domain: 'delshadlegal.com', asset: 'dcf12e21516b5edbe76587b2b38710d17e2d431e-2880x1800.png', crop: '?w=1280&h=800&fit=crop&crop=top&fm=webp&q=82', w: 1280, h: 800, alt: 'Delshad Legal content engine case study by LoudFace', metric: '+54% Google clicks', client: 'Delshad Legal', delay: '.08s' },
   { slug: 'outbound-specialist', cls: 't-sm t-outbound', domain: 'outboundspecialist.com', asset: 'd90a9cec8351f259afd300dcbc51641ed9b40c3d-1440x1845.webp', crop: '?w=1280&h=800&fit=crop&crop=top&fm=webp&q=82', w: 1280, h: 800, alt: 'Outbound Specialist website built by LoudFace', metric: '$200K sales in 30 days', client: 'Outbound Specialist', delay: '.16s' },
 ];
 

@@ -186,7 +186,7 @@
 :where(.hpv3) .wcard{position:relative;background:var(--paper);border-radius:13px;overflow:hidden;margin-bottom:18px;
   box-shadow:0 2px 4px rgba(20,16,60,.20),0 34px 60px -22px rgba(15,10,50,.62),inset 0 0 0 1px rgba(255,255,255,.5);}
 :where(.hpv3) .wcard .shot{aspect-ratio:16/10;overflow:hidden;}
-:where(.hpv3) .wcard .shot img{width:100%;height:100%;object-fit:cover;object-position:top;display:block;}
+:where(.hpv3) .wcard .shot img{width:100%;height:100%;object-fit:cover;object-position:center;display:block;}
 /* result CAPTION docked across the card's foot on EVERY card. The composite carries
    the number as artwork; at hero scale that reads as texture, so this caption is what
    actually tells a visitor whose site it is and what the work returned. A gradient
@@ -399,8 +399,8 @@
 :where(.hpv3) .tile-bar b{width:7px;height:7px;border-radius:50%;background:var(--surface-200);flex:none;}
 :where(.hpv3) .tile-bar span{margin-left:8px;font-family:var(--font-sans);font-size:9px;letter-spacing:.05em;color:var(--surface-500);
   overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
-:where(.hpv3) .tile-media{overflow:hidden;}
-:where(.hpv3) .tile-media img{width:100%;height:100%;object-fit:cover;object-position:top;transition:transform .7s var(--ease-out);}
+:where(.hpv3) .tile-media{overflow:hidden;aspect-ratio:16/9;}
+:where(.hpv3) .tile-media img{width:100%;height:100%;object-fit:cover;object-position:center;transition:transform .7s var(--ease-out);}
 :where(.hpv3) .tile:hover .tile-media img{transform:scale(1.025);}
 /* ---- the ONE result-pill vocabulary, page-wide (mirrors the hero .rpill exactly) ---- */
 :where(.hpv3) .tag{display:inline-flex;align-items:center;gap:8px;white-space:nowrap;}
@@ -420,12 +420,12 @@
    (FlowNinja never repeats a hue across the grid; the field IS the identity, not a dark default).
    Every field carries a faint single-hue tonal wash rising from the lower-right corner. */
 :where(.hpv3) .tile{background-image:radial-gradient(130% 108% at 82% 118%, var(--field-hi) 0%, var(--field) 62%);}
-:where(.hpv3) .t-montblanc{--field:#122a52;--field-hi:#1d4488;--stick:#e0b95f;grid-column:span 7;}.t-montblanc .tile-media{height:352px;}
-:where(.hpv3) .t-liqid{--field:#0d3a44;--field-hi:#15606f;--stick:#5fd0dc;grid-column:span 5;}.t-liqid .tile-media{height:352px;}
-:where(.hpv3) .t-liqid .tile-media img{object-position:left top;}
-:where(.hpv3) .t-sm{grid-column:span 4;}.t-sm .tile-media{height:204px;}
-:where(.hpv3) .t-hoxhunt{--field:#3a1f86;--field-hi:#5a34c4;--stick:#c3aaff;}
-:where(.hpv3) .t-eraser{--field:#5a2a1c;--field-hi:#8a4326;--stick:#f2b28a;}
+:where(.hpv3) .t-montblanc{--field:#122a52;--field-hi:#1d4488;--stick:#e0b95f;grid-column:span 4;}
+:where(.hpv3) .t-toku{--field:#14297e;--field-hi:#2447cf;--stick:#93a9ff;grid-column:span 4;}
+:where(.hpv3) .t-genie{--field:#2b3ba8;--field-hi:#4d63e8;--stick:#b3c1ff;grid-column:span 4;}
+:where(.hpv3) .t-sm{grid-column:span 4;}
+:where(.hpv3) .t-tm{--field:#0d3d2f;--field-hi:#177a58;--stick:#6fe3b1;}
+:where(.hpv3) .t-delshad{--field:#4a1a1a;--field-hi:#8a2f2f;--stick:#f2a9a0;}
 :where(.hpv3) .t-outbound{--field:#08554b;--field-hi:#0e7c6d;--stick:#3fe6cc;}
 
 /* ---------- results : THE one saturated brand band — the "loud moment" (FlowNinja saturated field).
@@ -568,7 +568,7 @@
    lower-center — single hue only, NO glow/halo/neon). The client photo stays but tinted indigo so
    the whole panel reads as one indigo field rather than flat near-black. ---------- */
 :where(.hpv3) .cover{position:relative;background:var(--primary-950);overflow:hidden;}
-:where(.hpv3) .cover-img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:top;filter:grayscale(1) brightness(.7);opacity:.16;}
+:where(.hpv3) .cover-img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center;filter:grayscale(1) brightness(.7);opacity:.16;}
 /* indigo veil + single-hue tonal horizon (radial from lower-center, indigo-800 → indigo-950) */
 :where(.hpv3) .cover-veil{position:absolute;inset:0;background:
   radial-gradient(120% 78% at 50% 116%, var(--primary-800) 0%, var(--primary-900) 34%, var(--primary-950) 68%),
@@ -586,7 +586,7 @@
 :where(.hpv3) .cover-card .bar b{width:7px;height:7px;border-radius:50%;background:var(--surface-200);}
 :where(.hpv3) .cover-card .bar span{margin-left:8px;font-family:var(--font-sans);font-size:9px;letter-spacing:.05em;color:var(--surface-500);}
 :where(.hpv3) .cover-card .shot{height:238px;overflow:hidden;}
-:where(.hpv3) .cover-card .shot img{width:100%;height:100%;object-fit:cover;object-position:top;display:block;}
+:where(.hpv3) .cover-card .shot img{width:100%;height:100%;object-fit:cover;object-position:center;display:block;}
 :where(.hpv3) .cover-obj .rpill{left:14px;bottom:14px;}
 :where(.hpv3) .cover-mid h2,:where(.hpv3) .cover-mid p,:where(.hpv3) .cover-cta{position:relative;z-index:1;}
 @media (min-width:1081px){
@@ -662,8 +662,7 @@
   :where(.hpv3) .steps::before,:where(.hpv3) .steps::after{display:none;}
   :where(.hpv3) .node{display:none;}
   :where(.hpv3) .figgrid{grid-template-columns:1fr;gap:48px;}
-  :where(.hpv3) .t-montblanc,:where(.hpv3) .t-liqid{grid-column:span 12;}
-  :where(.hpv3) .t-montblanc .tile-media,:where(.hpv3) .t-liqid .tile-media{height:340px;}
+  :where(.hpv3) .t-montblanc,:where(.hpv3) .t-toku,:where(.hpv3) .t-genie{grid-column:span 12;}
   :where(.hpv3) .t-sm{grid-column:span 6;}
   :where(.hpv3) .r-num,:where(.hpv3) .r-num.narrow,:where(.hpv3) .r-quote,:where(.hpv3) .r-quote.wide{grid-column:span 6;}
   :where(.hpv3) .cover-obj{display:none;}
@@ -727,7 +726,6 @@
   :where(.hpv3) .sec-head{flex-direction:column;align-items:flex-start;gap:20px;margin-bottom:36px;}
   :where(.hpv3) .work .sec-head{padding-bottom:28px;}
   :where(.hpv3) .t-sm{grid-column:span 12;}
-  :where(.hpv3) .t-sm .tile-media{height:220px;}
   :where(.hpv3) .r-num,:where(.hpv3) .r-num.narrow,:where(.hpv3) .r-quote,:where(.hpv3) .r-quote.wide{grid-column:span 12;}
   :where(.hpv3) .r-tile{padding:28px 24px 26px;}
   :where(.hpv3) .tile-foot{flex-wrap:wrap;row-gap:10px;padding-bottom:15px;}
