@@ -20,28 +20,28 @@
   "dropdowns": {
     "services": {
       "label": "Services",
-      "description": "Everything you need to design, build, and grow in Webflow.",
+      "description": "GEO, SEO, AEO, content, conversion, and delivery work for B2B SaaS growth.",
       "items": [
         {
-          "icon": "/images/Frame-1321316759.svg",
-          "iconAlt": "Webflow Development icon",
-          "title": "Webflow Development",
-          "description": "Scalable, AI-enhanced Webflow builds optimized for visibility and performance.",
-          "href": "/services/webflow"
+          "icon": "/images/growth-autopilot-icon.svg",
+          "iconAlt": "GEO icon",
+          "title": "Generative Engine Optimization",
+          "description": "Get your brand cited and recommended in AI answers.",
+          "href": "/services/geo-agency"
         },
         {
           "icon": "/images/stair-group.svg",
           "iconAlt": "SEO/AEO icon",
           "title": "SEO/AEO",
-          "description": "Visibility strategies that future-proof your search performance.",
+          "description": "Visibility strategies for Google and AI search.",
           "href": "/services/seo-aeo"
         },
         {
-          "icon": "/images/Frame-1321316760.svg",
-          "iconAlt": "UX/UI Design icon",
-          "title": "UX/UI Design",
-          "description": "Conversion-focused design systems built for CRO and search.",
-          "href": "/services/ux-ui-design"
+          "icon": "/images/stair-group.svg",
+          "iconAlt": "Organic Growth icon",
+          "title": "Organic Growth Program",
+          "description": "GEO, SEO, AEO, content, and conversion tied to customers.",
+          "href": "/services/organic-growth"
         },
         {
           "icon": "/images/Frame-1321316762-1.svg",
@@ -63,6 +63,20 @@
           "title": "Growth Autopilot",
           "description": "SEO, AEO, and CRO as one integrated system for B2B SaaS.",
           "href": "/services/growth-autopilot"
+        },
+        {
+          "icon": "/images/Frame-1321316759.svg",
+          "iconAlt": "Webflow Development icon",
+          "title": "Webflow Development",
+          "description": "Scalable, AI-enhanced Webflow builds optimized for visibility and performance.",
+          "href": "/services/webflow"
+        },
+        {
+          "icon": "/images/Frame-1321316760.svg",
+          "iconAlt": "UX/UI Design icon",
+          "title": "UX/UI Design",
+          "description": "Conversion-focused design systems built for CRO and search.",
+          "href": "/services/ux-ui-design"
         }
       ]
     },

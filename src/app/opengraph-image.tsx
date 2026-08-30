@@ -6,7 +6,7 @@ import { ImageResponse } from 'next/og';
 // request). On Node it's generated once and cached ~31 days.
 // Static content — regenerate at most once every ~31 days instead of per request.
 export const revalidate = 2678400;
-export const alt = 'LoudFace - B2B SaaS Websites That Convert';
+export const alt = 'LoudFace - AI-Native B2B SaaS Organic Growth';
 export const size = { width: 1200, height: 630 };
 export const contentType = 'image/png';
 
@@ -44,7 +44,7 @@ export default async function Image() {
             maxWidth: '80%',
           }}
         >
-          B2B SaaS Websites That Convert
+          AI-Native Organic Growth for B2B SaaS
         </div>
         <div
           style={{
@@ -55,7 +55,7 @@ export default async function Image() {
             lineHeight: 1.5,
           }}
         >
-          Webflow Development, SEO/AEO & CRO for Series A+ SaaS Companies
+          GEO, SEO, AEO, content, and conversion across your stack
         </div>
         <div
           style={{

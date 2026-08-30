@@ -17,12 +17,12 @@ const FAQS = [
     open: true,
   },
   {
-    q: 'Why Webflow instead of a custom-coded site?',
-    a: 'Speed and independence. Webflow lets us ship a production-quality site in weeks instead of months, and your marketing team can update pages, publish content, and launch campaigns without filing engineering tickets. For most B2B SaaS companies under $100M ARR, a custom-coded marketing site is overkill, and the maintenance cost chips away at budget every quarter.',
+    q: 'How do you choose the delivery stack?',
+    a: 'We start with the growth program, not a platform. Webflow is one delivery option when it fits the current site, team, and scope. We use another stack when it serves discovery, conversion, or operations better.',
   },
   {
-    q: 'Do we have to sign up for growth services, or can we just get a website?',
-    a: 'You can start with a website build only. Most of our clients do. About 70% of them add SEO and CRO within the first three months after launch, because by then they’ve seen the site perform and want to push it further. But there’s no obligation and no bait-and-switch.',
+    q: 'Can we start with one service?',
+    a: 'Yes. You can start with GEO, SEO, AEO, content, conversion, or a defined implementation project. We recommend the first scope after the audit. You can add work later when it supports the result.',
   },
   {
     q: 'How long does a website project take?',
@@ -34,7 +34,7 @@ const FAQS = [
   },
   {
     q: 'We already have a website. Can you optimize it without rebuilding?',
-    a: 'Sometimes. If your current site is on Webflow or a platform we can work with efficiently, we can run SEO and CRO on what you have. If the site itself is the bottleneck — slow, hard to update, poorly structured for search — we’ll tell you that honestly. We won’t spend six months optimizing a site that needs to be rebuilt.',
+    a: 'Sometimes. We can run SEO, AEO, and CRO on a stack we can work with efficiently. If the site is the bottleneck because it is slow, hard to update, or poorly structured for search, we will tell you. Then we scope only the delivery work that removes the constraint.',
   },
 ];
 

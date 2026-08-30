@@ -6,7 +6,7 @@
 const FAQS: { q: string; a: string; open?: boolean }[] = [
   {
     q: 'What services do you offer?',
-    a: 'We specialize in full-service digital marketing, with a focus on Webflow development, SEO, and conversion rate optimization. Our expertise includes custom website design and development, comprehensive SEO strategies, landing page optimization, and ongoing marketing consultation.',
+    a: 'We run GEO, SEO, AEO, content, and conversion programs for B2B SaaS companies. We add design and implementation work across the current stack when it removes a discovery or conversion constraint.',
     open: true,
   },
   {
@@ -14,8 +14,8 @@ const FAQS: { q: string; a: string; open?: boolean }[] = [
     a: 'We primarily work with B2B companies looking to improve their digital presence and conversion rates. Our clients range from funded startups to established enterprises across various industries including SaaS, professional services, and technology.',
   },
   {
-    q: 'Why do you specialize in Webflow?',
-    a: 'Webflow offers the perfect balance of design flexibility and development efficiency. It allows us to create custom, high-performance websites without the limitations of traditional CMS platforms, while still giving clients the ability to manage their content easily.',
+    q: 'How does Webflow fit into your work?',
+    a: 'Webflow is an optional delivery capability. We use it for builds and migrations when it fits the client stack and scope. The organic growth program comes first.',
   },
   {
     q: 'Where is LoudFace based?',

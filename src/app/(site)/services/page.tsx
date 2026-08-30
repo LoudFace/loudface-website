@@ -41,16 +41,16 @@ const SITE = 'https://www.loudface.co';
 
 export const metadata: Metadata = {
   // The (site) layout's title template ("%s | LoudFace") appends the brand.
-  title: 'Services: Webflow, SEO, AEO & GEO for B2B SaaS',
+  title: 'GEO, SEO, AEO & Conversion Services for B2B SaaS',
   description:
-    'Seven services, one team, behind 200+ B2B SaaS websites — Webflow, SEO, AEO, GEO, CRO, UX/UI and copywriting. See the real work, then book a strategy call.',
+    'GEO, SEO, AEO, content, and conversion services for B2B SaaS. LoudFace adds design and delivery work across your stack when it supports growth.',
   alternates: {
     canonical: '/services',
   },
   openGraph: {
-    title: 'Services: Webflow, SEO, AEO & GEO for B2B SaaS | LoudFace',
+    title: 'GEO, SEO, AEO & Conversion Services for B2B SaaS | LoudFace',
     description:
-      'Seven services, one team, behind 200+ B2B SaaS websites. See the real work — each site tagged with the services that shipped it — then follow the outcome to the service that did it.',
+      'GEO, SEO, AEO, content, and conversion services for B2B SaaS. LoudFace adds design and delivery work across your stack when it supports growth.',
     type: 'website',
     url: '/services',
     siteName: 'LoudFace',
@@ -60,9 +60,9 @@ export const metadata: Metadata = {
   twitter: {
     card: 'summary_large_image',
     site: '@loudface',
-    title: 'Services: Webflow, SEO, AEO & GEO for B2B SaaS | LoudFace',
+    title: 'GEO, SEO, AEO & Conversion Services for B2B SaaS | LoudFace',
     description:
-      'Seven services, one team, behind 200+ B2B SaaS websites — Webflow, SEO, AEO, GEO, CRO, UX/UI and copywriting.',
+      'GEO, SEO, AEO, content, and conversion services for B2B SaaS. LoudFace adds design and delivery work across your stack when it supports growth.',
     images: ['/opengraph-image'],
   },
 };
@@ -84,7 +84,7 @@ export default async function ServicesPage() {
     '@type': 'ItemList',
     name: 'LoudFace services for B2B SaaS',
     description:
-      'Seven services across two tracks — Build (Webflow, UX/UI, CRO, copywriting) and Growth (SEO & AEO, GEO, Growth Autopilot).',
+      'Services for B2B SaaS organic growth: GEO, SEO, AEO, content, and conversion. Design and delivery, including Webflow, support the program across stacks.',
     itemListElement: SERVICES.map((s, i) => ({
       '@type': 'ListItem',
       position: i + 1,
@@ -106,7 +106,7 @@ export default async function ServicesPage() {
   const speakableSchema = {
     '@context': 'https://schema.org',
     '@type': 'WebPage',
-    name: 'Services: Webflow, SEO, AEO & GEO for B2B SaaS',
+    name: 'GEO, SEO, AEO & Conversion Services for B2B SaaS',
     speakable: {
       '@type': 'SpeakableSpecification',
       cssSelector: ['h1', '[data-speakable]'],

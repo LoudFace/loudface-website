@@ -268,7 +268,7 @@ export const SERVICE_CONFIGS: Record<string, ServiceConfig> = {
         </>
       ),
       lede:
-        'We’re not generalists who happen to use Webflow. It’s our primary platform — we’ve built our entire practice around mastering it, from funded startups to established enterprises.',
+        'Webflow is a delivery capability we have deep experience with. We use that expertise for B2B SaaS builds and migrations when it fits the client stack and scope.',
       hero: { num: '288%', label: 'Best conversion increase from a LoudFace build', src: DIMER_SRC },
       extra: { num: '2h', label: 'Typical response time in working hours' },
     },

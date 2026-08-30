@@ -24,7 +24,7 @@ export interface ServicesFaqItem {
 export const SERVICES_FAQ: ServicesFaqItem[] = [
   {
     q: 'Can I hire you for just one service?',
-    a: 'Yes. Most engagements start on one track — a Webflow build, or the SEO/AEO + GEO program — and add the other whenever it makes sense. Because it’s the same team either way, nothing gets re-briefed when you scale up.',
+    a: 'Yes. An engagement can start with GEO, SEO, AEO, content, conversion, or stack-specific delivery. We add work when it supports the result. The same team keeps the context as the scope grows.',
   },
   {
     q: 'What’s the real difference between SEO/AEO and GEO?',
@@ -42,12 +42,12 @@ export const SERVICES_FAQ: ServicesFaqItem[] = [
   },
   {
     q: 'How do we start?',
-    a: 'A 30-minute strategy call. We look at your site together and tell you which of the seven services it actually needs — and which to skip — and where they’d move the needle first. No pitch deck.',
+    a: 'A 30-minute strategy call. We look at your site together and tell you which of the eight services it actually needs, which to skip, and where they would move the needle first. No pitch deck.',
   },
 ];
 
 /**
- * The seven services, in the two-track order they appear in the directory.
+ * The eight services, in the buyer-outcome order they appear in the directory.
  * Single source for the ServicesIndex directory rows AND the ItemList JSON-LD.
  */
 export interface ServiceEntry {
@@ -58,12 +58,12 @@ export interface ServiceEntry {
 }
 
 export const SERVICES: ServiceEntry[] = [
-  { slug: 'webflow', name: 'Webflow design & development', blurb: 'Scalable builds optimized for performance', track: 'build' },
-  { slug: 'ux-ui-design', name: 'UX/UI design', blurb: 'Conversion-focused design systems', track: 'build' },
-  { slug: 'cro', name: 'Conversion rate optimization', blurb: 'Data-driven optimization that converts', track: 'build' },
-  { slug: 'copywriting', name: 'Copywriting', blurb: 'Persuasive content that connects', track: 'build' },
+  { slug: 'geo-agency', name: 'Generative Engine Optimization', blurb: 'Get cited by ChatGPT, Perplexity & AI Overviews', track: 'grow' },
   { slug: 'seo-aeo', name: 'SEO & AEO', blurb: 'Visibility across search and AI engines', track: 'grow' },
   { slug: 'organic-growth', name: 'Organic growth program', blurb: 'The full category program: search, answer engines, content, conversion', track: 'grow' },
-  { slug: 'geo-agency', name: 'Generative Engine Optimization', blurb: 'Get cited by ChatGPT, Perplexity & AI Overviews', track: 'grow' },
+  { slug: 'cro', name: 'Conversion rate optimization', blurb: 'Data-driven optimization that converts', track: 'build' },
   { slug: 'growth-autopilot', name: 'Growth Autopilot', blurb: 'SEO, AEO & CRO as one integrated system', track: 'grow' },
+  { slug: 'copywriting', name: 'Copywriting', blurb: 'Persuasive content that connects', track: 'build' },
+  { slug: 'ux-ui-design', name: 'UX/UI design', blurb: 'Conversion-focused design systems', track: 'build' },
+  { slug: 'webflow', name: 'Webflow design & development', blurb: 'Scalable builds optimized for performance', track: 'build' },
 ];

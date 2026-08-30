@@ -22,12 +22,11 @@ export function HeroAbout({ team }: { team: TeamPerson[] }) {
             <em>since 2019</em>
           </span>
           <h1 className="rv" data-speakable style={{ ['--d' as string]: '.06s' }}>
-            The team behind <span className="soft">200+ B2B SaaS websites.</span>
+            The team behind <span className="soft">B2B SaaS organic growth.</span>
           </h1>
           <p className="hero-sub rv" data-speakable style={{ ['--d' as string]: '.12s' }}>
-            We build the site on Webflow: positioning, copy, design, code. Then we run the SEO,
-            conversion, and AI-search work that grows it. {team.length} of us, fully remote, based in
-            Dubai, serving global SaaS teams.
+            We get companies discovered across Google and AI search, then turn that visibility into customers.
+            We run GEO, SEO, AEO, content, and conversion. {team.length} of us work remotely from Dubai for global SaaS teams.
           </p>
           <div className="hero-cta rv" style={{ ['--d' as string]: '.18s' }}>
             <a className="btn btn-white btn-lg" href="#book" data-cal-trigger="">

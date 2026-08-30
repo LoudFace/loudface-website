@@ -110,7 +110,7 @@ export default async function TeamMemberPage({ params }: PageProps) {
     },
     knowsAbout: member.skills?.length
       ? member.skills
-      : ['Web Design', 'Webflow Development', 'SEO', 'B2B SaaS'],
+      : ['Generative Engine Optimization', 'SEO', 'Conversion Rate Optimization', 'B2B SaaS'],
   };
 
   const profilePageSchema = {

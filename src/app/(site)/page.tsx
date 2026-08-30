@@ -25,28 +25,28 @@ import { CONSENT_COOKIE, isTrackingAllowedServer, POSTHOG_DISTINCT_ID_COOKIE } f
 import { getHomepageHeroVariant } from '@/lib/posthog-server';
 
 export const metadata: Metadata = {
-  title: 'B2B SaaS Web Design, SEO & Growth Agency',
+  title: 'AI-Native B2B SaaS Organic Growth Agency',
   description:
-    'Design, development, and growth for Series A+ SaaS companies. We ship your website on Webflow in weeks, then drive traffic and conversions with SEO and CRO.',
+    'LoudFace gets B2B SaaS companies discovered across Google and AI search, then turns visibility into customers with GEO, SEO, AEO, content, and conversion.',
   alternates: {
     canonical: '/',
   },
   openGraph: {
-    title: 'B2B SaaS Web Design, SEO & Growth Agency | LoudFace',
+    title: 'AI-Native B2B SaaS Organic Growth Agency | LoudFace',
     description:
-      'Design, development, and growth for Series A+ SaaS companies. We ship your website on Webflow in weeks, then drive traffic and conversions with SEO and CRO.',
+      'LoudFace gets B2B SaaS companies discovered across Google and AI search, then turns visibility into customers with GEO, SEO, AEO, content, and conversion.',
     type: 'website',
     url: '/',
     siteName: 'LoudFace',
     locale: 'en_US',
-    images: [{ url: '/opengraph-image', width: 1200, height: 630, alt: 'LoudFace - B2B SaaS Growth Agency' }],
+    images: [{ url: '/opengraph-image', width: 1200, height: 630, alt: 'LoudFace - AI-Native B2B SaaS Organic Growth' }],
   },
   twitter: {
     card: 'summary_large_image',
     site: '@loudface',
-    title: 'B2B SaaS Web Design, SEO & Growth Agency | LoudFace',
+    title: 'AI-Native B2B SaaS Organic Growth Agency | LoudFace',
     description:
-      'Design, development, and growth for Series A+ SaaS companies. We ship your website on Webflow in weeks, then drive traffic and conversions with SEO and CRO.',
+      'LoudFace gets B2B SaaS companies discovered across Google and AI search, then turns visibility into customers with GEO, SEO, AEO, content, and conversion.',
     images: ['/opengraph-image'],
   },
 };
@@ -54,7 +54,7 @@ export const metadata: Metadata = {
 const speakableSchema = {
   '@context': 'https://schema.org',
   '@type': 'WebPage',
-  name: 'LoudFace - B2B SaaS Web Design, SEO & Growth Agency',
+  name: 'LoudFace - AI-Native B2B SaaS Organic Growth Agency',
   speakable: {
     '@type': 'SpeakableSpecification',
     cssSelector: ['h1', '[data-speakable]'],

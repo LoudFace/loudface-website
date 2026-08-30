@@ -7,7 +7,6 @@ import { VisualEditing } from "next-sanity/visual-editing";
 import { CalHandler } from "@/components/CalHandler";
 import { SiteHeader, SiteFooter } from "@/components/SiteChrome";
 import { Footer } from "@/components/Footer";
-import { asset } from "@/lib/assets";
 import { fetchFooterData } from "@/lib/cms-data";
 import { PostHogProvider } from "@/components/PostHogProvider";
 import { ConsentManager } from "@/components/ConsentManager";
@@ -17,7 +16,7 @@ import { getNavContent } from "@/lib/content-utils";
 
 /**
  * (site) Layout
- * Holds the public website chrome: Header, Footer, Webflow badge, Cal.com
+ * Holds the public website chrome: Header, Footer, Cal.com
  * booking, and the consent-managed trackers (PostHog, GTM, RB2B — all gated
  * behind ConsentManager). Anything that belongs to "the marketing site"
  * lives here.
@@ -97,29 +96,6 @@ export default async function SiteLayout({
         <SiteFooter>
           <Footer caseStudies={footerData?.caseStudies} blogPosts={footerData?.blogPosts} />
         </SiteFooter>
-
-        {/* Webflow Enterprise Partner Badge — site-wide.
-            lf-yields-to-consent: decorative chrome, so it steps aside entirely
-            while the consent bar owns the bottom band (see the bottom-band
-            contract in globals.css) and returns once consent is resolved.
-            It yields rather than lifting because lifting it by the bar's height
-            lands it straight on the hero CTA on short viewports. */}
-        <a
-          href="https://webflow.com/@loudface"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="lf-yields-to-consent fixed bottom-6 right-6 z-50 transition-opacity hover:opacity-80"
-          aria-label="Webflow Enterprise Partner"
-        >
-          <img
-            loading="lazy"
-            src={asset('/images/Enterprise-Blue-Badge.webp')}
-            alt="Webflow Enterprise Partner Badge"
-            width="660"
-            height="85"
-            className="w-[11.4rem] h-auto drop-shadow-lg"
-          />
-        </a>
 
         {/* GTM + RB2B live in ConsentManager below — consent-gated AND still
             deferred to first interaction, so the TBT-near-zero behavior the

@@ -94,9 +94,9 @@ export const PRICING_FAQ: { q: string; a: string; aHtml?: string }[] = [
   },
   {
     q: "What's the difference between Build and Growth?",
-    a: 'Build focuses on your Webflow site: launches, redesigns, landing pages, conversion optimization, and continuous UI iteration. Growth focuses on organic visibility: SEO, AEO (AI search optimization), content systems, and distribution experiments. At Dual and above, you run both simultaneously.',
+    a: 'Build focuses on conversion and implementation across your stack: launches, redesigns, landing pages, and continuous UI iteration. Webflow is one delivery option. Growth focuses on organic visibility through GEO, SEO, AEO, and content. At Dual and above, you run both simultaneously.',
     aHtml:
-      '<strong>Build</strong> focuses on your Webflow site: launches, redesigns, landing pages, conversion optimization, and continuous UI iteration. <strong>Growth</strong> focuses on organic visibility: SEO, AEO (AI search optimization), content systems, and distribution experiments. At Dual and above, you run both simultaneously.',
+      '<strong>Build</strong> focuses on conversion and implementation across your stack: launches, redesigns, landing pages, and continuous UI iteration. Webflow is one delivery option. <strong>Growth</strong> focuses on organic visibility through GEO, SEO, AEO, and content. At Dual and above, you run both simultaneously.',
   },
   {
     q: 'What does "Autopilot" actually mean?',

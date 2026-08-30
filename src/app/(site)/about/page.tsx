@@ -36,16 +36,16 @@ import { AboutV3Scripts } from '../../about-v3/Scripts';
 export const metadata: Metadata = {
   // No pipe + brand suffix here: the (site) layout's title template ("%s | LoudFace")
   // already appends " | LoudFace" — adding it again would double up the brand name.
-  title: 'About LoudFace — The Team Behind 200+ B2B SaaS Websites',
+  title: 'About LoudFace — AI-Native B2B SaaS Organic Growth',
   description:
-    'LoudFace is the team behind 200+ B2B SaaS websites. We build on Webflow, then run the SEO, AEO, and CRO that grows it — book a free strategy call.',
+    'Meet the AI-native B2B SaaS organic growth agency that gets companies discovered across Google and AI search, then turns visibility into customers.',
   alternates: {
     canonical: '/about',
   },
   openGraph: {
-    title: 'About LoudFace | Meet the Team Behind Your Growth',
+    title: 'About LoudFace | AI-Native B2B SaaS Organic Growth',
     description:
-      'The team behind 200+ B2B SaaS websites. We build on Webflow, then run the SEO, conversion, and AI-search work that grows it. Webflow Enterprise Partners.',
+      'Meet the AI-native B2B SaaS organic growth agency that runs GEO, SEO, AEO, content, and conversion across client stacks.',
     type: 'website',
     url: '/about',
     siteName: 'LoudFace',
@@ -55,9 +55,9 @@ export const metadata: Metadata = {
   twitter: {
     card: 'summary_large_image',
     site: '@loudface',
-    title: 'About LoudFace | Meet the Team Behind Your Growth',
+    title: 'About LoudFace | AI-Native B2B SaaS Organic Growth',
     description:
-      'The team behind 200+ B2B SaaS websites. We build on Webflow, then run the SEO, conversion, and AI-search work that grows it. Webflow Enterprise Partners.',
+      'Meet the AI-native B2B SaaS organic growth agency that runs GEO, SEO, AEO, content, and conversion across client stacks.',
     images: ['/opengraph-image'],
   },
 };
@@ -90,14 +90,14 @@ export default async function AboutPage() {
     '@type': 'AboutPage',
     name: 'About LoudFace',
     description:
-      'Learn about LoudFace, our mission, and the passionate team behind your next successful web project.',
+      'Meet LoudFace, an AI-native B2B SaaS organic growth agency that gets companies discovered across Google and AI search, then turns visibility into customers.',
     url: 'https://www.loudface.co/about',
     mainEntity: {
       '@type': 'Organization',
       name: 'LoudFace',
       url: 'https://www.loudface.co',
       description:
-        'B2B SaaS web design, SEO, AEO, and growth agency. Webflow Enterprise Partners with 7+ years of experience.',
+        'AI-native B2B SaaS organic growth agency. GEO, SEO, AEO, content, and conversion lead the work. Webflow and other stacks support the program.',
       foundingDate: '2019',
       address: {
         '@type': 'PostalAddress',

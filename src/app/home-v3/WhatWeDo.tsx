@@ -4,21 +4,21 @@
  */
 const PHASES = [
   {
-    kind: 'build',
-    phase: 'Phase one',
-    word: 'Build',
-    body: 'We design and build B2B SaaS sites on Webflow — positioning, copy, UX, UI, production code. You get a site your marketing team can run without filing a single engineering ticket, built to convert the traffic we’re about to send it.',
-    detail: 'Shipped in weeks, not quarters. Your team gets full CMS control from day one.',
-    caps: ['UX/UI Design', 'Webflow Development', 'Conversion Copywriting', 'CMS Architecture', 'Design System Setup'],
+    kind: 'grow',
+    phase: 'Core program',
+    word: 'Grow',
+    body: 'We run GEO, SEO, AEO, content, and conversion work to get B2B SaaS companies discovered across Google and AI search. We turn that visibility into customers.',
+    detail: 'The program starts with the surface that has the clearest route to customers.',
+    caps: ['Generative Engine Optimization', 'Technical SEO', 'AI Search Optimization (AEO)', 'Content Strategy', 'Conversion Rate Optimization'],
     delay: undefined as string | undefined,
   },
   {
-    kind: 'grow',
-    phase: 'Phase two',
-    word: 'Grow',
-    body: 'After launch, we stay. SEO and AEO bring in traffic from search engines and AI answers; CRO makes sure that traffic converts. You get a team that knows the site inside out — because we’re the ones who built it.',
-    detail: 'No onboarding lag. No “getting up to speed.” We’re already there.',
-    caps: ['Technical SEO', 'AI Search Optimization (AEO)', 'Content Strategy', 'Conversion Rate Optimization', 'Performance Analytics'],
+    kind: 'build',
+    phase: 'When needed',
+    word: 'Deliver',
+    body: 'When the audit finds a conversion or implementation gap, we fix it across your stack. That can mean positioning, copy, UX/UI, Webflow, or another delivery path.',
+    detail: 'Delivery work supports the organic growth program. It does not define it.',
+    caps: ['Conversion Copywriting', 'UX/UI Design', 'Webflow Development', 'CMS Architecture', 'Design System Setup'],
     delay: '.08s',
   },
 ];
@@ -30,10 +30,10 @@ export function WhatWeDo() {
         <div className="sec-head rv">
           <div>
             <span className="eyebrow"><i aria-hidden="true"></i>What we do</span>
-            <h2 className="sec">One partner from launch to growth</h2>
+            <h2 className="sec">One growth system, across your stack</h2>
             <p className="sub">
-              Most agencies hand you a website and move on. Most SEO shops inherit someone else’s mess and work around
-              it. We do both — so the growth work isn’t fighting the build, it’s built on it.
+              Organic growth and conversion work together. We start with the highest-impact surface, then fix what
+              blocks discovery or customers.
             </p>
           </div>
         </div>
@@ -52,7 +52,7 @@ export function WhatWeDo() {
         </div>
         <div className="tconnect rv" style={{ transitionDelay: '.14s' }}>
           <span className="rule" aria-hidden="true"></span>
-          <p>Most of our clients start with a build. Within three months, they ask us to handle growth too. That’s by design.</p>
+          <p>The audit sets the starting point. It may be visibility, content, conversion, or implementation.</p>
         </div>
       </div>
     </section>

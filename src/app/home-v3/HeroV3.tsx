@@ -56,14 +56,13 @@ const HERO_COPY: Record<HeroVariant, {
   sub: ReactNode;
 }> = {
   control: {
-    eyebrowLabel: 'Webflow Enterprise Partner',
-    eyebrowNote: '4+ years',
-    headline: <>Sites that convert.<br />Traffic that <span className="soft">compounds.</span></>,
+    eyebrowLabel: 'AI-native organic growth',
+    eyebrowNote: 'B2B SaaS',
+    headline: <>Get discovered across Google and AI search. Turn visibility into customers.</>,
     sub: (
       <>
-        We&rsquo;re the team behind 200+ B2B SaaS websites. We build the site on Webflow &mdash; positioning, copy,
-        design, code &mdash; then run the SEO, conversion, and AI-search work that grows it. Same team, first draft
-        to compounding traffic.
+        LoudFace is an AI-native B2B SaaS organic growth agency. We run GEO, SEO, AEO, content, and conversion to
+        get companies discovered across Google and AI search. We implement across your stack when the program needs it.
       </>
     ),
   },
@@ -73,9 +72,8 @@ const HERO_COPY: Record<HeroVariant, {
     headline: <>Your buyers ask AI first.<br />Make sure it <span className="soft">names you.</span></>,
     sub: (
       <>
-        We rebuild B2B SaaS websites to win the answer, not just the ranking. Toku went from invisible to cited in
-        97.8% of AI answers on its category&rsquo;s top prompt. Same team does the positioning, the site, and the
-        growth work after launch.
+        LoudFace runs GEO, SEO, AEO, content, and conversion for B2B SaaS companies. Toku reached 97.8% visibility
+        on its category&rsquo;s top AI-search prompt. We add delivery work across your stack when it supports the program.
       </>
     ),
   },

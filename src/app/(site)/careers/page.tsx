@@ -41,15 +41,15 @@ const SITE_URL = 'https://www.loudface.co';
 const PAGE_URL = `${SITE_URL}/careers`;
 
 export const metadata: Metadata = {
-  title: 'Careers — Remote Design, Webflow & SEO Roles',
+  title: 'Careers — Remote Growth, Content & Delivery Roles',
   // 120-160 chars (MIN_META_DESCRIPTION is 120; Ahrefs flags both ends).
   description:
-    'Careers at LoudFace. A small remote team building and growing B2B SaaS websites for brands like Montblanc and Radisson. See what we hire for.',
+    'Careers at LoudFace. Join a remote team that helps B2B SaaS companies get discovered across Google and AI search, then turn visibility into customers.',
   alternates: { canonical: '/careers' },
   openGraph: {
     title: 'Careers at LoudFace',
     description:
-      'A small remote team building and growing B2B SaaS websites. See what we hire for, and how hiring here actually works.',
+      'A remote team that runs organic growth, content, conversion, and delivery work for B2B SaaS. See what we hire for and how hiring works.',
     type: 'website',
     url: '/careers',
     siteName: 'LoudFace',
@@ -61,7 +61,7 @@ export const metadata: Metadata = {
     site: '@meetloudface',
     title: 'Careers at LoudFace',
     description:
-      'A small remote team building and growing B2B SaaS websites. See what we hire for, and how hiring here actually works.',
+      'A remote team that runs organic growth, content, conversion, and delivery work for B2B SaaS. See what we hire for and how hiring works.',
     images: ['/opengraph-image'],
   },
 };

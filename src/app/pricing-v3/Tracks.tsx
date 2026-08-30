@@ -27,15 +27,15 @@ export function Tracks() {
             <h3>Build</h3>
             <p className="tagline">Ship and optimize your site</p>
             <p>
-              Webflow design, development, landing pages, conversion optimization, and continuous UI
-              iteration. Everything that makes your website perform.
+              Conversion optimization, landing pages, UX/UI, and implementation across your stack. Webflow is one
+              delivery option when it fits the work.
             </p>
             <div className="tk-tags">
-              <span className="tk-tag">Webflow design</span>
-              <span className="tk-tag">Development</span>
-              <span className="tk-tag">Landing pages</span>
               <span className="tk-tag">CRO</span>
+              <span className="tk-tag">Landing pages</span>
               <span className="tk-tag">UI iteration</span>
+              <span className="tk-tag">Webflow</span>
+              <span className="tk-tag">Development</span>
             </div>
             <div className="tk-shot" aria-hidden="true">
               <Image

@@ -61,7 +61,7 @@ export function Story({ team }: { team: TeamPerson[] }) {
             className="a-plate a-s-media rv"
             style={{ ['--d' as string]: '.1s' }}
             role="img"
-            aria-label="Diagram: the leverage loop — a Webflow site feeds SEO and AI-search traffic, which feeds the conversion pipeline, which compounds back into the site."
+            aria-label="Diagram: the leverage loop — a growth surface feeds SEO and AI-search traffic, which feeds the conversion pipeline, which compounds back into the site."
           >
             <span className="a-fig-id">FIG.001</span>
             <span className="a-fig-meta">[ THE LEVERAGE LOOP ]</span>
@@ -80,8 +80,8 @@ export function Story({ team }: { team: TeamPerson[] }) {
                   <path d="M0,0.6 L7.4,4 L0,7.4 Z" fill="var(--primary-600)" />
                 </marker>
               </defs>
-              <text x="52" y="66" className="tk">The site</text>
-              <text x="52" y="80" className="t9">Built on Webflow</text>
+              <text x="52" y="66" className="tk">Growth surface</text>
+              <text x="52" y="80" className="t9">Built for your stack</text>
               <rect x="42" y="96" width="166" height="118" rx="1" fill="var(--primary-50)" stroke="var(--primary-600)" strokeWidth="1.5" />
               <rect x="42" y="96" width="166" height="18" rx="1" fill="var(--primary-100)" stroke="var(--primary-600)" strokeWidth="1" />
               <circle cx="52" cy="105" r="2" fill="var(--primary-400)" />

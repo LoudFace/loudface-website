@@ -352,7 +352,7 @@ export function SeoForPageV3({ view }: { view: SeoForView }) {
                   height={85}
                   loading="lazy"
                 />
-                <span className="pl">Webflow Enterprise Partner — our primary platform</span>
+                <span className="pl">Webflow Enterprise Partner — 4+ years of delivery experience.</span>
               </article>
               <article className="pcard pc-badges rv" style={{ ['--d' as string]: '.1s' }}>
                 <span className="bl">Recognized by the platforms that set the bar</span>

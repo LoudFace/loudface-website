@@ -15,7 +15,7 @@ import Script from "next/script";
  * so Sanity Studio renders against a clean slate. The /studio route gets
  * exactly the styling Sanity ships — no Tailwind preflight bleed.
  *
- * All site chrome (Header, Footer, PostHog, GTM, Cal, Leadsy, Webflow badge)
+ * All site chrome (Header, Footer, PostHog, GTM, Cal, Leadsy)
  * also lives in (site)/layout.tsx so that /studio and (audit) bypass them.
  */
 
@@ -59,11 +59,11 @@ const geistMono = localFont({
 
 export const metadata: Metadata = {
   title: {
-    default: "Webflow Development, SEO/AEO & Design Agency | LoudFace",
+    default: "AI-Native B2B SaaS Organic Growth Agency | LoudFace",
     template: "%s | LoudFace",
   },
   description:
-    "Transform your website into a growth engine. Industry-leading Webflow development, SEO/AEO & design delivering measurable ROI and sustainable business growth.",
+    "LoudFace gets B2B SaaS companies discovered across Google and AI search, then turns visibility into customers with GEO, SEO, AEO, content, and conversion.",
   metadataBase: new URL("https://www.loudface.co"),
   robots: {
     index: true,
@@ -74,24 +74,24 @@ export const metadata: Metadata = {
     locale: "en_US",
     url: "https://www.loudface.co",
     siteName: "LoudFace",
-    title: "Webflow Development, SEO/AEO & Design Agency | LoudFace",
+    title: "AI-Native B2B SaaS Organic Growth Agency | LoudFace",
     description:
-      "Transform your website into a growth engine. Industry-leading Webflow development, SEO/AEO & design delivering measurable ROI and sustainable business growth.",
+      "LoudFace gets B2B SaaS companies discovered across Google and AI search, then turns visibility into customers with GEO, SEO, AEO, content, and conversion.",
     images: [
       {
         url: "https://www.loudface.co/opengraph-image",
         width: 1200,
         height: 630,
-        alt: "LoudFace - B2B SaaS Websites That Convert",
+        alt: "LoudFace - AI-Native B2B SaaS Organic Growth",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
     site: "@loudface",
-    title: "Webflow Development, SEO/AEO & Design Agency | LoudFace",
+    title: "AI-Native B2B SaaS Organic Growth Agency | LoudFace",
     description:
-      "Transform your website into a growth engine. Industry-leading Webflow development, SEO/AEO & design delivering measurable ROI and sustainable business growth.",
+      "LoudFace gets B2B SaaS companies discovered across Google and AI search, then turns visibility into customers with GEO, SEO, AEO, content, and conversion.",
     images: ["https://www.loudface.co/opengraph-image"],
   },
   icons: {
@@ -134,9 +134,9 @@ const organizationSchema = {
   url: "https://www.loudface.co",
   logo: "https://www.loudface.co/images/loudface.svg",
   description:
-    "LoudFace is a B2B SaaS web design, SEO, AEO, and growth agency based in Dubai. Webflow Enterprise Partners with 200+ projects delivered.",
+    "LoudFace is an AI-native B2B SaaS organic growth agency in Dubai. It gets B2B SaaS companies discovered across Google and AI search, then turns visibility into customers.",
   disambiguatingDescription:
-    "LoudFace is a Dubai-based B2B SaaS web design and growth agency, not to be confused with other entities sharing a similar name.",
+    "LoudFace is a Dubai-based AI-native B2B SaaS organic growth agency, not to be confused with other entities sharing a similar name.",
   foundingDate: "2019",
   address: {
     "@type": "PostalAddress",
@@ -171,14 +171,15 @@ const organizationSchema = {
     "https://www.designrush.com/agency/profile/loudface",
   ],
   knowsAbout: [
-    "Webflow Development",
-    "Web Design",
+    "Generative Engine Optimization",
     "SEO",
     "Answer Engine Optimization",
+    "Content Strategy",
     "Conversion Rate Optimization",
+    "Conversion Copywriting",
     "B2B SaaS Marketing",
     "UX/UI Design",
-    "Copywriting",
+    "Webflow Development",
   ],
   founder: {
     "@type": "Person",
@@ -189,12 +190,14 @@ const organizationSchema = {
     "@type": "OfferCatalog",
     name: "LoudFace Services",
     itemListElement: [
-      { "@type": "Offer", itemOffered: { "@type": "Service", name: "Webflow Development" } },
+      { "@type": "Offer", itemOffered: { "@type": "Service", name: "Generative Engine Optimization" } },
       { "@type": "Offer", itemOffered: { "@type": "Service", name: "SEO & AEO" } },
-      { "@type": "Offer", itemOffered: { "@type": "Service", name: "UX/UI Design" } },
-      { "@type": "Offer", itemOffered: { "@type": "Service", name: "Copywriting" } },
-      { "@type": "Offer", itemOffered: { "@type": "Service", name: "Conversion Rate Optimization" } },
+      { "@type": "Offer", itemOffered: { "@type": "Service", name: "Organic Growth Program" } },
       { "@type": "Offer", itemOffered: { "@type": "Service", name: "Growth Autopilot" } },
+      { "@type": "Offer", itemOffered: { "@type": "Service", name: "Conversion Rate Optimization" } },
+      { "@type": "Offer", itemOffered: { "@type": "Service", name: "Copywriting" } },
+      { "@type": "Offer", itemOffered: { "@type": "Service", name: "UX/UI Design" } },
+      { "@type": "Offer", itemOffered: { "@type": "Service", name: "Webflow Development" } },
     ],
   },
 };

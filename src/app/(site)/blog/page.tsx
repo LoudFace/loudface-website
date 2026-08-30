@@ -27,14 +27,14 @@ import { FooterV3 } from '../../home-v3/FooterV3';
 const POSTS_PER_PAGE = 12;
 
 export const metadata: Metadata = {
-  title: 'Blog | Insights & Resources',
-  description: 'Actionable insights on Webflow development, SEO, AEO, and conversion design from the LoudFace team. Browse guides, tutorials, and deep-dives for B2B SaaS.',
+  title: 'B2B SaaS Organic Growth Insights',
+  description: 'Actionable GEO, SEO, AEO, content, and conversion insights from LoudFace. Browse B2B SaaS guides, tutorials, and Webflow delivery articles.',
   alternates: {
     canonical: '/blog',
   },
   openGraph: {
-    title: 'LoudFace Blog | Webflow, SEO & Growth Insights',
-    description: 'Actionable insights on Webflow development, SEO, AEO, and conversion design from the LoudFace team. Browse guides, tutorials, and deep-dives for B2B SaaS.',
+    title: 'LoudFace Blog | B2B SaaS Organic Growth Insights',
+    description: 'Actionable GEO, SEO, AEO, content, and conversion insights from LoudFace. Browse B2B SaaS guides, tutorials, and Webflow delivery articles.',
     type: 'website',
     url: '/blog',
     siteName: 'LoudFace',
@@ -44,8 +44,8 @@ export const metadata: Metadata = {
   twitter: {
     card: 'summary_large_image',
     site: '@loudface',
-    title: 'LoudFace Blog | Webflow, SEO & Growth Insights',
-    description: 'Actionable insights on Webflow development, SEO, AEO, and conversion design from the LoudFace team. Browse guides, tutorials, and deep-dives for B2B SaaS.',
+    title: 'LoudFace Blog | B2B SaaS Organic Growth Insights',
+    description: 'Actionable GEO, SEO, AEO, content, and conversion insights from LoudFace. Browse B2B SaaS guides, tutorials, and Webflow delivery articles.',
     images: ['/opengraph-image'],
   },
 };
@@ -78,7 +78,7 @@ export default async function BlogPage({
     '@context': 'https://schema.org',
     '@type': 'Blog',
     name: 'LoudFace Blog',
-    description: 'Insights on Webflow development, SEO, AEO, and design best practices.',
+    description: 'Insights on GEO, SEO, AEO, content, conversion, and Webflow delivery that help B2B SaaS companies get discovered and turn visibility into customers.',
     url: 'https://www.loudface.co/blog',
     blogPost: paginatedPosts.map((post) => ({
       '@type': 'BlogPosting',
@@ -109,8 +109,8 @@ export default async function BlogPage({
             <div className="lead-cat rvi"><span className="eyebrow glass"><i></i>Insights &amp; guides</span></div>
             <h1 className="rvi" style={{ ['--d' as string]: '.06s' }}>The LoudFace Blog</h1>
             <p className="lead-sub rvi" style={{ ['--d' as string]: '.12s' }}>
-              Actionable insights on Webflow development, SEO, AEO, and conversion design for B2B SaaS —
-              guides, tutorials, and deep-dives from our team.
+              Actionable GEO, SEO, AEO, content, and conversion insights for B2B SaaS. Webflow delivery guides sit
+              alongside them when implementation matters.
             </p>
             {blogPosts.length > 0 && (
               <span className="idx-count rvi" style={{ ['--d' as string]: '.18s' }}>
