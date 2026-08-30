@@ -235,27 +235,44 @@ export function buildFAQSchema(items: FAQItem[]): object | null {
 
 /**
  * Extract ranked entries from listicle HTML: <h3> headings that start
- * with "N. " (e.g. "3. Omniscient Digital"). Fires only when the page
- * has 3+ numbered headings, so regular posts never get an ItemList.
+ * with "N. " (e.g. "3. Omniscient Digital"), or <h2> headings when the
+ * page has a longer ranked roster. The stricter H2 threshold avoids turning
+ * short numbered how-to sections into ItemList schema.
  */
 export function extractRankedListFromHTML(html: string | undefined): string[] {
   if (!html) return [];
-  const entries: { pos: number; name: string }[] = [];
-  const h3 = /<h3[^>]*>([\s\S]*?)<\/h3>/gi;
-  let m: RegExpExecArray | null;
-  while ((m = h3.exec(html))) {
-    const text = stripHtml(m[1]).trim();
-    const numbered = text.match(/^(\d{1,2})[.)]\s+(.+)/);
-    if (numbered) entries.push({ pos: parseInt(numbered[1], 10), name: numbered[2].trim() });
+  const source = html;
+
+  function extract(tag: 'h2' | 'h3'): { pos: number; name: string }[] {
+    const entries: { pos: number; name: string }[] = [];
+    const headings = new RegExp(`<${tag}[^>]*>([\\s\\S]*?)<\\/${tag}>`, 'gi');
+    let match: RegExpExecArray | null;
+
+    while ((match = headings.exec(source))) {
+      const text = stripHtml(match[1]).trim();
+      const numbered = text.match(/^(\d{1,2})[.)]\s+(.+)/);
+      if (numbered) {
+        entries.push({ pos: parseInt(numbered[1], 10), name: numbered[2].trim() });
+      }
+    }
+
+    entries.sort((a, b) => a.pos - b.pos);
+    return entries;
   }
-  if (entries.length < 3) return [];
-  entries.sort((a, b) => a.pos - b.pos);
-  return entries.map((e) => e.name);
+
+  const h3Entries = extract('h3');
+  if (h3Entries.length >= 3) return h3Entries.map((entry) => entry.name);
+
+  const h2Entries = extract('h2');
+  if (h2Entries.length >= 5) return h2Entries.map((entry) => entry.name);
+
+  return [];
 }
 
 /**
  * Build ItemList JSON-LD for ranked listicles. Returns null when the
- * page isn't list-shaped (fewer than 3 numbered <h3> entries).
+ * page isn't list-shaped (fewer than 3 numbered <h3> or 5 numbered <h2>
+ * entries).
  */
 export function buildItemListSchema(
   html: string | undefined,
