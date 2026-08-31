@@ -7,21 +7,24 @@
 import { readFile } from 'node:fs/promises';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { parseArgs } from './args.mjs';
 
 const HERE = path.dirname(fileURLToPath(import.meta.url));
 const PROJECT = 'xjjjqhgt';
 const DATASET = 'production';
 
-const args = process.argv.slice(2);
-const slug = args.find((a) => !a.startsWith('--'));
-const vi = args.indexOf('--variant');
-const variant = vi === -1 ? null : args[vi + 1];
-const dry = args.includes('--dry');
-const ai = args.indexOf('--alt');
-const newAlt = ai === -1 ? null : args[ai + 1];
+const argv = parseArgs(process.argv.slice(2), {
+  booleans: ['dry'],
+  values: ['variant', 'alt'],
+  usage: 'publish.mjs <slug> [--variant b] [--alt "..."] [--dry]',
+});
+const slug = argv._[0];
+const variant = argv.variant ?? null;
+const dry = argv.dry === true;
+const newAlt = argv.alt ?? null;
 const token = process.env.SANITY_API_TOKEN;
 
-if (!slug) { console.error('usage: publish.mjs <slug> [--variant b] [--dry]'); process.exit(1); }
+if (!slug) { console.error('usage: publish.mjs <slug> [--variant b] [--alt "..."] [--dry]'); process.exit(1); }
 if (!token) { console.error('SANITY_API_TOKEN missing — run through scripts/with-secrets.sh'); process.exit(1); }
 
 const file = path.join(HERE, 'out', `${slug}${variant ? `-${variant}` : ''}.png`);

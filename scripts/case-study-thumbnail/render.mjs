@@ -18,6 +18,7 @@ import { readFile, writeFile, mkdir } from 'node:fs/promises';
 import path from 'node:path';
 import { createHash } from 'node:crypto';
 import { fileURLToPath } from 'node:url';
+import { parseArgs } from './args.mjs';
 
 const HERE = path.dirname(fileURLToPath(import.meta.url));
 const REPO = path.resolve(HERE, '../..');
@@ -28,15 +29,16 @@ const WIDTH = 1440;
 const HEIGHT = 900;
 const SCALE = 2; // -> 2880x1800, matching the existing thumbnails
 
-const args = process.argv.slice(2);
-const configArg = args.find((a) => !a.startsWith('--'));
-if (!configArg) {
-  console.error('usage: render.mjs <config.json> [--variant b] [--no-cache]');
-  process.exit(1);
-}
-const variantFlagIndex = args.indexOf('--variant');
-const variant = variantFlagIndex === -1 ? null : args[variantFlagIndex + 1];
-const noCache = args.includes('--no-cache');
+const USAGE = 'render.mjs <config.json> [--variant b] [--no-cache]';
+const argv = parseArgs(process.argv.slice(2), {
+  booleans: ['no-cache'],
+  values: ['variant'],
+  usage: USAGE,
+});
+const configArg = argv._[0];
+if (!configArg) { console.error(`usage: ${USAGE}`); process.exit(1); }
+const variant = argv.variant ?? null;
+const noCache = argv['no-cache'] === true;
 
 const configPath = path.isAbsolute(configArg) ? configArg : path.join(HERE, configArg);
 const config = JSON.parse(await readFile(configPath, 'utf8'));
