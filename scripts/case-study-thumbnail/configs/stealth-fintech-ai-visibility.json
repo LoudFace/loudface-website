@@ -1,0 +1,82 @@
+{
+  "slug": "stealth-fintech-ai-visibility",
+  "note": "Client is in stealth under NDA — no company name, domain or site screenshot may appear. Panels are anonymous wireframes: placeholder bars where text would be, no logo, no URL. The redaction is the message.",
+  "theme": {
+    "background": "linear-gradient(140deg, #0b1120 0%, #16224a 46%, #2a2f8f 100%)",
+    "bloom": "radial-gradient(1100px 780px at 14% 26%, rgba(99,102,241,.34), transparent 68%), radial-gradient(900px 700px at 92% 88%, rgba(37,99,235,.30), transparent 70%)",
+    "cardBg": "#f8f8fb",
+    "cardValue": "#1b1f6b",
+    "cardMuted": "rgba(15,23,42,.52)",
+    "cardRule": "rgba(27,31,107,.20)"
+  },
+  "panels": [
+    {
+      "wireframe": "page",
+      "accent": "#4f46e5",
+      "chrome": "",
+      "style": {
+        "left": 620,
+        "top": 60,
+        "width": 900,
+        "z": 1
+      }
+    },
+    {
+      "wireframe": "app",
+      "accent": "#4f46e5",
+      "chrome": "",
+      "style": {
+        "left": -60,
+        "top": 300,
+        "width": 1000,
+        "z": 2
+      }
+    }
+  ],
+  "card": {
+    "label": "AI visibility",
+    "value": "0.53% → 10.46%",
+    "valueSize": 50,
+    "caption": "peak in 7 weeks,\n15 Jun → 3 Aug 2026",
+    "right": 62,
+    "bottom": 92,
+    "width": 430
+  },
+  "variants": {
+    "b": {
+      "panels": [
+        {
+          "wireframe": "app",
+          "accent": "#4f46e5",
+          "chrome": "",
+          "style": {
+            "left": 600,
+            "top": 50,
+            "width": 940,
+            "z": 1
+          }
+        },
+        {
+          "wireframe": "page",
+          "accent": "#4f46e5",
+          "chrome": "",
+          "style": {
+            "left": -70,
+            "top": 330,
+            "width": 960,
+            "z": 2
+          }
+        }
+      ],
+      "card": {
+        "label": "AI mention rank",
+        "value": "6.0 → 1.6",
+        "valueSize": 58,
+        "caption": "in a category Stripe\nleads with 43.4%",
+        "right": 62,
+        "bottom": 92,
+        "width": 400
+      }
+    }
+  }
+}

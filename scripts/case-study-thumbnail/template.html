@@ -1,0 +1,88 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>case study thumbnail</title>
+<style>
+  @font-face {
+    font-family: "PPNeueMontreal";
+    src: url("__FONT_REGULAR__") format("woff2");
+    font-weight: 400;
+    font-display: block;
+  }
+  @font-face {
+    font-family: "PPNeueMontreal";
+    src: url("__FONT_MEDIUM__") format("woff2");
+    font-weight: 500;
+    font-display: block;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body { width: 1440px; height: 900px; overflow: hidden; }
+  body {
+    font-family: "PPNeueMontreal", -apple-system, "Helvetica Neue", Arial, sans-serif;
+    background: __BG__;
+    position: relative;
+  }
+  /* soft brand bloom so the flat fill does not read as a block of paint */
+  .bloom {
+    position: absolute; inset: 0;
+    background: __BLOOM__;
+  }
+  .panel {
+    position: absolute;
+    background: #fff;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 60px 120px -20px rgba(0,0,0,.55), 0 10px 30px -10px rgba(0,0,0,.35);
+  }
+  .panel .chrome {
+    height: 34px;
+    background: #f3f2f0;
+    border-bottom: 1px solid rgba(0,0,0,.08);
+    display: flex; align-items: center; gap: 7px;
+    padding: 0 14px;
+  }
+  .panel .dot { width: 11px; height: 11px; border-radius: 50%; }
+  .panel .url {
+    flex: 1;
+    margin: 0 14px 0 8px;
+    height: 20px;
+    border-radius: 10px;
+    background: #fff;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 11px; color: #55534f; letter-spacing: .01em;
+  }
+  .panel .shot { display: block; width: 100%; }
+  .card {
+    position: absolute;
+    background: __CARD_BG__;
+    border-radius: 16px;
+    padding: 34px 40px 32px;
+    box-shadow: 0 40px 90px -20px rgba(0,0,0,.5);
+  }
+  .card .label {
+    font-size: 13px; font-weight: 500;
+    letter-spacing: .14em; text-transform: uppercase;
+    color: __CARD_MUTED__;
+    margin-bottom: 14px;
+  }
+  .card .value {
+    font-size: __CARD_VALUE_SIZE__; line-height: 1.02; font-weight: 500;
+    letter-spacing: -.02em;
+    color: __CARD_VALUE__;
+    white-space: nowrap;
+  }
+  .card .rule {
+    height: 2px; width: 100%;
+    background: __CARD_RULE__;
+    margin: 22px 0 16px;
+  }
+  .card .caption {
+    font-size: 13px; font-weight: 500;
+    letter-spacing: .12em; text-transform: uppercase;
+    color: __CARD_MUTED__;
+    line-height: 1.5;
+    white-space: pre-line;
+  }
+</style>
+<div class="bloom"></div>
+__PANELS__
+__CARD__
