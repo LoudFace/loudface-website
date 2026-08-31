@@ -16,6 +16,7 @@ import { chromium } from 'playwright';
 import { WIREFRAMES } from './wireframes.mjs';
 import { readFile, writeFile, mkdir } from 'node:fs/promises';
 import path from 'node:path';
+import { createHash } from 'node:crypto';
 import { fileURLToPath } from 'node:url';
 
 const HERE = path.dirname(fileURLToPath(import.meta.url));
@@ -57,9 +58,19 @@ const browser = await chromium.launch();
 
 /* ---------- 1. capture each panel's screenshot ---------- */
 async function capture(panel, index) {
-  const key = `${config.slug}-${index}-${panel.cacheKey ?? Buffer.from(
-    `${panel.url}|${panel.scrollTo ?? 0}|${panel.viewport?.width ?? 1440}|${panel.clipHeight ?? ''}|${panel.hideSelectors?.join(',') ?? ''}`
-  ).toString('base64url').slice(0, 24)}.png`;
+  // Hash, never a truncated encoding: every panel's key string starts with the
+  // same long URL, so a truncated base64 collided across different scroll
+  // positions and clips and served the wrong cached screenshot.
+  const fingerprint = JSON.stringify({
+    url: panel.url,
+    scrollTo: panel.scrollTo ?? 0,
+    viewport: panel.viewport ?? null,
+    clipHeight: panel.clipHeight ?? null,
+    hideSelectors: panel.hideSelectors ?? null,
+  });
+  const key = `${config.slug}-${index}-${
+    panel.cacheKey ?? createHash('sha256').update(fingerprint).digest('hex').slice(0, 16)
+  }.png`;
   const file = path.join(CACHE, key);
   if (!noCache) {
     try { await readFile(file); console.log(`  cached  panel ${index}`); return file; } catch {}
