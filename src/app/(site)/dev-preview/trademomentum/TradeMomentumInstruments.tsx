@@ -38,7 +38,7 @@ import {
   LineChart,
   XAxis,
 } from '@/components/charts';
-import { EngineMark, GoogleMark } from '../case-study-charts/EngineMarks';
+import { EngineMark, GoogleMark } from '@/app/case-detail-v3/EngineMarks';
 import type { EngineId } from './data';
 import {
   AI_SOURCE,

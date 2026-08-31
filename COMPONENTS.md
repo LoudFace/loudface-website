@@ -371,6 +371,18 @@ All section components are exported from `@/components/sections` (or `@/componen
 
 ---
 
+## Case Study Detail Components (`src/app/case-detail-v3/`)
+
+Route-scoped components for `/case-studies/[slug]`, imported by relative path (not a barrel) from that page and from the `dev-preview/trademomentum` preview.
+
+| Component | File | Description | Client? |
+|-----------|------|-------------|---------|
+| `InstrumentsBoard` | `InstrumentsBoard.tsx` | Reusable "AI Search & Organic Growth" chart board (Peec AI + Google Search Console), generalised from the TradeMomentum case study's original `TradeMomentumInstruments` band. Props: `instruments` (`CaseStudyInstruments` from `@/lib/types`), `clientName`. Every field on `instruments` is optional — renders only the cells with data, collapsing a two-cell row to full width (`.inb-row--single`, see `instruments-board.css`) when only one side has data, and skipping a row/board entirely when neither/none of its fields are present. Wired in `case-studies/[slug]/page.tsx` in place of `ResultsInstruments`/`ResultsLedger` once a study's `instruments` field has at least 2 of its 4 chartable fields (`topicClimb`, `rankOverTime`, `engineBeforeAfter`, `indexedTrend`) filled in. Styles: `instruments-board.css` (import alongside the component). | Yes |
+| `EngineMarks` (`EngineMark`, `GoogleMark`, `OpenAIMark`, `PerplexityMark`, `GeminiMark`, `ClaudeMark`) | `EngineMarks.tsx` | Inline SVG marks for the AI engines a chart's data came from (nominative use, not an endorsement/partnership claim). Moved here from `dev-preview/case-study-charts/EngineMarks.tsx` so `InstrumentsBoard` and the dev-preview chart drafts share one copy — the dev-preview files now import from here. `EngineMark` takes `engine: 'chatgpt' \| 'perplexity' \| 'googleAio'`. | No |
+| `ResultsInstruments` | `ResultsInstruments.tsx` | Pre-existing "By the numbers" band driven by the `charts` Sanity field (step-area growth curve + bar comparisons). Still used when a study has `charts` but not enough of `instruments` to qualify for `InstrumentsBoard`. | No |
+
+---
+
 ## Blog Components (`src/components/blog/`)
 
 Components specific to blog post pages. Imported from `@/components/blog`.

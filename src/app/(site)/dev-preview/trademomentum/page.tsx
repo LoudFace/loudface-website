@@ -2,15 +2,21 @@
  * TradeMomentum case-study PREVIEW — the real page, real Sanity content.
  *
  * This is a static, single-slug mirror of `case-studies/[slug]/page.tsx` for
- * "trademomentum-niche-aeo-organic-growth" only. It exists so the new
- * `TradeMomentumInstruments` board can be judged inside the actual rendered
- * page (real hero, real body, real FAQ, real related work) instead of a mock.
+ * "trademomentum-niche-aeo-organic-growth" only. It exists to prove the
+ * generalised `InstrumentsBoard` (src/app/case-detail-v3/InstrumentsBoard.tsx)
+ * against the known-good TradeMomentum band inside the actual rendered page
+ * (real hero, real body, real FAQ, real related work) instead of a mock.
  *
  * ONE substitution vs. the production template: the results band always
- * renders `<TradeMomentumInstruments />` (the board under design) instead of
+ * renders `<InstrumentsBoard />`, fed a hardcoded `CaseStudyInstruments`
+ * object built from this directory's own `data.ts` (the same dataset the
+ * original `TradeMomentumInstruments` component used) — instead of
  * `ResultsInstruments`/`ResultsLedger`. Everything else — data assembly,
  * section order, structured data — is copied as closely as possible from the
  * production file so this reads as the real page, not a stand-in.
+ *
+ * `TradeMomentumInstruments.tsx` stays on disk as the original reference the
+ * generic component was generalised from; it is no longer imported anywhere.
  *
  * Not indexed. Production (`case-studies/[slug]/page.tsx`) is untouched.
  */
@@ -19,7 +25,7 @@ export const revalidate = 60;
 import { notFound } from 'next/navigation';
 import type { Metadata } from 'next';
 import '../../../case-detail-v3/case-detail-v3.css';
-import './instruments.css';
+import '../../../case-detail-v3/instruments-board.css';
 import { fetchCaseStudyDetailData, fetchItemBySlug } from '@/lib/cms-data';
 import { avatarImage, optimizeImage } from '@/lib/image-utils';
 import { rewriteLegacyUrls, resolveServiceSlug } from '@/lib/seo-utils';
@@ -34,9 +40,67 @@ import { FaqDetail } from '../../../case-detail-v3/FaqDetail';
 import { RelatedWork, type RelatedCard } from '../../../case-detail-v3/RelatedWork';
 import { CoverCTADetail } from '../../../case-detail-v3/CoverCTADetail';
 import { parseResultTransition, type ResultStat } from '../../../case-detail-v3/helpers';
-import { TradeMomentumInstruments } from './TradeMomentumInstruments';
+import { InstrumentsBoard } from '../../../case-detail-v3/InstrumentsBoard';
+import type { CaseStudyInstruments } from '@/lib/types';
+import {
+  AI_SOURCE,
+  GSC_SOURCE,
+  engineBeforeAfter,
+  engineBeforeAfterWindow,
+  gscMonthly,
+  googlePosition,
+  claims,
+  positionChange,
+  positionWeekly,
+  tradingCommunitiesNote,
+  tradingCommunitiesWeekly,
+} from './data';
 
 const SLUG = 'trademomentum-niche-aeo-organic-growth';
+
+/**
+ * The same TradeMomentum dataset `TradeMomentumInstruments` used, reshaped
+ * into the generic `CaseStudyInstruments` object `InstrumentsBoard` expects —
+ * i.e. what a Sanity `instruments` field for this study would hold.
+ */
+const tradeMomentumInstruments: CaseStudyInstruments = {
+  aiSource: AI_SOURCE,
+  gscSource: GSC_SOURCE,
+  topicClimb: {
+    title: '"Trading communities" · share of AI answers, weekly',
+    caption: `8.8% to ${tradingCommunitiesNote.measured} in seven weeks — the topic the product actually sells into, not the whole account.`,
+    points: tradingCommunitiesWeekly.map((w) => ({ week: w.week, value: w.visibility })),
+  },
+  rankOverTime: {
+    label: 'Average rank when cited · lower is better',
+    from: positionChange.from,
+    to: positionChange.to,
+    caption: 'From fourth-named to second across the engagement.',
+    points: positionWeekly.map((w) => ({ week: w.week, position: w.position })),
+  },
+  engineBeforeAfter: {
+    beforeLabel: engineBeforeAfterWindow.before,
+    afterLabel: engineBeforeAfterWindow.after,
+    caption: 'ChatGPT went from naming TradeMomentum in 1.4% of answers to 10.0% — a 7× lift.',
+    rows: engineBeforeAfter.map((e) => ({ engine: e.engine, before: e.before, after: e.after })),
+  },
+  indexedTrend: {
+    title: 'Impressions and clicks · indexed, Dec 2025 = 100',
+    baselineLabel: 'Dec',
+    caption: 'August is the first 24 days only. Impressions outran clicks — the pages entered far more results before climbing high enough in them to be clicked.',
+    startMonthIso: '2025-09',
+    points: gscMonthly.map((m) => ({ month: m.month, impressions: m.impressions, clicks: m.clicks, partial: m.partial })),
+  },
+  publishedResult: {
+    rows: [
+      { value: claims.impressionsMultiple, unit: 'impressions' },
+      { value: claims.clicksMultiple, unit: 'clicks per week' },
+    ],
+    positionFrom: googlePosition.from,
+    positionTo: googlePosition.to,
+    caption: 'Impressions on the December baseline the page uses; clicks weekly, September to August.',
+  },
+};
 
 export const metadata: Metadata = {
   title: 'TradeMomentum preview (instruments board) — not for indexing',
@@ -251,9 +315,9 @@ export default async function TradeMomentumPreviewPage() {
           result2={result2}
         />
 
-        {/* THE ONE SUBSTITUTION: the board under design, instead of
-            ResultsInstruments/ResultsLedger. */}
-        <TradeMomentumInstruments />
+        {/* THE ONE SUBSTITUTION: the generic InstrumentsBoard, proven against
+            TradeMomentum's own dataset, instead of ResultsInstruments/ResultsLedger. */}
+        <InstrumentsBoard instruments={tradeMomentumInstruments} clientName={client?.name || study.name} />
 
         <BuildStory bodyHtml={linkedBody} toc={toc} services={servicePills} technologies={techPills} facts={facts} />
 

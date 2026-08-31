@@ -1,0 +1,537 @@
+{
+  "_doc": "Staged instrument data for the case-study chart rollout. Pulled 2026-08-31 via Executor (Peec AI + Google Search Console). This file is the reviewed source the Sanity population step reads \u2014 nothing goes into Sanity that is not in here. All series are RAW measured values; indexing to a baseline happens at population time so the baseline choice stays visible. Eligibility rules applied: movement >= ~1.8x (or rank improvement >= 1.0), series >= 6 points, engines all non-zero in the after-window, claims must reconcile with the published page.",
+  "clients": {
+    "trademomentum": {
+      "slug": "trademomentum-niche-aeo-organic-growth",
+      "status": "DONE \u2014 live in dev-preview, data in src/app/(site)/dev-preview/trademomentum/data.ts",
+      "engines": [
+        "chatgpt",
+        "perplexity",
+        "googleAio"
+      ]
+    },
+    "loudface": {
+      "slug": "loudface-aeo-case-study",
+      "peecProject": "or_85a7fe4b-9032-4b0f-8b98-6deae65495ff",
+      "gscProperty": "https://www.loudface.co/",
+      "engines": [
+        "chatgpt",
+        "perplexity",
+        "googleAio"
+      ],
+      "eligible": {
+        "topicClimb": "YES as visibility series \u2014 claim 0.14% -> 12.78% (6 Apr -> 24 Aug, peak 13.64% on 10 Aug) reconciles with the pulled weekly series in dev-preview/case-study-charts/data.ts.",
+        "rankOverTime": "YES, borderline \u2014 4.0 -> ~2.6 weekly position, improvement ~1.4. Early weeks have no rank (not yet cited); start the series at the first cited week.",
+        "engineBeforeAfter": "YES \u2014 Apr -> Aug: ChatGPT 0% -> 15.4%, Perplexity 0.11% -> 12.8%, Google AIO 0.46% -> 8.3%.",
+        "indexedTrend": "NO \u2014 FAILS THE MOVEMENT RULE. Clicks Sep 2025 -> Aug 2026 are 0.67x (265 -> 177, with a Feb crash to 96 still recovering). Charting the recovery window alone would be cherry-picking. No Google board; the case study is an AI story anyway."
+      },
+      "gscMonthly": [
+        {
+          "m": "2025-09",
+          "clicks": 265,
+          "impr": 105937
+        },
+        {
+          "m": "2025-10",
+          "clicks": 270,
+          "impr": 90355
+        },
+        {
+          "m": "2025-11",
+          "clicks": 229,
+          "impr": 98697
+        },
+        {
+          "m": "2025-12",
+          "clicks": 243,
+          "impr": 93758
+        },
+        {
+          "m": "2026-01",
+          "clicks": 197,
+          "impr": 92281
+        },
+        {
+          "m": "2026-02",
+          "clicks": 96,
+          "impr": 32261
+        },
+        {
+          "m": "2026-03",
+          "clicks": 116,
+          "impr": 35692
+        },
+        {
+          "m": "2026-04",
+          "clicks": 133,
+          "impr": 29171
+        },
+        {
+          "m": "2026-05",
+          "clicks": 149,
+          "impr": 55135
+        },
+        {
+          "m": "2026-06",
+          "clicks": 143,
+          "impr": 41196
+        },
+        {
+          "m": "2026-07",
+          "clicks": 175,
+          "impr": 62933
+        },
+        {
+          "m": "2026-08",
+          "clicks": 177,
+          "impr": 59932,
+          "partial": true
+        }
+      ],
+      "note": "Weekly visibility/position and monthly-by-engine series already live in src/app/(site)/dev-preview/case-study-charts/data.ts (pulled same day)."
+    },
+    "genieTeacher": {
+      "slug": "genie-teacher-organic-growth",
+      "peecProject": "or_612f4f95-ed2a-4437-9dda-22a2d9ae9c56",
+      "gscProperty": "sc-domain:genieteacher.com",
+      "engines": [
+        "chatgpt",
+        "gemini",
+        "googleAio"
+      ],
+      "eligible": {
+        "topicClimb": "YES as SOV series \u2014 claim 2.26% -> 12.94% reconciles (measured 2.26% -> 12.76%). CAVEAT: six-week tracking hole 1 Jun - 13 Jul; the chart must show the gap or switch to monthly.",
+        "rankOverTime": "NO \u2014 1.7 -> 1.2, improvement 0.5 < 1.0 threshold. A flat-good story ('held 1.0-1.4 all summer') is the page's own claim; keep it as text, not a chart.",
+        "engineBeforeAfter": "NO \u2014 May -> Aug is mixed: ChatGPT DOWN 11.3% -> 9.1% (July peaked 24.6%). Charting May -> Jul instead would be cherry-picking; drop the cell.",
+        "indexedTrend": "YES \u2014 May 2026 = 100. Impressions 593 -> 10,111 (17.1x), clicks 40 -> 77 (1.9x). GSC has no data Jan-Mar 2026; start the series at Apr or May and say so."
+      },
+      "sovWeekly": [
+        {
+          "w": "2026-05-25",
+          "sov": 0.0226,
+          "v": 0.0526,
+          "pos": 1.7
+        },
+        {
+          "w": "2026-07-20",
+          "sov": 0.386,
+          "v": 0.2839,
+          "pos": 1.0
+        },
+        {
+          "w": "2026-07-27",
+          "sov": 0.2121,
+          "v": 0.1646,
+          "pos": 1.2
+        },
+        {
+          "w": "2026-08-03",
+          "sov": 0.1482,
+          "v": 0.0825,
+          "pos": 1.2
+        },
+        {
+          "w": "2026-08-10",
+          "sov": 0.1251,
+          "v": 0.0861,
+          "pos": 1.2
+        },
+        {
+          "w": "2026-08-17",
+          "sov": 0.1196,
+          "v": 0.0889,
+          "pos": 1.4
+        },
+        {
+          "w": "2026-08-24",
+          "sov": 0.1276,
+          "v": 0.0762,
+          "pos": 1.2
+        }
+      ],
+      "sovRankFinalWeek": {
+        "rank": 4,
+        "of": 7,
+        "leaders": [
+          "Superprof 25.5%",
+          "Preply 21.3%",
+          "TutorOcean 12.9%"
+        ]
+      },
+      "gscMonthly": [
+        {
+          "m": "2025-09",
+          "clicks": 61,
+          "impr": 930
+        },
+        {
+          "m": "2025-10",
+          "clicks": 25,
+          "impr": 692
+        },
+        {
+          "m": "2025-11",
+          "clicks": 30,
+          "impr": 582
+        },
+        {
+          "m": "2025-12",
+          "clicks": 3,
+          "impr": 210
+        },
+        {
+          "m": "2026-04",
+          "clicks": 20,
+          "impr": 269
+        },
+        {
+          "m": "2026-05",
+          "clicks": 40,
+          "impr": 593
+        },
+        {
+          "m": "2026-06",
+          "clicks": 25,
+          "impr": 1378
+        },
+        {
+          "m": "2026-07",
+          "clicks": 76,
+          "impr": 3481
+        },
+        {
+          "m": "2026-08",
+          "clicks": 77,
+          "impr": 10111,
+          "partial": true
+        }
+      ]
+    },
+    "stealthFintech": {
+      "slug": "stealth-fintech-ai-visibility",
+      "peecProject": "or_d202a3b8-0f73-4ac3-9ad8-1e700202eb50 (Bluefyn)",
+      "peecBrand": "kw_25eac0fa-133f-44e2-9a82-cf0c81cc55b8",
+      "gscProperty": "https://bluefyn.ai/",
+      "engines": [
+        "chatgpt",
+        "gemini",
+        "googleAio"
+      ],
+      "anonymity": "Client is unnamed on the page. Charts must not leak the brand \u2014 engine names and percentages only, no domain, no brand-coloured anything.",
+      "eligible": {
+        "topicClimb": "YES as visibility series \u2014 claim 0.53% -> 10.46% peak -> 8.00% settle reconciles EXACTLY (0.53% on 15 Jun, 10.46% on 3 Aug; final week measures 11.27% which is ABOVE the published settle figure \u2014 reconcile wording at population).",
+        "rankOverTime": "YES \u2014 6.0 -> 1.8, improvement 4.2. Matches claim '6.0 -> 1.6' within a partial week.",
+        "engineBeforeAfter": "YES \u2014 Jun -> Aug all engines up: ChatGPT 0.69% -> 5.38% (7.8x), Gemini 3.47% -> 10.42% (3.0x), Google AIO 2.92% -> 14.57% (5.0x).",
+        "indexedTrend": "NO \u2014 GSC exists only from Jun 2026 (3 points < 6). No Google board."
+      },
+      "visibilityWeekly": [
+        {
+          "w": "2026-06-15",
+          "v": 0.0053,
+          "pos": 6.0
+        },
+        {
+          "w": "2026-06-22",
+          "v": 0.0323,
+          "pos": 2.2
+        },
+        {
+          "w": "2026-06-29",
+          "v": 0.0442,
+          "pos": 2.5
+        },
+        {
+          "w": "2026-07-06",
+          "v": 0.0109,
+          "pos": 2.0
+        },
+        {
+          "w": "2026-07-13",
+          "v": 0.0638,
+          "pos": 1.0
+        },
+        {
+          "w": "2026-07-20",
+          "v": 0.0909,
+          "pos": 1.2
+        },
+        {
+          "w": "2026-07-27",
+          "v": 0.1005,
+          "pos": 1.5
+        },
+        {
+          "w": "2026-08-03",
+          "v": 0.1046,
+          "pos": 1.8
+        },
+        {
+          "w": "2026-08-10",
+          "v": 0.09,
+          "pos": 1.7
+        },
+        {
+          "w": "2026-08-17",
+          "v": 0.1024,
+          "pos": 1.7
+        },
+        {
+          "w": "2026-08-24",
+          "v": 0.1127,
+          "pos": 1.8
+        }
+      ],
+      "engineMonthly": [
+        {
+          "m": "2026-06",
+          "chatgpt": 0.0069,
+          "gemini": 0.0347,
+          "googleAio": 0.0292
+        },
+        {
+          "m": "2026-07",
+          "chatgpt": 0.0272,
+          "gemini": 0.0894,
+          "googleAio": 0.0896
+        },
+        {
+          "m": "2026-08",
+          "chatgpt": 0.0538,
+          "gemini": 0.1042,
+          "googleAio": 0.1457
+        }
+      ]
+    },
+    "delshadLegal": {
+      "slug": "delshad-legal-content-engine",
+      "peecProject": "or_61c5c337-1fa8-49fc-a38f-d1423d69c331",
+      "gscProperty": "sc-domain:delshadlegal.com",
+      "engines": [
+        "chatgpt",
+        "gemini",
+        "googleAio"
+      ],
+      "reconciliation": "EARLIER 'MISMATCH' WAS MY ERROR \u2014 the page claims SHARE OF VOICE and I compared visibility. SOV weekly: 0.13% (8 Jun) -> 30.51% (24 Aug), rank 1 of 12 in the final week. Published 32.71% is within a partial-week wobble of the measured 30.5%; align the wording at population.",
+      "eligible": {
+        "topicClimb": "YES as SOV series \u2014 0.13% -> 30.5%, 12 points, 1st of 12 tracked firms.",
+        "rankOverTime": "NO as a series \u2014 early weeks have no rank (not cited). Keep '1.4 average rank' as publishedResult text.",
+        "engineBeforeAfter": "YES \u2014 Jun -> Aug: ChatGPT 0.14% -> 3.22% (23x), Gemini 0.10% -> 3.89% (39x), Google AIO 0.00% -> 3.87%. Absolute levels are small \u2014 captions must not oversell; the SOV chart is the headline, this is the supporting split.",
+        "indexedTrend": "YES \u2014 Sep 2025 = 100. Clicks 234 -> 682 (2.9x), impressions 28,572 -> 67,135 (2.3x). NOTE the Dec 2025 click spike (890, celebrity-case news) \u2014 the caption should name it or the curve reads as a glitch."
+      },
+      "sovWeekly": [
+        {
+          "w": "2026-06-08",
+          "sov": 0.0013
+        },
+        {
+          "w": "2026-06-15",
+          "sov": 0.0048
+        },
+        {
+          "w": "2026-06-22",
+          "sov": 0.003
+        },
+        {
+          "w": "2026-06-29",
+          "sov": 0.0
+        },
+        {
+          "w": "2026-07-06",
+          "sov": 0.0021
+        },
+        {
+          "w": "2026-07-13",
+          "sov": 0.0051
+        },
+        {
+          "w": "2026-07-20",
+          "sov": 0.0185
+        },
+        {
+          "w": "2026-07-27",
+          "sov": 0.0
+        },
+        {
+          "w": "2026-08-03",
+          "sov": 0.2066
+        },
+        {
+          "w": "2026-08-10",
+          "sov": 0.254
+        },
+        {
+          "w": "2026-08-17",
+          "sov": 0.2653
+        },
+        {
+          "w": "2026-08-24",
+          "sov": 0.3051
+        }
+      ],
+      "sovRankFinalWeek": {
+        "rank": 1,
+        "of": 12
+      },
+      "engineMonthly": [
+        {
+          "m": "2026-06",
+          "chatgpt": 0.0014,
+          "gemini": 0.001,
+          "googleAio": 0.0
+        },
+        {
+          "m": "2026-07",
+          "chatgpt": 0.0,
+          "gemini": 0.0013,
+          "googleAio": 0.0024
+        },
+        {
+          "m": "2026-08",
+          "chatgpt": 0.0322,
+          "gemini": 0.0389,
+          "googleAio": 0.0387
+        }
+      ],
+      "gscMonthly": [
+        {
+          "m": "2025-09",
+          "clicks": 234,
+          "impr": 28572
+        },
+        {
+          "m": "2025-10",
+          "clicks": 188,
+          "impr": 14794
+        },
+        {
+          "m": "2025-11",
+          "clicks": 143,
+          "impr": 17255
+        },
+        {
+          "m": "2025-12",
+          "clicks": 890,
+          "impr": 28582
+        },
+        {
+          "m": "2026-01",
+          "clicks": 526,
+          "impr": 31649
+        },
+        {
+          "m": "2026-02",
+          "clicks": 273,
+          "impr": 29848
+        },
+        {
+          "m": "2026-03",
+          "clicks": 273,
+          "impr": 26436
+        },
+        {
+          "m": "2026-04",
+          "clicks": 266,
+          "impr": 26934
+        },
+        {
+          "m": "2026-05",
+          "clicks": 286,
+          "impr": 30117
+        },
+        {
+          "m": "2026-06",
+          "clicks": 434,
+          "impr": 39024
+        },
+        {
+          "m": "2026-07",
+          "clicks": 529,
+          "impr": 43404
+        },
+        {
+          "m": "2026-08",
+          "clicks": 682,
+          "impr": 67135,
+          "partial": true
+        }
+      ]
+    },
+    "toku": {
+      "slug": "toku-ai-cited-pipeline",
+      "peecProject": null,
+      "gscProperty": "https://www.toku.com/",
+      "status": "KEEPS EXISTING HAND-AUTHORED CHARTS \u2014 no live Peec project (its AI figures came from a one-off 75-prompt study), so only indexedTrend qualifies, which is below the two-instrument minimum for the new board. GSC data staged below in case a Peec project is created later. Toku rule (Natalie, May 2026): percentages and growth deltas only \u2014 indexing already satisfies this.",
+      "gscMonthly": [
+        {
+          "m": "2025-09",
+          "clicks": 961,
+          "impr": 39536
+        },
+        {
+          "m": "2025-10",
+          "clicks": 1856,
+          "impr": 113085
+        },
+        {
+          "m": "2025-11",
+          "clicks": 1576,
+          "impr": 153365
+        },
+        {
+          "m": "2025-12",
+          "clicks": 1304,
+          "impr": 207577
+        },
+        {
+          "m": "2026-01",
+          "clicks": 1666,
+          "impr": 338690
+        },
+        {
+          "m": "2026-02",
+          "clicks": 1457,
+          "impr": 284440
+        },
+        {
+          "m": "2026-03",
+          "clicks": 1622,
+          "impr": 335767
+        },
+        {
+          "m": "2026-04",
+          "clicks": 1501,
+          "impr": 262302
+        },
+        {
+          "m": "2026-05",
+          "clicks": 1528,
+          "impr": 308144
+        },
+        {
+          "m": "2026-06",
+          "clicks": 1508,
+          "impr": 266408
+        },
+        {
+          "m": "2026-07",
+          "clicks": 1780,
+          "impr": 265147
+        },
+        {
+          "m": "2026-08",
+          "clicks": 1172,
+          "impr": 189832,
+          "partial": true
+        }
+      ]
+    },
+    "codeop": {
+      "slug": "codeop",
+      "status": "KEEPS EXISTING CHARTS \u2014 2024 engagement, no live Peec project and no GSC access. The hand-authored charts in Sanity stay."
+    },
+    "zeiierman": {
+      "slug": "zeiierman",
+      "status": "KEEPS EXISTING CHART \u2014 2023-24 engagement, no live sources."
+    }
+  }
+}

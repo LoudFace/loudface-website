@@ -26,7 +26,7 @@ import {
   Grid,
   XAxis,
 } from '@/components/charts';
-import { GoogleMark } from '../case-study-charts/EngineMarks';
+import { GoogleMark } from '@/app/case-detail-v3/EngineMarks';
 import { GSC_SOURCE_NOTE, gscHeadline, gscMonthly, gscTopPages } from './data';
 
 const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];

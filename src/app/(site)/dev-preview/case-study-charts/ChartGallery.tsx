@@ -61,7 +61,7 @@ import type { HeatmapLevelStyles } from '@/components/charts/heatmap';
 import { useHeatmap } from '@/components/charts/heatmap';
 import { TooltipContent } from '@/components/charts/tooltip';
 
-import { EngineMark, GoogleMark, OpenAIMark, PerplexityMark } from './EngineMarks';
+import { EngineMark, GoogleMark, OpenAIMark, PerplexityMark } from '@/app/case-detail-v3/EngineMarks';
 import {
   ENGINES,
   SOURCE_NOTE,

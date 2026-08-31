@@ -30,7 +30,7 @@ import {
   RingChart,
   XAxis,
 } from '@/components/charts';
-import { EngineMark } from '../case-study-charts/EngineMarks';
+import { EngineMark } from '@/app/case-detail-v3/EngineMarks';
 import { EngineTooltipContent } from '../case-study-charts/ChartGallery';
 import {
   ENGINES,

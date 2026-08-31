@@ -47,6 +47,7 @@ export interface CaseStudy {
   technologies?: string[];
   "services-provided"?: string[];
   charts?: CaseStudyChart[];
+  instruments?: CaseStudyInstruments;
   faq?: FAQItem[];
   _createdAt?: string;
   _updatedAt?: string;
@@ -101,6 +102,64 @@ export interface CaseStudyChart {
   legendPrimary?: string;
   legendSecondary?: string;
   data: ChartDataPoint[];
+}
+
+/**
+ * The AI-engine identifiers the instruments board and its charts key rows to.
+ * A plain string-literal union — kept self-contained (not re-exported from a
+ * single canonical spot) because every consumer only needs structural
+ * compatibility, not a shared import.
+ */
+export type InstrumentEngineId = 'chatgpt' | 'perplexity' | 'gemini' | 'googleAio';
+
+/**
+ * The reusable "AI Search & Organic Growth" chart board (`InstrumentsBoard`,
+ * `src/app/case-detail-v3/InstrumentsBoard.tsx`). Generalised from the
+ * TradeMomentum case study's proven `TradeMomentumInstruments` band — every
+ * field is optional, and the board only renders the cells with data.
+ */
+export interface CaseStudyInstruments {
+  /** Source line for the AI board, e.g. "Peec AI · 6 Jul – 24 Aug 2026". */
+  aiSource?: string;
+  /** Source line for the Google board, e.g. "Google Search Console · indexed to Dec 2025 = 100". */
+  gscSource?: string;
+  topicClimb?: {
+    title: string;
+    caption: string;
+    /** `value` is a share, 0–1 (e.g. 0.333 for 33.3%). */
+    points: { week: string; value: number }[];
+  };
+  rankOverTime?: {
+    label: string;
+    from: number;
+    to: number;
+    caption: string;
+    /** Lower `position` is better. */
+    points: { week: string; position: number }[];
+  };
+  engineBeforeAfter?: {
+    beforeLabel: string;
+    afterLabel: string;
+    caption: string;
+    /** `before`/`after` are shares, 0–1. */
+    rows: { engine: InstrumentEngineId; before: number; after: number }[];
+  };
+  indexedTrend?: {
+    title: string;
+    /** e.g. "Dec" — the confidentiality formatter prints values as a multiple of this baseline. */
+    baselineLabel: string;
+    caption: string;
+    /** `impressions`/`clicks` are indexed to the baseline month = 100. */
+    points: { month: string; impressions: number; clicks: number; partial?: boolean }[];
+    /** The calendar month the first point represents, e.g. "2025-09". */
+    startMonthIso: string;
+  };
+  publishedResult?: {
+    rows: { value: string; unit: string }[];
+    positionFrom?: number;
+    positionTo?: number;
+    caption: string;
+  };
 }
 
 /**

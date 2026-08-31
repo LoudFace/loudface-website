@@ -286,6 +286,194 @@ export const caseStudy = defineType({
       ],
     }),
     defineField({
+      name: 'instruments',
+      title: 'Instruments Board',
+      type: 'object',
+      description:
+        'AI Search & Organic Growth chart board (Peec AI + Google Search Console). Every field is optional — InstrumentsBoard only renders the cells that have data, so a study can carry one metric or all of them.',
+      fields: [
+        defineField({
+          name: 'aiSource',
+          title: 'AI source line',
+          type: 'string',
+          description: 'e.g. "Peec AI · 6 Jul – 24 Aug 2026"',
+        }),
+        defineField({
+          name: 'gscSource',
+          title: 'Google source line',
+          type: 'string',
+          description: 'e.g. "Google Search Console · indexed to Dec 2025 = 100"',
+        }),
+        defineField({
+          name: 'topicClimb',
+          title: 'Topic climb (weekly share of AI answers)',
+          type: 'object',
+          fields: [
+            defineField({ name: 'title', title: 'Title', type: 'string' }),
+            defineField({ name: 'caption', title: 'Caption', type: 'text', rows: 2 }),
+            defineField({
+              name: 'points',
+              title: 'Weekly points',
+              type: 'array',
+              of: [
+                {
+                  type: 'object',
+                  fields: [
+                    defineField({ name: 'week', title: 'Week (ISO date)', type: 'string' }),
+                    defineField({
+                      name: 'value',
+                      title: 'Share (0–1)',
+                      type: 'number',
+                      description: 'e.g. 0.333 for 33.3%',
+                    }),
+                  ],
+                  preview: { select: { title: 'week', subtitle: 'value' } },
+                },
+              ],
+            }),
+          ],
+        }),
+        defineField({
+          name: 'rankOverTime',
+          title: 'Rank over time (mean cited position)',
+          type: 'object',
+          fields: [
+            defineField({ name: 'label', title: 'Label', type: 'string' }),
+            defineField({ name: 'from', title: 'From', type: 'number' }),
+            defineField({ name: 'to', title: 'To', type: 'number' }),
+            defineField({ name: 'caption', title: 'Caption', type: 'text', rows: 2 }),
+            defineField({
+              name: 'points',
+              title: 'Weekly points',
+              type: 'array',
+              of: [
+                {
+                  type: 'object',
+                  fields: [
+                    defineField({ name: 'week', title: 'Week (ISO date)', type: 'string' }),
+                    defineField({
+                      name: 'position',
+                      title: 'Position',
+                      type: 'number',
+                      description: 'Lower is better',
+                    }),
+                  ],
+                  preview: { select: { title: 'week', subtitle: 'position' } },
+                },
+              ],
+            }),
+          ],
+        }),
+        defineField({
+          name: 'engineBeforeAfter',
+          title: 'Engine before/after',
+          type: 'object',
+          fields: [
+            defineField({ name: 'beforeLabel', title: 'Before label', type: 'string', description: 'e.g. "May 2026"' }),
+            defineField({ name: 'afterLabel', title: 'After label', type: 'string', description: 'e.g. "Aug 2026"' }),
+            defineField({ name: 'caption', title: 'Caption', type: 'text', rows: 2 }),
+            defineField({
+              name: 'rows',
+              title: 'Rows, one per engine',
+              type: 'array',
+              of: [
+                {
+                  type: 'object',
+                  fields: [
+                    defineField({
+                      name: 'engine',
+                      title: 'Engine',
+                      type: 'string',
+                      options: {
+                        list: [
+                          { title: 'ChatGPT', value: 'chatgpt' },
+                          { title: 'Perplexity', value: 'perplexity' },
+                          { title: 'Gemini', value: 'gemini' },
+                          { title: 'Google AI Overviews', value: 'googleAio' },
+                        ],
+                      },
+                      validation: (rule) => rule.required(),
+                    }),
+                    defineField({ name: 'before', title: 'Before (0–1)', type: 'number' }),
+                    defineField({ name: 'after', title: 'After (0–1)', type: 'number' }),
+                  ],
+                  preview: { select: { title: 'engine', subtitle: 'after' } },
+                },
+              ],
+            }),
+          ],
+        }),
+        defineField({
+          name: 'indexedTrend',
+          title: 'Google impressions/clicks trend (indexed)',
+          type: 'object',
+          fields: [
+            defineField({ name: 'title', title: 'Title', type: 'string' }),
+            defineField({
+              name: 'baselineLabel',
+              title: 'Baseline label',
+              type: 'string',
+              description: 'e.g. "Dec" — the confidentiality formatter prints values as multiples of this month',
+            }),
+            defineField({ name: 'caption', title: 'Caption', type: 'text', rows: 2 }),
+            defineField({
+              name: 'startMonthIso',
+              title: 'Start month (ISO, YYYY-MM)',
+              type: 'string',
+              description: 'The calendar month the first point in `points` represents, e.g. "2025-09"',
+            }),
+            defineField({
+              name: 'points',
+              title: 'Monthly points',
+              type: 'array',
+              of: [
+                {
+                  type: 'object',
+                  fields: [
+                    defineField({ name: 'month', title: 'Month label', type: 'string' }),
+                    defineField({ name: 'impressions', title: 'Impressions (indexed)', type: 'number' }),
+                    defineField({ name: 'clicks', title: 'Clicks (indexed)', type: 'number' }),
+                    defineField({
+                      name: 'partial',
+                      title: 'Partial month?',
+                      type: 'boolean',
+                      description: 'Flags a mid-month pull so the dip does not read as a decline',
+                    }),
+                  ],
+                  preview: { select: { title: 'month', subtitle: 'impressions' } },
+                },
+              ],
+            }),
+          ],
+        }),
+        defineField({
+          name: 'publishedResult',
+          title: 'Published Google result (headline figures)',
+          type: 'object',
+          fields: [
+            defineField({
+              name: 'rows',
+              title: 'Figures',
+              type: 'array',
+              of: [
+                {
+                  type: 'object',
+                  fields: [
+                    defineField({ name: 'value', title: 'Value', type: 'string', description: 'e.g. "11.7x"' }),
+                    defineField({ name: 'unit', title: 'Unit', type: 'string', description: 'e.g. "impressions"' }),
+                  ],
+                  preview: { select: { title: 'value', subtitle: 'unit' } },
+                },
+              ],
+            }),
+            defineField({ name: 'positionFrom', title: 'Google position — from', type: 'number' }),
+            defineField({ name: 'positionTo', title: 'Google position — to', type: 'number' }),
+            defineField({ name: 'caption', title: 'Caption', type: 'text', rows: 2 }),
+          ],
+        }),
+      ],
+    }),
+    defineField({
       name: 'faq',
       title: 'FAQ',
       type: 'array',

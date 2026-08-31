@@ -6,8 +6,14 @@
  * Every mark inherits `currentColor` unless `brand` is set, so by default they
  * sit in whatever ink the surrounding chart uses. `brand` switches Google to
  * its four-colour G, which is the only one that carries required colour.
+ *
+ * Moved here from dev-preview/case-study-charts so `InstrumentsBoard` (and any
+ * future case-detail chart work) can share one copy instead of duplicating it.
+ * `EngineId` is a self-contained literal union — every dev-preview dataset
+ * declares its own copy of the same three literals, which TypeScript treats
+ * as structurally identical, so nothing needs to import this one specifically.
  */
-import type { EngineId } from './data';
+export type EngineId = 'chatgpt' | 'perplexity' | 'gemini' | 'googleAio';
 
 interface MarkProps {
   size?: number;
@@ -70,5 +76,6 @@ export function ClaudeMark({ size = 16, className }: MarkProps) {
 export function EngineMark({ engine, size = 16, className, brand }: MarkProps & { engine: EngineId }) {
   if (engine === 'chatgpt') return <OpenAIMark size={size} className={className} />;
   if (engine === 'perplexity') return <PerplexityMark size={size} className={className} />;
+  if (engine === 'gemini') return <GeminiMark size={size} className={className} />;
   return <GoogleMark size={size} className={className} brand={brand} />;
 }

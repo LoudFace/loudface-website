@@ -29,6 +29,7 @@ export const revalidate = 60;
 import { notFound } from 'next/navigation';
 import type { Metadata } from 'next';
 import '../../../case-detail-v3/case-detail-v3.css';
+import '../../../case-detail-v3/instruments-board.css';
 import { fetchCollection, fetchCaseStudyDetailData, fetchItemBySlug } from '@/lib/cms-data';
 import { avatarImage, optimizeImage } from '@/lib/image-utils';
 import {
@@ -61,6 +62,7 @@ import { HeroDetail } from '../../../case-detail-v3/HeroDetail';
 import { ResultsLedger } from '../../../case-detail-v3/ResultsLedger';
 import { BuildStory, type Fact, type Pill } from '../../../case-detail-v3/BuildStory';
 import { ResultsInstruments } from '../../../case-detail-v3/ResultsInstruments';
+import { InstrumentsBoard } from '../../../case-detail-v3/InstrumentsBoard';
 import { ProofQuote } from '../../../case-detail-v3/ProofQuote';
 import { FaqDetail } from '../../../case-detail-v3/FaqDetail';
 import { RelatedWork, type RelatedCard } from '../../../case-detail-v3/RelatedWork';
@@ -243,6 +245,18 @@ export default async function CaseStudyPage({ params }: PageProps) {
   // hero (2026-08-19 redesign); the growth curve stays axis-free.
   const charts = study.charts ?? [];
 
+  // InstrumentsBoard — the generalised TradeMomentum chart board. It replaces
+  // ResultsInstruments/ResultsLedger only once a study has enough of it filled
+  // in to look intentional rather than sparse: at least two of the four
+  // chartable fields. One field alone (say, only a topic-climb chart) still
+  // falls through to the plain results band below.
+  const instruments = study.instruments;
+  const instrumentsFieldCount = instruments
+    ? [instruments.topicClimb, instruments.rankOverTime, instruments.engineBeforeAfter, instruments.indexedTrend]
+        .filter(Boolean).length
+    : 0;
+  const showInstrumentsBoard = instrumentsFieldCount >= 2;
+
   // Testimonial (proof) — only when a resolvable quote body exists.
   const testimonialQuote = testimonial?.['testimonial-body'];
   const avatarUrl = testimonial?.['profile-image']?.url ? avatarImage(testimonial['profile-image'].url) : undefined;
@@ -352,7 +366,9 @@ export default async function CaseStudyPage({ params }: PageProps) {
           result2={result2}
         />
 
-        {charts.length > 0 ? (
+        {showInstrumentsBoard && instruments ? (
+          <InstrumentsBoard instruments={instruments} clientName={client?.name || study.name} />
+        ) : charts.length > 0 ? (
           <ResultsInstruments results={results} charts={charts} />
         ) : (
           <ResultsLedger results={results} />
