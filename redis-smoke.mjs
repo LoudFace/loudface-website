@@ -1,0 +1,13 @@
+import { readFileSync } from 'node:fs';
+import { createClient } from 'redis';
+const url = readFileSync('.env.local','utf8').split('\n').find(l=>l.startsWith('REDIS_URL='))?.slice(10).trim().replace(/^["']|["']$/g,'');
+const c = createClient({ url });
+c.on('error', e => console.error('[redis error]', e.message));
+await c.connect();
+const k = 'loudface:depupgrade:smoke';
+await c.set(k, 'ok');
+const v = await c.get(k);
+await c.del(k);
+console.log('redis 6 roundtrip:', v === 'ok' ? 'PASS' : 'FAIL got '+v);
+await c.close();
+console.log('close() clean');

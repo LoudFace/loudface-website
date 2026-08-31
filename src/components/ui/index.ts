@@ -1,10 +1,12 @@
 export { AICitationVisual } from './AICitationVisual';
+export { AnimatedNumber } from './AnimatedNumber';
 export { Badge } from './Badge';
 export { BulletLabel } from './BulletLabel';
 export { Button } from './Button';
 export { Card } from './Card';
 export { CaseStudyCharts } from './CaseStudyCharts';
 export { SliderNav } from './SliderNav';
+export { Tabs, TabsContent, TabsList, TabsTrigger } from './Tabs';
 export { ComponentAssemblyVisual } from './ComponentAssemblyVisual';
 export { LogoImage } from './LogoImage';
 export { CopyFirstVisual } from './CopyFirstVisual';

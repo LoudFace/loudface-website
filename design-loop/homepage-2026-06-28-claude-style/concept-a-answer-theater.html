@@ -1,0 +1,490 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>LoudFace Concept A - Answer Theater</title>
+    <style>
+      @import url("https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@400;500;600;700&family=Geist:wght@400;500;600;700&family=Instrument+Serif:ital@1&display=swap");
+
+      :root {
+        --paper: #f8faf6;
+        --paper-2: #edf3ec;
+        --ink: #17231f;
+        --ink-2: #22302e;
+        --muted: #66736d;
+        --line: #d8e1d8;
+        --indigo: #4f46e5;
+        --orange: #f2663f;
+        --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+      }
+
+      * { box-sizing: border-box; }
+      html { scroll-behavior: smooth; }
+      body {
+        margin: 0;
+        background: var(--ink);
+        color: var(--paper);
+        font-family: "Geist", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        -webkit-font-smoothing: antialiased;
+        overflow-x: hidden;
+      }
+      img, svg { display: block; max-width: 100%; }
+      a { color: inherit; text-decoration: none; }
+
+      .shell { width: min(100% - 48px, 1380px); margin: 0 auto; }
+      .nav {
+        height: 72px;
+        display: grid;
+        grid-template-columns: 1fr auto 1fr;
+        align-items: center;
+        gap: 20px;
+        border-bottom: 1px solid rgba(248, 250, 246, 0.15);
+      }
+      .nav img { width: 118px; height: auto; }
+      .nav-links {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 26px;
+        color: rgba(248, 250, 246, 0.68);
+        font-size: 14px;
+        font-weight: 600;
+      }
+      .nav-actions { justify-self: end; }
+      .btn {
+        min-height: 44px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 999px;
+        padding: 0 20px;
+        color: var(--ink);
+        background: var(--paper);
+        font-size: 14px;
+        font-weight: 700;
+        transition: transform 220ms var(--ease-out), background 220ms var(--ease-out);
+      }
+      .btn:active { transform: scale(0.98); }
+      .btn.dark { color: var(--paper); background: rgba(248, 250, 246, 0.08); }
+
+      h1, h2, h3 {
+        margin: 0;
+        font-family: "Bricolage Grotesque", "Geist", ui-sans-serif, system-ui, sans-serif;
+        letter-spacing: 0;
+        overflow-wrap: anywhere;
+      }
+      h1 {
+        max-width: 740px;
+        font-size: clamp(58px, 8.2vw, 128px);
+        line-height: 0.88;
+        font-weight: 650;
+      }
+      h2 {
+        font-size: clamp(38px, 5vw, 72px);
+        line-height: 0.96;
+        font-weight: 650;
+      }
+      h3 { font-size: 24px; line-height: 1.04; font-weight: 650; }
+      p { margin: 0; color: var(--muted); line-height: 1.55; }
+      .accent {
+        font-family: "Instrument Serif", Georgia, serif;
+        font-style: italic;
+        font-weight: 400;
+        color: var(--indigo);
+      }
+      .pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        width: max-content;
+        border: 1px solid rgba(248, 250, 246, 0.15);
+        border-radius: 999px;
+        padding: 8px 12px;
+        color: rgba(248, 250, 246, 0.72);
+        background: rgba(248, 250, 246, 0.06);
+        font-size: 13px;
+        font-weight: 700;
+      }
+      .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--indigo); }
+
+      .hero {
+        min-height: 900px;
+        background:
+          radial-gradient(circle at 74% 30%, rgba(79, 70, 229, 0.16), transparent 29%),
+          linear-gradient(180deg, #17231f 0%, #1e302a 100%);
+        overflow: hidden;
+      }
+      .hero-grid {
+        min-height: 828px;
+        display: grid;
+        grid-template-columns: minmax(0, 0.78fr) minmax(420px, 1fr);
+        gap: 56px;
+        align-items: center;
+        padding: 64px 0 44px;
+      }
+      .hero-copy p {
+        max-width: 560px;
+        margin-top: 24px;
+        color: rgba(248, 250, 246, 0.72);
+        font-size: 19px;
+      }
+      .actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 30px; }
+      .signal-strip {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 10px;
+        max-width: 600px;
+        margin-top: 38px;
+      }
+      .signal-strip div {
+        min-height: 82px;
+        border: 1px solid rgba(248, 250, 246, 0.14);
+        border-radius: 14px;
+        padding: 14px;
+        background: rgba(248, 250, 246, 0.055);
+      }
+      .signal-strip b {
+        display: block;
+        font-family: "Bricolage Grotesque", sans-serif;
+        font-size: 22px;
+        color: var(--paper);
+      }
+      .signal-strip span {
+        display: block;
+        margin-top: 5px;
+        color: rgba(248, 250, 246, 0.56);
+        font-size: 12px;
+        line-height: 1.35;
+      }
+
+      .proof-player {
+        position: relative;
+        border: 1px solid rgba(248, 250, 246, 0.15);
+        border-radius: 30px;
+        overflow: hidden;
+        min-height: 680px;
+        background: #0f1b18;
+        box-shadow: 0 36px 100px rgba(7, 13, 11, 0.28);
+      }
+      .proof-player::before {
+        content: "";
+        position: absolute;
+        inset: auto 0 0;
+        height: 38%;
+        z-index: 2;
+        backdrop-filter: blur(9px);
+        -webkit-backdrop-filter: blur(9px);
+        background: linear-gradient(180deg, transparent, rgba(15, 27, 24, 0.92));
+        pointer-events: none;
+      }
+      .player-top {
+        height: 52px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0 18px;
+        border-bottom: 1px solid rgba(248, 250, 246, 0.12);
+        color: rgba(248, 250, 246, 0.62);
+        font-size: 12px;
+        font-weight: 700;
+      }
+      .player-dots { display: flex; gap: 7px; }
+      .player-dots span { width: 9px; height: 9px; border-radius: 50%; background: rgba(248, 250, 246, 0.24); }
+      .player-media { position: absolute; inset: 52px 0 0; }
+      .player-media img { width: 100%; height: 100%; object-fit: cover; opacity: 0.42; }
+      .answer-stack { position: relative; z-index: 3; display: grid; gap: 14px; padding: 34px; }
+      .answer-card {
+        max-width: 520px;
+        border: 1px solid rgba(248, 250, 246, 0.16);
+        border-radius: 18px;
+        padding: 18px;
+        background: rgba(248, 250, 246, 0.9);
+        color: var(--ink);
+        box-shadow: 0 18px 50px rgba(4, 12, 10, 0.16);
+      }
+      .answer-card:nth-child(2) { margin-left: auto; transform: translateY(14px); }
+      .answer-card:nth-child(3) { width: 82%; margin-left: 42px; transform: translateY(20px); }
+      .answer-head {
+        display: flex;
+        justify-content: space-between;
+        gap: 16px;
+        color: var(--muted);
+        font-size: 12px;
+        font-weight: 800;
+      }
+      .answer-card p { margin-top: 12px; color: var(--ink); font-size: 16px; }
+      mark { color: var(--paper); background: var(--indigo); border-radius: 7px; padding: 0 0.28em 0.12em; }
+      .scrub {
+        position: absolute;
+        z-index: 4;
+        left: 34px;
+        right: 34px;
+        bottom: 34px;
+        display: grid;
+        grid-template-columns: auto 1fr auto;
+        gap: 14px;
+        align-items: center;
+        color: var(--paper);
+        font-size: 13px;
+        font-weight: 700;
+      }
+      .scrub-line { height: 8px; border-radius: 999px; background: rgba(248, 250, 246, 0.18); overflow: hidden; }
+      .scrub-line span { display: block; width: 68%; height: 100%; border-radius: inherit; background: var(--paper); }
+
+      .proof-logos {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 44px;
+        padding: 24px;
+        border-top: 1px solid var(--line);
+        border-bottom: 1px solid var(--line);
+        background: rgba(248, 250, 246, 0.92);
+      }
+      .proof-logos img { max-height: 26px; width: auto; filter: grayscale(1); opacity: 0.7; }
+      .section { padding: 100px 0; }
+      .light { color: var(--ink); background: var(--paper); }
+      .split {
+        display: grid;
+        grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+        gap: 52px;
+        align-items: start;
+      }
+      .section-copy { max-width: 560px; font-size: 18px; }
+      .mechanic {
+        display: grid;
+        grid-template-columns: minmax(280px, 0.78fr) minmax(0, 1fr);
+        gap: 28px;
+      }
+      .mechanic-card {
+        min-height: 250px;
+        border: 1px solid var(--line);
+        border-radius: 22px;
+        padding: 28px;
+        background: rgba(248, 250, 246, 0.82);
+      }
+      .mechanic-card.dark { color: var(--paper); background: var(--ink); }
+      .mechanic-card.dark p { color: rgba(248, 250, 246, 0.72); }
+      .mechanic-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+
+      .dark-section { background: var(--ink); color: var(--paper); }
+      .work-row {
+        display: grid;
+        grid-template-columns: 0.9fr 1.15fr 0.8fr;
+        gap: 18px;
+        align-items: stretch;
+        border-top: 1px solid rgba(248, 250, 246, 0.22);
+        padding: 22px 0;
+      }
+      .work-row p { color: rgba(248, 250, 246, 0.66); }
+      .thumb {
+        min-height: 132px;
+        border: 1px solid rgba(248, 250, 246, 0.18);
+        border-radius: 14px;
+        overflow: hidden;
+        background: var(--paper-2);
+      }
+      .thumb img { width: 100%; height: 100%; object-fit: cover; }
+      .video-section {
+        display: grid;
+        grid-template-columns: minmax(0, 0.82fr) minmax(320px, 1fr);
+        gap: 28px;
+        align-items: stretch;
+      }
+      .quote-card {
+        min-height: 360px;
+        border: 1px solid rgba(248, 250, 246, 0.15);
+        border-radius: 18px;
+        padding: 32px;
+        background: rgba(248, 250, 246, 0.06);
+      }
+      .quote-card p.big {
+        color: var(--paper);
+        font-family: "Bricolage Grotesque", sans-serif;
+        font-size: clamp(30px, 3.4vw, 48px);
+        line-height: 0.98;
+        font-weight: 600;
+      }
+      .video-card {
+        position: relative;
+        overflow: hidden;
+        min-height: 360px;
+        border: 1px solid rgba(248, 250, 246, 0.15);
+        border-radius: 18px;
+        background: #20302b;
+      }
+      .video-card img { width: 100%; height: 100%; object-fit: cover; opacity: 0.72; }
+      .play {
+        position: absolute;
+        left: 24px;
+        top: 24px;
+        width: 56px;
+        height: 56px;
+        border: 1px solid rgba(248, 250, 246, 0.45);
+        border-radius: 50%;
+        display: grid;
+        place-items: center;
+        color: var(--paper);
+        background: rgba(23, 35, 31, 0.45);
+      }
+      .play::before {
+        content: "";
+        width: 0;
+        height: 0;
+        border-top: 8px solid transparent;
+        border-bottom: 8px solid transparent;
+        border-left: 12px solid currentColor;
+        margin-left: 3px;
+      }
+      .caption {
+        position: absolute;
+        left: 24px;
+        right: 24px;
+        bottom: 22px;
+        color: var(--paper);
+        font-weight: 700;
+      }
+      .close-cta {
+        margin: 70px auto 56px;
+        border-radius: 24px;
+        padding: clamp(36px, 6vw, 72px);
+        color: var(--paper);
+        background: var(--ink);
+      }
+      .close-cta .inner {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) auto;
+        gap: 32px;
+        align-items: end;
+      }
+      .reveal { animation: rise 900ms var(--ease-out) both; }
+      .delay-1 { animation-delay: 120ms; }
+      .delay-2 { animation-delay: 220ms; }
+      .delay-3 { animation-delay: 340ms; }
+      @keyframes rise {
+        from { opacity: 0; transform: translateY(22px); filter: blur(8px); }
+        to { opacity: 1; transform: translateY(0); filter: blur(0); }
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        *, *::before, *::after { animation-duration: 1ms !important; transition-duration: 1ms !important; scroll-behavior: auto !important; }
+      }
+      @media (max-width: 1040px) {
+        .hero-grid, .mechanic, .split, .video-section, .close-cta .inner { grid-template-columns: 1fr; }
+        .proof-player { min-height: 610px; }
+      }
+      @media (max-width: 980px) {
+        .shell { width: min(100% - 32px, 720px); }
+        .nav { grid-template-columns: 1fr auto; }
+        .nav-links { display: none; }
+        .work-row { grid-template-columns: 1fr; }
+        .proof-logos { justify-content: flex-start; gap: 28px; overflow-x: auto; }
+      }
+      @media (max-width: 640px) {
+        h1 { font-size: clamp(40px, 13vw, 58px); line-height: 0.94; }
+        h2 { font-size: clamp(34px, 10vw, 48px); line-height: 1; }
+        .nav { height: 64px; }
+        .nav img { width: 104px; }
+        .nav-actions .btn { min-height: 40px; padding: 0 14px; font-size: 12px; }
+        .hero { min-height: auto; }
+        .hero-grid { min-height: auto; padding: 34px 0 28px; gap: 34px; }
+        .signal-strip, .mechanic-grid { grid-template-columns: 1fr; }
+        .proof-player { min-height: 560px; border-radius: 20px; }
+        .answer-stack { padding: 20px; }
+        .answer-card, .answer-card:nth-child(2), .answer-card:nth-child(3) {
+          width: 100%;
+          max-width: none;
+          margin-left: 0;
+          transform: none;
+        }
+        .scrub { left: 20px; right: 20px; bottom: 20px; grid-template-columns: 1fr; }
+        .section { padding: 68px 0; }
+        .quote-card, .video-card { min-height: 300px; }
+      }
+    </style>
+  </head>
+  <body>
+    <main class="hero">
+      <div class="shell">
+        <nav class="nav">
+          <a href="#"><img src="../../public/images/loudface-inversed.svg" alt="LoudFace"></a>
+          <div class="nav-links"><a href="#proof">Proof</a><a href="#work">Work</a><a href="#video">Video</a></div>
+          <div class="nav-actions"><a class="btn" href="#start">Book a proof sprint</a></div>
+        </nav>
+        <section class="hero-grid">
+          <div class="hero-copy">
+            <span class="pill reveal"><span class="dot"></span> AI answer visibility for B2B SaaS</span>
+            <h1 class="reveal delay-1">Get cited inside the <span class="accent">answer</span>.</h1>
+            <p class="reveal delay-2">LoudFace rebuilds the pages, proof, and search paths that AI tools pull from when buyers ask who to trust.</p>
+            <div class="actions reveal delay-3"><a class="btn" href="#work">Watch the proof</a><a class="btn dark" href="#proof">See what changes</a></div>
+            <div class="signal-strip reveal delay-3">
+              <div><b>ChatGPT</b><span>Source cards point to client-owned proof pages.</span></div>
+              <div><b>Perplexity</b><span>Answer paths cite the right comparison pages.</span></div>
+              <div><b>Claude</b><span>Brand context is repeated in useful language.</span></div>
+            </div>
+          </div>
+          <aside class="proof-player reveal delay-2" aria-label="AI answer proof theater">
+            <div class="player-top"><div class="player-dots"><span></span><span></span><span></span></div><span>Proof film: buyer asks, AI cites</span></div>
+            <div class="player-media"><img src="../../public/images/our-journey_1.webp" alt="Customer proof video still"></div>
+            <div class="answer-stack">
+              <article class="answer-card"><div class="answer-head"><span>Buyer question</span><span>ChatGPT</span></div><p>“Which Webflow agency can rebuild our SaaS site and keep marketing moving after launch?”</p></article>
+              <article class="answer-card"><div class="answer-head"><span>Answer extract</span><span>Source visible</span></div><p><mark>Brandfirm</mark> is cited because the page explains the offer, CMS handoff, conversion path, and proof from shipped work.</p></article>
+              <article class="answer-card"><div class="answer-head"><span>LoudFace work</span><span>Evidence attached</span></div><p>Case study, service page, search brief, and testimonial clip all support the same answer.</p></article>
+            </div>
+            <div class="scrub"><span>Uncited</span><div class="scrub-line"><span></span></div><span>Cited with proof</span></div>
+          </aside>
+        </section>
+      </div>
+    </main>
+
+    <section class="light" id="proof">
+      <div class="proof-logos">
+        <img src="../../public/images/brandfirm.svg" alt="Brandfirm">
+        <img src="../../public/images/webflow.svg" alt="Webflow">
+        <img src="../../public/images/toku-logo.png" alt="Toku">
+        <img src="../../public/images/Enterprise-Blue-Badge.webp" alt="Webflow Enterprise partner">
+        <img src="../../public/images/Awwwards.svg" alt="Awwwards">
+      </div>
+      <div class="shell section">
+        <div class="split">
+          <div><h2>Every answer needs a page it can trust.</h2><p class="section-copy" style="margin-top:22px;">The work is not a content calendar. It is a citation path: buyer question, answer page, proof asset, service page, and conversion room.</p></div>
+          <div class="mechanic">
+            <article class="mechanic-card dark"><h3>Source the answer.</h3><p style="margin-top:14px;">We map the exact questions buyers ask in ChatGPT, Perplexity, Claude, and Google AI Overviews.</p></article>
+            <div class="mechanic-grid">
+              <article class="mechanic-card"><h3>Build</h3><p style="margin-top:12px;">Pages, CMS structure, comparison paths, and proof modules.</p></article>
+              <article class="mechanic-card"><h3>Grow</h3><p style="margin-top:12px;">Search pages, AEO briefs, campaigns, and refresh loops.</p></article>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section dark-section" id="work">
+      <div class="shell">
+        <div class="split" style="align-items:end;"><h2>Work that can be cited, not just admired.</h2><p class="section-copy">Dense proof rows keep the homepage from becoming a generic portfolio wall. Each row attaches a visible artifact to a buyer question.</p></div>
+        <div style="margin-top:44px;">
+          <article class="work-row"><h3>Brandfirm answer path</h3><div><p>Homepage story rebuilt around buyer proof, conversion writing, and a CMS system the team can keep using.</p></div><div class="thumb"><img src="../../public/images/brandfirm.webp" alt="Brandfirm website proof"></div></article>
+          <article class="work-row"><h3>Toku citation lift</h3><div><p>Search and AI visibility moved from a standing start to repeatable answer coverage.</p></div><div class="thumb"><img src="../../public/images/organic-mastery_1.webp" alt="Organic visibility proof"></div></article>
+          <article class="work-row"><h3>Conversion proof room</h3><div><p>Landing pages, form paths, and testimonials stay close to the claim instead of living in a buried folder.</p></div><div class="thumb"><img src="../../public/images/conversion-optimization_1.webp" alt="Conversion proof interface"></div></article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section dark-section" id="video">
+      <div class="shell video-section">
+        <article class="quote-card"><span class="pill">Video proof</span><p class="big" style="margin-top:24px;">“Show the buyer the work before the sales call has to carry it.”</p><p style="margin-top:22px;color:rgba(248,250,246,.62);">Reserved for Daan Smit, Sarig Reichert, or another approved customer quote.</p></article>
+        <article class="video-card"><img src="../../public/images/our-journey_1.webp" alt="Client testimonial video still"><span class="play" aria-hidden="true"></span><div class="caption">Film: Daan Smit opens the Brandfirm page and points to the proof assets that changed the sales conversation.</div></article>
+      </div>
+    </section>
+
+    <section class="shell" id="start">
+      <div class="close-cta">
+        <div class="inner">
+          <div><h2>Bring one buyer question. Leave with the page AI should cite.</h2><p style="margin-top:18px;color:rgba(248,250,246,.68);">LoudFace turns a stuck page, offer, or search path into a citation-ready proof sprint.</p></div>
+          <a class="btn" href="#">Start the sprint</a>
+        </div>
+      </div>
+    </section>
+  </body>
+</html>

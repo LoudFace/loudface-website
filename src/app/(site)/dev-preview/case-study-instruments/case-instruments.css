@@ -1,0 +1,738 @@
+/**
+ * Case-study instruments band.
+ *
+ * The gallery at /dev-preview/case-study-charts is a catalogue — big cards, one
+ * chart each. This is the production shape: a COMPACT band that sits inside a
+ * case study without swallowing the page.
+ *
+ * The hard constraint (Arnel, 2026-08-31): the whole band must occupy at most
+ * two thirds of the viewport, so a reader always sees the story continue below
+ * it. `max-height: 66vh` enforces that, and the chart aspect ratios are chosen
+ * so the natural height lands under the cap rather than being clipped by it —
+ * the cap is a backstop, not the layout.
+ *
+ * Colour tokens are re-keyed to house indigo exactly as in the gallery, and for
+ * the same reason: no vendored chart component is edited.
+ */
+
+.cin {
+  --chart-1: #4f39f6;
+  --chart-2: #7c6cf8;
+  --chart-3: #a9a0fa;
+  --chart-4: #cdc7fc;
+  --chart-5: #e7e4fe;
+
+  --chart-background: #ffffff;
+  --chart-foreground: #1a1633;
+  --chart-foreground-muted: #6b6790;
+  --chart-line-primary: var(--chart-1);
+  --chart-line-secondary: var(--chart-2);
+  --chart-crosshair: #4f39f6;
+  --chart-grid: #e6e4f2;
+  --chart-label: #6b6790;
+
+  --chart-tooltip-background: rgb(20 16 48 / 0.92);
+  --chart-tooltip-foreground: #ffffff;
+  --chart-tooltip-muted: #a9a4c8;
+
+  --chart-marker-background: #f6f5fd;
+  --chart-marker-border: #d8d5ea;
+  --chart-marker-foreground: #2a2450;
+
+  /*
+   * Same four shadcn-base tokens this project never defines. See the gallery's
+   * stylesheet for the full note — `--border` is the radar/ring grid stroke and
+   * renders invisible without this.
+   */
+  --border: #e6e4f2;
+  --foreground: #1a1633;
+  --background: #ffffff;
+  --muted-foreground: #6b6790;
+  --color-muted: #f3f2fb;
+  --chart-indicator-color: #4f39f6;
+  --chart-segment-background: #f6f5fd;
+  --chart-segment-line: #e6e4f2;
+  --chart-marker-badge-background: #2a2450;
+  --chart-marker-badge-foreground: #ffffff;
+  --color-zinc-500: #6b6790;
+}
+
+/*
+ * FunnelChart's percentage badge is `bg-foreground text-background` — real
+ * Tailwind utility classes, not `var(--chart-*)` references. This project never
+ * registers `foreground`/`background` as theme colours, so Tailwind never emits
+ * those classes at all and the badge renders as dark text on the dark hatched
+ * fill. Defining custom properties cannot fix it; the class has to be styled
+ * directly. Same root cause as the zinc pill below.
+ */
+.cin .bg-foreground.text-background {
+  background-color: #1a1633;
+  color: #ffffff;
+}
+
+/* The tooltip date pill uses Tailwind classes this project's @theme deletes. */
+.cin .bg-zinc-900 {
+  background-color: #1a1633 !important;
+}
+.cin .bg-zinc-100 {
+  background-color: #f3f2fb !important;
+}
+.cin .text-zinc-900 {
+  color: #1a1633 !important;
+}
+
+/* ── Band ─────────────────────────────────────────────────────────────── */
+
+.cin-band {
+  /*
+   * The two-thirds rule. `max-height` alone was CLIPPING the bottom row's copy
+   * on a 720px-tall laptop — a cap that hides content is worse than a tall
+   * band. So the instruments themselves are sized in `vh` (see .cin-plot and
+   * .cin-funnel): the band shrinks with the viewport and lands under the cap on
+   * its own. The cap stays only as a backstop that should never engage.
+   */
+  display: flex;
+  flex-direction: column;
+}
+
+/*
+ * NO `max-height` cap. Two attempts at one both HID content instead of
+ * compacting it: first unconditionally, then behind `min-width: 900px` — which
+ * ignores height, so a 1280x720 laptop lost 37px and a 1024x600 netbook 76px
+ * (measured). A clip cannot make a dashboard shorter, it can only make part of
+ * it invisible, and an invisible chart is worse than a tall one.
+ *
+ * The two-thirds rule is enforced by SIZING instead: `.cin-plot` and the ring
+ * box are in `vh`, so every instrument shrinks with the viewport and the band
+ * lands at ~0.63 of a laptop screen on its own. Below 900px the cells stack and
+ * the band is honestly tall — correct, because on a phone the reader scrolls
+ * anyway and hiding four fifths of the evidence to honour a desktop ratio
+ * serves nobody.
+ */
+
+
+/* Chart plot height scales with the viewport so the band never hits the cap. */
+.cin-plot {
+  height: clamp(88px, 14vh, 142px);
+  min-width: 0;
+}
+
+/* ── Coverage bar ─────────────────────────────────────────────────────── */
+/*
+ * One stacked bar, three segments, 41 prompts. Replaces both the funnel (a
+ * funnel implies earned drop-off; the first stage here is just our own
+ * tracking choice) and the 41-square grid that followed it — the grid was
+ * tangible on a desktop but became texture at phone width, and the point of
+ * the cell is the PROPORTION, which a single bar states at any size.
+ * Segment widths come from flex-grow, so they are exact without any maths.
+ */
+
+.cin-cov-bar {
+  display: flex;
+  width: 100%;
+  height: 1.75rem;
+  border-radius: 999px;
+  overflow: hidden;
+  gap: 2px;
+  background: #fff;
+}
+
+.cin-cov-seg {
+  display: block;
+  min-width: 3px;
+}
+
+.cin-cov-seg--owned {
+  background: var(--chart-1);
+}
+
+.cin-cov-seg--cited {
+  background: var(--chart-3);
+}
+
+.cin-cov-seg--absent {
+  background: #eceafa;
+}
+
+.cin-cov-key {
+  list-style: none;
+  margin: 0.875rem 0 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+.cin-cov-key li {
+  display: grid;
+  grid-template-columns: 0.5rem 1fr auto;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.6875rem;
+  color: #4a4670;
+}
+
+.cin-cov-swatch {
+  width: 0.5rem;
+  height: 0.5rem;
+  border-radius: 2px;
+}
+
+.cin-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.75rem 2rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid #e9e7f4;
+}
+
+.cin-eyebrow {
+  font-size: 0.6875rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #8b87ab;
+  font-weight: 500;
+}
+
+/* Eyebrow carrying an engine mark — keeps it on one line with the label. */
+.cin-eyebrow--marked {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.cin-title {
+  font-size: 1.25rem;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  margin-top: 0.25rem;
+}
+
+.cin-source {
+  font-size: 0.6875rem;
+  color: #8b87ab;
+}
+
+/* ── Dashboard grid ───────────────────────────────────────────────────── */
+/*
+ * Two rows. Row 1 is the movement (30-day trio + the ring); row 2 is the
+ * standing (engine gauges, prompt funnel, rank). The 1px gaps plus a shared
+ * background paint the hairline rules, so no cell needs its own border.
+ */
+
+.cin-row {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1px;
+  background: #e9e7f4;
+  border: 1px solid #e9e7f4;
+  min-width: 0;
+}
+
+.cin-row--top {
+  margin-top: 1.25rem;
+  border-radius: 0.875rem 0.875rem 0 0;
+}
+
+.cin-row--bottom {
+  margin-top: 1px;
+  border-top: 0;
+  border-radius: 0 0 0.875rem 0.875rem;
+}
+
+@media (min-width: 900px) {
+  .cin-row--top {
+    grid-template-columns: 2.15fr 1fr;
+  }
+  .cin-row--bottom {
+    grid-template-columns: 1fr 1fr 1fr;
+  }
+}
+
+.cin-cell {
+  background: #fff;
+  padding: 1rem 1.125rem 1.125rem;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.cin-cell-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem 1rem;
+}
+
+.cin-cell-label {
+  font-size: 0.6875rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: #8b87ab;
+  font-weight: 500;
+}
+
+.cin-cell-body {
+  margin-top: 0.75rem;
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.cin-center {
+  align-items: center;
+}
+
+/*
+ * The ring is 1:1, so it gets a square box and fills it rather than sitting as
+ * a fixed 96px dial in a tall cell (Arnel, 2026-08-31). RingChart with no
+ * `size` prop measures its parent, so the aspect box drives the diameter.
+ */
+.cin-ring-box {
+  position: relative;
+  width: 100%;
+  max-width: clamp(104px, 15vh, 156px);
+  aspect-ratio: 1 / 1;
+  margin: 0 auto;
+}
+
+.cin-cell-foot {
+  margin-top: 0.75rem;
+  font-size: 0.6875rem;
+  line-height: 1.45;
+  color: #6b6790;
+  text-wrap: pretty;
+}
+
+/* ── Legend (logos, no dots) ──────────────────────────────────────────── */
+
+.cin-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.cin-legend-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  font-size: 0.6875rem;
+  color: #4a4670;
+}
+
+/* ── Ring key ─────────────────────────────────────────────────────────── */
+
+.cin-ring-key {
+  list-style: none;
+  margin: 0.75rem 0 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+.cin-ring-key li {
+  display: grid;
+  grid-template-columns: 0.875rem 0.9rem 1fr auto;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.6875rem;
+  color: #2a2450;
+}
+
+.cin-key-rule {
+  width: 0.75rem;
+  height: 0.1875rem;
+  border-radius: 999px;
+}
+
+.cin-engine-name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.cin-engine-value {
+  font-variant-numeric: tabular-nums;
+  color: #4a4670;
+}
+
+/* ── Engine gauges ────────────────────────────────────────────────────── */
+/*
+ * The gauge is scaled to the strongest engine so three low percentages still
+ * read as a comparison; the printed value under each is always the true
+ * figure. The engine's mark sits in the arc's mouth as the label.
+ */
+
+.cin-gauges {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.5rem;
+  justify-items: center;
+}
+
+.cin-gauge {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 0;
+}
+
+.cin-gauge-mark {
+  position: absolute;
+  top: 40px;
+  left: 50%;
+  transform: translateX(-50%);
+  line-height: 0;
+  color: #2a2450;
+}
+
+.cin-gauge-value {
+  margin-top: 0.25rem;
+  font-size: 0.9375rem;
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+  color: #1a1633;
+}
+
+/* ── Figures and owned prompts ────────────────────────────────────────── */
+
+.cin-figure {
+  display: flex;
+  align-items: baseline;
+  gap: 0.625rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.cin-figure-value {
+  font-size: 2.5rem;
+  font-weight: 500;
+  letter-spacing: -0.03em;
+  line-height: 1;
+  color: #1a1633;
+}
+
+.cin-transition {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  font-size: 0.75rem;
+  color: #6b6790;
+}
+
+.cin-arrow {
+  color: #a9a0fa;
+  flex-shrink: 0;
+}
+
+.cin-prompts {
+  list-style: none;
+  margin: 0.875rem 0 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+.cin-prompts li {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.75rem;
+  font-size: 0.6875rem;
+  color: #4a4670;
+  padding-bottom: 0.3rem;
+  border-bottom: 1px solid #f3f2fb;
+}
+
+.cin-prompt-name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.cin-prompt-value {
+  font-variant-numeric: tabular-nums;
+  color: #1a1633;
+  font-weight: 500;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cin *,
+  .cin *::before,
+  .cin *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* Ring centre — our own overlay; see the note in CaseStudyInstruments.tsx. */
+.cin-ring-center {
+  position: absolute;
+  inset: 0;
+  margin: auto;
+  width: 56%;
+  height: 56%;
+  pointer-events: none;
+  justify-content: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  line-height: 1.1;
+  max-width: 68px;
+  text-align: center;
+}
+
+.cin-ring-center-value {
+  font-size: 1.125rem;
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+  color: #1a1633;
+}
+
+.cin-ring-center-label {
+  margin-top: 0.125rem;
+  font-size: 0.5625rem;
+  line-height: 1.15;
+  color: #6b6790;
+}
+
+/*
+ * Short-viewport compaction. On a 1024x600 netbook the band was 0.9 of the
+ * screen. This tightens the things that cost height without carrying data —
+ * padding, the gauge dial, type — so the band genuinely shrinks. It never
+ * hides an instrument: the earlier `max-height` attempts did that, and a
+ * reader cannot act on a chart they cannot see.
+ */
+@media (min-width: 900px) and (max-height: 780px) {
+  .cin-head {
+    padding-bottom: 0.625rem;
+  }
+
+  .cin-title {
+    font-size: 1.0625rem;
+  }
+
+  .cin-row--top {
+    margin-top: 0.75rem;
+  }
+
+  .cin-cell {
+    padding: 0.75rem 0.875rem 0.875rem;
+  }
+
+  .cin-cell-body {
+    margin-top: 0.5rem;
+  }
+
+  .cin-cell-foot {
+    margin-top: 0.5rem;
+  }
+
+  .cin-figure-value {
+    font-size: 2rem;
+  }
+
+  .cin-cov-bar {
+    height: 1.25rem;
+  }
+
+  .cin-ring-box {
+    max-width: clamp(88px, 13vh, 120px);
+  }
+}
+
+/* ── Top pages list (Google board) ────────────────────────────────────── */
+
+.cin-row--pages {
+  grid-template-columns: 1fr;
+}
+
+@media (min-width: 900px) {
+  .cin-row--pages {
+    grid-template-columns: 1fr;
+  }
+}
+
+.cin-pages {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.cin-pages li {
+  display: grid;
+  grid-template-columns: minmax(0, 15rem) minmax(0, 1fr) 2.5rem;
+  align-items: center;
+  gap: 0.75rem;
+  font-size: 0.75rem;
+  color: #4a4670;
+}
+
+.cin-page-name {
+  display: flex;
+  align-items: baseline;
+  gap: 0.5rem;
+  min-width: 0;
+}
+
+/* The title truncates; the AI flag never does — it is the point of the row. */
+.cin-page-title {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Marks a page that ALSO wins in AI answers — the join between the two boards. */
+.cin-page-flag {
+  flex: 0 0 auto;
+  font-size: 0.5625rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--chart-1);
+  background: #efedfe;
+  border-radius: 999px;
+  padding: 0.1rem 0.375rem;
+}
+
+.cin-page-bar {
+  height: 0.5rem;
+  border-radius: 999px;
+  background: #f3f2fb;
+  overflow: hidden;
+}
+
+.cin-page-fill {
+  display: block;
+  height: 100%;
+  border-radius: 999px;
+  background: var(--chart-3);
+}
+
+.cin-page-fill--ai {
+  background: var(--chart-1);
+}
+
+.cin-engine-value {
+  text-align: right;
+}
+
+/*
+ * Short-viewport pass, continued. The figures cell and the pages list also
+ * need tightening so BOTH boards clear two thirds on a 1024x600 screen — the
+ * cap that used to "enforce" that was hiding content instead (see the note
+ * above the grid).
+ */
+@media (min-width: 900px) and (max-height: 780px) {
+  .cin-plot {
+    height: clamp(72px, 11vh, 112px);
+  }
+
+  .cin-pages {
+    gap: 0.3rem;
+  }
+
+  .cin-pages li {
+    font-size: 0.6875rem;
+  }
+
+  .cin-prompts {
+    margin-top: 0.5rem;
+  }
+
+  .cin-gauges .cin-gauge-value {
+    font-size: 0.8125rem;
+  }
+
+  .cin-cov-key,
+  .cin-ring-key {
+    margin-top: 0.5rem;
+  }
+}
+
+/*
+ * Horizontal page bars. Unlike .cin-plot this carries no height: BarChart has
+ * no `style` prop, so it sizes itself from `aspectRatio`. The row is full
+ * width, so that ratio already scales with the viewport.
+ */
+.cin-pagebars {
+  min-width: 0;
+}
+
+/*
+ * BarYAxis hardcodes `max-width: 70px` on every label (bar-y-axis.tsx line 49),
+ * so page names truncated to "Best comm…" no matter how wide the left margin
+ * was. The axis is vendored and must not be edited, so the cap is raised here
+ * instead — scoped to this chart so no other BarYAxis on the site changes.
+ * `!important` is required: the vendor sets it as an inline style.
+ */
+.cin-pagebars .truncate {
+  max-width: 152px !important;
+}
+
+/* Narrower gutter on a phone, so the label cap has to come down with it. */
+@media (max-width: 700px) {
+  .cin-pagebars .truncate {
+    max-width: 94px !important;
+  }
+}
+
+/* ── Tooltip ──────────────────────────────────────────────────────────── */
+/* Our own body: the vendored default printed raw data keys beside a coloured
+   dot and left the value flush against the panel edge. */
+
+.cin-tip {
+  padding: 0.625rem 0.875rem;
+}
+
+.cin-tip-title {
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: var(--chart-tooltip-foreground);
+  margin-bottom: 0.5rem;
+}
+
+.cin-tip-rows {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.375rem;
+}
+
+.cin-tip-rows li {
+  display: grid;
+  grid-template-columns: 0.875rem 1fr auto;
+  align-items: center;
+  gap: 0.5rem;
+  column-gap: 1.25rem;
+}
+
+.cin-tip-rule {
+  width: 0.75rem;
+  height: 0.1875rem;
+  border-radius: 999px;
+}
+
+.cin-tip-label {
+  font-size: 0.8125rem;
+  color: var(--chart-tooltip-muted);
+  white-space: nowrap;
+}
+
+.cin-tip-value {
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: var(--chart-tooltip-foreground);
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+}

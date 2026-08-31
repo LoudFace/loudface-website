@@ -1,0 +1,400 @@
+/**
+ * Chart gallery skin.
+ *
+ * The Bklit chart components read every colour from `--chart-*` custom
+ * properties, so re-keying them to the house indigo is done ENTIRELY here —
+ * not one harvested component is edited. `.csc` is the scope, so the override
+ * cannot leak into the rest of the site (globals.css keeps its greyscale set,
+ * which the case-detail instruments still use).
+ *
+ * House rule from the 2026-08-19 chart redesign still holds: chart ink is
+ * indigo, never a client brand colour. The three engine series are three steps
+ * of the same indigo ramp, and the engine LOGO is what tells them apart —
+ * colour alone is never the only differentiator.
+ */
+
+.csc {
+  /* Series ramp — one hue, three values. ChatGPT darkest, Google AIO lightest. */
+  --chart-1: #4f39f6;
+  --chart-2: #7c6cf8;
+  --chart-3: #a9a0fa;
+  --chart-4: #cdc7fc;
+  --chart-5: #e7e4fe;
+
+  --chart-background: #ffffff;
+  --chart-foreground: #1a1633;
+  --chart-foreground-muted: #6b6790;
+  --chart-line-primary: var(--chart-1);
+  --chart-line-secondary: var(--chart-2);
+  --chart-crosshair: #4f39f6;
+  --chart-grid: #e6e4f2;
+  --chart-brush-border: #d8d5ea;
+  --chart-label: #6b6790;
+
+  --chart-tooltip-background: rgb(20 16 48 / 0.92);
+  --chart-tooltip-foreground: #ffffff;
+  --chart-tooltip-muted: #a9a4c8;
+
+  --chart-marker-background: #f6f5fd;
+  --chart-marker-border: #d8d5ea;
+  --chart-marker-foreground: #2a2450;
+
+  /* Heatmap ramp — five steps of the same indigo, pale floor for empty weeks. */
+  --chart-scale-01: #f3f2fb;
+  --chart-scale-02: #ded9fb;
+  --chart-scale-03: #b9aefa;
+  --chart-scale-04: #8371f7;
+  --chart-scale-05: #4f39f6;
+  --chart-scale-pattern-color: #f3f2fb;
+
+  /*
+   * Tokens the harvested components expect but this project has never defined.
+   * Bklit is built on the shadcn base theme (--border / --foreground /
+   * --muted-foreground); our globals.css uses its own `surface-*` system and
+   * also resets Tailwind's default colour ramps to `initial`, so every one of
+   * these resolved to nothing. That is not cosmetic — `--border` is the radar
+   * and ring GRID stroke, so the grid rendered invisible until it was defined.
+   * Found by diffing `var(--…)` across src/components/charts against the
+   * tokens actually declared.
+   */
+  --border: #e6e4f2;
+  --foreground: #1a1633;
+  --muted-foreground: #6b6790;
+  --color-muted: #f3f2fb;
+
+  --chart-indicator-color: #4f39f6;
+  --chart-indicator-secondary-color: #a9a0fa;
+  --chart-segment-background: #f6f5fd;
+  --chart-segment-line: #e6e4f2;
+  --chart-marker-badge-background: #2a2450;
+  --chart-marker-badge-foreground: #ffffff;
+
+  /* Delta colours in the scatter and bar axes — mapped to the house semantics. */
+  --color-emerald-500: var(--color-success);
+  --color-red-500: var(--color-error);
+  --color-zinc-500: #6b6790;
+
+}
+
+/*
+ * Two vendored spots use actual TAILWIND UTILITY CLASSES for colour instead
+ * of a `var(--chart-*)` reference — `bg-foreground`/`text-background` (the
+ * FunnelChart percentage badge) and `bg-zinc-900` (the tooltip's date pill,
+ * `src/components/charts/tooltip/date-ticker.tsx`). Both paint nothing:
+ * `src/app/globals.css` zeroes Tailwind's default palette from inside an
+ * `@theme` block (`--color-zinc-*: initial`, line ~111) and never registers
+ * `foreground`/`background` as theme colours at all, so Tailwind's compiler
+ * never emits `.bg-foreground` / `.bg-zinc-900` as CSS in the first place —
+ * confirmed by reading the badge's own computed `background-color`
+ * (`rgba(0,0,0,0)`) even after defining matching `--color-*` custom
+ * properties here. That's a DIFFERENT failure mode from `--border` /
+ * `--foreground` / `--color-emerald-500` etc. above, which those components
+ * consume as plain `var(--…)` values (inline style / JS string), not
+ * through a Tailwind class — a scoped custom property fixes those, because
+ * nothing needs the class to exist as compiled CSS.
+ *
+ * A theme colour can only be (re)registered from an `@theme` block, and
+ * `@theme` can't be nested inside `.csc`, so the only fix available at the
+ * CSS-file level, without touching globals.css or the vendored components,
+ * is to skip Tailwind's utility layer entirely: target the class names
+ * directly and set the plain CSS properties ourselves.
+ */
+.csc .bg-foreground.text-background {
+  background-color: #1a1633;
+  color: #ffffff;
+}
+
+.csc .bg-zinc-900 {
+  background-color: #1a1633;
+}
+
+/* ── Page shell ───────────────────────────────────────────────────────── */
+
+.csc {
+  background: #fbfbfe;
+  color: #1a1633;
+  min-height: 100vh;
+}
+
+.csc-shell {
+  max-width: 1240px;
+  margin: 0 auto;
+  padding: 4rem 1.5rem 6rem;
+}
+
+@media (min-width: 768px) {
+  .csc-shell {
+    padding: 5rem 2.5rem 8rem;
+  }
+}
+
+.csc-eyebrow {
+  font-size: 0.75rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: #6b6790;
+  font-weight: 500;
+}
+
+.csc-h1 {
+  font-size: clamp(2rem, 4vw, 3.25rem);
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+  font-weight: 500;
+  margin-top: 1rem;
+  text-wrap: balance;
+}
+
+.csc-lede {
+  margin-top: 1.25rem;
+  max-width: 60ch;
+  color: #4a4670;
+  font-size: 1.0625rem;
+  line-height: 1.6;
+  text-wrap: pretty;
+}
+
+/* ── Engine strip ─────────────────────────────────────────────────────── */
+
+.csc-engines {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 2rem;
+}
+
+.csc-engine {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.4rem 0.8rem 0.4rem 0.6rem;
+  border: 1px solid #e6e4f2;
+  border-radius: 999px;
+  background: #fff;
+  font-size: 0.8125rem;
+  color: #2a2450;
+}
+
+/* ── Chart cards ──────────────────────────────────────────────────────── */
+
+.csc-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.25rem;
+  margin-top: 3rem;
+}
+
+@media (min-width: 900px) {
+  .csc-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .csc-card--wide {
+    grid-column: 1 / -1;
+  }
+}
+
+.csc-card {
+  border: 1px solid #e9e7f4;
+  border-radius: 1rem;
+  background: #fff;
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.csc-card-eyebrow {
+  font-size: 0.6875rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #8b87ab;
+  font-weight: 500;
+}
+
+.csc-card-title {
+  margin-top: 0.5rem;
+  font-size: 1.0625rem;
+  font-weight: 500;
+  line-height: 1.35;
+  letter-spacing: -0.01em;
+  text-wrap: balance;
+}
+
+.csc-card-note {
+  margin-top: 0.375rem;
+  font-size: 0.8125rem;
+  line-height: 1.5;
+  color: #6b6790;
+  text-wrap: pretty;
+}
+
+.csc-card-body {
+  margin-top: 1.25rem;
+  flex: 1;
+  min-width: 0;
+  /*
+   * Clipping boundary for chart overflow. The 3D-stacked BarChart recipe
+   * (card 4) has a real bug in the vendored BarChart: its y-scale for
+   * `stacked` bars is built from the max SINGLE series value, not the max
+   * STACKED TOTAL (see bar-chart.tsx's `buildYScalesForLines` call — its
+   * `resolveDomain` scans one key at a time and never sums), so bars for any
+   * month whose combined total exceeds that single-series max render far
+   * taller than the plot and bleed upward through the card's own title and
+   * into the card above. `overflow:hidden` here stops that bleed at the
+   * card boundary — it cannot fix the underlying scale (that needs a vendor
+   * fix), so the tallest months still render flat-topped instead of fully
+   * proportional. Reported, not silently patched — see the chart gallery
+   * task report.
+   */
+  overflow: hidden;
+}
+
+.csc-source {
+  margin-top: 1rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid #f0eff8;
+  font-size: 0.6875rem;
+  color: #8b87ab;
+  letter-spacing: 0.01em;
+}
+
+/* Legend used above charts that carry engine logos. */
+.csc-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-bottom: 0.75rem;
+}
+
+.csc-legend-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.75rem;
+  color: #4a4670;
+}
+
+.csc-legend-rule {
+  width: 1.125rem;
+  height: 0.1875rem;
+  border-radius: 999px;
+  flex-shrink: 0;
+}
+
+/* Wide charts scroll rather than squeezing their labels. */
+.csc-scroll {
+  overflow-x: auto;
+  min-width: 0;
+}
+
+/*
+ * Prompt row labels for the two heatmaps. Superseded the old `.csc-matrix`
+ * two-column CSS-grid layout (a hand-built label column that didn't line up
+ * with the chart's own cell rows — the row height was guessed in CSS, not
+ * measured from the chart). `HeatmapPromptLabels` in ChartGallery.tsx now
+ * reads the chart's real per-row geometry (`yScale`/`binHeight`/`gap` via
+ * the library's own `useHeatmap()`) and portals labels into the chart's own
+ * left margin, so this is just typography for that portalled span.
+ */
+/*
+ * Row labels sit on a 24px pitch (binSize 20 + gap 4). At the old 18px pitch
+ * an 11px label left ~5px of air and the ten rows read as one flush block
+ * (Arnel, 2026-08-31). The pitch does the work; this just stops the text
+ * fighting it — labels are pre-shortened in data.ts so nothing truncates,
+ * and the right padding holds them off the first column of cells.
+ */
+.csc-heatmap-row-label {
+  display: block;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  padding-right: 0.875rem;
+  font-size: 0.75rem;
+  line-height: 1.15;
+  color: #4a4670;
+}
+
+.csc-stat-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2rem;
+  margin-top: 1rem;
+}
+
+.csc-stat-label {
+  font-size: 0.75rem;
+  color: #6b6790;
+}
+
+.csc-stat-value {
+  font-size: 1.5rem;
+  font-weight: 500;
+  letter-spacing: -0.02em;
+  font-variant-numeric: tabular-nums;
+}
+
+/*
+ * Funnel stage names, rendered by us instead of FunnelChart's own
+ * `showLabels` — the built-in label is `whitespace-nowrap` positioned inside
+ * each segment's own (equal) width slice, so a stage name longer than that
+ * slice overflows into its neighbour and the two collide. A CSS grid with
+ * one column per stage gives each name a bounded, wrapping box instead.
+ */
+.csc-funnel-labels {
+  display: grid;
+  grid-template-columns: repeat(var(--csc-funnel-stage-count, 3), 1fr);
+  gap: 0.5rem;
+  margin-top: 0.75rem;
+  text-align: center;
+}
+
+.csc-funnel-label {
+  font-size: 0.75rem;
+  line-height: 1.35;
+  color: #6b6790;
+  text-wrap: balance;
+}
+
+/*
+ * Sankey needs real horizontal room for topic names once labels read
+ * left/right instead of rotated (see ChartGallery.tsx) — forcing a minimum
+ * width and letting the card scroll keeps mobile from squeezing the nodes
+ * into an unreadable sliver, the same trade the heatmaps already make.
+ */
+.csc-sankey-frame {
+  min-width: 640px;
+}
+
+/*
+ * The heatmap's `layout="fluid"` sizes every cell — and with it, ROW height
+ * — purely from the container's own width (cells are square). Shrink the
+ * card to a mobile width and row height shrinks right along with it, to
+ * well under one text line, so `HeatmapPromptLabels`' portalled row names
+ * (each pinned to its row's real y — see ChartGallery.tsx) start overlapping
+ * their neighbours even though the alignment math is correct. A min-width
+ * plus the shared `.csc-scroll` wrapper keeps every row tall enough for its
+ * own label, and lets the card scroll horizontally instead — same trade as
+ * the Sankey frame above.
+ */
+/*
+ * The heatmaps are deliberately SMALL — GitHub-contributions scale, not a
+ * full-bleed wall (Arnel, 2026-08-31). `binSize={15}` on the chart fixes the
+ * cell size, so the frame only has to stop the flex parent stretching it:
+ * `max-content` makes it hug the grid's natural width instead of filling the
+ * card. `min-width` is the narrow floor for the horizontal scroll on mobile.
+ */
+.csc-heatmap-frame {
+  width: max-content;
+  min-width: 460px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .csc *,
+  .csc *::before,
+  .csc *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

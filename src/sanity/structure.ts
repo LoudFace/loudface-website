@@ -10,7 +10,7 @@ import type { StructureResolver } from 'sanity/structure';
  * nothing goes orphaned.
  */
 
-const CONTENT_TYPES = ['blogPost', 'blogFaq', 'blogVisual', 'category', 'seoPage'];
+const CONTENT_TYPES = ['blogPost', 'research', 'blogFaq', 'blogVisual', 'category', 'seoPage'];
 
 const PROOF_TYPES = ['caseStudy', 'client', 'testimonial'];
 

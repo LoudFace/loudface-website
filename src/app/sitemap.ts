@@ -1,9 +1,5 @@
 import { MetadataRoute } from 'next';
-import {
-  assertCmsData,
-  fetchHomepageData,
-  fetchSeoPages,
-} from '@/lib/cms-data';
+import { fetchSitemapData } from '@/lib/cms-data';
 import nextConfig from '../../next.config';
 import { TEAM_HIDDEN } from './about-v3/data';
 
@@ -166,16 +162,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     },
   ];
 
-  const [cmsData, seoPages] = await Promise.all([
-    fetchHomepageData(),
-    fetchSeoPages(),
-  ]);
-
-  if (process.env.NODE_ENV === 'production') {
-    assertCmsData(cmsData);
-  }
-
-  const { caseStudies, blogPosts, teamMembers } = cmsData;
+  const { caseStudies, blogPosts, seoPages, teamMembers } = await fetchSitemapData();
 
   // Case study pages — include all case studies that have a slug
   // (even if they lack a paragraph-summary, they're still indexable pages)

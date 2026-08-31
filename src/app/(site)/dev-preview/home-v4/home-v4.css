@@ -1,0 +1,249 @@
+/* ============================================================================
+   HOME-V4 — additive-only styles for the merged homepage concept.
+
+   Every selector here is NEW markup introduced by this preview page. Nothing
+   in home-v3.css or instruments.css is overridden or edited — this file only
+   adds classes those files don't define, so the two source stylesheets stay
+   byte-for-byte reusable elsewhere.
+   ========================================================================= */
+
+/* ---- 1. problem panels: chip strip lives INSIDE the white plate, below the
+   figcaption, separated only by a hairline divider — same ground as the rest
+   of the panel, never a separate dark slab bolted underneath. ---- */
+:where(.hpv3) .chip-strip {
+  margin: 0;
+  padding: 16px 18px 18px;
+  border-top: 1px solid var(--rule);
+}
+:where(.hpv3) .chip-strip .ai-row {
+  margin-top: 0;
+  padding-top: 0;
+  border-top: none;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 8px 14px;
+}
+:where(.hpv3) .chip-strip .ai-row-label {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--pmut);
+  flex: none;
+}
+:where(.hpv3) .chip-strip .ai-chips {
+  margin-top: 0;
+}
+/* chips restyle for the light ground: white chip, hairline border, dark ink,
+   14px marks — the hero's glassy dark-field pill doesn't read on white. */
+:where(.hpv3) .chip-strip .chip {
+  height: 32px;
+  padding: 0 13px;
+  background: var(--plate-bg);
+  box-shadow: inset 0 0 0 1px var(--rule);
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  color: var(--pink);
+  font-size: 12.5px;
+}
+:where(.hpv3) .chip-strip .chip svg {
+  width: 14px;
+  height: 14px;
+}
+:where(.hpv3) .chip-strip .chip:hover,
+:where(.hpv3) .chip-strip .chip:focus-visible {
+  color: var(--pink);
+  background: var(--track);
+  box-shadow: inset 0 0 0 1px var(--rule);
+}
+:where(.hpv3) .panel-cap {
+  margin-top: 11px;
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--pmut);
+}
+
+/* ---- 2. pull-quote card paired with the tabbed system ---- */
+:where(.hpv3) .stage-quote {
+  margin-top: 40px;
+  padding: 22px 24px;
+  border: 1px solid var(--rule);
+  max-width: 46ch;
+}
+:where(.hpv3) .stage-quote blockquote {
+  font-size: 15px;
+  line-height: 1.55;
+  color: var(--pink);
+}
+:where(.hpv3) .stage-quote footer {
+  margin-top: 16px;
+  padding-top: 12px;
+  border-top: 1px solid var(--rule);
+  font-size: 11.5px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--pink);
+}
+:where(.hpv3) .stage-quote footer span {
+  font-weight: 500;
+  text-transform: none;
+  letter-spacing: normal;
+  color: var(--pmut);
+}
+
+/* ---- 3. results, charts-only (quotes relocated to sections 2 and 4) ---- */
+:where(.hpv3) .resi-charts-only .resi-pair {
+  margin-bottom: 0;
+}
+
+/* ---- 4. engagement timeline: dense mini-mocks, widened to fill the column ---- */
+:where(.hpv3) .tl-mock {
+  max-width: 640px;
+}
+:where(.hpv3) .tl-mock .ip-body {
+  padding: 16px 18px;
+}
+:where(.hpv3) .tl-more {
+  padding: 9px 0 0;
+  font-size: 11.5px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--pmut);
+}
+
+/* Slack-style report message (Month 3+) — plain rows, no chat-app logo */
+:where(.hpv3) .msg-mock {
+  max-width: 640px;
+  border: 1px solid var(--rule);
+  background: var(--plate-bg);
+}
+
+/* ---- 4a. timeline layout overrides — scoped to the harvested component's
+   markup via attribute selectors (unlayered, so they beat the Tailwind
+   utility layer without !important). timeline.tsx itself stays untouched;
+   `.tl-wrap` is the hook added around <Timeline> in page.tsx. Cuts the
+   component's stock md:pt-40 (160px) entry gap; the sticky date column
+   (`.sticky`, `top-40`) is left alone so its scroll behaviour is unchanged. */
+:where(.hpv3) .tl-wrap [class*="pt-10"][class*="md:pt-40"] {
+  padding-top: 20px;
+}
+@media (min-width: 768px) {
+  :where(.hpv3) .tl-wrap [class*="pt-10"][class*="md:pt-40"] {
+    padding-top: 64px;
+  }
+}
+:where(.hpv3) .msg-head {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  padding: 13px 18px;
+  border-bottom: 1px solid var(--rule);
+}
+:where(.hpv3) .msg-sender {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--pink);
+}
+:where(.hpv3) .msg-time {
+  font-size: 11px;
+  color: var(--pmut);
+}
+:where(.hpv3) .msg-body {
+  padding: 16px 18px;
+  display: grid;
+  gap: 12px;
+}
+:where(.hpv3) .msg-row b {
+  display: block;
+  font-size: 10.5px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--chart);
+  margin-bottom: 4px;
+}
+:where(.hpv3) .msg-row p {
+  font-size: 13.5px;
+  line-height: 1.5;
+  color: var(--pbody);
+}
+
+/* second engagement quote, after the last timeline entry */
+:where(.hpv3) .tl-quote {
+  margin: 8px 0 0 0;
+  padding: 22px 24px;
+  border: 1px solid var(--rule);
+  max-width: 460px;
+}
+:where(.hpv3) .tl-quote blockquote {
+  font-size: 15px;
+  line-height: 1.55;
+  color: var(--pink);
+}
+:where(.hpv3) .tl-quote footer {
+  margin-top: 16px;
+  padding-top: 12px;
+  border-top: 1px solid var(--rule);
+  font-size: 11.5px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--pink);
+}
+:where(.hpv3) .tl-quote footer span {
+  font-weight: 500;
+  text-transform: none;
+  letter-spacing: normal;
+  color: var(--pmut);
+}
+
+/* ---- 6. selected work: real screenshots as bento tile backgrounds ---- */
+:where(.hpv3) .wk-tile {
+  position: relative;
+  overflow: hidden;
+  background-size: cover;
+  background-position: center top;
+  border-radius: inherit;
+  min-height: 100%;
+}
+:where(.hpv3) .wk-tile::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(23, 20, 69, 0) 40%, rgba(23, 20, 69, 0.82) 100%);
+}
+:where(.hpv3) .wk-tile-meta {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 1;
+  padding: 16px 18px;
+}
+:where(.hpv3) .wk-tile-client {
+  display: block;
+  font-family: var(--font-heading);
+  font-size: 15px;
+  font-weight: 500;
+  color: #fff;
+}
+:where(.hpv3) .wk-tile-metric {
+  display: block;
+  margin-top: 3px;
+  font-size: 12.5px;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.82);
+}
+:where(.hpv3) .wk-bento .bf-window {
+  padding: 0;
+}
+
+@media (max-width: 760px) {
+  :where(.hpv3) .stage-quote,
+  :where(.hpv3) .tl-quote {
+    max-width: none;
+  }
+}

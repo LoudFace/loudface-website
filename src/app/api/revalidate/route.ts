@@ -57,6 +57,8 @@ function pathsFor(type: string | undefined, slug: string | undefined): string[] 
   switch (type) {
     case 'blogPost':
       return [...always, '/', '/blog', slug ? `/blog/${slug}` : null].filter(Boolean) as string[];
+    case 'research':
+      return [...always, '/', '/research', slug ? `/research/${slug}` : null].filter(Boolean) as string[];
     case 'caseStudy':
       return [...always, '/', '/case-studies', slug ? `/case-studies/${slug}` : null].filter(Boolean) as string[];
     case 'teamMember':

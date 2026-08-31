@@ -6,7 +6,11 @@
 /* ---- Fonts: loaded globally via next/font/local in src/app/layout.tsx (vars --font-satoshi / --font-neue-montreal) ---- */
 
 /* ---- Minimal reset ---- */
-:where(.hpv3) *,:where(.hpv3) *::before,:where(.hpv3) *::after{ box-sizing:border-box; margin:0; padding:0; }
+/* The reset lives in @layer base so Tailwind utilities (@layer utilities) can
+   override it — unlayered CSS beats ALL layered CSS, so an unlayered reset was
+   silently zeroing every margin/padding utility on components inside .hpv3.
+   The page's own bespoke rules are unlayered and still win over this reset. */
+@layer base { :where(.hpv3) *,:where(.hpv3) *::before,:where(.hpv3) *::after{ box-sizing:border-box; margin:0; padding:0; } }
 :where(.hpv3){ -webkit-text-size-adjust:100%; scroll-behavior:smooth; }
 :where(.hpv3){
   font-family:var(--font-sans);

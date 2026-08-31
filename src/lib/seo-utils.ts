@@ -131,6 +131,11 @@ const LEGACY_URL_MAP: Record<string, string> = {
   '/blog/is-webflow-good-for-small-businesses': '/blog/why-saas-companies-are-moving-to-webflow-in-2026-and-what-they-gain',
   '/blog/seo-vs-aeo-what-actually-changes-for-your-webflow-site-in-2026': '/blog/seo-vs-aeo-for-webflow',
   '/blog/seo-vs-aeo-webflow': '/blog/seo-vs-aeo-for-webflow',
+  // Content links from the legacy corpus. Keep the redirects for old inbound
+  // URLs, but make links rendered from current articles point to the final page.
+  '/blog/how-ai-webflow-systems-reduce-development-costs-for-scaling-teams': '/blog/webflow-agency-cost-b2b-saas-2026',
+  '/blog/the-future-of-webflow-ai-assisted-design-development-and-optimization': '/blog/webflow-ai-revolution',
+  '/blog/aeo-for-webflow-how-to-make-your-site-discoverable-by-ai-search-engines': '/blog/answer-engine-optimization-guide-2026',
   // Old case study slugs
   '/case-studies/icypeas': '/case-studies/b2b-saas-brand-and-website-redesign-case-study',
   '/case-studies/toku': '/case-studies/toku-design-messaging-upgrade',

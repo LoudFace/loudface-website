@@ -145,6 +145,48 @@ export interface BlogPost {
   "dataset-meta"?: DatasetMeta;
 }
 
+export interface ResearchDataFile {
+  label: string;
+  url: string;
+  note?: string;
+}
+
+/**
+ * A research study on /research/[slug].
+ *
+ * The evidence fields (sample, methodology, limitations) are separate from
+ * `content` on purpose: they are what makes a study citable rather than
+ * quotable, and keeping them as fields means the Studio asks for them every
+ * time instead of relying on an author remembering a heading.
+ */
+export interface ResearchStudy {
+  id: string;
+  name: string;
+  slug: string;
+  "meta-title"?: string;
+  "meta-description"?: string;
+  thumbnail?: CmsImage;
+  excerpt?: string;
+  "headline-finding"?: string;
+  "key-takeaways"?: string[];
+  content?: string;
+  "sample-summary"?: string;
+  methodology?: string;
+  limitations?: string;
+  appendix?: string;
+  "data-files"?: ResearchDataFile[];
+  "time-to-read"?: string | number;
+  featured?: boolean;
+  "published-date"?: string;
+  "last-updated"?: string;
+  authors?: string[];
+  supersedes?: string;
+  superseded?: string;
+  faq?: FAQItem[];
+  visuals?: BlogVisual[];
+  "dataset-meta"?: DatasetMeta;
+}
+
 export interface BlogVisualPosition {
   anchor: 'hero' | 'after-h2' | 'end';
   h2Index?: number;

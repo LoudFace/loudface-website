@@ -1,0 +1,598 @@
+/* Component-library integration test. The route keeps the v3 tokens and copy,
+   then adapts the borrowed structures under one preview-only scope. */
+
+:where(.lego-preview) .lego-sourcebar {
+  padding: 112px 0 54px;
+  background: var(--paper);
+  border-bottom: 1px solid var(--paper-line);
+}
+
+:where(.lego-preview) .lego-sourcebar-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 7fr) minmax(280px, 5fr);
+  gap: 48px;
+  align-items: end;
+}
+
+:where(.lego-preview) .lego-sourcebar h1 {
+  margin-top: 18px;
+  max-width: 20ch;
+  font-size: clamp(2rem, 4vw, 4.3rem);
+  color: var(--ink);
+}
+
+:where(.lego-preview) .lego-sourcebar-grid > p {
+  max-width: 60ch;
+  color: var(--body);
+  font-size: 16px;
+  line-height: 1.65;
+}
+
+:where(.lego-preview) .lego-source-count,
+:where(.lego-preview) .lego-kicker,
+:where(.lego-preview) .receipt-client {
+  display: inline-flex;
+  align-items: center;
+  min-height: 34px;
+  padding: 0 14px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+
+:where(.lego-preview) .lego-source-count {
+  color: var(--primary-700);
+  background: var(--primary-50);
+  box-shadow: inset 0 0 0 1px var(--primary-200);
+}
+
+:where(.lego-preview) .lego-source-register {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  margin-top: 48px;
+  border-top: 1px solid var(--primary-100);
+  border-left: 1px solid var(--primary-100);
+}
+
+:where(.lego-preview) .lego-source-register a {
+  display: grid;
+  align-content: start;
+  min-height: 132px;
+  padding: 16px 14px;
+  border-right: 1px solid var(--primary-100);
+  border-bottom: 1px solid var(--primary-100);
+  transition: background-color .2s var(--ease-out), transform .15s var(--ease-out);
+}
+
+:where(.lego-preview) .lego-source-register a:hover,
+:where(.lego-preview) .lego-source-register a:focus-visible {
+  background: var(--primary-50);
+}
+
+:where(.lego-preview) .lego-source-register a:active { transform: scale(.98); }
+
+:where(.lego-preview) .lego-source-register span {
+  color: var(--primary-500);
+  font-family: var(--font-mono);
+  font-size: 10px;
+}
+
+:where(.lego-preview) .lego-source-register strong {
+  margin-top: 18px;
+  color: var(--ink);
+  font-size: 13px;
+  font-weight: 600;
+}
+
+:where(.lego-preview) .lego-source-register small {
+  margin-top: 5px;
+  color: var(--surface-500);
+  font-size: 10.5px;
+  line-height: 1.4;
+}
+
+:where(.lego-preview) .lego-source-note {
+  margin: 14px 0 0 auto;
+  max-width: 74ch;
+  color: var(--surface-500);
+  font-size: 11px;
+  line-height: 1.55;
+  text-align: right;
+}
+
+/* Results: Case Studies 2's repeated proof-row structure, reskinned with real
+   LoudFace work instead of testimonial portraits and generic sample metrics. */
+:where(.lego-preview) .lego-results {
+  padding: 120px 0 128px;
+  background: var(--paper);
+}
+
+:where(.lego-preview) .lego-section-head {
+  display: grid;
+  grid-template-columns: 3fr 9fr;
+  gap: 32px;
+  align-items: start;
+  padding-bottom: 52px;
+  border-bottom: 1px solid var(--primary-100);
+}
+
+:where(.lego-preview) .lego-kicker {
+  justify-self: start;
+  color: var(--primary-700);
+  background: var(--primary-50);
+  box-shadow: inset 0 0 0 1px var(--primary-200);
+}
+
+:where(.lego-preview) .lego-kicker.dark {
+  color: var(--paper);
+  background: rgba(255,255,255,.1);
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,.2);
+}
+
+:where(.lego-preview) .lego-section-head h2 {
+  max-width: 14ch;
+  font-size: clamp(2rem, 4.4vw, 4.8rem);
+  color: var(--ink);
+}
+
+:where(.lego-preview) .lego-section-head p {
+  margin-top: 18px;
+  max-width: 58ch;
+  color: var(--body);
+  font-size: 17px;
+  line-height: 1.65;
+}
+
+:where(.lego-preview) .receipt-row {
+  display: grid;
+  grid-template-columns: minmax(0, 7fr) minmax(260px, 5fr);
+  gap: 56px;
+  align-items: center;
+  padding: 56px 0;
+  border-bottom: 1px solid var(--primary-100);
+}
+
+:where(.lego-preview) .receipt-row:nth-child(even) .receipt-work { order: 2; }
+:where(.lego-preview) .receipt-row:nth-child(even) .receipt-proof { order: 1; }
+
+:where(.lego-preview) .receipt-dossier {
+  position: relative;
+  padding-top: 24px;
+}
+
+:where(.lego-preview) .receipt-dossier-tab {
+  position: absolute;
+  top: 0;
+  left: 22px;
+  display: flex;
+  align-items: center;
+  width: 132px;
+  height: 32px;
+  padding: 0 15px;
+  color: var(--primary-700);
+  background: var(--primary-100);
+  clip-path: polygon(0 0, 82% 0, 100% 100%, 0 100%);
+  font-family: var(--font-mono);
+  font-size: 9.5px;
+  font-weight: 600;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+
+:where(.lego-preview) .receipt-browser {
+  position: relative;
+  overflow: hidden;
+  border-radius: 16px;
+  background: var(--paper);
+  box-shadow:
+    inset 0 0 0 1px var(--primary-100),
+    0 2px 4px rgba(30,27,75,.12),
+    0 30px 64px -28px rgba(30,27,75,.35);
+}
+
+:where(.lego-preview) .receipt-bar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  height: 36px;
+  padding: 0 14px;
+  color: var(--surface-500);
+  background: var(--surface-50);
+  border-bottom: 1px solid var(--primary-100);
+  font-size: 11px;
+}
+
+:where(.lego-preview) .receipt-dots { display: flex; gap: 5px; }
+:where(.lego-preview) .receipt-dots i {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--primary-200);
+}
+
+:where(.lego-preview) .receipt-browser img {
+  width: 100%;
+  aspect-ratio: 8 / 5;
+  object-fit: cover;
+  object-position: top;
+}
+
+:where(.lego-preview) .receipt-client {
+  gap: 9px;
+  padding: 0 12px;
+  color: var(--ink);
+  background: var(--primary-50);
+  box-shadow: inset 0 0 0 1px var(--primary-200);
+}
+
+:where(.lego-preview) .receipt-client i {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--primary-600);
+  box-shadow: 0 0 0 3px rgba(79,70,229,.12);
+}
+
+:where(.lego-preview) .receipt-client b {
+  padding-left: 9px;
+  color: var(--primary-600);
+  border-left: 1px solid var(--primary-200);
+  font-weight: 600;
+}
+
+:where(.lego-preview) .receipt-value {
+  margin-top: 28px;
+  color: var(--primary-700);
+  font-family: var(--font-heading);
+  font-size: clamp(3rem, 6vw, 6.2rem);
+  font-weight: 500;
+  line-height: .95;
+  letter-spacing: -.045em;
+  white-space: nowrap;
+}
+
+:where(.lego-preview) .receipt-proof h3 {
+  margin-top: 20px;
+  color: var(--ink);
+  font-size: 23px;
+}
+
+:where(.lego-preview) .receipt-description {
+  margin-top: 10px;
+  max-width: 38ch;
+  color: var(--body);
+  font-size: 15.5px;
+  line-height: 1.65;
+}
+
+:where(.lego-preview) .receipt-evidence {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  margin-top: 24px;
+  border-top: 1px solid var(--primary-100);
+  border-left: 1px solid var(--primary-100);
+}
+
+:where(.lego-preview) .receipt-evidence > div {
+  min-width: 0;
+  padding: 11px 10px;
+  border-right: 1px solid var(--primary-100);
+  border-bottom: 1px solid var(--primary-100);
+}
+
+:where(.lego-preview) .receipt-evidence dt {
+  color: var(--surface-500);
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+}
+
+:where(.lego-preview) .receipt-evidence dd {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 5px;
+  color: var(--ink);
+  font-size: 11px;
+  font-weight: 600;
+}
+
+:where(.lego-preview) .receipt-evidence dd i {
+  width: 5px;
+  height: 5px;
+  flex: none;
+  border-radius: 50%;
+  background: var(--success);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--success) 12%, transparent);
+}
+
+:where(.lego-preview) .receipt-link,
+:where(.lego-preview) .process-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 44px;
+  margin-top: 28px;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+:where(.lego-preview) .receipt-link { color: var(--primary-700); }
+:where(.lego-preview) .receipt-link svg,
+:where(.lego-preview) .process-cta svg { width: 13px; height: 13px; }
+:where(.lego-preview) .receipt-link:hover svg,
+:where(.lego-preview) .receipt-link:focus-visible svg,
+:where(.lego-preview) .process-cta:hover svg,
+:where(.lego-preview) .process-cta:focus-visible svg { transform: translateX(3px); }
+:where(.lego-preview) .receipt-link svg,
+:where(.lego-preview) .process-cta svg { transition: transform .2s var(--ease-out); }
+
+/* Process: beUI's shared-layout tabs become an engagement navigator. The tab
+   mechanism stays intact. The skin, content hierarchy, and progress rail are LoudFace. */
+:where(.lego-preview) .lego-process {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  padding: 120px 0 128px;
+  background: var(--primary-950);
+  background-image:
+    radial-gradient(90% 60% at 82% 116%, rgba(99,102,241,.5) 0%, rgba(99,102,241,0) 62%),
+    linear-gradient(165deg, var(--foot) 0%, var(--primary-950) 52%, var(--primary-900) 100%);
+}
+
+:where(.lego-preview) .lego-process::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background-image:
+    linear-gradient(rgba(255,255,255,.035) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,.035) 1px, transparent 1px);
+  background-size: 72px 72px;
+  -webkit-mask-image: radial-gradient(ellipse 74% 80% at 70% 68%, #000 0%, transparent 78%);
+  mask-image: radial-gradient(ellipse 74% 80% at 70% 68%, #000 0%, transparent 78%);
+}
+
+:where(.lego-preview) .lego-process-head {
+  display: grid;
+  grid-template-columns: 7fr 5fr;
+  gap: 48px;
+  align-items: end;
+}
+
+:where(.lego-preview) .lego-process-head h2 {
+  margin-top: 22px;
+  max-width: 14ch;
+  color: var(--paper);
+  font-size: clamp(2rem, 4.4vw, 4.8rem);
+}
+
+:where(.lego-preview) .lego-process-head > p {
+  max-width: 44ch;
+  color: var(--primary-200);
+  font-size: 17px;
+  line-height: 1.65;
+}
+
+:where(.lego-preview) .process-tabs {
+  display: grid;
+  grid-template-columns: minmax(250px, 4fr) minmax(0, 8fr);
+  gap: 32px;
+  margin-top: 64px;
+}
+
+:where(.lego-preview) .process-tabs-list {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 6px;
+  padding: 8px;
+  border-radius: 18px;
+  background: rgba(255,255,255,.06);
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,.14);
+}
+
+:where(.lego-preview) .process-tabs-list > div { width: 100%; }
+:where(.lego-preview) .process-tab-indicator {
+  border-radius: 12px;
+  background: var(--paper);
+  box-shadow: 0 14px 34px -18px rgba(0,0,0,.52);
+}
+
+:where(.lego-preview) .process-tab {
+  width: 100%;
+  min-height: 78px;
+  justify-content: flex-start;
+  gap: 18px;
+  padding: 13px 16px;
+  border-radius: 12px;
+  text-align: left;
+}
+
+:where(.lego-preview) .process-tab[aria-selected='true'] { color: var(--primary-950); }
+:where(.lego-preview) .process-tab[aria-selected='false'] { color: var(--primary-200); }
+:where(.lego-preview) .process-tab-gate {
+  flex: 0 0 78px;
+  font-size: 10.5px;
+  font-weight: 600;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+}
+
+:where(.lego-preview) .process-tab-title {
+  color: inherit;
+  font-family: var(--font-heading);
+  font-size: 17px;
+  font-weight: 500;
+}
+
+:where(.lego-preview) .process-stage {
+  position: relative;
+  min-height: 474px;
+  overflow: hidden;
+  border-radius: 20px;
+  padding: 34px;
+  background: rgba(255,255,255,.09);
+  box-shadow:
+    inset 0 0 0 1px rgba(255,255,255,.2),
+    0 3px 6px rgba(0,0,0,.2),
+    0 40px 72px -28px rgba(7,5,26,.72);
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
+}
+
+:where(.lego-preview) .process-progress {
+  position: relative;
+  display: flex;
+  justify-content: space-between;
+  height: 14px;
+}
+
+:where(.lego-preview) .process-progress::before,
+:where(.lego-preview) .process-progress-fill {
+  content: '';
+  position: absolute;
+  top: 6px;
+  left: 0;
+  height: 1px;
+}
+
+:where(.lego-preview) .process-progress::before {
+  right: 0;
+  border-top: 1px dashed rgba(255,255,255,.3);
+}
+
+:where(.lego-preview) .process-progress-fill {
+  background: var(--primary-200);
+  transition: width .45s var(--ease-out);
+}
+
+:where(.lego-preview) .process-progress i {
+  position: relative;
+  z-index: 1;
+  width: 13px;
+  height: 13px;
+  border-radius: 50%;
+  background: var(--primary-900);
+  border: 1px solid rgba(255,255,255,.5);
+  transition: background-color .25s var(--ease-out), border-color .25s var(--ease-out);
+}
+
+:where(.lego-preview) .process-progress i.reached {
+  background: var(--paper);
+  border-color: var(--paper);
+}
+
+:where(.lego-preview) .process-panel {
+  padding-top: 46px;
+}
+
+:where(.lego-preview) .process-panel-gate {
+  display: inline-flex;
+  align-items: center;
+  min-height: 32px;
+  padding: 0 13px;
+  border-radius: 999px;
+  color: var(--primary-900);
+  background: var(--paper);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: .05em;
+}
+
+:where(.lego-preview) .process-panel h3 {
+  margin-top: 24px;
+  max-width: 16ch;
+  color: var(--paper);
+  font-size: clamp(2rem, 4vw, 4rem);
+}
+
+:where(.lego-preview) .process-panel > p {
+  margin-top: 18px;
+  max-width: 62ch;
+  color: var(--primary-100);
+  font-size: 16px;
+  line-height: 1.7;
+}
+
+:where(.lego-preview) .process-panel ul {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+  margin-top: 28px;
+  list-style: none;
+}
+
+:where(.lego-preview) .process-panel li {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  min-height: 48px;
+  padding: 10px 12px;
+  border-radius: 10px;
+  color: var(--primary-100);
+  background: rgba(255,255,255,.07);
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,.14);
+  font-size: 12.5px;
+  line-height: 1.35;
+}
+
+:where(.lego-preview) .process-panel li svg {
+  width: 18px;
+  height: 18px;
+  flex: none;
+  color: var(--primary-300);
+}
+
+:where(.lego-preview) .process-cta {
+  min-height: 46px;
+  padding: 0 18px;
+  border-radius: 999px;
+  color: var(--primary-900);
+  background: var(--paper);
+}
+
+:where(.lego-preview) .process-cta:hover,
+:where(.lego-preview) .process-cta:focus-visible { background: var(--primary-50); }
+
+@media (max-width: 900px) {
+  :where(.lego-preview) .lego-sourcebar-grid,
+  :where(.lego-preview) .lego-section-head,
+  :where(.lego-preview) .lego-process-head,
+  :where(.lego-preview) .receipt-row,
+  :where(.lego-preview) .process-tabs { grid-template-columns: 1fr; }
+  :where(.lego-preview) .lego-source-register { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  :where(.lego-preview) .receipt-row:nth-child(even) .receipt-work,
+  :where(.lego-preview) .receipt-row:nth-child(even) .receipt-proof { order: initial; }
+  :where(.lego-preview) .receipt-row { gap: 32px; }
+  :where(.lego-preview) .process-tab { min-height: 70px; }
+}
+
+@media (max-width: 640px) {
+  :where(.lego-preview) .lego-sourcebar { padding: 88px 0 40px; }
+  :where(.lego-preview) .lego-source-register { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  :where(.lego-preview) .lego-source-register a { min-height: 118px; }
+  :where(.lego-preview) .lego-source-note { text-align: left; }
+  :where(.lego-preview) .lego-results,
+  :where(.lego-preview) .lego-process { padding: 80px 0; }
+  :where(.lego-preview) .lego-section-head { padding-bottom: 36px; }
+  :where(.lego-preview) .receipt-row { padding: 40px 0; }
+  :where(.lego-preview) .receipt-value { font-size: clamp(2.8rem, 15vw, 4.4rem); }
+  :where(.lego-preview) .receipt-evidence { grid-template-columns: 1fr; }
+  :where(.lego-preview) .process-tabs { margin-top: 44px; }
+  :where(.lego-preview) .process-stage { min-height: 0; padding: 24px 20px; }
+  :where(.lego-preview) .process-panel { padding-top: 34px; }
+  :where(.lego-preview) .process-panel ul { grid-template-columns: 1fr; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :where(.lego-preview) .process-progress-fill { transition: none; }
+  :where(.lego-preview) .receipt-link:hover svg,
+  :where(.lego-preview) .receipt-link:focus-visible svg,
+  :where(.lego-preview) .process-cta:hover svg,
+  :where(.lego-preview) .process-cta:focus-visible svg { transform: none; }
+}

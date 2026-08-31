@@ -13,6 +13,7 @@ import type {
   Client,
   Testimonial,
   BlogPost,
+  ResearchStudy,
   Category,
   TeamMember,
   Industry,
@@ -212,6 +213,74 @@ const BLOG_POST_CARD_PROJECTION = `{
   "categories": categories[]._ref
 }`;
 
+const RESEARCH_PROJECTION = `{
+  "id": _id,
+  name,
+  "slug": slug.current,
+  "meta-title": metaTitle,
+  "meta-description": metaDescription,
+  "thumbnail": thumbnail { "url": asset->url, "alt": alt },
+  excerpt,
+  "headline-finding": headlineFinding,
+  "key-takeaways": keyTakeaways,
+  content,
+  "sample-summary": sampleSummary,
+  methodology,
+  limitations,
+  appendix,
+  "data-files": dataFiles[]{ label, url, note },
+  "time-to-read": timeToRead,
+  featured,
+  "published-date": publishedDate,
+  "last-updated": lastUpdated,
+  "authors": authors[]._ref,
+  "supersedes": supersedes->slug.current,
+  "superseded": superseded->slug.current,
+  "faq": faq[]{ question, answer },
+  "dataset-meta": datasetMeta{
+    name,
+    description,
+    temporalCoverage,
+    variableMeasured,
+    measurementTechnique,
+    keywords,
+    license
+  },
+  "visuals": visuals[]{
+    _key,
+    position,
+    type,
+    alt,
+    caption,
+    "asset": asset { "url": asset->url, "alt": alt },
+    generation,
+    chart,
+    capture
+  }
+}`;
+
+/**
+ * Card-level research projection — the same discipline BLOG_POST_CARD_PROJECTION
+ * exists for. A study body plus its appendix and methodology is the largest
+ * document type on the site; the index renders cards and reads none of it.
+ * If a list consumer does not read a field, it does not belong here.
+ */
+const RESEARCH_CARD_PROJECTION = `{
+  "id": _id,
+  name,
+  "slug": slug.current,
+  "thumbnail": thumbnail { "url": asset->url, "alt": alt },
+  excerpt,
+  "headline-finding": headlineFinding,
+  "sample-summary": sampleSummary,
+  "time-to-read": timeToRead,
+  featured,
+  "published-date": publishedDate,
+  "last-updated": lastUpdated,
+  "authors": authors[]._ref,
+  "superseded": superseded->slug.current
+}`;
+
 const CATEGORY_PROJECTION = `{
   "id": _id,
   name,
@@ -392,9 +461,18 @@ export function getEmptyHomepageData(): HomepageData {
 const CMS_REVALIDATE_SECONDS = 86400;
 export const cmsTypeTag = (sanityType: string) => `sanity:${sanityType}`;
 export const cmsDocTag = (sanityType: string, slug: string) => `sanity:${sanityType}:${slug}`;
-const cacheFor = (...tags: string[]) => ({
-  next: { revalidate: CMS_REVALIDATE_SECONDS, tags },
+const cacheForSeconds = (revalidate: number, ...tags: string[]) => ({
+  next: { revalidate, tags },
 });
+
+const cacheFor = (...tags: string[]) => cacheForSeconds(CMS_REVALIDATE_SECONDS, ...tags);
+
+// The sitemap has a separate, small projection and a shorter cache than page
+// content. Page content can stay cached for 24 hours because the Sanity
+// webhook purges its tags. A missed webhook must not hide a newly published
+// URL from the sitemap for the same 24 hours.
+const SITEMAP_REVALIDATE_SECONDS = 3600;
+const sitemapCacheFor = (...tags: string[]) => cacheForSeconds(SITEMAP_REVALIDATE_SECONDS, ...tags);
 
 const fetchCaseStudies = cache((): Promise<CaseStudy[]> =>
   withRetry(() =>
@@ -433,6 +511,15 @@ const fetchBlogPosts = cache((): Promise<BlogPost[]> =>
       `*[_type == "blogPost"] | order(publishedDate desc) ${BLOG_POST_CARD_PROJECTION}`,
       {},
       cacheFor(cmsTypeTag('blogPost')),
+    ),
+  ),
+);
+const fetchResearchStudies = cache((): Promise<ResearchStudy[]> =>
+  withRetry(() =>
+    cachedReadClient.fetch<ResearchStudy[]>(
+      `*[_type == "research"] | order(publishedDate desc) ${RESEARCH_CARD_PROJECTION}`,
+      {},
+      cacheFor(cmsTypeTag('research')),
     ),
   ),
 );
@@ -606,6 +693,7 @@ const TYPE_PROJECTIONS: Record<string, string> = {
   client: CLIENT_PROJECTION,
   testimonial: TESTIMONIAL_PROJECTION,
   blogPost: BLOG_POST_PROJECTION,
+  research: RESEARCH_PROJECTION,
   category: CATEGORY_PROJECTION,
   teamMember: TEAM_MEMBER_PROJECTION,
   industry: INDUSTRY_PROJECTION,
@@ -618,6 +706,7 @@ const TYPE_PROJECTIONS: Record<string, string> = {
 // Collection key → Sanity type (for API route compatibility)
 const COLLECTION_TO_TYPE: Record<string, string> = {
   blog: 'blogPost',
+  research: 'research',
   'case-studies': 'caseStudy',
   testimonials: 'testimonial',
   clients: 'client',
@@ -690,6 +779,62 @@ export async function fetchCollection<T>(collectionKey: string): Promise<T[]> {
   }
 
   return items;
+}
+
+export interface SitemapData {
+  caseStudies: Array<{ slug?: string; _updatedAt?: string }>;
+  blogPosts: Array<{ slug?: string; 'published-date'?: string; 'last-updated'?: string }>;
+  seoPages: Array<{ slug?: string; _updatedAt?: string }>;
+  teamMembers: Array<{ slug?: string; _updatedAt?: string }>;
+}
+
+/**
+ * Fetch only the URL and date fields needed by the sitemap.
+ *
+ * This must not use the 24-hour page-list cache. The sitemap route itself is
+ * revalidated hourly, but a nested 24-hour CMS fetch would still serve the old
+ * URL list during that regeneration window. A dedicated one-hour projection
+ * keeps the Sanity request small while bounding the stale sitemap window when
+ * a publish webhook is missed.
+ */
+export async function fetchSitemapData(): Promise<SitemapData> {
+  const [caseStudies, blogPosts, seoPages, teamMembers] = await Promise.all([
+    withRetry(() =>
+      cachedReadClient.fetch<SitemapData['caseStudies']>(
+        `*[_type == "caseStudy" && defined(slug.current)] { "slug": slug.current, "_updatedAt": _updatedAt }`,
+        {},
+        sitemapCacheFor(cmsTypeTag('caseStudy')),
+      ),
+    ),
+    withRetry(() =>
+      cachedReadClient.fetch<SitemapData['blogPosts']>(
+        `*[_type == "blogPost" && defined(slug.current)] | order(publishedDate desc) { "slug": slug.current, "published-date": publishedDate, "last-updated": lastUpdated }`,
+        {},
+        sitemapCacheFor(cmsTypeTag('blogPost')),
+      ),
+    ),
+    withRetry(() =>
+      cachedReadClient.fetch<SitemapData['seoPages']>(
+        `*[_type == "seoPage" && defined(slug.current)] { "slug": slug.current, "_updatedAt": _updatedAt }`,
+        {},
+        sitemapCacheFor(cmsTypeTag('seoPage')),
+      ),
+    ),
+    withRetry(() =>
+      cachedReadClient.fetch<SitemapData['teamMembers']>(
+        `*[_type == "teamMember" && defined(slug.current)] { "slug": slug.current, "_updatedAt": _updatedAt }`,
+        {},
+        sitemapCacheFor(cmsTypeTag('teamMember')),
+      ),
+    ),
+  ]);
+
+  return {
+    caseStudies: caseStudies.filter((study) => !isHiddenCaseStudySlug(study.slug)),
+    blogPosts,
+    seoPages,
+    teamMembers,
+  };
 }
 
 /**
@@ -781,6 +926,50 @@ export async function fetchBlogIndexData(): Promise<BlogIndexData> {
     result.categories = toMapById(categories);
   } catch (error) {
     console.error('[CMS] Blog index data fetch failed:', error);
+  }
+  return result;
+}
+
+
+export interface ResearchIndexData {
+  studies: ResearchStudy[];
+  teamMembers: Map<string, TeamMember>;
+}
+
+/**
+ * Research index (/research). Reads card-level studies plus team members, so
+ * the index can name the researchers without a second round trip.
+ */
+export async function fetchResearchIndexData(): Promise<ResearchIndexData> {
+  const result: ResearchIndexData = { studies: [], teamMembers: new Map() };
+  try {
+    const [studies, teamMembers] = await Promise.all([fetchResearchStudies(), fetchTeamMembers()]);
+    result.studies = (studies || []).slice().sort(byPublishedDateDesc);
+    result.teamMembers = toMapById(teamMembers);
+  } catch (error) {
+    console.error('[CMS] Research index data fetch failed:', error);
+  }
+  return result;
+}
+
+export interface ResearchDetailData {
+  studies: ResearchStudy[];
+  teamMembers: Map<string, TeamMember>;
+}
+
+/**
+ * Research detail (/research/[slug]) — card-level studies for the related
+ * strip and the superseded notice, plus team members for the bylines. The
+ * study itself comes from fetchItemBySlug with the full projection.
+ */
+export async function fetchResearchDetailData(): Promise<ResearchDetailData> {
+  const result: ResearchDetailData = { studies: [], teamMembers: new Map() };
+  try {
+    const [studies, teamMembers] = await Promise.all([fetchResearchStudies(), fetchTeamMembers()]);
+    result.studies = (studies || []).slice().sort(byPublishedDateDesc);
+    result.teamMembers = toMapById(teamMembers);
+  } catch (error) {
+    console.error('[CMS] Research detail data fetch failed:', error);
   }
   return result;
 }

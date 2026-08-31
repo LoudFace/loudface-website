@@ -4,7 +4,7 @@ Quick-reference for every reusable component. **Check here before writing any ma
 
 Import all UI primitives from the barrel:
 ```tsx
-import { AICitationVisual, Badge, BulletLabel, Button, Card, CaseStudyCharts, SliderNav, ComponentAssemblyVisual, CopyFirstVisual, ConversionSplitVisual, DesignSystemVisual, LogoImage, PixelBreakpointAnimation, PreferredSourceButton, ScalableGridAnimation, SectionContainer, SectionHeader } from '@/components/ui';
+import { AICitationVisual, AnimatedNumber, Badge, BulletLabel, Button, Card, CaseStudyCharts, SliderNav, Tabs, TabsContent, TabsList, TabsTrigger, ComponentAssemblyVisual, CopyFirstVisual, ConversionSplitVisual, DesignSystemVisual, LogoImage, PixelBreakpointAnimation, PreferredSourceButton, ScalableGridAnimation, SectionContainer, SectionHeader } from '@/components/ui';
 ```
 
 ---
@@ -17,6 +17,22 @@ Animated browser frame mimicking an AI engine response where the brand is highli
 
 ```tsx
 <AICitationVisual />
+```
+
+### AnimatedNumber
+
+Viewport-triggered count animation adapted from Magic UI's NumberTicker. The final value stays in the server-rendered HTML and in screen-reader text. The visual count only starts after hydration. Respects reduced-motion preferences. Client component.
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `value` | `number` | required | Final value and server-rendered value |
+| `startValue` | `number` | `0` | Visual starting value |
+| `delay` | `number` | `0` | Delay in seconds after entering the viewport |
+| `decimalPlaces` | `number` | `0` | Fixed decimal places |
+| `className` | `string` | `''` | Additional classes |
+
+```tsx
+<AnimatedNumber value={97.8} decimalPlaces={1} />
 ```
 
 ### Badge
@@ -126,6 +142,28 @@ Prev/next arrow buttons for Embla carousels.
 
 ```tsx
 <SliderNav variant="light" onPrevClick={scrollPrev} onNextClick={scrollNext} />
+```
+
+### Tabs
+
+Accessible compound tabs adapted from beUI and Transitions.dev. Uses a shared Motion layout indicator, blur/fade panel swaps, LoudFace light/dark tokens, linked tab and panel IDs, roving focus, orientation-aware arrow keys, Home/End keys, and reduced-motion handling. Client component.
+
+| Component | Key props | Description |
+|------|------|-------------|
+| `Tabs` | `defaultValue?`, `value?`, `onValueChange?`, `variant?` (`pill`/`segment`/`underline`), `tone?` (`light`/`dark`) | State and motion provider |
+| `TabsList` | `orientation?` (`horizontal`/`vertical`), `ariaLabel?`, `className?` | Accessible tab list and keyboard navigation |
+| `TabsTrigger` | `value`, `className?`, `indicatorClassName?` | Tab control with the shared indicator |
+| `TabsContent` | `value`, `className?` | Linked tab panel; inactive content stays mounted and hidden |
+
+```tsx
+<Tabs defaultValue="build" variant="segment" tone="dark">
+  <TabsList ariaLabel="Engagement stage">
+    <TabsTrigger value="build">Build</TabsTrigger>
+    <TabsTrigger value="grow">Grow</TabsTrigger>
+  </TabsList>
+  <TabsContent value="build">Website build</TabsContent>
+  <TabsContent value="grow">Growth program</TabsContent>
+</Tabs>
 ```
 
 ### LogoImage
@@ -384,7 +422,7 @@ Pick `yields` for decoration, `lifts` for anything a user needs to click. Note `
 
 ```
 src/components/index.ts        → re-exports everything
-src/components/ui/index.ts     → AICitationVisual, Badge, BulletLabel, Button, Card, SliderNav, ComponentAssemblyVisual, CopyFirstVisual, ConversionSplitVisual, DesignSystemVisual, LogoImage, PixelBreakpointAnimation, PreferredSourceButton, ScalableGridAnimation, Pagination, SectionContainer, SectionHeader, VideoFacade
+src/components/ui/index.ts     → AICitationVisual, AnimatedNumber, Badge, BulletLabel, Button, Card, SliderNav, Tabs, TabsContent, TabsList, TabsTrigger, ComponentAssemblyVisual, CopyFirstVisual, ConversionSplitVisual, DesignSystemVisual, LogoImage, PixelBreakpointAnimation, PreferredSourceButton, ScalableGridAnimation, Pagination, SectionContainer, SectionHeader, VideoFacade
 src/components/sections/index.ts → Hero, Partners, Results, FAQ, CTA, TestimonialGrid, EditorialProse, DeliverablesGrid, RelatedServices, RelatedComparisons, RelatedArticles, ProblemChecker, ProblemCheckerA, ProblemCheckerC
 src/components/blog/index.ts   → BlogChart, BlogIllustration, BlogVisual, BlogContent, BlogTOC, BlogExploreWithAI, BlogCTACard, BlogShareRow
 ```

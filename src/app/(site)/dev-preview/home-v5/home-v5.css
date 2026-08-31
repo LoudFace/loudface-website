@@ -1,0 +1,1206 @@
+/* v5 — reference-cloned homepage concept. Fresh CSS, namespaced under .v5 with
+   :where() so nothing leaks outside this route. Reuses home-v3.css's brand
+   tokens (--primary-*, --surface-*, --night, --paper, --font-heading,
+   --font-sans) — declares none of its own colour tokens. Square corners
+   everywhere except the beautifului-token cards, per spec. */
+
+:where(.v5) {
+  --v5-air: 96px;
+}
+
+:where(.v5) .container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding-left: 24px;
+  padding-right: 24px;
+}
+
+:where(.v5) .v5-sec {
+  padding: var(--v5-air) 0;
+}
+
+:where(.v5) .v5-kicker {
+  display: inline-block;
+  font-family: var(--font-sans);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.11em;
+  text-transform: uppercase;
+  color: var(--primary-600);
+  margin-bottom: 14px;
+}
+
+:where(.v5) .v5-sec-head h2 {
+  font-family: var(--font-heading);
+  font-weight: 500;
+  font-size: clamp(1.9rem, 2.9vw, 2.55rem);
+  line-height: 1.14;
+  letter-spacing: -0.02em;
+  color: var(--ink);
+  max-width: 30ch;
+  text-wrap: balance;
+}
+
+:where(.v5) .v5-sec-head p {
+  margin-top: 14px;
+  font-size: 16px;
+  line-height: 1.6;
+  color: var(--body);
+  max-width: 52ch;
+  text-wrap: pretty;
+}
+
+:where(.v5) .v5-sec-head-center {
+  text-align: center;
+  margin-left: auto;
+  margin-right: auto;
+}
+:where(.v5) .v5-sec-head-center h2,
+:where(.v5) .v5-sec-head-center p {
+  margin-left: auto;
+  margin-right: auto;
+}
+
+:where(.v5) .v5-sec-head-row {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 24px;
+  flex-wrap: wrap;
+}
+
+:where(.v5) .v5-check-rows {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+:where(.v5) .v5-check-rows li {
+  display: flex;
+  align-items: flex-start;
+  gap: 9px;
+  font-size: 14.5px;
+  color: var(--body);
+}
+:where(.v5) .v5-check-rows b {
+  flex: none;
+  color: var(--primary-600);
+  font-weight: 700;
+}
+
+/* =========================================================================
+   Intro band
+   ========================================================================= */
+:where(.v5) .v5-intro {
+  padding: 64px 0 48px;
+  border-bottom: 1px solid var(--paper-line);
+}
+:where(.v5) .v5-intro h1 {
+  margin-top: 10px;
+  font-family: var(--font-heading);
+  font-weight: 500;
+  font-size: clamp(1.7rem, 2.4vw, 2.1rem);
+  letter-spacing: -0.02em;
+  color: var(--ink);
+  max-width: 44ch;
+  text-wrap: balance;
+}
+
+/* =========================================================================
+   S1 — Case-study proof band
+   ========================================================================= */
+:where(.v5) .v5-stats {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  border: 1px solid var(--paper-line);
+  margin-bottom: 40px;
+}
+:where(.v5) .v5-stat {
+  padding: 18px 22px;
+  border-right: 1px solid var(--paper-line);
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 10px;
+}
+:where(.v5) .v5-stat:last-child {
+  border-right: none;
+}
+:where(.v5) .v5-stat b {
+  font-family: var(--font-heading);
+  font-size: 19px;
+  font-weight: 500;
+  color: var(--ink);
+  white-space: nowrap;
+}
+:where(.v5) .v5-stat span {
+  font-size: 12px;
+  color: var(--mut);
+  text-align: right;
+}
+
+:where(.v5) .v5-case {
+  display: grid;
+  grid-template-columns: 3fr 2fr;
+  border: 1px solid var(--paper-line);
+}
+:where(.v5) .v5-case-main {
+  padding: 44px;
+  border-right: 1px solid var(--paper-line);
+}
+:where(.v5) .v5-case-client {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 24px;
+}
+:where(.v5) .v5-case-client img {
+  height: 22px;
+  width: auto;
+  object-fit: contain;
+}
+:where(.v5) .v5-case-client span {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--mut);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+:where(.v5) .v5-case-claim {
+  font-family: var(--font-heading);
+  font-weight: 500;
+  font-size: clamp(1.6rem, 2.4vw, 2.1rem);
+  line-height: 1.24;
+  letter-spacing: -0.015em;
+  color: var(--ink);
+  max-width: 24ch;
+  text-wrap: balance;
+}
+:where(.v5) .v5-case-claim em {
+  font-style: normal;
+  color: var(--primary-600);
+}
+:where(.v5) .v5-case-tags {
+  list-style: none;
+  display: flex;
+  gap: 8px;
+  margin-top: 26px;
+}
+:where(.v5) .v5-case-tags li {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--primary-700);
+  background: var(--primary-50);
+  border: 1px solid var(--primary-200);
+  padding: 5px 10px;
+}
+:where(.v5) .v5-case-results {
+  padding: 44px 36px;
+  background: var(--primary-50);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+:where(.v5) .v5-case-stat b {
+  display: block;
+  font-family: var(--font-heading);
+  font-size: 2.4rem;
+  font-weight: 500;
+  letter-spacing: -0.02em;
+  color: var(--primary-700);
+  line-height: 1;
+}
+:where(.v5) .v5-case-stat span {
+  display: block;
+  margin-top: 8px;
+  font-size: 13px;
+  color: var(--body);
+}
+:where(.v5) .v5-case-divider {
+  height: 1px;
+  background: var(--primary-200);
+  margin: 22px 0;
+}
+:where(.v5) .v5-case-link {
+  display: inline-block;
+  margin-top: 26px;
+  font-size: 13.5px;
+  font-weight: 600;
+  color: var(--primary-700);
+}
+:where(.v5) .v5-case-link:hover {
+  text-decoration: underline;
+}
+
+:where(.v5) .v5-rails {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1px;
+  background: var(--paper-line);
+  margin-top: 1px;
+}
+:where(.v5) .v5-rail {
+  background: var(--paper);
+  padding: 20px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  transition: background-color 0.2s;
+}
+:where(.v5) .v5-rail:hover {
+  background: var(--surface-50);
+}
+:where(.v5) .v5-rail-client {
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  color: var(--mut);
+}
+:where(.v5) .v5-rail-claim {
+  font-size: 14px;
+  color: var(--ink);
+  line-height: 1.4;
+}
+
+/* =========================================================================
+   S2 — The system, tabbed
+   ========================================================================= */
+:where(.v5) .v5-s2 {
+  background: var(--surface-50);
+}
+:where(.v5) .v5-s2 > .v5-sec-head,
+:where(.v5) .v5-s2 .sys {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding-left: 24px;
+  padding-right: 24px;
+}
+:where(.v5) .v5-s2 .v5-sec-head h2 {
+  max-width: 34ch;
+}
+
+:where(.v5) .sys-tabrow {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  margin-top: 40px;
+}
+:where(.v5) .sys-tab {
+  font-family: var(--font-sans);
+  font-size: 14px;
+  font-weight: 600;
+  padding: 14px 10px;
+  background: var(--paper);
+  border: 1px solid var(--paper-line);
+  border-left-width: 0;
+  color: var(--body);
+  transition: background-color 0.2s, color 0.2s;
+}
+:where(.v5) .sys-tab:first-child {
+  border-left-width: 1px;
+}
+:where(.v5) .sys-tab.is-active {
+  background: var(--primary-600);
+  border-color: var(--primary-600);
+  color: var(--paper);
+}
+:where(.v5) .sys-tab:not(.is-active):hover {
+  background: var(--surface-100);
+}
+
+:where(.v5) .sys-panel {
+  padding-top: 40px;
+}
+
+:where(.v5) .v5-sys-grid {
+  display: grid;
+  grid-template-columns: 45fr 55fr;
+  gap: 56px;
+  align-items: start;
+}
+
+:where(.v5) .v5-collage {
+  position: relative;
+  background: var(--primary-50);
+  padding: 40px;
+  min-height: 460px;
+}
+:where(.v5) .v5-mini {
+  background: var(--paper);
+  border: 1px solid var(--paper-line);
+  box-shadow: var(--bf-shadow-card);
+  border-radius: var(--bf-radius-card);
+  padding: 18px 20px;
+  width: 82%;
+}
+:where(.v5) .v5-mini figcaption {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--mut);
+  margin-bottom: 14px;
+}
+:where(.v5) .v5-mini-a {
+  position: absolute;
+  top: 24px;
+  left: 24px;
+  z-index: 1;
+  width: 68%;
+}
+:where(.v5) .v5-mini-b {
+  position: absolute;
+  right: 24px;
+  bottom: 40px;
+  width: 46%;
+  z-index: 2;
+  box-shadow: var(--bf-shadow-raised);
+}
+:where(.v5) .v5-mini-cap {
+  margin-top: 12px;
+  font-size: 11.5px;
+  color: var(--mut);
+}
+:where(.v5) .v5-mini-cap-inline {
+  font-size: 11.5px;
+  color: var(--mut);
+}
+
+:where(.v5) .v5-gap-row {
+  display: grid;
+  grid-template-columns: 1fr 70px 34px;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+:where(.v5) .v5-gap-label {
+  font-size: 12px;
+  color: var(--ink);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+:where(.v5) .v5-gap-track {
+  height: 6px;
+  background: var(--surface-100);
+}
+:where(.v5) .v5-gap-fill {
+  height: 100%;
+}
+:where(.v5) .v5-gap-muted {
+  background: var(--surface-300);
+}
+:where(.v5) .v5-gap-accent {
+  background: var(--primary-500);
+}
+:where(.v5) .v5-gap-pct {
+  font-size: 11px;
+  font-variant-numeric: tabular-nums;
+  color: var(--mut);
+  text-align: right;
+}
+:where(.v5) .v5-chipline {
+  display: inline-block;
+  margin-top: 4px;
+  font-size: 10.5px;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  color: var(--primary-700);
+  background: var(--primary-50);
+  padding: 3px 8px;
+}
+
+:where(.v5) .v5-kw-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12px;
+}
+:where(.v5) .v5-kw-table td {
+  padding: 6px 0;
+  border-bottom: 1px solid var(--paper-line);
+}
+:where(.v5) .v5-kw-table td:first-child {
+  color: var(--ink);
+}
+:where(.v5) .v5-kw-table td:last-child {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+  color: var(--mut);
+}
+:where(.v5) .v5-kw-table tr.is-struck td {
+  text-decoration: line-through;
+  color: var(--surface-400);
+}
+:where(.v5) .v5-kw-table tr.is-pick td {
+  color: var(--primary-700);
+  font-weight: 600;
+}
+
+:where(.v5) .v5-tree {
+  list-style: none;
+  font-size: 12.5px;
+  font-family: var(--font-sans);
+  color: var(--ink);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+:where(.v5) .v5-tree-child {
+  padding-left: 16px;
+  color: var(--body);
+}
+:where(.v5) .v5-tree-grandchild {
+  padding-left: 32px;
+  color: var(--mut);
+}
+
+:where(.v5) .v5-check-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+:where(.v5) .v5-check-list li {
+  display: flex;
+  gap: 8px;
+  font-size: 12.5px;
+  color: var(--ink);
+}
+:where(.v5) .v5-check-list b {
+  color: var(--primary-600);
+}
+
+:where(.v5) .v5-mini-chart {
+  width: 100%;
+}
+:where(.v5) .v5-ring-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 10px;
+}
+:where(.v5) .v5-bars {
+  margin-top: 6px;
+}
+
+:where(.v5) .v5-source-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+:where(.v5) .v5-source-list li {
+  display: flex;
+  justify-content: space-between;
+  font-size: 12.5px;
+  color: var(--ink);
+}
+:where(.v5) .v5-source-list b {
+  color: var(--primary-600);
+  font-size: 11px;
+  font-weight: 600;
+}
+:where(.v5) .v5-source-list li.is-absent span {
+  color: var(--surface-400);
+}
+:where(.v5) .v5-source-list li.is-absent b {
+  color: var(--surface-400);
+}
+
+:where(.v5) .v5-funnel {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+:where(.v5) .v5-funnel li {
+  display: flex;
+  justify-content: space-between;
+  font-size: 12.5px;
+  color: var(--body);
+}
+:where(.v5) .v5-funnel li.is-win {
+  color: var(--primary-700);
+  font-weight: 600;
+}
+
+:where(.v5) .v5-step-eyebrow {
+  display: block;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--primary-600);
+  margin-bottom: 14px;
+}
+:where(.v5) .v5-stepcopy h3 {
+  font-family: var(--font-heading);
+  font-weight: 500;
+  font-size: clamp(1.4rem, 2vw, 1.75rem);
+  line-height: 1.24;
+  color: var(--ink);
+  max-width: 22ch;
+  text-wrap: balance;
+}
+:where(.v5) .v5-stepcopy > p {
+  margin-top: 14px;
+  font-size: 15px;
+  line-height: 1.6;
+  color: var(--body);
+  max-width: 48ch;
+}
+:where(.v5) .v5-includes-label {
+  display: block;
+  margin-top: 24px;
+  margin-bottom: 12px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--mut);
+}
+
+:where(.v5) .v5-quotecard {
+  margin-top: 28px;
+  padding: 20px 22px;
+  border: 1px solid var(--paper-line);
+  background: var(--paper);
+}
+:where(.v5) .v5-quotecard blockquote {
+  font-size: 14.5px;
+  line-height: 1.55;
+  color: var(--ink);
+}
+:where(.v5) .v5-quotecard footer {
+  margin-top: 10px;
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--mut);
+}
+:where(.v5) .v5-quotecard footer span {
+  font-weight: 400;
+}
+
+/* =========================================================================
+   S3 — Testimonial stage
+   ========================================================================= */
+:where(.v5) .v5-s3 {
+  background: linear-gradient(165deg, var(--night-hi) 0%, var(--night) 55%, #110e36 100%);
+  padding: var(--v5-air) 24px;
+  text-align: center;
+}
+:where(.v5) .v5-s3 h2 {
+  font-family: var(--font-heading);
+  font-weight: 500;
+  font-size: clamp(1.9rem, 2.9vw, 2.55rem);
+  color: var(--paper);
+  max-width: 30ch;
+  margin: 0 auto;
+  text-wrap: balance;
+}
+
+:where(.v5) .qs {
+  max-width: 780px;
+  margin: 48px auto 0;
+}
+:where(.v5) .qs-card {
+  background: var(--paper);
+  padding: 56px 64px;
+}
+:where(.v5) .qs-card blockquote {
+  font-family: var(--font-heading);
+  font-weight: 500;
+  font-size: clamp(1.4rem, 2.4vw, 1.85rem);
+  line-height: 1.4;
+  color: var(--ink);
+  letter-spacing: -0.01em;
+  text-wrap: balance;
+}
+:where(.v5) .qs-card footer {
+  margin-top: 24px;
+  display: flex;
+  align-items: baseline;
+  justify-content: center;
+  gap: 10px;
+}
+:where(.v5) .qs-author {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--ink);
+}
+:where(.v5) .qs-org {
+  font-size: 13px;
+  color: var(--mut);
+}
+
+:where(.v5) .qs-rail {
+  display: flex;
+  justify-content: center;
+  gap: 1px;
+  margin-top: 1px;
+  background: rgba(255, 255, 255, 0.1);
+}
+:where(.v5) .qs-cell {
+  flex: 1;
+  padding: 16px 12px;
+  background: rgba(255, 255, 255, 0.06);
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 13px;
+  font-weight: 600;
+  transition: background-color 0.2s, color 0.2s;
+}
+:where(.v5) .qs-cell.is-active {
+  background: rgba(255, 255, 255, 0.96);
+  color: var(--primary-700);
+}
+:where(.v5) .qs-cell:not(.is-active):hover {
+  color: rgba(255, 255, 255, 0.8);
+}
+
+:where(.v5) .qs-sr-all {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+/* =========================================================================
+   S4 — Process, four columns
+   ========================================================================= */
+:where(.v5) .v5-s4 .v5-sec-head {
+  text-align: center;
+  margin: 0 auto 56px;
+}
+:where(.v5) .v5-s4 .v5-sec-head h2,
+:where(.v5) .v5-s4 .v5-sec-head p {
+  margin-left: auto;
+  margin-right: auto;
+}
+
+:where(.v5) .v5-process-cols {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 32px;
+  position: relative;
+}
+:where(.v5) .v5-process-rail {
+  display: none;
+}
+
+:where(.v5) .v5-process-gate {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--paper-line);
+  margin-bottom: 20px;
+}
+:where(.v5) .v5-process-node {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--primary-500);
+  flex: none;
+}
+:where(.v5) .v5-process-gate span {
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  color: var(--mut);
+}
+
+:where(.v5) .v5-process-col h3 {
+  margin-top: 20px;
+  margin-bottom: 12px;
+  font-family: var(--font-heading);
+  font-weight: 500;
+  font-size: 18px;
+  color: var(--ink);
+}
+
+:where(.v5) .v5-browser {
+  border: 1px solid var(--paper-line);
+  background: var(--paper);
+}
+:where(.v5) .v5-browser-bar {
+  display: flex;
+  gap: 5px;
+  padding: 9px 12px;
+  border-bottom: 1px solid var(--paper-line);
+  background: var(--surface-50);
+}
+:where(.v5) .v5-browser-bar i {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--surface-300);
+}
+:where(.v5) .v5-browser-body {
+  padding: 18px;
+  background: var(--primary-50);
+  min-height: 148px;
+}
+:where(.v5) .v5-mock-cap {
+  padding: 10px 18px 14px;
+  font-size: 11px;
+  color: var(--mut);
+  background: var(--paper);
+  border-top: 1px solid var(--paper-line);
+}
+
+:where(.v5) .v5-form-mock {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+:where(.v5) .v5-form-q {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--ink);
+}
+:where(.v5) .v5-form-input {
+  height: 30px;
+  background: var(--paper);
+  border: 1px solid var(--primary-200);
+}
+:where(.v5) .v5-form-progress {
+  height: 4px;
+  background: var(--primary-100);
+}
+:where(.v5) .v5-form-progress div {
+  height: 100%;
+  background: var(--primary-500);
+}
+:where(.v5) .v5-form-ok {
+  align-self: flex-start;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--paper);
+  background: var(--primary-600);
+  padding: 6px 16px;
+  cursor: default;
+}
+
+:where(.v5) .v5-strategy-mock {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+:where(.v5) .v5-channel-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--ink);
+}
+:where(.v5) .v5-channel-chips {
+  display: flex;
+  gap: 8px;
+  color: var(--primary-600);
+}
+:where(.v5) .v5-mark {
+  width: 15px;
+  height: 15px;
+}
+:where(.v5) .v5-progress-black {
+  height: 5px;
+  background: var(--surface-200);
+}
+:where(.v5) .v5-progress-black div {
+  height: 100%;
+  background: var(--ink);
+}
+:where(.v5) .v5-progress-label {
+  font-size: 11px;
+  color: var(--mut);
+}
+:where(.v5) .v5-plan-pills {
+  display: flex;
+  gap: 6px;
+}
+:where(.v5) .v5-plan-pills span {
+  font-size: 10.5px;
+  font-weight: 600;
+  color: var(--primary-700);
+  background: var(--paper);
+  border: 1px solid var(--primary-200);
+  padding: 3px 8px;
+}
+
+:where(.v5) .v5-exec-mock {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+:where(.v5) .v5-exec-pill {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: var(--paper);
+  border: 1px solid var(--primary-200);
+  padding: 8px 12px;
+  font-size: 11.5px;
+}
+:where(.v5) .v5-exec-pill span {
+  color: var(--ink);
+  font-weight: 600;
+}
+:where(.v5) .v5-exec-pill b {
+  color: var(--primary-700);
+  font-weight: 600;
+}
+
+:where(.v5) .v5-msg-mock {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+:where(.v5) .v5-msg-head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+:where(.v5) .v5-msg-avatar {
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--primary-600);
+  color: var(--paper);
+  font-size: 12px;
+  font-weight: 700;
+  flex: none;
+}
+:where(.v5) .v5-msg-head div {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.2;
+}
+:where(.v5) .v5-msg-head b {
+  font-size: 12px;
+  color: var(--ink);
+}
+:where(.v5) .v5-msg-head span {
+  font-size: 10.5px;
+  color: var(--mut);
+}
+:where(.v5) .v5-msg-text {
+  font-size: 12px;
+  color: var(--ink);
+  background: var(--paper);
+  border: 1px solid var(--primary-200);
+  padding: 8px 10px;
+}
+:where(.v5) .v5-msg-stats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+:where(.v5) .v5-msg-stats span {
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--primary-700);
+  background: var(--paper);
+  border: 1px solid var(--primary-200);
+  padding: 3px 8px;
+}
+
+/* =========================================================================
+   S5 — Comparison
+   ========================================================================= */
+:where(.v5) .v5-s5 {
+  padding-top: var(--v5-air);
+}
+
+:where(.v5) .v5-compare-header {
+  display: grid;
+  grid-template-columns: 2fr repeat(5, 1fr);
+  margin-top: 56px;
+  padding: 0 28px 12px;
+}
+:where(.v5) .v5-compare-header span {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  color: var(--mut);
+  text-align: center;
+}
+:where(.v5) .v5-compare-header-name {
+  text-align: left;
+}
+
+:where(.v5) .v5-compare-rows {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+:where(.v5) .v5-compare-row {
+  display: grid;
+  grid-template-columns: 2fr repeat(5, 1fr);
+  align-items: center;
+  background: var(--paper);
+  border: 1px solid var(--paper-line);
+  padding: 22px 28px;
+}
+:where(.v5) .v5-compare-row.is-solid {
+  background: var(--primary-600);
+  border-color: var(--primary-600);
+}
+:where(.v5) .v5-compare-name {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  text-align: left;
+}
+:where(.v5) .v5-compare-name b {
+  display: block;
+  font-size: 15px;
+  color: var(--ink);
+}
+:where(.v5) .v5-compare-row.is-solid .v5-compare-name b {
+  color: var(--paper);
+}
+:where(.v5) .v5-compare-name span {
+  display: block;
+  margin-top: 2px;
+  font-size: 12.5px;
+  color: var(--mut);
+  max-width: 32ch;
+}
+:where(.v5) .v5-compare-row.is-solid .v5-compare-name span {
+  color: rgba(255, 255, 255, 0.78);
+}
+:where(.v5) .v5-compare-marks {
+  display: contents;
+}
+:where(.v5) .v5-mark-check,
+:where(.v5) .v5-mark-partial,
+:where(.v5) .v5-mark-x {
+  display: block;
+  text-align: center;
+  font-size: 15px;
+  font-weight: 700;
+}
+:where(.v5) .v5-mark-check {
+  color: var(--primary-600);
+}
+:where(.v5) .v5-compare-row.is-solid .v5-mark-check {
+  color: var(--paper);
+}
+:where(.v5) .v5-mark-partial {
+  color: var(--surface-400);
+}
+:where(.v5) .v5-mark-x {
+  color: var(--surface-300);
+}
+
+:where(.v5) .v5-compare-foot {
+  margin-top: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  font-size: 13.5px;
+  color: var(--body);
+}
+:where(.v5) .v5-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--primary-500);
+}
+
+/* =========================================================================
+   S6 — Selected work grid
+   ========================================================================= */
+:where(.v5) .v5-s6 {
+  padding-bottom: calc(var(--v5-air) + 24px);
+}
+:where(.v5) .v5-explore-link {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--primary-700);
+}
+:where(.v5) .v5-explore-link:hover {
+  text-decoration: underline;
+}
+
+:where(.v5) .v5-work-grid {
+  display: grid;
+  grid-template-columns: 3fr 2fr;
+  gap: 1px;
+  background: var(--paper-line);
+  margin-top: 40px;
+  border: 1px solid var(--paper-line);
+}
+
+:where(.v5) .v5-work-feature {
+  display: flex;
+  flex-direction: column;
+  background: var(--paper);
+}
+:where(.v5) .v5-work-feature-copy {
+  padding: 36px;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+:where(.v5) .v5-work-feature-client {
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--mut);
+}
+:where(.v5) .v5-work-feature h3 {
+  margin-top: 14px;
+  font-family: var(--font-heading);
+  font-weight: 500;
+  font-size: clamp(1.2rem, 1.8vw, 1.5rem);
+  line-height: 1.32;
+  color: var(--ink);
+  max-width: 26ch;
+  text-wrap: balance;
+}
+:where(.v5) .v5-work-feature .v5-case-tags {
+  margin-top: 18px;
+}
+:where(.v5) .v5-work-feature-metric {
+  margin-top: auto;
+  padding-top: 22px;
+  font-family: var(--font-heading);
+  font-weight: 500;
+  font-size: 1.4rem;
+  color: var(--primary-600);
+}
+:where(.v5) .v5-work-feature-shot {
+  height: 260px;
+  background-size: cover;
+  background-position: center top;
+}
+
+:where(.v5) .v5-work-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  background: var(--paper-line);
+}
+:where(.v5) .v5-work-compact {
+  display: flex;
+  gap: 16px;
+  background: var(--paper);
+  padding: 18px;
+  flex: 1;
+}
+:where(.v5) .v5-work-compact-shot {
+  width: 88px;
+  height: 64px;
+  flex: none;
+  background-size: cover;
+  background-position: center top;
+}
+:where(.v5) .v5-work-compact-copy {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 4px;
+}
+:where(.v5) .v5-work-compact-copy b {
+  font-size: 14px;
+  color: var(--ink);
+}
+:where(.v5) .v5-work-compact-copy span {
+  font-size: 12.5px;
+  color: var(--body);
+  line-height: 1.4;
+}
+
+/* =========================================================================
+   Responsive
+   ========================================================================= */
+@media (max-width: 1024px) {
+  :where(.v5) .v5-case {
+    grid-template-columns: 1fr;
+  }
+  :where(.v5) .v5-case-main {
+    border-right: none;
+    border-bottom: 1px solid var(--paper-line);
+  }
+  :where(.v5) .v5-sys-grid {
+    grid-template-columns: 1fr;
+    gap: 32px;
+  }
+  :where(.v5) .v5-mini {
+    width: 100%;
+  }
+  :where(.v5) .v5-mini-b {
+    position: static;
+    margin-top: -16px;
+    margin-left: 12%;
+  }
+  :where(.v5) .v5-process-cols {
+    grid-template-columns: repeat(2, 1fr);
+    row-gap: 48px;
+  }
+  :where(.v5) .v5-compare-header,
+  :where(.v5) .v5-compare-row {
+    grid-template-columns: 1.4fr repeat(5, 1fr);
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+  :where(.v5) .v5-work-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 640px) {
+  :where(.v5) .v5-stats {
+    grid-template-columns: 1fr 1fr;
+  }
+  :where(.v5) .v5-stat:nth-child(2) {
+    border-right: none;
+  }
+  :where(.v5) .v5-stat:nth-child(3),
+  :where(.v5) .v5-stat:nth-child(4) {
+    border-top: 1px solid var(--paper-line);
+  }
+  :where(.v5) .v5-rails {
+    grid-template-columns: 1fr;
+  }
+  :where(.v5) .sys-tabrow {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  :where(.v5) .sys-tab:nth-child(3) {
+    border-left-width: 1px;
+  }
+  :where(.v5) .sys-tab:nth-child(n + 3) {
+    border-top-width: 0;
+  }
+  :where(.v5) .v5-process-cols {
+    grid-template-columns: 1fr;
+  }
+  :where(.v5) .v5-compare-header {
+    display: none;
+  }
+  :where(.v5) .v5-compare-row {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+  :where(.v5) .v5-compare-marks {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 4px;
+  }
+  :where(.v5) .qs-card {
+    padding: 36px 24px;
+  }
+}

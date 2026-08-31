@@ -1,7 +1,5 @@
 'use client';
 
-import Script from 'next/script';
-
 interface PreferredSourceOptions {
   theme?: 'light' | 'dark';
   lang?: string;
@@ -13,7 +11,12 @@ interface PreferredSourceApi {
 }
 
 type PreferredSourceCallback = (preferredSource: PreferredSourceApi) => void;
-type PreferredSourceQueue = PreferredSourceCallback[] | {
+/* An array satisfies this structurally, so the real `window.PREFERRED_SOURCE`
+   array Google's script installs still type-checks. Written as a single shape
+   rather than a union with `PreferredSourceCallback[]`: on a union TypeScript
+   intersects the two `push` signatures and the parameter collapses to `never`,
+   which made every `queue.push(...)` call below fail to compile. */
+type PreferredSourceQueue = {
   push: (...callbacks: PreferredSourceCallback[]) => void;
 };
 
@@ -27,10 +30,6 @@ interface PreferredSourceButtonProps {
   className?: string;
 }
 
-const manualControlAttribute = {
-  'preferred-sources-control': 'manual',
-};
-
 let preferredSourceApi: PreferredSourceApi | null = null;
 
 function preparePreferredSource(api: PreferredSourceApi) {
@@ -38,9 +37,17 @@ function preparePreferredSource(api: PreferredSourceApi) {
   api.init({ theme: 'dark' });
 }
 
-function initializePreferredSourceButton() {
-  const queue = (window.PREFERRED_SOURCE = window.PREFERRED_SOURCE || []);
-  queue.push(preparePreferredSource);
+const PREFERRED_SOURCE_SCRIPT = 'https://news.google.com/swg/js/v1/publisher.js';
+let preferredSourceScriptRequested = false;
+
+function ensurePreferredSourceScript() {
+  if (preferredSourceScriptRequested || typeof document === 'undefined') return;
+  preferredSourceScriptRequested = true;
+  const script = document.createElement('script');
+  script.src = PREFERRED_SOURCE_SCRIPT;
+  script.async = true;
+  script.setAttribute('preferred-sources-control', 'manual');
+  document.head.appendChild(script);
 }
 
 function openPreferredSourceFlow() {
@@ -49,11 +56,12 @@ function openPreferredSourceFlow() {
     return;
   }
 
-  const queue = (window.PREFERRED_SOURCE = window.PREFERRED_SOURCE || []);
+  const queue = (window.PREFERRED_SOURCE = window.PREFERRED_SOURCE || ([] as PreferredSourceCallback[]));
   queue.push((api) => {
     preparePreferredSource(api);
     api.addPreferredSource();
   });
+  ensurePreferredSourceScript();
 }
 
 /**
@@ -81,6 +89,7 @@ export function PreferredSourceButton({ className = '' }: PreferredSourceButtonP
             alt=""
             width="20"
             height="20"
+            loading="lazy"
             className="size-5 object-contain"
           />
         </span>
@@ -97,13 +106,6 @@ export function PreferredSourceButton({ className = '' }: PreferredSourceButtonP
           <path d="m7.5 4.5 5.5 5.5-5.5 5.5" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" />
         </svg>
       </button>
-      <Script
-        {...manualControlAttribute}
-        id="google-preferred-sources"
-        src="https://news.google.com/swg/js/v1/publisher.js"
-        strategy="lazyOnload"
-        onReady={initializePreferredSourceButton}
-      />
     </div>
   );
 }

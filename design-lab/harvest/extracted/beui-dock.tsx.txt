@@ -1,0 +1,257 @@
+// FILE: components/motion/dock.tsx
+"use client";
+// beui.dev/components/motion/dock
+
+import { motion, useReducedMotion } from "motion/react";
+import { createContext, useContext, useId, useMemo, type ReactNode } from "react";
+import { SPRING_LAYOUT } from "@/lib/ease";
+import { cn } from "@/lib/utils";
+
+type DockContextValue = {
+  size: number;
+  pillLayoutId: string;
+};
+
+const DockContext = createContext<DockContextValue | null>(null);
+
+export interface DockProps {
+  children: ReactNode;
+  className?: string;
+  /** Size of each item in px. */
+  size?: number;
+}
+
+export function Dock({ children, size = 44, className }: DockProps) {
+  const pillLayoutId = useId();
+  const ctx = useMemo<DockContextValue>(
+    () => ({ size, pillLayoutId }),
+    [size, pillLayoutId],
+  );
+
+  return (
+    <DockContext.Provider value={ctx}>
+      <div
+        className={cn(
+          "inline-flex h-auto items-end gap-1.5 rounded-2xl border border-border bg-card/80 px-2 py-1 shadow-2xl backdrop-blur-xl",
+          className,
+        )}
+      >
+        {children}
+      </div>
+    </DockContext.Provider>
+  );
+}
+
+export interface DockItemProps {
+  children: ReactNode;
+  className?: string;
+  /** When set, the item renders as a <button>. Omit when children carry their own link or button. */
+  onClick?: () => void;
+  active?: boolean;
+  "aria-label"?: string;
+}
+
+export function DockItem({
+  children,
+  className,
+  onClick,
+  active,
+  ...rest
+}: DockItemProps) {
+  const dock = useContext(DockContext);
+  const reduce = useReducedMotion();
+  const size = dock?.size ?? 44;
+  const pillLayoutId = dock?.pillLayoutId ?? "dock-pill";
+
+  const pill = active ? (
+    <motion.span
+      layoutId={pillLayoutId}
+      transition={reduce ? { duration: 0 } : SPRING_LAYOUT}
+      className="absolute inset-0.5 -z-10 rounded-xl bg-primary/5"
+    />
+  ) : null;
+  const sharedStyle = { width: size, height: size };
+  const sharedClass = cn(
+    "relative flex shrink-0 items-center justify-center rounded-full text-foreground",
+    className,
+  );
+
+  if (onClick) {
+    return (
+      <button
+        type="button"
+        onClick={onClick}
+        aria-label={rest["aria-label"]}
+        aria-pressed={active}
+        style={sharedStyle}
+        className={cn(
+          sharedClass,
+          "cursor-pointer border-0 bg-transparent p-0 outline-none",
+          "focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background",
+        )}
+      >
+        {pill}
+        {children}
+      </button>
+    );
+  }
+
+  // Children carry their own link or button (and its accessible name).
+  return (
+    <div style={sharedStyle} className={sharedClass}>
+      {pill}
+      {children}
+    </div>
+  );
+}
+
+export function DockSeparator({ className }: { className?: string }) {
+  return (
+    <span
+      aria-hidden
+      className={cn("mx-1 h-6 w-px self-center bg-border", className)}
+    />
+  );
+}
+
+
+// FILE: lib/ease.ts
+// Shared motion tokens. Easing curves mirror the CSS custom properties in
+// globals.css; springs are the canonical physics used across components.
+// Strong custom variants — defaults like `ease-in`/`ease-out` feel weak.
+
+export const EASE_OUT = [0.16, 1, 0.3, 1] as const;
+export const EASE_IN_OUT = [0.77, 0, 0.175, 1] as const;
+export const EASE_DRAWER = [0.32, 0.72, 0, 1] as const;
+
+/** CSS string form of EASE_OUT for inline style transitions. */
+export const EASE_OUT_CSS = "cubic-bezier(0.16, 1, 0.3, 1)";
+
+/** Press feedback on buttons and other tappable surfaces. */
+export const SPRING_PRESS = {
+  type: "spring",
+  stiffness: 500,
+  damping: 30,
+  mass: 0.6,
+} as const;
+
+/** Content swaps — label/icon slots trading places inside a control. */
+export const SPRING_SWAP = {
+  type: "spring",
+  stiffness: 460,
+  damping: 30,
+  mass: 0.55,
+} as const;
+
+/** Overlay panel entrances — modals and sheets summoned by pointer. */
+export const SPRING_PANEL = {
+  type: "spring",
+  stiffness: 420,
+  damping: 40,
+  mass: 0.5,
+} as const;
+
+/** Shared-layout glides — pills, indicators and panels morphing between positions. */
+export const SPRING_LAYOUT = {
+  type: "spring",
+  stiffness: 360,
+  damping: 32,
+  mass: 0.6,
+} as const;
+
+/** Cursor-follow physics for decorative mouse tracking (magnetic, tilt, dock). */
+export const SPRING_MOUSE = {
+  stiffness: 200,
+  damping: 15,
+  mass: 0.3,
+} as const;
+
+/** Dragged handles and fills (sliders) — critically damped `useSpring` config,
+ * so the value follows the pointer butterily and never rebounds off an end. */
+export const SPRING_GLIDE = {
+  stiffness: 700,
+  damping: 50,
+  mass: 0.5,
+} as const;
+
+
+// FILE: lib/utils.ts
+import { clsx, type ClassValue } from "clsx"
+import { twMerge } from "tailwind-merge"
+
+export function cn(...inputs: ClassValue[]) {
+  return twMerge(clsx(inputs))
+}
+
+
+// FILE: components/previews/motion/dock.preview.tsx
+"use client";
+
+import { Calendar, Home, Mail, Music, Settings, Sparkles } from "lucide-react";
+import { useState } from "react";
+import { GithubIcon } from "@/components/app/icons";
+import { Dock, DockItem, DockSeparator } from "@/components/motion/dock";
+
+const ITEMS = [
+  { id: "home", icon: Home, label: "Home" },
+  { id: "mail", icon: Mail, label: "Mail" },
+  { id: "calendar", icon: Calendar, label: "Calendar" },
+  { id: "music", icon: Music, label: "Music" },
+  { id: "discover", icon: Sparkles, label: "Discover" },
+];
+
+export function DockPreview() {
+  const [active, setActive] = useState("home");
+
+  return (
+    <div className="flex w-full justify-center">
+      <Dock>
+        {ITEMS.map(({ id, icon: Icon, label }) => (
+          <DockItem
+            key={id}
+            aria-label={label}
+            active={active === id}
+            onClick={() => setActive(id)}
+          >
+            <Icon className="h-5 w-5" />
+          </DockItem>
+        ))}
+        <DockSeparator />
+        <DockItem
+          aria-label="Settings"
+          active={active === "settings"}
+          onClick={() => setActive("settings")}
+        >
+          <Settings className="h-5 w-5" />
+        </DockItem>
+        <DockItem aria-label="GitHub">
+          <GithubIcon className="h-5 w-5" />
+        </DockItem>
+      </Dock>
+    </div>
+  );
+}
+
+
+// FILE: components/app/icons.tsx
+import type { SVGProps } from "react";
+
+export function GithubIcon(props: SVGProps<SVGSVGElement>) {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      viewBox="0 0 24 24"
+      fill="currentColor"
+      aria-hidden="true"
+      {...props}
+    >
+      <path
+        fillRule="evenodd"
+        clipRule="evenodd"
+        d="M12 .5C5.65.5.5 5.65.5 12.02c0 5.1 3.29 9.43 7.86 10.96.58.1.79-.25.79-.56v-2.01c-3.2.7-3.87-1.54-3.87-1.54-.52-1.33-1.27-1.68-1.27-1.68-1.04-.71.08-.69.08-.69 1.15.08 1.76 1.18 1.76 1.18 1.02 1.76 2.68 1.25 3.34.96.1-.74.4-1.25.73-1.54-2.55-.29-5.24-1.28-5.24-5.69 0-1.26.45-2.29 1.18-3.1-.12-.29-.51-1.46.11-3.04 0 0 .96-.31 3.15 1.18.91-.25 1.89-.38 2.87-.39.97 0 1.96.13 2.87.39 2.19-1.49 3.15-1.18 3.15-1.18.62 1.58.23 2.75.11 3.04.74.81 1.18 1.84 1.18 3.1 0 4.42-2.7 5.4-5.27 5.68.42.36.78 1.07.78 2.16v3.2c0 .31.21.67.8.56 4.57-1.53 7.85-5.86 7.85-10.96C23.5 5.65 18.35.5 12 .5Z"
+      />
+    </svg>
+  );
+}
+
+

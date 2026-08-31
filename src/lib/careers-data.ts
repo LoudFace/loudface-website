@@ -20,15 +20,16 @@
  *   - Show a role publicly ONLY when `Opening status` is exactly "Open".
  *     "Paused" and "Closed" must never render — a paused row today is a
  *     suspected duplicate that nobody has adjudicated yet.
- *   - Link `Application form` VERBATIM. Those URLs carry ?role= params that
- *     auto-tag the applicant in Notion; rebuilding the URL by hand drops the
- *     tag and the application lands untagged.
+ *   - Preserve every query parameter in `Application form`, then add the exact
+ *     Notion opening page id as `opening`. The broad `role` parameter controls
+ *     the question set; `opening` identifies the exact vacancy.
  *   - `Priority` and `Hiring owner` are empty on every row. Do not render them.
  */
 
 const NOTION_API_VERSION = '2022-06-28';
 // Notion DB "Hiring Openings" — an identifier, not a secret.
 const NOTION_OPENINGS_DB_ID = '2abb6339-4d10-80a3-8b88-d1f1cad2b02e';
+const NOTION_OPENINGS_DATA_SOURCE_ID = '1c9b6339-4d10-80fa-b890-000b23f308b7';
 const NOTION_API_KEY = process.env.NOTION_API_KEY ?? '';
 
 /** Only this status is public. See the contract above. */
@@ -61,9 +62,24 @@ export interface OpenRole {
   commitment: string;
   /** e.g. "Remote". Empty until set. */
   location: string;
-  /** The apply URL exactly as Notion holds it, ?role= param included. */
+  /** The Notion apply URL with the exact opening page id added. */
   applyUrl: string;
 }
+
+export interface ApplicationOpening {
+  /** Exact Notion page id used by the Candidates.Opening relation. */
+  id: string;
+  /** Human vacancy title shown in the locked form. */
+  title: string;
+  /** Broad machine role used to select the correct question set. */
+  roleKey: string;
+}
+
+export type ApplicationOpeningResult =
+  | { status: 'generic' }
+  | { status: 'open'; opening: ApplicationOpening }
+  | { status: 'closed' }
+  | { status: 'unavailable' };
 
 /* ── Notion response shapes (only the parts we read) ─────────────── */
 
@@ -83,6 +99,10 @@ interface NotionProperties {
 
 interface NotionPage {
   id?: string;
+  parent?: {
+    database_id?: string;
+    data_source_id?: string;
+  };
   properties?: NotionProperties;
 }
 
@@ -99,15 +119,32 @@ function plain(parts?: NotionText[]): string {
  * malformed or relative value in Notion would otherwise render as a broken
  * apply button — worse than the role not appearing at all.
  */
-function applyUrl(raw?: string | null): string {
+function applyUrl(raw: string | null | undefined, openingId: string): string {
   if (!raw) return '';
   try {
     const url = new URL(raw);
     if (url.protocol !== 'https:' && url.protocol !== 'http:') return '';
-    return raw;
+    url.searchParams.set('opening', openingId);
+    return url.toString();
   } catch {
     return '';
   }
+}
+
+function normalizeNotionId(raw: string): string {
+  const compact = raw.trim().replaceAll('-', '').toLowerCase();
+  if (!/^[0-9a-f]{32}$/.test(compact)) return '';
+  return [
+    compact.slice(0, 8),
+    compact.slice(8, 12),
+    compact.slice(12, 16),
+    compact.slice(16, 20),
+    compact.slice(20),
+  ].join('-');
+}
+
+function isKnownRole(role: string): boolean {
+  return ROLE_ORDER.includes(role as (typeof ROLE_ORDER)[number]);
 }
 
 function toOpenRole(page: NotionPage): OpenRole | null {
@@ -120,7 +157,7 @@ function toOpenRole(page: NotionPage): OpenRole | null {
   if (props['Opening status']?.status?.name !== PUBLIC_STATUS) return null;
 
   const title = plain(props.Name?.title);
-  const url = applyUrl(props['Application form']?.url);
+  const url = applyUrl(props['Application form']?.url, page.id);
 
   // A role with no title or no working apply link is not publishable. Dropping
   // it is correct: a listing nobody can apply to wastes the candidate's time.
@@ -135,6 +172,102 @@ function toOpenRole(page: NotionPage): OpenRole | null {
     location: plain(props.Location?.rich_text),
     applyUrl: url,
   };
+}
+
+/**
+ * Resolve one exact opening for the application form.
+ *
+ * A specific opening is never trusted from the browser. We retrieve the page,
+ * confirm that it belongs to Hiring Openings, confirm that it is Open, and
+ * derive the machine role from Notion. The POST route calls this again with a
+ * fresh read, so changing a URL parameter cannot alter the stored role.
+ */
+export async function fetchApplicationOpening(
+  rawOpeningId: string | null | undefined,
+  options: {
+    fresh?: boolean;
+    /** Test seam. Production callers use the environment key. */
+    apiKey?: string;
+    /** Test seam. Production callers use the platform fetch. */
+    fetchImpl?: typeof fetch;
+  } = {},
+): Promise<ApplicationOpeningResult> {
+  if (!rawOpeningId) return { status: 'generic' };
+
+  const openingId = normalizeNotionId(rawOpeningId);
+  if (!openingId) return { status: 'closed' };
+
+  const apiKey = options.apiKey ?? NOTION_API_KEY;
+  const fetchImpl = options.fetchImpl ?? fetch;
+
+  if (!apiKey) {
+    console.error('[careers] NOTION_API_KEY not set; cannot resolve opening.');
+    return { status: 'unavailable' };
+  }
+
+  for (let attempt = 1; attempt <= 2; attempt++) {
+    try {
+      const response = await fetchImpl(`https://api.notion.com/v1/pages/${openingId}`, {
+        headers: {
+          Authorization: `Bearer ${apiKey}`,
+          'Notion-Version': NOTION_API_VERSION,
+        },
+        ...(options.fresh
+          ? { cache: 'no-store' as const }
+          : { next: { revalidate: 60 } }),
+      });
+
+      if (!response.ok) {
+        const body = await response.text().catch(() => '');
+        console.error(
+          '[careers] Opening lookup failed (attempt %d): %d %s',
+          attempt,
+          response.status,
+          body.slice(0, 300),
+        );
+
+        if (isRetryableStatus(response.status) && attempt < 2) {
+          const retryAfter = Number(response.headers.get('retry-after'));
+          const waitMs = Number.isFinite(retryAfter) && retryAfter > 0
+            ? Math.min(retryAfter * 1000, 2000)
+            : 400 * attempt;
+          await new Promise((resolve) => setTimeout(resolve, waitMs));
+          continue;
+        }
+
+        return isRetryableStatus(response.status)
+          ? { status: 'unavailable' }
+          : { status: 'closed' };
+      }
+
+      const page = (await response.json()) as NotionPage;
+      const belongsToOpenings =
+        page.parent?.database_id === NOTION_OPENINGS_DB_ID ||
+        page.parent?.data_source_id === NOTION_OPENINGS_DATA_SOURCE_ID;
+      const props = page.properties;
+      const title = plain(props?.Name?.title);
+      const roleKey = props?.Role?.select?.name ?? '';
+      const isOpen = props?.['Opening status']?.status?.name === PUBLIC_STATUS;
+
+      if (!belongsToOpenings || !page.id || !title || !isKnownRole(roleKey) || !isOpen) {
+        return { status: 'closed' };
+      }
+
+      return {
+        status: 'open',
+        opening: { id: page.id, title, roleKey },
+      };
+    } catch (error) {
+      console.error('[careers] Opening lookup threw (attempt %d):', attempt, error);
+      if (attempt < 2) {
+        await new Promise((resolve) => setTimeout(resolve, 400 * attempt));
+        continue;
+      }
+      return { status: 'unavailable' };
+    }
+  }
+
+  return { status: 'unavailable' };
 }
 
 function byRoleOrder(a: OpenRole, b: OpenRole): number {

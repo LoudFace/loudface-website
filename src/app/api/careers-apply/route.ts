@@ -1,13 +1,14 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { fetchApplicationOpening } from '@/lib/careers-data';
 
 /**
  * POST /api/careers-apply
  *
  * Writes job applications to the Notion DB "Candidates"
- * (database_id hardcoded below — it's a stable identifier, not a secret).
+ * (database_id hardcoded below because it is a stable identifier, not a secret).
  *
  * Env vars required:
- *   - NOTION_API_KEY (Bearer auth for the Notion integration — same key the
+ *   - NOTION_API_KEY (Bearer auth for the Notion integration, using the same key the
  *     partner-apply route uses). The integration must ALSO be connected to the
  *     Candidates database in Notion, or every write 404s.
  *
@@ -20,11 +21,11 @@ import { NextRequest, NextResponse } from 'next/server';
  * logged under [careers-apply] RECOVERY for replay from the Vercel logs.
  *
  * If you add a property to the Notion DB, add it here AND in
- * CareersApplicationForm.tsx — otherwise that property stays blank on every row.
+ * CareersApplicationForm.tsx. Otherwise, that property stays blank on every row.
  */
 
 const NOTION_API_VERSION = '2022-06-28';
-// Notion DB "Candidates" — not a secret, fine to hardcode.
+// Notion DB "Candidates" is not a secret, so it is fine to hardcode.
 const NOTION_DB_ID = 'c1a5d01d-d3c4-46e5-821f-c397adc8bfda';
 const NOTION_API_KEY = process.env.NOTION_API_KEY ?? '';
 
@@ -75,15 +76,15 @@ const LONG_ANSWER_FIELDS = [
   ['builtWithAI', 'Built with AI'],
 ] as const;
 
-interface CareersApplicationPayload {
+export interface CareersApplicationPayload {
   name: string;
   email: string;
   role: string;
+  openingId: string | null;
   linkedin: string;
   portfolio: string;
   loom: string;
   location: string;
-  salary: number | null;
   aboutYou: string;
   proofOfWork: string;
   workLinks: string;
@@ -103,29 +104,29 @@ export async function POST(request: NextRequest) {
       name,
       email,
       role,
+      openingId,
       linkedin,
       portfolio,
       loom,
       location,
-      salary,
       aboutYou,
       proofOfWork,
       workLinks,
       builtWithAI,
       heard,
       source,
-      company, // honeypot — a real applicant never sees or fills this
+      company, // honeypot; a real applicant never sees or fills this
       elapsedMs, // milliseconds between page load and submit
     } = body ?? {};
 
     // ─── Spam gates ───────────────────────────────────────────────
     // Both answer with a success shape so a bot learns nothing from the reply.
     if (typeof company === 'string' && company.trim() !== '') {
-      console.warn('[careers-apply] honeypot tripped — discarded.');
+      console.warn('[careers-apply] honeypot tripped; discarded.');
       return NextResponse.json({ success: true, message: 'Application received.' }, { status: 200 });
     }
     if (typeof elapsedMs === 'number' && elapsedMs < 3000) {
-      console.warn('[careers-apply] submitted in %dms — discarded.', elapsedMs);
+      console.warn('[careers-apply] submitted in %dms; discarded.', elapsedMs);
       return NextResponse.json({ success: true, message: 'Application received.' }, { status: 200 });
     }
 
@@ -147,7 +148,37 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    if (typeof role !== 'string' || !ROLES.has(role)) {
+    let cleanRole = '';
+    let linkedOpeningId: string | null = null;
+
+    if (typeof openingId === 'string' && openingId.trim()) {
+      const openingResult = await fetchApplicationOpening(openingId, { fresh: true });
+
+      if (openingResult.status === 'unavailable') {
+        return NextResponse.json(
+          {
+            success: false,
+            message: 'We could not verify this opening. Please try again in a moment.',
+          },
+          { status: 502 },
+        );
+      }
+
+      if (openingResult.status !== 'open') {
+        return NextResponse.json(
+          {
+            success: false,
+            message: 'This role is no longer accepting applications.',
+          },
+          { status: 400 },
+        );
+      }
+
+      cleanRole = openingResult.opening.roleKey;
+      linkedOpeningId = openingResult.opening.id;
+    } else if (typeof role === 'string' && ROLES.has(role)) {
+      cleanRole = role;
+    } else {
       return NextResponse.json(
         { success: false, message: 'Please choose the role you are applying for.' },
         { status: 400 },
@@ -156,20 +187,15 @@ export async function POST(request: NextRequest) {
 
     const cleanHeard = Array.isArray(heard) ? heard.filter((h) => HEARD.has(h)).slice(0, 9) : [];
 
-    let cleanSalary: number | null = null;
-    if (typeof salary === 'number' && Number.isFinite(salary) && salary > 0) {
-      cleanSalary = Math.round(Math.min(salary, 1_000_000));
-    }
-
     const submission: CareersApplicationPayload = {
       name: cleanName,
       email: cleanEmail,
-      role,
+      role: cleanRole,
+      openingId: linkedOpeningId,
       linkedin: str(linkedin, 256),
       portfolio: str(portfolio, 256),
       loom: str(loom, 256),
       location: str(location, 120),
-      salary: cleanSalary,
       aboutYou: str(aboutYou),
       proofOfWork: str(proofOfWork),
       workLinks: str(workLinks),
@@ -184,7 +210,7 @@ export async function POST(request: NextRequest) {
     if (NOTION_API_KEY) {
       stored = await sendToNotionWithRetry(submission);
     } else {
-      console.error('[careers-apply] NOTION_API_KEY not set — cannot store application.');
+      console.error('[careers-apply] NOTION_API_KEY not set; cannot store application.');
     }
 
     if (!stored) {
@@ -197,7 +223,7 @@ export async function POST(request: NextRequest) {
         {
           success: false,
           message:
-            "We couldn't save your application just now — that's on us, not you. Your answers are still on this page: please copy them into an email to hello@loudface.co and we'll pick it up from there.",
+            "We couldn't save your application just now. That's on us, not you. Your answers are still on this page. Please copy them into an email to hello@loudface.co, and we'll pick it up from there.",
         },
         { status: 502 },
       );
@@ -227,8 +253,8 @@ class NotionWriteError extends Error {
 
 /**
  * One retry, and only for failures a retry can actually fix (network blips,
- * 429s, 5xx). A 4xx is a configuration or schema mistake — most often the
- * integration not being connected to the Candidates database — and retrying
+ * 429s, 5xx). A 4xx is a configuration or schema mistake. The most common cause
+ * is a missing connection to the Candidates database, and retrying
  * it just doubles the latency before the same failure.
  *
  * Returns true only when the application is genuinely stored.
@@ -248,7 +274,7 @@ async function sendToNotionWithRetry(s: CareersApplicationPayload): Promise<bool
   return false;
 }
 
-/** Only send a URL property Notion will accept — it rejects malformed values. */
+/** Only send a URL property Notion will accept. It rejects malformed values. */
 function urlProp(value: string): { url: string } | null {
   if (!value) return null;
   const withScheme = /^https?:\/\//i.test(value) ? value : `https://${value}`;
@@ -284,7 +310,7 @@ function paragraphBlocks(heading: string, value: string) {
   ];
 }
 
-async function sendToNotion(s: CareersApplicationPayload): Promise<void> {
+export function buildCandidateProperties(s: CareersApplicationPayload): Record<string, unknown> {
   const properties: Record<string, unknown> = {
     Name: { title: [{ type: 'text', text: { content: s.name } }] },
     Email: { email: s.email },
@@ -292,8 +318,11 @@ async function sendToNotion(s: CareersApplicationPayload): Promise<void> {
     Stage: { select: { name: 'New' } },
     Source: { select: { name: s.source } },
     Outreach: { select: { name: 'Not contacted' } },
+    'Waiting on': { select: { name: 'Agent' } },
     'Applied on': { date: { start: new Date().toISOString().slice(0, 10) } },
   };
+
+  if (s.openingId) properties.Opening = { relation: [{ id: s.openingId }] };
 
   const linkedin = urlProp(s.linkedin);
   if (linkedin) properties.LinkedIn = linkedin;
@@ -305,10 +334,15 @@ async function sendToNotion(s: CareersApplicationPayload): Promise<void> {
   if (loom) properties.Loom = loom;
 
   if (s.location) properties.Location = richText(s.location);
-  if (s.salary !== null) properties['Salary /m USD'] = { number: s.salary };
   if (s.heard.length > 0) {
     properties['How heard'] = { multi_select: s.heard.map((name) => ({ name })) };
   }
+
+  return properties;
+}
+
+async function sendToNotion(s: CareersApplicationPayload): Promise<void> {
+  const properties = buildCandidateProperties(s);
 
   // Summary in the property (scannable in a table view), full text in the body.
   const children: unknown[] = [];

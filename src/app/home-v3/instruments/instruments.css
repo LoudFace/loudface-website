@@ -1,0 +1,888 @@
+/* ============================================================================
+   INSTRUMENTS — per-section measured plates for the homepage variation.
+
+   REVISION 2 (after review). The first pass was rejected, correctly, as AI slop:
+   rounded corners everywhere, decorative status dots, an icon in a rounded
+   coloured box, and one decorative spline standing in for a chart. Two of those
+   (status dots, icon tiles) are already banned in the house taste laws.
+
+   The register now: a draughtsman's plate. Square corners, hairline rules,
+   diagonal hatching as the texture for an absent or unmet state, real axes with
+   real tick labels, and micro-labels set in Satoshi uppercase with letterspacing
+   (the house has two fonts; mono is banned site-wide).
+
+   Two grounds:
+     .ci-light  white plate on dotted paper, indigo ink
+     .ci-dark   the same plate inverted onto the night-indigo field
+   ========================================================================= */
+
+:where(.hpv3) .sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* ---------------------------------------------------------------- grounds */
+
+:where(.hpv3) .ci {
+  position: relative;
+  isolation: isolate;
+  padding: 104px 0 112px;
+  --plate-bg: #fff;
+  --rule: #dcdfee;
+  --rule-soft: #eceefa;
+  --pink: var(--ink);
+  --pmut: var(--mut);
+  --pbody: var(--body);
+  --chart: var(--primary-600);
+  --chart-soft: var(--primary-200);
+  --track: #f2f3fa;
+}
+
+:where(.hpv3) .ci-light {
+  background: var(--paper);
+  color: var(--ink);
+  background-image: radial-gradient(var(--rule-soft) 1px, transparent 1px);
+  background-size: 24px 24px;
+}
+:where(.hpv3) .ci-light::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: radial-gradient(126% 80% at 50% 44%, rgba(255, 255, 255, 0) 34%, var(--paper) 86%);
+  pointer-events: none;
+}
+
+:where(.hpv3) .ci-dark {
+  color: #fff;
+  background: var(--night);
+  background-image:
+    radial-gradient(108% 84% at 14% 0%, rgba(99, 102, 241, 0.3) 0%, rgba(23, 20, 69, 0) 58%),
+    linear-gradient(162deg, var(--night) 0%, var(--night-hi) 64%, var(--night) 100%);
+  --plate-bg: rgba(255, 255, 255, 0.04);
+  --rule: rgba(255, 255, 255, 0.2);
+  --rule-soft: rgba(255, 255, 255, 0.12);
+  --pink: #fff;
+  --pmut: rgba(255, 255, 255, 0.58);
+  --pbody: rgba(255, 255, 255, 0.74);
+  --chart: var(--primary-300);
+  --chart-soft: rgba(165, 180, 252, 0.4);
+  --track: rgba(255, 255, 255, 0.08);
+}
+
+:where(.hpv3) .ci-intro {
+  padding: 96px 0 8px;
+}
+:where(.hpv3) .ci-intro .ci-head {
+  margin-bottom: 0;
+}
+
+/* -------------------------------------------------------------- section head */
+
+:where(.hpv3) .ci-head {
+  max-width: 740px;
+  margin-bottom: 56px;
+}
+:where(.hpv3) .ci-head h2 {
+  font-size: clamp(2rem, 3.6vw, 3.2rem);
+  letter-spacing: -0.028em;
+  color: var(--pink);
+}
+:where(.hpv3) .ci-head p {
+  margin-top: 18px;
+  max-width: 62ch;
+  font-size: 17px;
+  line-height: 1.62;
+  color: var(--pbody);
+}
+:where(.hpv3) .ci-lede {
+  display: block;
+  margin-bottom: 18px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--rule);
+  width: fit-content;
+  font-size: 11.5px;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--chart);
+}
+
+/* ============================================================ plate shell
+   Square. Hairline. No chrome dots, no traffic lights, no icon tiles. The
+   header is a letterspaced caption sitting on a rule, the way a figure on a
+   drawing sheet is titled. */
+
+:where(.hpv3) .ip {
+  margin: 0;
+  background: var(--plate-bg);
+  border: 1px solid var(--rule);
+  position: relative;
+}
+:where(.hpv3) .ci-dark .ip {
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+:where(.hpv3) .ip-head {
+  display: flex;
+  align-items: baseline;
+  gap: 14px;
+  padding: 13px 18px;
+  border-bottom: 1px solid var(--rule);
+}
+:where(.hpv3) .ip-head h4,
+:where(.hpv3) .ip-name {
+  font-family: var(--font-sans);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--pink);
+}
+:where(.hpv3) .ip-meta {
+  margin-left: auto;
+  font-size: 10.5px;
+  font-weight: 500;
+  letter-spacing: 0.11em;
+  text-transform: uppercase;
+  color: var(--pmut);
+  font-variant-numeric: tabular-nums;
+}
+:where(.hpv3) .ip-body {
+  padding: 20px 18px;
+}
+:where(.hpv3) .ip-foot {
+  padding: 11px 18px 13px;
+  border-top: 1px solid var(--rule);
+  font-size: 12.5px;
+  line-height: 1.5;
+  color: var(--pmut);
+}
+:where(.hpv3) .ip-foot b {
+  font-weight: 600;
+  color: var(--pink);
+  font-variant-numeric: tabular-nums;
+}
+
+/* the one texture in the system: 45° hatching = absent, unmet, not covered */
+:where(.hpv3) .hatch {
+  background-image: repeating-linear-gradient(
+    45deg,
+    var(--rule-soft) 0 1px,
+    transparent 1px 6px
+  );
+}
+
+/* shared chart furniture ---------------------------------------------------- */
+:where(.hpv3) .ax {
+  font-family: var(--font-sans);
+  font-size: 9.5px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  fill: var(--pmut);
+}
+:where(.hpv3) .ax-num {
+  font-family: var(--font-sans);
+  font-size: 10px;
+  font-weight: 500;
+  fill: var(--pmut);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.02em;
+}
+:where(.hpv3) .grid-line {
+  stroke: var(--rule-soft);
+  stroke-width: 1;
+}
+:where(.hpv3) .axis-line {
+  stroke: var(--rule);
+  stroke-width: 1;
+}
+:where(.hpv3) .series {
+  stroke: var(--chart);
+  fill: none;
+  stroke-width: 2;
+}
+:where(.hpv3) .series-dashed {
+  stroke-dasharray: 5 5;
+}
+:where(.hpv3) .marker {
+  fill: var(--chart);
+}
+/* the hatched area under a series takes the chart ink, not the inherited text
+   colour — otherwise it renders as neutral grey against an indigo line */
+:where(.hpv3) .resi-fill {
+  color: var(--chart);
+  opacity: 0.5;
+}
+:where(.hpv3) .ser-bar {
+  fill: var(--chart);
+}
+:where(.hpv3) .ser-ghost {
+  fill: var(--track);
+}
+
+/* -------------------------------------------------------- 1. answer readout */
+
+:where(.hpv3) .answer-pair {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 24px;
+  align-items: start;
+}
+:where(.hpv3) .ans-prompt {
+  display: block;
+  font-size: 15px;
+  line-height: 1.5;
+  color: var(--pink);
+  padding: 0 0 16px;
+  margin-bottom: 14px;
+  border-bottom: 1px solid var(--rule);
+}
+:where(.hpv3) .ans-prompt small {
+  display: block;
+  margin-bottom: 8px;
+  font-size: 10.5px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--pmut);
+}
+:where(.hpv3) .ans-list {
+  list-style: none;
+  display: grid;
+}
+:where(.hpv3) .ans-list li {
+  display: grid;
+  grid-template-columns: 26px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--rule-soft);
+  font-size: 14.5px;
+}
+:where(.hpv3) .ans-list li:last-child {
+  border-bottom: none;
+}
+:where(.hpv3) .ans-rank {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  color: var(--pmut);
+  font-variant-numeric: tabular-nums;
+}
+:where(.hpv3) .ans-domain {
+  color: var(--pink);
+}
+:where(.hpv3) .ans-chip {
+  font-size: 10.5px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  padding: 4px 8px;
+  white-space: nowrap;
+  border: 1px solid var(--chart);
+  color: var(--chart);
+}
+:where(.hpv3) .ans-chip.absent {
+  border-color: var(--rule);
+  color: var(--pmut);
+}
+:where(.hpv3) .ans-list li.is-absent {
+  background-image: repeating-linear-gradient(45deg, var(--rule-soft) 0 1px, transparent 1px 6px);
+}
+:where(.hpv3) .ans-list li.is-absent .ans-domain,
+:where(.hpv3) .ans-list li.is-absent .ans-rank {
+  color: var(--pmut);
+}
+:where(.hpv3) .ans-list li.is-you .ans-domain {
+  font-weight: 600;
+}
+:where(.hpv3) .ans-list li.is-you .ans-rank {
+  color: var(--chart);
+}
+
+/* --------------------------------------------------------- 2. system stages */
+
+:where(.hpv3) .stage-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  margin-bottom: 40px;
+  border: 1px solid var(--rule);
+  width: fit-content;
+}
+:where(.hpv3) .stage-tab {
+  font-family: var(--font-sans);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.11em;
+  text-transform: uppercase;
+  padding: 13px 22px;
+  color: var(--pmut);
+  background: transparent;
+  border-right: 1px solid var(--rule);
+  transition:
+    background-color 0.2s var(--ease-out),
+    color 0.2s var(--ease-out);
+}
+:where(.hpv3) .stage-tab:last-child {
+  border-right: none;
+}
+:where(.hpv3) .stage-tab:hover {
+  color: var(--pink);
+  background: var(--track);
+}
+:where(.hpv3) .stage-tab.is-active {
+  background: var(--primary-600);
+  color: #fff;
+}
+:where(.hpv3) .ci-dark .stage-tab.is-active {
+  background: #fff;
+  color: var(--primary-800);
+}
+:where(.hpv3) .stage-tab:active {
+  transform: translateY(1px);
+}
+
+/* denser chart plates: less air around the bars than the default .ip-body pad */
+:where(.hpv3) .stage-inst .ip-body {
+  padding: 12px 14px 8px;
+}
+
+:where(.hpv3) .stage-panel {
+  display: none;
+  grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+  gap: 60px;
+  align-items: start;
+}
+:where(.hpv3) .stage-panel.is-active {
+  display: grid;
+  animation: ci-settle 0.4s var(--ease-out) both;
+}
+@keyframes ci-settle {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+:where(.hpv3) .stage-copy h3 {
+  font-size: clamp(1.5rem, 2.3vw, 2.05rem);
+  letter-spacing: -0.022em;
+  color: var(--pink);
+}
+:where(.hpv3) .stage-copy > p {
+  margin-top: 16px;
+  font-size: 16px;
+  line-height: 1.66;
+  color: var(--pbody);
+  max-width: 46ch;
+}
+:where(.hpv3) .stage-inc-label {
+  margin-top: 30px;
+  padding-bottom: 9px;
+  border-bottom: 1px solid var(--rule);
+  font-size: 10.5px;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--pmut);
+}
+:where(.hpv3) .stage-inc {
+  list-style: none;
+}
+:where(.hpv3) .stage-inc li {
+  padding: 11px 0;
+  border-bottom: 1px solid var(--rule-soft);
+  font-size: 15px;
+  color: var(--pink);
+}
+:where(.hpv3) .stage-inc li:last-child {
+  border-bottom: none;
+}
+
+/* --------------------------------------------------------- 3. results ip */
+
+:where(.hpv3) .resi-plate {
+  margin: 0 0 26px;
+}
+:where(.hpv3) .resi-chart svg {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+:where(.hpv3) .resi-cap {
+  margin-top: 0;
+}
+:where(.hpv3) .resi-row {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 24px;
+}
+:where(.hpv3) .resi-stat,
+:where(.hpv3) .resi-quote {
+  padding: 26px 24px;
+  border: 1px solid var(--rule);
+  background: var(--plate-bg);
+}
+:where(.hpv3) .resi-stat {
+  background: var(--primary-600);
+  border-color: var(--primary-600);
+  color: #fff;
+}
+:where(.hpv3) .resi-val {
+  font-family: var(--font-heading);
+  font-weight: 500;
+  font-size: clamp(2.6rem, 4.2vw, 3.4rem);
+  letter-spacing: -0.035em;
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+}
+:where(.hpv3) .resi-lab {
+  margin-top: 10px;
+  font-size: 15px;
+  font-weight: 600;
+}
+:where(.hpv3) .resi-desc {
+  margin-top: 10px;
+  font-size: 13.5px;
+  line-height: 1.55;
+  color: rgba(255, 255, 255, 0.78);
+}
+:where(.hpv3) .resi-src {
+  margin-top: 20px;
+  padding-top: 12px;
+  border-top: 1px solid rgba(255, 255, 255, 0.28);
+  font-size: 10.5px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.78);
+}
+:where(.hpv3) .resi-quote blockquote {
+  font-size: 16px;
+  line-height: 1.55;
+  color: var(--pink);
+}
+:where(.hpv3) .resi-who {
+  margin-top: 20px;
+  padding-top: 12px;
+  border-top: 1px solid var(--rule);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: var(--pink);
+}
+:where(.hpv3) .resi-who span {
+  font-weight: 500;
+  color: var(--pmut);
+}
+
+/* -------------------------------------------------------- 4. process gates */
+
+:where(.hpv3) .gates {
+  list-style: none;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  border-top: 1px solid var(--rule);
+  border-left: 1px solid var(--rule);
+}
+:where(.hpv3) .gate-col {
+  display: flex;
+  flex-direction: column;
+  padding: 0;
+  border-right: 1px solid var(--rule);
+  border-bottom: 1px solid var(--rule);
+}
+:where(.hpv3) .gate-when {
+  padding: 14px 20px;
+  border-bottom: 1px solid var(--rule);
+  font-size: 10.5px;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--chart);
+  font-variant-numeric: tabular-nums;
+}
+:where(.hpv3) .gate-art {
+  padding: 20px;
+  border-bottom: 1px solid var(--rule);
+  flex: none;
+  /* fixed so the four gate titles sit on one line across the row, whatever
+     each artifact's own height is */
+  min-height: 208px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+:where(.hpv3) .gate-text {
+  flex: 1;
+}
+:where(.hpv3) .gate-text {
+  padding: 20px;
+}
+:where(.hpv3) .gate-title {
+  font-size: 19px;
+  letter-spacing: -0.018em;
+  color: var(--pink);
+}
+:where(.hpv3) .gate-body {
+  margin-top: 10px;
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--pbody);
+}
+
+/* the artifacts inside a gate — flat, square, no chrome */
+:where(.hpv3) .art-rows {
+  list-style: none;
+  display: grid;
+}
+:where(.hpv3) .art-rows li {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 9px 0;
+  border-bottom: 1px solid var(--rule-soft);
+  font-size: 13px;
+  color: var(--pink);
+}
+:where(.hpv3) .art-rows li:last-child {
+  border-bottom: none;
+}
+:where(.hpv3) .art-rows li.is-blank {
+  color: var(--pmut);
+}
+:where(.hpv3) .art-mark {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  padding: 3px 7px;
+  border: 1px solid var(--rule);
+  color: var(--pmut);
+  white-space: nowrap;
+}
+:where(.hpv3) .art-mark.on {
+  border-color: var(--chart);
+  color: var(--chart);
+}
+:where(.hpv3) .art-mark.filled {
+  background: var(--primary-600);
+  border-color: var(--primary-600);
+  color: #fff;
+}
+:where(.hpv3) .ci-dark .art-mark.filled {
+  background: var(--primary-500);
+  border-color: var(--primary-500);
+}
+:where(.hpv3) .art-spark {
+  width: 100%;
+  height: auto;
+  display: block;
+  margin-bottom: 14px;
+}
+
+/* ----------------------------------------------------------- 5. the matrix */
+
+:where(.hpv3) .mx-wrap {
+  overflow-x: auto;
+}
+:where(.hpv3) .mx {
+  width: 100%;
+  min-width: 880px;
+  border-collapse: collapse;
+}
+:where(.hpv3) .mx th,
+:where(.hpv3) .mx td {
+  border: 1px solid var(--rule);
+}
+:where(.hpv3) .mx thead th {
+  font-family: var(--font-sans);
+  font-size: 10.5px;
+  font-weight: 600;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+  color: var(--pmut);
+  padding: 14px 10px;
+  text-align: center;
+  vertical-align: bottom;
+  border-top: none;
+  border-left-color: transparent;
+  border-right-color: transparent;
+}
+:where(.hpv3) .mx thead th:first-child {
+  text-align: left;
+  width: 32%;
+  border-left: none;
+}
+:where(.hpv3) .mx thead th:last-child {
+  border-right: none;
+}
+:where(.hpv3) .mx tbody th {
+  text-align: left;
+  padding: 22px 22px;
+  vertical-align: middle;
+  font-weight: 400;
+  background: var(--plate-bg);
+}
+:where(.hpv3) .mx tbody th b {
+  display: block;
+  font-family: var(--font-heading);
+  font-weight: 500;
+  font-size: 18px;
+  letter-spacing: -0.018em;
+  color: var(--pink);
+}
+:where(.hpv3) .mx tbody th span {
+  display: block;
+  margin-top: 7px;
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--pbody);
+  max-width: 42ch;
+}
+:where(.hpv3) .mx tbody td {
+  text-align: center;
+  padding: 22px 10px;
+  vertical-align: middle;
+  background: var(--plate-bg);
+}
+:where(.hpv3) .mx td.is-no {
+  background-image: repeating-linear-gradient(45deg, var(--rule-soft) 0 1px, transparent 1px 6px);
+}
+
+:where(.hpv3) .mx tr.is-hero th,
+:where(.hpv3) .mx tr.is-hero td {
+  background: var(--primary-600);
+  border-color: var(--primary-600);
+  background-image: none;
+}
+:where(.hpv3) .mx tr.is-hero th b {
+  color: #fff;
+  font-size: 21px;
+}
+:where(.hpv3) .mx tr.is-hero th span {
+  color: rgba(255, 255, 255, 0.84);
+}
+
+:where(.hpv3) .mx-mark {
+  display: inline-block;
+  line-height: 0;
+  color: var(--chart);
+}
+:where(.hpv3) .mx-mark svg {
+  width: 16px;
+  height: 16px;
+}
+:where(.hpv3) tr.is-hero .mx-mark {
+  color: #fff;
+}
+:where(.hpv3) .mx-varies,
+:where(.hpv3) .mx-no {
+  color: var(--pmut);
+}
+:where(.hpv3) .mx-note {
+  margin-top: 20px;
+  padding-top: 14px;
+  border-top: 1px solid var(--rule);
+  font-size: 13px;
+  color: var(--pmut);
+}
+
+/* ------------------------------------------------------------- responsive */
+
+@media (max-width: 1000px) {
+  :where(.hpv3) .stage-panel.is-active {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 34px;
+  }
+  :where(.hpv3) .gates {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  :where(.hpv3) .resi-row {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+@media (max-width: 760px) {
+  :where(.hpv3) .ci {
+    padding: 68px 0 72px;
+  }
+  :where(.hpv3) .answer-pair {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 18px;
+  }
+  :where(.hpv3) .gates {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  :where(.hpv3) .stage-tabs {
+    width: 100%;
+  }
+  :where(.hpv3) .stage-tab {
+    flex: 1 1 auto;
+    padding: 11px 12px;
+    font-size: 10.5px;
+    letter-spacing: 0.08em;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :where(.hpv3) .stage-panel.is-active {
+    animation: none;
+  }
+}
+
+/* ============================================================================
+   BKLIT CHART TOKENS — re-keyed to the LoudFace palette.
+
+   Bklit ships a neutral greyscale ramp. Its components read these variables, so
+   re-pointing them here is the whole colour change: not one line of Bklit source
+   is touched. Scoped to `.ci` so any other chart on the site keeps Bklit's
+   defaults.
+   ========================================================================= */
+
+:where(.hpv3) .ci.ci-light {
+  --chart-1: #4f46e5; /* primary-600 */
+  --chart-2: #818cf8; /* primary-400 */
+  --chart-3: #a5b4fc; /* primary-300 */
+  --chart-4: #c7d2fe; /* primary-200 */
+  --chart-5: #e0e7ff; /* primary-100 */
+  --chart-background: #ffffff;
+  --chart-foreground: var(--ink);
+  --chart-foreground-muted: var(--mut);
+  --chart-line-primary: var(--chart-1);
+  --chart-line-secondary: var(--chart-2);
+  --chart-crosshair: #4f46e5;
+  --chart-grid: #e8eaf3;
+  --chart-brush-border: var(--chart-grid);
+  --chart-tooltip-background: #1e1b4b;
+  --chart-tooltip-foreground: #ffffff;
+  --chart-tooltip-muted: #a5b4fc;
+  --chart-marker-background: #ffffff;
+  --chart-marker-border: #c7d2fe;
+  --chart-marker-foreground: #312e81;
+  --chart-label: var(--mut);
+  --chart-scale-01: #eef2ff;
+  --chart-scale-02: #e0e7ff;
+  --chart-scale-03: #c7d2fe;
+  --chart-scale-04: #818cf8;
+  --chart-scale-05: #4f46e5;
+  --chart-scale-pattern-color: #eef2ff;
+  --legend: #ffffff;
+  --legend-foreground: var(--ink);
+  --legend-muted: #f4f5fb;
+  --legend-muted-foreground: var(--mut);
+  --legend-track: #e8eaf3;
+}
+
+:where(.hpv3) .ci.ci-dark {
+  --chart-1: #a5b4fc; /* primary-300 reads as the ink on a night field */
+  --chart-2: #818cf8;
+  --chart-3: #6366f1;
+  --chart-4: #4f46e5;
+  --chart-5: #4338ca;
+  --chart-background: transparent;
+  --chart-foreground: #ffffff;
+  --chart-foreground-muted: rgba(255, 255, 255, 0.58);
+  --chart-line-primary: var(--chart-1);
+  --chart-line-secondary: var(--chart-2);
+  --chart-crosshair: #c7d2fe;
+  --chart-grid: rgba(255, 255, 255, 0.14);
+  --chart-brush-border: var(--chart-grid);
+  --chart-tooltip-background: #0d0a2e;
+  --chart-tooltip-foreground: #ffffff;
+  --chart-tooltip-muted: #a5b4fc;
+  --chart-marker-background: #171445;
+  --chart-marker-border: rgba(255, 255, 255, 0.28);
+  --chart-marker-foreground: #ffffff;
+  --chart-label: rgba(255, 255, 255, 0.58);
+  --chart-scale-01: rgba(255, 255, 255, 0.06);
+  --chart-scale-02: rgba(165, 180, 252, 0.22);
+  --chart-scale-03: rgba(129, 140, 248, 0.45);
+  --chart-scale-04: #6366f1;
+  --chart-scale-05: #a5b4fc;
+  --chart-scale-pattern-color: rgba(255, 255, 255, 0.08);
+  --legend: transparent;
+  --legend-foreground: #ffffff;
+  --legend-muted: rgba(255, 255, 255, 0.06);
+  --legend-muted-foreground: rgba(255, 255, 255, 0.58);
+  --legend-track: rgba(255, 255, 255, 0.14);
+}
+
+/* ---- results: ring + bar pair -------------------------------------------- */
+:where(.hpv3) .resi-pair {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 24px;
+  margin-bottom: 24px;
+  align-items: stretch;
+}
+:where(.hpv3) .resi-pair .ip {
+  display: flex;
+  flex-direction: column;
+}
+:where(.hpv3) .resi-pair .ip-body {
+  flex: 1;
+}
+:where(.hpv3) .resi-ring {
+  display: grid;
+  grid-template-columns: 240px minmax(0, 1fr);
+  gap: 28px;
+  align-items: center;
+}
+:where(.hpv3) .resi-side b {
+  display: block;
+  font-family: var(--font-heading);
+  font-weight: 500;
+  font-size: clamp(1.8rem, 3vw, 2.6rem);
+  letter-spacing: -0.03em;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+}
+:where(.hpv3) .resi-side span {
+  display: block;
+  margin-top: 8px;
+  font-size: 13.5px;
+  line-height: 1.5;
+  color: var(--pbody);
+}
+:where(.hpv3) .resi-before {
+  padding-bottom: 18px;
+  margin-bottom: 18px;
+  border-bottom: 1px solid var(--rule);
+}
+:where(.hpv3) .resi-before b {
+  color: var(--pmut);
+}
+:where(.hpv3) .resi-after b {
+  color: var(--chart-1);
+}
+:where(.hpv3) .resi-row {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+@media (max-width: 1000px) {
+  :where(.hpv3) .resi-pair,
+  :where(.hpv3) .resi-row {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  :where(.hpv3) .resi-ring {
+    grid-template-columns: minmax(0, 1fr);
+    justify-items: center;
+    text-align: center;
+  }
+}

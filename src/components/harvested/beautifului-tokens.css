@@ -1,0 +1,55 @@
+/**
+ * Craft variables harvested VERBATIM from beautifui-full.md Part A
+ * (beautifului.dev's foundation.css, source: their `@theme inline` radius
+ * scale + the shadow-plugin/unprefixed layered shadow values + their own
+ * semantic shadow tokens, §A4–A5 of the harvest).
+ *
+ * Colour is deliberately NOT carried over — LoudFace owns colour, this file
+ * borrows only their craft: the named radius scale and the layered shadow
+ * system. The one substitution: their `--line` / `--line-strong` hairline
+ * colours (used inside `--shadow-card` / `--shadow-raised`) are re-pointed
+ * to the project's own `--paper-line` token instead of beautifului's own
+ * border colour, since importing their line colour would be importing their
+ * colour system through the back door.
+ *
+ * Applied via wrapper classes (`.bf-card`, `.bf-window`) at the call site —
+ * the harvested components' own classes are never edited to add these.
+ */
+
+:root {
+  /* A4 — named radius scale, verbatim values */
+  --bf-radius-chip: 6px;
+  --bf-radius-control: 8px;
+  --bf-radius-card: 10px;
+  --bf-radius-window: 14px;
+
+  /* A5 — shadow-plugin/unprefixed base layers, verbatim */
+  --bf-shadow-xs: 0 0 4px 0 #0000000a;
+  --bf-shadow-sm: 0 18px 47px 0 #00000008, 0 7.5px 19px 0 #00000005, 0 4px 10.5px 0 #00000005,
+    0 2.3px 5.8px 0 #00000003, 0 1.2px 3.1px 0 #00000003, 0 0.5px 1.3px 0 #00000003;
+  --bf-shadow-md: 0 17.54px 23.39px 0 #0000000a, 0 9.4px 12.5px 0 #00000008, 0 5.25px 7px 0 #00000005,
+    0 2.79px 3.72px -2px #00000003, 0 1.16px 1.5px 0 #00000003;
+  --bf-shadow-lg: 0 25px 50px 0 #0000000d, 0 12px 24px 0 #0000000a, 0 6px 12px 0 #00000008,
+    0 3px 6px 0 #00000005, 0 1.5px 3px 0 #00000005;
+
+  /* A5 — beautifului's own semantic shadow tokens (light), verbatim
+     structure; --line / --line-strong substituted per the note above. */
+  --bf-line: var(--paper-line, #e8eaf3);
+  --bf-line-strong: var(--primary-200, #c7d2fe);
+  --bf-shadow-hairline: 0 0 0 1px var(--bf-line);
+  --bf-shadow-btn: 0 0 0 1px var(--bf-line-strong), var(--bf-shadow-xs);
+  --bf-shadow-card: 0 0 0 1px var(--bf-line), var(--bf-shadow-sm);
+  --bf-shadow-raised: 0 0 0 1px var(--bf-line), var(--bf-shadow-md);
+  --bf-shadow-overlay: 0 0 0 1px var(--bf-line), var(--bf-shadow-lg);
+}
+
+/* Wrapper utilities — apply the craft variables without touching the
+   harvested component's own class strings. */
+.bf-card {
+  border-radius: var(--bf-radius-card);
+  box-shadow: var(--bf-shadow-card);
+}
+.bf-window {
+  border-radius: var(--bf-radius-window);
+  box-shadow: var(--bf-shadow-raised);
+}
