@@ -27,6 +27,10 @@ export function parseArgs(argv, { booleans = [], values = [], positional = 1, us
     if (values.includes(name)) {
       const v = argv[i + 1];
       if (v === undefined || v.startsWith('--')) fail(`--${name} needs a value`);
+      // An empty or whitespace-only value must fail too. It survived the check
+      // above, then read as falsy downstream: `--variant ""` silently fell back
+      // to the default variant, and `--alt ""` would have wiped the alt text.
+      if (v.trim() === '') fail(`--${name} needs a non-empty value`);
       out[name] = v;
       i++; // consume the value so it never lands in positionals
       continue;
@@ -36,5 +40,6 @@ export function parseArgs(argv, { booleans = [], values = [], positional = 1, us
   }
 
   if (out._.length > positional) fail(`unexpected argument "${out._[positional]}"`);
+  out._.forEach((v, i) => { if (v.trim() === '') fail(`argument ${i + 1} is empty`); });
   return out;
 }
