@@ -121,7 +121,7 @@ const CASE_STUDY_PROJECTION = `{
     topicClimb{ title, caption, points[]{ week, value } },
     rankOverTime{ label, from, to, caption, points[]{ week, position } },
     engineBeforeAfter{ beforeLabel, afterLabel, caption, rows[]{ engine, before, after } },
-    indexedTrend{ title, baselineLabel, caption, startMonthIso, points[]{ month, impressions, clicks, partial } },
+    indexedTrend{ title, baselineLabel, caption, startMonthIso, points[]{ month, date, impressions, clicks, partial } },
     publishedResult{ rows[]{ value, unit }, positionFrom, positionTo, caption }
   },
   "faq": faq[]{ question, answer },

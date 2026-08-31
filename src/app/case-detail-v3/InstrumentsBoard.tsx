@@ -46,7 +46,6 @@ import {
   ChartTooltip,
   Grid,
   Line,
-  LineChart,
   XAxis,
 } from '@/components/charts';
 import type { CaseStudyInstruments, InstrumentEngineId } from '@/lib/types';
@@ -163,10 +162,18 @@ export function InstrumentsBoard({ instruments, clientName }: InstrumentsBoardPr
 
   const topicSeries = useMemo(
     () =>
-      (topicClimb?.points ?? []).map((p) => ({
-        date: new Date(`${p.week}T00:00:00Z`),
-        visibility: Number((p.value * 100).toFixed(1)),
-      })),
+      (topicClimb?.points ?? []).map((p) => {
+        const at = new Date(`${p.week}T00:00:00Z`);
+        return {
+          /* BarChart plots a CATEGORICAL x axis, so each point carries its own
+             label string rather than a Date. Points may be daily or weekly —
+             the label is the same either way, and the bars simply get thinner
+             as the series gets longer. */
+          day: fmtDay(at) ?? p.week,
+          date: at,
+          visibility: Number((p.value * 100).toFixed(1)),
+        };
+      }),
     [topicClimb]
   );
 
@@ -200,12 +207,19 @@ export function InstrumentsBoard({ instruments, clientName }: InstrumentsBoardPr
   const googleSeries = useMemo(
     () =>
       (indexedTrend?.points ?? []).map((p, i) => ({
-        date: monthAt(indexedTrend?.startMonthIso, i) ?? new Date(NaN),
+        /* A point carries `date` when the series is daily. Monthly series
+           predate that field and still derive their date by counting months
+           from `startMonthIso`. */
+        date: p.date ? new Date(`${p.date}T00:00:00Z`) : (monthAt(indexedTrend?.startMonthIso, i) ?? new Date(NaN)),
         impressions: p.impressions,
         clicks: p.clicks,
       })),
     [indexedTrend]
   );
+
+  /* A daily Google series needs day-level tooltips; a monthly one needs month
+     labels. One explicit ISO date on the first point is what separates them. */
+  const googleIsDaily = !!indexedTrend?.points?.[0]?.date;
 
   const asMultiple = useMemo(() => makeAsMultiple(indexedTrend?.baselineLabel), [indexedTrend]);
 
@@ -238,23 +252,35 @@ export function InstrumentsBoard({ instruments, clientName }: InstrumentsBoardPr
                     <div className="inb-cell">
                       <p className="inb-cell-label">{topicClimb.title}</p>
                       <div className="inb-cell-body">
-                        <div className="inb-plot">
+                        <div className="inb-plot inb-plot--bars">
                           {mounted && (
-                            <LineChart
+                            /*
+                             * Bars, not a line. Once this series went from
+                             * weekly to daily points (2026-09-01) a line became
+                             * dishonest: a brand can go a whole day without
+                             * being named, so the series has real zeros — 47 of
+                             * Delshad Legal's first 76 days. A line draws
+                             * straight through them as if the value were merely
+                             * low. Bars show the zero days as zero, and the
+                             * climb reads as a floor turning into a wall.
+                             */
+                            <BarChart
                               data={topicSeries}
-                              aspectRatio=""
-                              style={{ height: '100%' }}
-                              margin={{ top: 8, right: 10, bottom: 26, left: 10 }}
+                              xDataKey="day"
+                              /* BarChart takes no `style` prop, so it normally
+                                 sizes itself from this ratio alone — which is
+                                 how the engine bars once collapsed to nothing on
+                                 a phone. `.inb-plot--bars` overrides the ratio in
+                                 CSS and pins the chart to its box instead, so the
+                                 value here is only a pre-hydration placeholder. */
+                              aspectRatio="4 / 1"
+                              barGap={topicSeries.length > 40 ? 0.12 : 0.28}
+                              margin={{ top: 8, right: 10, bottom: 30, left: 10 }}
                             >
                               <Background pattern="dots" opacity={0.6} />
-                              <Line
-                                dataKey="visibility"
-                                curve={curveCatmullRom}
-                                fadeEdges
-                                strokeWidth={2.25}
-                                stroke="var(--chart-1)"
-                              />
-                              <XAxis />
+                              <Grid horizontal />
+                              <Bar dataKey="visibility" lineCap="butt" fill="var(--chart-1)" />
+                              <BarXAxis maxLabels={7} />
                               <ChartTooltip
                                 content={({ point }) => (
                                   <Tip
@@ -268,7 +294,7 @@ export function InstrumentsBoard({ instruments, clientName }: InstrumentsBoardPr
                                   />
                                 )}
                               />
-                            </LineChart>
+                            </BarChart>
                           )}
                         </div>
                       </div>
@@ -441,7 +467,7 @@ export function InstrumentsBoard({ instruments, clientName }: InstrumentsBoardPr
                           <ChartTooltip
                             content={({ point }) => (
                               <Tip
-                                title={fmtMonth(point.date)}
+                                title={googleIsDaily ? fmtDay(point.date) : fmtMonth(point.date)}
                                 rows={[
                                   {
                                     label: 'Impressions',

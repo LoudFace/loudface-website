@@ -149,8 +149,12 @@ export interface CaseStudyInstruments {
     /** e.g. "Dec" — the confidentiality formatter prints values as a multiple of this baseline. */
     baselineLabel: string;
     caption: string;
-    /** `impressions`/`clicks` are indexed to the baseline month = 100. */
-    points: { month: string; impressions: number; clicks: number; partial?: boolean }[];
+    /** `impressions`/`clicks` are indexed to the baseline month = 100 — for a
+     *  daily series, 100 is the baseline month's average DAY, so the baseline
+     *  label on the page keeps its meaning at either resolution.
+     *  `date` (ISO "YYYY-MM-DD") is present on daily points and absent on the
+     *  older monthly ones, which still derive their date from `startMonthIso`. */
+    points: { month: string; date?: string; impressions: number; clicks: number; partial?: boolean }[];
     /** The calendar month the first point represents, e.g. "2025-09". */
     startMonthIso: string;
   };

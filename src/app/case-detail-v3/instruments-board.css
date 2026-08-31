@@ -241,6 +241,17 @@
   min-width: 0;
 }
 
+/* A BarChart has no `style` prop, so it sizes itself purely from its
+   `aspectRatio` — and a ratio cannot track a box whose height is fixed in
+   pixels while its width follows the viewport. Left alone the chart overhangs
+   its box (25px at 900px wide) or, at phone width, collapses to nothing. This
+   overrides the ratio the chart writes inline and pins it to the box, which is
+   what every other chart in this board already does through `style`. */
+.inb-plot--bars > * {
+  aspect-ratio: auto !important;
+  height: 100% !important;
+}
+
 /* ── Ring ─────────────────────────────────────────────────────────────── */
 
 .inb-ring-box {

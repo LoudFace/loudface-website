@@ -306,20 +306,26 @@ export const caseStudy = defineType({
         }),
         defineField({
           name: 'topicClimb',
-          title: 'Topic climb (weekly share of AI answers)',
+          title: 'Topic climb (share of AI answers over time)',
           type: 'object',
           fields: [
             defineField({ name: 'title', title: 'Title', type: 'string' }),
             defineField({ name: 'caption', title: 'Caption', type: 'text', rows: 2 }),
             defineField({
               name: 'points',
-              title: 'Weekly points',
+              title: 'Points (daily or weekly)',
               type: 'array',
               of: [
                 {
                   type: 'object',
                   fields: [
-                    defineField({ name: 'week', title: 'Week (ISO date)', type: 'string' }),
+                    defineField({
+                      name: 'week',
+                      title: 'Point date (ISO)',
+                      type: 'string',
+                      description:
+                        'One ISO date per point. A daily series lists every day; a weekly one lists week-start dates. The chart draws bars either way — it does not need to be told which.',
+                    }),
                     defineField({
                       name: 'value',
                       title: 'Share (0–1)',
@@ -424,13 +430,20 @@ export const caseStudy = defineType({
             }),
             defineField({
               name: 'points',
-              title: 'Monthly points',
+              title: 'Points (daily or monthly)',
               type: 'array',
               of: [
                 {
                   type: 'object',
                   fields: [
                     defineField({ name: 'month', title: 'Month label', type: 'string' }),
+                    defineField({
+                      name: 'date',
+                      title: 'Date (ISO, daily series only)',
+                      type: 'string',
+                      description:
+                        'Set this on a daily series, e.g. "2026-08-24". Leave it empty on a monthly series, which dates its points by counting months from the start month below.',
+                    }),
                     defineField({ name: 'impressions', title: 'Impressions (indexed)', type: 'number' }),
                     defineField({ name: 'clicks', title: 'Clicks (indexed)', type: 'number' }),
                     defineField({

@@ -1,0 +1,410 @@
+{
+  "delshad-legal-content-engine": {
+    "_id": "caseStudy-delshad-legal-content-engine",
+    "topicClimb": {
+      "caption": "0.13% to 30.5% in eleven weeks — first of the twelve tracked employment-law firms by late August.",
+      "points": [
+        {
+          "_key": "pt-0",
+          "value": 0.0013,
+          "week": "2026-06-08"
+        },
+        {
+          "_key": "pt-1",
+          "value": 0.0048,
+          "week": "2026-06-15"
+        },
+        {
+          "_key": "pt-2",
+          "value": 0.003,
+          "week": "2026-06-22"
+        },
+        {
+          "_key": "pt-3",
+          "value": 0,
+          "week": "2026-06-29"
+        },
+        {
+          "_key": "pt-4",
+          "value": 0.0021,
+          "week": "2026-07-06"
+        },
+        {
+          "_key": "pt-5",
+          "value": 0.0051,
+          "week": "2026-07-13"
+        },
+        {
+          "_key": "pt-6",
+          "value": 0.0185,
+          "week": "2026-07-20"
+        },
+        {
+          "_key": "pt-7",
+          "value": 0,
+          "week": "2026-07-27"
+        },
+        {
+          "_key": "pt-8",
+          "value": 0.2066,
+          "week": "2026-08-03"
+        },
+        {
+          "_key": "pt-9",
+          "value": 0.254,
+          "week": "2026-08-10"
+        },
+        {
+          "_key": "pt-10",
+          "value": 0.2653,
+          "week": "2026-08-17"
+        },
+        {
+          "_key": "pt-11",
+          "value": 0.3051,
+          "week": "2026-08-24"
+        }
+      ],
+      "title": "Share of voice across 12 tracked firms, weekly"
+    },
+    "indexedTrend": {
+      "baselineLabel": "Sep",
+      "caption": "December's click spike is the celebrity-case news cycle; the durable climb starts in May. August is the first 24 days.",
+      "points": [
+        {
+          "_key": "pt-0",
+          "clicks": 100,
+          "impressions": 100,
+          "month": "09"
+        },
+        {
+          "_key": "pt-1",
+          "clicks": 80,
+          "impressions": 52,
+          "month": "10"
+        },
+        {
+          "_key": "pt-2",
+          "clicks": 61,
+          "impressions": 60,
+          "month": "11"
+        },
+        {
+          "_key": "pt-3",
+          "clicks": 380,
+          "impressions": 100,
+          "month": "12"
+        },
+        {
+          "_key": "pt-4",
+          "clicks": 225,
+          "impressions": 111,
+          "month": "01"
+        },
+        {
+          "_key": "pt-5",
+          "clicks": 117,
+          "impressions": 104,
+          "month": "02"
+        },
+        {
+          "_key": "pt-6",
+          "clicks": 117,
+          "impressions": 93,
+          "month": "03"
+        },
+        {
+          "_key": "pt-7",
+          "clicks": 114,
+          "impressions": 94,
+          "month": "04"
+        },
+        {
+          "_key": "pt-8",
+          "clicks": 122,
+          "impressions": 105,
+          "month": "05"
+        },
+        {
+          "_key": "pt-9",
+          "clicks": 185,
+          "impressions": 137,
+          "month": "06"
+        },
+        {
+          "_key": "pt-10",
+          "clicks": 226,
+          "impressions": 152,
+          "month": "07"
+        },
+        {
+          "_key": "pt-11",
+          "clicks": 291,
+          "impressions": 235,
+          "month": "08",
+          "partial": true
+        }
+      ],
+      "startMonthIso": "2025-09",
+      "title": "Impressions and clicks · indexed, Sep 2025 = 100"
+    }
+  },
+  "stealth-fintech-ai-visibility": {
+    "_id": "caseStudy-stealth-fintech-ai-visibility",
+    "topicClimb": {
+      "caption": "0.53% to 11.3% in ten weeks, peaking at 10.5% on 3 Aug — in a category where the leader holds over 40% of mentions.",
+      "points": [
+        {
+          "_key": "pt-0",
+          "value": 0.0053,
+          "week": "2026-06-15"
+        },
+        {
+          "_key": "pt-1",
+          "value": 0.0323,
+          "week": "2026-06-22"
+        },
+        {
+          "_key": "pt-2",
+          "value": 0.0442,
+          "week": "2026-06-29"
+        },
+        {
+          "_key": "pt-3",
+          "value": 0.0109,
+          "week": "2026-07-06"
+        },
+        {
+          "_key": "pt-4",
+          "value": 0.0638,
+          "week": "2026-07-13"
+        },
+        {
+          "_key": "pt-5",
+          "value": 0.0909,
+          "week": "2026-07-20"
+        },
+        {
+          "_key": "pt-6",
+          "value": 0.1005,
+          "week": "2026-07-27"
+        },
+        {
+          "_key": "pt-7",
+          "value": 0.1046,
+          "week": "2026-08-03"
+        },
+        {
+          "_key": "pt-8",
+          "value": 0.09,
+          "week": "2026-08-10"
+        },
+        {
+          "_key": "pt-9",
+          "value": 0.1024,
+          "week": "2026-08-17"
+        },
+        {
+          "_key": "pt-10",
+          "value": 0.1127,
+          "week": "2026-08-24"
+        }
+      ],
+      "title": "Share of AI answers naming the client, weekly"
+    },
+    "indexedTrend": null
+  },
+  "loudface-aeo-case-study": {
+    "_id": "caseStudy-loudface-aeo-case-study",
+    "topicClimb": {
+      "caption": "0.1% to a 13.6% peak in twenty weeks — the same measurement we sell, run on ourselves.",
+      "points": [
+        {
+          "_key": "pt-0",
+          "value": 0.0014,
+          "week": "2026-04-06"
+        },
+        {
+          "_key": "pt-1",
+          "value": 0,
+          "week": "2026-04-13"
+        },
+        {
+          "_key": "pt-2",
+          "value": 0.0012,
+          "week": "2026-04-20"
+        },
+        {
+          "_key": "pt-3",
+          "value": 0.006,
+          "week": "2026-04-27"
+        },
+        {
+          "_key": "pt-4",
+          "value": 0.0082,
+          "week": "2026-05-04"
+        },
+        {
+          "_key": "pt-5",
+          "value": 0.0101,
+          "week": "2026-05-11"
+        },
+        {
+          "_key": "pt-6",
+          "value": 0.032,
+          "week": "2026-05-18"
+        },
+        {
+          "_key": "pt-7",
+          "value": 0.0724,
+          "week": "2026-05-25"
+        },
+        {
+          "_key": "pt-8",
+          "value": 0.1004,
+          "week": "2026-06-01"
+        },
+        {
+          "_key": "pt-9",
+          "value": 0.0921,
+          "week": "2026-06-08"
+        },
+        {
+          "_key": "pt-10",
+          "value": 0.1154,
+          "week": "2026-06-15"
+        },
+        {
+          "_key": "pt-11",
+          "value": 0.0749,
+          "week": "2026-06-22"
+        },
+        {
+          "_key": "pt-12",
+          "value": 0.0637,
+          "week": "2026-06-29"
+        },
+        {
+          "_key": "pt-13",
+          "value": 0.0659,
+          "week": "2026-07-06"
+        },
+        {
+          "_key": "pt-14",
+          "value": 0.0649,
+          "week": "2026-07-13"
+        },
+        {
+          "_key": "pt-15",
+          "value": 0.0736,
+          "week": "2026-07-20"
+        },
+        {
+          "_key": "pt-16",
+          "value": 0.0884,
+          "week": "2026-07-27"
+        },
+        {
+          "_key": "pt-17",
+          "value": 0.1138,
+          "week": "2026-08-03"
+        },
+        {
+          "_key": "pt-18",
+          "value": 0.1364,
+          "week": "2026-08-10"
+        },
+        {
+          "_key": "pt-19",
+          "value": 0.1241,
+          "week": "2026-08-17"
+        }
+      ],
+      "title": "Share of AI answers naming LoudFace, weekly"
+    },
+    "indexedTrend": null
+  },
+  "genie-teacher-organic-growth": {
+    "_id": "caseStudy-genie-teacher-organic-growth",
+    "topicClimb": {
+      "caption": "2.26% to 12.8%, 25 May to 24 Aug. Tracking paused 1 Jun – 13 Jul; the line bridges that gap.",
+      "points": [
+        {
+          "_key": "pt-0",
+          "value": 0.0226,
+          "week": "2026-05-25"
+        },
+        {
+          "_key": "pt-1",
+          "value": 0.386,
+          "week": "2026-07-20"
+        },
+        {
+          "_key": "pt-2",
+          "value": 0.2121,
+          "week": "2026-07-27"
+        },
+        {
+          "_key": "pt-3",
+          "value": 0.1482,
+          "week": "2026-08-03"
+        },
+        {
+          "_key": "pt-4",
+          "value": 0.1251,
+          "week": "2026-08-10"
+        },
+        {
+          "_key": "pt-5",
+          "value": 0.1196,
+          "week": "2026-08-17"
+        },
+        {
+          "_key": "pt-6",
+          "value": 0.1276,
+          "week": "2026-08-24"
+        }
+      ],
+      "title": "Share of voice across tracked AI answers, weekly"
+    },
+    "indexedTrend": {
+      "baselineLabel": "May",
+      "caption": "Impressions rose 17× from May to August; August is the first 24 days. Search Console has no data for Jan–Mar, so the series starts in April.",
+      "points": [
+        {
+          "_key": "pt-0",
+          "clicks": 50,
+          "impressions": 45,
+          "month": "04"
+        },
+        {
+          "_key": "pt-1",
+          "clicks": 100,
+          "impressions": 100,
+          "month": "05"
+        },
+        {
+          "_key": "pt-2",
+          "clicks": 63,
+          "impressions": 232,
+          "month": "06"
+        },
+        {
+          "_key": "pt-3",
+          "clicks": 190,
+          "impressions": 587,
+          "month": "07"
+        },
+        {
+          "_key": "pt-4",
+          "clicks": 193,
+          "impressions": 1705,
+          "month": "08",
+          "partial": true
+        }
+      ],
+      "startMonthIso": "2026-04",
+      "title": "Impressions and clicks · indexed, May 2026 = 100"
+    }
+  }
+}
