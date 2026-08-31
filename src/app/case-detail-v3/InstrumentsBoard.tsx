@@ -468,8 +468,8 @@ export function InstrumentsBoard({ instruments, clientName }: InstrumentsBoardPr
                   <div className="inb-cell">
                     <p className="inb-cell-label">The published result</p>
                     <div className="inb-cell-body">
-                      {publishedResult.rows.map((row, i) => (
-                        <div className="inb-figure" key={row.unit} style={i > 0 ? { marginTop: '0.75rem' } : undefined}>
+                      {publishedResult.rows.map((row) => (
+                        <div className="inb-figure" key={row.unit}>
                           <span className="inb-figure-value">{row.value}</span>
                           <span className="inb-figure-unit">{row.unit}</span>
                         </div>
