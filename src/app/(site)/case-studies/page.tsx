@@ -36,7 +36,6 @@ import { asset } from '@/lib/assets';
 import { optimizeImage } from '@/lib/image-utils';
 import type { CaseStudy, Client, Industry, Technology } from '@/lib/types';
 import { getWorkImages } from '../../work-v3/data';
-import { HeroWork } from '../../work-v3/HeroWork';
 import { LogosMarquee } from '../../work-v3/LogosMarquee';
 import { Archive, type ArchiveCard } from '../../work-v3/Archive';
 import { Proof } from '../../work-v3/Proof';
@@ -205,8 +204,7 @@ export default async function WorkPage() {
 
       {/* .wkv3 scopes the bespoke resets so they can't touch the shared Header/Footer/Cal chrome. */}
       <div className="wkv3">
-        <HeroWork images={images} total={total} />
-        <LogosMarquee />
+
         {total === 0 ? (
           <section className="arch" id="archive" aria-label="All case studies">
             <div className="container">
@@ -216,6 +214,7 @@ export default async function WorkPage() {
         ) : (
           <Archive cards={cards} disciplineOrder={DISCIPLINE_ORDER} total={total} />
         )}
+        <LogosMarquee />
         <Proof />
         <Receipts total={total} namedClients={namedClients} />
         <CoverCTA images={images} />

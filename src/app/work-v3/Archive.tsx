@@ -17,7 +17,7 @@
 import { useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { DISCIPLINE_COPY } from './content';
+import { HeroWork } from './HeroWork';
 
 const LEAD_DISCIPLINE = 'AI Search & Organic Growth';
 
@@ -201,37 +201,32 @@ export function Archive({
 
   const filters = [{ label: 'All', value: 'all', count: total }, ...groups.map((d) => ({ label: d, value: d, count: counts[d] }))];
 
-  return (
-    <section className="arch" id="archive" aria-label="All case studies">
-      <div className="container">
-        {/* No second title block here. The page hero already says "Selected work
-            / Real results. Receipts attached." — a full "Every study, on file."
-            head underneath it made the reader pass TWO heroes before reaching a
-            single case study (Arnel, 2026-09-01). The filter bar is the section
-            opener now; the eyebrow keeps the label without the second stage. */}
-        <div className="arch-head rv">
-          <span className="eyebrow">
-            <i></i>The archive
-          </span>
-          <p className="arch-sub">
-            Filter by what you came for. Each card opens the full story — the problem, the build, and
-            the outcome we can put our name next to.
-          </p>
-        </div>
+  /* The filter bar lives INSIDE the hero band, not at the top of this section.
+     Stacking a hero, then a label block, then the tabs put four things between
+     the page top and the first study. One block now: the band, then the work. */
+  const filterBar = (
+    <div className="fbar" role="group" aria-label="Filter by discipline">
+      <div className="container fbar-in">
+        {filters.map((f) => (
+          <button
+            key={f.value}
+            type="button"
+            className="fbtn"
+            aria-pressed={active === f.value}
+            onClick={() => setActive(f.value)}
+          >
+            {f.label} <span className="fc">{f.count}</span>
+          </button>
+        ))}
+      </div>
+    </div>
+  );
 
-        <div className="fbar rv" role="group" aria-label="Filter by discipline">
-          {filters.map((f) => (
-            <button
-              key={f.value}
-              type="button"
-              className="fbtn"
-              aria-pressed={active === f.value}
-              onClick={() => setActive(f.value)}
-            >
-              {f.label} <span className="fc">{f.count}</span>
-            </button>
-          ))}
-        </div>
+  return (
+    <>
+      <HeroWork total={total}>{filterBar}</HeroWork>
+      <section className="arch" id="archive" aria-label="All case studies">
+      <div className="container">
 
         {groups.map((discipline) => {
           const groupCards = cards.filter((c) => c.disciplines[0] === discipline);
@@ -244,11 +239,11 @@ export function Archive({
               data-disc={discipline}
               hidden={active !== 'all' && active !== discipline}
             >
-              <div className="grp-head rv">
-                <div>
-                  <h2>{discipline}</h2>
-                  {DISCIPLINE_COPY[discipline] && <p className="gd">{DISCIPLINE_COPY[discipline]}</p>}
-                </div>
+              {/* A slim divider, not a title stage. The description paragraph is
+                  gone and the row is hidden when a single discipline is filtered,
+                  because the pressed tab already names it. */}
+              <div className="grp-head rv" hidden={active !== 'all'}>
+                <h2>{discipline}</h2>
                 <span className="grp-count">
                   <b>{n}</b> {n === 1 ? 'study' : 'studies'}
                 </span>
@@ -265,6 +260,7 @@ export function Archive({
           );
         })}
       </div>
-    </section>
+      </section>
+    </>
   );
 }
