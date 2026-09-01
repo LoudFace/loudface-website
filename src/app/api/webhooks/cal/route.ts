@@ -129,6 +129,19 @@ function collectAnswers(payload: CalWebhookPayload['payload']): Record<string, s
   return out;
 }
 
+// Only the public intro call is a lead. The other event types on the Cal.com
+// account are internal chats, partner calls and existing-client sessions, and a
+// lead channel that carries those stops being read. Verified against the live
+// bookings API on 2026-09-01: "loudface-intro-call" is event type 1985081.
+// The id is matched first because Cal.com keeps it when the slug is renamed.
+const LEAD_EVENT_TYPE_ID = 1985081;
+const LEAD_EVENT_TYPE_SLUG = 'loudface-intro-call';
+
+function isLeadBooking(payload: CalWebhookPayload['payload']): boolean {
+  if (typeof payload?.eventTypeId === 'number') return payload.eventTypeId === LEAD_EVENT_TYPE_ID;
+  return payload?.type === LEAD_EVENT_TYPE_SLUG;
+}
+
 const EVENT_MAP: Record<string, string> = {
   BOOKING_CREATED: 'call_booked',
   BOOKING_RESCHEDULED: 'call_rescheduled',
@@ -183,18 +196,21 @@ export async function POST(request: Request) {
   const email = attendee?.email?.toLowerCase().trim();
 
   // Runs before the no-email guard: a booking with no attendee email is still a
-  // lead a human should see. Never throws — see notifySlackOfLead.
-  await notifySlackOfLead({
-    event,
-    name: attendee?.name,
-    email,
-    timeZone: attendee?.timeZone,
-    eventTitle: body.payload?.title ?? body.payload?.type,
-    startTime: body.payload?.startTime,
-    bookingUid: body.payload?.uid,
-    answers: collectAnswers(body.payload),
-    utm: extractUtm(body.payload),
-  });
+  // lead a human should see. Never throws — see notifySlackOfLead. PostHog and
+  // Meta below still receive every event type; only Slack is filtered.
+  if (isLeadBooking(body.payload)) {
+    await notifySlackOfLead({
+      event,
+      name: attendee?.name,
+      email,
+      timeZone: attendee?.timeZone,
+      eventTitle: body.payload?.title ?? body.payload?.type,
+      startTime: body.payload?.startTime,
+      bookingUid: body.payload?.uid,
+      answers: collectAnswers(body.payload),
+      utm: extractUtm(body.payload),
+    });
+  }
 
   if (!email) {
     console.warn('[cal-webhook] no attendee email in payload');
