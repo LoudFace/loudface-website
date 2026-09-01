@@ -3,6 +3,7 @@ import crypto from 'node:crypto';
 import { sendMetaScheduleEvent } from '@/lib/meta-capi';
 import { getPostHogServer } from '@/lib/posthog-server';
 import { notifySlackOfLead } from '@/lib/slack-notify';
+import { sendBookedCallEmail } from '@/lib/booked-call-email';
 
 type CalAttendee = {
   email?: string;
@@ -199,6 +200,18 @@ export async function POST(request: Request) {
   // lead a human should see. Never throws — see notifySlackOfLead. PostHog and
   // Meta below still receive every event type; only Slack is filtered.
   if (isLeadBooking(body.payload)) {
+    // Only a brand-new booking gets the email. A reschedule or cancellation
+    // must not send "thanks for booking" again.
+    if (event === 'call_booked' && email) {
+      await sendBookedCallEmail({
+        name: attendee?.name,
+        email,
+        startTime: body.payload?.startTime,
+        timeZone: attendee?.timeZone,
+        bookingUid: body.payload?.uid,
+      });
+    }
+
     await notifySlackOfLead({
       event,
       name: attendee?.name,

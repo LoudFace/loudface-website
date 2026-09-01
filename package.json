@@ -18,7 +18,8 @@
     "visuals:compose": "tsx scripts/visuals/compose.ts",
     "visuals:generate": "tsx scripts/visuals/run.ts",
     "visuals:setup": "playwright install chromium",
-    "visuals:publish": "tsx scripts/publish-draft.ts"
+    "visuals:publish": "tsx scripts/publish-draft.ts",
+    "sync-drip-template": "node scripts/sync-drip-template.mjs"
   },
   "dependencies": {
     "@base-ui/react": "^1.7.0",
