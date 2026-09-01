@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import crypto from 'node:crypto';
 import { sendMetaScheduleEvent } from '@/lib/meta-capi';
 import { getPostHogServer } from '@/lib/posthog-server';
+import { notifySlackOfLead } from '@/lib/slack-notify';
 
 type CalAttendee = {
   email?: string;
@@ -105,6 +106,29 @@ function extractLeadSource(payload: CalWebhookPayload['payload']): string | unde
   return undefined;
 }
 
+// Slack is an internal channel, so unlike PostHog it gets every answer the
+// attendee gave — that is the point of the lead card. Labels are preferred over
+// Cal.com's auto-generated field names because a human reads this.
+function collectAnswers(payload: CalWebhookPayload['payload']): Record<string, string> {
+  const out: Record<string, string> = {};
+  for (const [key, resp] of Object.entries(payload?.responses ?? {})) {
+    const value = resp?.value;
+    const asString =
+      typeof value === 'string'
+        ? value
+        : typeof value === 'number' || typeof value === 'boolean'
+          ? String(value)
+          : Array.isArray(value)
+            ? value.filter((item) => typeof item === 'string' && item.trim()).join(', ')
+            : '';
+    const trimmed = asString.trim();
+    if (!trimmed) continue;
+    const label = typeof resp?.label === 'string' && resp.label.trim() ? resp.label.trim() : key;
+    out[label] = trimmed;
+  }
+  return out;
+}
+
 const EVENT_MAP: Record<string, string> = {
   BOOKING_CREATED: 'call_booked',
   BOOKING_RESCHEDULED: 'call_rescheduled',
@@ -157,6 +181,21 @@ export async function POST(request: Request) {
 
   const attendee = body.payload?.attendees?.[0];
   const email = attendee?.email?.toLowerCase().trim();
+
+  // Runs before the no-email guard: a booking with no attendee email is still a
+  // lead a human should see. Never throws — see notifySlackOfLead.
+  await notifySlackOfLead({
+    event,
+    name: attendee?.name,
+    email,
+    timeZone: attendee?.timeZone,
+    eventTitle: body.payload?.title ?? body.payload?.type,
+    startTime: body.payload?.startTime,
+    bookingUid: body.payload?.uid,
+    answers: collectAnswers(body.payload),
+    utm: extractUtm(body.payload),
+  });
+
   if (!email) {
     console.warn('[cal-webhook] no attendee email in payload');
     return NextResponse.json({ received: true, warning: 'no email' });
