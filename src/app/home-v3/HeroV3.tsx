@@ -17,20 +17,34 @@ const CDN = 'https://cdn.sanity.io/images/xjjjqhgt/production/';
    sliced their stat card and layering off. */
 const CROP = '?w=1000&fm=webp&q=82';
 
-type Card = { slug: string; asset: string; metric: string; client: string; eager?: boolean; priority?: boolean };
+type Card = { slug: string; asset: string; metric: string; client: string; alt: string; eager?: boolean; priority?: boolean };
 
+/* Curated order, SEO/AEO-first (2026-09-01). The marquee used to lead with the
+   web-build era (Montblanc, Radisson, Hoxhunt, LIQID, Eraser) which no longer
+   matches what we sell. It now leads with the six organic-growth studies and
+   keeps two delivery proofs (Dimer Health conversion, Outbound revenue).
+   Metric strings are shortened from each study's result1 in Sanity; per the
+   public-numbers policy they stay as percentages and multipliers, never
+   absolute traffic counts. They also carry the ACHIEVED value only, no
+   "from x to y" arrow (except Toku, which literally started at zero): the
+   arrow form overflowed the pill's nowrap box on a 76vw mobile card and
+   clipped the client name. Keep new pills under ~22 characters.
+   TradeMomentum and LoudFace pills quote the number PRINTED IN THEIR OWN
+   composite (11.7x impressions, 10% of AI answers) rather than Sanity's
+   result1 (7.2x clicks, 12.78%): a pill that contradicts the picture behind
+   it reads as an error. Re-cut the composite before changing these. */
 const COL_A: Card[] = [
-  { slug: 'dimer-health', asset: '467a77e9756e7890f1c62874d3388937727c4c6e-2880x1800.png', metric: '288% conversion lift', client: 'Dimer Health', eager: true, priority: true },
-  { slug: 'montblanc', asset: '9416b17af4983a14f8102906196363075cfd07ba-2880x1800.png', metric: '5+ microsite pages', client: 'Montblanc', eager: true },
-  { slug: 'hoxhunt', asset: 'ca8e0b9ee7bb6c5010f367586ed22def265a27a1-2880x1800.png', metric: '20+ pages', client: 'Hoxhunt' },
-  { slug: 'outbound-specialist', asset: '357651c0add5b9c0f1df95b591021decce87a8bc-2880x1800.png', metric: '$200K sales in 30 days', client: 'Outbound' },
+  { slug: 'toku-ai-cited-pipeline', asset: 'cafcfa6fadc9ea6d1d38391eda626fd12ff5e5a0-2880x1800.png', metric: '0 \u2192 97.8% AI visibility', client: 'Toku', alt: 'Toku AI search visibility case study by LoudFace', eager: true, priority: true },
+  { slug: 'delshad-legal-content-engine', asset: 'dcf12e21516b5edbe76587b2b38710d17e2d431e-2880x1800.png', metric: '32.7% AI share', client: 'Delshad Legal', alt: 'Delshad Legal content engine case study by LoudFace', eager: true },
+  { slug: 'genie-teacher-organic-growth', asset: '21db9f63b8c898d5ac57015bd2617156ad61091b-2880x1800.png', metric: '12.9% AI share', client: 'Genie Teacher', alt: 'Genie Teacher organic visibility case study by LoudFace' },
+  { slug: 'dimer-health', asset: '467a77e9756e7890f1c62874d3388937727c4c6e-2880x1800.png', metric: '288% conversion lift', client: 'Dimer Health', alt: 'Dimer Health website built by LoudFace' },
 ];
 
 const COL_B: Card[] = [
-  { slug: 'toku-ai-cited-pipeline', asset: 'cafcfa6fadc9ea6d1d38391eda626fd12ff5e5a0-2880x1800.png', metric: '0 → 97.8% AI visibility', client: 'Toku', eager: true },
-  { slug: 'radisson-hotels-group', asset: 'd7f6c041eab8e04c794c591227b7c4d9dfb94e86-2880x1800.png', metric: '2+ complex platforms', client: 'Radisson', eager: true },
-  { slug: 'liqid', asset: 'cafa9a84713495ea606a6b37badcc5691efac5a4-2880x1800.png', metric: '100+ pages launched', client: 'LIQID' },
-  { slug: 'eraser', asset: 'f6e208a93b76d3fe7ed1fe83a7d8ea1dc29e5962-2880x1800.png', metric: '6+ pages', client: 'Eraser' },
+  { slug: 'trademomentum-niche-aeo-organic-growth', asset: '3d31a25d5ec584328e198c4617f7e9fd7f3ccaed-2880x1800.png', metric: '11.7x impressions', client: 'TradeMomentum', alt: 'TradeMomentum organic growth case study by LoudFace', eager: true },
+  { slug: 'stealth-fintech-ai-visibility', asset: 'bbb33c1a5f465dd585e93ea11d0a6963f9f82870-2880x1800.png', metric: '10.5% AI visibility', client: 'Stealth Fintech', alt: 'Stealth fintech AI visibility case study by LoudFace', eager: true },
+  { slug: 'loudface-aeo-case-study', asset: '776d1fdb8b4da0aa4566e62d79efacdecb24cca2-2880x1800.png', metric: '10.4% of AI answers', client: 'LoudFace', alt: 'LoudFace answer-engine optimisation case study' },
+  { slug: 'outbound-specialist', asset: '357651c0add5b9c0f1df95b591021decce87a8bc-2880x1800.png', metric: '$200K sales in 30 days', client: 'Outbound', alt: 'Outbound Specialist website built by LoudFace' },
 ];
 
 function srcFor(c: Card, images?: HomeImages) {
@@ -95,7 +109,7 @@ function Wcard({ c, images, dup = false }: { c: Card; images?: HomeImages; dup?:
             affect loading/priority — never alt. */}
         <Image
           src={srcFor(c, images)}
-          alt={`${c.client} website built by LoudFace`}
+          alt={c.alt}
           width={1000}
           height={625}
           quality={82}

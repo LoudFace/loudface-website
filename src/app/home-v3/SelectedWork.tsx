@@ -7,6 +7,17 @@ import type { HomeImages } from './data';
  * class (t-montblanc, t-sm t-tm, …) drives its bento span; data maps from
  * TILES. Screenshots come from Sanity by slug (images prop) with a hardcoded
  * CDN fallback; metric strings + layout stay curated.
+ *
+ * Metric strings match the hero marquee pill for the same client (2026-09-01),
+ * so one client never carries two different headline numbers on one page.
+ * Genie Teacher and Delshad Legal used to quote "5x organic impressions" and
+ * "+54% Google clicks" — both still true in Sanity, both superseded by the
+ * AI share-of-voice figure the studies now lead with.
+ *
+ * One hard rule when editing these: never print a number that contradicts a
+ * DIFFERENT value of the SAME metric printed inside the tile's own composite.
+ * The crop is 1.6 ratio against a 1.6 source, so the tile shows the whole
+ * artwork, numbers included.
  */
 const CDN = 'https://cdn.sanity.io/images/xjjjqhgt/production/';
 
@@ -27,9 +38,9 @@ type Tile = {
 const TILES: Tile[] = [
   { slug: 'montblanc', cls: 't-montblanc', domain: 'montblanc.com', asset: 'a9110ec997f7a351bb9b90347bef4abf6b6b02fc-3024x1890.jpg', crop: '?w=1600&h=1000&fit=crop&crop=top&fm=webp&q=82', w: 1600, h: 1000, alt: 'Montblanc microsite built by LoudFace', metric: '5+ microsite pages launched', client: 'Montblanc' },
   { slug: 'toku-ai-cited-pipeline', cls: 't-toku', domain: 'toku.com', asset: 'cafcfa6fadc9ea6d1d38391eda626fd12ff5e5a0-2880x1800.png', crop: '?w=1600&h=1000&fit=crop&crop=top&fm=webp&q=82', w: 1600, h: 1000, alt: 'Toku AI search visibility case study by LoudFace', metric: '0 → 97.8% AI visibility', client: 'Toku', delay: '.08s' },
-  { slug: 'genie-teacher-organic-growth', cls: 't-genie', domain: 'genieteacher.com', asset: '21db9f63b8c898d5ac57015bd2617156ad61091b-2880x1800.png', crop: '?w=1600&h=1000&fit=crop&crop=top&fm=webp&q=82', w: 1600, h: 1000, alt: 'Genie Teacher organic visibility case study by LoudFace', metric: '5x organic impressions', client: 'Genie Teacher', delay: '.16s' },
+  { slug: 'genie-teacher-organic-growth', cls: 't-genie', domain: 'genieteacher.com', asset: '21db9f63b8c898d5ac57015bd2617156ad61091b-2880x1800.png', crop: '?w=1600&h=1000&fit=crop&crop=top&fm=webp&q=82', w: 1600, h: 1000, alt: 'Genie Teacher organic visibility case study by LoudFace', metric: '12.9% AI share of voice', client: 'Genie Teacher', delay: '.16s' },
   { slug: 'trademomentum-niche-aeo-organic-growth', cls: 't-sm t-tm', domain: 'trademomentum.org', asset: '3d31a25d5ec584328e198c4617f7e9fd7f3ccaed-2880x1800.png', crop: '?w=1280&h=800&fit=crop&crop=top&fm=webp&q=82', w: 1280, h: 800, alt: 'TradeMomentum organic growth case study by LoudFace', metric: '11.7x organic impressions', client: 'TradeMomentum' },
-  { slug: 'delshad-legal-content-engine', cls: 't-sm t-delshad', domain: 'delshadlegal.com', asset: 'dcf12e21516b5edbe76587b2b38710d17e2d431e-2880x1800.png', crop: '?w=1280&h=800&fit=crop&crop=top&fm=webp&q=82', w: 1280, h: 800, alt: 'Delshad Legal content engine case study by LoudFace', metric: '+54% Google clicks', client: 'Delshad Legal', delay: '.08s' },
+  { slug: 'delshad-legal-content-engine', cls: 't-sm t-delshad', domain: 'delshadlegal.com', asset: 'dcf12e21516b5edbe76587b2b38710d17e2d431e-2880x1800.png', crop: '?w=1280&h=800&fit=crop&crop=top&fm=webp&q=82', w: 1280, h: 800, alt: 'Delshad Legal content engine case study by LoudFace', metric: '32.7% AI share of voice', client: 'Delshad Legal', delay: '.08s' },
   { slug: 'outbound-specialist', cls: 't-sm t-outbound', domain: 'outboundspecialist.com', asset: 'd90a9cec8351f259afd300dcbc51641ed9b40c3d-1440x1845.webp', crop: '?w=1280&h=800&fit=crop&crop=top&fm=webp&q=82', w: 1280, h: 800, alt: 'Outbound Specialist website built by LoudFace', metric: '$200K sales in 30 days', client: 'Outbound Specialist', delay: '.16s' },
 ];
 

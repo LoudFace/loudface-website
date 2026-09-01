@@ -16,15 +16,13 @@ export type HomeImages = Record<string, string>;
 const HOME_SLUGS = [
   'dimer-health',
   'montblanc',
-  'hoxhunt',
   'outbound-specialist',
   'toku-ai-cited-pipeline',
   'trademomentum-niche-aeo-organic-growth',
   'delshad-legal-content-engine',
   'genie-teacher-organic-growth',
-  'radisson-hotels-group',
-  'liqid',
-  'eraser',
+  'stealth-fintech-ai-visibility',
+  'loudface-aeo-case-study',
 ];
 
 export async function getHomeV3Images(): Promise<HomeImages> {
