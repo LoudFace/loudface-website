@@ -1,7 +1,7 @@
 'use client';
 
 /**
- * Archive — the crisp-light case-study archive: oversized-type head, a sticky
+ * Archive — the crisp-light case-study archive: a compact label, a sticky
  * discipline filter bar, and studies grouped by primary discipline. Every card
  * is resolved server-side (page.tsx) from LIVE Sanity data, so this stays a thin
  * client component whose only job is the filter interaction.
@@ -204,15 +204,15 @@ export function Archive({
   return (
     <section className="arch" id="archive" aria-label="All case studies">
       <div className="container">
+        {/* No second title block here. The page hero already says "Selected work
+            / Real results. Receipts attached." — a full "Every study, on file."
+            head underneath it made the reader pass TWO heroes before reaching a
+            single case study (Arnel, 2026-09-01). The filter bar is the section
+            opener now; the eyebrow keeps the label without the second stage. */}
         <div className="arch-head rv">
           <span className="eyebrow">
             <i></i>The archive
           </span>
-          <h2 className="arch-big">
-            Every study,
-            <br />
-            <span className="ghost">on file.</span>
-          </h2>
           <p className="arch-sub">
             Filter by what you came for. Each card opens the full story — the problem, the build, and
             the outcome we can put our name next to.
