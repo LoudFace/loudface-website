@@ -132,15 +132,19 @@ function collectAnswers(payload: CalWebhookPayload['payload']): Record<string, s
 
 // Only the public intro call is a lead. The other event types on the Cal.com
 // account are internal chats, partner calls and existing-client sessions, and a
-// lead channel that carries those stops being read. Verified against the live
-// bookings API on 2026-09-01: "loudface-intro-call" is event type 1985081.
-// The id is matched first because Cal.com keeps it when the slug is renamed.
-const LEAD_EVENT_TYPE_ID = 1985081;
+// lead channel that carries those stops being read.
+//
+// The id is 529903, read from the live bookings API on 2026-09-01 for booking
+// nK6u7SKLdHR2nhRFvWfKtL. An earlier value of 1985081 was wrong, and because the
+// old check returned early on the id alone, every real intro call was classed as
+// "not a lead" — no Slack card and no email. Hence the OR below: either signal
+// qualifying is what makes this safe. A wrong id can no longer silence a lead.
+const LEAD_EVENT_TYPE_ID = 529903;
 const LEAD_EVENT_TYPE_SLUG = 'loudface-intro-call';
 
 function isLeadBooking(payload: CalWebhookPayload['payload']): boolean {
-  if (typeof payload?.eventTypeId === 'number') return payload.eventTypeId === LEAD_EVENT_TYPE_ID;
-  return payload?.type === LEAD_EVENT_TYPE_SLUG;
+  if (payload?.type === LEAD_EVENT_TYPE_SLUG) return true;
+  return payload?.eventTypeId === LEAD_EVENT_TYPE_ID;
 }
 
 const EVENT_MAP: Record<string, string> = {
