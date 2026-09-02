@@ -568,6 +568,24 @@ const nextConfig: NextConfig = {
         destination: '/blog/best-b2b-saas-seo-agencies',
         permanent: true,
       },
+      // ─── year-free rename of the AEO flagship (2026-09-02) ────────────────
+      // best-aeo-agencies-2026 -> best-aeo-agencies. NOT a fold: same page,
+      // same content, rebuilt and moved to a year-free slug so it stops needing
+      // an annual rename (Abhay). Evidence for dropping the year: 0 of 14
+      // competitor URLs sampled in the SERP + AI-citation recon carry a year in
+      // the URL, while ~90% carry it in the title; ours was the only
+      // year-stamped slug in the sample. Ranking risk is low and the 301 is
+      // mandatory: the page held ~position 9.6 across 180 days (7 clicks, 4,202
+      // impressions) and had fallen to zero impressions in the trailing 28 days,
+      // so there is little live ranking to lose but real history and AI-side URL
+      // equity to carry. It is also the single most-cited URL in our category on
+      // ChatGPT (8 citations in the recon sample), which is exactly the equity a
+      // 301 preserves and a 410 would throw away.
+      {
+        source: '/blog/best-aeo-agencies-2026',
+        destination: '/blog/best-aeo-agencies',
+        permanent: true,
+      },
       // ─── AEO cluster: fold the redundant LLM-SEO near-synonym (2026-06-23) ──
       // best-llm-seo-aeo-agencies-b2b-saas-2026 has ZERO unique Peec prompt
       // wins (~12 cites, every prompt dominated by best-aeo-agencies-b2b-saas-
