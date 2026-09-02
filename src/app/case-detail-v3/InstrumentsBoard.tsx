@@ -151,7 +151,7 @@ function useIsNarrow(query = '(max-width: 700px)') {
 }
 
 export function InstrumentsBoard({ instruments, clientName }: InstrumentsBoardProps) {
-  const { aiSource, gscSource, topicClimb, rankOverTime, engineBeforeAfter, indexedTrend, publishedResult } =
+  const { aiSource, gscSource, topicClimb, rankOverTime, engineBeforeAfter, indexedTrend, leadGrowth, publishedResult } =
     instruments;
 
   /* Chart enter animations differ between the server and client render, so the
@@ -223,13 +223,43 @@ export function InstrumentsBoard({ instruments, clientName }: InstrumentsBoardPr
 
   const asMultiple = useMemo(() => makeAsMultiple(indexedTrend?.baselineLabel), [indexedTrend]);
 
+  /* Leads are plotted as BARS for the same reason topicClimb is: these are
+     weekly buckets with real zeros in them, and a line drawn through a zero
+     week reads as "quiet", not "none". */
+  /* A thin series is bucketed by month instead of by week — our own booking
+     data is the case. Every point landing on the 1st is what says so, and the
+     axis has to follow: "1 Apr" under a monthly bar is a tell that the label
+     was never looked at. */
+  const leadIsMonthly = useMemo(() => {
+    const pts = leadGrowth?.points ?? [];
+    return pts.length > 1 && pts.every((p) => /-01$/.test(p.week));
+  }, [leadGrowth]);
+
+  const leadSeries = useMemo(
+    () =>
+      (leadGrowth?.points ?? []).map((p) => {
+        const at = new Date(`${p.week}T00:00:00Z`);
+        const label = leadIsMonthly
+          ? (MONTHS[at.getUTCMonth()] ?? p.week)
+          : (fmtDay(at) ?? p.week);
+        return { day: label, date: at, leads: p.value };
+      }),
+    [leadGrowth, leadIsMonthly]
+  );
+
+  const asLeadMultiple = useMemo(() => makeAsMultiple(leadGrowth?.baselineLabel), [leadGrowth]);
+
   const hasTopRow = !!(topicClimb || rankOverTime);
   const topRowSingle = !(topicClimb && rankOverTime);
   const hasAiBoard = hasTopRow || !!engineBeforeAfter;
   const hasGoogleBoard = !!indexedTrend;
   const googleRowSingle = !publishedResult;
+  /* The leads board needs its own series to draw. A bare multiplier with no
+     shape behind it is a claim, not an instrument — same rule as the Google
+     board, where publishedResult never renders without a trend beside it. */
+  const hasLeadBoard = !!(leadGrowth && leadGrowth.points?.length);
 
-  if (!hasAiBoard && !hasGoogleBoard) return null;
+  if (!hasAiBoard && !hasGoogleBoard && !hasLeadBoard) return null;
 
   return (
     <section className="nmx" aria-label="Results by the numbers">
@@ -511,6 +541,80 @@ export function InstrumentsBoard({ instruments, clientName }: InstrumentsBoardPr
                     <p className="inb-cell-foot">{publishedResult.caption}</p>
                   </div>
                 )}
+              </div>
+            </section>
+          )}
+
+          {/* ── Board 3: Leads ─────────────────────────────────────────── */}
+          {/*
+            * The outcome board. AI visibility and Google clicks are both
+            * upstream of the only thing a buyer is actually paying for, and a
+            * case study that stops at visibility invites "so did it sell
+            * anything?". This board answers that.
+            *
+            * CONFIDENTIALITY: the series is indexed to the study's own
+            * baseline window = 100 and the tooltip prints multiples, so the
+            * climb is public and the client's enquiry volume is not. Absolute
+            * lead counts never reach this component — see the note on
+            * `leadGrowth.points` in types.ts.
+            */}
+          {hasLeadBoard && leadGrowth && (
+            <section className="inb-band inb-band--leads" aria-label="Lead results">
+              <header className="inb-head">
+                <div>
+                  <p className="inb-eyebrow">By the numbers · Leads</p>
+                  <h2 className="inb-title">And what those answers turned into</h2>
+                </div>
+                {leadGrowth.source && <p className="inb-source">{leadGrowth.source}</p>}
+              </header>
+
+              <div className="inb-row inb-row--leads">
+                <div className="inb-cell">
+                  <p className="inb-cell-label">{leadGrowth.title}</p>
+                  <div className="inb-cell-body">
+                    <div className="inb-plot inb-plot--bars">
+                      {mounted && (
+                        <BarChart
+                          data={leadSeries}
+                          xDataKey="day"
+                          aspectRatio="4 / 1"
+                          barGap={leadSeries.length > 40 ? 0.12 : 0.28}
+                          margin={{ top: 8, right: 10, bottom: 30, left: 10 }}
+                        >
+                          <Background pattern="dots" opacity={0.6} />
+                          <Grid horizontal />
+                          <Bar dataKey="leads" lineCap="butt" fill="var(--chart-1)" />
+                          <BarXAxis maxLabels={7} />
+                          <ChartTooltip
+                            content={({ point }) => (
+                              <Tip
+                                title={leadIsMonthly ? fmtMonth(point.date) : fmtDay(point.date)}
+                                rows={[
+                                  {
+                                    label: leadIsMonthly ? 'That month' : 'That week',
+                                    value: asLeadMultiple(point.leads),
+                                  },
+                                ]}
+                              />
+                            )}
+                          />
+                        </BarChart>
+                      )}
+                    </div>
+                  </div>
+                  <p className="inb-cell-foot">{leadGrowth.caption}</p>
+                </div>
+
+                <div className="inb-cell">
+                  <p className="inb-cell-label">The published result</p>
+                  <div className="inb-cell-body">
+                    <div className="inb-figure">
+                      <span className="inb-figure-value">{leadGrowth.multiple}</span>
+                      <span className="inb-figure-unit">{leadGrowth.multipleLabel}</span>
+                    </div>
+                  </div>
+                  <p className="inb-cell-foot">Measured against {leadGrowth.baselineLabel}.</p>
+                </div>
               </div>
             </section>
           )}

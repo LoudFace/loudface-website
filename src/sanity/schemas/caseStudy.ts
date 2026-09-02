@@ -460,6 +460,67 @@ export const caseStudy = defineType({
           ],
         }),
         defineField({
+          name: 'leadGrowth',
+          title: 'Lead growth (weekly enquiries, indexed)',
+          type: 'object',
+          description:
+            'The business outcome the AI/organic work produced. Points are INDEXED to the baseline window = 100 — never raw enquiry counts, which are out of policy on public pages.',
+          fields: [
+            defineField({
+              name: 'title',
+              title: 'Title',
+              type: 'string',
+              description: 'e.g. "Enquiries per week, indexed"',
+            }),
+            defineField({
+              name: 'multiple',
+              title: 'Published multiplier',
+              type: 'string',
+              description: 'Pre-formatted, e.g. "2.7x"',
+            }),
+            defineField({
+              name: 'multipleLabel',
+              title: 'Multiplier label',
+              type: 'string',
+              description: 'What it counts, e.g. "more case enquiries a week"',
+            }),
+            defineField({
+              name: 'baselineLabel',
+              title: 'Baseline label',
+              type: 'string',
+              description:
+                'The window the multiplier compares against, e.g. "the first four weeks". The tooltip prints every point as a multiple of it.',
+            }),
+            defineField({ name: 'caption', title: 'Caption', type: 'text', rows: 2 }),
+            defineField({
+              name: 'source',
+              title: 'Source line',
+              type: 'string',
+              description: 'e.g. "PostHog · 9 Jun – 30 Aug 2026"',
+            }),
+            defineField({
+              name: 'points',
+              title: 'Weekly points (indexed, baseline window = 100)',
+              type: 'array',
+              of: [
+                {
+                  type: 'object',
+                  fields: [
+                    defineField({ name: 'week', title: 'Week start (ISO date)', type: 'string' }),
+                    defineField({
+                      name: 'value',
+                      title: 'Indexed value',
+                      type: 'number',
+                      description: 'Baseline window average = 100. Never a raw count.',
+                    }),
+                  ],
+                  preview: { select: { title: 'week', subtitle: 'value' } },
+                },
+              ],
+            }),
+          ],
+        }),
+        defineField({
           name: 'publishedResult',
           title: 'Published Google result (headline figures)',
           type: 'object',

@@ -158,6 +158,24 @@ export interface CaseStudyInstruments {
     /** The calendar month the first point represents, e.g. "2025-09". */
     startMonthIso: string;
   };
+  /** Weekly leads/enquiries, indexed so the shape is public and the client's
+   *  own volume is not. See the confidentiality note on `points`. */
+  leadGrowth?: {
+    title: string;
+    /** The published multiplier, pre-formatted, e.g. "2.7x". */
+    multiple: string;
+    /** What the multiplier counts, e.g. "more case enquiries a week". */
+    multipleLabel: string;
+    /** The window the multiplier is measured against, e.g. "the first four weeks". */
+    baselineLabel: string;
+    caption: string;
+    /** Source line for the leads board, e.g. "PostHog, 9 Jun - 30 Aug 2026". */
+    source?: string;
+    /** `value` is INDEXED to the baseline window = 100, never a lead count.
+     *  Publishing raw enquiry volumes is out of policy; the multiplier and the
+     *  shape of the climb are what a reader needs. */
+    points: { week: string; value: number }[];
+  };
   publishedResult?: {
     rows: { value: string; unit: string }[];
     positionFrom?: number;

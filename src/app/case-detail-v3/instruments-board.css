@@ -102,6 +102,12 @@
   margin-top: 2.25rem;
 }
 
+/* The leads board closes the story, so it gets the same air as the Google
+   board above it rather than reading as a continuation of it. */
+.inb-band--leads {
+  margin-top: 2.25rem;
+}
+
 .inb-head {
   display: flex;
   flex-wrap: wrap;
@@ -170,6 +176,11 @@
   border-radius: 0.875rem;
 }
 
+.inb-row--leads {
+  margin-top: 1rem;
+  border-radius: 0.875rem;
+}
+
 @media (min-width: 900px) {
   .inb-row {
     overflow: hidden;
@@ -186,6 +197,11 @@
     grid-template-columns: 1fr;
   }
   .inb-row--google {
+    grid-template-columns: 2.1fr 1fr;
+  }
+  /* Same split as the Google row: the series is the story, the multiplier is
+     the proof beside it. */
+  .inb-row--leads {
     grid-template-columns: 2.1fr 1fr;
   }
   /* Only one of the row's two possible cells has data — go full width rather
@@ -482,6 +498,9 @@
     height: 1.25rem;
   }
   .inb-band--google {
+    margin-top: 1.5rem;
+  }
+  .inb-band--leads {
     margin-top: 1.5rem;
   }
 }
