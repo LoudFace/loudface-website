@@ -34,6 +34,8 @@ function deriveRouteChrome(pathname: string): RouteChrome {
   const isTeamProfile = pathname.startsWith("/team/");
   // /careers is v3: electric hero + its own FooterV3.
   const isCareers = pathname === "/careers";
+  // /methodology is v3: electric hero + its own FooterV3.
+  const isMethodology = pathname === "/methodology";
 
   const isV3 =
     pathname === "/" ||
@@ -44,6 +46,7 @@ function deriveRouteChrome(pathname: string): RouteChrome {
     isSeoForIndustry ||
     isTeamProfile ||
     isCareers ||
+    isMethodology ||
     pathname === "/ai-instructions" ||
     pathname === "/contact" ||
     // Policy pages on the shared LegalPageV3 template.

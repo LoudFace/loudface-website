@@ -1,0 +1,234 @@
+/* ============================================================================
+   METHODOLOGY v3: SHARED BASE. Route-scoped styles common to all three
+   /methodology concepts. Architecture copied from pricing-v3.css / service-v3.css:
+
+   - Tokens + brand fonts come from the global @theme (globals.css). Nothing is
+     re-declared here, so a palette change lands in one place.
+   - Every reset lives under a ZERO-SPECIFICITY :where(.mth) wrapper so it can
+     never reach the shared Header / FooterV3 / Cal chrome outside the .mth tree.
+     Plain descendant scoping (.mth a) raises specificity and silently repaints
+     shared components: do not use it for resets.
+   - The page's own nav is NOT built here. The shared (site) Header renders in
+     its dark-hero variant (heroTheme="dark", registered in SiteChrome.tsx), and
+     each concept hero slides under it with margin-top:-64px like every other v3
+     route. Shared chrome is transcribed, never redesigned.
+
+   Concept-specific composition lives in concept-b.css, the shipped concept.
+   Only vocabulary the concept layer builds on belongs in this file.
+   ========================================================================== */
+
+/* ---- reset: zero specificity, scoped ---- */
+:where(.mth) *,:where(.mth) *::before,:where(.mth) *::after{box-sizing:border-box;margin:0;padding:0;}
+:where(.mth){
+  --ink:var(--surface-950);
+  --body:var(--surface-600);
+  --mut:var(--surface-500);
+  --paper:#ffffff;
+  --paper-line:#e8eaf3;
+  --night:#171445;
+  --night-hi:#241f66;
+  --foot:#14103a;
+  --foot-hi:#1e1b4b;
+  --elev:0 0 0 1px var(--paper-line),0 1px 2px rgba(10,10,10,.04),0 12px 32px -12px rgba(10,10,10,.12);
+  --elev-hi:0 0 0 1px var(--surface-300),0 2px 4px rgba(10,10,10,.05),0 20px 44px -16px rgba(10,10,10,.18);
+  --elev-dark:0 2px 4px rgba(10,8,30,.2),0 26px 46px -20px rgba(8,6,28,.46),inset 0 0 0 1px rgba(255,255,255,.08);
+  --gutter:24px;
+  font-family:var(--font-sans);
+  font-size:16px;
+  line-height:1.5;
+  color:var(--ink);
+  background:var(--paper);
+  -webkit-text-size-adjust:100%;
+  -webkit-font-smoothing:antialiased;
+  text-rendering:optimizeLegibility;
+}
+:where(.mth) h1,:where(.mth) h2,:where(.mth) h3,:where(.mth) h4{font-family:var(--font-heading);font-weight:500;line-height:1.1;letter-spacing:-.022em;}
+:where(.mth) a{color:inherit;text-decoration:none;}
+:where(.mth) img,:where(.mth) svg{display:block;max-width:100%;}
+:where(.mth) button{font:inherit;cursor:pointer;border:none;background:none;}
+:where(.mth) :focus-visible{outline:2px solid var(--primary-500);outline-offset:2px;}
+:where(.mth) section[id]{scroll-margin-top:84px;}
+.mth ::selection{background:var(--primary-100);color:var(--ink);}
+.mth .container{max-width:1200px;margin:0 auto;padding-left:var(--gutter);padding-right:var(--gutter);}
+.mth .narrow{max-width:820px;}
+
+/* ---- reveal-on-scroll ----
+   The start state is gated behind @media (scripting: enabled). Without the gate
+   a JS-off browser, and any AI or search crawler that does not execute JS, would
+   keep opacity:0 forever and render the whole page invisible. Gating the START
+   means those clients get full opacity and never enter the animation.
+   Calm-operator motion: exponential ease-out, no overshoot, no bounce. */
+@media (scripting: enabled){
+  .mth .rv{opacity:0;transform:translateY(12px);transition:opacity .6s var(--ease-out),transform .6s var(--ease-out);transition-delay:var(--d,0s);}
+  .mth .rv.in{opacity:1;transform:none;}
+  @media (prefers-reduced-motion:reduce){.mth .rv{opacity:1;transform:none;transition:none;}}
+}
+
+/* ---- type vocabulary ---- */
+.mth .eyebrow{display:inline-flex;align-items:center;gap:9px;height:32px;padding:0 15px 0 13px;border-radius:999px;
+  background:var(--primary-50);box-shadow:inset 0 0 0 1px var(--primary-200);
+  font-size:11.5px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--primary-700);white-space:nowrap;}
+.mth .eyebrow i{width:6px;height:6px;border-radius:50%;background:var(--primary-500);flex:none;}
+.mth .eyebrow.glass{background:rgba(255,255,255,.1);box-shadow:inset 0 0 0 1px rgba(255,255,255,.2);
+  -webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);color:rgba(255,255,255,.94);}
+.mth .eyebrow.glass i{background:var(--primary-300);}
+.mth .eyebrow em{font-style:normal;display:inline-flex;align-items:center;height:22px;padding:0 10px;border-radius:999px;
+  background:rgba(255,255,255,.92);color:var(--primary-800);font-size:10px;font-weight:700;letter-spacing:.04em;}
+.mth h2.sec{font-size:clamp(1.7rem,3vw,2.6rem);line-height:1.08;letter-spacing:-.028em;color:var(--ink);max-width:24ch;text-wrap:balance;}
+.mth h2.sec.on-dark{color:var(--paper);}
+.mth h2.sec .ghost{color:var(--primary-600);}
+.mth h2.sec.on-dark .ghost{color:var(--primary-300);}
+.mth .lede{font-size:16.5px;line-height:1.62;color:var(--body);max-width:62ch;text-wrap:pretty;}
+.mth .lede.on-dark{color:var(--primary-100);}
+.mth p.copy{font-size:16.5px;line-height:1.68;color:var(--body);max-width:70ch;text-wrap:pretty;}
+.mth p.copy + p.copy{margin-top:18px;}
+.mth p.copy.on-dark{color:rgba(224,231,255,.86);}
+.mth p.copy a,.mth .lede a{color:var(--primary-700);font-weight:600;box-shadow:inset 0 -1px 0 var(--primary-200);transition:box-shadow .2s var(--ease-out),color .2s var(--ease-out);}
+.mth p.copy a:hover,.mth .lede a:hover{color:var(--primary-800);box-shadow:inset 0 -2px 0 var(--primary-400);}
+.mth p.copy.on-dark a{color:var(--primary-200);box-shadow:inset 0 -1px 0 rgba(165,180,252,.5);}
+.mth p.copy.on-dark a:hover{color:var(--paper);box-shadow:inset 0 -2px 0 var(--primary-300);}
+.mth .klabel{display:inline-flex;align-items:center;gap:8px;font-size:11.5px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--mut);}
+.mth .klabel i{width:5px;height:5px;border-radius:50%;background:var(--primary-400);flex:none;}
+.mth .klabel.on-dark{color:var(--primary-300);}
+.mth .klabel.on-dark i{background:var(--primary-300);}
+/* Display figures stay Neue Montreal with tabular numerals so columns of
+   readings align. Two fonts only: Geist Mono is banned site-wide. */
+.mth .fig{font-family:var(--font-heading);font-weight:500;letter-spacing:-.03em;font-variant-numeric:tabular-nums;color:var(--ink);}
+.mth .fig.on-dark{color:var(--paper);}
+
+/* ---- buttons ---- */
+.mth .btn{display:inline-flex;align-items:center;justify-content:center;gap:10px;font-weight:600;border-radius:8px;
+  transition:background-color .2s var(--ease-out),color .2s var(--ease-out),box-shadow .2s var(--ease-out),transform .15s var(--ease-out);white-space:nowrap;}
+.mth .btn:active{transform:scale(.98);}
+.mth .btn:focus-visible{outline:2px solid var(--primary-500);outline-offset:2px;}
+.mth .btn-pill{border-radius:999px;}
+.mth .btn-ink{background:var(--primary-600);color:var(--paper);}
+.mth .btn-ink:hover,.mth .btn-ink:focus-visible{background:var(--primary-700);}
+.mth .btn-white{background:var(--paper);color:var(--primary-800);}
+.mth .btn-white:hover,.mth .btn-white:focus-visible{background:var(--primary-50);}
+.mth .btn-white:focus-visible{outline:2px solid var(--paper);outline-offset:2px;}
+.mth .btn-lg{height:52px;padding:0 28px;font-size:15.5px;}
+.mth .btn-md{height:44px;padding:0 22px;font-size:14.5px;}
+.mth .tlink{display:inline-flex;align-items:center;gap:9px;font-size:15px;font-weight:600;color:var(--primary-700);
+  transition:gap .2s var(--ease-out),color .2s var(--ease-out);}
+.mth .tlink svg{width:15px;height:15px;stroke:currentColor;fill:none;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round;transition:transform .2s var(--ease-out);}
+.mth .tlink:hover,.mth .tlink:focus-visible{color:var(--primary-800);}
+.mth .tlink:hover svg,.mth .tlink:focus-visible svg{transform:translateX(3px);}
+.mth .tlink:focus-visible{outline:2px solid var(--primary-500);outline-offset:3px;border-radius:4px;}
+.mth .tlink.on-dark{color:var(--paper);}
+.mth .tlink.on-dark:hover,.mth .tlink.on-dark:focus-visible{color:var(--primary-200);}
+.mth .tlink.on-dark:focus-visible{outline-color:var(--paper);}
+
+/* ---- the recurring price anchor ----
+   DESIGN.md §7: a hero proof-object may repeat later in the page as a
+   recurring anchor. "from $5,000 a month" sits in the hero and again in the
+   pricing callout, the same fact at two coordinated placements. */
+.mth .anchor{display:inline-flex;align-items:baseline;gap:8px;padding:12px 20px;border-radius:999px;
+  background:rgba(255,255,255,.1);box-shadow:inset 0 0 0 1px rgba(255,255,255,.22);
+  -webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);}
+.mth .anchor u{text-decoration:none;font-size:12px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:rgba(255,255,255,.7);}
+.mth .anchor b{font-family:var(--font-heading);font-weight:500;font-size:24px;letter-spacing:-.03em;color:var(--paper);font-variant-numeric:tabular-nums;}
+.mth .anchor span{font-size:13.5px;color:rgba(255,255,255,.78);}
+.mth .anchor.on-light{background:var(--primary-50);box-shadow:inset 0 0 0 1px var(--primary-200);-webkit-backdrop-filter:none;backdrop-filter:none;}
+.mth .anchor.on-light u{color:var(--primary-600);}
+.mth .anchor.on-light b{color:var(--primary-800);}
+.mth .anchor.on-light span{color:var(--body);}
+
+/* ---- the short-answer card (liftable block, carries data-speakable) ---- */
+.mth .answer{position:relative;background:var(--paper);border-radius:20px;padding:clamp(26px,3.4vw,40px);box-shadow:var(--elev-hi);}
+.mth .answer .alab{display:inline-flex;align-items:center;gap:9px;height:28px;padding:0 13px 0 11px;border-radius:999px;
+  background:var(--primary-600);color:var(--paper);font-size:10.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;}
+.mth .answer .alab i{width:6px;height:6px;border-radius:50%;background:var(--primary-200);flex:none;}
+.mth .answer p{margin-top:18px;font-size:clamp(17px,1.7vw,20px);line-height:1.6;color:var(--ink);max-width:74ch;text-wrap:pretty;}
+.mth .answer .stages-line{margin-top:18px;padding-top:18px;border-top:1px solid var(--paper-line);font-size:15px;line-height:1.62;color:var(--body);max-width:78ch;}
+
+/* ---- the "what we measure" table ---- */
+.mth .mtable-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch;border-radius:16px;box-shadow:var(--elev);}
+.mth .mtable{width:100%;min-width:720px;border-collapse:collapse;background:var(--paper);}
+.mth .mtable th,.mth .mtable td{text-align:left;padding:17px 22px;vertical-align:top;}
+.mth .mtable thead th{background:var(--paper);font-weight:600;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--mut);border-bottom:1px solid var(--paper-line);}
+.mth .mtable tbody th{font-weight:600;font-size:14.5px;color:var(--ink);border-top:1px solid var(--paper-line);min-width:210px;}
+.mth .mtable tbody td{font-size:14px;line-height:1.55;color:var(--body);border-top:1px solid var(--paper-line);}
+.mth .mtable tbody tr:hover th,.mth .mtable tbody tr:hover td{background:rgba(238,242,255,.5);}
+.mth .mtable tbody tr[data-floor] th{background:var(--primary-50);}
+.mth .mtable tbody tr[data-floor]:hover th{background:var(--primary-100);}
+/* The floor label sits on its own line under the metric name. Inline it ran
+   straight onto the end of the words with no gap. */
+.mth .floorchip{display:flex;width:fit-content;align-items:center;gap:6px;margin-top:9px;height:22px;padding:0 9px;border-radius:999px;
+  background:var(--primary-600);color:var(--paper);font-size:9.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;white-space:nowrap;}
+.mth .mtable-hint{display:none;}
+@media (max-width:760px){
+  .mth .mtable-hint{display:flex;align-items:center;justify-content:flex-end;gap:6px;margin-top:10px;font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--mut);}
+  .mth .mtable-hint svg{width:14px;height:14px;stroke:currentColor;stroke-width:1.6;fill:none;}
+  .mth .mtable thead th:first-child,.mth .mtable tbody th{position:sticky;left:0;z-index:2;background:var(--paper);box-shadow:1px 0 0 var(--paper-line);min-width:150px;}
+  .mth .mtable tbody tr[data-floor] th{background:var(--primary-50);}
+  .mth .mtable tbody tr:hover th{background:var(--paper);}
+}
+
+/* ---- FAQ accordion ----
+   Native <details>. Harvested reference was beUI's Bouncy Accordion; its spring
+   easing (bounce .38) is banned under calm-operator motion, and it cannot open
+   without JavaScript, which would hide nine answers from any engine that does
+   not run scripts. The single-open chevron semantics survive; the mechanism is
+   the platform's. Answers are in the served HTML whether open or closed. */
+.mth .acc{border-bottom:1px solid var(--paper-line);}
+.mth .acc details{border-top:1px solid var(--paper-line);}
+.mth .acc summary{list-style:none;display:flex;align-items:center;justify-content:space-between;gap:20px;padding:21px 2px;cursor:pointer;
+  font-size:16.5px;font-weight:600;color:var(--ink);transition:color .2s var(--ease-out);}
+.mth .acc summary::-webkit-details-marker{display:none;}
+.mth .acc summary:hover,.mth .acc summary:focus-visible{color:var(--primary-700);}
+.mth .acc summary:focus-visible{outline:2px solid var(--primary-400);outline-offset:3px;border-radius:6px;}
+.mth .acc summary .mk{flex:none;width:22px;height:22px;position:relative;transition:transform .3s var(--ease-out);}
+.mth .acc summary .mk::before,.mth .acc summary .mk::after{content:"";position:absolute;background:var(--surface-400);border-radius:2px;}
+.mth .acc summary .mk::before{left:3px;right:3px;top:10px;height:2px;}
+.mth .acc summary .mk::after{top:3px;bottom:3px;left:10px;width:2px;}
+.mth .acc details[open] summary{color:var(--primary-700);}
+.mth .acc details[open] summary .mk{transform:rotate(45deg);}
+.mth .acc details[open] summary .mk::before,.mth .acc details[open] summary .mk::after{background:var(--primary-500);}
+.mth .acc .ans{padding:0 2px 22px;font-size:15px;line-height:1.68;color:var(--body);max-width:68ch;}
+@media (prefers-reduced-motion:reduce){.mth .acc summary .mk{transition:none;}}
+
+/* ---- FooterV3 skin: verbatim transcription of the shipped v3 footer ----
+   FooterV3 renders INSIDE the .mth tree, so its CSS has to be present here.
+   Copied from pricing-v3.css so the footer is pixel-identical to the homepage,
+   About and Pricing. Shared chrome is not designable: never reinterpret it. */
+.mth .ft{position:relative;background:linear-gradient(180deg,var(--foot) 0%,var(--foot-hi) 100%);color:var(--paper);padding:clamp(64px,8vw,96px) 0 0;overflow:hidden;}
+.mth .ft-top{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1.6fr);gap:clamp(32px,5vw,72px);}
+.mth .ft-brand .wordmark{display:inline-block;}
+.mth .ft-brand p{margin-top:18px;font-size:14.5px;line-height:1.62;color:rgba(199,210,254,.76);max-width:34ch;}
+.mth .ft-badge{margin-top:26px;display:flex;flex-direction:column;gap:10px;}
+.mth .ft-badge img{width:150px;height:auto;}
+.mth .ft-badge span{font-size:12.5px;color:rgba(199,210,254,.68);}
+.mth .ft-cols{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:28px;}
+.mth .ft-col h3{font-family:var(--font-sans);font-size:11px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--primary-300);}
+.mth .ft-col ul{margin-top:16px;list-style:none;display:flex;flex-direction:column;gap:11px;}
+.mth .ft-col a{font-size:14.5px;color:rgba(224,231,255,.82);transition:color .2s var(--ease-out);}
+.mth .ft-col a:hover,.mth .ft-col a:focus-visible{color:var(--paper);}
+.mth .ft-mark{width:100%;height:auto;margin-top:clamp(40px,6vw,72px);opacity:.1;}
+.mth .ft-legal{display:flex;align-items:center;justify-content:space-between;gap:20px;flex-wrap:wrap;
+  padding:24px 0 28px;border-top:1px solid rgba(255,255,255,.1);margin-top:clamp(24px,4vw,40px);}
+.mth .ft-legal p{font-size:13px;color:rgba(199,210,254,.6);}
+.mth .ft-legal div{display:flex;gap:20px;}
+.mth .ft-legal a{font-size:13px;color:rgba(199,210,254,.68);transition:color .2s var(--ease-out);}
+.mth .ft-legal a:hover,.mth .ft-legal a:focus-visible{color:var(--paper);}
+@media (max-width:900px){.mth .ft-top{grid-template-columns:1fr;}.mth .ft-cols{grid-template-columns:repeat(2,minmax(0,1fr));}}
+@media (max-width:520px){.mth .ft-cols{grid-template-columns:1fr;}}
+
+/* ---- the measurement table on a night stage (concept B uses it as the page's
+   centrepiece instrument). Same markup, same semantics, dark ink. ---- */
+.mth .mtable-wrap.is-dark{box-shadow:inset 0 0 0 1px rgba(255,255,255,.12);}
+.mth .mtable-wrap.is-dark .mtable{background:transparent;}
+.mth .mtable-wrap.is-dark .mtable thead th{background:rgba(255,255,255,.04);color:var(--primary-300);border-bottom:1px solid rgba(255,255,255,.14);}
+.mth .mtable-wrap.is-dark .mtable tbody th{color:var(--paper);border-top:1px solid rgba(255,255,255,.1);}
+.mth .mtable-wrap.is-dark .mtable tbody td{color:rgba(224,231,255,.8);border-top:1px solid rgba(255,255,255,.1);}
+.mth .mtable-wrap.is-dark .mtable tbody tr:hover th,
+.mth .mtable-wrap.is-dark .mtable tbody tr:hover td{background:rgba(255,255,255,.05);}
+.mth .mtable-wrap.is-dark .mtable tbody tr[data-floor] th{background:rgba(99,102,241,.22);}
+.mth .mtable-wrap.is-dark .mtable tbody tr[data-floor]:hover th{background:rgba(99,102,241,.3);}
+.mth .mtable-wrap.is-dark .floorchip{background:var(--primary-300);color:var(--primary-950);}
+@media (max-width:760px){
+  .mth .mtable-wrap.is-dark .mtable thead th:first-child,
+  .mth .mtable-wrap.is-dark .mtable tbody th{background:var(--night);box-shadow:1px 0 0 rgba(255,255,255,.12);}
+  .mth .mtable-wrap.is-dark .mtable tbody tr[data-floor] th{background:rgba(99,102,241,.28);}
+  .mth .mtable-wrap.is-dark .mtable tbody tr:hover th{background:var(--night);}
+}
