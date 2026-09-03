@@ -31,6 +31,7 @@ export function FooterV3() {
               <ul>
                 <li><Link href="/case-studies">Work</Link></li>
                 <li><Link href="/#tracks">Services</Link></li>
+                <li><Link href="/methodology">Methodology</Link></li>
                 <li><Link href="/pricing">Pricing</Link></li>
               </ul>
             </div>

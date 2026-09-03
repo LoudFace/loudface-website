@@ -34,11 +34,8 @@ function deriveRouteChrome(pathname: string): RouteChrome {
   const isTeamProfile = pathname.startsWith("/team/");
   // /careers is v3: electric hero + its own FooterV3.
   const isCareers = pathname === "/careers";
-  // /methodology is v3: electric hero + its own FooterV3. The noindex
-  // /dev-preview/methodology-* concept previews get the same chrome, so a
-  // design review compares them against the real header, not a light one.
-  const isMethodology =
-    pathname === "/methodology" || pathname.startsWith("/dev-preview/methodology-");
+  // /methodology is v3: electric hero + its own FooterV3.
+  const isMethodology = pathname === "/methodology";
 
   const isV3 =
     pathname === "/" ||

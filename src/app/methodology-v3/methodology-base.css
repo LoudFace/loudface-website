@@ -13,8 +13,8 @@
      each concept hero slides under it with margin-top:-64px like every other v3
      route. Shared chrome is transcribed, never redesigned.
 
-   Concept-specific composition lives in concept-a.css / concept-b.css /
-   concept-c.css. Only vocabulary EVERY concept uses belongs in this file.
+   Concept-specific composition lives in concept-b.css, the shipped concept.
+   Only vocabulary the concept layer builds on belongs in this file.
    ========================================================================== */
 
 /* ---- reset: zero specificity, scoped ---- */

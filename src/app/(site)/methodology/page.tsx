@@ -15,9 +15,9 @@
  * THE PICK, 2026-09-03. Three concepts were built and Arnel picked: "Let's go
  * with option B, but the short answer: I want to use the option A design." So
  * this route renders concept B, the instrument, and concept B carries concept
- * A's short-answer block inside it. Concepts A and C still render at
- * /dev-preview/methodology-a and /dev-preview/methodology-c so the comparison
- * links stay live; they come out in a later commit.
+ * A's short-answer block inside it. Concepts A and C, and the three
+ * dev-preview routes that rendered them, were deleted when this page shipped
+ * to production on 2026-09-03.
  *
  * The copy is approved and fixed: see methodology-v3/data.tsx for the trail.
  */
