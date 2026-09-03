@@ -10,6 +10,11 @@
  * Different from concept A in spine, not palette: A is a narrative rail with the
  * table as a supporting section; B is a report with the table as the argument.
  *
+ * THIS IS THE PICKED CONCEPT (Arnel, 2026-09-03), and it now renders at the
+ * live /methodology route. Two changes came with the pick:
+ *  - The short answer uses CONCEPT A's block, not B's flat band. See AnswerB.
+ *  - The stage ledger opens its first three rows, not one. See StagesB.
+ *
  * Harvest notes: the funnel, ledger and spec sheet are house-built. beUI's
  * virtualized data table was rejected for this section precisely because B
  * leans on the table hardest, and a virtualized table serves three of eight
@@ -83,9 +88,9 @@ function HeroB() {
           <h1 className="rv" style={{ '--d': '.06s' } as React.CSSProperties}>
             {PAGE.h1}
           </h1>
-          <p className="hero-sub rv" style={{ '--d': '.1s' } as React.CSSProperties}>
-            {SHORT_ANSWER.stagesLine}
-          </p>
+          {/* The stages line used to sit here as a hero subline. It now travels
+              with the short-answer card below, which is where concept A keeps
+              it. The sentence is not duplicated and not dropped: it moved. */}
           <div className="hero-cta rv" style={{ '--d': '.16s' } as React.CSSProperties}>
             <Link href={START.ctaHref} className="btn btn-white btn-pill btn-lg">
               {START.ctaLabel}
@@ -143,9 +148,25 @@ function HeroB() {
   );
 }
 
+/**
+ * The short answer, in concept A's treatment.
+ *
+ * Arnel's pick, 2026-09-03: "Let's go with option B, but the short answer: I
+ * want to use the option A design." So B's original flat full-width band is
+ * gone and A's block stands in its place, unchanged in structure: its own card
+ * on a light ground, the labelled "THE SHORT ANSWER" pill, and the stages line
+ * carried under a hairline inside the same card. The card straddles the seam
+ * where the electric hero meets paper, exactly as it does in A.
+ *
+ * Adapted for B's ground in one place only: the strip behind the card is B's
+ * own hero gradient (150deg), not A's (158deg), so the card sits on THIS
+ * page's hero and does not read as a foreign element. See concept-b.css.
+ *
+ * The copy is untouched.
+ */
 function AnswerB() {
   return (
-    <section className="ansband" id="short-answer">
+    <section className="seam" id="short-answer">
       <div className="container">
         <div className="answer rv" data-speakable>
           <span className="alab">
@@ -153,8 +174,10 @@ function AnswerB() {
             {SHORT_ANSWER.label}
           </span>
           <p>{SHORT_ANSWER.body}</p>
+          <p className="stages-line">{SHORT_ANSWER.stagesLine}</p>
         </div>
       </div>
+      <div className="seam-tail" />
     </section>
   );
 }
@@ -322,8 +345,13 @@ function StagesB() {
             <div>The eight stages, in order</div>
             <div />
           </div>
+          {/* The first three stages open by default (Arnel, 2026-09-03): one
+              open row read as a fluke, three read as a ledger the reader is
+              already inside. The other five stay collapsed. Every stage is in
+              the served HTML either way, open or closed, which is what the
+              <details> element buys on a page that AI crawlers read. */}
           {STAGES.map((s, i) => (
-            <details key={s.n} open={i === 0}>
+            <details key={s.n} open={i < 3}>
               <summary>
                 {/* The approved heading, verbatim ("Stage 4. Artifact"). An
                     earlier version showed only the short name, which dropped the

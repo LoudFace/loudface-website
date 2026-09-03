@@ -1,7 +1,8 @@
 /**
- * Concept A preview. The live /methodology route currently composes concept A,
- * so this exists purely so all three concepts can be screenshotted and compared
- * from the same kind of URL during the design gate.
+ * Concept A preview, the losing concept, kept so the three comparison links
+ * stay live after the pick. The live /methodology route now composes concept B
+ * (with concept A's short-answer block inside it). This preview and the two
+ * beside it come out in a later commit.
  */
 export const revalidate = 60;
 

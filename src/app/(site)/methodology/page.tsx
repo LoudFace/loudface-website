@@ -12,10 +12,12 @@
  * SiteChrome.tsx + (site)/layout.tsx, so the page ships the same v3 FooterV3 the
  * homepage, About and Pricing do. Shared chrome is transcribed, never redesigned.
  *
- * CONCEPT SWITCH: three concepts were built for this page and the pick is
- * Arnel's. Concept A is wired here as the default; B and C render at
- * /dev-preview/methodology-b and /dev-preview/methodology-c. Switching the pick
- * is one import plus one element below.
+ * THE PICK, 2026-09-03. Three concepts were built and Arnel picked: "Let's go
+ * with option B, but the short answer: I want to use the option A design." So
+ * this route renders concept B, the instrument, and concept B carries concept
+ * A's short-answer block inside it. Concepts A and C still render at
+ * /dev-preview/methodology-a and /dev-preview/methodology-c so the comparison
+ * links stay live; they come out in a later commit.
  *
  * The copy is approved and fixed: see methodology-v3/data.tsx for the trail.
  */
@@ -23,8 +25,8 @@ export const revalidate = 60;
 
 import type { Metadata } from 'next';
 import '../../methodology-v3/methodology-base.css';
-import '../../methodology-v3/concept-a.css';
-import { MethodologyConceptA } from '../../methodology-v3/concepts/ConceptA';
+import '../../methodology-v3/concept-b.css';
+import { MethodologyConceptB } from '../../methodology-v3/concepts/ConceptB';
 import { buildMethodologyJsonLd } from '../../methodology-v3/jsonld';
 import { MethodologyScripts } from '../../methodology-v3/Scripts';
 
@@ -60,7 +62,7 @@ export default function MethodologyPage() {
   const jsonLd = buildMethodologyJsonLd();
 
   return (
-    <div className="mth mth-a">
+    <div className="mth mth-b">
       {jsonLd.map((s, i) => (
         <script
           key={i}
@@ -68,7 +70,7 @@ export default function MethodologyPage() {
           dangerouslySetInnerHTML={{ __html: JSON.stringify(s) }}
         />
       ))}
-      <MethodologyConceptA />
+      <MethodologyConceptB />
       <MethodologyScripts />
     </div>
   );

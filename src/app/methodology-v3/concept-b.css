@@ -4,6 +4,9 @@
    report, the chain is drawn as a funnel of one sample, the eight stages are a
    dense ledger rather than cards, and the measurement table is the centrepiece
    on a night stage instead of a supporting section. Scoped .mth.mth-b.
+
+   THE PICKED CONCEPT (Arnel, 2026-09-03). It carries concept A's short-answer
+   card rather than B's original flat band; that rule set is below, marked.
    ========================================================================== */
 
 /* ---------- HERO: electric stage, report mock as the focal object ---------- */
@@ -19,7 +22,8 @@
   mask-image:linear-gradient(180deg,#000 0%,rgba(0,0,0,.2) 72%,transparent 100%);}
 .mth-b .hero-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.02fr);gap:44px 56px;align-items:center;}
 .mth-b .hero h1{margin-top:22px;font-size:clamp(2.15rem,3.6vw,3.35rem);line-height:1.06;letter-spacing:-.034em;color:var(--paper);max-width:22ch;text-wrap:balance;}
-.mth-b .hero-sub{margin-top:22px;font-size:16.5px;line-height:1.62;color:var(--primary-50);max-width:52ch;text-wrap:pretty;}
+/* No hero subline: the stages line moved into the short-answer card below,
+   where concept A keeps it. */
 .mth-b .hero-cta{margin-top:32px;display:flex;align-items:center;gap:20px 24px;flex-wrap:wrap;}
 
 /* the report mock: a framed panel with the three readings the copy gives, and
@@ -48,11 +52,21 @@
 .mth-b .rp-row.is-blend svg{stroke:var(--surface-300);}
 .mth-b .rp-note{margin-top:14px;font-size:12px;line-height:1.5;color:var(--mut);}
 
-/* ---------- the short answer as a full-width band ---------- */
-.mth-b .ansband{background:var(--paper);border-bottom:1px solid var(--paper-line);padding:clamp(44px,5.4vw,68px) 0;}
-.mth-b .ansband .answer{box-shadow:none;padding:0;background:none;}
-.mth-b .ansband .answer p{max-width:none;font-size:clamp(18px,1.9vw,22px);}
-.mth-b .ansband .answer .stages-line{max-width:none;}
+/* ---------- the short answer: concept A's card, straddling the seam ----------
+   Arnel's pick, 2026-09-03: concept B, with concept A's short-answer block. B's
+   original flat full-width band (.ansband) is gone. This is A's rule set, with
+   ONE adaptation to B's ground: the strip behind the card is B's own hero
+   gradient (150deg), not A's (158deg), so the card lands on this page's hero.
+   The card itself is the shared .mth .answer in methodology-base.css, so it
+   needs no B override at all: the flattening overrides are what B used to add.
+   The funnel below opens on --surface-50, so the seam stays --paper and the
+   tail carries the gap between the two grounds. */
+.mth-b .seam{position:relative;background:var(--paper);}
+.mth-b .seam::before{content:"";position:absolute;top:0;left:0;right:0;height:92px;
+  background-image:linear-gradient(150deg,var(--primary-700) 0%,var(--primary-600) 48%,var(--primary-500) 100%);}
+.mth-b .seam .container{position:relative;padding-top:0;}
+.mth-b .seam .answer{margin-top:-52px;}
+.mth-b .seam-tail{padding:clamp(40px,5vw,64px) 0 0;}
 
 /* ---------- the funnel: one sample, one unit ---------- */
 .mth-b .funnel{background:var(--surface-50);border-bottom:1px solid var(--paper-line);padding:clamp(64px,8vw,100px) 0;}
