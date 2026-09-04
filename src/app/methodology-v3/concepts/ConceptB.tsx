@@ -287,7 +287,7 @@ function LedgerFigure({ stage }: { stage: Stage }) {
       <div className="lg-fig">
         <p className="lf-cap">128,515 citations, 90 days, B2B SaaS growth-agency category</p>
         <div className="lf-bar">
-          <b style={{ width: '52.76%' }}>52.76%</b>
+          <b style={{ width: '53.17%' }}>53.17%</b>
           <span>Every other page type</span>
         </div>
         <p className="lf-note">

@@ -191,7 +191,7 @@ export const STAGES: Stage[] = [
     blocks: [
       {
         kind: 'p',
-        text: 'Format decides citation. In our own 90-day study of 128,515 citations in the B2B SaaS growth-agency category, listicles carried 52.76% of every citation, more than every other page type combined. Our own most-cited page is a listicle as well. It carried 819 citations in the 30 days to 1 September 2026.',
+        text: 'Format decides citation. In our own 90-day study of 128,515 citations in the B2B SaaS growth-agency category, listicles carried 53.17% of every citation, more than every other page type combined. Our own most-cited page is a listicle as well. It carried 819 citations in the 30 days to 1 September 2026.',
       },
       {
         kind: 'p',
