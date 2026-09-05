@@ -24,6 +24,27 @@ function monthAt(startMonthIso: string, index: number): string | null {
   return d.toISOString().slice(0, 10);
 }
 
+/** "Genie Teacher: 5x Organic Visibility" → "Genie Teacher". The chart carries the rest. */
+const shortName = (name: string) => name.split(':')[0].trim();
+
+/** First clause only — a headline, not the footnote the case page needs. */
+const shortTitle = (title?: string) => (title ?? '').split(/[,(—]/)[0].trim();
+
+/**
+ * One number a reader can hold: average impressions a day over the last four
+ * weeks against the four weeks before LoudFace started. The series is indexed,
+ * which cancels out of a ratio.
+ */
+function liftSinceStart(points: { date: string; value: number }[], startDate?: string): number | null {
+  if (!startDate || points.length < 40) return null;
+  const idx = points.findIndex((p) => p.date >= startDate);
+  const before = idx >= 28 ? points.slice(idx - 28, idx) : points.slice(0, 28);
+  const after = points.slice(-28);
+  const mean = (xs: { value: number }[]) => xs.reduce((a, x) => a + x.value, 0) / xs.length;
+  const b = mean(before);
+  return b > 0 ? mean(after) / b : null;
+}
+
 function pickPlot(item: CaseProof): CasePlot | null {
   const topic = item.instruments?.topicClimb;
   const trend = item.instruments?.indexedTrend;
@@ -118,37 +139,32 @@ export async function ProposalCaseProof({
               {/* Everything that is not the line lives on the left, so the
                   line gets the whole right column and its full height. */}
               <div className="min-w-0">
-                <h3 className="text-[15px] font-medium leading-snug text-surface-950">{item.name}</h3>
-                {item.resultNumber && (
-                  <p className="proposal-num mt-2 text-[28px] font-medium leading-none tracking-[-0.035em] text-surface-950">
-                    {item.resultNumber}
+                <h3 className="text-[15px] font-medium leading-snug text-surface-950">{shortName(item.name)}</h3>
+                {(() => {
+                  const lift = plot?.kind === 'area' ? liftSinceStart(plot.points, plot.startDate) : null;
+                  const number = lift ? `${lift.toFixed(lift >= 10 ? 0 : 1)}×` : item.resultNumber;
+                  const line = lift ? 'more Google impressions a day since LoudFace started' : shortTitle(item.resultTitle);
+                  return (
+                    <>
+                      {number && (
+                        <p className="proposal-num mt-3 text-[34px] font-medium leading-none tracking-[-0.04em] text-surface-950">
+                          {number}
+                        </p>
+                      )}
+                      {line && <p className="mt-2 max-w-[24ch] text-[13.5px] leading-snug text-surface-600">{line}</p>}
+                    </>
+                  );
+                })()}
+                {plot?.kind === 'area' && plot.startDate && (
+                  <p className="mt-4 flex items-center gap-1.5 text-[12px] text-surface-500">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img src="/lf-logo.svg" alt="LoudFace" width={16} height={16} className="h-4 w-4 shrink-0 rounded-full" />
+                    <span>
+                      LoudFace starts ·{' '}
+                      {new Date(`${plot.startDate}T00:00:00Z`).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })}
+                    </span>
                   </p>
                 )}
-                {item.resultTitle && (
-                  <p className="mt-2 text-[13px] leading-snug text-surface-500">{item.resultTitle}</p>
-                )}
-
-                {plot && (
-                  <div className="mt-5 border-t border-surface-200 pt-4">
-                    {plot.kind === 'area' && plot.startDate && (
-                      <p className="flex items-center gap-1.5 text-[12px] text-surface-600">
-                        {/* eslint-disable-next-line @next/next/no-img-element */}
-                        <img src="/lf-logo.svg" alt="LoudFace" width={18} height={18} className="h-[18px] w-[18px] shrink-0 rounded-full" />
-                        <span>
-                          <span className="font-medium text-surface-900">LoudFace starts</span>
-                          <span className="text-surface-500">
-                            {' '}· {new Date(`${plot.startDate}T00:00:00Z`).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })}
-                            {plot.startDate < plot.points[0].date ? ', before this series begins' : ''}
-                          </span>
-                        </span>
-                      </p>
-                    )}
-                    {plot.caption && (
-                      <p className="mt-2 text-[11.5px] leading-snug text-surface-400">{plot.caption}</p>
-                    )}
-                  </div>
-                )}
-
                 <Link
                   href={`/case-studies/${item.slug}`}
                   className="mt-4 inline-block text-[12.5px] font-medium text-primary-600 underline underline-offset-2"
