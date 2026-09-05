@@ -329,31 +329,11 @@ export function ProposalDocument({
   // measure it has today and the rail sits in space the window already had.
   const page = hasRail ? 'mx-auto max-w-[1180px] px-5 sm:px-8' : 'mx-auto max-w-4xl px-5 sm:px-8';
 
-  const priceCard = proposal.priceLine ? (
-    <div
-      data-proposal-card
-      data-print-keep
-      data-proposal-pricing
-      data-proposal-section="Price line"
-      data-proposal-type="priceLine"
-      className="rounded-xl bg-white px-6 py-5 shadow-[0_1px_2px_rgba(10,10,10,0.05),0_16px_36px_-22px_rgba(10,10,10,0.55)]"
-    >
-      <p className="text-[11.5px] font-semibold uppercase tracking-[0.07em] text-surface-500">
-        Investment
-      </p>
-      <p className="proposal-num mt-2 text-[19px] font-medium leading-snug tracking-[-0.02em] text-surface-950 sm:text-[21px]">
-        {proposal.priceLine}
-      </p>
-    </div>
-  ) : null;
-
   /**
-   * Bands. The proposal is one light ground the whole way down, so section
-   * after section melts together and nothing tells the reader which movement
-   * of the argument they are in. Consecutive sections that share a band are
-   * drawn on ONE tinted panel — their problem, our offer, the price — rather
-   * than each section becoming its own card, which would flatten the page
-   * again in the other direction.
+   * Bands. Consecutive sections sharing a band are drawn on ONE band rather
+   * than each becoming its own card. Only the close uses one now: the body
+   * sits on a single ground, which is what stopped it reading as a stack of
+   * panels (Arnel's pick, 2026-09-05).
    */
   const bandOf = (section: ProposalSection): ProposalBand => {
     const band = (section as { band?: ProposalBand }).band;
@@ -467,6 +447,17 @@ export function ProposalDocument({
             <div className="proposal-lede mt-5 max-w-[62ch] text-[16.5px] leading-relaxed text-white/75 [&_a]:text-white [&_p+p]:mt-2.5 [&_strong]:font-semibold [&_strong]:text-white">
               <PortableText value={proposal.heroSummary} />
             </div>
+          )}
+
+          {proposal.priceLine && (
+            <p
+              data-proposal-pricing
+              data-proposal-section="Price line"
+              data-proposal-type="priceLine"
+              className="proposal-num mt-5 text-[16.5px] font-medium leading-relaxed text-white"
+            >
+              {proposal.priceLine}
+            </p>
           )}
 
           {proposal.heroQuote && (
