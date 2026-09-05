@@ -140,9 +140,8 @@ export async function ProposalCaseProof({
                   </div>
                   {plot.kind === 'area' && plot.startDate && (
                     <p className="mt-2 flex items-center gap-1.5 text-[12px] text-surface-600">
-                      <span className="inline-flex h-[18px] min-w-[18px] items-center justify-center rounded-full border border-surface-300 bg-primary-100 px-1 text-[9px] font-semibold tracking-[0.04em] text-surface-950">
-                        LF
-                      </span>
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img src="/lf-logo.svg" alt="LoudFace" width={18} height={18} className="h-[18px] w-[18px] rounded-full" />
                       <span className="font-medium text-surface-900">LoudFace starts</span>
                       <span className="text-surface-500">
                         · {new Date(`${plot.startDate}T00:00:00Z`).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })}

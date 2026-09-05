@@ -102,8 +102,16 @@ export function ProposalCaseChart({ plot }: { plot: CasePlot }) {
             <XAxis />
             {plot.startDate && plot.startDate >= plot.points[0].date && (
               <ChartMarkers
-                items={[{ date: new Date(`${plot.startDate}T00:00:00Z`), icon: 'LF', title: 'LoudFace starts', color: 'var(--color-primary-100)' }]}
-                size={22}
+                items={[
+                  {
+                    date: new Date(`${plot.startDate}T00:00:00Z`),
+                    // eslint-disable-next-line @next/next/no-img-element
+                    icon: <img src="/lf-logo.svg" alt="" className="h-full w-full rounded-full object-cover" />,
+                    title: 'LoudFace starts',
+                    color: '#5222FF',
+                  },
+                ]}
+                size={26}
                 showLines
               />
             )}
