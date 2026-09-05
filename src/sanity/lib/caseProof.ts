@@ -20,6 +20,8 @@ import type { CaseStudyChart } from '@/lib/types';
 
 export interface CaseProofInstruments {
   engagementStart?: string;
+  /** Indexed weekly leads; only the published multiple is shown. */
+  leadGrowth?: { multiple: string; multipleLabel: string };
   topicClimb?: { title: string; caption: string; points: { week: string; value: number }[] };
   indexedTrend?: {
     title: string;
@@ -52,6 +54,7 @@ const QUERY = `*[_type == "caseStudy" && slug.current in $slugs]{
   },
   "instruments": instruments{
     engagementStart,
+    leadGrowth{ multiple, multipleLabel },
     topicClimb{ title, caption, points[]{ week, value } },
     indexedTrend{ title, baselineLabel, caption, startMonthIso, points[]{ month, date, impressions, clicks } }
   }

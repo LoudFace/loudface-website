@@ -142,16 +142,27 @@ export async function ProposalCaseProof({
                 <h3 className="text-[15px] font-medium leading-snug text-surface-950">{shortName(item.name)}</h3>
                 {(() => {
                   const lift = plot?.kind === 'area' ? liftSinceStart(plot.points, plot.startDate) : null;
-                  const number = lift ? `${lift.toFixed(lift >= 10 ? 0 : 1)}×` : item.resultNumber;
-                  const line = lift ? 'more Google impressions a day since LoudFace started' : shortTitle(item.resultTitle);
+                  const lead = item.instruments?.leadGrowth;
+                  // Pipeline first when the case has it; the Google line is the secondary stat.
+                  const primary = lead
+                    ? { number: lead.multiple, line: shortTitle(lead.multipleLabel) }
+                    : lift
+                      ? { number: `${lift.toFixed(lift >= 10 ? 0 : 1)}×`, line: 'more Google impressions a day since LoudFace started' }
+                      : { number: item.resultNumber, line: shortTitle(item.resultTitle) };
+                  const secondary = lead && lift ? { number: `${lift.toFixed(lift >= 10 ? 0 : 1)}×`, line: 'more Google impressions a day' } : null;
                   return (
                     <>
-                      {number && (
+                      {primary.number && (
                         <p className="proposal-num mt-3 text-[34px] font-medium leading-none tracking-[-0.04em] text-surface-950">
-                          {number}
+                          {primary.number}
                         </p>
                       )}
-                      {line && <p className="mt-2 max-w-[24ch] text-[13.5px] leading-snug text-surface-600">{line}</p>}
+                      {primary.line && <p className="mt-2 max-w-[24ch] text-[13.5px] leading-snug text-surface-600">{primary.line}</p>}
+                      {secondary && (
+                        <p className="mt-3 text-[13.5px] leading-snug text-surface-600">
+                          <span className="proposal-num font-medium text-surface-950">{secondary.number}</span> {secondary.line}
+                        </p>
+                      )}
                     </>
                   );
                 })()}
