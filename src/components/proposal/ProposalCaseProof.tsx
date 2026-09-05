@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import { fetchCaseProof, type CaseProof } from '@/sanity/lib/caseProof';
 import { ProposalCaseChart, type CasePlot } from './ProposalCaseCharts';
+import { HugShape } from './HugShape';
 
 /**
  * Real case studies inside a proposal, drawn with the same Bklit charts as
@@ -52,11 +53,11 @@ function liftSinceStart(points: { date: string; value: number }[], startDate?: s
  * pills do not.
  */
 function Stat({ number, line, lead = false }: { number: string; line?: string; lead?: boolean }) {
-  // One inline run — tag, then words — with the background cloned per line,
-  // so the tint hugs the content on every row instead of boxing the block.
+  // Tag, then words, in one inline run. HugShape draws a single outline that
+  // follows the line boxes, so the tint molds around the content.
   return (
-    <p className="max-w-[28ch] text-[13px] leading-[1.95] [text-wrap:balance]">
-      <span className={`proposal-hug ${lead ? 'bg-primary-50 text-primary-900 font-medium' : 'bg-surface-100 text-surface-700'}`}>
+    <p className="relative isolate max-w-[30ch] py-1.5 pl-1 text-[13px] leading-[2.05]">
+      <HugShape fill={lead ? 'var(--color-primary-50)' : 'var(--color-surface-100)'} className={lead ? 'font-medium text-primary-900' : 'text-surface-700'}>
         <span
           className={`proposal-num mr-1.5 inline-flex h-6 items-center rounded-md px-2 align-[-0.35em] text-[14px] font-semibold tracking-[-0.02em] ${
             lead ? 'bg-primary-600 text-white' : 'bg-white text-surface-950 ring-1 ring-surface-200'
@@ -65,7 +66,7 @@ function Stat({ number, line, lead = false }: { number: string; line?: string; l
           {number}
         </span>
         {line}
-      </span>
+      </HugShape>
     </p>
   );
 }

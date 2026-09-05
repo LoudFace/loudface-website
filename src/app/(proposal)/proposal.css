@@ -720,12 +720,3 @@
   }
 }
 
-/* The stat pill hugs its lines: the background is cloned per line box. */
-.proposal-surface .proposal-hug {
-  padding: 0.32rem 0.6rem 0.32rem 0.3rem;
-  border-radius: 0.5rem;
-  /* rows touch, so the fragments read as one molded shape */
-  line-height: inherit;
-  -webkit-box-decoration-break: clone;
-  box-decoration-break: clone;
-}
