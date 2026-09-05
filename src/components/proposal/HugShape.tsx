@@ -15,13 +15,18 @@ export function HugShape({
   children,
   className = '',
   fill,
-  pad = 6,
+  stroke,
+  padX = 9,
+  padY = 4,
   radius = 9,
 }: {
   children: ReactNode;
   className?: string;
   fill: string;
-  pad?: number;
+  /** A thin outline, so the shape reads as a shape on white. */
+  stroke?: string;
+  padX?: number;
+  padY?: number;
   radius?: number;
 }) {
   const ref = useRef<HTMLSpanElement>(null);
@@ -71,13 +76,13 @@ export function HugShape({
         rows[i].top = mid;
       }
 
-      const x0 = Math.min(...rows.map((r) => r.left)) - pad - host.left;
-      const y0 = rows[0].top - pad - host.top;
+      const x0 = Math.min(...rows.map((r) => r.left)) - padX - host.left;
+      const y0 = rows[0].top - padY - host.top;
       const box = rows.map((r) => ({
-        l: r.left - pad - host.left - x0,
-        r: r.right + pad - host.left - x0,
-        t: r.top - pad - host.top - y0,
-        b: r.bottom + pad - host.top - y0,
+        l: r.left - padX - host.left - x0,
+        r: r.right + padX - host.left - x0,
+        t: r.top - padY - host.top - y0,
+        b: r.bottom + padY - host.top - y0,
       }));
       // Adjacent rows overlap by 2*pad after padding; keep the seams shared.
       for (let i = 1; i < box.length; i++) {
@@ -137,20 +142,20 @@ export function HugShape({
       ro.disconnect();
       window.removeEventListener('resize', measure);
     };
-  }, [pad, radius, children]);
+  }, [padX, padY, radius, children]);
 
   return (
     <span ref={hostRef} className="relative isolate block">
       {geom && (
         <svg
           aria-hidden="true"
-          className="pointer-events-none absolute -z-10"
+          className="pointer-events-none absolute -z-10 overflow-visible"
           style={{ left: geom.x, top: geom.y, width: geom.w, height: geom.h }}
           width={geom.w}
           height={geom.h}
           viewBox={`0 0 ${geom.w} ${geom.h}`}
         >
-          <path d={geom.d} fill={fill} />
+          <path d={geom.d} fill={fill} stroke={stroke} strokeWidth={stroke ? 1 : 0} vectorEffect="non-scaling-stroke" />
         </svg>
       )}
       <span ref={ref} className={className}>

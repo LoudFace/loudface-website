@@ -56,10 +56,10 @@ function Stat({ number, line, lead = false }: { number: string; line?: string; l
   // Tag, then words, in one inline run. HugShape draws a single outline that
   // follows the line boxes, so the tint molds around the content.
   return (
-    <p className="relative isolate max-w-[30ch] py-1.5 pl-1 text-[13px] leading-[2.05]">
-      <HugShape fill={lead ? 'var(--color-primary-50)' : 'var(--color-surface-100)'} className={lead ? 'font-medium text-primary-900' : 'text-surface-700'}>
+    <p className="relative isolate w-full py-1.5 pl-2.5 pr-4 text-[13px] leading-[2] [text-wrap:pretty]">
+      <HugShape fill={lead ? 'var(--color-primary-50)' : 'var(--color-surface-50)'} stroke={lead ? 'var(--color-primary-200)' : 'var(--color-surface-300)'} className={lead ? 'font-medium text-primary-900' : 'text-surface-700'}>
         <span
-          className={`proposal-num mr-1.5 inline-flex h-6 items-center rounded-md px-2 align-[-0.35em] text-[14px] font-semibold tracking-[-0.02em] ${
+          className={`proposal-num mr-2 inline-flex h-6 items-center rounded-md px-2 align-[-0.4em] text-[14px] font-semibold tracking-[-0.02em] ${
             lead ? 'bg-primary-600 text-white' : 'bg-white text-surface-950 ring-1 ring-surface-200'
           }`}
         >
