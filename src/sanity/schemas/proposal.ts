@@ -600,24 +600,6 @@ const proofRail = defineType({
       validation: (rule) => rule.max(3),
     }),
     defineField({
-      name: 'metrics',
-      title: 'Numbers',
-      type: 'array',
-      description: 'Our proof numbers, e.g. "288%" / "conversion lift, Dimer Health". They sit under the ratings.',
-      of: [
-        defineArrayMember({
-          type: 'object',
-          name: 'railMetric',
-          fields: [
-            defineField({ name: 'value', title: 'Number', type: 'string', validation: (rule) => rule.required() }),
-            defineField({ name: 'label', title: 'One line', type: 'string', validation: (rule) => rule.required() }),
-            defineField({ name: 'source', title: 'Source', type: 'string' }),
-          ],
-          preview: { select: { title: 'value', subtitle: 'label' } },
-        }),
-      ],
-    }),
-    defineField({
       name: 'quotesHeading',
       title: 'Reviews label',
       type: 'string',

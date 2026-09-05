@@ -150,13 +150,6 @@ export interface ProposalForecastAssumptions {
   ramp?: number[];
 }
 
-export interface ProposalRailMetric {
-  _key: string;
-  value: string;
-  label: string;
-  source?: string;
-}
-
 export type ProposalBand = 'plain' | 'white' | 'tint' | 'dark';
 
 export type ProposalSection =
@@ -304,7 +297,6 @@ export interface ProposalClipStrip {
 export interface ProposalProofRail {
   heading?: string;
   platforms?: ProposalReviewPlatform[];
-  metrics?: ProposalRailMetric[];
   quotesHeading?: string;
   quotes?: ProposalRailQuote[];
 }
@@ -345,7 +337,6 @@ const CONTENT_QUERY = `*[_type == "proposal" && token == $token][0]{
   proofRail{
     heading, quotesHeading,
     platforms[]{ _key, platform, rating, reviewCount, note, url },
-    metrics[]{ _key, value, label, source },
     quotes[]{ _key, text, author, company, platform }
   },
   sections[]{

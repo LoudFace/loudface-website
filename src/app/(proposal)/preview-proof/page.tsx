@@ -52,11 +52,6 @@ function fixture(_tone: 'light' | 'dark', withRail: boolean): Proposal {
             { _key: 'rp2', platform: 'google', rating: 5, reviewCount: 4, url: 'https://share.google/YNQOFTomnSaSIlSgb' },
             { _key: 'rp3', platform: 'trustpilot', rating: 4.3, reviewCount: 9, note: 'every one 5 stars', url: 'https://www.trustpilot.com/review/loudface.co' },
           ],
-          metrics: [
-            { _key: 'rm1', value: '288%', label: 'conversion lift after we rebuilt the booking flow', source: 'Dimer Health, on camera' },
-            { _key: 'rm2', value: '$1M+', label: 'in sales from one landing page we designed', source: 'Trustpilot, Maksim Polupanov' },
-            { _key: 'rm3', value: '3.2x', label: 'organic clicks in three months on a new site', source: 'Search Console, 29 Aug 2026' },
-          ],
           quotesHeading: 'What they said',
           quotes: [
             { _key: 'q1', text: 'One of the landing pages they designed has generated over $1M in sales so far.', author: 'Maksim Polupanov', platform: 'trustpilot' },

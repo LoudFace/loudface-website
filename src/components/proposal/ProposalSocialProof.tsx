@@ -227,7 +227,6 @@ export function ProofRail({
   clipsVariant?: 'strip' | 'grid';
 }) {
   const platforms = rail?.platforms ?? [];
-  const metrics = rail?.metrics ?? [];
   const quotes = (rail?.quotes ?? []).filter((quote) => quote.text);
   const playable = clips.filter((clip) => clip.videoUrl || clip.posterUrl || clip.name);
   const duration = Math.max(24, quotes.length * 8);
@@ -268,21 +267,6 @@ export function ProofRail({
               );
             })}
           </div>
-        </div>
-      )}
-
-      {metrics.length > 0 && (
-        <div>
-          <RailLabel>What the work produced</RailLabel>
-          <ul className="mt-3 divide-y divide-surface-200 border-y border-surface-200">
-            {metrics.map((m) => (
-              <li key={m._key} className="py-2.5">
-                <p className="proposal-num text-[22px] font-medium leading-none tracking-[-0.03em] text-surface-950">{m.value}</p>
-                <p className="mt-1.5 text-[12.5px] leading-snug text-surface-700">{m.label}</p>
-                {m.source && <p className="mt-1 text-[11px] leading-snug text-surface-400">{m.source}</p>}
-              </li>
-            ))}
-          </ul>
         </div>
       )}
 
