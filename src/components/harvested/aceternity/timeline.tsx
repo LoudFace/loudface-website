@@ -6,14 +6,13 @@
  * scroll-linked beam animation, and markup are untouched.
  *
  * Permitted edits only:
- *  - removed the hardcoded outer `bg-white dark:bg-neutral-950` so the page's
+ *  - removed the hardcoded outer light and dark demo backgrounds so the page's
  *    own section ground shows through (spec: "removing a hardcoded demo
  *    background colour on the outermost wrapper").
- *  - recoloured the beam gradient from the library's purple/blue
- *    (`from-purple-500 via-blue-500`) to the LoudFace indigo ramp
+ *  - recoloured the beam gradient from the library's purple/blue ramp to the LoudFace indigo ramp
  *    (`from-primary-600 via-primary-400`) — colour re-keying per the
  *    transplant palette map.
- *  - `via-neutral-700` (the dark-mode track colour) → `via-white/20`, since
+ *  - The dark-mode track colour → `via-white/20`, since
  *    the entry ground here is the deep night-indigo stage, not Tailwind's
  *    default dark-mode neutral.
  */
@@ -60,15 +59,15 @@ export const Timeline = ({ data }: { data: TimelineEntry[] }) => {
           >
             <div className="sticky flex flex-col md:flex-row z-40 items-center top-40 self-start max-w-xs lg:max-w-sm md:w-full">
               <div className="h-10 absolute left-3 md:left-3 w-10 rounded-full bg-white dark:bg-black flex items-center justify-center">
-                <div className="h-4 w-4 rounded-full bg-neutral-200 dark:bg-neutral-800 border border-neutral-300 dark:border-neutral-700 p-2" />
+                <div className="h-4 w-4 rounded-full bg-surface-200 dark:bg-surface-800 border border-surface-300 dark:border-surface-700 p-2" />
               </div>
-              <h3 className="hidden md:block text-xl md:pl-20 md:text-5xl font-bold text-neutral-500 dark:text-neutral-500 ">
+              <h3 className="hidden md:block text-xl md:pl-20 md:text-5xl font-bold text-surface-500 dark:text-surface-500 ">
                 {item.title}
               </h3>
             </div>
 
             <div className="relative pl-20 pr-4 md:pl-4 w-full">
-              <h3 className="md:hidden block text-2xl mb-4 text-left font-bold text-neutral-500 dark:text-neutral-500">
+              <h3 className="md:hidden block text-2xl mb-4 text-left font-bold text-surface-500 dark:text-surface-500">
                 {item.title}
               </h3>
               {item.content}{" "}
@@ -79,7 +78,7 @@ export const Timeline = ({ data }: { data: TimelineEntry[] }) => {
           style={{
             height: height + "px",
           }}
-          className="absolute md:left-8 left-8 top-0 overflow-hidden w-[2px] bg-[linear-gradient(to_bottom,var(--tw-gradient-stops))] from-transparent from-[0%] via-neutral-200 dark:via-white/20 to-transparent to-[99%]  [mask-image:linear-gradient(to_bottom,transparent_0%,black_10%,black_90%,transparent_100%)] "
+          className="absolute md:left-8 left-8 top-0 overflow-hidden w-[2px] bg-[linear-gradient(to_bottom,var(--tw-gradient-stops))] from-transparent from-[0%] via-surface-200 dark:via-white/20 to-transparent to-[99%]  [mask-image:linear-gradient(to_bottom,transparent_0%,black_10%,black_90%,transparent_100%)] "
         >
           <motion.div
             style={{

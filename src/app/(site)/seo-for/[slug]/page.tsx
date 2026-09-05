@@ -49,7 +49,7 @@ interface PageProps {
 
 // Slugs with bespoke static pages at /seo-for/[slug] — excluded so Next.js
 // doesn't generate duplicate routes from the dynamic Sanity-driven template.
-const BESPOKE_SLUGS = new Set(['b2b', 'saas']);
+const BESPOKE_SLUGS = new Set(['b2b', 'saas', 'hr-tech']);
 
 export async function generateStaticParams() {
   const seoPages = await fetchSeoPages();

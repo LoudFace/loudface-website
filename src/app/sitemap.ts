@@ -67,6 +67,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       changeFrequency: 'weekly',
       priority: 0.8,
     },
+    {
+      url: `${baseUrl}/seo-for/hr-tech`,
+      lastModified: new Date('2026-09-05'),
+      changeFrequency: 'monthly',
+      priority: 0.7,
+    },
     // Contact (net-new v3 page; previously 301'd to /)
     {
       url: `${baseUrl}/contact`,
@@ -190,12 +196,14 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   }));
 
   // SEO industry pages
-  const seoPageEntries: MetadataRoute.Sitemap = seoPages.map((page) => ({
-    url: `${baseUrl}/seo-for/${page.slug}`,
-    ...lastMod(page._updatedAt),
-    changeFrequency: 'monthly' as const,
-    priority: 0.7,
-  }));
+  const seoPageEntries: MetadataRoute.Sitemap = seoPages
+    .filter((page) => page.slug !== 'hr-tech')
+    .map((page) => ({
+      url: `${baseUrl}/seo-for/${page.slug}`,
+      ...lastMod(page._updatedAt),
+      changeFrequency: 'monthly' as const,
+      priority: 0.7,
+    }));
 
   // Team member / author pages — E-E-A-T signals
   // TEAM_HIDDEN drives both the listing and this sitemap. If they diverge, a

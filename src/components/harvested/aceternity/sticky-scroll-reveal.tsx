@@ -12,7 +12,7 @@
  *    tells us to replace values outright (its cyan/pink/orange demo palette
  *    → the LoudFace night-indigo stages + indigo ramp). Everything else in
  *    the array-driven logic (index math, useEffect wiring) is untouched.
- *  - `text-slate-100` / `text-slate-300` → recoloured to the project's own
+ *  - The library's light slate text colours → recoloured to the project's own
  *    light-on-dark tokens (`text-white` / `text-white/70`) since the panel
  *    sits on the night-indigo stage, not Tailwind's literal slate scale.
  */

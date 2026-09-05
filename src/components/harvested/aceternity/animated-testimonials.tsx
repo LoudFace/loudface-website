@@ -8,12 +8,11 @@
  * quote animation, and the prev/next wiring are all untouched.
  *
  * Permitted edits only:
- *  - `text-black` / `text-gray-500` / `dark:text-white` /
- *    `dark:text-neutral-500` / `dark:text-neutral-300` → the project's own
+ *  - The library's ink, muted, and dark-mode text colours → the project's own
  *    ink/muted/body tokens (colour re-keying; no dark-mode branch needed
  *    since this page authors light vs. dark explicitly per stage).
  *  - the two `IconArrowLeft/IconArrowRight` buttons recolour their icon
- *    background from `bg-gray-100 dark:bg-neutral-800` to the project's
+ *    background from the library's light and dark neutral fills to the project's
  *    primary-tinted equivalents.
  */
 import { IconArrowLeft, IconArrowRight } from "@tabler/icons-react";

@@ -4,12 +4,12 @@
  * https://ui.aceternity.com/registry/bento-grid.json).
  *
  * Permitted edits only:
- *  - `border-neutral-200` → `border-primary-100` and `dark:border-white/[0.2]`
+ *  - The library's neutral border → `border-primary-100` and `dark:border-white/[0.2]`
  *    → `border-white/20` (colour re-keying — the project's own hairline
  *    indigo-tinted border token family, not raw Tailwind neutral).
  *  - `dark:bg-black` → removed; this grid only ever sits on the crisp-light
  *    stage in this transplant, so the dark-mode branch is dead weight.
- *  - text colours (`text-neutral-600`, `dark:text-neutral-200/300`) → the
+ *  - The library's muted text colours → the
  *    project's own ink/body tokens are applied via the `.ip`-style utility
  *    classes at the call site instead of editing the component's Tailwind
  *    classes further — left as close to verbatim as the palette map allows.
