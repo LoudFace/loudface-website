@@ -309,7 +309,13 @@ function formatDate(value: string): string {
   }).format(parsed);
 }
 
-export function ProposalDocument({ proposal, clipsVariant = 'strip' }: { proposal: Proposal; clipsVariant?: 'strip' | 'grid' }) {
+export function ProposalDocument({
+  proposal,
+  clipsVariant = 'strip',
+}: {
+  proposal: Proposal;
+  clipsVariant?: 'strip' | 'grid';
+}) {
   const sections = proposal.sections ?? [];
   const rail = proposal.proofRail;
   const clips = (proposal.clipStrip?.clips ?? []).filter((clip) => clip.videoUrl || clip.posterUrl || clip.name);
@@ -391,9 +397,9 @@ export function ProposalDocument({ proposal, clipsVariant = 'strip' }: { proposa
         data-proposal-pricing={section._type === 'pricingTiersSection' ? '' : undefined}
         className={
           banded
-            ? `border-b py-9 last:border-b-0 sm:py-11 ${dark ? 'border-white/12' : 'border-surface-950/[0.07]'}`
+            ? `border-b py-11 last:border-b-0 sm:py-14 ${dark ? 'border-white/12' : 'border-surface-950/[0.07]'}`
             : boxed
-              ? 'border-b border-surface-200 py-9 last:border-b-0 sm:py-11'
+              ? 'border-b border-surface-200 py-11 last:border-b-0 sm:py-14'
               : 'mx-auto max-w-4xl border-b border-surface-200 px-5 py-9 last:border-b-0 sm:px-8 sm:py-11'
         }
       >
@@ -507,7 +513,7 @@ export function ProposalDocument({ proposal, clipsVariant = 'strip' }: { proposa
             <div className="min-w-0">{renderSections(true)}</div>
             {/* Sticky, so the ratings are still on screen at the price. */}
             <aside data-proposal-rail="aside" className="hidden lg:block">
-              <div className="sticky top-8 mt-9 rounded-2xl border border-surface-200 bg-surface-50 px-4 py-5">
+              <div className="sticky top-8 mt-10">
                 <ProofRail rail={rail} clips={clips} clipsVariant={clipsVariant} />
               </div>
             </aside>

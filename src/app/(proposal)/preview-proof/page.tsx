@@ -78,7 +78,6 @@ function fixture(_tone: 'light' | 'dark', withRail: boolean): Proposal {
       {
         _key: 'ask',
         _type: 'askAiSection',
-        band: 'tint',
         heading: 'What your buyers ask, and who gets named',
         intro: 'Each question asked 30 times across ChatGPT, Google AI Overview and Gemini.',
         questions: [
@@ -98,7 +97,6 @@ function fixture(_tone: 'light' | 'dark', withRail: boolean): Proposal {
       {
         _key: 'standing',
         _type: 'standingSection',
-        band: 'tint',
         heading: 'Where Jaris stands, and why',
         stats: [
           { _key: 's1', value: '2.0%', label: 'of AI answers name Jaris. Parafin: 26.7%', lead: true },
@@ -111,7 +109,6 @@ function fixture(_tone: 'light' | 'dark', withRail: boolean): Proposal {
       {
         _key: 'forecast',
         _type: 'forecastSection',
-        band: 'white',
         heading: 'What each month returns',
         todayLine: 'Today it is zero.',
         shareOfVoice: { min: 2, max: 20, value: 12, note: 'now 2.5%' },
@@ -122,7 +119,6 @@ function fixture(_tone: 'light' | 'dark', withRail: boolean): Proposal {
       {
         _key: 'tracks',
         _type: 'tracksSection',
-        band: 'white',
         heading: 'What you get',
         intro: 'Three tracks in parallel from week one. Content, design, development and reporting included.',
         tracks: [
@@ -146,7 +142,6 @@ function fixture(_tone: 'light' | 'dark', withRail: boolean): Proposal {
         _key: 'engagement',
         _type: 'timelineSection',
         variant: 'engagementLoop',
-        band: 'white',
         heading: 'How we work',
         gateLabel: 'Compliance gate',
         gate: {
@@ -162,7 +157,6 @@ function fixture(_tone: 'light' | 'dark', withRail: boolean): Proposal {
       {
         _key: 'months',
         _type: 'monthsSection',
-        band: 'white',
         heading: 'The first 90 days',
         intro: 'Contractual minimums. We ship above them.',
         months: [
