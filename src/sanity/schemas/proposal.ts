@@ -685,6 +685,13 @@ const askAiSection = defineType({
           fields: [
             defineField({ name: 'question', title: 'Question', type: 'string', validation: (rule) => rule.required() }),
             defineField({
+              name: 'short',
+              title: 'Tab label',
+              type: 'string',
+              description: 'Two or three words for the tab, e.g. "Vertical SaaS". The full question shows below.',
+              validation: (rule) => rule.required(),
+            }),
+            defineField({
               name: 'vendors',
               title: 'Who the AI names',
               type: 'array',

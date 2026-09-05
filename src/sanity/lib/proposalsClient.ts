@@ -182,6 +182,8 @@ export type ProposalSection =
       intro?: string;
       variant?: 'engagementLoop';
       gateLabel?: string;
+      gate?: { body?: string; items?: string[] };
+      showWeek?: boolean;
       illustrativeExample?: ProposalEngagementExample;
       items: ProposalTimelineItem[];
     }
@@ -214,7 +216,7 @@ export type ProposalSection =
       _type: 'askAiSection';
       heading?: string;
       intro?: string;
-      questions: Array<{ _key: string; question: string; vendors: Array<{ _key: string; name: string; share: number }> }>;
+      questions: Array<{ _key: string; question: string; short?: string; vendors: Array<{ _key: string; name: string; share: number }> }>;
       source?: string;
     }
   | {
@@ -347,11 +349,13 @@ const CONTENT_QUERY = `*[_type == "proposal" && token == $token][0]{
     },
     metrics[]{ _key, value, label, source },
     slugs,
-    questions[]{ _key, question, vendors[]{ _key, name, share } },
+    questions[]{ _key, question, short, vendors[]{ _key, name, share } },
     stats[]{ _key, value, label, lead },
     gap[]{ _key, pageType, citations, coverage, tone },
     shareOfVoice, impressions, conversion, assumptions,
     tracks[]{ _key, label, items[]{ _key, count, text } },
+    gate,
+    showWeek,
     targets,
     months[]{ _key, label, title, items, proves },
     measures[]{ _key, label, note }

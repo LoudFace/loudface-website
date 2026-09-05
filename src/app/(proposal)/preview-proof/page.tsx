@@ -83,21 +83,19 @@ function fixture(_tone: 'light' | 'dark', withRail: boolean): Proposal {
       {
         _key: 'ask',
         _type: 'askAiSection',
-        heading: 'Ask the AI what your buyers ask',
-        intro: 'Each question, asked 30 times across ChatGPT, Google AI Overview and Gemini.',
+        heading: 'What your buyers ask, and who gets named',
+        intro: 'Each question asked 30 times across ChatGPT, Google AI Overview and Gemini.',
         questions: [
-          { _key: 'aq1', question: 'Best embedded lending platforms for payment processors', vendors: [
+          { _key: 'aq1', question: 'Best embedded lending platforms for payment processors', short: 'Payment processors', vendors: [
             { _key: 'v1', name: 'Parafin', share: 90 }, { _key: 'v2', name: 'Kanmon', share: 67 }, { _key: 'v3', name: 'YouLend', share: 43 }, { _key: 'v4', name: 'Liberis', share: 37 }, { _key: 'v5', name: 'Lendflow', share: 23 }, { _key: 'v6', name: 'Jaris', share: 0 } ] },
-          { _key: 'aq2', question: 'Top embedded working capital providers for US payment facilitators', vendors: [
+          { _key: 'aq2', question: 'Top embedded working capital providers for US payment facilitators', short: 'Payment facilitators', vendors: [
             { _key: 'v1', name: 'Parafin', share: 100 }, { _key: 'v2', name: 'Kanmon', share: 73 }, { _key: 'v3', name: 'Liberis', share: 70 }, { _key: 'v4', name: 'YouLend', share: 60 }, { _key: 'v5', name: 'Jaris', share: 0 } ] },
-          { _key: 'aq3', question: 'Best embedded capital providers for vertical SaaS platforms', vendors: [
+          { _key: 'aq3', question: 'Best embedded capital providers for vertical SaaS platforms', short: 'Vertical SaaS', vendors: [
             { _key: 'v1', name: 'Parafin', share: 100 }, { _key: 'v2', name: 'Kanmon', share: 77 }, { _key: 'v3', name: 'Liberis', share: 57 }, { _key: 'v4', name: 'YouLend', share: 57 }, { _key: 'v5', name: 'Jaris', share: 0 } ] },
-          { _key: 'aq4', question: 'Leading embedded finance companies for small business platforms', vendors: [
+          { _key: 'aq4', question: 'Leading embedded finance companies for small business platforms', short: 'SMB platforms', vendors: [
             { _key: 'v1', name: 'Parafin', share: 62 }, { _key: 'v2', name: 'Kanmon', share: 38 }, { _key: 'v3', name: 'Liberis', share: 21 }, { _key: 'v4', name: 'YouLend', share: 14 }, { _key: 'v5', name: 'Jaris', share: 0 } ] },
-          { _key: 'aq5', question: 'Which companies help ISOs offer working capital to merchants?', vendors: [
+          { _key: 'aq5', question: 'Which companies help ISOs offer working capital to merchants?', short: 'ISOs', vendors: [
             { _key: 'v1', name: 'Liberis', share: 17 }, { _key: 'v2', name: 'Fundbox', share: 7 }, { _key: 'v3', name: 'Lendio', share: 7 }, { _key: 'v4', name: 'YouLend', share: 7 }, { _key: 'v5', name: 'Parafin', share: 3 }, { _key: 'v6', name: 'Jaris', share: 0 } ] },
-          { _key: 'aq6', question: 'What are managed settlements and who provides them?', vendors: [
-            { _key: 'v1', name: 'Jaris', share: 60 }, { _key: 'v2', name: 'Others', share: 40 } ] },
         ],
         source: 'Peec AI · 2,250 answers · 26 Aug to 2 Sep 2026 · US.',
       },
@@ -109,18 +107,8 @@ function fixture(_tone: 'light' | 'dark', withRail: boolean): Proposal {
           { _key: 's1', value: '2.0%', label: 'of AI answers name Jaris. Parafin: 26.7%', lead: true },
           { _key: 's2', value: '64 / 75', label: 'buyer questions with no Jaris' },
           { _key: 's3', value: '2.9', label: 'average position when Jaris is named', lead: true },
-          { _key: 's4', value: '0', label: 'product pages on jaris.io' },
         ],
-        gapHeading: 'What the AI cites, and what Jaris has',
-        gap: [
-          { _key: 'g1', pageType: 'Product pages', citations: 1060, coverage: 'None', tone: 'gap' },
-          { _key: 'g2', pageType: 'Articles', citations: 662, coverage: 'News only', tone: 'gap' },
-          { _key: 'g3', pageType: 'Listicles', citations: 370, coverage: 'Not listed', tone: 'gap' },
-          { _key: 'g4', pageType: 'Home page', citations: 363, coverage: 'Strongest asset', tone: 'asset' },
-          { _key: 'g5', pageType: 'How-to', citations: 157, coverage: 'None', tone: 'gap' },
-          { _key: 'g6', pageType: 'Comparison', citations: 25, coverage: 'None', tone: 'gap' },
-        ],
-        closing: 'The product is fine: when an assistant names Jaris it names it before Kanmon, Liberis and YouLend. Product pages are cited 1,060 times in this category and Jaris has one overview page for five products.',
+        closing: 'The product is not the problem: when an assistant names Jaris it names it before Kanmon, Liberis and YouLend. Product pages are the most cited page type in this category, 1,060 times, and Jaris has one overview page covering five products.',
         source: 'Peec AI citation counts · 2 Sep 2026.',
       },
       {
@@ -128,8 +116,8 @@ function fixture(_tone: 'light' | 'dark', withRail: boolean): Proposal {
         _type: 'forecastSection',
         heading: 'What each month returns',
         todayLine: 'Today it is zero.',
-        shareOfVoice: { min: 2, max: 30, value: 12, note: 'now 2.5%' },
-        impressions: { min: 0, max: 60000, step: 1000, value: 15000, note: 'now ~500' },
+        shareOfVoice: { min: 2, max: 20, value: 12, note: 'now 2.5%' },
+        impressions: { min: 0, max: 30000, step: 1000, value: 15000, note: 'now ~500' },
         conversion: { min: 0.5, max: 5, step: 0.1, value: 2 },
         assumptions: { aiQuestionsPerMonth: 2000, aiClickRate: 10, googleCtr: 2.5, ramp: [0.1, 0.35, 0.7, 1, 1, 1] },
       },
@@ -154,21 +142,19 @@ function fixture(_tone: 'light' | 'dark', withRail: boolean): Proposal {
         targets: ['openbankingtracker', 'Lendflow', 'Built In', 'Stripe', 'fintechspecs', 'Backbase'],
       },
       {
-        _key: 'gate',
-        _type: 'gateSection',
-        heading: 'Nothing regulated publishes without you',
-        body: 'Anything touching rates, loan terms, the bank relationship, FDIC or NMLS language comes to Jaris before it publishes. Permanently.',
-        items: [
-          'The first five articles are written and reviewed with you, to lock voice and claims.',
-          'Everything else publishes independently, so volume does not sit on your calendar.',
-        ],
-      },
-      {
         _key: 'engagement',
         _type: 'timelineSection',
         variant: 'engagementLoop',
-        heading: 'How the engagement moves',
+        heading: 'How we work',
         gateLabel: 'Compliance gate',
+        gate: {
+          body: 'Anything touching rates, loan terms, the bank relationship, FDIC or NMLS language comes to Jaris before it publishes. Permanently.',
+          items: [
+            'The first five articles are written and reviewed with you, to lock voice and claims.',
+            'Everything else publishes independently, so volume does not sit on your calendar.',
+          ],
+        },
+        showWeek: true,
         items: [],
       },
       {
@@ -188,13 +174,6 @@ function fixture(_tone: 'light' | 'dark', withRail: boolean): Proposal {
           { _key: 'me3', label: 'sentiment' },
           { _key: 'me4', label: 'Google impressions and clicks' },
         ],
-      },
-      {
-        _key: 'working',
-        _type: 'bulletListSection',
-        variant: 'workingTogether',
-        heading: 'A working week',
-        items: [],
       },
       {
         _key: 'cases',

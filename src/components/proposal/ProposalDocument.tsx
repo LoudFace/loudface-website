@@ -189,9 +189,24 @@ function EngagementLoopBlock({
   return (
     <>
       {section.intro && <p className="mt-3 max-w-[64ch] text-[15.5px] leading-relaxed text-surface-700">{section.intro}</p>}
+      {section.gate?.body && (
+        <div data-print-keep className="mt-5 border-l-2 border-primary-600 pl-4">
+          <p className="max-w-[64ch] text-[15.5px] font-medium leading-relaxed text-surface-950">{section.gate.body}</p>
+          {section.gate.items && section.gate.items.length > 0 && (
+            <p className="mt-2 max-w-[64ch] text-[14px] leading-relaxed text-surface-600">
+              {section.gate.items.join(' ')}
+            </p>
+          )}
+        </div>
+      )}
       <div className="mt-6">
         <EngagementLoopPlate clientName={clientName} gateLabel={section.gateLabel} />
       </div>
+      {section.showWeek && (
+        <div className="mt-8">
+          <WorkingWeek />
+        </div>
+      )}
     </>
   );
 }

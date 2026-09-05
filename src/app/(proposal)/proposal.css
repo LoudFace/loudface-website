@@ -736,6 +736,14 @@
   box-decoration-break: clone;
 }
 
+/* The question tabs scroll on a phone without showing a scrollbar. */
+.proposal-surface .proposal-tabs {
+  scrollbar-width: none;
+}
+.proposal-surface .proposal-tabs::-webkit-scrollbar {
+  display: none;
+}
+
 /* A shorter plot for the small supporting charts. */
 .proposal-surface .proposal-plot-sm {
   height: clamp(170px, 22vh, 210px);

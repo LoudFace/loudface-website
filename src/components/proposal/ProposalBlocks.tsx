@@ -1,6 +1,6 @@
 import type { ProposalSection } from '@/sanity/lib/proposalsClient';
 import { StatChip } from './StatChip';
-import { ProposalAskAi, ProposalForecast, ProposalGapChart } from './ProposalInteractive';
+import { ProposalAskAi, ProposalForecast } from './ProposalInteractive';
 
 /**
  * The client-first body blocks. Each opens with the client's numbers and
@@ -49,9 +49,19 @@ export function StandingBlock({ section }: { section: S<'standingSection'> }) {
       {gap.length > 0 && (
         <div className="mt-7">
           <Label>{section.gapHeading ?? 'What the AI cites, and what you have'}</Label>
-          <div className="mt-3">
-            <ProposalGapChart rows={gap} />
-          </div>
+          <ul className="mt-3 divide-y divide-surface-200 border-y border-surface-200">
+            {gap.map((r) => (
+              <li key={r._key} className="flex items-baseline justify-between gap-4 py-2 text-[13.5px]">
+                <span className={r.tone === 'asset' ? 'text-surface-500' : 'text-surface-900'}>{r.pageType}</span>
+                <span className="flex items-baseline gap-3">
+                  <span className={`text-[12.5px] ${r.tone === 'asset' ? 'text-primary-700' : 'text-surface-500'}`}>
+                    {r.coverage}
+                  </span>
+                  <span className="proposal-num w-[52px] text-right text-surface-950">{r.citations.toLocaleString('en-US')}</span>
+                </span>
+              </li>
+            ))}
+          </ul>
         </div>
       )}
       {section.closing && <p className="mt-5 max-w-[64ch] text-[15.5px] leading-relaxed text-surface-900">{section.closing}</p>}
@@ -134,19 +144,24 @@ export function MonthsBlock({ section }: { section: S<'monthsSection'> }) {
   return (
     <>
       <Intro text={section.intro} />
-      <ol className="mt-5 grid gap-3 sm:grid-cols-3">
+      <ol className="mt-5 grid border-y border-surface-200 sm:grid-cols-3 sm:divide-x sm:divide-surface-200">
         {months.map((m) => (
-          <li key={m._key} data-print-keep className="flex flex-col rounded-xl border border-surface-200 bg-white px-4 py-4">
+          <li
+            key={m._key}
+            data-print-keep
+            className="flex flex-col border-b border-surface-200 py-4 last:border-b-0 sm:border-b-0 sm:px-5 sm:first:pl-0 sm:last:pr-0"
+          >
             <p className="text-[11px] font-semibold uppercase tracking-[0.08em] text-primary-700">{m.label}</p>
             <p className="mt-1 text-[15px] font-medium text-surface-950">{m.title}</p>
-            <ul className="mt-2.5 flex-1 space-y-1 text-[13.5px] leading-snug text-surface-700">
+            <ul className="mt-2.5 flex-1 space-y-1 text-[13.5px] leading-snug text-surface-600">
               {(m.items ?? []).map((it) => (
                 <li key={it}>{it}</li>
               ))}
             </ul>
             {m.proves && (
-              <p className="mt-3 border-t border-surface-200 pt-2.5 text-[12.5px] text-surface-600">
-                <span className="font-semibold text-surface-950">Proves</span> · {m.proves}
+              <p className="mt-3 text-[12.5px] text-surface-950">
+                <span className="text-surface-400">Proves · </span>
+                {m.proves}
               </p>
             )}
           </li>
