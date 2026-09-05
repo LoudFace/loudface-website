@@ -2,6 +2,7 @@
 
 import { curveCatmullRom } from '@visx/curve';
 import { useEffect, useState } from 'react';
+import { ChartMarkers } from '@/components/charts/markers';
 import { Area, AreaChart, Background, Bar, BarChart, BarXAxis, ChartTooltip, Grid, XAxis } from '@/components/charts';
 import '@/app/case-detail-v3/instruments-board.css';
 
@@ -34,7 +35,8 @@ export type CasePlot =
       /** `value` is the lead series (clicks); `second` the quieter one (impressions). */
       points: { date: string; value: number; second?: number }[];
       secondLabel?: string;
-      /** Annotations derived from the data itself — never invented events. */
+      /** The day LoudFace started, ISO. Drawn as one marker when it falls inside the series. */
+      startDate?: string;
     };
 
 function Tip({ title, label, value }: { title: string; label: string; value: string }) {
@@ -92,12 +94,19 @@ export function ProposalCaseChart({ plot }: { plot: CasePlot }) {
             data={plot.points.map((p) => ({ date: new Date(`${p.date}T00:00:00Z`), value: p.value, second: p.second ?? 0 }))}
             aspectRatio=""
             style={{ height: '100%' }}
-            margin={{ top: 14, right: 22, bottom: 34, left: 22 }}
+            margin={{ top: plot.startDate ? 40 : 14, right: 22, bottom: 34, left: 22 }}
           >
             <Background pattern="dots" opacity={0.55} />
             <Grid horizontal />
             <Area dataKey="value" curve={curveCatmullRom} fillOpacity={0.24} strokeWidth={2} stroke="var(--chart-1)" />
             <XAxis />
+            {plot.startDate && plot.startDate >= plot.points[0].date && (
+              <ChartMarkers
+                items={[{ date: new Date(`${plot.startDate}T00:00:00Z`), icon: 'LF', title: 'LoudFace starts', color: 'var(--color-primary-100)' }]}
+                size={22}
+                showLines
+              />
+            )}
             <ChartTooltip
               content={({ point }) => (
                 <div className="inb-tip">

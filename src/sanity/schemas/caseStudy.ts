@@ -305,6 +305,13 @@ export const caseStudy = defineType({
           description: 'e.g. "Google Search Console · indexed to Dec 2025 = 100"',
         }),
         defineField({
+          name: 'engagementStart',
+          title: 'LoudFace started on',
+          type: 'date',
+          description:
+            'The day the engagement began. Drawn as a marker on the Google line so the reader sees the climb follows the partnership.',
+        }),
+        defineField({
           name: 'topicClimb',
           title: 'Topic climb (share of AI answers over time)',
           type: 'object',

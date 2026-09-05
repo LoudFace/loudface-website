@@ -45,6 +45,7 @@ function pickPlot(item: CaseProof): CasePlot | null {
       secondLabel: 'Clicks',
       caption: trend.caption,
       unitLabel: `× ${trend.baselineLabel}`,
+      startDate: item.instruments?.engagementStart,
       points,
     };
   };
@@ -137,6 +138,18 @@ export async function ProposalCaseProof({
                   <div className="mt-2">
                     <ProposalCaseChart plot={plot} />
                   </div>
+                  {plot.kind === 'area' && plot.startDate && (
+                    <p className="mt-2 flex items-center gap-1.5 text-[12px] text-surface-600">
+                      <span className="inline-flex h-[18px] min-w-[18px] items-center justify-center rounded-full border border-surface-300 bg-primary-100 px-1 text-[9px] font-semibold tracking-[0.04em] text-surface-950">
+                        LF
+                      </span>
+                      <span className="font-medium text-surface-900">LoudFace starts</span>
+                      <span className="text-surface-500">
+                        · {new Date(`${plot.startDate}T00:00:00Z`).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })}
+                        {plot.startDate < plot.points[0].date ? ', before this series begins' : ''}
+                      </span>
+                    </p>
+                  )}
                   {plot.caption && (
                     <p className="mt-2 text-[11.5px] leading-snug text-surface-400">{plot.caption}</p>
                   )}

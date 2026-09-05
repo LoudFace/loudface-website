@@ -118,6 +118,7 @@ const CASE_STUDY_PROJECTION = `{
   "instruments": instruments{
     aiSource,
     gscSource,
+    engagementStart,
     topicClimb{ title, caption, points[]{ week, value } },
     rankOverTime{ label, from, to, caption, points[]{ week, position } },
     engineBeforeAfter{ beforeLabel, afterLabel, caption, rows[]{ engine, before, after } },

@@ -19,6 +19,7 @@ import type { CaseStudyChart } from '@/lib/types';
  */
 
 export interface CaseProofInstruments {
+  engagementStart?: string;
   topicClimb?: { title: string; caption: string; points: { week: string; value: number }[] };
   indexedTrend?: {
     title: string;
@@ -50,6 +51,7 @@ const QUERY = `*[_type == "caseStudy" && slug.current in $slugs]{
     data[]{ label, value, secondaryValue, displayValue, secondaryDisplayValue }
   },
   "instruments": instruments{
+    engagementStart,
     topicClimb{ title, caption, points[]{ week, value } },
     indexedTrend{ title, baselineLabel, caption, startMonthIso, points[]{ month, date, impressions, clicks } }
   }

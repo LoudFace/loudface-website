@@ -123,6 +123,8 @@ export interface CaseStudyInstruments {
   aiSource?: string;
   /** Source line for the Google board, e.g. "Google Search Console · indexed to Dec 2025 = 100". */
   gscSource?: string;
+  /** ISO date the engagement began; drawn as a marker on the Google line. */
+  engagementStart?: string;
   topicClimb?: {
     title: string;
     caption: string;
