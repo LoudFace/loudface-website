@@ -583,7 +583,8 @@
 
 /* The Bklit plot box — same height rule as the case pages' .inb-plot. */
 .proposal-surface .proposal-plot {
-  height: clamp(110px, 14vh, 150px);
+  /* The line is the whole right column now; give the climb room to read. */
+  height: clamp(220px, 30vh, 300px);
   min-width: 0;
 }
 

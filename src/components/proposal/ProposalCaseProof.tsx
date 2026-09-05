@@ -113,8 +113,10 @@ export async function ProposalCaseProof({
             <article
               key={item.slug}
               data-print-keep
-              className="grid gap-x-8 gap-y-4 py-7 sm:grid-cols-[minmax(0,240px)_minmax(0,1fr)]"
+              className="grid gap-x-10 gap-y-4 py-8 sm:grid-cols-[minmax(0,236px)_minmax(0,1fr)]"
             >
+              {/* Everything that is not the line lives on the left, so the
+                  line gets the whole right column and its full height. */}
               <div className="min-w-0">
                 <h3 className="text-[15px] font-medium leading-snug text-surface-950">{item.name}</h3>
                 {item.resultNumber && (
@@ -125,33 +127,40 @@ export async function ProposalCaseProof({
                 {item.resultTitle && (
                   <p className="mt-2 text-[13px] leading-snug text-surface-500">{item.resultTitle}</p>
                 )}
+
+                {plot && (
+                  <div className="mt-5 border-t border-surface-200 pt-4">
+                    <p className="text-[12px] font-medium text-surface-700">{plot.title}</p>
+                    {plot.kind === 'area' && plot.startDate && (
+                      <p className="mt-2 flex items-center gap-1.5 text-[12px] text-surface-600">
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                        <img src="/lf-logo.svg" alt="LoudFace" width={18} height={18} className="h-[18px] w-[18px] shrink-0 rounded-full" />
+                        <span>
+                          <span className="font-medium text-surface-900">LoudFace starts</span>
+                          <span className="text-surface-500">
+                            {' '}· {new Date(`${plot.startDate}T00:00:00Z`).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })}
+                            {plot.startDate < plot.points[0].date ? ', before this series begins' : ''}
+                          </span>
+                        </span>
+                      </p>
+                    )}
+                    {plot.caption && (
+                      <p className="mt-2 text-[11.5px] leading-snug text-surface-400">{plot.caption}</p>
+                    )}
+                  </div>
+                )}
+
                 <Link
                   href={`/case-studies/${item.slug}`}
-                  className="mt-3 inline-block text-[12.5px] font-medium text-primary-600 underline underline-offset-2"
+                  className="mt-4 inline-block text-[12.5px] font-medium text-primary-600 underline underline-offset-2"
                 >
                   Read the case study
                 </Link>
               </div>
+
               {plot && (
-                <div className="min-w-0">
-                  <p className="text-[11.5px] font-medium text-surface-500">{plot.title}</p>
-                  <div className="mt-2">
-                    <ProposalCaseChart plot={plot} />
-                  </div>
-                  {plot.kind === 'area' && plot.startDate && (
-                    <p className="mt-2 flex items-center gap-1.5 text-[12px] text-surface-600">
-                      {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img src="/lf-logo.svg" alt="LoudFace" width={18} height={18} className="h-[18px] w-[18px] rounded-full" />
-                      <span className="font-medium text-surface-900">LoudFace starts</span>
-                      <span className="text-surface-500">
-                        · {new Date(`${plot.startDate}T00:00:00Z`).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })}
-                        {plot.startDate < plot.points[0].date ? ', before this series begins' : ''}
-                      </span>
-                    </p>
-                  )}
-                  {plot.caption && (
-                    <p className="mt-2 text-[11.5px] leading-snug text-surface-400">{plot.caption}</p>
-                  )}
+                <div className="min-w-0 self-stretch">
+                  <ProposalCaseChart plot={plot} />
                 </div>
               )}
             </article>
