@@ -725,8 +725,12 @@
    the padding is what lets neighbouring line boxes touch so the goo filter
    fuses them into one shape. */
 .proposal-surface .proposal-goo-run {
-  padding: 0.3rem 0.65rem 0.3rem 0.4rem;
-  border-radius: 0.5rem;
+  /* rows overlap by more than the blur radius, so the shared left edge stays
+     straight and only the ragged right side steps */
+  padding: 0.45rem 0.65rem 0.45rem 0.4rem;
+  /* square on the left: stacked rows share one straight edge, so there is no
+     waist to blur; the blob's outer corners are rounded by the filter */
+  border-radius: 0 0.5rem 0.5rem 0;
   /* both layers, so continuation lines indent identically */
   -webkit-box-decoration-break: clone;
   box-decoration-break: clone;

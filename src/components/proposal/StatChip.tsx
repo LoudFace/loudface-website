@@ -12,8 +12,8 @@ function GooFilter({ id, stroke }: { id: string; stroke: string }) {
   return (
     <svg width="0" height="0" style={{ position: 'absolute' }} aria-hidden="true" focusable="false">
       <filter id={id} x="-10%" y="-20%" width="120%" height="140%" colorInterpolationFilters="sRGB">
-        <feGaussianBlur in="SourceGraphic" stdDeviation="3.2" result="blur" />
-        <feColorMatrix in="blur" type="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 22 -11" result="goo" />
+        <feGaussianBlur in="SourceGraphic" stdDeviation="2.8" result="blur" />
+        <feColorMatrix in="blur" type="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 24 -12" result="goo" />
         <feMorphology in="goo" operator="dilate" radius="1" result="dilated" />
         <feFlood floodColor={stroke} result="ink" />
         <feComposite in="ink" in2="dilated" operator="in" result="outline" />
