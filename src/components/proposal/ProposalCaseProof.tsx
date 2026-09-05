@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import { fetchCaseProof, type CaseProof } from '@/sanity/lib/caseProof';
 import { ProposalCaseChart, type CasePlot } from './ProposalCaseCharts';
-import { HugShape } from './HugShape';
+import { StatChip } from './StatChip';
 
 /**
  * Real case studies inside a proposal, drawn with the same Bklit charts as
@@ -53,20 +53,9 @@ function liftSinceStart(points: { date: string; value: number }[], startDate?: s
  * pills do not.
  */
 function Stat({ number, line, lead = false }: { number: string; line?: string; lead?: boolean }) {
-  // Tag, then words, in one inline run. HugShape draws a single outline that
-  // follows the line boxes, so the tint molds around the content.
   return (
-    <p className="relative isolate w-full py-1.5 pl-3 pr-7 text-[13px] leading-[2] [text-wrap:pretty]">
-      <HugShape fill={lead ? 'var(--color-primary-50)' : 'var(--color-surface-50)'} stroke={lead ? 'var(--color-primary-200)' : 'var(--color-surface-300)'} padX={12} padY={5} className={lead ? 'font-medium text-primary-900' : 'text-surface-700'}>
-        <span
-          className={`proposal-num mr-2 inline-flex h-[22px] items-center rounded-[5px] px-1.5 align-middle text-[13px] font-semibold tracking-[-0.02em] ${
-            lead ? 'bg-primary-600 text-white' : 'bg-surface-200 text-surface-950'
-          }`}
-        >
-          {number}
-        </span>
-        {line}
-      </HugShape>
+    <p className="max-w-[26ch]">
+      <StatChip number={number} line={line} lead={lead} />
     </p>
   );
 }
@@ -177,7 +166,7 @@ export async function ProposalCaseProof({
                       : { number: item.resultNumber, line: shortTitle(item.resultTitle) };
                   const secondary = lead && lift ? { number: `${lift.toFixed(lift >= 10 ? 0 : 1)}×`, line: 'more Google impressions a day' } : null;
                   return (
-                    <div className="mt-3 space-y-2">
+                    <div className="mt-3 space-y-3">
                       {primary.number && <Stat number={primary.number} line={primary.line} lead />}
                       {secondary && <Stat number={secondary.number} line={secondary.line} />}
                     </div>
