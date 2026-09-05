@@ -130,9 +130,8 @@ export async function ProposalCaseProof({
 
                 {plot && (
                   <div className="mt-5 border-t border-surface-200 pt-4">
-                    <p className="text-[12px] font-medium text-surface-700">{plot.title}</p>
                     {plot.kind === 'area' && plot.startDate && (
-                      <p className="mt-2 flex items-center gap-1.5 text-[12px] text-surface-600">
+                      <p className="flex items-center gap-1.5 text-[12px] text-surface-600">
                         {/* eslint-disable-next-line @next/next/no-img-element */}
                         <img src="/lf-logo.svg" alt="LoudFace" width={18} height={18} className="h-[18px] w-[18px] shrink-0 rounded-full" />
                         <span>
