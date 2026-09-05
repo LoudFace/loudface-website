@@ -52,25 +52,20 @@ function liftSinceStart(points: { date: string; value: number }[], startDate?: s
  * pills do not.
  */
 function Stat({ number, line, lead = false }: { number: string; line?: string; lead?: boolean }) {
-  // A short label sits beside the tag; a long one goes under it, so the pill
-  // never turns into a tag with four lines of prose hanging off its side.
-  const stacked = (line?.length ?? 0) > 34;
+  // One inline run — tag, then words — with the background cloned per line,
+  // so the tint hugs the content on every row instead of boxing the block.
   return (
-    <p
-      className={`flex w-full gap-2.5 rounded-lg py-1.5 pl-1.5 pr-3 ${stacked ? 'flex-col items-start gap-1.5 pb-2.5' : 'items-center'} ${
-        lead ? 'bg-primary-50 ring-1 ring-primary-200/70' : 'bg-surface-100'
-      }`}
-    >
-      <span
-        className={`proposal-num inline-flex h-7 shrink-0 items-center rounded-md px-2 text-[15px] font-semibold tracking-[-0.02em] ${
-          lead ? 'bg-primary-600 text-white' : 'bg-white text-surface-950 ring-1 ring-surface-200'
-        }`}
-      >
-        {number}
+    <p className="max-w-[28ch] text-[13px] leading-[1.95] [text-wrap:balance]">
+      <span className={`proposal-hug ${lead ? 'bg-primary-50 text-primary-900 font-medium' : 'bg-surface-100 text-surface-700'}`}>
+        <span
+          className={`proposal-num mr-1.5 inline-flex h-6 items-center rounded-md px-2 align-[-0.35em] text-[14px] font-semibold tracking-[-0.02em] ${
+            lead ? 'bg-primary-600 text-white' : 'bg-white text-surface-950 ring-1 ring-surface-200'
+          }`}
+        >
+          {number}
+        </span>
+        {line}
       </span>
-      {line && (
-        <span className={`min-w-0 text-[13px] leading-[1.35] ${stacked ? 'pl-1' : ''} ${lead ? 'font-medium text-primary-900' : 'text-surface-700'}`}>{line}</span>
-      )}
     </p>
   );
 }
