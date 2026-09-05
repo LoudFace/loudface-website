@@ -735,3 +735,18 @@
   -webkit-box-decoration-break: clone;
   box-decoration-break: clone;
 }
+
+/* A shorter plot for the small supporting charts. */
+.proposal-surface .proposal-plot-sm {
+  height: clamp(170px, 22vh, 210px);
+}
+
+/* ── Forecast sliders ─────────────────────────────────────────────────── */
+.proposal-surface .proposal-range {
+  accent-color: var(--color-primary-600);
+  height: 20px;
+  cursor: pointer;
+}
+@media print {
+  .proposal-surface .proposal-range { display: none; }
+}

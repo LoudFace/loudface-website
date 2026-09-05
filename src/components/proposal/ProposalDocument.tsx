@@ -4,6 +4,7 @@ import type { Proposal, ProposalSection } from '@/sanity/lib/proposalsClient';
 import { ProofRail, ProofSection, isProofSection } from './ProposalSocialProof';
 import { ProposalCaseProof } from './ProposalCaseProof';
 import { EngagementLoopPlate, PlateDefs, WorkingWeek } from './ProposalFigures';
+import { AskAiBlock, ForecastBlock, GateBlock, MonthsBlock, StandingBlock, TracksBlock } from './ProposalBlocks';
 
 /**
  * The readable proposal. Server component, zero client JS — the only script on
@@ -110,6 +111,9 @@ function PricingBlock({
 }) {
   return (
     <>
+      {section.anchor && (
+        <p className="mt-3 max-w-[64ch] text-[15.5px] leading-relaxed text-surface-700">{section.anchor}</p>
+      )}
       <div className="mt-5 grid gap-3 sm:grid-cols-3">
         {section.tiers?.map((tier) => (
           <div
@@ -184,8 +188,9 @@ function EngagementLoopBlock({
 }) {
   return (
     <>
+      {section.intro && <p className="mt-3 max-w-[64ch] text-[15.5px] leading-relaxed text-surface-700">{section.intro}</p>}
       <div className="mt-6">
-        <EngagementLoopPlate clientName={clientName} />
+        <EngagementLoopPlate clientName={clientName} gateLabel={section.gateLabel} />
       </div>
     </>
   );
@@ -251,6 +256,18 @@ function SectionBody({ section, clientName }: { section: ProposalSection; client
       return section.variant === 'workingTogether'
         ? <WorkingTogetherBlock section={section} />
         : <BulletBlock section={section} />;
+    case 'askAiSection':
+      return <AskAiBlock section={section} clientName={clientName} />;
+    case 'standingSection':
+      return <StandingBlock section={section} />;
+    case 'forecastSection':
+      return <ForecastBlock section={section} />;
+    case 'tracksSection':
+      return <TracksBlock section={section} />;
+    case 'gateSection':
+      return <GateBlock section={section} />;
+    case 'monthsSection':
+      return <MonthsBlock section={section} />;
     default:
       return null;
   }
@@ -350,6 +367,13 @@ export function ProposalDocument({ proposal, clipsVariant = 'strip' }: { proposa
             <div className="proposal-lede mt-5 max-w-[62ch] text-[16.5px] leading-relaxed text-white/75 [&_a]:text-white [&_p+p]:mt-2.5 [&_strong]:font-semibold [&_strong]:text-white">
               <PortableText value={proposal.heroSummary} />
             </div>
+          )}
+
+          {proposal.heroQuote && (
+            <figure className="mt-7 max-w-[60ch] border-l-2 border-white/40 pl-4">
+              <blockquote className="text-[16px] leading-relaxed text-white/85">&ldquo;{proposal.heroQuote}&rdquo;</blockquote>
+              {proposal.heroQuoteBy && <figcaption className="mt-2 text-[12.5px] text-white/55">{proposal.heroQuoteBy}</figcaption>}
+            </figure>
           )}
 
           <dl className="mt-8 flex flex-wrap gap-x-9 gap-y-3 border-t border-white/15 pt-6 text-[13px] text-white/55">

@@ -76,8 +76,9 @@ function MiniChart({ x, y, lit = false }: { x: number; y: number; lit?: boolean 
  * braiding through the execution box (that is the "in parallel"), and the
  * return path arcing back over the top: results set the next priority.
  */
-export function EngagementLoopPlate({ clientName }: { clientName: string }) {
+export function EngagementLoopPlate({ clientName, gateLabel }: { clientName: string; gateLabel?: string }) {
   const client = clientName.toUpperCase();
+  const gate = (gateLabel || 'REVIEW GATE').toUpperCase();
   return (
     <Plate id="FIG.001" meta="THE LOOP" viewBox="0 0 1150 236" title={`How the engagement moves: LoudFace reads the data, sets the priority, executes content, design and development in parallel, and the results set the next priority. ${clientName} reviews the calibration articles in the first two weeks; reviews after that are optional.`}>
       {/* return path — results feed the next cycle */}
@@ -117,7 +118,7 @@ export function EngagementLoopPlate({ clientName }: { clientName: string }) {
 
       {/* the client's review gate — a branch into execution, not a station on the line */}
       <rect x="570" y="58" width="160" height="30" rx="1" className="fw s1" strokeDasharray="4 3" />
-      <text x="650" y="77" textAnchor="middle" className="t9 tk">{client} · REVIEW GATE</text>
+      <text x="650" y="77" textAnchor="middle" className="t9 tk">{client} · {gate}</text>
       <path d="M650 88V98" className="s1" strokeDasharray="2 2" markerEnd="url(#fx-arr)" />
       <text x="560" y="70" textAnchor="end" className="t9">CALIBRATION ARTICLES · WEEKS 1–2</text>
       <text x="560" y="82" textAnchor="end" className="t9">OPTIONAL AFTER THAT</text>

@@ -135,6 +135,28 @@ export interface ProposalReview {
   date?: string;
 }
 
+export interface ProposalSlider {
+  min: number;
+  max: number;
+  step?: number;
+  value: number;
+  note?: string;
+}
+
+export interface ProposalForecastAssumptions {
+  aiQuestionsPerMonth: number;
+  aiClickRate: number;
+  googleCtr: number;
+  ramp?: number[];
+}
+
+export interface ProposalRailMetric {
+  _key: string;
+  value: string;
+  label: string;
+  source?: string;
+}
+
 export type ProposalSection =
   | { _key: string; _type: 'richTextSection'; heading?: string; body: PortableTextBlock[] }
   | {
@@ -150,6 +172,7 @@ export type ProposalSection =
       _type: 'pricingTiersSection';
       heading?: string;
       tiers: ProposalTier[];
+      anchor?: string;
       note?: string;
     }
   | {
@@ -158,6 +181,7 @@ export type ProposalSection =
       heading?: string;
       intro?: string;
       variant?: 'engagementLoop';
+      gateLabel?: string;
       illustrativeExample?: ProposalEngagementExample;
       items: ProposalTimelineItem[];
     }
@@ -185,8 +209,62 @@ export type ProposalSection =
       intro?: string;
       metrics: ProposalMetric[];
     }
-
-;
+  | {
+      _key: string;
+      _type: 'askAiSection';
+      heading?: string;
+      intro?: string;
+      questions: Array<{ _key: string; question: string; vendors: Array<{ _key: string; name: string; share: number }> }>;
+      source?: string;
+    }
+  | {
+      _key: string;
+      _type: 'standingSection';
+      heading?: string;
+      stats?: Array<{ _key: string; value: string; label: string; lead?: boolean }>;
+      gapHeading?: string;
+      gap?: Array<{ _key: string; pageType: string; citations: number; coverage?: string; tone?: 'gap' | 'asset' }>;
+      closing?: string;
+      source?: string;
+    }
+  | {
+      _key: string;
+      _type: 'forecastSection';
+      heading?: string;
+      intro?: string;
+      shareOfVoice: ProposalSlider;
+      impressions: ProposalSlider;
+      conversion: ProposalSlider;
+      assumptions: ProposalForecastAssumptions;
+      todayLine?: string;
+      note?: string;
+    }
+  | {
+      _key: string;
+      _type: 'tracksSection';
+      heading?: string;
+      intro?: string;
+      tracks?: Array<{ _key: string; label: string; items?: Array<{ _key: string; count?: string; text: string }> }>;
+      targetsLabel?: string;
+      targets?: string[];
+    }
+  | {
+      _key: string;
+      _type: 'gateSection';
+      heading?: string;
+      body: string;
+      items?: string[];
+    }
+  | {
+      _key: string;
+      _type: 'monthsSection';
+      heading?: string;
+      intro?: string;
+      months?: Array<{ _key: string; label: string; title: string; items?: string[]; proves?: string }>;
+      measuresLabel?: string;
+      measures?: Array<{ _key: string; label: string; note?: string }>;
+      note?: string;
+    };
 
 export interface ProposalRailClip {
   _key: string;
@@ -214,6 +292,7 @@ export interface ProposalClipStrip {
 export interface ProposalProofRail {
   heading?: string;
   platforms?: ProposalReviewPlatform[];
+  metrics?: ProposalRailMetric[];
   quotesHeading?: string;
   quotes?: ProposalRailQuote[];
 }
@@ -226,6 +305,8 @@ export interface Proposal {
   validUntil: string;
   status: ProposalStatus;
   heroSummary?: PortableTextBlock[];
+  heroQuote?: string;
+  heroQuoteBy?: string;
   priceLine?: string;
   clipStrip?: ProposalClipStrip;
   proofRail?: ProposalProofRail;
@@ -247,11 +328,12 @@ const GATE_QUERY = `*[_type == "proposal" && token == $token][0]{
 /** Runs only after the cookie has been verified. */
 const CONTENT_QUERY = `*[_type == "proposal" && token == $token][0]{
   title, clientName, preparedFor, token, validUntil, status,
-  heroSummary, priceLine, contactEmail,
+  heroSummary, heroQuote, heroQuoteBy, priceLine, contactEmail,
   clipStrip{ heading, clips[]{ _key, videoUrl, posterUrl, label, orientation, name, duration } },
   proofRail{
     heading, quotesHeading,
     platforms[]{ _key, platform, rating, reviewCount, note, url },
+    metrics[]{ _key, value, label, source },
     quotes[]{ _key, text, author, company, platform }
   },
   sections[]{
@@ -264,7 +346,15 @@ const CONTENT_QUERY = `*[_type == "proposal" && token == $token][0]{
       workstreams[]{ _key, label, body }
     },
     metrics[]{ _key, value, label, source },
-    slugs
+    slugs,
+    questions[]{ _key, question, vendors[]{ _key, name, share } },
+    stats[]{ _key, value, label, lead },
+    gap[]{ _key, pageType, citations, coverage, tone },
+    shareOfVoice, impressions, conversion, assumptions,
+    tracks[]{ _key, label, items[]{ _key, count, text } },
+    targets,
+    months[]{ _key, label, title, items, proves },
+    measures[]{ _key, label, note }
   }
 }`;
 

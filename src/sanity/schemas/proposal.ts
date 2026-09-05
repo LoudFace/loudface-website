@@ -579,6 +579,24 @@ const proofRail = defineType({
       validation: (rule) => rule.max(3),
     }),
     defineField({
+      name: 'metrics',
+      title: 'Numbers',
+      type: 'array',
+      description: 'Our proof numbers, e.g. "288%" / "conversion lift, Dimer Health". They sit under the ratings.',
+      of: [
+        defineArrayMember({
+          type: 'object',
+          name: 'railMetric',
+          fields: [
+            defineField({ name: 'value', title: 'Number', type: 'string', validation: (rule) => rule.required() }),
+            defineField({ name: 'label', title: 'One line', type: 'string', validation: (rule) => rule.required() }),
+            defineField({ name: 'source', title: 'Source', type: 'string' }),
+          ],
+          preview: { select: { title: 'value', subtitle: 'label' } },
+        }),
+      ],
+    }),
+    defineField({
       name: 'quotesHeading',
       title: 'Reviews label',
       type: 'string',
@@ -636,6 +654,281 @@ const caseProofSection = defineType({
       subtitle: Array.isArray(slugs) ? slugs.join(', ') : undefined,
     }),
   },
+});
+
+
+/* ── Client-first blocks (2026-09-05) ──────────────────────────────────── */
+
+const sourceLine = defineField({
+  name: 'source',
+  title: 'Source line',
+  type: 'string',
+  description: 'Where the numbers come from, e.g. "Peec AI, 2,250 answers, 26 Aug to 2 Sep 2026".',
+});
+
+/** Block 2 — the reader picks a buyer question and sees who the assistants name. */
+const askAiSection = defineType({
+  name: 'askAiSection',
+  title: 'Ask the AI',
+  type: 'object',
+  fields: [
+    sectionHeading,
+    defineField({ name: 'intro', title: 'Intro line', type: 'text', rows: 2 }),
+    defineField({
+      name: 'questions',
+      title: 'Buyer questions',
+      type: 'array',
+      of: [
+        defineArrayMember({
+          type: 'object',
+          name: 'askAiQuestion',
+          fields: [
+            defineField({ name: 'question', title: 'Question', type: 'string', validation: (rule) => rule.required() }),
+            defineField({
+              name: 'vendors',
+              title: 'Who the AI names',
+              type: 'array',
+              of: [
+                defineArrayMember({
+                  type: 'object',
+                  name: 'askAiVendor',
+                  fields: [
+                    defineField({ name: 'name', title: 'Vendor', type: 'string', validation: (rule) => rule.required() }),
+                    defineField({ name: 'share', title: 'Share of answers (%)', type: 'number', validation: (rule) => rule.required().min(0).max(100) }),
+                  ],
+                  preview: { select: { title: 'name', subtitle: 'share' } },
+                }),
+              ],
+            }),
+          ],
+          preview: { select: { title: 'question' } },
+        }),
+      ],
+      validation: (rule) => rule.required().min(1),
+    }),
+    sourceLine,
+  ],
+  preview: { select: { title: 'heading' }, prepare: ({ title }) => ({ title: title || 'Ask the AI' }) },
+});
+
+/** Block 3 — where the client stands, and why: four numbers and the page-type gap. */
+const standingSection = defineType({
+  name: 'standingSection',
+  title: 'Where you stand',
+  type: 'object',
+  fields: [
+    sectionHeading,
+    defineField({
+      name: 'stats',
+      title: 'Numbers',
+      type: 'array',
+      of: [
+        defineArrayMember({
+          type: 'object',
+          name: 'standingStat',
+          fields: [
+            defineField({ name: 'value', title: 'Number', type: 'string', validation: (rule) => rule.required() }),
+            defineField({ name: 'label', title: 'One line', type: 'string', validation: (rule) => rule.required() }),
+            defineField({ name: 'lead', title: 'Lead (indigo)', type: 'boolean', initialValue: false }),
+          ],
+          preview: { select: { title: 'value', subtitle: 'label' } },
+        }),
+      ],
+    }),
+    defineField({ name: 'gapHeading', title: 'Gap chart label', type: 'string', initialValue: 'What the AI cites, and what you have' }),
+    defineField({
+      name: 'gap',
+      title: 'Citations by page type',
+      type: 'array',
+      of: [
+        defineArrayMember({
+          type: 'object',
+          name: 'standingGapRow',
+          fields: [
+            defineField({ name: 'pageType', title: 'Page type', type: 'string', validation: (rule) => rule.required() }),
+            defineField({ name: 'citations', title: 'Citations', type: 'number', validation: (rule) => rule.required().min(0) }),
+            defineField({ name: 'coverage', title: 'Client coverage', type: 'string', description: 'e.g. "None", "News only", "Strongest asset".' }),
+            defineField({
+              name: 'tone',
+              title: 'Tone',
+              type: 'string',
+              options: { list: [{ title: 'Gap', value: 'gap' }, { title: 'Asset', value: 'asset' }], layout: 'radio' },
+              initialValue: 'gap',
+            }),
+          ],
+          preview: { select: { title: 'pageType', subtitle: 'coverage' } },
+        }),
+      ],
+    }),
+    defineField({ name: 'closing', title: 'Closing line', type: 'text', rows: 2 }),
+    sourceLine,
+  ],
+  preview: { select: { title: 'heading' }, prepare: ({ title }) => ({ title: title || 'Where you stand' }) },
+});
+
+const sliderField = (name: string, title: string) =>
+  defineField({
+    name,
+    title,
+    type: 'object',
+    fields: [
+      defineField({ name: 'min', title: 'Min', type: 'number', validation: (rule) => rule.required() }),
+      defineField({ name: 'max', title: 'Max', type: 'number', validation: (rule) => rule.required() }),
+      defineField({ name: 'step', title: 'Step', type: 'number' }),
+      defineField({ name: 'value', title: 'Default', type: 'number', validation: (rule) => rule.required() }),
+      defineField({ name: 'note', title: 'Note under the slider', type: 'string', description: 'e.g. "today 2.5% · Parafin 34%".' }),
+    ],
+  });
+
+/** Block 4 — leads per month from three sliders. A model, never a promise. */
+const forecastSection = defineType({
+  name: 'forecastSection',
+  title: 'Pipeline forecast',
+  type: 'object',
+  fields: [
+    sectionHeading,
+    defineField({ name: 'intro', title: 'Intro line', type: 'text', rows: 2 }),
+    sliderField('shareOfVoice', 'AI share of voice (%)'),
+    sliderField('impressions', 'Google impressions a month'),
+    sliderField('conversion', 'Visitor to lead (%)'),
+    defineField({
+      name: 'assumptions',
+      title: 'Fixed assumptions',
+      type: 'object',
+      fields: [
+        defineField({ name: 'aiQuestionsPerMonth', title: 'Buyer questions asked to AI per month', type: 'number', validation: (rule) => rule.required() }),
+        defineField({ name: 'aiClickRate', title: 'Click-through when named (%)', type: 'number', validation: (rule) => rule.required() }),
+        defineField({ name: 'googleCtr', title: 'Google click-through (%)', type: 'number', validation: (rule) => rule.required() }),
+        defineField({
+          name: 'ramp',
+          title: 'Ramp per month (share of steady state)',
+          type: 'array',
+          of: [defineArrayMember({ type: 'number' })],
+          description: 'e.g. 0.1, 0.35, 0.7, 1, 1, 1. One entry per month shown.',
+        }),
+      ],
+    }),
+    defineField({ name: 'todayLine', title: 'Today line', type: 'string', initialValue: '0 leads a month from search or AI today.' }),
+    defineField({ name: 'note', title: 'Note under the block', type: 'text', rows: 3 }),
+  ],
+  preview: { select: { title: 'heading' }, prepare: ({ title }) => ({ title: title || 'Pipeline forecast' }) },
+});
+
+/** Block 5 — what you get: three tracks, counts in boxes. */
+const tracksSection = defineType({
+  name: 'tracksSection',
+  title: 'What you get',
+  type: 'object',
+  fields: [
+    sectionHeading,
+    defineField({ name: 'intro', title: 'Intro line', type: 'text', rows: 2 }),
+    defineField({
+      name: 'tracks',
+      title: 'Tracks',
+      type: 'array',
+      of: [
+        defineArrayMember({
+          type: 'object',
+          name: 'track',
+          fields: [
+            defineField({ name: 'label', title: 'Track', type: 'string', validation: (rule) => rule.required() }),
+            defineField({
+              name: 'items',
+              title: 'Items',
+              type: 'array',
+              of: [
+                defineArrayMember({
+                  type: 'object',
+                  name: 'trackItem',
+                  fields: [
+                    defineField({ name: 'count', title: 'Count', type: 'string', description: 'e.g. "5", "2–3 / week". Leave empty for no box.' }),
+                    defineField({ name: 'text', title: 'Text', type: 'string', validation: (rule) => rule.required() }),
+                  ],
+                  preview: { select: { title: 'text', subtitle: 'count' } },
+                }),
+              ],
+            }),
+          ],
+          preview: { select: { title: 'label' } },
+        }),
+      ],
+    }),
+    defineField({
+      name: 'targets',
+      title: 'Named targets',
+      type: 'array',
+      of: [defineArrayMember({ type: 'string' })],
+      description: 'The pages or lists we go after first, e.g. "lendflow.com roundup · 425 citations".',
+    }),
+    defineField({ name: 'targetsLabel', title: 'Targets label', type: 'string', initialValue: 'The pages the answers are built from' }),
+  ],
+  preview: { select: { title: 'heading' }, prepare: ({ title }) => ({ title: title || 'What you get' }) },
+});
+
+/** Block 6 — the compliance gate, boxed, before the loop. */
+const gateSection = defineType({
+  name: 'gateSection',
+  title: 'Review gate',
+  type: 'object',
+  fields: [
+    sectionHeading,
+    defineField({ name: 'body', title: 'The rule', type: 'text', rows: 3, validation: (rule) => rule.required() }),
+    defineField({
+      name: 'items',
+      title: 'Lines',
+      type: 'array',
+      of: [defineArrayMember({ type: 'string' })],
+    }),
+  ],
+  preview: { select: { title: 'heading' }, prepare: ({ title }) => ({ title: title || 'Review gate' }) },
+});
+
+/** Block 7 — the first months as a strip, each with the number it proves. */
+const monthsSection = defineType({
+  name: 'monthsSection',
+  title: 'The first months',
+  type: 'object',
+  fields: [
+    sectionHeading,
+    defineField({ name: 'intro', title: 'Intro line', type: 'text', rows: 2 }),
+    defineField({
+      name: 'months',
+      title: 'Months',
+      type: 'array',
+      of: [
+        defineArrayMember({
+          type: 'object',
+          name: 'monthPlan',
+          fields: [
+            defineField({ name: 'label', title: 'Label', type: 'string', description: 'e.g. "Month 1".', validation: (rule) => rule.required() }),
+            defineField({ name: 'title', title: 'Title', type: 'string', validation: (rule) => rule.required() }),
+            defineField({ name: 'items', title: 'Minimums', type: 'array', of: [defineArrayMember({ type: 'string' })] }),
+            defineField({ name: 'proves', title: 'Proves', type: 'string', description: 'The number that shows the month moved.' }),
+          ],
+          preview: { select: { title: 'label', subtitle: 'title' } },
+        }),
+      ],
+    }),
+    defineField({ name: 'measuresLabel', title: 'Measures label', type: 'string', initialValue: 'Your dashboard, refreshed every morning' }),
+    defineField({
+      name: 'measures',
+      title: 'What we measure',
+      type: 'array',
+      of: [
+        defineArrayMember({
+          type: 'object',
+          name: 'measure',
+          fields: [
+            defineField({ name: 'label', title: 'Metric', type: 'string', validation: (rule) => rule.required() }),
+            defineField({ name: 'note', title: 'Note', type: 'string' }),
+          ],
+          preview: { select: { title: 'label', subtitle: 'note' } },
+        }),
+      ],
+    }),
+    defineField({ name: 'note', title: 'Note under the block', type: 'string' }),
+  ],
+  preview: { select: { title: 'heading' }, prepare: ({ title }) => ({ title: title || 'The first months' }) },
 });
 
 /* ── The document ─────────────────────────────────────────────────────── */
@@ -749,6 +1042,21 @@ const proposal = defineType({
       description: 'The short callout at the top. Two or three sentences.',
     }),
     defineField({
+      name: 'heroQuote',
+      title: 'Hero quote',
+      type: 'text',
+      rows: 3,
+      group: 'content',
+      description: 'The client\'s own words, from the call. Rendered under the title.',
+    }),
+    defineField({
+      name: 'heroQuoteBy',
+      title: 'Hero quote attribution',
+      type: 'string',
+      group: 'content',
+      description: 'e.g. "Matt Thomas, 2 September call".',
+    }),
+    defineField({
       name: 'priceLine',
       title: 'Price line',
       type: 'string',
@@ -798,6 +1106,12 @@ const proposal = defineType({
         defineArrayMember({ type: 'bulletListSection' }),
         defineArrayMember({ type: 'metricsSection' }),
         defineArrayMember({ type: 'caseProofSection' }),
+        defineArrayMember({ type: 'askAiSection' }),
+        defineArrayMember({ type: 'standingSection' }),
+        defineArrayMember({ type: 'forecastSection' }),
+        defineArrayMember({ type: 'tracksSection' }),
+        defineArrayMember({ type: 'gateSection' }),
+        defineArrayMember({ type: 'monthsSection' }),
       ],
     }),
   ],
@@ -823,5 +1137,11 @@ export const proposalSchemaTypes = [
   proofRail,
   metricsSection,
   caseProofSection,
+  askAiSection,
+  standingSection,
+  forecastSection,
+  tracksSection,
+  gateSection,
+  monthsSection,
   proposal,
 ];

@@ -247,3 +247,15 @@ These defaults are optimized for AI coding agents (and humans) working on apps t
   needed. Always curl https://ai-gateway.vercel.sh/v1/models first; never trust model IDs from memory
 - For durable agent loops or untrusted code: use Workflow (pause/resume/state) + Sandbox; use Vercel MCP for secure infra access
 <!-- VERCEL BEST PRACTICES END -->
+
+## Proposals (`/p/<token>`) — the body is about the client, not about us
+
+A proposal body opens with the client's own data and closes with the price. Every section starts from their situation (the standing report, the call notes) and then says what we do about it. Our process, our week, our proof are supporting material: proof lives in the sticky rail, process gets one plate. Price tiers run high to low, the recommended tier last; never discount unprompted.
+
+**Forecast blocks show quantity per paid month.** Leads per month, month by month. Never totals over a term, never cost per lead, unless Arnel asks. Every ramp and rate assumption prints on the page.
+
+**Check before shipping a proposal body:** count the sections. If more than one third are about LoudFace (how we work, what we produced elsewhere), the body fails. Each remaining section must name a number from the client's report.
+
+**Ledger of misses**
+- 2026-09-05 · Forecast tile changed twice (12-month total, then cost per lead) before landing on leads per month. Root cause: I substituted my own summary metric instead of the quantity Arnel named.
+- 2026-09-05 · Jaris body shipped with 4 of 7 sections about LoudFace and a two-paragraph diagnosis. Root cause: I designed the proof and process blocks first and never re-read the body from the client's seat.

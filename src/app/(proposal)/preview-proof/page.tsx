@@ -24,7 +24,7 @@ function block(text: string, key: string): PortableTextBlock {
   } as unknown as PortableTextBlock;
 }
 
-function fixture(tone: 'light' | 'dark', withRail: boolean): Proposal {
+function fixture(_tone: 'light' | 'dark', withRail: boolean): Proposal {
   return {
     title: 'Getting Jaris named when buyers ask AI',
     clientName: 'Jaris',
@@ -33,7 +33,7 @@ function fixture(tone: 'light' | 'dark', withRail: boolean): Proposal {
     validUntil: '2026-10-04',
     status: 'sent',
     contactEmail: 'arnel@loudface.co',
-    priceLine: '$10,000/mo. 3-month minimum, then month to month.',
+    priceLine: '$5,000/mo flat. 3-month minimum, then month to month.',
     clipStrip: {
       heading: 'In their own words',
       clips: [
@@ -52,6 +52,11 @@ function fixture(tone: 'light' | 'dark', withRail: boolean): Proposal {
             { _key: 'rp2', platform: 'google', rating: 5, reviewCount: 4, url: 'https://share.google/YNQOFTomnSaSIlSgb' },
             { _key: 'rp3', platform: 'trustpilot', rating: 4.3, reviewCount: 9, note: 'every one 5 stars', url: 'https://www.trustpilot.com/review/loudface.co' },
           ],
+          metrics: [
+            { _key: 'rm1', value: '288%', label: 'conversion lift after we rebuilt the booking flow', source: 'Dimer Health, on camera' },
+            { _key: 'rm2', value: '$1M+', label: 'in sales from one landing page we designed', source: 'Trustpilot, Maksim Polupanov' },
+            { _key: 'rm3', value: '3.2x', label: 'organic clicks in three months on a new site', source: 'Search Console, 29 Aug 2026' },
+          ],
           quotesHeading: 'What they said',
           quotes: [
             { _key: 'q1', text: 'One of the landing pages they designed has generated over $1M in sales so far.', author: 'Maksim Polupanov', platform: 'trustpilot' },
@@ -67,24 +72,95 @@ function fixture(tone: 'light' | 'dark', withRail: boolean): Proposal {
       : undefined,
     heroSummary: [
       block(
-        'Your buyers ask ChatGPT which embedded lending platform to use, and Jaris is not in the answer. This is what we would do about it, what it costs, and what you get in the first 90 days.',
+        'Your buyers ask ChatGPT which embedded lending platform to use, and Jaris is not in the answer. This is what we would do about it, what it costs, and what you get every month.',
         'hero'
       ),
     ],
+    heroQuote:
+      'If they are looking for embedded finance themselves, they are gonna start doing that research. And if we are not even popping up as an option, then obviously we are missing opportunities there.',
+    heroQuoteBy: 'Matt Thomas, on our call, 2 September 2026',
     sections: [
       {
-        _key: 'where',
-        _type: 'richTextSection',
-        heading: 'Where you are',
-        body: [
-          block(
-            'Across 75 buying questions your competitors get named in, Jaris appears in almost none. Parafin and Kanmon are answering the questions your customers are actually asking.',
-            'w1'
-          ),
-          block(
-            'The pages exist. They are not written in a way an answer engine can quote, and nothing links them together.',
-            'w2'
-          ),
+        _key: 'ask',
+        _type: 'askAiSection',
+        heading: 'Ask the AI what your buyers ask',
+        intro: 'Each question, asked 30 times across ChatGPT, Google AI Overview and Gemini.',
+        questions: [
+          { _key: 'aq1', question: 'Best embedded lending platforms for payment processors', vendors: [
+            { _key: 'v1', name: 'Parafin', share: 90 }, { _key: 'v2', name: 'Kanmon', share: 67 }, { _key: 'v3', name: 'YouLend', share: 43 }, { _key: 'v4', name: 'Liberis', share: 37 }, { _key: 'v5', name: 'Lendflow', share: 23 }, { _key: 'v6', name: 'Jaris', share: 0 } ] },
+          { _key: 'aq2', question: 'Top embedded working capital providers for US payment facilitators', vendors: [
+            { _key: 'v1', name: 'Parafin', share: 100 }, { _key: 'v2', name: 'Kanmon', share: 73 }, { _key: 'v3', name: 'Liberis', share: 70 }, { _key: 'v4', name: 'YouLend', share: 60 }, { _key: 'v5', name: 'Jaris', share: 0 } ] },
+          { _key: 'aq3', question: 'Best embedded capital providers for vertical SaaS platforms', vendors: [
+            { _key: 'v1', name: 'Parafin', share: 100 }, { _key: 'v2', name: 'Kanmon', share: 77 }, { _key: 'v3', name: 'Liberis', share: 57 }, { _key: 'v4', name: 'YouLend', share: 57 }, { _key: 'v5', name: 'Jaris', share: 0 } ] },
+          { _key: 'aq4', question: 'Leading embedded finance companies for small business platforms', vendors: [
+            { _key: 'v1', name: 'Parafin', share: 62 }, { _key: 'v2', name: 'Kanmon', share: 38 }, { _key: 'v3', name: 'Liberis', share: 21 }, { _key: 'v4', name: 'YouLend', share: 14 }, { _key: 'v5', name: 'Jaris', share: 0 } ] },
+          { _key: 'aq5', question: 'Which companies help ISOs offer working capital to merchants?', vendors: [
+            { _key: 'v1', name: 'Liberis', share: 17 }, { _key: 'v2', name: 'Fundbox', share: 7 }, { _key: 'v3', name: 'Lendio', share: 7 }, { _key: 'v4', name: 'YouLend', share: 7 }, { _key: 'v5', name: 'Parafin', share: 3 }, { _key: 'v6', name: 'Jaris', share: 0 } ] },
+          { _key: 'aq6', question: 'What are managed settlements and who provides them?', vendors: [
+            { _key: 'v1', name: 'Jaris', share: 60 }, { _key: 'v2', name: 'Others', share: 40 } ] },
+        ],
+        source: 'Peec AI · 2,250 answers · 26 Aug to 2 Sep 2026 · US.',
+      },
+      {
+        _key: 'standing',
+        _type: 'standingSection',
+        heading: 'Where Jaris stands, and why',
+        stats: [
+          { _key: 's1', value: '2.0%', label: 'of AI answers name Jaris. Parafin: 26.7%', lead: true },
+          { _key: 's2', value: '64 / 75', label: 'buyer questions with no Jaris' },
+          { _key: 's3', value: '2.9', label: 'average position when Jaris is named', lead: true },
+          { _key: 's4', value: '0', label: 'product pages on jaris.io' },
+        ],
+        gapHeading: 'What the AI cites, and what Jaris has',
+        gap: [
+          { _key: 'g1', pageType: 'Product pages', citations: 1060, coverage: 'None', tone: 'gap' },
+          { _key: 'g2', pageType: 'Articles', citations: 662, coverage: 'News only', tone: 'gap' },
+          { _key: 'g3', pageType: 'Listicles', citations: 370, coverage: 'Not listed', tone: 'gap' },
+          { _key: 'g4', pageType: 'Home page', citations: 363, coverage: 'Strongest asset', tone: 'asset' },
+          { _key: 'g5', pageType: 'How-to', citations: 157, coverage: 'None', tone: 'gap' },
+          { _key: 'g6', pageType: 'Comparison', citations: 25, coverage: 'None', tone: 'gap' },
+        ],
+        closing: 'The product is fine: when an assistant names Jaris it names it before Kanmon, Liberis and YouLend. Product pages are cited 1,060 times in this category and Jaris has one overview page for five products.',
+        source: 'Peec AI citation counts · 2 Sep 2026.',
+      },
+      {
+        _key: 'forecast',
+        _type: 'forecastSection',
+        heading: 'What each month returns',
+        todayLine: 'Today it is zero.',
+        shareOfVoice: { min: 2, max: 30, value: 12, note: 'now 2.5%' },
+        impressions: { min: 0, max: 60000, step: 1000, value: 15000, note: 'now ~500' },
+        conversion: { min: 0.5, max: 5, step: 0.1, value: 2 },
+        assumptions: { aiQuestionsPerMonth: 2000, aiClickRate: 10, googleCtr: 2.5, ramp: [0.1, 0.35, 0.7, 1, 1, 1] },
+      },
+      {
+        _key: 'tracks',
+        _type: 'tracksSection',
+        heading: 'What you get',
+        intro: 'Three tracks in parallel from week one. Content, design, development and reporting included.',
+        tracks: [
+          { _key: 't1', label: 'On your site', items: [
+            { _key: 'i1', count: '5', text: 'product pages, one per product' },
+            { _key: 'i2', count: '3', text: 'solution pages: ISOs, payment service providers, vertical SaaS' },
+            { _key: 'i3', count: '1–2 / day', text: 'articles from your own material: underwriting, settlement mechanics, the bank programme' } ] },
+          { _key: 't2', label: 'Off your site', items: [
+            { _key: 'i1', count: '2–3 / week', text: 'placements on the pages the answers are built from' },
+            { _key: 'i2', text: 'category listicles first, then directories and comparison pages' } ] },
+          { _key: 't3', label: 'Your website', items: [
+            { _key: 'i1', text: 'rebuilt on a modern stack with the pages above, keys handed to you' },
+            { _key: 'i2', count: 'Week 1', text: 'canonical tags, the duplicate domain, sitemap, H1s and schema fixed' } ] },
+        ],
+        targetsLabel: 'We start with the six pages these answers are built from',
+        targets: ['openbankingtracker', 'Lendflow', 'Built In', 'Stripe', 'fintechspecs', 'Backbase'],
+      },
+      {
+        _key: 'gate',
+        _type: 'gateSection',
+        heading: 'Nothing regulated publishes without you',
+        body: 'Anything touching rates, loan terms, the bank relationship, FDIC or NMLS language comes to Jaris before it publishes. Permanently.',
+        items: [
+          'The first five articles are written and reviewed with you, to lock voice and claims.',
+          'Everything else publishes independently, so volume does not sit on your calendar.',
         ],
       },
       {
@@ -92,72 +168,38 @@ function fixture(tone: 'light' | 'dark', withRail: boolean): Proposal {
         _type: 'timelineSection',
         variant: 'engagementLoop',
         heading: 'How the engagement moves',
-        intro: 'We read the data, set the priority and take the work through to launch. What we learn sets the next priority. Jaris reviews the calibration articles in the first two weeks; after that, reviews are optional.',
-        items: [
-          { _key: 'e1', label: 'Data reveals the opportunity', body: 'We examine buyer questions, site performance and conversion data.' },
-          { _key: 'e2', label: 'LoudFace sets the priority', body: 'We decide the next move and show the evidence behind it.' },
-          { _key: 'e3', label: 'Jaris reviews the calibration articles', body: 'A review gate in the first two weeks. Ongoing review after that only if you insist; we do not recommend it.' },
-          { _key: 'e4', label: 'LoudFace executes in parallel', body: 'Content, design and development move together around the same priority.', kind: 'execution' },
-          { _key: 'e5', label: 'Results set the next priority', body: 'We own the results, so we own the workflow that produces them.' },
+        gateLabel: 'Compliance gate',
+        items: [],
+      },
+      {
+        _key: 'months',
+        _type: 'monthsSection',
+        heading: 'The first 90 days',
+        intro: 'Contractual minimums. We ship above them.',
+        months: [
+          { _key: 'm1', label: 'Month 1', title: 'Fixes, site, foundations', items: ['Technical fixes in week one', 'New website live', '5 product pages', '5 calibration articles'], proves: 'the duplicate domain is gone' },
+          { _key: 'm2', label: 'Month 2', title: 'Volume and reach', items: ['20+ articles', '3 solution pages', '8–12 placements'], proves: 'AI share of voice moves' },
+          { _key: 'm3', label: 'Month 3', title: 'Comparison and leads', items: ['20+ articles', 'Comparison and alternatives pages', '8–12 placements'], proves: 'first leads attributed' },
         ],
-        illustrativeExample: {
-          label: 'Illustrative example',
-          goal: 'Help buyers understand the product',
-          workstreams: [
-            { _key: 'ws1', label: 'Content', body: 'Clarify the product story' },
-            { _key: 'ws2', label: 'Design', body: 'Show the product clearly' },
-            { _key: 'ws3', label: 'Development', body: 'Build the improved page' },
-          ],
-          outcome: 'Launch and measure',
-          returnLabel: 'The response informs the next priority.',
-        },
+        measuresLabel: 'On your dashboard every morning',
+        measures: [
+          { _key: 'me1', label: 'leads booked' },
+          { _key: 'me2', label: 'AI share of voice' },
+          { _key: 'me3', label: 'sentiment' },
+          { _key: 'me4', label: 'Google impressions and clicks' },
+        ],
       },
       {
         _key: 'working',
         _type: 'bulletListSection',
         variant: 'workingTogether',
-        heading: 'What working together looks like',
-        intro: 'LoudFace owns the strategy, work, measurement and updates. Jaris keeps control of major decisions and owns the output.',
-        items: [
-          { _key: 'wt1', lead: 'Calibration', text: 'We use the first articles to align on voice and claims. Fintech context, research and review guide the work.' },
-          { _key: 'wt2', lead: 'Progress', text: 'You receive short updates daily or every other day, so you always know what is moving.' },
-          { _key: 'wt3', lead: 'Friday review', text: 'We share the week’s activity and results, with the next decisions made clear.' },
-          { _key: 'wt4', lead: 'Live reporting', text: 'The dashboard refreshes each morning, so you can see the current picture without waiting for a meeting.' },
-          { _key: 'wt5', lead: 'Check-ins', text: 'We can meet weekly, every two weeks or monthly, based on what helps the work move.' },
-        ],
-      },
-      {
-        _key: 'metrics',
-        _type: 'metricsSection',
-        heading: 'What this work has produced',
-        tone,
-        intro: 'Three clients, three different problems. Every number below has a source next to it.',
-        metrics: [
-          {
-            _key: 'm1',
-            value: '288%',
-            label: 'increase in conversion after we rebuilt the booking flow',
-            source: 'Dimer Health, client-reported on camera',
-          },
-          {
-            _key: 'm2',
-            value: '$1M+',
-            label: 'in sales from a single landing page we designed',
-            source: 'Trustpilot review, Maksim Polupanov, Nov 2024',
-          },
-          {
-            _key: 'm3',
-            value: '3.2x',
-            label: 'organic clicks in the first three months on a new site',
-            source: 'Google Search Console, 29 Aug 2026',
-          },
-        ],
+        heading: 'A working week',
+        items: [],
       },
       {
         _key: 'cases',
         _type: 'caseProofSection',
         heading: 'The same work, at four other companies',
-        intro: 'Live numbers from the public case studies. Click through for the full write-up.',
         slugs: ['delshad-legal-content-engine', 'genie-teacher-organic-growth', 'toku-ai-cited-pipeline', 'trademomentum-niche-aeo-organic-growth'],
         chartsPerCase: 1,
       },
@@ -165,12 +207,24 @@ function fixture(tone: 'light' | 'dark', withRail: boolean): Proposal {
         _key: 'price',
         _type: 'pricingTiersSection',
         heading: 'Investment',
+        anchor: '\u201cEmbedded lending platform\u201d costs $56.28 a click on Google. $5,000 buys 89 clicks. The same money here buys the pages, the placements and the site.',
         tiers: [
-          { _key: 't1', name: 'Growth', price: '$5,000', cadence: 'per month', description: 'A focused pace around the highest-priority work.' },
-          { _key: 't2', name: 'Scale', price: '$10,000', cadence: 'per month', description: 'More room to move connected priorities in parallel. What we recommend for Jaris.', recommended: true },
-          { _key: 't3', name: 'Accelerate', price: '$15,000', cadence: 'per month', description: 'For a wider range of work at a faster pace.' },
+          { _key: 't1', name: 'Accelerate', price: '$15,000', cadence: 'per month', description: 'Triple velocity and dedicated outreach.' },
+          { _key: 't2', name: 'Scale', price: '$10,000', cadence: 'per month', description: 'Double the content and outreach velocity.' },
+          { _key: 't3', name: 'Growth', price: '$5,000', cadence: 'per month', description: '1–2 articles a day, 2–3 placements a week, website build included, full reporting.', recommended: true },
         ],
-        note: '3-month minimum, then month to month.',
+        note: 'For $5,000 you get the whole team. Anything beyond this at your stage is redundant. 3-month minimum, then month to month. No setup fee.',
+      },
+      {
+        _key: 'terms',
+        _type: 'bulletListSection',
+        heading: 'Terms and next step',
+        items: [
+          { _key: 'tm1', lead: 'You own everything.', text: 'Website, content, CMS, tracking. If we stop after three months you keep all of it and we train your team on it.' },
+          { _key: 'tm2', lead: 'MSA plus a short order form', text: 'covering scope and the agreed monthly lead target.' },
+          { _key: 'tm3', lead: 'Kickoff within 48 hours', text: 'of signature. Technical fixes and the first content start in week one.' },
+          { _key: 'tm4', lead: 'Next step:', text: 'agree the lead target, sign, and we start that week.' },
+        ],
       },
     ],
   };
