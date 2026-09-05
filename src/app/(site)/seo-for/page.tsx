@@ -22,6 +22,7 @@ import {
   SectionHeader,
 } from '@/components/ui';
 import { FAQ, CTA } from '@/components/sections';
+import type { SeoPage } from '@/lib/types';
 
 
 export const metadata: Metadata = {
@@ -118,12 +119,25 @@ function getIndustryIcon(slug: string) {
   return INDUSTRY_ICONS[slug] || null;
 }
 
+const CODE_OWNED_HR_TECH_PAGE: SeoPage = {
+  id: 'code-hr-tech',
+  name: 'HR Tech SaaS',
+  slug: 'hr-tech',
+  'meta-description':
+    'SEO, AEO and GEO for HR tech SaaS. Build a buyer-led discovery system for HRIS, ATS and payroll categories.',
+  'hero-headline': 'SEO, AEO and GEO for HR Tech SaaS',
+};
+
 export default async function SeoForHubPage() {
   const content = getSeoForHubContent();
-  const [seoPages, cmsData] = await Promise.all([
+  const [cmsSeoPages, cmsData] = await Promise.all([
     fetchSeoPages(),
     fetchHomepageData(),
   ]);
+  const seoPages = [
+    ...cmsSeoPages.filter((page) => page.slug !== CODE_OWNED_HR_TECH_PAGE.slug),
+    CODE_OWNED_HR_TECH_PAGE,
+  ];
 
   const showcaseClients = cmsData.allClients.filter(
     (c) => c['showcase-logo']

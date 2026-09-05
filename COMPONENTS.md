@@ -371,6 +371,14 @@ All section components are exported from `@/components/sections` (or `@/componen
 
 ---
 
+## Route Components (`src/app/`)
+
+| Component | File | Description |
+|-----------|------|-------------|
+| `HRTechPage` | `seo-for-v3/HRTechPage.tsx` | Approved source-owned page component for `/seo-for/hr-tech`. Renders the HR tech SaaS SEO, AEO, and GEO page with its FAQ data and CEIPAL proof image. |
+
+---
+
 ## Case Study Detail Components (`src/app/case-detail-v3/`)
 
 Route-scoped components for `/case-studies/[slug]`, imported by relative path (not a barrel) from that page and from the `dev-preview/trademomentum` preview.
