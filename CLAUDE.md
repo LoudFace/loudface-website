@@ -254,8 +254,11 @@ A proposal body opens with the client's own data and closes with the price. Ever
 
 **Forecast blocks show quantity per paid month.** Leads per month, month by month. Never totals over a term, never cost per lead, unless Arnel asks. Every ramp and rate assumption prints on the page.
 
+**One idea, one control, one picture.** An interactive block gets at most two inputs and ONE chart that adapts. Anything else is a printed assumption, not a control. Supporting facts get one line, never a list of six rows or a second grid of tiles. If a block needs a paragraph to explain how to read it, the block is wrong.
+
 **Check before shipping a proposal body:** count the sections. If more than one third are about LoudFace (how we work, what we produced elsewhere), the body fails. Each remaining section must name a number from the client's report.
 
 **Ledger of misses**
+- 2026-09-05 · First forecast build shipped 3 sliders, 2 big numbers, 6 month tiles and 2 assumption paragraphs in one block. Arnel: "an absolute mess". Root cause: I added a control and a readout for every variable instead of choosing the single picture that answers the question.
 - 2026-09-05 · Forecast tile changed twice (12-month total, then cost per lead) before landing on leads per month. Root cause: I substituted my own summary metric instead of the quantity Arnel named.
 - 2026-09-05 · Jaris body shipped with 4 of 7 sections about LoudFace and a two-paragraph diagnosis. Root cause: I designed the proof and process blocks first and never re-read the body from the client's seat.
