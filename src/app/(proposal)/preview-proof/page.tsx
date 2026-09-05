@@ -156,13 +156,9 @@ function fixture(tone: 'light' | 'dark', withRail: boolean): Proposal {
       {
         _key: 'cases',
         _type: 'caseProofSection',
-        heading: 'The same work, at three other companies',
+        heading: 'The same work, at four other companies',
         intro: 'Live numbers from the public case studies. Click through for the full write-up.',
-        slugs: [
-          'toku-ai-cited-pipeline',
-          'trademomentum-niche-aeo-organic-growth',
-          'genie-teacher-organic-growth',
-        ],
+        slugs: ['delshad-legal-content-engine', 'genie-teacher-organic-growth', 'toku-ai-cited-pipeline', 'trademomentum-niche-aeo-organic-growth'],
         chartsPerCase: 1,
       },
       {
