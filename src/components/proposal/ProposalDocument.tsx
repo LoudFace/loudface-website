@@ -46,9 +46,13 @@ function Prose({ value, className = '' }: { value: PortableTextBlock[]; classNam
   );
 }
 
-function SectionHeading({ children }: { children: React.ReactNode }) {
+function SectionHeading({ children, dark = false }: { children: React.ReactNode; dark?: boolean }) {
   return (
-    <h2 className="text-[22px] sm:text-[26px] font-medium tracking-[-0.03em] leading-tight text-surface-950">
+    <h2
+      className={`text-[22px] sm:text-[26px] font-medium tracking-[-0.03em] leading-tight ${
+        dark ? 'text-white' : 'text-surface-950'
+      }`}
+    >
       {children}
     </h2>
   );
@@ -106,13 +110,17 @@ function TableBlock({ section }: { section: Extract<ProposalSection, { _type: 't
 
 function PricingBlock({
   section,
+  dark = false,
 }: {
   section: Extract<ProposalSection, { _type: 'pricingTiersSection' }>;
+  dark?: boolean;
 }) {
   return (
     <>
       {section.anchor && (
-        <p className="mt-3 max-w-[64ch] text-[15.5px] leading-relaxed text-surface-700">{section.anchor}</p>
+        <p className={`mt-3 max-w-[64ch] text-[15.5px] leading-relaxed ${dark ? 'text-white/70' : 'text-surface-700'}`}>
+          {section.anchor}
+        </p>
       )}
       <div className="mt-5 grid gap-3 sm:grid-cols-3">
         {section.tiers?.map((tier) => (
@@ -147,7 +155,9 @@ function PricingBlock({
         ))}
       </div>
       {section.note && (
-        <p className="mt-4 max-w-[68ch] text-[15px] leading-relaxed text-surface-700">{section.note}</p>
+        <p className={`mt-4 max-w-[68ch] text-[15px] leading-relaxed ${dark ? 'text-white/70' : 'text-surface-700'}`}>
+          {section.note}
+        </p>
       )}
     </>
   );
@@ -213,13 +223,15 @@ function EngagementLoopBlock({
 
 function BulletBlock({
   section,
+  dark = false,
 }: {
   section: Extract<ProposalSection, { _type: 'bulletListSection' }>;
+  dark?: boolean;
 }) {
   return (
     <>
       {section.intro && (
-        <p className="mt-3 max-w-[68ch] text-[15.5px] leading-relaxed text-surface-700">
+        <p className={`mt-3 max-w-[68ch] text-[15.5px] leading-relaxed ${dark ? 'text-white/70' : 'text-surface-700'}`}>
           {section.intro}
         </p>
       )}
@@ -228,10 +240,12 @@ function BulletBlock({
           <li key={item._key} data-print-keep className="flex gap-3">
             <span
               aria-hidden
-              className="mt-[9px] h-[5px] w-[5px] flex-none rounded-full bg-primary-600"
+              className={`mt-[9px] h-[5px] w-[5px] flex-none rounded-full ${dark ? 'bg-primary-400' : 'bg-primary-600'}`}
             />
-            <p className="max-w-[66ch] text-[15.5px] leading-relaxed text-surface-700">
-              {item.lead && <strong className="font-semibold text-surface-950">{item.lead} </strong>}
+            <p className={`max-w-[66ch] text-[15.5px] leading-relaxed ${dark ? 'text-white/70' : 'text-surface-700'}`}>
+              {item.lead && (
+                <strong className={`font-semibold ${dark ? 'text-white' : 'text-surface-950'}`}>{item.lead} </strong>
+              )}
               {item.text}
             </p>
           </li>
@@ -255,14 +269,22 @@ function WorkingTogetherBlock({
   );
 }
 
-function SectionBody({ section, clientName }: { section: ProposalSection; clientName: string }) {
+function SectionBody({
+  section,
+  clientName,
+  dark = false,
+}: {
+  section: ProposalSection;
+  clientName: string;
+  dark?: boolean;
+}) {
   switch (section._type) {
     case 'richTextSection':
       return <Prose value={section.body} className="mt-4" />;
     case 'tableSection':
       return <TableBlock section={section} />;
     case 'pricingTiersSection':
-      return <PricingBlock section={section} />;
+      return <PricingBlock section={section} dark={dark} />;
     case 'timelineSection':
       return section.variant === 'engagementLoop'
         ? <EngagementLoopBlock section={section} clientName={clientName} />
@@ -270,7 +292,7 @@ function SectionBody({ section, clientName }: { section: ProposalSection; client
     case 'bulletListSection':
       return section.variant === 'workingTogether'
         ? <WorkingTogetherBlock section={section} />
-        : <BulletBlock section={section} />;
+        : <BulletBlock section={section} dark={dark} />;
     case 'askAiSection':
       return <AskAiBlock section={section} clientName={clientName} />;
     case 'standingSection':
@@ -343,15 +365,22 @@ export function ProposalDocument({ proposal, clipsVariant = 'strip' }: { proposa
    */
   const bandOf = (section: ProposalSection): ProposalBand => {
     const band = (section as { band?: ProposalBand }).band;
-    return band === 'grey' || band === 'indigo' ? band : 'plain';
+    return band === 'white' || band === 'tint' || band === 'dark' ? band : 'plain';
   };
 
   const bandClass: Record<Exclude<ProposalBand, 'plain'>, string> = {
-    grey: 'border-y border-surface-200 bg-surface-100',
-    indigo: 'border-y border-primary-100 bg-primary-50',
+    white: 'border-y border-surface-200 bg-white',
+    tint: 'border-y border-primary-100 bg-primary-50',
+    dark: 'bg-night text-white',
   };
 
-  const renderOne = (section: ProposalSection, index: number, boxed: boolean, banded: boolean) => {
+  const renderOne = (
+    section: ProposalSection,
+    index: number,
+    boxed: boolean,
+    banded: boolean,
+    dark = false
+  ) => {
     if (section._type === 'caseProofSection') {
       return (
         <ProposalCaseProof
@@ -376,14 +405,14 @@ export function ProposalDocument({ proposal, clipsVariant = 'strip' }: { proposa
         data-proposal-pricing={section._type === 'pricingTiersSection' ? '' : undefined}
         className={
           banded
-            ? 'border-b border-surface-950/[0.07] py-9 last:border-b-0 sm:py-11'
+            ? `border-b py-9 last:border-b-0 sm:py-11 ${dark ? 'border-white/12' : 'border-surface-950/[0.07]'}`
             : boxed
               ? 'border-b border-surface-200 py-9 last:border-b-0 sm:py-11'
               : 'mx-auto max-w-4xl border-b border-surface-200 px-5 py-9 last:border-b-0 sm:px-8 sm:py-11'
         }
       >
-        {section.heading && <SectionHeading>{section.heading}</SectionHeading>}
-        <SectionBody section={section} clientName={proposal.clientName} />
+        {section.heading && <SectionHeading dark={dark}>{section.heading}</SectionHeading>}
+        <SectionBody section={section} clientName={proposal.clientName} dark={dark} />
       </section>
     );
   };
@@ -406,7 +435,8 @@ export function ProposalDocument({ proposal, clipsVariant = 'strip' }: { proposa
           </div>
         );
       }
-      const inner = group.items.map(({ section, index }) => renderOne(section, index, boxed, true));
+      const dark = group.band === 'dark';
+      const inner = group.items.map(({ section, index }) => renderOne(section, index, boxed, true, dark));
       if (boxed) {
         // Full bleed. The band is a section of the PAGE, not a card inside the
         // column, so it breaks out of the grid and runs edge to edge under the
@@ -418,7 +448,7 @@ export function ProposalDocument({ proposal, clipsVariant = 'strip' }: { proposa
             data-print-keep
             className={`proposal-bleed ${bandClass[group.band]}`}
           >
-            <div className="mx-auto max-w-[1180px] px-5 py-4 sm:px-8 lg:pr-[352px]">{inner}</div>
+            <div className="py-3">{inner}</div>
           </div>
         );
       }

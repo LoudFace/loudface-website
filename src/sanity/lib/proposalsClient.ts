@@ -157,7 +157,7 @@ export interface ProposalRailMetric {
   source?: string;
 }
 
-export type ProposalBand = 'plain' | 'grey' | 'indigo';
+export type ProposalBand = 'plain' | 'white' | 'tint' | 'dark';
 
 export type ProposalSection =
   | { _key: string; _type: 'richTextSection'; heading?: string; body: PortableTextBlock[] }
@@ -182,6 +182,7 @@ export type ProposalSection =
       _key: string;
       _type: 'timelineSection';
       heading?: string;
+      band?: ProposalBand;
       intro?: string;
       variant?: 'engagementLoop';
       gateLabel?: string;
@@ -239,6 +240,7 @@ export type ProposalSection =
       _key: string;
       _type: 'forecastSection';
       heading?: string;
+      band?: ProposalBand;
       intro?: string;
       shareOfVoice: ProposalSlider;
       impressions: ProposalSlider;

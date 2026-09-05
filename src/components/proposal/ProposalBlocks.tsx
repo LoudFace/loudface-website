@@ -81,7 +81,7 @@ export function ForecastBlock({ section }: { section: S<'forecastSection'> }) {
     <div
       data-proposal-card
       data-print-keep
-      className="mt-5 rounded-2xl border border-surface-200 bg-white px-5 py-5 shadow-[0_1px_2px_rgba(10,10,10,0.04)] sm:px-7 sm:py-6"
+      className="mt-5 rounded-2xl border border-surface-200 bg-surface-50 px-5 py-5 sm:px-7 sm:py-6"
     >
       <Intro text={section.intro} />
       <ProposalForecast

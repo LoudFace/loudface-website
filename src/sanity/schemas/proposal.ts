@@ -74,8 +74,9 @@ const sectionBand = defineField({
   options: {
     list: [
       { title: 'None — the page ground', value: 'plain' },
-      { title: 'Grey', value: 'grey' },
-      { title: 'Indigo', value: 'indigo' },
+      { title: 'White — a clean sheet', value: 'white' },
+      { title: 'Indigo tint', value: 'tint' },
+      { title: 'Dark — for the close', value: 'dark' },
     ],
     layout: 'radio',
   },
@@ -217,6 +218,7 @@ const timelineSection = defineType({
   type: 'object',
   fields: [
     sectionHeading,
+    sectionBand,
     defineField({
       name: 'variant',
       title: 'Presentation',
@@ -815,6 +817,7 @@ const forecastSection = defineType({
   type: 'object',
   fields: [
     sectionHeading,
+    sectionBand,
     defineField({ name: 'intro', title: 'Intro line', type: 'text', rows: 2 }),
     sliderField('shareOfVoice', 'AI share of voice (%)'),
     sliderField('impressions', 'Google impressions a month'),

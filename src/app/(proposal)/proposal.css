@@ -763,30 +763,46 @@
   .proposal-surface .proposal-range { display: none; }
 }
 
-/* ── Full-bleed bands ─────────────────────────────────────────────────── */
+/* ── Bands ────────────────────────────────────────────────────────────── */
 /*
  * A band is a section of the PAGE, not a card inside the document column, so
- * it has to escape a column that is neither full width nor centred (the proof
- * rail takes the right side). The usual `left:50%; margin-left:-50vw` trick
- * assumes a centred parent and lands the band off to the left here, so the
- * offset is computed from the page container instead: the outer gutter plus
- * the container's own horizontal padding.
+ * it escapes the column and runs to the left edge of the window. It stops at
+ * the column's right edge on purpose: the proof rail lives out there and has
+ * no tone of its own, so a dark band running under it would swallow its
+ * labels. The offset cannot use the usual `left:50%; margin-left:-50vw` — that
+ * assumes a centred parent, and this column sits beside the rail — so it is
+ * computed from the page container: outer gutter plus container padding.
  */
 .proposal-surface .proposal-bleed {
-  width: 100vw;
-  margin-left: calc(-1 * (max(0px, (100vw - 1180px) / 2) + 1.25rem));
+  --proposal-bleed: calc(max(0px, (100vw - 1180px) / 2) + 1.25rem);
+  margin-left: calc(-1 * var(--proposal-bleed));
+  padding-left: var(--proposal-bleed);
+  /* No rail below lg, so the band runs to both edges. */
+  margin-right: calc(-1 * var(--proposal-bleed));
+  padding-right: var(--proposal-bleed);
 }
 
 @media (min-width: 640px) {
   .proposal-surface .proposal-bleed {
-    margin-left: calc(-1 * (max(0px, (100vw - 1180px) / 2) + 2rem));
+    --proposal-bleed: calc(max(0px, (100vw - 1180px) / 2) + 2rem);
+  }
+}
+
+@media (min-width: 1024px) {
+  .proposal-surface .proposal-bleed {
+    margin-right: 0;
+    padding-right: 2rem;
+    border-top-right-radius: 1rem;
+    border-bottom-right-radius: 1rem;
   }
 }
 
 @media print {
   .proposal-surface .proposal-bleed {
-    width: auto;
-    margin-left: 0;
+    margin: 0;
+    padding: 0;
     background: none !important;
+    color: inherit !important;
+    border-radius: 0;
   }
 }
