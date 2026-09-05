@@ -201,10 +201,12 @@ export function ProposalAskAi({ questions, clientName }: { questions: AskAiQuest
                 }`}
               >
                 <span className="truncate">{v.name}</span>
-                <span className="h-[8px] rounded-[2px] bg-surface-100">
+                {/* Translucent, so the bars read on the page ground, on a white
+                    band and on the indigo band without three sets of tokens. */}
+                <span className="h-[8px] rounded-[2px] bg-surface-950/[0.07]">
                   <span
                     className={`block h-full rounded-[2px] transition-[width] duration-300 motion-reduce:transition-none ${
-                      isClient ? 'bg-primary-600' : 'bg-surface-300'
+                      isClient ? 'bg-primary-600' : 'bg-surface-950/25'
                     }`}
                     style={{ width: `${Math.max((v.share / top) * 100, v.share > 0 ? 3 : 0)}%` }}
                   />

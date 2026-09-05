@@ -215,7 +215,7 @@ export function MonthsBlock({ section }: { section: S<'monthsSection'> }) {
               {(m.items ?? []).map((it) => (
                 <li
                   key={it}
-                  className="rounded-md border border-surface-200 bg-white px-2 py-1 text-[11.5px] leading-snug text-surface-700"
+                  className="rounded-md border border-surface-950/10 bg-surface-950/[0.03] px-2 py-1 text-[11.5px] leading-snug text-surface-700"
                 >
                   {it}
                 </li>
@@ -236,7 +236,7 @@ export function MonthsBlock({ section }: { section: S<'monthsSection'> }) {
         <div className="mt-4 flex flex-wrap items-center gap-2 text-[11.5px]">
           <span className="text-surface-500">{section.measuresLabel ?? 'Tracked daily'}</span>
           {measures.map((m) => (
-            <span key={m._key} className="rounded-md border border-surface-200 px-2 py-1 text-surface-700">
+            <span key={m._key} className="rounded-md border border-surface-950/10 px-2 py-1 text-surface-700">
               {m.label}
             </span>
           ))}

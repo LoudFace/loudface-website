@@ -39,7 +39,7 @@ export function StatChip({ number, line, lead = false }: { number: string; line?
   );
   return (
     <>
-      <GooFilter id={filterId} stroke={lead ? '#c7d2fe' : '#d4d4d4'} />
+      <GooFilter id={filterId} stroke={lead ? '#a5b4fc' : '#e5e5e5'} />
     <span className="relative grid max-w-full text-[13px] leading-[2]">
       {/* the shape: same run, invisible text, per-line background, fused by the filter */}
       <span
@@ -47,7 +47,7 @@ export function StatChip({ number, line, lead = false }: { number: string; line?
         className="col-start-1 row-start-1 select-none"
         style={{ filter: `url(#${filterId})` }}
       >
-        <span className={`proposal-goo-run text-transparent ${lead ? 'bg-primary-50 font-medium' : 'bg-surface-50'}`}>
+        <span className={`proposal-goo-run text-transparent ${lead ? 'bg-primary-100 font-medium' : 'bg-white'}`}>
           <span className={`${tag} invisible`}>{number}</span>
           {line}
         </span>
