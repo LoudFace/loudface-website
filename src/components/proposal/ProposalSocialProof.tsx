@@ -25,10 +25,10 @@ import { ProposalClipStrip } from './ProposalClipStrip';
  * palette, and deliberately NOT in globals.css `@theme`.
  */
 
-const PLATFORMS: Record<ReviewPlatformName, { label: string; accent: string }> = {
-  clutch: { label: 'Clutch', accent: '#FF3D2E' },
-  google: { label: 'Google', accent: '#4285F4' },
-  trustpilot: { label: 'Trustpilot', accent: '#00B67A' },
+const PLATFORMS: Record<ReviewPlatformName, { label: string; accent: string; logo: string }> = {
+  clutch: { label: 'Clutch', accent: '#FF3D2E', logo: '/images/review-platforms/clutch.png' },
+  google: { label: 'Google', accent: '#4285F4', logo: '/images/review-platforms/google.png' },
+  trustpilot: { label: 'Trustpilot', accent: '#00B67A', logo: '/images/review-platforms/trustpilot.png' },
 };
 
 type ProofSectionType = Extract<ProposalSection, { _type: 'metricsSection' }>;
@@ -193,15 +193,21 @@ function RailQuote({
 }) {
   const meta = quote.platform ? PLATFORMS[quote.platform] : undefined;
   return (
-    <figure className="proposal-marquee-item">
+    <figure
+      className="proposal-marquee-item rounded-lg border border-surface-200 bg-white px-3.5 py-3 shadow-[0_1px_2px_rgba(10,10,10,0.04)]"
+      data-proposal-card
+    >
       <blockquote className="text-[13.5px] leading-[1.5] text-surface-700">&ldquo;{quote.text}&rdquo;</blockquote>
-      <figcaption className="mt-1.5 flex flex-wrap items-center gap-x-1.5 text-[12px] text-surface-500">
+      <figcaption className="mt-2.5 flex items-center gap-2 text-[12px] text-surface-500">
         {meta && (
-          <span aria-hidden="true" className="inline-block h-[6px] w-[6px] rounded-full" style={{ backgroundColor: meta.accent }} />
+          // eslint-disable-next-line @next/next/no-img-element
+          <img src={meta.logo} alt={meta.label} width={16} height={16} className="h-4 w-4 shrink-0 rounded-[3px] object-contain" />
         )}
-        {quote.author && <span className="font-medium text-surface-900">{quote.author}</span>}
-        {quote.company && <span>· {quote.company}</span>}
-        {meta && <span>· {meta.label}</span>}
+        <span className="min-w-0 truncate">
+          {quote.author && <span className="font-medium text-surface-900">{quote.author}</span>}
+          {quote.company && <span> · {quote.company}</span>}
+          {meta && <span> · {meta.label}</span>}
+        </span>
       </figcaption>
     </figure>
   );

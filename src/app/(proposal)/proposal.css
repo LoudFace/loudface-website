@@ -207,7 +207,7 @@
 /* The spacing is a margin, not a flex gap: a gap adds one extra step across
    the seam and the loop visibly jumps every cycle. */
 .proposal-marquee-item {
-  margin-bottom: 18px;
+  margin-bottom: 10px;
 }
 
 .proposal-marquee:hover .proposal-marquee-track,
