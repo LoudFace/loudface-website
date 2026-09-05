@@ -45,6 +45,36 @@ function liftSinceStart(points: { date: string; value: number }[], startDate?: s
   return b > 0 ? mean(after) / b : null;
 }
 
+/**
+ * A result as a badge, not a sentence: the number is a solid tag, the label
+ * sits beside it, the whole thing is one pill. The lead stat gets the indigo;
+ * the Google lift the quiet grey. Two lines of prose melted together; two
+ * pills do not.
+ */
+function Stat({ number, line, lead = false }: { number: string; line?: string; lead?: boolean }) {
+  // A short label sits beside the tag; a long one goes under it, so the pill
+  // never turns into a tag with four lines of prose hanging off its side.
+  const stacked = (line?.length ?? 0) > 34;
+  return (
+    <p
+      className={`flex w-full gap-2.5 rounded-lg py-1.5 pl-1.5 pr-3 ${stacked ? 'flex-col items-start gap-1.5 pb-2.5' : 'items-center'} ${
+        lead ? 'bg-primary-50 ring-1 ring-primary-200/70' : 'bg-surface-100'
+      }`}
+    >
+      <span
+        className={`proposal-num inline-flex h-7 shrink-0 items-center rounded-md px-2 text-[15px] font-semibold tracking-[-0.02em] ${
+          lead ? 'bg-primary-600 text-white' : 'bg-white text-surface-950 ring-1 ring-surface-200'
+        }`}
+      >
+        {number}
+      </span>
+      {line && (
+        <span className={`min-w-0 text-[13px] leading-[1.35] ${stacked ? 'pl-1' : ''} ${lead ? 'font-medium text-primary-900' : 'text-surface-700'}`}>{line}</span>
+      )}
+    </p>
+  );
+}
+
 function pickPlot(item: CaseProof): CasePlot | null {
   const topic = item.instruments?.topicClimb;
   const trend = item.instruments?.indexedTrend;
@@ -151,19 +181,10 @@ export async function ProposalCaseProof({
                       : { number: item.resultNumber, line: shortTitle(item.resultTitle) };
                   const secondary = lead && lift ? { number: `${lift.toFixed(lift >= 10 ? 0 : 1)}×`, line: 'more Google impressions a day' } : null;
                   return (
-                    <>
-                      {primary.number && (
-                        <p className="proposal-num mt-3 text-[34px] font-medium leading-none tracking-[-0.04em] text-surface-950">
-                          {primary.number}
-                        </p>
-                      )}
-                      {primary.line && <p className="mt-2 max-w-[24ch] text-[13.5px] leading-snug text-surface-600">{primary.line}</p>}
-                      {secondary && (
-                        <p className="mt-3 text-[13.5px] leading-snug text-surface-600">
-                          <span className="proposal-num font-medium text-surface-950">{secondary.number}</span> {secondary.line}
-                        </p>
-                      )}
-                    </>
+                    <div className="mt-3 space-y-2">
+                      {primary.number && <Stat number={primary.number} line={primary.line} lead />}
+                      {secondary && <Stat number={secondary.number} line={secondary.line} />}
+                    </div>
                   );
                 })()}
                 {plot?.kind === 'area' && plot.startDate && (
