@@ -720,3 +720,11 @@
   }
 }
 
+
+/* The stat chip's two stacked runs must wrap identically: same padding, and
+   the padding is what lets neighbouring line boxes touch so the goo filter
+   fuses them into one shape. */
+.proposal-surface .proposal-goo-run {
+  padding: 0.3rem 0.65rem 0.3rem 0.4rem;
+  border-radius: 0.5rem;
+}

@@ -54,7 +54,7 @@ function liftSinceStart(points: { date: string; value: number }[], startDate?: s
  */
 function Stat({ number, line, lead = false }: { number: string; line?: string; lead?: boolean }) {
   return (
-    <p className="max-w-[26ch]">
+    <p className="max-w-[28ch] pr-6 [text-wrap:pretty]">
       <StatChip number={number} line={line} lead={lead} />
     </p>
   );
