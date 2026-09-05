@@ -157,6 +157,8 @@ export interface ProposalRailMetric {
   source?: string;
 }
 
+export type ProposalBand = 'plain' | 'grey' | 'indigo';
+
 export type ProposalSection =
   | { _key: string; _type: 'richTextSection'; heading?: string; body: PortableTextBlock[] }
   | {
@@ -171,6 +173,7 @@ export type ProposalSection =
       _key: string;
       _type: 'pricingTiersSection';
       heading?: string;
+      band?: ProposalBand;
       tiers: ProposalTier[];
       anchor?: string;
       note?: string;
@@ -191,6 +194,7 @@ export type ProposalSection =
       _key: string;
       _type: 'bulletListSection';
       heading?: string;
+      band?: ProposalBand;
       intro?: string;
       variant?: 'workingTogether';
       items: ProposalBullet[];
@@ -215,6 +219,7 @@ export type ProposalSection =
       _key: string;
       _type: 'askAiSection';
       heading?: string;
+      band?: ProposalBand;
       intro?: string;
       questions: Array<{ _key: string; question: string; short?: string; vendors: Array<{ _key: string; name: string; share: number }> }>;
       source?: string;
@@ -223,6 +228,7 @@ export type ProposalSection =
       _key: string;
       _type: 'standingSection';
       heading?: string;
+      band?: ProposalBand;
       stats?: Array<{ _key: string; value: string; label: string; lead?: boolean }>;
       gapHeading?: string;
       gap?: Array<{ _key: string; pageType: string; citations: number; coverage?: string; tone?: 'gap' | 'asset' }>;
@@ -245,6 +251,7 @@ export type ProposalSection =
       _key: string;
       _type: 'tracksSection';
       heading?: string;
+      band?: ProposalBand;
       intro?: string;
       tracks?: Array<{ _key: string; label: string; items?: Array<{ _key: string; count?: string; text: string }> }>;
       targetsLabel?: string;
@@ -261,6 +268,7 @@ export type ProposalSection =
       _key: string;
       _type: 'monthsSection';
       heading?: string;
+      band?: ProposalBand;
       intro?: string;
       months?: Array<{ _key: string; label: string; title: string; items?: string[]; proves?: string }>;
       measuresLabel?: string;
@@ -356,6 +364,7 @@ const CONTENT_QUERY = `*[_type == "proposal" && token == $token][0]{
     tracks[]{ _key, label, items[]{ _key, count, text } },
     gate,
     showWeek,
+    band,
     targets,
     months[]{ _key, label, title, items, proves },
     measures[]{ _key, label, note }

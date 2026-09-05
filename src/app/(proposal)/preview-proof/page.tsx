@@ -83,6 +83,7 @@ function fixture(_tone: 'light' | 'dark', withRail: boolean): Proposal {
       {
         _key: 'ask',
         _type: 'askAiSection',
+        band: 'grey',
         heading: 'What your buyers ask, and who gets named',
         intro: 'Each question asked 30 times across ChatGPT, Google AI Overview and Gemini.',
         questions: [
@@ -102,6 +103,7 @@ function fixture(_tone: 'light' | 'dark', withRail: boolean): Proposal {
       {
         _key: 'standing',
         _type: 'standingSection',
+        band: 'grey',
         heading: 'Where Jaris stands, and why',
         stats: [
           { _key: 's1', value: '2.0%', label: 'of AI answers name Jaris. Parafin: 26.7%', lead: true },
@@ -187,6 +189,7 @@ function fixture(_tone: 'light' | 'dark', withRail: boolean): Proposal {
       {
         _key: 'price',
         _type: 'pricingTiersSection',
+        band: 'indigo',
         heading: 'Investment',
         anchor: '\u201cEmbedded lending platform\u201d costs $56.28 a click on Google. $5,000 buys 89 clicks. The same money here buys the pages, the placements and the site.',
         tiers: [
@@ -199,6 +202,7 @@ function fixture(_tone: 'light' | 'dark', withRail: boolean): Proposal {
       {
         _key: 'terms',
         _type: 'bulletListSection',
+        band: 'indigo',
         heading: 'Terms and next step',
         items: [
           { _key: 'tm1', lead: 'You own everything.', text: 'Website, content, CMS, tracking. If we stop after three months you keep all of it and we train your team on it.' },

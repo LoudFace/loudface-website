@@ -9,6 +9,10 @@
  */
 
 .proposal-surface {
+  /* Full-bleed bands break out with `w-screen`; clip keeps that from adding a
+     horizontal scrollbar. `clip` rather than `hidden` so `position: sticky`
+     still works for the proof rail. */
+  overflow-x: clip;
   /* Long prose lines are the fastest way to make a document feel cheap. */
   --proposal-measure: 68ch;
 }
@@ -757,4 +761,32 @@
 }
 @media print {
   .proposal-surface .proposal-range { display: none; }
+}
+
+/* ── Full-bleed bands ─────────────────────────────────────────────────── */
+/*
+ * A band is a section of the PAGE, not a card inside the document column, so
+ * it has to escape a column that is neither full width nor centred (the proof
+ * rail takes the right side). The usual `left:50%; margin-left:-50vw` trick
+ * assumes a centred parent and lands the band off to the left here, so the
+ * offset is computed from the page container instead: the outer gutter plus
+ * the container's own horizontal padding.
+ */
+.proposal-surface .proposal-bleed {
+  width: 100vw;
+  margin-left: calc(-1 * (max(0px, (100vw - 1180px) / 2) + 1.25rem));
+}
+
+@media (min-width: 640px) {
+  .proposal-surface .proposal-bleed {
+    margin-left: calc(-1 * (max(0px, (100vw - 1180px) / 2) + 2rem));
+  }
+}
+
+@media print {
+  .proposal-surface .proposal-bleed {
+    width: auto;
+    margin-left: 0;
+    background: none !important;
+  }
 }

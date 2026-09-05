@@ -65,6 +65,23 @@ const sectionHeading = defineField({
   description: 'Shown above the block. Leave empty to run the block into the one above it.',
 });
 
+const sectionBand = defineField({
+  name: 'band',
+  title: 'Background band',
+  type: 'string',
+  description:
+    'Consecutive sections sharing a band are drawn on one tinted panel. Use it to separate the movements of the argument — their problem, our offer, the price — not to decorate a single section.',
+  options: {
+    list: [
+      { title: 'None — the page ground', value: 'plain' },
+      { title: 'Grey', value: 'grey' },
+      { title: 'Indigo', value: 'indigo' },
+    ],
+    layout: 'radio',
+  },
+  initialValue: 'plain',
+});
+
 const richTextSection = defineType({
   name: 'richTextSection',
   title: 'Text',
@@ -142,6 +159,7 @@ const pricingTiersSection = defineType({
   type: 'object',
   fields: [
     sectionHeading,
+    sectionBand,
     defineField({
       name: 'tiers',
       title: 'Tiers',
@@ -290,6 +308,7 @@ const bulletListSection = defineType({
   type: 'object',
   fields: [
     sectionHeading,
+    sectionBand,
     defineField({
       name: 'variant',
       title: 'Presentation',
@@ -673,6 +692,7 @@ const askAiSection = defineType({
   type: 'object',
   fields: [
     sectionHeading,
+    sectionBand,
     defineField({ name: 'intro', title: 'Intro line', type: 'text', rows: 2 }),
     defineField({
       name: 'questions',
@@ -725,6 +745,7 @@ const standingSection = defineType({
   type: 'object',
   fields: [
     sectionHeading,
+    sectionBand,
     defineField({
       name: 'stats',
       title: 'Numbers',
@@ -828,6 +849,7 @@ const tracksSection = defineType({
   type: 'object',
   fields: [
     sectionHeading,
+    sectionBand,
     defineField({ name: 'intro', title: 'Intro line', type: 'text', rows: 2 }),
     defineField({
       name: 'tracks',
@@ -897,6 +919,7 @@ const monthsSection = defineType({
   type: 'object',
   fields: [
     sectionHeading,
+    sectionBand,
     defineField({ name: 'intro', title: 'Intro line', type: 'text', rows: 2 }),
     defineField({
       name: 'months',

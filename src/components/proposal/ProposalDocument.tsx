@@ -1,6 +1,6 @@
 import { PortableText, type PortableTextComponents } from '@portabletext/react';
 import type { PortableTextBlock } from '@portabletext/types';
-import type { Proposal, ProposalSection } from '@/sanity/lib/proposalsClient';
+import type { Proposal, ProposalBand, ProposalSection } from '@/sanity/lib/proposalsClient';
 import { ProofRail, ProofSection, isProofSection } from './ProposalSocialProof';
 import { ProposalCaseProof } from './ProposalCaseProof';
 import { EngagementLoopPlate, PlateDefs, WorkingWeek } from './ProposalFigures';
@@ -333,9 +333,27 @@ export function ProposalDocument({ proposal, clipsVariant = 'strip' }: { proposa
     </div>
   ) : null;
 
-  const renderSections = (boxed: boolean) =>
-    sections.map((section, index) =>
-      section._type === 'caseProofSection' ? (
+  /**
+   * Bands. The proposal is one light ground the whole way down, so section
+   * after section melts together and nothing tells the reader which movement
+   * of the argument they are in. Consecutive sections that share a band are
+   * drawn on ONE tinted panel — their problem, our offer, the price — rather
+   * than each section becoming its own card, which would flatten the page
+   * again in the other direction.
+   */
+  const bandOf = (section: ProposalSection): ProposalBand => {
+    const band = (section as { band?: ProposalBand }).band;
+    return band === 'grey' || band === 'indigo' ? band : 'plain';
+  };
+
+  const bandClass: Record<Exclude<ProposalBand, 'plain'>, string> = {
+    grey: 'border-y border-surface-200 bg-surface-100',
+    indigo: 'border-y border-primary-100 bg-primary-50',
+  };
+
+  const renderOne = (section: ProposalSection, index: number, boxed: boolean, banded: boolean) => {
+    if (section._type === 'caseProofSection') {
+      return (
         <ProposalCaseProof
           key={section._key}
           heading={section.heading}
@@ -344,26 +362,73 @@ export function ProposalDocument({ proposal, clipsVariant = 'strip' }: { proposa
           chartsPerCase={section.chartsPerCase}
           index={index}
         />
-      ) : isProofSection(section) ? (
-        <ProofSection key={section._key} section={section} index={index} boxed={boxed} />
-      ) : (
-        <section
-          key={section._key}
-          id={`section-${index + 1}`}
-          data-proposal-section={section.heading || section._type}
-          data-proposal-type={section._type}
-          data-proposal-pricing={section._type === 'pricingTiersSection' ? '' : undefined}
-          className={
-            boxed
+      );
+    }
+    if (isProofSection(section)) {
+      return <ProofSection key={section._key} section={section} index={index} boxed={boxed} />;
+    }
+    return (
+      <section
+        key={section._key}
+        id={`section-${index + 1}`}
+        data-proposal-section={section.heading || section._type}
+        data-proposal-type={section._type}
+        data-proposal-pricing={section._type === 'pricingTiersSection' ? '' : undefined}
+        className={
+          banded
+            ? 'border-b border-surface-950/[0.07] py-9 last:border-b-0 sm:py-11'
+            : boxed
               ? 'border-b border-surface-200 py-9 last:border-b-0 sm:py-11'
               : 'mx-auto max-w-4xl border-b border-surface-200 px-5 py-9 last:border-b-0 sm:px-8 sm:py-11'
-          }
-        >
-          {section.heading && <SectionHeading>{section.heading}</SectionHeading>}
-          <SectionBody section={section} clientName={proposal.clientName} />
-        </section>
-      )
+        }
+      >
+        {section.heading && <SectionHeading>{section.heading}</SectionHeading>}
+        <SectionBody section={section} clientName={proposal.clientName} />
+      </section>
     );
+  };
+
+  const renderSections = (boxed: boolean) => {
+    const groups: { band: ProposalBand; items: { section: ProposalSection; index: number }[] }[] = [];
+    sections.forEach((section, index) => {
+      const band = bandOf(section);
+      const last = groups[groups.length - 1];
+      if (last && last.band === band && band !== 'plain') last.items.push({ section, index });
+      else if (last && last.band === 'plain' && band === 'plain') last.items.push({ section, index });
+      else groups.push({ band, items: [{ section, index }] });
+    });
+
+    return groups.map((group, groupIndex) => {
+      if (group.band === 'plain') {
+        return (
+          <div key={`band-${groupIndex}`} className="contents">
+            {group.items.map(({ section, index }) => renderOne(section, index, boxed, false))}
+          </div>
+        );
+      }
+      const inner = group.items.map(({ section, index }) => renderOne(section, index, boxed, true));
+      if (boxed) {
+        // Full bleed. The band is a section of the PAGE, not a card inside the
+        // column, so it breaks out of the grid and runs edge to edge under the
+        // sticky rail; the inner padding puts the text back in the column.
+        return (
+          <div
+            key={`band-${groupIndex}`}
+            data-proposal-band={group.band}
+            data-print-keep
+            className={`proposal-bleed ${bandClass[group.band]}`}
+          >
+            <div className="mx-auto max-w-[1180px] px-5 py-4 sm:px-8 lg:pr-[352px]">{inner}</div>
+          </div>
+        );
+      }
+      return (
+        <div key={`band-${groupIndex}`} data-proposal-band={group.band} className={bandClass[group.band]}>
+          <div className="mx-auto max-w-4xl px-5 py-4 sm:px-8">{inner}</div>
+        </div>
+      );
+    });
+  };
 
   return (
     <main className="pb-0">
