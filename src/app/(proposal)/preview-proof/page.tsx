@@ -128,18 +128,20 @@ function fixture(_tone: 'light' | 'dark', withRail: boolean): Proposal {
         intro: 'Three tracks in parallel from week one. Content, design, development and reporting included.',
         tracks: [
           { _key: 't1', label: 'On your site', items: [
-            { _key: 'i1', count: '5', text: 'product pages, one per product' },
-            { _key: 'i2', count: '3', text: 'solution pages: ISOs, payment service providers, vertical SaaS' },
-            { _key: 'i3', count: '1–2 / day', text: 'articles from your own material: underwriting, settlement mechanics, the bank programme' } ] },
+            { _key: 'i1', count: '5', text: 'Product pages, one for each product' },
+            { _key: 'i2', count: '3', text: 'Solution pages: ISOs, payment service providers, vertical SaaS' },
+            { _key: 'i3', count: '1–2 a day', text: 'Articles from your own material: underwriting, settlement mechanics, the bank programme' },
+            { _key: 'i4', count: 'Month 3', text: 'Comparison and alternatives pages' } ] },
           { _key: 't2', label: 'Off your site', items: [
-            { _key: 'i1', count: '2–3 / week', text: 'placements on the pages the answers are built from' },
-            { _key: 'i2', text: 'category listicles first, then directories and comparison pages' } ] },
+            { _key: 'i1', count: '2–3 a week', text: 'Placements on the pages these answers are built from' },
+            { _key: 'i2', text: 'Category listicles first, then directories and comparison pages' } ] },
           { _key: 't3', label: 'Your website', items: [
-            { _key: 'i1', text: 'rebuilt on a modern stack with the pages above, keys handed to you' },
-            { _key: 'i2', count: 'Week 1', text: 'canonical tags, the duplicate domain, sitemap, H1s and schema fixed' } ] },
+            { _key: 'i1', count: 'Month 1', text: 'Rebuilt on a modern stack with the pages above, keys handed to you' },
+            { _key: 'i2', count: 'Week 1', text: 'Canonical tags, the duplicate domain, sitemap, H1s and schema' } ] },
         ],
-        targetsLabel: 'We start with the six pages these answers are built from',
+        targetsLabel: 'We start with the six most-cited pages in the category',
         targets: ['openbankingtracker', 'Lendflow', 'Built In', 'Stripe', 'fintechspecs', 'Backbase'],
+        // the six most-cited pages in the category, from the report
       },
       {
         _key: 'engagement',

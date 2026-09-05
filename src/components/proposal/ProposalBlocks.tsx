@@ -86,34 +86,72 @@ export function ForecastBlock({ section }: { section: S<'forecastSection'> }) {
   );
 }
 
+/**
+ * One table, the same chrome as `tableSection`: rounded card, hairline rows,
+ * a quiet header. The track name spans its rows so it is said once.
+ *
+ * Two earlier shapes were rejected: three narrow columns with a grey count
+ * chip before each line (every line started in a different place and wrapped
+ * raggedly), and a bare hairline list (a wall of rows with no structure).
+ */
 export function TracksBlock({ section }: { section: S<'tracksSection'> }) {
-  const tracks = section.tracks ?? [];
+  const tracks = (section.tracks ?? []).filter((t) => (t.items ?? []).length > 0);
   const targets = section.targets ?? [];
   return (
     <>
       <Intro text={section.intro} />
-      <div className="mt-5 grid gap-0 border-y border-surface-200 sm:grid-cols-3 sm:divide-x sm:divide-surface-200">
-        {tracks.map((t) => (
-          <div key={t._key} data-print-keep className="border-b border-surface-200 py-4 last:border-b-0 sm:border-b-0 sm:px-5 sm:first:pl-0 sm:last:pr-0">
-            <Label>{t.label}</Label>
-            <ul className="mt-3 space-y-2.5">
-              {(t.items ?? []).map((it) => (
-                <li key={it._key} className="flex items-start gap-2.5 text-[14px] leading-snug text-surface-700">
-                  {it.count && (
-                    <span className="proposal-num inline-flex h-[22px] shrink-0 items-center rounded-[5px] bg-surface-200 px-1.5 text-[12.5px] font-semibold tracking-[-0.02em] text-surface-950">
-                      {it.count}
-                    </span>
-                  )}
-                  <span>{it.text}</span>
-                </li>
-              ))}
-            </ul>
-          </div>
-        ))}
+      <div
+        data-proposal-card
+        data-print-keep
+        className="mt-6 overflow-x-auto rounded-xl border border-surface-200 bg-white shadow-[0_1px_2px_rgba(10,10,10,0.04)]"
+      >
+        <table className="w-full border-collapse text-left">
+          <thead>
+            <tr className="bg-surface-50 text-[11px] font-semibold uppercase tracking-[0.07em] text-surface-500">
+              <th scope="col" className="border-b border-surface-200 px-4 py-2.5">Track</th>
+              <th scope="col" className="border-b border-surface-200 px-4 py-2.5">What ships</th>
+              <th scope="col" className="border-b border-surface-200 px-4 py-2.5 text-right">How much</th>
+            </tr>
+          </thead>
+          {tracks.map((track, groupIndex) => {
+            const items = track.items ?? [];
+            return (
+              <tbody key={track._key} className={groupIndex > 0 ? 'border-t border-surface-200' : ''}>
+                {items.map((item, i) => (
+                  <tr key={item._key}>
+                    {i === 0 && (
+                      <th
+                        scope="rowgroup"
+                        rowSpan={items.length}
+                        className="w-[132px] border-r border-surface-200 px-4 py-3 align-top text-[13.5px] font-medium text-surface-950"
+                      >
+                        {track.label}
+                      </th>
+                    )}
+                    <td
+                      className={`px-4 py-3 align-top text-[14.5px] leading-snug text-surface-700 ${
+                        i < items.length - 1 ? 'border-b border-surface-200' : ''
+                      }`}
+                    >
+                      {item.text}
+                    </td>
+                    <td
+                      className={`proposal-num w-[112px] whitespace-nowrap px-4 py-3 text-right align-top text-[13.5px] font-medium text-surface-950 ${
+                        i < items.length - 1 ? 'border-b border-surface-200' : ''
+                      }`}
+                    >
+                      {item.count ?? ''}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            );
+          })}
+        </table>
       </div>
       {targets.length > 0 && (
-        <p className="mt-5 max-w-[68ch] text-[13.5px] leading-relaxed text-surface-600">
-          <span className="font-medium text-surface-950">{section.targetsLabel ?? 'First'}</span> · {targets.join(' · ')}
+        <p className="mt-4 max-w-[68ch] text-[13.5px] leading-relaxed text-surface-600">
+          <span className="font-medium text-surface-950">{section.targetsLabel ?? 'First'}</span>: {targets.join(' · ')}
         </p>
       )}
     </>
