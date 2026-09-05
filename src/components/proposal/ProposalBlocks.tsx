@@ -70,9 +70,19 @@ export function StandingBlock({ section }: { section: S<'standingSection'> }) {
   );
 }
 
+/**
+ * The one block that sits on its own panel. The page is otherwise a single
+ * light ground with hairline rules, and section after section melts together;
+ * lifting the interactive block gives the scroll a beat and marks the place
+ * the reader is meant to touch.
+ */
 export function ForecastBlock({ section }: { section: S<'forecastSection'> }) {
   return (
-    <>
+    <div
+      data-proposal-card
+      data-print-keep
+      className="mt-5 rounded-2xl border border-surface-200 bg-white px-5 py-5 shadow-[0_1px_2px_rgba(10,10,10,0.04)] sm:px-7 sm:py-6"
+    >
       <Intro text={section.intro} />
       <ProposalForecast
         shareOfVoice={section.shareOfVoice}
@@ -82,7 +92,7 @@ export function ForecastBlock({ section }: { section: S<'forecastSection'> }) {
         todayLine={section.todayLine}
       />
       {section.note && <p className="mt-3 max-w-[64ch] text-[13.5px] leading-relaxed text-surface-600">{section.note}</p>}
-    </>
+    </div>
   );
 }
 
@@ -176,40 +186,61 @@ export function GateBlock({ section }: { section: S<'gateSection'> }) {
   );
 }
 
+/**
+ * The same idiom as the working week strip directly above it: columns divided
+ * by hairlines, every fact a discrete chip, one filled chip for the outcome.
+ * The earlier shape was three columns of running text with a "Proves" line
+ * underneath, and it read as a wall.
+ *
+ * The month titles were cut on purpose — they were our words about the work,
+ * not a thing the client receives. The chips are the work.
+ */
 export function MonthsBlock({ section }: { section: S<'monthsSection'> }) {
   const months = section.months ?? [];
   const measures = section.measures ?? [];
   return (
     <>
       <Intro text={section.intro} />
-      <ol className="mt-5 grid border-y border-surface-200 sm:grid-cols-3 sm:divide-x sm:divide-surface-200">
+      <ol
+        className="mt-5 grid grid-cols-1 divide-y divide-surface-200 border-y border-surface-200 sm:grid-cols-3 sm:divide-x sm:divide-y-0"
+        data-print-keep
+      >
         {months.map((m) => (
           <li
             key={m._key}
-            data-print-keep
-            className="flex flex-col border-b border-surface-200 py-4 last:border-b-0 sm:border-b-0 sm:px-5 sm:first:pl-0 sm:last:pr-0"
+            className="flex min-w-0 flex-wrap items-start gap-x-3 gap-y-2 py-3 sm:block sm:px-4 sm:py-4 sm:first:pl-0 sm:last:pr-0"
           >
-            <p className="text-[11px] font-semibold uppercase tracking-[0.08em] text-primary-700">{m.label}</p>
-            <p className="mt-1 text-[15px] font-medium text-surface-950">{m.title}</p>
-            <ul className="mt-2.5 flex-1 space-y-1 text-[13.5px] leading-snug text-surface-600">
+            <p className="w-[68px] text-[12px] font-medium text-surface-900 sm:w-auto">{m.label}</p>
+            <ul className="flex flex-wrap gap-1.5 sm:mt-2.5 sm:flex-col sm:items-start">
               {(m.items ?? []).map((it) => (
-                <li key={it}>{it}</li>
+                <li
+                  key={it}
+                  className="rounded-md border border-surface-200 bg-white px-2 py-1 text-[11.5px] leading-snug text-surface-700"
+                >
+                  {it}
+                </li>
               ))}
+              {m.proves && (
+                <li className="flex items-center gap-1.5 rounded-md bg-primary-600 px-2 py-1 text-[11.5px] font-medium leading-snug text-white">
+                  <svg width="11" height="11" viewBox="0 0 12 12" fill="none" aria-hidden="true" className="shrink-0">
+                    <path d="M1.5 6l3 3 6-7" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round" />
+                  </svg>
+                  {m.proves}
+                </li>
+              )}
             </ul>
-            {m.proves && (
-              <p className="mt-3 text-[12.5px] text-surface-950">
-                <span className="text-surface-400">Proves · </span>
-                {m.proves}
-              </p>
-            )}
           </li>
         ))}
       </ol>
       {measures.length > 0 && (
-        <p className="mt-5 text-[13.5px] leading-relaxed text-surface-600">
-          <span className="font-medium text-surface-950">{section.measuresLabel ?? 'Tracked daily'}</span> ·{' '}
-          {measures.map((m) => m.label).join(' · ')}
-        </p>
+        <div className="mt-4 flex flex-wrap items-center gap-2 text-[11.5px]">
+          <span className="text-surface-500">{section.measuresLabel ?? 'Tracked daily'}</span>
+          {measures.map((m) => (
+            <span key={m._key} className="rounded-md border border-surface-200 px-2 py-1 text-surface-700">
+              {m.label}
+            </span>
+          ))}
+        </div>
       )}
       {section.note && <p className="mt-3 text-[13px] text-surface-500">{section.note}</p>}
     </>

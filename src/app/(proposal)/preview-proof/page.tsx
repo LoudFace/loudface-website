@@ -165,9 +165,9 @@ function fixture(_tone: 'light' | 'dark', withRail: boolean): Proposal {
         heading: 'The first 90 days',
         intro: 'Contractual minimums. We ship above them.',
         months: [
-          { _key: 'm1', label: 'Month 1', title: 'Fixes, site, foundations', items: ['Technical fixes in week one', 'New website live', '5 product pages', '5 calibration articles'], proves: 'the duplicate domain is gone' },
-          { _key: 'm2', label: 'Month 2', title: 'Volume and reach', items: ['20+ articles', '3 solution pages', '8–12 placements'], proves: 'AI share of voice moves' },
-          { _key: 'm3', label: 'Month 3', title: 'Comparison and leads', items: ['20+ articles', 'Comparison and alternatives pages', '8–12 placements'], proves: 'first leads attributed' },
+          { _key: 'm1', label: 'Month 1', title: '', items: ['Technical fixes', 'New website live', '5 product pages', '5 calibration articles'], proves: 'One domain, pages cited' },
+          { _key: 'm2', label: 'Month 2', title: '', items: ['20+ articles', '3 solution pages', '8–12 placements'], proves: 'AI share of voice moves' },
+          { _key: 'm3', label: 'Month 3', title: '', items: ['20+ articles', 'Comparison pages', '8–12 placements'], proves: 'First leads attributed' },
         ],
         measuresLabel: 'On your dashboard every morning',
         measures: [
