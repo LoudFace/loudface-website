@@ -47,17 +47,14 @@ export function StatChip({ number, line, lead = false }: { number: string; line?
         className="col-start-1 row-start-1 select-none"
         style={{ filter: `url(#${filterId})` }}
       >
-        <span
-          className={`proposal-goo-run text-transparent ${lead ? 'bg-primary-50' : 'bg-surface-50'}`}
-          style={{ boxDecorationBreak: 'clone', WebkitBoxDecorationBreak: 'clone' }}
-        >
+        <span className={`proposal-goo-run text-transparent ${lead ? 'bg-primary-50 font-medium' : 'bg-surface-50'}`}>
           <span className={`${tag} invisible`}>{number}</span>
           {line}
         </span>
       </span>
-      {/* the words, on top */}
-      <span className={`proposal-goo-run relative z-10 col-start-1 row-start-1 ${lead ? 'font-medium text-primary-900' : 'text-surface-700'}`}>
-        {run}
+      {/* the words, on top — same structure as the shape layer, so both wrap alike */}
+      <span className="relative z-10 col-start-1 row-start-1">
+        <span className={`proposal-goo-run ${lead ? 'font-medium text-primary-900' : 'text-surface-700'}`}>{run}</span>
       </span>
     </span>
     </>

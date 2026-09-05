@@ -727,4 +727,7 @@
 .proposal-surface .proposal-goo-run {
   padding: 0.3rem 0.65rem 0.3rem 0.4rem;
   border-radius: 0.5rem;
+  /* both layers, so continuation lines indent identically */
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
 }
