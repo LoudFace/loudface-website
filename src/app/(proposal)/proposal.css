@@ -1,0 +1,720 @@
+/**
+ * Proposal surface — the bits Tailwind utilities cannot express.
+ *
+ * Everything here is scoped to .proposal-surface so it can never reach the
+ * marketing site. Loaded after globals.css by (proposal)/layout.tsx.
+ *
+ * The print rules matter more than they look: clients forward these proposals
+ * internally as PDFs, so Cmd+P is a real output format, not an afterthought.
+ */
+
+.proposal-surface {
+  /* Long prose lines are the fastest way to make a document feel cheap. */
+  --proposal-measure: 68ch;
+}
+
+.proposal-prose > * + * {
+  margin-top: 0.85rem;
+}
+
+.proposal-prose p,
+.proposal-prose li {
+  max-width: var(--proposal-measure);
+}
+
+.proposal-prose h3 {
+  margin-top: 1.75rem;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  font-size: 1.0625rem;
+  color: var(--surface-950);
+}
+
+.proposal-prose ul {
+  list-style: disc;
+  padding-left: 1.15rem;
+}
+
+.proposal-prose li::marker {
+  color: var(--surface-400);
+}
+
+.proposal-prose a {
+  color: var(--primary-600);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.proposal-prose strong {
+  font-weight: 600;
+  color: var(--surface-950);
+}
+
+/* Numbers in tables and pricing line up column-wise. */
+.proposal-num {
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.01em;
+}
+
+/* Engagement steps and the working-together list are set in utilities:
+   hairline rows on the page ground, no containers. A box on this surface
+   is reserved for the places a number lives. */
+
+/* ── Print ─────────────────────────────────────────────────────────────
+   Cmd+P has to produce something a CFO can read. No screen chrome, no
+   gate, no orphaned headings, and the dark header keeps its ink so the
+   document still looks like ours on paper. */
+@media print {
+  @page {
+    margin: 14mm 12mm;
+  }
+
+  html,
+  body {
+    background: #ffffff !important;
+  }
+
+  .proposal-surface {
+    background: #ffffff !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+    font-size: 10.5pt;
+  }
+
+  /* The access form and anything else marked screen-only never prints. */
+  .proposal-surface [data-proposal-gate],
+  .proposal-surface [data-print="hide"] {
+    display: none !important;
+  }
+
+  .proposal-surface [data-print="show"] {
+    display: block !important;
+  }
+
+  /* Keep whole units together. */
+  .proposal-surface table,
+  .proposal-surface tr,
+  .proposal-surface figure,
+  .proposal-surface [data-print-keep] {
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+
+  /* A heading at the foot of a page with its body overleaf reads as a bug. */
+  .proposal-surface h1,
+  .proposal-surface h2,
+  .proposal-surface h3 {
+    break-after: avoid;
+    page-break-after: avoid;
+    break-inside: avoid;
+  }
+
+  .proposal-surface p,
+  .proposal-surface li {
+    orphans: 3;
+    widows: 3;
+    max-width: none;
+  }
+
+  /* Screen uses rounded cards on a tinted ground; paper wants hairlines. */
+  .proposal-surface [data-proposal-card] {
+    box-shadow: none !important;
+    border: 1px solid rgba(10, 10, 10, 0.18) !important;
+  }
+
+  .proposal-surface a {
+    text-decoration: underline;
+  }
+
+  /* Section rhythm compresses on paper — screen padding wastes a page. */
+  .proposal-surface [data-proposal-section] {
+    padding-top: 1.25rem !important;
+    padding-bottom: 1.25rem !important;
+  }
+
+  .proposal-engagement,
+  .proposal-working {
+    box-shadow: none;
+  }
+
+  .proposal-engagement-flow > .is-execution {
+    background: #f6f5ff !important;
+  }
+}
+
+/* ── Social proof ──────────────────────────────────────────────────────
+   Screen keeps the dark proof band. Paper does not: a full-width indigo
+   block mid-document eats a page of toner and straddles page breaks. The
+   header keeps its ink because it is the masthead and appears once. */
+@media print {
+  .proposal-surface [data-proposal-band='dark'] {
+    background: #ffffff !important;
+    color: var(--color-surface-950) !important;
+    border-top: 1px solid rgba(10, 10, 10, 0.18);
+    border-bottom: 1px solid rgba(10, 10, 10, 0.18);
+  }
+
+  /* The tone classes are white-on-dark; on paper they have to become ink. */
+  .proposal-surface [data-proposal-band='dark'] * {
+    color: var(--color-surface-950) !important;
+    border-color: rgba(10, 10, 10, 0.18) !important;
+  }
+
+  .proposal-surface [data-proposal-band='dark'] [data-proposal-card] {
+    background: #ffffff !important;
+  }
+
+  /* A clip and its quote belong on the same page. */
+  .proposal-surface figure[data-print-keep] {
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+}
+
+/* The rail prints once, in the flow, never as a column beside the text. */
+@media print {
+  .proposal-surface [data-proposal-rail='aside'] {
+    display: none !important;
+  }
+
+  .proposal-surface [data-proposal-rail='inline'] {
+    display: block !important;
+  }
+}
+
+/* ── The rail marquee ──────────────────────────────────────────────────
+   Every review in a 232px window, moving slowly enough to read. It pauses
+   under the cursor, and it does not move at all for a reader who asked for
+   less motion, or on paper — in both cases it unrolls into a plain list and
+   the duplicate half is dropped so nothing is said twice. */
+.proposal-marquee {
+  position: relative;
+  height: 232px;
+  overflow: hidden;
+  -webkit-mask-image: linear-gradient(to bottom, transparent 0, #000 11%, #000 85%, transparent 100%);
+  mask-image: linear-gradient(to bottom, transparent 0, #000 11%, #000 85%, transparent 100%);
+}
+
+.proposal-marquee-track {
+  display: flex;
+  flex-direction: column;
+  animation-name: proposal-marquee-scroll;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+  will-change: transform;
+}
+
+/* The spacing is a margin, not a flex gap: a gap adds one extra step across
+   the seam and the loop visibly jumps every cycle. */
+.proposal-marquee-item {
+  margin-bottom: 18px;
+}
+
+.proposal-marquee:hover .proposal-marquee-track,
+.proposal-marquee:focus .proposal-marquee-track,
+.proposal-marquee:focus-within .proposal-marquee-track {
+  animation-play-state: paused;
+}
+
+.proposal-marquee:focus-visible {
+  outline: 2px solid var(--color-primary-500);
+  outline-offset: 4px;
+  border-radius: 6px;
+}
+
+@keyframes proposal-marquee-scroll {
+  from {
+    transform: translate3d(0, 0, 0);
+  }
+  to {
+    transform: translate3d(0, -50%, 0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .proposal-marquee {
+    height: auto;
+    overflow: visible;
+    -webkit-mask-image: none;
+    mask-image: none;
+  }
+
+  .proposal-marquee-track {
+    animation: none;
+  }
+
+  .proposal-marquee-dup {
+    display: none !important;
+  }
+}
+
+@media print {
+  .proposal-marquee {
+    height: auto;
+    overflow: visible;
+    -webkit-mask-image: none;
+    mask-image: none;
+  }
+
+  .proposal-marquee-track {
+    animation: none !important;
+  }
+
+  .proposal-marquee-dup {
+    display: none !important;
+  }
+}
+
+@media print {
+  /* Rail rows are links on screen. On paper an underline under every rating
+     row just looks like a mistake. */
+  .proposal-surface [data-proposal-rail] a {
+    text-decoration: none !important;
+  }
+
+  /* A label with its clips overleaf reads as a bug. */
+  .proposal-surface [data-proposal-rail] > div > div {
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+}
+
+/* A touch device has no hover, so it has no way to stop the scroll. It gets
+   the plain list instead — the same shape reduced motion and paper get. */
+@media (hover: none), (pointer: coarse) {
+  .proposal-marquee {
+    height: auto;
+    overflow: visible;
+    -webkit-mask-image: none;
+    mask-image: none;
+  }
+
+  .proposal-marquee-track {
+    animation: none;
+  }
+
+  .proposal-marquee-dup {
+    display: none !important;
+  }
+}
+
+/* ── The clip strip ────────────────────────────────────────────────────
+   Same rules as the review marquee: it moves for a mouse, pauses under one,
+   and is a plain row for touch, reduced motion and paper. */
+.proposal-strip {
+  overflow: hidden;
+  -webkit-mask-image: linear-gradient(to right, transparent 0, #000 4%, #000 96%, transparent 100%);
+  mask-image: linear-gradient(to right, transparent 0, #000 4%, #000 96%, transparent 100%);
+}
+
+.proposal-strip-track {
+  display: flex;
+  width: max-content;
+  animation-name: proposal-strip-scroll;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+  will-change: transform;
+}
+
+.proposal-strip-item {
+  margin-right: 18px;
+}
+
+.proposal-strip:hover .proposal-strip-track,
+.proposal-strip:focus .proposal-strip-track,
+.proposal-strip:focus-within .proposal-strip-track {
+  animation-play-state: paused;
+}
+
+.proposal-strip:focus-visible {
+  outline: 2px solid var(--color-primary-500);
+  outline-offset: 2px;
+}
+
+@keyframes proposal-strip-scroll {
+  from {
+    transform: translate3d(0, 0, 0);
+  }
+  to {
+    transform: translate3d(-50%, 0, 0);
+  }
+}
+
+/* The clip modal. A native <dialog>, so Esc and focus trapping are free. */
+.proposal-dialog {
+  /* inset + margin:auto is what centres a native dialog; setting width alone
+     leaves it pinned to the top-left. */
+  position: fixed;
+  inset: 0;
+  margin: auto;
+  max-width: min(880px, 92vw);
+  max-height: 92vh;
+  width: 100%;
+  height: fit-content;
+  border: 0;
+  padding: 0;
+  background: transparent;
+  color: inherit;
+}
+
+.proposal-dialog::backdrop {
+  background: rgba(10, 8, 34, 0.82);
+  backdrop-filter: blur(2px);
+}
+
+.proposal-dialog-inner {
+  padding: 0;
+}
+
+@media (prefers-reduced-motion: reduce), (hover: none), (pointer: coarse) {
+  .proposal-strip {
+    overflow-x: auto;
+    -webkit-mask-image: none;
+    mask-image: none;
+    padding-inline: 1.25rem;
+  }
+
+  .proposal-strip-track {
+    animation: none;
+  }
+
+  .proposal-strip-dup {
+    display: none !important;
+  }
+}
+
+@media print {
+  .proposal-strip {
+    overflow: visible;
+    -webkit-mask-image: none;
+    mask-image: none;
+  }
+
+  .proposal-strip-track {
+    animation: none !important;
+    width: auto;
+    flex-wrap: wrap;
+  }
+
+  .proposal-strip-dup {
+    display: none !important;
+  }
+
+  .proposal-dialog {
+    display: none !important;
+  }
+}
+
+/* Paper gets the flowed copy of the rail, laid as two columns so the clips
+   do not print page-wide and the reviews sit beside them. */
+@media print {
+  .proposal-surface [data-proposal-rail='inline'] > div {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    column-gap: 10mm;
+    align-items: start;
+  }
+
+  .proposal-surface [data-proposal-rail='inline'] > div > * + * {
+    margin-top: 0;
+  }
+
+  .proposal-surface [data-proposal-rail='inline'] figure > div[data-proposal-card] {
+    max-width: 62mm;
+  }
+}
+
+/* ── Blueprint plates ──────────────────────────────────────────────────
+   The house explanatory-graphic system (DESIGN.md §8), scoped to this
+   surface. Paper is one 12px dot tile; strokes are primary-600 at 1 or 2;
+   fills are the light ramp only; every label inherits one voice. */
+.proposal-surface .plate {
+  position: relative;
+  border-radius: 12px;
+  background-color: #fdfdff;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12'%3E%3Crect width='1' height='1' fill='%234f39f6' fill-opacity='.13'/%3E%3C/svg%3E");
+  background-repeat: repeat;
+  background-position: 50% 50%;
+  box-shadow: inset 0 0 0 1px var(--color-primary-100);
+  color: var(--color-primary-600);
+  font-family: var(--font-sans);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.proposal-surface .plate svg {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.proposal-surface .plate text {
+  fill: var(--color-surface-600);
+}
+
+.proposal-surface .plate text.t9 {
+  font-size: 9px;
+}
+
+.proposal-surface .plate text.tk {
+  fill: var(--color-primary-600);
+}
+
+.proposal-surface .plate .s1,
+.proposal-surface .plate .s2 {
+  stroke: var(--color-primary-600);
+  fill: none;
+}
+
+.proposal-surface .plate .s1 {
+  stroke-width: 1;
+}
+
+.proposal-surface .plate .s2 {
+  stroke-width: 2;
+}
+
+.proposal-surface .plate .f50 {
+  fill: var(--color-primary-50);
+}
+
+.proposal-surface .plate .f100 {
+  fill: var(--color-primary-100);
+}
+
+.proposal-surface .plate .f600 {
+  fill: var(--color-primary-600);
+}
+
+.proposal-surface .plate .fw {
+  fill: #ffffff;
+}
+
+.proposal-surface .plate .fh {
+  fill: url(#fx-hatch);
+}
+
+/* the hatch pattern lives in a defs block outside any .plate */
+.proposal-surface .f50 {
+  fill: var(--color-primary-50);
+}
+
+.proposal-surface .s1 {
+  stroke: var(--color-primary-600);
+  stroke-width: 1;
+}
+
+.proposal-surface .fig-id,
+.proposal-surface .fig-meta,
+.proposal-surface .fig-yr {
+  position: absolute;
+  writing-mode: vertical-rl;
+  letter-spacing: 0.14em;
+  color: var(--color-primary-600);
+  user-select: none;
+  pointer-events: none;
+}
+
+.proposal-surface .fig-id {
+  top: 14px;
+  left: 13px;
+}
+
+.proposal-surface .fig-meta {
+  top: 14px;
+  right: 13px;
+}
+
+.proposal-surface .fig-yr {
+  bottom: 14px;
+  right: 13px;
+}
+
+.proposal-surface .plate .ants {
+  stroke-dasharray: 4 4;
+  animation: proposal-fig-ants 1s linear infinite;
+}
+
+@keyframes proposal-fig-ants {
+  from {
+    stroke-dashoffset: 16;
+  }
+  to {
+    stroke-dashoffset: -16;
+  }
+}
+
+.proposal-surface .plate .flick {
+  animation: proposal-fig-flick 0.15s linear infinite;
+}
+
+@keyframes proposal-fig-flick {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+.proposal-surface .plate .settle {
+  animation: proposal-fig-settle 1.3s cubic-bezier(0.25, 0.1, 0.25, 1) both;
+}
+
+@keyframes proposal-fig-settle {
+  from {
+    transform: translate(var(--sx, 0px), var(--sy, 14px));
+  }
+  to {
+    transform: translate(0, 0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .proposal-surface .plate .ants,
+  .proposal-surface .plate .flick,
+  .proposal-surface .plate .settle {
+    animation: none;
+  }
+}
+
+/* The Bklit plot box — same height rule as the case pages' .inb-plot. */
+.proposal-surface .proposal-plot {
+  height: clamp(110px, 14vh, 150px);
+  min-width: 0;
+}
+
+.proposal-surface .proposal-plot > * {
+  aspect-ratio: auto !important;
+  height: 100% !important;
+}
+
+@media print {
+  .proposal-surface .plate .ants,
+  .proposal-surface .plate .flick,
+  .proposal-surface .plate .settle {
+    animation: none !important;
+  }
+
+  .proposal-surface .plate {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+}
+
+/* On a phone the plate keeps its size and scrolls sideways — a 10px label
+   scaled to a third of its width is not a label. */
+.proposal-surface .plate-scroll {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: thin;
+}
+
+@media (max-width: 767px) {
+  .proposal-surface .plate-scroll .plate {
+    min-width: 860px;
+  }
+}
+
+@media print {
+  .proposal-surface .plate-scroll {
+    overflow: visible;
+  }
+
+  .proposal-surface .plate-scroll .plate {
+    min-width: 0;
+  }
+}
+
+/* Markers hang above the plot line; the chart's svg must not clip them. */
+.proposal-surface .proposal-plot svg {
+  overflow: visible;
+}
+
+/* ── The clip strip ────────────────────────────────────────────────────
+   One tile shape for every clip; the player opens at the clip's own shape. */
+.proposal-surface .proposal-strip {
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;
+  -webkit-mask-image: linear-gradient(to right, #000 88%, transparent);
+  mask-image: linear-gradient(to right, #000 88%, transparent);
+}
+
+.proposal-surface .proposal-strip::-webkit-scrollbar {
+  display: none;
+}
+
+.proposal-surface .proposal-strip-track {
+  display: flex;
+  gap: 10px;
+  padding-right: 40px;
+}
+
+.proposal-surface .proposal-strip-item {
+  flex: 0 0 132px;
+  scroll-snap-align: start;
+}
+
+.proposal-surface .proposal-dialog {
+  /* Tailwind's reset zeroes every margin, which drags a <dialog> to the
+     top-left corner. Centring is the UA default; put it back. */
+  margin: auto;
+  inset: 0;
+  width: fit-content;
+  height: fit-content;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  max-width: none;
+  max-height: none;
+  overflow: visible;
+}
+
+.proposal-surface .proposal-dialog::backdrop {
+  background: rgba(10, 8, 30, 0.82);
+}
+
+.proposal-surface .proposal-dialog-inner {
+  position: relative;
+}
+
+.proposal-surface .proposal-dialog-inner video {
+  border-radius: 12px;
+  background: #000;
+}
+
+.proposal-surface .proposal-dialog-inner.is-portrait video {
+  /* Tall by default; on a phone held sideways the width is the limit. */
+  height: min(78vh, 720px, calc(90vw * 16 / 9));
+  width: auto;
+  aspect-ratio: 9 / 16;
+}
+
+.proposal-surface .proposal-dialog-inner.is-landscape video {
+  /* Wide by default; on a phone held sideways the height is the limit. */
+  width: min(84vw, 960px, calc(78vh * 16 / 9));
+  height: auto;
+  aspect-ratio: 16 / 9;
+}
+
+@media print {
+  .proposal-surface .proposal-strip {
+    overflow: visible;
+    -webkit-mask-image: none;
+    mask-image: none;
+  }
+
+  .proposal-surface .proposal-strip-track {
+    flex-wrap: wrap;
+    padding-right: 0;
+  }
+
+  .proposal-surface .proposal-dialog {
+    display: none !important;
+  }
+}

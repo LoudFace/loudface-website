@@ -128,6 +128,22 @@ const nextConfig: NextConfig = {
         source: '/preview/:path*',
         headers: [{ key: 'X-Robots-Tag', value: 'noindex, nofollow' }],
       },
+      // ─── Client proposals: /p/* is NEVER indexable ───────────────────
+      // Gated proposals served at loudface.co/p/<token> (see
+      // src/app/(proposal)/p/[token]/page.tsx and docs/PROPOSALS.md). The
+      // access code keeps a stranger from READING one; this header keeps the
+      // URL out of search results if a client ever pastes the link somewhere
+      // public.
+      //
+      // Same trap as /preview/ above: do NOT "also" add a /p/ disallow to
+      // robots.txt. A disallowed crawler never fetches the page, so it never
+      // reads this header, and the bare URL can still be indexed. The page
+      // must stay crawlable for the noindex to do its job — the crawler that
+      // fetches it hits the access gate and finds nothing to index.
+      {
+        source: '/p/:path*',
+        headers: [{ key: 'X-Robots-Tag', value: 'noindex, nofollow, noarchive' }],
+      },
       // ─── Long-lived cache for static assets served from public/ ──────
       // (next/font assets in _next/static/ already get immutable from Vercel)
       {

@@ -430,6 +430,35 @@ Pick `yields` for decoration, `lifts` for anything a user needs to click. Note `
 
 ---
 
+## Proposal Components (`src/components/proposal/`)
+
+Used ONLY by the gated client-proposal surface at `/p/<token>`. They are not
+exported from any barrel and must not be imported into the marketing site —
+they render content from the **private** `proposals` Sanity dataset. Full
+operator guide: `docs/PROPOSALS.md`.
+
+| Component | File | Description |
+|-----------|------|-------------|
+| `ProposalDocument` | `ProposalDocument.tsx` | Server component. Renders one unlocked proposal: dark `night` header, the price card overlapping it, then the CMS `sections` array (text / table / pricing tiers / timeline / bullet list / results / case studies). Props: `proposal: Proposal`. **Two layouts:** with a `proofRail` or `clipStrip` on the document it goes two-column on `lg` (document left, sticky rail right, page 1180px) and sections render `boxed`; without one it stays a single 4xl column. The two `timelineSection` / `bulletListSection` variants (`engagementLoop`, `workingTogether`) render as hairline rows on the page ground — no containers. **House rule for this surface: a box only where a number lives.** Every block carries `data-proposal-section`, `data-print-keep` and `data-proposal-card` — keep those if you restyle it. |
+| `ProofRail` / `ProofSection` / `isProofSection` | `ProposalSocialProof.tsx` | Server components. `ProofRail` is the sticky margin note — ratings card, the clips stacked at 16:9, and every review in a CSS marquee that pauses on hover/focus and is a plain list on touch, reduced-motion and paper. No toolbar, no inner scrollbar, no accordion (a widget-style rail was tried and rejected as mentally loaded). Rendered twice by `ProposalDocument` — sticky `aside` on `lg`, inline copy for phones and print; `proposal.css` shows one. `ProofSection` is the numbers row that stays in the body. Platform brand colours live in this file on purpose and must NOT enter `globals.css` `@theme`. |
+| `ProposalCaseProof` / `ProposalCaseChart` | `ProposalCaseProof.tsx`, `ProposalCaseCharts.tsx` | Real case studies in the body, read **live from the public dataset by slug** (`src/sanity/lib/caseProof.ts`, incl. `instruments`). Drawn with the **same Bklit charts as the case pages** (`@/components/charts` BarChart/AreaChart, card-less on dotted paper, house indigo — the 2026-08-19 rule); never the old `CaseStudyCharts` bar renderer. One plot per case: a daily Google series first, else the weekly AI climb, else the first structured chart. `ProposalCaseChart` is the client half and imports `instruments-board.css` for the chart tokens. |
+| `EngagementLoopPlate` / `WorkingWeek` / `PlateDefs` | `ProposalFigures.tsx` | Server components. The engagement loop is a **blueprint plate** (DESIGN.md §8 idiom, adapted from approved FIG.002) — five stations, three lanes braiding through execution, a return arc; it replaces a five-row list. The working week is a **calendar strip** in DOM, not a plate (a plate for a cadence was tried and rejected on sight). `PlateDefs` emits the shared arrowhead + hatch once per page. Plate CSS is scoped in `proposal.css`. |
+| `ProposalClipStrip` | `ProposalClipStrip.tsx` | Client component. Every clip in the rail as ONE tile shape (4:5, cropped to the face) in a CSS scroll-snap strip, with play opening a native `<dialog>` lightbox at the clip's OWN shape (portrait tall, landscape wide). This is how mixed 16:9 / 9:16 testimonials share a 296px column without letterboxing or squeezing. `variant="grid"` packs native-shape tiles two across instead. Downloads nothing until a clip is opened; prints as a wrapped row of posters. |
+| `ProposalVideo` | `ProposalVideo.tsx` | Client component — the only one on an unlocked proposal besides analytics. Poster + our own play button until clicked, then the real `<video controls autoPlay>`. It exists because Chromium paints its grey control bar across the still on a bare `<video controls poster>`, and native controls cannot be restyled. Downloads nothing until the click. Props: `src`, `poster?`, `label`, `size?` (`sm` for rail thumbnails). |
+| `ProposalAnalytics` | `ProposalAnalytics.tsx` | Client component, renders nothing. Fires `proposal_opened`, `proposal_unlocked`, `proposal_pricing_viewed` and `proposal_section_viewed` through the shared `ensurePostHog()` consent gate, and strips `?unlocked=1` from the URL. Props: `token`, `state` (`locked`/`unlocked`), `clientName?`, `justUnlocked?`. **Never pass `clientName` in the locked state** — that prop reaches the browser. |
+
+Print is a first-class output for all of these: the rail prints once in the
+flow (never as a column) with the marquee unrolled into a plain list, clips
+print as their poster, and a dark results band prints ink-free. The marquee
+also stops dead under `prefers-reduced-motion`. See the `@media print` and
+`prefers-reduced-motion` rules in `src/app/(proposal)/proposal.css`.
+
+The locked screen itself is `src/app/(proposal)/p/[token]/AccessGate.tsx`. It
+lives beside the route on purpose: it is the one component that must know
+nothing about the proposal except its token.
+
+---
+
 ## Barrel Exports
 
 ```

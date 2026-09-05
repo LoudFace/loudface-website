@@ -58,7 +58,12 @@ export default function proxy(request: NextRequest) {
   }
 
   // Serve .md variants of pages by rewriting to the llms-md catch-all route
-  if (pathname.endsWith('.md') && !pathname.startsWith('/api/') && !pathname.startsWith('/studio/')) {
+  if (
+    pathname.endsWith('.md') &&
+    !pathname.startsWith('/api/') &&
+    !pathname.startsWith('/studio/') &&
+    !pathname.startsWith('/p/')
+  ) {
     const pagePath = pathname.slice(0, -3); // strip .md
     return NextResponse.rewrite(
       new URL(`/api/llms-md${pagePath}`, request.url)
@@ -74,7 +79,10 @@ export default function proxy(request: NextRequest) {
     !request.headers.has('rsc') &&
     !request.nextUrl.search.includes('_rsc=') &&
     !pathname.startsWith('/api/') &&
-    !pathname.startsWith('/studio');
+    !pathname.startsWith('/studio') &&
+    // Gated proposals are documents for one named reader, not a public page
+    // with a Markdown twin. Nothing under /p/ is content-negotiable.
+    !pathname.startsWith('/p/');
 
   if (negotiable && prefersMarkdown(request.headers.get('accept'))) {
     const segments = pathname.replace(/\.md$/, '').split('/').filter(Boolean);
