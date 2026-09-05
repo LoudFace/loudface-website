@@ -43,20 +43,23 @@ export function HugShape({
       // Per-fragment boxes: a text node yields one rect per line it spans; an
       // element (the tag) yields its own box. Ranging over the whole span
       // would also return the span's overall box and poison the rows.
-      const rects: DOMRect[] = [];
+      // Text nodes give one rect per line — those set each row's height.
+      // Elements (the tag) only widen the row they sit on; a tag taller or
+      // shorter than the line must not move the row's top or bottom.
+      const lineRects: DOMRect[] = [];
+      const inlineRects: DOMRect[] = [];
       el.childNodes.forEach((node) => {
         if (node.nodeType === Node.TEXT_NODE) {
           const range = document.createRange();
           range.selectNodeContents(node);
-          rects.push(...Array.from(range.getClientRects()));
-        } else if (node instanceof HTMLElement && !(node instanceof SVGElement) && node.tagName !== 'svg') {
-          rects.push(node.getBoundingClientRect());
+          lineRects.push(...Array.from(range.getClientRects()));
+        } else if (node instanceof HTMLElement) {
+          inlineRects.push(node.getBoundingClientRect());
         }
       });
-      const usable = rects.filter((r) => r.width > 0 && r.height > 0);
+      const usable = lineRects.filter((r) => r.width > 0 && r.height > 0);
       if (usable.length === 0) return setGeom(null);
 
-      // Merge fragments into rows by their vertical centre.
       const rows: { top: number; bottom: number; left: number; right: number }[] = [];
       for (const r of usable) {
         const cy = r.top + r.height / 2;
@@ -67,6 +70,14 @@ export function HugShape({
           row.top = Math.min(row.top, r.top);
           row.bottom = Math.max(row.bottom, r.bottom);
         } else rows.push({ top: r.top, bottom: r.bottom, left: r.left, right: r.right });
+      }
+      for (const r of inlineRects) {
+        const cy = r.top + r.height / 2;
+        const row = rows.find((q) => cy > q.top - 2 && cy < q.bottom + 2) ?? rows[0];
+        if (row) {
+          row.left = Math.min(row.left, r.left);
+          row.right = Math.max(row.right, r.right);
+        }
       }
       rows.sort((a, b) => a.top - b.top);
       // Rows share edges so the shape is one piece.
@@ -129,18 +140,23 @@ export function HugShape({
     };
 
     measure();
-    // The web fonts change every line break; measure again once they are in.
+    // Web fonts land after first paint and change every line break, and a
+    // reflow that only moves line ends does not resize the block host — so
+    // re-measure on the font events and a few beats after mount as well.
     let alive = true;
-    document.fonts?.ready.then(() => alive && measure());
-    const raf = requestAnimationFrame(measure);
-    const ro = new ResizeObserver(measure);
+    const again = () => alive && measure();
+    document.fonts?.ready.then(again);
+    document.fonts?.addEventListener('loadingdone', again);
+    const timers = [120, 400, 1200, 3000].map((ms) => window.setTimeout(again, ms));
+    const ro = new ResizeObserver(again);
     ro.observe(hostEl);
-    window.addEventListener('resize', measure);
+    window.addEventListener('resize', again);
     return () => {
       alive = false;
-      cancelAnimationFrame(raf);
+      timers.forEach(clearTimeout);
+      document.fonts?.removeEventListener('loadingdone', again);
       ro.disconnect();
-      window.removeEventListener('resize', measure);
+      window.removeEventListener('resize', again);
     };
   }, [padX, padY, radius, children]);
 
