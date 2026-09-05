@@ -39,14 +39,6 @@ function pickPlot(item: CaseProof): CasePlot | null {
       .filter((p): p is { date: string; value: number; second: number } => Boolean(p.date));
     if (points.length === 0) return null;
     const peak = points.reduce((best, p) => (p.value > best.value ? p : best), points[0]);
-    // One marker, at the high, and it is explained in words under the chart —
-    // an icon with a hover-only title reads as decoration.
-    const markers =
-      peak.date !== points[0].date
-        ? [{ date: peak.date, icon: '↑', title: trendIsDaily
-              ? `${(peak.value / 100).toFixed(1)}× the average ${trend.baselineLabel} day`
-              : `${(peak.value / 100).toFixed(1)}× ${trend.baselineLabel}`, description: `High on ${fmtWeek(peak.date)}` }]
-        : [];
     return {
       kind: 'area',
       title: `Google impressions · ${trend.baselineLabel} = 1×`,
@@ -54,7 +46,6 @@ function pickPlot(item: CaseProof): CasePlot | null {
       caption: trend.caption,
       unitLabel: `× ${trend.baselineLabel}`,
       points,
-      markers,
     };
   };
   const barsFromTopic = (): CasePlot | null =>
@@ -146,19 +137,6 @@ export async function ProposalCaseProof({
                   <div className="mt-2">
                     <ProposalCaseChart plot={plot} />
                   </div>
-                  {plot.kind === 'area' && plot.markers && plot.markers.length > 0 && (
-                    <ul className="mt-2 flex flex-wrap gap-x-4 gap-y-1 text-[12px] text-surface-600">
-                      {plot.markers.map((m) => (
-                        <li key={m.date} className="flex items-center gap-1.5">
-                          <span className="inline-flex h-[18px] w-[18px] items-center justify-center rounded-full border border-surface-300 bg-primary-100 text-[11px] text-surface-950">
-                            {m.icon}
-                          </span>
-                          <span className="font-medium text-surface-900">{m.description}</span>
-                          <span className="text-surface-500">· {m.title}</span>
-                        </li>
-                      ))}
-                    </ul>
-                  )}
                   {plot.caption && (
                     <p className="mt-2 text-[11.5px] leading-snug text-surface-400">{plot.caption}</p>
                   )}

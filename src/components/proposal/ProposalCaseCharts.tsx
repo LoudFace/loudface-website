@@ -3,7 +3,6 @@
 import { curveCatmullRom } from '@visx/curve';
 import { useEffect, useState } from 'react';
 import { Area, AreaChart, Background, Bar, BarChart, BarXAxis, ChartTooltip, Grid, XAxis } from '@/components/charts';
-import { ChartMarkers } from '@/components/charts/markers';
 import '@/app/case-detail-v3/instruments-board.css';
 
 /**
@@ -36,7 +35,6 @@ export type CasePlot =
       points: { date: string; value: number; second?: number }[];
       secondLabel?: string;
       /** Annotations derived from the data itself — never invented events. */
-      markers?: { date: string; icon: string; title: string; description?: string }[];
     };
 
 function Tip({ title, label, value }: { title: string; label: string; value: string }) {
@@ -94,25 +92,12 @@ export function ProposalCaseChart({ plot }: { plot: CasePlot }) {
             data={plot.points.map((p) => ({ date: new Date(`${p.date}T00:00:00Z`), value: p.value, second: p.second ?? 0 }))}
             aspectRatio=""
             style={{ height: '100%' }}
-            margin={{ top: plot.markers?.length ? 38 : 12, right: 18, bottom: 24, left: 18 }}
+            margin={{ top: 14, right: 22, bottom: 34, left: 22 }}
           >
             <Background pattern="dots" opacity={0.55} />
             <Grid horizontal />
             <Area dataKey="value" curve={curveCatmullRom} fillOpacity={0.24} strokeWidth={2} stroke="var(--chart-1)" />
             <XAxis />
-            {plot.markers && plot.markers.length > 0 && (
-              <ChartMarkers
-                size={22}
-                items={plot.markers.map((m) => ({
-                  date: new Date(`${m.date}T00:00:00Z`),
-                  icon: m.icon,
-                  title: m.title,
-                  description: m.description,
-                  // The default disc is near-white and vanishes on the paper.
-                  color: 'var(--color-primary-100)',
-                }))}
-              />
-            )}
             <ChartTooltip
               content={({ point }) => (
                 <div className="inb-tip">

@@ -58,7 +58,7 @@ function fixture(tone: 'light' | 'dark', withRail: boolean): Proposal {
             { _key: 'q2', text: 'We really felt that they cared for our project as if it were their own.', author: 'Christian Mailind', platform: 'trustpilot' },
             { _key: 'q3', text: 'We began receiving leads immediately after the launch of our campaign.', author: 'Daan Smit', platform: 'trustpilot' },
             { _key: 'q4', text: 'From start to finish, the team exceeded expectations.', author: 'Sarig Reichert', company: 'Dimer Health', platform: 'trustpilot' },
-            { _key: 'q5', text: 'Working with LoudFace has been refreshing; we were surprised by their passion.', author: 'Verified review', platform: 'clutch' },
+            { _key: 'q5', text: 'Working with LoudFace has been refreshing; we were surprised by their passion.', author: 'E-learning platform, verified client', platform: 'clutch' },
             { _key: 'q6', text: 'I have not had a feature request that they were not able to deliver on.', author: 'Shin Kim', platform: 'trustpilot' },
             { _key: 'q7', text: 'LoudFace is nothing short of phenomenal.', author: 'Kristian Krogh Bang', platform: 'trustpilot' },
             { _key: 'q8', text: 'Professional, very helpful, communicated well, and met deadlines on time.', author: 'Christian', platform: 'trustpilot' },
