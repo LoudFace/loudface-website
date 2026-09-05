@@ -190,28 +190,32 @@ export function ProposalAskAi({ questions, clientName }: { questions: AskAiQuest
 
       <div id={`${groupId}-panel`} role="tabpanel" aria-labelledby={`${groupId}-tab-${active}`} className="mt-5">
         <p className="text-[15.5px] leading-snug text-surface-950">&ldquo;{current.question}&rdquo;</p>
-        <ul className="mt-4 max-w-[560px] space-y-1.5">
+        <ul className="mt-4 max-w-[560px] space-y-2">
           {vendors.map((v) => {
             const isClient = v.name.toLowerCase() === lower;
+            const absent = isClient && v.share === 0;
             return (
               <li
                 key={v._key}
-                className={`grid grid-cols-[76px_minmax(0,1fr)_36px] items-center gap-3 text-[13px] ${
-                  isClient ? 'font-medium text-primary-800' : 'text-surface-600'
+                className={`grid grid-cols-[86px_minmax(0,1fr)_40px] items-center gap-3 text-[13px] ${
+                  isClient ? 'font-medium text-surface-950' : 'text-surface-600'
                 }`}
               >
                 <span className="truncate">{v.name}</span>
-                {/* Translucent, so the bars read on the page ground, on a white
-                    band and on the indigo band without three sets of tokens. */}
-                <span className="h-[8px] rounded-[2px] bg-surface-950/[0.07]">
-                  <span
-                    className={`block h-full rounded-[2px] transition-[width] duration-300 motion-reduce:transition-none ${
-                      isClient ? 'bg-primary-600' : 'bg-surface-950/25'
-                    }`}
-                    style={{ width: `${Math.max((v.share / top) * 100, v.share > 0 ? 3 : 0)}%` }}
-                  />
-                </span>
-                <span className="proposal-num text-right">{v.share}%</span>
+                {absent ? (
+                  <span className="text-[12.5px] italic text-surface-500">never named</span>
+                ) : (
+                  // Translucent track, so the bars read on every band.
+                  <span className="h-[9px] rounded-[2px] bg-surface-950/[0.06]">
+                    <span
+                      className={`block h-full rounded-[2px] transition-[width] duration-300 motion-reduce:transition-none ${
+                        isClient ? 'bg-primary-600' : 'bg-primary-600/30'
+                      }`}
+                      style={{ width: `${Math.max((v.share / top) * 100, 3)}%` }}
+                    />
+                  </span>
+                )}
+                <span className={`proposal-num text-right ${isClient ? 'text-surface-950' : ''}`}>{v.share}%</span>
               </li>
             );
           })}

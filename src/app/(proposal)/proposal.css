@@ -766,19 +766,20 @@
 /* ── Bands ────────────────────────────────────────────────────────────── */
 /*
  * A band is a section of the PAGE, not a card inside the document column, so
- * it escapes the column and runs to the left edge of the window. It stops at
- * the column's right edge on purpose: the proof rail lives out there and has
- * no tone of its own, so a dark band running under it would swallow its
- * labels. The offset cannot use the usual `left:50%; margin-left:-50vw` — that
- * assumes a centred parent, and this column sits beside the rail — so it is
- * computed from the page container: outer gutter plus container padding.
+ * it escapes the column and runs the full width of the window, under the
+ * proof rail. The rail carries its own surface (see ProposalDocument), which
+ * is what makes that safe: an earlier version stopped the band at the column
+ * edge instead and left a hard vertical seam down the middle of the page.
+ *
+ * The offset cannot use the usual `left:50%; margin-left:-50vw` — that assumes
+ * a centred parent, and this column sits beside the rail — so it is computed
+ * from the page container: outer gutter plus container padding.
  */
 .proposal-surface .proposal-bleed {
   --proposal-bleed: calc(max(0px, (100vw - 1180px) / 2) + 1.25rem);
+  width: 100vw;
   margin-left: calc(-1 * var(--proposal-bleed));
   padding-left: var(--proposal-bleed);
-  /* No rail below lg, so the band runs to both edges. */
-  margin-right: calc(-1 * var(--proposal-bleed));
   padding-right: var(--proposal-bleed);
 }
 
@@ -788,21 +789,12 @@
   }
 }
 
-@media (min-width: 1024px) {
-  .proposal-surface .proposal-bleed {
-    margin-right: 0;
-    padding-right: 2rem;
-    border-top-right-radius: 1rem;
-    border-bottom-right-radius: 1rem;
-  }
-}
-
 @media print {
   .proposal-surface .proposal-bleed {
+    width: auto;
     margin: 0;
     padding: 0;
     background: none !important;
     color: inherit !important;
-    border-radius: 0;
   }
 }

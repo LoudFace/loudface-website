@@ -3,7 +3,7 @@ import type { PortableTextBlock } from '@portabletext/types';
 import type { Proposal, ProposalBand, ProposalSection } from '@/sanity/lib/proposalsClient';
 import { ProofRail, ProofSection, isProofSection } from './ProposalSocialProof';
 import { ProposalCaseProof } from './ProposalCaseProof';
-import { EngagementLoopPlate, PlateDefs, WorkingWeek } from './ProposalFigures';
+import { EngagementLoopPlate, PlateDefs } from './ProposalFigures';
 import { AskAiBlock, ForecastBlock, GateBlock, MonthsBlock, StandingBlock, TracksBlock } from './ProposalBlocks';
 
 /**
@@ -213,9 +213,11 @@ function EngagementLoopBlock({
         <EngagementLoopPlate clientName={clientName} gateLabel={section.gateLabel} />
       </div>
       {section.showWeek && (
-        <div className="mt-8">
-          <WorkingWeek />
-        </div>
+        <p className="mt-5 text-[13.5px] leading-relaxed text-surface-600">
+          <span className="font-medium text-surface-950">Cadence</span> · a short written update every
+          other day, a review every Friday, a dashboard that refreshes each morning, and a call
+          weekly, fortnightly or monthly — your call.
+        </p>
       )}
     </>
   );
@@ -255,20 +257,6 @@ function BulletBlock({
   );
 }
 
-function WorkingTogetherBlock({
-  section,
-}: {
-  section: Extract<ProposalSection, { _type: 'bulletListSection' }>;
-}) {
-  return (
-    <>
-      <div className="mt-6">
-        <WorkingWeek />
-      </div>
-    </>
-  );
-}
-
 function SectionBody({
   section,
   clientName,
@@ -290,9 +278,7 @@ function SectionBody({
         ? <EngagementLoopBlock section={section} clientName={clientName} />
         : <TimelineBlock section={section} />;
     case 'bulletListSection':
-      return section.variant === 'workingTogether'
-        ? <WorkingTogetherBlock section={section} />
-        : <BulletBlock section={section} dark={dark} />;
+      return <BulletBlock section={section} dark={dark} />;
     case 'askAiSection':
       return <AskAiBlock section={section} clientName={clientName} />;
     case 'standingSection':
@@ -344,7 +330,7 @@ export function ProposalDocument({ proposal, clipsVariant = 'strip' }: { proposa
       data-proposal-pricing
       data-proposal-section="Price line"
       data-proposal-type="priceLine"
-      className="-mt-11 rounded-xl border border-surface-200 bg-white px-6 py-5 shadow-[0_1px_2px_rgba(10,10,10,0.05),0_16px_36px_-22px_rgba(10,10,10,0.35)]"
+      className="rounded-xl bg-white px-6 py-5 shadow-[0_1px_2px_rgba(10,10,10,0.05),0_16px_36px_-22px_rgba(10,10,10,0.55)]"
     >
       <p className="text-[11.5px] font-semibold uppercase tracking-[0.07em] text-surface-500">
         Investment
@@ -448,7 +434,7 @@ export function ProposalDocument({ proposal, clipsVariant = 'strip' }: { proposa
             data-print-keep
             className={`proposal-bleed ${bandClass[group.band]}`}
           >
-            <div className="py-3">{inner}</div>
+            <div className="mx-auto max-w-[1180px] py-3 lg:pr-[384px]">{inner}</div>
           </div>
         );
       }
@@ -464,9 +450,11 @@ export function ProposalDocument({ proposal, clipsVariant = 'strip' }: { proposa
     <main className="pb-0">
       <PlateDefs />
       <header className="bg-night text-white">
-        <div className={`${page} pt-12 pb-20 sm:pt-16`}>
+        <div className={`${page} pt-12 pb-14 sm:pt-16`}>
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src="/lf-logo.svg" alt="LoudFace" className="h-6 w-auto opacity-90" />
+          <div className={hasRail ? 'lg:grid lg:grid-cols-[minmax(0,1fr)_328px] lg:gap-14' : ''}>
+          <div className="min-w-0">
           <p className="mt-9 text-[13px] tracking-[0.02em] text-white/55">
             Proposal for {proposal.clientName}
           </p>
@@ -485,6 +473,10 @@ export function ProposalDocument({ proposal, clipsVariant = 'strip' }: { proposa
               {proposal.heroQuoteBy && <figcaption className="mt-2 text-[12.5px] text-white/55">{proposal.heroQuoteBy}</figcaption>}
             </figure>
           )}
+
+          </div>
+          {priceCard && <div className="mt-9 lg:mt-[68px]">{priceCard}</div>}
+          </div>
 
           <dl className="mt-8 flex flex-wrap gap-x-9 gap-y-3 border-t border-white/15 pt-6 text-[13px] text-white/55">
             {proposal.preparedFor && proposal.preparedFor.length > 0 && (
@@ -509,19 +501,13 @@ export function ProposalDocument({ proposal, clipsVariant = 'strip' }: { proposa
         </div>
       </header>
 
-      {proposal.priceLine && (
-        <div className={page}>
-          <div className={hasRail ? 'lg:max-w-[calc(100%-352px)]' : ''}>{priceCard}</div>
-        </div>
-      )}
-
       {hasRail ? (
         <div className={page}>
-          <div className="lg:grid lg:grid-cols-[minmax(0,1fr)_296px] lg:gap-14">
+          <div className="lg:grid lg:grid-cols-[minmax(0,1fr)_328px] lg:gap-14">
             <div className="min-w-0">{renderSections(true)}</div>
             {/* Sticky, so the ratings are still on screen at the price. */}
             <aside data-proposal-rail="aside" className="hidden lg:block">
-              <div className="sticky top-8 pt-9">
+              <div className="sticky top-8 mt-9 rounded-2xl border border-surface-200 bg-surface-50 px-4 py-5">
                 <ProofRail rail={rail} clips={clips} clipsVariant={clipsVariant} />
               </div>
             </aside>
@@ -535,7 +521,7 @@ export function ProposalDocument({ proposal, clipsVariant = 'strip' }: { proposa
         <div>{renderSections(false)}</div>
       )}
 
-      <footer className="mt-4 bg-night px-5 py-10 text-white/60 sm:px-8">
+      <footer className="border-t border-white/10 bg-night px-5 py-10 text-white/60 sm:px-8">
         <div className={`flex flex-wrap items-baseline justify-between gap-3 text-[13px] ${hasRail ? 'mx-auto max-w-[1180px]' : 'mx-auto max-w-4xl'}`}>
           <p>
             Prepared by LoudFace for {proposal.clientName}. Confidential — please do not

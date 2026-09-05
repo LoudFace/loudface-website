@@ -1,5 +1,4 @@
 import type { ProposalSection } from '@/sanity/lib/proposalsClient';
-import { StatChip } from './StatChip';
 import { ProposalAskAi, ProposalForecast } from './ProposalInteractive';
 
 /**
@@ -32,19 +31,39 @@ export function AskAiBlock({ section, clientName }: { section: S<'askAiSection'>
   );
 }
 
+/**
+ * Three numbers on one hairline row, then the sentence that explains them.
+ * The goo `StatChip` was tried here and pulled out again: three blobs of three
+ * different widths on two rows read as leftover UI, and that treatment earns
+ * its keep in the case rows, where a number sits inside running prose.
+ */
 export function StandingBlock({ section }: { section: S<'standingSection'> }) {
   const stats = section.stats ?? [];
   const gap = section.gap ?? [];
   return (
     <>
       {stats.length > 0 && (
-        <div className="mt-5 grid gap-x-6 gap-y-3 sm:grid-cols-2">
+        <dl className="mt-5 grid border-y border-surface-950/10 sm:grid-cols-3 sm:divide-x sm:divide-surface-950/10">
           {stats.map((s) => (
-            <p key={s._key} className="pr-3 [text-wrap:pretty]">
-              <StatChip number={s.value} line={s.label} lead={s.lead} />
-            </p>
+            <div
+              key={s._key}
+              data-print-keep
+              className="border-b border-surface-950/10 py-4 last:border-b-0 sm:border-b-0 sm:px-5 sm:py-5 sm:first:pl-0 sm:last:pr-0"
+            >
+              <dt className="sr-only">{s.label}</dt>
+              <dd>
+                <p
+                  className={`proposal-num text-[30px] font-medium leading-none tracking-[-0.04em] sm:text-[34px] ${
+                    s.lead ? 'text-primary-700' : 'text-surface-950'
+                  }`}
+                >
+                  {s.value}
+                </p>
+                <p className="mt-2 max-w-[26ch] text-[13.5px] leading-snug text-surface-600">{s.label}</p>
+              </dd>
+            </div>
           ))}
-        </div>
+        </dl>
       )}
       {gap.length > 0 && (
         <div className="mt-7">
@@ -64,25 +83,17 @@ export function StandingBlock({ section }: { section: S<'standingSection'> }) {
           </ul>
         </div>
       )}
-      {section.closing && <p className="mt-5 max-w-[64ch] text-[15.5px] leading-relaxed text-surface-900">{section.closing}</p>}
+      {section.closing && (
+        <p className="mt-6 max-w-[64ch] text-[15.5px] leading-relaxed text-surface-900">{section.closing}</p>
+      )}
       <Source text={section.source} />
     </>
   );
 }
 
-/**
- * The one block that sits on its own panel. The page is otherwise a single
- * light ground with hairline rules, and section after section melts together;
- * lifting the interactive block gives the scroll a beat and marks the place
- * the reader is meant to touch.
- */
 export function ForecastBlock({ section }: { section: S<'forecastSection'> }) {
   return (
-    <div
-      data-proposal-card
-      data-print-keep
-      className="mt-5 rounded-2xl border border-surface-200 bg-surface-50 px-5 py-5 sm:px-7 sm:py-6"
-    >
+    <div data-print-keep>
       <Intro text={section.intro} />
       <ProposalForecast
         shareOfVoice={section.shareOfVoice}
@@ -196,51 +207,49 @@ export function GateBlock({ section }: { section: S<'gateSection'> }) {
  * not a thing the client receives. The chips are the work.
  */
 export function MonthsBlock({ section }: { section: S<'monthsSection'> }) {
-  const months = section.months ?? [];
+  const months = (section.months ?? []).filter((m) => (m.items ?? []).length > 0);
   const measures = section.measures ?? [];
   return (
     <>
       <Intro text={section.intro} />
-      <ol
-        className="mt-5 grid grid-cols-1 divide-y divide-surface-200 border-y border-surface-200 sm:grid-cols-3 sm:divide-x sm:divide-y-0"
+      <div
+        data-proposal-card
         data-print-keep
+        className="mt-6 overflow-x-auto rounded-xl border border-surface-200 bg-white shadow-[0_1px_2px_rgba(10,10,10,0.04)]"
       >
-        {months.map((m) => (
-          <li
-            key={m._key}
-            className="flex min-w-0 flex-wrap items-start gap-x-3 gap-y-2 py-3 sm:block sm:px-4 sm:py-4 sm:first:pl-0 sm:last:pr-0"
-          >
-            <p className="w-[68px] text-[12px] font-medium text-surface-900 sm:w-auto">{m.label}</p>
-            <ul className="flex flex-wrap gap-1.5 sm:mt-2.5 sm:flex-col sm:items-start">
-              {(m.items ?? []).map((it) => (
-                <li
-                  key={it}
-                  className="rounded-md border border-surface-950/10 bg-surface-950/[0.03] px-2 py-1 text-[11.5px] leading-snug text-surface-700"
+        <table className="w-full border-collapse text-left">
+          <thead>
+            <tr className="bg-surface-50 text-[11px] font-semibold uppercase tracking-[0.07em] text-surface-500">
+              <th scope="col" className="border-b border-surface-200 px-4 py-2.5">When</th>
+              <th scope="col" className="border-b border-surface-200 px-4 py-2.5">What ships</th>
+              <th scope="col" className="border-b border-surface-200 px-4 py-2.5">What it proves</th>
+            </tr>
+          </thead>
+          <tbody>
+            {months.map((m, i) => (
+              <tr key={m._key} className={i < months.length - 1 ? 'border-b border-surface-200' : ''}>
+                <th
+                  scope="row"
+                  className="w-[104px] border-r border-surface-200 px-4 py-3 text-left align-top text-[13.5px] font-medium text-surface-950"
                 >
-                  {it}
-                </li>
-              ))}
-              {m.proves && (
-                <li className="flex items-center gap-1.5 rounded-md bg-primary-600 px-2 py-1 text-[11.5px] font-medium leading-snug text-white">
-                  <svg width="11" height="11" viewBox="0 0 12 12" fill="none" aria-hidden="true" className="shrink-0">
-                    <path d="M1.5 6l3 3 6-7" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round" />
-                  </svg>
+                  {m.label}
+                </th>
+                <td className="px-4 py-3 align-top text-[14.5px] leading-snug text-surface-700">
+                  {(m.items ?? []).join(' · ')}
+                </td>
+                <td className="w-[210px] border-l border-surface-200 px-4 py-3 align-top text-[13.5px] leading-snug text-primary-700">
                   {m.proves}
-                </li>
-              )}
-            </ul>
-          </li>
-        ))}
-      </ol>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
       {measures.length > 0 && (
-        <div className="mt-4 flex flex-wrap items-center gap-2 text-[11.5px]">
-          <span className="text-surface-500">{section.measuresLabel ?? 'Tracked daily'}</span>
-          {measures.map((m) => (
-            <span key={m._key} className="rounded-md border border-surface-950/10 px-2 py-1 text-surface-700">
-              {m.label}
-            </span>
-          ))}
-        </div>
+        <p className="mt-4 text-[13.5px] leading-relaxed text-surface-600">
+          <span className="font-medium text-surface-950">{section.measuresLabel ?? 'Tracked daily'}</span> ·{' '}
+          {measures.map((m) => m.label).join(' · ')}
+        </p>
       )}
       {section.note && <p className="mt-3 text-[13px] text-surface-500">{section.note}</p>}
     </>
