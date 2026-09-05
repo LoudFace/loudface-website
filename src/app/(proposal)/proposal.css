@@ -189,7 +189,7 @@
    the duplicate half is dropped so nothing is said twice. */
 .proposal-marquee {
   position: relative;
-  height: 232px;
+  height: 440px;
   overflow: hidden;
   -webkit-mask-image: linear-gradient(to bottom, transparent 0, #000 11%, #000 85%, transparent 100%);
   mask-image: linear-gradient(to bottom, transparent 0, #000 11%, #000 85%, transparent 100%);
