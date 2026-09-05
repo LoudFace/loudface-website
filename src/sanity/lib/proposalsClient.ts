@@ -216,7 +216,6 @@ export type ProposalSection =
       band?: ProposalBand;
       intro?: string;
       questions: Array<{ _key: string; question: string; short?: string; vendors: Array<{ _key: string; name: string; share: number }> }>;
-      source?: string;
     }
   | {
       _key: string;
@@ -227,7 +226,6 @@ export type ProposalSection =
       gapHeading?: string;
       gap?: Array<{ _key: string; pageType: string; citations: number; coverage?: string; tone?: 'gap' | 'asset' }>;
       closing?: string;
-      source?: string;
     }
   | {
       _key: string;
@@ -249,8 +247,6 @@ export type ProposalSection =
       band?: ProposalBand;
       intro?: string;
       tracks?: Array<{ _key: string; label: string; items?: Array<{ _key: string; count?: string; text: string }> }>;
-      targetsLabel?: string;
-      targets?: string[];
     }
   | {
       _key: string;
@@ -266,8 +262,6 @@ export type ProposalSection =
       band?: ProposalBand;
       intro?: string;
       months?: Array<{ _key: string; label: string; title: string; items?: string[]; proves?: string }>;
-      measuresLabel?: string;
-      measures?: Array<{ _key: string; label: string; note?: string }>;
       note?: string;
     };
 
@@ -358,9 +352,7 @@ const CONTENT_QUERY = `*[_type == "proposal" && token == $token][0]{
     gate,
     showWeek,
     band,
-    targets,
-    months[]{ _key, label, title, items, proves },
-    measures[]{ _key, label, note }
+    months[]{ _key, label, title, items, proves }
   }
 }`;
 

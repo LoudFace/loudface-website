@@ -662,13 +662,6 @@ const caseProofSection = defineType({
 
 /* ── Client-first blocks (2026-09-05) ──────────────────────────────────── */
 
-const sourceLine = defineField({
-  name: 'source',
-  title: 'Source line',
-  type: 'string',
-  description: 'Where the numbers come from, e.g. "Peec AI, 2,250 answers, 26 Aug to 2 Sep 2026".',
-});
-
 /** Block 2 — the reader picks a buyer question and sees who the assistants name. */
 const askAiSection = defineType({
   name: 'askAiSection',
@@ -717,7 +710,6 @@ const askAiSection = defineType({
       ],
       validation: (rule) => rule.required().min(1),
     }),
-    sourceLine,
   ],
   preview: { select: { title: 'heading' }, prepare: ({ title }) => ({ title: title || 'Ask the AI' }) },
 });
@@ -773,7 +765,6 @@ const standingSection = defineType({
       ],
     }),
     defineField({ name: 'closing', title: 'Closing line', type: 'text', rows: 2 }),
-    sourceLine,
   ],
   preview: { select: { title: 'heading' }, prepare: ({ title }) => ({ title: title || 'Where you stand' }) },
 });
@@ -867,14 +858,6 @@ const tracksSection = defineType({
         }),
       ],
     }),
-    defineField({
-      name: 'targets',
-      title: 'Named targets',
-      type: 'array',
-      of: [defineArrayMember({ type: 'string' })],
-      description: 'The pages or lists we go after first, e.g. "lendflow.com roundup · 425 citations".',
-    }),
-    defineField({ name: 'targetsLabel', title: 'Targets label', type: 'string', initialValue: 'The pages the answers are built from' }),
   ],
   preview: { select: { title: 'heading' }, prepare: ({ title }) => ({ title: title || 'What you get' }) },
 });
@@ -921,23 +904,6 @@ const monthsSection = defineType({
             defineField({ name: 'proves', title: 'Proves', type: 'string', description: 'The number that shows the month moved.' }),
           ],
           preview: { select: { title: 'label', subtitle: 'title' } },
-        }),
-      ],
-    }),
-    defineField({ name: 'measuresLabel', title: 'Measures label', type: 'string', initialValue: 'Your dashboard, refreshed every morning' }),
-    defineField({
-      name: 'measures',
-      title: 'What we measure',
-      type: 'array',
-      of: [
-        defineArrayMember({
-          type: 'object',
-          name: 'measure',
-          fields: [
-            defineField({ name: 'label', title: 'Metric', type: 'string', validation: (rule) => rule.required() }),
-            defineField({ name: 'note', title: 'Note', type: 'string' }),
-          ],
-          preview: { select: { title: 'label', subtitle: 'note' } },
         }),
       ],
     }),

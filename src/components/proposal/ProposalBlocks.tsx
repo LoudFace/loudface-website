@@ -13,10 +13,6 @@ function Intro({ text }: { text?: string }) {
   return text ? <p className="mt-3 max-w-[64ch] text-[15.5px] leading-relaxed text-surface-700">{text}</p> : null;
 }
 
-function Source({ text }: { text?: string }) {
-  return text ? <p className="mt-3 text-[12px] text-surface-500">{text}</p> : null;
-}
-
 function Label({ children }: { children: React.ReactNode }) {
   return <p className="text-[11.5px] font-semibold uppercase tracking-[0.09em] text-surface-500">{children}</p>;
 }
@@ -26,7 +22,6 @@ export function AskAiBlock({ section, clientName }: { section: S<'askAiSection'>
     <>
       <Intro text={section.intro} />
       <ProposalAskAi questions={section.questions ?? []} clientName={clientName} />
-      <Source text={section.source} />
     </>
   );
 }
@@ -86,7 +81,6 @@ export function StandingBlock({ section }: { section: S<'standingSection'> }) {
       {section.closing && (
         <p className="mt-6 max-w-[64ch] text-[15.5px] leading-relaxed text-surface-900">{section.closing}</p>
       )}
-      <Source text={section.source} />
     </>
   );
 }
@@ -117,7 +111,6 @@ export function ForecastBlock({ section }: { section: S<'forecastSection'> }) {
  */
 export function TracksBlock({ section }: { section: S<'tracksSection'> }) {
   const tracks = (section.tracks ?? []).filter((t) => (t.items ?? []).length > 0);
-  const targets = section.targets ?? [];
   return (
     <>
       <Intro text={section.intro} />
@@ -170,11 +163,6 @@ export function TracksBlock({ section }: { section: S<'tracksSection'> }) {
           })}
         </table>
       </div>
-      {targets.length > 0 && (
-        <p className="mt-4 max-w-[68ch] text-[13.5px] leading-relaxed text-surface-600">
-          <span className="font-medium text-surface-950">{section.targetsLabel ?? 'First'}</span>: {targets.join(' · ')}
-        </p>
-      )}
     </>
   );
 }
@@ -208,7 +196,6 @@ export function GateBlock({ section }: { section: S<'gateSection'> }) {
  */
 export function MonthsBlock({ section }: { section: S<'monthsSection'> }) {
   const months = (section.months ?? []).filter((m) => (m.items ?? []).length > 0);
-  const measures = section.measures ?? [];
   return (
     <>
       <Intro text={section.intro} />
@@ -245,12 +232,6 @@ export function MonthsBlock({ section }: { section: S<'monthsSection'> }) {
           </tbody>
         </table>
       </div>
-      {measures.length > 0 && (
-        <p className="mt-4 text-[13.5px] leading-relaxed text-surface-600">
-          <span className="font-medium text-surface-950">{section.measuresLabel ?? 'Tracked daily'}</span> ·{' '}
-          {measures.map((m) => m.label).join(' · ')}
-        </p>
-      )}
       {section.note && <p className="mt-3 text-[13px] text-surface-500">{section.note}</p>}
     </>
   );

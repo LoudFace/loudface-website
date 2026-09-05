@@ -92,7 +92,6 @@ function fixture(_tone: 'light' | 'dark', withRail: boolean): Proposal {
           { _key: 'aq5', question: 'Which companies help ISOs offer working capital to merchants?', short: 'ISOs', vendors: [
             { _key: 'v1', name: 'Liberis', share: 17 }, { _key: 'v2', name: 'Fundbox', share: 7 }, { _key: 'v3', name: 'Lendio', share: 7 }, { _key: 'v4', name: 'YouLend', share: 7 }, { _key: 'v5', name: 'Parafin', share: 3 }, { _key: 'v6', name: 'Jaris', share: 0 } ] },
         ],
-        source: 'Peec AI · 2,250 answers · 26 Aug to 2 Sep 2026 · US.',
       },
       {
         _key: 'standing',
@@ -104,7 +103,6 @@ function fixture(_tone: 'light' | 'dark', withRail: boolean): Proposal {
           { _key: 's3', value: '2.9', label: 'average position when Jaris is named', lead: true },
         ],
         closing: 'The product is not the problem: when an assistant names Jaris it names it before Kanmon, Liberis and YouLend. Product pages are the most cited page type in this category, 1,060 times, and Jaris has one overview page covering five products.',
-        source: 'Peec AI citation counts · 2 Sep 2026.',
       },
       {
         _key: 'forecast',
@@ -134,9 +132,6 @@ function fixture(_tone: 'light' | 'dark', withRail: boolean): Proposal {
             { _key: 'i1', count: 'Month 1', text: 'Rebuilt on a modern stack with the pages above, keys handed to you' },
             { _key: 'i2', count: 'Week 1', text: 'Canonical tags, the duplicate domain, sitemap, H1s and schema' } ] },
         ],
-        targetsLabel: 'We start with the six most-cited pages in the category',
-        targets: ['openbankingtracker', 'Lendflow', 'Built In', 'Stripe', 'fintechspecs', 'Backbase'],
-        // the six most-cited pages in the category, from the report
       },
       {
         _key: 'engagement',
@@ -163,13 +158,6 @@ function fixture(_tone: 'light' | 'dark', withRail: boolean): Proposal {
           { _key: 'm1', label: 'Month 1', title: '', items: ['Technical fixes', 'New website live', '5 product pages', '5 calibration articles'], proves: 'One domain, pages cited' },
           { _key: 'm2', label: 'Month 2', title: '', items: ['20+ articles', '3 solution pages', '8–12 placements'], proves: 'AI share of voice moves' },
           { _key: 'm3', label: 'Month 3', title: '', items: ['20+ articles', 'Comparison pages', '8–12 placements'], proves: 'First leads attributed' },
-        ],
-        measuresLabel: 'On your dashboard every morning',
-        measures: [
-          { _key: 'me1', label: 'leads booked' },
-          { _key: 'me2', label: 'AI share of voice' },
-          { _key: 'me3', label: 'sentiment' },
-          { _key: 'me4', label: 'Google impressions and clicks' },
         ],
       },
       {

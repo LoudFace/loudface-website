@@ -459,12 +459,8 @@ export function ProposalDocument({
         <div className={`${page} pt-12 pb-14 sm:pt-16`}>
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src="/lf-logo.svg" alt="LoudFace" className="h-6 w-auto opacity-90" />
-          <div className={hasRail ? 'lg:grid lg:grid-cols-[minmax(0,1fr)_328px] lg:gap-14' : ''}>
-          <div className="min-w-0">
-          <p className="mt-9 text-[13px] tracking-[0.02em] text-white/55">
-            Proposal for {proposal.clientName}
-          </p>
-          <h1 className="mt-2.5 max-w-[20ch] text-[30px] font-medium leading-[1.08] tracking-[-0.035em] sm:text-[42px]">
+          <div className="min-w-0 max-w-[62ch]">
+          <h1 className="mt-9 max-w-[20ch] text-[30px] font-medium leading-[1.08] tracking-[-0.035em] sm:text-[42px]">
             {proposal.title}
           </h1>
           {proposal.heroSummary && proposal.heroSummary.length > 0 && (
@@ -479,9 +475,6 @@ export function ProposalDocument({
               {proposal.heroQuoteBy && <figcaption className="mt-2 text-[12.5px] text-white/55">{proposal.heroQuoteBy}</figcaption>}
             </figure>
           )}
-
-          </div>
-          {priceCard && <div className="mt-9 lg:mt-[68px]">{priceCard}</div>}
           </div>
 
           <dl className="mt-8 flex flex-wrap gap-x-9 gap-y-3 border-t border-white/15 pt-6 text-[13px] text-white/55">
@@ -489,18 +482,6 @@ export function ProposalDocument({
               <div>
                 <dt className="inline">Prepared for </dt>
                 <dd className="inline font-medium text-white">{proposal.preparedFor.join(', ')}</dd>
-              </div>
-            )}
-            <div>
-              <dt className="inline">Valid until </dt>
-              <dd className="inline font-medium text-white">{formatDate(proposal.validUntil)}</dd>
-            </div>
-            {proposal.contactEmail && (
-              <div>
-                <dt className="inline">Questions </dt>
-                <dd className="inline font-medium text-white">
-                  <a href={`mailto:${proposal.contactEmail}`}>{proposal.contactEmail}</a>
-                </dd>
               </div>
             )}
           </dl>
