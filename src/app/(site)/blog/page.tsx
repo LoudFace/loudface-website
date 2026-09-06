@@ -26,17 +26,28 @@ import { FooterV3 } from '../../home-v3/FooterV3';
 
 const POSTS_PER_PAGE = 12;
 
-export const metadata: Metadata = {
-  title: 'B2B SaaS Organic Growth Insights',
+// Paginated pages carry their own canonical. Until 2026-09-06 /blog?page=2..8
+// all declared /blog as canonical, so Google folded them into page 1 and had
+// no crawl path to the ~78 posts that only those pages link to.
+export async function generateMetadata({
+  searchParams,
+}: {
+  searchParams: Promise<{ page?: string }>;
+}): Promise<Metadata> {
+  const { page: pageParam } = await searchParams;
+  const page = Math.max(1, parseInt(pageParam || '1', 10) || 1);
+  const path = page > 1 ? `/blog?page=${page}` : '/blog';
+  return {
+  title: page > 1 ? `B2B SaaS Organic Growth Insights – Page ${page}` : 'B2B SaaS Organic Growth Insights',
   description: 'Actionable GEO, SEO, AEO, content, and conversion insights from LoudFace. Browse B2B SaaS guides, tutorials, and Webflow delivery articles.',
   alternates: {
-    canonical: '/blog',
+    canonical: path,
   },
   openGraph: {
     title: 'LoudFace Blog | B2B SaaS Organic Growth Insights',
     description: 'Actionable GEO, SEO, AEO, content, and conversion insights from LoudFace. Browse B2B SaaS guides, tutorials, and Webflow delivery articles.',
     type: 'website',
-    url: '/blog',
+    url: path,
     siteName: 'LoudFace',
     locale: 'en_US',
     images: [{ url: '/opengraph-image', width: 1200, height: 630, alt: 'LoudFace Blog' }],
@@ -48,7 +59,8 @@ export const metadata: Metadata = {
     description: 'Actionable GEO, SEO, AEO, content, and conversion insights from LoudFace. Browse B2B SaaS guides, tutorials, and Webflow delivery articles.',
     images: ['/opengraph-image'],
   },
-};
+  };
+}
 
 export default async function BlogPage({
   searchParams,
