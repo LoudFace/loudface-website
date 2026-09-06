@@ -128,6 +128,15 @@ const CODE_OWNED_HR_TECH_PAGE: SeoPage = {
   'hero-headline': 'SEO, AEO and GEO for HR Tech SaaS',
 };
 
+const CODE_OWNED_EDTECH_PAGE: SeoPage = {
+  id: 'code-edtech',
+  name: 'EdTech SaaS',
+  slug: 'edtech',
+  'meta-description':
+    'SEO, AEO and GEO for edtech SaaS. Build the evidence, privacy, rostering and procurement pages institutional buyers check before they buy.',
+  'hero-headline': 'SEO, AEO and GEO for EdTech SaaS',
+};
+
 export default async function SeoForHubPage() {
   const content = getSeoForHubContent();
   const [cmsSeoPages, cmsData] = await Promise.all([
@@ -135,8 +144,13 @@ export default async function SeoForHubPage() {
     fetchHomepageData(),
   ]);
   const seoPages = [
-    ...cmsSeoPages.filter((page) => page.slug !== CODE_OWNED_HR_TECH_PAGE.slug),
+    ...cmsSeoPages.filter(
+      (page) =>
+        page.slug !== CODE_OWNED_HR_TECH_PAGE.slug &&
+        page.slug !== CODE_OWNED_EDTECH_PAGE.slug
+    ),
     CODE_OWNED_HR_TECH_PAGE,
+    CODE_OWNED_EDTECH_PAGE,
   ];
 
   const showcaseClients = cmsData.allClients.filter(
