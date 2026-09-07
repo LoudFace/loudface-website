@@ -467,7 +467,8 @@ export const PROOF: { heading: string; cards: ProofCard[] } = {
         <>
           We ran this method on loudface.co and published the{' '}
           <Link href="/case-studies/loudface-aeo-case-study">full record</Link>. Our share of the AI
-          answers in our category went from 0.18% in April 2026 to 9.4% in June. April was 8 brand
+          answers in our category went from 0.18% in April 2026 to 10.35% over the quarter to June 2026,
+          with a June 30-day blend across the three engines of 9.4%. April was 8 brand
           mentions across 2,747 monitored answers. June was 1,434 mentions, on a much larger pool of
           answers. In the 30 days to 2 September 2026, we are named in 12.95% of AI answers on our
           tracked prompt set, and our average position when cited is 2.8, across a tracked panel of 50
@@ -543,7 +544,7 @@ export const PROOF: { heading: string; cards: ProofCard[] } = {
           <Link href="/case-studies/toku-ai-cited-pipeline">Toku</Link> appeared in 97.8% of AI answers on
           &ldquo;best stablecoin payroll providers&rdquo;, the highest of any brand on that prompt.
           On &ldquo;best stablecoin payroll solutions for crypto and Web3 companies&rdquo; the figure
-          was 93.2% at an average position of 2.5, up from 81.5% in April 2026. Both August figures
+          was 93.4% at an average position of 2.5, up from 86% in the spring window. Both August figures
           come from the 30-day read ending 19 August 2026, across 95 tracked prompts. LoudFace was Toku&rsquo;s
           growth partner for 18 months, and the 2024 site foundation is part of why the AI work
           compounded as fast as it did. Those figures are visibility readings, which means how often

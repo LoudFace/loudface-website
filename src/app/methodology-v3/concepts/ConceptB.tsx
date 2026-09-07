@@ -496,8 +496,8 @@ function ProofB() {
                       <span>April 2026</span>
                     </div>
                     <div>
-                      <b>9.4%</b>
-                      <span>June 2026</span>
+                      <b>10.35%</b>
+                      <span>Q2 2026 (April to June)</span>
                     </div>
                     <div>
                       <b>12.95%</b>
