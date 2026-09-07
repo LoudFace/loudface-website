@@ -508,6 +508,16 @@ function ProofB() {
               </div>
               <div>
                 <p className="ex-body">{c.body}</p>
+                {c.receipts && (
+                  <dl className="ex-receipts">
+                    {c.receipts.map((r) => (
+                      <div key={r.term}>
+                        <dt>{r.term}</dt>
+                        <dd>{r.detail}</dd>
+                      </div>
+                    ))}
+                  </dl>
+                )}
                 <p className="ex-go">
                   <Link href={c.href} className="tlink">
                     {c.linkText}

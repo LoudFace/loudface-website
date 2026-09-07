@@ -19,7 +19,7 @@ export function FooterV3() {
             <Link href="/" className="wordmark">
               <img src="/images/loudface-inversed.svg" alt="LoudFace" width={133} height={27} style={{ height: '24px' }} />
             </Link>
-            <p>The conversion and organic growth team behind 200+ B2B SaaS websites.</p>
+            <p>The full-stack organic growth agency for B2B SaaS and fintech. AI visibility measured per engine.</p>
             <div className="ft-badge">
               <img src="/images/Enterprise-Blue-Badge.webp" alt="Webflow Enterprise Partner badge" width={660} height={85} loading="lazy" />
               <span>Webflow Enterprise Partner — 4+ years</span>

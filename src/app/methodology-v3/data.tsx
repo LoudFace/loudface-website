@@ -34,7 +34,7 @@ export const PAGE = {
 export const SHORT_ANSWER = {
   label: 'The short answer',
   body:
-    "The Answer Chain is LoudFace's eight-stage generative engine optimization (GEO) method for getting a B2B SaaS named in AI answers. LoudFace measures that work against revenue outcomes rather than vanity metrics. Share of answers and citations are tracked per engine, then read against search demand, signups, booked demos and captured leads. Engagements start from $5,000 a month.",
+    "LoudFace is a full-stack organic growth agency for B2B SaaS and fintech, with AI visibility measured per engine. The Answer Chain is LoudFace's eight-stage generative engine optimization (GEO) method for getting a B2B SaaS named in AI answers. LoudFace measures that work against revenue outcomes rather than vanity metrics. Share of answers and citations are tracked per engine, then read against search demand, signups, booked demos and captured leads. Engagements start from $5,000 a month.",
   stagesLine:
     'The eight stages, in order: baseline per engine, crawler access, brand entity, liftable artifact, original material, third-party corroboration, selective placement, and per-engine reporting through to revenue.',
 } as const;
@@ -435,6 +435,12 @@ export const ENGINES = {
 
 /* ─── Slot 7: proof (three linked cards) ─────────────────────────── */
 
+/** One row of a proof card's receipts list: the four fields an engine asks for, plus window and source. */
+export interface ProofReceipt {
+  term: string;
+  detail: ReactNode;
+}
+
 export interface ProofCard {
   id: string;
   label: string;
@@ -444,6 +450,8 @@ export interface ProofCard {
   body: ReactNode;
   href: string;
   linkText: string;
+  /** Six-row receipts block: Client, Prompt, Before to after, Engines, Window, Source. */
+  receipts?: ProofReceipt[];
 }
 
 export const PROOF: { heading: string; cards: ProofCard[] } = {
@@ -468,6 +476,24 @@ export const PROOF: { heading: string; cards: ProofCard[] } = {
       ),
       href: '/case-studies/loudface-aeo-case-study',
       linkText: 'Read the full record',
+      receipts: [
+        { term: 'Client', detail: 'LoudFace (our own domain)' },
+        { term: 'Prompt', detail: 'Our tracked prompt set for the B2B SaaS growth-agency category' },
+        { term: 'Before to after', detail: '0.18% of AI answers in April 2026 to 12.95%, at an average position of 2.8, against a tracked panel of 50 brands' },
+        { term: 'Engines', detail: 'ChatGPT, Perplexity and Google AI Overviews' },
+        { term: 'Window', detail: 'April 2026 to the 30 days ending 2 September 2026' },
+        {
+          term: 'Source',
+          detail: (
+            <>
+              <Link href="/case-studies/loudface-aeo-case-study">
+                April 2026 baseline, case study
+              </Link>
+              ; current reading: this page, 30 days to 2 September 2026
+            </>
+          ),
+        },
+      ],
     },
     {
       id: 'category-study',
@@ -490,6 +516,21 @@ export const PROOF: { heading: string; cards: ProofCard[] } = {
       ),
       href: '/blog/best-agencies-chatgpt-perplexity-citations-2026',
       linkText: 'Read the study',
+      receipts: [
+        { term: 'Client', detail: 'None, category study' },
+        { term: 'Prompt', detail: 'The tracked B2B SaaS growth-agency prompt set, including \u201Cbest GEO agencies\u201D and \u201Cbest AI search agencies\u201D; the study does not publish a prompt count' },
+        { term: 'Before to after', detail: 'Not a before and after: a single 90-day read of 128,515 citations, in which loudface.co was the most-cited source domain with 6,616 citations' },
+        { term: 'Engines', detail: 'ChatGPT, Perplexity and Google AI Overviews, the three channels active in the dataset' },
+        { term: 'Window', detail: '90 days, 25 April 2026 to 24 July 2026' },
+        {
+          term: 'Source',
+          detail: (
+            <Link href="/blog/best-agencies-chatgpt-perplexity-citations-2026">
+              Who AI actually cites in the B2B SaaS growth-agency category
+            </Link>
+          ),
+        },
+      ],
     },
     {
       id: 'client',
@@ -511,6 +552,103 @@ export const PROOF: { heading: string; cards: ProofCard[] } = {
       ),
       href: '/case-studies/toku-ai-cited-pipeline',
       linkText: 'Read the case study',
+      receipts: [
+        { term: 'Client', detail: 'Toku (a former client)' },
+        { term: 'Prompt', detail: '\u201Cbest stablecoin payroll providers\u201D' },
+        { term: 'Before to after', detail: 'Near zero to 97.8% of AI answers on that one prompt, the highest of any brand on it; across all 95 prompts the average cited position was 2.1' },
+        { term: 'Engines', detail: 'Google AI Overviews, ChatGPT, Perplexity, Claude, Gemini and Grok' },
+        { term: 'Window', detail: '30-day read ending 19 August 2026, from an 18-month engagement' },
+        {
+          term: 'Source',
+          detail: <Link href="/case-studies/toku-ai-cited-pipeline">Toku AI-cited pipeline case study</Link>,
+        },
+      ],
+    },
+    {
+      id: 'genie-teacher',
+      label: 'A client',
+      headline: 'Genie Teacher, across its tutoring prompt set.',
+      figure: '12.94%',
+      figureLabel: 'share of voice on 24 August 2026, up from 2.26%',
+      body: (
+        <>
+          <Link href="/case-studies/genie-teacher-organic-growth">Genie Teacher</Link> went from 2.26%
+          share of voice on 25 May 2026 to 12.94% on 24 August 2026. Visibility went from 5.26% to
+          9.17% over the same window, with a 28.39% peak on 20 July 2026. When the engines cited
+          Genie Teacher across its 81 tracked prompts, its average position was 1.1, on the 30-day
+          window ending 19 August 2026.
+        </>
+      ),
+      href: '/case-studies/genie-teacher-organic-growth',
+      linkText: 'Read the case study',
+      receipts: [
+        { term: 'Client', detail: 'Genie Teacher' },
+        { term: 'Prompt', detail: '81 buyer prompts in Peec AI across the tutoring category, spanning brand, competitor comparisons and the certified-teacher wedge' },
+        { term: 'Before to after', detail: '2.26% to 12.94% share of voice; visibility 5.26% to 9.17%, peaking at 28.39% on 20 July 2026; average position 1.1 when cited' },
+        { term: 'Engines', detail: 'The case study does not name the engines; it reports the Peec AI tracked reading as one number' },
+        { term: 'Window', detail: '25 May 2026 to 24 August 2026; position read on the 30 days ending 19 August 2026' },
+        {
+          term: 'Source',
+          detail: <Link href="/case-studies/genie-teacher-organic-growth">Genie Teacher organic growth case study</Link>,
+        },
+      ],
+    },
+    {
+      id: 'stealth-fintech',
+      label: 'A client',
+      headline: 'A stealth fintech, on a fixed panel of buyer prompts.',
+      figure: '10.46%',
+      figureLabel: 'peak AI visibility on 3 August 2026, up from 0.53%',
+      body: (
+        <>
+          A <Link href="/case-studies/stealth-fintech-ai-visibility">stealth fintech</Link> went from
+          0.53% AI visibility on 15 June 2026 to a peak of 10.46% on 3 August 2026, then settled at
+          8.00% by 24 August 2026. Average mention rank improved from 6.0 to 1.6. The tracked panel runs about
+          500 AI answers a week, thinner than our larger accounts, so week-to-week swings, the 3
+          August peak included, read as directional rather than exact.
+        </>
+      ),
+      href: '/case-studies/stealth-fintech-ai-visibility',
+      linkText: 'Read the case study',
+      receipts: [
+        { term: 'Client', detail: 'A stealth fintech (named privately)' },
+        { term: 'Prompt', detail: 'A fixed panel of buyer prompts in Peec AI; the case study does not publish the individual prompts' },
+        { term: 'Before to after', detail: '0.53% to a 10.46% peak, settling at 8.00%; average mention rank 6.0 to 1.6' },
+        { term: 'Engines', detail: 'ChatGPT, Gemini and Google AI Overviews, tracked in Peec AI' },
+        { term: 'Window', detail: '15 June 2026 to 24 August 2026' },
+        {
+          term: 'Source',
+          detail: <Link href="/case-studies/stealth-fintech-ai-visibility">Stealth fintech AI visibility case study</Link>,
+        },
+      ],
+    },
+    {
+      id: 'trademomentum',
+      label: 'A client',
+      headline: 'TradeMomentum, on its wedge topic.',
+      figure: '34.4%',
+      figureLabel: 'AI visibility on \u201Ctrading communities\u201D, up from 8.8%',
+      body: (
+        <>
+          <Link href="/case-studies/trademomentum-niche-aeo-organic-growth">TradeMomentum</Link> went
+          from 8.8% to 34.4% AI visibility on its core wedge topic, trading communities, between
+          6 July and 24 August 2026, tracked in Peec AI. On the classic-search side, Google clicks
+          grew from 46 a week in September 2025 to 332 a week in August 2026.
+        </>
+      ),
+      href: '/case-studies/trademomentum-niche-aeo-organic-growth',
+      linkText: 'Read the case study',
+      receipts: [
+        { term: 'Client', detail: 'TradeMomentum' },
+        { term: 'Prompt', detail: 'The wedge topic \u201Ctrading communities\u201D, inside a buyer prompt set that also holds \u201Cbest 60-day trading bootcamp\u201D and \u201Ctop momentum trading communities\u201D' },
+        { term: 'Before to after', detail: '8.8% to 34.4% AI visibility; Google clicks 46 a week in September 2025 to 332 a week in August 2026' },
+        { term: 'Engines', detail: 'Peec AI panel: ChatGPT, Perplexity and Google AI Overviews, plus Google Search Console' },
+        { term: 'Window', detail: '6 July to 24 August 2026 for AI visibility; September 2025 to August 2026 for Google clicks' },
+        {
+          term: 'Source',
+          detail: <Link href="/case-studies/trademomentum-niche-aeo-organic-growth">TradeMomentum niche AEO case study</Link>,
+        },
+      ],
     },
   ],
 };

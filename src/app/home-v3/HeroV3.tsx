@@ -75,8 +75,9 @@ const HERO_COPY: Record<HeroVariant, {
     headline: <>Get discovered across Google and AI search. Turn visibility into customers.</>,
     sub: (
       <>
-        LoudFace is an AI-native B2B SaaS organic growth agency. We run GEO, SEO, AEO, content, and conversion to
-        get companies discovered across Google and AI search. We implement across your stack when the program needs it.
+        LoudFace is a full-stack organic growth agency for B2B SaaS and fintech, with AI visibility measured per engine.
+        We run GEO, SEO, AEO, content, and conversion to get companies discovered across Google and AI search. We
+        implement across your stack when the program needs it.
       </>
     ),
   },
@@ -86,8 +87,9 @@ const HERO_COPY: Record<HeroVariant, {
     headline: <>Your buyers ask AI first.<br />Make sure it <span className="soft">names you.</span></>,
     sub: (
       <>
-        LoudFace runs GEO, SEO, AEO, content, and conversion for B2B SaaS companies. Toku reached 97.8% visibility
-        on its category&rsquo;s top AI-search prompt. We add delivery work across your stack when it supports the program.
+        LoudFace is a full-stack organic growth agency for B2B SaaS and fintech, with AI visibility measured per engine.
+        Toku reached 97.8% visibility on its category&rsquo;s top AI-search prompt. We add delivery work across your
+        stack when it supports the program.
       </>
     ),
   },

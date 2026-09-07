@@ -25,7 +25,7 @@ export function HeroAbout({ team }: { team: TeamPerson[] }) {
             The team behind <span className="soft">B2B SaaS organic growth.</span>
           </h1>
           <p className="hero-sub rv" data-speakable style={{ ['--d' as string]: '.12s' }}>
-            We get companies discovered across Google and AI search, then turn that visibility into customers.
+            The full-stack organic growth agency for B2B SaaS and fintech. AI visibility measured per engine.
             We run GEO, SEO, AEO, content, and conversion. {team.length} of us work remotely from Dubai for global SaaS teams.
           </p>
           <div className="hero-cta rv" style={{ ['--d' as string]: '.18s' }}>
