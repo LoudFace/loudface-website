@@ -79,6 +79,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       changeFrequency: 'monthly',
       priority: 0.7,
     },
+    {
+      url: `${baseUrl}/seo-for/ai-startups`,
+      lastModified: new Date('2026-09-10'),
+      changeFrequency: 'monthly',
+      priority: 0.7,
+    },
     // Contact (net-new v3 page; previously 301'd to /)
     {
       url: `${baseUrl}/contact`,
@@ -203,7 +209,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
   // SEO industry pages
   const seoPageEntries: MetadataRoute.Sitemap = seoPages
-    .filter((page) => page.slug !== 'hr-tech' && page.slug !== 'edtech')
+    .filter(
+      (page) =>
+        page.slug !== 'hr-tech' &&
+        page.slug !== 'edtech' &&
+        page.slug !== 'ai-startups'
+    )
     .map((page) => ({
       url: `${baseUrl}/seo-for/${page.slug}`,
       ...lastMod(page._updatedAt),
