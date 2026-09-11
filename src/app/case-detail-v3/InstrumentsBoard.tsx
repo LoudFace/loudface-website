@@ -50,9 +50,9 @@ import {
 import { ChartMarkers } from '@/components/charts/markers';
 import type { CaseStudyInstruments, InstrumentEngineId } from '@/lib/types';
 
-/* Horizontal hairlines over the dotted paper. The proposal plots draw them at
-   the same faint weight; set false to run on dots alone. */
-const SHOW_GRID = true;
+/* No horizontal hairlines: over the dotted paper they read as broken dashes
+   (Arnel, 2026-09-11). The plots run on dots alone. */
+const SHOW_GRID = false;
 import { EngineMark, GoogleMark } from './EngineMarks';
 
 interface InstrumentsBoardProps {
