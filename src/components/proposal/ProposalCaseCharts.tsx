@@ -3,14 +3,15 @@
 import { curveCatmullRom } from '@visx/curve';
 import { useEffect, useState } from 'react';
 import { ChartMarkers } from '@/components/charts/markers';
-import { Area, AreaChart, Background, Bar, BarChart, BarXAxis, ChartTooltip, Grid, XAxis } from '@/components/charts';
+import { Area, AreaChart, Background, Bar, BarChart, BarXAxis, ChartTooltip, XAxis } from '@/components/charts';
 import '@/app/case-detail-v3/instruments-board.css';
 
 /**
  * The same Bklit charts the public case-study pages draw, at proposal size.
  *
  * Card-less on dotted paper, house indigo ink, one plot per case — the
- * 2026-08-19 case-study rule, carried over unchanged. The plot descriptor is
+ * 2026-08-19 case-study rule. No horizontal grid: over the dots the hairlines
+ * read as broken dashes (Arnel, 2026-09-11), same as the case-study boards. The plot descriptor is
  * built on the server (`ProposalCaseProof`) from the case study's own
  * instruments, so what a prospect sees here is what they find on the site.
  *
@@ -73,7 +74,6 @@ export function ProposalCaseChart({ plot }: { plot: CasePlot }) {
             margin={{ top: 8, right: 8, bottom: 26, left: 8 }}
           >
             <Background pattern="dots" opacity={0.6} />
-            <Grid horizontal />
             <Bar dataKey="value" lineCap="butt" fill="var(--chart-1)" />
             <BarXAxis maxLabels={6} />
             <ChartTooltip
@@ -97,7 +97,6 @@ export function ProposalCaseChart({ plot }: { plot: CasePlot }) {
             margin={{ top: plot.startDate ? 40 : 14, right: 22, bottom: 34, left: 22 }}
           >
             <Background pattern="dots" opacity={0.55} />
-            <Grid horizontal />
             <Area dataKey="value" curve={curveCatmullRom} fillOpacity={0.24} strokeWidth={2} stroke="var(--chart-1)" />
             <XAxis />
             {plot.startDate && plot.startDate >= plot.points[0].date && (
