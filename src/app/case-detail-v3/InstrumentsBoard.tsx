@@ -45,10 +45,14 @@ import {
   BarXAxis,
   ChartTooltip,
   Grid,
-  Line,
   XAxis,
 } from '@/components/charts';
+import { ChartMarkers } from '@/components/charts/markers';
 import type { CaseStudyInstruments, InstrumentEngineId } from '@/lib/types';
+
+/* Horizontal hairlines over the dotted paper. The proposal plots draw them at
+   the same faint weight; set false to run on dots alone. */
+const SHOW_GRID = true;
 import { EngineMark, GoogleMark } from './EngineMarks';
 
 interface InstrumentsBoardProps {
@@ -151,8 +155,17 @@ function useIsNarrow(query = '(max-width: 700px)') {
 }
 
 export function InstrumentsBoard({ instruments, clientName }: InstrumentsBoardProps) {
-  const { aiSource, gscSource, topicClimb, rankOverTime, engineBeforeAfter, indexedTrend, leadGrowth, publishedResult } =
-    instruments;
+  const {
+    aiSource,
+    gscSource,
+    topicClimb,
+    rankOverTime,
+    engineBeforeAfter,
+    indexedTrend,
+    leadGrowth,
+    publishedResult,
+    engagementStart,
+  } = instruments;
 
   /* Chart enter animations differ between the server and client render, so the
      charts mount client-side. Their boxes keep their size, so nothing shifts. */
@@ -220,6 +233,17 @@ export function InstrumentsBoard({ instruments, clientName }: InstrumentsBoardPr
   /* A daily Google series needs day-level tooltips; a monthly one needs month
      labels. One explicit ISO date on the first point is what separates them. */
   const googleIsDaily = !!indexedTrend?.points?.[0]?.date;
+
+  /* The day LoudFace started, drawn as one marker when it falls inside the
+     series — the same mark the proposal plots carry. */
+  const startMarker = useMemo(() => {
+    if (!engagementStart || googleSeries.length === 0) return null;
+    const at = new Date(`${engagementStart}T00:00:00Z`);
+    const first = googleSeries[0].date;
+    const last = googleSeries[googleSeries.length - 1].date;
+    if (Number.isNaN(at.getTime()) || at < first || at > last) return null;
+    return at;
+  }, [engagementStart, googleSeries]);
 
   const asMultiple = useMemo(() => makeAsMultiple(indexedTrend?.baselineLabel), [indexedTrend]);
 
@@ -308,7 +332,7 @@ export function InstrumentsBoard({ instruments, clientName }: InstrumentsBoardPr
                               margin={{ top: 8, right: 10, bottom: 30, left: 10 }}
                             >
                               <Background pattern="dots" opacity={0.6} />
-                              <Grid horizontal />
+                              {SHOW_GRID && <Grid horizontal />}
                               <Bar dataKey="visibility" lineCap="butt" fill="var(--chart-1)" />
                               <BarXAxis maxLabels={7} />
                               <ChartTooltip
@@ -417,7 +441,7 @@ export function InstrumentsBoard({ instruments, clientName }: InstrumentsBoardPr
                                 : { top: 10, right: 8, bottom: 32, left: 8 }
                             }
                           >
-                            <Grid horizontal />
+                            {SHOW_GRID && <Grid horizontal />}
                             <Bar dataKey="before" fill="var(--chart-3)" lineCap={3} />
                             <Bar dataKey="after" fill="var(--chart-1)" lineCap={3} />
                             <BarXAxis />
@@ -471,29 +495,46 @@ export function InstrumentsBoard({ instruments, clientName }: InstrumentsBoardPr
                 <div className="inb-cell">
                   <p className="inb-cell-label">{indexedTrend.title}</p>
                   <div className="inb-cell-body">
-                    <div className="inb-legend">
-                      <span className="inb-legend-item">
-                        <span className="inb-key-rule" style={{ background: 'var(--chart-3)' }} />
-                        Impressions
-                      </span>
-                      <span className="inb-legend-item">
-                        <span className="inb-key-rule" style={{ background: 'var(--chart-1)' }} />
-                        Clicks
-                      </span>
-                    </div>
-                    <div className="inb-plot">
+                    <div className="inb-plot inb-plot--lead">
                       {mounted && (
+                        /*
+                         * Impressions lead, alone. On one shared scale the
+                         * click line read flat beside a 100× impressions climb
+                         * and the two overlapping fills muddied the curve —
+                         * the proposal plots draw the one series and carry
+                         * clicks in the tooltip, and they read far cleaner.
+                         */
                         <AreaChart
                           data={googleSeries}
                           aspectRatio=""
                           style={{ height: '100%' }}
-                          margin={{ top: 6, right: 10, bottom: 26, left: 10 }}
+                          margin={{ top: startMarker ? 40 : 14, right: 22, bottom: 34, left: 22 }}
                         >
                           <Background pattern="dots" opacity={0.55} />
-                          <Grid horizontal />
-                          <Area dataKey="impressions" fillOpacity={0.2} strokeWidth={2} stroke="var(--chart-3)" />
-                          <Area dataKey="clicks" fillOpacity={0.3} strokeWidth={2} stroke="var(--chart-1)" />
+                          {SHOW_GRID && <Grid horizontal />}
+                          <Area
+                            dataKey="impressions"
+                            curve={curveCatmullRom}
+                            fillOpacity={0.24}
+                            strokeWidth={2}
+                            stroke="var(--chart-1)"
+                          />
                           <XAxis />
+                          {startMarker && (
+                            <ChartMarkers
+                              items={[
+                                {
+                                  date: startMarker,
+                                  // eslint-disable-next-line @next/next/no-img-element
+                                  icon: <img src="/lf-logo.svg" alt="" className="h-full w-full rounded-full object-cover" />,
+                                  title: 'LoudFace starts',
+                                  color: '#5222FF',
+                                },
+                              ]}
+                              size={26}
+                              showLines
+                            />
+                          )}
                           <ChartTooltip
                             content={({ point }) => (
                               <Tip
@@ -502,12 +543,12 @@ export function InstrumentsBoard({ instruments, clientName }: InstrumentsBoardPr
                                   {
                                     label: 'Impressions',
                                     value: asMultiple(point.impressions),
-                                    swatch: 'var(--chart-3)',
+                                    swatch: 'var(--chart-1)',
                                   },
                                   {
                                     label: 'Clicks',
                                     value: asMultiple(point.clicks),
-                                    swatch: 'var(--chart-1)',
+                                    swatch: 'var(--chart-3)',
                                   },
                                 ]}
                               />
@@ -582,7 +623,7 @@ export function InstrumentsBoard({ instruments, clientName }: InstrumentsBoardPr
                           margin={{ top: 8, right: 10, bottom: 30, left: 10 }}
                         >
                           <Background pattern="dots" opacity={0.6} />
-                          <Grid horizontal />
+                          {SHOW_GRID && <Grid horizontal />}
                           <Bar dataKey="leads" lineCap="butt" fill="var(--chart-1)" />
                           <BarXAxis maxLabels={7} />
                           <ChartTooltip
