@@ -7,8 +7,9 @@
  * plain ResultsLedger. Sits directly after the hero.
  *
  * Language: bklit-style instruments re-keyed to the house — card-less charts
- * drawn straight on dotted drafting paper, hairline rules, ONE indigo ink mark
- * per chart. Chart ink is ALWAYS house indigo, never the client brand color
+ * drawn straight on dotted drafting paper, ONE indigo ink mark per chart and
+ * no dashed grid or guide lines (over the dots they read as broken dashes;
+ * Arnel, 2026-09-11). Chart ink is ALWAYS house indigo, never the client brand color
  * (a green-toned client color on the indigo site is what triggered the redesign).
  *
  * The growth curve is a STEP area (honest for month buckets) and stays
@@ -102,14 +103,9 @@ function StepCurve({ chart }: { chart: CaseStudyChart }) {
     <div className="curve-plot" role="img" aria-label={`Stepped growth curve from ${data[0].label ?? 'start'} to ${data[n - 1].label ?? 'end'}${data[0].displayValue && data[n - 1].displayValue ? `, ${data[0].displayValue} to ${data[n - 1].displayValue}` : ''}`}>
       <svg className="curve-svg" viewBox={`0 0 ${W} ${H}`} preserveAspectRatio="none" aria-hidden="true">
         <path fill="var(--acc-100, #e0e7ff)" d={area} />
-        <g stroke="rgba(79,70,229,.22)" strokeWidth="1" strokeDasharray="3 4" vectorEffect="non-scaling-stroke">
-          <path d="M0 100H800" />
-          <path d="M0 200H800" />
-          <path d="M0 300H800" />
-          {Array.from({ length: n - 1 }, (_, i) => (
-            <path key={i} d={`M${((i + 1) * band).toFixed(1)} 0V${H}`} />
-          ))}
-        </g>
+        {/* No dashed grid: over the dotted paper the hairlines read as broken
+            dashes (Arnel, 2026-09-11). The step, the fill and the baseline are
+            the whole drawing. */}
         <path
           fill="none"
           stroke="#4f46e5"

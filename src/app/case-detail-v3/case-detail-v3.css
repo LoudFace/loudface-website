@@ -301,8 +301,9 @@
 .csv3 .nmx .bar-legend .swatch.now{ background:var(--acc); }
 .csv3 .nmx .guides{ position:absolute; top:0; bottom:0; left:calc(var(--labw) + var(--cgap));
   right:calc(var(--valw) + var(--cgap)); pointer-events:none; }
-.csv3 .nmx .guides i{ position:absolute; top:-4px; bottom:-4px; width:0; border-left:1px dashed var(--guide); }
-.csv3 .nmx .guides i.solid{ border-left-style:solid; border-left-color:var(--line); }
+/* Dashed guide lines retired 2026-09-11: only the two solid edges remain. */
+.csv3 .nmx .guides i{ display:none; }
+.csv3 .nmx .guides i.solid{ display:block; position:absolute; top:-4px; bottom:-4px; width:0; border-left:1px solid var(--line); }
 .csv3 .nmx .plot{ position:relative; display:grid; grid-template-columns:var(--labw) minmax(0,1fr) var(--valw);
   column-gap:var(--cgap); row-gap:14px; align-items:center; }
 .csv3 .nmx .brow{ display:contents; }
