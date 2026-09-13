@@ -12,6 +12,18 @@
         "NEXT_PUBLIC_SANITY_PROJECT_ID": "xjjjqhgt",
         "NEXT_PUBLIC_SANITY_DATASET": "production"
       }
+    },
+    {
+      "name": "design-preview",
+      "runtimeExecutable": "python3",
+      "runtimeArgs": ["-m", "http.server", "7788", "--directory", ".claude/drafts/landing-redesign"],
+      "port": 7788
+    },
+    {
+      "name": "usvc-preview",
+      "runtimeExecutable": "python3",
+      "runtimeArgs": ["-m", "http.server", "7799", "--directory", ".claude/design/usvc-round"],
+      "port": 7799
     }
   ]
 }

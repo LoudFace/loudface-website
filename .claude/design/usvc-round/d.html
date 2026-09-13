@@ -1,0 +1,1230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>LoudFace — Your website converts. Your organic traffic compounds.</title>
+<meta name="description" content="LoudFace is the conversion and organic growth team behind 200+ B2B SaaS websites. We build on Webflow, then run SEO, AEO, and CRO to grow what we shipped." />
+
+<!-- Fonts: Geist (Google) × Gambarino (Fontshare). No mono. -->
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+<link href="https://api.fontshare.com/v2/css?f[]=gambarino@400,1&display=swap" rel="stylesheet" />
+
+<style>
+  :root{
+    /* Re-keyed tokens */
+    --paper:#FAFAFB;
+    --paper-2:#F2F2F5;
+    --ink:#0D0D14;
+    --ink-2:#15151F;
+    --text:#14141C;
+    --muted:#5B5B6B;
+    --line:#E6E6EC;
+    --line-ink:rgba(255,255,255,0.10);
+    --accent:#6366F1;
+    --accent-d:#4F46E5;
+    /* DECLARED DEPARTURE: a punchier electric indigo for the ONE loud moment */
+    --loud:#4D5BFF;
+    --loud-d:#3B49F0;
+    --accent-soft:#EEF0FF;
+    --ok:#16B364;
+    --no:#E5484D;
+
+    --ease-out:cubic-bezier(.22,1,.36,1);
+    --ease-loud:cubic-bezier(.16,1,.3,1);
+
+    --maxw:1200px;
+    --gut:clamp(20px,5vw,64px);
+    --radius:3px;          /* near-square everywhere */
+  }
+
+  *,*::before,*::after{box-sizing:border-box;}
+  html{-webkit-text-size-adjust:100%;scroll-behavior:smooth;}
+  @media (prefers-reduced-motion:reduce){html{scroll-behavior:auto;}}
+
+  body{
+    margin:0;
+    background:var(--paper);
+    color:var(--text);
+    font-family:"Geist",ui-sans-serif,system-ui,sans-serif;
+    font-weight:400;
+    font-size:17px;
+    line-height:1.6;
+    letter-spacing:-0.011em;
+    -webkit-font-smoothing:antialiased;
+    text-rendering:optimizeLegibility;
+    overflow-x:hidden;
+  }
+  img{display:block;max-width:100%;}
+  a{color:inherit;text-decoration:none;}
+
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:0 var(--gut);}
+
+  /* ---- type primitives ---- */
+  .serif{font-family:"Gambarino",Georgia,serif;font-style:italic;font-weight:400;}
+  .accent-word{color:var(--accent);font-family:"Gambarino",Georgia,serif;font-style:italic;font-weight:400;}
+
+  .label{
+    font-size:11.5px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;
+    color:var(--muted);
+  }
+  .label.on-ink{color:rgba(255,255,255,.55);}
+  .label.on-loud{color:rgba(255,255,255,.78);}
+
+  .eyebrow{display:inline-flex;align-items:center;gap:9px;}
+  .eyebrow .dot{width:6px;height:6px;border-radius:50%;background:var(--accent);display:inline-block;}
+
+  h1,h2,h3{margin:0;font-weight:500;letter-spacing:-0.025em;line-height:1.04;}
+  h2{font-size:clamp(28px,3.7vw,46px);color:var(--ink);}
+  h3{font-size:clamp(19px,1.6vw,22px);letter-spacing:-0.02em;}
+  p{margin:0;}
+
+  .lead{font-size:clamp(17px,1.35vw,19px);color:var(--muted);line-height:1.62;letter-spacing:-0.012em;}
+
+  /* ---- THE ONE pill ---- */
+  .pill{
+    display:inline-flex;align-items:center;gap:10px;
+    background:var(--ink);color:#fff;
+    font-size:15px;font-weight:500;letter-spacing:-0.01em;
+    padding:13px 24px 13px 26px;border-radius:999px;
+    border:1px solid var(--ink);
+    transition:background .25s var(--ease-out),transform .12s var(--ease-out),box-shadow .25s var(--ease-out);
+    cursor:pointer;white-space:nowrap;
+  }
+  .pill:hover{background:var(--loud);border-color:var(--loud);box-shadow:0 8px 26px -12px rgba(77,91,255,.7);}
+  .pill:active{transform:scale(.98);}
+  .pill .arr{transition:transform .25s var(--ease-out);}
+  .pill:hover .arr{transform:translateX(3px);}
+  .pill.on-ink{background:#fff;color:var(--ink);border-color:#fff;}
+  .pill.on-ink:hover{background:var(--loud);color:#fff;border-color:var(--loud);}
+  .pill.lg{font-size:16px;padding:16px 28px 16px 30px;}
+
+  /* near-square secondary, NOT a pill */
+  .btn-ghost{
+    display:inline-flex;align-items:center;gap:8px;
+    font-size:15px;font-weight:500;color:var(--text);
+    padding:12px 18px;border:1px solid var(--line);border-radius:var(--radius);background:transparent;
+    transition:border-color .2s var(--ease-out),background .2s var(--ease-out),color .2s var(--ease-out);
+    cursor:pointer;
+  }
+  .btn-ghost:hover{border-color:#cfcfdb;background:#fff;}
+  .btn-ghost.on-ink{color:rgba(255,255,255,.9);border-color:var(--line-ink);}
+  .btn-ghost.on-ink:hover{border-color:rgba(255,255,255,.3);background:rgba(255,255,255,.04);}
+
+  .textlink{
+    display:inline-flex;align-items:center;gap:6px;color:var(--text);font-weight:500;font-size:15px;
+    border-bottom:1px solid var(--line);padding-bottom:2px;transition:border-color .2s var(--ease-out),color .2s;
+  }
+  .textlink:hover{border-color:var(--accent);color:var(--accent);}
+
+  /* ===================== HEADER ===================== */
+  header{
+    position:sticky;top:0;z-index:60;
+    background:color-mix(in srgb,var(--paper) 86%,transparent);
+    backdrop-filter:saturate(150%) blur(14px);-webkit-backdrop-filter:saturate(150%) blur(14px);
+    border-bottom:1px solid transparent;
+    transition:border-color .3s var(--ease-out),background .3s var(--ease-out);
+  }
+  header.scrolled{border-bottom-color:var(--line);}
+  .nav{display:flex;align-items:center;justify-content:space-between;height:72px;}
+  .nav-logo svg{height:25px;width:auto;display:block;}
+  .nav-links{display:flex;align-items:center;gap:30px;}
+  .nav-links a{font-size:15px;font-weight:500;color:var(--muted);letter-spacing:-0.01em;transition:color .18s var(--ease-out);}
+  .nav-links a:hover{color:var(--ink);}
+  .nav-right{display:flex;align-items:center;gap:18px;}
+  .nav-toggle{display:none;background:none;border:0;cursor:pointer;padding:8px;margin:-8px;}
+  .nav-toggle span{display:block;width:22px;height:1.5px;background:var(--ink);margin:5px 0;transition:transform .25s var(--ease-out),opacity .2s;}
+
+  /* ===================== HERO ===================== */
+  .hero{padding:clamp(60px,9vw,118px) 0 clamp(54px,7vw,92px);position:relative;}
+  .hero-grid{
+    display:grid;grid-template-columns:minmax(0,1fr) clamp(220px,26vw,330px);
+    gap:clamp(28px,5vw,72px);align-items:end;
+  }
+  .hero-chip{
+    display:inline-flex;align-items:center;gap:10px;
+    background:var(--accent-soft);color:var(--accent-d);
+    font-size:13px;font-weight:600;letter-spacing:-0.005em;
+    padding:7px 14px 7px 12px;border-radius:999px;border:1px solid #E0E4FF;margin-bottom:30px;
+  }
+  .hero-chip .pulse{position:relative;width:7px;height:7px;}
+  .hero-chip .pulse i{position:absolute;inset:0;border-radius:50%;background:var(--accent);}
+  .hero-chip .pulse i::after{content:"";position:absolute;inset:0;border-radius:50%;background:var(--accent);animation:ping 2.4s var(--ease-out) infinite;}
+  @keyframes ping{0%{transform:scale(1);opacity:.6}70%,100%{transform:scale(2.6);opacity:0}}
+  @media (prefers-reduced-motion:reduce){.hero-chip .pulse i::after{animation:none;}}
+
+  .hero-h1{
+    font-size:clamp(33px,5vw,62px);
+    line-height:1.03;letter-spacing:-0.032em;color:var(--ink);font-weight:500;
+    margin:0;
+  }
+  .hero-h1 .ln{display:block;}
+  .hero-h1 .ln + .ln{margin-top:.06em;}
+
+  /* THE LOUD BLOCK — color-blocked solid electric-indigo near-square */
+  .loudblock{
+    display:inline-block;position:relative;
+    background:var(--loud);color:#fff;
+    font-family:"Gambarino",Georgia,serif;font-style:italic;font-weight:400;
+    line-height:.86;letter-spacing:-0.02em;
+    padding:.07em .2em .15em;border-radius:5px;
+    transform:translateZ(0) rotate(-1.1deg);
+    margin:0 .04em;
+    box-shadow:0 18px 50px -22px rgba(77,91,255,.85);
+    vertical-align:baseline;
+    will-change:transform,opacity;
+  }
+  /* loud-reveal: bolder but still tasteful */
+  .reveal-loud .loudblock{
+    animation:loudpop .9s var(--ease-loud) both;
+    animation-delay:.5s;
+  }
+  @keyframes loudpop{
+    0%{opacity:0;transform:translateY(14px) rotate(-3.4deg) scale(.9);}
+    60%{opacity:1;}
+    100%{opacity:1;transform:translateY(0) rotate(-1.1deg) scale(1);}
+  }
+  @media (prefers-reduced-motion:reduce){.reveal-loud .loudblock{animation:none;}}
+
+  .hero-sub{max-width:46ch;margin:clamp(26px,3vw,38px) 0 0;}
+  .hero-cta{display:flex;align-items:center;gap:18px;flex-wrap:wrap;margin-top:clamp(26px,3vw,36px);}
+
+  /* hero photo inset — small, B&W */
+  .hero-photo{position:relative;align-self:end;}
+  .hero-photo .frame{
+    position:relative;border-radius:4px;overflow:hidden;border:1px solid var(--line);
+    background:var(--paper-2);aspect-ratio:4/5;
+  }
+  .hero-photo img{width:100%;height:100%;object-fit:cover;filter:grayscale(1) contrast(1.06) brightness(1.02);}
+  .hero-photo .frame::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,transparent 55%,rgba(13,13,20,.32));}
+  .hero-photo .cap{
+    position:absolute;left:12px;bottom:11px;right:12px;color:#fff;z-index:2;
+  }
+  .hero-photo .cap .nm{font-size:13.5px;font-weight:600;letter-spacing:-0.01em;}
+  .hero-photo .cap .rl{font-size:11px;font-weight:500;letter-spacing:.04em;opacity:.82;text-transform:uppercase;margin-top:1px;}
+  .hero-photo .tag{
+    position:absolute;top:-10px;left:-10px;z-index:3;
+    background:var(--ink);color:#fff;border-radius:3px;
+    font-size:10.5px;font-weight:600;letter-spacing:.13em;text-transform:uppercase;padding:5px 9px;
+  }
+
+  /* ===================== TRUST STRIP ===================== */
+  .trust{padding:30px 0 38px;border-top:1px solid var(--line);}
+  .trust-head{font-size:13px;color:var(--muted);font-weight:500;letter-spacing:-0.005em;margin-bottom:22px;text-align:center;}
+  .marquee{position:relative;overflow:hidden;-webkit-mask-image:linear-gradient(90deg,transparent,#000 9%,#000 91%,transparent);mask-image:linear-gradient(90deg,transparent,#000 9%,#000 91%,transparent);}
+  .marquee-track{display:flex;align-items:center;gap:60px;width:max-content;animation:scroll 46s linear infinite;}
+  .marquee:hover .marquee-track{animation-play-state:paused;}
+  @media (prefers-reduced-motion:reduce){.marquee-track{animation:none;flex-wrap:wrap;justify-content:center;}}
+  @keyframes scroll{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+  .marquee-track img{height:23px;width:auto;opacity:.5;filter:grayscale(1);transition:opacity .25s var(--ease-out);flex-shrink:0;}
+  .marquee-track img:hover{opacity:.85;}
+  .marquee-track img.tall{height:30px;}
+
+  /* ===================== SECTION SHELL ===================== */
+  section.band{padding:clamp(72px,9vw,120px) 0;}
+  .sec-head{max-width:760px;}
+  .sec-head .eyebrow{margin-bottom:18px;}
+  .sec-head .sub{margin-top:18px;}
+
+  /* ===================== PROBLEM ===================== */
+  .problem{border-top:1px solid var(--line);}
+  .prob-list{margin-top:clamp(40px,5vw,62px);border-top:1px solid var(--line);}
+  .prob-row{
+    display:grid;grid-template-columns:54px minmax(0,1fr);gap:clamp(16px,3vw,40px);
+    padding:clamp(24px,3vw,32px) 0;border-bottom:1px solid var(--line);
+    align-items:start;
+  }
+  .prob-row .idx{padding-top:13px;}
+  .prob-row .idx i{display:block;width:18px;height:1.5px;background:#cfcfdb;transition:background .25s var(--ease-out),width .25s var(--ease-out);}
+  .prob-row:hover .idx i{background:var(--accent);width:26px;}
+  .prob-row .body{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,1.2fr);gap:clamp(12px,3vw,44px);align-items:baseline;}
+  .prob-row .ttl{font-size:clamp(18px,1.7vw,22px);font-weight:500;letter-spacing:-0.02em;color:var(--ink);line-height:1.28;}
+  .prob-row .exp{color:var(--muted);font-size:16px;line-height:1.58;}
+  .prob-row:hover .ttl{color:var(--accent-d);}
+  .prob-foot{margin-top:36px;display:flex;align-items:center;gap:14px;flex-wrap:wrap;}
+  .prob-foot .serif{font-size:clamp(18px,1.7vw,21px);color:var(--ink);}
+
+  /* ===================== TWO TRACKS ===================== */
+  .tracks{border-top:1px solid var(--line);background:var(--paper-2);}
+  .tracks-intro{max-width:680px;margin-top:18px;}
+  .diptych{
+    margin-top:clamp(42px,5vw,64px);
+    display:grid;grid-template-columns:1fr 1fr;gap:0;
+    border:1px solid var(--line);border-radius:5px;overflow:hidden;background:var(--paper);
+  }
+  .track{padding:clamp(28px,3.4vw,44px);position:relative;}
+  .track + .track{border-left:1px solid var(--line);}
+  .track .kicker{display:flex;align-items:baseline;gap:12px;margin-bottom:7px;}
+  .track .kicker .word{font-size:13px;font-weight:600;letter-spacing:.18em;text-transform:uppercase;color:var(--accent-d);}
+  .track h3{color:var(--ink);margin-bottom:14px;font-size:clamp(21px,1.9vw,26px);}
+  .track .td{color:var(--muted);font-size:16px;line-height:1.58;max-width:42ch;}
+  .caps{margin-top:24px;display:flex;flex-wrap:wrap;gap:8px;}
+  .cap{
+    font-size:12.5px;font-weight:500;letter-spacing:-0.005em;color:var(--text);
+    background:var(--paper-2);border:1px solid var(--line);border-radius:3px;padding:6px 11px;
+    transition:border-color .2s var(--ease-out),color .2s,background .2s;
+  }
+  .track:hover .cap{border-color:#dcdce6;}
+  .cap:hover{color:var(--accent-d);border-color:#c9cdf5;background:#fff;}
+  .track .detail{margin-top:22px;display:flex;align-items:center;gap:9px;font-size:14px;color:var(--ink);font-weight:500;}
+  .track .detail .tick{width:16px;height:16px;flex:0 0 16px;color:var(--accent);}
+  .connector{
+    margin-top:26px;display:flex;align-items:flex-start;gap:13px;
+    color:var(--muted);font-size:15.5px;line-height:1.55;max-width:74ch;
+  }
+  .connector .serif{color:var(--ink);}
+  .connector .ic{flex:0 0 18px;margin-top:3px;color:var(--accent);}
+
+  /* ===================== WORK / RESULTS ===================== */
+  .work{border-top:1px solid var(--line);}
+  .work-top{display:flex;align-items:flex-end;justify-content:space-between;gap:24px;flex-wrap:wrap;}
+  .work-grid{
+    margin-top:clamp(40px,5vw,58px);
+    display:grid;grid-template-columns:repeat(3,1fr);gap:clamp(14px,1.6vw,20px);
+  }
+  .wcard{
+    grid-column:span 1;display:block;position:relative;border:1px solid var(--line);border-radius:5px;overflow:hidden;
+    background:var(--paper);
+    transition:border-color .25s var(--ease-out),transform .35s var(--ease-out),box-shadow .35s var(--ease-out);
+  }
+  .wcard:hover{border-color:#d8d8e2;transform:translateY(-3px);box-shadow:0 22px 50px -28px rgba(13,13,20,.4);}
+  .wcard.feature{grid-column:span 2;}
+  .wcard .thumb{position:relative;aspect-ratio:16/10;overflow:hidden;background:var(--paper-2);}
+  .wcard.feature .thumb{aspect-ratio:16/9;}
+  .wcard .thumb img{width:100%;height:100%;object-fit:cover;transition:transform .6s var(--ease-out);}
+  .wcard:hover .thumb img{transform:scale(1.045);}
+  .wcard .thumb::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,transparent 46%,rgba(13,13,20,.06));}
+  .wcard .meta{padding:18px 20px 20px;display:flex;align-items:flex-end;justify-content:space-between;gap:14px;}
+  .wcard .meta .nm{font-size:15px;font-weight:600;letter-spacing:-0.01em;color:var(--ink);}
+  .wcard .meta .ds{font-size:13px;color:var(--muted);margin-top:3px;line-height:1.4;max-width:32ch;}
+  .wcard .fig{text-align:right;flex-shrink:0;}
+  .wcard .fig .n{font-size:clamp(22px,2.2vw,30px);font-weight:600;letter-spacing:-0.03em;color:var(--ink);line-height:1;font-variant-numeric:tabular-nums;}
+  .wcard .fig .l{font-size:11px;color:var(--muted);letter-spacing:.02em;margin-top:5px;max-width:14ch;margin-left:auto;line-height:1.3;}
+  .wcard .swatch{position:absolute;top:14px;left:14px;width:9px;height:9px;border-radius:2px;z-index:2;box-shadow:0 0 0 3px rgba(250,250,251,.85);}
+  .wcard .go{position:absolute;top:13px;right:13px;width:30px;height:30px;border-radius:3px;background:rgba(250,250,251,.92);display:flex;align-items:center;justify-content:center;color:var(--ink);opacity:0;transform:translateY(-4px);transition:opacity .25s var(--ease-out),transform .25s var(--ease-out);z-index:2;}
+  .wcard:hover .go{opacity:1;transform:translateY(0);}
+
+  /* ===================== CHART ===================== */
+  .chart-band{border-top:1px solid var(--line);background:var(--paper-2);}
+  .chart-grid{display:grid;grid-template-columns:minmax(0,.82fr) minmax(0,1.18fr);gap:clamp(34px,5vw,70px);align-items:center;}
+  .chart-copy .big{font-size:clamp(52px,6vw,82px);font-weight:600;letter-spacing:-0.04em;color:var(--ink);line-height:.92;font-variant-numeric:tabular-nums;}
+  .chart-copy .big span{color:var(--accent);}
+  .chart-copy h3{margin-top:16px;color:var(--ink);}
+  .chart-copy .legend{margin-top:18px;color:var(--muted);font-size:14.5px;line-height:1.55;max-width:38ch;}
+  .chart-copy .legend .src{display:flex;align-items:center;gap:8px;margin-bottom:8px;color:var(--text);font-weight:500;font-size:13.5px;}
+  .chart-copy .legend .src i{width:18px;height:2px;background:var(--accent);border-radius:2px;display:inline-block;}
+  .chart-svg-wrap{
+    background:var(--paper);border:1px solid var(--line);border-radius:5px;padding:clamp(20px,2.4vw,30px);
+  }
+  .chart-svg-wrap .ch-head{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:14px;}
+  .chart-svg-wrap .ch-head .t{font-size:13px;font-weight:600;color:var(--ink);letter-spacing:-0.005em;}
+  .chart-svg-wrap .ch-head .d{font-size:12px;color:var(--muted);}
+  svg.curve{display:block;width:100%;height:auto;}
+
+  /* ===================== LOUD FULL-BLEED CHAPTER ===================== */
+  .detonate{
+    background:var(--loud);color:#fff;position:relative;overflow:hidden;
+    padding:clamp(86px,12vw,170px) 0;
+  }
+  .detonate::before{
+    content:"";position:absolute;inset:0;
+    background:
+      radial-gradient(120% 120% at 18% 0%,rgba(255,255,255,.10),transparent 50%),
+      radial-gradient(90% 90% at 100% 100%,rgba(0,0,0,.18),transparent 55%);
+    pointer-events:none;
+  }
+  .detonate .grain{position:absolute;inset:0;opacity:.5;mix-blend-mode:overlay;pointer-events:none;}
+  .det-inner{position:relative;z-index:2;}
+  .det-eyebrow{display:inline-flex;align-items:center;gap:10px;color:rgba(255,255,255,.8);font-size:12px;font-weight:600;letter-spacing:.18em;text-transform:uppercase;margin-bottom:clamp(24px,3vw,40px);}
+  .det-eyebrow .dot{width:6px;height:6px;border-radius:50%;background:#fff;}
+  .det-statement{
+    color:#fff;
+    font-family:"Gambarino",Georgia,serif;font-style:italic;font-weight:400;
+    font-size:clamp(52px,9.2vw,140px);line-height:.9;letter-spacing:-0.025em;
+    max-width:15ch;
+  }
+  .det-statement .reg{font-family:"Geist",sans-serif;font-style:normal;font-weight:500;letter-spacing:-0.03em;}
+  .det-sub{margin-top:clamp(30px,3.6vw,46px);max-width:54ch;color:rgba(255,255,255,.86);font-size:clamp(16px,1.4vw,19px);line-height:1.6;}
+  .det-meta{margin-top:clamp(38px,4.4vw,56px);display:flex;gap:clamp(30px,5vw,72px);flex-wrap:wrap;border-top:1px solid rgba(255,255,255,.18);padding-top:clamp(28px,3vw,38px);}
+  .det-meta .m .n{font-size:clamp(26px,3vw,40px);font-weight:600;letter-spacing:-0.03em;line-height:1;font-variant-numeric:tabular-nums;}
+  .det-meta .m .l{font-size:13px;color:rgba(255,255,255,.7);margin-top:8px;letter-spacing:.01em;max-width:22ch;line-height:1.4;}
+
+  /* ===================== TESTIMONIAL ===================== */
+  .quote{border-top:1px solid var(--line);}
+  .quote .q{
+    font-family:"Gambarino",Georgia,serif;font-style:italic;font-weight:400;
+    font-size:clamp(26px,3.8vw,48px);line-height:1.16;letter-spacing:-0.02em;color:var(--ink);
+    max-width:18ch;margin:0 auto;text-align:center;
+  }
+  .quote .q .mark{color:var(--accent);}
+  .quote .src{margin-top:clamp(30px,3.4vw,42px);display:flex;align-items:center;justify-content:center;gap:14px;}
+  .quote .src .av{width:46px;height:46px;border-radius:50%;overflow:hidden;border:1px solid var(--line);background:var(--paper-2);}
+  .quote .src .av img{width:100%;height:100%;object-fit:cover;filter:grayscale(1) contrast(1.05);}
+  .quote .src .who .nm{font-size:15px;font-weight:600;color:var(--ink);letter-spacing:-0.01em;}
+  .quote .src .who .co{font-size:13.5px;color:var(--muted);margin-top:1px;}
+  .quote .logos{margin-top:clamp(34px,4vw,46px);display:flex;align-items:center;justify-content:center;gap:clamp(28px,5vw,56px);flex-wrap:wrap;}
+  .quote .logos img{height:21px;opacity:.42;filter:grayscale(1);}
+
+  /* ===================== FIT (best-for / not-for) ===================== */
+  .fit{border-top:1px solid var(--line);background:var(--paper-2);}
+  .fit-grid{margin-top:clamp(40px,5vw,56px);display:grid;grid-template-columns:1fr 1fr;gap:clamp(16px,2vw,22px);}
+  .fit-card{background:var(--paper);border:1px solid var(--line);border-radius:5px;padding:clamp(26px,3vw,36px);}
+  .fit-card.no{background:#fff;}
+  .fit-card .fh{display:flex;align-items:center;gap:11px;margin-bottom:20px;}
+  .fit-card .fh .ic{width:30px;height:30px;border-radius:4px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+  .fit-card.yes .fh .ic{background:rgba(22,179,100,.12);color:var(--ok);}
+  .fit-card.no .fh .ic{background:rgba(229,72,77,.10);color:var(--no);}
+  .fit-card .fh .t{font-size:16px;font-weight:600;letter-spacing:-0.01em;color:var(--ink);}
+  .fit-card ul{list-style:none;margin:0;padding:0;}
+  .fit-card li{display:flex;gap:12px;padding:11px 0;border-bottom:1px solid var(--line);font-size:15.5px;color:var(--text);line-height:1.45;}
+  .fit-card li:last-child{border-bottom:0;}
+  .fit-card li .b{flex:0 0 18px;margin-top:2px;}
+  .fit-card.yes li .b{color:var(--ok);}
+  .fit-card.no li .b{color:var(--no);}
+  .fit-card.no li{color:var(--muted);}
+
+  /* ===================== PROCESS ===================== */
+  .process{border-top:1px solid var(--line);}
+  .timeline{margin-top:clamp(44px,5vw,64px);position:relative;}
+  .timeline::before{content:"";position:absolute;left:0;right:0;top:34px;height:1px;background:var(--line);}
+  .tl-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:clamp(14px,2vw,28px);position:relative;}
+  .tl-step{position:relative;padding-top:62px;}
+  .tl-step .node{position:absolute;top:29px;left:0;width:11px;height:11px;border-radius:50%;background:var(--paper);border:1.5px solid #c7c7d3;transition:border-color .3s var(--ease-out),background .3s;}
+  .tl-step:hover .node{border-color:var(--accent);background:var(--accent);}
+  .tl-step .when{font-size:12px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--accent-d);margin-bottom:8px;}
+  .tl-step .st{font-size:clamp(17px,1.5vw,20px);font-weight:500;letter-spacing:-0.02em;color:var(--ink);margin-bottom:10px;line-height:1.2;}
+  .tl-step .sd{font-size:14.5px;color:var(--muted);line-height:1.55;}
+
+  /* ===================== STATS ===================== */
+  .stats{border-top:1px solid var(--line);background:var(--ink);color:#fff;}
+  .stats .sec-head .eyebrow{color:rgba(255,255,255,.55);}
+  .stats .sec-head .eyebrow .dot{background:var(--accent);}
+  .stats .sec-head h2{color:#fff;}
+  .stats .sec-head .sub{color:rgba(255,255,255,.62);}
+  .stat-grid{margin-top:clamp(48px,6vw,72px);display:grid;grid-template-columns:repeat(4,1fr);gap:0;border-top:1px solid var(--line-ink);}
+  .stat{padding:clamp(30px,3.6vw,44px) clamp(20px,2.4vw,32px) clamp(30px,3.6vw,40px) 0;border-bottom:1px solid var(--line-ink);position:relative;}
+  .stat + .stat{border-left:1px solid var(--line-ink);padding-left:clamp(20px,2.4vw,32px);}
+  .stat .n{font-size:clamp(40px,5.2vw,70px);font-weight:600;letter-spacing:-0.04em;line-height:.9;color:#fff;font-variant-numeric:tabular-nums;}
+  .stat .n .u{color:var(--accent);}
+  .stat .lb{font-size:14.5px;font-weight:500;color:#fff;margin-top:18px;letter-spacing:-0.01em;}
+  .stat .ds{font-size:13px;color:rgba(255,255,255,.52);margin-top:6px;line-height:1.5;max-width:24ch;}
+
+  /* ===================== TEAM ===================== */
+  .team{border-top:1px solid var(--line-ink);background:var(--ink);color:#fff;}
+  .team .sec-head .eyebrow{color:rgba(255,255,255,.55);}
+  .team .sec-head .eyebrow .dot{background:var(--accent);}
+  .team .sec-head h2{color:#fff;}
+  .team .sec-head .sub{color:rgba(255,255,255,.62);}
+  .team-grid{margin-top:clamp(40px,5vw,58px);display:grid;grid-template-columns:repeat(6,1fr);gap:clamp(12px,1.4vw,18px);}
+  .member{position:relative;}
+  .member .ph{aspect-ratio:1/1;border-radius:4px;overflow:hidden;background:var(--ink-2);border:1px solid var(--line-ink);}
+  .member .ph img{width:100%;height:100%;object-fit:cover;filter:grayscale(1) contrast(1.08) brightness(.96);transition:filter .4s var(--ease-out),transform .5s var(--ease-out);}
+  .member:hover .ph img{filter:grayscale(0) contrast(1.02);transform:scale(1.03);}
+  .member .ph::after{content:"";position:absolute;inset:0;background:linear-gradient(190deg,transparent 60%,rgba(13,13,20,.5));pointer-events:none;border-radius:4px;}
+  .member .nm{font-size:13.5px;font-weight:600;letter-spacing:-0.01em;margin-top:12px;color:#fff;}
+  .member .rl{font-size:12px;color:rgba(255,255,255,.55);margin-top:2px;line-height:1.3;}
+
+  /* ===================== CLOSING ===================== */
+  .closing{border-top:1px solid var(--line-ink);background:var(--ink);color:#fff;padding:clamp(80px,11vw,140px) 0;text-align:center;}
+  .closing .eyebrow{justify-content:center;color:rgba(255,255,255,.55);margin-bottom:26px;}
+  .closing .eyebrow .dot{background:var(--accent);}
+  .closing h2{
+    font-size:clamp(32px,5vw,62px);color:#fff;letter-spacing:-0.03em;line-height:1.04;max-width:16ch;margin:0 auto;font-weight:500;
+  }
+  .closing h2 .serif{color:#fff;opacity:.96;}
+  .closing .cs{margin-top:26px;color:rgba(255,255,255,.66);font-size:clamp(16px,1.4vw,18px);max-width:52ch;margin-left:auto;margin-right:auto;line-height:1.6;}
+  .closing .cc{margin-top:clamp(34px,4vw,46px);display:flex;align-items:center;justify-content:center;gap:16px;flex-wrap:wrap;}
+  .closing .tiny{margin-top:24px;font-size:13px;color:rgba(255,255,255,.42);}
+
+  /* ===================== FOOTER ===================== */
+  footer{background:var(--ink);color:#fff;border-top:1px solid var(--line-ink);padding:clamp(56px,7vw,84px) 0 38px;}
+  .foot-top{display:grid;grid-template-columns:minmax(0,1.5fr) repeat(3,minmax(0,1fr));gap:clamp(28px,4vw,52px);padding-bottom:clamp(44px,5vw,60px);border-bottom:1px solid var(--line-ink);}
+  .foot-brand .lf svg{height:24px;width:auto;}
+  .foot-brand p{margin-top:18px;color:rgba(255,255,255,.55);font-size:14.5px;max-width:34ch;line-height:1.6;}
+  .foot-brand .pill{margin-top:24px;}
+  .foot-col h4{font-size:12px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:rgba(255,255,255,.4);margin:0 0 18px;}
+  .foot-col a{display:block;color:rgba(255,255,255,.72);font-size:14.5px;padding:6px 0;transition:color .18s var(--ease-out);letter-spacing:-0.005em;}
+  .foot-col a:hover{color:#fff;}
+  .foot-bottom{display:flex;align-items:center;justify-content:space-between;gap:18px;flex-wrap:wrap;padding-top:30px;}
+  .foot-bottom .cp{font-size:13px;color:rgba(255,255,255,.42);}
+  .foot-bottom .leg{display:flex;gap:24px;}
+  .foot-bottom .leg a{font-size:13px;color:rgba(255,255,255,.42);transition:color .18s;}
+  .foot-bottom .leg a:hover{color:rgba(255,255,255,.8);}
+
+  /* ===================== reveal anim ===================== */
+  .reveal{opacity:0;transform:translateY(18px);}
+  .reveal.in{opacity:1;transform:none;transition:opacity .8s var(--ease-out),transform .8s var(--ease-out);}
+  .reveal[data-d="1"].in{transition-delay:.07s;}
+  .reveal[data-d="2"].in{transition-delay:.14s;}
+  .reveal[data-d="3"].in{transition-delay:.21s;}
+  .reveal[data-d="4"].in{transition-delay:.28s;}
+  .reveal[data-d="5"].in{transition-delay:.35s;}
+  @media (prefers-reduced-motion:reduce){.reveal{opacity:1!important;transform:none!important;}}
+
+  /* ===================== RESPONSIVE ===================== */
+  @media (max-width:1024px){
+    .work-grid{grid-template-columns:1fr 1fr;}
+    .wcard.feature{grid-column:span 2;}
+    .team-grid{grid-template-columns:repeat(3,1fr);}
+    .stat-grid{grid-template-columns:repeat(2,1fr);}
+    .stat:nth-child(2){border-left:1px solid var(--line-ink);}
+    .stat:nth-child(3){border-left:0;}
+    .tl-grid{grid-template-columns:1fr 1fr;gap:34px 28px;}
+    .timeline::before{display:none;}
+  }
+  @media (max-width:768px){
+    body{font-size:16px;}
+    .nav-links{display:none;}
+    .nav-right .pill{display:none;}
+    .nav-toggle{display:block;}
+    .nav.open + .mobile-menu{display:block;}
+    .hero-grid{grid-template-columns:1fr;gap:40px;}
+    .hero-photo{max-width:260px;order:-1;}
+    .hero-h1{font-size:clamp(32px,9.5vw,48px);}
+    .prob-row{grid-template-columns:1fr;gap:0;}
+    .prob-row .idx{display:none;}
+    .prob-row .body{grid-template-columns:1fr;gap:9px;}
+    .prob-row .exp{margin-top:2px;}
+    .diptych{grid-template-columns:1fr;}
+    .track + .track{border-left:0;border-top:1px solid var(--line);}
+    .work-grid{grid-template-columns:1fr;}
+    .wcard.feature{grid-column:span 1;}
+    .chart-grid{grid-template-columns:1fr;gap:30px;}
+    .fit-grid{grid-template-columns:1fr;}
+    .tl-grid{grid-template-columns:1fr;gap:28px;}
+    .team-grid{grid-template-columns:repeat(2,1fr);}
+    .foot-top{grid-template-columns:1fr 1fr;gap:34px 24px;}
+    .foot-brand{grid-column:1 / -1;}
+    .det-meta{gap:26px;}
+    .loudblock{transform:rotate(-1deg);}
+  }
+  @media (max-width:440px){
+    .team-grid{grid-template-columns:repeat(2,1fr);}
+    .foot-top{grid-template-columns:1fr;}
+    .stat-grid{grid-template-columns:1fr;}
+    .stat + .stat{border-left:0;}
+    .quote .logos{gap:26px;}
+  }
+
+  /* mobile menu */
+  .mobile-menu{display:none;border-top:1px solid var(--line);background:var(--paper);padding:18px var(--gut) 26px;}
+  .mobile-menu a{display:block;font-size:18px;font-weight:500;color:var(--ink);padding:12px 0;border-bottom:1px solid var(--line);}
+  .mobile-menu .pill{display:inline-flex;margin-top:18px;}
+</style>
+</head>
+<body>
+
+<!-- ===================== HEADER ===================== -->
+<header id="hdr">
+  <div class="wrap">
+    <nav class="nav" id="nav">
+      <a class="nav-logo" href="#" aria-label="LoudFace home">
+        <!-- real wordmark -->
+        <img src="loudface.svg" alt="LoudFace" style="height:25px;width:auto;" />
+      </a>
+      <div class="nav-links">
+        <a href="#work">Work</a>
+        <a href="#tracks">Services</a>
+        <a href="#team">About</a>
+        <a href="#knowledge">Blog</a>
+      </div>
+      <div class="nav-right">
+        <a href="#book" class="pill">Book your strategy call <span class="arr" aria-hidden="true">→</span></a>
+        <button class="nav-toggle" id="navToggle" aria-label="Toggle menu" aria-expanded="false">
+          <span></span><span></span>
+        </button>
+      </div>
+    </nav>
+  </div>
+  <div class="mobile-menu" id="mobileMenu">
+    <a href="#work">Work</a>
+    <a href="#tracks">Services</a>
+    <a href="#team">About</a>
+    <a href="#knowledge">Blog</a>
+    <a href="#book" class="pill">Book your strategy call <span aria-hidden="true">→</span></a>
+  </div>
+</header>
+
+<main>
+
+<!-- ===================== HERO ===================== -->
+<section class="hero">
+  <div class="wrap">
+    <div class="hero-grid">
+      <div class="hero-copy">
+        <div class="hero-chip reveal in">
+          <span class="pulse"><i></i></span>
+          2 client slots open for Q2
+        </div>
+
+        <h1 class="hero-h1 reveal-loud">
+          <span class="ln">Your website converts.</span>
+          <span class="ln">Your organic traffic</span>
+          <span class="ln"><span class="loudblock">compounds.</span></span>
+        </h1>
+
+        <p class="lead hero-sub">
+          LoudFace is the conversion and organic growth team behind
+          <strong style="color:var(--ink);font-weight:600">200+ B2B SaaS websites</strong>.
+          We build on Webflow (or a custom stack), then run SEO, AEO, and CRO to
+          <span class="serif" style="color:var(--accent)">grow what we shipped.</span>
+        </p>
+
+        <div class="hero-cta">
+          <a href="#book" class="pill lg">Book your strategy call <span class="arr" aria-hidden="true">→</span></a>
+          <a href="#knowledge" class="textlink">See what AI says about us
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7M9 7h8v8"/></svg>
+          </a>
+        </div>
+      </div>
+
+      <div class="hero-photo reveal in" data-d="2">
+        <span class="tag">The team</span>
+        <div class="frame">
+          <img src="https://cdn.sanity.io/images/xjjjqhgt/production/92dfd51e1f15a98227f6308a075c490ce52c05b4-1000x1000.png" alt="Arnel Bukva, Founder and Head of Growth at LoudFace" loading="eager" />
+          <div class="cap">
+            <div class="nm">Arnel Bukva</div>
+            <div class="rl">Founder &amp; Head of Growth</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== TRUST ===================== -->
+<section class="trust">
+  <div class="wrap">
+    <div class="trust-head">Trusted by B2B SaaS teams shipping real products</div>
+  </div>
+  <div class="marquee">
+    <div class="marquee-track">
+      <img src="https://cdn.sanity.io/images/xjjjqhgt/production/8e1d16ee7901b68310fb048d6c3f929d6f2fbe88-886x183.png" alt="Brandfirm" />
+      <img class="tall" src="https://cdn.sanity.io/images/xjjjqhgt/production/2916b66c3352d3932990dd7b7052901ae1078d04-845x178.png" alt="Hoxhunt" />
+      <img src="https://cdn.sanity.io/images/xjjjqhgt/production/bdd109e13c67dad916c89a42c71d67c3ba0b217e-680x233.png" alt="Dimer Health" />
+      <img src="https://cdn.sanity.io/images/xjjjqhgt/production/bf5fa13f7566496f48caf6e20a73ca612ced0291-619x202.png" alt="LIQID" />
+      <img src="https://cdn.sanity.io/images/xjjjqhgt/production/86cefc1d66ac01f9a48a5722d54579ad638eb575-724x106.png" alt="Eraser" />
+      <img src="https://cdn.sanity.io/images/xjjjqhgt/production/90fcd30f2058c1975d25c315ccef475997d07461-836x203.png" alt="Radisson Hotels Group" />
+      <img class="tall" src="https://cdn.sanity.io/images/xjjjqhgt/production/2f486497d33dd29a431377f3f8703571823f3646-868x202.png" alt="Draw Things" />
+      <img src="https://cdn.sanity.io/images/xjjjqhgt/production/57a1d5dd25daa13a34e0888331efd47c05cb7111-748x140.png" alt="Viaduct" />
+      <img src="https://cdn.sanity.io/images/xjjjqhgt/production/bbea1aa498a036d20ca5eb0f4777fb1a9dd12016-929x110.png" alt="Reiterate" />
+      <img src="https://cdn.sanity.io/images/xjjjqhgt/production/e2d6029d82c468cbd31b76bf72aea6a6d468fe3c-672x217.png" alt="Speckle" />
+      <!-- duplicate for seamless loop -->
+      <img src="https://cdn.sanity.io/images/xjjjqhgt/production/8e1d16ee7901b68310fb048d6c3f929d6f2fbe88-886x183.png" alt="" aria-hidden="true" />
+      <img class="tall" src="https://cdn.sanity.io/images/xjjjqhgt/production/2916b66c3352d3932990dd7b7052901ae1078d04-845x178.png" alt="" aria-hidden="true" />
+      <img src="https://cdn.sanity.io/images/xjjjqhgt/production/bdd109e13c67dad916c89a42c71d67c3ba0b217e-680x233.png" alt="" aria-hidden="true" />
+      <img src="https://cdn.sanity.io/images/xjjjqhgt/production/bf5fa13f7566496f48caf6e20a73ca612ced0291-619x202.png" alt="" aria-hidden="true" />
+      <img src="https://cdn.sanity.io/images/xjjjqhgt/production/86cefc1d66ac01f9a48a5722d54579ad638eb575-724x106.png" alt="" aria-hidden="true" />
+      <img src="https://cdn.sanity.io/images/xjjjqhgt/production/90fcd30f2058c1975d25c315ccef475997d07461-836x203.png" alt="" aria-hidden="true" />
+      <img class="tall" src="https://cdn.sanity.io/images/xjjjqhgt/production/2f486497d33dd29a431377f3f8703571823f3646-868x202.png" alt="" aria-hidden="true" />
+      <img src="https://cdn.sanity.io/images/xjjjqhgt/production/57a1d5dd25daa13a34e0888331efd47c05cb7111-748x140.png" alt="" aria-hidden="true" />
+      <img src="https://cdn.sanity.io/images/xjjjqhgt/production/bbea1aa498a036d20ca5eb0f4777fb1a9dd12016-929x110.png" alt="" aria-hidden="true" />
+      <img src="https://cdn.sanity.io/images/xjjjqhgt/production/e2d6029d82c468cbd31b76bf72aea6a6d468fe3c-672x217.png" alt="" aria-hidden="true" />
+    </div>
+  </div>
+</section>
+
+<!-- ===================== PROBLEM ===================== -->
+<section class="band problem" id="problem">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="eyebrow reveal"><span class="dot"></span><span class="label">The quiet leak</span></span>
+      <h2 class="reveal" data-d="1">Your website is costing you deals.<br /><span class="serif" style="color:var(--accent)">You just can't see it.</span></h2>
+      <p class="lead sub reveal" data-d="2">Five failures we find on nearly every B2B SaaS site. None of them show up in a dashboard until the pipeline does.</p>
+    </div>
+
+    <div class="prob-list">
+      <div class="prob-row reveal">
+        <div class="idx"><i></i></div>
+        <div class="body">
+          <div class="ttl">Your homepage explains what you built, not why anyone should care.</div>
+          <div class="exp">Visitors land, skim, and leave because the messaging talks about features instead of the problem you solve for buyers.</div>
+        </div>
+      </div>
+      <div class="prob-row reveal">
+        <div class="idx"><i></i></div>
+        <div class="body">
+          <div class="ttl">Marketing owns a website they can't update without engineering.</div>
+          <div class="exp">Every landing page needs a dev sprint. Every campaign launch gets delayed.</div>
+        </div>
+      </div>
+      <div class="prob-row reveal">
+        <div class="idx"><i></i></div>
+        <div class="body">
+          <div class="ttl">You redesigned six months ago and organic traffic still hasn't moved.</div>
+          <div class="exp">The site looks better, but nobody optimized it for search.</div>
+        </div>
+      </div>
+      <div class="prob-row reveal">
+        <div class="idx"><i></i></div>
+        <div class="body">
+          <div class="ttl">Buyers ask ChatGPT, Perplexity, and Claude for recommendations in your category. You don't come up.</div>
+          <div class="exp">AI search shapes shortlists before a prospect ever visits your site.</div>
+        </div>
+      </div>
+      <div class="prob-row reveal">
+        <div class="idx"><i></i></div>
+        <div class="body">
+          <div class="ttl">Your site gets traffic, but conversion hasn't changed in a year.</div>
+          <div class="exp">No one is running experiments. Traffic without conversion is a vanity metric.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="prob-foot reveal">
+      <span class="serif">We fix all five — with one team.</span>
+      <a href="#tracks" class="textlink">See how it works</a>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== TWO TRACKS ===================== -->
+<section class="band tracks" id="tracks">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="eyebrow reveal"><span class="dot"></span><span class="label">One partner, launch to growth</span></span>
+      <h2 class="reveal" data-d="1">Most agencies hand you a website<br />and move on. <span class="serif" style="color:var(--accent)">We don't.</span></h2>
+      <p class="lead tracks-intro reveal" data-d="2">Most SEO shops inherit someone else's mess. We do both — and because we do both, neither half is compromised.</p>
+    </div>
+
+    <div class="diptych reveal" data-d="1">
+      <div class="track">
+        <div class="kicker"><span class="word">Build</span></div>
+        <h3>A website that earns its traffic</h3>
+        <p class="td">Design and build B2B SaaS sites on Webflow — positioning, copy, UX, UI, and production code. Strategy turned into pages that move.</p>
+        <div class="caps">
+          <span class="cap">UX/UI Design</span>
+          <span class="cap">Webflow Development</span>
+          <span class="cap">Conversion Copywriting</span>
+          <span class="cap">CMS Architecture</span>
+          <span class="cap">Design System Setup</span>
+        </div>
+        <div class="detail">
+          <svg class="tick" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+          Shipped in weeks, not quarters.
+        </div>
+      </div>
+      <div class="track">
+        <div class="kicker"><span class="word">Grow</span></div>
+        <h3>Traffic and conversions, month over month</h3>
+        <p class="td">SEO and AEO bring organic traffic from search and AI platforms. CRO converts it. The compounding half of the engine.</p>
+        <div class="caps">
+          <span class="cap">Technical SEO</span>
+          <span class="cap">AI Engine Optimization (AEO)</span>
+          <span class="cap">Content Strategy</span>
+          <span class="cap">Conversion Rate Optimization</span>
+          <span class="cap">Performance Analytics</span>
+        </div>
+        <div class="detail">
+          <svg class="tick" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+          No onboarding lag — we built it.
+        </div>
+      </div>
+    </div>
+
+    <div class="connector reveal">
+      <svg class="ic" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+      <span>Most clients start with a build. <span class="serif">Within three months they ask us to handle growth too.</span> That's by design.</span>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== WORK / RESULTS ===================== -->
+<section class="band work" id="work">
+  <div class="wrap">
+    <div class="work-top">
+      <div class="sec-head">
+        <span class="eyebrow reveal"><span class="dot"></span><span class="label">Selected work</span></span>
+        <h2 class="reveal" data-d="1">The work speaks. <span class="serif" style="color:var(--accent)">Specifically.</span></h2>
+        <p class="lead sub reveal" data-d="2">Real projects, real metrics, real SaaS companies.</p>
+      </div>
+    </div>
+
+    <div class="work-grid">
+      <!-- feature: Toku -->
+      <a class="wcard feature reveal" href="#" data-d="1" aria-label="Toku case study">
+        <span class="swatch" style="background:#1646ce"></span>
+        <span class="go" aria-hidden="true"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7M9 7h8v8"/></svg></span>
+        <div class="thumb"><img src="https://cdn.sanity.io/images/xjjjqhgt/production/bd1c09b494f7074c268f5b964d0c77dc1b1ef965-2880x1620.webp" alt="Toku — AI-cited pipeline case study" loading="lazy" /></div>
+        <div class="meta">
+          <div>
+            <div class="nm">Toku — AI-Cited Pipeline</div>
+            <div class="ds">AI visibility climb on the core stablecoin payroll prompt, plus +800% Google clicks.</div>
+          </div>
+          <div class="fig"><div class="n">0 → 86<span style="font-size:.6em">%</span></div><div class="l">AI visibility on core prompt</div></div>
+        </div>
+      </a>
+
+      <!-- Dimer Health -->
+      <a class="wcard reveal" href="#" data-d="2" aria-label="Dimer Health case study">
+        <span class="swatch" style="background:#4037a0"></span>
+        <span class="go" aria-hidden="true"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7M9 7h8v8"/></svg></span>
+        <div class="thumb"><img src="https://cdn.sanity.io/images/xjjjqhgt/production/a0f4750b896ced6ffca9c5869623b15614f312ba-1440x10131.webp" alt="Dimer Health case study" loading="lazy" /></div>
+        <div class="meta">
+          <div><div class="nm">Dimer Health</div><div class="ds">Conversion-led redesign.</div></div>
+          <div class="fig"><div class="n">288<span style="font-size:.6em">%</span></div><div class="l">Increased conversion rate</div></div>
+        </div>
+      </a>
+
+      <!-- Outbound Specialist -->
+      <a class="wcard reveal" href="#" data-d="3" aria-label="Outbound Specialist case study">
+        <span class="swatch" style="background:#4d4f0a"></span>
+        <span class="go" aria-hidden="true"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7M9 7h8v8"/></svg></span>
+        <div class="thumb"><img src="https://cdn.sanity.io/images/xjjjqhgt/production/d90a9cec8351f259afd300dcbc51641ed9b40c3d-1440x1845.webp" alt="Outbound Specialist case study" loading="lazy" /></div>
+        <div class="meta">
+          <div><div class="nm">Outbound Specialist</div><div class="ds">Landing page that paid for itself.</div></div>
+          <div class="fig"><div class="n">$200K</div><div class="l">In sales within 30 days</div></div>
+        </div>
+      </a>
+
+      <!-- LIQID -->
+      <a class="wcard reveal" href="#" data-d="1" aria-label="LIQID case study">
+        <span class="swatch" style="background:#ef233c"></span>
+        <span class="go" aria-hidden="true"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7M9 7h8v8"/></svg></span>
+        <div class="thumb"><img src="https://cdn.sanity.io/images/xjjjqhgt/production/5f21404454406eee90732e4e1c8655e0c8c6013b-3024x3629.webp" alt="LIQID case study" loading="lazy" /></div>
+        <div class="meta">
+          <div><div class="nm">LIQID</div><div class="ds">Scaled CMS-driven site.</div></div>
+          <div class="fig"><div class="n">100<span style="font-size:.6em">+</span></div><div class="l">Pages launched</div></div>
+        </div>
+      </a>
+
+      <!-- LoudFace AEO (feature-wide on second row) -->
+      <a class="wcard feature reveal" href="#" data-d="2" aria-label="LoudFace AEO case study">
+        <span class="swatch" style="background:#4f46e5"></span>
+        <span class="go" aria-hidden="true"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7M9 7h8v8"/></svg></span>
+        <div class="thumb"><img src="https://cdn.sanity.io/images/xjjjqhgt/production/d84029c39e2b8c10915db4da5e0b42d439c43219-3200x2000.jpg" alt="LoudFace AEO case study — share of AI answers" loading="lazy" /></div>
+        <div class="meta">
+          <div>
+            <div class="nm">LoudFace — 0.18% to 10% of AI answers</div>
+            <div class="ds">We ran the AEO play on ourselves. Best average cited position of any agency on our tracked leaderboard: 2.9.</div>
+          </div>
+          <div class="fig"><div class="n">0.18 → 10.4<span style="font-size:.55em">%</span></div><div class="l">Share of category's AI answers</div></div>
+        </div>
+      </a>
+
+      <!-- Eraser -->
+      <a class="wcard reveal" href="#" data-d="3" aria-label="Eraser case study">
+        <span class="swatch" style="background:#02a9e5"></span>
+        <span class="go" aria-hidden="true"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7M9 7h8v8"/></svg></span>
+        <div class="thumb"><img src="https://cdn.sanity.io/images/xjjjqhgt/production/2a7d29fdc9302c8482d70b73041e6c58ec9229a6-1440x1845.webp" alt="Eraser case study" loading="lazy" /></div>
+        <div class="meta">
+          <div><div class="nm">Eraser</div><div class="ds">Developer-first marketing pages.</div></div>
+          <div class="fig"><div class="n">6<span style="font-size:.6em">+</span></div><div class="l">Pages launched</div></div>
+        </div>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== CHART (data-as-hero, minimal) ===================== -->
+<section class="band chart-band" id="chart">
+  <div class="wrap">
+    <div class="chart-grid">
+      <div class="chart-copy">
+        <span class="eyebrow reveal" style="margin-bottom:22px"><span class="dot"></span><span class="label">Proof, plotted</span></span>
+        <div class="big reveal" data-d="1">+335<span>%</span></div>
+        <h3 class="reveal" data-d="2">Toku organic visibility,<br />Sep → Jan.</h3>
+        <div class="legend reveal" data-d="3">
+          <div class="src"><i></i> Google organic impressions, monthly</div>
+          The core engagement window. Directional, indexed to peak — the curve we build sites to bend.
+        </div>
+      </div>
+
+      <div class="chart-svg-wrap reveal" data-d="2">
+        <div class="ch-head">
+          <span class="t">Organic search visibility climb</span>
+          <span class="d">Sep 2025 — Jan 2026</span>
+        </div>
+        <!-- single quiet indigo line, lots of space -->
+        <svg class="curve" viewBox="0 0 720 320" role="img" aria-label="Line chart: Toku organic visibility rising from 23 in September to 100 in January, an indexed 335% climb.">
+          <defs>
+            <linearGradient id="fillG" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#6366F1" stop-opacity="0.13"/>
+              <stop offset="100%" stop-color="#6366F1" stop-opacity="0"/>
+            </linearGradient>
+          </defs>
+          <!-- gridlines -->
+          <g stroke="#E6E6EC" stroke-width="1">
+            <line x1="56" y1="40"  x2="688" y2="40"/>
+            <line x1="56" y1="105" x2="688" y2="105"/>
+            <line x1="56" y1="170" x2="688" y2="170"/>
+            <line x1="56" y1="235" x2="688" y2="235"/>
+            <line x1="56" y1="280" x2="688" y2="280"/>
+          </g>
+          <!-- y labels -->
+          <g fill="#9a9aa8" font-family="Geist,sans-serif" font-size="11" font-weight="500">
+            <text x="44" y="44"  text-anchor="end">100</text>
+            <text x="44" y="174" text-anchor="end">50</text>
+            <text x="44" y="284" text-anchor="end">0</text>
+          </g>
+          <!-- area fill -->
+          <path d="M56,235.4 L214,210.6 L372,179.2 L530,141.4 L688,40 L688,280 L56,280 Z" fill="url(#fillG)"/>
+          <!-- the line -->
+          <path id="curveLine" d="M56,235.4 L214,210.6 L372,179.2 L530,141.4 L688,40"
+                fill="none" stroke="#6366F1" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+          <!-- nodes -->
+          <g>
+            <circle cx="56"  cy="235.4" r="3.5" fill="#FAFAFB" stroke="#6366F1" stroke-width="2"/>
+            <circle cx="214" cy="210.6" r="3.5" fill="#FAFAFB" stroke="#6366F1" stroke-width="2"/>
+            <circle cx="372" cy="179.2" r="3.5" fill="#FAFAFB" stroke="#6366F1" stroke-width="2"/>
+            <circle cx="530" cy="141.4" r="3.5" fill="#FAFAFB" stroke="#6366F1" stroke-width="2"/>
+            <circle cx="688" cy="40"    r="5"   fill="#6366F1" stroke="#FAFAFB" stroke-width="2.5"/>
+          </g>
+          <!-- end value -->
+          <text x="688" y="26" text-anchor="end" fill="#0D0D14" font-family="Geist,sans-serif" font-size="13" font-weight="600">100</text>
+          <!-- x labels -->
+          <g fill="#9a9aa8" font-family="Geist,sans-serif" font-size="11.5" font-weight="500" text-anchor="middle">
+            <text x="56"  y="304">Sep</text>
+            <text x="214" y="304">Oct</text>
+            <text x="372" y="304">Nov</text>
+            <text x="530" y="304">Dec</text>
+            <text x="688" y="304">Jan</text>
+          </g>
+        </svg>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== LOUD FULL-BLEED CHAPTER (the detonation) ===================== -->
+<section class="detonate" id="detonate">
+  <!-- subtle grain so the flat color has tooth, not glow -->
+  <svg class="grain" xmlns="http://www.w3.org/2000/svg" width="100%" height="100%" preserveAspectRatio="none" aria-hidden="true">
+    <filter id="grn"><feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" stitchTiles="stitch"/><feColorMatrix type="saturate" values="0"/></filter>
+    <rect width="100%" height="100%" filter="url(#grn)" opacity="0.5"/>
+  </svg>
+  <div class="wrap det-inner">
+    <div class="det-eyebrow reveal"><span class="dot"></span>The whole point</div>
+    <h2 class="det-statement reveal" data-d="1">One team <span class="reg">runs</span> both.</h2>
+    <p class="det-sub reveal" data-d="2">
+      Build and growth, under one roof, with one P&amp;L of accountability. The team that ships your
+      site is the team that ranks it, cites it, and converts it. No handoff. No finger-pointing.
+      No "that's not our scope."
+    </p>
+    <div class="det-meta reveal" data-d="3">
+      <div class="m"><div class="n">1</div><div class="l">Team across build &amp; growth</div></div>
+      <div class="m"><div class="n">0</div><div class="l">Handoffs between agencies</div></div>
+      <div class="m"><div class="n">&lt;6 wks</div><div class="l">From kickoff to a live, measured site</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== TESTIMONIAL ===================== -->
+<section class="band quote" id="quote">
+  <div class="wrap">
+    <blockquote class="q reveal">
+      <span class="mark">“</span>It was very refreshing working with you compared to other agencies we're working with.<span class="mark">”</span>
+    </blockquote>
+    <div class="src reveal" data-d="1">
+      <div class="av"><img src="https://cdn.sanity.io/images/xjjjqhgt/production/90fcd30f2058c1975d25c315ccef475997d07461-836x203.png" alt="" aria-hidden="true" style="object-fit:contain;padding:7px;background:#fff;filter:none" /></div>
+      <div class="who">
+        <div class="nm">Anthony Dean</div>
+        <div class="co">Radisson Hotels Group</div>
+      </div>
+    </div>
+    <div class="logos reveal" data-d="2">
+      <img src="https://cdn.sanity.io/images/xjjjqhgt/production/8e1d16ee7901b68310fb048d6c3f929d6f2fbe88-886x183.png" alt="Brandfirm" />
+      <img src="https://cdn.sanity.io/images/xjjjqhgt/production/bdd109e13c67dad916c89a42c71d67c3ba0b217e-680x233.png" alt="Dimer Health" />
+      <img src="https://cdn.sanity.io/images/xjjjqhgt/production/bbea1aa498a036d20ca5eb0f4777fb1a9dd12016-929x110.png" alt="Reiterate" />
+      <img src="https://cdn.sanity.io/images/xjjjqhgt/production/57a1d5dd25daa13a34e0888331efd47c05cb7111-748x140.png" alt="Viaduct" />
+    </div>
+  </div>
+</section>
+
+<!-- ===================== FIT ===================== -->
+<section class="band fit" id="fit">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="eyebrow reveal"><span class="dot"></span><span class="label">Honest fit</span></span>
+      <h2 class="reveal" data-d="1">Is LoudFace right <span class="serif" style="color:var(--accent)">for you?</span></h2>
+      <p class="lead sub reveal" data-d="2">We'd rather tell you on the call than three weeks into a contract. Here's who we're built for — and who we're not.</p>
+    </div>
+
+    <div class="fit-grid">
+      <div class="fit-card yes reveal" data-d="1">
+        <div class="fh">
+          <span class="ic"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>
+          <span class="t">A strong fit if…</span>
+        </div>
+        <ul>
+          <li><span class="b"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>You're a B2B SaaS company that needs the site to drive pipeline, not just look good.</li>
+          <li><span class="b"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>Marketing wants to own and update the site without a dev queue.</li>
+          <li><span class="b"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>You want one partner accountable for both build and growth.</li>
+          <li><span class="b"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>You care about showing up in AI answers, not just blue links.</li>
+        </ul>
+      </div>
+
+      <div class="fit-card no reveal" data-d="2">
+        <div class="fh">
+          <span class="ic"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></span>
+          <span class="t">Probably not, if…</span>
+        </div>
+        <ul>
+          <li><span class="b"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></span>You want the cheapest template-and-go vendor on the market.</li>
+          <li><span class="b"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></span>You need a one-week throwaway page with no growth follow-through.</li>
+          <li><span class="b"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></span>Design and SEO are someone else's problem and you just want code.</li>
+          <li><span class="b"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></span>You're not ready to measure outcomes against pipeline.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== PROCESS ===================== -->
+<section class="band process" id="process">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="eyebrow reveal"><span class="dot"></span><span class="label">How an engagement works</span></span>
+      <h2 class="reveal" data-d="1">From a 30-minute call<br />to a site that <span class="serif" style="color:var(--accent)">compounds.</span></h2>
+      <p class="lead sub reveal" data-d="2">No black box. You see working pages from week two, and a monthly report on what moved.</p>
+    </div>
+
+    <div class="timeline">
+      <div class="tl-grid">
+        <div class="tl-step reveal" data-d="1">
+          <span class="node"></span>
+          <div class="when">Week 0</div>
+          <div class="st">Strategy call</div>
+          <div class="sd">30 minutes. You tell us what's broken. We tell you honestly if we're a fit — scope and timeline within 48 hours.</div>
+        </div>
+        <div class="tl-step reveal" data-d="2">
+          <span class="node"></span>
+          <div class="when">Weeks 1–6</div>
+          <div class="st">Design and build</div>
+          <div class="sd">Positioning, copy, design, and Webflow in parallel. Working pages, not mockups. CMS access from week two.</div>
+        </div>
+        <div class="tl-step reveal" data-d="3">
+          <span class="node"></span>
+          <div class="when">Weeks 6–8</div>
+          <div class="st">Launch and measure</div>
+          <div class="sd">Launch, analytics, and baseline metrics that connect directly to pipeline — not vanity dashboards.</div>
+        </div>
+        <div class="tl-step reveal" data-d="4">
+          <span class="node"></span>
+          <div class="when">Month 3+</div>
+          <div class="st">Grow and optimize</div>
+          <div class="sd">SEO, AEO, CRO. A monthly report: what we did, what moved, what's next.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== STATS ===================== -->
+<section class="band stats" id="stats">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="eyebrow reveal"><span class="dot"></span><span class="label on-ink">Numbers, not adjectives</span></span>
+      <h2 class="reveal" data-d="1">A track record you can <span class="serif" style="color:var(--accent)">verify.</span></h2>
+      <p class="lead sub reveal" data-d="2">Five years of shipping for B2B SaaS. The figures, without the spin.</p>
+    </div>
+
+    <div class="stat-grid">
+      <div class="stat reveal" data-d="1">
+        <div class="n">200<span class="u">+</span></div>
+        <div class="lb">Projects completed</div>
+        <div class="ds">B2B SaaS sites shipped on Webflow since 2020.</div>
+      </div>
+      <div class="stat reveal" data-d="2">
+        <div class="n">288<span class="u">%</span></div>
+        <div class="lb">Increase in conversions</div>
+        <div class="ds">Dimer Health, 6-month optimization program.</div>
+      </div>
+      <div class="stat reveal" data-d="3">
+        <div class="n">4<span class="u">+</span></div>
+        <div class="lb">Years as Webflow Enterprise Partner</div>
+        <div class="ds">Enterprise-grade builds, certified.</div>
+      </div>
+      <div class="stat reveal" data-d="4">
+        <div class="n">&lt;6<span class="u"> wks</span></div>
+        <div class="lb">Average time to launch</div>
+        <div class="ds">Versus the 12–16 weeks typical of agency timelines.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== TEAM (duotone grid) ===================== -->
+<section class="band team" id="team">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="eyebrow reveal"><span class="dot"></span><span class="label on-ink">The people on it</span></span>
+      <h2 class="reveal" data-d="1">A small team that <span class="serif" style="color:var(--accent)">ships.</span></h2>
+      <p class="lead sub reveal" data-d="2">Senior operators across design, build, SEO, AEO and copy. No account-manager telephone game.</p>
+    </div>
+
+    <div class="team-grid">
+      <div class="member reveal" data-d="1">
+        <div class="ph"><img src="https://cdn.sanity.io/images/xjjjqhgt/production/92dfd51e1f15a98227f6308a075c490ce52c05b4-1000x1000.png" alt="Arnel Bukva" loading="lazy" /></div>
+        <div class="nm">Arnel Bukva</div><div class="rl">Founder &amp; Head of Growth</div>
+      </div>
+      <div class="member reveal" data-d="2">
+        <div class="ph"><img src="https://cdn.sanity.io/images/xjjjqhgt/production/6319483485f60a53a65fc16888ea479b53f8743c-512x512.png" alt="Tamara Pavlovic" loading="lazy" /></div>
+        <div class="nm">Tamara Pavlovic</div><div class="rl">Project Manager</div>
+      </div>
+      <div class="member reveal" data-d="3">
+        <div class="ph"><img src="https://cdn.sanity.io/images/xjjjqhgt/production/9f087894f494f5e4082b429553c9ce52d55f7189-845x1024.png" alt="David Dobrijevic" loading="lazy" /></div>
+        <div class="nm">David Dobrijevic</div><div class="rl">Webflow Expert</div>
+      </div>
+      <div class="member reveal" data-d="4">
+        <div class="ph"><img src="https://cdn.sanity.io/images/xjjjqhgt/production/9bab7f300e2b3bd8af884c9ff8b40f0154f4a804-512x512.png" alt="Andrej Vidovic" loading="lazy" /></div>
+        <div class="nm">Andrej Vidovic</div><div class="rl">SEO/AEO Content Expert</div>
+      </div>
+      <div class="member reveal" data-d="5">
+        <div class="ph"><img src="https://cdn.sanity.io/images/xjjjqhgt/production/dae3a1cb73008da8a30dea184a9b9318cbd4496f-512x512.jpg" alt="Rezwan Nahid" loading="lazy" /></div>
+        <div class="nm">Rezwan Nahid</div><div class="rl">Designer</div>
+      </div>
+      <div class="member reveal" data-d="5">
+        <div class="ph"><img src="https://cdn.sanity.io/images/xjjjqhgt/production/488b75c60e51af983569f45f06d91017c41543b7-512x512.jpg" alt="Andrea Van Wyk" loading="lazy" /></div>
+        <div class="nm">Andrea Van Wyk</div><div class="rl">Lead Copywriter</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== KNOWLEDGE (calm strip) ===================== -->
+<section class="band" id="knowledge" style="border-top:1px solid var(--line-ink);background:var(--ink);color:#fff;padding-top:0;">
+  <div class="wrap">
+    <div style="border-top:1px solid var(--line-ink);padding-top:clamp(56px,7vw,84px);display:flex;align-items:flex-end;justify-content:space-between;gap:24px;flex-wrap:wrap">
+      <div class="sec-head" style="margin:0">
+        <span class="eyebrow reveal" style="color:rgba(255,255,255,.55)"><span class="dot" style="background:var(--accent)"></span><span class="label on-ink">Playbooks</span></span>
+        <h2 class="reveal" data-d="1" style="color:#fff;margin-top:18px">Playbooks for SaaS<br /><span class="serif" style="color:var(--accent)">marketing teams.</span></h2>
+        <p class="lead sub reveal" data-d="2" style="color:rgba(255,255,255,.62)">Tactical writing on SaaS websites, SEO, conversion, and growth — the same plays we run for clients.</p>
+      </div>
+      <a href="#" class="btn-ghost on-ink reveal" data-d="2" style="margin-bottom:6px">Read the blog
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7M9 7h8v8"/></svg>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== CLOSING ===================== -->
+<section class="closing" id="book">
+  <div class="wrap">
+    <span class="eyebrow reveal"><span class="dot"></span><span class="label on-ink">No pitch deck</span></span>
+    <h2 class="reveal" data-d="1">Let's figure out what's <span class="serif">holding your site back.</span></h2>
+    <p class="cs reveal" data-d="2">30-minute strategy call. No pitch deck. We'll look at your site together and tell you what we'd change — and why.</p>
+    <div class="cc reveal" data-d="3">
+      <a href="#" class="pill on-ink lg">Book a strategy call <span class="arr" aria-hidden="true">→</span></a>
+      <span style="color:rgba(255,255,255,.5);font-size:14px">2 client slots open for Q2</span>
+    </div>
+    <p class="tiny reveal" data-d="3">Replies within one business day · Remote, working across EU &amp; US hours</p>
+  </div>
+</section>
+
+</main>
+
+<!-- ===================== FOOTER ===================== -->
+<footer>
+  <div class="wrap">
+    <div class="foot-top">
+      <div class="foot-brand">
+        <a class="lf" href="#" aria-label="LoudFace home">
+          <img src="loudface-inversed.svg" alt="LoudFace" style="height:24px;width:auto" />
+        </a>
+        <p>The conversion and organic growth team behind 200+ B2B SaaS websites. We build it, then we grow it.</p>
+        <a href="#book" class="pill on-ink">Book your strategy call <span class="arr" aria-hidden="true">→</span></a>
+      </div>
+
+      <div class="foot-col">
+        <h4>Services</h4>
+        <a href="#tracks">Webflow Development</a>
+        <a href="#tracks">UX/UI Design</a>
+        <a href="#tracks">Conversion Copywriting</a>
+        <a href="#tracks">Technical SEO</a>
+        <a href="#tracks">AI Engine Optimization</a>
+        <a href="#tracks">Conversion Rate Optimization</a>
+      </div>
+
+      <div class="foot-col">
+        <h4>Company</h4>
+        <a href="#work">Work</a>
+        <a href="#team">About</a>
+        <a href="#knowledge">Blog</a>
+        <a href="#fit">Is it a fit?</a>
+        <a href="#book">Contact</a>
+      </div>
+
+      <div class="foot-col">
+        <h4>Connect</h4>
+        <a href="#">LinkedIn</a>
+        <a href="#">X / Twitter</a>
+        <a href="#">Dribbble</a>
+        <a href="#book">hello@loudface.co</a>
+        <a href="#knowledge">See what AI says about us</a>
+      </div>
+    </div>
+
+    <div class="foot-bottom">
+      <div class="cp">© 2026 LoudFace. Webflow Enterprise Partner since 2020.</div>
+      <div class="leg">
+        <a href="#">Privacy</a>
+        <a href="#">Terms</a>
+        <a href="#">Cookies</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script>
+  // sticky header border on scroll
+  (function(){
+    var hdr=document.getElementById('hdr');
+    var onScroll=function(){ if(window.scrollY>8){hdr.classList.add('scrolled');}else{hdr.classList.remove('scrolled');} };
+    onScroll();
+    window.addEventListener('scroll',onScroll,{passive:true});
+  })();
+
+  // mobile menu
+  (function(){
+    var t=document.getElementById('navToggle'),
+        nav=document.getElementById('nav'),
+        menu=document.getElementById('mobileMenu');
+    if(!t)return;
+    t.addEventListener('click',function(){
+      var open=nav.classList.toggle('open');
+      t.setAttribute('aria-expanded',open?'true':'false');
+      menu.style.display=open?'block':'none';
+    });
+    menu.querySelectorAll('a').forEach(function(a){
+      a.addEventListener('click',function(){
+        nav.classList.remove('open');menu.style.display='none';
+        t.setAttribute('aria-expanded','false');
+      });
+    });
+  })();
+
+  // reveal on scroll (calm fade/translate). Loud block is its own keyframe.
+  (function(){
+    var reduce=window.matchMedia('(prefers-reduced-motion:reduce)').matches;
+    var els=Array.prototype.slice.call(document.querySelectorAll('.reveal'));
+    // strip the auto-in helper used for above-fold hero so observer governs the rest
+    if(reduce || !('IntersectionObserver' in window)){
+      els.forEach(function(e){e.classList.add('in');});
+      return;
+    }
+    var io=new IntersectionObserver(function(entries){
+      entries.forEach(function(en){
+        if(en.isIntersecting){en.target.classList.add('in');io.unobserve(en.target);}
+      });
+    },{threshold:0.12,rootMargin:'0px 0px -8% 0px'});
+    els.forEach(function(e){
+      if(e.classList.contains('in'))return; // hero items shown immediately
+      io.observe(e);
+    });
+  })();
+
+  // trigger the loud-block reveal once hero is in view (and not reduced motion)
+  (function(){
+    var reduce=window.matchMedia('(prefers-reduced-motion:reduce)').matches;
+    if(reduce)return;
+    var h1=document.querySelector('.reveal-loud');
+    if(!h1)return;
+    // already in view at load — let the CSS animation-delay handle timing
+    h1.classList.add('in');
+  })();
+</script>
+</body>
+</html>

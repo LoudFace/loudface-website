@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>LoudFace Homepage Concept C - Soft Operating System</title>
+  <style>
+    @font-face{font-family:NeueMontreal;src:url("http://localhost:3005/fonts/NeueMontreal-Medium.woff2") format("woff2");font-weight:500}
+    @font-face{font-family:Satoshi;src:url("http://localhost:3005/fonts/Satoshi-Regular.woff2") format("woff2");font-weight:400}
+    @font-face{font-family:Satoshi;src:url("http://localhost:3005/fonts/Satoshi-Bold.woff2") format("woff2");font-weight:700}
+    :root{--ink:#17312b;--green:#dff4df;--mint:#aee5bd;--blue:#dce8f3;--paper:#fbfcfa;--line:#d9e4dd;--muted:#5e6d67;--indigo:#4f46e5}
+    *{box-sizing:border-box} body{margin:0;background:var(--paper);color:var(--ink);font-family:Satoshi,system-ui,sans-serif;overflow-x:hidden} img{max-width:100%;display:block} a{text-decoration:none;color:inherit}.page{max-width:1320px;margin:auto;padding:22px}.nav{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px}.nav img{width:128px}.nav div{display:flex;gap:24px;font-size:14px;color:var(--muted)}.demo{background:var(--ink);color:#fff;border-radius:12px;padding:13px 20px;font-weight:700}
+    .grid{display:grid;grid-template-columns:.78fr 1.22fr;gap:22px}.tile{border-radius:16px;border:1px solid var(--line);overflow:hidden}.hero-copy{background:var(--green);padding:46px;min-height:430px;display:flex;flex-direction:column;justify-content:space-between}.h1{font-family:NeueMontreal,sans-serif;font-size:clamp(48px,6vw,88px);line-height:.96;margin:0}.accent{font-family:Georgia,serif;font-style:italic;color:var(--indigo);font-weight:400}.hero-copy p{font-size:18px;line-height:1.55;color:var(--muted);max-width:520px}.hero-media{background:var(--blue);padding:30px;display:grid;align-content:center}.flow{display:flex;align-items:center;justify-content:center;gap:32px}.mini{width:150px;height:210px;border-radius:16px;background:#fff;border:1px solid #cbd9d6;padding:16px;box-shadow:0 16px 40px rgba(23,49,43,.08)}.mini img{height:54px;object-fit:contain;margin:auto auto 28px}.mini b{display:block;text-align:center;margin-bottom:8px}.mini span{display:block;text-align:center;color:var(--muted);font-size:12px}.line{width:90px;height:1px;border-top:1px dashed #78948b;position:relative}.line:after{content:"";position:absolute;right:-4px;top:-5px;width:9px;height:9px;border-radius:50%;background:var(--ink)}
+    .cta-tile{background:var(--ink);color:#fff;padding:30px 42px;display:flex;align-items:center;justify-content:space-between;min-height:118px;font-size:22px}.arrow{font-size:42px}.trust{text-align:center;padding:30px 0;color:var(--muted)}.logos{margin-top:20px;display:flex;justify-content:center;gap:34px;flex-wrap:wrap;filter:grayscale(1);opacity:.75}.logos img{max-height:30px;max-width:132px}.proof-row{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:22px}.proof-row div{background:#fff;border:1px solid var(--line);border-radius:14px;padding:18px;text-align:left}.proof-row b{display:block;font-family:NeueMontreal,sans-serif;font-size:34px;line-height:1}.proof-row span{display:block;color:var(--muted);font-size:13px;line-height:1.35;margin-top:6px}
+    .section-grid{display:grid;grid-template-columns:1.08fr .92fr;gap:22px;margin-top:42px}.big{background:#e9f8e9;min-height:520px;padding:48px;display:flex;flex-direction:column;justify-content:space-between}.big h2{font-family:NeueMontreal,sans-serif;font-size:72px;line-height:.96;margin:0}.big p{color:var(--muted);font-size:18px;max-width:500px}.side{display:grid;gap:22px}.image-card{background:var(--blue);min-height:230px;padding:20px}.image-card img{height:190px;width:100%;object-fit:cover;border-radius:12px}.menu-card{background:var(--mint);padding:36px;display:grid;grid-template-columns:1fr 1fr;gap:24px}.menu-card a{display:block;margin:0 0 13px;color:#31554a}.badge{align-self:end;width:54px;height:54px;border-radius:13px;background:var(--ink);display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700}
+    .work{margin-top:22px;display:grid;grid-template-columns:repeat(2,1fr);gap:22px}.work article{background:#fff;border:1px solid var(--line);border-radius:16px;overflow:hidden}.work img{height:190px;width:100%;object-fit:cover}.work div{padding:24px}.work h3{font-size:26px;font-family:NeueMontreal,sans-serif;margin:0 0 10px}.work p{color:var(--muted);line-height:1.5}.close{margin-top:22px;background:var(--ink);color:#fff;border-radius:16px;padding:42px;display:flex;align-items:center;justify-content:space-between}.close h2{font-family:NeueMontreal,sans-serif;font-size:48px;line-height:1;margin:0;max-width:700px}.close a{background:#fff;color:var(--ink);padding:14px 20px;border-radius:999px;font-weight:700}
+    @media(max-width:860px){.page{padding:12px;overflow:hidden}.nav img{width:112px}.nav div{display:none}.demo{padding:10px 12px;font-size:12px}.grid,.section-grid,.work,.proof-row{grid-template-columns:1fr}.hero-copy{padding:24px;min-height:280px}.h1{font-size:30px;line-height:1.08;overflow-wrap:break-word}.hero-media{padding:18px;overflow:hidden}.flow{gap:5px;justify-content:center;overflow:visible;padding-bottom:0}.mini{width:82px;height:140px;padding:9px;flex:0 0 auto}.mini img{height:38px;margin:auto auto 20px}.mini b{font-size:13px}.mini span{font-size:10px}.line{width:14px;flex:0 0 auto}.cta-tile,.close{display:block;overflow:hidden}.cta-tile{padding:24px;font-size:18px}.big{padding:28px;min-height:300px;overflow:hidden}.big h2,.close h2{font-size:30px;line-height:1.1}.menu-card{grid-template-columns:1fr}.close a{display:inline-flex;margin-top:24px}}
+  </style>
+</head>
+<body>
+  <div class="page">
+    <nav class="nav"><img src="http://localhost:3005/images/loudface.svg" alt="LoudFace" /><div><a>About</a><a>Case Studies</a><a>What We Offer</a></div><a class="demo">Book a working session</a></nav>
+    <main class="grid">
+      <section class="tile hero-copy">
+        <h1 class="h1">Fewer handoffs. More proof.</h1>
+        <p>LoudFace gives SaaS teams a website operating system: pages, proof, CMS structure, search content, and conversion work in one calm room.</p>
+      </section>
+      <section class="tile hero-media">
+        <div class="flow">
+          <div class="mini"><img src="http://localhost:3005/images/Strategy.svg" alt="" /><b>Offer</b><span>Buyer promise</span></div>
+          <div class="line"></div>
+          <div class="mini"><img src="http://localhost:3005/images/Discovery.svg" alt="" /><b>Site</b><span>CMS and pages</span></div>
+          <div class="line"></div>
+          <div class="mini"><img src="http://localhost:3005/images/Execution.svg" alt="" /><b>Growth</b><span>Search and CRO</span></div>
+        </div>
+      </section>
+      <a class="tile cta-tile">Request a working session <span class="arrow">-></span></a>
+      <section class="tile hero-copy" style="background:#eef2ff"><h1 class="h1">Your SaaS site should sell the room <span class="accent">before</span> the call.</h1><p>The page should make sales feel late to the conversation, not responsible for starting it.</p></section>
+    </main>
+    <section class="trust">Trusted by SaaS teams shipping real products<div class="logos"><img src="http://localhost:3005/images/brandfirm.svg" alt="Brandfirm" /><img src="http://localhost:3005/images/toku-logo.png" alt="Toku" /><img src="http://localhost:3005/images/webflow.svg" alt="Webflow" /><img src="http://localhost:3005/images/Enterprise-Blue-Badge.webp" alt="Webflow Enterprise" /></div><div class="proof-row"><div><b>200+</b><span>B2B SaaS websites shipped</span></div><div><b>288%</b><span>best conversion increase</span></div><div><b>0->86%</b><span>Toku AI visibility lift</span></div></div></section>
+    <section class="section-grid">
+      <article class="tile big"><h2>Bring order back into the growth site.</h2><p>Join the SaaS teams replacing agency sprawl with one page system that can launch, publish, rank, and convert.</p></article>
+      <div class="side">
+        <article class="tile image-card"><img src="http://localhost:3005/images/brandfirm.webp" alt="LoudFace work" /></article>
+        <article class="tile menu-card"><div><a>Website systems</a><a>Webflow CMS</a><a>Conversion copy</a><a>Search pages</a></div><div><a>Case Studies</a><a>SEO and AEO</a><a>CRO</a><a>Contact</a></div><div class="badge">LF</div></article>
+      </div>
+    </section>
+    <section class="work">
+      <article><img src="http://localhost:3005/images/organic-mastery_1.webp" alt="Organic growth" /><div><h3>Grow the demand layer.</h3><p>Organic pages, AI-answer coverage, landing pages, and content that buyers can actually use.</p></div></article>
+      <article><img src="http://localhost:3005/images/conversion-optimization_1.webp" alt="Conversion work" /><div><h3>Keep the buyer loop alive.</h3><p>Post-demo flows, proof pages, release notes, and experiments stay part of the site.</p></div></article>
+    </section>
+    <section class="close"><h2>One working room for the website and the growth around it.</h2><a>Book a working session</a></section>
+  </div>
+</body>
+</html>

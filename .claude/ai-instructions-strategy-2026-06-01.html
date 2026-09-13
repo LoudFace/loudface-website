@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AI Instructions Page — Strategy to Win Clients</title>
+<style>
+  :root{
+    --ink:#16140f; --ink-soft:#4a463d; --muted:#7a756a; --line:#e6e1d6;
+    --paper:#f6f3ec; --card:#fffdf8; --accent:#b5341f; --accent-soft:#f3dccb;
+    --good:#2f6f43; --good-soft:#dcefe1; --warn:#9a6a12; --warn-soft:#f6e9cf;
+    --bad:#9b2222; --bad-soft:#f4dada;
+    --mono:"SFMono-Regular",ui-monospace,"JetBrains Mono",Menlo,Consolas,monospace;
+    --sans:"Söhne","Neue Haas Grotesk Display",-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,sans-serif;
+    --serif:"Tiempos Headline","Charter","Iowan Old Style",Georgia,serif;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--sans);font-size:17px;line-height:1.62;-webkit-font-smoothing:antialiased}
+  .wrap{max-width:900px;margin:0 auto;padding:0 24px}
+  header.hero{padding:58px 0 34px;border-bottom:1px solid var(--line)}
+  .kicker{font-family:var(--mono);font-size:12px;letter-spacing:.18em;text-transform:uppercase;color:var(--accent);font-weight:600;margin:0 0 16px}
+  h1{font-family:var(--serif);font-weight:600;font-size:40px;line-height:1.07;margin:0 0 16px;letter-spacing:-.01em}
+  .lede{font-size:19px;color:var(--ink-soft);max-width:62ch;margin:0}
+  .meta{margin-top:22px;font-family:var(--mono);font-size:12px;color:var(--muted);display:flex;gap:18px;flex-wrap:wrap}
+  .meta b{color:var(--ink-soft);font-weight:600}
+
+  .bignote{margin:34px 0;border:1px solid var(--line);border-left:4px solid var(--accent);border-radius:0 14px 14px 0;background:var(--card);padding:24px 26px}
+  .bignote h2{margin:0 0 10px;font-family:var(--serif);font-size:23px;font-weight:600}
+  .bignote p{margin:0 0 10px;color:var(--ink-soft)}.bignote p:last-child{margin:0}
+
+  section{padding:38px 0;border-bottom:1px solid var(--line)}
+  .sec-num{font-family:var(--mono);font-size:12px;color:var(--accent);letter-spacing:.16em;text-transform:uppercase;display:block;margin-bottom:9px}
+  h2.sec{font-family:var(--serif);font-size:27px;font-weight:600;margin:0 0 8px;letter-spacing:-.01em}
+  h3{font-size:17px;font-weight:650;margin:24px 0 8px}
+  p{margin:0 0 14px}
+  a{color:var(--accent)}
+  strong{font-weight:650}
+  ul,ol{margin:0 0 14px;padding-left:20px}li{margin:0 0 7px}
+
+  .stat-row{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:22px 0}
+  @media(max-width:640px){.stat-row{grid-template-columns:repeat(2,1fr)}}
+  .stat{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:15px 16px}
+  .stat .n{font-family:var(--serif);font-size:27px;font-weight:600;display:block;line-height:1}
+  .stat .l{font-size:12px;color:var(--muted);margin-top:6px;display:block;line-height:1.35}
+  .stat.bad .n{color:var(--bad)}.stat.good .n{color:var(--good)}.stat.warn .n{color:var(--warn)}
+
+  .kb{border-left:3px solid var(--good);background:var(--good-soft);padding:13px 17px;border-radius:0 9px 9px 0;margin:16px 0;font-size:14.5px}
+  .kb .tag{font-family:var(--mono);font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;font-weight:700;color:var(--good);display:block;margin-bottom:5px}
+
+  .callout{border-left:3px solid var(--accent);background:var(--accent-soft);padding:15px 18px;border-radius:0 10px 10px 0;margin:18px 0}
+  .callout .tag{font-family:var(--mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;font-weight:700;display:block;margin-bottom:6px;color:var(--ink-soft)}
+  .callout p{margin:0}
+
+  table{width:100%;border-collapse:collapse;margin:18px 0;font-size:14.5px}
+  th,td{text-align:left;padding:11px 13px;border-bottom:1px solid var(--line);vertical-align:top}
+  th{font-family:var(--mono);font-size:10.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);font-weight:600}
+  .pri{font-family:var(--mono);font-size:11px;font-weight:700;padding:2px 8px;border-radius:5px;white-space:nowrap}
+  .pri.p0{background:var(--bad);color:#fff}.pri.p1{background:var(--warn);color:#fff}.pri.p2{background:var(--muted);color:#fff}
+
+  .before-after{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:18px 0}
+  @media(max-width:680px){.before-after{grid-template-columns:1fr}}
+  .ba{border-radius:11px;padding:15px 17px;font-size:14px}
+  .ba.b{background:var(--bad-soft);border:1px solid #e9c9c9}
+  .ba.a{background:var(--good-soft);border:1px solid #c4dfcb}
+  .ba .h{font-family:var(--mono);font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;font-weight:700;margin-bottom:8px}
+  .ba.b .h{color:var(--bad)}.ba.a .h{color:var(--good)}
+  .ba code{font-size:12.5px}
+
+  pre{background:#1d1a14;color:#ece6d8;border-radius:11px;padding:16px 18px;overflow:auto;font-family:var(--mono);font-size:12.5px;line-height:1.55;margin:14px 0}
+  code:not(pre code){font-family:var(--mono);font-size:.85em;background:#ece7da;padding:2px 6px;border-radius:5px}
+
+  footer{padding:32px 0 70px;color:var(--muted);font-size:13px}
+  footer .src{font-family:var(--mono);font-size:11.5px;line-height:1.85}
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <div class="wrap">
+    <p class="kicker">LoudFace · AI Instructions Page — Strategy</p>
+    <h1>The page gets cited. That's not the same as getting clients.</h1>
+    <p class="lede">It won the easy game — branded "what is LoudFace" queries. But those are people who already know the name. To win <em>clients</em>, the page has to influence the <strong>decision</strong> and <strong>category</strong> moments. Here's how to rebuild it for that — grounded in LoudFace's own battle-tested playbook, not generic agency advice.</p>
+    <div class="meta">
+      <span><b>Date</b> 2026-06-01</span>
+      <span><b>Grounded in</b> Thought Leadership KB + live Peec</span>
+      <span><b>Status</b> proposal — not yet shipped</span>
+    </div>
+  </div>
+</header>
+
+<div class="wrap">
+
+  <div class="bignote">
+    <h2>The reframe: branded citation ≠ pipeline</h2>
+    <p>The day-2 win was real — ChatGPT cites the page on "what is LoudFace." But a buyer asking <em>that</em> already knows LoudFace exists. The queries that actually create clients are different: <strong>"best AEO agency for B2B SaaS,"</strong> <strong>"is LoudFace any good,"</strong> <strong>"LoudFace vs Omniscient."</strong> The page barely touches those.</p>
+    <p>Your own KB says it plainly: <em>"the only meaningful metric for an organic strategy is whether pipeline is being filled with qualified leads."</em> So the question isn't "how do we get cited more" — it's <strong>"what does the page need to say so that when a buyer is deciding, the AI argues our case."</strong></p>
+  </div>
+
+  <!-- where we actually stand -->
+  <section>
+    <span class="sec-num">01 · The honest baseline</span>
+    <h2 class="sec">Where LoudFace actually stands in AI answers</h2>
+    <p>Live Peec, last 7 days, category prompts (the ones buyers use to build a shortlist):</p>
+    <div class="stat-row">
+      <div class="stat bad"><span class="n">8%</span><span class="l">Visibility on category prompts (Omniscient: 40%)</span></div>
+      <div class="stat bad"><span class="n">1%</span><span class="l">Share of voice across the lane</span></div>
+      <div class="stat warn"><span class="n">60</span><span class="l">Sentiment — below the 65–85 norm. AI is lukewarm on us.</span></div>
+      <div class="stat warn"><span class="n">3.5</span><span class="l">Avg position when mentioned — fine, but rarely mentioned</span></div>
+    </div>
+    <p>Translation: when a buyer asks AI for a shortlist, LoudFace shows up <strong>1 in 12 times</strong> and, when it does, the description is tepid. The new page can't fix the visibility gap alone (your KB already diagnosed that as a Domain-Rating + citation-fragmentation problem). But it <em>can</em> fix two things that directly move pipeline: <strong>how warmly AI describes us</strong>, and <strong>what buying criteria AI repeats</strong> when we're in the running.</p>
+    <div class="kb"><span class="tag">KB · Battle-tested</span>"Concentrate, don't narrow. The constraint is DR + citation fragmentation — we scatter ~304 citations across 4 near-synonym pages while the lane winner concentrates ~266 on one URL." → The /ai-instructions page should be a <em>concentrating</em> entity hub, not a 5th fragment.</div>
+  </section>
+
+  <!-- what the page is actually for -->
+  <section>
+    <span class="sec-num">02 · Reposition the page's job</span>
+    <h2 class="sec">Three jobs it should do — only one of which it does today</h2>
+    <table>
+      <thead><tr><th>Job</th><th>Query moment</th><th>Today</th></tr></thead>
+      <tbody>
+        <tr><td><strong>1. Describe us</strong></td><td>"what is LoudFace"</td><td><span style="color:var(--good);font-weight:650">✓ Working</span> — cited day 2</td></tr>
+        <tr><td><strong>2. Make AI warm + specific about us</strong></td><td>any mention, anywhere</td><td><span style="color:var(--warn);font-weight:650">Weak</span> — facts present, but no proof story to lift sentiment 60→75+</td></tr>
+        <tr><td><strong>3. Arm the buying decision</strong></td><td>"is LoudFace good," "X vs LoudFace," "who should I hire"</td><td><span style="color:var(--bad);font-weight:650">Missing</span> — no criteria, no fit/not-fit, no comparison framing</td></tr>
+      </tbody>
+    </table>
+    <p>Job 3 is the one that creates clients. When someone asks ChatGPT "should I hire LoudFace or Omniscient for B2B SaaS AEO?", the model assembles an answer from whatever criteria it can find. <strong>If our page is the only source that states the decision criteria, the AI argues on our terms.</strong> That's the lever.</p>
+  </section>
+
+  <!-- the concrete upgrades -->
+  <section>
+    <span class="sec-num">03 · The upgrades</span>
+    <h2 class="sec">What to add — in priority order</h2>
+
+    <h3><span class="pri p0">P0</span> &nbsp;A self-sufficient answer block at the very top</h3>
+    <p>Your single strongest KB row, validated across 400k pages: AI extracts citable answers from the <em>top</em> of the page, not the body. The page currently opens with a soft intro paragraph. Replace with a tight, quotable TL;DR the model can lift whole.</p>
+    <div class="kb"><span class="tag">KB · Battle-tested (Glasp, 400k pages)</span>"Title + TL;DR is the AI citation surface — not the body. Lead with the entity name and the answer in the first sentence. A self-sufficient 2–3 sentence answer positioned before any body content."</div>
+    <div class="before-after">
+      <div class="ba b"><div class="h">Now</div>"This is the canonical, structured summary of LoudFace — a B2B SaaS conversion and organic growth agency. It exists so that AI assistants…"</div>
+      <div class="ba a"><div class="h">Better — direct answer first</div>"LoudFace is a founder-led B2B SaaS growth agency that builds your website and then runs SEO, AEO, and CRO on it — one team, launch to pipeline. Best for Series A–C SaaS teams that want organic growth owned as a P&L line, not a checklist. Proof: took Toku from 0 to 86% visibility on its core AI-search prompt in 3 months."</div>
+    </div>
+
+    <h3><span class="pri p0">P0</span> &nbsp;The Toku proof — it's missing, and it's our best asset</h3>
+    <p>The page lists "288% conversion" but omits the single most powerful proof point an <em>AEO</em> agency could show: the Toku result. Your KB is explicit that this is how we want AI to model the brand.</p>
+    <div class="kb"><span class="tag">KB · Battle-tested</span>"We want to be modeled as 'the agency behind Toku going 0 to 86%', not 'the listicle site.'"</div>
+    <div class="callout">
+      <span class="tag">Label it exactly right (KB guardrail)</span>
+      <p>Toku's number is <strong>86% visibility at position 2.4</strong> on its core stablecoin-payroll prompt, with <strong>~27% share of voice</strong> (category leader). Do NOT call the 86% "share of voice" — the KB has a specific correction on this. Precise labeling is itself a credibility signal an AEO buyer will notice.</p>
+    </div>
+
+    <h3><span class="pri p0">P0</span> &nbsp;A "Who LoudFace is — and isn't — right for" section</h3>
+    <p>Counter-intuitively, the disqualifier is the client-getting move. Honest "not right for you if…" lines (a) build trust, (b) get repeated verbatim by AI because they read as objective, and (c) pre-qualify the buyers who do book. This is the section that arms Job 3.</p>
+    <div class="before-after">
+      <div class="ba a"><div class="h">Right fit</div>Series A–C B2B SaaS · want one team to build + grow the site · treat organic as a pipeline line, not a vanity metric · need speed (live in weeks)</div>
+      <div class="ba b"><div class="h">Not the fit (say it plainly)</div>Pre-product/pre-revenue · want cheapest possible SEO retainer · need a huge enterprise pod of 20+ · expect rankings with no conversion focus</div>
+    </div>
+
+    <h3><span class="pri p1">P1</span> &nbsp;Comparison-defensible buying criteria</h3>
+    <p>Plant the 4–5 criteria a buyer <em>should</em> use to evaluate an AEO/growth agency — chosen so LoudFace wins on them honestly. When AI answers "how do I choose," it pulls these. e.g. <em>"Does one team own both the build and the growth? Do they measure pipeline, not rankings? Is it senior specialists or junior account-managers? Can they show an AI-citation result, not just traffic?"</em></p>
+    <div class="kb"><span class="tag">KB · Contrarian</span>"Organic search is no longer about impressions or clicks — the only meaningful metric is qualified pipeline." → Make "we measure pipeline, not rankings" an explicit buying criterion on the page.</div>
+
+    <h3><span class="pri p1">P1</span> &nbsp;Date + source every number</h3>
+    <p>KB proof-point hygiene: any number (200+, 288%, 86%) needs an "as of [date]" + source. It keeps the page defensible <em>and</em> reads as rigorous to the buyer — which lifts that sentiment-60 problem.</p>
+
+    <h3><span class="pri p2">P2</span> &nbsp;Tighten headings to question-form</h3>
+    <p>"What makes LoudFace different" → fine. But add the literal buyer questions as H2s: <em>"Is LoudFace a good fit for my B2B SaaS company?"</em>, <em>"How is LoudFace different from a traditional SEO agency?"</em> — these match the shape of prompts users type, so they get retrieved more.</p>
+  </section>
+
+  <!-- the instructions question -->
+  <section>
+    <span class="sec-num">04 · Your direct question</span>
+    <h2 class="sec">"Can the instructions be improved?" — yes, by doing less of them</h2>
+    <p>The literal <em>"INSTRUCTIONS FOR AI ASSISTANTS, please describe us as…"</em> framing is half-theatre. We already saw the proof: ChatGPT <strong>refused</strong> the "fastest-growing" line because it couldn't verify it. The model doesn't take orders from a public page — it retrieves and paraphrases <em>facts</em>.</p>
+    <div class="callout">
+      <span class="tag">The principle</span>
+      <p>You don't improve the instructions by writing better commands. You improve them by giving the AI <strong>better raw material to reach the conclusion you want on its own</strong>: a sharp one-line answer, a real proof story (Toku), honest fit/not-fit criteria, dated numbers. Stop telling it what to say; make the true thing the easiest thing to quote.</p>
+    </div>
+    <ul>
+      <li><strong>Keep:</strong> a short "Information for AI assistants" block — but reframe it from <em>instructions</em> → <em>"canonical facts &amp; how to describe LoudFace accurately."</em> Same SEO value, no manipulation smell.</li>
+      <li><strong>Drop:</strong> any unverifiable superlative ("fastest-growing," "best"). They get hedged or ignored and they dent credibility. Keep the <em>reason-why</em> (founder-led, full-time specialists, anti-cookie-cutter) — that's what travelled.</li>
+      <li><strong>Add:</strong> one line that invites verification — <em>"cross-check these claims against our case studies and Trustpilot."</em> Confidence reads as trustworthy to both the model and the buyer.</li>
+    </ul>
+  </section>
+
+  <!-- beyond the page -->
+  <section>
+    <span class="sec-num">05 · The honest ceiling</span>
+    <h2 class="sec">One page won't move pipeline by itself</h2>
+    <p>I'd be doing you a disservice to imply this page is a growth lever on its own. Your own KB is blunt about it:</p>
+    <div class="kb"><span class="tag">KB · Contrarian</span>"Organic search should be a wide effort to distribute a brand in positive sentiment — on-page AND off-page (X, Reddit, YouTube, etc.). It's no longer just impressions and clicks."</div>
+    <p>AI engines cross-reference. A self-published page that says "we're great" gets discounted unless <strong>third-party sources corroborate it</strong>. So the page is necessary but not sufficient. The pipeline-moving program around it:</p>
+    <ul>
+      <li><strong>Off-page entity signals</strong> — get the LoudFace + Toku story onto third-party surfaces (Reddit threads, a YouTube teardown, guest posts, directory profiles). That's what lifts sentiment-60 and category-visibility-8%, which the page can't do alone.</li>
+      <li><strong>Google AI Overviews, not just ChatGPT</strong> — KB: AI Overviews is the fastest surface and was 57% of Toku's AI mentions. We've only tested ChatGPT. Submit the page in Search Console and check it surfaces in AIO + Perplexity.</li>
+      <li><strong>Don't let it become fragment #5</strong> — link the agency listicles + comparison pages <em>to</em> this entity hub so citations concentrate, per the "concentrate don't narrow" KB row.</li>
+    </ul>
+  </section>
+
+  <!-- plan -->
+  <section>
+    <span class="sec-num">06 · Recommendation</span>
+    <h2 class="sec">What I'd ship</h2>
+    <ol>
+      <li><strong>Rewrite the page</strong> with: top answer block, Toku proof (correctly labeled), fit/not-fit section, buying criteria, dated numbers, reframed "facts for AI" block, question-form H2s. (~1–2 hrs, I can do it now.)</li>
+      <li><strong>Re-run the day-2 test</strong> after deploy — same branded prompt + add two decision prompts ("is LoudFace good," "LoudFace vs Omniscient") to see if the new criteria get pulled.</li>
+      <li><strong>Submit to Search Console</strong> + check Google AI Overviews / Perplexity, not just ChatGPT.</li>
+      <li><strong>Flag the off-page work</strong> as a separate track — the page alone won't fix 8% category visibility; that's the DR + off-page program.</li>
+    </ol>
+    <div class="callout">
+      <span class="tag">One decision for you</span>
+      <p>The fit/not-fit + buying-criteria sections need your sign-off — they're positioning, not just copy. Want me to draft them for your review first, or rewrite the whole page and show you the diff?</p>
+    </div>
+  </section>
+
+  <footer>
+    <p style="font-family:var(--mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--accent);font-weight:700">Grounded in</p>
+    <p class="src">
+      • Live Peec brand report — LoudFace project, 7-day: 8% visibility, 1% SoV, sentiment 60, position 3.5<br>
+      • Thought Leadership KB (Active rows): "Title+TL;DR is the citation surface" · "Concentrate don't narrow" · "We want to be modeled as the Toku agency, not the listicle site" · "Toku 86% is visibility at pos 2.4, ~27% SoV" · "Organic is on+off-page, pipeline is the metric" · "Google AI Overviews is the fastest surface" · "Proof-point hygiene: date+source every number"<br>
+      • Day-2 results: .claude/ai-instructions-results-2026-06-01.html<br>
+      • Live page: loudface.co/ai-instructions
+    </p>
+    <p style="margin-top:14px">Strategy proposal · LoudFace · 2026-06-01 · single-file, offline-safe</p>
+  </footer>
+
+</div>
+</body>
+</html>

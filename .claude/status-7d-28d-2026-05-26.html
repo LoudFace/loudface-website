@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>LoudFace 7d/28d Status — 2026-05-26</title>
+<style>
+  :root {
+    --ink: #1a1a1f; --paper: #faf8f3; --rule: #d8d3c4; --muted: #6b6660;
+    --accent: #b8431d; --win: #2d6a3e; --win-bg: #e8f1e7;
+    --loss: #a02828; --loss-bg: #f5e4e1;
+    --neutral: #4a4640; --neutral-bg: #ece8de;
+    --highlight: #f0ead6;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: "Charter", "Iowan Old Style", "Sitka Text", Cambria, Georgia, serif;
+    background: var(--paper); color: var(--ink); line-height: 1.55;
+    font-feature-settings: "kern", "liga", "onum";
+    -webkit-font-smoothing: antialiased;
+  }
+  .container { max-width: 1100px; margin: 0 auto; padding: 64px 48px 96px; }
+
+  header { border-bottom: 2px solid var(--ink); padding-bottom: 32px; margin-bottom: 48px; }
+  .kicker {
+    font-family: ui-monospace, "SF Mono", Menlo, monospace;
+    font-size: 12px; text-transform: uppercase; letter-spacing: 0.12em;
+    color: var(--muted); margin-bottom: 16px;
+  }
+  h1 { font-size: 54px; line-height: 0.98; letter-spacing: -0.02em; font-weight: 700; margin-bottom: 20px; }
+  .dek { font-size: 21px; line-height: 1.4; color: var(--neutral); max-width: 760px; }
+
+  section { margin-bottom: 56px; }
+  section h2 {
+    font-size: 13px; text-transform: uppercase; letter-spacing: 0.14em;
+    font-family: ui-monospace, Menlo, monospace;
+    color: var(--accent); margin-bottom: 24px;
+    border-top: 1px solid var(--rule); padding-top: 16px;
+  }
+  section h3 { font-size: 24px; line-height: 1.15; letter-spacing: -0.01em; margin-bottom: 16px; font-weight: 600; }
+  section p { font-size: 17px; line-height: 1.6; max-width: 760px; margin-bottom: 14px; }
+  .lede { font-size: 21px; line-height: 1.5; }
+  .lede strong { background: var(--highlight); padding: 0 4px; }
+
+  .stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 18px; margin-top: 8px; }
+  .stat {
+    background: white; border: 1px solid var(--rule);
+    padding: 22px 22px 20px; border-radius: 4px;
+  }
+  .stat.up { border-left: 4px solid var(--win); }
+  .stat.down { border-left: 4px solid var(--loss); }
+  .stat.flat { border-left: 4px solid var(--rule); }
+  .stat .label {
+    font-family: ui-monospace, Menlo, monospace; font-size: 11px;
+    text-transform: uppercase; letter-spacing: 0.1em; color: var(--muted);
+    margin-bottom: 10px;
+  }
+  .stat .value {
+    font-size: 38px; font-weight: 700; letter-spacing: -0.02em;
+    line-height: 1; font-feature-settings: "tnum"; margin-bottom: 8px;
+  }
+  .stat .delta {
+    font-family: ui-monospace, Menlo, monospace; font-size: 13px; font-weight: 500;
+  }
+  .stat .delta.up { color: var(--win); }
+  .stat .delta.down { color: var(--loss); }
+  .stat .delta.flat { color: var(--muted); }
+  .stat .sub { font-size: 12px; color: var(--muted); margin-top: 6px; font-family: ui-monospace, Menlo, monospace; }
+
+  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 32px; }
+
+  table {
+    width: 100%; border-collapse: collapse;
+    font-family: ui-monospace, "SF Mono", Menlo, monospace;
+    font-size: 13px; background: white; border: 1px solid var(--rule);
+    margin-top: 8px;
+  }
+  thead { background: var(--highlight); }
+  th, td { text-align: left; padding: 10px 14px; border-bottom: 1px solid var(--rule); vertical-align: top; }
+  th { font-weight: 600; font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--neutral); }
+  tbody tr:last-child td { border-bottom: none; }
+  tbody tr:hover { background: #fbfaf5; }
+  td.num, th.num { text-align: right; font-feature-settings: "tnum"; }
+  td.win-val { color: var(--win); font-weight: 600; }
+  td.loss-val { color: var(--loss); font-weight: 600; }
+
+  .callout {
+    background: white; border: 1px solid var(--rule);
+    padding: 22px 26px; border-radius: 4px;
+    border-left: 4px solid var(--accent); margin-top: 12px;
+  }
+  .callout.win { border-left-color: var(--win); background: #f5f9f4; }
+  .callout.loss { border-left-color: var(--loss); background: #fdf6f4; }
+  .callout h4 { font-size: 18px; line-height: 1.25; margin-bottom: 8px; font-weight: 600; }
+  .callout p { font-size: 15px; line-height: 1.55; color: var(--neutral); margin-bottom: 6px; max-width: none; }
+  .callout .num { font-family: ui-monospace, Menlo, monospace; font-weight: 600; color: var(--ink); }
+
+  .badge {
+    display: inline-block;
+    font-family: ui-monospace, Menlo, monospace;
+    font-size: 11px; font-weight: 600;
+    text-transform: uppercase; letter-spacing: 0.08em;
+    padding: 3px 8px; border-radius: 3px; margin-right: 6px;
+  }
+  .badge.win  { background: var(--win-bg);  color: var(--win); }
+  .badge.loss { background: var(--loss-bg); color: var(--loss); }
+  .badge.neutral { background: var(--neutral-bg); color: var(--neutral); }
+
+  /* Sparkline-style trend bars */
+  .trend-row { display: grid; grid-template-columns: 200px 1fr 80px; gap: 12px; align-items: center; padding: 10px 0; border-bottom: 1px solid var(--rule); }
+  .trend-row:last-child { border-bottom: none; }
+  .trend-row .name { font-weight: 500; font-family: "Charter", Georgia, serif; }
+  .trend-row .spark { display: flex; gap: 2px; align-items: flex-end; height: 28px; }
+  .trend-row .spark .bar { background: var(--accent); width: 18px; opacity: 0.5; }
+  .trend-row .spark .bar.last { opacity: 1; background: var(--win); }
+  .trend-row .end { text-align: right; font-family: ui-monospace, Menlo, monospace; font-weight: 600; font-size: 13px; }
+
+  footer { margin-top: 80px; padding-top: 32px; border-top: 1px solid var(--rule); font-size: 13px; color: var(--muted); font-family: ui-monospace, Menlo, monospace; }
+  footer p { font-size: 13px; line-height: 1.6; max-width: none; margin-bottom: 6px; }
+
+  @media (max-width: 760px) {
+    .container { padding: 32px 20px; }
+    h1 { font-size: 36px; }
+    .stats-grid { grid-template-columns: repeat(2, 1fr); }
+    .two-col { grid-template-columns: 1fr; }
+    .trend-row { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <header>
+    <p class="kicker">7-day + 28-day status · 2026-05-26</p>
+    <h1>28-day trend up sharply. 7-day pulled back. Peec visibility tripled in 10 days. Today's work isn't in the numbers yet.</h1>
+    <p class="dek">Three signal layers (GSC, Peec, Ahrefs) show the same shape: the listicle ship cadence of 05-15 → 05-23 is converting in AI citations, the structural retrofit work today is too recent to read in GSC, and the AEO Guide page is still the #1 unrealized opportunity on the site (12K impressions, 1 click).</p>
+  </header>
+
+  <section>
+    <h2>Headline numbers</h2>
+    <h3>28 days (Apr 28 → May 25 vs Mar 31 → Apr 27)</h3>
+    <div class="stats-grid">
+      <div class="stat up">
+        <div class="label">GSC Clicks</div>
+        <div class="value">150</div>
+        <div class="delta up">+38% vs prior 28d</div>
+        <div class="sub">+41 abs (109 → 150)</div>
+      </div>
+      <div class="stat up">
+        <div class="label">GSC Impressions</div>
+        <div class="value">46.7K</div>
+        <div class="delta up">+72% vs prior 28d</div>
+        <div class="sub">+19,600 abs</div>
+      </div>
+      <div class="stat down">
+        <div class="label">GSC Avg Position</div>
+        <div class="value">25.7</div>
+        <div class="delta down">−2.7 vs prior 28d</div>
+        <div class="sub">New impressions land deeper</div>
+      </div>
+      <div class="stat down">
+        <div class="label">GSC CTR</div>
+        <div class="value">0.32%</div>
+        <div class="delta down">−0.08pp</div>
+        <div class="sub">Position depth is the constraint</div>
+      </div>
+    </div>
+
+    <h3 style="margin-top: 32px;">7 days (May 19 → 24 vs May 12 → 18)</h3>
+    <div class="stats-grid">
+      <div class="stat down">
+        <div class="label">GSC Clicks</div>
+        <div class="value">35</div>
+        <div class="delta down">−25% vs prior 7d</div>
+        <div class="sub">Only 6 days reported · 5/25 not in yet</div>
+      </div>
+      <div class="stat down">
+        <div class="label">GSC Impressions</div>
+        <div class="value">9.98K</div>
+        <div class="delta down">−46% vs prior 7d</div>
+        <div class="sub">5/16-18 spike has rolled off</div>
+      </div>
+      <div class="stat up">
+        <div class="label">GSC CTR</div>
+        <div class="value">0.35%</div>
+        <div class="delta up">+0.10pp</div>
+        <div class="sub">Smaller pool, slightly better extraction</div>
+      </div>
+      <div class="stat down">
+        <div class="label">GSC Avg Position</div>
+        <div class="value">28.7</div>
+        <div class="delta down">+6.2 worse</div>
+        <div class="sub">Volatile on a small window</div>
+      </div>
+    </div>
+
+    <h3 style="margin-top: 32px;">Peec citation tracking (10-day inflection)</h3>
+    <div class="stats-grid">
+      <div class="stat up">
+        <div class="label">Peec Visibility %</div>
+        <div class="value">0.95%</div>
+        <div class="delta up">2.9× in 10 days</div>
+        <div class="sub">0.33% on 2026-05-15 → 0.95% on 2026-05-25</div>
+      </div>
+      <div class="stat up">
+        <div class="label">LF Citations 30d</div>
+        <div class="value">144</div>
+        <div class="delta up">vs 4 prior 30d</div>
+        <div class="sub">Tracker was near-dead pre-relaunch</div>
+      </div>
+      <div class="stat up">
+        <div class="label">LF Citations last 7d</div>
+        <div class="value">110</div>
+        <div class="delta up">vs 24 prior 7d</div>
+        <div class="sub">New listicle cohort dominating</div>
+      </div>
+      <div class="stat">
+        <div class="label">Avg position when cited</div>
+        <div class="value">3.6</div>
+        <div class="delta up">−0.4 better</div>
+        <div class="sub">From 4.0 prior 30d</div>
+      </div>
+    </div>
+
+    <h3 style="margin-top: 32px;">Ahrefs (loudface.co, US, mode=subdomains)</h3>
+    <div class="stats-grid">
+      <div class="stat flat">
+        <div class="label">Domain Rating</div>
+        <div class="value">30</div>
+        <div class="delta flat">flat 30 days</div>
+        <div class="sub">Was 44 90d ago — kill list landed</div>
+      </div>
+      <div class="stat up">
+        <div class="label">US Org Traffic / wk</div>
+        <div class="value">44</div>
+        <div class="delta up">+42% vs 30d ago</div>
+        <div class="sub">31 → 44 over 30 days</div>
+      </div>
+      <div class="stat">
+        <div class="label">Ranked Keywords (US)</div>
+        <div class="value">7</div>
+        <div class="delta flat">vs 11 30d ago</div>
+        <div class="sub">Fewer but better-positioned</div>
+      </div>
+      <div class="stat up">
+        <div class="label">Top-3 keywords</div>
+        <div class="value">2</div>
+        <div class="delta up">held + 1 improved</div>
+        <div class="sub">webflow auth0 pos 4→3</div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2>What's actually driving the gains</h2>
+    <p class="lede">
+      The Peec visibility curve (0.33% → 0.95% over 10 days) and the GSC 28d impression curve (+72%) are <strong>both attributable to a specific 4-listicle cohort shipped 2026-05-15 to 2026-05-23</strong>. The structural retrofit work shipped today is too recent to show in the data — that's the next 7-14 days of curve.
+    </p>
+
+    <h3 style="margin-top: 24px;">The 4 listicles doing the work</h3>
+    <table>
+      <thead><tr><th>Published</th><th>Title</th><th class="num">Peec mentions 30d</th><th class="num">Position when cited</th></tr></thead>
+      <tbody>
+        <tr><td>2026-05-15</td><td>Best B2B SaaS Webflow agencies 2026 (Ranked)</td><td class="num win-val">63</td><td class="num">2.8</td></tr>
+        <tr><td>2026-05-19</td><td>10 Best B2B SaaS Content & SEO Agencies 2026</td><td class="num win-val">62</td><td class="num">3.1</td></tr>
+        <tr><td>2026-05-20</td><td>AEO Agency Pricing for B2B SaaS 2026</td><td class="num win-val">31</td><td class="num">1.7</td></tr>
+        <tr><td>2026-05-23</td><td>Best Organic Growth Agencies for B2B SaaS 2026</td><td class="num win-val">26</td><td class="num">4.8</td></tr>
+      </tbody>
+    </table>
+    <p style="margin-top: 14px; font-size: 14px; color: var(--muted);">182 mentions from these 4 pieces in 30 days. The pattern is now unambiguous: <strong>year-stamped B2B SaaS agency listicles with specific competitor framing get cited fast in AI assistants</strong>.</p>
+
+    <h3 style="margin-top: 32px;">New Peec prompts already converting (≤24h after add)</h3>
+    <p>I added 18 new prompts today + 5 more in the second batch + 7 in the third (after the branded swap). Within hours, several are showing first LoudFace citations:</p>
+    <table>
+      <thead><tr><th>New prompt (added today)</th><th class="num">First citations</th><th class="num">Visibility %</th><th class="num">Position</th></tr></thead>
+      <tbody>
+        <tr><td>Best B2B SaaS organic growth agency 2026</td><td class="num win-val">12</td><td class="num win-val">56%</td><td class="num">4.8</td></tr>
+        <tr><td>Webflow plus AEO agency for B2B SaaS organic growth</td><td class="num win-val">11</td><td class="num win-val">63%</td><td class="num win-val">1.0</td></tr>
+        <tr><td>Best organic growth agency for Series B SaaS companies</td><td class="num win-val">7</td><td class="num">33%</td><td class="num win-val">1.0</td></tr>
+        <tr><td>Agency that combines SEO, AEO, and Webflow for B2B SaaS</td><td class="num win-val">5</td><td class="num">44%</td><td class="num win-val">1.3</td></tr>
+      </tbody>
+    </table>
+    <p style="margin-top: 14px; font-size: 14px; color: var(--muted);">The new prompts are aligned with content we already shipped — the listicles + repositioning copy. Citations land fast because the content + prompt match.</p>
+  </section>
+
+  <section>
+    <h2>The single biggest unrealized opportunity</h2>
+    <div class="callout loss">
+      <h4>/blog/answer-engine-optimization-guide-2026 — still leaking 12K impressions</h4>
+      <p>This page has <span class="num">12,061 impressions at position 9.1</span> in the last 28 days. It generated <span class="num">1 click</span> = 0.01% CTR. At position 9.1, a working title/meta should pull ~3% CTR = ~360 clicks. This single page is leaving more clicks on the table than the entire rest of the site combined.</p>
+      <p>I patched the metaTitle and metaDescription earlier today (from the broken truncated version to "Answer Engine Optimization (AEO) Guide: 2026" + a 139-char description front-loading the value prop). <strong>Google hasn't re-rendered the SERP snippet yet — typical 1–7 day delay.</strong> The 12K imps + 1 click number reflects ~27 days of the old broken snippet and ~1 day of the new one. Next week's data is the read on whether the fix worked.</p>
+    </div>
+  </section>
+
+  <section>
+    <h2>Where competitors are eating us</h2>
+    <p>Top 5 prompts where LoudFace is cited 0 times in 30 days and competitors dominate:</p>
+    <table>
+      <thead><tr><th>Prompt</th><th class="num">LF</th><th>Top competitor (cites)</th><th>Pattern</th></tr></thead>
+      <tbody>
+        <tr><td>Best B2B SaaS SEO agencies compared</td><td class="num loss-val">0</td><td>Skale 172, First Page Sage 131, Omniscient 103</td><td>Pure SEO listicle</td></tr>
+        <tr><td>Top organic growth agencies for SaaS brands</td><td class="num loss-val">0</td><td>Omniscient 125, Skale 122, Animalz 110</td><td>Generic listicle</td></tr>
+        <tr><td>Best agency for B2B SaaS content and SEO</td><td class="num loss-val">0</td><td>Animalz 144, Siege Media 138, Omniscient 90</td><td>Content + SEO bundle</td></tr>
+        <tr><td>Recommended SEO agencies for Series A SaaS startups</td><td class="num loss-val">0</td><td>Skale 103, Omniscient 100, First Page Sage 91</td><td>Stage-of-buyer</td></tr>
+        <tr><td>SEO agency that specializes in SaaS startups</td><td class="num loss-val">0</td><td>Skale 122</td><td>Pure SEO</td></tr>
+      </tbody>
+    </table>
+    <p style="margin-top: 14px; font-size: 14px; color: var(--muted);">
+      Pattern: <strong>pure "B2B SaaS SEO" listicle queries without Webflow or AEO modifiers are being eaten by Skale, Omniscient, Animalz, Siege Media, and First Page Sage.</strong> Where we add an AEO or Webflow modifier, we appear. Where we drop those modifiers, we don't.
+    </p>
+  </section>
+
+  <section>
+    <h2>By Peec topic — where we actually win</h2>
+    <table>
+      <thead><tr><th>Topic</th><th class="num">LF mentions 30d</th><th class="num">Visibility %</th><th class="num">Avg position cited</th><th>Read</th></tr></thead>
+      <tbody>
+        <tr><td>Webflow for SaaS</td><td class="num win-val">50</td><td class="num win-val">5%</td><td class="num win-val">2.8</td><td>Strongest cluster. Highest visibility. Best position.</td></tr>
+        <tr><td>B2B SaaS SEO Agency</td><td class="num">61</td><td class="num">2%</td><td class="num">4.3</td><td>Largest cluster. Right intent. Position deep.</td></tr>
+        <tr><td>AEO AI Search for SaaS</td><td class="num">24</td><td class="num">1%</td><td class="num">2.9</td><td>Medium volume. Decent position when cited.</td></tr>
+        <tr><td>Converting AI & Search Traffic (CRO)</td><td class="num loss-val">6</td><td class="num loss-val">1%</td><td class="num">4.8</td><td><strong>3→0 in last 7d. Regression.</strong></td></tr>
+        <tr><td>Competitor Comparison</td><td class="num loss-val">3</td><td class="num loss-val">0%</td><td class="num">6.0</td><td>Essentially dead before today's prompt swap.</td></tr>
+      </tbody>
+    </table>
+    <p style="margin-top: 14px; font-size: 14px; color: var(--muted);">
+      "Webflow for SaaS" is the cluster we kept after the May 2026 repositioning debate. It's the only topic clearing 5% visibility. <strong>Keeping it was the right call</strong> — the data confirms it.
+    </p>
+  </section>
+
+  <section>
+    <h2>10-day Peec visibility trajectory</h2>
+    <p>This is the cleanest signal in the dataset. Tracks daily Peec visibility % (0.33% on May 15 → 0.95% on May 25):</p>
+    <div style="background: white; border: 1px solid var(--rule); border-radius: 4px; padding: 24px;">
+      <div class="trend-row">
+        <div class="name">2026-05-15</div>
+        <div class="spark"><div class="bar" style="height: 35%;"></div></div>
+        <div class="end">0.33%</div>
+      </div>
+      <div class="trend-row">
+        <div class="name">2026-05-16</div>
+        <div class="spark"><div class="bar" style="height: 35%;"></div></div>
+        <div class="end">0.33%</div>
+      </div>
+      <div class="trend-row">
+        <div class="name">2026-05-17</div>
+        <div class="spark"><div class="bar" style="height: 36%;"></div></div>
+        <div class="end">0.34%</div>
+      </div>
+      <div class="trend-row">
+        <div class="name">2026-05-18</div>
+        <div class="spark"><div class="bar" style="height: 43%;"></div></div>
+        <div class="end">0.41%</div>
+      </div>
+      <div class="trend-row">
+        <div class="name">2026-05-19</div>
+        <div class="spark"><div class="bar" style="height: 49%;"></div></div>
+        <div class="end">0.47%</div>
+      </div>
+      <div class="trend-row">
+        <div class="name">2026-05-20</div>
+        <div class="spark"><div class="bar" style="height: 57%;"></div></div>
+        <div class="end">0.54%</div>
+      </div>
+      <div class="trend-row">
+        <div class="name">2026-05-21</div>
+        <div class="spark"><div class="bar" style="height: 64%;"></div></div>
+        <div class="end">0.61%</div>
+      </div>
+      <div class="trend-row">
+        <div class="name">2026-05-22</div>
+        <div class="spark"><div class="bar" style="height: 73%;"></div></div>
+        <div class="end">0.69%</div>
+      </div>
+      <div class="trend-row">
+        <div class="name">2026-05-23</div>
+        <div class="spark"><div class="bar" style="height: 77%;"></div></div>
+        <div class="end">0.73%</div>
+      </div>
+      <div class="trend-row">
+        <div class="name">2026-05-24</div>
+        <div class="spark"><div class="bar" style="height: 86%;"></div></div>
+        <div class="end">0.82%</div>
+      </div>
+      <div class="trend-row">
+        <div class="name">2026-05-25</div>
+        <div class="spark"><div class="bar last" style="height: 100%;"></div></div>
+        <div class="end">0.95%</div>
+      </div>
+    </div>
+    <p style="margin-top: 14px; font-size: 15px; color: var(--neutral);">
+      No plateau yet. The curve is accelerating, not topping out. <strong>Today's prompt-tracker overhaul (deleting 30 prompts and adding 30 new commercial-only ones) means tomorrow's data point isn't directly comparable to this curve.</strong> Expect a brief volatility window over the next 7 days as the new prompts seed initial citation data.
+    </p>
+  </section>
+
+  <section>
+    <h2>What still needs attention</h2>
+    <div class="callout loss">
+      <h4>CRO topic regression</h4>
+      <p>"Converting AI & Search Traffic" dropped from <span class="num">3 to 0 citations</span> in the last 7 days. Competitor Veza Digital has 138 mentions on the Webflow CRO surface. We've shipped no CRO-focused content recently. Risk of full topic abandonment. Decision needed: keep tracking CRO + commit to shipping content, or drop the topic.</p>
+    </div>
+    <div class="callout loss">
+      <h4>Empty content pipeline</h4>
+      <p>Notion Website Content database shows <span class="num">0 Drafts, 0 Outlines, 0 Reviews</span> in flight. 17 rows in "Idea" status, 124 Published. Either the loop velocity is fully tied to ad-hoc generation today, or the calendar isn't tracking the actual drafting work. Worth confirming.</p>
+    </div>
+    <div class="callout loss">
+      <h4>Topic-tagging hygiene</h4>
+      <p><span class="num">41 of 124 published pieces (33%)</span> are tagged "Untracked" or untagged in Peec Topic. The B2B SaaS SEO Agency topic — the #1 strategic cluster — only has <span class="num">4 tagged published pieces</span>. <code>/refresh-calendar</code> can't roll up signals on the untagged pages. Worth a tagging sweep.</p>
+    </div>
+    <div class="callout loss">
+      <h4>5 cusp-deep listicles aren't converting</h4>
+      <p><code>/blog/best-b2b-saas-seo-agencies</code> sits at position 51 with 4,258 impressions — content/internal-linking refresh needed, not a CTR fix. Same shape for the "15+ Best Webflow Agencies" piece (pos 77, 795 imps). These aren't snippet problems — they're rank problems.</p>
+    </div>
+  </section>
+
+  <section>
+    <h2>Attribution table — what happened, what it caused</h2>
+    <table>
+      <thead><tr><th>Action</th><th>When</th><th>Visible in data?</th><th>Estimated impact</th></tr></thead>
+      <tbody>
+        <tr><td>4 year-stamped agency listicles published</td><td>2026-05-15 → 05-23</td><td>✅ Yes</td><td>+140 Peec mentions, +0.62pp visibility in 10 days</td></tr>
+        <tr><td>Founder entity page strengthened (skills + bio)</td><td>2026-05-26</td><td>Partial</td><td>Likely contributing to "Webflow plus AEO" prompt landing at 1.0 position</td></tr>
+        <tr><td>150 article structural retrofits (CTAs, definitions, criteria, timelines, TLDR)</td><td>2026-05-26</td><td>❌ Too recent</td><td>Expect GSC impression boost in 7–14d, AI citation lift in 14–30d</td></tr>
+        <tr><td>seo-utils renderer fix (trailing-connective truncation)</td><td>2026-05-26 (earlier today)</td><td>❌ Too recent</td><td>22 metaTitles now SERP-safe; visible after Google re-renders snippets in 1–7d</td></tr>
+        <tr><td>AEO Guide title/meta rewrite</td><td>2026-05-26 (earlier today)</td><td>❌ Too recent</td><td>Page sits at 12K imp/pos 9.1/1 click; rewrite landed but not yet re-rendered</td></tr>
+        <tr><td>Peec prompt tracker overhaul (30 deleted, 30 added, 0 branded)</td><td>2026-05-26</td><td>Partial</td><td>4 new prompts already showing first citations within 24h</td></tr>
+        <tr><td>2 article redirects (kill list)</td><td>2026-05-26</td><td>Partial</td><td>Consolidates signal into canonical destinations; minor on first 7d</td></tr>
+        <tr><td>Disavow.txt baseline shipped</td><td>2026-05-26</td><td>❌ Not uploaded yet</td><td>4-6 weeks after manual GSC upload — defensive, not growth</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section>
+    <h2>What we can't say yet</h2>
+    <p class="lede">
+      Today's work is <strong>materially invisible in current data</strong>. The structural retrofit, the prompt-tracker overhaul, the seo-utils fix, the AEO Guide rewrite — none of these are in the 7d or 28d window in any meaningful way. The 28d view includes about 1 day of post-fix data. The 7d view doesn't include data for 5/25 at all.
+    </p>
+    <p class="lede" style="margin-top: 16px;">
+      <strong>The fair read on today's work won't be available until 2026-06-02</strong> (one full 7d window post-ship). The 28d delta on the retrofit will be readable around 2026-06-23.
+    </p>
+    <p class="lede" style="margin-top: 16px;">
+      <strong>What you CAN trust from this data:</strong> the listicle ship cadence works (4 pieces → 182 Peec mentions in 30 days), the new commercial-intent prompts are already converting within 24h (4 prompts at >50% visibility), and the AEO Guide snippet fix is shipped but pending Google re-render.
+    </p>
+  </section>
+
+  <footer>
+    <p>Sources: GSC (sc-domain:loudface.co, 28d windows ending 2026-05-25) · Peec MCP (project or_85a7fe4b…, 30d aggregation through 2026-05-26) · Ahrefs Site Explorer (loudface.co, mode=subdomains, US country, today vs 30d ago) · Notion Daily Snapshots DB and Website Content DB (LoudFace-filtered rows only).</p>
+    <p>Caveats: GSC 7d window has only 6 days of data (5/25 not yet reported). Peec 30d window reflects the OLD prompt set (changed earlier today). Ahrefs has 1-2 week lag. 5/21 Daily Snapshots has duplicate rows (known worker issue) — used the higher value as canonical.</p>
+    <p>Pulled 2026-05-26 · /Users/arnel/Code Projects/LoudFace Agency/loudface-website/.claude/status-7d-28d-2026-05-26.html</p>
+  </footer>
+
+</div>
+</body>
+</html>

@@ -1,0 +1,529 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Notion Workers migration plan — LoudFace content calendar</title>
+<style>
+  :root {
+    --bg: #0a0a0b;
+    --panel: #131316;
+    --panel-2: #1a1a1f;
+    --border: #26262d;
+    --text: #e8e8ea;
+    --muted: #9a9aa3;
+    --dim: #6f6f78;
+    --accent: #d8ff00;
+    --warn: #ffb347;
+    --error: #ff6b6b;
+    --good: #7ee787;
+    --code-bg: #0d0d10;
+    --link: #a3c9ff;
+    --mono: ui-monospace, "JetBrains Mono", Menlo, monospace;
+    --sans: -apple-system, "Inter", system-ui, sans-serif;
+  }
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0; padding: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--sans);
+    font-size: 15px;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+  .wrap { max-width: 1080px; margin: 0 auto; padding: 64px 32px 96px; }
+  header {
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 32px; margin-bottom: 48px;
+  }
+  .eyebrow {
+    text-transform: uppercase; letter-spacing: 0.12em;
+    font-size: 11px; color: var(--accent); font-weight: 600;
+    margin-bottom: 12px;
+  }
+  h1 {
+    font-size: 38px; line-height: 1.15; margin: 0 0 18px;
+    font-weight: 600; letter-spacing: -0.02em;
+  }
+  .deck { font-size: 17px; color: var(--muted); max-width: 800px; }
+  h2 {
+    font-size: 24px; margin: 56px 0 18px;
+    font-weight: 600; letter-spacing: -0.01em;
+    padding-top: 24px; border-top: 1px solid var(--border);
+  }
+  h2:first-of-type { border-top: none; padding-top: 0; }
+  h3 {
+    font-size: 17px; margin: 32px 0 10px;
+    font-weight: 600;
+  }
+  p, ul, ol { color: var(--text); }
+  ul, ol { padding-left: 22px; }
+  li { margin: 6px 0; }
+  code {
+    font-family: var(--mono);
+    background: var(--code-bg);
+    border: 1px solid var(--border);
+    padding: 1px 6px; border-radius: 4px;
+    font-size: 13px;
+  }
+  pre {
+    background: var(--code-bg);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 20px;
+    overflow-x: auto;
+    font-family: var(--mono);
+    font-size: 13px;
+    line-height: 1.55;
+    margin: 16px 0 24px;
+  }
+  pre .k { color: #c8b5ff; }
+  pre .s { color: #a3e09f; }
+  pre .c { color: var(--dim); font-style: italic; }
+  pre .n { color: #ffd58a; }
+  pre .f { color: var(--accent); }
+  .panel {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 24px 28px;
+    margin: 24px 0;
+  }
+  .panel.accent { border-color: var(--accent); }
+  .panel.warn { border-color: var(--warn); }
+  .grid-2 {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 18px;
+    margin: 20px 0;
+  }
+  @media (max-width: 720px) { .grid-2 { grid-template-columns: 1fr; } }
+  .grid-3 {
+    display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 18px;
+    margin: 20px 0;
+  }
+  @media (max-width: 720px) { .grid-3 { grid-template-columns: 1fr; } }
+  .stat {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 18px 20px;
+  }
+  .stat .label { font-size: 12px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.08em; }
+  .stat .value { font-size: 28px; font-weight: 600; margin-top: 4px; letter-spacing: -0.01em; }
+  .stat .delta { font-size: 12px; color: var(--accent); margin-top: 4px; }
+  table {
+    width: 100%; border-collapse: collapse;
+    margin: 16px 0;
+    font-size: 14px;
+  }
+  th, td {
+    text-align: left; padding: 12px 16px;
+    border-bottom: 1px solid var(--border);
+    vertical-align: top;
+  }
+  th { font-size: 12px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); font-weight: 500; }
+  tr:last-child td { border-bottom: none; }
+  .toc {
+    background: var(--panel-2);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 18px 22px;
+    margin-bottom: 40px;
+    display: flex; gap: 22px; flex-wrap: wrap;
+    font-size: 13px;
+  }
+  .toc a { color: var(--muted); text-decoration: none; }
+  .toc a:hover { color: var(--text); }
+  .toc strong { color: var(--accent); font-weight: 500; margin-right: 6px; }
+  a { color: var(--link); }
+  .pill {
+    display: inline-block; padding: 2px 10px;
+    border: 1px solid var(--border); border-radius: 99px;
+    font-size: 12px; color: var(--muted);
+  }
+  .pill.beta { color: var(--warn); border-color: var(--warn); }
+  .pill.good { color: var(--good); border-color: var(--good); }
+  .pill.cur { color: var(--error); border-color: var(--error); }
+  .arch { background: var(--panel); border: 1px solid var(--border); border-radius: 12px; padding: 28px; margin: 20px 0; }
+  .arch h3 { margin-top: 0; }
+  .checklist { list-style: none; padding: 0; }
+  .checklist li {
+    padding: 10px 0 10px 32px;
+    position: relative;
+    border-bottom: 1px solid var(--border);
+  }
+  .checklist li:before {
+    content: "□"; position: absolute; left: 0; top: 9px;
+    color: var(--muted); font-size: 18px;
+  }
+  .checklist li.done:before { content: "✓"; color: var(--good); }
+  .checklist li:last-child { border-bottom: none; }
+  .decision {
+    background: linear-gradient(180deg, var(--panel), var(--panel-2));
+    border: 1px solid var(--accent);
+    border-radius: 16px;
+    padding: 32px;
+    margin: 40px 0;
+  }
+  .decision h2 { border-top: none; margin-top: 0; padding-top: 0; }
+  .option {
+    background: var(--panel-2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 20px 22px;
+    margin: 14px 0;
+  }
+  .option .name { font-weight: 600; font-size: 16px; }
+  .option .name .pill { margin-left: 10px; }
+  .option .meta { font-size: 13px; color: var(--muted); margin: 4px 0 12px; }
+  hr { border: none; border-top: 1px solid var(--border); margin: 32px 0; }
+  .small { font-size: 13px; color: var(--muted); }
+  .kbd {
+    font-family: var(--mono); font-size: 12px;
+    background: var(--code-bg); border: 1px solid var(--border);
+    padding: 2px 8px; border-radius: 5px;
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <div class="eyebrow">Plan · 2026-05-14 · Decision required</div>
+  <h1>Migrate the LoudFace content calendar to Notion Workers</h1>
+  <p class="deck">
+    Replace the Claude-Cloud-scheduled <code>/refresh-calendar</code> skill
+    with three native Notion Workers running on Notion's infra. Why: airtight
+    schema, persistent cursors, atomic upserts, hosted runtime, fewer moving parts.
+    Trade-off: Workers is in beta, and there's 2-3 hours of one-time setup.
+  </p>
+</header>
+
+<nav class="toc">
+  <strong>On this page</strong>
+  <a href="#why">Why migrate</a>
+  <a href="#current">Current state</a>
+  <a href="#architecture">Proposed architecture</a>
+  <a href="#workers">The three workers</a>
+  <a href="#setup">Setup checklist</a>
+  <a href="#tradeoffs">Tradeoffs</a>
+  <a href="#decision">Decision</a>
+</nav>
+
+<h2 id="why">Why migrate</h2>
+
+<p>The current setup works, but four pain points keep showing up:</p>
+<ol>
+  <li><strong>Token-burning runs.</strong> Each <code>/refresh-calendar</code> execution makes 100+ MCP roundtrips. Cloud subscription pays the bill.</li>
+  <li><strong>View pagination cap.</strong> Notion's <code>query-database-view</code> returns max 100 rows. With 104+ Published rows, a single run misses some.</li>
+  <li><strong>No persistent cursor.</strong> Every run pulls everything, re-computes everything, writes everything. No idea of "what changed since last run."</li>
+  <li><strong>Field gaps from initial backfill.</strong> 75 rows were missing Meta Description and Last Updated until just now. A declarative schema would have caught that on day one.</li>
+</ol>
+
+<p>Notion's new <a href="https://www.notion.com/product/dev">Developer Platform</a> (announced 2026) gives us three primitives that solve all four:</p>
+
+<div class="grid-3">
+  <div class="stat">
+    <div class="label">Syncs</div>
+    <div class="value">↻</div>
+    <div class="delta">Continuously upsert external records into a DB with a declarative schema and persistent cursor.</div>
+  </div>
+  <div class="stat">
+    <div class="label">Agent tools</div>
+    <div class="value">⚒</div>
+    <div class="delta">Custom tools for Notion Agents that query live data or hit any API.</div>
+  </div>
+  <div class="stat">
+    <div class="label">Webhooks</div>
+    <div class="value">⇆</div>
+    <div class="delta">Listen for events from external systems, trigger Notion workflows.</div>
+  </div>
+</div>
+
+<p class="small">All three run on Notion's hosted Workers runtime — isolated sandboxes managed by Notion. No Vercel cron, no Lambda, no Claude Cloud burn.</p>
+
+<h2 id="current">Current state</h2>
+
+<div class="grid-3">
+  <div class="stat">
+    <div class="label">Calendar rows</div>
+    <div class="value">125</div>
+    <div class="delta">104 Published + 19 Idea/Draft/Outline + 2 new dupes flagged for cleanup</div>
+  </div>
+  <div class="stat">
+    <div class="label">Sanity docs (live)</div>
+    <div class="value">104</div>
+    <div class="delta">79 blog + 25 case studies (3 GONE excluded)</div>
+  </div>
+  <div class="stat">
+    <div class="label">Refresh cadence</div>
+    <div class="value">Manual</div>
+    <div class="delta">Skill exists; cron not scheduled yet</div>
+  </div>
+</div>
+
+<div class="panel warn">
+  <strong>Known issues today</strong>
+  <ul style="margin-top: 10px;">
+    <li>View pagination capped at 100 — last refresh missed 4 rows the first time.</li>
+    <li>Word Count not populated on any backfilled row (Sanity export didn't include body length).</li>
+    <li>AEO Score / SEO Score columns are "Not Assessed" on all 100 rows (subjective fields — needs manual or LLM-driven scoring).</li>
+    <li>Sanity case studies don't have <code>publishedDate</code> set — 25 rows have blank Publish Date.</li>
+  </ul>
+</div>
+
+<h2 id="architecture">Proposed architecture</h2>
+
+<div class="arch">
+  <h3>Before</h3>
+<pre><span class="c">// Claude Cloud /schedule → /refresh-calendar skill</span>
+<span class="f">Schedule</span>: cron <span class="s">"7 9 * * *"</span> on Claude Cloud
+  ↓
+<span class="f">Skill</span>: /refresh-calendar (MCP-based)
+  ↓ <span class="c">~110 MCP calls per run</span>
+  ↓ 1 Sanity fetch + 1 GSC pull + 1 Peec pull + 100 Notion updates
+  ↓
+<span class="f">Notion DB</span>: Website Content (manual schema, drift possible)
+</pre>
+  <h3>After</h3>
+<pre><span class="c">// Three independent workers running on Notion's runtime</span>
+
+<span class="f">Worker 1</span>: sanitySync       schedule: <span class="s">"1h"</span>    <span class="c">// auto-syncs new posts</span>
+<span class="f">Worker 2</span>: gscMetrics       schedule: <span class="s">"6h"</span>    <span class="c">// GSC clicks/imp/pos</span>
+<span class="f">Worker 3</span>: peecCitations    schedule: <span class="s">"6h"</span>    <span class="c">// Peec AI mentions</span>
+
+  ↓ each one is atomic and idempotent
+  ↓ each one declares its own schema (no drift)
+  ↓ each one uses a persistent cursor (only re-syncs deltas)
+  ↓
+<span class="f">Notion DB</span>: Website Content (schema-as-code, airtight)
+</pre>
+</div>
+
+<h2 id="workers">The three workers</h2>
+
+<h3>Worker 1 — <code>sanitySync.ts</code></h3>
+<p>Source of truth for: <strong>Title, URL, Content Type, Publish Date, Meta Description, Last Updated</strong>. Runs hourly. Never touches Status (preserves editorial pipeline).</p>
+
+<pre><span class="k">import</span> { Worker, Schema, Builder } <span class="k">from</span> <span class="s">"@notionhq/workers"</span>;
+<span class="k">import</span> { createClient } <span class="k">from</span> <span class="s">"@sanity/client"</span>;
+
+<span class="k">const</span> worker = <span class="k">new</span> Worker();
+
+<span class="k">const</span> calendar = worker.<span class="f">database</span>(<span class="s">"website-content"</span>, {
+  type: <span class="s">"managed"</span>,
+  primaryKeyProperty: <span class="s">"URL"</span>,
+  schema: { properties: {
+    <span class="s">"Title"</span>: Schema.<span class="f">title</span>(),
+    <span class="s">"URL"</span>: Schema.<span class="f">url</span>(),
+    <span class="s">"Content Type"</span>: Schema.<span class="f">select</span>([
+      { name: <span class="s">"Blog Post"</span> }, { name: <span class="s">"Listicle"</span> },
+      { name: <span class="s">"Case Study"</span> }, { name: <span class="s">"Landing Page"</span> },
+    ]),
+    <span class="s">"Publish Date"</span>: Schema.<span class="f">date</span>(),
+    <span class="s">"Last Updated"</span>: Schema.<span class="f">date</span>(),
+    <span class="s">"Meta Description"</span>: Schema.<span class="f">richText</span>(),
+    <span class="s">"Status"</span>: Schema.<span class="f">status</span>({
+      groups: { complete: [<span class="s">"Published"</span>], in_progress: [<span class="s">"Draft"</span>, <span class="s">"Review"</span>] }
+    }),
+  }}
+});
+
+<span class="k">const</span> sanity = <span class="f">createClient</span>({ projectId: <span class="s">"xjjjqhgt"</span>, dataset: <span class="s">"production"</span> });
+
+worker.<span class="f">sync</span>(<span class="s">"sanitySync"</span>, {
+  database: calendar,
+  schedule: <span class="s">"1h"</span>,
+  execute: <span class="k">async</span> () => {
+    <span class="k">const</span> docs = <span class="k">await</span> sanity.<span class="f">fetch</span>(`
+      *[_type in [<span class="s">"blogPost"</span>, <span class="s">"caseStudy"</span>] && defined(slug.current)] {
+        _id, _type, slug, name, publishedDate, lastUpdated, metaDescription
+      }`);
+
+    <span class="k">return</span> {
+      changes: docs.<span class="f">map</span>(d => ({
+        type: <span class="s">"upsert"</span>,
+        key: <span class="f">buildUrl</span>(d),  <span class="c">// primary key — no dupes, ever</span>
+        properties: {
+          <span class="s">"Title"</span>: Builder.<span class="f">title</span>(d.name),
+          <span class="s">"URL"</span>: Builder.<span class="f">url</span>(<span class="f">buildUrl</span>(d)),
+          <span class="s">"Content Type"</span>: Builder.<span class="f">select</span>(<span class="f">classify</span>(d)),
+          <span class="s">"Publish Date"</span>: Builder.<span class="f">date</span>(d.publishedDate),
+          <span class="s">"Last Updated"</span>: Builder.<span class="f">date</span>(d.lastUpdated),
+          <span class="s">"Meta Description"</span>: Builder.<span class="f">richText</span>(d.metaDescription),
+          <span class="c">// Status only set on FIRST upsert, never overwritten</span>
+          <span class="s">"Status"</span>: Builder.<span class="f">statusInitial</span>(<span class="s">"Published"</span>),
+        }
+      }))
+    };
+  }
+});
+</pre>
+
+<h3>Worker 2 — <code>gscMetrics.ts</code></h3>
+<p>Pulls last-7-day GSC analytics, paginated. Upserts metrics into existing rows by URL. Never creates new rows.</p>
+
+<pre>worker.<span class="f">sync</span>(<span class="s">"gscMetrics"</span>, {
+  database: calendar,
+  schedule: <span class="s">"6h"</span>,
+  execute: <span class="k">async</span> ({ env }) => {
+    <span class="k">const</span> pages = <span class="k">await</span> <span class="f">gscSearchAnalytics</span>({
+      siteUrl: <span class="s">"https://www.loudface.co/"</span>,
+      startDate: <span class="f">daysAgo</span>(7),
+      endDate: <span class="f">today</span>(),
+      dimensions: [<span class="s">"page"</span>],
+      rowLimit: 1000,
+      auth: env.GSC_SERVICE_ACCOUNT_KEY,
+    });
+
+    <span class="k">return</span> {
+      changes: pages.<span class="f">map</span>(p => ({
+        type: <span class="s">"update"</span>,  <span class="c">// update-only, won't create</span>
+        key: p.page,
+        properties: {
+          <span class="s">"GSC Clicks 7d"</span>: Builder.<span class="f">number</span>(p.clicks),
+          <span class="s">"GSC Impressions 7d"</span>: Builder.<span class="f">number</span>(p.impressions),
+          <span class="s">"GSC Position 7d"</span>: Builder.<span class="f">number</span>(p.position.<span class="f">toFixed</span>(1)),
+          <span class="s">"Last Refreshed"</span>: Builder.<span class="f">date</span>(<span class="f">today</span>()),
+        }
+      }))
+    };
+  }
+});
+</pre>
+
+<h3>Worker 3 — <code>peecCitations.ts</code></h3>
+<p>Same shape, different source. Pulls Peec URL report for loudface.co domain, updates the <code>Peec Mentions</code> column.</p>
+
+<pre>worker.<span class="f">sync</span>(<span class="s">"peecCitations"</span>, {
+  database: calendar,
+  schedule: <span class="s">"6h"</span>,
+  execute: <span class="k">async</span> ({ env }) => {
+    <span class="k">const</span> data = <span class="k">await</span> <span class="f">peecUrlReport</span>({
+      projectId: <span class="s">"or_85a7fe4b-9032-4b0f-8b98-6deae65495ff"</span>,
+      domain: <span class="s">"loudface.co"</span>,
+      startDate: <span class="f">daysAgo</span>(7),
+      endDate: <span class="f">today</span>(),
+      token: env.PEEC_API_TOKEN,
+    });
+
+    <span class="k">return</span> { changes: data.rows.<span class="f">map</span>(r => ({
+      type: <span class="s">"update"</span>,
+      key: <span class="f">normalizeUrl</span>(r.url),
+      properties: { <span class="s">"Peec Mentions"</span>: Builder.<span class="f">number</span>(r.citation_count) }
+    }))};
+  }
+});
+</pre>
+
+<h2 id="setup">Setup checklist</h2>
+
+<p>One-time work to get this running. Total: ~2-3 hours.</p>
+
+<ul class="checklist">
+  <li><strong>Install Notion CLI</strong> · <code>npm install -g @notionhq/cli</code> · 5 min</li>
+  <li><strong>Authenticate the CLI to your workspace</strong> · <code>ntn auth login</code> · 2 min</li>
+  <li><strong>Create new project dir</strong> · <code>scripts/notion-workers/</code> with the Workers SDK · 10 min</li>
+  <li><strong>Add API tokens to Worker env (encrypted in Notion's vault)</strong>:
+    <ul>
+      <li><code>SANITY_API_TOKEN</code> — already in .env.local, just copy it across</li>
+      <li><code>GSC_SERVICE_ACCOUNT_KEY</code> — needs new Google Cloud service account with read-only GSC access. Most involved step (~30 min)</li>
+      <li><code>PEEC_API_TOKEN</code> — from app.peec.ai API settings (5 min)</li>
+    </ul>
+  </li>
+  <li><strong>Write Worker 1 (sanitySync)</strong> · ~45 min · simplest, validates the setup</li>
+  <li><strong>Deploy + smoke test</strong> · <code>ntn deploy worker</code> · 10 min</li>
+  <li><strong>Write Worker 2 (gscMetrics)</strong> · ~45 min</li>
+  <li><strong>Write Worker 3 (peecCitations)</strong> · ~30 min</li>
+  <li><strong>Disable old /refresh-calendar Cloud schedule</strong> · 2 min</li>
+  <li><strong>Update <code>CLAUDE.md</code> + brain page</strong> with new architecture · 10 min</li>
+</ul>
+
+<h2 id="tradeoffs">Tradeoffs</h2>
+
+<table>
+<thead><tr><th></th><th>Stay on /refresh-calendar (current)</th><th>Migrate to Notion Workers</th></tr></thead>
+<tbody>
+<tr>
+  <td><strong>Status</strong></td>
+  <td><span class="pill cur">In use</span></td>
+  <td><span class="pill beta">Beta (Notion Workers)</span></td>
+</tr>
+<tr>
+  <td><strong>Runtime cost</strong></td>
+  <td>Claude Cloud subscription (token-priced)</td>
+  <td>Included in Notion workspace</td>
+</tr>
+<tr>
+  <td><strong>Schema</strong></td>
+  <td>Manual (drift possible)</td>
+  <td>Declarative (drift impossible)</td>
+</tr>
+<tr>
+  <td><strong>Pagination</strong></td>
+  <td>Capped at 100 rows per run — manual workaround</td>
+  <td>Native cursor — handles 10K+ rows</td>
+</tr>
+<tr>
+  <td><strong>Idempotency</strong></td>
+  <td>Best-effort (per-row update with risk of partial run)</td>
+  <td>Atomic per-key upsert</td>
+</tr>
+<tr>
+  <td><strong>Deduplication</strong></td>
+  <td>Possible if heuristic fails</td>
+  <td>Primary key enforced</td>
+</tr>
+<tr>
+  <td><strong>Observability</strong></td>
+  <td>Activity Log in Notion</td>
+  <td>Activity Log + Worker run logs visible in Notion</td>
+</tr>
+<tr>
+  <td><strong>Setup time</strong></td>
+  <td>Already done</td>
+  <td>2-3 hours</td>
+</tr>
+<tr>
+  <td><strong>Beta risk</strong></td>
+  <td>None</td>
+  <td>API may change before GA. Notion may rate-limit.</td>
+</tr>
+</tbody>
+</table>
+
+<div class="decision" id="decision">
+<h2 style="margin-top:0;">Decision</h2>
+
+<div class="option">
+  <div class="name">Option A — Migrate to Notion Workers <span class="pill good">Recommended for long-term</span></div>
+  <div class="meta">2-3 hours setup · solves all 4 pain points · accepts beta risk</div>
+  Build the three workers. Disable Cloud schedule. The calendar becomes truly hands-off.
+</div>
+
+<div class="option">
+  <div class="name">Option B — Harden current skill on Vercel cron <span class="pill">Middle ground</span></div>
+  <div class="meta">~90 min setup · solves pagination + idempotency · adds Notion REST API integration token</div>
+  Create a Notion internal integration. Build one Node script that does Sanity sync + GSC + Peec writes via REST API. Run via Vercel cron. No Notion beta dependency. Less elegant than Workers, more proven.
+</div>
+
+<div class="option">
+  <div class="name">Option C — Keep current and just schedule it <span class="pill cur">Lowest effort</span></div>
+  <div class="meta">10 min setup · works for now · doesn't fix pagination root cause</div>
+  Add the <code>/schedule</code> cron, document the 100-row cap as a known limitation. Revisit when Workers ships GA or the calendar grows past ~200 rows.
+</div>
+
+<p style="margin-top: 24px; color: var(--muted);">
+  My recommendation is <strong>Option A</strong>, but it depends on appetite for one beta-feature dependency.
+  If the answer is "I want airtight and I'm comfortable with beta," go A.
+  If the answer is "I want airtight but I want it on infra I already trust (Vercel)," go B.
+</p>
+</div>
+
+<hr />
+
+<p class="small">Generated 2026-05-14 · Lives at <code>.claude/plans/notion-workers-migration.html</code> · Open with <code>open .claude/plans/notion-workers-migration.html</code></p>
+
+</div>
+</body>
+</html>

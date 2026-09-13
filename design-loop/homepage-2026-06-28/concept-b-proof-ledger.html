@@ -1,0 +1,1528 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>LoudFace Concept B - Proof Ledger</title>
+    <style>
+      /*
+        Intended LoudFace type direction:
+        headings: Bricolage Grotesque
+        body and labels: Geist
+        accent words only: Instrument Serif Italic
+        Fallbacks stay sans-led so the standalone file remains credible offline.
+      */
+      @import url("https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@400;500;600&family=Geist:wght@400;500;600&family=Instrument+Serif:ital@1&display=swap");
+
+      :root {
+        --page: #f7f8f7;
+        --panel: #eef1ef;
+        --panel-strong: #e5ebe8;
+        --ink: #22302e;
+        --ink-soft: #3f4f4c;
+        --muted: #66736f;
+        --line: #d4ddda;
+        --line-strong: #b8c5c1;
+        --indigo: #4f46e5;
+        --indigo-deep: #3730a3;
+        --dark: #172321;
+        --dark-2: #20312e;
+        --dark-line: #43514d;
+        --mist: #fafdFA;
+        --sage: #dce5e1;
+        --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+        --ease-soft: cubic-bezier(0.22, 0.61, 0.36, 1);
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        background: var(--page);
+        color: var(--ink);
+        font-family: "Geist", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        font-size: 16px;
+        line-height: 1.5;
+        -webkit-font-smoothing: antialiased;
+        text-rendering: optimizeLegibility;
+        overflow-x: hidden;
+      }
+
+      img {
+        display: block;
+        max-width: 100%;
+      }
+
+      a {
+        color: inherit;
+        text-decoration: none;
+      }
+
+      button,
+      a {
+        -webkit-tap-highlight-color: transparent;
+      }
+
+      .page {
+        overflow: hidden;
+      }
+
+      .hero-copy,
+      .proof-cockpit,
+      .section-inner,
+      .section-heading > *,
+      .engine-row > *,
+      .ledger-row > *,
+      .testimony-layout > *,
+      .index-grid > *,
+      .index-item > *,
+      .cta-panel > * {
+        min-width: 0;
+      }
+
+      .site-header {
+        position: sticky;
+        top: 0;
+        z-index: 20;
+        display: grid;
+        grid-template-columns: minmax(120px, 1fr) auto minmax(120px, 1fr);
+        align-items: center;
+        gap: 20px;
+        padding: 18px clamp(18px, 4vw, 52px);
+        background: rgba(247, 248, 247, 0.9);
+        border-bottom: 1px solid rgba(212, 221, 218, 0.85);
+        backdrop-filter: blur(18px);
+      }
+
+      .brand {
+        width: 126px;
+      }
+
+      .nav-links {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        padding: 5px;
+        border: 1px solid var(--line);
+        border-radius: 999px;
+        background: rgba(250, 253, 250, 0.72);
+      }
+
+      .nav-links a {
+        border-radius: 999px;
+        padding: 8px 14px;
+        color: var(--ink-soft);
+        font-size: 14px;
+        font-weight: 500;
+        transition: color 180ms var(--ease-soft), background 180ms var(--ease-soft), transform 180ms var(--ease-soft);
+      }
+
+      .nav-links a:hover {
+        background: var(--panel-strong);
+        color: var(--ink);
+      }
+
+      .nav-links a:active,
+      .button:active,
+      .ledger-row:active,
+      .mini-proof:active {
+        transform: scale(0.98);
+      }
+
+      .header-action {
+        justify-self: end;
+        display: inline-flex;
+        min-height: 42px;
+        align-items: center;
+        border-radius: 999px;
+        padding: 0 18px;
+        background: var(--ink);
+        color: var(--page);
+        font-size: 14px;
+        font-weight: 600;
+        transition: background 180ms var(--ease-soft), transform 180ms var(--ease-soft);
+      }
+
+      .header-action:hover {
+        background: var(--dark);
+      }
+
+      .hero {
+        position: relative;
+        display: grid;
+        grid-template-columns: minmax(0, 1.04fr) minmax(350px, 0.96fr);
+        gap: clamp(26px, 4vw, 64px);
+        align-items: stretch;
+        min-height: 760px;
+        padding: clamp(44px, 7vw, 92px) clamp(18px, 4vw, 52px) clamp(30px, 5vw, 70px);
+      }
+
+      .hero-copy {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        gap: 42px;
+        min-width: 0;
+      }
+
+      .proof-label {
+        display: inline-flex;
+        width: fit-content;
+        align-items: center;
+        gap: 10px;
+        border: 1px solid var(--line);
+        border-radius: 999px;
+        padding: 8px 12px;
+        background: rgba(250, 253, 250, 0.72);
+        color: var(--ink-soft);
+        font-size: 13px;
+        font-weight: 600;
+        letter-spacing: 0.01em;
+      }
+
+      .proof-label::before {
+        content: "";
+        width: 8px;
+        height: 8px;
+        border-radius: 999px;
+        background: var(--indigo);
+      }
+
+      h1,
+      h2,
+      h3,
+      .display-word,
+      .ledger-title {
+        margin: 0;
+        font-family: "Bricolage Grotesque", "Geist", ui-sans-serif, system-ui, sans-serif;
+        font-weight: 500;
+        letter-spacing: 0;
+      }
+
+      .hero h1 {
+        max-width: 920px;
+        margin-top: 24px;
+        font-size: clamp(54px, 9vw, 132px);
+        line-height: 0.92;
+      }
+
+      .accent {
+        color: var(--indigo);
+        font-family: "Instrument Serif", Georgia, serif;
+        font-style: italic;
+        font-weight: 400;
+      }
+
+      .hero-intro {
+        display: grid;
+        grid-template-columns: minmax(210px, 0.65fr) minmax(280px, 1fr);
+        gap: 28px;
+        align-items: end;
+        margin-top: clamp(24px, 5vw, 56px);
+      }
+
+      .hero-intro p {
+        max-width: 650px;
+        margin: 0;
+        color: var(--ink-soft);
+        font-size: clamp(18px, 1.8vw, 24px);
+        line-height: 1.34;
+      }
+
+      .button-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+      }
+
+      .button {
+        display: inline-flex;
+        min-height: 48px;
+        align-items: center;
+        justify-content: center;
+        border: 1px solid transparent;
+        border-radius: 999px;
+        padding: 0 20px;
+        font-size: 15px;
+        font-weight: 600;
+        transition: background 190ms var(--ease-soft), color 190ms var(--ease-soft), border-color 190ms var(--ease-soft), transform 190ms var(--ease-soft);
+      }
+
+      .button.primary {
+        background: var(--ink);
+        color: var(--page);
+      }
+
+      .button.primary:hover {
+        background: var(--dark);
+      }
+
+      .button.secondary {
+        border-color: var(--line-strong);
+        background: rgba(250, 253, 250, 0.68);
+        color: var(--ink);
+      }
+
+      .button.secondary:hover {
+        border-color: var(--ink-soft);
+        background: var(--panel);
+      }
+
+      .hero-docket {
+        border-top: 1px solid var(--line-strong);
+      }
+
+      .docket-line {
+        display: grid;
+        grid-template-columns: 0.9fr 1.25fr 0.8fr;
+        gap: 18px;
+        align-items: baseline;
+        min-height: 58px;
+        padding: 14px 0;
+        border-bottom: 1px solid var(--line);
+      }
+
+      .docket-line strong {
+        color: var(--ink);
+        font-size: clamp(21px, 2.6vw, 34px);
+        font-weight: 500;
+        letter-spacing: 0;
+        line-height: 1;
+      }
+
+      .docket-line span {
+        color: var(--muted);
+        font-size: 14px;
+        font-weight: 500;
+      }
+
+      .docket-line b {
+        justify-self: end;
+        color: var(--indigo-deep);
+        font-size: 13px;
+        font-weight: 600;
+      }
+
+      .proof-cockpit {
+        position: relative;
+        display: grid;
+        grid-template-rows: auto 1fr auto;
+        min-height: 650px;
+        overflow: hidden;
+        border: 1px solid var(--line-strong);
+        border-radius: 24px;
+        background: var(--dark);
+        color: var(--page);
+      }
+
+      .cockpit-top {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+        padding: 20px;
+        border-bottom: 1px solid var(--dark-line);
+      }
+
+      .window-dots {
+        display: flex;
+        gap: 7px;
+      }
+
+      .window-dots i {
+        width: 10px;
+        height: 10px;
+        border-radius: 999px;
+        background: #8fa09b;
+      }
+
+      .cockpit-top span {
+        color: #c9d5d1;
+        font-size: 13px;
+        font-weight: 600;
+      }
+
+      .cockpit-stage {
+        position: relative;
+        min-height: 470px;
+        padding: 22px;
+      }
+
+      .video-pane {
+        position: absolute;
+        inset: 22px 22px auto 22px;
+        height: 52%;
+        overflow: hidden;
+        border: 1px solid #53625e;
+        border-radius: 18px;
+        background: #243734;
+      }
+
+      .video-pane img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        filter: saturate(0.78) contrast(0.93) brightness(0.72);
+        opacity: 0.82;
+      }
+
+      .video-pane::after {
+        content: "Daan Smit / Brandfirm video testimonial";
+        position: absolute;
+        left: 18px;
+        bottom: 16px;
+        max-width: calc(100% - 36px);
+        border-radius: 999px;
+        padding: 8px 12px;
+        background: rgba(23, 35, 33, 0.78);
+        color: var(--page);
+        font-size: 12px;
+        font-weight: 600;
+        letter-spacing: 0.02em;
+      }
+
+      .play {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        display: grid;
+        width: 58px;
+        height: 58px;
+        place-items: center;
+        border: 1px solid #dce5e1;
+        border-radius: 999px;
+        background: rgba(247, 248, 247, 0.14);
+        transform: translate(-50%, -50%);
+      }
+
+      .play::before {
+        content: "";
+        width: 0;
+        height: 0;
+        margin-left: 4px;
+        border-top: 11px solid transparent;
+        border-bottom: 11px solid transparent;
+        border-left: 17px solid #f7f8f7;
+      }
+
+      .case-rail {
+        position: absolute;
+        right: 22px;
+        bottom: 24px;
+        left: 22px;
+        display: grid;
+        grid-template-columns: 1fr 0.72fr;
+        gap: 14px;
+      }
+
+      .rail-large,
+      .rail-stack {
+        min-width: 0;
+      }
+
+      .rail-large {
+        overflow: hidden;
+        border: 1px solid #53625e;
+        border-radius: 18px;
+        background: var(--dark-2);
+        clip-path: polygon(0 0, 100% 0, 100% 88%, 88% 100%, 0 100%);
+      }
+
+      .rail-large img {
+        width: 100%;
+        height: 218px;
+        object-fit: cover;
+        opacity: 0.86;
+      }
+
+      .rail-caption {
+        display: flex;
+        justify-content: space-between;
+        gap: 14px;
+        padding: 12px 14px 14px;
+      }
+
+      .rail-caption strong {
+        color: var(--page);
+        font-size: 16px;
+        font-weight: 600;
+      }
+
+      .rail-caption span {
+        color: #aebcb8;
+        font-size: 12px;
+        font-weight: 600;
+      }
+
+      .rail-stack {
+        display: grid;
+        gap: 14px;
+      }
+
+      .mini-proof {
+        display: grid;
+        grid-template-columns: 58px minmax(0, 1fr);
+        gap: 12px;
+        align-items: center;
+        min-height: 82px;
+        border: 1px solid #53625e;
+        border-radius: 16px;
+        padding: 10px;
+        background: #20312e;
+        transition: transform 180ms var(--ease-soft), border-color 180ms var(--ease-soft);
+      }
+
+      .mini-proof:hover {
+        border-color: #81908c;
+      }
+
+      .mini-proof img {
+        width: 58px;
+        height: 58px;
+        border-radius: 12px;
+        object-fit: cover;
+        background: #dce5e1;
+      }
+
+      .mini-proof strong {
+        display: block;
+        color: var(--page);
+        font-size: 15px;
+        font-weight: 600;
+        line-height: 1.15;
+      }
+
+      .mini-proof span {
+        color: #aebcb8;
+        font-size: 13px;
+        font-weight: 500;
+      }
+
+      .cockpit-footer {
+        display: grid;
+        grid-template-columns: 1fr auto;
+        gap: 18px;
+        align-items: center;
+        padding: 16px 20px 20px;
+        border-top: 1px solid var(--dark-line);
+        color: #c9d5d1;
+        font-size: 13px;
+        font-weight: 500;
+      }
+
+      .proof-pulse {
+        display: inline-flex;
+        align-items: center;
+        gap: 9px;
+        color: var(--page);
+      }
+
+      .proof-pulse::before {
+        content: "";
+        width: 9px;
+        height: 9px;
+        border-radius: 999px;
+        background: var(--indigo);
+      }
+
+      .section {
+        padding: clamp(72px, 9vw, 128px) clamp(18px, 4vw, 52px);
+      }
+
+      .section-inner {
+        width: min(1380px, 100%);
+        margin: 0 auto;
+      }
+
+      .section-heading {
+        display: grid;
+        grid-template-columns: minmax(0, 0.95fr) minmax(280px, 0.65fr);
+        gap: clamp(28px, 5vw, 80px);
+        align-items: end;
+        margin-bottom: clamp(34px, 5vw, 62px);
+      }
+
+      .section-heading h2 {
+        font-size: clamp(42px, 7.6vw, 112px);
+        line-height: 0.94;
+      }
+
+      .section-heading p {
+        margin: 0;
+        color: var(--ink-soft);
+        font-size: clamp(17px, 1.6vw, 22px);
+        line-height: 1.38;
+      }
+
+      .build-grow {
+        border-top: 1px solid var(--line-strong);
+      }
+
+      .engine-row {
+        display: grid;
+        grid-template-columns: minmax(260px, 0.48fr) minmax(0, 1fr) minmax(240px, 0.52fr);
+        gap: clamp(20px, 4vw, 56px);
+        align-items: stretch;
+        padding: clamp(28px, 4vw, 52px) 0;
+        border-bottom: 1px solid var(--line);
+      }
+
+      .display-word {
+        color: var(--ink);
+        font-size: clamp(56px, 8vw, 116px);
+        line-height: 0.82;
+      }
+
+      .engine-copy {
+        align-self: center;
+      }
+
+      .engine-copy h3 {
+        max-width: 760px;
+        font-size: clamp(28px, 3.5vw, 54px);
+        line-height: 1;
+      }
+
+      .engine-copy p {
+        max-width: 670px;
+        margin: 18px 0 0;
+        color: var(--ink-soft);
+        font-size: 17px;
+      }
+
+      .engine-proof {
+        display: grid;
+        align-content: space-between;
+        min-height: 210px;
+        border: 1px solid var(--line);
+        border-radius: 18px;
+        padding: 18px;
+        background: var(--panel);
+      }
+
+      .engine-proof span {
+        color: var(--muted);
+        font-size: 13px;
+        font-weight: 600;
+      }
+
+      .engine-proof strong {
+        display: block;
+        margin-top: 26px;
+        color: var(--ink);
+        font-size: clamp(22px, 3vw, 38px);
+        font-weight: 500;
+        line-height: 1;
+      }
+
+      .proof-tags {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-top: 22px;
+      }
+
+      .proof-tags i {
+        border: 1px solid var(--line-strong);
+        border-radius: 999px;
+        padding: 6px 9px;
+        color: var(--ink-soft);
+        font-size: 12px;
+        font-style: normal;
+        font-weight: 600;
+      }
+
+      .work-ledger {
+        background: #fbfcfb;
+        border-top: 1px solid var(--line);
+        border-bottom: 1px solid var(--line);
+      }
+
+      .ledger {
+        border-top: 1px solid var(--line-strong);
+      }
+
+      .ledger-row {
+        display: grid;
+        grid-template-columns: minmax(190px, 0.72fr) minmax(260px, 1.1fr) minmax(220px, 0.82fr) minmax(220px, 0.72fr);
+        gap: clamp(16px, 3vw, 42px);
+        align-items: center;
+        min-height: 184px;
+        padding: 24px 0;
+        border-bottom: 1px solid var(--line);
+        transition: background 190ms var(--ease-soft), transform 190ms var(--ease-soft);
+      }
+
+      .ledger-row:hover {
+        background: rgba(238, 241, 239, 0.65);
+      }
+
+      .ledger-title {
+        font-size: clamp(31px, 4.5vw, 64px);
+        line-height: 0.95;
+      }
+
+      .ledger-title small {
+        display: block;
+        margin-top: 10px;
+        color: var(--muted);
+        font-family: "Geist", ui-sans-serif, system-ui, sans-serif;
+        font-size: 14px;
+        font-weight: 600;
+      }
+
+      .ledger-work h3 {
+        font-size: clamp(22px, 2.3vw, 34px);
+        line-height: 1.04;
+      }
+
+      .ledger-work p,
+      .result-cell p {
+        margin: 10px 0 0;
+        color: var(--ink-soft);
+        font-size: 15px;
+      }
+
+      .media-thumb {
+        overflow: hidden;
+        min-height: 134px;
+        border: 1px solid var(--line-strong);
+        border-radius: 18px;
+        background: var(--sage);
+        clip-path: polygon(0 0, 100% 0, 100% calc(100% - 22px), calc(100% - 22px) 100%, 0 100%);
+      }
+
+      .media-thumb img {
+        width: 100%;
+        height: 160px;
+        object-fit: cover;
+        transition: transform 620ms var(--ease-out);
+      }
+
+      .ledger-row:hover .media-thumb img {
+        transform: scale(1.045);
+      }
+
+      .result-cell {
+        align-self: stretch;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        gap: 18px;
+      }
+
+      .result-state {
+        display: inline-flex;
+        width: fit-content;
+        align-items: center;
+        gap: 8px;
+        border: 1px solid var(--line-strong);
+        border-radius: 999px;
+        padding: 6px 9px;
+        color: var(--ink-soft);
+        font-size: 12px;
+        font-weight: 600;
+      }
+
+      .result-state::before {
+        content: "";
+        width: 7px;
+        height: 7px;
+        border-radius: 999px;
+        background: var(--indigo);
+      }
+
+      .result-cell strong {
+        color: var(--indigo-deep);
+        font-size: clamp(20px, 2.4vw, 32px);
+        font-weight: 500;
+        line-height: 1;
+      }
+
+      .testimonial {
+        background: var(--dark);
+        color: var(--page);
+      }
+
+      .testimonial .section-heading h2,
+      .testimonial .section-heading p {
+        color: var(--page);
+      }
+
+      .testimonial .section-heading p {
+        color: #c9d5d1;
+      }
+
+      .testimony-layout {
+        display: grid;
+        grid-template-columns: minmax(0, 0.9fr) minmax(340px, 1.1fr);
+        gap: clamp(24px, 4vw, 58px);
+        align-items: stretch;
+      }
+
+      .quote-panel {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        min-height: 460px;
+        border: 1px solid var(--dark-line);
+        border-radius: 22px;
+        padding: clamp(24px, 4vw, 44px);
+        background: #20312e;
+      }
+
+      .quote-panel blockquote {
+        margin: 0;
+        font-family: "Bricolage Grotesque", "Geist", ui-sans-serif, system-ui, sans-serif;
+        font-size: clamp(34px, 5vw, 76px);
+        font-weight: 500;
+        line-height: 0.98;
+        letter-spacing: 0;
+      }
+
+      .quote-panel footer {
+        margin-top: 34px;
+        color: #c9d5d1;
+        font-size: 15px;
+        font-weight: 500;
+      }
+
+      .video-slot {
+        position: relative;
+        min-height: 540px;
+        overflow: hidden;
+        border: 1px solid var(--dark-line);
+        border-radius: 22px;
+        background: #243734;
+      }
+
+      .video-slot img {
+        width: 100%;
+        height: 100%;
+        min-height: 540px;
+        object-fit: cover;
+        filter: saturate(0.8) contrast(0.92) brightness(0.58);
+      }
+
+      .video-copy {
+        position: absolute;
+        inset: auto 22px 22px 22px;
+        display: grid;
+        grid-template-columns: 1fr auto;
+        gap: 18px;
+        align-items: end;
+      }
+
+      .video-copy strong {
+        display: block;
+        max-width: 560px;
+        font-family: "Bricolage Grotesque", "Geist", ui-sans-serif, system-ui, sans-serif;
+        font-size: clamp(30px, 3.5vw, 54px);
+        font-weight: 500;
+        line-height: 1;
+      }
+
+      .video-copy span {
+        display: inline-flex;
+        width: fit-content;
+        border: 1px solid #81908c;
+        border-radius: 999px;
+        padding: 8px 11px;
+        color: var(--page);
+        font-size: 12px;
+        font-weight: 600;
+        letter-spacing: 0.02em;
+      }
+
+      .proof-index {
+        background: var(--page);
+      }
+
+      .index-grid {
+        display: grid;
+        grid-template-columns: minmax(240px, 0.45fr) minmax(0, 1fr);
+        gap: clamp(26px, 5vw, 72px);
+        align-items: start;
+      }
+
+      .index-copy {
+        position: sticky;
+        top: 110px;
+      }
+
+      .index-copy h2 {
+        font-size: clamp(40px, 6vw, 90px);
+        line-height: 0.95;
+      }
+
+      .index-copy p {
+        margin: 20px 0 0;
+        color: var(--ink-soft);
+        font-size: 18px;
+      }
+
+      .index-list {
+        border-top: 1px solid var(--line-strong);
+      }
+
+      .index-item {
+        display: grid;
+        grid-template-columns: minmax(180px, 0.42fr) minmax(0, 1fr) minmax(150px, 0.32fr);
+        gap: clamp(16px, 3vw, 44px);
+        align-items: baseline;
+        padding: 22px 0;
+        border-bottom: 1px solid var(--line);
+      }
+
+      .index-item strong {
+        font-family: "Bricolage Grotesque", "Geist", ui-sans-serif, system-ui, sans-serif;
+        font-size: clamp(24px, 3vw, 44px);
+        font-weight: 500;
+        line-height: 1;
+      }
+
+      .index-item p {
+        margin: 0;
+        color: var(--ink-soft);
+      }
+
+      .index-item span {
+        justify-self: end;
+        color: var(--indigo-deep);
+        font-size: 13px;
+        font-weight: 600;
+      }
+
+      .cta {
+        background: #e8eeeb;
+        border-top: 1px solid var(--line);
+      }
+
+      .cta-panel {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) auto;
+        gap: 28px;
+        align-items: end;
+        border: 1px solid var(--line-strong);
+        border-radius: 24px;
+        padding: clamp(26px, 5vw, 58px);
+        background: var(--page);
+      }
+
+      .cta h2 {
+        max-width: 930px;
+        font-size: clamp(46px, 7.8vw, 120px);
+        line-height: 0.92;
+      }
+
+      .cta p {
+        max-width: 650px;
+        margin: 22px 0 0;
+        color: var(--ink-soft);
+        font-size: 18px;
+      }
+
+      .cta-actions {
+        display: grid;
+        gap: 12px;
+        justify-items: end;
+      }
+
+      .cta-note {
+        max-width: 260px;
+        color: var(--muted);
+        font-size: 13px;
+        font-weight: 500;
+        text-align: right;
+      }
+
+      .site-footer {
+        display: grid;
+        grid-template-columns: 1fr auto;
+        gap: 20px;
+        align-items: center;
+        padding: 24px clamp(18px, 4vw, 52px);
+        background: var(--dark);
+        color: #c9d5d1;
+        font-size: 13px;
+      }
+
+      .footer-brand {
+        width: 122px;
+        filter: brightness(1.5);
+      }
+
+      .reveal {
+        animation: blurRise 720ms var(--ease-out) both;
+      }
+
+      .reveal.delay-1 {
+        animation-delay: 90ms;
+      }
+
+      .reveal.delay-2 {
+        animation-delay: 180ms;
+      }
+
+      .reveal.delay-3 {
+        animation-delay: 270ms;
+      }
+
+      @keyframes blurRise {
+        from {
+          opacity: 0;
+          filter: blur(12px);
+          transform: translateY(22px);
+        }
+        to {
+          opacity: 1;
+          filter: blur(0);
+          transform: translateY(0);
+        }
+      }
+
+      @media (max-width: 1080px) {
+        .site-header {
+          grid-template-columns: 1fr auto;
+        }
+
+        .nav-links {
+          display: none;
+        }
+
+        .hero {
+          grid-template-columns: 1fr;
+          min-height: 0;
+        }
+
+        .proof-cockpit {
+          min-height: 610px;
+        }
+
+        .section-heading,
+        .hero-intro,
+        .engine-row,
+        .testimony-layout,
+        .index-grid,
+        .cta-panel {
+          grid-template-columns: 1fr;
+        }
+
+        .index-copy {
+          position: static;
+        }
+
+        .cta-actions {
+          justify-items: start;
+        }
+
+        .cta-note {
+          text-align: left;
+        }
+      }
+
+      @media (max-width: 820px) {
+        .hero {
+          padding-top: 34px;
+        }
+
+        .hero h1 {
+          font-size: clamp(46px, 15vw, 88px);
+        }
+
+        .docket-line,
+        .ledger-row,
+        .index-item {
+          grid-template-columns: 1fr;
+          gap: 9px;
+        }
+
+        .docket-line b,
+        .index-item span {
+          justify-self: start;
+        }
+
+        .proof-cockpit {
+          min-height: 720px;
+          border-radius: 20px;
+        }
+
+        .cockpit-stage {
+          min-height: 565px;
+        }
+
+        .video-pane {
+          height: 278px;
+        }
+
+        .case-rail {
+          grid-template-columns: 1fr;
+          top: 332px;
+          bottom: auto;
+        }
+
+        .rail-large img {
+          height: 170px;
+        }
+
+        .ledger-row {
+          align-items: start;
+          min-height: 0;
+          padding: 28px 0;
+        }
+
+        .result-cell {
+          gap: 12px;
+        }
+
+        .media-thumb img {
+          height: 190px;
+        }
+
+        .quote-panel,
+        .video-slot,
+        .video-slot img {
+          min-height: 430px;
+        }
+
+        .video-copy {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      @media (max-width: 560px) {
+        .site-header {
+          padding: 14px 16px;
+        }
+
+        .brand {
+          width: 112px;
+        }
+
+        .header-action {
+          min-height: 38px;
+          padding: 0 13px;
+          font-size: 13px;
+        }
+
+        .hero,
+        .section {
+          padding-right: 16px;
+          padding-left: 16px;
+        }
+
+        .proof-label {
+          max-width: 100%;
+          align-items: flex-start;
+          border-radius: 18px;
+        }
+
+        .button {
+          width: 100%;
+        }
+
+        .button-row {
+          width: 100%;
+        }
+
+        .proof-cockpit {
+          min-height: 815px;
+        }
+
+        .cockpit-top,
+        .cockpit-footer {
+          grid-template-columns: 1fr;
+          align-items: start;
+        }
+
+        .cockpit-stage {
+          padding: 14px;
+        }
+
+        .video-pane {
+          inset: 14px 14px auto 14px;
+        }
+
+        .case-rail {
+          right: 14px;
+          left: 14px;
+        }
+
+        .display-word {
+          font-size: clamp(54px, 22vw, 102px);
+        }
+
+        .section-heading h2 {
+          font-size: clamp(36px, 11vw, 46px);
+        }
+
+        .engine-copy h3 {
+          font-size: 25px;
+          line-height: 1.05;
+        }
+
+        .engine-copy p,
+        .ledger-work p,
+        .result-cell p,
+        .section-heading p {
+          font-size: 15px;
+        }
+
+        .engine-proof strong {
+          font-size: 20px;
+          line-height: 1.08;
+        }
+
+        .engine-proof {
+          min-height: 190px;
+        }
+
+        .cta-panel {
+          border-radius: 20px;
+        }
+
+        .site-footer {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        html {
+          scroll-behavior: auto;
+        }
+
+        *,
+        *::before,
+        *::after {
+          animation-duration: 1ms !important;
+          animation-iteration-count: 1 !important;
+          scroll-behavior: auto !important;
+          transition-duration: 1ms !important;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="page">
+      <header class="site-header">
+        <a href="#" aria-label="LoudFace home">
+          <img class="brand" src="../../public/images/loudface.svg" alt="LoudFace" />
+        </a>
+        <nav class="nav-links" aria-label="Homepage sections">
+          <a href="#proof">Proof</a>
+          <a href="#build-grow">Build + Grow</a>
+          <a href="#ledger">Ledger</a>
+          <a href="#contact">Start</a>
+        </nav>
+        <a class="header-action" href="#contact">Open a sprint</a>
+      </header>
+
+      <main>
+        <section class="hero" aria-labelledby="hero-title">
+          <div class="hero-copy">
+            <div>
+              <div class="proof-label reveal">Live proof docket for B2B SaaS creative growth</div>
+              <h1 id="hero-title" class="reveal delay-1">Every shipped system becomes <span class="accent">proof</span>.</h1>
+              <div class="hero-intro reveal delay-2">
+                <div class="button-row">
+                  <a class="button primary" href="#ledger">Review the ledger</a>
+                  <a class="button secondary" href="#contact">Plan a Build + Grow sprint</a>
+                </div>
+                <p>LoudFace builds the site, runs the growth engine, then keeps the work visible as a record of shipped assets, decisions, experiments, and results.</p>
+              </div>
+            </div>
+
+            <div class="hero-docket reveal delay-3" aria-label="Proof docket summary">
+              <div class="docket-line">
+                <strong>Build</strong>
+                <span>Websites, brand systems, conversion paths, launch-ready content</span>
+                <b>Shipped assets</b>
+              </div>
+              <div class="docket-line">
+                <strong>Grow</strong>
+                <span>SEO, ads, email, experiments, reporting, offer refinement</span>
+                <b>Measured motions</b>
+              </div>
+              <div class="docket-line">
+                <strong>Prove</strong>
+                <span>Client clips, campaign notes, before-after screens, outcome receipts</span>
+                <b>Visible evidence</b>
+              </div>
+            </div>
+          </div>
+
+          <aside class="proof-cockpit reveal delay-2" aria-label="Proof cockpit preview">
+            <div class="cockpit-top">
+              <div class="window-dots" aria-hidden="true"><i></i><i></i><i></i></div>
+              <span>Proof cockpit, filtered by shipped work</span>
+            </div>
+            <div class="cockpit-stage">
+              <div class="video-pane">
+                <img src="../../public/images/our-journey_1.webp" alt="Video call still reserved for customer testimonial" />
+                <div class="play" aria-hidden="true"></div>
+              </div>
+              <div class="case-rail">
+                <div class="rail-large">
+                  <img src="../../public/images/conversion-optimization_1.webp" alt="Conversion optimization interface mockup" />
+                  <div class="rail-caption">
+                    <strong>Conversion proof packet</strong>
+                    <span>Build evidence</span>
+                  </div>
+                </div>
+                <div class="rail-stack">
+                  <div class="mini-proof">
+                    <img src="../../public/images/profitable-ads_1.webp" alt="Paid growth graph visual" />
+                    <div>
+                      <strong>Paid growth notes</strong>
+                      <span>Experiment queue</span>
+                    </div>
+                  </div>
+                  <div class="mini-proof">
+                    <img src="../../public/images/organic-mastery_1.webp" alt="SEO system visual" />
+                    <div>
+                      <strong>Organic map</strong>
+                      <span>Search motion</span>
+                    </div>
+                  </div>
+                  <div class="mini-proof">
+                    <img src="../../public/images/email-marketing_1.webp" alt="Lifecycle email visual" />
+                    <div>
+                      <strong>Lifecycle clips</strong>
+                      <span>Retention motion</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="cockpit-footer">
+              <span class="proof-pulse">Proof in review</span>
+              <span>Dimer Health: 288% conversion lift</span>
+            </div>
+          </aside>
+        </section>
+
+        <section id="build-grow" class="section" aria-labelledby="build-grow-title">
+          <div class="section-inner">
+            <div class="section-heading">
+              <h2 id="build-grow-title">One docket for <span class="accent">Build</span> and Grow.</h2>
+              <p>The page behaves like an editorial index, but the content is operational: what was made, what growth motion it supports, and what proof can be shown.</p>
+            </div>
+
+            <div class="build-grow">
+              <article class="engine-row">
+                <div class="display-word">Build</div>
+                <div class="engine-copy">
+                  <h3>Turn positioning, Webflow production, CRO, and content into a launchable system.</h3>
+                  <p>The build side is treated as evidence, not decoration. Screens, conversion paths, messaging choices, and implementation notes all become visible proof assets.</p>
+                </div>
+                <div class="engine-proof">
+                  <span>Proof artifacts</span>
+                  <div>
+                    <strong>Site receipts, launch notes, conversion map</strong>
+                    <div class="proof-tags">
+                      <i>Webflow</i>
+                      <i>Messaging</i>
+                      <i>CRO</i>
+                    </div>
+                  </div>
+                </div>
+              </article>
+
+              <article class="engine-row">
+                <div class="display-word">Grow</div>
+                <div class="engine-copy">
+                  <h3>Connect campaigns, search, lifecycle, and reporting to the same shipped narrative.</h3>
+                  <p>Growth work sits beside the creative work so a SaaS team can see how the website, ads, SEO, and email are compounding rather than living in separate documents.</p>
+                </div>
+                <div class="engine-proof">
+                  <span>Proof artifacts</span>
+                  <div>
+                    <strong>Experiment log, channel readout, testimonial cuts</strong>
+                    <div class="proof-tags">
+                      <i>SEO</i>
+                      <i>Paid</i>
+                      <i>Email</i>
+                    </div>
+                  </div>
+                </div>
+              </article>
+            </div>
+          </div>
+        </section>
+
+        <section id="ledger" class="section work-ledger" aria-labelledby="ledger-title">
+          <div class="section-inner">
+            <div class="section-heading">
+              <h2 id="ledger-title">Work ledger, not a card wall.</h2>
+              <p>Dense rows let LoudFace show more proof without turning the homepage into a generic portfolio grid. Each row has a media receipt and a result field.</p>
+            </div>
+
+            <div class="ledger">
+              <article class="ledger-row">
+                <div class="ledger-title">
+                  Brandfirm
+                  <small>Website system</small>
+                </div>
+                <div class="ledger-work">
+                  <h3>Build a sharper B2B presence around authority, speed, and service clarity.</h3>
+                  <p>Messaging architecture, Webflow production, conversion-focused page structure, and proof capture plan.</p>
+                </div>
+                <div class="media-thumb">
+                  <img src="../../public/images/brandfirm.webp" alt="Brandfirm website system visual" />
+                </div>
+                <div class="result-cell">
+                  <span class="result-state">Shipped proof</span>
+                  <div>
+                    <strong>Brandfirm launch system</strong>
+                    <p>Video testimonial and launch narrative slot for a sales-ready service site.</p>
+                  </div>
+                </div>
+              </article>
+
+              <article class="ledger-row">
+                <div class="ledger-title">
+                  Organic motion
+                  <small>Search growth</small>
+                </div>
+                <div class="ledger-work">
+                  <h3>Translate subject-matter expertise into a search system buyers can find.</h3>
+                  <p>Content map, technical cleanup, publishing rhythm, and proof-led landing pages.</p>
+                </div>
+                <div class="media-thumb">
+                  <img src="../../public/images/organic-mastery_1.webp" alt="Organic growth system visual" />
+                </div>
+                <div class="result-cell">
+                  <span class="result-state">Growth proof</span>
+                  <div>
+                    <strong>Toku: 0 to 86% AI visibility</strong>
+                    <p>Use this row for verified search visibility, answer coverage, and category position.</p>
+                  </div>
+                </div>
+              </article>
+
+              <article class="ledger-row">
+                <div class="ledger-title">
+                  Paid engine
+                  <small>Experiment system</small>
+                </div>
+                <div class="ledger-work">
+                  <h3>Ship creative tests with enough context to know what actually changed.</h3>
+                  <p>Offer tests, ad angles, landing page variants, reporting rituals, and decision notes.</p>
+                </div>
+                <div class="media-thumb">
+                  <img src="../../public/images/profitable-ads_1.webp" alt="Paid acquisition system visual" />
+                </div>
+                <div class="result-cell">
+                  <span class="result-state">Measured proof</span>
+                  <div>
+                    <strong>Campaign learning log</strong>
+                    <p>Replace with approved CAC, demo quality, win notes, or creative learning.</p>
+                  </div>
+                </div>
+              </article>
+
+              <article class="ledger-row">
+                <div class="ledger-title">
+                  Lifecycle
+                  <small>Email growth</small>
+                </div>
+                <div class="ledger-work">
+                  <h3>Keep the launch working after the first click with lifecycle proof.</h3>
+                  <p>Onboarding, nurture, retention, campaign cadence, and voice-consistent email systems.</p>
+                </div>
+                <div class="media-thumb">
+                  <img src="../../public/images/email-marketing_1.webp" alt="Email marketing system visual" />
+                </div>
+                <div class="result-cell">
+                  <span class="result-state">Lifecycle proof</span>
+                  <div>
+                    <strong>Sales handoff evidence</strong>
+                    <p>Use for activation, replies, reactivation, or sales assist evidence.</p>
+                  </div>
+                </div>
+              </article>
+            </div>
+          </div>
+        </section>
+
+        <section id="proof" class="section testimonial" aria-labelledby="testimonial-title">
+          <div class="section-inner">
+            <div class="section-heading">
+              <h2 id="testimonial-title">The proof should feel filmed.</h2>
+              <p>A dark cinematic break gives the ledger a human witness: client clips, result stories, and the moment a shipped system started moving.</p>
+            </div>
+
+            <div class="testimony-layout">
+              <div class="quote-panel">
+                <blockquote>"Show the work, then show what happened after it went live."</blockquote>
+                <footer>Reserved for the approved Daan Smit or Sarig Reichert customer quote.</footer>
+              </div>
+              <div class="video-slot">
+                <img src="../../public/images/our-journey_1.webp" alt="Placeholder for filmed customer testimonial" />
+                <div class="play" aria-hidden="true"></div>
+                <div class="video-copy">
+                  <strong>Cut a result story from the client's screen, team call, and final numbers.</strong>
+                  <span>Sarig Reichert / Dimer Health video testimonial</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="section proof-index" aria-labelledby="index-title">
+          <div class="section-inner index-grid">
+            <div class="index-copy">
+              <h2 id="index-title">A homepage that keeps receipts.</h2>
+              <p>The editorial index can expand over time as more work ships. It gives LoudFace a format for proof without making every case study compete for a card.</p>
+            </div>
+
+            <div class="index-list" aria-label="Proof index">
+              <div class="index-item">
+                <strong>Live shipped work</strong>
+                <p>Link each service claim to a proof asset, a client clip, or a case-study detail page.</p>
+                <span>Portfolio signal</span>
+              </div>
+              <div class="index-item">
+                <strong>Result docket</strong>
+                <p>Store approved outcomes beside the work they came from so numbers have context.</p>
+                <span>Trust signal</span>
+              </div>
+              <div class="index-item">
+                <strong>Build + Grow bridge</strong>
+                <p>Show how creative production and growth operations work as one motion.</p>
+                <span>Positioning signal</span>
+              </div>
+              <div class="index-item">
+                <strong>Video queue</strong>
+                <p>Reserve visible zones for founder walkthroughs, client proof, and teardown clips.</p>
+                <span>Media signal</span>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section id="contact" class="section cta" aria-labelledby="cta-title">
+          <div class="section-inner">
+            <div class="cta-panel">
+              <div>
+                <h2 id="cta-title">Bring one proof sprint into the room.</h2>
+                <p>Pick a current page, funnel, or campaign. LoudFace turns it into a Build + Grow plan with the proof assets the homepage should be able to show.</p>
+              </div>
+              <div class="cta-actions">
+                <a class="button primary" href="mailto:hello@loudface.com">Start the proof sprint</a>
+                <div class="cta-note">For SaaS teams that need creative work tied to visible growth outcomes.</div>
+              </div>
+            </div>
+          </div>
+        </section>
+      </main>
+
+      <footer class="site-footer">
+        <img class="footer-brand" src="../../public/images/loudface-inversed.svg" alt="LoudFace" />
+        <span>Build + Grow proof ledger concept</span>
+      </footer>
+    </div>
+  </body>
+</html>

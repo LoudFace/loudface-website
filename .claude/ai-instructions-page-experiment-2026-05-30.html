@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AEO Experiment Briefing — The "AI Instructions" Page</title>
+<style>
+  :root{
+    --ink:#16140f; --ink-soft:#4a463d; --muted:#7a756a; --line:#e6e1d6;
+    --paper:#f6f3ec; --card:#fffdf8; --accent:#b5341f; --accent-soft:#f3dccb;
+    --good:#2f6f43; --good-soft:#dcefe1; --warn:#9a6a12; --warn-soft:#f6e9cf;
+    --bad:#9b2222; --bad-soft:#f4dada; --ink-invert:#f6f3ec;
+    --mono:"SFMono-Regular",ui-monospace,"Cascadia Code","JetBrains Mono",Menlo,Consolas,monospace;
+    --sans:"Söhne","Neue Haas Grotesk Display",-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,sans-serif;
+    --serif:"Tiempos Headline","Charter","Iowan Old Style",Georgia,"Times New Roman",serif;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--sans);
+    font-size:17px;line-height:1.6;-webkit-font-smoothing:antialiased}
+  .wrap{max-width:880px;margin:0 auto;padding:0 24px}
+  header.hero{padding:64px 0 40px;border-bottom:1px solid var(--line)}
+  .kicker{font-family:var(--mono);font-size:12px;letter-spacing:.18em;text-transform:uppercase;
+    color:var(--accent);font-weight:600;margin:0 0 18px}
+  h1{font-family:var(--serif);font-weight:600;font-size:46px;line-height:1.05;margin:0 0 18px;letter-spacing:-.01em}
+  .lede{font-size:20px;color:var(--ink-soft);max-width:62ch;margin:0}
+  .meta{margin-top:28px;font-family:var(--mono);font-size:12.5px;color:var(--muted);display:flex;gap:20px;flex-wrap:wrap}
+  .meta b{color:var(--ink-soft);font-weight:600}
+
+  /* verdict band */
+  .verdict{margin:40px 0;border:1px solid var(--line);border-radius:16px;overflow:hidden;background:var(--card)}
+  .verdict-top{display:flex;align-items:center;gap:16px;padding:22px 26px;background:var(--good-soft);border-bottom:1px solid var(--line)}
+  .stamp{font-family:var(--mono);font-weight:700;font-size:13px;letter-spacing:.1em;text-transform:uppercase;
+    padding:7px 14px;border-radius:999px;background:var(--good);color:#fff;white-space:nowrap}
+  .verdict-top h2{margin:0;font-family:var(--serif);font-size:22px;font-weight:600}
+  .verdict-body{padding:22px 26px;color:var(--ink-soft)}
+  .verdict-body p{margin:0 0 12px}
+  .verdict-body p:last-child{margin:0}
+
+  section{padding:44px 0;border-bottom:1px solid var(--line)}
+  h2.sec{font-family:var(--serif);font-size:30px;font-weight:600;margin:0 0 6px;letter-spacing:-.01em}
+  .sec-num{font-family:var(--mono);font-size:12px;color:var(--accent);letter-spacing:.16em;text-transform:uppercase;display:block;margin-bottom:10px}
+  h3{font-size:18px;font-weight:650;margin:30px 0 10px}
+  p{margin:0 0 16px}
+  a{color:var(--accent);text-decoration:underline;text-underline-offset:2px;text-decoration-thickness:1px}
+  strong{font-weight:650}
+  ul,ol{margin:0 0 16px;padding-left:22px}
+  li{margin:0 0 8px}
+
+  .callout{border-left:3px solid var(--accent);background:var(--accent-soft);
+    padding:16px 20px;border-radius:0 10px 10px 0;margin:22px 0}
+  .callout.good{border-color:var(--good);background:var(--good-soft)}
+  .callout.warn{border-color:var(--warn);background:var(--warn-soft)}
+  .callout p{margin:0}
+  .callout .tag{font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;
+    font-weight:700;display:block;margin-bottom:6px;color:var(--ink-soft)}
+
+  table{width:100%;border-collapse:collapse;margin:20px 0;font-size:15px}
+  th,td{text-align:left;padding:11px 14px;border-bottom:1px solid var(--line);vertical-align:top}
+  th{font-family:var(--mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:600}
+  tbody tr:hover{background:var(--paper)}
+  td .yes{color:var(--good);font-weight:650}
+  td .no{color:var(--bad);font-weight:650}
+  td .mid{color:var(--warn);font-weight:650}
+
+  .diagram{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:24px;margin:24px 0}
+  .diagram svg{width:100%;height:auto;display:block}
+  .cap{font-family:var(--mono);font-size:12px;color:var(--muted);margin-top:12px;text-align:center}
+
+  pre{background:#1d1a14;color:#ece6d8;border-radius:12px;padding:20px 22px;overflow:auto;
+    font-family:var(--mono);font-size:13px;line-height:1.6;margin:18px 0}
+  pre .c{color:#8c8472}
+  pre .h{color:#e0a44a}
+  pre .k{color:#d98266}
+  code:not(pre code){font-family:var(--mono);font-size:.86em;background:#ece7da;padding:2px 6px;border-radius:5px}
+
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:22px 0}
+  @media(max-width:680px){.grid2{grid-template-columns:1fr}}
+  .mini{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:18px 20px}
+  .mini h4{margin:0 0 8px;font-size:14px;font-family:var(--mono);text-transform:uppercase;letter-spacing:.06em;color:var(--muted)}
+  .mini p{margin:0;font-size:15px;color:var(--ink-soft)}
+  .mini .big{font-family:var(--serif);font-size:30px;font-weight:600;color:var(--ink);display:block;margin-bottom:2px}
+
+  .steps{counter-reset:step;list-style:none;padding:0;margin:22px 0}
+  .steps li{counter-increment:step;position:relative;padding:0 0 18px 48px;margin:0}
+  .steps li::before{content:counter(step);position:absolute;left:0;top:-2px;width:32px;height:32px;
+    background:var(--ink);color:var(--paper);border-radius:9px;font-family:var(--mono);font-weight:700;
+    font-size:14px;display:flex;align-items:center;justify-content:center}
+  .steps li b{display:block;margin-bottom:2px}
+
+  .copybtn{font-family:var(--mono);font-size:13px;font-weight:600;background:var(--ink);color:var(--paper);
+    border:none;padding:12px 20px;border-radius:10px;cursor:pointer;margin:8px 0;transition:opacity .15s}
+  .copybtn:hover{opacity:.85}
+  .copybtn.ok{background:var(--good)}
+
+  footer{padding:40px 0 70px;color:var(--muted);font-size:13px}
+  footer .src{font-family:var(--mono);font-size:12px;line-height:1.9}
+  footer a{color:var(--ink-soft)}
+  .pill{display:inline-block;font-family:var(--mono);font-size:11px;padding:3px 9px;border-radius:999px;
+    background:var(--accent-soft);color:var(--accent);font-weight:600;letter-spacing:.04em}
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <div class="wrap">
+    <p class="kicker">LoudFace · AEO Experiment Briefing</p>
+    <h1>The "AI Instructions" page that ChatGPT cited in 48 hours</h1>
+    <p class="lede">What the experiment actually was, why it works (and why it's <em>not</em> the llms.txt myth), and a concrete, measurable version we can ship this week.</p>
+    <div class="meta">
+      <span><b>Prepared</b> 2026-05-30</span>
+      <span><b>For</b> Arnel / LoudFace</span>
+      <span><b>Effort</b> ~1 hr build · 2 wk measure</span>
+      <span><b>Risk</b> Low</span>
+    </div>
+  </div>
+</header>
+
+<div class="wrap">
+
+  <!-- VERDICT -->
+  <div class="verdict">
+    <div class="verdict-top">
+      <span class="stamp">Recommend: Ship it</span>
+      <h2>Worth running — as a measured experiment, not a copy-paste</h2>
+    </div>
+    <div class="verdict-body">
+      <p>The phenomenon is real and reproducible <strong>on ChatGPT</strong>. The cost is an hour. The upside is a controlled brand-grounding asset plus a piece of original AEO research we can publish (dogfooding is on-brand for us).</p>
+      <p>The catch: most people are repeating it as an <em>"llms.txt"</em> hack. It is not. The root <code>/llms.txt</code> file shows <strong>no measurable citation lift</strong> across a 300k-domain study. What actually worked for Nectiv was a <strong>normal indexable page</strong>. Build the right thing and measure it with Peec — don't eyeball it like the original did.</p>
+    </div>
+  </div>
+
+  <!-- 1 -->
+  <section>
+    <span class="sec-num">01 · What actually happened</span>
+    <h2 class="sec">The Nectiv experiment</h2>
+    <p>A digital agency (<a href="https://nectivdigital.com/blog/aeo-experiment-chatgpt-cited-an-ai-instructions-page-in-48-hours">Nectiv</a>) published a single page and watched ChatGPT start quoting it on branded questions.</p>
+    <table>
+      <tbody>
+        <tr><th>The page</th><td><code>/ai-instructions</code> — a plain, markdown-style page of brand facts</td></tr>
+        <tr><th>Placement</th><td>Linked directly in the site <strong>footer</strong> (so it's crawlable from every page)</td></tr>
+        <tr><th>The hook</th><td>A section literally headed <code>## INSTRUCTIONS FOR AI ASSISTANTS</code> stating how they want the brand described</td></tr>
+        <tr><th>The canary</th><td>They wrote "we work with companies doing <strong>$30M+ ARR</strong>" — a fact found <em>nowhere else on the site</em>, planted to test attribution</td></tr>
+        <tr><th>Result</th><td>Indexed in Google &lt;24h. <strong>Cited by ChatGPT &lt;48h.</strong> ChatGPT sometimes reproduced the $30M figure and their framework names verbatim on branded prompts</td></tr>
+        <tr><th>Effort</th><td>By their own account, "took me 5 minutes"</td></tr>
+      </tbody>
+    </table>
+    <div class="callout">
+      <span class="tag">Why the canary is clever</span>
+      <p>Putting a unique fact <em>only</em> on that page turns a vague claim into proof. When ChatGPT repeated "$30M+ ARR," there was only one place it could have come from. That's a real attribution test — and it's the part we should keep.</p>
+    </div>
+  </section>
+
+  <!-- 2 -->
+  <section>
+    <span class="sec-num">02 · The trap</span>
+    <h2 class="sec">This is not llms.txt — and that distinction is everything</h2>
+    <p>The internet is currently conflating two different things. They live at different URLs, get treated differently by crawlers, and have opposite track records.</p>
+    <table>
+      <thead><tr><th>&nbsp;</th><th>Root <code>/llms.txt</code> file</th><th>An <code>/ai-instructions</code> <em>page</em></th></tr></thead>
+      <tbody>
+        <tr><th>What it is</th><td>A spec file at site root, robots.txt-style</td><td>A normal HTML page with a URL, in your sitemap</td></tr>
+        <tr><th>Indexed &amp; retrievable?</th><td><span class="no">Not really</span> — treated as config, not content</td><td><span class="yes">Yes</span> — enters the search index like any page</td></tr>
+        <tr><th>Officially used by OpenAI?</th><td><span class="no">No commitment</span>. GPTBot fetches it, doesn't act on it</td><td>n/a — it's just a page their search bot reads</td></tr>
+        <tr><th>Evidence of citation lift</th><td><span class="no">None.</span> 300k-domain study: no effect</td><td><span class="mid">Anecdotal but reproducible</span> on ChatGPT</td></tr>
+      </tbody>
+    </table>
+    <div class="callout warn">
+      <span class="tag">The hard data on llms.txt</span>
+      <p>A <a href="https://www.searchenginejournal.com/llms-txt-shows-no-clear-effect-on-ai-citations-based-on-300k-domains/561542/">~300,000-domain SE Ranking study</a> found <strong>no relationship</strong> between having <code>llms.txt</code> and how often a domain is cited by LLMs — removing it even <em>improved</em> model accuracy. Separately, monitoring of 500M+ AI-bot visits found only ~408 hits targeting <code>llms.txt</code> directly. If we ship the root file and call it done, we ship the thing that doesn't work.</p>
+    </div>
+    <p>So the takeaway isn't "make an llms.txt." It's: <strong>make a clean, fact-dense, indexable page that becomes the single canonical source of brand facts</strong> — and let normal AI search retrieval do the rest.</p>
+  </section>
+
+  <!-- 3 -->
+  <section>
+    <span class="sec-num">03 · Mechanism</span>
+    <h2 class="sec">Why it actually works (it's retrieval, not obedience)</h2>
+    <p>The "instructions for AI" framing is half theatre. ChatGPT isn't taking orders from your page. What's happening is more mundane — and more reliable:</p>
+    <div class="diagram">
+      <svg viewBox="0 0 820 250" role="img" aria-label="Flow: page is indexed, retrieved on branded queries, then cited">
+        <defs>
+          <marker id="arr" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto">
+            <path d="M0,0 L9,4.5 L0,9 z" fill="#b5341f"/>
+          </marker>
+          <style>
+            .box{fill:#fffdf8;stroke:#16140f;stroke-width:1.5;rx:10}
+            .lbl{font-family:var(--sans,sans-serif);font-size:13px;fill:#16140f;font-weight:600}
+            .sub{font-family:var(--mono,monospace);font-size:10px;fill:#7a756a}
+            .ln{stroke:#b5341f;stroke-width:2;fill:none;marker-end:url(#arr)}
+          </style>
+        </defs>
+        <rect class="box" x="8" y="92" width="150" height="66" rx="10"/>
+        <text class="lbl" x="83" y="118" text-anchor="middle">Your page</text>
+        <text class="sub" x="83" y="137" text-anchor="middle">fact-dense, footer-linked</text>
+
+        <rect class="box" x="200" y="92" width="160" height="66" rx="10"/>
+        <text class="lbl" x="280" y="118" text-anchor="middle">Search index</text>
+        <text class="sub" x="280" y="137" text-anchor="middle">OpenAI / Bing crawl</text>
+
+        <rect class="box" x="402" y="92" width="170" height="66" rx="10"/>
+        <text class="lbl" x="487" y="113" text-anchor="middle">Branded query</text>
+        <text class="sub" x="487" y="131" text-anchor="middle">"what is LoudFace?"</text>
+        <text class="sub" x="487" y="145" text-anchor="middle">→ retrieves your page</text>
+
+        <rect class="box" x="614" y="92" width="158" height="66" rx="10"/>
+        <text class="lbl" x="693" y="118" text-anchor="middle">ChatGPT cites it</text>
+        <text class="sub" x="693" y="137" text-anchor="middle">paraphrases facts</text>
+
+        <line class="ln" x1="158" y1="125" x2="196" y2="125"/>
+        <line class="ln" x1="360" y1="125" x2="398" y2="125"/>
+        <line class="ln" x1="572" y1="125" x2="610" y2="125"/>
+
+        <text class="sub" x="410" y="40" text-anchor="middle" fill="#2f6f43" style="font-weight:700">CANARY FACT ($30M ARR) rides this whole path —</text>
+        <text class="sub" x="410" y="55" text-anchor="middle" fill="#2f6f43" style="font-weight:700">if it comes out the far end, the page is in the pipeline.</text>
+        <path d="M83,92 C83,30 693,30 693,92" stroke="#2f6f43" stroke-width="1.5" fill="none" stroke-dasharray="4 4"/>
+      </svg>
+      <p class="cap">The page wins because it's the densest, cleanest, most quotable source of brand facts — not because it "instructs" anything.</p>
+    </div>
+    <p>Two real reasons it punches above its weight:</p>
+    <ul>
+      <li><strong>It's the canonical answer source.</strong> Most sites scatter brand facts across home / about / pricing. One tidy page concentrates them, so it's the easiest thing for a retrieval system to lift a clean answer from.</li>
+      <li><strong>Structure gets cited more.</strong> Direct-answer formatting, tables and clear headings get pulled into AI answers far more than prose. The markdown style isn't magic — it's just retrieval-friendly.</li>
+    </ul>
+  </section>
+
+  <!-- 4 -->
+  <section>
+    <span class="sec-num">04 · The honest limits</span>
+    <h2 class="sec">What it does <em>not</em> do</h2>
+    <div class="grid2">
+      <div class="mini"><h4>ChatGPT only</h4><p>Nectiv saw it on ChatGPT and <strong>nowhere else</strong> — Gemini, Claude, and Google AI Mode didn't cite the page on the same prompts. Single-engine play.</p></div>
+      <div class="mini"><h4>Branded queries only</h4><p>It grounds <em>"who is LoudFace / what do they do"</em> answers. It will not rank you for "best B2B SaaS SEO agency" — that's still the listicle/comparison game.</p></div>
+      <div class="mini"><h4>Not obedience</h4><p>You can't force a tone or suppress a competitor by writing it down. The model paraphrases facts; it doesn't follow commands in a public file.</p></div>
+      <div class="mini"><h4>Not durable yet</h4><p>Anecdotal, recent, single-engine. Treat the "48 hours" as one data point, not a law. Hence: measure ours.</p></div>
+    </div>
+    <div class="callout warn">
+      <span class="tag">One soft risk worth naming</span>
+      <p>A public "INSTRUCTIONS FOR AI" block can read as manipulative and, in theory, invites prompt-injection-style scrutiny. We'll keep ours as <strong>honest, verifiable brand facts</strong> framed as an AI-readable fact sheet — not as commands to lie or bury rivals.</p>
+    </div>
+  </section>
+
+  <!-- 5 -->
+  <section>
+    <span class="sec-num">05 · Fit for LoudFace</span>
+    <h2 class="sec">Why we're unusually well-placed to run this</h2>
+    <table>
+      <tbody>
+        <tr><th>We measure, they guessed</th><td><span class="yes">✓</span> We track AI citations in <strong>Peec</strong> daily. We can run this as a real before/after with a canary, not vibes. That's the whole edge.</td></tr>
+        <tr><th>Crawlers already allowed</th><td><span class="yes">✓</span> <code>src/app/robots.ts</code> permits <code>GPTBot</code> + <code>OAI-SearchBot</code> + <code>ChatGPT-User</code> — the bots that matter here aren't blocked.</td></tr>
+        <tr><th>Indexing is fast</th><td><span class="yes">✓</span> Sanity webhook → IndexNow + ISR revalidate already fires on publish, so a new page pings search engines immediately.</td></tr>
+        <tr><th>It's our category</th><td><span class="yes">✓</span> We sell AEO/organic growth. Running + publishing this experiment <em>is</em> content + credibility. Dogfooding compounds.</td></tr>
+        <tr><th>Cloudflare edge</th><td><span class="mid">⚠</span> Memory flags that Cloudflare's default bot-management can inject an AI-blocking <code>robots.txt</code> at the edge, overriding ours. <strong>Verify the live robots.txt before counting on this.</strong></td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- 6 -->
+  <section>
+    <span class="sec-num">06 · The plan</span>
+    <h2 class="sec">A measurable LoudFace version</h2>
+    <p>Same idea, but instrumented so we actually learn something — and don't ship the dead llms.txt variant.</p>
+
+    <h3>Hypothesis</h3>
+    <p>A fact-dense, indexable <code>/ai-instructions</code> page, footer-linked, will (a) get cited by ChatGPT on branded LoudFace prompts within ~1–2 weeks, and (b) reproduce a planted canary fact — measurable in Peec.</p>
+
+    <h3>The canary</h3>
+    <p>One true-but-unique fact, on this page only, phrased distinctively so attribution is unambiguous. Candidates to pick from (must be real):</p>
+    <ul>
+      <li>A specific client-tier or ICP detail not stated elsewhere on the site</li>
+      <li>A named internal methodology / framework (like Nectiv's "Adaptive Workflows")</li>
+      <li>A specific founding detail or a precise stat</li>
+    </ul>
+    <div class="callout">
+      <span class="tag">Decision needed from you</span>
+      <p>Give me <strong>one real fact</strong> that's currently nowhere on loudface.co. That becomes our canary. (Don't fabricate — a false canary that gets cited is a brand liability.)</p>
+    </div>
+
+    <h3>Build steps</h3>
+    <ol class="steps">
+      <li><b>Create the page</b> as a real route (<code>/ai-instructions</code>) or a Sanity entry — proper page, in the sitemap, server-rendered. Not a static .txt, not just llms.txt.</li>
+      <li><b>Structure it for retrieval</b> — H2 sections, a facts table, clear Q→A blocks: who we are, what we do, ICP, services, proof, contact. Plus one honest <em>"Information for AI assistants"</em> section with the canary.</li>
+      <li><b>Footer-link it</b> sitewide so it's crawlable from every page.</li>
+      <li><b>Force indexing</b> — confirm IndexNow fires; submit in GSC + Bing Webmaster.</li>
+      <li><b>Verify live robots.txt</b> isn't Cloudflare-overridden to block GPTBot/OAI-SearchBot.</li>
+      <li><b>Baseline in Peec</b> — record current branded-prompt citations <em>before</em> we ship, so the delta is real.</li>
+    </ol>
+
+    <h3>Measurement &amp; success criteria</h3>
+    <table>
+      <thead><tr><th>Signal</th><th>Tool</th><th>Win condition</th></tr></thead>
+      <tbody>
+        <tr><td>Page indexed</td><td>GSC / Bing</td><td>Indexed within 72h</td></tr>
+        <tr><td>Cited on branded prompts</td><td>Peec</td><td>Appears as a cited source on ≥1 LoudFace branded prompt within 14d</td></tr>
+        <tr><td>Canary reproduced</td><td>Manual ChatGPT check + Peec chat inspect</td><td>ChatGPT repeats the canary fact → pipeline confirmed</td></tr>
+        <tr><td>Engine spread</td><td>Peec (break down by model)</td><td>Bonus if anything beyond ChatGPT cites it</td></tr>
+      </tbody>
+    </table>
+
+    <h3>Timeline</h3>
+    <div class="grid2">
+      <div class="mini"><span class="big">~1 hr</span><h4>Build + ship</h4><p>Page, footer link, indexing.</p></div>
+      <div class="mini"><span class="big">14 d</span><h4>Measure</h4><p>Daily Peec branded-prompt check + manual ChatGPT spot-checks.</p></div>
+    </div>
+    <p>If it works → write it up as original research (our own numbers beat rehashing Nectiv) and add an <code>/ai-instructions</code> page to client playbooks. If it doesn't → we've spent an hour and learned our canary didn't enter the pipeline, which is also publishable.</p>
+  </section>
+
+  <!-- 7 -->
+  <section>
+    <span class="sec-num">07 · Over to you</span>
+    <h2 class="sec">Next steps</h2>
+    <ol>
+      <li><strong>Pick the canary fact</strong> — one real thing not currently on the site.</li>
+      <li><strong>Say go</strong> and I'll build <code>/ai-instructions</code> (route + footer link), wire indexing, and set the Peec baseline.</li>
+      <li>Optional: I can pull <code>/seo-brain</code> first to slot this into the content calendar + log it as a tracked experiment.</li>
+    </ol>
+    <button class="copybtn" id="copy">Copy experiment brief as prompt →</button>
+    <p style="font-size:13px;color:var(--muted);margin-top:4px">Copies a ready-to-paste brief so you can hand this to me (or anyone) to execute.</p>
+  </section>
+
+  <footer>
+    <p class="pill">Sources</p>
+    <p class="src">
+      • Nectiv — <a href="https://nectivdigital.com/blog/aeo-experiment-chatgpt-cited-an-ai-instructions-page-in-48-hours">AEO Experiment: ChatGPT Cited An "AI Instructions" Page In 48 Hours</a><br>
+      • Search Engine Journal — <a href="https://www.searchenginejournal.com/llms-txt-shows-no-clear-effect-on-ai-citations-based-on-300k-domains/561542/">LLMs.txt Shows No Clear Effect On AI Citations (300k domains)</a><br>
+      • SE Ranking — <a href="https://seranking.com/blog/llms-txt/">LLMs.txt: Why Brands Rely On It and Why It Doesn't Work</a><br>
+      • Ahrefs — <a href="https://ahrefs.com/blog/what-is-llms-txt/">What Is llms.txt, and Should You Care About It?</a><br>
+      • SearchSignal — <a href="https://searchsignal.online/blog/llms-txt-2026">llms.txt in 2026: What It Does (and Doesn't) Do</a><br>
+      • Internal — <code>src/app/robots.ts</code>, Cloudflare-zone memory note, Peec tracking infra
+    </p>
+    <p style="margin-top:18px">Briefing generated for LoudFace · 2026-05-30 · single-file, offline-safe</p>
+  </footer>
+
+</div>
+
+<script>
+  const brief = [
+    "Run the LoudFace AEO 'AI Instructions page' experiment.",
+    "",
+    "Background: Nectiv published an /ai-instructions page (markdown-style, footer-linked, fact-dense) and ChatGPT cited it within 48h, reproducing a unique canary fact ($30M+ ARR). This is NOT the llms.txt root file (that shows no citation lift across a 300k-domain study) — it's a normal indexable PAGE that enters search retrieval.",
+    "",
+    "Build:",
+    "1. Create a real, server-rendered /ai-instructions page (route or Sanity entry), in the sitemap.",
+    "2. Structure for retrieval: H2 sections, a brand-facts table, Q->A blocks (who we are, what we do, ICP, services, proof, contact), plus an honest 'Information for AI assistants' section.",
+    "3. Plant ONE real canary fact found nowhere else on loudface.co: <FILL IN>.",
+    "4. Footer-link it sitewide.",
+    "5. Force indexing (IndexNow + GSC + Bing). Verify live robots.txt isn't Cloudflare-overridden to block GPTBot/OAI-SearchBot.",
+    "6. Record a Peec baseline of branded-prompt citations BEFORE shipping.",
+    "",
+    "Success (within 14d): page indexed <72h; cited by ChatGPT on >=1 branded prompt; canary fact reproduced (pipeline confirmed). Bonus: any non-ChatGPT engine cites it.",
+    "Measure daily in Peec + manual ChatGPT spot-checks. Write up results as original research if it works."
+  ].join("\n");
+  const btn = document.getElementById('copy');
+  btn.addEventListener('click', async () => {
+    try { await navigator.clipboard.writeText(brief);
+      btn.textContent = 'Copied ✓'; btn.classList.add('ok');
+      setTimeout(()=>{btn.textContent='Copy experiment brief as prompt →';btn.classList.remove('ok');},1800);
+    } catch(e){ btn.textContent='Press ⌘C — selected';
+      const r=document.createRange();r.selectNodeContents(btn);window.getSelection().removeAllRanges();window.getSelection().addRange(r);}
+  });
+</script>
+</body>
+</html>

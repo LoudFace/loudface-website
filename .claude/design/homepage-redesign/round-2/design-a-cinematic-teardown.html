@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>LoudFace Homepage Concept A - Cinematic Teardown</title>
+  <style>
+    @font-face{font-family:NeueMontreal;src:url("http://localhost:3005/fonts/NeueMontreal-Medium.woff2") format("woff2");font-weight:500}
+    @font-face{font-family:Satoshi;src:url("http://localhost:3005/fonts/Satoshi-Regular.woff2") format("woff2");font-weight:400}
+    @font-face{font-family:Satoshi;src:url("http://localhost:3005/fonts/Satoshi-Bold.woff2") format("woff2");font-weight:700}
+    :root{--ink:#17211f;--ink2:#22302e;--paper:#f8faf7;--muted:#65706d;--line:#dfe5df;--indigo:#4f46e5;--blue:#eef2ff}
+    *{box-sizing:border-box} body{margin:0;background:var(--paper);color:var(--ink);font-family:Satoshi,system-ui,sans-serif;overflow-x:hidden} a{color:inherit;text-decoration:none} img{max-width:100%;display:block}
+    .wrap{max-width:1320px;margin:auto;padding:0 28px}.nav{height:72px;display:flex;align-items:center;justify-content:space-between}.nav img{width:126px}.nav .links{display:flex;gap:22px;color:#d5ded9;font-size:14px}.pill{border:1px solid rgba(255,255,255,.18);border-radius:999px;padding:10px 16px;background:rgba(255,255,255,.07);color:#fff}
+    .stage{margin:0 16px 20px;border-radius:22px;overflow:hidden;background:var(--ink);color:#fff;position:relative}.grid{position:absolute;inset:0;opacity:.16;background-image:linear-gradient(rgba(255,255,255,.16) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.16) 1px,transparent 1px);background-size:58px 58px}.hero{position:relative;min-height:720px;padding:0 0 42px;display:flex;flex-direction:column}.hero-body{flex:1;display:grid;grid-template-columns:1.04fr .96fr;gap:52px;align-items:center;padding:52px}.kicker{font-size:14px;color:#aab8b2;font-weight:700}.h1{font-family:NeueMontreal,sans-serif;font-size:clamp(58px,8.2vw,118px);line-height:.88;letter-spacing:0;margin:28px 0}.accent{font-family:Georgia,serif;font-style:italic;color:#a5b4fc;font-weight:400}.copy{max-width:520px;color:#cad5d0;font-size:18px;line-height:1.55}.actions{display:flex;gap:12px;margin-top:26px}.btn{display:inline-flex;align-items:center;justify-content:center;border-radius:999px;padding:14px 20px;font-weight:700}.btn.primary{background:#fff;color:var(--ink)}.btn.ghost{border:1px solid rgba(255,255,255,.18);color:#fff}.metrics{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:26px;max-width:560px}.metric{border:1px solid rgba(255,255,255,.13);border-radius:12px;padding:12px;background:rgba(255,255,255,.05)}.metric b{display:block;font-family:NeueMontreal,sans-serif;font-size:28px;line-height:1}.metric span{display:block;margin-top:5px;color:#aebbb6;font-size:12px;line-height:1.35}
+    .teardown{align-self:center;border:1px solid rgba(255,255,255,.14);border-radius:18px;overflow:hidden;background:#0d1513;box-shadow:0 32px 80px rgba(0,0,0,.25)}.teardown-head{height:48px;display:flex;align-items:center;justify-content:space-between;padding:0 16px;border-bottom:1px solid rgba(255,255,255,.12);color:#aebbb6;font-size:13px}.scrub{height:6px;background:rgba(255,255,255,.1);border-radius:999px;overflow:hidden;width:180px}.scrub span{display:block;width:62%;height:100%;background:#fff}.teardown-img{height:320px;width:100%;object-fit:cover;object-position:top}.teardown-foot{display:grid;grid-template-columns:1fr 1fr;border-top:1px solid rgba(255,255,255,.12)}.note{padding:18px;border-right:1px solid rgba(255,255,255,.12)}.note:last-child{border-right:0}.note b{display:block;color:#fff;margin-bottom:7px}.note span{font-size:14px;color:#aebbb6;line-height:1.45}
+    .proof-band{position:relative;background:#fff;color:var(--ink);padding:28px 52px;display:grid;grid-template-columns:260px 1fr;gap:28px;align-items:center}.proof-band h2{font-family:NeueMontreal,sans-serif;font-size:30px;line-height:1.05;margin:0}.cards{display:flex;gap:14px;overflow:hidden}.card{min-width:240px;border:1px solid var(--line);border-radius:12px;overflow:hidden;background:#fff}.card img{height:120px;width:100%;object-fit:cover}.card div{padding:14px}.card b{display:block;font-size:15px}.card span{font-size:13px;color:var(--muted)}
+    .section{padding:90px 0}.split{display:grid;grid-template-columns:.85fr 1.15fr;gap:42px}.section h2{font-family:NeueMontreal,sans-serif;font-size:56px;line-height:.98;margin:0 0 18px}.panel-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}.panel{border:1px solid var(--line);border-radius:16px;background:#fff;padding:24px;min-height:220px}.panel.dark{background:var(--ink);color:#fff}.panel img{height:128px;width:100%;object-fit:cover;border-radius:10px;margin-bottom:18px}.panel p,.section p{color:var(--muted);line-height:1.55}.panel.dark p{color:#b8c3bd}.close{margin:40px 16px;border-radius:20px;background:var(--ink);color:#fff;padding:64px}.close h2{font-family:NeueMontreal,sans-serif;font-size:64px;line-height:.95;margin:0}.close p{max-width:520px;color:#c5d0cb}
+    @media(max-width:840px){.wrap{padding:0 18px}.nav .links,.pill{display:none}.nav{height:64px}.nav img{width:112px}.stage{margin:0;overflow:hidden;border-radius:0}.hero{min-height:auto}.hero-body{grid-template-columns:1fr;padding:24px 20px;gap:26px}.h1{font-size:30px;line-height:1.08;overflow-wrap:break-word;margin:20px 0;max-width:300px}.copy{font-size:15px;max-width:300px}.actions{flex-direction:column;max-width:300px}.metrics{grid-template-columns:1fr;gap:8px;max-width:300px}.metric b{font-size:24px}.teardown{width:100%;min-width:0}.teardown-head{gap:12px}.scrub{width:70px;flex:0 0 auto}.teardown-img{height:200px}.teardown-foot,.proof-band,.split,.panel-grid{grid-template-columns:1fr}.proof-band{padding:24px}.cards{display:grid;grid-template-columns:1fr;overflow:visible}.card{min-width:0}.section.wrap{padding:56px 18px}.section h2,.close h2{font-size:30px;line-height:1.1}.close{padding:28px;margin:24px 0;border-radius:0;overflow:hidden}.close p{font-size:15px}}
+  </style>
+</head>
+<body>
+  <main class="stage">
+    <div class="grid"></div>
+    <div class="wrap">
+      <nav class="nav">
+        <img src="http://localhost:3005/images/loudface-inversed.svg" alt="LoudFace" />
+        <div class="links"><a>Work</a><a>Systems</a><a>Proof</a></div>
+        <a class="pill">Book a teardown</a>
+      </nav>
+      <section class="hero">
+        <div class="hero-body">
+          <div>
+            <div class="kicker">Client work, paused at the proof moment</div>
+            <h1 class="h1">Your SaaS site should feel proven <span class="accent">before</span> the call.</h1>
+            <p class="copy">LoudFace turns the messy parts of growth into a page system buyers can inspect: offer, proof, search surface, conversion path, and the story sales needs later.</p>
+            <div class="actions"><a class="btn primary">Book a working session</a><a class="btn ghost">Watch the teardown</a></div>
+            <div class="metrics"><div class="metric"><b>200+</b><span>B2B SaaS websites shipped</span></div><div class="metric"><b>288%</b><span>best conversion increase</span></div><div class="metric"><b>0->86%</b><span>Toku AI visibility lift</span></div></div>
+          </div>
+          <aside class="teardown">
+            <div class="teardown-head"><span>Homepage teardown footage</span><div class="scrub"><span></span></div></div>
+            <img class="teardown-img" src="http://localhost:3005/images/profitable-ads_1.webp" alt="Campaign work screen" />
+            <div class="teardown-foot">
+              <div class="note"><b>What buyers see</b><span>Claim, proof, and product context land in one visible sequence.</span></div>
+              <div class="note"><b>What we change</b><span>The page stops explaining everything and starts showing the right evidence.</span></div>
+            </div>
+          </aside>
+        </div>
+      </section>
+    </div>
+    <section class="proof-band">
+      <h2>Real work sits under the claim.</h2>
+      <div class="cards">
+        <article class="card"><img src="http://localhost:3005/images/brandfirm.webp" alt="Brandfirm work" /><div><b>Brandfirm page system</b><span>Offer, CMS, and conversion path.</span></div></article>
+        <article class="card"><img src="http://localhost:3005/images/organic-mastery_1.webp" alt="Organic growth work" /><div><b>Organic growth surface</b><span>Search and answer coverage.</span></div></article>
+        <article class="card"><img src="http://localhost:3005/images/conversion-optimization_1.webp" alt="Conversion work" /><div><b>Conversion room</b><span>Landing pages and tests.</span></div></article>
+      </div>
+    </section>
+  </main>
+  <section class="section wrap">
+    <div class="split">
+      <div><h2>Build the front door. Keep the room running.</h2><p>Most teams split site work, SEO, and conversion into separate vendors. This concept sells one operating room instead.</p></div>
+      <div class="panel-grid">
+        <article class="panel"><img src="http://localhost:3005/images/webflow-experts_1.webp" alt="Webflow build" /><h3>Website system</h3><p>Messaging, page architecture, CMS, Webflow build, and launch QA.</p></article>
+        <article class="panel dark"><h3>Growth system</h3><p>SEO, AEO, landing pages, and experiments feed back into the site instead of floating outside it.</p></article>
+        <article class="panel"><h3>Client proof</h3><p>Case studies, teardown clips, and screenshots live near the claims they support.</p></article>
+        <article class="panel"><h3>Sales handoff</h3><p>The site gives sales a cleaner story because the page already did the early proof work.</p></article>
+      </div>
+    </div>
+  </section>
+  <section class="close">
+    <h2>Bring one messy growth problem. Leave with the first page worth fixing.</h2>
+    <p>Thirty minutes. No deck. We inspect the page, the offer, and the proof buyers get before they talk to sales.</p>
+  </section>
+</body>
+</html>

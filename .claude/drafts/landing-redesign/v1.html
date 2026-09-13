@@ -1,0 +1,753 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LoudFace — One team builds it. The same team grows it.</title>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preconnect" href="https://api.fontshare.com" crossorigin>
+<link href="fonts.css" rel="stylesheet">
+<link href="https://api.fontshare.com/v2/css?f[]=clash-display@400,500,600,700&f[]=general-sans@400,500,600&f[]=cabinet-grotesk@400,500,700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..700&family=Geist:wght@400;500;600&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+<style>
+:root{
+  --display:'Bricolage Grotesque',system-ui,sans-serif;
+  --body:'Geist',system-ui,sans-serif;
+  --serif:'Instrument Serif',Georgia,serif;
+  --mono:'Geist Mono',ui-monospace,monospace;
+  --ink:#0F1413; --ink-2:#3A4441; --ink-3:#5E6864;
+  --hair:#E8E7E1; --hair-2:#F0EFE9;
+  --paper:#FCFCFB; --paper-2:#F5F4F0; --white:#FFFFFF;
+  --primary:#4F46E5; --primary-2:#6E73FF; --primary-soft:#EEF0FF;
+  --build:#EA580C; --grow:#4F46E5;
+  --ease:cubic-bezier(.2,.7,.2,1);
+  --shadow-sm:0 1px 2px rgba(15,20,19,.04), 0 1px 1px rgba(15,20,19,.03);
+  --shadow-md:0 1px 2px rgba(15,20,19,.04), 0 8px 24px -12px rgba(15,20,19,.14), 0 2px 6px -2px rgba(15,20,19,.06);
+  --shadow-lg:0 2px 4px rgba(15,20,19,.04), 0 24px 60px -24px rgba(15,20,19,.22), 0 8px 20px -10px rgba(15,20,19,.1);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  font-family:var(--body);
+  background:var(--paper);
+  color:var(--ink);
+  line-height:1.55;
+  -webkit-font-smoothing:antialiased;
+  text-rendering:optimizeLegibility;
+  overflow-x:hidden;
+}
+h1,h2,h3,h4{font-family:var(--display);font-weight:500;letter-spacing:-0.025em;line-height:1.02}
+.serif-i{font-family:var(--serif);font-style:italic;color:var(--primary);font-weight:400;letter-spacing:-0.01em}
+a{color:inherit;text-decoration:none}
+img{display:block;max-width:100%}
+.wrap{max-width:1240px;margin:0 auto;padding:0 32px}
+.mono{font-family:var(--mono);font-size:11px;letter-spacing:.04em;text-transform:uppercase;color:var(--ink-3)}
+
+/* focus */
+a:focus-visible,button:focus-visible,.tile:focus-visible{
+  outline:2px solid var(--primary);outline-offset:2px;border-radius:8px;
+}
+
+/* ---------- NAV ---------- */
+.nav{position:sticky;top:0;z-index:60;background:rgba(252,252,251,.82);backdrop-filter:saturate(180%) blur(14px);border-bottom:1px solid var(--hair)}
+.nav-inner{display:flex;align-items:center;justify-content:space-between;height:68px}
+.brand{display:flex;align-items:center;gap:10px;font-family:var(--display);font-weight:600;font-size:19px;letter-spacing:-0.03em}
+.brand .dot{width:11px;height:11px;border-radius:50%;background:var(--primary);position:relative}
+.brand .dot::after{content:"";position:absolute;inset:-4px;border-radius:50%;border:1px solid var(--primary);opacity:.35}
+.nav-links{display:flex;align-items:center;gap:34px}
+.nav-links a{font-size:14px;color:var(--ink-2);font-weight:450;transition:color .2s var(--ease)}
+.nav-links a:hover{color:var(--ink)}
+.nav-cta{display:inline-flex;align-items:center;gap:8px;background:var(--ink);color:var(--paper);padding:10px 18px;border-radius:999px;font-size:13.5px;font-weight:500;font-family:var(--body);transition:transform .2s var(--ease),background .2s var(--ease);border:none;cursor:pointer}
+.nav-cta:hover{background:#1c2422}
+.nav-cta:active{transform:scale(.97)}
+.nav-cta svg{width:14px;height:14px}
+.menu-btn{display:none;background:none;border:1px solid var(--hair);border-radius:9px;width:42px;height:42px;cursor:pointer;align-items:center;justify-content:center}
+.menu-btn svg{width:20px;height:20px;stroke:var(--ink)}
+
+/* ---------- HERO ---------- */
+.hero{padding:74px 0 64px;position:relative}
+.hero-grid{display:grid;grid-template-columns:1.04fr 1fr;gap:64px;align-items:center}
+.avail{display:inline-flex;align-items:center;gap:9px;background:var(--primary-soft);color:#3730a3;padding:7px 14px;border-radius:999px;font-size:12.5px;font-weight:500;margin-bottom:26px;border:1px solid rgba(79,70,229,.14)}
+.avail .pulse{width:7px;height:7px;border-radius:50%;background:var(--primary);box-shadow:0 0 0 0 rgba(79,70,229,.5);animation:pulse 2.6s var(--ease) infinite}
+@keyframes pulse{0%{box-shadow:0 0 0 0 rgba(79,70,229,.4)}70%{box-shadow:0 0 0 7px rgba(79,70,229,0)}100%{box-shadow:0 0 0 0 rgba(79,70,229,0)}}
+.hero h1{font-size:clamp(40px,5.2vw,68px);line-height:1.01;letter-spacing:-0.035em}
+.hero h1 .ln{display:block;overflow:hidden}
+.hero p.sub{margin-top:26px;font-size:18px;line-height:1.6;color:var(--ink-2);max-width:500px}
+.hero-cta-row{display:flex;align-items:center;gap:16px;margin-top:34px;flex-wrap:wrap}
+.btn-primary{display:inline-flex;align-items:center;gap:10px;background:var(--primary);color:#fff;padding:15px 26px;border-radius:12px;font-size:15px;font-weight:500;font-family:var(--body);border:none;cursor:pointer;box-shadow:var(--shadow-md);transition:transform .22s var(--ease),box-shadow .22s var(--ease),background .22s var(--ease)}
+.btn-primary:hover{background:#4338ca;box-shadow:var(--shadow-lg);transform:translateY(-1px)}
+.btn-primary:active{transform:translateY(0) scale(.985)}
+.btn-primary svg{width:16px;height:16px}
+.btn-watch{display:inline-flex;align-items:center;gap:11px;font-size:15px;font-weight:500;color:var(--ink);padding:13px 8px;cursor:pointer;background:none;border:none;font-family:var(--body);transition:color .2s var(--ease)}
+.btn-watch:hover{color:var(--primary)}
+.btn-watch .play{width:38px;height:38px;border-radius:50%;background:var(--white);border:1px solid var(--hair);display:flex;align-items:center;justify-content:center;box-shadow:var(--shadow-sm);transition:transform .22s var(--ease),border-color .2s var(--ease)}
+.btn-watch:hover .play{transform:scale(1.07);border-color:var(--primary)}
+.btn-watch .play svg{width:13px;height:13px;fill:var(--primary);stroke:none}
+.trust{margin-top:42px;display:flex;align-items:center;gap:14px;font-size:12.5px;color:var(--ink-3);flex-wrap:wrap}
+.trust .seg{display:flex;align-items:center;gap:14px}
+.trust .sep{width:4px;height:4px;border-radius:50%;background:var(--hair);}
+
+/* ---- HERO CHART CARD ---- */
+.chart-card{position:relative;background:var(--white);border:1px solid var(--hair);border-radius:22px;padding:24px 24px 18px;box-shadow:var(--shadow-lg)}
+.chart-card::before{content:"";position:absolute;inset:0;border-radius:22px;border:1px solid rgba(79,70,229,.06);pointer-events:none}
+.cc-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px}
+.cc-title{font-family:var(--display);font-weight:500;font-size:15px;letter-spacing:-0.02em}
+.cc-sub{font-size:12px;color:var(--ink-3);margin-top:1px}
+.cc-badge{display:inline-flex;align-items:center;gap:6px;background:var(--primary-soft);color:#3730a3;font-family:var(--mono);font-size:10px;letter-spacing:.04em;text-transform:uppercase;padding:5px 9px;border-radius:7px;font-weight:500}
+.cc-chip{position:absolute;display:flex;align-items:center;gap:9px;background:var(--white);border:1px solid var(--hair);border-radius:12px;padding:8px 12px 8px 8px;box-shadow:var(--shadow-md);z-index:3}
+.cc-chip .logo-box{width:34px;height:34px;border-radius:8px;background:var(--paper-2);display:flex;align-items:center;justify-content:center;overflow:hidden}
+.cc-chip .logo-box img{height:14px;width:auto;object-fit:contain}
+.cc-chip .meta{line-height:1.2}
+.cc-chip .meta b{font-size:12.5px;font-weight:600;font-family:var(--display);letter-spacing:-0.01em}
+.cc-chip .meta span{display:block;font-size:10.5px;color:var(--ink-3)}
+.chip-tl{top:78px;left:-18px}
+.chip-br{bottom:64px;right:-14px}
+.chart-svg{width:100%;height:auto;display:block;margin-top:2px}
+.cc-foot{display:flex;align-items:center;justify-content:space-between;margin-top:8px;padding-top:12px;border-top:1px solid var(--hair-2)}
+.cc-stat{display:flex;align-items:baseline;gap:7px}
+.cc-stat .n{font-family:var(--mono);font-size:17px;font-weight:600;color:var(--primary);letter-spacing:-0.01em}
+.cc-stat .l{font-size:11px;color:var(--ink-3)}
+
+/* ---------- DIVIDER CURVE ---------- */
+.curve-div{display:block;width:100%;height:40px}
+.section{padding:96px 0}
+.section-tight{padding:64px 0}
+
+/* ---------- LOGO PROOF ---------- */
+.logo-proof{padding:54px 0;border-top:1px solid var(--hair);border-bottom:1px solid var(--hair);background:var(--paper)}
+.lp-label{text-align:center;font-size:13px;color:var(--ink-3);margin-bottom:32px}
+.lp-label b{color:var(--ink-2);font-weight:500}
+.lp-marquee{overflow:hidden;-webkit-mask-image:linear-gradient(90deg,transparent,#000 9%,#000 91%,transparent);mask-image:linear-gradient(90deg,transparent,#000 9%,#000 91%,transparent)}
+.lp-track{display:flex;align-items:center;gap:68px;width:max-content;animation:marq 38s linear infinite}
+.lp-track img{height:26px;width:auto;object-fit:contain;filter:grayscale(1);opacity:.46;transition:opacity .3s var(--ease),filter .3s var(--ease)}
+.lp-track img:hover{filter:grayscale(0);opacity:1}
+@keyframes marq{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+
+/* ---------- SECTION HEADER ---------- */
+.sec-head{max-width:680px}
+.sec-head h2{font-size:clamp(30px,3.6vw,46px);line-height:1.04;letter-spacing:-0.03em}
+.sec-head p{margin-top:18px;font-size:17px;color:var(--ink-2);line-height:1.55;max-width:560px}
+.colorblock{display:inline-block;color:#fff;padding:0 .22em .04em;border-radius:12px;font-style:normal;font-family:var(--display);font-weight:500;line-height:1;transform:rotate(-1deg)}
+.cb-build{background:var(--build)}
+.cb-grow{background:var(--grow)}
+
+/* ---------- BENTO ---------- */
+.bento{display:grid;grid-template-columns:1fr 1fr;grid-auto-rows:auto;gap:18px;margin-top:52px}
+.track-card{position:relative;background:var(--white);border:1px solid var(--hair);border-radius:20px;padding:30px 30px 26px;box-shadow:var(--shadow-sm);transition:transform .3s var(--ease),box-shadow .3s var(--ease),border-color .3s var(--ease);overflow:hidden}
+.track-card:hover{transform:translateY(-3px);box-shadow:var(--shadow-md)}
+.track-card .num{font-family:var(--mono);font-size:11px;letter-spacing:.06em;color:var(--ink-3)}
+.track-card.build:hover{border-color:rgba(234,88,12,.32)}
+.track-card.grow:hover{border-color:rgba(79,70,229,.32)}
+.tc-top{display:flex;align-items:flex-start;justify-content:space-between;gap:16px}
+.tc-tag{display:inline-flex;align-items:center;gap:8px;font-family:var(--mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;font-weight:500;padding:6px 11px;border-radius:8px}
+.tag-build{background:#FEEFE6;color:#9a3a0f}
+.tag-grow{background:var(--primary-soft);color:#3730a3}
+.track-card h3{font-size:25px;margin-top:22px;letter-spacing:-0.025em;line-height:1.08}
+.track-card p{margin-top:13px;font-size:14.5px;color:var(--ink-2);line-height:1.55}
+.caps{display:flex;flex-wrap:wrap;gap:8px;margin-top:22px}
+.cap{font-family:var(--mono);font-size:11px;letter-spacing:.02em;padding:6px 11px;border-radius:7px;background:var(--paper-2);color:var(--ink-2);border:1px solid var(--hair)}
+.spark{width:100%;height:54px;margin-top:24px;display:block}
+.connector{grid-column:1 / -1;display:flex;align-items:center;gap:18px;background:var(--paper-2);border:1px solid var(--hair);border-radius:16px;padding:22px 28px;margin-top:2px}
+.connector .ico{flex:none;width:44px;height:44px;border-radius:12px;background:var(--white);border:1px solid var(--hair);display:flex;align-items:center;justify-content:center}
+.connector .ico svg{width:22px;height:22px;stroke:var(--primary);fill:none}
+.connector p{font-family:var(--serif);font-style:italic;font-size:20px;line-height:1.35;color:var(--ink);letter-spacing:-0.01em}
+.connector p em{color:var(--primary);font-style:italic}
+
+/* ---------- CASE PROOFS ---------- */
+.cases{display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-top:52px}
+.case-card{position:relative;background:var(--white);border:1px solid var(--hair);border-radius:20px;overflow:hidden;box-shadow:var(--shadow-sm);transition:transform .3s var(--ease),box-shadow .3s var(--ease)}
+.case-card:hover{transform:translateY(-3px);box-shadow:var(--shadow-md)}
+.case-media{position:relative;aspect-ratio:16/10;overflow:hidden;background:var(--paper-2)}
+.case-media img{width:100%;height:100%;object-fit:cover;object-position:top;transition:transform 1.1s var(--ease)}
+.case-card:hover .case-media img{transform:scale(1.04)}
+.accent-bar{position:absolute;left:0;top:0;bottom:0;width:4px;z-index:2}
+.case-body{padding:26px 28px 28px}
+.case-tagline{display:flex;align-items:center;gap:10px;margin-bottom:14px}
+.case-logo{height:18px;width:auto;object-fit:contain}
+.case-metric{margin-left:auto;font-family:var(--mono);font-size:13px;font-weight:600;padding:5px 10px;border-radius:7px;letter-spacing:-0.01em}
+.case-card h3{font-size:21px;letter-spacing:-0.02em;line-height:1.13}
+.case-card .desc{margin-top:12px;font-size:14px;color:var(--ink-2);line-height:1.56}
+.case-tags{display:flex;gap:8px;margin-top:18px;flex-wrap:wrap}
+.case-tag{font-family:var(--mono);font-size:10.5px;letter-spacing:.03em;text-transform:uppercase;padding:5px 10px;border-radius:6px;background:var(--paper-2);color:var(--ink-2);border:1px solid var(--hair)}
+/* video placeholder bits */
+.vph{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:space-between;padding:16px;background:linear-gradient(180deg,rgba(15,20,19,.12),rgba(15,20,19,.58));z-index:2}
+.vph-top{display:flex;justify-content:flex-end}
+.vph-chip{display:inline-flex;align-items:center;gap:7px;background:rgba(252,252,251,.92);border:1px dashed rgba(15,20,19,.32);border-radius:8px;padding:5px 10px;font-family:var(--mono);font-size:10px;letter-spacing:.04em;text-transform:uppercase;color:var(--ink-2);font-weight:500}
+.vph-chip .rec{width:7px;height:7px;border-radius:50%;background:var(--build)}
+.vph-center{position:absolute;inset:0;display:flex;align-items:center;justify-content:center}
+.vph-play{width:64px;height:64px;border-radius:50%;background:rgba(252,252,251,.94);display:flex;align-items:center;justify-content:center;box-shadow:var(--shadow-lg);transition:transform .25s var(--ease)}
+.case-card:hover .vph-play{transform:scale(1.08)}
+.vph-play svg{width:22px;height:22px;fill:var(--ink);stroke:none;margin-left:3px}
+.vph-cap{font-size:12.5px;color:#fff;line-height:1.4;font-weight:450;max-width:80%}
+.vph-cap b{font-weight:600}
+
+/* ---------- WORK GALLERY (bento) ---------- */
+.gallery{display:grid;grid-template-columns:repeat(4,1fr);grid-auto-rows:200px;gap:16px;margin-top:48px}
+.g-tile{position:relative;border-radius:16px;overflow:hidden;border:1px solid var(--hair);background:var(--paper-2);box-shadow:var(--shadow-sm);transition:transform .3s var(--ease),box-shadow .3s var(--ease)}
+.g-tile:hover{transform:translateY(-3px);box-shadow:var(--shadow-md)}
+.g-tile img{width:100%;height:100%;object-fit:cover;object-position:top;transition:transform 1s var(--ease)}
+.g-tile:hover img{transform:scale(1.05)}
+.g-tile .g-label{position:absolute;left:14px;bottom:13px;z-index:2;display:flex;align-items:center;gap:8px}
+.g-tile .g-label .nm{font-family:var(--display);font-weight:500;font-size:13.5px;color:#fff;letter-spacing:-0.01em;text-shadow:0 1px 6px rgba(0,0,0,.5)}
+.g-tile .g-label .tg{font-family:var(--mono);font-size:9.5px;letter-spacing:.05em;text-transform:uppercase;color:rgba(255,255,255,.82);background:rgba(15,20,19,.4);padding:3px 7px;border-radius:5px;backdrop-filter:blur(4px)}
+.g-tile .scrim{position:absolute;inset:0;background:linear-gradient(180deg,transparent 46%,rgba(15,20,19,.55));z-index:1}
+.g-wide{grid-column:span 2}
+.g-tall{grid-row:span 2}
+/* reel tile (video placeholder in gallery) */
+.g-reel .vph{padding:12px}
+.g-reel .vph-play{width:48px;height:48px}
+.g-reel .vph-play svg{width:16px;height:16px}
+.g-reel .vph-chip{font-size:9px;padding:4px 8px}
+
+/* ---------- TESTIMONIAL + VIDEO ---------- */
+.tw-grid{display:grid;grid-template-columns:1.25fr 1fr;gap:24px;margin-top:8px;align-items:stretch}
+.quote-card{background:var(--ink);color:var(--paper);border-radius:22px;padding:48px 46px;position:relative;overflow:hidden;display:flex;flex-direction:column;justify-content:space-between;box-shadow:var(--shadow-lg)}
+.quote-card .qmark{position:absolute;top:24px;right:38px;font-family:var(--serif);font-size:130px;line-height:1;color:rgba(110,115,255,.22)}
+.quote-card .qcurve{position:absolute;left:0;right:0;bottom:0;width:100%;opacity:.5}
+.quote-card blockquote{font-family:var(--display);font-weight:500;font-size:clamp(23px,2.6vw,30px);line-height:1.24;letter-spacing:-0.025em;position:relative;z-index:2;max-width:560px}
+.quote-card blockquote .serif-i{color:var(--primary-2)}
+.q-author{display:flex;align-items:center;gap:14px;margin-top:38px;position:relative;z-index:2}
+.q-author img{width:50px;height:50px;border-radius:50%;object-fit:cover;border:1px solid rgba(255,255,255,.16)}
+.q-author .nm{font-family:var(--display);font-weight:500;font-size:15px;letter-spacing:-0.01em}
+.q-author .rl{font-size:12.5px;color:rgba(252,252,251,.6);margin-top:1px}
+.vtest{position:relative;border-radius:22px;overflow:hidden;border:1px solid var(--hair);min-height:340px;background:var(--paper-2);box-shadow:var(--shadow-sm)}
+.vtest img{width:100%;height:100%;object-fit:cover;object-position:center top;position:absolute;inset:0}
+
+/* ---------- STATS ---------- */
+.stats{border-top:1px solid var(--hair);border-bottom:1px solid var(--hair)}
+.stats-grid{display:grid;grid-template-columns:repeat(4,1fr)}
+.stat{padding:48px 30px;border-right:1px solid var(--hair);position:relative}
+.stat:last-child{border-right:none}
+.stat .sn{display:flex;align-items:baseline;gap:8px;font-family:var(--mono);font-size:clamp(32px,3.6vw,46px);font-weight:600;letter-spacing:-0.03em;color:var(--ink)}
+.stat .sn .upc{width:24px;height:14px}
+.stat .sl{margin-top:12px;font-size:13px;color:var(--ink-3);line-height:1.45;max-width:200px}
+.stat .sl b{color:var(--ink-2);font-weight:500}
+
+/* ---------- FINAL CTA ---------- */
+.final{position:relative;overflow:hidden}
+.final-card{background:var(--white);border:1px solid var(--hair);border-radius:28px;padding:72px 64px;text-align:center;position:relative;overflow:hidden;box-shadow:var(--shadow-lg)}
+.final-card .bgcurve{position:absolute;inset:0;width:100%;height:100%;z-index:0;opacity:.9}
+.final-inner{position:relative;z-index:2;max-width:680px;margin:0 auto}
+.final h2{font-size:clamp(32px,4.4vw,54px);line-height:1.05;letter-spacing:-0.035em}
+.final p{margin-top:22px;font-size:18px;color:var(--ink-2);line-height:1.55;max-width:520px;margin-left:auto;margin-right:auto}
+.final .btn-primary{margin-top:34px}
+
+/* ---------- FOOTER ---------- */
+.footer{padding:56px 0 64px;border-top:1px solid var(--hair)}
+.footer-inner{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:24px}
+.footer .brand{font-size:17px}
+.footer-meta{display:flex;align-items:center;gap:24px}
+.footer-meta a{font-size:13.5px;color:var(--ink-2);transition:color .2s var(--ease)}
+.footer-meta a:hover{color:var(--ink)}
+.footer-note{font-family:var(--mono);font-size:10.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-3)}
+
+/* ---------- ENTRANCE ---------- */
+.reveal{opacity:0;transform:translateY(20px) scale(.995);filter:blur(4px);transition:opacity .8s var(--ease),transform .8s var(--ease),filter .8s var(--ease)}
+.reveal.in{opacity:1;transform:none;filter:none}
+.r1{transition-delay:.05s}.r2{transition-delay:.13s}.r3{transition-delay:.21s}.r4{transition-delay:.29s}
+
+/* draw curve */
+.draw-path{stroke-dasharray:1;stroke-dashoffset:1;transition:stroke-dashoffset 1.8s var(--ease) .25s}
+.chart-card.in .draw-path{stroke-dashoffset:0}
+.area-fill{opacity:0;transition:opacity 1.1s var(--ease) .7s}
+.chart-card.in .area-fill{opacity:1}
+.dot-pt{opacity:0;transform:scale(.4);transform-box:fill-box;transform-origin:center;transition:opacity .5s var(--ease),transform .5s var(--ease)}
+.chart-card.in .dot-pt{opacity:1;transform:scale(1)}
+.dp1{transition-delay:1.4s}.dp2{transition-delay:1.65s}.dp3{transition-delay:1.9s}
+
+/* ---------- RESPONSIVE ---------- */
+@media(max-width:1080px){
+  .gallery{grid-template-columns:repeat(2,1fr);grid-auto-rows:180px}
+  .g-wide{grid-column:span 2}.g-tall{grid-row:span 1}
+}
+@media(max-width:900px){
+  .wrap{padding:0 22px}
+  .nav-links{display:none}
+  .nav .nav-cta{display:none}
+  .menu-btn{display:flex}
+  .hero{padding:48px 0 44px}
+  .hero-grid{grid-template-columns:1fr;gap:44px}
+  .bento{grid-template-columns:1fr}
+  .cases{grid-template-columns:1fr}
+  .tw-grid{grid-template-columns:1fr}
+  .quote-card{padding:38px 32px}
+  .stats-grid{grid-template-columns:1fr 1fr}
+  .stat{border-bottom:1px solid var(--hair)}
+  .stat:nth-child(2){border-right:none}
+  .stat:nth-child(3),.stat:nth-child(4){border-bottom:none}
+  .final-card{padding:48px 28px}
+  .gallery{grid-template-columns:1fr 1fr;grid-auto-rows:160px}
+  .chip-tl{left:8px;top:14px}.chip-br{right:8px;bottom:14px}
+  .section{padding:68px 0}
+}
+@media(max-width:560px){
+  .gallery{grid-template-columns:1fr;grid-auto-rows:200px}
+  .g-wide,.g-tall{grid-column:span 1;grid-row:span 1}
+  .stats-grid{grid-template-columns:1fr}
+  .stat{border-right:none}
+  .trust{font-size:11.5px}
+}
+@media(prefers-reduced-motion:reduce){
+  *{animation:none!important}
+  .reveal{opacity:1;transform:none;filter:none;transition:none}
+  .draw-path{stroke-dashoffset:0;transition:none}
+  .area-fill,.dot-pt{opacity:1;transform:none;transition:none}
+  .lp-track{animation:none}
+  html{scroll-behavior:auto}
+}
+</style>
+</head>
+<body>
+
+<!-- ============ NAV ============ -->
+<nav class="nav">
+  <div class="wrap nav-inner">
+    <a class="brand" href="#top"><span class="dot"></span>LoudFace</a>
+    <div class="nav-links">
+      <a href="#bento">What we do</a>
+      <a href="#work">Work</a>
+      <a href="#proof">Results</a>
+      <a href="#cta">Contact</a>
+    </div>
+    <button class="nav-cta" onclick="document.getElementById('cta').scrollIntoView()">
+      Book a call
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+    </button>
+    <button class="menu-btn" aria-label="Open menu" onclick="document.getElementById('cta').scrollIntoView()">
+      <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+    </button>
+  </div>
+</nav>
+
+<!-- ============ HERO ============ -->
+<header class="hero" id="top">
+  <div class="wrap hero-grid">
+    <div class="hero-copy">
+      <span class="avail reveal r1"><span class="pulse"></span>2 client slots open for Q3 2026</span>
+      <h1 class="reveal r1">
+        <span class="ln">Your website converts.</span>
+        <span class="ln">Your traffic compounds.</span>
+        <span class="ln"><span class="serif-i">One team</span> runs both.</span>
+      </h1>
+      <p class="sub reveal r2">LoudFace is the conversion and organic-growth team behind 200+ B2B SaaS websites. We build on Webflow, then run SEO, AEO and CRO to grow what we shipped.</p>
+      <div class="hero-cta-row reveal r3">
+        <button class="btn-primary" onclick="document.getElementById('cta').scrollIntoView()">
+          Book your strategy call
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+        </button>
+        <button class="btn-watch" onclick="document.getElementById('work').scrollIntoView()">
+          <span class="play"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></span>
+          Watch the 90-sec intro
+        </button>
+      </div>
+      <div class="trust reveal r4">
+        <div class="seg">Webflow Enterprise Partner</div>
+        <span class="sep"></span>
+        <div class="seg">Shipping since 2020</div>
+        <span class="sep"></span>
+        <div class="seg">Series A+ SaaS</div>
+      </div>
+    </div>
+
+    <!-- HERO CHART CARD -->
+    <div class="chart-card reveal r2" id="heroChart">
+      <div class="cc-head">
+        <div>
+          <div class="cc-title">Compounding performance</div>
+          <div class="cc-sub">Build, then grow — month over month</div>
+        </div>
+        <span class="cc-badge"><span style="width:6px;height:6px;border-radius:50%;background:#4F46E5;display:inline-block"></span>Live</span>
+      </div>
+
+      <!-- floating client chip TL -->
+      <div class="cc-chip chip-tl">
+        <span class="logo-box"><img src="https://cdn.sanity.io/images/xjjjqhgt/production/6a79052d6d3db7428b73436f15350c87e0cefa3b-339x109.png?h=60&auto=format" alt="Toku logo"></span>
+        <span class="meta"><b>Toku</b><span>AI visibility</span></span>
+      </div>
+      <!-- floating client chip BR -->
+      <div class="cc-chip chip-br">
+        <span class="logo-box"><img src="https://cdn.sanity.io/images/xjjjqhgt/production/bdd109e13c67dad916c89a42c71d67c3ba0b217e-680x233.png?h=60&auto=format" alt="Dimer Health logo"></span>
+        <span class="meta"><b>Dimer</b><span>Conversion rate</span></span>
+      </div>
+
+      <!-- THE COMPOUNDING CHART -->
+      <svg class="chart-svg" viewBox="0 0 520 300" preserveAspectRatio="none" aria-hidden="true">
+        <defs>
+          <linearGradient id="areaG" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#4F46E5" stop-opacity="0.18"/>
+            <stop offset="100%" stop-color="#4F46E5" stop-opacity="0.01"/>
+          </linearGradient>
+        </defs>
+        <!-- gridlines -->
+        <g stroke="#E8E7E1" stroke-width="1">
+          <line x1="40" y1="40" x2="500" y2="40"/>
+          <line x1="40" y1="95" x2="500" y2="95"/>
+          <line x1="40" y1="150" x2="500" y2="150"/>
+          <line x1="40" y1="205" x2="500" y2="205"/>
+          <line x1="40" y1="258" x2="500" y2="258"/>
+        </g>
+        <!-- x axis ticks (months) -->
+        <g font-family="'Geist Mono',monospace" font-size="9" fill="#5E6864" text-anchor="middle">
+          <text x="70" y="278">M1</text>
+          <text x="155" y="278">M2</text>
+          <text x="240" y="278">M3</text>
+          <text x="325" y="278">M4</text>
+          <text x="410" y="278">M5</text>
+          <text x="490" y="278">M6</text>
+        </g>
+        <!-- launch marker -->
+        <line x1="70" y1="40" x2="70" y2="258" stroke="#EA580C" stroke-width="1" stroke-dasharray="3 4" opacity="0.55"/>
+        <text x="74" y="52" font-family="'Geist Mono',monospace" font-size="8.5" fill="#EA580C" letter-spacing="0.5">LAUNCH</text>
+        <!-- area fill -->
+        <path class="area-fill" d="M70,228 C140,222 175,208 240,178 C300,150 345,108 410,72 C450,50 475,42 490,40 L490,258 L70,258 Z" fill="url(#areaG)"/>
+        <!-- compounding curve -->
+        <path class="draw-path" d="M70,228 C140,222 175,208 240,178 C300,150 345,108 410,72 C450,50 475,42 490,40"
+              fill="none" stroke="#4F46E5" stroke-width="2.6" stroke-linecap="round" pathLength="1"/>
+        <!-- data points -->
+        <circle class="dot-pt dp1" cx="70" cy="228" r="4.5" fill="#fff" stroke="#4F46E5" stroke-width="2.4"/>
+        <circle class="dot-pt dp2" cx="240" cy="178" r="4.5" fill="#fff" stroke="#4F46E5" stroke-width="2.4"/>
+        <circle class="dot-pt dp3" cx="490" cy="40" r="5.5" fill="#4F46E5" stroke="#fff" stroke-width="2.4"/>
+      </svg>
+
+      <div class="cc-foot">
+        <div class="cc-stat"><span class="n">+288%</span><span class="l">conversion lift · Dimer</span></div>
+        <div class="cc-stat"><span class="n">0 → 86%</span><span class="l">AI visibility · Toku</span></div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- ============ LOGO PROOF ============ -->
+<section class="logo-proof" aria-label="Trusted by">
+  <div class="wrap">
+    <p class="lp-label"><b>Trusted by B2B SaaS teams</b> shipping and scaling on Webflow since 2020</p>
+  </div>
+  <div class="lp-marquee">
+    <div class="lp-track" id="logoTrack">
+      <img src="https://cdn.sanity.io/images/xjjjqhgt/production/7421bda16647889739dd725fe4967e45b42dd4c5-997x139.png?h=80&auto=format" alt="Montblanc">
+      <img src="https://cdn.sanity.io/images/xjjjqhgt/production/90fcd30f2058c1975d25c315ccef475997d07461-836x203.png?h=80&auto=format" alt="Radisson">
+      <img src="https://cdn.sanity.io/images/xjjjqhgt/production/2916b66c3352d3932990dd7b7052901ae1078d04-845x178.png?h=80&auto=format" alt="Hoxhunt">
+      <img src="https://cdn.sanity.io/images/xjjjqhgt/production/bf5fa13f7566496f48caf6e20a73ca612ced0291-619x202.png?h=80&auto=format" alt="LIQID">
+      <img src="https://cdn.sanity.io/images/xjjjqhgt/production/6a79052d6d3db7428b73436f15350c87e0cefa3b-339x109.png?h=80&auto=format" alt="Toku">
+      <img src="https://cdn.sanity.io/images/xjjjqhgt/production/bdd109e13c67dad916c89a42c71d67c3ba0b217e-680x233.png?h=80&auto=format" alt="Dimer Health">
+      <img src="https://cdn.sanity.io/images/xjjjqhgt/production/86cefc1d66ac01f9a48a5722d54579ad638eb575-724x106.png?h=80&auto=format" alt="Eraser">
+      <img src="https://cdn.sanity.io/images/xjjjqhgt/production/5139fa977e892fe5854a9dea4976ce056fec88d5-820x269.png?h=80&auto=format" alt="Ceipal">
+      <img src="https://cdn.sanity.io/images/xjjjqhgt/production/d21e5758cf17fd620251a0352a90352beee26a5f-2612x554.webp?h=80&auto=format" alt="Seamless AI">
+    </div>
+  </div>
+</section>
+
+<!-- ============ BENTO: BUILD / GROW ============ -->
+<section class="section" id="bento">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <h2>One team <span class="colorblock cb-build">builds</span> it. The same team <span class="colorblock cb-grow">grows</span> it.</h2>
+      <p>Most agencies hand you a site and walk away. We launch the build, then stay on to compound the traffic and conversions — because the team that grows your site is the team that knows it best.</p>
+    </div>
+
+    <div class="bento">
+      <!-- BUILD card (the launch point) -->
+      <div class="track-card build reveal r1">
+        <div class="tc-top">
+          <span class="tc-tag tag-build"><span style="width:6px;height:6px;border-radius:50%;background:#EA580C;display:inline-block"></span>Build · Track 01</span>
+          <span class="num">THE LAUNCH POINT</span>
+        </div>
+        <h3>A website that earns its traffic</h3>
+        <p>Positioning, copy, UX/UI and production Webflow, shipped in weeks. Your marketing team runs it without filing engineering tickets.</p>
+        <div class="caps">
+          <span class="cap">UX/UI</span>
+          <span class="cap">Webflow</span>
+          <span class="cap">Conversion Copy</span>
+          <span class="cap">CMS</span>
+        </div>
+        <!-- spark: the launch point of the curve -->
+        <svg class="spark" viewBox="0 0 300 54" preserveAspectRatio="none" aria-hidden="true">
+          <line x1="0" y1="40" x2="300" y2="40" stroke="#F0EFE9" stroke-width="1"/>
+          <path d="M0,42 C60,40 110,38 150,36" fill="none" stroke="#EA580C" stroke-width="2.4" stroke-linecap="round"/>
+          <circle cx="150" cy="36" r="4.5" fill="#fff" stroke="#EA580C" stroke-width="2.4"/>
+          <path d="M150,36 C200,33 250,29 300,24" fill="none" stroke="#E8E7E1" stroke-width="2" stroke-dasharray="2 5" stroke-linecap="round"/>
+        </svg>
+      </div>
+
+      <!-- GROW card (the compounding climb) -->
+      <div class="track-card grow reveal r2">
+        <div class="tc-top">
+          <span class="tc-tag tag-grow"><span style="width:6px;height:6px;border-radius:50%;background:#4F46E5;display:inline-block"></span>Grow · Track 02</span>
+          <span class="num">THE COMPOUNDING CLIMB</span>
+        </div>
+        <h3>Traffic and conversions, month over month</h3>
+        <p>SEO for Google, AEO for the AI engines, CRO to convert it all. A team that knows your site inside out, because we built it.</p>
+        <div class="caps">
+          <span class="cap">Technical SEO</span>
+          <span class="cap">AEO</span>
+          <span class="cap">Content</span>
+          <span class="cap">CRO</span>
+        </div>
+        <!-- spark: the compounding climb -->
+        <svg class="spark" viewBox="0 0 300 54" preserveAspectRatio="none" aria-hidden="true">
+          <line x1="0" y1="40" x2="300" y2="40" stroke="#F0EFE9" stroke-width="1"/>
+          <defs><linearGradient id="sparkG" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#4F46E5" stop-opacity="0.16"/><stop offset="100%" stop-color="#4F46E5" stop-opacity="0"/></linearGradient></defs>
+          <path d="M0,44 C70,42 120,36 180,26 C230,18 270,9 300,4 L300,54 L0,54 Z" fill="url(#sparkG)"/>
+          <path d="M0,44 C70,42 120,36 180,26 C230,18 270,9 300,4" fill="none" stroke="#4F46E5" stroke-width="2.6" stroke-linecap="round"/>
+          <circle cx="0" cy="44" r="4" fill="#fff" stroke="#4F46E5" stroke-width="2.2"/>
+          <circle cx="300" cy="4" r="5" fill="#4F46E5" stroke="#fff" stroke-width="2.2"/>
+        </svg>
+      </div>
+
+      <!-- connector -->
+      <div class="connector reveal r3">
+        <span class="ico">
+          <svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17c4-1 6-4 8-9"/><path d="M11 8l3-3M11 8h4"/><path d="M14 17c3-1 5-3 7-7"/></svg>
+        </span>
+        <p>Most clients start with a build. Within three months, they ask us to handle growth too — <em>that's by design.</em></p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- thin curve divider -->
+<div class="wrap"><svg class="curve-div" viewBox="0 0 1176 40" preserveAspectRatio="none" aria-hidden="true"><path d="M0,30 C300,30 380,12 588,12 C796,12 876,30 1176,30" fill="none" stroke="#E8E7E1" stroke-width="1.5"/><circle cx="588" cy="12" r="3.5" fill="#EEF0FF" stroke="#4F46E5" stroke-width="1.5"/></svg></div>
+
+<!-- ============ CASE PROOFS ============ -->
+<section class="section-tight" id="proof">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <h2>Built, then <span class="serif-i">grown</span> — with the numbers to prove it.</h2>
+      <p>Two clients, two outcomes, one team across both phases. Real metrics, measured — not estimated.</p>
+    </div>
+
+    <div class="cases">
+      <!-- TOKU — image case -->
+      <article class="case-card reveal r1">
+        <div class="case-media">
+          <span class="accent-bar" style="background:#1646CE"></span>
+          <img src="https://cdn.sanity.io/images/xjjjqhgt/production/bd1c09b494f7074c268f5b964d0c77dc1b1ef965-2880x1620.webp?w=1200&h=760&fit=crop&crop=top&auto=format&q=85" alt="Toku stablecoin payroll website">
+        </div>
+        <div class="case-body">
+          <div class="case-tagline">
+            <img class="case-logo" src="https://cdn.sanity.io/images/xjjjqhgt/production/6a79052d6d3db7428b73436f15350c87e0cefa3b-339x109.png?h=44&auto=format" alt="Toku">
+            <span class="case-metric" style="background:#E7ECFB;color:#1646CE">0 → 86%</span>
+          </div>
+          <h3>How Toku became the AI's answer for stablecoin payroll</h3>
+          <p class="desc">When buyers ask ChatGPT and Perplexity who handles stablecoin payroll, Toku now comes up. We rebuilt for clarity, then ran AEO until it owned the category's core prompt.</p>
+          <div class="case-tags">
+            <span class="case-tag">Fintech</span>
+            <span class="case-tag">AI visibility 0 → 86%</span>
+            <span class="case-tag">Build → Grow</span>
+          </div>
+        </div>
+      </article>
+
+      <!-- DIMER — VIDEO PLACEHOLDER case -->
+      <article class="case-card reveal r2">
+        <div class="case-media">
+          <span class="accent-bar" style="background:#4037A0;z-index:3"></span>
+          <img src="https://cdn.sanity.io/images/xjjjqhgt/production/a0f4750b896ced6ffca9c5869623b15614f312ba-1440x10131.webp?w=1200&h=760&fit=crop&crop=top&auto=format&q=85" alt="Dimer Health telehealth website">
+          <div class="vph">
+            <div class="vph-top"><span class="vph-chip"><span class="rec"></span>Video placeholder</span></div>
+            <div class="vph-center"><span class="vph-play"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></span></div>
+            <div class="vph-cap"><b>To film:</b> 45-sec case film — before/after the Dimer rebuild, conversion dashboard on screen.</div>
+          </div>
+        </div>
+        <div class="case-body">
+          <div class="case-tagline">
+            <img class="case-logo" src="https://cdn.sanity.io/images/xjjjqhgt/production/bdd109e13c67dad916c89a42c71d67c3ba0b217e-680x233.png?h=44&auto=format" alt="Dimer Health">
+            <span class="case-metric" style="background:#ECEBF6;color:#4037A0">+288%</span>
+          </div>
+          <h3>A telehealth brand and website rebuilt to convert</h3>
+          <p class="desc">A best-in-class site for a healthcare startup, then six months of conversion work. 288% lift in conversion rate, measured, not estimated.</p>
+          <div class="case-tags">
+            <span class="case-tag">Healthtech</span>
+            <span class="case-tag">Conversion +288%</span>
+            <span class="case-tag">6 months</span>
+          </div>
+        </div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- ============ WORK GALLERY ============ -->
+<section class="section-tight" id="work">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <h2>The work that <span class="serif-i">compounds</span>.</h2>
+      <p>A look across the 200+ B2B SaaS sites we've shipped and scaled.</p>
+    </div>
+
+    <div class="gallery">
+      <!-- wide hero film tile (video placeholder) -->
+      <div class="g-tile g-wide g-tall g-reel reveal r1">
+        <img src="https://cdn.sanity.io/images/xjjjqhgt/production/b24a66ce0191bb3913ae1517bac7d4d327d42f3e-2880x1620.jpg?w=1200&h=900&fit=crop&crop=top&auto=format&q=85" alt="BlockHorizon website">
+        <div class="vph">
+          <div class="vph-top"><span class="vph-chip"><span class="rec"></span>Reel placeholder</span></div>
+          <div class="vph-center"><span class="vph-play"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></span></div>
+          <div class="vph-cap"><b>To film:</b> 60-sec showreel — scroll-throughs of recent builds, fast cuts.</div>
+        </div>
+      </div>
+
+      <div class="g-tile reveal r2">
+        <span class="scrim"></span>
+        <img src="https://cdn.sanity.io/images/xjjjqhgt/production/2a7d29fdc9302c8482d70b73041e6c58ec9229a6-1440x1845.webp?w=600&h=600&fit=crop&crop=top&auto=format&q=85" alt="Eraser website">
+        <div class="g-label"><span class="nm">Eraser</span><span class="tg">Dev tools</span></div>
+      </div>
+
+      <div class="g-tile reveal r3">
+        <span class="scrim"></span>
+        <img src="https://cdn.sanity.io/images/xjjjqhgt/production/3ac92e2393c7a26dc96f737c27d7faf49fbe6243-1440x8455.jpg?w=600&h=600&fit=crop&crop=top&auto=format&q=85" alt="Hoxhunt website">
+        <div class="g-label"><span class="nm">Hoxhunt</span><span class="tg">Security</span></div>
+      </div>
+
+      <div class="g-tile g-wide reveal r2">
+        <span class="scrim"></span>
+        <img src="https://cdn.sanity.io/images/xjjjqhgt/production/a9110ec997f7a351bb9b90347bef4abf6b6b02fc-3024x1890.jpg?w=1200&h=600&fit=crop&crop=top&auto=format&q=85" alt="Montblanc project">
+        <div class="g-label"><span class="nm">Montblanc</span><span class="tg">Brand</span></div>
+      </div>
+
+      <div class="g-tile reveal r3">
+        <span class="scrim"></span>
+        <img src="https://cdn.sanity.io/images/xjjjqhgt/production/bd1c09b494f7074c268f5b964d0c77dc1b1ef965-2880x1620.webp?w=600&h=600&fit=crop&crop=top&auto=format&q=85" alt="Toku website">
+        <div class="g-label"><span class="nm">Toku</span><span class="tg">Fintech</span></div>
+      </div>
+
+      <div class="g-tile reveal r4">
+        <span class="scrim"></span>
+        <img src="https://cdn.sanity.io/images/xjjjqhgt/production/a0f4750b896ced6ffca9c5869623b15614f312ba-1440x10131.webp?w=600&h=600&fit=crop&crop=top&auto=format&q=85" alt="Dimer Health website">
+        <div class="g-label"><span class="nm">Dimer Health</span><span class="tg">Healthtech</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ TESTIMONIAL + VIDEO TESTIMONIAL ============ -->
+<section class="section" id="testimonial">
+  <div class="wrap">
+    <div class="tw-grid">
+      <!-- text quote -->
+      <div class="quote-card reveal r1">
+        <span class="qmark" aria-hidden="true">"</span>
+        <svg class="qcurve" viewBox="0 0 700 120" preserveAspectRatio="none" aria-hidden="true">
+          <path d="M0,100 C180,100 240,52 410,52 C560,52 620,30 700,18" fill="none" stroke="#6E73FF" stroke-width="1.5" opacity="0.45"/>
+          <circle cx="410" cy="52" r="3" fill="#6E73FF" opacity="0.6"/>
+        </svg>
+        <blockquote>You guys are the experts. I can rely on you to drive the plan — you've <span class="serif-i">already earned my trust</span> in what you've delivered so far.</blockquote>
+        <div class="q-author">
+          <img src="https://cdn.sanity.io/images/xjjjqhgt/production/ed922fafea75109de6c216519a1e1bb608c01fe8-944x1024.png?w=120&h=120&fit=crop&auto=format" alt="Kenneth O'Friel">
+          <div>
+            <div class="nm">Kenneth O'Friel</div>
+            <div class="rl">CEO of Toku</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- video testimonial placeholder -->
+      <div class="vtest reveal r2">
+        <img src="https://cdn.sanity.io/images/xjjjqhgt/production/53a5363a122ef95a350039a3d4ef74b9841a1e2a-512x502.png?w=760&h=900&fit=crop&auto=format" alt="Sarig Reichert, Dimer CPO">
+        <div class="vph">
+          <div class="vph-top"><span class="vph-chip"><span class="rec"></span>Video testimonial</span></div>
+          <div class="vph-center"><span class="vph-play"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></span></div>
+          <div class="vph-cap"><b>To film:</b> Sarig Reichert (Dimer CPO) — 30-sec testimonial on the conversion lift.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ STATS ============ -->
+<section class="stats">
+  <div class="wrap">
+    <div class="stats-grid">
+      <div class="stat reveal r1">
+        <div class="sn">200+ <svg class="upc" viewBox="0 0 24 14" aria-hidden="true"><path d="M1,12 C8,11 14,6 23,2" fill="none" stroke="#4F46E5" stroke-width="2" stroke-linecap="round"/></svg></div>
+        <div class="sl"><b>Projects shipped</b> — B2B SaaS on Webflow since 2020</div>
+      </div>
+      <div class="stat reveal r2">
+        <div class="sn">288% <svg class="upc" viewBox="0 0 24 14" aria-hidden="true"><path d="M1,12 C8,11 14,6 23,2" fill="none" stroke="#4F46E5" stroke-width="2" stroke-linecap="round"/></svg></div>
+        <div class="sl"><b>Conversion lift</b> — Dimer Health, six months</div>
+      </div>
+      <div class="stat reveal r3">
+        <div class="sn">4+ <span style="font-size:.5em;color:var(--ink-3);font-weight:500;align-self:flex-end;margin-bottom:.4em">yrs</span></div>
+        <div class="sl"><b>Webflow Enterprise Partner</b></div>
+      </div>
+      <div class="stat reveal r4">
+        <div class="sn">&lt;6 <span style="font-size:.5em;color:var(--ink-3);font-weight:500;align-self:flex-end;margin-bottom:.4em">wks</span></div>
+        <div class="sl"><b>Time to launch</b> — others quote 12–16</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ FINAL CTA ============ -->
+<section class="section final" id="cta">
+  <div class="wrap">
+    <div class="final-card reveal">
+      <svg class="bgcurve" viewBox="0 0 1112 360" preserveAspectRatio="none" aria-hidden="true">
+        <defs><linearGradient id="ctaArea" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#4F46E5" stop-opacity="0.05"/><stop offset="100%" stop-color="#4F46E5" stop-opacity="0"/></linearGradient></defs>
+        <path d="M0,320 C300,310 420,250 640,180 C820,122 960,70 1112,40 L1112,360 L0,360 Z" fill="url(#ctaArea)"/>
+        <path d="M0,320 C300,310 420,250 640,180 C820,122 960,70 1112,40" fill="none" stroke="#EEF0FF" stroke-width="2.5"/>
+        <circle cx="1112" cy="40" r="4" fill="#4F46E5" opacity="0.5"/>
+      </svg>
+      <div class="final-inner">
+        <h2>Let's figure out what's <span class="serif-i">holding your site back.</span></h2>
+        <p>30-minute strategy call. No pitch deck. We'll look at your site together and tell you what we'd change, and why.</p>
+        <button class="btn-primary" onclick="window.location.href='#cta'">
+          Book a strategy call
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+        </button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ FOOTER ============ -->
+<footer class="footer">
+  <div class="wrap footer-inner">
+    <a class="brand" href="#top"><span class="dot"></span>LoudFace</a>
+    <div class="footer-meta">
+      <a href="#bento">What we do</a>
+      <a href="#work">Work</a>
+      <a href="#proof">Results</a>
+      <a href="#cta">Contact</a>
+    </div>
+    <div style="display:flex;flex-direction:column;align-items:flex-end;gap:6px">
+      <span class="footer-note">© 2026 LoudFace</span>
+      <span class="footer-note" style="color:#4F46E5">V1 · Compounding</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+(function(){
+  var reduce = window.matchMedia('(prefers-reduced-motion:reduce)').matches;
+
+  // duplicate marquee track for seamless loop
+  var track = document.getElementById('logoTrack');
+  if(track && !reduce){
+    track.innerHTML += track.innerHTML;
+  }
+
+  // intersection reveal
+  if('IntersectionObserver' in window && !reduce){
+    var io = new IntersectionObserver(function(entries){
+      entries.forEach(function(e){
+        if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); }
+      });
+    }, {threshold:0.12, rootMargin:'0px 0px -8% 0px'});
+    document.querySelectorAll('.reveal').forEach(function(el){ io.observe(el); });
+    // chart card draw trigger
+    var hc = document.getElementById('heroChart');
+    if(hc){
+      var io2 = new IntersectionObserver(function(en){
+        en.forEach(function(e){ if(e.isIntersecting){ e.target.classList.add('in'); io2.unobserve(e.target);} });
+      }, {threshold:0.3});
+      io2.observe(hc);
+    }
+  } else {
+    document.querySelectorAll('.reveal').forEach(function(el){ el.classList.add('in'); });
+    var hc2 = document.getElementById('heroChart'); if(hc2) hc2.classList.add('in');
+  }
+})();
+</script>
+
+</body>
+</html>

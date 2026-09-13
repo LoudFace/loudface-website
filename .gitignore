@@ -65,3 +65,6 @@ __pycache__/
 scripts/internal-links/inventory.json
 scripts/internal-links/patches/
 public/preview/
+
+# Proposal document backups — they carry client pricing.
+scripts/backups/

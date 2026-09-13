@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>LoudFace — The Operator Model</title>
+<style>
+/* ============== FONTS (self-hosted brand) ============== */
+@font-face{font-family:'Neue Montreal';src:url('fonts/NeueMontreal-Regular.woff2') format('woff2');font-weight:400;font-style:normal;font-display:swap}
+@font-face{font-family:'Neue Montreal';src:url('fonts/NeueMontreal-Medium.woff2') format('woff2');font-weight:500;font-style:normal;font-display:swap}
+@font-face{font-family:'Neue Montreal';src:url('fonts/NeueMontreal-Bold.woff2') format('woff2');font-weight:700;font-style:normal;font-display:swap}
+@font-face{font-family:'Satoshi';src:url('fonts/Satoshi-Regular.woff2') format('woff2');font-weight:400;font-style:normal;font-display:swap}
+@font-face{font-family:'Satoshi';src:url('fonts/Satoshi-Medium.woff2') format('woff2');font-weight:500;font-style:normal;font-display:swap}
+@font-face{font-family:'Satoshi';src:url('fonts/Satoshi-Bold.woff2') format('woff2');font-weight:700;font-style:normal;font-display:swap}
+@font-face{font-family:'Geist Mono';src:url('fonts/GeistMono-Regular.woff2') format('woff2');font-weight:400;font-style:normal;font-display:swap}
+@font-face{font-family:'Geist Mono';src:url('fonts/GeistMono-Medium.woff2') format('woff2');font-weight:500;font-style:normal;font-display:swap}
+
+/* ============== TOKENS ============== */
+:root{
+  --s50:#fafafa; --s100:#f5f5f5; --s200:#e5e5e5; --s300:#d4d4d4; --s400:#a3a3a3;
+  --s500:#737373; --s600:#525252; --s700:#404040; --s800:#262626; --s900:#22302e; --s950:#0a0a0a;
+  --p300:#a5b4fc; --p400:#818cf8; --p500:#6366f1; --p600:#4f46e5; --p50:#eef2ff;
+  --wine950:#231421; --wine900:#382235; --winetext:#c8e0f7; --wineborder:#cadbd9;
+  --success:#22c55e;
+  --heading:'Neue Montreal',system-ui,sans-serif;
+  --body:'Satoshi',system-ui,sans-serif;
+  --mono:'Geist Mono',ui-monospace,monospace;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{background:#111;}
+body{font-family:var(--body);-webkit-font-smoothing:antialiased;-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+
+@page{size:13.333in 7.5in;margin:0;}
+
+.slide{
+  position:relative;width:13.333in;height:7.5in;overflow:hidden;
+  padding:60px 84px 52px;display:flex;flex-direction:column;
+}
+.slide:not(:last-child){break-after:page;}
+
+/* themes */
+.light{background:var(--s50);color:var(--s600);}
+.light h1,.light h2,.light h3{color:var(--s900);}
+.charcoal{
+  background:
+    linear-gradient(rgba(255,255,255,.022) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(255,255,255,.022) 1px,transparent 1px),
+    radial-gradient(110% 75% at 82% -12%, #2f4540 0%, #22302e 64%);
+  background-size:46px 46px,46px 46px,100% 100%;
+  color:var(--s300);
+}
+.wine{
+  background:
+    linear-gradient(rgba(255,255,255,.02) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(255,255,255,.02) 1px,transparent 1px),
+    radial-gradient(105% 72% at 76% -12%, #4a2b43 0%, #231421 60%);
+  background-size:46px 46px,46px 46px,100% 100%;
+  color:rgba(248,240,245,.74);
+}
+.charcoal h1,.charcoal h2,.charcoal h3,.wine h1,.wine h2{color:#fff;}
+.wine h1,.wine h2,.wine h3{color:var(--winetext);}
+
+/* furniture */
+.top{display:flex;justify-content:space-between;align-items:center;
+  font-family:var(--mono);font-size:12px;letter-spacing:.16em;text-transform:uppercase;}
+.light .top{color:var(--s500);}
+.charcoal .top,.wine .top{color:rgba(255,255,255,.5);}
+.top .r{display:flex;gap:14px;align-items:center}
+.hair{height:1px;margin-top:14px;}
+.light .hair{background:var(--s200);}
+.charcoal .hair{background:rgba(255,255,255,.12);}
+.wine .hair{background:rgba(202,219,217,.18);}
+.main{flex:1;display:flex;flex-direction:column;justify-content:center;}
+.foot{display:flex;justify-content:space-between;align-items:center;
+  font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;}
+.light .foot{color:var(--s400);}
+.charcoal .foot,.wine .foot{color:rgba(255,255,255,.42);}
+
+/* type */
+h1{font-family:var(--heading);font-weight:500;letter-spacing:-.022em;line-height:1.05;}
+h2{font-family:var(--heading);font-weight:500;letter-spacing:-.02em;line-height:1.08;font-size:46px;}
+h3{font-family:var(--heading);font-weight:500;letter-spacing:-.01em;line-height:1.15;}
+.lead{font-size:20px;line-height:1.6;max-width:62ch;}
+.eyebrow{font-family:var(--mono);font-size:13px;letter-spacing:.18em;text-transform:uppercase;}
+.light .accent{color:var(--p600);} .charcoal .accent{color:var(--p300);} .wine .accent{color:var(--p300);}
+.hi{color:var(--p600);} .charcoal .hi,.wine .hi{color:var(--p300);}
+.muted{color:var(--s500);} .charcoal .muted,.wine .muted{color:rgba(255,255,255,.5);}
+
+/* cards */
+.card{border-radius:14px;padding:26px 28px;}
+.light .card{background:#fff;border:1px solid var(--s200);}
+.charcoal .card,.wine .card{background:rgba(255,255,255,.045);border:1px solid rgba(255,255,255,.09);}
+.wine .card{border-color:rgba(202,219,217,.16);}
+.card h3{font-size:21px;margin-bottom:9px;}
+.light .card h3{color:var(--s900);} .charcoal .card h3,.wine .card h3{color:#fff;}
+.card p{font-size:15.5px;line-height:1.55;}
+
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:22px;}
+.grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:20px;}
+.row{display:flex;gap:20px;}
+
+/* tag */
+.tag{display:inline-flex;align-items:center;gap:7px;font-family:var(--mono);font-size:10.5px;
+  letter-spacing:.14em;text-transform:uppercase;padding:4px 10px;border-radius:999px;}
+.light .tag{background:var(--p50);color:var(--p600);}
+.charcoal .tag,.wine .tag{background:rgba(165,180,252,.14);color:var(--p300);}
+.tag.warn{background:rgba(245,158,11,.14);color:#d98a0b;}
+
+/* stat */
+.stat .n{font-family:var(--mono);font-weight:500;font-size:30px;line-height:1;}
+.stat .l{font-family:var(--mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;margin-top:9px;}
+
+.quote{font-family:var(--heading);font-weight:500;letter-spacing:-.015em;line-height:1.18;}
+
+.kicker{font-family:var(--mono);font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--s500);}
+.charcoal .kicker,.wine .kicker{color:rgba(255,255,255,.5);}
+
+ol.steps{counter-reset:st;display:flex;flex-direction:column;gap:14px;}
+ol.steps li{counter-increment:st;display:flex;gap:16px;align-items:flex-start;font-size:16px;line-height:1.5;}
+ol.steps li::before{content:counter(st,decimal-leading-zero);font-family:var(--mono);font-size:13px;
+  color:var(--p600);min-width:30px;padding-top:2px;}
+.charcoal ol.steps li::before,.wine ol.steps li::before{color:var(--p300);}
+ol.steps b{font-weight:500;}
+.light ol.steps b{color:var(--s900);} .charcoal ol.steps b,.wine ol.steps b{color:#fff;}
+</style>
+</head>
+<body>
+
+<!-- ============ 01 · COVER (WINE) ============ -->
+<section class="slide wine">
+  <div class="top"><span>LoudFace · Internal Brief</span><span class="r">2026</span></div>
+  <div class="hair"></div>
+  <div class="main">
+    <div class="eyebrow accent" style="margin-bottom:26px;">The Operating Model · v3</div>
+    <h1 style="font-size:104px;margin-bottom:4px;">The Operator</h1>
+    <h1 style="font-size:104px;color:var(--p300);margin-bottom:34px;">Model.</h1>
+    <p class="lead" style="font-size:23px;max-width:60ch;color:rgba(248,240,245,.82);">
+      How we deliver from here. This direction is <b style="color:#fff;font-weight:500;">decided</b> —
+      and it is an <b style="color:var(--p300);font-weight:500;">evolution of your craft</b>, not a replacement of it.
+      Read every page holding both at once.
+    </p>
+  </div>
+  <div class="hair" style="margin-bottom:18px;"></div>
+  <div class="foot"><span>A working brief for the team</span><span>01 / 10</span></div>
+</section>
+
+<!-- ============ 02 · BOTH AT ONCE (LIGHT) ============ -->
+<section class="slide light">
+  <div class="top"><span>01 — Where we stand</span><span class="r">The Operator Model</span></div>
+  <div class="hair"></div>
+  <div class="main">
+    <h2 style="margin-bottom:10px;">Two things are true <span class="hi">at the same time.</span></h2>
+    <p class="lead muted" style="margin-bottom:30px;">Most change memos pick one. This one refuses to. Hold both as you read.</p>
+    <div class="grid2">
+      <div class="card" style="border-top:3px solid var(--p600);">
+        <div class="tag" style="margin-bottom:14px;">This is decided</div>
+        <h3>We are moving to an operator model.</h3>
+        <p style="margin-top:8px;">Not a proposal up for debate, not an experiment with an exit. The tools already changed the work; the org is catching up to a reality that's here. The question is <b style="color:var(--s900);font-weight:500;">how we move</b>, not whether.</p>
+      </div>
+      <div class="card" style="border-top:3px solid var(--p300);">
+        <div class="tag" style="margin-bottom:14px;">This is evolution</div>
+        <h3>No one is being replaced by a machine.</h3>
+        <p style="margin-top:8px;">Your craft becomes the part that matters more, not less. The repetitive production becomes an engine. You move up the stack — from doing every task to <b style="color:var(--s900);font-weight:500;">directing the work and owning the outcome.</b></p>
+      </div>
+    </div>
+  </div>
+  <div class="hair" style="margin-bottom:18px;"></div>
+  <div class="foot"><span>LoudFace — Internal</span><span>02 / 10</span></div>
+</section>
+
+<!-- ============ 03 · WHY NOW (LIGHT) ============ -->
+<section class="slide light">
+  <div class="top"><span>02 — Why now</span><span class="r">The Operator Model</span></div>
+  <div class="hair"></div>
+  <div class="main">
+    <h2 style="margin-bottom:14px;max-width:20ch;">The chain we were built on just <span class="hi">collapsed.</span></h2>
+    <p class="lead" style="margin-bottom:34px;max-width:64ch;">
+      For years the work moved through five sets of hands because no one person could do all five crafts well. That was the real constraint — not talent, <b style="color:var(--s900);font-weight:500;">handoffs.</b> AI tools removed it. Production-grade design, build, copy and analysis now sit inside the work of one operator.
+    </p>
+    <div class="grid3">
+      <div class="card">
+        <div class="kicker" style="margin-bottom:10px;">Development</div>
+        <h3 style="font-size:19px;">Absorbed.</h3>
+        <p style="margin-top:7px;">Claude Code + Figma turns a design into a built page. The dedicated dev seat is gone.</p>
+      </div>
+      <div class="card">
+        <div class="kicker" style="margin-bottom:10px;">Copywriting</div>
+        <h3 style="font-size:19px;">Engine + editor.</h3>
+        <p style="margin-top:7px;">The Content Engine already lets one writer produce the output of ten. Proven, in-house, today.</p>
+      </div>
+      <div class="card">
+        <div class="kicker" style="margin-bottom:10px;">Strategy · PM</div>
+        <h3 style="font-size:19px;">Judgment + rhythm.</h3>
+        <p style="margin-top:7px;">The analysis becomes a skill; the coordination becomes a ritual. What's left is the human call.</p>
+      </div>
+    </div>
+  </div>
+  <div class="hair" style="margin-bottom:18px;"></div>
+  <div class="foot"><span>LoudFace — Internal</span><span>03 / 10</span></div>
+</section>
+
+<!-- ============ 04 · THE RELAY (LIGHT, diagram) ============ -->
+<section class="slide light">
+  <div class="top"><span>03 — The cost of the relay</span><span class="r">The Operator Model</span></div>
+  <div class="hair"></div>
+  <div class="main">
+    <h2 style="margin-bottom:10px;">Five people, five handoffs, <span class="hi">one telephone game.</span></h2>
+    <p class="lead muted" style="margin-bottom:26px;max-width:62ch;">Every arrow is a place work waits, context leaks, and quality drifts before the client ever sees it.</p>
+
+    <svg viewBox="0 0 1130 150" width="100%" style="margin-bottom:26px;" font-family="Geist Mono">
+      <defs>
+        <marker id="ar" markerWidth="9" markerHeight="9" refX="5.5" refY="3" orient="auto">
+          <path d="M0,0 L6,3 L0,6 Z" fill="#a3a3a3"/>
+        </marker>
+      </defs>
+      <g>
+        <g><rect x="0"   y="34" width="150" height="60" rx="11" fill="#fff" stroke="#e5e5e5"/><text x="75"   y="60" text-anchor="middle" font-size="13" fill="#22302e" letter-spacing="1">STRATEGY</text><text x="75"   y="78" text-anchor="middle" font-size="10" fill="#a3a3a3">defines</text></g>
+        <g><rect x="196" y="34" width="150" height="60" rx="11" fill="#fff" stroke="#e5e5e5"/><text x="271"  y="60" text-anchor="middle" font-size="13" fill="#22302e" letter-spacing="1">COPY</text><text x="271"  y="78" text-anchor="middle" font-size="10" fill="#a3a3a3">writes</text></g>
+        <g><rect x="392" y="34" width="150" height="60" rx="11" fill="#fff" stroke="#e5e5e5"/><text x="467"  y="60" text-anchor="middle" font-size="13" fill="#22302e" letter-spacing="1">DESIGN</text><text x="467"  y="78" text-anchor="middle" font-size="10" fill="#a3a3a3">composes</text></g>
+        <g><rect x="588" y="34" width="150" height="60" rx="11" fill="#fff" stroke="#e5e5e5"/><text x="663"  y="60" text-anchor="middle" font-size="13" fill="#22302e" letter-spacing="1">DEV</text><text x="663"  y="78" text-anchor="middle" font-size="10" fill="#a3a3a3">builds</text></g>
+        <g><rect x="784" y="34" width="150" height="60" rx="11" fill="#fff" stroke="#e5e5e5"/><text x="859"  y="60" text-anchor="middle" font-size="13" fill="#22302e" letter-spacing="1">PM</text><text x="859"  y="78" text-anchor="middle" font-size="10" fill="#a3a3a3">chases</text></g>
+        <g><rect x="980" y="34" width="150" height="60" rx="11" fill="#22302e"/><text x="1055" y="69" text-anchor="middle" font-size="12" fill="#fff" letter-spacing="1">CLIENT</text></g>
+      </g>
+      <g stroke="#a3a3a3" stroke-width="1.6">
+        <line x1="152" y1="64" x2="190" y2="64" marker-end="url(#ar)"/>
+        <line x1="348" y1="64" x2="386" y2="64" marker-end="url(#ar)"/>
+        <line x1="544" y1="64" x2="582" y2="64" marker-end="url(#ar)"/>
+        <line x1="740" y1="64" x2="778" y2="64" marker-end="url(#ar)"/>
+        <line x1="936" y1="64" x2="974" y2="64" marker-end="url(#ar)"/>
+      </g>
+      <g font-size="9" fill="#d98a0b" text-anchor="middle" letter-spacing="1">
+        <text x="171" y="24">handoff</text><text x="367" y="24">handoff</text>
+        <text x="563" y="24">handoff</text><text x="759" y="24">handoff</text>
+        <text x="955" y="24">handoff</text>
+      </g>
+    </svg>
+
+    <div class="row">
+      <div class="card" style="flex:1;"><div class="stat"><div class="n">3–6 wks</div><div class="l muted">typical cycle, brief → live</div></div></div>
+      <div class="card" style="flex:1;"><div class="stat"><div class="n">5 ×</div><div class="l muted">places context can leak</div></div></div>
+      <div class="card" style="flex:1.4;"><h3 style="font-size:17px;color:var(--s900);">The person who saw the data<br>never spoke to the client.</h3></div>
+    </div>
+    <div style="margin-top:14px;"><span class="tag warn">Target reference · directional, not yet measured</span></div>
+  </div>
+  <div class="hair" style="margin-bottom:18px;"></div>
+  <div class="foot"><span>LoudFace — Internal</span><span>04 / 10</span></div>
+</section>
+
+<!-- ============ 05 · THE POD (CHARCOAL, diagram) ============ -->
+<section class="slide charcoal">
+  <div class="top"><span>04 — The new unit</span><span class="r">The Operator Model</span></div>
+  <div class="hair"></div>
+  <div class="main">
+    <div class="row" style="align-items:center;gap:54px;">
+      <div style="flex:1.05;">
+        <h2 style="margin-bottom:16px;">The pod:<br>one operator, <span class="hi">the whole client.</span></h2>
+        <p class="lead" style="font-size:18px;margin-bottom:22px;color:rgba(255,255,255,.78);">
+          One person owns strategy → content → build → comms for their clients. The engines do the production. Design holds the quality gate. Nothing crosses a seam where it can be lost or watered down.
+        </p>
+        <ol class="steps">
+          <li><span><b>One owner, end to end.</b> The face on the call is the hand on the work.</span></li>
+          <li><span><b>Engines do production.</b> Content, build, research — run in parallel, not in sequence.</span></li>
+          <li><span><b>Design gates the ship.</b> Async review before anything goes out. Quality isn't optional.</span></li>
+        </ol>
+      </div>
+      <div style="flex:.95;">
+        <svg viewBox="0 0 440 380" width="100%" font-family="Geist Mono">
+          <defs>
+            <marker id="arw" markerWidth="8" markerHeight="8" refX="5" refY="3" orient="auto"><path d="M0,0 L5,3 L0,6 Z" fill="rgba(255,255,255,.45)"/></marker>
+          </defs>
+          <!-- spokes -->
+          <g stroke="rgba(255,255,255,.28)" stroke-width="1.4">
+            <line x1="220" y1="190" x2="80"  y2="80"  marker-end="url(#arw)"/>
+            <line x1="220" y1="190" x2="360" y2="80"  marker-end="url(#arw)"/>
+            <line x1="220" y1="190" x2="70"  y2="300" marker-end="url(#arw)"/>
+            <line x1="220" y1="190" x2="370" y2="300" marker-end="url(#arw)"/>
+          </g>
+          <!-- engine chips -->
+          <g>
+            <rect x="8"   y="54"  width="150" height="50" rx="10" fill="rgba(255,255,255,.05)" stroke="rgba(255,255,255,.12)"/>
+            <text x="83"  y="78"  text-anchor="middle" font-size="11.5" fill="#fff">CONTENT</text><text x="83" y="93" text-anchor="middle" font-size="9" fill="rgba(255,255,255,.55)">engine</text>
+            <rect x="290" y="54"  width="142" height="50" rx="10" fill="rgba(255,255,255,.05)" stroke="rgba(255,255,255,.12)"/>
+            <text x="361" y="78"  text-anchor="middle" font-size="11.5" fill="#fff">BUILD</text><text x="361" y="93" text-anchor="middle" font-size="9" fill="rgba(255,255,255,.55)">Claude Code</text>
+            <rect x="2"   y="276" width="150" height="50" rx="10" fill="rgba(255,255,255,.05)" stroke="rgba(255,255,255,.12)"/>
+            <text x="77"  y="300" text-anchor="middle" font-size="11.5" fill="#fff">STRATEGY</text><text x="77" y="315" text-anchor="middle" font-size="9" fill="rgba(255,255,255,.55)">AEO · SEO</text>
+            <rect x="296" y="276" width="142" height="50" rx="10" fill="rgba(255,255,255,.05)" stroke="rgba(255,255,255,.12)"/>
+            <text x="367" y="300" text-anchor="middle" font-size="11.5" fill="#fff">REPORTING</text><text x="367" y="315" text-anchor="middle" font-size="9" fill="rgba(255,255,255,.55)">engine</text>
+          </g>
+          <!-- center operator -->
+          <circle cx="220" cy="190" r="62" fill="#6366f1"/>
+          <circle cx="220" cy="190" r="62" fill="none" stroke="rgba(255,255,255,.35)" stroke-width="1.5"/>
+          <text x="220" y="186" text-anchor="middle" font-size="14" fill="#fff" letter-spacing="1">OPERATOR</text>
+          <text x="220" y="204" text-anchor="middle" font-size="9.5" fill="rgba(255,255,255,.8)">owns the client</text>
+        </svg>
+      </div>
+    </div>
+  </div>
+  <div class="hair" style="margin-bottom:18px;"></div>
+  <div class="foot"><span>LoudFace — Internal</span><span>05 / 10</span></div>
+</section>
+
+<!-- ============ 06 · EVERYONE OPERATES / FLOOR + EDGE (LIGHT) ============ -->
+<section class="slide light">
+  <div class="top"><span>05 — Everyone operates</span><span class="r">The Operator Model</span></div>
+  <div class="hair"></div>
+  <div class="main">
+    <h2 style="margin-bottom:8px;max-width:24ch;">“Not everyone can code or design.”<br>That is the <span class="hi">non-argument.</span></h2>
+    <p class="lead muted" style="margin-bottom:24px;max-width:64ch;">The skill carries the floor to senior level on day one. Your talent is the edge on top of it.</p>
+    <div class="row" style="gap:24px;align-items:stretch;">
+      <div style="flex:1.15;display:flex;flex-direction:column;gap:16px;">
+        <div class="card">
+          <div class="kicker accent" style="margin-bottom:8px;">The floor — guaranteed</div>
+          <h3 style="font-size:19px;">Every craft, senior standard, built in.</h3>
+          <p style="margin-top:7px;">The skills in <b style="color:var(--s900);font-weight:500;">loudface-skills</b> design, build and write to a senior bar by default. You don't need to be a developer to ship a senior build — you direct one. The capability is in the system, not gatekept by a title.</p>
+        </div>
+        <div class="card">
+          <div class="kicker accent" style="margin-bottom:8px;">The edge — yours</div>
+          <h3 style="font-size:19px;">You set the ceiling in your craft.</h3>
+          <p style="margin-top:7px;">Each of you is still deepest in one thing — design, copy, dev, or AEO strategy. That taste is what lifts a pod's work from senior to unmistakable. The floor is shared; the edge is you.</p>
+        </div>
+      </div>
+      <div style="flex:.9;" class="card">
+        <div class="kicker" style="margin-bottom:6px;">Floor + edge</div>
+        <svg viewBox="0 0 444 230" width="100%" font-family="Geist Mono">
+          <!-- floor line -->
+          <line x1="10" y1="150" x2="350" y2="150" stroke="#4f46e5" stroke-width="1.4" stroke-dasharray="5 4"/>
+          <text x="440" y="143" text-anchor="end" font-size="10" fill="#4f46e5">SENIOR FLOOR</text>
+          <!-- bars: base to floor (grey) + edge above (indigo) -->
+          <g>
+            <rect x="34"  y="150" width="48" height="56" fill="#e5e5e5"/><rect x="34"  y="96"  width="48" height="54" fill="#6366f1"/>
+            <text x="58"  y="222" text-anchor="middle" font-size="10" fill="#737373">DESIGN</text>
+            <rect x="118" y="150" width="48" height="56" fill="#e5e5e5"/><rect x="118" y="112" width="48" height="38" fill="#818cf8"/>
+            <text x="142" y="222" text-anchor="middle" font-size="10" fill="#737373">COPY</text>
+            <rect x="202" y="150" width="48" height="56" fill="#e5e5e5"/><rect x="202" y="120" width="48" height="30" fill="#818cf8"/>
+            <text x="226" y="222" text-anchor="middle" font-size="10" fill="#737373">DEV</text>
+            <rect x="286" y="150" width="48" height="56" fill="#e5e5e5"/><rect x="286" y="104" width="48" height="46" fill="#6366f1"/>
+            <text x="310" y="222" text-anchor="middle" font-size="10" fill="#737373">AEO</text>
+          </g>
+          <text x="10" y="28" font-size="11" fill="#22302e">Everyone clears the floor.</text>
+          <text x="10" y="46" font-size="11" fill="#4f46e5">Each spikes in their craft.</text>
+        </svg>
+      </div>
+    </div>
+  </div>
+  <div class="hair" style="margin-bottom:18px;"></div>
+  <div class="foot"><span>LoudFace — Internal</span><span>06 / 10</span></div>
+</section>
+
+<!-- ============ 07 · CROSS-COLLAB + FLYWHEEL (WINE, diagram) ============ -->
+<section class="slide wine">
+  <div class="top"><span>06 — How we compound</span><span class="r">The Operator Model</span></div>
+  <div class="hair"></div>
+  <div class="main">
+    <div class="row" style="align-items:center;gap:50px;">
+      <div style="flex:1.05;">
+        <h2 style="margin-bottom:16px;">We help each other by<br><span class="hi">feeding the library.</span></h2>
+        <p class="lead" style="font-size:18px;color:rgba(248,240,245,.8);margin-bottom:20px;">
+          Operators still pull each other in — the copy-strong one gets the design-strong one to push a layout further. But the help has one rule, so the old chain can't sneak back:
+        </p>
+        <div class="card" style="padding:20px 24px;margin-bottom:18px;">
+          <p style="font-size:16px;line-height:1.5;color:rgba(248,240,245,.9);">You pull someone in to <b style="color:#fff;font-weight:500;">raise your edge or teach you</b> — never to take the task off your plate. Then you write what you learned into <b style="color:var(--p300);font-weight:500;">loudface-skills</b>, and the whole team gets it tomorrow.</p>
+        </div>
+        <p class="quote" style="font-size:23px;color:#fff;max-width:24ch;">Competitors add people.<br>We add skills. The gap <span style="color:var(--p300);">compounds.</span></p>
+      </div>
+      <div style="flex:.92;">
+        <svg viewBox="0 0 400 392" width="100%" font-family="Geist Mono">
+          <!-- ring -->
+          <circle cx="200" cy="196" r="132" fill="none" stroke="rgba(165,180,252,.45)" stroke-width="1.4"/>
+          <!-- clockwise arrowheads in the gaps between nodes -->
+          <g fill="#a5b4fc">
+            <g transform="translate(293.3,102.7) rotate(45)"><path d="M0,-4 L7,0 L0,4 Z"/></g>
+            <g transform="translate(293.3,289.3) rotate(135)"><path d="M0,-4 L7,0 L0,4 Z"/></g>
+            <g transform="translate(106.7,289.3) rotate(225)"><path d="M0,-4 L7,0 L0,4 Z"/></g>
+            <g transform="translate(106.7,102.7) rotate(315)"><path d="M0,-4 L7,0 L0,4 Z"/></g>
+          </g>
+          <!-- center label -->
+          <text x="200" y="200" text-anchor="middle" font-size="11" fill="#a5b4fc" letter-spacing="2">THE LOOP</text>
+          <!-- nodes (opaque, mask the ring beneath) -->
+          <g>
+            <g><circle cx="200" cy="64"  r="42" fill="#2d1b2b" stroke="rgba(202,219,217,.30)" stroke-width="1.2"/><text x="200" y="60"  text-anchor="middle" font-size="11" fill="#fff">SOLVE</text><text x="200" y="75"  text-anchor="middle" font-size="8.5" fill="rgba(248,240,245,.6)">a problem</text></g>
+            <g><circle cx="332" cy="196" r="46" fill="#2d1b2b" stroke="rgba(202,219,217,.30)" stroke-width="1.2"/><text x="332" y="192" text-anchor="middle" font-size="10.5" fill="#fff">CODIFY</text><text x="332" y="207" text-anchor="middle" font-size="8" fill="#a5b4fc">&#8594; loudface-skills</text></g>
+            <g><circle cx="200" cy="328" r="42" fill="#2d1b2b" stroke="rgba(202,219,217,.30)" stroke-width="1.2"/><text x="200" y="324" text-anchor="middle" font-size="11" fill="#fff">SHARE</text><text x="200" y="339" text-anchor="middle" font-size="8.5" fill="rgba(248,240,245,.6)">org-wide</text></g>
+            <g><circle cx="68"  cy="196" r="46" fill="#2d1b2b" stroke="rgba(202,219,217,.30)" stroke-width="1.2"/><text x="68"  y="192" text-anchor="middle" font-size="10" fill="#fff">LEVEL UP</text><text x="68"  y="207" text-anchor="middle" font-size="8" fill="rgba(248,240,245,.6)">everyone</text></g>
+          </g>
+        </svg>
+      </div>
+    </div>
+  </div>
+  <div class="hair" style="margin-bottom:18px;"></div>
+  <div class="foot"><span>LoudFace — Internal</span><span>07 / 10</span></div>
+</section>
+
+<!-- ============ 08 · WHO DOES WHAT (LIGHT, coverage map) ============ -->
+<section class="slide light">
+  <div class="top"><span>07 — Who does what</span><span class="r">The Operator Model</span></div>
+  <div class="hair"></div>
+  <div class="main">
+    <h2 style="margin-bottom:10px;">Same functions covered. <span class="hi">Fewer seams.</span></h2>
+    <p class="lead muted" style="margin-bottom:24px;max-width:64ch;">The client still gets every discipline. It just isn't five separate people passing a baton.</p>
+    <div style="display:flex;flex-direction:column;gap:0;border:1px solid var(--s200);border-radius:14px;overflow:hidden;background:#fff;">
+      <div style="display:grid;grid-template-columns:1fr 1.3fr;gap:0;padding:13px 26px;background:var(--s100);font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--s500);">
+        <span>Function</span><span>Who owns it now</span>
+      </div>
+      <div class="cov">
+        <div class="cr"><span class="cf">Strategy &amp; direction</span><span class="cw">The <b>Operator</b>, with a principal at kickoff &amp; quarterly reviews</span></div>
+        <div class="cr"><span class="cf">Content &amp; copy</span><span class="cw">Content <b>Engine</b> + operator's editing eye + adversarial QA pass</span></div>
+        <div class="cr"><span class="cf">Design &amp; build</span><span class="cw">Operator builds via skills; <b>Design Director</b> gates everything shipped</span></div>
+        <div class="cr"><span class="cf">Delivery &amp; comms</span><span class="cw">The <b>Operator</b>, daily — the face on the call is the hand on the work</span></div>
+        <div class="cr"><span class="cf">Engines &amp; escalation</span><span class="cw"><b>Founder</b> — builds the systems, catches the hard 20%, sells</span></div>
+      </div>
+    </div>
+    <p class="muted" style="font-size:13px;margin-top:16px;">These are <b style="color:var(--s900);font-weight:500;">roles, not names.</b> Where each of us lands — and how we get there — is a one-to-one conversation, not a slide.</p>
+  </div>
+  <div class="hair" style="margin-bottom:18px;"></div>
+  <div class="foot"><span>LoudFace — Internal</span><span>08 / 10</span></div>
+</section>
+<style>
+.cov{display:flex;flex-direction:column;}
+.cr{display:grid;grid-template-columns:1fr 1.3fr;gap:0;padding:18px 26px;border-top:1px solid var(--s200);align-items:center;}
+.cf{font-family:var(--heading);font-weight:500;font-size:18px;color:var(--s900);}
+.cw{font-size:15.5px;color:var(--s600);line-height:1.45;}
+.cw b,.cf b{font-weight:500;color:var(--s900);}
+</style>
+
+<!-- ============ 09 · WHAT IT MEANS FOR YOU (WINE, reassurance) ============ -->
+<section class="slide wine">
+  <div class="top"><span>08 — What this means for you</span><span class="r">The Operator Model</span></div>
+  <div class="hair"></div>
+  <div class="main">
+    <h2 style="margin-bottom:12px;">Your role gets <span class="hi">bigger</span>, not smaller.</h2>
+    <p class="lead" style="font-size:18px;color:rgba(248,240,245,.8);margin-bottom:30px;max-width:62ch;">The fear with any AI shift is “less of me.” This is the opposite. You trade repetitive production for ownership, leverage, and a craft that compounds.</p>
+    <div class="grid3" style="margin-bottom:26px;">
+      <div class="card">
+        <div class="n" style="font-family:var(--mono);font-size:22px;color:var(--p300);margin-bottom:10px;">01</div>
+        <h3 style="font-size:19px;">Own the whole client.</h3>
+        <p style="margin-top:7px;color:rgba(248,240,245,.78);">Not a slice of a deliverable — the relationship and the result. The interesting part of the job, finally undivided.</p>
+      </div>
+      <div class="card">
+        <div class="n" style="font-family:var(--mono);font-size:22px;color:var(--p300);margin-bottom:10px;">02</div>
+        <h3 style="font-size:19px;">Direct, don't grind.</h3>
+        <p style="margin-top:7px;color:rgba(248,240,245,.78);">You point senior-grade output where it needs to go. Your judgment is the scarce input, not your keystrokes.</p>
+      </div>
+      <div class="card">
+        <div class="n" style="font-family:var(--mono);font-size:22px;color:var(--p300);margin-bottom:10px;">03</div>
+        <h3 style="font-size:19px;">Build IP, not just deliverables.</h3>
+        <p style="margin-top:7px;color:rgba(248,240,245,.78);">Every skill you add to the library makes the whole team better — and makes you harder to replace, not easier.</p>
+      </div>
+    </div>
+    <p style="font-size:15.5px;color:rgba(248,240,245,.7);">And we get you there — <b style="color:#fff;font-weight:500;">apprenticeship inside a working pod, war-gaming real calls, and escalation for the hard 20%.</b> No one is dropped in the deep end.</p>
+  </div>
+  <div class="hair" style="margin-bottom:18px;"></div>
+  <div class="foot"><span>LoudFace — Internal</span><span>09 / 10</span></div>
+</section>
+
+<!-- ============ 10 · THE PATH + THE ASK (CHARCOAL, close) ============ -->
+<section class="slide charcoal">
+  <div class="top"><span>09 — The path &amp; the ask</span><span class="r">The Operator Model</span></div>
+  <div class="hair"></div>
+  <div class="main">
+    <div class="row" style="gap:50px;align-items:flex-start;">
+      <div style="flex:1;">
+        <h2 style="margin-bottom:18px;">We prove it, <span class="hi">then we move.</span></h2>
+        <ol class="steps" style="gap:16px;">
+          <li><span><b>Pilot.</b> 2–3 clients run pod-style for 60–90 days.</span></li>
+          <li><span><b>Measure.</b> Cycle time, margin, and client happiness vs. the old chain.</span></li>
+          <li><span><b>Migrate in waves</b> once the pod beats the chain — not before.</span></li>
+        </ol>
+        <p class="muted" style="font-size:14px;margin-top:20px;max-width:42ch;">This isn't a switch flipped on Monday. It's a move we earn the right to make, with evidence.</p>
+      </div>
+      <div style="flex:1;">
+        <div class="kicker" style="margin-bottom:14px;color:rgba(255,255,255,.6);">What we ask of you</div>
+        <div style="display:flex;flex-direction:column;gap:12px;margin-bottom:24px;">
+          <div class="card" style="padding:16px 20px;"><p style="color:rgba(255,255,255,.9);font-size:15.5px;">Come in <b style="color:#fff;font-weight:500;">willing to operate</b> — lean on the skills before deciding you can't.</p></div>
+          <div class="card" style="padding:16px 20px;"><p style="color:rgba(255,255,255,.9);font-size:15.5px;"><b style="color:#fff;font-weight:500;">Feed the library.</b> Every problem you solve, you leave behind for the team.</p></div>
+          <div class="card" style="padding:16px 20px;"><p style="color:rgba(255,255,255,.9);font-size:15.5px;">Bring the wariness — <b style="color:#fff;font-weight:500;">pressure-test it in the open,</b> not in the hallway.</p></div>
+        </div>
+      </div>
+    </div>
+    <div style="margin-top:8px;border-top:1px solid rgba(255,255,255,.12);padding-top:18px;display:flex;align-items:center;gap:34px;">
+      <span class="tag">Targets · directional</span>
+      <div class="stat" style="display:flex;align-items:baseline;gap:10px;"><span class="n" style="font-size:24px;color:#fff;">5 → 0</span><span class="l muted" style="margin:0;">handoffs</span></div>
+      <div class="stat" style="display:flex;align-items:baseline;gap:10px;"><span class="n" style="font-size:24px;color:#fff;">weeks → days</span><span class="l muted" style="margin:0;">cycle time</span></div>
+      <div class="stat" style="display:flex;align-items:baseline;gap:10px;"><span class="n" style="font-size:24px;color:#fff;">5 → ~1.5</span><span class="l muted" style="margin:0;">humans / deliverable</span></div>
+    </div>
+  </div>
+  <div class="hair" style="margin-bottom:18px;"></div>
+  <div class="foot"><span>LoudFace — The Operator Model · Internal</span><span>10 / 10</span></div>
+</section>
+
+</body>
+</html>

@@ -1,0 +1,411 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>LoudFace Content Refresh Plan — May 2026 (v2)</title>
+<style>
+  :root {
+    --bg: #0c0e12;
+    --surface: #14171d;
+    --surface-2: #1c2028;
+    --border: #2a2f3a;
+    --text: #e8eaed;
+    --muted: #9ca3af;
+    --dim: #6b7280;
+    --accent: #f59e0b;
+    --good: #10b981;
+    --warn: #f59e0b;
+    --bad: #ef4444;
+    --neutral: #6366f1;
+    --keep: #10b981;
+    --refresh: #3b82f6;
+    --rewrite: #f59e0b;
+    --merge: #8b5cf6;
+    --kill: #ef4444;
+  }
+  * { box-sizing: border-box; }
+  body { background: var(--bg); color: var(--text); font-family: -apple-system, BlinkMacSystemFont, "Inter", system-ui, sans-serif; line-height: 1.55; margin: 0; padding: 48px 24px 96px; }
+  .container { max-width: 1180px; margin: 0 auto; }
+  h1 { font-size: 32px; font-weight: 600; margin: 0 0 6px; letter-spacing: -0.02em; }
+  .subtitle { color: var(--muted); font-size: 15px; margin-bottom: 32px; }
+  h2 { font-size: 22px; font-weight: 600; margin: 56px 0 16px; letter-spacing: -0.01em; padding-bottom: 8px; border-bottom: 1px solid var(--border); }
+  h3 { font-size: 17px; font-weight: 600; margin: 28px 0 12px; color: var(--text); }
+  p { margin: 0 0 14px; color: var(--muted); }
+  p.lead { color: var(--text); font-size: 16px; }
+  strong { color: var(--text); }
+  a { color: #60a5fa; text-decoration: none; }
+  a:hover { text-decoration: underline; }
+  code { background: var(--surface-2); padding: 1px 6px; border-radius: 4px; font-size: 13px; color: #e5e7eb; }
+
+  .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; margin: 24px 0 40px; }
+  .stat { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 16px 18px; }
+  .stat-label { color: var(--dim); font-size: 12px; text-transform: uppercase; letter-spacing: 0.08em; }
+  .stat-value { font-size: 26px; font-weight: 600; margin-top: 4px; }
+  .stat-value.keep { color: var(--keep); }
+  .stat-value.refresh { color: var(--refresh); }
+  .stat-value.rewrite { color: var(--rewrite); }
+  .stat-value.merge { color: var(--merge); }
+  .stat-value.kill { color: var(--kill); }
+
+  table { width: 100%; border-collapse: collapse; margin: 16px 0 32px; font-size: 13.5px; }
+  thead { background: var(--surface-2); }
+  th { text-align: left; font-weight: 500; color: var(--muted); padding: 10px 12px; border-bottom: 1px solid var(--border); font-size: 12px; text-transform: uppercase; letter-spacing: 0.05em; }
+  td { padding: 11px 12px; border-bottom: 1px solid var(--border); color: var(--text); vertical-align: top; }
+  td.dim { color: var(--muted); }
+  td.url { font-family: ui-monospace, SFMono-Regular, monospace; font-size: 12.5px; }
+  td.metric { text-align: right; font-variant-numeric: tabular-nums; }
+  td.metric.zero { color: var(--dim); }
+  td.metric.high { color: var(--good); }
+  td.metric.medium { color: var(--warn); }
+  tr:hover { background: var(--surface); }
+  tr:last-child td { border-bottom: none; }
+
+  .pill { display: inline-block; padding: 2px 9px; border-radius: 999px; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em; }
+  .pill.keep { background: rgba(16,185,129,0.15); color: var(--keep); border: 1px solid rgba(16,185,129,0.3); }
+  .pill.refresh { background: rgba(59,130,246,0.15); color: var(--refresh); border: 1px solid rgba(59,130,246,0.3); }
+  .pill.rewrite { background: rgba(245,158,11,0.15); color: var(--rewrite); border: 1px solid rgba(245,158,11,0.3); }
+  .pill.merge { background: rgba(139,92,246,0.15); color: var(--merge); border: 1px solid rgba(139,92,246,0.3); }
+  .pill.kill { background: rgba(239,68,68,0.15); color: var(--kill); border: 1px solid rgba(239,68,68,0.3); }
+  .pill.cusp { background: rgba(99,102,241,0.15); color: var(--neutral); border: 1px solid rgba(99,102,241,0.3); margin-left: 6px; }
+
+  .prio { display: inline-block; width: 22px; height: 22px; line-height: 22px; text-align: center; border-radius: 4px; font-size: 12px; font-weight: 600; }
+  .prio.p0 { background: rgba(239,68,68,0.2); color: var(--bad); }
+  .prio.p1 { background: rgba(245,158,11,0.2); color: var(--warn); }
+  .prio.p2 { background: rgba(99,102,241,0.2); color: var(--neutral); }
+  .prio.p3 { background: var(--surface-2); color: var(--muted); }
+
+  .hero-block { background: linear-gradient(135deg, #1a1f2e 0%, #161a24 100%); border: 1px solid var(--border); border-radius: 12px; padding: 28px 32px; margin-bottom: 40px; }
+  .hero-block h2 { border: none; padding: 0; margin: 0 0 14px; font-size: 18px; }
+  .hero-block ol { margin: 0; padding-left: 22px; color: var(--text); }
+  .hero-block li { margin-bottom: 10px; line-height: 1.6; }
+  .hero-block li strong { color: var(--accent); }
+
+  .note { background: var(--surface); border-left: 3px solid var(--neutral); padding: 12px 16px; border-radius: 4px; margin: 16px 0; font-size: 14px; color: var(--muted); }
+  .note strong { color: var(--text); }
+  .note.principle { border-left-color: var(--accent); }
+  .note.principle strong { color: var(--accent); }
+
+  .legend { display: flex; gap: 16px; flex-wrap: wrap; margin: 16px 0 32px; }
+  .legend-item { display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--muted); }
+  .legend-dot { width: 10px; height: 10px; border-radius: 50%; }
+
+  .toc { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 16px 20px; margin-bottom: 32px; }
+  .toc-title { font-size: 12px; text-transform: uppercase; color: var(--muted); margin-bottom: 8px; letter-spacing: 0.06em; }
+  .toc ul { margin: 0; padding-left: 18px; columns: 2; column-gap: 24px; }
+  .toc li { margin-bottom: 6px; font-size: 14px; }
+
+  .effort { font-size: 11px; color: var(--dim); margin-left: 8px; }
+  .revision-tag { display: inline-block; background: rgba(245,158,11,0.2); color: var(--accent); padding: 2px 9px; border-radius: 999px; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em; margin-left: 8px; vertical-align: middle; }
+
+  hr { border: 0; border-top: 1px solid var(--border); margin: 56px 0; }
+  .footer { color: var(--dim); font-size: 12px; text-align: center; margin-top: 64px; }
+</style>
+</head>
+<body>
+<div class="container">
+
+<h1>LoudFace Content Refresh Plan <span class="revision-tag">v2</span></h1>
+<div class="subtitle">Generated 2026-05-15 · Revised after rule change: don't 410 indexed URLs. Most "kill" candidates moved to "rewrite in place."</div>
+
+<div class="note principle"><strong>Guiding principle (now in the Knowledge Base):</strong> Killing an indexed URL throws away backlinks, branded recognition, internal-link equity, and any topical signal even when traffic is low. The default for bad-but-indexed pages is <strong>rewrite in place</strong>. <strong>301 merge</strong> when a sibling already covers the intent. <strong>410</strong> only when the topic is genuinely dead AND there is no good redirect target. Applied to the audit, the "true kill" list dropped from 28 to 1.</div>
+
+<div class="toc">
+  <div class="toc-title">On this page</div>
+  <ul>
+    <li><a href="#tldr">TL;DR + next 5 moves</a></li>
+    <li><a href="#stats">Inventory at a glance</a></li>
+    <li><a href="#findings">Top findings</a></li>
+    <li><a href="#keep">Keep as-is (8)</a></li>
+    <li><a href="#refresh">Refresh (20)</a></li>
+    <li><a href="#rewrite">Rewrite in place (44)</a></li>
+    <li><a href="#merge">301 merge (7)</a></li>
+    <li><a href="#kill">True 410 (1)</a></li>
+    <li><a href="#case-studies">Case studies (27)</a></li>
+    <li><a href="#seo-for">/seo-for pages (6)</a></li>
+    <li><a href="#cadence">Suggested execution cadence</a></li>
+  </ul>
+</div>
+
+<div class="hero-block" id="tldr">
+  <h2>TL;DR + next 5 moves (v2)</h2>
+  <p style="color: var(--text); margin-bottom: 18px;">80 blog posts on the site. Triage: keep 8, refresh 20, rewrite in place 44, 301 merge 7, true 410 just 1 (an expired Webflow rebrand news post). The 2024-10 mass AI-gen drop has valid topics underneath the slop voice — those get rewritten on the same URL, not killed. Five moves recover the highest leverage:</p>
+  <ol>
+    <li><strong>Cusp page rewrites — top priority.</strong> Six pages already attract Google demand but rank too low to convert. Rank lift on these is the fastest revenue payoff in the whole plan. <code>/blog/best-b2b-saas-seo-agencies</code> (2,015 imps / pos 53), <code>/blog/webflow-vs-wix-studio</code> (1,934 / 26), <code>/blog/best-webflow-split-testing-tools-compared</code> (1,669 / 27), <code>/blog/the-webflow-expert</code> (1,080 / 42), <code>/blog/top-10-webflow-agency-templates</code> (674 / 13), <code>/blog/convert-figma-designs-to-webflow-pages</code> (630 / 64).</li>
+    <li><strong>Execute the 7 301 merges this week.</strong> Surgical, fast, no drafting required. Cleans up the keyword cannibalization between agency-decision and pricing cluster URLs. Estimated 2-3 hours total.</li>
+    <li><strong>Refresh the 12 AEO playbook posts</strong> from the March 2026 batch — year-stamp + retrofit the three-speed framing from the KB so they're consistent with the rewritten founder byline.</li>
+    <li><strong>Bulk-rewrite the 2024-10 batch in topic-cluster groups,</strong> 5-7 per week. Don't kill them; rewrite preserves the indexed URLs and replaces the slop content. Use the cascade: /seo-brain → /serp-recon → /draft-content (KB-grounded) → /critique-content → /verify-content → ship in place.</li>
+    <li><strong>Verify Finnrick before any other action.</strong> GSC shows <code>/case-studies/finnrick-analytics</code> at 766 imps with 5 clicks — but the memory note says it was unpublished 2026-04-13. Either the 410 didn't propagate, or the memory is wrong. Resolve before acting elsewhere.</li>
+  </ol>
+</div>
+
+<h2 id="stats">Inventory at a glance</h2>
+
+<div class="stats">
+  <div class="stat"><div class="stat-label">Blog posts</div><div class="stat-value">80</div></div>
+  <div class="stat"><div class="stat-label">Case studies</div><div class="stat-value">27</div></div>
+  <div class="stat"><div class="stat-label">/seo-for pages</div><div class="stat-value">6</div></div>
+  <div class="stat"><div class="stat-label">Keep</div><div class="stat-value keep">8</div></div>
+  <div class="stat"><div class="stat-label">Refresh</div><div class="stat-value refresh">20</div></div>
+  <div class="stat"><div class="stat-label">Rewrite in place</div><div class="stat-value rewrite">44</div></div>
+  <div class="stat"><div class="stat-label">301 merge</div><div class="stat-value merge">7</div></div>
+  <div class="stat"><div class="stat-label">True 410</div><div class="stat-value kill">1</div></div>
+</div>
+
+<div class="legend">
+  <div class="legend-item"><span class="legend-dot" style="background:var(--keep)"></span> Keep — recent, voice-controlled, performing</div>
+  <div class="legend-item"><span class="legend-dot" style="background:var(--refresh)"></span> Refresh — bones good, year-stamp + voice pass</div>
+  <div class="legend-item"><span class="legend-dot" style="background:var(--rewrite)"></span> Rewrite — full rewrite on same URL, preserves equity</div>
+  <div class="legend-item"><span class="legend-dot" style="background:var(--merge)"></span> 301 merge — redirect to sibling, consolidate authority</div>
+  <div class="legend-item"><span class="legend-dot" style="background:var(--kill)"></span> 410 — only when no rescue path AND no redirect target</div>
+  <div class="legend-item"><span class="legend-dot" style="background:var(--neutral)"></span> Cusp — has impressions, rank lift converts</div>
+</div>
+
+<h2 id="findings">Top findings</h2>
+
+<h3>1. The 2024-10 mass AI-gen drop has valid topics underneath the slop</h3>
+<p>Forty-plus posts dropped on 2024-10-10 — clearly an AI-gen content migration. Sample voice: <em>"It's like having a translator who speaks fluent web design!"</em> · <em>"having a personal bodyguard for your website."</em> Earlier draft of this audit recommended killing 28 of them. <strong>That was wrong.</strong> Most have valid topics that map to LoudFace's strategy (beginner Webflow guides, integration playbooks, comparison content) — the rescue path is rewriting in place, which preserves the indexed URLs and replaces the slop content. The volume mistake doesn't get unwound by another volume mistake.</p>
+
+<h3>2. The 2025-01 webflow-vs-X comparisons are 60% there already</h3>
+<p>Cleaner TL;DR-at-top structure, first-person voice creeping in ("As a Webflow Premium Enterprise Partner, I've worked with countless clients"). Still uses banned words (<em>seamless</em>, <em>celebrated for its simplicity</em>) and lacks the three-speed framing from the new KB. Refresh territory, not rewrite — bones are good.</p>
+
+<h3>3. The 2026-03 AEO playbook batch is the strategic high-ground</h3>
+<p>Twelve pieces shipped March 2026 (eeat-in-the-age-of-ai, ai-first-content-architecture, share-of-answer, how-to-become-a-trusted-llm-source, etc.). Strategic voice but predate the KB. Refresh to align with three-speed model + 2026 year-stamps.</p>
+
+<h3>4. Keyword cannibalization cluster around "Webflow agency"</h3>
+<p>Four older posts all target overlapping intent: <code>best-webflow-agencies</code>, <code>top-webflow-agency</code>, <code>why-choose-loudface-webflow-agency</code>, <code>how-to-choose-the-right-webflow-agency-for-your-brand</code>. Plus the new 2026 listicle. <strong>301 merge:</strong> consolidate to <code>best-webflow-agencies</code> as the general canonical (the B2B SaaS listicle is the sibling).</p>
+
+<h3>5. Six cusp pages are the fastest path to clicks</h3>
+<p>Each already attracts Google impressions but ranks too low to convert. A targeted rewrite that moves them onto page 1-2 is more leverage than any single new piece.</p>
+
+<hr>
+
+<h2 id="keep">Keep as-is (8 pieces)</h2>
+<p>Recent strategic shipments. Voice-controlled, year-stamped, structured for AEO. <strong>Don't touch unless data changes.</strong></p>
+<table>
+<thead><tr><th>URL</th><th>Published</th><th>Pattern</th></tr></thead>
+<tbody>
+<tr><td class="url">/blog/webflow-agency-cost-b2b-saas-2026</td><td class="dim">2026-05-15</td><td>Pricing intent</td></tr>
+<tr><td class="url">/blog/best-b2b-saas-webflow-agencies-2026</td><td class="dim">2026-05-15</td><td>Year-stamped listicle</td></tr>
+<tr><td class="url">/blog/b2b-saas-seo-agency-comparison-2026</td><td class="dim">2026-05-15</td><td>X vs Y comparison</td></tr>
+<tr><td class="url">/blog/best-aeo-tools-for-b2b-saas-2026</td><td class="dim">2026-05-14</td><td>Year-stamped listicle</td></tr>
+<tr><td class="url">/blog/best-aeo-agencies-b2b-saas-2026</td><td class="dim">2026-04-21</td><td>Year-stamped listicle</td></tr>
+<tr><td class="url">/blog/answer-engine-optimization-guide-2026</td><td class="dim">2026-04-21</td><td>AEO playbook (best-example for founder byline)</td></tr>
+<tr><td class="url">/blog/share-of-answer-audit-90-minutes</td><td class="dim">2026-04-28</td><td>Named framework</td></tr>
+<tr><td class="url">/blog/new-search-funnel-rankings-to-recommendations</td><td class="dim">2026-05-07</td><td>Founder byline</td></tr>
+</tbody>
+</table>
+
+<h2 id="refresh">Refresh — 20 pieces</h2>
+<p>Bones are good. Each needs: <strong>2026 year-stamp</strong>, <strong>voice pass</strong>, <strong>retrofit three-speed framing from KB</strong>, <strong>add FAQ schema if missing</strong>, <strong>cross-link to recent strategic shipments</strong>. <span class="effort">30-60 min per piece.</span></p>
+<table>
+<thead><tr><th>P</th><th>URL</th><th>Pub</th><th class="metric">Imps 28d</th><th class="metric">Pos</th><th>Action</th></tr></thead>
+<tbody>
+<tr><td><span class="prio p0">0</span></td><td class="url">/blog/best-b2b-saas-seo-agencies <span class="pill cusp">CUSP</span></td><td class="dim">2026-04-17</td><td class="metric high">2,015</td><td class="metric medium">53.2</td><td>Rank rescue: title rewrite, schema audit, expand to 4,000 words like sibling listicles</td></tr>
+<tr><td><span class="prio p1">1</span></td><td class="url">/blog/how-to-structure-content-for-ai-extraction</td><td class="dim">2026-03-15</td><td class="metric high">613</td><td class="metric high">6.6</td><td>Already ranks well — year-stamp + three-speed framing, link to founder byline</td></tr>
+<tr><td><span class="prio p1">1</span></td><td class="url">/blog/eeat-in-the-age-of-ai</td><td class="dim">2026-03-16</td><td class="metric medium">106</td><td class="metric medium">17.3</td><td>Year-stamp, voice pass, add Toku proof, FAQ schema</td></tr>
+<tr><td><span class="prio p1">1</span></td><td class="url">/blog/seo-survival-playbook</td><td class="dim">2026-03-16</td><td class="metric zero">—</td><td class="metric zero">—</td><td>Year-stamp + voice + 2026 GSC-decline data + AEO cross-links</td></tr>
+<tr><td><span class="prio p1">1</span></td><td class="url">/blog/ai-first-content-architecture</td><td class="dim">2026-03-15</td><td class="metric zero">—</td><td class="metric zero">—</td><td>Align with KB three-speed model, add foundation-work insight</td></tr>
+<tr><td><span class="prio p1">1</span></td><td class="url">/blog/share-of-answer</td><td class="dim">2026-03-14</td><td class="metric zero">—</td><td class="metric zero">—</td><td>Pair with /blog/share-of-answer-audit-90-minutes via cross-link</td></tr>
+<tr><td><span class="prio p1">1</span></td><td class="url">/blog/zero-click-content-that-drives-revenue</td><td class="dim">2026-03-14</td><td class="metric zero">—</td><td class="metric zero">—</td><td>Year-stamp + voice + link to KB "60-word answer block" insight</td></tr>
+<tr><td><span class="prio p2">2</span></td><td class="url">/blog/how-to-become-a-trusted-llm-source</td><td class="dim">2026-03-09</td><td class="metric zero">—</td><td class="metric zero">—</td><td>Year-stamp, voice pass, add Toku citation-pickup data</td></tr>
+<tr><td><span class="prio p2">2</span></td><td class="url">/blog/aeo-strategies-that-work</td><td class="dim">2026-03-08</td><td class="metric zero">—</td><td class="metric zero">—</td><td>Align with three-speed framing, voice pass</td></tr>
+<tr><td><span class="prio p2">2</span></td><td class="url">/blog/machine-to-machine-marketing</td><td class="dim">2026-03-07</td><td class="metric zero">—</td><td class="metric zero">—</td><td>Year-stamp, sharper opening, voice pass</td></tr>
+<tr><td><span class="prio p1">1</span></td><td class="url">/blog/webflow-vs-wix-studio <span class="pill cusp">CUSP</span></td><td class="dim">2025-01-07</td><td class="metric high">1,934</td><td class="metric medium">26.4</td><td>Page 3 with high volume — voice + 2026 framing + table refresh</td></tr>
+<tr><td><span class="prio p1">1</span></td><td class="url">/blog/webflow-vs-wix-comparison</td><td class="dim">2025-01-07</td><td class="metric zero">—</td><td class="metric zero">—</td><td>Voice + 2026 framing + table refresh (companion to wix-studio)</td></tr>
+<tr><td><span class="prio p1">1</span></td><td class="url">/blog/webflow-vs-squarespace</td><td class="dim">2025-01-10</td><td class="metric zero">—</td><td class="metric zero">—</td><td>Voice + 2026 framing + table refresh</td></tr>
+<tr><td><span class="prio p1">1</span></td><td class="url">/blog/webflow-vs-wordpress-org</td><td class="dim">2025-01-18</td><td class="metric zero">—</td><td class="metric zero">—</td><td>Voice + 2026 framing + table refresh</td></tr>
+<tr><td><span class="prio p2">2</span></td><td class="url">/blog/webflow-vs-wordpress-com</td><td class="dim">2025-01-14</td><td class="metric zero">—</td><td class="metric zero">—</td><td>Voice + 2026 framing + table refresh</td></tr>
+<tr><td><span class="prio p2">2</span></td><td class="url">/blog/webflow-vs-editorx</td><td class="dim">2025-01-22</td><td class="metric zero">—</td><td class="metric zero">—</td><td>Voice + 2026 framing; assess EditorX relevance in 2026</td></tr>
+<tr><td><span class="prio p0">0</span></td><td class="url">/blog/best-webflow-split-testing-tools-compared <span class="pill cusp">CUSP</span></td><td class="dim">2024-09-05</td><td class="metric high">1,669</td><td class="metric medium">26.8</td><td>Highest-traffic non-strategic post. 2026-stamp + voice + LoudFace POV section</td></tr>
+<tr><td><span class="prio p2">2</span></td><td class="url">/blog/seo-vs-aeo-for-webflow</td><td class="dim">2025-12-25</td><td class="metric zero">—</td><td class="metric zero">—</td><td>Refresh against KB three-speed framing</td></tr>
+<tr><td><span class="prio p2">2</span></td><td class="url">/blog/top-10-webflow-agency-templates <span class="pill cusp">CUSP</span></td><td class="dim">2025-12-08</td><td class="metric high">674</td><td class="metric medium">12.6</td><td>Page 2 with traction — year-stamp + voice + LoudFace-built templates</td></tr>
+<tr><td><span class="prio p3">3</span></td><td class="url">/blog/ai-enhanced-webflow-development</td><td class="dim">2025-12-04</td><td class="metric zero">—</td><td class="metric zero">—</td><td>Year-stamp, voice pass, link to AEO content</td></tr>
+</tbody>
+</table>
+
+<h2 id="rewrite">Rewrite in place — 44 pieces</h2>
+<p>URL stays. Content gets replaced from scratch in LoudFace voice, grounded in KB. Preserves backlinks, indexed status, internal-link equity, all GSC history. <strong>Each goes through the full cascade.</strong> <span class="effort">90-120 min per piece. Batch by topic cluster.</span></p>
+
+<h3>Cluster A: Cusp page rewrites (P0 — highest leverage)</h3>
+<table>
+<thead><tr><th>URL</th><th class="metric">Imps 28d</th><th class="metric">Pos</th><th>Action</th></tr></thead>
+<tbody>
+<tr><td class="url">/blog/the-webflow-expert <span class="pill cusp">CUSP</span></td><td class="metric high">1,080</td><td class="metric medium">41.9</td><td>Page 4 with high volume. Rewrite with LoudFace voice + pricing intent</td></tr>
+<tr><td class="url">/blog/convert-figma-designs-to-webflow-pages <span class="pill cusp">CUSP</span></td><td class="metric high">630</td><td class="metric medium">63.7</td><td>Real search demand. Rewrite as tactical playbook in LoudFace voice</td></tr>
+</tbody>
+</table>
+
+<h3>Cluster B: Agency / pricing canonicals</h3>
+<table>
+<thead><tr><th>URL</th><th>Pub</th><th>Action</th></tr></thead>
+<tbody>
+<tr><td class="url">/blog/best-webflow-agencies <span class="pill cusp">CUSP</span></td><td class="dim">2025-10-08</td><td>Becomes the canonical "general Webflow agency" listicle. B2B SaaS one is the sibling. Will receive 3 301-merges.</td></tr>
+<tr><td class="url">/blog/webflow-agency-pricing</td><td class="dim">2025-11-10</td><td>Canonical "Webflow Agency Pricing 2026"; B2B SaaS pricing piece is the sibling. Will absorb /understanding-webflow-pricing via 301.</td></tr>
+<tr><td class="url">/blog/the-problem-with-traditional-webflow-agencies</td><td class="dim">2026-03-07</td><td>Strong topic, generic voice. Rewrite as Arnel-voice opinion piece</td></tr>
+</tbody>
+</table>
+
+<h3>Cluster C: Webflow + AI / AEO (high-intent rewrites)</h3>
+<table>
+<thead><tr><th>URL</th><th>Pub</th><th>Action</th></tr></thead>
+<tbody>
+<tr><td class="url">/blog/aeo-for-webflow-how-to-make-your-site-discoverable-by-ai-search-engines</td><td class="dim">2026-01-27</td><td>Strong intent. Rewrite as AEO playbook with KB three-speed grounding</td></tr>
+<tr><td class="url">/blog/how-to-future-proof-your-webflow-website-for-search-and-ai-agents</td><td class="dim">2026-01-26</td><td>Rewrite or merge into AEO playbook. Verdict TBD after drafting.</td></tr>
+<tr><td class="url">/blog/what-google-sge-and-ai-search-mean-for-webflow-sites-in-2026</td><td class="dim">2026-01-23</td><td>SGE = AI Overviews now. Terminology refresh + rewrite</td></tr>
+<tr><td class="url">/blog/webflow-ai-revolution</td><td class="dim">2024-10-10</td><td>Topic still on-strategy. Rewrite with current Webflow + AI framing</td></tr>
+<tr><td class="url">/blog/why-loudface-builds-ai-enhanced-seo-aeo-driven-webflow-systems-not-just-websites</td><td class="dim">2026-01-30</td><td>URL stays. Rewrite as "LoudFace philosophy" piece in Arnel voice</td></tr>
+<tr><td class="url">/blog/how-ai-webflow-systems-reduce-development-costs-for-scaling-teams</td><td class="dim">2026-01-29</td><td>Rewrite as case-study-led piece using real LoudFace client data</td></tr>
+<tr><td class="url">/blog/the-future-of-webflow-ai-assisted-design-development-and-optimization</td><td class="dim">2026-01-28</td><td>Rewrite with concrete examples; flag if topic is still relevant at draft time</td></tr>
+<tr><td class="url">/blog/is-webflow-good-for-seo</td><td class="dim">2024-10-10</td><td>High-volume query. Rewrite with current AEO framing — major SEO opportunity</td></tr>
+</tbody>
+</table>
+
+<h3>Cluster D: Webflow for [industry] pieces (pair with /seo-for landings)</h3>
+<table>
+<thead><tr><th>URL</th><th>Pub</th><th>Action</th></tr></thead>
+<tbody>
+<tr><td class="url">/blog/webflow-for-fintech-why-it-outperforms-traditional-cms-platforms</td><td class="dim">2026-01-19</td><td>Pair with /seo-for/fintech. Rewrite as "Webflow for fintech 2026" companion</td></tr>
+<tr><td class="url">/blog/webflow-for-ecommerce</td><td class="dim">2026-03-07</td><td>Pair with /seo-for/ecommerce. Arnel voice + Mr.Grateful case</td></tr>
+<tr><td class="url">/blog/webflow-for-healthcare</td><td class="dim">2026-03-07</td><td>Pair with /seo-for/healthcare. Dimer Health / IMP case</td></tr>
+<tr><td class="url">/blog/why-saas-companies-are-moving-to-webflow-in-2026-and-what-they-gain</td><td class="dim">2026-01-22</td><td>Rewrite + cross-link to /seo-for/saas</td></tr>
+<tr><td class="url">/blog/why-are-startups-switching-to-webflow</td><td class="dim">2026-01-15</td><td>Pair with /seo-for/startups. Rewrite + cross-link</td></tr>
+<tr><td class="url">/blog/is-webflow-good-for-ecommerce-the-honest-2026-review-features-costs-alternatives</td><td class="dim">2026-01-22</td><td>Rewrite + cross-link to /seo-for/ecommerce</td></tr>
+<tr><td class="url">/blog/is-webflow-good-for-small-businesses-heres-what-you-need-to-know</td><td class="dim">2026-01-21</td><td>Off-ICP. Rewrite with sharper "when Webflow is NOT for you" angle</td></tr>
+</tbody>
+</table>
+
+<h3>Cluster E: Comparison content</h3>
+<table>
+<thead><tr><th>URL</th><th>Pub</th><th>Action</th></tr></thead>
+<tbody>
+<tr><td class="url">/blog/webflow-vs-framer-ultimate-showdown</td><td class="dim">2024-10-10</td><td>Rename to "Webflow vs Framer for B2B SaaS in 2026." Rewrite full piece + table</td></tr>
+<tr><td class="url">/blog/webflow-vs-hubspot</td><td class="dim">2024-10-10</td><td>Cross-functional comparison. Rewrite with Arnel voice</td></tr>
+</tbody>
+</table>
+
+<h3>Cluster F: Webflow tactical playbooks (the 2024-10 batch — rewrite in batches of 5-7 per week)</h3>
+<table>
+<thead><tr><th>URL</th><th>Pub</th><th>Action</th></tr></thead>
+<tbody>
+<tr><td class="url">/blog/mastering-webflow-guide</td><td class="dim">2024-10-10</td><td>Rewrite as "Getting started with Webflow: real practitioner guide" in Arnel voice</td></tr>
+<tr><td class="url">/blog/add-html-tables-in-webflow-cms</td><td class="dim">2024-10-14</td><td>Tactical playbook in LoudFace voice; integrate with /blog/how-to-structure-content-for-ai-extraction</td></tr>
+<tr><td class="url">/blog/how-to-use-figma-to-webflow-plugin</td><td class="dim">2024-10-14</td><td>Tactical playbook in LoudFace voice with current 2026 plugin state</td></tr>
+<tr><td class="url">/blog/how-to-optimize-calendly-embed-load-time-on-webflow</td><td class="dim">2024-10-10</td><td>Niche but valid. Rewrite as a tight performance playbook</td></tr>
+<tr><td class="url">/blog/best-webflow-tools-and-integrations</td><td class="dim">2024-10-10</td><td>Rewrite with sharper take + 2026 stack</td></tr>
+<tr><td class="url">/blog/add-google-calendar-on-webflow</td><td class="dim">2024-10-10</td><td>Tight tactical playbook in LoudFace voice</td></tr>
+<tr><td class="url">/blog/pitfalls-of-choosing-wrong-webflow-vendor</td><td class="dim">2024-10-10</td><td>Rewrite as Arnel-voice opinion piece</td></tr>
+<tr><td class="url">/blog/top-10-saas-tools-for-webflow</td><td class="dim">2024-10-10</td><td>Rewrite with sharper take + LoudFace's actual stack</td></tr>
+<tr><td class="url">/blog/the-strategic-role-of-webflow-agency-in-digital-transformation</td><td class="dim">2024-10-10</td><td>Rewrite or 301 to /services if no clear angle emerges</td></tr>
+<tr><td class="url">/blog/preview-cms-pages-blog-posts</td><td class="dim">2024-10-10</td><td>Tight tactical playbook in LoudFace voice</td></tr>
+<tr><td class="url">/blog/webflow-and-lottie-animations</td><td class="dim">2024-10-10</td><td>Animations + performance angle in LoudFace voice</td></tr>
+<tr><td class="url">/blog/webflow-and-auth0-guide</td><td class="dim">2024-10-10</td><td>Tactical integration playbook</td></tr>
+<tr><td class="url">/blog/understanding-webflows-cms-guide</td><td class="dim">2024-10-10</td><td>Practitioner CMS guide in LoudFace voice</td></tr>
+<tr><td class="url">/blog/webflow-connection-guide-google-analytics-and-search-console</td><td class="dim">2024-10-10</td><td>Tactical setup playbook with 2026 GA4/GSC state</td></tr>
+<tr><td class="url">/blog/webflow-no-code-agencies</td><td class="dim">2024-10-10</td><td>Rewrite with sharper category POV</td></tr>
+<tr><td class="url">/blog/webflow-devlink</td><td class="dim">2024-10-10</td><td>DevLink for engineering teams. Rewrite in practitioner voice</td></tr>
+<tr><td class="url">/blog/webflow-zapier-integration</td><td class="dim">2024-10-10</td><td>Tactical integration playbook</td></tr>
+<tr><td class="url">/blog/building-custom-apps-in-webflow</td><td class="dim">2024-09-21</td><td>Webflow Apps API playbook with 2026 state</td></tr>
+<tr><td class="url">/blog/use-webflow-as-your-marketing-funnel</td><td class="dim">2024-09-12</td><td>Rewrite with Arnel voice + CRO angle</td></tr>
+<tr><td class="url">/blog/relumes-innovative-business-model</td><td class="dim">2024-10-18</td><td>Has 2 clicks. Rewrite as sharper Relume review</td></tr>
+<tr><td class="url">/blog/webflow-website-design</td><td class="dim">2025-11-03</td><td>Rewrite as design-led service piece</td></tr>
+<tr><td class="url">/blog/webflow-best-cms-for-marketers</td><td class="dim">2025-10-30</td><td>Rewrite with marketer-CMS angle + LoudFace POV</td></tr>
+<tr><td class="url">/blog/webflow-vs-popular-alternatives</td><td class="dim">2024-10-10</td><td>Rewrite as hub piece linking out to specific X vs Y comparisons</td></tr>
+<tr><td class="url">/blog/webflow-vendors-compared</td><td class="dim">2024-10-10</td><td>Rewrite as agency-comparison companion to /best-webflow-agencies</td></tr>
+<tr><td class="url">/blog/webflow-success-story</td><td class="dim">2024-10-10</td><td>Rewrite as a real "why we built LoudFace on Webflow" founder piece</td></tr>
+<tr><td class="url">/blog/ab-testing-setup-using-delta-reference-and-confidence-intervals</td><td class="dim">2024-09-07</td><td>Niche but valid. Rewrite if experimentation angle stays relevant</td></tr>
+<tr><td class="url">/blog/webflow-split-testing-setup</td><td class="dim">2024-09-04</td><td>Companion to /best-webflow-split-testing-tools. Rewrite together</td></tr>
+</tbody>
+</table>
+
+<h2 id="merge">301 merge — 7 pieces</h2>
+<p>A stronger sibling already covers the intent. Old URL 301-redirects to the canonical. <strong>Link equity flows to the canonical URL.</strong> <span class="effort">15-30 min per merge — set redirect, update internal links, IndexNow ping.</span></p>
+<table>
+<thead><tr><th>URL</th><th>301 target</th><th>Why</th></tr></thead>
+<tbody>
+<tr><td class="url">/blog/top-webflow-agency</td><td class="url">/blog/best-webflow-agencies</td><td class="dim">Same intent, stronger canonical</td></tr>
+<tr><td class="url">/blog/why-choose-loudface-webflow-agency</td><td class="url">/about (or /services/seo-aeo)</td><td class="dim">Brand page is the right destination</td></tr>
+<tr><td class="url">/blog/how-to-choose-the-right-webflow-agency-for-your-brand</td><td class="url">/blog/best-webflow-agencies</td><td class="dim">Decision-guide intent collapses into canonical</td></tr>
+<tr><td class="url">/blog/understanding-webflow-pricing</td><td class="url">/blog/webflow-agency-pricing</td><td class="dim">Duplicate intent; pricing canonical wins</td></tr>
+<tr><td class="url">/blog/finnrick-analytics-case-study (if still live)</td><td class="url">/case-studies (index)</td><td class="dim">Per memory note, was unpublished 2026-04-13. Verify state.</td></tr>
+<tr><td class="url">/case-studies/zeiierman-website (if duplicate)</td><td class="url">/case-studies/zeiierman</td><td class="dim">Verify whether the two zeiierman case studies are dupes</td></tr>
+<tr><td class="url">/case-studies/toku-design-messaging-upgrade</td><td class="url"><em>(stays — pairs intentionally with toku-ai-cited-pipeline)</em></td><td class="dim">Just listed for reference, no action</td></tr>
+</tbody>
+</table>
+
+<h2 id="kill">True 410 — 1 piece</h2>
+<p>Genuinely dead topic, no redirect target, no rescue path.</p>
+<table>
+<thead><tr><th>URL</th><th>Pub</th><th>Reason</th><th>Action</th></tr></thead>
+<tbody>
+<tr><td class="url">/blog/webflows-new-brand-overhaul-and-platform-updates</td><td class="dim">2024-10-10</td><td class="dim">Expired news piece about a Webflow rebrand. Time-bound. No sibling page to redirect to. Content cannot be rescued because the news has aged out.</td><td>410</td></tr>
+</tbody>
+</table>
+
+<div class="note"><strong>Why so few 410s now?</strong> Every URL that earned even a single Google impression has accumulated value. Killing it loses that. Rewriting preserves the URL while replacing the content. The 301 merges further consolidate authority where two URLs were splitting it. After this audit there's essentially no leak of accumulated equity — only redirection of it.</div>
+
+<h2 id="case-studies">Case studies — 27 pieces</h2>
+<p>Most look real and current. Two open items:</p>
+<table>
+<thead><tr><th>URL</th><th>Status</th><th>Note</th></tr></thead>
+<tbody>
+<tr><td class="url">/case-studies/toku-ai-cited-pipeline</td><td><span class="pill keep">KEEP</span></td><td class="dim">Citation magnet for current content</td></tr>
+<tr><td class="url">/case-studies/toku-design-messaging-upgrade</td><td><span class="pill keep">KEEP</span></td><td class="dim">2024 redesign companion</td></tr>
+<tr><td class="url">/case-studies/codeop</td><td><span class="pill keep">KEEP</span></td><td class="dim">+49% organic, cited frequently</td></tr>
+<tr><td class="url">/case-studies/zeiierman</td><td><span class="pill keep">KEEP</span></td><td class="dim">WP→Webflow migration proof</td></tr>
+<tr><td class="url">/case-studies/zeiierman-website</td><td><span class="pill merge">VERIFY</span></td><td class="dim">Likely duplicate of /case-studies/zeiierman. Verify and consolidate via 301.</td></tr>
+<tr><td class="url">/case-studies/trademomentum-niche-aeo-organic-growth</td><td><span class="pill keep">KEEP</span></td><td class="dim">Multi-fold impressions + AI citation pickup</td></tr>
+<tr><td class="url">/case-studies/outbound-specialist</td><td><span class="pill refresh">REFRESH?</span></td><td class="dim">Previously downgraded in listicle content; refresh framing or quietly retire</td></tr>
+<tr><td class="url">All other case studies (20)</td><td><span class="pill keep">KEEP</span></td><td class="dim">No issues surfaced; defer detailed review</td></tr>
+</tbody>
+</table>
+
+<div class="note"><strong>Specific check:</strong> GSC shows <code>/case-studies/finnrick-analytics</code> at 766 impressions, position 6.9, 5 clicks over 28d. Memory note says Finnrick was unpublished 2026-04-13. Either it's still indexed and the 410 didn't propagate, or it's still live and memory is stale. <strong>Verify before any other action.</strong></div>
+
+<h2 id="seo-for">/seo-for industry pages — 6 pieces</h2>
+<table>
+<thead><tr><th>URL</th><th>Updated</th><th class="metric">Imps 28d</th><th class="metric">Pos</th><th>Action</th></tr></thead>
+<tbody>
+<tr><td class="url">/seo-for/fintech</td><td class="dim">2026-05-15</td><td class="metric zero">—</td><td class="metric zero">—</td><td><span class="pill keep">KEEP</span> Just refreshed today</td></tr>
+<tr><td class="url">/seo-for/ecommerce</td><td class="dim">2026-05-09</td><td class="metric zero">—</td><td class="metric zero">—</td><td><span class="pill refresh">REFRESH</span> Three-speed framing + Mr.Grateful proof + KB voice</td></tr>
+<tr><td class="url">/seo-for/healthcare</td><td class="dim">2026-05-09</td><td class="metric medium">393</td><td class="metric medium">13.7</td><td><span class="pill refresh">REFRESH</span> Has impressions. Voice pass + Dimer Health proof + 2026 framing</td></tr>
+<tr><td class="url">/seo-for/startups</td><td class="dim">2026-05-09</td><td class="metric zero">—</td><td class="metric zero">—</td><td><span class="pill refresh">REFRESH</span> Voice pass + 2026 framing + named proof</td></tr>
+<tr><td class="url">/seo-for/b2b</td><td class="dim">2026-03-29</td><td class="metric zero">—</td><td class="metric zero">—</td><td><span class="pill refresh">REFRESH</span> Older. Voice pass + 2026 framing + clear positioning</td></tr>
+<tr><td class="url">/seo-for/saas</td><td class="dim">2026-03-29</td><td class="metric zero">—</td><td class="metric zero">—</td><td><span class="pill refresh">REFRESH</span> Pair with B2B SaaS Webflow + pricing pieces</td></tr>
+</tbody>
+</table>
+
+<h2 id="cadence">Suggested execution cadence (v2)</h2>
+<p class="lead">Eight-week sprint, three parallel tracks. Track A = surgical (cusps + merges), Track B = AEO playbook refreshes, Track C = bulk rewrite-in-place of the 2024-10 cluster.</p>
+
+<table>
+<thead><tr><th>Week</th><th>Track A — surgical wins</th><th>Track B — refresh AEO playbooks</th><th>Track C — bulk rewrite-in-place</th></tr></thead>
+<tbody>
+<tr><td><strong>1</strong></td><td>Verify Finnrick state. Execute all 7 301 merges (2-3h total). Rank-rescue /blog/best-b2b-saas-seo-agencies (2,015-imp opportunity).</td><td>Refresh /blog/answer-engine-optimization-guide-2026 + /blog/how-to-structure-content-for-ai-extraction + /blog/eeat-in-the-age-of-ai</td><td><em>(Track C starts week 2 — let the surgical wins land first)</em></td></tr>
+<tr><td><strong>2</strong></td><td>Rewrite /blog/the-webflow-expert (1,080-imp cusp at pos 42)</td><td>Refresh /blog/share-of-answer + /blog/share-of-answer-audit-90-minutes (named-framework pair)</td><td>Cluster F batch 1: /mastering-webflow-guide, /understanding-webflows-cms-guide, /webflow-success-story, /webflow-ai-revolution, /webflow-devlink (5 pieces, tight LoudFace voice)</td></tr>
+<tr><td><strong>3</strong></td><td>Rewrite /blog/best-webflow-split-testing-tools-compared (1,669-imp cusp)</td><td>Refresh /blog/seo-survival-playbook + /blog/ai-first-content-architecture</td><td>Cluster F batch 2: /add-html-tables, /how-to-use-figma-to-webflow-plugin, /webflow-and-lottie-animations, /webflow-and-auth0-guide, /webflow-zapier-integration, /add-google-calendar (6 tactical playbooks)</td></tr>
+<tr><td><strong>4</strong></td><td>Rewrite /blog/webflow-vs-wix-studio (1,934-imp cusp at pos 26)</td><td>Refresh /blog/how-to-become-a-trusted-llm-source + /blog/aeo-strategies-that-work</td><td>Cluster D batch: /webflow-for-fintech, /webflow-for-ecommerce, /webflow-for-healthcare, /why-saas-companies-are-moving-to-webflow, /why-are-startups-switching-to-webflow (5 industry pieces — pair each with its /seo-for landing)</td></tr>
+<tr><td><strong>5</strong></td><td>Rewrite /blog/convert-figma-designs-to-webflow-pages (630-imp cusp at pos 64)</td><td>Refresh /blog/webflow-vs-wix-comparison + /blog/webflow-vs-squarespace + /blog/webflow-vs-wordpress-org</td><td>Cluster C batch: /aeo-for-webflow-..., /how-to-future-proof-..., /what-google-sge-..., /is-webflow-good-for-seo (4 Webflow+AI rewrites)</td></tr>
+<tr><td><strong>6</strong></td><td>Rewrite /blog/best-webflow-agencies (canonical for general agency intent)</td><td>Refresh remaining webflow-vs-X pieces + /blog/seo-vs-aeo-for-webflow</td><td>Cluster F batch 3: /best-webflow-tools-and-integrations, /pitfalls-of-choosing-wrong-webflow-vendor, /the-strategic-role-of-webflow-agency-in-digital-transformation, /webflow-no-code-agencies, /top-10-saas-tools-for-webflow (5 pieces)</td></tr>
+<tr><td><strong>7</strong></td><td>Rewrite /blog/webflow-agency-pricing (canonical general pricing)</td><td>Refresh /blog/zero-click-content-that-drives-revenue + /blog/machine-to-machine-marketing</td><td>Cluster E + remaining tactical: /webflow-vs-framer-ultimate-showdown, /webflow-vs-hubspot, /webflow-vs-popular-alternatives, /webflow-vendors-compared (4 comparison rewrites)</td></tr>
+<tr><td><strong>8</strong></td><td>Rewrite /blog/the-problem-with-traditional-webflow-agencies (founder opinion piece)</td><td>Refresh /seo-for/* landing pages (b2b, saas, ecommerce, healthcare, startups)</td><td>Final batch: /preview-cms-pages-blog-posts, /webflow-connection-guide-google-analytics-and-search-console, /how-to-optimize-calendly-embed-load-time-on-webflow, /use-webflow-as-your-marketing-funnel, /building-custom-apps-in-webflow (5 tactical)</td></tr>
+</tbody>
+</table>
+
+<p>After 8 weeks: <strong>1 piece killed</strong>, <strong>7 pieces 301-merged</strong>, <strong>~20 pieces refreshed</strong>, <strong>~30 pieces rewritten in place</strong>, <strong>6 cusp pages rescued</strong>. Remaining ~10 rewrite candidates roll into weeks 9-10 alongside continued new pattern-rotation shipments (one new piece per week from the rotation to keep the calendar alive).</p>
+
+<div class="note"><strong>Each refresh / rewrite goes through the full cascade:</strong> <code>/seo-brain</code> (pulls KB) → <code>/serp-recon</code> → <code>/draft-content</code> (grounded in KB) → <code>/critique-content</code> → <code>/verify-content</code> → ship (in place for rewrites/refreshes, with IndexNow ping). The KB is the unlock — every piece compounds on prior LoudFace experience instead of drifting back to generic agency thinking.</div>
+
+<h2>Notes worth flagging</h2>
+<ul style="color: var(--muted);">
+  <li>Major rewrites on indexed URLs typically show a temporary GSC dip in weeks 2-3, then recover and exceed prior performance over weeks 4-8. This is normal and expected — don't roll back at first wobble.</li>
+  <li>Internal-link updates: when 301 merges land, audit internal links across the site for references to the old URLs. The link graph stays cleaner if we update them rather than letting the 301 chain absorb them forever.</li>
+  <li>The Sanity webhook auto-fires IndexNow on every blogPost change. Rewrites in place will re-ping. No manual action needed except for the rare 410.</li>
+  <li>For the 410 ( /blog/webflows-new-brand-overhaul-and-platform-updates ), the Sanity unpublish needs to translate into an actual 410 from /api/blog/[slug]. Verify the Sanity workflow handles this cleanly — if not, the route handler may need a tiny patch to return 410 for known-unpublished slugs rather than 404.</li>
+</ul>
+
+<div class="footer">Generated by Claude Code · LoudFace content audit v2 · 2026-05-15<br>Source data: GSC last 28d, Sanity blogPost + caseStudy + seoPage indexes, Thought Leadership KB, AI Search &amp; SEO Search strategy doc</div>
+
+</div>
+</body>
+</html>

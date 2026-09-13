@@ -1,0 +1,1196 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>LoudFace homepage concept B</title>
+    <style>
+      @import url("https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,500;12..96,600&family=Geist:wght@400;500;600&family=Instrument+Serif:ital@1&display=swap");
+
+      :root {
+        --ink: #101513;
+        --ink-2: #17201d;
+        --ink-3: #22302e;
+        --paper: #f7f8f4;
+        --paper-2: #ecefe8;
+        --paper-3: #dfe5dc;
+        --line-dark: rgba(247, 248, 244, 0.12);
+        --line-light: rgba(16, 21, 19, 0.12);
+        --violet: #4f46e5;
+        --violet-soft: #7771ec;
+        --sage: #8ca8a0;
+        --text-dark: #17201d;
+        --text-soft: #51605b;
+        --text-light: #e8ede7;
+        --text-muted: #aeb9b2;
+        --display: "Bricolage Grotesque", "Neue Montreal", system-ui, sans-serif;
+        --sans: "Geist", "Satoshi", system-ui, sans-serif;
+        --serif: "Instrument Serif", Georgia, serif;
+        --ease: cubic-bezier(0.19, 1, 0.22, 1);
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html {
+        background: var(--paper);
+        scroll-behavior: smooth;
+        width: 100%;
+        overflow-x: hidden;
+      }
+
+      body {
+        margin: 0;
+        width: 100%;
+        overflow-x: hidden;
+        color: var(--text-dark);
+        font-family: var(--sans);
+        font-size: 16px;
+        line-height: 1.5;
+        background: var(--paper);
+        -webkit-font-smoothing: antialiased;
+        text-rendering: optimizeLegibility;
+      }
+
+      img {
+        display: block;
+        max-width: 100%;
+      }
+
+      figure {
+        margin: 0;
+      }
+
+      main {
+        overflow: hidden;
+      }
+
+      a {
+        color: inherit;
+        text-decoration: none;
+      }
+
+      a:focus-visible,
+      button:focus-visible {
+        outline: 2px solid var(--violet-soft);
+        outline-offset: 4px;
+      }
+
+      .stage {
+        position: relative;
+        min-height: 1120px;
+        overflow: hidden;
+        isolation: isolate;
+        color: var(--text-light);
+        background:
+          linear-gradient(180deg, rgba(16, 21, 19, 0.1) 0%, rgba(16, 21, 19, 0.86) 56%, rgba(247, 248, 244, 0.06) 100%),
+          var(--ink);
+      }
+
+      .stage::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        z-index: -3;
+        background-image:
+          repeating-linear-gradient(0deg, transparent 0 71px, var(--line-dark) 72px),
+          repeating-linear-gradient(90deg, transparent 0 71px, var(--line-dark) 72px);
+        opacity: 0.82;
+      }
+
+      .stage::after {
+        content: "";
+        position: absolute;
+        right: 0;
+        bottom: -1px;
+        left: 0;
+        z-index: -2;
+        height: 220px;
+        background:
+          repeating-linear-gradient(0deg, transparent 0 71px, rgba(16, 21, 19, 0.1) 72px),
+          repeating-linear-gradient(90deg, transparent 0 71px, rgba(16, 21, 19, 0.1) 72px),
+          var(--paper);
+        clip-path: polygon(0 70%, 100% 42%, 100% 100%, 0 100%);
+      }
+
+      .nav {
+        position: absolute;
+        top: 0;
+        right: 0;
+        left: 0;
+        z-index: 20;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 24px;
+        padding: 28px 48px;
+        color: var(--text-light);
+      }
+
+      .nav-logo {
+        width: 133px;
+        height: auto;
+      }
+
+      .nav-links {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        padding: 6px;
+        border: 1px solid rgba(247, 248, 244, 0.12);
+        border-radius: 999px;
+        background: rgba(247, 248, 244, 0.06);
+        backdrop-filter: blur(14px);
+      }
+
+      .nav-links a,
+      .nav-cta {
+        min-height: 44px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 999px;
+        font-size: 0.93rem;
+        font-weight: 500;
+        transition:
+          background-color 220ms var(--ease),
+          color 220ms var(--ease),
+          transform 220ms var(--ease);
+      }
+
+      .nav-links a {
+        padding: 0 18px;
+        color: var(--text-muted);
+      }
+
+      .nav-links a:hover {
+        color: var(--paper);
+        background: rgba(247, 248, 244, 0.08);
+      }
+
+      .nav-cta {
+        padding: 0 20px;
+        color: var(--ink);
+        background: var(--paper);
+      }
+
+      .nav-cta:hover {
+        transform: translateY(-1px);
+        background: var(--paper-2);
+      }
+
+      .hero-lockup {
+        position: relative;
+        z-index: 3;
+        padding: 124px 48px 0;
+      }
+
+      .giant-wordmark {
+        width: min(92vw, 1460px);
+        height: auto;
+        margin: 0 auto;
+        opacity: 0.97;
+      }
+
+      .claim-row {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) 360px;
+        gap: 40px;
+        align-items: end;
+        width: min(1280px, calc(100vw - 96px));
+        margin: 30px auto 0;
+      }
+
+      .claim-row h1 {
+        max-width: 900px;
+        margin: 0;
+        font-family: var(--display);
+        font-size: 7rem;
+        font-weight: 500;
+        line-height: 0.92;
+        letter-spacing: 0;
+      }
+
+      .claim-row em {
+        color: var(--violet-soft);
+        font-family: var(--serif);
+        font-style: italic;
+        font-weight: 400;
+      }
+
+      .hero-note {
+        margin: 0 0 12px;
+        color: var(--text-muted);
+        font-size: 1.08rem;
+      }
+
+      .hero-actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+        margin-top: 24px;
+      }
+
+      .button {
+        min-height: 48px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 999px;
+        padding: 0 22px;
+        border: 1px solid rgba(247, 248, 244, 0.2);
+        font-weight: 600;
+        transition:
+          background-color 220ms var(--ease),
+          border-color 220ms var(--ease),
+          transform 220ms var(--ease);
+      }
+
+      .button:active {
+        transform: scale(0.98);
+      }
+
+      .button.primary {
+        color: var(--ink);
+        background: var(--paper);
+      }
+
+      .button.primary:hover {
+        background: var(--paper-2);
+      }
+
+      .button.secondary {
+        color: var(--paper);
+        background: rgba(247, 248, 244, 0.06);
+      }
+
+      .button.secondary:hover {
+        border-color: rgba(247, 248, 244, 0.4);
+        background: rgba(247, 248, 244, 0.1);
+      }
+
+      .media-belt {
+        position: relative;
+        z-index: 4;
+        margin-top: 68px;
+        padding: 76px 0 88px;
+        color: var(--text-dark);
+      }
+
+      .media-belt::before {
+        content: "";
+        position: absolute;
+        inset: 0 -8vw;
+        z-index: -1;
+        background:
+          repeating-linear-gradient(0deg, transparent 0 71px, rgba(16, 21, 19, 0.1) 72px),
+          repeating-linear-gradient(90deg, transparent 0 71px, rgba(16, 21, 19, 0.1) 72px),
+          var(--paper);
+        border-top: 1px solid rgba(247, 248, 244, 0.2);
+        border-bottom: 1px solid rgba(16, 21, 19, 0.16);
+        clip-path: polygon(0 9%, 100% 0, 100% 91%, 0 100%);
+      }
+
+      .gallery-wall {
+        width: min(1280px, calc(100vw - 48px));
+        margin: 0 auto;
+        display: grid;
+        grid-template-columns: 1.18fr 0.85fr 1.02fr 0.72fr;
+        grid-template-rows: 172px 172px;
+        gap: 18px;
+        transform: rotate(-0.7deg);
+      }
+
+      .media-panel {
+        position: relative;
+        overflow: hidden;
+        min-width: 0;
+        border: 1px solid rgba(16, 21, 19, 0.16);
+        border-radius: 14px;
+        background: var(--paper-2);
+        box-shadow: 0 24px 60px rgba(16, 21, 19, 0.16);
+      }
+
+      .media-panel img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+
+      .media-panel.big {
+        grid-row: span 2;
+      }
+
+      .media-panel.wide {
+        grid-column: span 2;
+      }
+
+      .panel-label {
+        position: absolute;
+        left: 14px;
+        bottom: 14px;
+        max-width: calc(100% - 28px);
+        padding: 7px 10px;
+        border: 1px solid rgba(16, 21, 19, 0.16);
+        border-radius: 999px;
+        color: var(--text-dark);
+        background: rgba(247, 248, 244, 0.9);
+        font-size: 0.76rem;
+        font-weight: 600;
+        letter-spacing: 0;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+
+      .slot {
+        display: grid;
+        min-height: 100%;
+        padding: 20px;
+        background:
+          linear-gradient(180deg, rgba(79, 70, 229, 0.08), rgba(247, 248, 244, 0.04)),
+          repeating-linear-gradient(0deg, transparent 0 35px, rgba(16, 21, 19, 0.08) 36px),
+          repeating-linear-gradient(90deg, transparent 0 35px, rgba(16, 21, 19, 0.08) 36px),
+          var(--paper-2);
+      }
+
+      .slot-browser {
+        align-self: stretch;
+        border: 1px solid rgba(16, 21, 19, 0.14);
+        border-radius: 12px;
+        background: rgba(247, 248, 244, 0.78);
+        overflow: hidden;
+      }
+
+      .slot-topbar {
+        height: 32px;
+        border-bottom: 1px solid rgba(16, 21, 19, 0.12);
+        display: flex;
+        align-items: center;
+        gap: 7px;
+        padding: 0 12px;
+      }
+
+      .slot-dot {
+        width: 7px;
+        height: 7px;
+        border-radius: 50%;
+        background: rgba(16, 21, 19, 0.25);
+      }
+
+      .slot-body {
+        display: grid;
+        grid-template-columns: 1.1fr 0.9fr;
+        gap: 14px;
+        padding: 18px;
+      }
+
+      .slot-line {
+        height: 12px;
+        border-radius: 999px;
+        background: rgba(16, 21, 19, 0.16);
+      }
+
+      .slot-line.short {
+        width: 62%;
+      }
+
+      .slot-line.mid {
+        width: 78%;
+      }
+
+      .slot-shot {
+        min-height: 118px;
+        border-radius: 10px;
+        background:
+          repeating-linear-gradient(0deg, transparent 0 24px, rgba(16, 21, 19, 0.08) 25px),
+          var(--paper-3);
+      }
+
+      .stage-foot {
+        position: relative;
+        z-index: 3;
+        display: grid;
+        grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+        gap: 48px;
+        width: min(1280px, calc(100vw - 96px));
+        margin: 92px auto 0;
+        padding-bottom: 210px;
+        color: var(--paper);
+      }
+
+      .stage-foot h2 {
+        margin: 0;
+        font-family: var(--display);
+        font-size: 3.5rem;
+        font-weight: 500;
+        line-height: 1;
+        letter-spacing: 0;
+      }
+
+      .stage-foot p {
+        margin: 0;
+        color: var(--text-muted);
+        font-size: 1.1rem;
+      }
+
+      .proof-list {
+        display: grid;
+        gap: 14px;
+      }
+
+      .proof-item {
+        display: grid;
+        grid-template-columns: 140px minmax(0, 1fr);
+        gap: 20px;
+        padding: 18px 0;
+        border-top: 1px solid rgba(247, 248, 244, 0.14);
+      }
+
+      .proof-item strong {
+        color: var(--paper);
+        font-weight: 600;
+      }
+
+      .proof-item span {
+        color: var(--text-muted);
+      }
+
+      .section {
+        position: relative;
+        padding: 116px 48px;
+      }
+
+      .section-inner {
+        width: min(1280px, 100%);
+        margin: 0 auto;
+      }
+
+      .section h2 {
+        margin: 0;
+        font-family: var(--display);
+        font-size: 4.4rem;
+        font-weight: 500;
+        line-height: 0.98;
+        letter-spacing: 0;
+      }
+
+      .section h2 em {
+        color: var(--violet);
+        font-family: var(--serif);
+        font-style: italic;
+        font-weight: 400;
+      }
+
+      .split-head {
+        display: grid;
+        grid-template-columns: minmax(0, 0.98fr) minmax(300px, 0.58fr);
+        gap: 60px;
+        align-items: end;
+      }
+
+      .split-head p {
+        margin: 0 0 8px;
+        color: var(--text-soft);
+        font-size: 1.15rem;
+      }
+
+      .engine-grid {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+        gap: 22px;
+        margin-top: 46px;
+      }
+
+      .engine-card {
+        position: relative;
+        min-height: 500px;
+        overflow: hidden;
+        border: 1px solid rgba(16, 21, 19, 0.12);
+        border-radius: 18px;
+        background: var(--paper-2);
+      }
+
+      .engine-card.dark {
+        color: var(--paper);
+        background:
+          repeating-linear-gradient(0deg, transparent 0 55px, rgba(247, 248, 244, 0.08) 56px),
+          repeating-linear-gradient(90deg, transparent 0 55px, rgba(247, 248, 244, 0.08) 56px),
+          var(--ink-2);
+      }
+
+      .engine-card img {
+        position: absolute;
+        inset: auto 0 0;
+        width: 100%;
+        height: 58%;
+        object-fit: cover;
+        border-top: 1px solid rgba(16, 21, 19, 0.1);
+      }
+
+      .engine-card.dark img {
+        opacity: 0.82;
+        border-top-color: rgba(247, 248, 244, 0.12);
+      }
+
+      .engine-copy {
+        position: relative;
+        z-index: 1;
+        max-width: 470px;
+        padding: 34px;
+      }
+
+      .engine-copy h3 {
+        margin: 0 0 14px;
+        font-family: var(--display);
+        font-size: 2.3rem;
+        font-weight: 500;
+        line-height: 1.02;
+        letter-spacing: 0;
+      }
+
+      .engine-copy p {
+        margin: 0;
+        color: var(--text-soft);
+        font-size: 1rem;
+      }
+
+      .engine-card.dark .engine-copy p {
+        color: var(--text-muted);
+      }
+
+      .process-strip {
+        display: grid;
+        grid-template-columns: 1.1fr 0.9fr;
+        gap: 22px;
+        margin-top: 22px;
+      }
+
+      .ledger {
+        border: 1px solid rgba(16, 21, 19, 0.12);
+        border-radius: 18px;
+        background: #f2f4ef;
+        overflow: hidden;
+      }
+
+      .ledger-row {
+        display: grid;
+        grid-template-columns: 0.72fr 1fr 1fr;
+        gap: 18px;
+        padding: 22px 24px;
+        border-top: 1px solid rgba(16, 21, 19, 0.1);
+      }
+
+      .ledger-row:first-child {
+        border-top: 0;
+      }
+
+      .ledger-row.header {
+        color: var(--text-soft);
+        font-size: 0.82rem;
+        font-weight: 600;
+        background: rgba(16, 21, 19, 0.04);
+      }
+
+      .ledger-row strong {
+        font-weight: 600;
+      }
+
+      .quote-panel {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        min-height: 360px;
+        padding: 30px;
+        border-radius: 18px;
+        color: var(--paper);
+        background:
+          repeating-linear-gradient(0deg, transparent 0 55px, rgba(247, 248, 244, 0.08) 56px),
+          repeating-linear-gradient(90deg, transparent 0 55px, rgba(247, 248, 244, 0.08) 56px),
+          var(--ink-3);
+      }
+
+      .quote-panel p {
+        margin: 0;
+        font-family: var(--display);
+        font-size: 2.35rem;
+        font-weight: 500;
+        line-height: 1.04;
+        letter-spacing: 0;
+      }
+
+      .quote-panel span {
+        color: var(--text-muted);
+      }
+
+      .video-section {
+        padding: 118px 48px;
+        color: var(--paper);
+        background:
+          repeating-linear-gradient(0deg, transparent 0 71px, rgba(247, 248, 244, 0.1) 72px),
+          repeating-linear-gradient(90deg, transparent 0 71px, rgba(247, 248, 244, 0.1) 72px),
+          var(--ink);
+      }
+
+      .video-layout {
+        width: min(1280px, 100%);
+        margin: 0 auto;
+        display: grid;
+        grid-template-columns: 0.68fr 1fr;
+        gap: 44px;
+        align-items: center;
+      }
+
+      .video-section h2 {
+        margin: 0;
+        font-family: var(--display);
+        font-size: 4.3rem;
+        font-weight: 500;
+        line-height: 0.98;
+        letter-spacing: 0;
+      }
+
+      .video-section p {
+        margin: 24px 0 0;
+        color: var(--text-muted);
+        font-size: 1.08rem;
+      }
+
+      .player {
+        overflow: hidden;
+        border: 1px solid rgba(247, 248, 244, 0.14);
+        border-radius: 20px;
+        background: var(--ink-2);
+        box-shadow: 0 30px 80px rgba(16, 21, 19, 0.24);
+      }
+
+      .player-screen {
+        position: relative;
+        aspect-ratio: 16 / 9;
+        display: grid;
+        place-items: center;
+        background:
+          linear-gradient(145deg, rgba(79, 70, 229, 0.18), rgba(16, 21, 19, 0.2)),
+          url("../../../public/images/our-journey_1.webp") center / cover;
+      }
+
+      .player-screen::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: rgba(16, 21, 19, 0.35);
+      }
+
+      .play-button {
+        position: relative;
+        z-index: 2;
+        width: 74px;
+        height: 74px;
+        display: grid;
+        place-items: center;
+        border: 1px solid rgba(247, 248, 244, 0.28);
+        border-radius: 50%;
+        background: rgba(247, 248, 244, 0.88);
+      }
+
+      .play-button svg {
+        width: 28px;
+        height: 28px;
+        margin-left: 4px;
+        fill: var(--ink);
+      }
+
+      .player-caption {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 18px;
+        padding: 18px 20px;
+        color: var(--text-muted);
+        border-top: 1px solid rgba(247, 248, 244, 0.12);
+      }
+
+      .player-caption strong {
+        color: var(--paper);
+        font-weight: 600;
+      }
+
+      .cta-section {
+        padding: 104px 48px 42px;
+        background:
+          repeating-linear-gradient(0deg, transparent 0 71px, rgba(16, 21, 19, 0.08) 72px),
+          repeating-linear-gradient(90deg, transparent 0 71px, rgba(16, 21, 19, 0.08) 72px),
+          var(--paper);
+      }
+
+      .cta-box {
+        width: min(1280px, 100%);
+        margin: 0 auto;
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) 320px;
+        gap: 48px;
+        align-items: end;
+        padding: 46px;
+        border: 1px solid rgba(16, 21, 19, 0.12);
+        border-radius: 20px;
+        background: rgba(247, 248, 244, 0.72);
+      }
+
+      .cta-box img {
+        width: 180px;
+        margin-bottom: 34px;
+      }
+
+      .cta-box h2 {
+        margin: 0;
+        font-family: var(--display);
+        font-size: 4.1rem;
+        font-weight: 500;
+        line-height: 0.98;
+        letter-spacing: 0;
+      }
+
+      .cta-copy {
+        display: grid;
+        gap: 22px;
+        justify-items: start;
+      }
+
+      .cta-copy p {
+        margin: 0;
+        color: var(--text-soft);
+        font-size: 1.05rem;
+      }
+
+      .footer-line {
+        width: min(1280px, 100%);
+        margin: 34px auto 0;
+        display: flex;
+        justify-content: space-between;
+        gap: 20px;
+        color: var(--text-soft);
+        font-size: 0.94rem;
+      }
+
+      @media (min-width: 1280px) {
+        .claim-row h1 {
+          font-size: 8.25rem;
+        }
+      }
+
+      @media (max-width: 1120px) {
+        .claim-row,
+        .stage-foot,
+        .split-head,
+        .video-layout,
+        .cta-box {
+          grid-template-columns: 1fr;
+        }
+
+        .claim-row h1 {
+          font-size: 5.9rem;
+        }
+
+        .hero-note {
+          max-width: 620px;
+        }
+
+        .gallery-wall {
+          grid-template-columns: 1fr 1fr;
+          grid-template-rows: 210px 210px 210px;
+          transform: rotate(-0.4deg);
+        }
+
+        .media-panel.wide {
+          grid-column: span 1;
+        }
+
+        .section h2,
+        .video-section h2,
+        .cta-box h2 {
+          font-size: 3.5rem;
+        }
+
+        .process-strip {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      @media (max-width: 760px) {
+        .stage {
+          min-height: 1260px;
+        }
+
+        .nav {
+          position: relative;
+          padding: 22px 18px;
+          gap: 12px;
+        }
+
+        .nav-logo {
+          width: 108px;
+        }
+
+        .nav-links {
+          display: none;
+        }
+
+        .nav-cta {
+          min-height: 42px;
+          padding: 0 12px;
+          font-size: 0.78rem;
+          flex: 0 0 auto;
+        }
+
+        .hero-lockup {
+          padding: 42px 18px 0;
+        }
+
+        .giant-wordmark {
+          width: 92%;
+          margin-top: 10px;
+          margin-left: 0;
+        }
+
+        .claim-row {
+          width: 100%;
+          margin-top: 28px;
+          gap: 24px;
+        }
+
+        .claim-row h1 {
+          font-size: 3.08rem;
+          line-height: 0.96;
+        }
+
+        .hero-note {
+          font-size: 1rem;
+        }
+
+        .media-belt {
+          margin-top: 44px;
+          padding: 58px 0 68px;
+        }
+
+        .gallery-wall {
+          width: calc(100vw - 28px);
+          grid-template-columns: 1fr;
+          grid-template-rows: auto;
+          gap: 14px;
+          transform: none;
+        }
+
+        .media-panel {
+          min-height: 178px;
+          border-radius: 12px;
+        }
+
+        .media-panel.big {
+          min-height: 300px;
+        }
+
+        .slot-body {
+          grid-template-columns: 1fr;
+        }
+
+        .panel-label {
+          max-width: calc(100% - 20px);
+          left: 10px;
+          bottom: 10px;
+          font-size: 0.7rem;
+        }
+
+        .stage-foot {
+          width: calc(100vw - 36px);
+          margin-top: 58px;
+          padding-bottom: 150px;
+          gap: 28px;
+        }
+
+        .stage-foot h2,
+        .section h2,
+        .video-section h2,
+        .cta-box h2 {
+          font-size: 2.34rem;
+          line-height: 1;
+        }
+
+        .proof-item {
+          grid-template-columns: 1fr;
+          gap: 8px;
+        }
+
+        .section,
+        .video-section,
+        .cta-section {
+          padding-right: 18px;
+          padding-left: 18px;
+        }
+
+        .section {
+          padding-top: 78px;
+          padding-bottom: 78px;
+        }
+
+        .engine-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .engine-card {
+          min-height: 420px;
+        }
+
+        .engine-copy {
+          padding: 24px;
+        }
+
+        .engine-copy h3,
+        .quote-panel p {
+          font-size: 1.72rem;
+        }
+
+        .ledger-row {
+          grid-template-columns: 1fr;
+          gap: 8px;
+          padding: 18px;
+        }
+
+        .ledger-row.header {
+          display: none;
+        }
+
+        .video-section {
+          padding-top: 82px;
+          padding-bottom: 86px;
+        }
+
+        .player-caption {
+          align-items: flex-start;
+          flex-direction: column;
+        }
+
+        .cta-section {
+          padding-top: 78px;
+        }
+
+        .cta-box {
+          padding: 26px;
+          gap: 28px;
+        }
+
+        .footer-line {
+          flex-direction: column;
+        }
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        *,
+        *::before,
+        *::after {
+          scroll-behavior: auto !important;
+          transition-duration: 0.01ms !important;
+          animation-duration: 0.01ms !important;
+          animation-iteration-count: 1 !important;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <section class="stage" aria-label="LoudFace full-bleed stage">
+        <header class="nav" aria-label="Primary navigation">
+          <a href="#top" aria-label="LoudFace home">
+            <img class="nav-logo" src="../../../public/images/loudface-inversed.svg" alt="LoudFace" />
+          </a>
+          <nav class="nav-links" aria-label="Homepage sections">
+            <a href="#work">Work</a>
+            <a href="#system">System</a>
+            <a href="#film">Film</a>
+          </nav>
+          <a class="nav-cta" href="#contact">Book a teardown</a>
+        </header>
+
+        <div class="hero-lockup" id="top">
+          <img class="giant-wordmark" src="../../../public/images/loudface-inversed.svg" alt="LoudFace" />
+          <div class="claim-row">
+            <h1>Your SaaS site should sell the room <em>before</em> the call.</h1>
+            <div>
+              <p class="hero-note">
+                LoudFace builds the public face of B2B SaaS: positioning, websites, paid tests, and lifecycle email shaped around one clear buyer path.
+              </p>
+              <div class="hero-actions" aria-label="Hero actions">
+                <a class="button primary" href="#contact">Book a teardown</a>
+                <a class="button secondary" href="#work">See the wall</a>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="media-belt" id="work">
+          <div class="gallery-wall" aria-label="Case study media wall">
+            <figure class="media-panel big">
+              <div class="slot">
+                <div class="slot-browser" aria-hidden="true">
+                  <div class="slot-topbar">
+                    <span class="slot-dot"></span>
+                    <span class="slot-dot"></span>
+                    <span class="slot-dot"></span>
+                  </div>
+                  <div class="slot-body">
+                    <div>
+                      <div class="slot-line"></div>
+                      <br />
+                      <div class="slot-line mid"></div>
+                      <br />
+                      <div class="slot-line short"></div>
+                    </div>
+                    <div class="slot-shot"></div>
+                  </div>
+                </div>
+              </div>
+              <figcaption class="panel-label">Case-study screenshot slot: SaaS homepage rebuild</figcaption>
+            </figure>
+
+            <figure class="media-panel">
+              <img src="../../../public/images/brandfirm.webp" alt="Abstract Webflow and performance system graphic" />
+              <figcaption class="panel-label">Build system asset</figcaption>
+            </figure>
+
+            <figure class="media-panel wide">
+              <img src="../../../public/images/profitable-ads_1.webp" alt="Paid acquisition path graphic with connected dots" />
+              <figcaption class="panel-label">Paid test map</figcaption>
+            </figure>
+
+            <figure class="media-panel">
+              <img src="../../../public/images/email-marketing_1.webp" alt="Lifecycle email path graphic with a megaphone icon" />
+              <figcaption class="panel-label">Lifecycle email board</figcaption>
+            </figure>
+
+            <figure class="media-panel">
+              <img src="../../../public/images/organic-mastery_1.webp" alt="SEO and website architecture graphic" />
+              <figcaption class="panel-label">Search surface asset</figcaption>
+            </figure>
+          </div>
+        </div>
+
+        <div class="stage-foot">
+          <h2>A gallery wall, not a template stack.</h2>
+          <div class="proof-list">
+            <div class="proof-item">
+              <strong>What buyers see</strong>
+              <span>Hero copy, product proof, pricing paths, and the pages sales keeps sending in follow-up.</span>
+            </div>
+            <div class="proof-item">
+              <strong>What growth needs</strong>
+              <span>Paid landing pages, lifecycle email, conversion notes, and a weekly backlog your team can act on.</span>
+            </div>
+            <div class="proof-item">
+              <strong>What gets filmed</strong>
+              <span>Product walkthroughs, founder clips, customer proof, and teardown videos cut for the page.</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="system">
+        <div class="section-inner">
+          <div class="split-head">
+            <h2>One crew for <em>build</em> and growth.</h2>
+            <p>
+              The homepage should not hand off from design to ads to email like separate rooms. LoudFace treats them as one buyer surface, then keeps tuning what the market actually reads.
+            </p>
+          </div>
+
+          <div class="engine-grid">
+            <article class="engine-card">
+              <div class="engine-copy">
+                <h3>Build the front door.</h3>
+                <p>Positioning, Webflow implementation, page systems, CMS structure, and the media slots that make the offer feel real.</p>
+              </div>
+              <img src="../../../public/images/webflow.png" alt="Webflow brand mark cropped as a website build asset" />
+            </article>
+
+            <article class="engine-card dark">
+              <div class="engine-copy">
+                <h3>Run the growth room.</h3>
+                <p>Landing pages, lifecycle email, paid creative tests, and weekly notes tied back to the same claim.</p>
+              </div>
+              <img src="../../../public/images/profitable-ads_1.webp" alt="Paid acquisition path graphic inside a dark growth card" />
+            </article>
+          </div>
+
+          <div class="process-strip">
+            <div class="ledger" aria-label="Work ledger">
+              <div class="ledger-row header">
+                <span>Surface</span>
+                <span>What gets rebuilt</span>
+                <span>Media to place</span>
+              </div>
+              <div class="ledger-row">
+                <strong>Homepage</strong>
+                <span>Claim, proof order, product story, CTA path</span>
+                <span>Hero screenshot wall and founder walkthrough</span>
+              </div>
+              <div class="ledger-row">
+                <strong>Paid landing page</strong>
+                <span>Ad promise, objection copy, form path, handoff</span>
+                <span>Offer video and page-scroll capture</span>
+              </div>
+              <div class="ledger-row">
+                <strong>Email loop</strong>
+                <span>Welcome flow, proof sequence, sales-assist copy</span>
+                <span>Customer quote clips and product moments</span>
+              </div>
+            </div>
+            <aside class="quote-panel">
+              <p>Make the proof visible enough that the buyer can argue for you.</p>
+              <span>Concept note for the media direction</span>
+            </aside>
+          </div>
+        </div>
+      </section>
+
+      <section class="video-section" id="film">
+        <div class="video-layout">
+          <div>
+            <h2>The page needs footage, not filler.</h2>
+            <p>
+              This direction reserves a real player for a homepage teardown, founder clip, or customer story. The slot is meant to be filmed, not faked with generic motion.
+            </p>
+          </div>
+          <div class="player" aria-label="Video media slot">
+            <div class="player-screen">
+              <div class="play-button" aria-hidden="true">
+                <svg viewBox="0 0 24 24" role="img" aria-label="Play">
+                  <path d="M8 5v14l11-7z"></path>
+                </svg>
+              </div>
+            </div>
+            <div class="player-caption">
+              <strong>Video slot: homepage teardown or customer proof</strong>
+              <span>Replace with produced footage</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="cta-section" id="contact">
+        <div class="cta-box">
+          <div>
+            <img src="../../../public/images/loudface.svg" alt="LoudFace" />
+            <h2>Start with the screen your buyer sees first.</h2>
+          </div>
+          <div class="cta-copy">
+            <p>Send the page, the funnel, or the offer that is underperforming. LoudFace will map what to rebuild and what proof the page is missing.</p>
+            <a class="button primary" href="mailto:hello@loudface.com">hello@loudface.com</a>
+          </div>
+        </div>
+        <div class="footer-line">
+          <span>LoudFace, B2B SaaS creative and growth</span>
+          <span>Concept B, full-bleed canvas stage</span>
+        </div>
+      </section>
+    </main>
+  </body>
+</html>

@@ -1,0 +1,196 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>LoudFace landing — USVC round · 4 directions</title>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@300..700&family=Newsreader:ital,opsz,wght@1,6..72,300..500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#FAFAFB; --ink:#0D0D14; --ink2:#15151F; --text:#E9E9F0; --muted:#9A9AAB;
+    --line:rgba(255,255,255,.10); --accent:#7B7EF6; --accent2:#4F46E5; --ok:#16B364; --no:#E5484D; --warn:#E8A13A;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{margin:0;background:var(--ink);color:var(--text);font-family:Geist,system-ui,sans-serif;-webkit-font-smoothing:antialiased;line-height:1.5}
+  .wrap{max-width:1280px;margin:0 auto;padding:48px 28px 96px}
+  .ser{font-family:Newsreader,serif;font-style:italic}
+  header.top{margin-bottom:8px}
+  .kick{font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+  h1{font-size:clamp(28px,4vw,46px);font-weight:500;letter-spacing:-.02em;margin:.3em 0 .2em;line-height:1.08}
+  h1 .ser{color:var(--accent)}
+  .lede{color:var(--muted);max-width:60ch;font-size:16px}
+  .lede b{color:var(--text);font-weight:500}
+
+  .legend{display:flex;gap:18px;flex-wrap:wrap;margin:22px 0 38px;font-size:12.5px;color:var(--muted)}
+  .legend span{display:inline-flex;align-items:center;gap:7px}
+  .dot{width:9px;height:9px;border-radius:2px;display:inline-block}
+
+  /* scorecard */
+  .card-tbl{width:100%;border-collapse:collapse;margin:0 0 56px;font-size:13.5px;border:1px solid var(--line);border-radius:10px;overflow:hidden}
+  .card-tbl th,.card-tbl td{padding:11px 12px;text-align:center;border-bottom:1px solid var(--line)}
+  .card-tbl th:first-child,.card-tbl td:first-child{text-align:left;color:var(--muted)}
+  .card-tbl thead th{background:var(--ink2);font-weight:500;letter-spacing:.01em}
+  .card-tbl tbody tr:last-child td{border-bottom:0}
+  .card-tbl .nm{font-weight:500;color:var(--text)}
+  .card-tbl .lead td{background:rgba(123,126,246,.08)}
+  .sc{font-variant-numeric:tabular-nums;font-weight:500}
+  .s5{color:#9DE0B8}.s4{color:#cfcfe0}.s3{color:var(--warn)}
+  .src{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em}
+
+  .grid{display:grid;grid-template-columns:repeat(2,1fr);gap:26px}
+  @media(max-width:900px){.grid{grid-template-columns:1fr}}
+  .col{border:1px solid var(--line);border-radius:14px;background:var(--ink2);overflow:hidden;display:flex;flex-direction:column}
+  .col .head{padding:18px 20px 14px;border-bottom:1px solid var(--line)}
+  .tag{display:inline-block;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink);background:var(--accent);padding:3px 9px;border-radius:3px;font-weight:600}
+  .col h2{font-size:21px;font-weight:500;margin:11px 0 3px;letter-spacing:-.01em}
+  .col h2 .ser{color:var(--accent)}
+  .col .one{font-size:13px;color:var(--muted);margin:0}
+  .shot{display:block;width:100%;border-bottom:1px solid var(--line);background:#fff}
+  .shot.hero img,.shot.full img{width:100%;display:block}
+  .shot.full{max-height:300px;overflow-y:auto;scrollbar-width:thin}
+  .meta{padding:16px 20px 20px;font-size:13px}
+  .meta p{margin:0 0 10px}
+  .meta .lbl{font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);display:block;margin-bottom:4px}
+  .pros,.cons{margin:0;padding-left:0;list-style:none}
+  .pros li,.cons li{padding-left:20px;position:relative;margin-bottom:5px;color:#d3d3e0}
+  .pros li:before{content:"+";position:absolute;left:2px;color:var(--ok);font-weight:700}
+  .cons li:before{content:"–";position:absolute;left:4px;color:var(--warn);font-weight:700}
+  .row{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px}
+  .btn{flex:1;min-width:130px;text-align:center;text-decoration:none;font-size:13px;font-weight:500;padding:11px 14px;border-radius:999px;transition:transform .15s cubic-bezier(.22,1,.36,1),background .15s}
+  .btn:active{transform:scale(.97)}
+  .btn.pri{background:var(--accent);color:#0b0b12}
+  .btn.pri:hover{background:#9396f8}
+  .btn.gho{background:transparent;color:var(--text);border:1px solid var(--line)}
+  .btn.gho:hover{background:rgba(255,255,255,.05)}
+  .axisbar{display:flex;align-items:center;gap:8px;margin:14px 0 2px}
+  .axisbar .track{flex:1;height:6px;background:rgba(255,255,255,.08);border-radius:3px;overflow:hidden}
+  .axisbar .fill{height:100%;background:linear-gradient(90deg,#4F46E5,#9396f8);border-radius:3px}
+  .axisbar .n{font-size:12px;color:var(--muted);min-width:128px}
+  .axisbar .v{font-size:12px;color:var(--text);font-variant-numeric:tabular-nums;min-width:26px;text-align:right}
+  footer.note{margin-top:60px;padding-top:26px;border-top:1px solid var(--line);color:var(--muted);font-size:13.5px;line-height:1.7}
+  footer.note b{color:var(--text);font-weight:500}
+  .pick{display:inline-block;background:var(--accent2);color:#fff;border-radius:5px;padding:1px 7px;font-weight:600;font-size:12px}
+  code{background:var(--ink);padding:2px 6px;border-radius:4px;border:1px solid var(--line);font-size:12px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <div class="kick">LoudFace landing · design-loop · USVC round</div>
+    <h1>Four directions, <span class="ser">one accent</span>, zero clones.</h1>
+    <p class="lede">All four steal USVC's <b>discipline</b> — a near-monochrome field where a single accent does all the energy work, grotesque × serif-italic pairing, near-square geometry with exactly one pill — and <b>re-key it off navy onto your white chassis</b> with indigo. Built from real LoudFace copy, real case-study charts, real client logos, real team. Genuinely different spines so this is a real choice, not three framings of one idea. <b>The pick is yours.</b></p>
+  </header>
+
+  <div class="legend">
+    <span><i class="dot" style="background:#9DE0B8"></i> 5 · exemplary</span>
+    <span><i class="dot" style="background:#cfcfe0"></i> 4 · strong</span>
+    <span><i class="dot" style="background:var(--warn)"></i> 3 · acceptable</span>
+    <span style="margin-left:auto"><i class="dot" style="background:var(--accent)"></i> mode: <b style="color:var(--text)">redesign</b> — ambition weighted ≥ overall</span>
+  </div>
+
+  <table class="card-tbl">
+    <thead><tr><th>axis</th><th>A · The Field</th><th>B · Blueprint</th><th>C · Editorial Index</th><th>D · Loud Restraint</th><th class="src">source</th></tr></thead>
+    <tbody>
+      <tr><td class="nm">Typography</td><td class="sc s4">4</td><td class="sc s4">4</td><td class="sc s5">5</td><td class="sc s4">4</td><td class="src">llm</td></tr>
+      <tr><td class="nm">Hierarchy</td><td class="sc s4">4</td><td class="sc s4">4</td><td class="sc s5">5</td><td class="sc s4">4</td><td class="src">llm</td></tr>
+      <tr><td class="nm">Color &amp; restraint</td><td class="sc s4">4</td><td class="sc s4">4</td><td class="sc s5">5</td><td class="sc s4">4</td><td class="src">det+llm</td></tr>
+      <tr><td class="nm">Spacing &amp; rhythm</td><td class="sc s4">4</td><td class="sc s4">4</td><td class="sc s4">4</td><td class="sc s4">4</td><td class="src">det+llm</td></tr>
+      <tr><td class="nm">Motion &amp; feedback</td><td class="sc s4">4</td><td class="sc s5">5</td><td class="sc s4">4</td><td class="sc s4">4</td><td class="src">llm</td></tr>
+      <tr><td class="nm">System-fit <span class="src">(token+voice)</span></td><td class="sc s5">5</td><td class="sc s4">4</td><td class="sc s5">5</td><td class="sc s4">4</td><td class="src">llm</td></tr>
+      <tr><td class="nm">Overall</td><td class="sc s4">4</td><td class="sc s4">4</td><td class="sc s5">5</td><td class="sc s4">4</td><td class="src">llm</td></tr>
+      <tr class="lead"><td class="nm">Ambition &amp; distinctiveness</td><td class="sc s3">3</td><td class="sc s5">5</td><td class="sc s5">5</td><td class="sc s4">4</td><td class="src">llm+critique</td></tr>
+    </tbody>
+  </table>
+
+  <div class="grid">
+
+    <!-- A -->
+    <section class="col" id="a">
+      <div class="head">
+        <span class="tag">A · most USVC-faithful</span>
+        <h2>The Field — <span class="ser">photographic + data</span></h2>
+        <p class="one">Cinematic B&amp;W founder hero, nav docked low, a dark data-chapter with the real Toku growth curve.</p>
+      </div>
+      <a class="shot hero" href="a.html" target="_blank"><img src="shots/a-hero.png" alt="Direction A hero"></a>
+      <div class="shot full"><img src="shots/a-ov.png" alt="Direction A full page"></div>
+      <div class="meta">
+        <div class="axisbar"><span class="n">signature move</span><span class="track"><span class="fill" style="width:62%"></span></span></div>
+        <p style="margin-top:6px"><span class="lbl">Steal → twist</span>USVC's institutional inversion: header docked at the <b style="color:#fff">bottom</b> of a B&amp;W portrait hero, then a deep-ink <b style="color:#fff">data-as-hero</b> chapter where your traffic claim becomes the real Toku curve (+335%).</p>
+        <span class="lbl">Strong</span>
+        <ul class="pros"><li>Cleanest, most premium-restrained; safest to ship</li><li>Geist × Newsreader-italic accent reads sharp</li><li>Photography + data = trust signals</li></ul>
+        <span class="lbl" style="margin-top:10px">Watch</span>
+        <ul class="cons"><li>The safest swing — least surprising of the four</li><li>Has a dash-eyebrow kicker (AI tell) → remove</li><li>Indigo-on-white small text dips under AA → darken</li></ul>
+        <div class="row"><a class="btn pri" href="a.html" target="_blank">Open live page ↗</a><a class="btn gho" href="shots/a-mob.png" target="_blank">Mobile ↗</a></div>
+      </div>
+    </section>
+
+    <!-- B -->
+    <section class="col" id="b">
+      <div class="head">
+        <span class="tag" style="background:#4F46E5;color:#fff">B · boldest signature</span>
+        <h2>Blueprint — <span class="ser">the diagram is the page</span></h2>
+        <p class="one">The problem literally assembles into the answer: scattered problem-chips wire into a solid-indigo "One team runs both."</p>
+      </div>
+      <a class="shot hero" href="b.html" target="_blank"><img src="shots/b-hero.png" alt="Direction B hero"></a>
+      <div class="shot full"><img src="shots/b-ov.png" alt="Direction B full page"></div>
+      <div class="meta">
+        <div class="axisbar"><span class="n">signature move</span><span class="track"><span class="fill" style="width:100%"></span></span></div>
+        <p style="margin-top:6px"><span class="lbl">Steal → twist</span>USVC's constellation as the <b style="color:#fff">whole-page organizing system</b>: dotted-grid blueprint, crop-marks, Build/Grow as wired converging nodes, case studies inside browser frames.</p>
+        <span class="lbl">Strong</span>
+        <ul class="pros"><li>Most memorable — the one you'd describe to someone</li><li>Best motion: wire-draw + snap-in reveals</li><li>Color-blocked title moments you've liked before</li></ul>
+        <span class="lbl" style="margin-top:10px">Watch</span>
+        <ul class="cons"><li>"01" + "SHEET 01" numbered markers (AI tell) → trim</li><li>Busiest — needs a calm pass on density</li><li>Indigo-on-white contrast → darken small text</li></ul>
+        <div class="row"><a class="btn pri" href="b.html" target="_blank">Open live page ↗</a><a class="btn gho" href="shots/b-mob.png" target="_blank">Mobile ↗</a></div>
+      </div>
+    </section>
+
+    <!-- C -->
+    <section class="col" id="c">
+      <div class="head">
+        <span class="tag" style="background:#9DE0B8;color:#0b0b12">C · highest caliber</span>
+        <h2>Editorial Index — <span class="ser">the studio report</span></h2>
+        <p class="one">The agency as a beautifully-set annual report: report masthead, network-arc to "200+", work as a ledger, stats as a financial table.</p>
+      </div>
+      <a class="shot hero" href="c.html" target="_blank"><img src="shots/c-hero.png" alt="Direction C hero"></a>
+      <div class="shot full"><img src="shots/c-ov.png" alt="Direction C full page"></div>
+      <div class="meta">
+        <div class="axisbar"><span class="n">signature move</span><span class="track"><span class="fill" style="width:94%"></span></span></div>
+        <p style="margin-top:6px"><span class="lbl">Steal → twist</span>USVC's ruled grid + editorial gravity pushed to <b style="color:#fff">print</b>: Bricolage × Sentient-italic, a network-arc of real logos converging to 200+, work indexed like a ledger, stats as a ruled table.</p>
+        <span class="lbl">Strong</span>
+        <ul class="pros"><li>Most "designed" &amp; premium — top-studio caliber</li><li>Cleanest objectively — 0 contrast fails, no AI tells</li><li>Serif-forward gravity; the work-ledger is gorgeous</li></ul>
+        <span class="lbl" style="margin-top:10px">Watch</span>
+        <ul class="cons"><li>Quietest energy — relies on type, not a loud moment</li><li>Heavy uppercase labels → ease a few</li><li>Could borrow D's one loud block for punch</li></ul>
+        <div class="row"><a class="btn pri" href="c.html" target="_blank">Open live page ↗</a><a class="btn gho" href="shots/c-mob.png" target="_blank">Mobile ↗</a></div>
+      </div>
+    </section>
+
+    <!-- D -->
+    <section class="col" id="d">
+      <div class="head">
+        <span class="tag" style="background:#E8A13A;color:#0b0b12">D · the brand, literal</span>
+        <h2>Loud Restraint — <span class="ser">95% calm, one shout</span></h2>
+        <p class="one">Quiet ink-on-paper everywhere so one move detonates: a color-blocked "compounds." + a full-bleed electric chapter for "One team runs both."</p>
+      </div>
+      <a class="shot hero" href="d.html" target="_blank"><img src="shots/d-hero.png" alt="Direction D hero"></a>
+      <div class="shot full"><img src="shots/d-ov.png" alt="Direction D full page"></div>
+      <div class="meta">
+        <div class="axisbar"><span class="n">signature move</span><span class="track"><span class="fill" style="width:80%"></span></span></div>
+        <p style="margin-top:6px"><span class="lbl">Steal → twist</span>USVC's "one pill means something" applied to <b style="color:#fff">typography</b>: restraint as the setup so the color-blocked word + the full-bleed electric-indigo chapter land like a shout. <b style="color:#fff">Declared:</b> accent pushed to electric #4D5BFF for the loud moments only.</p>
+        <span class="lbl">Strong</span>
+        <ul class="pros"><li>The name made literal — confident &amp; on-brand</li><li>The full-bleed detonation is genuinely memorable</li><li>Color-blocked word — a treatment you've liked</li></ul>
+        <span class="lbl" style="margin-top:10px">Watch</span>
+        <ul class="cons"><li>The calm sections are a touch conventional vs B/C</li><li>Hero portrait caption bar needs polish</li><li>Lives or dies on the two loud moments landing</li></ul>
+        <div class="row"><a class="btn pri" href="d.html" target="_blank">Open live page ↗</a><a class="btn gho" href="shots/d-mob.png" target="_blank">Mobile ↗</a></div>
+      </div>
+    </section>
+
+  </div>
+
+  <footer class="note">
+    <p><b>My honest read.</b> <span class="pick">C</span> is the caliber leader — the most "designed," cleanest, most premium, and the fullest realization of USVC's "institutional but alive" re-keyed to LoudFace. <span class="pick" style="background:#4F46E5">B</span> is the boldest <b>signature</b> — the most memorable, the one a prospect remembers. <span class="pick" style="background:#6b6b7a">A</span> is the safe-premium baseline; <span class="pick" style="background:#6b6b7a">D</span> is the punchiest one-idea swing.</p>
+    <p style="margin-top:12px"><b>The grafts write themselves:</b> C's editorial calibre + B's blueprint hero, or C + D's one loud full-bleed block, would each be stronger than any single direction. Your call drives the next loop — tell me <b>the pick</b> (A/B/C/D) and any grafts, and I'll iterate that one to ship-caliber (fix the flagged tells, tighten density, run mobile + the detector clean), then we wire it into the real Next.js homepage.</p>
+  </footer>
+</div>
+</body>
+</html>

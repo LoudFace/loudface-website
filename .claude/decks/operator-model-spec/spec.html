@@ -1,0 +1,713 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LoudFace — The Operator Model · Ops Spec</title>
+<link rel="stylesheet" href="fonts.css">
+<style>
+  :root{
+    --paper:#F0F2EF;
+    --card:#FAFBF9;
+    --ink:#15211C;
+    --ink-soft:#4A5A52;
+    --line:#C9D2CC;
+    --green:#0B6B43;
+    --green-soft:#DDEAE2;
+    --orange:#D14B12;
+    --orange-soft:#F7E3D8;
+    --mono:'JetBrains Mono', ui-monospace, monospace;
+    --sans:'Archivo', system-ui, sans-serif;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  html{scroll-behavior:smooth;}
+  @media (prefers-reduced-motion: reduce){ html{scroll-behavior:auto;} *{animation:none!important; transition:none!important;} }
+  body{
+    background:var(--paper);
+    background-image:radial-gradient(var(--line) 1px, transparent 1px);
+    background-size:26px 26px;
+    color:var(--ink);
+    font-family:var(--sans);
+    font-size:15px;
+    line-height:1.45;
+    padding:48px 20px 80px;
+    -webkit-print-color-adjust:exact;
+    print-color-adjust:exact;
+  }
+  .wrap{max-width:980px; margin:0 auto;}
+
+  /* ---------- type ---------- */
+  .eyebrow{font-family:var(--mono); font-size:11px; letter-spacing:.14em; text-transform:uppercase; color:var(--ink-soft);}
+  h1{font-stretch:115%; font-weight:900; font-size:clamp(34px,6vw,58px); line-height:1.0; letter-spacing:-.01em; margin:10px 0 14px; text-transform:uppercase;}
+  .sub{font-size:16px; color:var(--ink-soft); max-width:620px;}
+  .sub b{color:var(--ink); font-weight:700;}
+  .sec{margin-top:64px;}
+  .sec-head{display:flex; align-items:baseline; gap:14px; border-bottom:2px solid var(--ink); padding-bottom:10px; margin-bottom:24px;}
+  .sec-head .num{font-family:var(--mono); font-weight:700; font-size:13px; color:var(--green);}
+  .sec-head h2{font-stretch:115%; font-weight:800; font-size:clamp(19px,3vw,25px); text-transform:uppercase; letter-spacing:.01em;}
+  .sec-head .note{margin-left:auto; font-family:var(--mono); font-size:11px; color:var(--ink-soft); text-align:right;}
+  .tag{display:inline-block; font-family:var(--mono); font-size:10.5px; letter-spacing:.06em; padding:3px 8px; border:1px solid var(--line); border-radius:4px; background:var(--card); white-space:nowrap;}
+  .tag.green{border-color:var(--green); color:var(--green); background:var(--green-soft);}
+  .tag.orange{border-color:var(--orange); color:var(--orange); background:var(--orange-soft);}
+  .lead{font-size:15.5px; color:var(--ink-soft); max-width:680px; margin-bottom:20px;}
+  .lead b{color:var(--ink); font-weight:700;}
+
+  /* ---------- header strip ---------- */
+  .meta{display:flex; gap:10px; flex-wrap:wrap; margin-top:20px;}
+
+  /* ---------- cards / structure ---------- */
+  .card{background:var(--card); border:1.5px solid var(--ink); border-radius:8px; padding:16px 18px; position:relative;}
+  .card h3{font-stretch:110%; font-weight:800; font-size:16px; text-transform:uppercase; letter-spacing:.01em;}
+  .card .role{font-family:var(--mono); font-size:11px; color:var(--green); margin:2px 0 10px; font-weight:500;}
+  .card ul{list-style:none;}
+  .card li{font-size:13.5px; color:var(--ink-soft); padding:3px 0 3px 14px; position:relative;}
+  .card li::before{content:""; position:absolute; left:0; top:10px; width:6px; height:2px; background:var(--green);}
+  .founder{max-width:460px; margin:0 auto;}
+  .stem{width:2px; height:26px; background:var(--ink); margin:0 auto;}
+  .bus{height:2px; background:var(--ink); margin:0 7%; position:relative;}
+  .bus::before,.bus::after{content:""; position:absolute; top:0; width:2px; height:14px; background:var(--ink);}
+  .bus::before{left:0;} .bus::after{right:0;}
+  .bus .mid{position:absolute; left:50%; top:0; width:2px; height:14px; background:var(--ink); transform:translateX(-1px);}
+  .pods{display:grid; grid-template-columns:repeat(3,1fr); gap:14px; margin-top:14px;}
+  .pod .clients{font-family:var(--mono); font-size:11px; font-weight:700; color:var(--ink); background:var(--green-soft); border:1px solid var(--green); border-radius:4px; padding:2px 7px; display:inline-block; margin-bottom:8px;}
+  .pod .chips{display:flex; flex-wrap:wrap; gap:4px; margin:8px 0 10px;}
+  .pod .chips span{font-family:var(--mono); font-size:9.5px; border:1px solid var(--line); border-radius:3px; padding:2px 5px; color:var(--ink-soft); background:var(--paper);}
+  .pod .steward{font-family:var(--mono); font-size:10.5px; color:var(--green); border-top:1px dashed var(--line); padding-top:8px; font-weight:500;}
+  .gate{margin-top:16px; border:1.5px dashed var(--ink); border-radius:8px; background:repeating-linear-gradient(-45deg, var(--card), var(--card) 12px, #F3F5F2 12px, #F3F5F2 14px); padding:14px 18px; display:flex; gap:16px; align-items:center; flex-wrap:wrap;}
+  .gate .badge{font-family:var(--mono); font-size:10px; font-weight:700; letter-spacing:.12em; color:var(--card); background:var(--ink); padding:5px 9px; border-radius:4px;}
+  .gate .who{font-stretch:110%; font-weight:800; font-size:15px; text-transform:uppercase;}
+  .gate p{font-size:13px; color:var(--ink-soft); flex:1 1 320px;}
+  .gate p strong{color:var(--ink);}
+  .engines{margin-top:16px; border:1.5px solid var(--green); border-radius:8px; background:var(--green-soft); padding:14px 18px;}
+  .engines .label{font-family:var(--mono); font-size:10px; font-weight:700; letter-spacing:.12em; color:var(--green); text-transform:uppercase; margin-bottom:10px;}
+  .engines .row{display:flex; flex-wrap:wrap; gap:8px;}
+  .engines .eng{font-family:var(--mono); font-size:11px; font-weight:500; background:var(--card); border:1px solid var(--green); border-radius:5px; padding:6px 10px; display:flex; align-items:center; gap:7px;}
+  .engines .eng i{width:7px; height:7px; border-radius:50%; background:var(--green); display:inline-block;}
+  .engines .foot{font-size:12.5px; color:var(--ink-soft); margin-top:10px;}
+  .engines .foot b{color:var(--ink);}
+
+  /* ---------- two-col blocks (framing / floor-edge) ---------- */
+  .twocol{display:grid; grid-template-columns:1fr 1fr; gap:14px;}
+  .twocol.tilt-green > div:first-child{border-top:4px solid var(--ink);}
+  .twocol.tilt-green > div:last-child{border-top:4px solid var(--green);}
+  .card p.body{font-size:13.5px; color:var(--ink-soft); margin-top:8px;}
+  .card p.body b{color:var(--ink); font-weight:700;}
+  .vizcard{background:var(--card); border:1.5px solid var(--ink); border-radius:8px; padding:14px 16px;}
+  .vizcard .vlabel{font-family:var(--mono); font-size:10px; font-weight:700; letter-spacing:.1em; text-transform:uppercase; color:var(--ink-soft); margin-bottom:8px;}
+
+  /* ---------- callouts ---------- */
+  .callout{border:1.5px solid var(--green); border-left-width:5px; background:var(--green-soft); border-radius:8px; padding:16px 20px; margin-bottom:16px;}
+  .callout p{font-size:14.5px; color:var(--ink);}
+  .callout p b{font-weight:700;}
+  .qbig{font-stretch:112%; font-weight:800; font-size:clamp(20px,3.2vw,28px); line-height:1.12; text-transform:none; letter-spacing:-.01em; margin:18px 0 4px;}
+  .qbig .g{color:var(--green);}
+  .qbig .o{color:var(--orange);}
+
+  /* ---------- flow ---------- */
+  .flowblock{border:1.5px solid var(--ink); border-radius:8px; background:var(--card); padding:18px; margin-bottom:18px;}
+  .flowblock .fb-head{display:flex; align-items:center; gap:10px; margin-bottom:16px; flex-wrap:wrap;}
+  .flowblock .fb-head strong{font-stretch:110%; font-weight:800; font-size:15px; text-transform:uppercase;}
+  .rail{display:flex; align-items:stretch; flex-wrap:wrap; gap:0; row-gap:14px;}
+  .rail .node{font-family:var(--mono); font-size:11px; font-weight:500; border:1.5px solid var(--orange); color:var(--ink); background:var(--orange-soft); border-radius:5px; padding:8px 10px; text-align:center; min-width:84px; display:flex; align-items:center; justify-content:center;}
+  .rail .node.end{border-color:var(--ink); background:var(--paper);}
+  .rail .arr{display:flex; flex-direction:column; justify-content:center; align-items:center; padding:0 4px; color:var(--orange);}
+  .rail .arr svg{display:block;}
+  .rail .arr em{font-family:var(--mono); font-style:normal; font-size:8.5px; color:var(--orange); margin-top:2px; white-space:nowrap;}
+  .hub-svg{width:100%; height:auto; display:block;}
+  .stats{display:grid; grid-template-columns:repeat(3,1fr); gap:14px; margin-top:4px;}
+  .stat{border:1.5px solid var(--ink); border-radius:8px; background:var(--card); padding:14px 16px;}
+  .stat .k{font-family:var(--mono); font-size:10px; letter-spacing:.1em; text-transform:uppercase; color:var(--ink-soft);}
+  .stat .v{font-stretch:115%; font-weight:900; font-size:24px; margin-top:4px;}
+  .stat .v .old{color:var(--orange); text-decoration:line-through; text-decoration-thickness:2.5px; margin-right:8px; font-size:18px;}
+  .stat .v .new{color:var(--green);}
+
+  /* ---------- day ---------- */
+  .day{border:1.5px solid var(--ink); border-radius:8px; overflow:hidden; background:var(--card);}
+  .day-grid{display:grid; grid-template-columns:120px repeat(5,1fr);}
+  .day-grid > div{padding:10px 10px; border-bottom:1px solid var(--line); border-right:1px solid var(--line); font-size:12px;}
+  .day-grid > div:nth-child(6n){border-right:none;}
+  .day-grid .time{font-family:var(--mono); font-size:10px; font-weight:700; background:var(--ink); color:var(--card); letter-spacing:.04em;}
+  .day-grid .lane{font-family:var(--mono); font-size:10.5px; font-weight:700; background:var(--paper); color:var(--ink); text-transform:uppercase; letter-spacing:.06em; display:flex; align-items:center;}
+  .day-grid b{display:block; font-weight:700; font-size:12px; margin-bottom:2px;}
+  .day-grid .cell{color:var(--ink-soft);}
+  .day-grid .cell.op{background:#FFFFFF;}
+  .day-grid .cell.eng{background:var(--green-soft); color:var(--ink-soft); font-family:var(--mono); font-size:10.5px;}
+  .day-grid .cell.quiet{background:var(--paper); color:#9AA8A0;}
+  .splitbars{display:grid; grid-template-columns:repeat(3,1fr); gap:14px; margin-top:18px;}
+  .split{border:1.5px solid var(--ink); border-radius:8px; background:var(--card); padding:14px 16px;}
+  .split h4{font-stretch:110%; font-weight:800; font-size:13px; text-transform:uppercase; margin-bottom:10px;}
+  .bar{display:flex; height:14px; border-radius:4px; overflow:hidden; border:1px solid var(--ink);}
+  .bar i{display:block; height:100%;}
+  .legend{display:flex; flex-direction:column; gap:3px; margin-top:9px;}
+  .legend span{font-family:var(--mono); font-size:10px; color:var(--ink-soft); display:flex; align-items:center; gap:6px;}
+  .legend i{width:8px; height:8px; border-radius:2px; display:inline-block;}
+  .c1{background:var(--green);} .c2{background:#7FB89C;} .c3{background:var(--ink);}
+  .week{display:flex; gap:10px; margin-top:18px; flex-wrap:wrap;}
+  .week .d{flex:1 1 150px; border:1.5px solid var(--ink); border-radius:8px; background:var(--card); padding:10px 12px;}
+  .week .d .dn{font-family:var(--mono); font-size:10px; font-weight:700; letter-spacing:.1em; color:var(--green);}
+  .week .d p{font-size:12.5px; color:var(--ink-soft); margin-top:3px;}
+
+  /* ---------- table ---------- */
+  table{width:100%; border-collapse:collapse; background:var(--card); border:1.5px solid var(--ink); border-radius:8px; overflow:hidden;}
+  thead th{font-family:var(--mono); font-size:10px; letter-spacing:.1em; text-transform:uppercase; text-align:left; background:var(--ink); color:var(--card); padding:10px 14px;}
+  tbody td{padding:11px 14px; border-top:1px solid var(--line); font-size:13.5px; vertical-align:top;}
+  tbody td:first-child{font-weight:700; width:42%;}
+  tbody td:nth-child(2){font-family:var(--mono); font-size:12px; color:var(--green); font-weight:700; width:23%;}
+  tbody td:last-child{color:var(--ink-soft); font-size:12.5px;}
+
+  /* ---------- meaning cards ---------- */
+  .means{display:grid; grid-template-columns:repeat(3,1fr); gap:14px;}
+  .means .card .nbig{font-family:var(--mono); font-weight:700; font-size:18px; color:var(--green); margin-bottom:6px;}
+
+  .footer{margin-top:60px; border-top:2px solid var(--ink); padding-top:18px; display:flex; justify-content:space-between; gap:24px; flex-wrap:wrap;}
+  .footer .roll{max-width:620px;}
+  .footer .roll h4{font-stretch:110%; font-weight:800; font-size:14px; text-transform:uppercase; margin-bottom:6px;}
+  .footer p{font-size:13px; color:var(--ink-soft);}
+  .footer p b{color:var(--ink);}
+  .footer .ask{display:flex; gap:6px; flex-wrap:wrap; margin-top:12px;}
+  .footer .stamp{font-family:var(--mono); font-size:10px; color:var(--ink-soft); letter-spacing:.1em; text-align:right;}
+
+  /* ---------- oversight tier · craft edges · tap rail ---------- */
+  .tier{border:1.5px solid var(--ink); border-radius:8px; background:var(--card); padding:14px 16px;}
+  .tier .tlabel{font-family:var(--mono); font-size:10px; font-weight:700; letter-spacing:.1em; color:var(--ink); text-transform:uppercase; margin-bottom:10px;}
+  .tier .trow{display:grid; grid-template-columns:repeat(3,1fr); gap:12px;}
+  .lead-card{border:1.5px solid var(--ink); border-radius:7px; padding:12px 14px; background:var(--paper);}
+  .lead-card h4{font-stretch:110%; font-weight:800; font-size:14.5px; text-transform:uppercase; letter-spacing:.01em;}
+  .lead-card .rem{font-family:var(--mono); font-size:9.5px; color:var(--green); margin:3px 0 8px; font-weight:700; letter-spacing:.04em;}
+  .lead-card p{font-size:12px; color:var(--ink-soft); line-height:1.5;}
+  .lead-card p b{color:var(--ink);}
+  .pod .edge{display:inline-block; font-family:var(--mono); font-size:9.5px; font-weight:700; letter-spacing:.06em; color:var(--green); border:1px solid var(--green); border-radius:3px; padding:2px 6px; margin-bottom:8px; background:var(--green-soft);}
+  .rail.go .node{border-color:var(--green); background:var(--green-soft); color:var(--ink);}
+  .rail.go .node.go-end{background:var(--green); color:var(--card); border-color:var(--green);}
+  .rail.go .arr{color:var(--green);}
+  .rail.go .arr em{color:var(--green);}
+
+  /* ---------- print / pdf ---------- */
+  @page{ size:1120px 1584px; margin:0; }
+  @media print{
+    body{ padding:46px 44px 22px; }
+    .card,.flowblock,.stat,.split,.day,.week .d,table,.callout,.gate,.engines,.vizcard,.twocol,.means,.footer,.tier,.lead-card{ break-inside:avoid; }
+    .sec-head{ break-after:avoid; }
+    .sec{ break-inside:auto; margin-top:52px; }
+    .footer{ margin-top:44px; }
+  }
+
+  /* ---------- responsive (screen only — print always uses desktop layout) ---------- */
+  @media screen and (max-width:760px){
+    .pods,.stats,.splitbars,.twocol,.means,.tier .trow{grid-template-columns:1fr;}
+    .bus{display:none;}
+    .day-grid{grid-template-columns:96px 1fr;}
+    .day-grid .time{display:none;}
+    .day-grid .cell b::before{content:attr(data-t) "  "; font-family:var(--mono); font-size:9px; color:var(--green);}
+    .sec-head .note{display:none;}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <!-- ================= HEADER ================= -->
+  <header>
+    <div class="eyebrow">LoudFace — Internal · Ops Spec</div>
+    <h1>The Operator<br>Model</h1>
+    <p class="sub">This direction is <b>decided</b> — and it is an <b>evolution of your craft</b>, not a replacement of it. Assembly line → pods: one operator owns a client end-to-end and the engines do production, while a thin tier of specialists sets the ceiling on craft and strategy.</p>
+    <div class="meta">
+      <span class="tag green">≈12 clients</span>
+      <span class="tag">3 operator pods</span>
+      <span class="tag">2 principals + delivery lead</span>
+      <span class="tag">6 engines</span>
+      <span class="tag">loudface-skills</span>
+    </div>
+  </header>
+
+  <!-- ================= 01 TWO THINGS AT ONCE ================= -->
+  <section class="sec">
+    <div class="sec-head">
+      <span class="num">01</span>
+      <h2>Two things at once</h2>
+      <span class="note">read both · together</span>
+    </div>
+    <p class="lead">Most change memos pick one note — drive, or reassure. This one refuses to. Hold both as you read every section below.</p>
+    <div class="twocol tilt-green">
+      <div class="card">
+        <span class="tag" style="margin-bottom:10px;">This is decided</span>
+        <h3>We are moving to the operator model.</h3>
+        <p class="body">Not a proposal up for debate, not an experiment with an exit. The tools already changed the work; the org is catching up to a reality that is here. The question is <b>how we move</b>, not whether.</p>
+      </div>
+      <div class="card">
+        <span class="tag green" style="margin-bottom:10px;">This is evolution</span>
+        <h3>No one is replaced by a machine.</h3>
+        <p class="body">Your craft becomes the part that matters more, not less. The repetitive production becomes an engine. You move up the stack — from doing every task to <b>directing the work and owning the outcome.</b></p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= 02 WHY NOW ================= -->
+  <section class="sec">
+    <div class="sec-head">
+      <span class="num">02</span>
+      <h2>Why now</h2>
+      <span class="note">the constraint was handoffs, not talent</span>
+    </div>
+    <p class="lead">For years the work crossed five sets of hands because no one person could do all five crafts well. That was the real constraint — not talent, <b>handoffs.</b> AI removed it. Production-grade design, build, copy and analysis now sit inside one operator's work.</p>
+    <div class="pods" style="margin-top:0;">
+      <div class="card">
+        <div class="role">DEVELOPMENT</div>
+        <h3 style="font-size:15px;">Absorbed</h3>
+        <p class="body">Claude Code + Figma / Webflow turns a design into a built page. The dedicated dev seat is gone.</p>
+      </div>
+      <div class="card">
+        <div class="role">COPYWRITING</div>
+        <h3 style="font-size:15px;">Engine + editor</h3>
+        <p class="body">The Content Engine already lets one writer produce the output of ten. Proven, in-house, today.</p>
+      </div>
+      <div class="card">
+        <div class="role">STRATEGY · PM</div>
+        <h3 style="font-size:15px;">Judgment + ritual</h3>
+        <p class="body">The analysis becomes a skill; the coordination becomes a rhythm. What is left is the human call.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= 03 HOW WORK MOVES ================= -->
+  <section class="sec">
+    <div class="sec-head">
+      <span class="num">03</span>
+      <h2>How work moves</h2>
+      <span class="note">one deliverable, two worlds</span>
+    </div>
+
+    <div class="flowblock">
+      <div class="fb-head"><span class="tag orange">V1 — THE RELAY</span><strong>Every arrow is a wait state</strong></div>
+      <div class="rail">
+        <span class="node end">CLIENT</span>
+        <span class="arr"><svg width="26" height="10" viewBox="0 0 26 10"><path d="M0 5h20m0 0-5-4m5 4-5 4" stroke="currentColor" stroke-width="1.6" fill="none"/></svg><em>brief</em></span>
+        <span class="node">PM</span>
+        <span class="arr"><svg width="26" height="10" viewBox="0 0 26 10"><path d="M0 5h20m0 0-5-4m5 4-5 4" stroke="currentColor" stroke-width="1.6" fill="none"/></svg><em>+2d</em></span>
+        <span class="node">STRATEGIST</span>
+        <span class="arr"><svg width="26" height="10" viewBox="0 0 26 10"><path d="M0 5h20m0 0-5-4m5 4-5 4" stroke="currentColor" stroke-width="1.6" fill="none"/></svg><em>+3d</em></span>
+        <span class="node">COPYWRITER</span>
+        <span class="arr"><svg width="26" height="10" viewBox="0 0 26 10"><path d="M0 5h20m0 0-5-4m5 4-5 4" stroke="currentColor" stroke-width="1.6" fill="none"/></svg><em>+4d</em></span>
+        <span class="node">DESIGNER</span>
+        <span class="arr"><svg width="26" height="10" viewBox="0 0 26 10"><path d="M0 5h20m0 0-5-4m5 4-5 4" stroke="currentColor" stroke-width="1.6" fill="none"/></svg><em>+5d</em></span>
+        <span class="node">DEVELOPER</span>
+        <span class="arr"><svg width="26" height="10" viewBox="0 0 26 10"><path d="M0 5h20m0 0-5-4m5 4-5 4" stroke="currentColor" stroke-width="1.6" fill="none"/></svg><em>+2d</em></span>
+        <span class="node">PM</span>
+        <span class="arr"><svg width="26" height="10" viewBox="0 0 26 10"><path d="M0 5h20m0 0-5-4m5 4-5 4" stroke="currentColor" stroke-width="1.6" fill="none"/></svg><em>ship</em></span>
+        <span class="node end">CLIENT</span>
+      </div>
+    </div>
+
+    <div class="flowblock">
+      <div class="fb-head"><span class="tag green">V2 — THE POD</span><strong>One head holds the whole job</strong></div>
+      <svg class="hub-svg" viewBox="0 0 880 330" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Pod flow: client to operator, operator runs five engines in parallel, design gate, ship">
+        <defs>
+          <marker id="ag" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto"><path d="M0 0L8 4L0 8z" fill="#0B6B43"/></marker>
+        </defs>
+        <rect x="20" y="135" width="120" height="60" rx="8" fill="#F0F2EF" stroke="#15211C" stroke-width="1.5"/>
+        <text x="80" y="161" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="13" font-weight="700" fill="#15211C">CLIENT</text>
+        <text x="80" y="179" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" fill="#4A5A52">one Slack away</text>
+        <line x1="140" y1="155" x2="218" y2="155" stroke="#0B6B43" stroke-width="2" marker-end="url(#ag)"/>
+        <line x1="218" y1="175" x2="140" y2="175" stroke="#0B6B43" stroke-width="2" marker-end="url(#ag)"/>
+        <rect x="220" y="105" width="190" height="120" rx="10" fill="#FAFBF9" stroke="#15211C" stroke-width="2"/>
+        <text x="315" y="145" text-anchor="middle" font-family="Archivo, sans-serif" font-size="19" font-weight="800" fill="#15211C">OPERATOR</text>
+        <text x="315" y="166" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9.5" fill="#0B6B43" font-weight="700">STRATEGY · JUDGMENT · COMMS</text>
+        <text x="315" y="186" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9.5" fill="#4A5A52">orchestrates, doesn't relay</text>
+        <text x="315" y="204" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9.5" fill="#4A5A52">same day, same head</text>
+        <line x1="410" y1="125" x2="500" y2="50" stroke="#0B6B43" stroke-width="1.6" marker-end="url(#ag)"/>
+        <line x1="410" y1="145" x2="500" y2="115" stroke="#0B6B43" stroke-width="1.6" marker-end="url(#ag)"/>
+        <line x1="410" y1="165" x2="500" y2="165" stroke="#0B6B43" stroke-width="1.6" marker-end="url(#ag)"/>
+        <line x1="410" y1="185" x2="500" y2="215" stroke="#0B6B43" stroke-width="1.6" marker-end="url(#ag)"/>
+        <line x1="410" y1="205" x2="500" y2="280" stroke="#0B6B43" stroke-width="1.6" marker-end="url(#ag)"/>
+        <g font-family="JetBrains Mono, monospace" font-size="10.5" font-weight="500">
+          <rect x="505" y="32" width="150" height="34" rx="6" fill="#DDEAE2" stroke="#0B6B43" stroke-width="1.4"/>
+          <text x="580" y="53" text-anchor="middle" fill="#15211C">CONTENT ENGINE</text>
+          <rect x="505" y="97" width="150" height="34" rx="6" fill="#DDEAE2" stroke="#0B6B43" stroke-width="1.4"/>
+          <text x="580" y="118" text-anchor="middle" fill="#15211C">DEV ENGINE</text>
+          <rect x="505" y="148" width="150" height="34" rx="6" fill="#DDEAE2" stroke="#0B6B43" stroke-width="1.4"/>
+          <text x="580" y="169" text-anchor="middle" fill="#15211C">AUDIT ENGINE</text>
+          <rect x="505" y="198" width="150" height="34" rx="6" fill="#DDEAE2" stroke="#0B6B43" stroke-width="1.4"/>
+          <text x="580" y="219" text-anchor="middle" fill="#15211C">REPORTING ENGINE</text>
+          <rect x="505" y="263" width="150" height="34" rx="6" fill="#DDEAE2" stroke="#0B6B43" stroke-width="1.4"/>
+          <text x="580" y="284" text-anchor="middle" fill="#15211C">PM ENGINE</text>
+        </g>
+        <text x="580" y="20" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" fill="#4A5A52" letter-spacing="1">RUN IN PARALLEL, NOT IN SEQUENCE</text>
+        <line x1="655" y1="165" x2="718" y2="165" stroke="#0B6B43" stroke-width="2" marker-end="url(#ag)"/>
+        <rect x="720" y="125" width="64" height="80" rx="8" fill="#FAFBF9" stroke="#15211C" stroke-width="1.6" stroke-dasharray="5 4"/>
+        <text x="752" y="158" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" font-weight="700" fill="#15211C">DESIGN</text>
+        <text x="752" y="172" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" font-weight="700" fill="#15211C">+ QA</text>
+        <text x="752" y="189" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="8.5" fill="#4A5A52">async gate</text>
+        <line x1="784" y1="165" x2="812" y2="165" stroke="#0B6B43" stroke-width="2" marker-end="url(#ag)"/>
+        <rect x="814" y="138" width="54" height="54" rx="27" fill="#0B6B43"/>
+        <text x="841" y="170" text-anchor="middle" font-family="Archivo, sans-serif" font-size="11" font-weight="800" fill="#FAFBF9">SHIP</text>
+      </svg>
+    </div>
+
+    <span class="tag orange" style="margin-bottom:12px;">Targets · directional, not yet measured</span>
+    <div class="stats">
+      <div class="stat"><div class="k">Handoffs per deliverable</div><div class="v"><span class="old">6</span><span class="new">0</span></div></div>
+      <div class="stat"><div class="k">Cycle time</div><div class="v"><span class="old">3–6 wk</span><span class="new">2–5 d</span></div></div>
+      <div class="stat"><div class="k">Humans per deliverable</div><div class="v"><span class="old">5</span><span class="new">1.5</span></div></div>
+    </div>
+  </section>
+
+  <!-- ================= 04 EVERYONE OPERATES ================= -->
+  <section class="sec">
+    <div class="sec-head">
+      <span class="num">04</span>
+      <h2>Everyone operates</h2>
+      <span class="note">the capability objection, answered</span>
+    </div>
+    <p class="lead">Every operator is a different specialist underneath — one leads in design, one in content, one in dev, one in AEO strategy. <b>Same senior floor on everything; a different edge on top.</b> We don't pretend everyone is equally good at everything — we make sure no one is blocked by what they're not.</p>
+    <p class="qbig">“Not everyone can code or design.”<br>That is the <span class="o">non-argument.</span></p>
+    <div class="callout">
+      <p>The skill carries the <b>floor</b> to senior level on day one. Your talent is the <b>edge</b> on top. You do not need to be a developer to ship a senior build — you direct one.</p>
+    </div>
+    <div class="twocol" style="align-items:stretch;">
+      <div style="display:flex; flex-direction:column; gap:14px;">
+        <div class="card">
+          <div class="role">THE FLOOR — GUARANTEED</div>
+          <h3 style="font-size:15px;">Every craft, senior standard, built in</h3>
+          <p class="body">The skills in <b>loudface-skills</b> design, build and write to a senior bar by default. The capability is in the system, not gatekept by a job title.</p>
+        </div>
+        <div class="card">
+          <div class="role">THE EDGE — YOURS</div>
+          <h3 style="font-size:15px;">You set the ceiling in your craft</h3>
+          <p class="body">Each of you is still deepest in one thing — design, copy, dev, or AEO strategy. That taste lifts a pod's work from senior to <b>unmistakable.</b></p>
+        </div>
+      </div>
+      <div class="vizcard">
+        <div class="vlabel">Floor + edge</div>
+        <svg viewBox="0 0 440 250" width="100%" font-family="JetBrains Mono, monospace">
+          <text x="8" y="22" font-size="11" fill="#15211C">Everyone clears the floor.</text>
+          <text x="8" y="40" font-size="11" fill="#0B6B43">Each spikes in their craft.</text>
+          <line x1="10" y1="165" x2="350" y2="165" stroke="#0B6B43" stroke-width="1.4" stroke-dasharray="5 4"/>
+          <text x="436" y="158" text-anchor="end" font-size="10" fill="#0B6B43">SENIOR FLOOR</text>
+          <g>
+            <rect x="40"  y="165" width="52" height="60" fill="#C9D2CC"/><rect x="40"  y="104" width="52" height="61" fill="#0B6B43"/>
+            <text x="66"  y="242" text-anchor="middle" font-size="10" fill="#4A5A52">DESIGN</text>
+            <rect x="130" y="165" width="52" height="60" fill="#C9D2CC"/><rect x="130" y="124" width="52" height="41" fill="#7FB89C"/>
+            <text x="156" y="242" text-anchor="middle" font-size="10" fill="#4A5A52">COPY</text>
+            <rect x="220" y="165" width="52" height="60" fill="#C9D2CC"/><rect x="220" y="132" width="52" height="33" fill="#7FB89C"/>
+            <text x="246" y="242" text-anchor="middle" font-size="10" fill="#4A5A52">DEV</text>
+            <rect x="310" y="165" width="52" height="60" fill="#C9D2CC"/><rect x="310" y="112" width="52" height="53" fill="#0B6B43"/>
+            <text x="336" y="242" text-anchor="middle" font-size="10" fill="#4A5A52">AEO</text>
+          </g>
+        </svg>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= 05 THE FLYWHEEL ================= -->
+  <section class="sec">
+    <div class="sec-head">
+      <span class="num">05</span>
+      <h2>Specialists, collaborating</h2>
+      <span class="note">one brain per client · still a team</span>
+    </div>
+    <p class="lead">One operator owns the client — but no one operates alone. When the content-led operator needs a design crack that Claude won't nail, they <b>tap the design-led operator.</b> They solve it together and bank the fix as a skill — so next time the floor is already higher.</p>
+    <div class="callout">
+      <p>The one rule that keeps this from becoming the old relay: <b>pull someone in to raise your edge or teach you — never to take the task off your plate.</b> Then write what you learned into <b>loudface-skills</b>, and the whole team has it tomorrow.</p>
+    </div>
+    <div class="vizcard" style="margin-bottom:16px;">
+      <div class="vlabel">The tap — how cross-craft help flows</div>
+      <div class="rail go">
+        <span class="node">HIT YOUR CEILING</span>
+        <span class="arr"><svg width="26" height="10" viewBox="0 0 26 10"><path d="M0 5h20m0 0-5-4m5 4-5 4" stroke="currentColor" stroke-width="1.6" fill="none"/></svg><em>not the relay</em></span>
+        <span class="node">TAP THE CRAFT-DEEP PEER</span>
+        <span class="arr"><svg width="26" height="10" viewBox="0 0 26 10"><path d="M0 5h20m0 0-5-4m5 4-5 4" stroke="currentColor" stroke-width="1.6" fill="none"/></svg><em>together</em></span>
+        <span class="node">SOLVE IT WITH THEM</span>
+        <span class="arr"><svg width="26" height="10" viewBox="0 0 26 10"><path d="M0 5h20m0 0-5-4m5 4-5 4" stroke="currentColor" stroke-width="1.6" fill="none"/></svg><em>bank it</em></span>
+        <span class="node">CO-WRITE THE SKILL</span>
+        <span class="arr"><svg width="26" height="10" viewBox="0 0 26 10"><path d="M0 5h20m0 0-5-4m5 4-5 4" stroke="currentColor" stroke-width="1.6" fill="none"/></svg><em></em></span>
+        <span class="node go-end">FLOOR RISES FOR ALL</span>
+      </div>
+    </div>
+    <div class="twocol" style="align-items:center;">
+      <div>
+        <p class="qbig">Competitors add people.<br>We add skills. The gap <span class="g">compounds.</span></p>
+        <p class="lead" style="margin-top:12px;">Every tap that becomes a skill is a permanent upgrade to the whole team. That's the flywheel — and it's the moat: rivals add headcount, we add capability.</p>
+      </div>
+      <div class="vizcard">
+        <div class="vlabel">The loop — loudface-skills</div>
+        <svg viewBox="0 0 400 392" width="100%" font-family="JetBrains Mono, monospace">
+          <circle cx="200" cy="196" r="132" fill="none" stroke="#0B6B43" stroke-width="1.5"/>
+          <g fill="#0B6B43">
+            <g transform="translate(293.3,102.7) rotate(45)"><path d="M0,-4 L7,0 L0,4 Z"/></g>
+            <g transform="translate(293.3,289.3) rotate(135)"><path d="M0,-4 L7,0 L0,4 Z"/></g>
+            <g transform="translate(106.7,289.3) rotate(225)"><path d="M0,-4 L7,0 L0,4 Z"/></g>
+            <g transform="translate(106.7,102.7) rotate(315)"><path d="M0,-4 L7,0 L0,4 Z"/></g>
+          </g>
+          <text x="200" y="200" text-anchor="middle" font-size="11" font-weight="700" fill="#0B6B43" letter-spacing="2">THE LOOP</text>
+          <g>
+            <g><circle cx="200" cy="64"  r="44" fill="#FAFBF9" stroke="#15211C" stroke-width="1.5"/><text x="200" y="60"  text-anchor="middle" font-size="11" font-weight="700" fill="#15211C">SOLVE</text><text x="200" y="75"  text-anchor="middle" font-size="8.5" fill="#4A5A52">a problem</text></g>
+            <g><circle cx="332" cy="196" r="48" fill="#FAFBF9" stroke="#15211C" stroke-width="1.5"/><text x="332" y="192" text-anchor="middle" font-size="10.5" font-weight="700" fill="#15211C">CODIFY</text><text x="332" y="207" text-anchor="middle" font-size="7.5" fill="#0B6B43">→ loudface-skills</text></g>
+            <g><circle cx="200" cy="328" r="44" fill="#FAFBF9" stroke="#15211C" stroke-width="1.5"/><text x="200" y="324" text-anchor="middle" font-size="11" font-weight="700" fill="#15211C">SHARE</text><text x="200" y="339" text-anchor="middle" font-size="8.5" fill="#4A5A52">org-wide</text></g>
+            <g><circle cx="68"  cy="196" r="48" fill="#FAFBF9" stroke="#15211C" stroke-width="1.5"/><text x="68"  y="192" text-anchor="middle" font-size="10" font-weight="700" fill="#15211C">LEVEL UP</text><text x="68"  y="207" text-anchor="middle" font-size="8.5" fill="#4A5A52">everyone</text></g>
+          </g>
+        </svg>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= 06 STRUCTURE ================= -->
+  <section class="sec">
+    <div class="sec-head">
+      <span class="num">06</span>
+      <h2>Structure</h2>
+      <span class="note">flat on delivery · layered on craft</span>
+    </div>
+
+    <div class="callout" style="border-color:var(--ink); background:var(--card); margin-bottom:18px;">
+      <p><b>Flat on delivery, layered on craft.</b> One operator brain per client — horizontal, no relay. Above it, a thin tier of specialists sets the ceiling and takes the hardest calls, and <b>never steps back into the production line.</b> Seniority here is who sets the standard — not who hands to whom.</p>
+    </div>
+
+    <div class="card founder">
+      <h3>Founder</h3>
+      <div class="role">ENGINES · SALES · ESCALATION</div>
+      <ul>
+        <li>Builds &amp; maintains all six engines</li>
+        <li>Sales, pricing, scope — every deal</li>
+        <li>Escalation endpoint when a client is on fire</li>
+        <li>Sets the QA standards the gates enforce</li>
+      </ul>
+    </div>
+
+    <div class="stem"></div>
+
+    <div class="tier">
+      <div class="tlabel">Oversight tier — sets the ceiling, never joins the relay</div>
+      <div class="trow">
+        <div class="lead-card">
+          <h4>Delivery Lead</h4>
+          <div class="rem">EVOLVED PM · ALL PODS</div>
+          <p>Sits between founder and operators. Owns whether every client is on track, flowing and risk-free across all pods — conducting capacity and timelines, escalating up. The PM <b>function</b> kept; the PM <b>job</b> gone.</p>
+        </div>
+        <div class="lead-card">
+          <h4>Strategy Principal</h4>
+          <div class="rem">PLAYER-COACH · ALL STRATEGY</div>
+          <p>Oversees strategy on every client — direction, review, the hardest calls — and keeps the AEO frontier current, feeding it into skills. Also owns 1–2 flagship clients directly.</p>
+        </div>
+        <div class="lead-card">
+          <h4>Design Director</h4>
+          <div class="rem">CRAFT GATE · ALL PODS</div>
+          <p>Builds each client's design system once; operators assemble inside it. Holds the hard veto on visual quality before anything ships — the moat AI hasn't cracked.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="stem"></div>
+    <div class="bus"><span class="mid"></span></div>
+
+    <div class="pods">
+      <div class="card pod">
+        <h3>Pod 1</h3>
+        <span class="edge">HOME CRAFT — DESIGN</span>
+        <div class="role">CLIENT OPERATOR</div>
+        <span class="clients">4 CLIENTS · END-TO-END</span>
+        <div class="chips"><span>STRATEGY</span><span>CONTENT</span><span>BUILD</span><span>COMMS</span><span>REPORTING</span></div>
+        <div class="steward">STEWARD: DEV ENGINE + design-system skills</div>
+      </div>
+      <div class="card pod">
+        <h3>Pod 2</h3>
+        <span class="edge">HOME CRAFT — CONTENT</span>
+        <div class="role">CLIENT OPERATOR</div>
+        <span class="clients">4 CLIENTS · END-TO-END</span>
+        <div class="chips"><span>STRATEGY</span><span>CONTENT</span><span>BUILD</span><span>COMMS</span><span>REPORTING</span></div>
+        <div class="steward">STEWARD: CONTENT ENGINE — the proven template</div>
+      </div>
+      <div class="card pod">
+        <h3>Pod 3</h3>
+        <span class="edge">HOME CRAFT — DEV / AEO</span>
+        <div class="role">CLIENT OPERATOR</div>
+        <span class="clients">4 CLIENTS · END-TO-END</span>
+        <div class="chips"><span>STRATEGY</span><span>CONTENT</span><span>BUILD</span><span>COMMS</span><span>REPORTING</span></div>
+        <div class="steward">STEWARD: AUDIT + REPORTING ENGINES</div>
+      </div>
+    </div>
+    <p class="lead" style="font-size:13px; margin-top:12px;">Operators differ by home craft — <b>route each client to the operator whose edge fits</b> (design-heavy build → the design-led operator). They clear the senior floor on everything via skills and tap each other for the rest. The Strategy Principal also runs a flagship pod.</p>
+
+    <div class="engines">
+      <div class="label">Engine Layer — shared infrastructure, all skills live in loudface-skills</div>
+      <div class="row">
+        <span class="eng"><i></i>CONTENT ENGINE</span>
+        <span class="eng"><i></i>DEV ENGINE — Claude Code + Figma / Webflow MCP</span>
+        <span class="eng"><i></i>AUDIT ENGINE — DataForSEO</span>
+        <span class="eng"><i></i>REPORTING ENGINE — Ahrefs + Peec</span>
+        <span class="eng"><i></i>PM ENGINE</span>
+        <span class="eng"><i></i>QA ENGINE</span>
+      </div>
+      <p class="foot">Built by the founder. Each pod <b>stewards</b> an engine; the Delivery Lead stewards the PM + QA engines. Full-stack on clients, specialist on systems. Client context lives in per-client repos (CLAUDE.md + Notion), <b>never in heads.</b></p>
+    </div>
+  </section>
+
+  <!-- ================= 07 THE DAY ================= -->
+  <section class="sec">
+    <div class="sec-head">
+      <span class="num">07</span>
+      <h2>The day, distributed</h2>
+      <span class="note">a normal Tuesday in the pod model</span>
+    </div>
+
+    <div class="day">
+      <div class="day-grid">
+        <div class="time"></div>
+        <div class="time">08:30</div>
+        <div class="time">09:00–12:00</div>
+        <div class="time">13:00–14:30</div>
+        <div class="time">14:30–16:30</div>
+        <div class="time">16:30–17:30</div>
+
+        <div class="lane">Operator ×3</div>
+        <div class="cell op"><b data-t="08:30">Triage</b>Approve PM-Engine digest: overnight client msgs, drafted replies, today's priorities</div>
+        <div class="cell op"><b data-t="09:00">Production I</b>Content runs · Webflow build via Claude Code · audit kickoff for new client</div>
+        <div class="cell op"><b data-t="13:00">Client time</b>Weekly calls, Slack threads, expectation-setting — the human layer</div>
+        <div class="cell op"><b data-t="14:30">Production II + QA</b>Adversarial Claude review pass, fix, submit to design gate</div>
+        <div class="cell op"><b data-t="16:30">Ship</b>Push live · Reporting Engine sends client update · log friction for retro</div>
+
+        <div class="lane">Engines</div>
+        <div class="cell eng">PM ENGINE: digests compiled overnight</div>
+        <div class="cell eng">CONTENT + DEV + AUDIT running in parallel</div>
+        <div class="cell eng">idle / queued</div>
+        <div class="cell eng">QA ENGINE: review passes</div>
+        <div class="cell eng">REPORTING ENGINE: client updates out</div>
+
+        <div class="lane">Delivery Lead</div>
+        <div class="cell op"><b data-t="08:30">Pulse</b>Scan all pods — what's on track, what's slipping, who's at risk</div>
+        <div class="cell op"><b data-t="09:00">Unblock</b>Clear dependencies across pods · manage client timelines &amp; expectations</div>
+        <div class="cell op"><b data-t="13:00">Client health</b>Check-ins on at-risk accounts before they smoulder</div>
+        <div class="cell op"><b data-t="14:30">Capacity</b>Balance load across pods · plan next week's client slots</div>
+        <div class="cell op"><b data-t="16:30">Roll-up</b>What shipped, what's at risk → founder</div>
+
+        <div class="lane">Strategy Principal</div>
+        <div class="cell op"><b data-t="08:30">Scan</b>Skim overnight signals — rankings, AI citations, anomalies</div>
+        <div class="cell op"><b data-t="09:00">Flagship clients</b>Operates 1–2 hardest accounts directly (player-coach)</div>
+        <div class="cell op"><b data-t="13:00">Strategy review</b>Reviews pods' strategic calls · unblocks the hard ones</div>
+        <div class="cell op"><b data-t="14:30">Frontier</b>AEO R&amp;D → codifies into strategy skills</div>
+        <div class="cell quiet">—</div>
+
+        <div class="lane">Design Dir.</div>
+        <div class="cell quiet">—</div>
+        <div class="cell op"><b data-t="09:00">Systems</b>Design system + components for newest client (one-time per client)</div>
+        <div class="cell op"><b data-t="13:00">Gate</b>Review queue: approve / kick back pod outputs</div>
+        <div class="cell op"><b data-t="14:30">Art direction</b>Brand work, the 30% AI can't do</div>
+        <div class="cell quiet">—</div>
+
+        <div class="lane">Founder</div>
+        <div class="cell quiet">—</div>
+        <div class="cell op"><b data-t="09:00">Sales + engines</b>Deals, pricing, engine R&amp;D</div>
+        <div class="cell op"><b data-t="13:00">Escalations</b>Anything on fire lands here</div>
+        <div class="cell op"><b data-t="14:30">Engine fixes</b>Patch whatever the morning's friction log surfaced</div>
+        <div class="cell quiet">—</div>
+      </div>
+    </div>
+
+    <div class="splitbars">
+      <div class="split">
+        <h4>Operator time</h4>
+        <div class="bar"><i class="c1" style="width:60%"></i><i class="c2" style="width:25%"></i><i class="c3" style="width:15%"></i></div>
+        <div class="legend">
+          <span><i class="c1"></i>60% production via engines</span>
+          <span><i class="c2"></i>25% client comms</span>
+          <span><i class="c3"></i>15% QA + strategy calls</span>
+        </div>
+      </div>
+      <div class="split">
+        <h4>Strategy Principal time</h4>
+        <div class="bar"><i class="c1" style="width:40%"></i><i class="c2" style="width:35%"></i><i class="c3" style="width:25%"></i></div>
+        <div class="legend">
+          <span><i class="c1"></i>40% flagship clients</span>
+          <span><i class="c2"></i>35% strategy review across pods</span>
+          <span><i class="c3"></i>25% AEO frontier → skills</span>
+        </div>
+      </div>
+      <div class="split">
+        <h4>Delivery Lead time</h4>
+        <div class="bar"><i class="c1" style="width:50%"></i><i class="c2" style="width:30%"></i><i class="c3" style="width:20%"></i></div>
+        <div class="legend">
+          <span><i class="c1"></i>50% pod tracking &amp; unblocking</span>
+          <span><i class="c2"></i>30% client health</span>
+          <span><i class="c3"></i>20% capacity &amp; founder roll-up</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="week">
+      <div class="d"><span class="dn">MON</span><p>30-min all-hands: week plan per client. The only standing meeting.</p></div>
+      <div class="d"><span class="dn">TUE–THU</span><p>Production + client time. Engines run, operators ship.</p></div>
+      <div class="d"><span class="dn">WED</span><p>Design gate clear-out — nothing queues past Wednesday.</p></div>
+      <div class="d"><span class="dn">FRI</span><p>Ship + auto-reports + engine retro: what broke feeds the build list.</p></div>
+    </div>
+  </section>
+
+  <!-- ================= 08 DECISION RIGHTS ================= -->
+  <section class="sec">
+    <div class="sec-head">
+      <span class="num">08</span>
+      <h2>Decision rights</h2>
+      <span class="note">if two people think they own it, it breaks</span>
+    </div>
+    <table>
+      <thead><tr><th>Decision</th><th>Owner</th><th>Notes</th></tr></thead>
+      <tbody>
+        <tr><td>Scope, pricing, new deals</td><td>FOUNDER</td><td>Operators never negotiate scope mid-project</td></tr>
+        <tr><td>Strategy direction, all clients</td><td>STRATEGY PRINCIPAL</td><td>Sets the line every pod steers to; owns the hardest calls</td></tr>
+        <tr><td>Strategy call on a client</td><td>OPERATOR</td><td>Within the Principal's direction; Principal reviews</td></tr>
+        <tr><td>Delivery health, capacity, timelines</td><td>DELIVERY LEAD</td><td>Across all pods; first to spot a slipping client</td></tr>
+        <tr><td>Cross-craft help</td><td>OPERATOR PEERS</td><td>Tap rule — raise the edge, never take the task</td></tr>
+        <tr><td>Ship / no-ship</td><td>OPERATOR</td><td>Only after QA pass + design gate clear</td></tr>
+        <tr><td>Visual quality</td><td>DESIGN DIR.</td><td>Hard veto — independent of pod deadlines</td></tr>
+        <tr><td>Engine changes</td><td>STEWARD + FOUNDER</td><td>Steward proposes, founder merges</td></tr>
+        <tr><td>Client escalation / fires</td><td>DELIVERY LEAD → FOUNDER</td><td>Lead holds the line; founder is the backstop</td></tr>
+        <tr><td>Tie-breaks</td><td>FOUNDER</td><td>By definition</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- ================= 09 WHAT THIS MEANS FOR YOU ================= -->
+  <section class="sec">
+    <div class="sec-head">
+      <span class="num">09</span>
+      <h2>What this means for you</h2>
+      <span class="note">bigger role, not smaller</span>
+    </div>
+    <p class="lead">The fear with any AI shift is “less of me.” This is the opposite — you trade repetitive production for ownership, leverage, and a craft that compounds.</p>
+    <div class="means">
+      <div class="card">
+        <div class="nbig">01</div>
+        <h3 style="font-size:15px;">Own the whole client</h3>
+        <p class="body">Not a slice of a deliverable — the relationship and the result. The interesting part of the job, finally undivided.</p>
+      </div>
+      <div class="card">
+        <div class="nbig">02</div>
+        <h3 style="font-size:15px;">Direct, don't grind</h3>
+        <p class="body">You point senior-grade output where it needs to go. Your judgment is the scarce input, not your keystrokes.</p>
+      </div>
+      <div class="card">
+        <div class="nbig">03</div>
+        <h3 style="font-size:15px;">Build IP, not just deliverables</h3>
+        <p class="body">Every skill you add to loudface-skills makes the whole team better — and makes you harder to replace, not easier.</p>
+      </div>
+    </div>
+    <div class="callout" style="margin-top:16px; margin-bottom:0;">
+      <p>And we get you there — <b>apprenticeship inside a working pod, war-gaming real client calls, and escalation for the hard 20%.</b> No one is dropped in the deep end. And for our strongest specialists — strategy, design, delivery — this is a step <b>up</b> the stack: your judgment now sets the ceiling on every client, not just the ones you touch.</p>
+    </div>
+  </section>
+
+  <!-- ================= FOOTER ================= -->
+  <div class="footer">
+    <div class="roll">
+      <h4>Rollout — prove it, then move</h4>
+      <p>Don't reorg — <b>pilot.</b> Pod 3 (Content Engine) is already running the model. Add 2–3 clients to a second pod for 60–90 days, measure cycle time / margin / client happiness against the relay, then migrate the book in waves once the pod beats the chain.</p>
+      <div class="ask">
+        <span class="tag green">Come willing to operate</span>
+        <span class="tag green">Feed the library</span>
+        <span class="tag green">Pressure-test in the open</span>
+      </div>
+    </div>
+    <div class="stamp">LOUDFACE FZCO · DUBAI<br>OPS SPEC · V3 · JUN 2026</div>
+  </div>
+
+</div>
+</body>
+</html>

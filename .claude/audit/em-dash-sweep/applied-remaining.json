@@ -1,0 +1,30 @@
+[
+  {
+    "slug": "best-b2b-saas-seo-agencies",
+    "changes": 9,
+    "ops": [
+      "visuals[3].chart.data[0].label",
+      "visuals[3].chart.data[1].label",
+      "visuals[3].chart.data[2].label",
+      "visuals[3].chart.data[3].label",
+      "visuals[6].chart.data[0].label",
+      "visuals[6].chart.data[1].label",
+      "visuals[6].chart.data[2].label",
+      "visuals[6].chart.data[3].label",
+      "visuals[6].chart.data[4].label",
+      "lastUpdated"
+    ],
+    "ok": true,
+    "tx_id": "7ONx74QMiI10eazwuwJPyr"
+  },
+  {
+    "slug": "pitfalls-of-choosing-wrong-webflow-vendor",
+    "changes": 1,
+    "ops": [
+      "faq[6].question",
+      "lastUpdated"
+    ],
+    "ok": true,
+    "tx_id": "DJ1Y76QLqJX8nukZ8QzKcK"
+  }
+]

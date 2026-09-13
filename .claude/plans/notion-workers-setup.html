@@ -1,0 +1,261 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Notion Workers — setup runbook (LoudFace)</title>
+<style>
+  :root {
+    --bg: #0a0a0b;
+    --panel: #131316;
+    --panel-2: #1a1a1f;
+    --border: #26262d;
+    --text: #e8e8ea;
+    --muted: #9a9aa3;
+    --dim: #6f6f78;
+    --accent: #d8ff00;
+    --warn: #ffb347;
+    --good: #7ee787;
+    --code-bg: #0d0d10;
+    --link: #a3c9ff;
+    --mono: ui-monospace, "JetBrains Mono", Menlo, monospace;
+    --sans: -apple-system, "Inter", system-ui, sans-serif;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; background: var(--bg); color: var(--text); font-family: var(--sans); font-size: 15px; line-height: 1.6; -webkit-font-smoothing: antialiased; }
+  .wrap { max-width: 980px; margin: 0 auto; padding: 56px 28px 80px; }
+  header { border-bottom: 1px solid var(--border); padding-bottom: 28px; margin-bottom: 40px; }
+  .eyebrow { text-transform: uppercase; letter-spacing: 0.12em; font-size: 11px; color: var(--accent); font-weight: 600; margin-bottom: 12px; }
+  h1 { font-size: 34px; line-height: 1.15; margin: 0 0 16px; font-weight: 600; letter-spacing: -0.02em; }
+  .deck { font-size: 16px; color: var(--muted); max-width: 760px; }
+  h2 { font-size: 22px; margin: 48px 0 16px; font-weight: 600; padding-top: 22px; border-top: 1px solid var(--border); }
+  h2:first-of-type { border-top: none; padding-top: 0; }
+  h3 { font-size: 16px; margin: 24px 0 10px; font-weight: 600; }
+  code { font-family: var(--mono); background: var(--code-bg); border: 1px solid var(--border); padding: 1px 6px; border-radius: 4px; font-size: 13px; }
+  pre { background: var(--code-bg); border: 1px solid var(--border); border-radius: 10px; padding: 18px; overflow-x: auto; font-family: var(--mono); font-size: 13px; line-height: 1.55; margin: 12px 0 18px; }
+  .step {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 22px 26px;
+    margin: 16px 0;
+    position: relative;
+  }
+  .step .num {
+    position: absolute; left: -16px; top: 22px;
+    width: 32px; height: 32px; border-radius: 50%;
+    background: var(--accent); color: #000;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 700; font-size: 14px;
+  }
+  .step h3 { margin-top: 0; }
+  .step .meta { font-size: 12px; color: var(--muted); margin-bottom: 12px; text-transform: uppercase; letter-spacing: 0.06em; }
+  .panel.warn { border-color: var(--warn); background: var(--panel); padding: 18px 22px; border-radius: 12px; margin: 16px 0; border-width: 1px; border-style: solid; }
+  .panel.good { border-color: var(--good); background: var(--panel); padding: 18px 22px; border-radius: 12px; margin: 16px 0; border-width: 1px; border-style: solid; }
+  ul, ol { padding-left: 22px; }
+  li { margin: 6px 0; }
+  a { color: var(--link); }
+  hr { border: none; border-top: 1px solid var(--border); margin: 32px 0; }
+  .small { font-size: 13px; color: var(--muted); }
+  .pill { display: inline-block; padding: 2px 10px; border: 1px solid var(--border); border-radius: 99px; font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.06em; }
+  .pill.user { color: var(--warn); border-color: var(--warn); }
+  .pill.auto { color: var(--good); border-color: var(--good); }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <div class="eyebrow">Runbook · 2026-05-14 · 25–40 minutes total</div>
+  <h1>Deploy Notion Workers for the LoudFace content index</h1>
+  <p class="deck">
+    Code is written, typechecked, built. What's left is the parts only you can do:
+    enable the Workers feature in your workspace, get three API credentials, push them
+    to Notion, and deploy. Every step has the exact command to run.
+  </p>
+</header>
+
+<h2>What you'll end up with</h2>
+<ul>
+  <li>A new Notion database called <strong>Live Site Index</strong>, auto-created by the worker on first sync.</li>
+  <li>Three syncs running on Notion's hosted runtime:
+    <ul>
+      <li><code>sanitySync</code> hourly — Title, URL, Content Type, dates, Meta Description.</li>
+      <li><code>gscMetrics</code> every 6h — clicks, impressions, position (7d).</li>
+      <li><code>peecCitations</code> every 6h — AI citation count + rate (7d).</li>
+    </ul>
+  </li>
+  <li>The existing <strong>Website Content</strong> calendar untouched — it stays the editorial pipeline (Idea / Outline / Draft / Review / Published).</li>
+</ul>
+
+<h2>Steps</h2>
+
+<div class="step">
+  <div class="num">1</div>
+  <div class="meta"><span class="pill user">You</span> · 30 seconds</div>
+  <h3>Enable the Workers feature in your workspace</h3>
+  <p>Workers is in beta and gated per workspace. Run an interactive workers command — the CLI will prompt you to enable it, redirect you to a Notion page, you click "Enable", done.</p>
+<pre>cd "/Users/arnel/Code Projects/LoudFace Agency/loudface-website/scripts/notion-workers"
+ntn workers list</pre>
+  <p class="small">If it prompts "Workers not enabled — open in browser to enable?", say yes. Otherwise it's already on.</p>
+</div>
+
+<div class="step">
+  <div class="num">2</div>
+  <div class="meta"><span class="pill user">You</span> · 5 minutes</div>
+  <h3>Get a Google Cloud service account for GSC read access</h3>
+  <p>The worker needs a service account key (not OAuth — server-to-server). Quickest path:</p>
+  <ol>
+    <li>Go to <a href="https://console.cloud.google.com/iam-admin/serviceaccounts">console.cloud.google.com/iam-admin/serviceaccounts</a>.</li>
+    <li>Pick or create a project (any name, e.g. <code>loudface-workers</code>).</li>
+    <li>Create a service account: name <code>gsc-reader</code>, no roles needed.</li>
+    <li>On the new account: <strong>Keys</strong> → <strong>Add key</strong> → <strong>Create new key</strong> → JSON. Download.</li>
+    <li>Enable the GSC API for the project: <a href="https://console.cloud.google.com/apis/library/searchconsole.googleapis.com">enable here</a>.</li>
+    <li>Go to <a href="https://search.google.com/search-console/users">search.google.com/search-console/users</a>, pick <code>https://www.loudface.co/</code>, click <strong>Add user</strong>, paste the service account email (looks like <code>gsc-reader@loudface-workers.iam.gserviceaccount.com</code>), permission: <strong>Restricted</strong>.</li>
+  </ol>
+  <p class="small">The whole JSON file goes into one env var. Keep it locally for now, we push it in step 4.</p>
+</div>
+
+<div class="step">
+  <div class="num">3</div>
+  <div class="meta"><span class="pill user">You</span> · 2 minutes</div>
+  <h3>Get a Peec AI API token</h3>
+  <ol>
+    <li>Go to <a href="https://app.peec.ai">app.peec.ai</a>, log in to the LoudFace project.</li>
+    <li>Settings → API Keys → Generate new key.</li>
+    <li>Copy the token. It won't be shown again.</li>
+  </ol>
+</div>
+
+<div class="step">
+  <div class="num">4</div>
+  <div class="meta"><span class="pill user">You</span> · 2 minutes</div>
+  <h3>Set the three secrets</h3>
+  <p>The Sanity token is already in <code>.env.local</code> of the main project. Reuse it.</p>
+<pre><span style="color: var(--dim);"># From the workers project dir:</span>
+cd "/Users/arnel/Code Projects/LoudFace Agency/loudface-website/scripts/notion-workers"
+
+<span style="color: var(--dim);"># 1. Sanity — pull the existing token</span>
+SANITY_TOKEN=$(grep '^SANITY_API_TOKEN=' ../../.env.local | cut -d= -f2-)
+ntn workers env set SANITY_API_TOKEN="$SANITY_TOKEN"
+
+<span style="color: var(--dim);"># 2. GSC — paste the FULL JSON contents of the key file you downloaded</span>
+<span style="color: var(--dim);"># (single-quote it so $ chars in the JSON don't get expanded)</span>
+ntn workers env set GSC_SERVICE_ACCOUNT_JSON='{"type":"service_account",...}'
+
+<span style="color: var(--dim);"># 3. Peec</span>
+ntn workers env set PEEC_API_TOKEN='your-peec-token-here'
+
+<span style="color: var(--dim);"># Verify all three are stored</span>
+ntn workers env list</pre>
+  <div class="panel good">
+    Secrets are encrypted at rest in Notion's vault and exposed to the worker
+    runtime as <code>process.env.*</code>. They never appear in the deployed code.
+  </div>
+</div>
+
+<div class="step">
+  <div class="num">5</div>
+  <div class="meta"><span class="pill auto">Auto</span> · 1 minute</div>
+  <h3>Deploy the worker</h3>
+<pre>ntn workers deploy</pre>
+  <p>This compiles + uploads. You should see something like:</p>
+<pre>[build] Deploying...
+[build] Uploading to Notion...
+[build] Worker updated...
+
+Capabilities:
+  sync  sanitySync
+  sync  gscMetrics
+  sync  peecCitations</pre>
+</div>
+
+<div class="step">
+  <div class="num">6</div>
+  <div class="meta"><span class="pill auto">Auto</span> · 2 minutes</div>
+  <h3>Trigger the initial sanity sync to populate the new database</h3>
+  <p>First time around, kick the sanity sync manually so the <strong>Live Site Index</strong> database appears in Notion. After that the hourly schedule takes over.</p>
+<pre>ntn workers sync trigger sanitySync</pre>
+  <p>Watch it complete:</p>
+<pre>ntn workers sync status</pre>
+  <p>You should see <code>HEALTHY</code> within ~30 seconds and a new <strong>Live Site Index</strong> database in Notion with ~104 rows.</p>
+</div>
+
+<div class="step">
+  <div class="num">7</div>
+  <div class="meta"><span class="pill auto">Auto</span> · 1 minute</div>
+  <h3>Trigger the metric syncs once so the first numbers land</h3>
+<pre>ntn workers sync trigger gscMetrics
+ntn workers sync trigger peecCitations
+ntn workers sync status</pre>
+  <p>Two more <code>HEALTHY</code> rows. The Live Site Index is now fully populated and on auto-pilot.</p>
+</div>
+
+<div class="step">
+  <div class="num">8</div>
+  <div class="meta"><span class="pill user">Optional</span> · later</div>
+  <h3>Clean up the old Website Content calendar</h3>
+  <p>Now that the Live Site Index is the source of truth for live content + metrics,
+  the 100+ rows we backfilled into the original calendar are duplicates of what
+  the worker manages. Two options:</p>
+  <ul>
+    <li><strong>Keep them</strong> — calendar shows everything in one place. Manual cleanup needed periodically.</li>
+    <li><strong>Delete the Published rows</strong> — calendar shrinks back to ~19 active editorial entries (Idea/Outline/Draft/Review). The Live Site Index covers published.</li>
+  </ul>
+  <p>Recommend option two — that's the clean separation the migration was designed for. I can run a one-shot delete script when you're ready.</p>
+</div>
+
+<h2>Sanity checks after deploy</h2>
+
+<pre><span style="color: var(--dim);"># See what's deployed</span>
+ntn workers list
+ntn workers capabilities list
+
+<span style="color: var(--dim);"># Inspect last run logs for any sync</span>
+ntn workers runs list --plain | head -n3
+ntn workers runs logs &lt;runId&gt;
+
+<span style="color: var(--dim);"># Preview a sync without writing (debugging only)</span>
+ntn workers sync trigger sanitySync --preview
+
+<span style="color: var(--dim);"># If something's stuck, reset cursor + retry</span>
+ntn workers sync state reset gscMetrics
+ntn workers sync trigger gscMetrics</pre>
+
+<h2>Common failure modes</h2>
+
+<table style="width: 100%; border-collapse: collapse; margin-top: 8px;">
+<thead><tr style="border-bottom: 1px solid var(--border);">
+<th style="text-align: left; padding: 10px 14px; font-size: 12px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.06em;">If you see…</th>
+<th style="text-align: left; padding: 10px 14px; font-size: 12px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.06em;">Fix</th>
+</tr></thead>
+<tbody>
+<tr style="border-bottom: 1px solid var(--border);">
+<td style="padding: 10px 14px;"><code>GSC token exchange failed: 400</code></td>
+<td style="padding: 10px 14px;">The service account isn't added to GSC users for <code>www.loudface.co</code>. Re-do step 2 line 6.</td>
+</tr>
+<tr style="border-bottom: 1px solid var(--border);">
+<td style="padding: 10px 14px;"><code>GSC query failed: 403</code></td>
+<td style="padding: 10px 14px;">The GSC API isn't enabled for the project. <a href="https://console.cloud.google.com/apis/library/searchconsole.googleapis.com">Enable it</a>.</td>
+</tr>
+<tr style="border-bottom: 1px solid var(--border);">
+<td style="padding: 10px 14px;"><code>Peec fetch failed: 401</code></td>
+<td style="padding: 10px 14px;">Wrong/expired Peec token. Regenerate at app.peec.ai → Settings → API Keys.</td>
+</tr>
+<tr style="border-bottom: 1px solid var(--border);">
+<td style="padding: 10px 14px;"><code>Sanity fetch failed: 401</code></td>
+<td style="padding: 10px 14px;">Token expired or didn't get copied correctly. Re-run step 4 line 3.</td>
+</tr>
+<tr>
+<td style="padding: 10px 14px;"><strong>Live Site Index</strong> not appearing</td>
+<td style="padding: 10px 14px;">The first <code>sanitySync</code> run creates it. Trigger it manually: <code>ntn workers sync trigger sanitySync</code>.</td>
+</tr>
+</tbody>
+</table>
+
+<hr />
+<p class="small">Files lives in <code>scripts/notion-workers/</code> · runbook at <code>.claude/plans/notion-workers-setup.html</code></p>
+
+</div>
+</body>
+</html>

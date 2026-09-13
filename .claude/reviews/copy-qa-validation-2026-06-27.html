@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Copy/QA Audit — Validation Report · loudface.co</title>
+<style>
+  :root{
+    --bg:#0d0b0f; --panel:#17141a; --panel2:#1f1b24; --line:#2c2731;
+    --ink:#f3eef7; --muted:#a99fb4; --faint:#7b7286;
+    --primary:#a855f7; --primary-d:#7c3aed;
+    --green:#34d399; --amber:#fbbf24; --red:#f87171; --blue:#60a5fa; --slate:#94a3b8;
+    --mono:'SFMono-Regular',ui-monospace,'Cascadia Code','Geist Mono',Menlo,monospace;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{margin:0;background:radial-gradient(1200px 600px at 80% -10%,rgba(124,58,237,.18),transparent 60%),var(--bg);
+    color:var(--ink);font:16px/1.6 -apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;
+    -webkit-font-smoothing:antialiased}
+  .wrap{max-width:1040px;margin:0 auto;padding:56px 24px 96px}
+  header.top{margin-bottom:8px}
+  .kicker{font:600 12px/1 var(--mono);letter-spacing:.18em;text-transform:uppercase;color:var(--primary)}
+  h1{font-size:34px;line-height:1.15;margin:14px 0 10px;letter-spacing:-.02em}
+  .sub{color:var(--muted);max-width:70ch}
+  .meta{margin-top:14px;font:500 13px/1 var(--mono);color:var(--faint);display:flex;gap:18px;flex-wrap:wrap}
+
+  .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin:34px 0 10px}
+  .stat{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:18px 16px}
+  .stat .n{font-size:30px;font-weight:700;letter-spacing:-.02em}
+  .stat .l{color:var(--muted);font-size:12.5px;margin-top:4px}
+  .stat.green .n{color:var(--green)} .stat.amber .n{color:var(--amber)}
+  .stat.blue .n{color:var(--blue)} .stat.slate .n{color:var(--slate)}
+
+  .legend{display:flex;gap:10px;flex-wrap:wrap;margin:26px 0 6px}
+  .chip{font:600 11.5px/1 var(--mono);letter-spacing:.04em;padding:6px 9px;border-radius:999px;border:1px solid var(--line);color:var(--muted)}
+  .chip b{color:var(--ink)}
+
+  .callout{background:linear-gradient(180deg,rgba(124,58,237,.14),rgba(124,58,237,.04));
+    border:1px solid #3a2d52;border-radius:16px;padding:20px 22px;margin:30px 0 8px}
+  .callout h3{margin:0 0 10px;font-size:16px}
+  .callout ol{margin:0;padding-left:20px;color:var(--muted)}
+  .callout li{margin:7px 0}
+  .callout li b{color:var(--ink)}
+
+  section.group{margin-top:42px}
+  section.group > h2{font-size:13px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;
+    color:var(--faint);border-bottom:1px solid var(--line);padding-bottom:10px;margin:0 0 18px}
+
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:18px 20px;margin:14px 0}
+  .card.dec{border-color:#4a3a16;background:linear-gradient(180deg,rgba(251,191,36,.06),transparent)}
+  .card.design{border-color:#27303f;background:linear-gradient(180deg,rgba(96,165,250,.05),transparent)}
+  .card h3{margin:0 0 4px;font-size:17px;display:flex;align-items:flex-start;gap:10px;flex-wrap:wrap}
+  .num{font:700 13px/1.5 var(--mono);color:var(--faint);min-width:24px}
+  .verdict{font:600 10.5px/1 var(--mono);letter-spacing:.06em;text-transform:uppercase;
+    padding:5px 8px;border-radius:6px;white-space:nowrap}
+  .v-confirmed{background:rgba(52,211,153,.14);color:var(--green);border:1px solid rgba(52,211,153,.3)}
+  .v-decision{background:rgba(251,191,36,.14);color:var(--amber);border:1px solid rgba(251,191,36,.3)}
+  .v-design{background:rgba(96,165,250,.14);color:var(--blue);border:1px solid rgba(96,165,250,.3)}
+  .where{font:600 10.5px/1 var(--mono);letter-spacing:.04em;padding:5px 8px;border-radius:6px;border:1px solid var(--line);color:var(--muted)}
+  .w-code{color:#c4b5fd;border-color:#3a2d52}
+  .w-cms{color:#fcd34d;border-color:#4a3a16}
+  .title-txt{flex:1;min-width:200px}
+  .body{color:var(--muted);font-size:14.5px;margin-top:8px}
+  .ev{margin-top:12px;background:var(--panel2);border:1px solid var(--line);border-radius:10px;padding:12px 14px;font:13px/1.55 var(--mono);color:#cdc4d6;overflow-x:auto}
+  .ev .path{color:var(--primary);font-weight:600}
+  .ev .bad{color:var(--red)} .ev .good{color:var(--green)}
+  .ev .lbl{color:var(--faint);text-transform:uppercase;font-size:10.5px;letter-spacing:.08em;display:block;margin:2px 0 3px}
+  .fix{margin-top:10px;font-size:14px;color:var(--ink)}
+  .fix b{color:var(--green)}
+  .ask{margin-top:10px;font-size:13.5px;color:var(--amber)}
+  .ask b{color:#fde68a}
+  footer{margin-top:54px;border-top:1px solid var(--line);padding-top:20px;color:var(--faint);font-size:13px}
+  a{color:var(--primary)}
+  @media(max-width:680px){.stats{grid-template-columns:repeat(2,1fr)}h1{font-size:27px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header class="top">
+  <div class="kicker">Validation Report · Non-CMS + CMS Copy QA</div>
+  <h1>I checked every finding against the source.<br>Here's what's real.</h1>
+  <p class="sub">Each AI-audit finding ground-truthed against the actual repo (<span style="font-family:var(--mono);font-size:13px">file:line</span>) and the live Sanity dataset (<span style="font-family:var(--mono);font-size:13px">xjjjqhgt/production</span>). Verdicts below are evidence-backed, not eyeballed.</p>
+  <div class="meta">
+    <span>2026-06-27</span><span>branch · feat/webinar-ai-search-visibility</span><span>18 static pages + CMS collections</span>
+  </div>
+</header>
+
+<div class="stats">
+  <div class="stat green"><div class="n">11</div><div class="l">findings confirmed real</div></div>
+  <div class="stat amber"><div class="n">6</div><div class="l">need your editorial call</div></div>
+  <div class="stat blue"><div class="n">1</div><div class="l">by-design (not a bug)</div></div>
+  <div class="stat slate"><div class="n">2</div><div class="l">client quotes — flag only</div></div>
+</div>
+
+<div class="legend">
+  <span class="chip"><b>Verdict</b> · CONFIRMED = real &amp; one right answer · DECISION = real but yours to call · BY-DESIGN = intended</span>
+</div>
+<div class="legend">
+  <span class="chip w-code" style="color:#c4b5fd">CODE = in-repo (git-reversible, not pushed)</span>
+  <span class="chip w-cms" style="color:#fcd34d">CMS = Sanity edit → saved as draft, you publish in /studio</span>
+</div>
+
+<div class="callout">
+  <h3>⏳ Before I touch anything — 6 calls only you can make</h3>
+  <ol>
+    <li><b>Founding year</b> — structured data says <b>2019</b> in 3 places, but copy says "since 2020", "8+ years", "7+ years". Pick one canonical year.</li>
+    <li><b>Project count</b> — site says <b>200+</b> everywhere; <code>/case-studies</code> hero says <b>50+</b>. Unify, or are they deliberately different?</li>
+    <li><b>Pricing tier names</b> — <code>/pricing</code> = Solo / Dual / Scale; <code>/services/growth-autopilot</code> = Base / Growth+ / Scale. Same ladder, two names.</li>
+    <li><b>Partner reply SLA</b> — page says "within 48 hours" (×2); the form says "5–7 business days" (×2). Which is true?</li>
+    <li><b>Ashburn first name</b> — testimonial = <b>Domenic</b>; Mr.Grateful case study = <b>Dominic</b>. Which is his real name?</li>
+    <li><b>UK vs US spelling</b> — 4 pages use "optimise/optimisation"; rest of site is US. I'll standardize to <b>US</b> unless you say otherwise.</li>
+  </ol>
+</div>
+
+<!-- ============ CONFIRMED ============ -->
+<section class="group">
+  <h2>Confirmed — one right answer, I'll just fix these</h2>
+
+  <div class="card">
+    <h3><span class="num">1</span><span class="verdict v-confirmed">Confirmed</span><span class="where w-code">CODE</span><span class="title-txt">Blog cards: “9 min read min read” / “7 min min read”</span></h3>
+    <div class="body">Real template bug, and the root cause is messier than the audit said. The CMS <code>timeToRead</code> field is entered three different ways across posts — some <span class="good">"10 min read"</span>, some <span class="bad">"9 min"</span> (no “read”), one <span class="bad">null</span> — and the card blindly appends “ min read” to all of them.</div>
+    <div class="ev">
+      <span class="lbl">Template — src/app/(site)/blog/<span class="path">page.tsx:173</span></span>
+      {post['time-to-read'] ? `${post['time-to-read']} <span class="bad">min read</span>` : '5 min read'}
+      <span class="lbl" style="margin-top:8px">Live CMS values (sample)</span>
+      "10 min read"  ·  "9 min"  ·  "7 min"  ·  null   →  all get " min read" tacked on
+    </div>
+    <div class="fix"><b>Fix:</b> a defensive <code>formatReadTime()</code> helper that pulls the integer and always renders “N min read”. One helper, used in both the listing (<code>page.tsx:173</code>) and detail page (<code>[slug]/page.tsx:356</code>, which currently shows the bare “9 min”). Beats hand-editing 33 CMS rows and survives future messy entries.</div>
+  </div>
+
+  <div class="card">
+    <h3><span class="num">2</span><span class="verdict v-confirmed">Confirmed</span><span class="where w-cms">CMS</span><span class="title-txt">“Saas” → “SaaS” (2 case-study titles)</span></h3>
+    <div class="body">Not in the codebase — these are Sanity <code>caseStudy.projectTitle</code> values. They surface on the homepage, <code>/case-studies</code>, <code>/services/webflow</code> <em>and</em> the footer (the footer lists case-study titles, <code>Footer.tsx:175</code>) — so one CMS edit fixes every instance.</div>
+    <div class="ev">
+      <span class="lbl">Sanity · caseStudy.projectTitle</span>
+      Eraser   <span class="path">imported-caseStudy-67bde53e2e9bd74f1a3f4080</span>  <span class="bad">"Saas platform with new aesthetics"</span>
+      Sendswift <span class="path">imported-caseStudy-67bde541752d61d0b9db084d</span>  <span class="bad">"Saas Landing Page"</span>
+    </div>
+    <div class="fix"><b>Fix:</b> set both → <span class="good">"SaaS …"</span> via Sanity draft patch.</div>
+  </div>
+
+  <div class="card">
+    <h3><span class="num">3</span><span class="verdict v-confirmed">Confirmed</span><span class="where w-cms">CMS</span><span class="title-txt">“Hubspot” → “HubSpot” (LIQID title)</span></h3>
+    <div class="body">CMS title contradicts its own body copy (which correctly writes “HubSpot”).</div>
+    <div class="ev">
+      <span class="lbl">Sanity · caseStudy.projectTitle</span>
+      LIQID  <span class="path">imported-caseStudy-67bde54015ae8b7e575d1528</span>  <span class="bad">"Hubspot to Webflow Migration"</span> → <span class="good">"HubSpot to Webflow Migration"</span>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3><span class="num">12a</span><span class="verdict v-confirmed">Confirmed</span><span class="where w-code">CODE</span><span class="title-txt">/about hero: “to marketing” → “to market”</span></h3>
+    <div class="ev">
+      <span class="lbl">src/data/content/<span class="path">about.json:5</span></span>
+      "Building better ways <span class="bad">to marketing</span> products and services" → <span class="good">to market</span>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3><span class="num">12b</span><span class="verdict v-confirmed">Confirmed</span><span class="where w-code">CODE</span><span class="title-txt">/about FAQ: “Still have questions?” printed twice</span></h3>
+    <div class="body">The FAQ footer renders <em>both</em> a title (h3) and a sub-line (p). The /about page passes <code>footerText:"Still have questions?"</code>, and the <code>footerTitle</code> falls back to the global default — which is <em>also</em> “Still have questions?”. So they stack.</div>
+    <div class="ev">
+      <span class="lbl">FAQ.tsx footer</span>
+      &lt;h3&gt;{finalFooterTitle}&lt;/h3&gt;   ← faq.json:footerTitle = <span class="bad">"Still have questions?"</span>
+      &lt;p&gt;{finalFooterText}&lt;/p&gt;     ← about.json:100 footerText = <span class="bad">"Still have questions?"</span>
+    </div>
+    <div class="fix"><b>Fix:</b> change <code>about.json</code> <code>footerText</code> to a real supporting line (e.g. “We're here to help — reach out anytime.”).</div>
+  </div>
+
+  <div class="card">
+    <h3><span class="num">12c</span><span class="verdict v-confirmed">Confirmed</span><span class="where w-cms">CMS</span><span class="title-txt">Team bios: David's stray quotes, Rezwan &amp; Andrea missing periods</span></h3>
+    <div class="body">All three are Sanity <code>teamMember.bioSummary</code> values (rendered at <code>about/page.tsx:250</code>).</div>
+    <div class="ev">
+      <span class="lbl">Sanity · teamMember.bioSummary</span>
+      David   …development background<span class="bad">...&quot; the good old way&quot;.</span> Today, he's…
+      Rezwan  …he's most likely studying design<span class="bad">␀</span>   (no period)
+      Andrea  …copywriting, and content creation<span class="bad">␀</span>  (no period)
+    </div>
+    <div class="fix"><b>Fix:</b> tidy David's punctuation; add closing periods to Rezwan &amp; Andrea. Sanity draft patches.</div>
+  </div>
+</section>
+
+<!-- ============ DECISION ============ -->
+<section class="group">
+  <h2>Confirmed, but yours to call</h2>
+
+  <div class="card dec">
+    <h3><span class="num">5</span><span class="verdict v-decision">Decision</span><span class="where w-code">CODE</span><span class="title-txt">200+ Projects vs 50+ Projects Delivered</span></h3>
+    <div class="ev">
+      <span class="path">200+</span>  hero.json · homepage.json · services-seo-aeo/webflow/ux · ai-instructions · layout.tsx
+      <span class="path">50+</span>   work.json:6  → "50+ Projects Delivered" (the /case-studies hero only)
+    </div>
+    <div class="ask"><b>Need:</b> unify to 200+? Or is 50+ deliberately “case studies delivered” vs 200+ “sites shipped”? My default: <b>200+</b>.</div>
+  </div>
+
+  <div class="card dec">
+    <h3><span class="num">6</span><span class="verdict v-decision">Decision</span><span class="where w-code">CODE</span><span class="title-txt">Founding year told 4 ways</span></h3>
+    <div class="ev">
+      <span class="good">2019</span>  foundingDate (structured data) × 3 — layout.tsx:140, about/page.tsx:106, ai-instructions:166
+      <span class="bad">2020</span>  homepage.json:109  "shipped on Webflow since 2020"
+      <span class="bad">8+ yrs</span> work.json:9  "8+ Years Experience"
+      <span class="good">7+ yrs</span> about.json:23 "7+ Years Young"   (7+ ≈ 2019 ✓)
+      ~2017  Arnel bio "earliest Webflow users (2017)" — personal, not company age
+    </div>
+    <div class="ask"><b>Need:</b> confirm canonical year. Structured data already says <b>2019</b> → I'd set “since 2019” + “7+ years” and leave Arnel's personal 2017 note.</div>
+  </div>
+
+  <div class="card dec">
+    <h3><span class="num">7</span><span class="verdict v-decision">Decision</span><span class="where w-code">CODE</span><span class="title-txt">Pricing tiers: two naming systems</span></h3>
+    <div class="ev">
+      <span class="path">pricing.json</span>            Solo Autopilot · Dual Autopilot · Scale Autopilot
+      <span class="path">services-growth-autopilot.json</span>  Base Autopilot · Growth Autopilot Plus · Scale Autopilot
+    </div>
+    <div class="ask"><b>Need:</b> pick the canonical set; I'll align both pages. (Same 1-track / 2-track / multi-track ladder.)</div>
+  </div>
+
+  <div class="card dec">
+    <h3><span class="num">8</span><span class="verdict v-decision">Decision</span><span class="where w-code">CODE</span><span class="title-txt">Partner reply SLA contradicts itself</span></h3>
+    <div class="ev">
+      <span class="bad">48 hours</span>     partners/page.tsx:73 &amp; :509
+      <span class="bad">5–7 business days</span> PartnerApplicationForm.tsx:149 &amp; :386
+    </div>
+    <div class="ask"><b>Need:</b> which is the real SLA? I'll make all 4 spots match it. (Separate “5 business days” for deal-status updates at :159 is a different thing — left alone.)</div>
+  </div>
+
+  <div class="card dec">
+    <h3><span class="num">9</span><span class="verdict v-decision">Decision</span><span class="where w-code">CODE</span><span class="title-txt">UK vs US spelling mixed</span></h3>
+    <div class="ev">
+      <span class="bad">UK</span>  services-growth-autopilot.json · services-seo-aeo.json · seo-for-b2b.json · seo-for-saas.json  ("optimise/optimisation")
+      <span class="good">US</span>  rest of site + those pages' own meta/nav ("optimize/optimization")
+    </div>
+    <div class="ask"><b>Need:</b> confirm — I'll standardize the 4 pages to <b>US</b> unless you want UK site-wide.</div>
+  </div>
+
+  <div class="card dec">
+    <h3><span class="num">11</span><span class="verdict v-decision">Decision</span><span class="where w-code">CODE</span><span class="title-txt">/ai-instructions: “share of voice” vs “visibility”</span></h3>
+    <div class="body">Real self-contradiction — and it violates your own KB rule baked into the file. Lines 135 &amp; 281 call the Toku result “category leader by <b>share of voice</b>,” but the footnote (284–285) <em>and</em> the file's own header comment say the 86% is a <b>visibility</b> figure, <em>not</em> share of voice.</div>
+    <div class="ev">
+      <span class="lbl">ai-instructions/page.tsx</span>
+      :12  // Toku proof: 86% visibility … (labeled per KB; <span class="good">NOT "share of voice"</span>)
+      :135 …86% visibility… making Toku the category leader by <span class="bad">share of voice</span>
+      :281 …the category leader by <span class="bad">share of voice</span> on that prompt.
+      :284 …This is a <span class="good">visibility figure</span>… <span class="good">not a share-of-voice figure</span>, which is a separate metric…
+    </div>
+    <div class="ask"><b>Need:</b> does Toku genuinely lead on the separate share-of-voice metric? If yes → I'll reword to keep both straight. If unsure → drop the SOV claim, keep “visibility.” (Ties to your [[feedback_toku_case_study_rules]] memory.)</div>
+  </div>
+
+  <div class="card dec">
+    <h3><span class="num">4</span><span class="verdict v-decision">Decision</span><span class="where w-cms">CMS</span><span class="title-txt">Domenic vs Dominic Ashburn</span></h3>
+    <div class="ev">
+      <span class="bad">Domenic</span> testimonial <span class="path">imported-testimonial-67bdb4f33120ed8c4483b7bb</span> "Domenic Ashburn · Founder | Grateful Labs"
+      <span class="bad">Dominic</span> case study  <span class="path">imported-caseStudy-67bde53f403425f1521eb10b</span> body "Dominic Ashburn, known as Mr. Grateful"
+    </div>
+    <div class="ask"><b>Need:</b> his actual name. I'll align both the testimonial + the case-study body to it.</div>
+  </div>
+</section>
+
+<!-- ============ BY DESIGN ============ -->
+<section class="group">
+  <h2>Looked wrong, but it's intentional</h2>
+
+  <div class="card design">
+    <h3><span class="num">10</span><span class="verdict v-design">By-design</span><span class="title-txt">Case-studies filter counts “don't add up”</span></h3>
+    <div class="body">Not a data error. The tab badges and the section headers count differently <em>on purpose</em>, and it's documented in the component:
+      <ul style="margin:8px 0 0;color:var(--muted)">
+        <li><b>Tab badge</b> counts every discipline a study is tagged with → multi-discipline studies counted more than once (badges sum to 29).</li>
+        <li><b>“All”-view section header</b> counts each study once, under its <em>primary</em> discipline (sums to 26 = the real total).</li>
+      </ul>
+    </div>
+    <div class="ev">
+      <span class="lbl">CaseStudyGallery.tsx</span>
+      :47 // a study counts toward every discipline it is tagged with
+      :83 // "All" view groups each study once under its PRIMARY discipline — no duplicates
+    </div>
+    <div class="ask" style="color:var(--blue)"><b>Optional:</b> if the badge≠section-header mismatch bugs you visually, I can make tab badges count primary-only so 5/5/19 → 5/3/18. Cosmetic, your call. Not filed as a bug.</div>
+  </div>
+</section>
+
+<!-- ============ QUOTES ============ -->
+<section class="group">
+  <h2>Client quotes — flagging only (don't silently edit)</h2>
+  <div class="card">
+    <div class="body" style="margin-top:0">These are verbatim testimonials in Sanity. Two have grammar slips — “…Arnel <b>has</b> built and maintains…” and “…on our <b>clients</b> landing pages…” (missing apostrophe). Editing a client's literal quote is a judgment call (some agencies keep quotes word-for-word). I won't touch these without your nod. If you want them cleaned, say so and I'll patch the testimonial docs.</div>
+  </div>
+</section>
+
+<footer>
+  <p><b>Method:</b> every code claim verified at <span style="font-family:var(--mono)">file:line</span>; every CMS claim verified against live Sanity (<span style="font-family:var(--mono)">xjjjqhgt/production</span>) by document id. Code fixes land in-repo on the current branch (not pushed). CMS fixes save as Sanity <b>drafts</b> — nothing publishes until you hit Publish in <a href="#">/studio</a>.</p>
+  <p style="margin-top:14px"><b>The bigger move:</b> this audit is worth automating. A weekly job that re-crawls the 18 non-CMS pages + pulls the CMS title/metric fields, then flags new typos, broken numbers, and template regressions (the “min read min read” class) before they ship — so you stop eyeballing it. Say the word and I'll wire it into the existing nightly worker setup.</p>
+</footer>
+
+</div>
+</body>
+</html>

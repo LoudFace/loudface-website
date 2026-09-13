@@ -1,0 +1,1379 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LoudFace — The Studio Report</title>
+<meta name="description" content="LoudFace is the conversion and organic growth team behind 200+ B2B SaaS websites. We build on Webflow, then run SEO, AEO, and CRO to grow what we shipped.">
+
+<!-- Fonts: Bricolage Grotesque (Google) × Sentient (Fontshare) -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preconnect" href="https://api.fontshare.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@10..48,300..800&display=swap" rel="stylesheet">
+<link href="https://api.fontshare.com/v2/css?f[]=sentient@1,2,400,500&display=swap" rel="stylesheet">
+
+<style>
+:root{
+  --paper:#FAFAFB; --paper-2:#F2F2F5; --ink:#0D0D14; --ink-2:#15151F;
+  --text:#14141C; --muted:#5B5B6B; --line:#E6E6EC; --line-2:#D9D9E1;
+  --line-ink:rgba(255,255,255,0.10); --line-ink-2:rgba(255,255,255,0.16);
+  --accent:#6366F1; --accent-d:#4F46E5; --accent-soft:#EEF0FF;
+  --ok:#16B364; --no:#E5484D;
+  --disp:"Bricolage Grotesque",-apple-system,system-ui,sans-serif;
+  --serif:"Sentient",Georgia,serif;
+  --ease-out:cubic-bezier(.22,1,.36,1);
+  --ease-in-out:cubic-bezier(.65,0,.35,1);
+  --gut:clamp(20px,5vw,72px);
+  --maxw:1320px;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{
+  font-family:var(--disp); background:var(--paper); color:var(--text);
+  font-weight:400; line-height:1.5; -webkit-font-smoothing:antialiased;
+  text-rendering:optimizeLegibility; overflow-x:hidden;
+}
+img{display:block;max-width:100%}
+a{color:inherit;text-decoration:none}
+::selection{background:var(--accent);color:#fff}
+
+/* ---- layout primitives ---- */
+.wrap{max-width:var(--maxw);margin:0 auto;padding:0 var(--gut)}
+.eyebrow{
+  font-family:var(--disp); font-size:11px; font-weight:600; letter-spacing:.22em;
+  text-transform:uppercase; color:var(--muted);
+}
+.eyebrow .dot{display:inline-block;width:6px;height:6px;background:var(--accent);border-radius:1px;
+  margin-right:.7em;vertical-align:middle;transform:translateY(-1px)}
+.it{font-family:var(--serif);font-style:italic;font-weight:400;color:var(--accent-d)}
+.serif{font-family:var(--serif);font-weight:400}
+
+/* vertical edge-label */
+.edgelabel{
+  position:absolute; left:0; top:0; writing-mode:vertical-rl; transform:rotate(180deg);
+  transform-origin:left top; font-family:var(--disp); font-size:10.5px; font-weight:600;
+  letter-spacing:.34em; text-transform:uppercase; color:var(--muted);
+  padding:4px 0; border-left:1px solid var(--line); padding-left:9px;
+  height:max-content;
+}
+
+/* section frame label (top-left tab) */
+.framelabel{
+  display:inline-flex; align-items:center; gap:.7em;
+  font-family:var(--disp); font-size:10.5px; font-weight:600; letter-spacing:.24em;
+  text-transform:uppercase; color:var(--muted);
+}
+.framelabel .num{
+  font-variant-numeric:tabular-nums; color:var(--accent-d); font-weight:700;
+  border:1px solid var(--line-2); border-radius:2px; padding:2px 6px; font-size:10px;
+  background:var(--paper-2);
+}
+
+/* buttons */
+.pill{
+  display:inline-flex; align-items:center; gap:.6em; justify-content:center;
+  font-family:var(--disp); font-weight:600; font-size:14.5px; letter-spacing:.005em;
+  background:var(--ink); color:#fff; padding:13px 26px; border-radius:999px;
+  border:1px solid var(--ink); cursor:pointer; transition:background .25s var(--ease-out),transform .12s var(--ease-out);
+  white-space:nowrap;
+}
+.pill:hover{background:var(--accent-d);border-color:var(--accent-d)}
+.pill:active{transform:scale(.98)}
+.pill .arr{transition:transform .3s var(--ease-out)}
+.pill:hover .arr{transform:translateX(3px)}
+.pill.indigo{background:var(--accent-d);border-color:var(--accent-d)}
+.pill.indigo:hover{background:var(--ink);border-color:var(--ink)}
+.pill.onink{background:#fff;color:var(--ink);border-color:#fff}
+.pill.onink:hover{background:var(--accent);color:#fff;border-color:var(--accent)}
+.linkarrow{
+  display:inline-flex;align-items:center;gap:.5em;font-size:13.5px;font-weight:500;color:var(--text);
+  border-bottom:1px solid var(--line-2); padding-bottom:2px; transition:color .2s var(--ease-out),border-color .2s var(--ease-out);
+}
+.linkarrow:hover{color:var(--accent-d);border-color:var(--accent)}
+
+/* ============ HEADER ============ */
+header{
+  position:sticky; top:0; z-index:60; background:rgba(250,250,251,.82);
+  backdrop-filter:saturate(180%) blur(14px); -webkit-backdrop-filter:saturate(180%) blur(14px);
+  border-bottom:1px solid var(--line);
+}
+.nav{display:flex;align-items:center;justify-content:space-between;height:64px;gap:24px}
+.brand img{height:21px;width:auto}
+.nav-links{display:flex;align-items:center;gap:30px}
+.nav-links a{
+  font-size:14px;font-weight:500;color:var(--muted);transition:color .2s var(--ease-out);position:relative;
+}
+.nav-links a:hover{color:var(--text)}
+.nav-right{display:flex;align-items:center;gap:18px}
+.nav-meta{font-size:11px;font-weight:600;letter-spacing:.04em;color:var(--muted);text-transform:uppercase}
+.nav-meta b{color:var(--accent-d);font-weight:700}
+.burger{display:none;flex-direction:column;gap:4px;background:none;border:0;cursor:pointer;padding:6px}
+.burger span{width:21px;height:1.6px;background:var(--text);display:block;transition:.3s var(--ease-out)}
+
+/* ============ HERO / COVER ============ */
+.hero{position:relative;padding:clamp(40px,7vw,84px) 0 clamp(36px,5vw,56px)}
+.hero .wrap{position:relative}
+.hero-edge{
+  position:absolute; left:calc(-1 * var(--gut) + 8px); top:6px; height:340px;
+}
+/* baseline ruled grid behind hero */
+.hero-rules{
+  position:absolute; inset:0; pointer-events:none; z-index:0;
+  background-image:repeating-linear-gradient(to bottom,transparent 0,transparent 47px,var(--line) 47px,var(--line) 48px);
+  -webkit-mask-image:linear-gradient(to bottom,transparent,#000 14%,#000 78%,transparent);
+  mask-image:linear-gradient(to bottom,transparent,#000 14%,#000 78%,transparent);
+  opacity:.7;
+}
+.hero-top{
+  display:flex;justify-content:space-between;align-items:flex-start;gap:24px;
+  position:relative;z-index:2;padding-bottom:26px;border-bottom:1px solid var(--line);
+}
+.hero-issue{font-size:11px;font-weight:600;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);line-height:1.7}
+.hero-issue b{color:var(--text)}
+.hero-grid{
+  display:grid;grid-template-columns:minmax(0,1fr) 300px;gap:clamp(28px,4vw,56px);
+  align-items:end;position:relative;z-index:2;padding-top:clamp(30px,4vw,48px);
+}
+.hero-head h1{
+  font-family:var(--disp); font-weight:500; letter-spacing:-.022em; line-height:1.02;
+  font-size:clamp(33px,6.0vw,72px);
+}
+.hero-head h1 .ln{display:block}
+.hero-head h1 .ln.b{font-weight:600}
+.hero-sub{
+  font-family:var(--serif); font-size:clamp(15.5px,1.55vw,19px); line-height:1.62;
+  color:var(--text); max-width:48ch; margin-top:clamp(20px,2.5vw,30px);
+}
+.hero-sub b{font-weight:500;color:var(--text)}
+.hero-cta{display:flex;align-items:center;gap:22px;flex-wrap:wrap;margin-top:clamp(22px,2.6vw,30px)}
+.hero-scarcity{
+  display:inline-flex;align-items:center;gap:.6em;font-size:11.5px;font-weight:600;letter-spacing:.04em;
+  text-transform:uppercase;color:var(--accent-d);
+}
+.hero-scarcity .pulse{width:7px;height:7px;border-radius:50%;background:var(--accent);position:relative}
+.hero-scarcity .pulse::after{content:"";position:absolute;inset:-4px;border-radius:50%;border:1px solid var(--accent);
+  animation:ping 2.4s var(--ease-out) infinite}
+@keyframes ping{0%{transform:scale(.6);opacity:.9}100%{transform:scale(1.7);opacity:0}}
+
+/* hero image inset (B&W team) */
+.hero-figure{position:relative}
+.hero-figure .frame{
+  border:1px solid var(--line-2); padding:8px; background:#fff; position:relative;
+}
+.hero-figure img{
+  width:100%; aspect-ratio:4/4.6; object-fit:cover; object-position:center top;
+  filter:grayscale(1) contrast(1.06) brightness(1.02);
+}
+.hero-figure .cap{
+  display:flex;justify-content:space-between;align-items:baseline;gap:10px;margin-top:10px;
+  font-size:10.5px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);
+}
+.hero-figure .cap .it{font-size:12.5px;letter-spacing:0;text-transform:none}
+.hero-figure .plate{
+  position:absolute;left:-1px;top:-1px;background:var(--accent-d);color:#fff;
+  font-size:10px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;padding:5px 9px;z-index:2;
+}
+.hero-descriptor{
+  margin-top:clamp(26px,3vw,40px);padding-top:18px;border-top:1px solid var(--line);
+  display:flex;flex-wrap:wrap;gap:8px 26px;align-items:center;position:relative;z-index:2;
+  font-size:12px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);
+}
+.hero-descriptor span{display:inline-flex;align-items:center;gap:.7em}
+.hero-descriptor .sep{width:4px;height:4px;background:var(--line-2);border-radius:1px}
+
+/* ============ TRUST STRIP ============ */
+.trust{border-top:1px solid var(--line);border-bottom:1px solid var(--line);background:var(--paper)}
+.trust .wrap{padding-top:22px;padding-bottom:22px}
+.trust-row{display:flex;align-items:center;gap:clamp(18px,3vw,40px);justify-content:space-between}
+.trust-lab{font-size:11px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);
+  flex-shrink:0;max-width:170px;line-height:1.5}
+.marquee{flex:1;overflow:hidden;position:relative;
+  -webkit-mask-image:linear-gradient(to right,transparent,#000 6%,#000 94%,transparent);
+  mask-image:linear-gradient(to right,transparent,#000 6%,#000 94%,transparent)}
+.marquee-track{display:flex;align-items:center;gap:clamp(34px,4.5vw,62px);width:max-content;
+  animation:scrollx 46s linear infinite}
+.marquee:hover .marquee-track{animation-play-state:paused}
+@keyframes scrollx{to{transform:translateX(-50%)}}
+.marquee-track img{height:clamp(15px,1.7vw,20px);width:auto;opacity:.5;
+  filter:grayscale(1) brightness(.35);transition:opacity .3s,filter .3s;flex-shrink:0}
+.marquee-track img:hover{opacity:.9;filter:grayscale(1) brightness(0)}
+
+/* ============ section wrapper ============ */
+section{position:relative}
+.sec{padding:clamp(56px,8vw,108px) 0}
+.sec-pad-sm{padding:clamp(44px,6vw,76px) 0}
+.sechead{display:flex;justify-content:space-between;align-items:flex-end;gap:24px;flex-wrap:wrap;
+  padding-bottom:clamp(28px,3.5vw,44px);border-bottom:1px solid var(--line);margin-bottom:clamp(34px,4vw,52px)}
+.sechead .l{max-width:64ch}
+.sechead h2{font-family:var(--disp);font-weight:500;letter-spacing:-.018em;line-height:1.05;
+  font-size:clamp(27px,3.7vw,46px);margin-top:14px}
+.sechead h2 .b{font-weight:600}
+.sechead p{font-family:var(--serif);font-size:clamp(15px,1.5vw,18px);line-height:1.6;color:var(--muted);
+  margin-top:16px;max-width:52ch}
+
+/* ============ NETWORK ARC ============ */
+.arc-sec{background:var(--paper);border-top:1px solid var(--line)}
+.arc-head{text-align:center;max-width:60ch;margin:0 auto clamp(8px,1vw,14px)}
+.arc-head .eyebrow{display:inline-flex;margin-bottom:18px}
+.arc-head h2{font-family:var(--disp);font-weight:500;letter-spacing:-.018em;line-height:1.06;
+  font-size:clamp(24px,3.2vw,40px)}
+.arc-head h2 .it{font-size:1.04em}
+.arcwrap{position:relative;max-width:1000px;margin:0 auto;padding-top:clamp(44px,6vw,88px)}
+.arcwrap svg{display:block;width:100%;height:auto;overflow:visible}
+.arc-node-line{stroke:var(--line-2);stroke-width:1;fill:none}
+.arc-node-line.live{stroke:var(--accent);stroke-width:1.4}
+.arc-figure-num{font-family:var(--disp);font-weight:700;letter-spacing:-.03em;fill:var(--accent-d)}
+.arc-figure-sub{font-family:var(--disp);font-weight:600;letter-spacing:.18em;fill:var(--muted);text-transform:uppercase}
+.arc-foot{display:flex;justify-content:center;gap:clamp(28px,5vw,72px);margin-top:clamp(20px,3vw,38px);
+  flex-wrap:wrap;text-align:center}
+.arc-stat{display:flex;flex-direction:column;gap:3px}
+.arc-stat .n{font-family:var(--disp);font-weight:700;font-size:clamp(22px,2.6vw,32px);letter-spacing:-.02em;color:var(--text)}
+.arc-stat .l{font-size:10.5px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:var(--muted)}
+.arc-logo-chip{fill:#fff;stroke:var(--line-2);stroke-width:1}
+.arc-logo-chip.live{stroke:var(--accent);stroke-width:1.5}
+
+/* ============ PROBLEM (editorial prose) ============ */
+.problem{background:var(--ink);color:#fff}
+.problem .eyebrow{color:rgba(255,255,255,.55)}
+.problem .eyebrow .dot{background:var(--accent)}
+.problem-head{padding-bottom:clamp(30px,3.5vw,48px);border-bottom:1px solid var(--line-ink);
+  margin-bottom:clamp(34px,4vw,52px);max-width:24ch}
+.problem-head h2{font-family:var(--disp);font-weight:500;letter-spacing:-.018em;line-height:1.04;
+  font-size:clamp(27px,3.8vw,48px);margin-top:18px;color:#fff}
+.problem-head h2 .it{color:#A5A8FF}
+.problem-grid{display:grid;grid-template-columns:1fr 1fr;gap:0}
+.prob-item{padding:clamp(22px,2.6vw,34px) clamp(22px,3vw,44px) clamp(22px,2.6vw,34px) 0;
+  border-top:1px solid var(--line-ink)}
+.prob-item:nth-child(odd){border-right:1px solid var(--line-ink);padding-right:clamp(28px,3.4vw,48px)}
+.prob-item:nth-child(even){padding-left:clamp(28px,3.4vw,48px);padding-right:0}
+.prob-item p{font-family:var(--serif);font-size:clamp(16px,1.6vw,19.5px);line-height:1.5;color:#fff}
+.prob-item p .lead{font-weight:500}
+.prob-item .why{display:block;margin-top:12px;font-family:var(--disp);font-size:13.5px;line-height:1.6;
+  color:rgba(255,255,255,.62);font-weight:400}
+
+/* ============ TWO TRACKS BUILD/GROW ============ */
+.tracks-intro{font-family:var(--serif);font-size:clamp(16px,1.7vw,21px);line-height:1.55;color:var(--text);
+  max-width:60ch;margin-bottom:clamp(34px,4vw,54px)}
+.tracks-intro b{color:var(--accent-d);font-weight:500}
+.tracks{display:grid;grid-template-columns:1fr 1px 1fr;gap:0;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+.track-div{background:var(--line)}
+.track{padding:clamp(28px,3.4vw,46px) clamp(24px,3vw,44px)}
+.track.build{padding-left:0}
+.track.grow{padding-right:0}
+.track-tag{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:18px}
+.track-tag .name{font-family:var(--disp);font-weight:700;font-size:13px;letter-spacing:.2em;text-transform:uppercase;
+  color:var(--accent-d)}
+.track-tag .idx{font-size:11px;font-weight:600;color:var(--muted);font-variant-numeric:tabular-nums}
+.track h3{font-family:var(--disp);font-weight:500;font-size:clamp(20px,2.2vw,28px);letter-spacing:-.012em;line-height:1.12}
+.track h3 .it{display:block;font-size:.92em}
+.track .desc{font-size:14.5px;line-height:1.6;color:var(--muted);margin-top:14px;max-width:42ch}
+.caps{display:flex;flex-wrap:wrap;gap:7px;margin-top:22px}
+.cap{font-family:var(--disp);font-size:10.5px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--text);border:1px solid var(--line-2);border-radius:2px;padding:6px 10px;background:var(--paper);
+  transition:border-color .2s var(--ease-out),color .2s var(--ease-out)}
+.cap:hover{border-color:var(--accent);color:var(--accent-d)}
+.track .note{margin-top:22px;padding-top:16px;border-top:1px solid var(--line);
+  font-size:12.5px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;color:var(--text)}
+.track .note .it{text-transform:none;letter-spacing:0;font-size:14px}
+.tracks-connector{margin-top:clamp(28px,3.4vw,42px);font-family:var(--serif);font-style:italic;
+  font-size:clamp(16px,1.7vw,20px);line-height:1.55;color:var(--text);max-width:60ch}
+.tracks-connector b{font-style:normal;font-family:var(--disp);font-weight:600;color:var(--accent-d)}
+
+/* ============ WORK INDEX ============ */
+.work .sechead{margin-bottom:0;border-bottom:1px solid var(--line)}
+.windex{border-bottom:1px solid var(--line)}
+.wrow{
+  display:grid;grid-template-columns:42px minmax(0,1.1fr) minmax(0,1.5fr) auto;
+  gap:clamp(16px,2.4vw,40px);align-items:center;
+  padding:clamp(16px,1.9vw,22px) 0;border-top:1px solid var(--line);
+  position:relative;transition:background .25s var(--ease-out);
+}
+.wrow:first-child{border-top:0}
+.wrow:hover{background:var(--paper-2)}
+.wrow .widx{font-size:12px;font-weight:600;color:var(--muted);font-variant-numeric:tabular-nums;letter-spacing:.04em}
+.wrow:hover .widx{color:var(--accent-d)}
+.wrow .wname{display:flex;flex-direction:column;gap:4px}
+.wrow .wname .nm{font-family:var(--disp);font-weight:500;font-size:clamp(17px,1.9vw,23px);letter-spacing:-.01em;
+  line-height:1.15;color:var(--text)}
+.wrow .wname .nm .it{font-size:.92em}
+.wrow .wname .tag{font-size:11px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+.wrow .wthumb{position:relative;overflow:hidden;border:1px solid var(--line);aspect-ratio:16/8.4;background:var(--paper-2)}
+.wrow .wthumb img{width:100%;height:100%;object-fit:cover;object-position:center top;
+  filter:grayscale(.85) contrast(1.02);transition:filter .5s var(--ease-out),transform .6s var(--ease-out)}
+.wrow:hover .wthumb img{filter:grayscale(0) contrast(1);transform:scale(1.035)}
+.wrow .wresult{display:flex;flex-direction:column;align-items:flex-end;gap:3px;text-align:right;min-width:118px}
+.wrow .wresult .fig{font-family:var(--disp);font-weight:700;font-size:clamp(19px,2.2vw,28px);letter-spacing:-.02em;
+  color:var(--text);font-variant-numeric:tabular-nums;line-height:1}
+.wrow .wresult .lab{font-size:10.5px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);
+  max-width:20ch;line-height:1.35}
+.work-foot{display:flex;justify-content:space-between;align-items:center;gap:20px;flex-wrap:wrap;
+  margin-top:clamp(28px,3.4vw,44px)}
+.work-foot .meta{font-size:12px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+
+/* ============ CHART (data as hero) ============ */
+.chart-sec{background:var(--ink);color:#fff;border-top:1px solid var(--ink)}
+.chart-sec .eyebrow{color:rgba(255,255,255,.55)}
+.chart-sec .eyebrow .dot{background:var(--accent)}
+.chart-grid{display:grid;grid-template-columns:0.85fr 1.15fr;gap:clamp(34px,5vw,72px);align-items:center}
+.chart-copy h2{font-family:var(--disp);font-weight:500;letter-spacing:-.018em;line-height:1.06;
+  font-size:clamp(25px,3.2vw,40px);color:#fff;margin-top:18px}
+.chart-copy h2 .it{color:#A5A8FF}
+.chart-copy .big{font-family:var(--disp);font-weight:700;font-size:clamp(40px,6vw,76px);letter-spacing:-.03em;
+  color:#fff;line-height:1;margin-top:clamp(22px,3vw,34px)}
+.chart-copy .big .em{color:var(--accent)}
+.chart-copy .leg{margin-top:18px;font-size:13px;line-height:1.6;color:rgba(255,255,255,.6);max-width:42ch}
+.chart-copy .leg b{color:#fff;font-weight:600}
+.chartbox{border:1px solid var(--line-ink-2);padding:clamp(20px,2.5vw,30px);background:var(--ink-2);position:relative}
+.chartbox .ch-top{display:flex;justify-content:space-between;align-items:baseline;gap:12px;margin-bottom:18px}
+.chartbox .ch-top .t{font-size:11px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:rgba(255,255,255,.6)}
+.chartbox .ch-top .v{font-family:var(--disp);font-weight:700;font-size:14px;color:var(--accent);letter-spacing:.02em}
+.chartbox svg{width:100%;height:auto;display:block;overflow:visible}
+
+/* ============ STATS LEDGER ============ */
+.ledger .sechead{margin-bottom:clamp(20px,2.5vw,32px)}
+.ledger-table{border-top:2px solid var(--text)}
+.lrow{display:grid;grid-template-columns:54px minmax(0,1fr) minmax(0,1.4fr) auto;gap:clamp(14px,2vw,32px);
+  align-items:baseline;padding:clamp(18px,2.4vw,30px) 0;border-bottom:1px solid var(--line);position:relative}
+.lrow .lnum{font-size:11px;font-weight:600;color:var(--muted);font-variant-numeric:tabular-nums;letter-spacing:.06em;
+  padding-top:10px}
+.lrow .llabel{font-family:var(--disp);font-weight:500;font-size:clamp(15px,1.6vw,18px);color:var(--text);
+  letter-spacing:-.005em;padding-top:6px}
+.lrow .lfoot{font-size:13px;line-height:1.55;color:var(--muted);padding-top:8px;max-width:46ch}
+.lrow .lfig{font-family:var(--disp);font-weight:700;font-size:clamp(38px,5.6vw,68px);letter-spacing:-.035em;
+  color:var(--text);text-align:right;line-height:.92;font-variant-numeric:tabular-nums;white-space:nowrap}
+.lrow .lfig sub{font-size:.34em;font-weight:600;vertical-align:baseline;letter-spacing:.02em;color:var(--muted);
+  margin-left:.12em}
+.lrow.accent .lfig{color:var(--accent-d)}
+
+/* ============ TESTIMONIAL PULLQUOTE ============ */
+.quote-sec{background:var(--paper);border-top:1px solid var(--line)}
+.quote-grid{display:grid;grid-template-columns:minmax(0,1fr) 280px;gap:clamp(34px,5vw,68px);align-items:start}
+.bigquote{font-family:var(--serif);font-weight:400;font-style:italic;letter-spacing:-.01em;line-height:1.28;
+  font-size:clamp(24px,3.6vw,46px);color:var(--text)}
+.bigquote .mark{color:var(--accent);font-style:normal}
+.bigquote .hl{color:var(--accent-d)}
+.quote-by{margin-top:clamp(26px,3vw,38px);display:flex;align-items:center;gap:14px;padding-top:20px;
+  border-top:1px solid var(--line)}
+.quote-by .av{width:46px;height:46px;border-radius:50%;object-fit:cover;
+  filter:grayscale(1) contrast(1.05);border:1px solid var(--line-2)}
+.quote-by .who .nm{font-family:var(--disp);font-weight:600;font-size:15px;color:var(--text)}
+.quote-by .who .ro{font-size:12.5px;color:var(--muted);font-weight:500;margin-top:2px}
+.quote-aside{border-left:1px solid var(--line);padding-left:clamp(20px,2.5vw,34px);align-self:stretch}
+.quote-aside .mini{padding:18px 0;border-bottom:1px solid var(--line)}
+.quote-aside .mini:first-child{padding-top:0}
+.quote-aside .mini p{font-family:var(--serif);font-style:italic;font-size:14.5px;line-height:1.5;color:var(--text)}
+.quote-aside .mini .who{margin-top:9px;font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+
+/* ============ BEST FOR / NOT FOR ============ */
+.fit-grid{display:grid;grid-template-columns:1fr 1fr;gap:clamp(18px,2.4vw,28px)}
+.fitcard{border:1px solid var(--line-2);background:#fff;padding:clamp(24px,3vw,40px);position:relative}
+.fitcard .ttl{display:flex;align-items:center;gap:11px;font-family:var(--disp);font-weight:600;
+  font-size:clamp(18px,2vw,23px);letter-spacing:-.01em;color:var(--text);
+  padding-bottom:18px;margin-bottom:6px;border-bottom:1px solid var(--line)}
+.fitcard .ttl .it{font-weight:400}
+.fitcard .badge{width:26px;height:26px;border-radius:3px;display:inline-flex;align-items:center;justify-content:center;
+  flex-shrink:0}
+.fitcard.yes .badge{background:rgba(22,179,100,.12);color:var(--ok)}
+.fitcard.no .badge{background:rgba(229,72,77,.1);color:var(--no)}
+.fitlist{list-style:none;margin-top:16px}
+.fitlist li{display:flex;gap:13px;padding:11px 0;font-size:15px;line-height:1.5;color:var(--text);
+  border-bottom:1px solid var(--line)}
+.fitlist li:last-child{border-bottom:0}
+.fitlist li .ic{flex-shrink:0;margin-top:2px}
+.fitcard.yes .ic{color:var(--ok)}
+.fitcard.no .ic{color:var(--no)}
+.fitlist li .ic svg{display:block}
+
+/* ============ PROCESS TIMELINE ============ */
+.proc-table{border-top:2px solid var(--text)}
+.prow{display:grid;grid-template-columns:200px minmax(0,1fr) 150px;gap:clamp(18px,3vw,48px);
+  align-items:baseline;padding:clamp(20px,2.6vw,34px) 0;border-bottom:1px solid var(--line);
+  position:relative;transition:background .25s var(--ease-out)}
+.prow:hover{background:var(--paper-2)}
+.prow .pstage{display:flex;flex-direction:column;gap:6px}
+.prow .pstage .nm{font-family:var(--disp);font-weight:600;font-size:clamp(16px,1.8vw,21px);letter-spacing:-.01em;color:var(--text)}
+.prow .pstage .nm .it{font-weight:400}
+.prow .pdesc{font-size:14.5px;line-height:1.6;color:var(--muted);max-width:54ch}
+.prow .pwhen{justify-self:end;text-align:right;font-family:var(--disp);font-weight:600;font-size:12px;
+  letter-spacing:.1em;text-transform:uppercase;color:var(--accent-d);font-variant-numeric:tabular-nums}
+.prow .pwhen .marker{display:inline-block;margin-left:9px;width:8px;height:8px;border-radius:50%;
+  background:var(--accent);vertical-align:middle}
+.prow:nth-child(1) .pwhen .marker{opacity:.4}
+.prow:nth-child(2) .pwhen .marker{opacity:.6}
+.prow:nth-child(3) .pwhen .marker{opacity:.8}
+
+/* ============ TEAM (indigo duotone) ============ */
+.team-sec{background:var(--ink);color:#fff;border-top:1px solid var(--ink)}
+.team-sec .eyebrow{color:rgba(255,255,255,.55)}
+.team-sec .eyebrow .dot{background:var(--accent)}
+.team-sec .sechead{border-bottom:1px solid var(--line-ink)}
+.team-sec .sechead h2{color:#fff}
+.team-sec .sechead h2 .it{color:#A5A8FF}
+.team-sec .sechead p{color:rgba(255,255,255,.6)}
+.team-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:clamp(10px,1.4vw,18px)}
+.tmember{position:relative}
+.tmember .pic{aspect-ratio:1/1.12;overflow:hidden;border:1px solid var(--line-ink-2);position:relative;background:var(--ink-2)}
+.tmember .pic img{width:100%;height:100%;object-fit:cover;object-position:center top;
+  filter:grayscale(1) contrast(1.04) brightness(.96);
+  mix-blend-mode:luminosity;transition:transform .6s var(--ease-out)}
+.tmember .pic::after{content:"";position:absolute;inset:0;background:var(--accent-d);
+  mix-blend-mode:color;opacity:.78;pointer-events:none;transition:opacity .4s var(--ease-out)}
+.tmember .pic::before{content:"";position:absolute;inset:0;z-index:2;
+  background:linear-gradient(to top,rgba(13,13,20,.55),transparent 55%);pointer-events:none}
+.tmember:hover .pic img{transform:scale(1.04)}
+.tmember:hover .pic::after{opacity:.5}
+.tmember .meta{padding-top:12px}
+.tmember .meta .nm{font-family:var(--serif);font-style:italic;font-weight:500;font-size:clamp(15px,1.5vw,18px);
+  color:#fff;line-height:1.15}
+.tmember .meta .ro{font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;
+  color:rgba(255,255,255,.5);margin-top:5px;line-height:1.4}
+
+/* ============ KNOWLEDGE strip ============ */
+.know{background:var(--paper);border-top:1px solid var(--line)}
+.know .wrap{display:flex;justify-content:space-between;align-items:center;gap:30px;flex-wrap:wrap;
+  padding-top:clamp(34px,4vw,52px);padding-bottom:clamp(34px,4vw,52px)}
+.know .l h3{font-family:var(--disp);font-weight:500;font-size:clamp(20px,2.4vw,30px);letter-spacing:-.015em}
+.know .l h3 .it{font-weight:400}
+.know .l p{font-size:14.5px;color:var(--muted);margin-top:8px;max-width:48ch;line-height:1.55}
+
+/* ============ CLOSING CTA ============ */
+.close{background:var(--ink);color:#fff;position:relative;overflow:hidden}
+.close .wrap{position:relative;z-index:2;padding-top:clamp(64px,9vw,128px);padding-bottom:clamp(64px,9vw,128px)}
+.close-rules{position:absolute;inset:0;z-index:1;pointer-events:none;
+  background-image:repeating-linear-gradient(to bottom,transparent 0,transparent 55px,var(--line-ink) 55px,var(--line-ink) 56px);
+  -webkit-mask-image:radial-gradient(120% 90% at 50% 50%,#000,transparent 78%);
+  mask-image:radial-gradient(120% 90% at 50% 50%,#000,transparent 78%);opacity:.7}
+.close-inner{max-width:980px;margin:0 auto;text-align:center}
+.close .eyebrow{color:rgba(255,255,255,.55);justify-content:center;display:inline-flex;margin-bottom:clamp(26px,3vw,38px)}
+.close .eyebrow .dot{background:var(--accent)}
+.close h2{font-family:var(--disp);font-weight:500;letter-spacing:-.022em;line-height:1.05;
+  font-size:clamp(32px,5.6vw,72px);color:#fff}
+.close h2 .it{display:block;color:#A5A8FF;font-size:1.02em;line-height:1.08}
+.close .csub{font-family:var(--serif);font-size:clamp(16px,1.7vw,21px);line-height:1.55;
+  color:rgba(255,255,255,.72);max-width:56ch;margin:clamp(26px,3vw,38px) auto 0}
+.close-cta{margin-top:clamp(30px,3.6vw,44px);display:flex;justify-content:center;align-items:center;gap:24px;flex-wrap:wrap}
+.close-cta .meta{font-size:12px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:rgba(255,255,255,.5)}
+
+/* ============ FOOTER ============ */
+footer{background:var(--ink);color:#fff;border-top:1px solid var(--line-ink)}
+.foot-top{display:grid;grid-template-columns:1.6fr 1fr 1fr 1fr;gap:clamp(24px,4vw,56px);
+  padding-top:clamp(48px,6vw,80px);padding-bottom:clamp(40px,5vw,60px)}
+.foot-brand img{height:24px;width:auto;margin-bottom:20px}
+.foot-brand p{font-family:var(--serif);font-size:15px;line-height:1.55;color:rgba(255,255,255,.62);max-width:34ch}
+.foot-brand .tag{margin-top:20px;font-size:11px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;
+  color:rgba(255,255,255,.4)}
+.foot-col h4{font-size:11px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:rgba(255,255,255,.5);
+  margin-bottom:18px}
+.foot-col ul{list-style:none}
+.foot-col li{margin-bottom:11px}
+.foot-col a{font-size:14px;color:rgba(255,255,255,.8);transition:color .2s var(--ease-out);display:inline-flex;
+  align-items:center;gap:.5em}
+.foot-col a:hover{color:#fff}
+.foot-col a .ext{opacity:.4;transition:opacity .2s,transform .2s var(--ease-out)}
+.foot-col a:hover .ext{opacity:.8;transform:translate(1px,-1px)}
+.foot-bot{border-top:1px solid var(--line-ink);padding-top:24px;padding-bottom:32px;
+  display:flex;justify-content:space-between;align-items:center;gap:18px;flex-wrap:wrap}
+.foot-bot .cp{font-size:12px;color:rgba(255,255,255,.45);font-weight:500}
+.foot-bot .cp b{color:rgba(255,255,255,.7);font-weight:600}
+.foot-bot .lf{display:flex;gap:20px}
+.foot-bot .lf a{font-size:12px;color:rgba(255,255,255,.5);font-weight:500;transition:color .2s}
+.foot-bot .lf a:hover{color:#fff}
+
+/* ============ reveal motion ============ */
+.reveal{opacity:0;transform:translateY(22px);transition:opacity .8s var(--ease-out),transform .8s var(--ease-out)}
+.reveal.in{opacity:1;transform:none}
+.reveal[data-d="1"]{transition-delay:.06s}
+.reveal[data-d="2"]{transition-delay:.12s}
+.reveal[data-d="3"]{transition-delay:.18s}
+.reveal[data-d="4"]{transition-delay:.24s}
+.draw{stroke-dasharray:1;stroke-dashoffset:1;transition:stroke-dashoffset 1.6s var(--ease-out)}
+.draw.in{stroke-dashoffset:0}
+
+/* ============ RESPONSIVE ============ */
+@media(max-width:1080px){
+  .hero-grid{grid-template-columns:minmax(0,1fr) 250px}
+  .team-grid{grid-template-columns:repeat(3,1fr)}
+  .quote-grid{grid-template-columns:1fr}
+  .quote-aside{border-left:0;border-top:1px solid var(--line);padding-left:0;padding-top:24px;
+    display:grid;grid-template-columns:1fr 1fr;gap:0 24px}
+  .quote-aside .mini:nth-child(2){padding-top:0}
+}
+@media(max-width:880px){
+  .nav-links,.nav-meta{display:none}
+  .burger{display:flex}
+  .chart-grid{grid-template-columns:1fr;gap:32px}
+  .hero-edge{display:none}
+  .edgelabel{display:none}
+  .lrow{grid-template-columns:32px 1fr auto;gap:14px 16px}
+  .lrow .lfoot{grid-column:2/4;padding-top:4px}
+  .lrow .lfig{grid-column:1/4;text-align:left;padding-top:6px;font-size:clamp(44px,13vw,60px)}
+  .lrow .llabel{grid-column:2/4}
+  .prow{grid-template-columns:1fr;gap:8px}
+  .prow .pwhen{justify-self:start;text-align:left}
+  .prow .pwhen .marker{display:none}
+}
+@media(max-width:720px){
+  .hero-grid{grid-template-columns:1fr}
+  .hero-figure{max-width:360px;margin-top:8px}
+  .hero-head h1{font-size:clamp(32px,9vw,52px)}
+  .hero-rules{display:none}
+  .hero-top{flex-direction:column;gap:14px}
+  .problem-grid{grid-template-columns:1fr}
+  .prob-item,.prob-item:nth-child(odd),.prob-item:nth-child(even){padding-left:0;padding-right:0;border-right:0}
+  .tracks{grid-template-columns:1fr}
+  .track-div{display:none}
+  .track,.track.build,.track.grow{padding:clamp(26px,5vw,38px) 0}
+  .track.grow{border-top:1px solid var(--line)}
+  .fit-grid{grid-template-columns:1fr}
+  .team-grid{grid-template-columns:repeat(2,1fr)}
+  .foot-top{grid-template-columns:1fr 1fr;gap:32px 24px}
+  .foot-brand{grid-column:1/3}
+  .trust-row{flex-direction:column;align-items:flex-start;gap:16px}
+  .trust-lab{max-width:none}
+  .wrow{grid-template-columns:30px 1fr;gap:8px 14px;padding:18px 0}
+  .wrow .wthumb{grid-column:1/3;order:3;margin-top:6px}
+  .wrow .wresult{grid-column:1/3;order:4;align-items:flex-start;text-align:left;flex-direction:row;
+    gap:12px;align-items:baseline;margin-top:6px;border-top:1px solid var(--line);padding-top:12px;width:100%}
+  .wrow .widx{order:0}
+  .wrow .wname{order:1;grid-column:2/3}
+  .quote-aside{grid-template-columns:1fr}
+  .quote-aside .mini:nth-child(2){padding-top:18px;border-top:1px solid var(--line);margin-top:-1px}
+}
+@media(prefers-reduced-motion:reduce){
+  *{animation:none!important}
+  .reveal{opacity:1;transform:none;transition:none}
+  .draw{stroke-dashoffset:0;transition:none}
+  .hero-scarcity .pulse::after{display:none}
+}
+</style>
+</head>
+<body>
+
+<!-- ============================ HEADER ============================ -->
+<header>
+  <div class="wrap">
+    <nav class="nav">
+      <a href="#" class="brand" aria-label="LoudFace home"><img src="loudface.svg" alt="LoudFace"></a>
+      <div class="nav-links">
+        <a href="#work">Work</a>
+        <a href="#services">Services</a>
+        <a href="#about">About</a>
+        <a href="#blog">Blog</a>
+      </div>
+      <div class="nav-right">
+        <span class="nav-meta"><b>2</b> slots · Q2</span>
+        <a href="#book" class="pill indigo">Book your strategy call <span class="arr">→</span></a>
+        <button class="burger" aria-label="Menu"><span></span><span></span><span></span></button>
+      </div>
+    </nav>
+  </div>
+</header>
+
+<!-- ============================ HERO / COVER ============================ -->
+<section class="hero">
+  <div class="wrap">
+    <div class="hero-rules" aria-hidden="true"></div>
+    <div class="edgelabel hero-edge">The Studio — Conversion &amp; Organic Growth</div>
+
+    <div class="hero-top reveal">
+      <div class="hero-issue">
+        LoudFace&nbsp;·&nbsp;<b>The Studio Report</b><br>
+        Conversion &amp; organic growth for B2B SaaS
+      </div>
+      <div class="hero-issue" style="text-align:right">
+        Webflow Enterprise Partner<br>
+        <b>Operating since 2020</b>
+      </div>
+    </div>
+
+    <div class="hero-grid">
+      <div class="hero-head">
+        <h1 class="reveal" data-d="1">
+          <span class="ln b">Your website converts.</span>
+          <span class="ln">Your organic traffic <span class="it">compounds.</span></span>
+          <span class="ln serif it" style="color:var(--accent-d);font-weight:400">One team runs both.</span>
+        </h1>
+        <p class="hero-sub reveal" data-d="2">
+          LoudFace is the conversion and organic growth team behind <b>200+ B2B SaaS websites</b>.
+          We build on Webflow (or custom stack), then run SEO, AEO, and CRO to grow what we shipped.
+        </p>
+        <div class="hero-cta reveal" data-d="3">
+          <a href="#book" class="pill">Book your strategy call <span class="arr">→</span></a>
+          <span class="hero-scarcity"><span class="pulse"></span>2 client slots open for Q2</span>
+        </div>
+      </div>
+
+      <figure class="hero-figure reveal" data-d="3">
+        <div class="frame">
+          <span class="plate">Plate I</span>
+          <img src="https://cdn.sanity.io/images/xjjjqhgt/production/92dfd51e1f15a98227f6308a075c490ce52c05b4-1000x1000.png" alt="Arnel Bukva, Founder &amp; Head of Growth at LoudFace">
+        </div>
+        <figcaption class="cap">
+          <span>The Studio</span>
+          <span class="it">Arnel Bukva, Founder</span>
+        </figcaption>
+      </figure>
+    </div>
+
+    <div class="hero-descriptor reveal" data-d="4">
+      <span>B2B SaaS</span><span class="sep"></span>
+      <span>Webflow Enterprise Partner</span><span class="sep"></span>
+      <span>SEO · AEO · CRO</span><span class="sep"></span>
+      <span>Since 2020</span>
+      <span style="margin-left:auto"><a href="#ai" class="linkarrow">See what AI says about us →</a></span>
+    </div>
+  </div>
+</section>
+
+<!-- ============================ TRUST STRIP ============================ -->
+<section class="trust">
+  <div class="wrap">
+    <div class="trust-row reveal">
+      <div class="trust-lab">Trusted by B2B SaaS teams shipping real products</div>
+      <div class="marquee">
+        <div class="marquee-track" id="trustTrack">
+          <!-- duplicated in JS for seamless loop -->
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================ NETWORK ARC ============================ -->
+<section class="arc-sec sec" id="about">
+  <div class="wrap">
+    <div class="arc-head reveal">
+      <span class="eyebrow"><span class="dot"></span>The Network</span>
+      <h2>Two hundred-plus B2B SaaS sites, <span class="it">built and grown</span> by one studio.</h2>
+    </div>
+    <div class="arcwrap reveal" data-d="1">
+      <svg viewBox="0 0 1000 470" role="img" aria-label="Network arc of client logos converging into 200+ sites shipped">
+        <!-- arc baseline -->
+        <path d="M40 430 A 540 540 0 0 1 960 430" fill="none" stroke="var(--line)" stroke-width="1"/>
+        <!-- connecting lines drawn in JS, plus logo chips + center figure -->
+        <g id="arcNodes"></g>
+        <!-- center stat -->
+        <text x="500" y="392" text-anchor="middle" class="arc-figure-num" font-size="118">200+</text>
+        <text x="500" y="428" text-anchor="middle" class="arc-figure-sub" font-size="13">Sites shipped on Webflow</text>
+      </svg>
+    </div>
+    <div class="arc-foot reveal" data-d="2">
+      <div class="arc-stat"><span class="n">4+ yrs</span><span class="l">Webflow Enterprise Partner</span></div>
+      <div class="arc-stat"><span class="n">22</span><span class="l">SaaS brands in the index</span></div>
+      <div class="arc-stat"><span class="n">&lt;6 wks</span><span class="l">Average time to launch</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================ PROBLEM ============================ -->
+<section class="problem sec">
+  <div class="wrap">
+    <div class="problem-head reveal">
+      <span class="eyebrow"><span class="dot"></span>The Diagnosis</span>
+      <h2>Your website is costing you deals. <span class="it">You just can't see it.</span></h2>
+    </div>
+    <div class="problem-grid">
+      <div class="prob-item reveal">
+        <p><span class="lead">Your homepage explains what you built, not why anyone should care.</span></p>
+        <span class="why">Visitors land, skim, and leave because the messaging talks about features instead of the problem you solve for buyers.</span>
+      </div>
+      <div class="prob-item reveal" data-d="1">
+        <p><span class="lead">Marketing owns a website they can't update without engineering.</span></p>
+        <span class="why">Every landing page needs a dev sprint. Every campaign launch gets delayed.</span>
+      </div>
+      <div class="prob-item reveal">
+        <p><span class="lead">You redesigned six months ago and organic traffic still hasn't moved.</span></p>
+        <span class="why">The site looks better, but nobody optimized it for search.</span>
+      </div>
+      <div class="prob-item reveal" data-d="1">
+        <p><span class="lead">Buyers ask ChatGPT, Perplexity, and Claude for recommendations in your category. You don't come up.</span></p>
+        <span class="why">AI search shapes shortlists before a prospect ever visits your site.</span>
+      </div>
+      <div class="prob-item reveal" style="grid-column:1/-1;border-bottom:1px solid var(--line-ink)">
+        <p><span class="lead">Your site gets traffic, but conversion hasn't changed in a year.</span></p>
+        <span class="why">No one is running experiments. Traffic without conversion is a vanity metric.</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================ TWO TRACKS ============================ -->
+<section class="sec" id="services">
+  <div class="wrap">
+    <div class="sechead reveal">
+      <div class="l">
+        <span class="framelabel"><span class="num">II</span>The Operating Model</span>
+        <h2>One partner from <span class="b">launch</span> to <span class="it">growth.</span></h2>
+      </div>
+    </div>
+    <p class="tracks-intro reveal" data-d="1">
+      Most agencies hand you a website and move on. Most SEO shops inherit someone else's mess.
+      <b>We do both — and because we do both, neither half is compromised.</b>
+    </p>
+
+    <div class="tracks reveal" data-d="2">
+      <div class="track build">
+        <div class="track-tag"><span class="name">Build</span><span class="idx">Track 01</span></div>
+        <h3>A website that <span class="it">earns its traffic.</span></h3>
+        <p class="desc">We design and build B2B SaaS sites on Webflow — positioning, copy, UX, UI, and production code, shipped as working pages.</p>
+        <div class="caps">
+          <span class="cap">UX / UI Design</span>
+          <span class="cap">Webflow Development</span>
+          <span class="cap">Conversion Copywriting</span>
+          <span class="cap">CMS Architecture</span>
+          <span class="cap">Design System Setup</span>
+        </div>
+        <div class="note">Shipped in weeks, <span class="it">not quarters.</span></div>
+      </div>
+
+      <div class="track-div" aria-hidden="true"></div>
+
+      <div class="track grow">
+        <div class="track-tag"><span class="name">Grow</span><span class="idx">Track 02</span></div>
+        <h3>Traffic and conversions, <span class="it">month over month.</span></h3>
+        <p class="desc">SEO and AEO bring organic traffic from search and AI platforms; CRO converts it into pipeline.</p>
+        <div class="caps">
+          <span class="cap">Technical SEO</span>
+          <span class="cap">AI Engine Optimization</span>
+          <span class="cap">Content Strategy</span>
+          <span class="cap">Conversion Rate Optimization</span>
+          <span class="cap">Performance Analytics</span>
+        </div>
+        <div class="note">No onboarding lag — <span class="it">we built it.</span></div>
+      </div>
+    </div>
+
+    <p class="tracks-connector reveal" data-d="2">
+      Most clients start with a build. Within three months they ask us to handle growth too.
+      <b>That's by design.</b>
+    </p>
+  </div>
+</section>
+
+<!-- ============================ WORK INDEX ============================ -->
+<section class="sec work" id="work">
+  <div class="wrap">
+    <div class="sechead reveal">
+      <div class="l">
+        <span class="framelabel"><span class="num">III</span>Selected Work</span>
+        <h2>The work speaks. <span class="it">Specifically.</span></h2>
+        <p>Real projects, real metrics, real SaaS companies — indexed by outcome.</p>
+      </div>
+      <a href="#work-all" class="linkarrow">Full index of engagements →</a>
+    </div>
+
+    <div class="windex" id="windex">
+      <!-- rows -->
+      <a class="wrow reveal" href="#" data-slug="/work/toku-ai-cited-pipeline">
+        <span class="widx">01</span>
+        <span class="wname">
+          <span class="nm">Toku — <span class="it">AI-Cited Pipeline</span></span>
+          <span class="tag">Stablecoin Payroll · AEO + Content</span>
+        </span>
+        <span class="wthumb"><img loading="lazy" src="https://cdn.sanity.io/images/xjjjqhgt/production/bd1c09b494f7074c268f5b964d0c77dc1b1ef965-2880x1620.webp" alt="Toku case study"></span>
+        <span class="wresult"><span class="fig">0&nbsp;→&nbsp;86%</span><span class="lab">AI visibility on core prompt</span></span>
+      </a>
+
+      <a class="wrow reveal" href="#" data-slug="/work/loudface-aeo-case-study">
+        <span class="widx">02</span>
+        <span class="wname">
+          <span class="nm">LoudFace — <span class="it">0.18% to 10% of AI answers</span></span>
+          <span class="tag">Our Own Site · AEO Leaderboard</span>
+        </span>
+        <span class="wthumb"><img loading="lazy" src="https://cdn.sanity.io/images/xjjjqhgt/production/d84029c39e2b8c10915db4da5e0b42d439c43219-3200x2000.jpg" alt="LoudFace AEO case study"></span>
+        <span class="wresult"><span class="fig">10.4%</span><span class="lab">Share of category's AI answers</span></span>
+      </a>
+
+      <a class="wrow reveal" href="#" data-slug="/work/dimer-health">
+        <span class="widx">03</span>
+        <span class="wname">
+          <span class="nm">Dimer Health</span>
+          <span class="tag">Healthcare SaaS · Build + CRO</span>
+        </span>
+        <span class="wthumb"><img loading="lazy" src="https://cdn.sanity.io/images/xjjjqhgt/production/a0f4750b896ced6ffca9c5869623b15614f312ba-1440x10131.webp" alt="Dimer Health case study"></span>
+        <span class="wresult"><span class="fig">288%</span><span class="lab">Increased conversion rate</span></span>
+      </a>
+
+      <a class="wrow reveal" href="#" data-slug="/work/outbound-specialist">
+        <span class="widx">04</span>
+        <span class="wname">
+          <span class="nm">Outbound Specialist</span>
+          <span class="tag">Sales Tooling · Conversion Site</span>
+        </span>
+        <span class="wthumb"><img loading="lazy" src="https://cdn.sanity.io/images/xjjjqhgt/production/d90a9cec8351f259afd300dcbc51641ed9b40c3d-1440x1845.webp" alt="Outbound Specialist case study"></span>
+        <span class="wresult"><span class="fig">$200K</span><span class="lab">In sales within 30 days</span></span>
+      </a>
+
+      <a class="wrow reveal" href="#" data-slug="/work/liqid">
+        <span class="widx">05</span>
+        <span class="wname">
+          <span class="nm">LIQID</span>
+          <span class="tag">Wealth Platform · Scaled CMS</span>
+        </span>
+        <span class="wthumb"><img loading="lazy" src="https://cdn.sanity.io/images/xjjjqhgt/production/5f21404454406eee90732e4e1c8655e0c8c6013b-3024x3629.webp" alt="LIQID case study"></span>
+        <span class="wresult"><span class="fig">100+</span><span class="lab">Pages launched</span></span>
+      </a>
+
+      <a class="wrow reveal" href="#" data-slug="/work/hoxhunt">
+        <span class="widx">06</span>
+        <span class="wname">
+          <span class="nm">Hoxhunt</span>
+          <span class="tag">Security Awareness · Webflow Build</span>
+        </span>
+        <span class="wthumb"><img loading="lazy" src="https://cdn.sanity.io/images/xjjjqhgt/production/3ac92e2393c7a26dc96f737c27d7faf49fbe6243-1440x8455.jpg" alt="Hoxhunt case study"></span>
+        <span class="wresult"><span class="fig">20+</span><span class="lab">Pages launched</span></span>
+      </a>
+
+      <a class="wrow reveal" href="#" data-slug="/work/radisson-hotels-group">
+        <span class="widx">07</span>
+        <span class="wname">
+          <span class="nm">Radisson Hotels Group</span>
+          <span class="tag">Enterprise · Complex Platforms</span>
+        </span>
+        <span class="wthumb"><img loading="lazy" src="https://cdn.sanity.io/images/xjjjqhgt/production/7d8ef15a548457e46a262f4ef9617e3260d10722-1440x1845.jpg" alt="Radisson Hotels Group case study"></span>
+        <span class="wresult"><span class="fig">2+</span><span class="lab">Ultra-complex platforms, shipped fast</span></span>
+      </a>
+    </div>
+
+    <div class="work-foot reveal">
+      <span class="meta">Toku · LoudFace · Dimer Health · Eraser · Hoxhunt · LIQID · Montblanc · Radisson · + more</span>
+      <a href="#work-all" class="linkarrow">View all case studies →</a>
+    </div>
+  </div>
+</section>
+
+<!-- ============================ CHART (DATA AS HERO) ============================ -->
+<section class="chart-sec sec" id="ai">
+  <div class="wrap">
+    <div class="chart-grid">
+      <div class="chart-copy reveal">
+        <span class="eyebrow"><span class="dot"></span>The Curve · Toku</span>
+        <h2>Organic visibility doesn't spike. <span class="it">It compounds.</span></h2>
+        <div class="big"><span class="em">+335%</span></div>
+        <p class="leg">
+          <b>Google organic impressions, monthly</b> — the core engagement window for Toku's
+          stablecoin payroll content. Directional, indexed to peak, Sep 2025 → Jan 2026.
+        </p>
+      </div>
+
+      <div class="chartbox reveal" data-d="1">
+        <div class="ch-top">
+          <span class="t">Toku — organic search visibility</span>
+          <span class="v">Sep → Jan · indexed 0–100</span>
+        </div>
+        <svg viewBox="0 0 560 300" role="img" aria-label="Toku organic search visibility climbing from 23 to 100 indexed, September 2025 to January 2026">
+          <!-- gridlines -->
+          <g stroke="var(--line-ink)" stroke-width="1">
+            <line x1="44" y1="40" x2="540" y2="40"/>
+            <line x1="44" y1="100" x2="540" y2="100"/>
+            <line x1="44" y1="160" x2="540" y2="160"/>
+            <line x1="44" y1="220" x2="540" y2="220"/>
+            <line x1="44" y1="258" x2="540" y2="258"/>
+          </g>
+          <!-- y labels -->
+          <g fill="rgba(255,255,255,.4)" font-family="var(--disp)" font-size="10" font-weight="600">
+            <text x="38" y="44" text-anchor="end">100</text>
+            <text x="38" y="104" text-anchor="end">75</text>
+            <text x="38" y="164" text-anchor="end">50</text>
+            <text x="38" y="224" text-anchor="end">25</text>
+            <text x="38" y="262" text-anchor="end">0</text>
+          </g>
+          <!-- area fill -->
+          <path id="tokuArea" fill="url(#tg)" opacity="0" d=""/>
+          <defs>
+            <linearGradient id="tg" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0" stop-color="#6366F1" stop-opacity=".34"/>
+              <stop offset="1" stop-color="#6366F1" stop-opacity="0"/>
+            </linearGradient>
+          </defs>
+          <!-- line -->
+          <path id="tokuLine" class="draw" fill="none" stroke="#A5A8FF" stroke-width="2.5"
+            stroke-linecap="round" stroke-linejoin="round" d="" pathLength="1"/>
+          <!-- nodes + month labels injected by JS -->
+          <g id="tokuNodes"></g>
+        </svg>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================ STATS LEDGER ============================ -->
+<section class="sec ledger">
+  <div class="wrap">
+    <div class="sechead reveal">
+      <div class="l">
+        <span class="framelabel"><span class="num">IV</span>The Record</span>
+        <h2>Numbers, <span class="it">not adjectives.</span></h2>
+      </div>
+    </div>
+
+    <div class="ledger-table">
+      <div class="lrow reveal">
+        <span class="lnum">01</span>
+        <span class="llabel">Projects completed</span>
+        <span class="lfoot">B2B SaaS sites shipped on Webflow since 2020 — the index this studio is built on.</span>
+        <span class="lfig">200<sub>+</sub></span>
+      </div>
+      <div class="lrow accent reveal" data-d="1">
+        <span class="lnum">02</span>
+        <span class="llabel">Increase in conversions</span>
+        <span class="lfoot">Dimer Health, measured across a six-month conversion-rate optimization engagement.</span>
+        <span class="lfig">288<sub>%</sub></span>
+      </div>
+      <div class="lrow reveal" data-d="2">
+        <span class="lnum">03</span>
+        <span class="llabel">Years as Webflow Enterprise Partner</span>
+        <span class="lfoot">Among the longest-standing enterprise partners building production B2B SaaS sites.</span>
+        <span class="lfig">4<sub>+ YRS</sub></span>
+      </div>
+      <div class="lrow reveal" data-d="3">
+        <span class="lnum">04</span>
+        <span class="llabel">Average time to launch</span>
+        <span class="lfoot">Working pages, not mockups — versus the 12–16 weeks typical of agency builds.</span>
+        <span class="lfig">&lt;6<sub>WKS</sub></span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================ TESTIMONIAL PULLQUOTE ============================ -->
+<section class="quote-sec sec">
+  <div class="wrap">
+    <span class="framelabel reveal" style="margin-bottom:clamp(28px,3.5vw,44px);display:inline-flex"><span class="num">V</span>In Their Words</span>
+    <div class="quote-grid">
+      <div class="reveal" data-d="1">
+        <blockquote class="bigquote">
+          <span class="mark">“</span>We are extremely happy with the landing page LoudFace built for us in Webflow.
+          The team's <span class="hl">expertise and attention to detail</span> were evident from the start —
+          and we began receiving results almost immediately.<span class="mark">”</span>
+        </blockquote>
+        <div class="quote-by">
+          <img class="av" src="https://cdn.sanity.io/images/xjjjqhgt/production/8e1d16ee7901b68310fb048d6c3f929d6f2fbe88-886x183.png" alt="" style="object-fit:contain;background:#fff;padding:8px">
+          <div class="who">
+            <div class="nm">Daan Smit</div>
+            <div class="ro">CEO &amp; Founder, Brandfirm</div>
+          </div>
+        </div>
+      </div>
+
+      <aside class="quote-aside reveal" data-d="2">
+        <div class="mini">
+          <p>“I received excellent help and service from LoudFace — super-fast responses, completely according to my wishes. I got to shape every part of the website.”</p>
+          <div class="who">Cajsa Olsson · Countive</div>
+        </div>
+        <div class="mini">
+          <p>“It was very refreshing working with you compared to the other agencies we work with.”</p>
+          <div class="who">Anthony Dean · Radisson Hotels</div>
+        </div>
+        <div class="mini">
+          <p>“LoudFace really stood out with their let's-get-this-done attitude. We felt like a partner rather than a client.”</p>
+          <div class="who">Elizabete · Reiterate</div>
+        </div>
+      </aside>
+    </div>
+  </div>
+</section>
+
+<!-- ============================ BEST FOR / NOT FOR ============================ -->
+<section class="sec">
+  <div class="wrap">
+    <div class="sechead reveal">
+      <div class="l">
+        <span class="framelabel"><span class="num">VI</span>The Fit Test</span>
+        <h2>Built for some teams. <span class="it">Honestly, not for others.</span></h2>
+      </div>
+    </div>
+
+    <div class="fit-grid">
+      <div class="fitcard yes reveal" data-d="1">
+        <div class="ttl">
+          <span class="badge"><svg width="15" height="15" viewBox="0 0 16 16" fill="none"><path d="M3.5 8.5L6.5 11.5L12.5 4.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+          Built for SaaS teams who <span class="it">&nbsp;…</span>
+        </div>
+        <ul class="fitlist">
+          <li><span class="ic"><svg width="17" height="17" viewBox="0 0 16 16" fill="none"><path d="M3.5 8.5L6.5 11.5L12.5 4.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>Want one team to build the site <em>and</em> grow the traffic</li>
+          <li><span class="ic"><svg width="17" height="17" viewBox="0 0 16 16" fill="none"><path d="M3.5 8.5L6.5 11.5L12.5 4.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>Need marketing to edit pages without a dev sprint</li>
+          <li><span class="ic"><svg width="17" height="17" viewBox="0 0 16 16" fill="none"><path d="M3.5 8.5L6.5 11.5L12.5 4.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>Care about showing up in AI search, not just Google</li>
+          <li><span class="ic"><svg width="17" height="17" viewBox="0 0 16 16" fill="none"><path d="M3.5 8.5L6.5 11.5L12.5 4.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>Measure a website by pipeline, not by how it looks</li>
+        </ul>
+      </div>
+
+      <div class="fitcard no reveal" data-d="2">
+        <div class="ttl">
+          <span class="badge"><svg width="13" height="13" viewBox="0 0 16 16" fill="none"><path d="M4 4L12 12M12 4L4 12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></span>
+          Not the right fit if you <span class="it">&nbsp;…</span>
+        </div>
+        <ul class="fitlist">
+          <li><span class="ic"><svg width="15" height="15" viewBox="0 0 16 16" fill="none"><path d="M4 4L12 12M12 4L4 12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></span>Want the cheapest template, shipped and forgotten</li>
+          <li><span class="ic"><svg width="15" height="15" viewBox="0 0 16 16" fill="none"><path d="M4 4L12 12M12 4L4 12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></span>Need a logo and a brand book, but no website</li>
+          <li><span class="ic"><svg width="15" height="15" viewBox="0 0 16 16" fill="none"><path d="M4 4L12 12M12 4L4 12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></span>Expect overnight rankings with no content investment</li>
+          <li><span class="ic"><svg width="15" height="15" viewBox="0 0 16 16" fill="none"><path d="M4 4L12 12M12 4L4 12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></span>Want a vendor to take orders, not a partner to push back</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================ PROCESS TIMELINE ============================ -->
+<section class="sec">
+  <div class="wrap">
+    <div class="sechead reveal">
+      <div class="l">
+        <span class="framelabel"><span class="num">VII</span>The Engagement</span>
+        <h2>How an engagement <span class="it">works.</span></h2>
+        <p>Week 0 to Month 3 and beyond — read it like a schedule, because that's how we run it.</p>
+      </div>
+    </div>
+
+    <div class="proc-table">
+      <div class="prow reveal">
+        <div class="pstage">
+          <span class="nm">Strategy <span class="it">call</span></span>
+        </div>
+        <p class="pdesc">Thirty minutes. You tell us what's broken. We tell you honestly if we're a fit — scope and timeline land within 48 hours.</p>
+        <span class="pwhen">Week 0 <span class="marker"></span></span>
+      </div>
+      <div class="prow reveal" data-d="1">
+        <div class="pstage">
+          <span class="nm">Design <span class="it">and build</span></span>
+        </div>
+        <p class="pdesc">Positioning, copy, design, and Webflow in parallel. Working pages, not mockups. CMS access from week two.</p>
+        <span class="pwhen">Weeks 1–6 <span class="marker"></span></span>
+      </div>
+      <div class="prow reveal" data-d="2">
+        <div class="pstage">
+          <span class="nm">Launch <span class="it">and measure</span></span>
+        </div>
+        <p class="pdesc">Launch, analytics, and baseline metrics that connect directly to pipeline — not vanity dashboards.</p>
+        <span class="pwhen">Weeks 6–8 <span class="marker"></span></span>
+      </div>
+      <div class="prow reveal" data-d="3">
+        <div class="pstage">
+          <span class="nm">Grow <span class="it">and optimize</span></span>
+        </div>
+        <p class="pdesc">SEO, AEO, CRO. A monthly report: what we did, what moved, and what's next.</p>
+        <span class="pwhen">Month 3+ <span class="marker"></span></span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================ TEAM (DUOTONE) ============================ -->
+<section class="team-sec sec">
+  <div class="wrap">
+    <div class="sechead reveal">
+      <div class="l">
+        <span class="eyebrow"><span class="dot"></span>The Studio</span>
+        <h2>A small team that <span class="it">ships, then grows it.</span></h2>
+        <p>Six people who build the site and run the growth — the same hands, start to finish.</p>
+      </div>
+    </div>
+
+    <div class="team-grid">
+      <figure class="tmember reveal">
+        <div class="pic"><img loading="lazy" src="https://cdn.sanity.io/images/xjjjqhgt/production/92dfd51e1f15a98227f6308a075c490ce52c05b4-1000x1000.png" alt="Arnel Bukva"></div>
+        <figcaption class="meta"><div class="nm">Arnel Bukva</div><div class="ro">Founder &amp; Head of Growth</div></figcaption>
+      </figure>
+      <figure class="tmember reveal" data-d="1">
+        <div class="pic"><img loading="lazy" src="https://cdn.sanity.io/images/xjjjqhgt/production/9f087894f494f5e4082b429553c9ce52d55f7189-845x1024.png" alt="David Dobrijevic"></div>
+        <figcaption class="meta"><div class="nm">David Dobrijevic</div><div class="ro">Webflow Expert</div></figcaption>
+      </figure>
+      <figure class="tmember reveal" data-d="2">
+        <div class="pic"><img loading="lazy" src="https://cdn.sanity.io/images/xjjjqhgt/production/9bab7f300e2b3bd8af884c9ff8b40f0154f4a804-512x512.png" alt="Andrej Vidovic"></div>
+        <figcaption class="meta"><div class="nm">Andrej Vidovic</div><div class="ro">SEO / AEO Content Expert</div></figcaption>
+      </figure>
+      <figure class="tmember reveal" data-d="3">
+        <div class="pic"><img loading="lazy" src="https://cdn.sanity.io/images/xjjjqhgt/production/6319483485f60a53a65fc16888ea479b53f8743c-512x512.png" alt="Tamara Pavlovic"></div>
+        <figcaption class="meta"><div class="nm">Tamara Pavlovic</div><div class="ro">Project Manager</div></figcaption>
+      </figure>
+      <figure class="tmember reveal" data-d="4">
+        <div class="pic"><img loading="lazy" src="https://cdn.sanity.io/images/xjjjqhgt/production/dae3a1cb73008da8a30dea184a9b9318cbd4496f-512x512.jpg" alt="Rezwan Nahid"></div>
+        <figcaption class="meta"><div class="nm">Rezwan Nahid</div><div class="ro">Designer</div></figcaption>
+      </figure>
+      <figure class="tmember reveal" data-d="4">
+        <div class="pic"><img loading="lazy" src="https://cdn.sanity.io/images/xjjjqhgt/production/488b75c60e51af983569f45f06d91017c41543b7-512x512.jpg" alt="Andrea Van Wyk"></div>
+        <figcaption class="meta"><div class="nm">Andrea Van Wyk</div><div class="ro">Lead Copywriter</div></figcaption>
+      </figure>
+    </div>
+  </div>
+</section>
+
+<!-- ============================ KNOWLEDGE STRIP ============================ -->
+<section class="know" id="blog">
+  <div class="wrap">
+    <div class="l reveal">
+      <h3>Playbooks for <span class="it">SaaS marketing teams.</span></h3>
+      <p>Tactical writing on SaaS websites, SEO, conversion, and growth — the same thinking we apply to client work.</p>
+    </div>
+    <a href="#blog-all" class="pill reveal" data-d="1">Read the playbooks <span class="arr">→</span></a>
+  </div>
+</section>
+
+<!-- ============================ CLOSING CTA ============================ -->
+<section class="close" id="book">
+  <div class="close-rules" aria-hidden="true"></div>
+  <div class="wrap">
+    <div class="close-inner">
+      <span class="eyebrow reveal"><span class="dot"></span>The Last Word</span>
+      <h2 class="reveal" data-d="1">Let's figure out <span class="it">what's holding your site back.</span></h2>
+      <p class="csub reveal" data-d="2">
+        A 30-minute strategy call. No pitch deck. We'll look at your site together and tell you
+        what we'd change — and exactly why.
+      </p>
+      <div class="close-cta reveal" data-d="3">
+        <a href="#book" class="pill onink">Book a strategy call <span class="arr">→</span></a>
+        <span class="meta">2 client slots open for Q2</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================ FOOTER ============================ -->
+<footer>
+  <div class="wrap">
+    <div class="foot-top">
+      <div class="foot-brand">
+        <img src="loudface-inversed.svg" alt="LoudFace">
+        <p>The conversion and organic growth team behind 200+ B2B SaaS websites. We build it, then we grow it.</p>
+        <div class="tag">B2B SaaS · Webflow Enterprise Partner · Since 2020</div>
+      </div>
+      <div class="foot-col">
+        <h4>Services</h4>
+        <ul>
+          <li><a href="#">Webflow Development</a></li>
+          <li><a href="#">UX / UI Design</a></li>
+          <li><a href="#">Technical SEO</a></li>
+          <li><a href="#">AI Engine Optimization</a></li>
+          <li><a href="#">Conversion Optimization</a></li>
+        </ul>
+      </div>
+      <div class="foot-col">
+        <h4>Company</h4>
+        <ul>
+          <li><a href="#work">Work</a></li>
+          <li><a href="#about">About</a></li>
+          <li><a href="#blog">Blog</a></li>
+          <li><a href="#book">Strategy Call</a></li>
+          <li><a href="#ai">What AI Says</a></li>
+        </ul>
+      </div>
+      <div class="foot-col">
+        <h4>Connect</h4>
+        <ul>
+          <li><a href="#">LinkedIn <span class="ext"><svg width="11" height="11" viewBox="0 0 12 12" fill="none"><path d="M3 9L9 3M9 3H4M9 3V8" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg></span></a></li>
+          <li><a href="#">X / Twitter <span class="ext"><svg width="11" height="11" viewBox="0 0 12 12" fill="none"><path d="M3 9L9 3M9 3H4M9 3V8" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg></span></a></li>
+          <li><a href="#">hello@loudface.co</a></li>
+          <li><a href="#book">Book a call</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="foot-bot">
+      <span class="cp">© 2026 <b>LoudFace</b>. The Studio Report. All rights reserved.</span>
+      <div class="lf">
+        <a href="#">Privacy</a>
+        <a href="#">Terms</a>
+        <a href="#">Sitemap</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script>
+(function(){
+  "use strict";
+  var reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  /* ---------- TRUST MARQUEE (real logos) ---------- */
+  var logos = [
+    ["Hoxhunt","https://cdn.sanity.io/images/xjjjqhgt/production/2916b66c3352d3932990dd7b7052901ae1078d04-845x178.png"],
+    ["LIQID","https://cdn.sanity.io/images/xjjjqhgt/production/bf5fa13f7566496f48caf6e20a73ca612ced0291-619x202.png"],
+    ["Dimer Health","https://cdn.sanity.io/images/xjjjqhgt/production/bdd109e13c67dad916c89a42c71d67c3ba0b217e-680x233.png"],
+    ["Radisson","https://cdn.sanity.io/images/xjjjqhgt/production/90fcd30f2058c1975d25c315ccef475997d07461-836x203.png"],
+    ["Brandfirm","https://cdn.sanity.io/images/xjjjqhgt/production/8e1d16ee7901b68310fb048d6c3f929d6f2fbe88-886x183.png"],
+    ["Eraser","https://cdn.sanity.io/images/xjjjqhgt/production/86cefc1d66ac01f9a48a5722d54579ad638eb575-724x106.png"],
+    ["Reiterate","https://cdn.sanity.io/images/xjjjqhgt/production/bbea1aa498a036d20ca5eb0f4777fb1a9dd12016-929x110.png"],
+    ["Ceipal","https://cdn.sanity.io/images/xjjjqhgt/production/5139fa977e892fe5854a9dea4976ce056fec88d5-820x269.png"],
+    ["Seamless AI","https://cdn.sanity.io/images/xjjjqhgt/production/d21e5758cf17fd620251a0352a90352beee26a5f-2612x554.webp"],
+    ["Speckle","https://cdn.sanity.io/images/xjjjqhgt/production/e2d6029d82c468cbd31b76bf72aea6a6d468fe3c-672x217.png"],
+    ["Draw Things","https://cdn.sanity.io/images/xjjjqhgt/production/2f486497d33dd29a431377f3f8703571823f3646-868x202.png"],
+    ["Outbound Specialist","https://cdn.sanity.io/images/xjjjqhgt/production/d98435922c91b37ae3a19ee3f52b17d5a07b311b-1000x400.png"],
+    ["CodeOp","https://cdn.sanity.io/images/xjjjqhgt/production/1a063792eea014820391406ad70d029f2d8422d0-692x170.png"],
+    ["Viaduct","https://cdn.sanity.io/images/xjjjqhgt/production/57a1d5dd25daa13a34e0888331efd47c05cb7111-748x140.png"]
+  ];
+  var track = document.getElementById("trustTrack");
+  if(track){
+    var html = "";
+    for(var pass=0; pass<2; pass++){
+      for(var i=0;i<logos.length;i++){
+        html += '<img src="'+logos[i][1]+'" alt="'+logos[i][0]+'" loading="lazy">';
+      }
+    }
+    track.innerHTML = html;
+  }
+
+  /* ---------- NETWORK ARC (real logos on an orbit) ---------- */
+  var arcLogos = [
+    ["Hoxhunt","https://cdn.sanity.io/images/xjjjqhgt/production/2916b66c3352d3932990dd7b7052901ae1078d04-845x178.png"],
+    ["LIQID","https://cdn.sanity.io/images/xjjjqhgt/production/bf5fa13f7566496f48caf6e20a73ca612ced0291-619x202.png"],
+    ["Dimer","https://cdn.sanity.io/images/xjjjqhgt/production/bdd109e13c67dad916c89a42c71d67c3ba0b217e-680x233.png"],
+    ["Radisson","https://cdn.sanity.io/images/xjjjqhgt/production/90fcd30f2058c1975d25c315ccef475997d07461-836x203.png"],
+    ["Eraser","https://cdn.sanity.io/images/xjjjqhgt/production/86cefc1d66ac01f9a48a5722d54579ad638eb575-724x106.png"],
+    ["Brandfirm","https://cdn.sanity.io/images/xjjjqhgt/production/8e1d16ee7901b68310fb048d6c3f929d6f2fbe88-886x183.png"],
+    ["Ceipal","https://cdn.sanity.io/images/xjjjqhgt/production/5139fa977e892fe5854a9dea4976ce056fec88d5-820x269.png"],
+    ["Reiterate","https://cdn.sanity.io/images/xjjjqhgt/production/bbea1aa498a036d20ca5eb0f4777fb1a9dd12016-929x110.png"],
+    ["Speckle","https://cdn.sanity.io/images/xjjjqhgt/production/e2d6029d82c468cbd31b76bf72aea6a6d468fe3c-672x217.png"]
+  ];
+  var arc = document.getElementById("arcNodes");
+  if(arc){
+    // Arc path is: M40 430 A 540 540 0 0 1 960 430 (endpoints + radius).
+    // Recover the true circle center so nodes ride the SAME visible arc.
+    var ax0=40, ay0=430, ax1=960, ay1=430, R=540;
+    var mxC=(ax0+ax1)/2, myC=(ay0+ay1)/2;            // chord midpoint = (500,430)
+    var half=Math.hypot(ax1-ax0,ay1-ay0)/2;          // half chord = 460
+    var h=Math.sqrt(Math.max(0,R*R-half*half));      // center offset from chord = sqrt(540^2-460^2)
+    var cx=mxC, cy=myC + h;                           // center sits BELOW the chord (sweep flag 1)
+    var aStart=Math.atan2(ay0-cy, ax0-cx);           // angle to left endpoint
+    var aEnd=Math.atan2(ay1-cy, ax1-cx);             // angle to right endpoint
+    var n=arcLogos.length;
+    var convergeX=500, convergeY=352;                // converge point just above the figure
+    var svgns="http://www.w3.org/2000/svg";
+    // inset the endpoints slightly so nodes don't sit at the very tips
+    var pad=0.06;
+    var frag = document.createDocumentFragment();
+    for(var k=0;k<n;k++){
+      var t = n===1?0.5:(pad + (1-2*pad)*(k/(n-1)));
+      var ang = aStart + (aEnd-aStart)*t;
+      var x = cx + R*Math.cos(ang);
+      var y = cy + R*Math.sin(ang);
+      var live = (k===Math.floor(n/2)); // highlight one node indigo
+      // connecting line to converge point
+      var line=document.createElementNS(svgns,"path");
+      var mx=(x+convergeX)/2, my=Math.min(y,convergeY)-26;
+      line.setAttribute("d","M"+x+" "+y+" Q "+mx+" "+my+" "+convergeX+" "+convergeY);
+      line.setAttribute("class","arc-node-line draw"+(live?" live":""));
+      line.setAttribute("pathLength","1");
+      line.style.transitionDelay=(0.5+k*0.06)+"s";
+      frag.appendChild(line);
+      // chip
+      var rw=58, rh=34;
+      var rect=document.createElementNS(svgns,"rect");
+      rect.setAttribute("x",x-rw/2); rect.setAttribute("y",y-rh/2);
+      rect.setAttribute("width",rw); rect.setAttribute("height",rh);
+      rect.setAttribute("rx","3");
+      rect.setAttribute("class","arc-logo-chip"+(live?" live":""));
+      frag.appendChild(rect);
+      // logo image inside chip
+      var img=document.createElementNS(svgns,"image");
+      var iw=40, ih=18;
+      img.setAttributeNS("http://www.w3.org/1999/xlink","href",arcLogos[k][1]);
+      img.setAttribute("href",arcLogos[k][1]);
+      img.setAttribute("x",x-iw/2); img.setAttribute("y",y-ih/2);
+      img.setAttribute("width",iw); img.setAttribute("height",ih);
+      img.setAttribute("preserveAspectRatio","xMidYMid meet");
+      img.style.filter="grayscale(1) contrast(1.05) brightness(.4)";
+      img.style.opacity="0.85";
+      frag.appendChild(img);
+    }
+    arc.appendChild(frag);
+  }
+
+  /* ---------- TOKU CHART ---------- */
+  (function(){
+    var pts = [["Sep",23],["Oct",34],["Nov",46],["Dec",62],["Jan",100]];
+    var x0=70, x1=520, yTop=40, yBot=258;
+    var n=pts.length;
+    function X(i){ return x0 + (x1-x0)*(i/(n-1)); }
+    function Y(v){ return yBot - (yBot-yTop)*(v/100); }
+    var d="", area="M"+X(0)+" "+yBot;
+    for(var i=0;i<n;i++){
+      d += (i===0?"M":"L")+X(i)+" "+Y(pts[i][1])+" ";
+      area += "L"+X(i)+" "+Y(pts[i][1])+" ";
+    }
+    area += "L"+X(n-1)+" "+yBot+" Z";
+    var line=document.getElementById("tokuLine");
+    var areaEl=document.getElementById("tokuArea");
+    if(line) line.setAttribute("d",d.trim());
+    if(areaEl) areaEl.setAttribute("d",area);
+    var nodes=document.getElementById("tokuNodes");
+    if(nodes){
+      var svgns="http://www.w3.org/2000/svg", frag=document.createDocumentFragment();
+      for(var j=0;j<n;j++){
+        var cxN=X(j), cyN=Y(pts[j][1]), last=(j===n-1);
+        var c=document.createElementNS(svgns,"circle");
+        c.setAttribute("cx",cxN); c.setAttribute("cy",cyN); c.setAttribute("r",last?5:3.4);
+        c.setAttribute("fill",last?"#6366F1":"#0D0D14");
+        c.setAttribute("stroke",last?"#fff":"#A5A8FF");
+        c.setAttribute("stroke-width",last?2:1.6);
+        frag.appendChild(c);
+        // month label
+        var t=document.createElementNS(svgns,"text");
+        t.setAttribute("x",cxN); t.setAttribute("y",284); t.setAttribute("text-anchor","middle");
+        t.setAttribute("fill","rgba(255,255,255,.5)"); t.setAttribute("font-size","11");
+        t.setAttribute("font-weight","600"); t.setAttribute("font-family","var(--disp)");
+        t.textContent=pts[j][0];
+        frag.appendChild(t);
+        // value label on last point
+        if(last){
+          var v=document.createElementNS(svgns,"text");
+          v.setAttribute("x",cxN); v.setAttribute("y",cyN-14); v.setAttribute("text-anchor","middle");
+          v.setAttribute("fill","#A5A8FF"); v.setAttribute("font-size","13");
+          v.setAttribute("font-weight","700"); v.setAttribute("font-family","var(--disp)");
+          v.textContent="100";
+          frag.appendChild(v);
+        }
+      }
+      nodes.appendChild(frag);
+    }
+  })();
+
+  /* ---------- REVEAL + DRAW on scroll ---------- */
+  if(reduce){
+    document.querySelectorAll(".reveal").forEach(function(e){e.classList.add("in")});
+    document.querySelectorAll(".draw").forEach(function(e){e.classList.add("in")});
+    var ta=document.getElementById("tokuArea"); if(ta) ta.setAttribute("opacity","1");
+  } else {
+    var io=new IntersectionObserver(function(entries){
+      entries.forEach(function(en){
+        if(en.isIntersecting){
+          en.target.classList.add("in");
+          // when chart enters, fade in area
+          if(en.target.classList.contains("chartbox")){
+            var ta=document.getElementById("tokuArea");
+            if(ta){ ta.style.transition="opacity 1.2s var(--ease-out) .4s"; ta.setAttribute("opacity","1"); }
+          }
+          io.unobserve(en.target);
+        }
+      });
+    },{threshold:0.16, rootMargin:"0px 0px -8% 0px"});
+    document.querySelectorAll(".reveal").forEach(function(e){io.observe(e)});
+
+    // draw paths (chart line + arc lines) when their container reveals
+    var drawIO=new IntersectionObserver(function(entries){
+      entries.forEach(function(en){
+        if(en.isIntersecting){
+          en.target.querySelectorAll(".draw").forEach(function(p){p.classList.add("in")});
+          drawIO.unobserve(en.target);
+        }
+      });
+    },{threshold:0.12});
+    document.querySelectorAll(".chartbox, .arcwrap").forEach(function(e){drawIO.observe(e)});
+  }
+
+  /* ---------- mobile burger (simple anchor scroll, links already present) ---------- */
+  var burger=document.querySelector(".burger");
+  if(burger){
+    burger.addEventListener("click",function(){
+      var t=document.getElementById("about");
+      if(t) t.scrollIntoView({behavior:reduce?"auto":"smooth"});
+    });
+  }
+
+  /* ---------- work rows: log slug (mock click) ---------- */
+  document.querySelectorAll(".wrow").forEach(function(r){
+    r.addEventListener("click",function(e){e.preventDefault();});
+  });
+})();
+</script>
+</body>
+</html>

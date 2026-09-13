@@ -1,0 +1,630 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LoudFace — One team builds it, the same team grows it</title>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preconnect" href="https://api.fontshare.com" crossorigin>
+<link href="fonts.css" rel="stylesheet">
+<link href="https://api.fontshare.com/v2/css?f[]=clash-display@400,500,600,700&f[]=general-sans@400,500,600&f[]=cabinet-grotesk@400,500,700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..700&family=Geist:wght@400;500;600&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+<style>
+:root{
+  --display:'Bricolage Grotesque',system-ui,sans-serif;
+  --body:'Geist',system-ui,sans-serif;
+  --serif:'Instrument Serif',Georgia,serif;
+  --mono:'Geist Mono',ui-monospace,monospace;
+  --ink:#0F1413; --ink-2:#3A4441; --ink-3:#5E6864;
+  --hair:#E8E7E1; --hair-2:#F0EFE9;
+  --paper:#FCFCFB; --paper-2:#F5F4F0; --white:#FFFFFF;
+  --primary:#4F46E5; --primary-2:#6E73FF; --primary-soft:#EEF0FF;
+  --build:#EA580C; --grow:#4F46E5;
+  --ease:cubic-bezier(.2,.7,.2,1);
+  --shadow-1:0 1px 2px rgba(15,20,19,.04), 0 2px 6px rgba(15,20,19,.05);
+  --shadow-2:0 2px 4px rgba(15,20,19,.05), 0 8px 24px rgba(15,20,19,.08);
+  --shadow-3:0 4px 8px rgba(15,20,19,.06), 0 18px 48px rgba(15,20,19,.12);
+  --r:16px; --r-sm:12px; --r-lg:22px;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  font-family:var(--body);
+  background:var(--paper);
+  color:var(--ink);
+  -webkit-font-smoothing:antialiased;
+  text-rendering:optimizeLegibility;
+  line-height:1.5;
+  overflow-x:hidden;
+}
+h1,h2,h3,h4{font-family:var(--display);font-weight:500;letter-spacing:-.025em;line-height:1.02}
+i.s{font-family:var(--serif);font-style:italic;color:var(--primary);font-weight:400;letter-spacing:-.01em}
+a{color:inherit;text-decoration:none}
+img{display:block;max-width:100%}
+.mono{font-family:var(--mono);font-feature-settings:"tnum" 1}
+.wrap{max-width:1240px;margin:0 auto;padding:0 28px}
+:focus-visible{outline:2px solid var(--primary);outline-offset:2px;border-radius:6px}
+
+/* ===== entrance motion ===== */
+.rise{opacity:0;transform:translateY(18px);filter:blur(6px);transition:opacity .9s var(--ease),transform .9s var(--ease),filter .9s var(--ease)}
+.rise.in{opacity:1;transform:none;filter:none}
+.d1{transition-delay:.06s}.d2{transition-delay:.12s}.d3{transition-delay:.18s}
+.d4{transition-delay:.24s}.d5{transition-delay:.30s}.d6{transition-delay:.36s}
+
+/* ===== nav ===== */
+.nav{position:sticky;top:0;z-index:60;background:rgba(252,252,251,.82);backdrop-filter:blur(14px) saturate(1.4);border-bottom:1px solid var(--hair)}
+.nav-in{display:flex;align-items:center;justify-content:space-between;height:68px}
+.brand{display:flex;align-items:center;gap:11px;font-family:var(--display);font-weight:600;font-size:19px;letter-spacing:-.03em}
+.brand .dot{width:26px;height:26px;border-radius:8px;background:var(--ink);display:grid;place-items:center;color:var(--paper);font-size:13px;font-weight:700;font-family:var(--mono)}
+.nav-links{display:flex;align-items:center;gap:30px}
+.nav-links a{font-size:14.5px;color:var(--ink-2);font-weight:500;transition:color .2s var(--ease)}
+.nav-links a:hover{color:var(--ink)}
+.btn{display:inline-flex;align-items:center;gap:8px;font-family:var(--body);font-weight:600;font-size:14.5px;border:none;cursor:pointer;border-radius:100px;padding:11px 20px;transition:transform .18s var(--ease),box-shadow .2s var(--ease),background .2s var(--ease)}
+.btn:active{transform:scale(.97)}
+.btn-dark{background:var(--ink);color:var(--paper);box-shadow:var(--shadow-1)}
+.btn-dark:hover{box-shadow:var(--shadow-2);background:#1b2220}
+.btn-primary{background:var(--primary);color:#fff;box-shadow:0 2px 10px rgba(79,70,229,.28)}
+.btn-primary:hover{background:#4338ca;box-shadow:0 6px 20px rgba(79,70,229,.36)}
+.btn-ghost{background:var(--white);color:var(--ink);border:1px solid var(--hair);box-shadow:var(--shadow-1)}
+.btn-ghost:hover{border-color:#d8d7cf;box-shadow:var(--shadow-2)}
+.btn-lg{padding:15px 26px;font-size:15.5px}
+@media(max-width:840px){.nav-links{display:none}}
+
+/* ===== hero ===== */
+.hero{padding:64px 0 40px;position:relative}
+.hero-grid{display:grid;grid-template-columns:1.02fr .98fr;gap:54px;align-items:center}
+.pill{display:inline-flex;align-items:center;gap:9px;background:var(--white);border:1px solid var(--hair);border-radius:100px;padding:7px 14px 7px 11px;font-size:13px;font-weight:500;color:var(--ink-2);box-shadow:var(--shadow-1)}
+.pill .blink{width:8px;height:8px;border-radius:50%;background:var(--build);box-shadow:0 0 0 4px rgba(234,88,12,.16);animation:blink 2.6s var(--ease) infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.45}}
+h1.hero-h{font-size:clamp(40px,5.6vw,72px);margin:26px 0 0;letter-spacing:-.035em}
+h1.hero-h span{display:block}
+.hero-sub{font-size:18.5px;line-height:1.55;color:var(--ink-2);max-width:520px;margin:26px 0 0}
+.hero-cta{display:flex;align-items:center;gap:14px;margin:34px 0 0;flex-wrap:wrap}
+.watch{display:inline-flex;align-items:center;gap:11px;font-weight:600;font-size:14.5px;color:var(--ink);background:none;border:none;cursor:pointer;padding:8px 4px}
+.watch .pp{width:38px;height:38px;border-radius:50%;background:var(--white);border:1px solid var(--hair);display:grid;place-items:center;box-shadow:var(--shadow-1);transition:transform .2s var(--ease),box-shadow .2s var(--ease)}
+.watch:hover .pp{transform:scale(1.07);box-shadow:var(--shadow-2)}
+.watch .pp svg{margin-left:2px}
+.trust{margin:38px 0 0;display:flex;align-items:center;gap:14px;font-family:var(--mono);font-size:12px;color:var(--ink-3);letter-spacing:.01em;flex-wrap:wrap}
+.trust .sep{width:4px;height:4px;border-radius:50%;background:#cbcabf}
+
+/* hero mosaic */
+.mosaic{position:relative;display:grid;grid-template-columns:1fr 1fr;grid-template-rows:auto auto;gap:14px}
+.mtile{position:relative;border-radius:var(--r);overflow:hidden;border:1px solid var(--hair);box-shadow:var(--shadow-2);background:var(--paper-2)}
+.mtile img{width:100%;height:100%;object-fit:cover;object-position:top}
+.mtile.tall{grid-row:span 2;aspect-ratio:auto}
+.mtile .topbar{position:absolute;top:0;left:0;right:0;height:4px;z-index:2}
+.mtile .nm{position:absolute;left:11px;bottom:10px;z-index:2;font-family:var(--mono);font-size:11px;font-weight:500;color:#fff;background:rgba(15,20,19,.6);backdrop-filter:blur(4px);padding:4px 9px;border-radius:7px}
+.m-toku{aspect-ratio:1.5/1}
+.m-mont{aspect-ratio:1.5/1}
+.m-dimer{grid-column:1/-1}
+.m-dimer img{height:228px;object-position:top}
+.chip{position:absolute;z-index:5;background:var(--white);border:1px solid var(--hair);border-radius:13px;box-shadow:var(--shadow-3);padding:11px 14px}
+.chip .lbl{font-family:var(--mono);font-size:10px;color:var(--ink-3);letter-spacing:.06em;text-transform:uppercase}
+.chip .val{font-family:var(--display);font-weight:600;font-size:22px;letter-spacing:-.03em;margin-top:3px;display:block}
+.chip-1{top:-16px;right:-14px}.chip-1 .val{color:#1646CE}
+.chip-2{bottom:60px;left:-22px}.chip-2 .val{color:var(--build)}
+.chip-play{position:absolute;z-index:5;top:50%;left:50%;transform:translate(-50%,-50%);width:62px;height:62px;border-radius:50%;background:rgba(255,255,255,.92);backdrop-filter:blur(6px);border:1px solid rgba(255,255,255,.7);box-shadow:var(--shadow-3);display:grid;place-items:center;cursor:pointer;transition:transform .22s var(--ease)}
+.chip-play:hover{transform:translate(-50%,-50%) scale(1.08)}
+.vch{position:absolute;z-index:4;top:11px;right:11px;font-family:var(--mono);font-size:10px;letter-spacing:.04em;color:#fff;border:1px dashed rgba(255,255,255,.75);background:rgba(15,20,19,.4);backdrop-filter:blur(4px);padding:4px 9px;border-radius:7px}
+
+/* ===== section scaffolding ===== */
+section{position:relative}
+.sec{padding:80px 0}
+.sec-tight{padding:56px 0}
+.eyebrow-in{display:inline-flex;align-items:center;gap:8px;font-family:var(--mono);font-size:12px;letter-spacing:.04em;color:var(--ink-3)}
+.eyebrow-in .ic{width:7px;height:7px;border-radius:2px;background:var(--primary)}
+
+/* ===== logo proof (tiered grid) ===== */
+.proof{padding:54px 0 14px}
+.proof-head{display:flex;align-items:flex-end;justify-content:space-between;gap:24px;margin-bottom:26px;flex-wrap:wrap}
+.proof-head p{font-size:16px;color:var(--ink-2);max-width:460px}
+.proof-head h3{font-size:22px;letter-spacing:-.025em}
+.tier{margin-top:14px}
+.tier-label{font-family:var(--mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-3);margin-bottom:10px;padding-left:2px}
+.logo-row{display:grid;grid-template-columns:repeat(4,1fr);gap:0;border:1px solid var(--hair);border-radius:var(--r);overflow:hidden;background:var(--white)}
+.logo-cell{display:grid;place-items:center;padding:26px 22px;border-right:1px solid var(--hair-2);min-height:96px}
+.logo-cell:last-child{border-right:none}
+.logo-cell img{max-height:30px;width:auto;filter:grayscale(1);opacity:.5;transition:filter .3s var(--ease),opacity .3s var(--ease),transform .3s var(--ease)}
+.logo-cell:hover img{filter:grayscale(0);opacity:1;transform:scale(1.04)}
+@media(max-width:760px){.logo-row{grid-template-columns:repeat(2,1fr)}.logo-cell:nth-child(2n){border-right:none}}
+
+/* ===== build/grow bento ===== */
+.bg-title{font-size:clamp(32px,4.3vw,56px);letter-spacing:-.035em;max-width:880px;line-height:1.04}
+.cblock{display:inline-block;color:#fff;border-radius:14px;padding:.02em .28em .12em;line-height:1;position:relative;top:.04em}
+.cblock.build{background:var(--build)}
+.cblock.grow{background:var(--grow)}
+.bg-connect{font-family:var(--serif);font-style:italic;font-size:22px;line-height:1.4;color:var(--ink-2);max-width:560px;margin-top:18px}
+.bg-connect b{color:var(--primary);font-style:italic;font-weight:400}
+.bento{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:42px}
+.bcard{background:var(--white);border:1px solid var(--hair);border-radius:var(--r-lg);padding:30px;box-shadow:var(--shadow-1);position:relative;overflow:hidden;transition:box-shadow .3s var(--ease),transform .3s var(--ease)}
+.bcard:hover{box-shadow:var(--shadow-2);transform:translateY(-3px)}
+.bcard .track{display:flex;align-items:center;gap:10px;margin-bottom:16px}
+.bcard .tnum{font-family:var(--mono);font-size:12px;font-weight:500;color:var(--ink-3)}
+.bcard .tname{font-family:var(--mono);font-size:12px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;padding:4px 10px;border-radius:7px}
+.bcard.build .tname{background:rgba(234,88,12,.1);color:var(--build)}
+.bcard.grow .tname{background:var(--primary-soft);color:var(--primary)}
+.bcard h3{font-size:25px;letter-spacing:-.028em;margin-bottom:10px}
+.bcard p{font-size:15.5px;color:var(--ink-2);line-height:1.55;max-width:420px}
+.caps{display:flex;flex-wrap:wrap;gap:8px;margin-top:20px}
+.cap{font-family:var(--mono);font-size:11.5px;font-weight:500;color:var(--ink-2);background:var(--paper-2);border:1px solid var(--hair);border-radius:8px;padding:6px 11px}
+.bcard.build .build-shots{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:24px}
+.bcard.build .build-shots .sh{border-radius:11px;overflow:hidden;border:1px solid var(--hair);height:118px;box-shadow:var(--shadow-1)}
+.bcard.build .build-shots .sh img{width:100%;height:100%;object-fit:cover;object-position:top}
+.bcard.grow .grow-viz{margin-top:24px;background:var(--paper-2);border:1px solid var(--hair);border-radius:13px;padding:18px 18px 12px}
+.tiles{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:18px}
+.tile{background:var(--white);border:1px solid var(--hair);border-radius:var(--r);padding:22px;box-shadow:var(--shadow-1);transition:box-shadow .3s var(--ease)}
+.tile:hover{box-shadow:var(--shadow-2)}
+.tile .tk{font-family:var(--mono);font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-3)}
+.tile h4{font-size:18px;margin:8px 0 6px;letter-spacing:-.02em}
+.tile p{font-size:14px;color:var(--ink-2);line-height:1.5}
+
+/* ===== shipped rail ===== */
+.rail-sec{padding:74px 0;background:linear-gradient(180deg,var(--paper) 0%,var(--paper-2) 50%,var(--paper) 100%)}
+.rail-head{display:flex;align-items:flex-end;justify-content:space-between;gap:20px;margin-bottom:30px;flex-wrap:wrap}
+.rail-head h2{font-size:clamp(28px,3.6vw,42px);letter-spacing:-.03em}
+.rail-head h2 .s{font-size:.96em}
+.rail-marq{position:relative;overflow:hidden;-webkit-mask-image:linear-gradient(90deg,transparent,#000 5%,#000 95%,transparent);mask-image:linear-gradient(90deg,transparent,#000 5%,#000 95%,transparent)}
+.rail-track{display:flex;gap:20px;width:max-content;animation:rail 46s linear infinite;will-change:transform}
+.rail-marq:hover .rail-track{animation-play-state:paused}
+@keyframes rail{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+.rcard{width:340px;flex:0 0 340px;background:var(--white);border:1px solid var(--hair);border-radius:var(--r);overflow:hidden;box-shadow:var(--shadow-1);transition:transform .3s var(--ease),box-shadow .3s var(--ease)}
+.rcard:hover{transform:translateY(-4px);box-shadow:var(--shadow-3)}
+.rcard .cbar{height:5px}
+.rcard .shot{height:200px;overflow:hidden;background:var(--paper-2);border-bottom:1px solid var(--hair-2)}
+.rcard .shot img{width:100%;height:100%;object-fit:cover;object-position:top;transition:transform 6s var(--ease)}
+.rcard:hover .shot img{transform:scale(1.06)}
+.rcard .meta{padding:16px 18px 18px;display:flex;align-items:center;justify-content:space-between;gap:12px}
+.rcard .nm{font-family:var(--display);font-weight:600;font-size:17px;letter-spacing:-.02em}
+.rcard .tag{font-family:var(--mono);font-size:11px;color:var(--ink-3);margin-top:3px}
+.rcard .met{text-align:right}
+.rcard .met .v{font-family:var(--display);font-weight:600;font-size:20px;letter-spacing:-.03em}
+.rcard .met .k{font-family:var(--mono);font-size:10px;color:var(--ink-3);letter-spacing:.04em;text-transform:uppercase}
+
+/* ===== case feature ===== */
+.case{display:grid;grid-template-columns:1fr 1.08fr;gap:46px;align-items:center}
+.case.flip{grid-template-columns:1.08fr 1fr}
+.case.flip .case-text{order:2}
+.case-media{position:relative;border-radius:var(--r-lg);overflow:hidden;border:1px solid var(--hair);box-shadow:var(--shadow-3);background:var(--paper-2)}
+.case-media .topbar{position:absolute;top:0;left:0;right:0;height:5px;z-index:2}
+.case-media img{width:100%;object-fit:cover;object-position:top;display:block}
+.case-media.video{cursor:pointer}
+.case-media .scrim{position:absolute;inset:0;background:linear-gradient(180deg,rgba(15,20,19,.05),rgba(15,20,19,.5));z-index:1}
+.case-media .play{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:74px;height:74px;border-radius:50%;background:rgba(255,255,255,.94);box-shadow:var(--shadow-3);display:grid;place-items:center;z-index:3;transition:transform .22s var(--ease)}
+.case-media.video:hover .play{transform:translate(-50%,-50%) scale(1.08)}
+.case-media .vchip{position:absolute;top:14px;left:14px;z-index:3;font-family:var(--mono);font-size:10.5px;letter-spacing:.04em;color:#fff;border:1px dashed rgba(255,255,255,.8);background:rgba(15,20,19,.36);backdrop-filter:blur(4px);padding:5px 11px;border-radius:8px}
+.case-media .vcap{position:absolute;bottom:14px;left:14px;right:14px;z-index:3;font-size:13px;color:#fff;font-weight:500;text-shadow:0 1px 3px rgba(0,0,0,.4)}
+.case-accent{font-family:var(--mono);font-size:12px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;display:inline-flex;align-items:center;gap:9px}
+.case-accent .sw{width:11px;height:11px;border-radius:4px}
+.case-metric{font-family:var(--display);font-weight:600;font-size:clamp(48px,7vw,84px);letter-spacing:-.04em;line-height:.95;margin:18px 0 6px}
+.case h3{font-size:clamp(24px,3vw,33px);letter-spacing:-.03em;line-height:1.08;margin-bottom:14px}
+.case p{font-size:16px;color:var(--ink-2);line-height:1.6;max-width:460px}
+.case-tags{display:flex;gap:10px;margin-top:22px;flex-wrap:wrap}
+.case-tags span{font-family:var(--mono);font-size:11.5px;color:var(--ink-2);background:var(--white);border:1px solid var(--hair);border-radius:8px;padding:6px 12px;box-shadow:var(--shadow-1)}
+.case-link{display:inline-flex;align-items:center;gap:8px;margin-top:24px;font-weight:600;font-size:14.5px;color:var(--primary);transition:gap .2s var(--ease)}
+.case-link:hover{gap:13px}
+
+/* ===== testimonial + video testimonial ===== */
+.testi-grid{display:grid;grid-template-columns:1.25fr .75fr;gap:24px;align-items:stretch}
+.quote-card{background:var(--ink);color:var(--paper);border-radius:var(--r-lg);padding:44px;position:relative;overflow:hidden;display:flex;flex-direction:column;justify-content:space-between;box-shadow:var(--shadow-3)}
+.quote-card .mark{font-family:var(--serif);font-style:italic;font-size:120px;line-height:.6;color:rgba(110,115,255,.35);position:absolute;top:30px;right:34px}
+.quote-card blockquote{font-family:var(--display);font-weight:500;font-size:clamp(22px,2.7vw,31px);letter-spacing:-.025em;line-height:1.22;max-width:640px;position:relative;z-index:1}
+.quote-card blockquote i{font-family:var(--serif);font-style:italic;color:var(--primary-2);font-weight:400}
+.quote-by{display:flex;align-items:center;gap:14px;margin-top:34px}
+.quote-by img{width:50px;height:50px;border-radius:50%;object-fit:cover;border:2px solid rgba(255,255,255,.2)}
+.quote-by .n{font-weight:600;font-size:15px}
+.quote-by .r{font-family:var(--mono);font-size:12px;color:rgba(255,255,255,.55);margin-top:2px}
+.vtesti{position:relative;border-radius:var(--r-lg);overflow:hidden;border:1px solid var(--hair);box-shadow:var(--shadow-2);cursor:pointer;min-height:300px;background:var(--paper-2)}
+.vtesti img{width:100%;height:100%;object-fit:cover;position:absolute;inset:0}
+.vtesti .scrim{position:absolute;inset:0;background:linear-gradient(180deg,rgba(15,20,19,.1),rgba(15,20,19,.62));z-index:1}
+.vtesti .play{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:66px;height:66px;border-radius:50%;background:rgba(255,255,255,.94);box-shadow:var(--shadow-3);display:grid;place-items:center;z-index:3;transition:transform .22s var(--ease)}
+.vtesti:hover .play{transform:translate(-50%,-50%) scale(1.08)}
+.vtesti .vchip{position:absolute;top:13px;left:13px;z-index:3;font-family:var(--mono);font-size:10px;letter-spacing:.04em;color:#fff;border:1px dashed rgba(255,255,255,.8);background:rgba(15,20,19,.4);backdrop-filter:blur(4px);padding:4px 10px;border-radius:7px}
+.vtesti .vcap{position:absolute;bottom:14px;left:15px;right:15px;z-index:3;color:#fff}
+.vtesti .vcap .vn{font-weight:600;font-size:14px}
+.vtesti .vcap .vr{font-family:var(--mono);font-size:11px;color:rgba(255,255,255,.7);margin-top:2px}
+
+/* ===== stats ===== */
+.stats-sec{background:var(--ink);color:var(--paper);padding:72px 0}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:0}
+.stat{padding:8px 28px;border-left:1px solid rgba(255,255,255,.12)}
+.stat:first-child{border-left:none;padding-left:0}
+.stat .v{font-family:var(--display);font-weight:500;font-size:clamp(40px,5vw,60px);letter-spacing:-.04em;line-height:1}
+.stat .v .s{font-family:var(--serif);font-style:italic;color:var(--primary-2);font-weight:400}
+.stat .k{font-family:var(--mono);font-size:12px;color:rgba(255,255,255,.55);margin-top:14px;line-height:1.5;letter-spacing:.01em}
+@media(max-width:860px){.stats{grid-template-columns:repeat(2,1fr);gap:36px 0}.stat{padding:0 22px}.stat:nth-child(odd){border-left:none;padding-left:0}}
+
+/* ===== final cta ===== */
+.cta-sec{padding:100px 0}
+.cta-card{background:var(--white);border:1px solid var(--hair);border-radius:28px;padding:64px 56px;text-align:center;box-shadow:var(--shadow-3);position:relative;overflow:hidden;max-width:900px;margin:0 auto}
+.cta-card::before{content:"";position:absolute;inset:0;background:radial-gradient(120% 90% at 50% -10%,rgba(79,70,229,.07),transparent 60%);pointer-events:none}
+.cta-card h2{font-size:clamp(32px,4.6vw,56px);letter-spacing:-.035em;line-height:1.05;position:relative}
+.cta-card h2 i{font-family:var(--serif);font-style:italic;color:var(--primary);font-weight:400}
+.cta-card p{font-size:17px;color:var(--ink-2);max-width:520px;margin:22px auto 0;line-height:1.55;position:relative}
+.cta-card .btn{margin-top:34px;position:relative}
+
+/* ===== footer ===== */
+.foot{border-top:1px solid var(--hair);padding:44px 0 56px}
+.foot-in{display:flex;align-items:center;justify-content:space-between;gap:24px;flex-wrap:wrap}
+.foot .brand{font-size:16px}
+.foot-note{font-family:var(--mono);font-size:12px;color:var(--ink-3)}
+.foot-links{display:flex;gap:22px;font-size:14px;color:var(--ink-2)}
+.foot-links a:hover{color:var(--ink)}
+
+/* ===== responsive ===== */
+@media(max-width:980px){
+  .hero-grid{grid-template-columns:1fr;gap:44px}
+  .bento{grid-template-columns:1fr}
+  .tiles{grid-template-columns:1fr 1fr}
+  .case,.case.flip{grid-template-columns:1fr;gap:28px}
+  .case.flip .case-text{order:0}
+  .testi-grid{grid-template-columns:1fr}
+  .chip-2{left:-8px}
+}
+@media(max-width:560px){
+  .wrap{padding:0 18px}
+  .tiles{grid-template-columns:1fr}
+  .chip-1{right:-6px;top:-10px}
+  .stat .k{font-size:11px}
+  .cta-card{padding:44px 26px}
+  .bcard{padding:24px}
+}
+@media(prefers-reduced-motion:reduce){
+  *{scroll-behavior:auto!important}
+  .rise{opacity:1;transform:none;filter:none;transition:none}
+  .rail-track{animation:none}
+  .blink{animation:none}
+  .rcard:hover .shot img{transform:none}
+}
+</style>
+</head>
+<body>
+
+<!-- ===== NAV ===== -->
+<nav class="nav">
+  <div class="wrap nav-in">
+    <a class="brand" href="#"><span class="dot">LF</span>LoudFace</a>
+    <div class="nav-links">
+      <a href="#work">Work</a>
+      <a href="#approach">Build &amp; Grow</a>
+      <a href="#proof">Results</a>
+      <a href="#cta">Contact</a>
+    </div>
+    <a class="btn btn-dark" href="#cta">Book a call</a>
+  </div>
+</nav>
+
+<!-- ===== HERO ===== -->
+<header class="hero">
+  <div class="wrap hero-grid">
+    <div class="hero-text">
+      <span class="pill rise in"><span class="blink"></span>2 client slots open for Q3 2026</span>
+      <h1 class="hero-h rise d1">
+        <span>Your website converts.</span>
+        <span>Your traffic compounds.</span>
+        <span><i class="s">One team</i> runs both.</span>
+      </h1>
+      <p class="hero-sub rise d2">LoudFace is the conversion and organic-growth team behind 200+ B2B SaaS websites. We build on Webflow, then run SEO, AEO and CRO to grow what we shipped.</p>
+      <div class="hero-cta rise d3">
+        <a class="btn btn-primary btn-lg" href="#cta">Book your strategy call</a>
+        <button class="watch" type="button" aria-label="Watch the 90 second intro">
+          <span class="pp"><svg width="13" height="14" viewBox="0 0 13 14" fill="none"><path d="M0 0v14l13-7z" fill="#0F1413"/></svg></span>
+          Watch the 90-sec intro
+        </button>
+      </div>
+      <div class="trust rise d4">
+        <span>Webflow Enterprise Partner</span><span class="sep"></span>
+        <span>Shipping since 2020</span><span class="sep"></span>
+        <span>Series A+ SaaS</span>
+      </div>
+    </div>
+
+    <div class="mosaic rise d2">
+      <div class="mtile m-toku">
+        <span class="topbar" style="background:#1646CE"></span>
+        <img src="https://cdn.sanity.io/images/xjjjqhgt/production/bd1c09b494f7074c268f5b964d0c77dc1b1ef965-2880x1620.webp?w=900&h=600&fit=crop&crop=top&auto=format&q=85" alt="Toku stablecoin payroll website built by LoudFace" loading="eager">
+        <span class="nm">Toku · Fintech</span>
+      </div>
+      <div class="mtile m-mont video" role="button" tabindex="0" aria-label="Play studio reel">
+        <span class="topbar" style="background:#0F1413"></span>
+        <img src="https://cdn.sanity.io/images/xjjjqhgt/production/a9110ec997f7a351bb9b90347bef4abf6b6b02fc-3024x1890.jpg?w=900&h=600&fit=crop&crop=top&auto=format&q=85" alt="Montblanc enterprise website work" loading="eager">
+        <span class="vch">video placeholder · studio reel</span>
+        <span class="chip-play" aria-hidden="true"><svg width="16" height="18" viewBox="0 0 16 18" fill="none"><path d="M0 0v18l16-9z" fill="#0F1413"/></svg></span>
+        <span class="nm">Montblanc · Enterprise</span>
+      </div>
+      <div class="mtile m-dimer">
+        <span class="topbar" style="background:#4037A0"></span>
+        <img src="https://cdn.sanity.io/images/xjjjqhgt/production/a0f4750b896ced6ffca9c5869623b15614f312ba-1440x10131.webp?w=1200&h=440&fit=crop&crop=top&auto=format&q=85" alt="Dimer Health telehealth website rebuilt for conversion" loading="lazy">
+        <span class="nm">Dimer Health · Healthtech</span>
+      </div>
+      <span class="chip chip-1"><span class="lbl">Toku · AI visibility</span><span class="val">0 to 86%</span></span>
+      <span class="chip chip-2"><span class="lbl">Dimer · conversion rate</span><span class="val">+288%</span></span>
+    </div>
+  </div>
+</header>
+
+<!-- ===== LOGO PROOF (tiered grid) ===== -->
+<section class="proof" id="proof">
+  <div class="wrap">
+    <div class="proof-head rise">
+      <h3>Trusted across <i class="s">fintech, health and enterprise.</i></h3>
+      <p>The brands we build for ship fast and grow after launch — the same team owns both.</p>
+    </div>
+
+    <div class="tier rise d1">
+      <div class="tier-label">Fintech</div>
+      <div class="logo-row">
+        <div class="logo-cell"><img src="https://cdn.sanity.io/images/xjjjqhgt/production/6a79052d6d3db7428b73436f15350c87e0cefa3b-339x109.png?h=80&auto=format" alt="Toku"></div>
+        <div class="logo-cell"><img src="https://cdn.sanity.io/images/xjjjqhgt/production/bf5fa13f7566496f48caf6e20a73ca612ced0291-619x202.png?h=80&auto=format" alt="LIQID"></div>
+        <div class="logo-cell"><img src="https://cdn.sanity.io/images/xjjjqhgt/production/86cefc1d66ac01f9a48a5722d54579ad638eb575-724x106.png?h=80&auto=format" alt="Eraser"></div>
+        <div class="logo-cell"><img src="https://cdn.sanity.io/images/xjjjqhgt/production/d21e5758cf17fd620251a0352a90352beee26a5f-2612x554.webp?h=80&auto=format" alt="Seamless AI"></div>
+      </div>
+    </div>
+
+    <div class="tier rise d2">
+      <div class="tier-label">Healthtech &amp; security</div>
+      <div class="logo-row">
+        <div class="logo-cell"><img src="https://cdn.sanity.io/images/xjjjqhgt/production/bdd109e13c67dad916c89a42c71d67c3ba0b217e-680x233.png?h=80&auto=format" alt="Dimer Health"></div>
+        <div class="logo-cell"><img src="https://cdn.sanity.io/images/xjjjqhgt/production/2916b66c3352d3932990dd7b7052901ae1078d04-845x178.png?h=80&auto=format" alt="Hoxhunt"></div>
+        <div class="logo-cell"><img src="https://cdn.sanity.io/images/xjjjqhgt/production/5139fa977e892fe5854a9dea4976ce056fec88d5-820x269.png?h=80&auto=format" alt="Ceipal"></div>
+        <div class="logo-cell"><img src="https://cdn.sanity.io/images/xjjjqhgt/production/90fcd30f2058c1975d25c315ccef475997d07461-836x203.png?h=80&auto=format" alt="Radisson"></div>
+      </div>
+    </div>
+
+    <div class="tier rise d3">
+      <div class="tier-label">Enterprise</div>
+      <div class="logo-row">
+        <div class="logo-cell"><img src="https://cdn.sanity.io/images/xjjjqhgt/production/7421bda16647889739dd725fe4967e45b42dd4c5-997x139.png?h=80&auto=format" alt="Montblanc"></div>
+        <div class="logo-cell"><img src="https://cdn.sanity.io/images/xjjjqhgt/production/90fcd30f2058c1975d25c315ccef475997d07461-836x203.png?h=80&auto=format" alt="Radisson"></div>
+        <div class="logo-cell"><img src="https://cdn.sanity.io/images/xjjjqhgt/production/2916b66c3352d3932990dd7b7052901ae1078d04-845x178.png?h=80&auto=format" alt="Hoxhunt"></div>
+        <div class="logo-cell"><img src="https://cdn.sanity.io/images/xjjjqhgt/production/5139fa977e892fe5854a9dea4976ce056fec88d5-820x269.png?h=80&auto=format" alt="Ceipal"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== BUILD / GROW BENTO ===== -->
+<section class="sec" id="approach">
+  <div class="wrap">
+    <h2 class="bg-title rise">One team <span class="cblock build">builds</span> it.<br>The same team <span class="cblock grow">grows</span> it.</h2>
+    <p class="bg-connect rise d1">Most clients start with a build. Within three months, they ask us to handle growth too — <b>that's by design.</b></p>
+
+    <div class="bento">
+      <div class="bcard build rise d2">
+        <div class="track">
+          <span class="tnum">01</span>
+          <span class="tname">Build</span>
+        </div>
+        <h3>A website that earns its traffic</h3>
+        <p>Positioning, copy, UX/UI and production Webflow, shipped in weeks. Your marketing team runs it without filing engineering tickets.</p>
+        <div class="build-shots">
+          <div class="sh"><img src="https://cdn.sanity.io/images/xjjjqhgt/production/2a7d29fdc9302c8482d70b73041e6c58ec9229a6-1440x1845.webp?w=460&h=360&fit=crop&crop=top&auto=format&q=85" alt="Eraser website build by LoudFace" loading="lazy"></div>
+          <div class="sh"><img src="https://cdn.sanity.io/images/xjjjqhgt/production/b24a66ce0191bb3913ae1517bac7d4d327d42f3e-2880x1620.jpg?w=460&h=360&fit=crop&crop=top&auto=format&q=85" alt="BlockHorizon website build by LoudFace" loading="lazy"></div>
+        </div>
+        <div class="caps">
+          <span class="cap">UX/UI</span><span class="cap">Webflow</span>
+          <span class="cap">Conversion Copy</span><span class="cap">CMS</span>
+        </div>
+      </div>
+
+      <div class="bcard grow rise d3">
+        <div class="track">
+          <span class="tnum">02</span>
+          <span class="tname">Grow</span>
+        </div>
+        <h3>Traffic and conversions, month over month</h3>
+        <p>SEO for Google, AEO for the AI engines, CRO to convert it all. A team that knows your site inside out, because we built it.</p>
+        <div class="grow-viz">
+          <svg width="100%" height="116" viewBox="0 0 380 116" fill="none" preserveAspectRatio="none" role="img" aria-label="Compounding growth curve from launch to month six">
+            <defs>
+              <linearGradient id="gf" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0" stop-color="#4F46E5" stop-opacity=".18"/>
+                <stop offset="1" stop-color="#4F46E5" stop-opacity="0"/>
+              </linearGradient>
+            </defs>
+            <line x1="0" y1="30" x2="380" y2="30" stroke="#E8E7E1" stroke-width="1" stroke-dasharray="3 5"/>
+            <line x1="0" y1="62" x2="380" y2="62" stroke="#E8E7E1" stroke-width="1" stroke-dasharray="3 5"/>
+            <line x1="0" y1="94" x2="380" y2="94" stroke="#E8E7E1" stroke-width="1" stroke-dasharray="3 5"/>
+            <path d="M0 104 C70 100 120 92 175 70 C230 48 290 26 380 8 L380 116 L0 116 Z" fill="url(#gf)"/>
+            <path d="M0 104 C70 100 120 92 175 70 C230 48 290 26 380 8" stroke="#4F46E5" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+            <circle cx="380" cy="8" r="4.5" fill="#4F46E5" stroke="#fff" stroke-width="2"/>
+          </svg>
+          <div style="display:flex;justify-content:space-between;font-family:var(--mono);font-size:10.5px;color:var(--ink-3);letter-spacing:.04em;margin-top:2px">
+            <span>Launch</span><span>Month 3</span><span>Month 6</span>
+          </div>
+        </div>
+        <div class="caps">
+          <span class="cap">Technical SEO</span><span class="cap">AEO</span>
+          <span class="cap">Content</span><span class="cap">CRO</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="tiles">
+      <div class="tile rise d2">
+        <div class="tk">No handoff</div>
+        <h4>One contract, one team</h4>
+        <p>No re-briefing a growth agency on a site they didn't build. We already know every section and why it's there.</p>
+      </div>
+      <div class="tile rise d3">
+        <div class="tk">Built to be grown</div>
+        <h4>Structured for search day one</h4>
+        <p>Every build ships with the technical SEO and AEO scaffolding the growth work needs — no rework, no retrofit.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== SHIPPED RAIL ===== -->
+<section class="rail-sec" id="work">
+  <div class="wrap rail-head rise">
+    <h2>Shipped by <span class="s"><i class="s">LoudFace.</i></span></h2>
+    <a class="btn btn-ghost" href="#cta">See the full portfolio</a>
+  </div>
+  <div class="rail-marq" aria-label="Recent client websites">
+    <div class="rail-track" id="railTrack">
+      <!-- card set (duplicated by JS for seamless loop) -->
+      <article class="rcard">
+        <span class="cbar" style="background:#1646CE"></span>
+        <div class="shot"><img src="https://cdn.sanity.io/images/xjjjqhgt/production/bd1c09b494f7074c268f5b964d0c77dc1b1ef965-2880x1620.webp?w=720&h=460&fit=crop&crop=top&auto=format&q=85" alt="Toku website" loading="lazy"></div>
+        <div class="meta"><div><div class="nm">Toku</div><div class="tag">Fintech · Build → Grow</div></div><div class="met"><div class="v" style="color:#1646CE">0 to 86%</div><div class="k">AI visibility</div></div></div>
+      </article>
+      <article class="rcard">
+        <span class="cbar" style="background:#4037A0"></span>
+        <div class="shot"><img src="https://cdn.sanity.io/images/xjjjqhgt/production/a0f4750b896ced6ffca9c5869623b15614f312ba-1440x10131.webp?w=720&h=460&fit=crop&crop=top&auto=format&q=85" alt="Dimer Health website" loading="lazy"></div>
+        <div class="meta"><div><div class="nm">Dimer Health</div><div class="tag">Healthtech · 6 months</div></div><div class="met"><div class="v" style="color:#4037A0">+288%</div><div class="k">Conversion rate</div></div></div>
+      </article>
+      <article class="rcard">
+        <span class="cbar" style="background:#0F1413"></span>
+        <div class="shot"><img src="https://cdn.sanity.io/images/xjjjqhgt/production/a9110ec997f7a351bb9b90347bef4abf6b6b02fc-3024x1890.jpg?w=720&h=460&fit=crop&crop=top&auto=format&q=85" alt="Montblanc website" loading="lazy"></div>
+        <div class="meta"><div><div class="nm">Montblanc</div><div class="tag">Enterprise · Web</div></div><div class="met"><div class="v">Build</div><div class="k">Webflow</div></div></div>
+      </article>
+      <article class="rcard">
+        <span class="cbar" style="background:#16A34A"></span>
+        <div class="shot"><img src="https://cdn.sanity.io/images/xjjjqhgt/production/3ac92e2393c7a26dc96f737c27d7faf49fbe6243-1440x8455.jpg?w=720&h=460&fit=crop&crop=top&auto=format&q=85" alt="Hoxhunt website" loading="lazy"></div>
+        <div class="meta"><div><div class="nm">Hoxhunt</div><div class="tag">Security · Build → Grow</div></div><div class="met"><div class="v" style="color:#16A34A">Grow</div><div class="k">SEO + AEO</div></div></div>
+      </article>
+      <article class="rcard">
+        <span class="cbar" style="background:#EA580C"></span>
+        <div class="shot"><img src="https://cdn.sanity.io/images/xjjjqhgt/production/b24a66ce0191bb3913ae1517bac7d4d327d42f3e-2880x1620.jpg?w=720&h=460&fit=crop&crop=top&auto=format&q=85" alt="BlockHorizon website" loading="lazy"></div>
+        <div class="meta"><div><div class="nm">BlockHorizon</div><div class="tag">Fintech · Web</div></div><div class="met"><div class="v" style="color:#EA580C">Build</div><div class="k">Webflow</div></div></div>
+      </article>
+      <article class="rcard">
+        <span class="cbar" style="background:#7C3AED"></span>
+        <div class="shot"><img src="https://cdn.sanity.io/images/xjjjqhgt/production/2a7d29fdc9302c8482d70b73041e6c58ec9229a6-1440x1845.webp?w=720&h=460&fit=crop&crop=top&auto=format&q=85" alt="Eraser website" loading="lazy"></div>
+        <div class="meta"><div><div class="nm">Eraser</div><div class="tag">DevTool · Build → Grow</div></div><div class="met"><div class="v" style="color:#7C3AED">Build</div><div class="k">Webflow</div></div></div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- ===== CASE: TOKU (video feature) ===== -->
+<section class="sec" id="case-toku">
+  <div class="wrap case">
+    <div class="case-text rise">
+      <span class="case-accent" style="color:#1646CE"><span class="sw" style="background:#1646CE"></span>Toku · Fintech</span>
+      <div class="case-metric" style="color:#1646CE">0 to 86%</div>
+      <h3>How Toku became the AI's answer for stablecoin payroll</h3>
+      <p>When buyers ask ChatGPT and Perplexity who handles stablecoin payroll, Toku now comes up. We rebuilt for clarity, then ran AEO until it owned the category's core prompt.</p>
+      <div class="case-tags"><span>AI visibility 0 → 86%</span><span>Build → Grow</span></div>
+      <a class="case-link" href="#cta">Read the Toku case study <svg width="16" height="14" viewBox="0 0 16 14" fill="none"><path d="M9 1l6 6-6 6M15 7H1" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+    </div>
+    <div class="case-media video rise d1" role="button" tabindex="0" aria-label="Play Toku case film">
+      <span class="topbar" style="background:#1646CE"></span>
+      <div class="scrim"></div>
+      <img src="https://cdn.sanity.io/images/xjjjqhgt/production/bd1c09b494f7074c268f5b964d0c77dc1b1ef965-2880x1620.webp?w=1200&h=760&fit=crop&crop=top&auto=format&q=85" alt="Toku stablecoin payroll website" loading="lazy">
+      <span class="vchip">video placeholder · case film</span>
+      <span class="play" aria-hidden="true"><svg width="18" height="20" viewBox="0 0 18 20" fill="none"><path d="M0 0v20l18-10z" fill="#0F1413"/></svg></span>
+      <span class="vcap">Film: 60-sec Toku case film — site walkthrough + the AEO prompt it now owns.</span>
+    </div>
+  </div>
+</section>
+
+<!-- ===== CASE: DIMER (image feature, flipped) ===== -->
+<section class="sec" id="case-dimer" style="padding-top:8px">
+  <div class="wrap case flip">
+    <div class="case-media rise">
+      <span class="topbar" style="background:#4037A0"></span>
+      <img src="https://cdn.sanity.io/images/xjjjqhgt/production/a0f4750b896ced6ffca9c5869623b15614f312ba-1440x10131.webp?w=1200&h=760&fit=crop&crop=top&auto=format&q=85" alt="Dimer Health telehealth website rebuilt to convert" loading="lazy">
+    </div>
+    <div class="case-text rise d1">
+      <span class="case-accent" style="color:#4037A0"><span class="sw" style="background:#4037A0"></span>Dimer Health · Healthtech</span>
+      <div class="case-metric" style="color:#4037A0">+288%</div>
+      <h3>A telehealth brand and website rebuilt to convert</h3>
+      <p>A best-in-class site for a healthcare startup, then six months of conversion work. 288% lift in conversion rate, measured, not estimated.</p>
+      <div class="case-tags"><span>Conversion rate +288%</span><span>6 months</span></div>
+      <a class="case-link" style="color:#4037A0" href="#cta">Read the Dimer case study <svg width="16" height="14" viewBox="0 0 16 14" fill="none"><path d="M9 1l6 6-6 6M15 7H1" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+    </div>
+  </div>
+</section>
+
+<!-- ===== TESTIMONIAL + VIDEO TESTIMONIAL ===== -->
+<section class="sec">
+  <div class="wrap testi-grid">
+    <div class="quote-card rise">
+      <span class="mark" aria-hidden="true">"</span>
+      <blockquote>You guys are the experts. I can rely on you to drive the plan — you've <i>already earned my trust</i> in what you've delivered so far.</blockquote>
+      <div class="quote-by">
+        <img src="https://cdn.sanity.io/images/xjjjqhgt/production/ed922fafea75109de6c216519a1e1bb608c01fe8-944x1024.png?w=120&h=120&fit=crop&auto=format" alt="Kenneth O'Friel, CEO of Toku">
+        <div><div class="n">Kenneth O'Friel</div><div class="r">CEO, Toku</div></div>
+      </div>
+    </div>
+    <div class="vtesti rise d1" role="button" tabindex="0" aria-label="Play Dimer Health video testimonial">
+      <img src="https://cdn.sanity.io/images/xjjjqhgt/production/53a5363a122ef95a350039a3d4ef74b9841a1e2a-512x502.png?w=760&h=900&fit=crop&auto=format" alt="Sarig Reichert, CPO of Dimer Health">
+      <div class="scrim"></div>
+      <span class="vchip">video placeholder · testimonial</span>
+      <span class="play" aria-hidden="true"><svg width="16" height="18" viewBox="0 0 16 18" fill="none"><path d="M0 0v18l16-9z" fill="#0F1413"/></svg></span>
+      <div class="vcap"><div class="vn">Sarig Reichert</div><div class="vr">CPO, Dimer Health — film: 45-sec client testimonial</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== STATS ===== -->
+<section class="stats-sec">
+  <div class="wrap stats">
+    <div class="stat rise"><div class="v mono">200+</div><div class="k">Projects shipped — B2B SaaS<br>on Webflow since 2020</div></div>
+    <div class="stat rise d1"><div class="v mono">288%</div><div class="k">Conversion lift —<br>Dimer Health, six months</div></div>
+    <div class="stat rise d2"><div class="v mono">4+ <span class="s">yrs</span></div><div class="k">Webflow Enterprise<br>Partner</div></div>
+    <div class="stat rise d3"><div class="v mono">&lt;6 <span class="s">wks</span></div><div class="k">Time to launch —<br>others quote 12–16</div></div>
+  </div>
+</section>
+
+<!-- ===== FINAL CTA ===== -->
+<section class="cta-sec" id="cta">
+  <div class="wrap">
+    <div class="cta-card rise">
+      <h2>Let's figure out what's <i>holding your site back.</i></h2>
+      <p>30-minute strategy call. No pitch deck. We'll look at your site together and tell you what we'd change, and why.</p>
+      <a class="btn btn-primary btn-lg" href="#">Book a strategy call</a>
+    </div>
+  </div>
+</section>
+
+<!-- ===== FOOTER ===== -->
+<footer class="foot">
+  <div class="wrap foot-in">
+    <a class="brand" href="#"><span class="dot">LF</span>LoudFace</a>
+    <div class="foot-links">
+      <a href="#work">Work</a>
+      <a href="#approach">Build &amp; Grow</a>
+      <a href="#proof">Results</a>
+      <a href="#cta">Contact</a>
+    </div>
+    <div class="foot-note">© 2026 LoudFace · V4 · Studio Showcase</div>
+  </div>
+</footer>
+
+<script>
+(function(){
+  var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  /* seamless marquee: duplicate the track contents once */
+  var track = document.getElementById('railTrack');
+  if(track && !reduce){
+    track.innerHTML += track.innerHTML;
+  }
+
+  /* entrance reveal on scroll */
+  var items = document.querySelectorAll('.rise');
+  if(reduce){
+    items.forEach(function(el){el.classList.add('in');});
+  } else if('IntersectionObserver' in window){
+    var io = new IntersectionObserver(function(entries){
+      entries.forEach(function(e){
+        if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); }
+      });
+    },{threshold:.12, rootMargin:'0px 0px -8% 0px'});
+    items.forEach(function(el){ if(!el.classList.contains('in')) io.observe(el); });
+  } else {
+    items.forEach(function(el){el.classList.add('in');});
+  }
+
+  /* keyboard activation for video placeholders */
+  document.querySelectorAll('[role="button"][tabindex="0"]').forEach(function(el){
+    el.addEventListener('keydown', function(ev){
+      if(ev.key === 'Enter' || ev.key === ' '){ ev.preventDefault(); el.click(); }
+    });
+  });
+})();
+</script>
+</body>
+</html>

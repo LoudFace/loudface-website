@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>LoudFace Homepage Concept E - Sticky Side Index</title>
+  <style>
+    @font-face{font-family:NeueMontreal;src:url("http://localhost:3005/fonts/NeueMontreal-Medium.woff2") format("woff2");font-weight:500}
+    @font-face{font-family:Satoshi;src:url("http://localhost:3005/fonts/Satoshi-Regular.woff2") format("woff2");font-weight:400}
+    @font-face{font-family:Satoshi;src:url("http://localhost:3005/fonts/Satoshi-Bold.woff2") format("woff2");font-weight:700}
+    :root{--ink:#17211f;--paper:#fbfcfa;--line:#dfe5df;--muted:#64706c;--indigo:#4f46e5;--soft:#f2f6f1;--dark:#22302e;--green:#dff4df}
+    *{box-sizing:border-box} html,body{overflow-x:hidden} body{margin:0;background:var(--paper);color:var(--ink);font-family:Satoshi,system-ui,sans-serif} img{display:block;max-width:100%} a{text-decoration:none;color:inherit}
+    .shell{display:grid;grid-template-columns:410px 1fr;min-height:0}.rail{position:sticky;top:0;height:960px;border-right:1px solid var(--line);padding:30px;display:flex;flex-direction:column;background:#fff}.rail img{width:128px}.rail h1{font-family:NeueMontreal,sans-serif;font-size:48px;line-height:.98;margin:52px 0 18px;letter-spacing:0}.accent{font-family:Georgia,serif;font-style:italic;color:var(--indigo);font-weight:400}.rail p{color:var(--muted);line-height:1.55;max-width:310px}.btn{margin-top:22px;display:inline-flex;align-items:center;justify-content:center;background:var(--ink);color:#fff;border-radius:999px;padding:14px 18px;font-weight:700}.index{margin-top:auto;border-top:1px solid var(--line);padding-top:18px}.index a{display:flex;justify-content:space-between;border-bottom:1px solid var(--line);padding:12px 0;color:var(--muted);font-size:14px}.index strong{color:var(--ink)}
+    .rail-proof{display:grid;grid-template-columns:1fr;gap:9px;margin-top:24px}.rail-proof div{border:1px solid var(--line);border-radius:12px;padding:12px;background:var(--soft)}.rail-proof b{display:block;font-family:NeueMontreal,sans-serif;font-size:26px;line-height:1}.rail-proof span{display:block;color:var(--muted);font-size:12px;margin-top:4px;line-height:1.35}
+    .content{padding:28px}.board{min-height:760px;display:grid;grid-template-columns:.95fr 1.05fr;gap:22px;align-items:stretch}.tile{border:1px solid var(--line);border-radius:16px;background:#fff;overflow:hidden}.intro{background:var(--green);padding:42px;display:flex;flex-direction:column;justify-content:space-between}.eyebrow{display:inline-flex;width:max-content;border:1px solid rgba(23,33,31,.14);border-radius:999px;padding:7px 10px;color:#46625b;font-size:13px}.intro h2{font-family:NeueMontreal,sans-serif;font-size:68px;line-height:.96;margin:24px 0 18px;letter-spacing:0}.intro p{color:#4f625c;font-size:18px;line-height:1.55;max-width:560px}.proofgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:22px}.proofgrid div{background:#fff;border:1px solid rgba(23,33,31,.12);border-radius:12px;padding:14px}.proofgrid b{display:block;font-family:NeueMontreal,sans-serif;font-size:30px;line-height:1}.proofgrid span{display:block;color:var(--muted);font-size:12px;line-height:1.35;margin-top:5px}
+    .screen{display:grid;grid-template-rows:auto auto;background:var(--dark);color:#fff}.screen img{width:100%;height:520px;object-fit:cover}.cap{padding:26px;border-top:1px solid rgba(255,255,255,.12)}.cap h3{font-family:NeueMontreal,sans-serif;font-size:32px;line-height:1;margin:0 0 8px}.cap p{margin:0;color:#c2cdc8;line-height:1.5}
+    .chapter-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-top:22px}.chapter{padding:24px;min-height:230px}.chapter.dark{background:var(--dark);color:#fff}.chapter h3{font-family:NeueMontreal,sans-serif;font-size:30px;line-height:1;margin:0 0 12px}.chapter p{margin:0;color:var(--muted);line-height:1.5}.chapter.dark p{color:#c3cec9}.chapter img{height:88px;width:100%;object-fit:cover;border-radius:10px;margin-bottom:18px}
+    .quote-strip{margin-top:22px;background:var(--ink);color:#fff;border-radius:16px;padding:42px;display:grid;grid-template-columns:1fr 320px;gap:28px;align-items:end}.quote-strip h2{font-family:NeueMontreal,sans-serif;font-size:54px;line-height:.98;margin:0}.quote-card{border:1px solid rgba(255,255,255,.15);border-radius:14px;padding:20px;background:rgba(255,255,255,.05)}.quote-card b{display:block;margin-bottom:10px}.quote-card p{margin:0;color:#c8d2ce;line-height:1.5}
+    @media(max-width:980px){.shell{display:block}.rail{position:relative;height:auto;border-right:0;border-bottom:1px solid var(--line);padding:20px}.rail h1{font-size:30px;margin:34px 0 14px;line-height:1.1;overflow-wrap:break-word}.index{display:none}.rail-proof{grid-template-columns:1fr}.content{padding:12px}.board{min-height:auto}.board,.chapter-grid,.quote-strip{grid-template-columns:1fr}.intro{padding:24px;min-height:auto}.intro h2{font-size:30px;line-height:1.1}.intro p{font-size:15px}.proofgrid{grid-template-columns:1fr}.screen img{height:260px}.chapter{min-height:auto}.quote-strip{padding:28px}.quote-strip h2{font-size:30px;line-height:1.1}}
+  </style>
+</head>
+<body>
+  <main class="shell">
+    <aside class="rail">
+      <img src="http://localhost:3005/images/loudface.svg" alt="LoudFace" />
+      <h1>Your SaaS site should sell the room <span class="accent">before</span> the call.</h1>
+      <p>A sticky-index homepage for buyers who want the website, proof, search surface, and conversion path visible at once.</p>
+      <a class="btn">Book a working session</a>
+      <div class="rail-proof"><div><b>200+</b><span>B2B SaaS websites shipped</span></div><div><b>288%</b><span>best conversion increase</span></div><div><b>0->86%</b><span>Toku AI visibility lift</span></div></div>
+      <nav class="index"><a><strong>Website system</strong><span>pages</span></a><a><strong>Search surface</strong><span>answers</span></a><a><strong>Conversion room</strong><span>tests</span></a><a><strong>Client proof</strong><span>receipts</span></a></nav>
+    </aside>
+    <section class="content">
+      <section class="board">
+        <article class="tile intro">
+          <div>
+            <span class="eyebrow">Sticky proof index</span>
+            <h2>One homepage, four buyer jobs.</h2>
+            <p>The right side works like a visible operating board: what LoudFace builds, how growth attaches to it, what proof exists, and what happens next.</p>
+          </div>
+          <div class="proofgrid"><div><b>Webflow</b><span>CMS, components, and launch QA</span></div><div><b>SEO+AEO</b><span>answer surfaces buyers can cite</span></div><div><b>CRO</b><span>pages and tests tied to proof</span></div></div>
+        </article>
+        <article class="tile screen">
+          <img src="http://localhost:3005/images/webflow-experts_1.webp" alt="Website system preview" />
+          <div class="cap"><h3>Build the site buyers can use.</h3><p>Not just a prettier homepage, a working surface the team can keep publishing after launch.</p></div>
+        </article>
+      </section>
+      <section class="chapter-grid">
+        <article class="tile chapter"><img src="http://localhost:3005/images/organic-mastery_1.webp" alt="Search work" /><h3>Search surface</h3><p>Organic pages and AI-answer coverage stay close to the site because buyers judge the category there.</p></article>
+        <article class="tile chapter dark"><h3>Answer proof</h3><p>Case media, screenshots, and direct answers sit near the claims they support.</p></article>
+        <article class="tile chapter"><img src="http://localhost:3005/images/conversion-optimization_1.webp" alt="Conversion work" /><h3>Conversion room</h3><p>Landing pages, post-demo paths, and tests stay connected to the site memory.</p></article>
+        <article class="tile chapter dark"><h3>Client receipts</h3><p>Brandfirm, Toku, Webflow partner status, and result metrics are visible before the booking moment.</p></article>
+      </section>
+      <footer class="quote-strip"><h2>Bring the stuck page. Leave with the next room to build.</h2><div class="quote-card"><b>What the index proves</b><p>LoudFace is not selling a prettier screen. It sells a website system that can publish, rank, get cited, and convert.</p></div></footer>
+    </section>
+  </main>
+</body>
+</html>

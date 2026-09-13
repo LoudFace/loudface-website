@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>LoudFace Homepage Concept B - Proof Ledger</title>
+  <style>
+    @font-face{font-family:NeueMontreal;src:url("http://localhost:3005/fonts/NeueMontreal-Medium.woff2") format("woff2");font-weight:500}
+    @font-face{font-family:Satoshi;src:url("http://localhost:3005/fonts/Satoshi-Regular.woff2") format("woff2");font-weight:400}
+    @font-face{font-family:Satoshi;src:url("http://localhost:3005/fonts/Satoshi-Bold.woff2") format("woff2");font-weight:700}
+    :root{--ink:#17211f;--paper:#fbfcfa;--soft:#f1f5f0;--line:#dfe5df;--muted:#66726e;--indigo:#4f46e5;--orange:#ef6845}
+    *{box-sizing:border-box} body{margin:0;background:var(--paper);color:var(--ink);font-family:Satoshi,system-ui,sans-serif;overflow-x:hidden} img{display:block;max-width:100%} a{text-decoration:none;color:inherit}.wrap{max-width:1280px;margin:auto;padding:0 28px}
+    .nav{height:76px;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between}.nav img{width:128px}.nav .mid{display:flex;gap:28px;color:var(--muted);font-size:14px}.btn{border-radius:999px;padding:12px 18px;background:var(--ink);color:#fff;font-weight:700}
+    .hero{padding:96px 0 44px;text-align:center}.eyebrow{display:inline-flex;border:1px solid var(--line);border-radius:999px;padding:8px 12px;color:var(--muted);font-size:13px;background:#fff}.h1{font-family:NeueMontreal,sans-serif;font-size:clamp(54px,7.5vw,116px);line-height:.92;letter-spacing:0;margin:26px auto 22px;max-width:980px}.block{display:inline-block;background:var(--orange);color:#fff;border-radius:8px;padding:0 .12em}.accent{font-family:Georgia,serif;font-style:italic;color:var(--indigo);font-weight:400}.lead{font-size:19px;line-height:1.55;color:var(--muted);max-width:690px;margin:auto}
+    .ledger{margin:50px auto 0;max-width:1080px;position:relative;padding:58px 0;background-image:linear-gradient(var(--line) 1px,transparent 1px),linear-gradient(90deg,var(--line) 1px,transparent 1px);background-size:180px 72px}.criteria{position:relative;z-index:2;margin:auto;width:min(520px,90%);background:var(--ink);color:#fff;border-radius:12px;padding:22px 26px;text-align:left;box-shadow:0 16px 0 rgba(23,33,31,.08)}.criteria b{display:block;font-size:24px;margin-bottom:6px}.criteria span{color:#c4cfca}.statline{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;max-width:760px;margin:24px auto 0}.statline div{background:#fff;border:1px solid var(--line);border-radius:12px;padding:14px;text-align:left}.statline b{display:block;font-family:NeueMontreal,sans-serif;font-size:30px;line-height:1}.statline span{display:block;color:var(--muted);font-size:13px;line-height:1.35;margin-top:5px}
+    .receipts{display:grid;grid-template-columns:repeat(3,1fr);gap:22px;margin-top:44px}.receipt{background:#fff;border:1px solid var(--line);border-radius:14px;overflow:hidden;text-align:left}.receipt .top{height:150px;background:var(--soft);display:flex;align-items:center;justify-content:center;padding:24px}.receipt .top img{max-height:72px;object-fit:contain}.receipt .body{padding:18px}.tag{display:inline-flex;border:1px solid var(--line);border-radius:999px;padding:5px 8px;font-size:12px;color:var(--muted);margin-bottom:12px}.receipt h3{font-family:NeueMontreal,sans-serif;font-size:23px;line-height:1.08;margin:0 0 12px}.receipt p{color:var(--muted);line-height:1.5;margin:0}.receipt .row{border-top:1px solid var(--line);display:flex;justify-content:space-between;padding:13px 18px;color:var(--muted);font-size:14px}.row strong{color:var(--ink)}
+    .proof-strip{border-top:1px solid var(--line);border-bottom:1px solid var(--line);padding:18px 0;background:#fff}.logos{display:flex;align-items:center;justify-content:center;gap:40px;flex-wrap:wrap;filter:grayscale(1);opacity:.72}.logos img{max-height:32px;max-width:140px}
+    .section{padding:94px 0}.cols{display:grid;grid-template-columns:.9fr 1.1fr;gap:56px;align-items:start}.section h2{font-family:NeueMontreal,sans-serif;font-size:58px;line-height:.98;margin:0}.section p{color:var(--muted);line-height:1.55}.list{display:grid;gap:14px}.item{border:1px solid var(--line);border-radius:16px;background:#fff;padding:24px;display:grid;grid-template-columns:1fr 160px;gap:24px;align-items:center}.thumb{height:110px;border-radius:10px;object-fit:cover;background:var(--soft)}.item h3{font-size:24px;margin:0 0 8px;font-family:NeueMontreal,sans-serif}.close{margin-top:22px;border-radius:18px;background:var(--ink);color:#fff;padding:44px;display:flex;justify-content:space-between;gap:30px;align-items:center}.close h2{font-size:46px;margin:0;max-width:680px}.close .btn{background:#fff;color:var(--ink)}
+    @media(max-width:840px){.wrap{padding:0 18px}.nav .mid{display:none}.nav img{width:112px}.nav .btn{font-size:12px;padding:10px 12px}.hero{padding-top:42px;overflow:hidden}.h1{font-size:30px;line-height:1.08;overflow-wrap:break-word;max-width:330px}.block{max-width:100%}.lead{font-size:15px;max-width:330px}.ledger{padding:28px 0;background-size:110px 64px;overflow:hidden}.criteria{width:auto;margin:0 14px;padding:18px}.statline{grid-template-columns:1fr;margin:18px 14px 0}.receipts,.cols{grid-template-columns:1fr}.receipts{gap:14px}.receipt{min-width:0}.proof-strip{overflow:hidden}.logos{gap:22px}.section.wrap{padding:60px 18px}.section h2{font-size:31px;line-height:1.1}.item{grid-template-columns:1fr;min-width:0}.close{display:block;padding:28px;overflow:hidden}.close h2{font-size:29px;line-height:1.1}.close .btn{display:inline-flex;margin-top:22px}}
+  </style>
+</head>
+<body>
+  <nav class="nav wrap">
+    <img src="http://localhost:3005/images/loudface.svg" alt="LoudFace" />
+    <div class="mid"><a>Ledger</a><a>Work</a><a>Services</a><a>Contact</a></div>
+    <a class="btn">Book a review</a>
+  </nav>
+  <main class="hero wrap">
+    <span class="eyebrow">Proof ledger for B2B SaaS websites</span>
+    <h1 class="h1">Make every claim on the page point to a <span class="block">receipt</span>.</h1>
+    <p class="lead">This direction treats the homepage like organized evidence: the offer, the work, the result, and the next move are filed where a buyer can scan them.</p>
+    <section class="ledger">
+      <div class="criteria"><b>Evidence object</b><span>Claim, proof, page system, and handoff all visible before the strategy call.</span></div>
+      <div class="statline"><div><b>200+</b><span>B2B SaaS websites shipped</span></div><div><b>288%</b><span>best conversion increase</span></div><div><b>0->86%</b><span>Toku AI visibility from a standing start</span></div></div>
+      <div class="receipts">
+        <article class="receipt"><div class="top"><img src="http://localhost:3005/images/brandfirm.svg" alt="Brandfirm" /></div><div class="body"><span class="tag">Website system</span><h3>Homepage story rebuilt around buyer proof.</h3><p>From positioning to CMS structure, the page has a clear job.</p></div><div class="row"><span>Artifact</span><strong>Page system</strong></div></article>
+        <article class="receipt"><div class="top"><img src="http://localhost:3005/images/webflow.png" alt="Webflow" /></div><div class="body"><span class="tag">CMS handoff</span><h3>Marketing can publish without asking engineering.</h3><p>Components, templates, and collection logic sit behind the page.</p></div><div class="row"><span>Artifact</span><strong>CMS kit</strong></div></article>
+        <article class="receipt"><div class="top"><img src="http://localhost:3005/images/toku-logo.png" alt="Toku" /></div><div class="body"><span class="tag">Search surface</span><h3>The content path answers real buyer questions.</h3><p>SEO and AEO work is treated as part of the site, not a side channel.</p></div><div class="row"><span>Artifact</span><strong>Answer map</strong></div></article>
+      </div>
+    </section>
+  </main>
+  <section class="proof-strip"><div class="logos wrap"><img src="http://localhost:3005/images/Enterprise-Blue-Badge.webp" alt="Webflow Enterprise" /><img src="http://localhost:3005/images/Awwwards.svg" alt="Awwwards" /><img src="http://localhost:3005/images/Trustpilot.svg" alt="Trustpilot" /><img src="http://localhost:3005/images/webflow.svg" alt="Webflow" /></div></section>
+  <section class="section wrap">
+    <div class="cols">
+      <div><h2>A homepage buyers can inspect, not decode.</h2><p>Use this if you want the page to feel precise, accountable, and unusually clear. It is the least decorative direction and the easiest to extend into service pages.</p></div>
+      <div class="list">
+        <article class="item"><div><h3>Build the site system.</h3><p>Positioning, UX, copy, visual system, CMS, Webflow build, and QA.</p></div><img class="thumb" src="http://localhost:3005/images/webflow-experts_1.webp" alt="Webflow work" /></article>
+        <article class="item"><div><h3>Grow the answer layer.</h3><p>Search pages, AI answer coverage, landing pages, and useful content.</p></div><img class="thumb" src="http://localhost:3005/images/organic-mastery_1.webp" alt="Organic work" /></article>
+        <article class="item"><div><h3>Keep proof close.</h3><p>Case studies, teardown clips, client quotes, and release notes near the claims.</p></div><img class="thumb" src="http://localhost:3005/images/conversion-optimization_1.webp" alt="Conversion work" /></article>
+      </div>
+    </div>
+    <div class="close"><h2>Bring the page, the funnel, and the stuck campaign.</h2><a class="btn">Book a working session</a></div>
+  </section>
+</body>
+</html>

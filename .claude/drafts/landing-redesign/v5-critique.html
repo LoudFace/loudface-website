@@ -1,0 +1,272 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>V5 Landing — Design-Loop Critique</title>
+<style>
+  :root{
+    --ink:#15201d; --ink2:#3f4d49; --mut:#6b7975; --line:#e4e7e4; --line2:#eef0ed;
+    --paper:#fbfcfb; --card:#ffffff; --indigo:#4f46e5; --indigo-soft:#eef2ff;
+    --orange:#c2410c; --red:#b91c1c; --amber:#b45309; --green:#15803d;
+    --p0:#b91c1c; --p1:#b45309; --p2:#3f4d49; --pass:#15803d;
+    --radius:14px; --shadow:0 1px 2px rgba(20,32,29,.04),0 8px 30px rgba(20,32,29,.06);
+  }
+  *{box-sizing:border-box}
+  html{-webkit-font-smoothing:antialiased}
+  body{margin:0;background:var(--paper);color:var(--ink);
+    font-family:'Geist','Satoshi',ui-sans-serif,system-ui,-apple-system,sans-serif;
+    line-height:1.6;font-size:16px}
+  .wrap{max-width:980px;margin:0 auto;padding:64px 28px 120px}
+  h1,h2,h3{font-family:'Bricolage Grotesque','Neue Montreal',ui-sans-serif,system-ui,sans-serif;
+    font-weight:600;letter-spacing:-.02em;line-height:1.12;margin:0}
+  .serif{font-family:'Instrument Serif',Georgia,serif;font-style:italic;color:var(--indigo);font-weight:400}
+  .mlabel{font-family:'Geist',ui-monospace,monospace;text-transform:uppercase;letter-spacing:.14em;
+    font-size:11.5px;color:var(--mut);font-weight:600}
+  /* header */
+  header{border-bottom:1px solid var(--line);padding-bottom:30px;margin-bottom:42px}
+  header .top{display:flex;justify-content:space-between;align-items:flex-start;gap:20px;flex-wrap:wrap}
+  h1{font-size:clamp(30px,4.4vw,46px);margin:14px 0 10px}
+  header p{max-width:62ch;color:var(--ink2);margin:6px 0 0;font-size:16.5px}
+  .pill{display:inline-flex;align-items:center;gap:7px;border:1px solid var(--line);
+    background:var(--card);border-radius:999px;padding:6px 13px;font-size:12.5px;color:var(--ink2);box-shadow:var(--shadow)}
+  .dot{width:7px;height:7px;border-radius:50%;background:var(--indigo)}
+  .verdict{margin-top:26px;background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:22px 24px;box-shadow:var(--shadow);display:grid;grid-template-columns:auto 1fr;gap:22px;align-items:center}
+  .bigscore{font-family:'Bricolage Grotesque',sans-serif;font-weight:600;font-size:54px;line-height:1;letter-spacing:-.03em}
+  .bigscore small{display:block;font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--mut);margin-top:8px;font-weight:600;font-family:'Geist',sans-serif}
+  .verdict p{margin:0;color:var(--ink2);font-size:15.5px}
+  /* sections */
+  section{margin-top:52px}
+  .eyebrow{display:flex;align-items:center;gap:10px;margin-bottom:18px}
+  .eyebrow h2{font-size:13px;text-transform:uppercase;letter-spacing:.16em;color:var(--mut);font-weight:600;font-family:'Geist',sans-serif}
+  .eyebrow .ln{height:1px;background:var(--line);flex:1}
+  /* score table */
+  table{width:100%;border-collapse:collapse;font-size:14.5px}
+  .axes td,.axes th{padding:13px 12px;border-bottom:1px solid var(--line2);vertical-align:middle;text-align:left}
+  .axes th{font-size:11px;text-transform:uppercase;letter-spacing:.1em;color:var(--mut);font-weight:600}
+  .axes td.ax{font-weight:600;color:var(--ink);width:30%}
+  .axes td.ax span{display:block;font-weight:400;color:var(--mut);font-size:12.5px;margin-top:2px}
+  .bar{position:relative;width:96px;height:7px;border-radius:5px;background:var(--line);overflow:hidden;display:inline-block;vertical-align:middle;margin-right:9px}
+  .bar > i{position:absolute;left:0;top:0;bottom:0;border-radius:5px}
+  .sc{font-variant-numeric:tabular-nums;font-weight:600;font-size:13.5px}
+  .kind{font-size:11px;border:1px solid var(--line);border-radius:5px;padding:2px 7px;color:var(--mut);white-space:nowrap}
+  .kind.obj{background:#f6f8f7}
+  .kind.jud{background:#f5f3ff;border-color:#e6e1fb;color:#5b50c9}
+  /* punch list */
+  .item{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    box-shadow:var(--shadow);padding:18px 20px;margin-bottom:14px}
+  .item .h{display:flex;align-items:flex-start;gap:12px;flex-wrap:wrap}
+  .tag{font-size:11px;font-weight:700;letter-spacing:.06em;border-radius:6px;padding:3px 9px;color:#fff;white-space:nowrap;margin-top:2px}
+  .t-p0{background:var(--p0)} .t-p1{background:var(--p1)} .t-p2{background:#566}
+  .item h3{font-size:16.5px;font-weight:600;flex:1;min-width:240px}
+  .src{font-size:11px;color:var(--mut);border:1px solid var(--line);border-radius:6px;padding:3px 8px;white-space:nowrap}
+  .item .body{margin-top:11px;color:var(--ink2);font-size:14.6px}
+  .item .body b{color:var(--ink)}
+  .ev{margin-top:11px;background:#0f1413;color:#cdd6d2;border-radius:9px;padding:11px 13px;
+    font-family:ui-monospace,'Geist Mono',monospace;font-size:12.5px;line-height:1.55;overflow-x:auto;white-space:pre-wrap}
+  .ev .k{color:#f0a36b}
+  .fix{margin-top:11px;padding-left:14px;border-left:2px solid var(--indigo);color:var(--ink);font-size:14.4px}
+  .fix b{color:var(--indigo)}
+  /* keep / strong */
+  .keep{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  @media(max-width:640px){.keep{grid-template-columns:1fr}.verdict{grid-template-columns:1fr}}
+  .keep .k{background:#f4faf6;border:1px solid #d9ecdf;border-radius:11px;padding:13px 15px;font-size:14px;color:#1f3b2b}
+  .keep .k b{color:#15803d}
+  /* detector grid */
+  .det{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px}
+  .det .c{border:1px solid var(--line);border-radius:11px;padding:13px 14px;background:var(--card)}
+  .det .c .n{font-family:'Bricolage Grotesque',sans-serif;font-weight:600;font-size:26px;letter-spacing:-.02em}
+  .det .c .l{font-size:12px;color:var(--mut);margin-top:3px;line-height:1.35}
+  .det .c.warn{border-left:none}
+  .det .c .n.r{color:var(--red)} .det .c .n.a{color:var(--amber)} .det .c .n.g{color:var(--mut)}
+  footer{margin-top:60px;padding-top:24px;border-top:1px solid var(--line);color:var(--mut);font-size:13px;display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}
+  .legend{display:flex;gap:16px;flex-wrap:wrap;margin:14px 0 0;font-size:12.5px;color:var(--mut)}
+  .legend span{display:inline-flex;align-items:center;gap:6px}
+  .sw{width:11px;height:11px;border-radius:3px;display:inline-block}
+  a{color:var(--indigo)}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <div class="top">
+    <span class="mlabel">Design-Loop · Critique Gate · review-only</span>
+    <span class="pill"><span class="dot"></span> v5.html · 70&nbsp;KB · 817&nbsp;lines</span>
+  </div>
+  <h1>V5 “Synthesis” landing — <span class="serif">what's strong, what's weak</span></h1>
+  <p>Full critique against the anchored context: global taste-laws + Arnel's rejections, the project <b>DESIGN.md</b>, and the learned <b>taste-rulebook</b> (rounds 1–3 locks). Objective axes scored by the <b>impeccable&nbsp;3.1.0</b> detector; judgment axes scored against the locks &amp; references. <b>No code was changed</b> — the critique lane does not close the loop.</p>
+
+  <div class="verdict">
+    <div style="text-align:center">
+      <div class="bigscore">3.6<small>/ 5 overall</small></div>
+    </div>
+    <p><b>Strongest synthesis of the set</b> — it's the only direction that fuses the compounding proof-card, the “measured / numbers” instrument panel, and a real editorial voice, and it clears the deepest AI tells (it's media-rich, not an all-DOM page; no gradient text, no nested cards, no side-stripe accents; the no-mono lock holds). It loses points on <b>accessibility</b> (26 contrast hits + sub-12px micro-text), three <b>brand-lock</b> misses (real wordmark SVG, an orange glow on dark, numbered markers), and small <b>voice</b> slips (em-dash overuse, one buzzword). All fixable without touching the concept.</p>
+  </div>
+  <div class="legend">
+    <span><span class="sw" style="background:var(--p0)"></span> P0 — lock/ban violation or blocks ship</span>
+    <span><span class="sw" style="background:var(--p1)"></span> P1 — clear quality / a11y issue</span>
+    <span><span class="sw" style="background:#566"></span> P2 — polish</span>
+    <span><span class="sw" style="background:var(--pass)"></span> verified pass</span>
+  </div>
+</header>
+
+<!-- ───────────── SCORE TABLE ───────────── -->
+<section>
+  <div class="eyebrow"><h2>Axis scores</h2><span class="ln"></span></div>
+  <table class="axes">
+    <thead><tr><th>Axis</th><th>Type</th><th>Score</th></tr></thead>
+    <tbody>
+      <tr><td class="ax">Media &amp; imagery<span>hero proof-card, studio film, case videos, work mosaic, video testimonial, real faces/logos</span></td>
+        <td><span class="kind jud">judgment</span></td>
+        <td><span class="bar"><i style="width:90%;background:var(--green)"></i></span><span class="sc">4.5</span></td></tr>
+      <tr><td class="ax">Ambition / leap<span>real departure from current site, not a safe re-tread — clears the rejection</span></td>
+        <td><span class="kind jud">judgment</span></td>
+        <td><span class="bar"><i style="width:90%;background:var(--green)"></i></span><span class="sc">4.5</span></td></tr>
+      <tr><td class="ax">Hierarchy &amp; structure<span>one H1, clear chapters — but footer skips h2→h4</span></td>
+        <td><span class="kind obj">detector</span></td>
+        <td><span class="bar"><i style="width:80%;background:#65a30d"></i></span><span class="sc">4.0</span></td></tr>
+      <tr><td class="ax">Motion register<span>calm reveals (register: web allows) — one width-transition vs the transform/opacity law</span></td>
+        <td><span class="kind obj">detector</span></td>
+        <td><span class="bar"><i style="width:80%;background:#65a30d"></i></span><span class="sc">4.0</span></td></tr>
+      <tr><td class="ax">Typography system<span>locked faces honored, NO-mono lock holds — but 10.5–11px micro-text, tight leading, all-caps on long strings</span></td>
+        <td><span class="kind obj">detector</span></td>
+        <td><span class="bar"><i style="width:70%;background:#ca8a04"></i></span><span class="sc">3.5</span></td></tr>
+      <tr><td class="ax">Layout &amp; spacing<span>strong bento/blueprint composition — 10 cramped-padding, 13 clipped-overflow</span></td>
+        <td><span class="kind obj">detector</span></td>
+        <td><span class="bar"><i style="width:70%;background:#ca8a04"></i></span><span class="sc">3.5</span></td></tr>
+      <tr><td class="ax">Copy / voice<span>distinctive manifesto — but 13 em-dashes + one “best-in-class” buzzword</span></td>
+        <td><span class="kind jud">judgment</span></td>
+        <td><span class="bar"><i style="width:70%;background:#ca8a04"></i></span><span class="sc">3.5</span></td></tr>
+      <tr><td class="ax">Brand-lock conformance<span>wordmark not the real SVG · numbered markers · orange glow on dark</span></td>
+        <td><span class="kind jud">judgment</span></td>
+        <td><span class="bar"><i style="width:60%;background:#d97706"></i></span><span class="sc">3.0</span></td></tr>
+      <tr><td class="ax">Color &amp; depth<span>white page + indigo restraint good — orange 3.6:1 sub-AA, orange glow, untinted #000/#fff</span></td>
+        <td><span class="kind obj">detector</span></td>
+        <td><span class="bar"><i style="width:60%;background:#d97706"></i></span><span class="sc">3.0</span></td></tr>
+      <tr><td class="ax">Accessibility / contrast<span>26 low-contrast + sub-12px text — weakest axis</span></td>
+        <td><span class="kind obj">detector</span></td>
+        <td><span class="bar"><i style="width:50%;background:var(--red)"></i></span><span class="sc">2.5</span></td></tr>
+    </tbody>
+  </table>
+</section>
+
+<!-- ───────────── PUNCH LIST ───────────── -->
+<section>
+  <div class="eyebrow"><h2>Prioritized punch-list</h2><span class="ln"></span></div>
+
+  <!-- P0 -->
+  <div class="item">
+    <div class="h"><span class="tag t-p0">P0 · LOCK</span><h3>Wordmark is a CSS mark, not the real <code>loudface.svg</code></h3><span class="src">grep: 0 refs</span></div>
+    <div class="body">Round-2 lock is explicit: <b>“Always use the REAL loudface wordmark SVG (<code>public/images/loudface.svg</code>, indigo #4F46E5; white variant <code>loudface-inversed.svg</code> on dark). Never a placeholder CSS mark.”</b> v5's nav uses <code>class="logo"</code> with zero references to the SVG.</div>
+    <div class="ev">grep -c "loudface.svg|loudface-inversed"  →  <span class="k">0</span>
+nav markup: &lt;… class="logo"&gt; (CSS/text mark)</div>
+    <div class="fix"><b>Fix →</b> swap to the real SVG (indigo on light, inversed on dark). One-line change; lock compliance.</div>
+  </div>
+
+  <div class="item">
+    <div class="h"><span class="tag t-p0">P0 · BAN</span><h3>Orange glow on the dark page</h3><span class="src">detector: dark-glow</span></div>
+    <div class="body">Taste-law hard ban: <b>“No glow / halo / pulsing ring … no dark-mode glowing accents.”</b> Two box-shadows cast an orange <code>rgb(234,88,12)</code> glow on a dark surface.</div>
+    <div class="ev">[dark-glow]  Colored glow (<span class="k">rgb(234,88,12)</span>) on dark page
+box-shadow w/ orange rgba on dark  →  <span class="k">2</span> occurrences</div>
+    <div class="fix"><b>Fix →</b> remove the colored box-shadow; carry emphasis with a hairline ring + the block fill, not a glow.</div>
+  </div>
+
+  <!-- P1 -->
+  <div class="item">
+    <div class="h"><span class="tag t-p1">P1 · A11Y</span><h3>26 low-contrast hits — the weakest axis</h3><span class="src">detector: low-contrast ×26</span></div>
+    <div class="body">Two are clearly real and should be fixed; a cluster of white-on-near-white reads are likely <b>static-analysis false positives</b> (white text that actually sits on indigo/orange color-blocks, which the file-only detector can't resolve) — <b>verify visually before touching those</b>.</div>
+    <div class="ev">REAL    <span class="k">1.8:1</span>  #3a4441 on #0f1413   (muted text, dark section — too dim)
+REAL    <span class="k">3.6:1</span>  #ea580c on #ffffff   (orange accent on white &lt; AA 4.5)
+CHECK   <span class="k">1.0–1.1:1</span> #ffffff on #fcfcfb/#f5f4f0 (likely white-on-color-block; verify)</div>
+    <div class="fix"><b>Fix →</b> lift dark-section muted text to ≥ <code>#9aa6a2</code>; darken the orange accent to ~<code>#c2410c</code> for small text (keep bright orange only for large display); confirm the color-block words really sit on their fill.</div>
+  </div>
+
+  <div class="item">
+    <div class="h"><span class="tag t-p1">P1 · A11Y</span><h3>Micro-text below 12px + tight leading + all-caps sentences</h3><span class="src">detector: tiny-text ×8 · tight-leading ×4 · all-caps-body ×4</span></div>
+    <div class="body">The instrument-label / coordinate slot drops to <b>10.5–11px</b> and runs <b>uppercase across 33–35-char strings</b> — both hurt legibility. Four blocks sit under 1.3× leading.</div>
+    <div class="ev">[tiny-text]     <span class="k">11px</span> body · <span class="k">10.5px</span> body
+[all-caps-body] uppercase on <span class="k">35 / 34 / 33</span> chars
+[tight-leading] line-height <span class="k">1.18x / 1.26x</span> (need ≥1.3)</div>
+    <div class="fix"><b>Fix →</b> floor micro-labels at 12px; reserve uppercase for ≤ ~20-char labels (sentence-case the long ones); raise body leading to ≥1.4.</div>
+  </div>
+
+  <div class="item">
+    <div class="h"><span class="tag t-p1">P1 · TELL</span><h3>Numbered section / module markers</h3><span class="src">detector: numbered-section-markers (advisory)</span></div>
+    <div class="body">Taste-law <b>standing veto</b>: numbered markers (01/02/03) must <b>not</b> be laundered as “design-system sanctioned.” Detector found the full sequence. <b>MODULE 01 / MODULE 02</b> on the Build/Grow cards is the clear hit. The <code>R-01…R-05 / T-01…T-04</code> blueprint coordinates are <b>borderline-defensible</b> as the deliberate instrument motif — but the human outranks the motif, so thin them.</div>
+    <div class="ev">[numbered-section-markers]  Sequence: <span class="k">01, 02, 03, 04, 05, 06</span>
+grep: "MODULE 01", "MODULE 02"  ·  R-01…R-05  ·  T-01…T-04</div>
+    <div class="fix"><b>Fix →</b> drop “MODULE 01/02” (use the verbs Build / Grow alone); keep at most one coordinate readout as signature, not a numbered index on every panel.</div>
+  </div>
+
+  <div class="item">
+    <div class="h"><span class="tag t-p1">P1 · VOICE</span><h3>Em-dash overuse (13) + one “best-in-class” buzzword</h3><span class="src">detector: em-dash-overuse · marketing-buzzword</span></div>
+    <div class="body">13 em-dashes in body copy is the AI cadence tell; “best-in-class” (Dimer case line) is a flagged buzzword. The manifesto voice is otherwise distinctive and on-brand — these are surgical edits.</div>
+    <div class="ev">[em-dash-overuse]   <span class="k">13</span> em-dashes in body
+   …its traffic — two precise…  · …for growth — momentum…  · …since 2020 — startups…
+[marketing-buzzword] “<span class="k">best-in-class</span> site for a healthcare startup”</div>
+    <div class="fix"><b>Fix →</b> convert ~half the em-dashes to periods/commas; replace “best-in-class” with a concrete claim.</div>
+  </div>
+
+  <!-- P2 -->
+  <div class="item">
+    <div class="h"><span class="tag t-p2">P2 · POLISH</span><h3>Cramped padding &amp; clipped overflow</h3><span class="src">detector: cramped-padding ×10 · clipped-overflow ×13</span></div>
+    <div class="body">Several panels (incl. the testimonial <code>quote</code> and the <code>finalcta</code>) have children flush against a border/fill with no inset. 13 clip-containers (crop-mark frames, floating chips) risk cutting positioned children. Mostly cosmetic for a mockup; worth resolving when it becomes real components.</div>
+    <div class="ev">[cramped-padding] "quote": children flush against border+bg (no inset)
+[cramped-padding] "finalcta": children flush against bg on all sides
+[clipped-overflow] section.hero / hero-film / gauge.feature clip a positioned child</div>
+    <div class="fix"><b>Fix →</b> add 12–16px inner padding inside bordered/filled panels; let crop-frame corners overflow visible.</div>
+  </div>
+
+  <div class="item">
+    <div class="h"><span class="tag t-p2">P2 · POLISH</span><h3>Untinted pure #000 / #fff · width-transition · footer heading skip</h3><span class="src">detector: layout-transition · skipped-heading</span></div>
+    <div class="body">Taste-law: tint every neutral (OKLCH) — found <b>5×</b> pure <code>#000</code>, <b>20×</b> pure <code>#fff</code>. The gauge meter animates <code>width</code> (reflow) vs the transform/opacity law. Footer jumps <code>h2 → h4</code> (“Services”), skipping h3.</div>
+    <div class="ev">[layout-transition] transition: <span class="k">width</span>
+[skipped-heading]  &lt;h2&gt;…holding your site back&lt;/h2&gt; → &lt;h4&gt;Services&lt;/h4&gt;
+pure #000: <span class="k">5</span>  ·  pure #fff: <span class="k">20</span></div>
+    <div class="fix"><b>Fix →</b> tint neutrals slightly; animate the gauge with transform/scaleX; demote footer column labels to non-heading or fix the level.</div>
+  </div>
+</section>
+
+<!-- ───────────── VERIFIED PASSES / KEEP ───────────── -->
+<section>
+  <div class="eyebrow"><h2>What's working — keep</h2><span class="ln"></span></div>
+  <div class="keep">
+    <div class="k"><b>NO-mono lock holds ✓</b> — <code>--mono</code> resolves to Geist <em>sans</em> (uppercase+tracked), not a mono face. The 40 “mono-style” labels are compliant.</div>
+    <div class="k"><b>Locked type system honored ✓</b> — Bricolage Grotesque + Geist + Instrument Serif italic (indigo accents). No stray families loaded.</div>
+    <div class="k"><b>Deepest AI tells avoided ✓</b> — media-rich (not the all-DOM page), no gradient text, no nested cards, no side-stripe accent borders.</div>
+    <div class="k"><b>Section kickers are mild ✓</b> — <code>.k</code> labels exist but there's <em>no</em> literal dash/rule eyebrow; the detector did not fire <code>repeated-section-kickers</code>.</div>
+    <div class="k"><b>White page + indigo restraint ✓</b> — reinforces the “white reads modern” pick; indigo stays categorical, orange used sparingly.</div>
+    <div class="k"><b>Sanctioned grafts present ✓</b> — color-blocked Build/Grow title words, Instrument-Serif italic highlights, bento diptych, video-testimonial slot — all from rounds 1–2.</div>
+  </div>
+</section>
+
+<!-- ───────────── DETECTOR RAW ───────────── -->
+<section>
+  <div class="eyebrow"><h2>Detector raw — 73 findings (impeccable 3.1.0)</h2><span class="ln"></span></div>
+  <div class="det">
+    <div class="c"><div class="n r">26</div><div class="l">low-contrast <span style="color:#b91c1c">(2 real · rest verify)</span></div></div>
+    <div class="c"><div class="n a">13</div><div class="l">clipped-overflow-container</div></div>
+    <div class="c"><div class="n a">10</div><div class="l">cramped-padding</div></div>
+    <div class="c"><div class="n a">8</div><div class="l">tiny-text (&lt;12px)</div></div>
+    <div class="c"><div class="n a">4</div><div class="l">tight-leading</div></div>
+    <div class="c"><div class="n a">4</div><div class="l">all-caps-body</div></div>
+    <div class="c"><div class="n g">2</div><div class="l">overused-font <span>(advisory — sanctioned)</span></div></div>
+    <div class="c"><div class="n r">1</div><div class="l">dark-glow <span style="color:#b91c1c">(hard ban)</span></div></div>
+    <div class="c"><div class="n a">1</div><div class="l">em-dash-overuse</div></div>
+    <div class="c"><div class="n a">1</div><div class="l">marketing-buzzword</div></div>
+    <div class="c"><div class="n a">1</div><div class="l">layout-transition</div></div>
+    <div class="c"><div class="n a">1</div><div class="l">skipped-heading</div></div>
+    <div class="c"><div class="n g">1</div><div class="l">numbered-section-markers <span>(advisory)</span></div></div>
+  </div>
+</section>
+
+<footer>
+  <span>LoudFace · design-loop critique gate · review-only (no files changed, loop not closed)</span>
+  <span>impeccable 3.1.0 · DESIGN.md + taste-laws + rejections + rulebook anchored · 2026-06-24</span>
+</footer>
+
+</div>
+</body>
+</html>

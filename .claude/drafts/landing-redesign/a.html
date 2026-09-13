@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LoudFace — Direction A · The Proof Engine</title>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="fonts.css" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#0E1413; --ink-2:#384441; --ink-3:#5C6764; --hair:#E7E6E1; --hair-2:#EFEEE9;
+  --paper:#FCFCFB; --paper-2:#F6F5F1; --white:#FFFFFF;
+  --primary:#4F46E5; --primary-tint:#EEF0FF;
+  --accent:#1646CE; /* toku */
+  --r:18px;
+  --ease:cubic-bezier(.2,.7,.2,1);
+  --display:'Neue Montreal','Satoshi',system-ui,sans-serif;
+  --body:'Satoshi',system-ui,sans-serif;
+  --serif:'Instrument Serif',Georgia,serif;
+  --mono:'Geist Mono',ui-monospace,monospace;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{font-family:var(--body);background:var(--paper);color:var(--ink);-webkit-font-smoothing:antialiased;line-height:1.5;overflow-x:hidden}
+.wrap{max-width:1240px;margin:0 auto;padding:0 32px}
+a{color:inherit;text-decoration:none}
+h1,h2,h3{font-family:var(--display);font-weight:500;letter-spacing:-.02em;line-height:1.02}
+.serif-i{font-family:var(--serif);font-style:italic;font-weight:400;letter-spacing:-.01em}
+.mono{font-family:var(--mono);font-weight:500;letter-spacing:.02em}
+
+/* NAV */
+nav{position:sticky;top:0;z-index:50;background:rgba(252,252,251,.82);backdrop-filter:blur(14px);border-bottom:1px solid var(--hair)}
+.nav-in{display:flex;align-items:center;justify-content:space-between;height:68px}
+.logo{font-family:var(--display);font-weight:500;font-size:21px;letter-spacing:-.03em;display:flex;align-items:center;gap:9px}
+.logo .dot{width:9px;height:9px;border-radius:50%;background:var(--ink);display:inline-block}
+.nav-links{display:flex;gap:30px;font-size:15px;color:var(--ink-2);font-weight:500}
+.nav-links a:hover{color:var(--ink)}
+.nav-cta{font-size:14px;font-weight:500;background:var(--ink);color:var(--paper);padding:10px 18px;border-radius:999px;transition:transform .2s var(--ease),background .2s}
+.nav-cta:hover{background:#22302e}.nav-cta:active{transform:scale(.97)}
+
+/* HERO */
+.hero{padding:78px 0 30px;position:relative}
+.hero-grid{display:grid;grid-template-columns:1.05fr .95fr;gap:54px;align-items:center}
+.avail{display:inline-flex;align-items:center;gap:10px;font-size:13px;font-weight:500;color:var(--ink-2);background:var(--white);border:1px solid var(--hair);padding:7px 14px 7px 12px;border-radius:999px;margin-bottom:30px}
+.avail .pulse{width:8px;height:8px;border-radius:50%;background:#1FAA6A;position:relative}
+.avail .pulse::after{content:"";position:absolute;inset:-5px;border-radius:50%;border:1.5px solid #1FAA6A;opacity:.35;animation:ring 2.4s var(--ease) infinite}
+@keyframes ring{0%{transform:scale(.6);opacity:.5}100%{transform:scale(1.5);opacity:0}}
+h1.hl{font-size:clamp(40px,5.1vw,68px);letter-spacing:-.032em;line-height:1.0}
+h1.hl .l{display:block;opacity:0;transform:translateY(14px);filter:blur(8px);animation:rise .9s var(--ease) forwards}
+h1.hl .l:nth-child(1){animation-delay:.05s}
+h1.hl .l:nth-child(2){animation-delay:.15s}
+h1.hl .l:nth-child(3){animation-delay:.25s}
+@keyframes rise{to{opacity:1;transform:none;filter:none}}
+.sub{font-size:18px;line-height:1.6;color:var(--ink-2);max-width:36ch;margin:26px 0 32px;opacity:0;animation:rise .9s var(--ease) .4s forwards}
+.cta-row{display:flex;gap:14px;align-items:center;opacity:0;animation:rise .9s var(--ease) .5s forwards}
+.btn{font-family:var(--body);font-size:15px;font-weight:500;padding:14px 24px;border-radius:999px;cursor:pointer;transition:transform .2s var(--ease),background .2s,border-color .2s;border:1px solid transparent}
+.btn-primary{background:var(--ink);color:var(--paper)}
+.btn-primary:hover{background:#22302e}.btn:active{transform:scale(.98)}
+.btn-ghost{background:transparent;border-color:var(--hair);color:var(--ink)}
+.btn-ghost:hover{background:var(--white);border-color:#d8d7d1}
+.hero-trust{margin-top:34px;display:flex;align-items:center;gap:16px;font-size:13px;color:var(--ink-3);opacity:0;animation:rise .9s var(--ease) .6s forwards}
+.hero-trust .ln{width:34px;height:1px;background:var(--hair);}
+
+/* hero collage */
+.collage{position:relative;height:520px}
+.shot{position:absolute;border-radius:14px;overflow:hidden;box-shadow:0 1px 1px rgba(20,30,28,.04),0 18px 40px -16px rgba(20,30,28,.22);border:1px solid rgba(255,255,255,.7)}
+.shot img{width:100%;height:100%;object-fit:cover;display:block;transform:scale(1.04);animation:kb 18s ease-in-out infinite alternate}
+@keyframes kb{to{transform:scale(1.12)}}
+.shot.big{width:73%;height:74%;right:0;top:4%;z-index:2;animation:float1 9s var(--ease) infinite alternate}
+.shot.small{width:50%;height:46%;left:0;bottom:2%;z-index:3;animation:float2 11s var(--ease) infinite alternate}
+@keyframes float1{to{transform:translateY(-12px)}}
+@keyframes float2{to{transform:translateY(10px)}}
+.chip{position:absolute;z-index:4;background:var(--white);border:1px solid var(--hair);border-radius:13px;padding:12px 15px;box-shadow:0 14px 34px -14px rgba(20,30,28,.3)}
+.chip .n{font-family:var(--mono);font-weight:500;font-size:25px;letter-spacing:-.02em;line-height:1}
+.chip .t{font-size:11.5px;color:var(--ink-3);margin-top:5px;max-width:15ch;line-height:1.3}
+.chip.c1{left:-14px;top:8%}
+.chip.c2{right:6%;bottom:-2px}
+.chip .swatch{width:8px;height:8px;border-radius:2px;display:inline-block;margin-right:6px;vertical-align:middle}
+
+/* MARQUEE */
+.proof-bar{border-top:1px solid var(--hair);border-bottom:1px solid var(--hair);margin-top:46px;padding:26px 0;background:var(--white)}
+.proof-label{font-family:var(--mono);font-size:11.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-3);text-align:center;margin-bottom:20px}
+.marquee{display:flex;overflow:hidden;-webkit-mask-image:linear-gradient(90deg,transparent,#000 8%,#000 92%,transparent)}
+.mq-track{display:flex;gap:62px;align-items:center;padding-right:62px;animation:scroll 34s linear infinite;flex-shrink:0}
+.mq-track img{height:27px;width:auto;filter:grayscale(1);opacity:.5;transition:.3s}
+.marquee:hover .mq-track{animation-play-state:paused}
+.mq-track img:hover{filter:grayscale(0);opacity:1}
+@keyframes scroll{to{transform:translateX(-50%)}}
+
+/* SECTION SHELL */
+section{padding:96px 0}
+.eyebrow{font-family:var(--mono);font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--accent);display:flex;align-items:center;gap:10px}
+.eyebrow b{font-weight:500;color:var(--ink-3)}
+.h2{font-size:clamp(30px,3.6vw,46px);letter-spacing:-.028em;margin-top:18px;max-width:18ch}
+.lede{font-size:18px;color:var(--ink-2);max-width:50ch;margin-top:18px;line-height:1.6}
+
+/* CASE FEATURE */
+.case{display:grid;grid-template-columns:1fr 1fr;gap:48px;align-items:center;margin-top:64px}
+.case.flip .media{order:2}
+.case-media{border-radius:var(--r);overflow:hidden;position:relative;aspect-ratio:4/3;box-shadow:0 30px 60px -30px rgba(20,30,28,.35);border:1px solid var(--hair)}
+.case-media img{width:100%;height:100%;object-fit:cover;object-position:top}
+.case-media .tag{position:absolute;left:16px;top:16px;background:rgba(255,255,255,.95);backdrop-filter:blur(6px);border-radius:8px;padding:6px 11px;font-size:12px;font-weight:600;display:flex;align-items:center;gap:7px}
+.case-num{font-family:var(--mono);font-weight:500;font-size:clamp(44px,5vw,64px);letter-spacing:-.03em;line-height:.9}
+.case-h{font-size:27px;font-family:var(--display);font-weight:500;letter-spacing:-.02em;margin:14px 0 14px}
+.case p{color:var(--ink-2);font-size:16px;line-height:1.62;max-width:46ch}
+.case .meta{margin-top:22px;display:flex;gap:26px}
+.case .meta div span{display:block}
+.case .meta .k{font-size:13px;color:var(--ink-3)}
+.case .meta .v{font-weight:600;font-size:15px;margin-top:3px}
+.readlink{display:inline-flex;align-items:center;gap:8px;margin-top:24px;font-weight:500;font-size:15px;border-bottom:1.5px solid var(--ink);padding-bottom:3px;transition:gap .2s}
+.readlink:hover{gap:13px}
+
+/* DUAL ENGINE */
+.engine{background:#101716;color:#E7ECEA;border-radius:28px;padding:64px 56px;position:relative;overflow:hidden}
+.engine .h2{color:#fff}
+.engine .lede{color:#9FA, ;color:#A6B1AE}
+.duo{display:grid;grid-template-columns:1fr 1fr;gap:0;margin-top:52px;position:relative}
+.duo::before{content:"";position:absolute;left:50%;top:8%;bottom:8%;width:1px;background:linear-gradient(#ffffff00,#ffffff22,#ffffff00)}
+.lane{padding:8px 40px}
+.lane:first-child{padding-left:0}.lane:last-child{padding-right:0}
+.lane .tag{font-family:var(--mono);font-size:12px;letter-spacing:.1em;color:#7E8B88}
+.lane h3{color:#fff;font-size:25px;margin:14px 0 8px}
+.lane .st{color:#A9C2FF;font-weight:500;font-size:15px;margin-bottom:14px}
+.lane p{color:#A6B1AE;font-size:15px;line-height:1.62}
+.caps{display:flex;flex-wrap:wrap;gap:8px;margin-top:20px}
+.caps span{font-size:13px;padding:6px 12px;border-radius:8px;background:rgba(255,255,255,.06);color:#C7D0CE}
+.connector{margin-top:44px;text-align:center}
+.connector .serif-i{font-size:21px;color:#Cdd;color:#C7D6D2;max-width:52ch;margin:0 auto;display:block;line-height:1.45}
+
+/* QUOTE */
+.quote-sec{background:var(--white);border-top:1px solid var(--hair);border-bottom:1px solid var(--hair)}
+.quote{display:grid;grid-template-columns:auto 1fr;gap:40px;align-items:center;max-width:1000px;margin:0 auto}
+.q-face{width:128px;height:128px;border-radius:20px;object-fit:cover;border:1px solid var(--hair)}
+.q-body{font-family:var(--display);font-weight:500;font-size:clamp(23px,2.7vw,32px);letter-spacing:-.02em;line-height:1.28}
+.q-body .serif-i{color:var(--accent)}
+.q-meta{margin-top:22px;display:flex;align-items:center;gap:14px;font-size:15px}
+.q-meta img{height:22px;filter:grayscale(1);opacity:.7}
+.q-meta .who b{font-weight:600}.q-meta .who span{color:var(--ink-3)}
+.q-rule{width:1px;height:24px;background:var(--hair)}
+
+/* STATS */
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:30px;margin-top:8px}
+.stat .n{font-family:var(--mono);font-weight:500;font-size:clamp(38px,4.4vw,54px);letter-spacing:-.03em;line-height:.95}
+.stat .l{font-size:13px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:var(--ink-2);margin-top:14px}
+.stat .d{font-size:13.5px;color:var(--ink-3);margin-top:8px;line-height:1.5;max-width:24ch}
+.stats-head{display:flex;justify-content:space-between;align-items:flex-end;flex-wrap:wrap;gap:16px}
+
+/* CTA */
+.cta{text-align:center;padding:120px 0}
+.cta h2{font-size:clamp(34px,4.4vw,58px);letter-spacing:-.03em;max-width:18ch;margin:0 auto}
+.cta .serif-i{color:var(--accent)}
+.cta p{font-size:18px;color:var(--ink-2);max-width:48ch;margin:22px auto 34px}
+footer{border-top:1px solid var(--hair);padding:40px 0;color:var(--ink-3);font-size:13.5px;display:flex;justify-content:space-between}
+
+@media (max-width:900px){
+  .hero-grid{grid-template-columns:1fr;gap:40px}.collage{height:380px}
+  .case,.duo,.quote{grid-template-columns:1fr;gap:28px}.case.flip .media{order:0}
+  .duo::before{display:none}.lane{padding:24px 0;border-top:1px solid #ffffff14}.lane:first-child{border:0}
+  .stats{grid-template-columns:repeat(2,1fr)}.engine{padding:40px 26px}
+  .quote{grid-template-columns:1fr}.q-face{width:84px;height:84px}
+}
+@media(prefers-reduced-motion:reduce){*{animation:none!important}h1.hl .l,.sub,.cta-row,.hero-trust{opacity:1!important;transform:none!important;filter:none!important}}
+</style>
+</head>
+<body>
+<nav><div class="wrap nav-in">
+  <div class="logo"><span class="dot"></span>LoudFace</div>
+  <div class="nav-links"><a>Work</a><a>Services</a><a>Process</a><a>Pricing</a><a>Writing</a></div>
+  <a class="nav-cta">Book a strategy call</a>
+</div></nav>
+
+<header class="hero"><div class="wrap hero-grid">
+  <div>
+    <div class="avail"><span class="pulse"></span> 2 client slots open for Q3 2026</div>
+    <h1 class="hl"><span class="l">Your website converts.</span><span class="l">Your traffic compounds.</span><span class="l"><span class="serif-i">One team</span> runs both.</span></h1>
+    <p class="sub">LoudFace is the conversion &amp; organic-growth team behind 200+ B2B SaaS websites. We build on Webflow, then run SEO, AEO &amp; CRO to grow what we shipped.</p>
+    <div class="cta-row">
+      <button class="btn btn-primary">Book your strategy call</button>
+      <button class="btn btn-ghost">See the work →</button>
+    </div>
+    <div class="hero-trust"><span>Webflow Enterprise Partner</span><span class="ln"></span><span>Shipping since 2020</span><span class="ln"></span><span>Series A+ SaaS</span></div>
+  </div>
+  <div class="collage">
+    <div class="shot big"><img src="https://cdn.sanity.io/images/xjjjqhgt/production/bd1c09b494f7074c268f5b964d0c77dc1b1ef965-2880x1620.webp?w=900&h=620&fit=crop&crop=top&auto=format&q=85" alt="Toku"></div>
+    <div class="shot small"><img src="https://cdn.sanity.io/images/xjjjqhgt/production/a0f4750b896ced6ffca9c5869623b15614f312ba-1440x10131.webp?w=620&h=440&fit=crop&crop=top&auto=format&q=85" alt="Dimer Health"></div>
+    <div class="chip c1"><div class="n" style="color:var(--accent)"><span class="swatch" style="background:#1646ce"></span>0→86%</div><div class="t">AI visibility on the core stablecoin-payroll prompt · Toku</div></div>
+    <div class="chip c2"><div class="n" style="color:#4037a0"><span class="swatch" style="background:#4037a0"></span>+288%</div><div class="t">Conversion rate over 6 months · Dimer Health</div></div>
+  </div>
+</div></header>
+
+<div class="proof-bar"><div class="wrap">
+  <div class="proof-label">Trusted by B2B SaaS teams shipping real products</div>
+  <div class="marquee"><div class="mq-track" id="mqt">
+    <img src="https://cdn.sanity.io/images/xjjjqhgt/production/7421bda16647889739dd725fe4967e45b42dd4c5-997x139.png?h=80&auto=format" alt="Montblanc">
+    <img src="https://cdn.sanity.io/images/xjjjqhgt/production/90fcd30f2058c1975d25c315ccef475997d07461-836x203.png?h=80&auto=format" alt="Radisson">
+    <img src="https://cdn.sanity.io/images/xjjjqhgt/production/2916b66c3352d3932990dd7b7052901ae1078d04-845x178.png?h=80&auto=format" alt="Hoxhunt">
+    <img src="https://cdn.sanity.io/images/xjjjqhgt/production/bf5fa13f7566496f48caf6e20a73ca612ced0291-619x202.png?h=80&auto=format" alt="LIQID">
+    <img src="https://cdn.sanity.io/images/xjjjqhgt/production/6a79052d6d3db7428b73436f15350c87e0cefa3b-339x109.png?h=80&auto=format" alt="Toku">
+    <img src="https://cdn.sanity.io/images/xjjjqhgt/production/bdd109e13c67dad916c89a42c71d67c3ba0b217e-680x233.png?h=80&auto=format" alt="Dimer">
+    <img src="https://cdn.sanity.io/images/xjjjqhgt/production/86cefc1d66ac01f9a48a5722d54579ad638eb575-724x106.png?h=80&auto=format" alt="Eraser">
+    <img src="https://cdn.sanity.io/images/xjjjqhgt/production/5139fa977e892fe5854a9dea4976ce056fec88d5-820x269.png?h=80&auto=format" alt="Ceipal">
+  </div></div>
+</div></div>
+
+<section><div class="wrap">
+  <div class="eyebrow">The work speaks <b>· specifically</b></div>
+  <h2 class="h2">Real projects. Real metrics. <span class="serif-i" style="letter-spacing:-.01em">Real SaaS companies.</span></h2>
+
+  <div class="case">
+    <div class="media case-media"><img src="https://cdn.sanity.io/images/xjjjqhgt/production/bd1c09b494f7074c268f5b964d0c77dc1b1ef965-2880x1620.webp?w=1100&h=820&fit=crop&crop=top&auto=format&q=85" alt="Toku">
+      <span class="tag"><span class="swatch" style="background:#1646ce;width:10px;height:10px;border-radius:2px"></span>Toku · Fintech</span></div>
+    <div>
+      <div class="case-num" style="color:#1646ce">0→86%</div>
+      <h3 class="case-h">How Toku became the AI's answer for stablecoin payroll</h3>
+      <p>When buyers ask ChatGPT and Perplexity who handles stablecoin payroll, Toku now comes up. We rebuilt the site for clarity, then ran AEO until it owned the category's core prompt.</p>
+      <div class="meta"><div><span class="k">AI visibility</span><span class="v">0 → 86%</span></div><div><span class="k">Engagement</span><span class="v">Build → Grow</span></div></div>
+      <a class="readlink">Read the case study →</a>
+    </div>
+  </div>
+
+  <div class="case flip" style="margin-top:84px">
+    <div class="media case-media"><img src="https://cdn.sanity.io/images/xjjjqhgt/production/a0f4750b896ced6ffca9c5869623b15614f312ba-1440x10131.webp?w=1100&h=820&fit=crop&crop=top&auto=format&q=85" alt="Dimer Health">
+      <span class="tag"><span class="swatch" style="background:#4037a0;width:10px;height:10px;border-radius:2px"></span>Dimer Health · Healthtech</span></div>
+    <div>
+      <div class="case-num" style="color:#4037a0">+288%</div>
+      <h3 class="case-h">A telehealth brand &amp; website rebuilt to convert</h3>
+      <p>A best-in-class site for a healthcare startup — then six months of conversion work. The result: a 288% lift in conversion rate, measured, not estimated.</p>
+      <div class="meta"><div><span class="k">Conversion rate</span><span class="v">+288%</span></div><div><span class="k">Window</span><span class="v">6 months</span></div></div>
+      <a class="readlink">Read the case study →</a>
+    </div>
+  </div>
+</div></section>
+
+<section style="padding-top:0"><div class="wrap"><div class="engine">
+  <div class="eyebrow" style="color:#A9C2FF">One partner <b style="color:#7E8B88">· launch to growth</b></div>
+  <h2 class="h2">Most agencies hand you a site and leave.</h2>
+  <p class="lede">Most SEO shops inherit someone else's mess. We do both — and because we do both, neither half is compromised.</p>
+  <div class="duo">
+    <div class="lane">
+      <div class="tag">01 — BUILD</div>
+      <h3>A website that earns its traffic</h3>
+      <div class="st">Shipped in weeks, not quarters.</div>
+      <p>Positioning, copy, UX/UI and production Webflow — a site your marketing team runs without filing engineering tickets, built to convert the traffic you're about to drive to it.</p>
+      <div class="caps"><span>UX/UI Design</span><span>Webflow Dev</span><span>Conversion Copy</span><span>CMS Architecture</span></div>
+    </div>
+    <div class="lane">
+      <div class="tag">02 — GROW</div>
+      <h3>Traffic &amp; conversions, month over month</h3>
+      <div class="st">No onboarding lag. We're already there.</div>
+      <p>After launch we stay — SEO and AEO to bring in organic and AI-search traffic, CRO to make it convert. A team that knows your site inside out, because we built it.</p>
+      <div class="caps"><span>Technical SEO</span><span>AEO</span><span>Content Strategy</span><span>CRO</span></div>
+    </div>
+  </div>
+  <div class="connector"><span class="serif-i">Most clients start with a build. Within three months, they ask us to handle growth too. That's by design.</span></div>
+</div></div></section>
+
+<section class="quote-sec"><div class="wrap"><div class="quote">
+  <img class="q-face" src="https://cdn.sanity.io/images/xjjjqhgt/production/ed922fafea75109de6c216519a1e1bb608c01fe8-944x1024.png?w=256&h=256&fit=crop&auto=format" alt="Kenneth O'Friel">
+  <div>
+    <div class="q-body">"You guys are the experts. I can rely on you to drive the plan — you've <span class="serif-i">already earned my trust</span> in what you've delivered so far."</div>
+    <div class="q-meta">
+      <div class="who"><b>Kenneth O'Friel</b> <span>· CEO, Toku</span></div>
+      <span class="q-rule"></span>
+      <img src="https://cdn.sanity.io/images/xjjjqhgt/production/6a79052d6d3db7428b73436f15350c87e0cefa3b-339x109.png?h=66&auto=format" alt="Toku">
+    </div>
+  </div>
+</div></div></section>
+
+<section><div class="wrap">
+  <div class="stats-head">
+    <h2 class="h2" style="margin:0">Numbers, not adjectives.</h2>
+    <p style="color:var(--ink-3);font-size:14px;max-width:30ch">Every figure here is from a real engagement. Nothing rounded up for the website.</p>
+  </div>
+  <div class="stats" style="margin-top:54px">
+    <div class="stat"><div class="n">200+</div><div class="l">Projects shipped</div><div class="d">B2B SaaS sites built on Webflow since 2020.</div></div>
+    <div class="stat"><div class="n" style="color:#4037a0">288%</div><div class="l">Conversion lift</div><div class="d">Dimer Health, over a 6-month window.</div></div>
+    <div class="stat"><div class="n">4+ yrs</div><div class="l">Enterprise Partner</div><div class="d">Among few agencies with Webflow Enterprise status.</div></div>
+    <div class="stat"><div class="n">&lt;6 wks</div><div class="l">Time to launch</div><div class="d">Kickoff to live. Others quote 12–16.</div></div>
+  </div>
+</div></section>
+
+<section class="cta"><div class="wrap">
+  <h2>Let's figure out what's <span class="serif-i">holding your site back.</span></h2>
+  <p>30-minute strategy call. No pitch deck. We'll look at your site together and tell you what we'd change, and why.</p>
+  <button class="btn btn-primary" style="padding:16px 30px;font-size:16px">Book a strategy call</button>
+</div></section>
+
+<footer><div class="wrap" style="display:flex;justify-content:space-between;width:100%;max-width:1240px;margin:0 auto;padding:0 32px"><span>© 2026 LoudFace</span><span class="mono">Direction A · The Proof Engine</span></div></footer>
+
+<script>
+// duplicate marquee for seamless loop
+const t=document.getElementById('mqt');if(t){t.innerHTML+=t.innerHTML;}
+</script>
+</body>
+</html>

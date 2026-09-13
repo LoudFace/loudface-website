@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Peec Prompt Audit — 2026-05-26</title>
+<style>
+  :root {
+    --ink: #1a1a1f; --paper: #faf8f3; --rule: #d8d3c4; --muted: #6b6660;
+    --accent: #b8431d; --win: #2d6a3e; --win-bg: #e8f1e7;
+    --loss: #a02828; --loss-bg: #f5e4e1;
+    --neutral: #4a4640; --neutral-bg: #ece8de;
+    --highlight: #f0ead6;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: "Charter", "Iowan Old Style", "Sitka Text", Cambria, Georgia, serif;
+    background: var(--paper); color: var(--ink); line-height: 1.55;
+    font-feature-settings: "kern", "liga", "onum";
+    -webkit-font-smoothing: antialiased;
+  }
+  .container { max-width: 1100px; margin: 0 auto; padding: 64px 48px 96px; }
+
+  header { border-bottom: 2px solid var(--ink); padding-bottom: 32px; margin-bottom: 48px; }
+  .kicker {
+    font-family: ui-monospace, "SF Mono", Menlo, monospace;
+    font-size: 12px; text-transform: uppercase; letter-spacing: 0.12em;
+    color: var(--muted); margin-bottom: 16px;
+  }
+  h1 { font-size: 52px; line-height: 0.98; letter-spacing: -0.02em; font-weight: 700; margin-bottom: 20px; }
+  .dek { font-size: 21px; line-height: 1.4; color: var(--neutral); max-width: 760px; }
+
+  section { margin-bottom: 56px; }
+  section h2 {
+    font-size: 13px; text-transform: uppercase; letter-spacing: 0.14em;
+    font-family: ui-monospace, Menlo, monospace;
+    color: var(--accent); margin-bottom: 24px;
+    border-top: 1px solid var(--rule); padding-top: 16px;
+  }
+  section h3 { font-size: 24px; line-height: 1.15; letter-spacing: -0.01em; margin-bottom: 16px; font-weight: 600; }
+  section p { font-size: 17px; line-height: 1.6; max-width: 760px; margin-bottom: 14px; }
+  .lede { font-size: 21px; line-height: 1.5; }
+  .lede strong { background: var(--highlight); padding: 0 4px; }
+  .lede .red { background: var(--loss-bg); color: var(--loss); padding: 0 4px; }
+
+  .stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 18px; margin-top: 8px; }
+  .stat {
+    background: white; border: 1px solid var(--rule);
+    padding: 22px 22px 20px; border-radius: 4px;
+  }
+  .stat.bad { border-left: 4px solid var(--loss); }
+  .stat.good { border-left: 4px solid var(--win); }
+  .stat .label {
+    font-family: ui-monospace, Menlo, monospace; font-size: 11px;
+    text-transform: uppercase; letter-spacing: 0.1em; color: var(--muted);
+    margin-bottom: 10px;
+  }
+  .stat .value {
+    font-size: 36px; font-weight: 700; letter-spacing: -0.02em;
+    line-height: 1; font-feature-settings: "tnum"; margin-bottom: 8px;
+  }
+  .stat .delta {
+    font-family: ui-monospace, Menlo, monospace; font-size: 13px; font-weight: 500;
+  }
+  .stat .delta.bad { color: var(--loss); }
+  .stat .delta.good { color: var(--win); }
+  .stat .delta.flat { color: var(--muted); }
+  .stat .sub { font-size: 12px; color: var(--muted); margin-top: 6px; font-family: ui-monospace, Menlo, monospace; }
+
+  .badge {
+    display: inline-block;
+    font-family: ui-monospace, Menlo, monospace;
+    font-size: 11px; font-weight: 600;
+    text-transform: uppercase; letter-spacing: 0.08em;
+    padding: 3px 8px; border-radius: 3px; margin-right: 6px;
+  }
+  .badge.win  { background: var(--win-bg);  color: var(--win); }
+  .badge.loss { background: var(--loss-bg); color: var(--loss); }
+  .badge.neutral { background: var(--neutral-bg); color: var(--neutral); }
+
+  table {
+    width: 100%; border-collapse: collapse;
+    font-family: ui-monospace, "SF Mono", Menlo, monospace;
+    font-size: 13px; background: white; border: 1px solid var(--rule);
+    margin-top: 8px;
+  }
+  thead { background: var(--highlight); }
+  th, td { text-align: left; padding: 10px 14px; border-bottom: 1px solid var(--rule); vertical-align: top; }
+  th { font-weight: 600; font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--neutral); }
+  tbody tr:last-child td { border-bottom: none; }
+  tbody tr:hover { background: #fbfaf5; }
+  td.num, th.num { text-align: right; font-feature-settings: "tnum"; }
+  td.win-val { color: var(--win); font-weight: 600; }
+  td.loss-val { color: var(--loss); font-weight: 600; }
+
+  /* Mix bar */
+  .mix-bar { display: flex; height: 36px; border-radius: 4px; overflow: hidden; margin: 16px 0; border: 1px solid var(--rule); }
+  .mix-seg { display: flex; align-items: center; justify-content: center; font-family: ui-monospace, Menlo, monospace; font-size: 12px; color: white; font-weight: 600; }
+  .mix-commercial { background: #b8431d; }
+  .mix-educational { background: #a02828; }
+  .mix-other { background: #b8a040; color: #1a1a1f; }
+  .mix-pricing { background: #2d6a3e; }
+  .mix-comparison { background: #6b6660; }
+  .mix-legend { display: flex; flex-wrap: wrap; gap: 16px; font-size: 13px; color: var(--neutral); font-family: ui-monospace, Menlo, monospace; }
+  .mix-legend .dot { display: inline-block; width: 10px; height: 10px; border-radius: 2px; margin-right: 6px; vertical-align: middle; }
+
+  .callout {
+    background: white; border: 1px solid var(--rule);
+    padding: 22px 26px; border-radius: 4px;
+    border-left: 4px solid var(--accent); margin-top: 12px;
+  }
+  .callout.bad { border-left-color: var(--loss); background: #fdf6f4; }
+  .callout.good { border-left-color: var(--win); background: #f5f9f4; }
+  .callout h4 { font-size: 18px; line-height: 1.25; margin-bottom: 8px; font-weight: 600; }
+  .callout p { font-size: 15px; line-height: 1.55; color: var(--neutral); margin-bottom: 6px; max-width: none; }
+  .callout .num { font-family: ui-monospace, Menlo, monospace; font-weight: 600; color: var(--ink); }
+
+  .prompt-list { list-style: none; padding: 0; margin-top: 8px; }
+  .prompt-list li {
+    background: white; border: 1px solid var(--rule); border-radius: 4px;
+    padding: 14px 18px; margin-bottom: 10px;
+    font-size: 15px; line-height: 1.5;
+  }
+  .prompt-list li.add { border-left: 3px solid var(--win); }
+  .prompt-list li.remove { border-left: 3px solid var(--loss); }
+  .prompt-list .prompt {
+    font-family: ui-monospace, Menlo, monospace; font-size: 13px;
+    font-weight: 600; color: var(--ink); display: block; margin-bottom: 6px;
+  }
+  .prompt-list .rationale { color: var(--neutral); font-size: 14px; }
+
+  .recs { counter-reset: rec; }
+  .rec {
+    background: white; border: 1px solid var(--rule);
+    padding: 22px 24px; border-radius: 4px; margin-bottom: 14px;
+    position: relative; padding-left: 70px;
+  }
+  .rec::before {
+    counter-increment: rec; content: counter(rec);
+    position: absolute; left: 22px; top: 18px;
+    font-family: ui-monospace, Menlo, monospace;
+    font-size: 30px; font-weight: 700; color: var(--accent); line-height: 1;
+  }
+  .rec h4 { font-size: 18px; margin-bottom: 6px; font-weight: 600; }
+  .rec p { font-size: 15px; line-height: 1.55; color: var(--neutral); max-width: none; margin-bottom: 0; }
+
+  footer { margin-top: 80px; padding-top: 32px; border-top: 1px solid var(--rule); font-size: 13px; color: var(--muted); font-family: ui-monospace, Menlo, monospace; }
+  footer p { font-size: 13px; line-height: 1.6; max-width: none; margin-bottom: 6px; }
+
+  @media (max-width: 760px) {
+    .container { padding: 32px 20px; }
+    h1 { font-size: 36px; }
+    .stats-grid { grid-template-columns: repeat(2, 1fr); }
+  }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <header>
+    <p class="kicker">Peec Prompt Coverage Audit · 2026-05-26</p>
+    <h1>Your instinct was right. We're tracking the wrong prompts and losing the right ones.</h1>
+    <p class="dek">75 unique prompts in the Peec tracker. 20% citation rate. Cited 213 times vs competitors at 4,011 — a 1-to-19 share-of-voice gap. Heavy lean on educational/awareness queries that don't drive pipeline. Critical clusters (fintech-specific, branded, stage-of-buyer) are missing entirely.</p>
+  </header>
+
+  <section>
+    <h2>Headline numbers</h2>
+    <div class="stats-grid">
+      <div class="stat bad">
+        <div class="label">Total tracked prompts</div>
+        <div class="value">75</div>
+        <div class="delta flat">unique, deduped</div>
+        <div class="sub">150 rows in DB · 23 are "untracked match" noise</div>
+      </div>
+      <div class="stat bad">
+        <div class="label">% with any LF citation</div>
+        <div class="value">20%</div>
+        <div class="delta bad">15 of 75</div>
+        <div class="sub">Most prompts have zero LF presence</div>
+      </div>
+      <div class="stat bad">
+        <div class="label">LF vs competitor cites (30d)</div>
+        <div class="value">213 : 4,011</div>
+        <div class="delta bad">1-to-19 ratio</div>
+        <div class="sub">We trail badly even where we show up</div>
+      </div>
+      <div class="stat good">
+        <div class="label">Prompts we WIN</div>
+        <div class="value">2</div>
+        <div class="delta good">covered + winning</div>
+        <div class="sub">Both: Webflow-for-SaaS pricing</div>
+      </div>
+      <div class="stat">
+        <div class="label">Covered but losing</div>
+        <div class="value">9</div>
+        <div class="delta flat">cusp targets</div>
+        <div class="sub">The right prompts; we just don't lead yet</div>
+      </div>
+      <div class="stat bad">
+        <div class="label">No LF coverage at all</div>
+        <div class="value">41</div>
+        <div class="delta bad">55% of total</div>
+        <div class="sub">Most have competitor citation volume</div>
+      </div>
+      <div class="stat bad">
+        <div class="label">Educational prompts (0% cited)</div>
+        <div class="value">13</div>
+        <div class="delta bad">17% of total</div>
+        <div class="sub">Top-of-funnel reads, not buyers</div>
+      </div>
+      <div class="stat bad">
+        <div class="label">Branded / LF-named prompts</div>
+        <div class="value">0</div>
+        <div class="delta bad">none tracked</div>
+        <div class="sub">No way to see brand demand shift</div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Intent mix — what we're actually tracking</h2>
+    <p>The intent distribution explains the citation gap. Commercial intent dominates by count, but Educational (17%) is doing zero work — those queries are readers researching, not buyers hiring.</p>
+    <div class="mix-bar">
+      <div class="mix-seg mix-commercial" style="flex: 69">Commercial 69%</div>
+      <div class="mix-seg mix-educational" style="flex: 17">Educational 17%</div>
+      <div class="mix-seg mix-other" style="flex: 7">Other 7%</div>
+      <div class="mix-seg mix-pricing" style="flex: 4">Pricing 4%</div>
+      <div class="mix-seg mix-comparison" style="flex: 3">Cmp 3%</div>
+    </div>
+
+    <h3 style="margin-top: 32px;">Citation rate by intent type</h3>
+    <table>
+      <thead><tr><th>Intent</th><th class="num">Prompts</th><th class="num">% of total</th><th class="num">Citation rate</th><th>Reading</th></tr></thead>
+      <tbody>
+        <tr><td>Pricing</td><td class="num">3</td><td class="num">4%</td><td class="num win-val">67%</td><td>Highest hit rate. Punching above weight.</td></tr>
+        <tr><td>Commercial</td><td class="num">52</td><td class="num">69%</td><td class="num">23%</td><td>The right cluster. The work is to win more.</td></tr>
+        <tr><td>Other</td><td class="num">5</td><td class="num">7%</td><td class="num">20%</td><td>Mixed bag — re-categorize.</td></tr>
+        <tr><td>Educational</td><td class="num">13</td><td class="num">17%</td><td class="num loss-val">0%</td><td>Marketer research, not buyer intent. Demote.</td></tr>
+        <tr><td>Comparison</td><td class="num">2</td><td class="num">3%</td><td class="num loss-val">0%</td><td>Under-represented + we're losing.</td></tr>
+      </tbody>
+    </table>
+
+    <h3 style="margin-top: 32px;">By Topic (where the AEO cluster is bleeding)</h3>
+    <table>
+      <thead><tr><th>Topic</th><th class="num">Prompts</th><th class="num">Citation rate</th><th class="num">LF cites (30d)</th><th>Reading</th></tr></thead>
+      <tbody>
+        <tr><td>Webflow for SaaS</td><td class="num">14</td><td class="num win-val">21%</td><td class="num">79</td><td>Strongest by volume. Legacy positioning.</td></tr>
+        <tr><td>B2B SaaS SEO Agency</td><td class="num">36</td><td class="num">17%</td><td class="num">41</td><td>Largest cluster. Right target. Slow conversion.</td></tr>
+        <tr><td>Competitor Comparison</td><td class="num">16</td><td class="num">12%</td><td class="num">34</td><td>OK for awareness; we don't lead any.</td></tr>
+        <tr><td>AEO AI Search for SaaS</td><td class="num">44</td><td class="num loss-val">7%</td><td class="num">53</td><td><strong>Largest bleed.</strong> 29% of total with lowest hit rate.</td></tr>
+        <tr><td>Converting AI &amp; Search Traffic</td><td class="num">18</td><td class="num">6%</td><td class="num">6</td><td>Top-of-funnel queries miscategorized.</td></tr>
+        <tr><td>Webflow AEO Agency</td><td class="num">14</td><td class="num loss-val">0%</td><td class="num">0</td><td>Zero footprint despite 14 prompts.</td></tr>
+        <tr><td>Thought Leadership</td><td class="num">8</td><td class="num loss-val">0%</td><td class="num">0</td><td>Pure top-of-funnel. Demote.</td></tr>
+      </tbody>
+    </table>
+
+    <div class="callout bad" style="margin-top: 20px;">
+      <h4>The AEO cluster is the biggest single problem</h4>
+      <p><span class="num">44 prompts (29% of total)</span> tagged "AEO AI Search for SaaS" with a <span class="num">7% citation rate</span> — that's both the largest cluster and the lowest hit rate. Either the AEO content is structurally wrong (run <code>/pattern-audit</code> on it) or the prompts being tracked don't match commercial intent (re-curate the cluster). Both are real possibilities.</p>
+    </div>
+  </section>
+
+  <section>
+    <h2>The 2 winners + 9 cusp losers</h2>
+    <p>These 11 prompts are the right targets. The 2 we win are pre-repositioning legacy wins (Webflow-for-SaaS). The 9 we cover-but-lose are exactly aligned with the May 2026 repositioning — we just don't lead yet.</p>
+
+    <h3 style="margin-top: 24px;">Where we lead</h3>
+    <table>
+      <thead><tr><th>Prompt</th><th class="num">LF cites</th><th class="num">Top competitor</th><th>Topic</th></tr></thead>
+      <tbody>
+        <tr><td>Webflow agency pricing for a B2B SaaS website</td><td class="num win-val">53</td><td class="num">62</td><td>Webflow for SaaS · Pricing</td></tr>
+        <tr><td>Webflow Enterprise Partner agencies for B2B SaaS companies</td><td class="num win-val">16</td><td class="num">26</td><td>Webflow for SaaS · Commercial</td></tr>
+      </tbody>
+    </table>
+
+    <h3 style="margin-top: 24px;">Where we appear but trail (cusp prompts — win these next)</h3>
+    <table>
+      <thead><tr><th>Prompt</th><th class="num">LF</th><th class="num">Comp</th><th class="num">Gap</th></tr></thead>
+      <tbody>
+        <tr><td>Top B2B SaaS SEO agencies in 2026</td><td class="num">25</td><td class="num">98</td><td class="num loss-val">−73</td></tr>
+        <tr><td>AEO agency pricing for B2B SaaS companies</td><td class="num">25</td><td class="num">64</td><td class="num loss-val">−39</td></tr>
+        <tr><td>Hire AEO agency for B2B SaaS</td><td class="num">18</td><td class="num">46</td><td class="num loss-val">−28</td></tr>
+        <tr><td>Agency for SaaS organic revenue growth</td><td class="num">11</td><td class="num">53</td><td class="num loss-val">−42</td></tr>
+        <tr><td>Best AEO and SEO agency for B2B tech companies</td><td class="num">10</td><td class="num">41</td><td class="num loss-val">−31</td></tr>
+        <tr><td>Best B2B SaaS SEO agencies compared</td><td class="num">9</td><td class="num">68</td><td class="num loss-val">−59</td></tr>
+        <tr><td>Best SEO agency for B2B SaaS companies</td><td class="num">5</td><td class="num">54</td><td class="num loss-val">−49</td></tr>
+        <tr><td>Best agency for B2B SaaS content and SEO</td><td class="num">5</td><td class="num">53</td><td class="num loss-val">−48</td></tr>
+        <tr><td>Which agency is best for SaaS organic traffic growth</td><td class="num">4</td><td class="num">46</td><td class="num loss-val">−42</td></tr>
+      </tbody>
+    </table>
+    <p style="margin-top: 14px; font-size: 14px; color: var(--muted);">The 5 competitors winning these listicle slots: Radyant, SaaSHero, DiscoveredLabs, ExaltGrowth, Onely. We have the prompts right; we don't yet have the citations.</p>
+  </section>
+
+  <section>
+    <h2>What to remove</h2>
+    <p>These are tracked but track the wrong thing. Either remove from Peec or move to a "content research" view that's not on the visibility KPI list.</p>
+    <ul class="prompt-list">
+      <li class="remove">
+        <span class="prompt">"How long does AEO take to show results for a B2B SaaS company"</span>
+        <span class="rationale"><span class="badge loss">remove</span> Educational, 0% cited, Comp 23. Marketer-research query, not buyer-decision. Doesn't drive pipeline.</span>
+      </li>
+      <li class="remove">
+        <span class="prompt">"How to build organic traffic for a B2B SaaS website"</span>
+        <span class="rationale"><span class="badge loss">remove</span> Thought leadership, 0% cited. Blog-discovery query. The reader is doing research, not buying.</span>
+      </li>
+      <li class="remove">
+        <span class="prompt">"How to track AI search visibility for a SaaS company"</span>
+        <span class="rationale"><span class="badge loss">remove</span> Educational. Same problem.</span>
+      </li>
+      <li class="remove">
+        <span class="prompt">"Looking for a performance marketing agency using Webflow"</span>
+        <span class="rationale"><span class="badge loss">remove</span> Wrong category — LoudFace is not a performance marketing agency. The buyer here isn't a fit.</span>
+      </li>
+      <li class="remove">
+        <span class="prompt">"Webflow experts for improving organic traffic through AEO"</span>
+        <span class="rationale"><span class="badge loss">remove</span> Webflow-front-door framing contradicts the May 2026 repositioning where Webflow is delivery capability, not product.</span>
+      </li>
+      <li class="remove">
+        <span class="prompt">"How to increase demo request conversions on a SaaS website"</span>
+        <span class="rationale"><span class="badge loss">remove</span> Top-of-funnel marketing research. Comp 124, LF 0. Even winning it wouldn't drive deals.</span>
+      </li>
+      <li class="remove">
+        <span class="prompt">"Best organic growth strategies for B2B SaaS in 2026"</span>
+        <span class="rationale"><span class="badge loss">remove</span> Educational. Reader research, not buyer query.</span>
+      </li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>What to add — the 5 critical gaps</h2>
+    <p>These are missing entirely. Each maps to a specific commercial reality (case study, ICP, pricing tier, or pipeline signal) that the current tracker doesn't measure.</p>
+
+    <ul class="prompt-list">
+      <li class="add">
+        <span class="prompt">"LoudFace agency reviews" + "LoudFace vs Radyant" + "LoudFace vs Omnius" + "LoudFace vs SaaSHero"</span>
+        <span class="rationale"><span class="badge win">add (4-5 prompts)</span> Zero branded prompts tracked today. Branded queries are where bottom-funnel demand surfaces — without these we can't measure when content actually shifts brand awareness. Bake-off queries ("LoudFace vs X") are the moment a consideration-stage buyer narrows their shortlist.</span>
+      </li>
+      <li class="add">
+        <span class="prompt">"Best AEO agency for B2B fintech payroll and payments companies" + "SEO agency for stablecoin / web3 fintech B2B" + "Marketing agency for embedded finance startups"</span>
+        <span class="rationale"><span class="badge win">add (5-7 prompts)</span> All 7 fintech prompts currently tracked are generic. Zero capture LoudFace's actual fintech wedge (Toku stablecoin payroll). The case study with the most evidence has zero prompt support in the tracker.</span>
+      </li>
+      <li class="add">
+        <span class="prompt">"Series B SaaS organic growth agency" + "Agency for $5M-$20M ARR SaaS scaling organic" + "Growth agency for Series C SaaS pre-IPO"</span>
+        <span class="rationale"><span class="badge win">add (3-5 prompts)</span> Only one stage-of-buyer prompt exists today, and it's not cited. Series A-C is half the ICP. These are pipeline-grade queries — the buyer is in budget range.</span>
+      </li>
+      <li class="add">
+        <span class="prompt">"Agency that combines SEO, AEO, and Webflow for B2B SaaS" + "Full-stack organic growth retainer for SaaS"</span>
+        <span class="rationale"><span class="badge win">add (2-3 prompts)</span> The unified-stack positioning (Solo/Dual/Scale) has no prompt that maps to it. This is the differentiation; nothing in the tracker measures it.</span>
+      </li>
+      <li class="add">
+        <span class="prompt">"How to evaluate a B2B SaaS SEO agency" + "Questions to ask an AEO agency before hiring" + "Red flags when hiring a SaaS growth agency"</span>
+        <span class="rationale"><span class="badge win">add (3 prompts)</span> Vendor-evaluation queries are pre-shortlist intent. The agency that publishes the evaluation framework usually gets cited — and we just shipped 9 evaluation-criteria tables today. Perfect alignment between content and prompts.</span>
+      </li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>Structural changes — fix the taxonomy</h2>
+    <div class="recs">
+      <div class="rec">
+        <h4>Clean up the 23 "untracked match" rows</h4>
+        <p>31% of the DB has no <code>Matched LoudFace URLs</code> assigned. They're noise in every dashboard. For each: either assign a target URL (so it becomes a real coverage measurement) or remove. As-is they distort all the rate calculations.</p>
+      </div>
+      <div class="rec">
+        <h4>Add a Vertical field to the Topic taxonomy</h4>
+        <p>Current Topic mixes service (AEO, SEO, Webflow) with vertical (B2B SaaS) and intent stage (Converting AI traffic). Split: keep "Topic = service cluster," add a new "Vertical = SaaS / Fintech / B2B-other" multi-select. Only way to filter "how am I doing on fintech?" in one view.</p>
+      </div>
+      <div class="rec">
+        <h4>Rebalance the intent mix to commercial 75-80%</h4>
+        <p>Current: 69% commercial / 17% educational. Target: 75-80% commercial, 8-10% pricing, 8-10% comparison/branded, ≤5% educational. Educational is doing too much work for a tracker meant to measure pipeline-relevant visibility.</p>
+      </div>
+      <div class="rec">
+        <h4>Audit the AEO topic urgently</h4>
+        <p>44 prompts (29% of total) at 7% citation rate is the biggest single misalignment. Run <code>/pattern-audit "AEO AI Search for SaaS"</code> next session — that's the LoudFace internal command that pulls every URL targeting these prompts and benchmarks against the saved competitor URLs. Either the content's structurally wrong or the prompts are. Both are real possibilities.</p>
+      </div>
+      <div class="rec">
+        <h4>Drop "Webflow AEO Agency" topic to 0-3 prompts</h4>
+        <p>14 prompts at 0% citation. The "Webflow agency that does AEO" framing is the legacy positioning the May 2026 brain update specifically killed (Webflow = delivery capability, not front door). Tracking 14 prompts for an explicitly-deprecated framing wastes Peec quota.</p>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2>The bottom line</h2>
+    <p class="lede">
+      <strong>The tracker isn't measuring what matters.</strong> It's heavily weighted toward Educational + generic Webflow + AEO-research prompts that don't drive pipeline. It's missing the three clusters most aligned with LoudFace's actual proof: <strong>fintech-specific commercial</strong>, <strong>stage-of-buyer (Series A-C)</strong>, and <strong>branded / vs-competitor</strong>.
+    </p>
+    <p class="lede" style="margin-top: 16px;">
+      <strong>The 9 covered-but-losing commercial prompts are the right targets to win, not replace.</strong> Radyant, SaaSHero, DiscoveredLabs, ExaltGrowth, Onely are eating the listicle slot on B2B SaaS SEO. That's a content+citations gap, not a positioning gap.
+    </p>
+    <p class="lede" style="margin-top: 16px;">
+      <strong>The 13 Educational and 8 Thought Leadership prompts are the right ones to remove.</strong> They're 21 of 75 slots being spent measuring marketer research instead of buyer demand.
+    </p>
+    <p style="margin-top: 24px; font-size: 16px; color: var(--neutral);">
+      Recommended first action: open the Prompt Coverage DB in Notion, archive the 7 specific prompts listed in "What to remove" above, and add the 17–22 prompts listed in "What to add." That alone shifts the corpus from 69% commercial to ~80% commercial and starts measuring the fintech wedge and brand demand that the current tracker is blind to.
+    </p>
+  </section>
+
+  <footer>
+    <p>Source: Notion Prompt Coverage DB <code>collection://869461d7-1eb2-4612-ae6e-f6f09bfcadd5</code> · 150 rows / 75 unique prompts · last worker refresh 2026-05-21.</p>
+    <p>Caveats: citation counts are 30-day rolling. "Covered + winning" / "covered but losing" / "no coverage" statuses are Peec's own classification. The 23 "untracked match" prompts have no Matched URLs and aren't reflected in coverage stats — they're noise.</p>
+    <p>Pulled 2026-05-26 · /Users/arnel/Code Projects/LoudFace Agency/loudface-website/.claude/peec-prompt-audit-2026-05-26.html</p>
+  </footer>
+
+</div>
+</body>
+</html>

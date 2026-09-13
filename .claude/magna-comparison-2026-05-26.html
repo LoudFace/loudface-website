@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Magna vs LoudFace — Why They're Winning the Fintech AEO Prompt</title>
+<style>
+  :root {
+    --ink: #1a1a1f;
+    --paper: #faf8f3;
+    --rule: #d8d3c4;
+    --muted: #6b6660;
+    --accent: #b8431d;
+    --magna: #5a3aa8;        /* purple for them */
+    --us: #1e5f4e;           /* deep green for us */
+    --win: #2d6a3e;
+    --win-bg: #e8f1e7;
+    --loss: #a02828;
+    --loss-bg: #f5e4e1;
+    --neutral: #4a4640;
+    --neutral-bg: #ece8de;
+    --highlight: #f0ead6;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: "Charter", "Iowan Old Style", "Sitka Text", Cambria, Georgia, serif;
+    background: var(--paper); color: var(--ink); line-height: 1.55;
+    font-feature-settings: "kern", "liga", "onum";
+    -webkit-font-smoothing: antialiased;
+  }
+  .container { max-width: 1080px; margin: 0 auto; padding: 64px 48px 96px; }
+
+  header { border-bottom: 2px solid var(--ink); padding-bottom: 32px; margin-bottom: 48px; }
+  .kicker {
+    font-family: ui-monospace, "SF Mono", Menlo, monospace;
+    font-size: 12px; text-transform: uppercase; letter-spacing: 0.12em;
+    color: var(--muted); margin-bottom: 16px;
+  }
+  h1 { font-size: 56px; line-height: 0.98; letter-spacing: -0.02em; font-weight: 700; margin-bottom: 20px; }
+  .dek { font-size: 21px; line-height: 1.4; color: var(--neutral); max-width: 760px; }
+
+  section { margin-bottom: 56px; }
+  section h2 {
+    font-size: 13px; text-transform: uppercase; letter-spacing: 0.14em;
+    font-family: ui-monospace, Menlo, monospace;
+    color: var(--accent); margin-bottom: 24px;
+    border-top: 1px solid var(--rule); padding-top: 16px;
+  }
+  section h3 { font-size: 26px; line-height: 1.15; letter-spacing: -0.01em; margin-bottom: 16px; font-weight: 600; }
+  section p { font-size: 17px; line-height: 1.6; max-width: 760px; margin-bottom: 14px; }
+  .lede { font-size: 20px; line-height: 1.5; }
+  .lede strong { background: var(--highlight); padding: 0 4px; }
+
+  /* Side-by-side comparison */
+  .versus { display: grid; grid-template-columns: 1fr 60px 1fr; gap: 24px; margin-top: 8px; align-items: stretch; }
+  .col { background: white; border: 1px solid var(--rule); padding: 24px 26px; border-radius: 4px; border-top: 4px solid; }
+  .col.magna { border-top-color: var(--magna); }
+  .col.us { border-top-color: var(--us); }
+  .col-label {
+    font-family: ui-monospace, Menlo, monospace;
+    font-size: 11px; text-transform: uppercase; letter-spacing: 0.12em;
+    margin-bottom: 8px;
+  }
+  .col.magna .col-label { color: var(--magna); }
+  .col.us .col-label { color: var(--us); }
+  .col h4 { font-size: 18px; line-height: 1.3; margin-bottom: 12px; font-weight: 600; }
+  .col ul { list-style: none; padding: 0; }
+  .col ul li { padding: 6px 0; padding-left: 20px; position: relative; font-size: 15px; line-height: 1.5; color: var(--neutral); }
+  .col ul li::before { content: ""; position: absolute; left: 0; top: 13px; width: 8px; height: 8px; border-radius: 50%; background: var(--rule); }
+  .col.magna ul li::before { background: var(--magna); }
+  .col.us ul li::before { background: var(--us); }
+  .vs {
+    align-self: center; text-align: center;
+    font-family: ui-monospace, Menlo, monospace;
+    font-size: 14px; letter-spacing: 0.1em; color: var(--muted);
+    background: var(--paper); padding: 8px 0;
+  }
+
+  /* Scoreboard */
+  .scoreboard {
+    display: grid; grid-template-columns: 1fr 80px 80px 1fr; gap: 0;
+    background: white; border: 1px solid var(--rule); border-radius: 4px;
+    overflow: hidden;
+    font-size: 14px;
+  }
+  .sb-row { display: contents; }
+  .sb-row > div {
+    padding: 12px 16px; border-bottom: 1px solid var(--rule);
+    font-family: ui-monospace, Menlo, monospace; font-size: 13px;
+  }
+  .sb-header > div { background: var(--highlight); font-weight: 600; font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em; }
+  .sb-row > div.criterion {
+    font-family: "Charter", Georgia, serif; font-size: 15px; font-weight: 500;
+  }
+  .sb-row > div.score { text-align: center; font-weight: 600; }
+  .sb-row > div.notes { color: var(--muted); font-size: 13px; line-height: 1.4; }
+  .check-magna { color: var(--magna); }
+  .check-us { color: var(--us); }
+  .tie { color: var(--muted); }
+  .sb-row:last-child > div { border-bottom: none; }
+
+  /* Callout */
+  .callout {
+    background: white; border: 1px solid var(--rule); padding: 22px 26px;
+    border-radius: 4px; border-left: 4px solid var(--accent);
+    margin-top: 16px;
+  }
+  .callout h4 { font-size: 18px; line-height: 1.25; margin-bottom: 8px; font-weight: 600; }
+  .callout p { font-size: 15px; line-height: 1.55; color: var(--neutral); margin-bottom: 6px; max-width: none; }
+
+  /* Recommendation cards */
+  .recs { counter-reset: rec; }
+  .rec {
+    background: white; border: 1px solid var(--rule);
+    padding: 22px 24px; border-radius: 4px; margin-bottom: 14px;
+    position: relative; padding-left: 70px;
+  }
+  .rec::before {
+    counter-increment: rec; content: counter(rec);
+    position: absolute; left: 22px; top: 18px;
+    font-family: ui-monospace, Menlo, monospace;
+    font-size: 30px; font-weight: 700; color: var(--accent); line-height: 1;
+  }
+  .rec h4 { font-size: 18px; margin-bottom: 6px; font-weight: 600; }
+  .rec p { font-size: 15px; line-height: 1.55; color: var(--neutral); max-width: none; margin-bottom: 0; }
+  .rec .meta {
+    font-family: ui-monospace, Menlo, monospace; font-size: 11px;
+    color: var(--muted); text-transform: uppercase; letter-spacing: 0.08em;
+    margin-top: 10px;
+  }
+  .rec .meta .tag {
+    display: inline-block; padding: 2px 7px; background: var(--highlight);
+    border-radius: 3px; margin-right: 8px;
+  }
+  .rec.priority { border-left: 4px solid var(--accent); }
+  .rec.priority::before { color: var(--ink); }
+
+  /* Snippets — show what to add */
+  .snippet {
+    background: var(--ink); color: #e9e6dc; padding: 20px 24px;
+    border-radius: 4px; font-family: ui-monospace, Menlo, monospace;
+    font-size: 13px; line-height: 1.5; overflow-x: auto;
+    margin-top: 10px;
+  }
+  .snippet .comment { color: #8e8a7e; }
+  .snippet .tag { color: #a8b4ff; }
+
+  footer { margin-top: 80px; padding-top: 32px; border-top: 1px solid var(--rule); font-size: 13px; color: var(--muted); font-family: ui-monospace, Menlo, monospace; }
+  footer p { font-size: 13px; line-height: 1.6; max-width: none; margin-bottom: 6px; }
+
+  @media (max-width: 760px) {
+    .container { padding: 32px 20px; }
+    h1 { font-size: 38px; }
+    .versus { grid-template-columns: 1fr; }
+    .vs { padding: 4px 0; }
+    .scoreboard { grid-template-columns: 1fr; }
+    .sb-row > div { border-bottom: 1px solid var(--rule); }
+  }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <header>
+    <p class="kicker">Competitive teardown · usemagna.com · 2026-05-26</p>
+    <h1>They're playing the generic AEO game. We're playing the fintech-vertical game. They won today because their generic article substitutes when AI can't find a fintech-perfect match.</h1>
+    <p class="dek">Magna's 2-month-old AEO agency is outranking us on the fintech-specific prompt. Here's exactly what they're doing better, what we're doing better, and what to copy without compromising our positioning.</p>
+  </header>
+
+  <section>
+    <h2>The 60-second answer</h2>
+    <p class="lede">
+      Magna is winning this prompt for two structural reasons, not because their writing is better. <strong>(1) Their article is built for AI extraction</strong> — Quick Answer block, comparison table at the top, evaluation framework with red flags, definition section, multiple CTAs. <strong>(2) They're targeting the GENERIC "best AEO agencies" prompt and getting substituted into vertical-specific queries when AI can't find a perfect fintech match.</strong> Their content depth is shallower than ours; their AEO formatting is sharper than ours.
+    </p>
+    <p class="lede">
+      We can close the structural gap in <strong>2–3 hours of editing</strong> on our fintech article. The strategic gap (their entity authority for "AEO" is concentrated; ours is spread across Webflow + SaaS + AEO + fintech) is a longer game.
+    </p>
+  </section>
+
+  <!-- Where they win -->
+  <section>
+    <h2>Where they win — what to copy</h2>
+    <div class="versus">
+      <div class="col magna">
+        <div class="col-label">Magna · usemagna.com</div>
+        <h4>Built for AI extraction</h4>
+        <ul>
+          <li><strong>Quick Answer block at the top</strong> — 56-word bolded paragraph with specific numbers (150+ clients, 4.8/5, 41 reviews). AI extracts this verbatim.</li>
+          <li><strong>5-row comparison table immediately after intro</strong> — Specialty / Results Timeline / Best For. Compact, table-extractable, gets pulled into AI Overviews.</li>
+          <li><strong>"What is an AEO agency?" definition section</strong> — claims category vocabulary. AI learns the term from this article.</li>
+          <li><strong>7-row evaluation criteria table with red flags</strong> — "How to choose" framework. AI cites this as a how-to.</li>
+          <li><strong>Results timeline with specific milestones</strong> — "4–8 weeks," "2–4 months," "4–6 months." Specific enough to be lifted as a fact.</li>
+          <li><strong>Pricing tiers as a dedicated section</strong> — 3 explicit bands with what each buys.</li>
+          <li><strong>3 CTAs in the article</strong> — top intro, mid-article, footer. We have 1.</li>
+          <li><strong>Author byline + photo + date</strong> — "By August Tange, April 10, 2026." Entity authority for the author.</li>
+        </ul>
+      </div>
+      <div class="vs">vs</div>
+      <div class="col us">
+        <div class="col-label">LoudFace · loudface.co</div>
+        <h4>Currently in our fintech article</h4>
+        <ul>
+          <li>Direct answer paragraph (now the TL;DR block, after this morning's fix)</li>
+          <li>Methodology section as <strong>numbered paragraphs</strong>, not a table</li>
+          <li>No "what is fintech AEO?" definition</li>
+          <li>No comparison table at the top — the 8 agencies are inline H3s</li>
+          <li>No results timeline section</li>
+          <li>Pricing analysis exists but is buried below ranks</li>
+          <li>1 CTA at the end</li>
+          <li>Implied author authority (Arnel as founder), but no inline byline + photo on this page</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- Where we win -->
+  <section>
+    <h2>Where we win — don't dilute these</h2>
+    <div class="versus">
+      <div class="col magna">
+        <div class="col-label">Magna · weaknesses</div>
+        <h4>Generic, polished, shallow</h4>
+        <ul>
+          <li>Article is for "best AEO agencies" — <strong>no fintech specificity anywhere</strong>. Doesn't mention compliance review, FINRA, PSD2, MTL, PCI, or any regulated counterparty patterns.</li>
+          <li>Competitor write-ups are 1 paragraph each. iPullRank, Siege Media, Kalicube, NP Digital — surface-level positioning, no named clients, no measurable case studies.</li>
+          <li>Self-rank #1 with "150 clients, 4.8/5 stars" — but no <em>named</em> client case studies. AI extracts the numbers; sophisticated humans discount unverified marketing claims.</li>
+          <li>Reads as polished generic marketing prose. No distinctive voice. The kind of content an LLM would write if asked.</li>
+          <li>Reviews are claimed but only one external proof point (Trustpilot link in footer).</li>
+          <li>No data on share-of-answer or platform-level citation rates — claims "covers all major AI platforms" without measurement infrastructure named.</li>
+          <li>Omits the actual competitive field for fintech (First Page Sage, CSTMR, Mint Position, Skale, NoGood, WebFX) — fintech buyer will Google around and find the gap.</li>
+        </ul>
+      </div>
+      <div class="vs">vs</div>
+      <div class="col us">
+        <div class="col-label">LoudFace · strengths</div>
+        <h4>Specific, honest, operational</h4>
+        <ul>
+          <li><strong>Real fintech specificity</strong> — compliance review cycles (1–6 weeks), regulatory terminology (PSD2, FINRA, MTL, PCI), buyer-prompt examples ("stablecoin payroll", "MTL state-by-state coverage").</li>
+          <li><strong>Named clients with metrics</strong> — Toku (86% Peec share-of-answer on "stablecoin payroll" prompt), TradeMomentum (7x organic impressions).</li>
+          <li>Honest #2 placement with First Page Sage at #1, disclosed reason. Higher trust signal than self-rank #1.</li>
+          <li>Real competitive field listed (8 agencies including First Page Sage, Omnius, Siege Media, NoGood, Skale, CSTMR, Mint Position). The fintech buyer who Googles around finds it complete.</li>
+          <li>Operational specificity (Peec AI for citation measurement, internal Notion-based brain, weekly Showcase calls). Magna can't match this without operational depth.</li>
+          <li>Arnel's voice — distinct, opinionated, not LLM-grade prose.</li>
+          <li>Methodology has 6 measurable criteria — including "AI-cited case studies in fintech specifically" — which is the actual test for fintech buyers.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- Scoreboard -->
+  <section>
+    <h2>Scoreboard — 12 dimensions</h2>
+    <div class="scoreboard">
+      <div class="sb-row sb-header">
+        <div class="criterion">Dimension</div>
+        <div class="score">Magna</div>
+        <div class="score">LoudFace</div>
+        <div class="notes">Verdict</div>
+      </div>
+      <div class="sb-row"><div class="criterion">Quick Answer / TL;DR block</div><div class="score check-magna">✓</div><div class="score check-us">✓</div><div class="notes">Tied — we shipped this today</div></div>
+      <div class="sb-row"><div class="criterion">Comparison table at the top</div><div class="score check-magna">✓</div><div class="score">—</div><div class="notes">Magna wins — easy add for us</div></div>
+      <div class="sb-row"><div class="criterion">"What is X?" definition section</div><div class="score check-magna">✓</div><div class="score">—</div><div class="notes">Magna wins — claims category vocab</div></div>
+      <div class="sb-row"><div class="criterion">Evaluation criteria as a TABLE</div><div class="score check-magna">✓</div><div class="score">—</div><div class="notes">Magna wins — we have 6 criteria as paragraphs</div></div>
+      <div class="sb-row"><div class="criterion">Results timeline section</div><div class="score check-magna">✓</div><div class="score">—</div><div class="notes">Magna wins — extractable as fact claims</div></div>
+      <div class="sb-row"><div class="criterion">Pricing tiers section</div><div class="score check-magna">✓</div><div class="score check-us">✓</div><div class="notes">Tied</div></div>
+      <div class="sb-row"><div class="criterion">FAQ schema + 8 Q&As</div><div class="score check-magna">✓</div><div class="score check-us">✓</div><div class="notes">Tied</div></div>
+      <div class="sb-row"><div class="criterion">Number of CTAs</div><div class="score check-magna">3</div><div class="score">1</div><div class="notes">Magna wins — we can add 2 easily</div></div>
+      <div class="sb-row"><div class="criterion">Vertical specificity (fintech)</div><div class="score">—</div><div class="score check-us">✓✓</div><div class="notes">We win decisively — they have zero</div></div>
+      <div class="sb-row"><div class="criterion">Named clients with metrics</div><div class="score">—</div><div class="score check-us">✓✓</div><div class="notes">We win — Toku, TradeMomentum, named</div></div>
+      <div class="sb-row"><div class="criterion">Honesty signal (#2 vs #1)</div><div class="score">self-#1</div><div class="score check-us">honest #2</div><div class="notes">We win on credibility</div></div>
+      <div class="sb-row"><div class="criterion">Distinctive voice</div><div class="score tie">generic</div><div class="score check-us">distinct</div><div class="notes">We win — theirs reads LLM-grade</div></div>
+    </div>
+  </section>
+
+  <!-- The deeper question -->
+  <section>
+    <h2>Why their generic article is winning a fintech-specific prompt</h2>
+    <p>
+      Magna's URL is <code>/blog/ai-search-strategies/best-aeo-agency-2026.html</code> — a <strong>generic</strong> AEO listicle. It doesn't say "fintech" anywhere meaningful. So why does it surface for "20 best AEO agencies for fintech in 2026"?
+    </p>
+    <div class="callout">
+      <h4>The substitution mechanic</h4>
+      <p>When an AI model gets a vertical-specific prompt and no article is a perfect match, it falls back to the strongest generic match in the category. Magna optimized hard for the <em>generic</em> AEO prompt with extraction-friendly structure + concentrated entity authority. Our fintech-specific article only shipped today and has zero accumulated authority signals (citations, links, mentions).</p>
+      <p><strong>The result:</strong> AI substitutes their generic top-pick into the fintech query. We're not losing the fintech battle — we haven't shown up to it yet.</p>
+    </div>
+    <p style="margin-top:20px;">
+      This is also why their 2-month head-start matters more than our 6-year SEO history: their entity profile is concentrated 100% on "AEO." Our entity profile splits across Webflow, B2B SaaS, AEO, design, fintech. AI's "who's the AEO agency" answer pulls strongly toward the concentrated signal.
+    </p>
+  </section>
+
+  <!-- What they might be doing under the hood -->
+  <section>
+    <h2>Things we can't see — and shouldn't assume</h2>
+    <ul style="list-style: none; padding-left: 0;">
+      <li style="padding: 10px 0; font-size: 16px; line-height: 1.5; padding-left: 26px; position: relative;">
+        <span style="position:absolute;left:0;top:14px;width:8px;height:8px;border-radius:50%;background:var(--neutral);display:inline-block;"></span>
+        <strong>Backlink velocity.</strong> A 2-month-old domain hitting top-5 AEO citation may be running aggressive PR/digital-PR campaigns to seed AI training. Worth pulling Ahrefs on usemagna.com to see — separate task.
+      </li>
+      <li style="padding: 10px 0; font-size: 16px; line-height: 1.5; padding-left: 26px; position: relative;">
+        <span style="position:absolute;left:0;top:14px;width:8px;height:8px;border-radius:50%;background:var(--neutral);display:inline-block;"></span>
+        <strong>Trustpilot reviews.</strong> 4.8/5 across 41 reviews is real-looking, but 41 reviews accumulated in 2 months is fast. Could be legitimate or coordinated.
+      </li>
+      <li style="padding: 10px 0; font-size: 16px; line-height: 1.5; padding-left: 26px; position: relative;">
+        <span style="position:absolute;left:0;top:14px;width:8px;height:8px;border-radius:50%;background:var(--neutral);display:inline-block;"></span>
+        <strong>AI Visibility Score widget.</strong> Free tool that drives email captures + brand mentions. Tool-led content marketing is one of the strongest AEO plays — AI models cite "tools you can use" sections.
+      </li>
+      <li style="padding: 10px 0; font-size: 16px; line-height: 1.5; padding-left: 26px; position: relative;">
+        <span style="position:absolute;left:0;top:14px;width:8px;height:8px;border-radius:50%;background:var(--neutral);display:inline-block;"></span>
+        <strong>Founder/team byline strategy.</strong> "August Tange" gets a personal byline. If their leadership is publishing on LinkedIn + bylined posts on third-party publications, that's concentrated AEO entity work.
+      </li>
+    </ul>
+  </section>
+
+  <!-- Recommended actions -->
+  <section>
+    <h2>What to ship — in order of effort vs leverage</h2>
+    <div class="recs">
+
+      <div class="rec priority">
+        <h4>Patch our fintech article with the structural pieces we're missing</h4>
+        <p>Add to <code>/blog/best-aeo-agency-fintech-companies-2026</code>: (a) a 5–8 row comparison table immediately after the TL;DR with Agency / Best For / Pricing / Fintech Fit columns; (b) a "What makes a fintech AEO agency different?" definition section claiming the category vocabulary; (c) a 7-row evaluation criteria table with red flags (we already have the 6 criteria — just reformat as table); (d) a results timeline section with our actual benchmarks (Toku's took months, others 4–8 weeks); (e) two more CTAs — one mid-article, one after the criteria table.</p>
+        <div class="meta">
+          <span class="tag">Effort: 2–3 hours</span>
+          <span class="tag">Expected lift: 1–2 positions in fintech AEO citation rank within 2–4 weeks</span>
+        </div>
+      </div>
+
+      <div class="rec">
+        <h4>Publish a generic "Best AEO Agencies in 2026" article — go head-to-head</h4>
+        <p>Right now we only have vertical-specific articles (fintech, B2B SaaS). Magna wins the generic prompt by default because nobody else is competing. A generic version of our listicle — same 8 agencies, no fintech qualifier — claims the generic "best AEO agencies" prompt. Our methodology + named clients + honest #2 placement should outperform Magna's generic content on the same surface.</p>
+        <div class="meta">
+          <span class="tag">Effort: 4–6 hours</span>
+          <span class="tag">Risk: dilutes vertical positioning slightly</span>
+          <span class="tag">Expected lift: generic AEO prompt coverage</span>
+        </div>
+      </div>
+
+      <div class="rec">
+        <h4>Build a <code>/services/aeo</code> landing page to concentrate AEO entity authority</h4>
+        <p>Right now our AEO content is scattered across <code>/services/seo-aeo</code> (combined), individual blog posts, and case studies. A dedicated <code>/services/aeo</code> page with our methodology, named client wins, citation tracking infrastructure (Peec + internal brain), and pricing concentrates the "LoudFace is an AEO agency" entity signal. This is the long game vs Magna's concentration play.</p>
+        <div class="meta">
+          <span class="tag">Effort: 1–2 days</span>
+          <span class="tag">Strategic: closes the entity-authority gap</span>
+        </div>
+      </div>
+
+      <div class="rec">
+        <h4>Audit Magna's authority profile in Ahrefs + check their Peec coverage</h4>
+        <p>Pull <code>usemagna.com</code> in Ahrefs — DR, organic keyword count, top backlinks, new referring domains (last 60 days). If their backlinks are concentrated on a few PR placements, that's a known play we can match. If their authority is purely from on-page extraction + AI seeding, that's a different (and harder) game. Worth knowing before deciding to compete on their terrain or stay on ours.</p>
+        <div class="meta">
+          <span class="tag">Effort: 15 minutes</span>
+          <span class="tag">Output: tactical intel for the next 2 moves</span>
+        </div>
+      </div>
+
+      <div class="rec">
+        <h4>Build a free "AI Visibility Score" tool — concrete brand asset</h4>
+        <p>Magna's free tool is doing real work: email captures, brand mentions, citation hooks ("you can use Magna AI's free tool"). We already run <code>/audit</code> — a more sophisticated free tool. If we make our audit findable from the homepage with a "Check Your AEO Visibility" hero CTA (mirroring Magna's positioning), we beat them on this dimension because our audit is already deeper than their widget.</p>
+        <div class="meta">
+          <span class="tag">Effort: 1 hour (positioning change, not new build)</span>
+          <span class="tag">Existing asset, underused</span>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- Honest summary -->
+  <section>
+    <h2>The honest summary</h2>
+    <p class="lede">
+      Magna is not doing better content. They're doing <strong>better structural extraction</strong> + <strong>a more concentrated entity bet</strong>. Their actual depth, voice, specificity, and credibility signals are weaker than ours. They win this prompt today because they showed up to the generic AEO game with the right format, and we didn't.
+    </p>
+    <p class="lede">
+      <strong>The five structural pieces we can add to our fintech article in 2–3 hours will close most of this gap.</strong> The harder play — concentrating our AEO entity authority via a dedicated landing page and a generic AEO listicle — is the real strategic move. Worth doing both.
+    </p>
+    <p class="lede" style="margin-top:20px;">
+      Don't try to copy their voice. Theirs reads like marketing prose generated by ChatGPT. Ours reads like an operator who has been in the room. That's the durable advantage. Keep it.
+    </p>
+  </section>
+
+  <footer>
+    <p>Comparison subject: <code>https://usemagna.com/blog/ai-search-strategies/best-aeo-agency-2026.html</code> · Magna published 2026-04-10 · LoudFace fintech article shipped 2026-05-25.</p>
+    <p>Pulled 2026-05-26 · /Users/arnel/Code Projects/LoudFace Agency/loudface-website/.claude/magna-comparison-2026-05-26.html</p>
+  </footer>
+
+</div>
+</body>
+</html>

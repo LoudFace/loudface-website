@@ -1,0 +1,761 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LoudFace — Measured. One team builds it. The same team grows it.</title>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preconnect" href="https://api.fontshare.com" crossorigin>
+<link href="fonts.css" rel="stylesheet">
+<link href="https://api.fontshare.com/v2/css?f[]=clash-display@400,500,600,700&f[]=general-sans@400,500,600&f[]=cabinet-grotesk@400,500,700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..700&family=Geist:wght@400;500;600&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --display:'Bricolage Grotesque',system-ui,sans-serif;
+    --body:'Geist',system-ui,sans-serif;
+    --serif:'Instrument Serif',Georgia,serif;
+    --mono:'Geist Mono',ui-monospace,monospace;
+    --ink:#0F1413; --ink-2:#3A4441; --ink-3:#5E6864;
+    --hair:#E8E7E1; --hair-2:#F0EFE9;
+    --paper:#FCFCFB; --paper-2:#F5F4F0; --white:#FFFFFF;
+    --primary:#4F46E5; --primary-2:#6E73FF; --primary-soft:#EEF0FF;
+    --build:#EA580C; --grow:#4F46E5;
+    --ease:cubic-bezier(.2,.7,.2,1);
+    --gut:clamp(20px,5vw,72px);
+    --maxw:1320px;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
+  body{
+    font-family:var(--body);background:var(--paper);color:var(--ink);
+    line-height:1.5;-webkit-font-smoothing:antialiased;
+    text-rendering:optimizeLegibility;overflow-x:hidden;
+  }
+  ::selection{background:var(--primary);color:#fff}
+  a{color:inherit;text-decoration:none}
+  img{display:block;max-width:100%}
+  h1,h2,h3{font-family:var(--display);font-weight:500;letter-spacing:-0.025em;line-height:1.02}
+  i.s{font-family:var(--serif);font-style:italic;color:var(--primary);letter-spacing:0;font-weight:400}
+  .mono{font-family:var(--mono);font-weight:400}
+  .wrap{max-width:var(--maxw);margin:0 auto;padding-inline:var(--gut)}
+
+  /* coordinate label */
+  .coord{font-family:var(--mono);font-size:11px;letter-spacing:.04em;color:var(--ink-3);text-transform:uppercase}
+  .coord b{color:var(--primary);font-weight:400}
+
+  /* crop-mark corner frame */
+  .crop{position:relative}
+  .crop::before,.crop::after,
+  .crop>.cm-tr,.crop>.cm-bl{content:"";position:absolute;width:14px;height:14px;z-index:3;pointer-events:none}
+  .crop::before{top:-1px;left:-1px;border-top:1.5px solid var(--ink);border-left:1.5px solid var(--ink)}
+  .crop::after{bottom:-1px;right:-1px;border-bottom:1.5px solid var(--ink);border-right:1.5px solid var(--ink)}
+  .crop>.cm-tr{top:-1px;right:-1px;border-top:1.5px solid var(--ink);border-right:1.5px solid var(--ink)}
+  .crop>.cm-bl{bottom:-1px;left:-1px;border-bottom:1.5px solid var(--ink);border-left:1.5px solid var(--ink)}
+  .crop.ind::before,.crop.ind::after,.crop.ind>.cm-tr,.crop.ind>.cm-bl{border-color:var(--primary)}
+
+  /* buttons */
+  .btn{
+    font-family:var(--body);font-weight:500;font-size:15px;
+    display:inline-flex;align-items:center;gap:9px;
+    padding:14px 24px;border-radius:999px;border:1px solid transparent;
+    cursor:pointer;transition:transform .18s var(--ease),background .2s var(--ease),box-shadow .2s var(--ease),border-color .2s var(--ease);
+    letter-spacing:-0.01em;
+  }
+  .btn:focus-visible{outline:2px solid var(--primary);outline-offset:2px}
+  .btn:active{transform:scale(.975)}
+  .btn-pri{background:var(--ink);color:#fff;box-shadow:0 1px 2px rgba(15,20,19,.18),0 8px 24px -10px rgba(15,20,19,.4)}
+  .btn-pri:hover{background:#000;box-shadow:0 2px 4px rgba(15,20,19,.22),0 14px 34px -10px rgba(15,20,19,.5)}
+  .btn-sec{background:var(--white);color:var(--ink);border-color:var(--hair)}
+  .btn-sec:hover{border-color:var(--ink-3);background:var(--paper-2)}
+  .btn-ind{background:var(--primary);color:#fff;box-shadow:0 1px 2px rgba(79,70,229,.25),0 10px 28px -10px rgba(79,70,229,.55)}
+  .btn-ind:hover{background:#443cd6}
+
+  /* nav */
+  header.nav{position:sticky;top:0;z-index:60;background:rgba(252,252,251,.82);backdrop-filter:blur(14px) saturate(1.4);border-bottom:1px solid var(--hair)}
+  .nav-in{display:flex;align-items:center;justify-content:space-between;height:64px}
+  .logo{display:flex;align-items:center;gap:11px;font-family:var(--display);font-weight:600;font-size:19px;letter-spacing:-0.03em}
+  .logo .mk{width:30px;height:30px;border-radius:7px;background:var(--ink);position:relative;flex:none}
+  .logo .mk::before{content:"";position:absolute;inset:8px;border:1.5px solid var(--paper);border-radius:2px}
+  .logo .mk::after{content:"";position:absolute;left:14px;top:6px;bottom:6px;width:1.5px;background:var(--primary-2)}
+  nav.links{display:flex;align-items:center;gap:6px}
+  nav.links a{font-size:14px;font-weight:500;color:var(--ink-2);padding:8px 13px;border-radius:8px;transition:color .18s var(--ease),background .18s var(--ease)}
+  nav.links a:hover{color:var(--ink);background:var(--paper-2)}
+  .nav-cta{margin-left:8px}
+  .nav-status{display:none;align-items:center;gap:8px;font-family:var(--mono);font-size:11px;color:var(--ink-3);padding:6px 12px;border:1px solid var(--hair);border-radius:999px}
+  .dot{width:6px;height:6px;border-radius:50%;background:var(--primary);position:relative;flex:none}
+  .dot::after{content:"";position:absolute;inset:-4px;border-radius:50%;border:1px solid var(--primary);opacity:.4}
+  @media(min-width:1080px){.nav-status{display:flex}}
+  @media(max-width:880px){nav.links a:not(.nav-cta){display:none}}
+
+  /* blueprint grid backdrop */
+  .blueprint{position:absolute;inset:0;z-index:0;pointer-events:none;
+    background-image:
+      linear-gradient(var(--hair) 1px,transparent 1px),
+      linear-gradient(90deg,var(--hair) 1px,transparent 1px);
+    background-size:64px 64px;
+    -webkit-mask-image:radial-gradient(120% 90% at 50% 18%,#000 30%,transparent 80%);
+    mask-image:radial-gradient(120% 90% at 50% 18%,#000 30%,transparent 80%);
+    opacity:.7;
+  }
+  .blueprint.fine{background-size:16px 16px;opacity:.4}
+
+  /* hero */
+  .hero{position:relative;padding-top:clamp(40px,7vw,84px);padding-bottom:clamp(48px,7vw,96px);overflow:hidden}
+  .hero-grid{position:relative;z-index:2;display:grid;grid-template-columns:1.05fr .95fr;gap:clamp(32px,4vw,64px);align-items:center}
+  @media(max-width:980px){.hero-grid{grid-template-columns:1fr;gap:40px}}
+  .pill{display:inline-flex;align-items:center;gap:9px;font-family:var(--mono);font-size:12px;letter-spacing:.02em;color:var(--ink-2);background:var(--white);border:1px solid var(--hair);border-radius:999px;padding:8px 14px;box-shadow:0 1px 1px rgba(15,20,19,.04)}
+  .pill .dot{background:var(--build)}
+  .pill .dot::after{border-color:var(--build)}
+  h1.headline{font-size:clamp(40px,6.6vw,82px);margin-top:24px;letter-spacing:-0.035em}
+  h1.headline .line{display:block}
+  h1.headline .line:nth-child(2){color:var(--ink-2)}
+  .sub{font-size:clamp(16px,1.5vw,19px);color:var(--ink-2);max-width:34em;margin-top:26px;line-height:1.6}
+  .hero-cta{display:flex;flex-wrap:wrap;gap:12px;margin-top:32px;align-items:center}
+  .watch{display:inline-flex;align-items:center;gap:10px;font-size:14px;font-weight:500;color:var(--ink-2);padding:10px 4px;cursor:pointer;background:none;border:none;font-family:var(--body)}
+  .watch:hover{color:var(--ink)}
+  .watch .pp{width:34px;height:34px;border-radius:50%;border:1px solid var(--hair);display:grid;place-items:center;background:var(--white);transition:border-color .2s var(--ease),background .2s var(--ease)}
+  .watch:hover .pp{border-color:var(--ink);background:var(--paper-2)}
+  .watch svg{width:11px;height:11px;fill:var(--ink)}
+  .trust{margin-top:38px;font-family:var(--mono);font-size:12px;color:var(--ink-3);letter-spacing:.01em;display:flex;flex-wrap:wrap;gap:7px 14px;align-items:center}
+  .trust b{color:var(--ink-2);font-weight:400}
+  .trust .sep{color:var(--hair);font-weight:400}
+
+  /* instrument panel (hero right) */
+  .instrument{position:relative;background:var(--white);border:1px solid var(--hair);border-radius:14px;padding:22px;box-shadow:0 1px 1px rgba(15,20,19,.03),0 18px 50px -28px rgba(15,20,19,.28);}
+  .inst-top{display:flex;align-items:center;justify-content:space-between;padding-bottom:14px;border-bottom:1px solid var(--hair)}
+  .inst-id{display:flex;align-items:center;gap:10px}
+  .inst-logo{height:18px;width:auto;opacity:.85}
+  .inst-tag{font-family:var(--mono);font-size:10.5px;letter-spacing:.05em;color:var(--ink-3);text-transform:uppercase}
+  .inst-live{font-family:var(--mono);font-size:10.5px;color:var(--primary);display:flex;align-items:center;gap:6px}
+  .readouts{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--hair);border:1px solid var(--hair);border-radius:10px;overflow:hidden;margin-top:16px}
+  .ro{background:var(--white);padding:16px 14px}
+  .ro .lbl{font-family:var(--mono);font-size:10.5px;letter-spacing:.04em;text-transform:uppercase;color:var(--ink-3)}
+  .ro .val{font-family:var(--mono);font-size:clamp(26px,3vw,34px);font-weight:500;letter-spacing:-0.03em;margin-top:8px;line-height:1}
+  .ro .val .u{font-size:.5em;color:var(--ink-3);margin-left:3px}
+  .ro .delta{font-size:11px;color:var(--ink-3);margin-top:8px;font-family:var(--mono);display:flex;align-items:center;gap:6px}
+  .ro .delta b{color:var(--primary);font-weight:400}
+  .ro.bld .val{color:var(--build)}
+  .ro.bld .delta b{color:var(--build)}
+  /* sparkline track */
+  .spark{margin-top:16px;border:1px solid var(--hair);border-radius:10px;padding:14px 14px 10px;background:var(--paper)}
+  .spark-head{display:flex;justify-content:space-between;align-items:baseline;font-family:var(--mono);font-size:10.5px;color:var(--ink-3);text-transform:uppercase;letter-spacing:.04em}
+  .spark svg{display:block;width:100%;height:64px;margin-top:8px;overflow:visible}
+  .axis-x{display:flex;justify-content:space-between;font-family:var(--mono);font-size:10px;color:var(--ink-3);margin-top:7px}
+
+  /* ruler tick row */
+  .ruler{height:18px;position:relative;margin:0;display:flex;align-items:flex-end;gap:0}
+  .ruler .t{flex:1;border-left:1px solid var(--hair);height:6px}
+  .ruler .t:nth-child(5n+1){height:14px;border-color:var(--ink-3)}
+
+  /* section frame */
+  section{position:relative}
+  .sec{padding-block:clamp(56px,8vw,118px)}
+  .sec-head{max-width:760px}
+  .sec-kicker{display:inline-flex;align-items:center;gap:10px;font-family:var(--mono);font-size:12px;color:var(--primary);letter-spacing:.02em}
+  .sec-kicker .rule{width:42px;height:1px;background:var(--primary);opacity:.5}
+  h2.sec-title{font-size:clamp(30px,4.2vw,52px);margin-top:18px;letter-spacing:-0.03em}
+  .sec-sub{font-size:clamp(16px,1.5vw,18px);color:var(--ink-2);margin-top:18px;max-width:46em;line-height:1.6}
+
+  /* color-block word */
+  .cblock{display:inline-block;color:#fff;border-radius:12px;padding:.02em .34em .12em;line-height:1;position:relative;top:.02em}
+  .cblock.b{background:var(--build);box-shadow:0 6px 22px -8px rgba(234,88,12,.55)}
+  .cblock.g{background:var(--grow);box-shadow:0 6px 22px -8px rgba(79,70,229,.55)}
+
+  /* logo proof */
+  .logoproof{border-top:1px solid var(--hair);border-bottom:1px solid var(--hair);background:var(--paper-2)}
+  .lp-in{display:grid;grid-template-columns:auto 1fr;gap:clamp(24px,4vw,64px);align-items:center;padding-block:34px}
+  @media(max-width:900px){.lp-in{grid-template-columns:1fr;gap:22px}}
+  .lp-label{font-family:var(--mono);font-size:12px;color:var(--ink-3);max-width:18ch;line-height:1.5;text-transform:uppercase;letter-spacing:.04em}
+  .lp-label b{color:var(--ink);font-weight:400}
+  .lp-rail{display:flex;flex-wrap:wrap;align-items:center;gap:clamp(28px,4vw,56px)}
+  .lp-rail img{height:26px;width:auto;filter:grayscale(1);opacity:.46;transition:filter .25s var(--ease),opacity .25s var(--ease)}
+  .lp-rail img:hover{filter:grayscale(0);opacity:1}
+
+  /* build/grow bento */
+  .bg-wrap{display:grid;grid-template-columns:1fr auto 1fr;gap:0;margin-top:clamp(36px,5vw,64px);align-items:stretch}
+  @media(max-width:900px){.bg-wrap{grid-template-columns:1fr}}
+  .module{position:relative;background:var(--white);border:1px solid var(--hair);padding:clamp(26px,3vw,40px);border-radius:16px}
+  .module .modspec{display:flex;align-items:center;justify-content:space-between;font-family:var(--mono);font-size:11px;color:var(--ink-3);letter-spacing:.04em;text-transform:uppercase}
+  .module .num{font-family:var(--mono);font-size:13px;color:var(--ink-3)}
+  .module h3{font-size:clamp(24px,2.6vw,34px);margin-top:18px;letter-spacing:-0.025em}
+  .module .mdesc{color:var(--ink-2);margin-top:16px;line-height:1.6;font-size:15.5px;max-width:34em}
+  .caps{display:flex;flex-wrap:wrap;gap:8px;margin-top:24px}
+  .cap{font-family:var(--mono);font-size:12px;color:var(--ink-2);padding:7px 12px;border:1px solid var(--hair);border-radius:8px;background:var(--paper);transition:border-color .2s var(--ease),color .2s var(--ease)}
+  .module.build .cap:hover{border-color:var(--build);color:var(--build)}
+  .module.grow .cap:hover{border-color:var(--grow);color:var(--grow)}
+  .module .bar{height:4px;border-radius:2px;margin-top:24px;width:100%}
+  .module.build .bar{background:linear-gradient(90deg,var(--build),#f59e6a)}
+  .module.grow .bar{background:linear-gradient(90deg,var(--grow),var(--primary-2))}
+  .module .meta-metric{font-family:var(--mono);font-size:11px;color:var(--ink-3);margin-top:14px;text-transform:uppercase;letter-spacing:.04em}
+  .bg-divider{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:0 clamp(14px,2vw,30px);position:relative}
+  @media(max-width:900px){.bg-divider{flex-direction:row;padding:26px 0}}
+  .bg-divider .vrule{flex:1;width:1px;background:repeating-linear-gradient(to bottom,var(--hair) 0 6px,transparent 6px 12px);min-height:60px}
+  @media(max-width:900px){.bg-divider .vrule{height:1px;width:100%;min-height:0;background:repeating-linear-gradient(to right,var(--hair) 0 6px,transparent 6px 12px)}}
+  .bg-divider .arrow{font-family:var(--mono);font-size:11px;color:var(--primary);writing-mode:vertical-rl;text-orientation:mixed;padding:14px 0;letter-spacing:.1em;white-space:nowrap}
+  @media(max-width:900px){.bg-divider .arrow{writing-mode:horizontal-tb;padding:0 14px}}
+  .bg-connector{margin-top:clamp(28px,4vw,44px);text-align:center;font-family:var(--serif);font-style:italic;font-size:clamp(20px,2.6vw,30px);color:var(--ink-2);line-height:1.35;max-width:30ch;margin-inline:auto}
+  .bg-connector em{font-style:italic;color:var(--primary)}
+
+  /* measured stats bento (asymmetric) */
+  .stats-bento{display:grid;grid-template-columns:1.6fr 1fr 1fr;grid-template-rows:auto auto;gap:14px;margin-top:clamp(36px,5vw,56px)}
+  @media(max-width:900px){.stats-bento{grid-template-columns:1fr 1fr}}
+  @media(max-width:560px){.stats-bento{grid-template-columns:1fr}}
+  .gauge{position:relative;background:var(--white);border:1px solid var(--hair);border-radius:16px;padding:24px;display:flex;flex-direction:column;justify-content:space-between;min-height:160px;overflow:hidden}
+  .gauge .blueprint{opacity:.5}
+  .gauge .g-top{position:relative;z-index:2;display:flex;align-items:flex-start;justify-content:space-between}
+  .gauge .g-lbl{font-family:var(--mono);font-size:11px;color:var(--ink-3);text-transform:uppercase;letter-spacing:.04em;max-width:20ch;line-height:1.4}
+  .gauge .g-coord{font-family:var(--mono);font-size:10px;color:var(--primary)}
+  .gauge .g-num{position:relative;z-index:2;font-family:var(--display);font-weight:500;font-size:clamp(40px,6vw,72px);letter-spacing:-0.04em;line-height:.9;margin-top:18px}
+  .gauge .g-num .u{font-size:.36em;color:var(--ink-3);font-family:var(--mono);margin-left:4px;letter-spacing:0}
+  .gauge .g-note{position:relative;z-index:2;font-size:13px;color:var(--ink-2);margin-top:12px;line-height:1.45}
+  .gauge.feature{grid-row:span 2;justify-content:flex-start}
+  .gauge.feature .g-num{font-size:clamp(56px,9vw,116px)}
+  .gauge.feature .g-note{font-size:15px;margin-top:18px;max-width:32ch}
+  .gauge.ind{background:var(--primary);border-color:var(--primary)}
+  .gauge.ind .blueprint{background-image:linear-gradient(rgba(255,255,255,.14) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.14) 1px,transparent 1px);opacity:1}
+  .gauge.ind .g-lbl,.gauge.ind .g-note{color:rgba(255,255,255,.78)}
+  .gauge.ind .g-num{color:#fff}
+  .gauge.ind .g-num .u{color:rgba(255,255,255,.6)}
+  .gauge.ind .g-coord{color:rgba(255,255,255,.7)}
+  /* progress meter inside feature gauge */
+  .meter{position:relative;z-index:2;margin-top:auto;padding-top:22px}
+  .meter .track{height:8px;border-radius:999px;background:rgba(255,255,255,.22);overflow:hidden}
+  .meter .fill{height:100%;width:0;border-radius:999px;background:#fff;transition:width 1.4s var(--ease)}
+  .meter .scale{display:flex;justify-content:space-between;font-family:var(--mono);font-size:10px;color:rgba(255,255,255,.65);margin-top:8px}
+
+  /* case proofs */
+  .cases{display:grid;grid-template-columns:1fr 1fr;gap:clamp(18px,2.4vw,28px);margin-top:clamp(36px,5vw,56px)}
+  @media(max-width:900px){.cases{grid-template-columns:1fr}}
+  .case{position:relative;background:var(--white);border:1px solid var(--hair);border-radius:16px;overflow:hidden;transition:transform .3s var(--ease),box-shadow .3s var(--ease)}
+  .case:hover{transform:translateY(-4px);box-shadow:0 1px 2px rgba(15,20,19,.04),0 26px 60px -30px rgba(15,20,19,.36)}
+  .case-media{position:relative;aspect-ratio:16/10;overflow:hidden;background:var(--paper-2)}
+  .case-media img{width:100%;height:100%;object-fit:cover;object-position:top;transition:transform 1.1s var(--ease)}
+  .case:hover .case-media img{transform:scale(1.045)}
+  .case-coord{position:absolute;top:12px;left:12px;z-index:4;font-family:var(--mono);font-size:10.5px;color:#fff;background:rgba(15,20,19,.6);backdrop-filter:blur(6px);padding:5px 9px;border-radius:6px;letter-spacing:.03em}
+  .case-accent{position:absolute;top:12px;right:12px;z-index:4;width:11px;height:11px;border-radius:3px}
+  .case-body{padding:22px 24px 26px}
+  .case-metricrow{display:flex;align-items:flex-end;justify-content:space-between;gap:16px}
+  .case-metric{font-family:var(--display);font-weight:500;font-size:clamp(34px,4.4vw,54px);letter-spacing:-0.04em;line-height:.9}
+  .case-meta{font-family:var(--mono);font-size:11px;color:var(--ink-3);text-align:right;text-transform:uppercase;letter-spacing:.03em;line-height:1.5}
+  .case h3{font-size:clamp(19px,2vw,23px);margin-top:18px;letter-spacing:-0.02em;line-height:1.12}
+  .case p{color:var(--ink-2);font-size:14.5px;margin-top:12px;line-height:1.55}
+  .case-tags{display:flex;gap:7px;margin-top:18px;flex-wrap:wrap}
+  .case-tag{font-family:var(--mono);font-size:11px;padding:5px 10px;border-radius:7px;letter-spacing:.02em}
+
+  /* video placeholder */
+  .vph{position:relative;overflow:hidden}
+  .vph .scrim{position:absolute;inset:0;z-index:2;background:linear-gradient(180deg,rgba(15,20,19,.18) 0%,rgba(15,20,19,.52) 70%,rgba(15,20,19,.72) 100%)}
+  .vph .play{position:absolute;z-index:4;left:50%;top:50%;transform:translate(-50%,-50%);width:64px;height:64px;border-radius:50%;background:rgba(255,255,255,.94);display:grid;place-items:center;box-shadow:0 10px 30px -10px rgba(15,20,19,.5);transition:transform .25s var(--ease)}
+  .vph:hover .play{transform:translate(-50%,-50%) scale(1.07)}
+  .vph .play svg{width:18px;height:18px;fill:var(--ink);margin-left:3px}
+  .vchip{position:absolute;z-index:4;top:12px;right:12px;font-family:var(--mono);font-size:10.5px;color:#fff;border:1px dashed rgba(255,255,255,.7);border-radius:6px;padding:5px 9px;letter-spacing:.04em;text-transform:uppercase;display:flex;align-items:center;gap:7px}
+  .vchip .rd{width:6px;height:6px;border-radius:50%;background:var(--build)}
+  .vcap{position:absolute;z-index:4;left:14px;bottom:14px;right:14px;color:#fff}
+  .vcap .vt{font-family:var(--display);font-weight:500;font-size:clamp(17px,2vw,22px);letter-spacing:-0.02em}
+  .vcap .vd{font-family:var(--mono);font-size:11px;color:rgba(255,255,255,.78);margin-top:6px;letter-spacing:.02em}
+
+  /* hero film band */
+  .filmband{position:relative;z-index:2;margin-top:clamp(40px,5vw,68px)}
+  .hero-film{position:relative;aspect-ratio:21/8;border-radius:18px;overflow:hidden;border:1px solid var(--hair);box-shadow:0 1px 2px rgba(15,20,19,.04),0 30px 70px -36px rgba(15,20,19,.4)}
+  .hero-film img{width:100%;height:100%;object-fit:cover}
+  @media(max-width:700px){.hero-film{aspect-ratio:4/3}}
+
+  /* work gallery */
+  .gallery{display:grid;grid-template-columns:repeat(4,1fr);grid-auto-rows:200px;gap:14px;margin-top:clamp(36px,5vw,56px)}
+  @media(max-width:1000px){.gallery{grid-template-columns:repeat(2,1fr);grid-auto-rows:180px}}
+  @media(max-width:560px){.gallery{grid-template-columns:1fr;grid-auto-rows:200px}}
+  .gtile{position:relative;border-radius:14px;overflow:hidden;border:1px solid var(--hair);background:var(--paper-2)}
+  .gtile img{width:100%;height:100%;object-fit:cover;object-position:top;transition:transform 1s var(--ease)}
+  .gtile:hover img{transform:scale(1.05)}
+  .gtile .gl{position:absolute;left:12px;bottom:12px;z-index:3;font-family:var(--mono);font-size:11px;color:#fff;letter-spacing:.02em;text-shadow:0 1px 6px rgba(0,0,0,.6)}
+  .gtile .gl b{display:block;font-family:var(--display);font-weight:500;font-size:15px;letter-spacing:-0.01em}
+  .gtile .gscrim{position:absolute;inset:0;z-index:2;background:linear-gradient(180deg,transparent 40%,rgba(15,20,19,.55) 100%);opacity:.9}
+  .gtile .gcoord{position:absolute;top:12px;left:12px;z-index:3;font-family:var(--mono);font-size:10px;color:rgba(255,255,255,.85);text-shadow:0 1px 4px rgba(0,0,0,.6)}
+  .t-wide{grid-column:span 2}
+  .t-tall{grid-row:span 2}
+  @media(max-width:560px){.t-wide,.t-tall{grid-column:span 1;grid-row:span 1}}
+
+  /* testimonial + video testimonial */
+  .quote-wrap{display:grid;grid-template-columns:1.3fr 1fr;gap:clamp(18px,2.4vw,28px);margin-top:clamp(36px,5vw,56px);align-items:stretch}
+  @media(max-width:900px){.quote-wrap{grid-template-columns:1fr}}
+  .quote{position:relative;background:var(--white);border:1px solid var(--hair);border-radius:18px;padding:clamp(30px,4vw,52px);display:flex;flex-direction:column;justify-content:space-between;overflow:hidden}
+  .quote .blueprint.fine{opacity:.32}
+  .quote blockquote{position:relative;z-index:2;font-family:var(--display);font-weight:500;font-size:clamp(22px,3vw,38px);letter-spacing:-0.025em;line-height:1.18}
+  .quote blockquote i{font-family:var(--serif);font-style:italic;color:var(--primary);font-weight:400}
+  .quote .qfoot{position:relative;z-index:2;display:flex;align-items:center;gap:14px;margin-top:34px}
+  .quote .qav{width:52px;height:52px;border-radius:50%;object-fit:cover;border:1px solid var(--hair)}
+  .quote .qname{font-family:var(--display);font-weight:500;font-size:16px;letter-spacing:-0.01em}
+  .quote .qrole{font-family:var(--mono);font-size:12px;color:var(--ink-3);margin-top:3px}
+  .vtest{position:relative;border-radius:18px;overflow:hidden;border:1px solid var(--hair);min-height:300px}
+  .vtest img{width:100%;height:100%;object-fit:cover;object-position:center top;position:absolute;inset:0}
+
+  /* final cta */
+  .finalcta{position:relative;background:var(--ink);color:#fff;border-radius:24px;overflow:hidden;padding:clamp(48px,7vw,92px) clamp(28px,5vw,72px);margin-top:0}
+  .finalcta .blueprint{background-image:linear-gradient(rgba(255,255,255,.07) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.07) 1px,transparent 1px);opacity:1;-webkit-mask-image:radial-gradient(120% 110% at 30% 0%,#000 20%,transparent 75%);mask-image:radial-gradient(120% 110% at 30% 0%,#000 20%,transparent 75%)}
+  .fc-in{position:relative;z-index:2;max-width:780px}
+  .finalcta h2{font-size:clamp(34px,5.2vw,68px);letter-spacing:-0.035em;color:#fff}
+  .finalcta h2 i{font-family:var(--serif);font-style:italic;color:var(--primary-2);font-weight:400}
+  .finalcta p{color:rgba(255,255,255,.72);font-size:clamp(16px,1.6vw,19px);margin-top:24px;max-width:46em;line-height:1.6}
+  .fc-cta{margin-top:36px;display:flex;flex-wrap:wrap;gap:14px;align-items:center}
+  .fc-meta{font-family:var(--mono);font-size:12px;color:rgba(255,255,255,.5);letter-spacing:.02em}
+  .fc-coords{position:absolute;z-index:2;top:24px;right:28px;font-family:var(--mono);font-size:11px;color:rgba(255,255,255,.4);text-align:right;line-height:1.7}
+
+  /* footer */
+  footer.ft{padding-block:48px;border-top:1px solid var(--hair)}
+  .ft-in{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:18px}
+  .ft-logo{display:flex;align-items:center;gap:10px;font-family:var(--display);font-weight:600;font-size:16px;letter-spacing:-0.02em}
+  .ft-logo .mk{width:24px;height:24px;border-radius:6px;background:var(--ink);position:relative}
+  .ft-logo .mk::after{content:"";position:absolute;left:11px;top:5px;bottom:5px;width:1.5px;background:var(--primary-2)}
+  .ft-note{font-family:var(--mono);font-size:12px;color:var(--ink-3);letter-spacing:.02em}
+  .ft-links{display:flex;gap:20px;font-family:var(--mono);font-size:12px;color:var(--ink-2)}
+  .ft-links a:hover{color:var(--primary)}
+
+  /* entrance */
+  .reveal{opacity:0;transform:translateY(22px);filter:blur(4px);transition:opacity .9s var(--ease),transform .9s var(--ease),filter .9s var(--ease)}
+  .reveal.in{opacity:1;transform:none;filter:none}
+  .reveal[data-d="1"]{transition-delay:.08s}
+  .reveal[data-d="2"]{transition-delay:.16s}
+  .reveal[data-d="3"]{transition-delay:.24s}
+  .reveal[data-d="4"]{transition-delay:.32s}
+
+  @media(prefers-reduced-motion:reduce){
+    *{animation:none!important;transition:none!important;scroll-behavior:auto!important}
+    .reveal{opacity:1!important;transform:none!important;filter:none!important}
+    .meter .fill{transition:none!important}
+  }
+</style>
+</head>
+<body>
+
+<header class="nav">
+  <div class="wrap nav-in">
+    <a href="#top" class="logo"><span class="mk"></span>LoudFace</a>
+    <nav class="links">
+      <a href="#build">What we do</a>
+      <a href="#work">Work</a>
+      <a href="#proof">Results</a>
+      <span class="nav-status"><span class="dot"></span>2 slots · Q3 2026</span>
+      <a href="#book" class="btn btn-pri nav-cta">Book a call</a>
+    </nav>
+  </div>
+</header>
+
+<main id="top">
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="blueprint"></div>
+    <div class="wrap">
+      <div class="hero-grid">
+        <div>
+          <span class="pill reveal in"><span class="dot"></span>2 client slots open for Q3 2026</span>
+          <h1 class="headline reveal in" data-d="1">
+            <span class="line">Your website converts.</span>
+            <span class="line">Your traffic compounds.</span>
+            <span class="line"><i class="s">One team</i> runs both.</span>
+          </h1>
+          <p class="sub reveal in" data-d="2">LoudFace is the conversion and organic-growth team behind 200+ B2B SaaS websites. We build on Webflow, then run SEO, AEO and CRO to grow what we shipped.</p>
+          <div class="hero-cta reveal in" data-d="3">
+            <a href="#book" class="btn btn-ind">Book your strategy call <span aria-hidden="true">→</span></a>
+            <button class="watch" type="button" aria-label="Watch the 90-second intro">
+              <span class="pp"><svg viewBox="0 0 12 12" aria-hidden="true"><path d="M2 1l9 5-9 5z"/></svg></span>
+              Watch the 90-sec intro
+            </button>
+          </div>
+          <div class="trust reveal in" data-d="4">
+            <b>Webflow Enterprise Partner</b><span class="sep">·</span><b>Shipping since 2020</b><span class="sep">·</span><b>Series A+ SaaS</b>
+          </div>
+        </div>
+
+        <!-- instrument panel -->
+        <div class="instrument crop ind reveal in" data-d="2">
+          <span class="cm-tr"></span><span class="cm-bl"></span>
+          <div class="inst-top">
+            <div class="inst-id">
+              <img class="inst-logo" src="https://cdn.sanity.io/images/xjjjqhgt/production/6a79052d6d3db7428b73436f15350c87e0cefa3b-339x109.png?h=80&auto=format" alt="Toku logo">
+              <span class="inst-tag">Build → Grow · 06 mo</span>
+            </div>
+            <span class="inst-live"><span class="dot"></span>LIVE</span>
+          </div>
+          <div class="readouts">
+            <div class="ro">
+              <div class="lbl">AI visibility</div>
+              <div class="val">86<span class="u">%</span></div>
+              <div class="delta">from <b>0%</b> at launch</div>
+            </div>
+            <div class="ro bld">
+              <div class="lbl">Conv. rate lift</div>
+              <div class="val">288<span class="u">%</span></div>
+              <div class="delta">measured · <b>+288%</b></div>
+            </div>
+          </div>
+          <div class="spark">
+            <div class="spark-head"><span>Organic visibility index</span><span style="color:var(--primary)">+86 pts</span></div>
+            <svg viewBox="0 0 280 64" preserveAspectRatio="none" aria-hidden="true">
+              <line x1="0" y1="16" x2="280" y2="16" stroke="#E8E7E1" stroke-width="1"/>
+              <line x1="0" y1="40" x2="280" y2="40" stroke="#E8E7E1" stroke-width="1"/>
+              <polyline class="sparkline" points="0,60 40,56 80,50 120,40 160,28 200,18 240,9 280,3" fill="none" stroke="#4F46E5" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+              <circle class="sparkdot" cx="280" cy="3" r="4" fill="#4F46E5"/>
+            </svg>
+            <div class="axis-x"><span>Wk 0</span><span>Wk 12</span><span>Wk 24</span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- hero film placeholder -->
+      <div class="filmband reveal" data-d="2">
+        <div class="hero-film vph crop">
+          <span class="cm-tr"></span><span class="cm-bl"></span>
+          <img src="https://cdn.sanity.io/images/xjjjqhgt/production/b24a66ce0191bb3913ae1517bac7d4d327d42f3e-2880x1620.jpg?w=1600&h=600&fit=crop&crop=top&auto=format&q=85" alt="LoudFace studio reel background">
+          <div class="scrim"></div>
+          <div class="vchip"><span class="rd"></span>Video placeholder</div>
+          <div class="play"><svg viewBox="0 0 12 12" aria-hidden="true"><path d="M2 1l9 5-9 5z"/></svg></div>
+          <div class="vcap">
+            <div class="vt">The 90-second studio intro</div>
+            <div class="vd">FILM: founder + team walkthrough — how one team builds and grows. 16:9, 90s.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- LOGO PROOF -->
+  <section class="logoproof">
+    <div class="wrap lp-in">
+      <div class="lp-label">Trusted by <b>200+ B2B SaaS teams</b> — from Series A startups to global brands</div>
+      <div class="lp-rail">
+        <img src="https://cdn.sanity.io/images/xjjjqhgt/production/7421bda16647889739dd725fe4967e45b42dd4c5-997x139.png?h=80&auto=format" alt="Montblanc">
+        <img src="https://cdn.sanity.io/images/xjjjqhgt/production/2916b66c3352d3932990dd7b7052901ae1078d04-845x178.png?h=80&auto=format" alt="Hoxhunt">
+        <img src="https://cdn.sanity.io/images/xjjjqhgt/production/bf5fa13f7566496f48caf6e20a73ca612ced0291-619x202.png?h=80&auto=format" alt="LIQID">
+        <img src="https://cdn.sanity.io/images/xjjjqhgt/production/90fcd30f2058c1975d25c315ccef475997d07461-836x203.png?h=80&auto=format" alt="Radisson">
+        <img src="https://cdn.sanity.io/images/xjjjqhgt/production/6a79052d6d3db7428b73436f15350c87e0cefa3b-339x109.png?h=80&auto=format" alt="Toku">
+        <img src="https://cdn.sanity.io/images/xjjjqhgt/production/5139fa977e892fe5854a9dea4976ce056fec88d5-820x269.png?h=80&auto=format" alt="Ceipal">
+        <img src="https://cdn.sanity.io/images/xjjjqhgt/production/d21e5758cf17fd620251a0352a90352beee26a5f-2612x554.webp?h=80&auto=format" alt="Seamless AI">
+      </div>
+    </div>
+  </section>
+
+  <!-- BUILD / GROW BENTO -->
+  <section class="sec" id="build">
+    <div class="wrap">
+      <div class="sec-head reveal">
+        <span class="sec-kicker"><span class="rule"></span>The model</span>
+        <h2 class="sec-title">One team <span class="cblock b">builds</span> it.<br>The same team <span class="cblock g">grows</span> it.</h2>
+        <p class="sec-sub">No handoff. No re-learning your product. The team that ships your site is the team that compounds its traffic — two precisely-spec'd modules, one operating system.</p>
+      </div>
+
+      <div class="bg-wrap">
+        <!-- BUILD -->
+        <div class="module build crop reveal" data-d="1">
+          <span class="cm-tr"></span><span class="cm-bl"></span>
+          <div class="modspec"><span class="num">MODULE 01 / BUILD</span><span>x:0 → y:6wk</span></div>
+          <h3>A website that earns its traffic</h3>
+          <p class="mdesc">Positioning, copy, UX/UI and production Webflow, shipped in weeks. Your marketing team runs it without filing engineering tickets.</p>
+          <div class="caps">
+            <span class="cap">UX/UI</span>
+            <span class="cap">Webflow</span>
+            <span class="cap">Conversion Copy</span>
+            <span class="cap">CMS</span>
+          </div>
+          <div class="bar"></div>
+          <div class="meta-metric">Spec · launch in &lt; 6 weeks</div>
+        </div>
+
+        <!-- divider ruler -->
+        <div class="bg-divider" aria-hidden="true">
+          <div class="vrule"></div>
+          <div class="arrow">BUILD → GROW</div>
+          <div class="vrule"></div>
+        </div>
+
+        <!-- GROW -->
+        <div class="module grow crop ind reveal" data-d="2">
+          <span class="cm-tr"></span><span class="cm-bl"></span>
+          <div class="modspec"><span class="num">MODULE 02 / GROW</span><span>x:6wk → y:∞</span></div>
+          <h3>Traffic and conversions, month over month</h3>
+          <p class="mdesc">SEO for Google, AEO for the AI engines, CRO to convert it all. A team that knows your site inside out, because we built it.</p>
+          <div class="caps">
+            <span class="cap">Technical SEO</span>
+            <span class="cap">AEO</span>
+            <span class="cap">Content</span>
+            <span class="cap">CRO</span>
+          </div>
+          <div class="bar"></div>
+          <div class="meta-metric">Spec · compounding, monthly</div>
+        </div>
+      </div>
+
+      <p class="bg-connector reveal">Most clients start with a build. Within three months, they ask us to handle growth too — <em>that's by design.</em></p>
+    </div>
+  </section>
+
+  <!-- MEASURED STATS BENTO -->
+  <section class="sec" id="proof" style="padding-top:0">
+    <div class="wrap">
+      <div class="sec-head reveal">
+        <span class="sec-kicker"><span class="rule"></span>The instrument panel</span>
+        <h2 class="sec-title">Measured — <i class="s">numbers,</i> not adjectives.</h2>
+        <p class="sec-sub">Every claim on this page is a reading off real client work. Here's the panel.</p>
+      </div>
+
+      <div class="stats-bento">
+        <!-- feature gauge -->
+        <div class="gauge feature ind crop ind reveal" data-d="1">
+          <span class="cm-tr"></span><span class="cm-bl"></span>
+          <div class="blueprint fine"></div>
+          <div class="g-top">
+            <div class="g-lbl">Projects shipped<br>B2B SaaS on Webflow</div>
+            <div class="g-coord">[R-01]</div>
+          </div>
+          <div class="g-num">200<span class="u">+</span></div>
+          <div class="g-note">Production websites built and grown since 2020 — startups to global brands.</div>
+          <div class="meter">
+            <div class="track"><div class="fill" data-fill="92"></div></div>
+            <div class="scale"><span>2020</span><span>2026</span></div>
+          </div>
+        </div>
+
+        <!-- gauge 2 -->
+        <div class="gauge crop reveal" data-d="2">
+          <span class="cm-tr"></span><span class="cm-bl"></span>
+          <div class="blueprint fine"></div>
+          <div class="g-top">
+            <div class="g-lbl">Conversion lift<br>Dimer Health · 6 mo</div>
+            <div class="g-coord" style="color:var(--build)">[R-02]</div>
+          </div>
+          <div class="g-num" style="color:var(--build)">288<span class="u">%</span></div>
+          <div class="g-note">Measured, not estimated.</div>
+        </div>
+
+        <!-- gauge 3 -->
+        <div class="gauge crop reveal" data-d="3">
+          <span class="cm-tr"></span><span class="cm-bl"></span>
+          <div class="blueprint fine"></div>
+          <div class="g-top">
+            <div class="g-lbl">Webflow Enterprise<br>Partner</div>
+            <div class="g-coord">[R-03]</div>
+          </div>
+          <div class="g-num">4<span class="u">+ yrs</span></div>
+          <div class="g-note">Certified, enterprise-grade builds.</div>
+        </div>
+
+        <!-- gauge 4 -->
+        <div class="gauge crop reveal" data-d="2">
+          <span class="cm-tr"></span><span class="cm-bl"></span>
+          <div class="blueprint fine"></div>
+          <div class="g-top">
+            <div class="g-lbl">Time to launch<br>vs. 12–16 elsewhere</div>
+            <div class="g-coord">[R-04]</div>
+          </div>
+          <div class="g-num">&lt;6<span class="u">wks</span></div>
+          <div class="g-note">Half the industry's quote.</div>
+        </div>
+
+        <!-- gauge 5 (AI visibility, fills the bottom-left under feature) -->
+        <div class="gauge crop reveal" data-d="3">
+          <span class="cm-tr"></span><span class="cm-bl"></span>
+          <div class="blueprint fine"></div>
+          <div class="g-top">
+            <div class="g-lbl">AI visibility<br>Toku · category prompt</div>
+            <div class="g-coord">[R-05]</div>
+          </div>
+          <div class="g-num">0→86<span class="u">%</span></div>
+          <div class="g-note">From invisible to the AI's answer.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CASE PROOFS -->
+  <section class="sec" style="padding-top:0">
+    <div class="wrap">
+      <div class="sec-head reveal">
+        <span class="sec-kicker"><span class="rule"></span>Two readings, in full</span>
+        <h2 class="sec-title">Build, then <i class="s">grow.</i> The same file.</h2>
+      </div>
+
+      <div class="cases">
+        <!-- TOKU as video placeholder -->
+        <article class="case reveal" data-d="1">
+          <div class="case-media vph">
+            <img src="https://cdn.sanity.io/images/xjjjqhgt/production/bd1c09b494f7074c268f5b964d0c77dc1b1ef965-2880x1620.webp?w=1200&h=760&fit=crop&crop=top&auto=format&q=85" alt="Toku stablecoin payroll website">
+            <div class="scrim"></div>
+            <span class="case-coord">CASE / 01 · TOKU · 1646CE</span>
+            <span class="case-accent" style="background:#1646CE"></span>
+            <div class="vchip"><span class="rd"></span>Video placeholder</div>
+            <div class="play"><svg viewBox="0 0 12 12" aria-hidden="true"><path d="M2 1l9 5-9 5z"/></svg></div>
+            <div class="vcap">
+              <div class="vt">How Toku won the AI's answer</div>
+              <div class="vd">FILM: 60s case film — AEO before/after, ChatGPT & Perplexity screen-capture.</div>
+            </div>
+          </div>
+          <div class="case-body">
+            <div class="case-metricrow">
+              <div class="case-metric" style="color:#1646CE">0 → 86%</div>
+              <div class="case-meta">AI visibility<br>Build → Grow</div>
+            </div>
+            <h3>How Toku became the AI's answer for stablecoin payroll</h3>
+            <p>When buyers ask ChatGPT and Perplexity who handles stablecoin payroll, Toku now comes up. We rebuilt for clarity, then ran AEO until it owned the category's core prompt.</p>
+            <div class="case-tags">
+              <span class="case-tag" style="background:#E8ECFB;color:#1646CE">Fintech</span>
+              <span class="case-tag" style="background:var(--paper-2);color:var(--ink-2)">AEO</span>
+              <span class="case-tag" style="background:var(--paper-2);color:var(--ink-2)">Webflow rebuild</span>
+            </div>
+          </div>
+        </article>
+
+        <!-- DIMER static case -->
+        <article class="case reveal" data-d="2">
+          <div class="case-media crop">
+            <span class="cm-tr"></span><span class="cm-bl"></span>
+            <img src="https://cdn.sanity.io/images/xjjjqhgt/production/a0f4750b896ced6ffca9c5869623b15614f312ba-1440x10131.webp?w=1200&h=760&fit=crop&crop=top&auto=format&q=85" alt="Dimer Health telehealth website">
+            <span class="case-coord">CASE / 02 · DIMER · 4037A0</span>
+            <span class="case-accent" style="background:#4037A0"></span>
+          </div>
+          <div class="case-body">
+            <div class="case-metricrow">
+              <div class="case-metric" style="color:#4037A0">+288%</div>
+              <div class="case-meta">Conversion rate<br>6 months</div>
+            </div>
+            <h3>A telehealth brand and website rebuilt to convert</h3>
+            <p>A best-in-class site for a healthcare startup, then six months of conversion work. 288% lift in conversion rate, measured, not estimated.</p>
+            <div class="case-tags">
+              <span class="case-tag" style="background:#EBE9F6;color:#4037A0">Healthtech</span>
+              <span class="case-tag" style="background:var(--paper-2);color:var(--ink-2)">CRO</span>
+              <span class="case-tag" style="background:var(--paper-2);color:var(--ink-2)">Brand + Build</span>
+            </div>
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- WORK GALLERY -->
+  <section class="sec" id="work" style="padding-top:0">
+    <div class="wrap">
+      <div class="sec-head reveal">
+        <span class="sec-kicker"><span class="rule"></span>The archive</span>
+        <h2 class="sec-title">More of the <i class="s">work.</i></h2>
+        <p class="sec-sub">Real shipped sites — every tile a production build on Webflow.</p>
+      </div>
+
+      <div class="gallery">
+        <div class="gtile t-wide t-tall reveal" data-d="1">
+          <img src="https://cdn.sanity.io/images/xjjjqhgt/production/3ac92e2393c7a26dc96f737c27d7faf49fbe6243-1440x8455.jpg?w=900&h=1000&fit=crop&crop=top&auto=format&q=85" alt="Hoxhunt cybersecurity website">
+          <div class="gscrim"></div>
+          <div class="gcoord">[T-01] 02:01</div>
+          <div class="gl"><b>Hoxhunt</b>Security awareness · Build + Grow</div>
+        </div>
+        <div class="gtile reveal" data-d="2">
+          <img src="https://cdn.sanity.io/images/xjjjqhgt/production/2a7d29fdc9302c8482d70b73041e6c58ec9229a6-1440x1845.webp?w=760&h=500&fit=crop&crop=top&auto=format&q=85" alt="Eraser diagramming tool website">
+          <div class="gscrim"></div>
+          <div class="gcoord">[T-02]</div>
+          <div class="gl"><b>Eraser</b>Dev tooling</div>
+        </div>
+        <div class="gtile reveal" data-d="3">
+          <img src="https://cdn.sanity.io/images/xjjjqhgt/production/a9110ec997f7a351bb9b90347bef4abf6b6b02fc-3024x1890.jpg?w=760&h=500&fit=crop&crop=top&auto=format&q=85" alt="Montblanc luxury brand website">
+          <div class="gscrim"></div>
+          <div class="gcoord">[T-03]</div>
+          <div class="gl"><b>Montblanc</b>Luxury · global</div>
+        </div>
+        <div class="gtile t-wide reveal" data-d="2">
+          <img src="https://cdn.sanity.io/images/xjjjqhgt/production/b24a66ce0191bb3913ae1517bac7d4d327d42f3e-2880x1620.jpg?w=1100&h=440&fit=crop&crop=top&auto=format&q=85" alt="BlockHorizon fintech website">
+          <div class="gscrim"></div>
+          <div class="gcoord">[T-04] 03:40</div>
+          <div class="gl"><b>BlockHorizon</b>Web3 finance · Build</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- TESTIMONIAL + VIDEO TESTIMONIAL -->
+  <section class="sec" style="padding-top:0">
+    <div class="wrap">
+      <div class="quote-wrap">
+        <div class="quote crop reveal" data-d="1">
+          <span class="cm-tr"></span><span class="cm-bl"></span>
+          <div class="blueprint fine"></div>
+          <blockquote>"You guys are the experts. I can rely on you to drive the plan — you've <i>already earned my trust</i> in what you've delivered so far."</blockquote>
+          <div class="qfoot">
+            <img class="qav" src="https://cdn.sanity.io/images/xjjjqhgt/production/ed922fafea75109de6c216519a1e1bb608c01fe8-944x1024.png?w=240&h=240&fit=crop&auto=format" alt="Kenneth O'Friel">
+            <div>
+              <div class="qname">Kenneth O'Friel</div>
+              <div class="qrole">CEO, Toku · [R-01 + R-05]</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- video testimonial -->
+        <div class="vtest vph crop ind reveal" data-d="2">
+          <span class="cm-tr"></span><span class="cm-bl"></span>
+          <img src="https://cdn.sanity.io/images/xjjjqhgt/production/53a5363a122ef95a350039a3d4ef74b9841a1e2a-512x502.png?w=760&h=1000&fit=crop&auto=format&q=85" alt="Sarig Reichert, CPO of Dimer Health">
+          <div class="scrim"></div>
+          <div class="vchip"><span class="rd"></span>Video placeholder</div>
+          <div class="play"><svg viewBox="0 0 12 12" aria-hidden="true"><path d="M2 1l9 5-9 5z"/></svg></div>
+          <div class="vcap">
+            <div class="vt">Sarig Reichert, Dimer Health</div>
+            <div class="vd">FILM: 45s video testimonial — CPO on the +288% conversion result. Portrait, 9:16.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FINAL CTA -->
+  <section class="sec" id="book" style="padding-top:0">
+    <div class="wrap">
+      <div class="finalcta reveal">
+        <div class="blueprint"></div>
+        <div class="fc-coords" aria-hidden="true">x: your site<br>y: what we'd change<br>t: 30 min</div>
+        <div class="fc-in">
+          <h2>Let's figure out what's <i>holding your site back.</i></h2>
+          <p>30-minute strategy call. No pitch deck. We'll look at your site together and tell you what we'd change, and why.</p>
+          <div class="fc-cta">
+            <a href="#book" class="btn btn-ind">Book a strategy call <span aria-hidden="true">→</span></a>
+            <span class="fc-meta">2 slots open · Q3 2026</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer class="ft">
+  <div class="wrap ft-in">
+    <div class="ft-logo"><span class="mk"></span>LoudFace</div>
+    <div class="ft-note">© 2026 LoudFace · V2 · Blueprint</div>
+    <nav class="ft-links">
+      <a href="#build">Model</a>
+      <a href="#work">Work</a>
+      <a href="#proof">Results</a>
+      <a href="#book">Book a call</a>
+    </nav>
+  </div>
+</footer>
+
+<script>
+(function(){
+  var rm = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var nodes = Array.prototype.slice.call(document.querySelectorAll('.reveal'));
+  if(rm || !('IntersectionObserver' in window)){
+    nodes.forEach(function(n){n.classList.add('in')});
+    document.querySelectorAll('.meter .fill').forEach(function(f){f.style.width=(f.getAttribute('data-fill')||'0')+'%'});
+    return;
+  }
+  var io = new IntersectionObserver(function(entries){
+    entries.forEach(function(e){
+      if(e.isIntersecting){
+        e.target.classList.add('in');
+        var fills = e.target.querySelectorAll('.meter .fill');
+        fills.forEach(function(f){ setTimeout(function(){ f.style.width=(f.getAttribute('data-fill')||'0')+'%'; },120); });
+        io.unobserve(e.target);
+      }
+    });
+  },{threshold:0.14, rootMargin:'0px 0px -8% 0px'});
+  nodes.forEach(function(n){ io.observe(n); });
+})();
+</script>
+
+</body>
+</html>

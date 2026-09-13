@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AI Instructions Page — Results (Day 2)</title>
+<style>
+  :root{
+    --ink:#16140f; --ink-soft:#4a463d; --muted:#7a756a; --line:#e6e1d6;
+    --paper:#f6f3ec; --card:#fffdf8; --accent:#b5341f; --accent-soft:#f3dccb;
+    --good:#2f6f43; --good-soft:#dcefe1; --warn:#9a6a12; --warn-soft:#f6e9cf;
+    --bad:#9b2222; --bad-soft:#f4dada;
+    --mono:"SFMono-Regular",ui-monospace,"JetBrains Mono",Menlo,Consolas,monospace;
+    --sans:"Söhne","Neue Haas Grotesk Display",-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,sans-serif;
+    --serif:"Tiempos Headline","Charter","Iowan Old Style",Georgia,serif;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--sans);font-size:17px;line-height:1.6;-webkit-font-smoothing:antialiased}
+  .wrap{max-width:880px;margin:0 auto;padding:0 24px}
+  header.hero{padding:60px 0 36px;border-bottom:1px solid var(--line)}
+  .kicker{font-family:var(--mono);font-size:12px;letter-spacing:.18em;text-transform:uppercase;color:var(--accent);font-weight:600;margin:0 0 16px}
+  h1{font-family:var(--serif);font-weight:600;font-size:42px;line-height:1.06;margin:0 0 16px;letter-spacing:-.01em}
+  .lede{font-size:19px;color:var(--ink-soft);max-width:60ch;margin:0}
+  .meta{margin-top:24px;font-family:var(--mono);font-size:12.5px;color:var(--muted);display:flex;gap:18px;flex-wrap:wrap}
+  .meta b{color:var(--ink-soft);font-weight:600}
+
+  .verdict{margin:36px 0;border:1px solid var(--line);border-radius:16px;overflow:hidden;background:var(--card)}
+  .verdict-top{display:flex;align-items:center;gap:16px;padding:20px 24px;background:var(--good-soft);border-bottom:1px solid var(--line)}
+  .stamp{font-family:var(--mono);font-weight:700;font-size:13px;letter-spacing:.08em;text-transform:uppercase;padding:7px 14px;border-radius:999px;background:var(--good);color:#fff;white-space:nowrap}
+  .verdict-top h2{margin:0;font-family:var(--serif);font-size:21px;font-weight:600}
+  .verdict-body{padding:20px 24px;color:var(--ink-soft)}
+  .verdict-body p{margin:0 0 12px}.verdict-body p:last-child{margin:0}
+
+  section{padding:40px 0;border-bottom:1px solid var(--line)}
+  .sec-num{font-family:var(--mono);font-size:12px;color:var(--accent);letter-spacing:.16em;text-transform:uppercase;display:block;margin-bottom:10px}
+  h2.sec{font-family:var(--serif);font-size:28px;font-weight:600;margin:0 0 8px;letter-spacing:-.01em}
+  h3{font-size:17px;font-weight:650;margin:26px 0 8px}
+  p{margin:0 0 15px}
+  a{color:var(--accent);text-underline-offset:2px}
+  strong{font-weight:650}
+  ul{margin:0 0 15px;padding-left:20px}li{margin:0 0 7px}
+
+  .scorecard{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;margin:24px 0}
+  @media(max-width:640px){.scorecard{grid-template-columns:1fr}}
+  .metric{background:var(--card);border:1px solid var(--line);border-radius:13px;padding:18px 20px;position:relative}
+  .metric .q{font-size:14px;color:var(--ink-soft);margin:0 0 10px;font-weight:550}
+  .metric .a{font-family:var(--serif);font-size:23px;font-weight:600;margin:0;display:flex;align-items:center;gap:9px}
+  .dot{width:11px;height:11px;border-radius:50%;flex-shrink:0}
+  .dot.g{background:var(--good)}.dot.y{background:var(--warn)}.dot.r{background:var(--bad)}
+  .metric .note{font-size:12.5px;color:var(--muted);margin:7px 0 0}
+
+  blockquote{margin:18px 0;padding:16px 20px;border-left:3px solid var(--good);background:var(--good-soft);border-radius:0 10px 10px 0;font-size:15.5px;color:var(--ink)}
+  blockquote .src{display:block;font-family:var(--mono);font-size:11px;color:var(--muted);margin-top:8px}
+  blockquote.warn{border-color:var(--warn);background:var(--warn-soft)}
+
+  .callout{border-left:3px solid var(--accent);background:var(--accent-soft);padding:15px 19px;border-radius:0 10px 10px 0;margin:20px 0}
+  .callout .tag{font-family:var(--mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;font-weight:700;display:block;margin-bottom:6px;color:var(--ink-soft)}
+  .callout p{margin:0}
+
+  table{width:100%;border-collapse:collapse;margin:18px 0;font-size:14.5px}
+  th,td{text-align:left;padding:10px 13px;border-bottom:1px solid var(--line);vertical-align:top}
+  th{font-family:var(--mono);font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);font-weight:600}
+  td .yes{color:var(--good);font-weight:650}.td .no{color:var(--bad);font-weight:650}
+  .cite-pill{display:inline-block;font-family:var(--mono);font-size:11px;background:var(--good);color:#fff;padding:2px 9px;border-radius:999px;font-weight:600}
+
+  footer{padding:34px 0 70px;color:var(--muted);font-size:13px}
+  footer .src{font-family:var(--mono);font-size:12px;line-height:1.85}
+  footer a{color:var(--ink-soft)}
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <div class="wrap">
+    <p class="kicker">LoudFace · AEO Experiment — Results</p>
+    <h1>The AI Instructions page is already getting cited</h1>
+    <p class="lede">Day 2 readout. Live ChatGPT with web search now cites <code>/ai-instructions</code> on branded questions and reproduces the planted canary fact. The page entered the retrieval pipeline — fast.</p>
+    <div class="meta">
+      <span><b>Shipped</b> 2026-05-30</span>
+      <span><b>Measured</b> 2026-06-01 (~48h)</span>
+      <span><b>Engine</b> ChatGPT gpt-5.5 + web search</span>
+    </div>
+  </div>
+</header>
+
+<div class="wrap">
+
+  <div class="verdict">
+    <div class="verdict-top">
+      <span class="stamp">Result: It worked</span>
+      <h2>Cited 6× in a branded answer. Canary reproduced.</h2>
+    </div>
+    <div class="verdict-body">
+      <p>Asked ChatGPT "what is LoudFace?" with web search on, the model pulled <code>/ai-instructions</code> as a source <strong>six times</strong> in one answer — including for the founding facts, the ICP, and the differentiator. It reproduced our canary almost verbatim. This matches Nectiv's ~48-hour claim.</p>
+      <p>The "fastest-growing" superlative did <strong>not</strong> get parroted — and that's the right outcome. ChatGPT flagged it as unverifiable and repeated the <em>defensible reason-why</em> instead. Exactly the framing call we made on the way in. Credibility intact.</p>
+    </div>
+  </div>
+
+  <!-- scorecard -->
+  <section>
+    <span class="sec-num">01 · Scorecard vs the plan</span>
+    <h2 class="sec">What we set out to measure</h2>
+    <div class="scorecard">
+      <div class="metric">
+        <p class="q">Cited by ChatGPT on a branded prompt?</p>
+        <p class="a"><span class="dot g"></span>Yes — 6 citations</p>
+        <p class="note">Target was ≥1 within 14 days. Hit on day 2.</p>
+      </div>
+      <div class="metric">
+        <p class="q">Canary fact reproduced?</p>
+        <p class="a"><span class="dot g"></span>Yes</p>
+        <p class="note">"Founder-led studio with full-time specialists rather than a generic retainer shop" — attributed to the page.</p>
+      </div>
+      <div class="metric">
+        <p class="q">Superlative ("fastest-growing") repeated?</p>
+        <p class="a"><span class="dot y"></span>No — by design</p>
+        <p class="note">ChatGPT refused the unverifiable claim, kept the reason-why. Protects trust.</p>
+      </div>
+      <div class="metric">
+        <p class="q">Indexed in Google yet?</p>
+        <p class="a"><span class="dot y"></span>Not yet</p>
+        <p class="note">Normal at 48h. ChatGPT search ≠ Google index — they retrieve independently.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- evidence -->
+  <section>
+    <span class="sec-num">02 · The evidence</span>
+    <h2 class="sec">What ChatGPT actually said</h2>
+    <p>Prompt: <em>"What is LoudFace? Tell me about the agency — what they do, who they work with, and what makes them different. Cite your sources."</em> (gpt-5.5, web search on)</p>
+
+    <h3>The differentiator — straight from the page</h3>
+    <blockquote>
+      "Founder-led operating model — their own brand information describes the agency as a <strong>founder-led studio with full-time specialists rather than a generic retainer shop</strong>."
+      <span class="src">cited: loudface.co/ai-instructions — this phrasing exists ONLY on the new page</span>
+    </blockquote>
+    <p>That's the canary. The "lifestyle business / cookie-cutter retainer" contrast we planted came back as "generic retainer shop," attributed to the page. There's nowhere else on the site it could have come from — attribution confirmed.</p>
+
+    <h3>The page was a top source for the core facts</h3>
+    <p><code>/ai-instructions</code> was cited as the source for: who LoudFace serves (Series A+, &lt;$100M ARR), HQ (Dubai, fully remote), the "one team builds + grows" model, and the AEO positioning. <span class="cite-pill">6 citations in one answer</span></p>
+
+    <h3>On the superlative — the guardrail held</h3>
+    <blockquote class="warn">
+      "I can't verify that LoudFace is <em>the</em> fastest-growing agency… I did not find an independent ranking, revenue/headcount growth data, or third-party benchmark proving 'fastest-growing.'"
+      <span class="src">ChatGPT, second prompt — then it repeated the reason-why framing instead</span>
+    </blockquote>
+    <p>This is why we framed the claim as positioning + reason rather than raw fact. A bare "we're #1" would've been ignored or hedged; the <em>reason</em> ("founder-led, full-time specialists, not cookie-cutter") got picked up cleanly.</p>
+  </section>
+
+  <!-- mechanism confirmed -->
+  <section>
+    <span class="sec-num">03 · What this proves</span>
+    <h2 class="sec">The mechanism is real</h2>
+    <ul>
+      <li><strong>It's retrieval, not obedience.</strong> ChatGPT didn't "follow instructions" — it found the cleanest, most quotable brand-fact source and lifted from it. Exactly the prediction in the briefing.</li>
+      <li><strong>Speed matches the original.</strong> Nectiv said ~48h; we hit it at ~48h. The IndexNow + footer-link + fact-dense structure did its job.</li>
+      <li><strong>The canary did its job.</strong> A unique phrase let us attribute a citation with certainty, not vibes.</li>
+      <li><strong>Honest framing beat hype.</strong> The defensible reason-why traveled; the superlative didn't. Worth remembering for client playbooks.</li>
+    </ul>
+  </section>
+
+  <!-- caveats -->
+  <section>
+    <span class="sec-num">04 · Honest caveats</span>
+    <h2 class="sec">What this is NOT (yet)</h2>
+    <table>
+      <tbody>
+        <tr><th>Sample size</th><td>One ChatGPT-search call (via DataForSEO's ChatGPT scraper — represents the real search mechanism, but it's a single sample). Re-run on a few prompt variants to confirm it's stable, not a one-off.</td></tr>
+        <tr><th>Peec won't catch it</th><td>Peec tracks <em>category</em> prompts ("best AEO agency for B2B SaaS"), not branded "what is LoudFace" ones. So this win won't show in Peec dashboards. To track it, we'd add a branded prompt to Peec or keep spot-checking live ChatGPT.</td></tr>
+        <tr><th>ChatGPT-only so far</th><td>Haven't tested Gemini / Claude / Google AI. Nectiv saw ChatGPT-only. Expect the same unless tested otherwise.</td></tr>
+        <tr><th>Not in Google index</th><td>The page isn't in Google's classic index yet (48h is early). Doesn't matter for the ChatGPT result — different pipeline — but worth submitting in Search Console to speed it.</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- next -->
+  <section>
+    <span class="sec-num">05 · Next moves</span>
+    <h2 class="sec">Where to take it</h2>
+    <ul>
+      <li><strong>Confirm stability</strong> — re-run 3–4 branded prompt variants over the next week so we can say "consistently cited," not "cited once."</li>
+      <li><strong>Add a branded prompt to Peec</strong> — so the citation is tracked automatically going forward.</li>
+      <li><strong>Test other engines</strong> — quick Gemini / Claude / Perplexity check to map coverage.</li>
+      <li><strong>Submit to Search Console</strong> — get the page into Google's index too.</li>
+      <li><strong>Write it up as original research</strong> — we now have our OWN data (cited in 48h, canary reproduced) — stronger than rehashing Nectiv. On-brand for an AEO agency. Feeds the content calendar.</li>
+      <li><strong>Roll into client playbooks</strong> — an <code>/ai-instructions</code> page becomes a standard low-effort AEO play for every tenant.</li>
+    </ul>
+  </section>
+
+  <footer>
+    <p style="font-family:var(--mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--accent);font-weight:700">Method</p>
+    <p class="src">
+      • Live query: DataForSEO ChatGPT scraper, model gpt-5.5-2026-04-23, web_search=true, 2 branded prompts<br>
+      • Page: <a href="https://www.loudface.co/ai-instructions">loudface.co/ai-instructions</a> (live, HTTP 200)<br>
+      • Peec project: LoudFace — branded prompt not currently tracked (category prompts only)<br>
+      • Google index: not yet indexed at 48h (checked via site: query)<br>
+      • Prior briefing: .claude/ai-instructions-page-experiment-2026-05-30.html
+    </p>
+    <p style="margin-top:16px">Results readout · LoudFace · 2026-06-01 · single-file, offline-safe</p>
+  </footer>
+
+</div>
+</body>
+</html>

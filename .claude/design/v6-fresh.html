@@ -1,0 +1,908 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LoudFace — V6 Fresh Landing</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,500;12..96,600&family=Newsreader:ital,opsz,wght@1,6..72,400;1,6..72,500&family=Geist:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+
+:root{
+  --paper:#fafafa;
+  --ink:#22302e;
+  --accent:#4f46e5;
+  --accent-dark:#4338ca;
+  --body:#525252;
+  --muted:#737373;
+  --subtle:#a3a3a3;
+  --border:#e5e5e5;
+  --dark:#262626;
+  --ease-out:cubic-bezier(0.16,1,0.3,1);
+  --ease-smooth:cubic-bezier(0.4,0,0.2,1);
+}
+
+html{scroll-behavior:smooth}
+
+body{
+  font-family:'Geist',system-ui,sans-serif;
+  background:var(--paper);
+  color:var(--ink);
+  font-size:16px;
+  line-height:1.6;
+  -webkit-font-smoothing:antialiased;
+}
+
+/* LAYOUT */
+.container{max-width:1200px;margin:0 auto;padding:0 48px}
+
+/* NAV */
+nav{
+  position:sticky;top:0;z-index:100;height:64px;
+  background:rgba(250,250,250,0.88);
+  backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+  border-bottom:1px solid var(--border);
+}
+.nav-inner{
+  display:flex;align-items:center;gap:0;
+  max-width:1200px;margin:0 auto;padding:0 48px;height:100%;
+}
+.nav-logo{flex-shrink:0;display:flex;align-items:center;text-decoration:none}
+.nav-links{display:flex;align-items:center;gap:2px;list-style:none;margin-left:auto;margin-right:28px}
+.nav-links a{
+  font-size:14px;font-weight:500;color:var(--muted);text-decoration:none;
+  padding:6px 12px;border-radius:6px;
+  transition:color 150ms var(--ease-smooth),background 150ms var(--ease-smooth);
+}
+.nav-links a:hover{color:var(--ink);background:#f0f0ee}
+.nav-cta{
+  display:inline-flex;align-items:center;height:36px;padding:0 18px;
+  background:var(--ink);color:#fafafa;font-size:14px;font-weight:500;
+  border-radius:999px;text-decoration:none;
+  transition:background 150ms var(--ease-smooth),transform 120ms var(--ease-out);
+}
+.nav-cta:hover{background:#2e3e3c}
+.nav-cta:active{transform:scale(0.98)}
+
+/* HERO */
+.hero{padding:80px 0 72px;overflow:visible}
+.hero-grid{display:grid;grid-template-columns:52fr 48fr;gap:64px;align-items:center}
+
+.hero-eyebrow{
+  display:inline-flex;align-items:center;gap:8px;
+  font-size:13px;font-weight:500;color:var(--muted);margin-bottom:28px;
+}
+.eyebrow-dot{width:6px;height:6px;border-radius:50%;background:var(--accent);flex-shrink:0}
+
+.hero-headline{
+  font-family:'Bricolage Grotesque',sans-serif;
+  font-size:clamp(32px,4.2vw,52px);font-weight:500;
+  line-height:1.1;color:var(--ink);letter-spacing:-0.022em;margin-bottom:24px;
+}
+.hero-headline em{
+  font-family:'Newsreader',Georgia,serif;font-style:italic;
+  color:var(--accent);font-weight:400;
+}
+
+.hero-sub{font-size:17px;color:var(--body);line-height:1.65;margin-bottom:36px;max-width:460px}
+
+.hero-actions{display:flex;align-items:center;gap:20px;flex-wrap:wrap}
+
+.btn-primary{
+  display:inline-flex;align-items:center;height:48px;padding:0 28px;
+  background:var(--ink);color:#fafafa;font-size:15px;font-weight:500;
+  border-radius:999px;text-decoration:none;border:none;cursor:pointer;
+  transition:background 150ms var(--ease-smooth),transform 120ms var(--ease-out);
+}
+.btn-primary:hover{background:#2e3e3c}
+.btn-primary:active{transform:scale(0.98)}
+
+.btn-text{
+  font-size:14px;font-weight:500;color:var(--muted);text-decoration:none;
+  transition:color 120ms var(--ease-smooth);
+}
+.btn-text:hover{color:var(--ink)}
+
+.hero-scarcity{
+  display:inline-flex;align-items:center;gap:7px;
+  font-size:12px;color:var(--subtle);margin-top:16px;
+}
+.scarcity-dot{width:5px;height:5px;border-radius:50%;background:#16a34a;flex-shrink:0}
+
+/* BROWSER FRAME */
+.hero-visual{position:relative;margin-right:-16px}
+.browser-frame{
+  border-radius:12px;overflow:hidden;
+  box-shadow:
+    0 0 0 1px rgba(0,0,0,0.07),
+    0 4px 6px -2px rgba(0,0,0,0.06),
+    0 20px 48px -8px rgba(0,0,0,0.14);
+}
+.browser-chrome{
+  background:#f0f0ef;border-bottom:1px solid #d4d4d4;
+  padding:10px 16px;display:flex;align-items:center;gap:10px;
+}
+.browser-dots{display:flex;gap:5px}
+.browser-dot{width:11px;height:11px;border-radius:50%}
+.bd-r{background:#ff5f57}.bd-y{background:#ffbd2e}.bd-g{background:#28c840}
+.browser-url{
+  flex:1;background:white;border:1px solid #d8d8d7;border-radius:6px;
+  height:24px;display:flex;align-items:center;padding:0 10px;
+  font-size:11px;color:var(--muted);gap:5px;
+}
+.url-lock{color:#16a34a;font-size:10px;font-weight:700}
+.browser-content{position:relative;aspect-ratio:16/10;overflow:hidden;background:#fff}
+.browser-content img{width:100%;height:100%;object-fit:cover;object-position:top;display:block}
+
+/* METRIC CHIPS */
+.chip{
+  position:absolute;
+  background:white;border-radius:10px;padding:10px 14px;
+  box-shadow:0 2px 12px rgba(0,0,0,0.12),0 0 0 1px rgba(0,0,0,0.05);
+  display:flex;flex-direction:column;gap:3px;
+  pointer-events:none;
+}
+.chip-tr{top:16px;right:16px}
+.chip-bl{bottom:16px;left:16px}
+.chip-value{
+  font-family:'Bricolage Grotesque',sans-serif;font-size:20px;font-weight:600;
+  color:var(--ink);line-height:1;
+}
+.chip-value.ac{color:var(--accent)}
+.chip-label{font-size:11px;color:var(--muted);line-height:1.4}
+
+/* SHIPPED STRIP */
+.shipped{padding:28px 0;border-top:1px solid var(--border);border-bottom:1px solid var(--border)}
+.strip-label{font-size:11px;font-weight:500;letter-spacing:0.07em;text-transform:uppercase;color:var(--subtle);margin-bottom:14px}
+.strip-row{display:flex;gap:10px;overflow-x:auto;scrollbar-width:none;-ms-overflow-style:none}
+.strip-row::-webkit-scrollbar{display:none}
+.strip-thumb{
+  flex-shrink:0;width:128px;height:76px;border-radius:6px;overflow:hidden;
+  border:1px solid var(--border);
+}
+.strip-thumb img{
+  width:100%;height:100%;object-fit:cover;object-position:top;display:block;
+  filter:grayscale(25%);transition:filter 200ms var(--ease-smooth);
+}
+.strip-thumb:hover img{filter:none}
+
+/* PARTNERS */
+.partners{padding:56px 0;border-bottom:1px solid var(--border)}
+.section-meta{font-size:12px;font-weight:500;letter-spacing:0.06em;text-transform:uppercase;color:var(--subtle);text-align:center;margin-bottom:32px}
+.logo-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:20px 40px;align-items:center;justify-items:center}
+.logo-item img{max-width:110px;max-height:26px;object-fit:contain;filter:grayscale(100%) opacity(0.4);transition:filter 200ms var(--ease-smooth)}
+.logo-item img:hover{filter:grayscale(60%) opacity(0.65)}
+
+/* PROBLEM */
+.problem{padding:96px 0;border-bottom:1px solid var(--border)}
+.problem-heading{
+  font-family:'Bricolage Grotesque',sans-serif;
+  font-size:clamp(28px,3.2vw,44px);font-weight:500;
+  color:var(--ink);line-height:1.15;letter-spacing:-0.02em;margin-bottom:56px;
+  max-width:700px;
+}
+.ink-block{background:var(--ink);color:var(--paper);padding:2px 10px;border-radius:3px;display:inline}
+.problem-rows{border-top:1px solid var(--border)}
+.problem-row{display:grid;grid-template-columns:196px 1fr;gap:36px;padding:28px 0;border-bottom:1px solid var(--border);align-items:start}
+.pr-label{font-size:14px;font-weight:500;color:var(--ink)}
+.pr-text{font-size:14.5px;color:var(--body);line-height:1.65}
+
+/* BUILD / GROW SPLIT */
+.build-grow{display:grid;grid-template-columns:1fr 1fr}
+.bg-panel{padding:80px 64px;position:relative}
+.bg-panel.light{background:var(--paper);border-top:1px solid var(--border);border-right:2px solid var(--accent)}
+.bg-panel.dark{background:var(--dark);border-top:1px solid #333}
+.track-label{font-size:10px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;margin-bottom:20px}
+.bg-panel.light .track-label{color:var(--accent)}
+.bg-panel.dark .track-label{color:rgba(99,102,241,0.6)}
+.track-heading{
+  font-family:'Bricolage Grotesque',sans-serif;
+  font-size:clamp(22px,2.2vw,30px);font-weight:500;
+  line-height:1.2;letter-spacing:-0.02em;margin-bottom:20px;
+}
+.bg-panel.light .track-heading{color:var(--ink)}
+.bg-panel.dark .track-heading{color:#fafafa}
+.track-detail{font-size:14px;margin-bottom:36px;line-height:1.6}
+.bg-panel.light .track-detail{color:var(--body)}
+.bg-panel.dark .track-detail{color:#a3a3a3}
+.caps-list{display:flex;flex-direction:column;gap:11px}
+.cap-item{display:flex;align-items:center;gap:10px;font-size:14px;font-weight:500}
+.bg-panel.light .cap-item{color:var(--ink)}
+.bg-panel.dark .cap-item{color:#d4d4d4}
+.cap-dot{width:4px;height:4px;border-radius:50%;flex-shrink:0}
+.bg-panel.light .cap-dot{background:var(--accent)}
+.bg-panel.dark .cap-dot{background:rgba(99,102,241,0.55)}
+.connector{margin-top:48px;padding-top:24px;border-top:1px solid rgba(0,0,0,0.08);font-size:13px;color:var(--muted);font-style:italic}
+.bg-panel.dark .connector{border-top-color:rgba(255,255,255,0.07);color:#525252}
+
+/* WORK LEDGER */
+.work-ledger{background:var(--dark);padding:80px 0}
+.ledger-top{margin-bottom:48px}
+.ledger-heading{
+  font-family:'Bricolage Grotesque',sans-serif;
+  font-size:clamp(24px,2.8vw,38px);font-weight:500;
+  color:#fafafa;letter-spacing:-0.02em;line-height:1.15;
+}
+.ledger-heading em{font-family:'Newsreader',Georgia,serif;font-style:italic;color:var(--accent);font-weight:400}
+.ledger-sub{font-size:14px;color:#525252;margin-top:8px}
+.work-table{width:100%;border-collapse:collapse;border-top:1px solid #333}
+.work-row{
+  display:grid;grid-template-columns:160px 1fr 80px 160px 32px;
+  gap:0;padding:20px 0;border-bottom:1px solid #333;
+  align-items:center;cursor:pointer;
+  transition:background 150ms var(--ease-smooth);
+}
+.work-row:hover{background:rgba(255,255,255,0.02)}
+.wr-client{}
+.client-name{font-size:14px;font-weight:600;color:#fafafa}
+.client-cat{font-size:11px;color:#525252;margin-top:2px}
+.wr-desc{font-size:13px;color:#737373;padding:0 24px;line-height:1.5}
+.wr-thumb{padding:0 16px}
+.thumb-img{width:72px;height:46px;border-radius:5px;overflow:hidden;border:1px solid #333}
+.thumb-img img{width:100%;height:100%;object-fit:cover;object-position:top;display:block}
+.wr-metric{text-align:right;padding-right:8px}
+.metric-val{font-family:'Bricolage Grotesque',sans-serif;font-size:20px;font-weight:600;color:#fafafa;line-height:1}
+.metric-lbl{font-size:11px;color:#525252;margin-top:1px}
+.wr-arrow{text-align:right;font-size:16px;color:#333;transition:color 150ms var(--ease-smooth)}
+.work-row:hover .wr-arrow{color:var(--accent)}
+
+/* DATA CHAPTER */
+.data-chapter{background:#1e1e1e;padding:96px 0;border-top:1px solid #181818}
+.data-grid{display:grid;grid-template-columns:1fr 1fr;gap:80px;align-items:center}
+.data-heading{
+  font-family:'Bricolage Grotesque',sans-serif;
+  font-size:clamp(24px,2.6vw,36px);font-weight:500;color:#fafafa;
+  letter-spacing:-0.02em;line-height:1.2;margin-bottom:28px;
+}
+.data-heading em{font-family:'Newsreader',Georgia,serif;font-style:italic;color:var(--accent);font-weight:400}
+.data-stat{font-family:'Bricolage Grotesque',sans-serif;font-size:64px;font-weight:600;color:#fafafa;line-height:1;letter-spacing:-0.03em;margin-bottom:16px}
+.data-caption{font-size:14px;color:#525252;line-height:1.6;max-width:300px}
+.chart-header{font-size:11px;color:#404040;text-transform:uppercase;letter-spacing:0.06em;text-align:right;margin-bottom:10px}
+.chart-client-id{display:flex;align-items:center;gap:8px;margin-top:14px}
+.chart-cid-dot{width:8px;height:8px;border-radius:50%;background:var(--accent)}
+.chart-cid-label{font-size:12px;color:#525252}
+
+/* AI VISIBILITY */
+.ai-visibility{padding:96px 0;border-top:1px solid var(--border)}
+.ai-header{display:grid;grid-template-columns:1fr auto;gap:64px;align-items:end;margin-bottom:52px}
+.ai-heading{
+  font-family:'Bricolage Grotesque',sans-serif;
+  font-size:clamp(24px,2.8vw,38px);font-weight:500;color:var(--ink);
+  letter-spacing:-0.02em;line-height:1.2;max-width:560px;
+}
+.ai-heading em{font-family:'Newsreader',Georgia,serif;font-style:italic;color:var(--accent);font-weight:400}
+.ai-stat-block{text-align:right;flex-shrink:0}
+.ai-stat-num{font-family:'Bricolage Grotesque',sans-serif;font-size:48px;font-weight:600;color:var(--ink);line-height:1;letter-spacing:-0.02em}
+.ai-stat-label{font-size:13px;color:var(--muted);margin-top:4px}
+.ai-panels{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.ai-panel{background:white;border-radius:12px;border:1px solid var(--border);overflow:hidden;box-shadow:0 1px 4px rgba(0,0,0,0.04)}
+.aip-header{display:flex;align-items:center;gap:9px;padding:14px 16px 12px;border-bottom:1px solid var(--border)}
+.aip-icon{width:22px;height:22px;border-radius:5px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.icon-claude{background:#CC785C}
+.icon-gpt{background:#10a37f}
+.icon-perplexity{background:#20808d}
+.aip-icon svg{width:12px;height:12px;fill:white}
+.aip-name{font-size:12px;font-weight:600;color:var(--ink)}
+.aip-prompt{padding:12px 16px;background:#f9f9f9;border-bottom:1px solid var(--border);font-size:12px;color:var(--body)}
+.aip-q{font-weight:500}
+.aip-response{padding:16px;font-size:12.5px;color:var(--body);line-height:1.65}
+.ai-cite{background:rgba(79,70,229,0.09);color:var(--accent-dark);border-radius:3px;padding:1px 5px;font-weight:600}
+
+/* LOUD BLOCK */
+.loud-block{background:var(--accent);padding:100px 0}
+.loud-inner{text-align:center;max-width:720px;margin:0 auto}
+.loud-heading{
+  font-family:'Bricolage Grotesque',sans-serif;
+  font-size:clamp(36px,5.5vw,68px);font-weight:500;color:white;
+  letter-spacing:-0.03em;line-height:1.05;margin-bottom:40px;
+}
+.loud-heading em{font-family:'Newsreader',Georgia,serif;font-style:italic;color:rgba(255,255,255,0.65);font-weight:400}
+.btn-white{
+  display:inline-flex;align-items:center;height:52px;padding:0 32px;
+  background:white;color:var(--accent);font-size:15px;font-weight:600;
+  border-radius:999px;text-decoration:none;
+  transition:background 150ms var(--ease-smooth),transform 120ms var(--ease-out);
+}
+.btn-white:hover{background:rgba(255,255,255,0.9)}
+.btn-white:active{transform:scale(0.98)}
+
+/* STATS */
+.stats-section{padding:80px 0;border-top:1px solid var(--border)}
+.stats-rows{border-top:1px solid var(--border)}
+.stat-row{display:grid;grid-template-columns:200px 1fr 260px;gap:32px;padding:36px 0;border-bottom:1px solid var(--border);align-items:baseline}
+.sn{font-family:'Bricolage Grotesque',sans-serif;font-size:52px;font-weight:600;color:var(--ink);line-height:1;letter-spacing:-0.03em}
+.sl{font-size:16px;font-weight:500;color:var(--ink)}
+.sd{font-size:13px;color:var(--muted);text-align:right}
+
+/* PROCESS */
+.process{padding:80px 0 96px;border-top:1px solid var(--border)}
+.process-top{margin-bottom:56px}
+.process-sm-label{font-size:12px;font-weight:500;letter-spacing:0.06em;text-transform:uppercase;color:var(--subtle);margin-bottom:14px}
+.process-heading{font-family:'Bricolage Grotesque',sans-serif;font-size:clamp(22px,2.2vw,30px);font-weight:500;color:var(--ink);letter-spacing:-0.02em}
+.steps-track{display:grid;grid-template-columns:repeat(4,1fr);position:relative;gap:0}
+.steps-track::before{content:'';position:absolute;top:18px;left:6px;right:6px;height:1px;background:var(--border);z-index:0}
+.step{padding-top:50px;padding-right:28px;position:relative}
+.step-node{position:absolute;top:12px;left:0;width:14px;height:14px;border-radius:50%;background:var(--paper);border:2px solid var(--accent);z-index:1}
+.step-time{font-size:11px;font-weight:600;letter-spacing:0.04em;color:var(--accent);margin-bottom:8px}
+.step-name{font-size:15px;font-weight:600;color:var(--ink);margin-bottom:9px}
+.step-desc{font-size:13px;color:var(--muted);line-height:1.6}
+
+/* TESTIMONIAL */
+.testimonial{padding:96px 0;border-top:1px solid var(--border)}
+.testi-inner{max-width:820px}
+.testi-quote{
+  font-family:'Newsreader',Georgia,serif;font-style:italic;
+  font-size:clamp(22px,2.6vw,34px);color:var(--ink);line-height:1.42;
+  font-weight:400;margin-bottom:36px;
+}
+.testi-attr{display:flex;align-items:center;gap:14px}
+.attr-name{font-size:15px;font-weight:600;color:var(--ink)}
+.attr-role{font-size:13px;color:var(--muted);margin-top:2px}
+.attr-div{width:1px;height:32px;background:var(--border)}
+
+/* TEAM */
+.team{padding:80px 0;border-top:1px solid var(--border)}
+.team-top{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:40px}
+.team-heading{font-family:'Bricolage Grotesque',sans-serif;font-size:clamp(20px,2vw,28px);font-weight:500;color:var(--ink);letter-spacing:-0.02em}
+.team-count{font-size:14px;color:var(--muted)}
+.team-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:16px}
+.team-member{}
+.team-photo{aspect-ratio:1;border-radius:8px;overflow:hidden;background:#e8e8e8;margin-bottom:12px}
+.team-photo img{width:100%;height:100%;object-fit:cover;display:block;filter:grayscale(100%);transition:filter 300ms var(--ease-smooth)}
+.team-member:hover .team-photo img{filter:grayscale(0%)}
+.team-name{font-size:13px;font-weight:600;color:var(--ink)}
+.team-role{font-size:12px;color:var(--muted);margin-top:2px}
+
+/* CTA */
+.cta-section{padding:96px 0;border-top:1px solid var(--border)}
+.cta-inner{max-width:600px;margin:0 auto;text-align:center}
+.cta-heading{
+  font-family:'Bricolage Grotesque',sans-serif;
+  font-size:clamp(24px,3vw,40px);font-weight:500;color:var(--ink);
+  letter-spacing:-0.022em;line-height:1.2;margin-bottom:18px;
+}
+.cta-sub{font-size:16px;color:var(--body);line-height:1.65;margin-bottom:36px}
+.cta-actions{display:flex;align-items:center;justify-content:center;gap:20px}
+
+/* FOOTER */
+footer{background:var(--ink);padding:64px 0 40px}
+.footer-grid{display:grid;grid-template-columns:1.4fr 1fr 1fr 1fr;gap:56px;margin-bottom:56px}
+.footer-tagline{font-size:13px;color:rgba(250,250,250,0.38);margin-top:20px;line-height:1.65;max-width:220px}
+.footer-col-title{font-size:10px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:rgba(250,250,250,0.3);margin-bottom:16px}
+.footer-links{list-style:none;display:flex;flex-direction:column;gap:10px}
+.footer-links a{font-size:14px;color:rgba(250,250,250,0.5);text-decoration:none;transition:color 150ms var(--ease-smooth)}
+.footer-links a:hover{color:rgba(250,250,250,0.85)}
+.footer-bottom{display:flex;align-items:center;justify-content:space-between;padding-top:28px;border-top:1px solid rgba(250,250,250,0.07)}
+.footer-copy{font-size:12px;color:rgba(250,250,250,0.25)}
+.footer-status{display:flex;align-items:center;gap:6px;font-size:12px;color:rgba(250,250,250,0.3)}
+.status-dot{width:6px;height:6px;border-radius:50%;background:#4ade80}
+
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{transition-duration:0.01ms!important;animation-duration:0.01ms!important}}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-inner">
+    <a class="nav-logo" href="/" aria-label="LoudFace">
+      <svg width="120" height="25" viewBox="0 0 133 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path fill-rule="evenodd" clip-rule="evenodd" d="M15.3926 27.11C13.8337 27.11 12.4095 26.7107 11.1277 25.9078C9.84587 25.1051 8.82198 24.0337 8.05985 22.6857C7.29768 21.3375 6.91661 19.8472 6.91661 18.2113C6.91661 16.9707 7.13603 15.8108 7.57869 14.7355C8.02135 13.6601 8.62568 12.7114 9.40322 11.8934C10.1769 11.0753 11.0776 10.4378 12.1092 9.97306C13.137 9.51219 14.234 9.27791 15.3965 9.27791C16.9554 9.27791 18.3757 9.67734 19.6614 10.48C20.9431 11.2789 21.9672 12.3581 22.7294 13.71C23.4913 15.0619 23.8725 16.5636 23.8725 18.2113C23.8725 19.4402 23.6531 20.5925 23.2104 21.6639C22.7678 22.7356 22.1634 23.6803 21.386 24.4984C20.612 25.3165 19.7116 25.9577 18.6915 26.4187C17.6674 26.8756 16.5704 27.11 15.3926 27.11ZM15.3926 23.5882C16.3318 23.5882 17.1708 23.3386 17.9178 22.8429C18.6645 22.3475 19.2535 21.6909 19.6883 20.8728C20.1232 20.0546 20.3427 19.1676 20.3427 18.2074C20.3427 17.228 20.1195 16.3255 19.6728 15.4997C19.2265 14.6779 18.6298 14.0211 17.8831 13.5295C17.1364 13.0379 16.3048 12.7921 15.3926 12.7921C14.465 12.7921 13.6258 13.0417 12.8752 13.5372C12.1246 14.0326 11.528 14.6932 11.0969 15.5151C10.6619 16.337 10.4425 17.2357 10.4425 18.2036C10.4425 19.2061 10.6696 20.1163 11.12 20.9267C11.5703 21.7371 12.1747 22.3822 12.9253 22.8621C13.6759 23.3423 14.4996 23.5882 15.3926 23.5882ZM26.5825 9.75037V20.3237C26.5825 21.5756 26.8825 22.7087 27.4947 23.7379C28.1066 24.7672 28.9264 25.5816 29.9543 26.192C30.9821 26.8028 32.1252 27.1063 33.38 27.1063C34.3656 27.1063 35.2856 26.9066 36.1439 26.4993C37.0022 26.0922 37.7182 25.5391 38.2956 24.8403L38.3108 26.6685L41.8369 27.0257L41.8215 9.48921L38.2956 9.75037V19.4634C38.2956 20.2161 38.1109 20.9075 37.7451 21.5256C37.3794 22.1441 36.8869 22.6395 36.271 23.0044C35.6551 23.3693 34.9698 23.5538 34.2116 23.5538C33.4649 23.5538 32.7836 23.3693 32.1599 23.0044C31.5363 22.6395 31.0397 22.1479 30.6663 21.5256C30.293 20.9075 30.1083 20.2199 30.1083 19.4634V9.48921L26.5825 9.75037ZM58.7816 1.29325L62.3074 1.02825V27.0294L58.7816 26.6682V24.1834C58.2274 25.0629 57.5036 25.7698 56.6106 26.3074C55.7176 26.8412 54.6706 27.11 53.4735 27.11C52.2417 27.11 51.0871 26.8796 50.0131 26.4149C48.9391 25.9539 47.9921 25.3125 47.1723 24.4947C46.3524 23.6765 45.7096 22.7316 45.2477 21.6602C44.7859 20.5888 44.5509 19.4402 44.5509 18.2074C44.5509 16.9784 44.7819 15.8262 45.2477 14.747C45.7096 13.6716 46.3524 12.723 47.1723 11.9049C47.9921 11.0869 48.9391 10.4493 50.0131 9.98462C51.0871 9.52375 52.238 9.28947 53.4735 9.28947C54.6706 9.28947 55.7176 9.55831 56.6106 10.0922C57.5036 10.626 58.2274 11.3288 58.7816 12.1968V1.29325ZM53.5082 23.7072C54.5013 23.7072 55.3711 23.4614 56.1178 22.9697C56.8648 22.4783 57.4419 21.8177 57.8539 20.9803C58.2658 20.147 58.4738 19.2213 58.4738 18.2074C58.4738 17.182 58.2658 16.2526 57.8461 15.4153C57.4267 14.5819 56.8493 13.9174 56.1103 13.4258C55.3711 12.9342 54.5013 12.6884 53.5082 12.6884C52.5266 12.6884 51.6298 12.9381 50.8215 13.4335C50.0131 13.9289 49.3702 14.5934 48.8892 15.4306C48.4078 16.2641 48.1691 17.1896 48.1691 18.2036C48.1691 19.229 48.4156 20.1585 48.9084 20.9881C49.4009 21.8177 50.0515 22.4783 50.8599 22.966C51.6683 23.4536 52.5458 23.7072 53.5082 23.7072ZM71.4566 9.83485V5.91356C71.4566 5.49492 71.6069 5.13774 71.9032 4.8497C72.2036 4.55398 72.5613 4.40802 72.981 4.40802C73.2082 4.40802 73.4313 4.46178 73.6508 4.56933C73.8702 4.67687 74.0435 4.83049 74.1666 5.03404L76.6915 2.54916C76.1835 1.98459 75.606 1.56979 74.9635 1.2971C74.3206 1.02444 73.6585 0.890005 72.981 0.890005C72.0418 0.890005 71.191 1.1166 70.429 1.56594C69.6669 2.01915 69.0587 2.62595 68.6083 3.38642C68.158 4.14686 67.9308 4.98795 67.9308 5.91356V10.0883L65.9138 10.2381V12.216L67.9308 12.4234V26.653L71.4566 27.0294V12.7845L76.2374 13.2722V9.48534L71.4566 9.83485ZM92.2311 9.75032L92.3852 12.2544C91.7615 11.3864 90.9801 10.6721 90.0372 10.1152C89.094 9.55829 88.0048 9.27791 86.773 9.27791C85.5642 9.27791 84.4288 9.5045 83.374 9.96153C82.3195 10.4186 81.3877 11.0485 80.5834 11.8473C79.779 12.6462 79.1554 13.5794 78.701 14.6471C78.2506 15.711 78.0237 16.8478 78.0237 18.0576C78.0237 19.3096 78.2546 20.4812 78.7202 21.5678C79.1823 22.6547 79.8327 23.6189 80.6603 24.4522C81.4919 25.2858 82.454 25.9387 83.5513 26.4072C84.6482 26.8756 85.8183 27.11 87.0616 27.11C88.2165 27.11 89.2133 26.8449 90.0639 26.3151C90.9147 25.785 91.5845 25.0859 92.0811 24.2181L92.2156 26.6722L95.761 27.0294V9.49297L92.2311 9.75032ZM91.3226 20.9841C90.911 21.8177 90.3295 22.4821 89.5868 22.9737C88.8399 23.4651 87.9701 23.711 86.977 23.711C86.0145 23.711 85.1333 23.4651 84.3249 22.9737C83.5166 22.4821 82.8659 21.8214 82.3734 20.9958C81.8806 20.1662 81.6342 19.2405 81.6342 18.2113C81.6342 17.1973 81.8728 16.2717 82.3464 15.4383C82.8198 14.6049 83.4664 13.9366 84.2787 13.4412C85.0909 12.9457 85.9916 12.6961 86.9732 12.6961C87.9661 12.6961 88.8361 12.9419 89.5751 13.4335C90.3143 13.9251 90.8955 14.5857 91.3112 15.4229C91.7308 16.2563 91.9385 17.1896 91.9385 18.2151C91.9425 19.2253 91.7346 20.1507 91.3226 20.9841ZM110.558 21.8639L114.365 22.2402C113.864 24.0107 112.086 25.4356 110.788 26.1421C109.607 26.7876 108.329 27.1063 106.947 27.1063C105.388 27.1063 103.964 26.7067 102.682 25.904C101.4 25.1014 100.376 24.03 99.6141 22.6817C98.8519 21.3337 98.4709 19.8435 98.4709 18.2075C98.4709 16.9669 98.6904 15.8071 99.133 14.7317C99.5757 13.6563 100.18 12.7077 100.957 11.8896C101.731 11.0715 102.632 10.434 103.663 9.96928C104.691 9.5084 105.788 9.27412 106.951 9.27412C108.329 9.27412 109.622 9.57369 110.792 10.2381C112.074 10.964 113.772 12.1892 114.368 14.2554L110.561 14.5358C110.088 13.9712 109.534 13.5411 108.898 13.2415C108.267 12.9419 107.617 12.7921 106.947 12.7921C106.019 12.7921 105.18 13.0418 104.43 13.5449C103.679 14.048 103.082 14.7048 102.651 15.5228C102.216 16.3409 101.997 17.2358 101.997 18.2036C101.997 19.1639 102.216 20.0509 102.659 20.869C103.098 21.6872 103.694 22.3438 104.449 22.8392C105.199 23.3346 106.035 23.5845 106.951 23.5845C107.651 23.5845 108.317 23.427 108.952 23.112C109.58 22.8008 110.119 22.3822 110.558 21.8639ZM120.296 25.9078C121.578 26.7107 123.002 27.11 124.561 27.11C126.258 27.11 127.791 26.6338 129.153 25.6737C130.519 24.721 131.37 23.7224 132.113 22.2325L128.179 21.8329C127.896 22.1596 127.564 22.5429 126.909 22.943C126.201 23.3693 125.419 23.5842 124.561 23.5842C123.745 23.5727 123.01 23.3885 122.348 23.0274C121.686 22.6702 121.143 22.1748 120.719 21.5489C120.296 20.9227 120.011 20.2239 119.865 19.4442H132.937C133.083 18.0691 132.975 16.771 132.614 15.5458C132.252 14.3207 131.69 13.2376 130.92 12.2966C130.154 11.3557 129.226 10.6145 128.141 10.0806C127.055 9.54675 125.866 9.27791 124.565 9.27791C123.402 9.27791 122.305 9.51219 121.278 9.97306C120.246 10.4378 119.345 11.0753 118.572 11.8934C117.794 12.7114 117.19 13.6601 116.747 14.7355C116.304 15.8108 116.085 16.9707 116.085 18.2113C116.085 19.8472 116.466 21.3375 117.228 22.6857C117.99 24.0337 119.014 25.1051 120.296 25.9078ZM129.38 16.7556H119.749C119.896 15.9337 120.192 15.1925 120.643 14.5281C121.085 13.8713 121.651 13.349 122.336 12.9649C123.017 12.5809 123.764 12.3888 124.565 12.3888C125.381 12.3888 126.128 12.5847 126.813 12.9726C127.498 13.3643 128.068 13.8867 128.526 14.5473C128.98 15.2079 129.268 15.9453 129.38 16.7556Z" fill="#4F46E5"/>
+        <path d="M3.52591 1.04302L0 1.30143V26.6682L3.52591 27.0257V1.04302Z" fill="#4F46E5"/>
+      </svg>
+    </a>
+    <ul class="nav-links">
+      <li><a href="/work">Work</a></li>
+      <li><a href="/services">Services</a></li>
+      <li><a href="/blog">Blog</a></li>
+      <li><a href="/about">About</a></li>
+    </ul>
+    <a class="nav-cta" href="#">Book a call</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="container">
+    <div class="hero-grid">
+      <div class="hero-left">
+        <div class="hero-eyebrow">
+          <span class="eyebrow-dot"></span>
+          B2B SaaS websites that earn their traffic
+        </div>
+        <h1 class="hero-headline">
+          Your website converts.<br>
+          Your traffic <em>compounds.</em><br>
+          One team runs both.
+        </h1>
+        <p class="hero-sub">LoudFace is the conversion and organic growth team behind 200+ B2B SaaS websites. We build on Webflow, then run SEO, AEO, and CRO to grow what we shipped.</p>
+        <div class="hero-actions">
+          <a class="btn-primary" href="#">Book your strategy call</a>
+          <a class="btn-text" href="#">See what AI says about us →</a>
+        </div>
+        <div class="hero-scarcity">
+          <span class="scarcity-dot"></span>
+          2 client slots open for Q3 2026
+        </div>
+      </div>
+      <div class="hero-visual">
+        <div class="browser-frame">
+          <div class="browser-chrome">
+            <div class="browser-dots">
+              <div class="browser-dot bd-r"></div>
+              <div class="browser-dot bd-y"></div>
+              <div class="browser-dot bd-g"></div>
+            </div>
+            <div class="browser-url">
+              <span class="url-lock">⬤</span>
+              toku.io
+            </div>
+          </div>
+          <div class="browser-content">
+            <img src="https://cdn.sanity.io/images/xjjjqhgt/production/bd1c09b494f7074c268f5b964d0c77dc1b1ef965-2880x1620.webp" alt="Toku website" loading="eager" fetchpriority="high">
+            <div class="chip chip-tr">
+              <span class="chip-value ac">+335%</span>
+              <span class="chip-label">Google visibility<br>Sep → Jan</span>
+            </div>
+            <div class="chip chip-bl">
+              <span class="chip-value">0 → 86%</span>
+              <span class="chip-label">AI citation share<br>core query</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SHIPPED STRIP -->
+<div class="shipped">
+  <div class="container">
+    <div class="strip-label">Sites we've shipped</div>
+    <div class="strip-row">
+      <div class="strip-thumb"><img src="https://cdn.sanity.io/images/xjjjqhgt/production/bd1c09b494f7074c268f5b964d0c77dc1b1ef965-2880x1620.webp" alt="Toku"></div>
+      <div class="strip-thumb"><img src="https://cdn.sanity.io/images/xjjjqhgt/production/a0f4750b896ced6ffca9c5869623b15614f312ba-1440x10131.webp" alt="Dimer Health"></div>
+      <div class="strip-thumb"><img src="https://cdn.sanity.io/images/xjjjqhgt/production/2a7d29fdc9302c8482d70b73041e6c58ec9229a6-1440x1845.webp" alt="Eraser"></div>
+      <div class="strip-thumb"><img src="https://cdn.sanity.io/images/xjjjqhgt/production/3ac92e2393c7a26dc96f737c27d7faf49fbe6243-1440x8455.jpg" alt="Hoxhunt"></div>
+      <div class="strip-thumb"><img src="https://cdn.sanity.io/images/xjjjqhgt/production/5f21404454406eee90732e4e1c8655e0c8c6013b-3024x3629.webp" alt="LIQID"></div>
+      <div class="strip-thumb"><img src="https://cdn.sanity.io/images/xjjjqhgt/production/d90a9cec8351f259afd300dcbc51641ed9b40c3d-1440x1845.webp" alt="Outbound Specialist"></div>
+      <div class="strip-thumb"><img src="https://cdn.sanity.io/images/xjjjqhgt/production/7d8ef15a548457e46a262f4ef9617e3260d10722-1440x1845.jpg" alt="Radisson"></div>
+      <div class="strip-thumb"><img src="https://cdn.sanity.io/images/xjjjqhgt/production/a9110ec997f7a351bb9b90347bef4abf6b6b02fc-3024x1890.jpg" alt="Montblanc"></div>
+    </div>
+  </div>
+</div>
+
+<!-- PARTNERS -->
+<section class="partners">
+  <div class="container">
+    <p class="section-meta">Trusted by B2B SaaS teams shipping real products</p>
+    <div class="logo-grid">
+      <div class="logo-item"><img src="https://cdn.sanity.io/images/xjjjqhgt/production/90fcd30f2058c1975d25c315ccef475997d07461-836x203.png" alt="Radisson Hotels Group"></div>
+      <div class="logo-item"><img src="https://cdn.sanity.io/images/xjjjqhgt/production/7421bda16647889739dd725fe4967e45b42dd4c5-997x139.png" alt="Montblanc"></div>
+      <div class="logo-item"><img src="https://cdn.sanity.io/images/xjjjqhgt/production/2916b66c3352d3932990dd7b7052901ae1078d04-845x178.png" alt="Hoxhunt"></div>
+      <div class="logo-item"><img src="https://cdn.sanity.io/images/xjjjqhgt/production/bf5fa13f7566496f48caf6e20a73ca612ced0291-619x202.png" alt="LIQID"></div>
+      <div class="logo-item"><img src="https://cdn.sanity.io/images/xjjjqhgt/production/bdd109e13c67dad916c89a42c71d67c3ba0b217e-680x233.png" alt="Dimer Health"></div>
+      <div class="logo-item"><img src="https://cdn.sanity.io/images/xjjjqhgt/production/86cefc1d66ac01f9a48a5722d54579ad638eb575-724x106.png" alt="Eraser"></div>
+      <div class="logo-item"><img src="https://cdn.sanity.io/images/xjjjqhgt/production/bbea1aa498a036d20ca5eb0f4777fb1a9dd12016-929x110.png" alt="Reiterate"></div>
+      <div class="logo-item"><img src="https://cdn.sanity.io/images/xjjjqhgt/production/57a1d5dd25daa13a34e0888331efd47c05cb7111-748x140.png" alt="Viaduct"></div>
+      <div class="logo-item"><img src="https://cdn.sanity.io/images/xjjjqhgt/production/e2d6029d82c468cbd31b76bf72aea6a6d468fe3c-672x217.png" alt="Speckle"></div>
+      <div class="logo-item"><img src="https://cdn.sanity.io/images/xjjjqhgt/production/8e1d16ee7901b68310fb048d6c3f929d6f2fbe88-886x183.png" alt="Brandfirm"></div>
+      <div class="logo-item"><img src="https://cdn.sanity.io/images/xjjjqhgt/production/d98435922c91b37ae3a19ee3f52b17d5a07b311b-1000x400.png" alt="Outbound Specialist"></div>
+      <div class="logo-item"><img src="https://cdn.sanity.io/images/xjjjqhgt/production/d21e5758cf17fd620251a0352a90352beee26a5f-2612x554.webp" alt="Seamless AI"></div>
+    </div>
+  </div>
+</section>
+
+<!-- PROBLEM -->
+<section class="problem">
+  <div class="container">
+    <h2 class="problem-heading">Your website is <span class="ink-block">costing you deals.</span><br>You just can't see it.</h2>
+    <div class="problem-rows">
+      <div class="problem-row">
+        <div class="pr-label">The messaging</div>
+        <div class="pr-text">Your homepage explains what you built, not why anyone should care. Visitors land, skim, and leave — because the copy talks about features instead of the problem you solve for buyers.</div>
+      </div>
+      <div class="problem-row">
+        <div class="pr-label">The handoff</div>
+        <div class="pr-text">Marketing owns a website they can't update without engineering. Every landing page needs a dev sprint. Every campaign launch gets delayed by a sprint queue.</div>
+      </div>
+      <div class="problem-row">
+        <div class="pr-label">The redesign that didn't move</div>
+        <div class="pr-text">You shipped a new site six months ago and organic traffic still hasn't moved. The site looks better, but nobody optimized it for how search actually works in 2026.</div>
+      </div>
+      <div class="problem-row">
+        <div class="pr-label">The AI shortlist</div>
+        <div class="pr-text">Buyers ask ChatGPT, Perplexity, and Claude for recommendations in your category. You don't come up. AI search shapes the shortlist before a prospect ever visits your site.</div>
+      </div>
+      <div class="problem-row">
+        <div class="pr-label">The traffic that doesn't convert</div>
+        <div class="pr-text">Your site gets traffic, but conversion hasn't changed in a year. No one is running experiments. Traffic without conversion is a vanity metric with a cost center attached.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- BUILD / GROW SPLIT -->
+<div class="build-grow">
+  <div class="bg-panel light">
+    <div class="track-label">Build</div>
+    <h2 class="track-heading">A website that earns its traffic</h2>
+    <p class="track-detail">Design and build B2B SaaS sites on Webflow — positioning, copy, UX, UI, and production code. Shipped in weeks, not quarters.</p>
+    <div class="caps-list">
+      <div class="cap-item"><span class="cap-dot"></span>UX/UI Design</div>
+      <div class="cap-item"><span class="cap-dot"></span>Webflow Development</div>
+      <div class="cap-item"><span class="cap-dot"></span>Conversion Copywriting</div>
+      <div class="cap-item"><span class="cap-dot"></span>CMS Architecture</div>
+      <div class="cap-item"><span class="cap-dot"></span>Design System Setup</div>
+    </div>
+    <p class="connector">Most clients start with a build. Within three months they ask us to handle growth too. That's by design.</p>
+  </div>
+  <div class="bg-panel dark">
+    <div class="track-label">Grow</div>
+    <h2 class="track-heading">Traffic and conversions,<br>month over month</h2>
+    <p class="track-detail">SEO and AEO bring organic traffic from search engines and AI platforms. CRO converts it. No onboarding lag — we built the site.</p>
+    <div class="caps-list">
+      <div class="cap-item"><span class="cap-dot"></span>Technical SEO</div>
+      <div class="cap-item"><span class="cap-dot"></span>AI Engine Optimization (AEO)</div>
+      <div class="cap-item"><span class="cap-dot"></span>Content Strategy</div>
+      <div class="cap-item"><span class="cap-dot"></span>Conversion Rate Optimization</div>
+      <div class="cap-item"><span class="cap-dot"></span>Performance Analytics</div>
+    </div>
+    <p class="connector">The growth team inherits zero context debt. We know where every element lives because we built it.</p>
+  </div>
+</div>
+
+<!-- WORK LEDGER -->
+<section class="work-ledger">
+  <div class="container">
+    <div class="ledger-top">
+      <h2 class="ledger-heading">The work speaks. <em>Specifically.</em></h2>
+      <p class="ledger-sub">Real projects, real metrics, real SaaS companies.</p>
+    </div>
+    <div class="work-table" role="table">
+      <div class="work-row" role="row">
+        <div class="wr-client"><div class="client-name">Toku</div><div class="client-cat">Stablecoin payroll</div></div>
+        <div class="wr-desc">AI visibility + organic search growth on core payroll compliance queries</div>
+        <div class="wr-thumb"><div class="thumb-img"><img src="https://cdn.sanity.io/images/xjjjqhgt/production/bd1c09b494f7074c268f5b964d0c77dc1b1ef965-2880x1620.webp" alt="Toku"></div></div>
+        <div class="wr-metric"><div class="metric-val">0 → 86%</div><div class="metric-lbl">AI citation share</div></div>
+        <div class="wr-arrow">→</div>
+      </div>
+      <div class="work-row" role="row">
+        <div class="wr-client"><div class="client-name">LoudFace</div><div class="client-cat">Agency — own site</div></div>
+        <div class="wr-desc">AEO-first content strategy driving AI answer share in B2B web agency category</div>
+        <div class="wr-thumb"><div class="thumb-img"><img src="https://cdn.sanity.io/images/xjjjqhgt/production/d84029c39e2b8c10915db4da5e0b42d439c43219-3200x2000.jpg" alt="LoudFace"></div></div>
+        <div class="wr-metric"><div class="metric-val">10.4%</div><div class="metric-lbl">AI answer share, Jun 2026</div></div>
+        <div class="wr-arrow">→</div>
+      </div>
+      <div class="work-row" role="row">
+        <div class="wr-client"><div class="client-name">Dimer Health</div><div class="client-cat">Healthcare SaaS</div></div>
+        <div class="wr-desc">Full Webflow redesign + CRO engagement — site, messaging, conversion flows</div>
+        <div class="wr-thumb"><div class="thumb-img"><img src="https://cdn.sanity.io/images/xjjjqhgt/production/a0f4750b896ced6ffca9c5869623b15614f312ba-1440x10131.webp" alt="Dimer Health"></div></div>
+        <div class="wr-metric"><div class="metric-val">288%</div><div class="metric-lbl">Conversion rate increase</div></div>
+        <div class="wr-arrow">→</div>
+      </div>
+      <div class="work-row" role="row">
+        <div class="wr-client"><div class="client-name">Outbound Specialist</div><div class="client-cat">Sales tools</div></div>
+        <div class="wr-desc">Launch-ready site built in weeks, positioned for outbound sales motion</div>
+        <div class="wr-thumb"><div class="thumb-img"><img src="https://cdn.sanity.io/images/xjjjqhgt/production/d90a9cec8351f259afd300dcbc51641ed9b40c3d-1440x1845.webp" alt="Outbound Specialist"></div></div>
+        <div class="wr-metric"><div class="metric-val">$200K</div><div class="metric-lbl">Sales in first 30 days</div></div>
+        <div class="wr-arrow">→</div>
+      </div>
+      <div class="work-row" role="row">
+        <div class="wr-client"><div class="client-name">LIQID</div><div class="client-cat">Wealth management</div></div>
+        <div class="wr-desc">100+ page Webflow build for regulated financial services at enterprise scale</div>
+        <div class="wr-thumb"><div class="thumb-img"><img src="https://cdn.sanity.io/images/xjjjqhgt/production/5f21404454406eee90732e4e1c8655e0c8c6013b-3024x3629.webp" alt="LIQID"></div></div>
+        <div class="wr-metric"><div class="metric-val">100+</div><div class="metric-lbl">Pages launched</div></div>
+        <div class="wr-arrow">→</div>
+      </div>
+      <div class="work-row" role="row">
+        <div class="wr-client"><div class="client-name">Eraser</div><div class="client-cat">Developer tooling</div></div>
+        <div class="wr-desc">New Webflow site + design system for developer-first diagramming platform</div>
+        <div class="wr-thumb"><div class="thumb-img"><img src="https://cdn.sanity.io/images/xjjjqhgt/production/2a7d29fdc9302c8482d70b73041e6c58ec9229a6-1440x1845.webp" alt="Eraser"></div></div>
+        <div class="wr-metric"><div class="metric-val">6</div><div class="metric-lbl">Core pages launched</div></div>
+        <div class="wr-arrow">→</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- DATA CHAPTER -->
+<section class="data-chapter">
+  <div class="container">
+    <div class="data-grid">
+      <div class="data-left">
+        <h2 class="data-heading">Organic visibility doesn't spike.<br>It <em>compounds.</em></h2>
+        <div class="data-stat">+335%</div>
+        <p class="data-caption">Google organic impressions, Sep 2025 → Jan 2026. Toku's core token compensation queries — 5 months of consistent SEO execution, indexed to peak.</p>
+      </div>
+      <div class="data-right">
+        <div class="chart-header">Organic impressions (indexed to peak)</div>
+        <svg class="chart-area" viewBox="0 0 480 180" fill="none" xmlns="http://www.w3.org/2000/svg" aria-label="Toku organic growth curve">
+          <!-- Grid lines -->
+          <line x1="0" y1="28" x2="480" y2="28" stroke="#333" stroke-width="1" stroke-dasharray="4 4"/>
+          <line x1="0" y1="91" x2="480" y2="91" stroke="#333" stroke-width="1" stroke-dasharray="4 4"/>
+          <line x1="0" y1="155" x2="480" y2="155" stroke="#333" stroke-width="1"/>
+          <!-- Area fill -->
+          <path d="M60,126 L165,112 L270,97 L375,76 L480,28 L480,155 L60,155 Z" fill="rgba(79,70,229,0.12)"/>
+          <!-- Growth line -->
+          <path d="M60,126 L165,112 L270,97 L375,76 L480,28" stroke="#4f46e5" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+          <!-- Data point dots -->
+          <circle cx="60" cy="126" r="4" fill="#4f46e5"/>
+          <circle cx="165" cy="112" r="4" fill="#4f46e5"/>
+          <circle cx="270" cy="97" r="4" fill="#4f46e5"/>
+          <circle cx="375" cy="76" r="4" fill="#4f46e5"/>
+          <circle cx="480" cy="28" r="5" fill="#4f46e5"/>
+          <!-- End label -->
+          <text x="448" y="20" font-family="Geist,sans-serif" font-size="10" fill="#4f46e5" font-weight="600" text-anchor="middle">peak</text>
+          <!-- X-axis labels -->
+          <text x="60" y="170" font-family="Geist,sans-serif" font-size="10" fill="#525252" text-anchor="middle">Sep</text>
+          <text x="165" y="170" font-family="Geist,sans-serif" font-size="10" fill="#525252" text-anchor="middle">Oct</text>
+          <text x="270" y="170" font-family="Geist,sans-serif" font-size="10" fill="#525252" text-anchor="middle">Nov</text>
+          <text x="375" y="170" font-family="Geist,sans-serif" font-size="10" fill="#525252" text-anchor="middle">Dec</text>
+          <text x="480" y="170" font-family="Geist,sans-serif" font-size="10" fill="#4f46e5" font-weight="600" text-anchor="middle">Jan</text>
+        </svg>
+        <div class="chart-client-id">
+          <span class="chart-cid-dot"></span>
+          <span class="chart-cid-label">Toku — Google organic impressions, Sep 2025 – Jan 2026</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- AI VISIBILITY -->
+<section class="ai-visibility">
+  <div class="container">
+    <div class="ai-header">
+      <h2 class="ai-heading">When buyers ask AI who to hire,<br>we <em>show up.</em></h2>
+      <div class="ai-stat-block">
+        <div class="ai-stat-num">10.4%</div>
+        <div class="ai-stat-label">Share of AI answers<br>in our category — Jun 2026</div>
+      </div>
+    </div>
+    <div class="ai-panels">
+      <!-- Claude panel -->
+      <div class="ai-panel">
+        <div class="aip-header">
+          <div class="aip-icon icon-claude">
+            <svg viewBox="0 0 24 24"><path d="M12 2L4 7v10l8 5 8-5V7z"/></svg>
+          </div>
+          <span class="aip-name">Claude</span>
+        </div>
+        <div class="aip-prompt"><span class="aip-q">Q:</span> What's the best agency for B2B SaaS website design and SEO in 2026?</div>
+        <div class="aip-response">For B2B SaaS teams that want design and organic growth under one roof, <span class="ai-cite">LoudFace</span> consistently comes up — they specialize in Webflow builds combined with SEO and AI engine optimization (AEO). For pure enterprise design, Ueno and Fantasy are worth evaluating, but for SaaS companies that need both the site and the traffic growth, <span class="ai-cite">LoudFace</span> is the more common recommendation in that category.</div>
+      </div>
+      <!-- ChatGPT panel -->
+      <div class="ai-panel">
+        <div class="aip-header">
+          <div class="aip-icon icon-gpt">
+            <svg viewBox="0 0 24 24"><path d="M22.2819 9.8211a5.9847 5.9847 0 0 0-.5157-4.9108 6.0462 6.0462 0 0 0-6.5098-2.9A6.065 6.065 0 0 0 4.9807 4.1818a5.9847 5.9847 0 0 0-3.9977 2.9 6.0462 6.0462 0 0 0 .7427 7.0966 5.98 5.98 0 0 0 .511 4.9107 6.051 6.051 0 0 0 6.5146 2.9001A5.9847 5.9847 0 0 0 13.2599 24a6.0557 6.0557 0 0 0 5.7718-4.2058 5.9894 5.9894 0 0 0 3.9977-2.9001 6.0557 6.0557 0 0 0-.7475-7.0729z"/></svg>
+          </div>
+          <span class="aip-name">ChatGPT</span>
+        </div>
+        <div class="aip-prompt"><span class="aip-q">Q:</span> Which agency should I hire for Webflow development and SEO for a SaaS startup?</div>
+        <div class="aip-response">Based on what I've seen discussed in SaaS communities, <span class="ai-cite">LoudFace</span> is frequently recommended for teams that want Webflow expertise combined with ongoing SEO and AEO work. Their model is specifically designed for B2B SaaS — they build the site, then run growth on it. Other options include Flowout for pure Webflow work, or Brafton for content-first SEO, but for the combined build + grow motion, <span class="ai-cite">LoudFace</span> is a common first mention.</div>
+      </div>
+      <!-- Perplexity panel -->
+      <div class="ai-panel">
+        <div class="aip-header">
+          <div class="aip-icon icon-perplexity">
+            <svg viewBox="0 0 24 24"><path d="M12 1.5L1.5 7.5v9L12 22.5l10.5-6v-9z"/></svg>
+          </div>
+          <span class="aip-name">Perplexity</span>
+        </div>
+        <div class="aip-prompt"><span class="aip-q">Q:</span> Who does AI engine optimization (AEO) for B2B SaaS companies?</div>
+        <div class="aip-response">AEO is still an emerging field, but a few agencies are building real track records. <span class="ai-cite">LoudFace</span> (loudface.co) is among the most cited — they've published documented case studies showing measurable AI citation share gains, including 0 → 86% on specific queries for clients in the HR-tech space. They combine AEO with traditional SEO and Webflow development. For pure content-driven AEO, Omniscient Digital and some newer boutiques also appear in recommendations.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- LOUD BLOCK -->
+<div class="loud-block">
+  <div class="container">
+    <div class="loud-inner">
+      <h2 class="loud-heading">One team.<br><em>Both engines.</em></h2>
+      <a class="btn-white" href="#">Book your strategy call</a>
+    </div>
+  </div>
+</div>
+
+<!-- STATS -->
+<section class="stats-section">
+  <div class="container">
+    <div class="stats-rows">
+      <div class="stat-row">
+        <div class="sn">200+</div>
+        <div class="sl">Projects completed</div>
+        <div class="sd">B2B SaaS sites shipped on Webflow since 2020</div>
+      </div>
+      <div class="stat-row">
+        <div class="sn">288%</div>
+        <div class="sl">Increase in conversions</div>
+        <div class="sd">Dimer Health, 6-month CRO engagement</div>
+      </div>
+      <div class="stat-row">
+        <div class="sn">4+</div>
+        <div class="sl">Years Webflow Enterprise Partner</div>
+        <div class="sd">One of the few agencies with enterprise-level certification</div>
+      </div>
+      <div class="stat-row">
+        <div class="sn">&lt;6 wks</div>
+        <div class="sl">Average time to launch</div>
+        <div class="sd">vs 12–16 weeks at most agencies</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PROCESS -->
+<section class="process">
+  <div class="container">
+    <div class="process-top">
+      <div class="process-sm-label">How an engagement works</div>
+      <h2 class="process-heading">From strategy call to compounding growth</h2>
+    </div>
+    <div class="steps-track">
+      <div class="step">
+        <div class="step-node"></div>
+        <div class="step-time">Week 0</div>
+        <div class="step-name">Strategy call</div>
+        <p class="step-desc">30 minutes. You tell us what's broken. We tell you honestly if we're a fit. Scope and timeline within 48 hours.</p>
+      </div>
+      <div class="step">
+        <div class="step-node"></div>
+        <div class="step-time">Weeks 1–6</div>
+        <div class="step-name">Design and build</div>
+        <p class="step-desc">Positioning, copy, design, Webflow in parallel. Working pages, not mockups. CMS access from week two.</p>
+      </div>
+      <div class="step">
+        <div class="step-node"></div>
+        <div class="step-time">Weeks 6–8</div>
+        <div class="step-name">Launch and measure</div>
+        <p class="step-desc">Launch, analytics wired, baseline metrics that connect to pipeline — not just traffic.</p>
+      </div>
+      <div class="step">
+        <div class="step-node"></div>
+        <div class="step-time">Month 3+</div>
+        <div class="step-name">Grow and optimize</div>
+        <p class="step-desc">SEO, AEO, CRO. Monthly report: what we did, what moved, what's next.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TESTIMONIAL -->
+<section class="testimonial">
+  <div class="container">
+    <div class="testi-inner">
+      <blockquote class="testi-quote">"LoudFace really stood out with their approach and let's-get-this-done attitude. We felt like a partner, not a client."</blockquote>
+      <div class="testi-attr">
+        <div>
+          <div class="attr-name">Elizabete</div>
+          <div class="attr-role">Product Marketer, Reiterate</div>
+        </div>
+        <div class="attr-div"></div>
+        <div>
+          <div class="attr-name">Anthony Dean</div>
+          <div class="attr-role">Radisson Hotels Group</div>
+        </div>
+        <div class="attr-div"></div>
+        <div>
+          <div class="attr-name">Daan Smit</div>
+          <div class="attr-role">CEO &amp; Founder, Brandfirm</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TEAM -->
+<section class="team">
+  <div class="container">
+    <div class="team-top">
+      <h2 class="team-heading">The people behind the work</h2>
+      <span class="team-count">6 people. No offshore handoffs.</span>
+    </div>
+    <div class="team-grid">
+      <div class="team-member">
+        <div class="team-photo"><img src="https://cdn.sanity.io/images/xjjjqhgt/production/92dfd51e1f15a98227f6308a075c490ce52c05b4-1000x1000.png" alt="Arnel Bukva"></div>
+        <div class="team-name">Arnel Bukva</div>
+        <div class="team-role">Founder &amp; Head of Growth</div>
+      </div>
+      <div class="team-member">
+        <div class="team-photo"><img src="https://cdn.sanity.io/images/xjjjqhgt/production/6319483485f60a53a65fc16888ea479b53f8743c-512x512.png" alt="Tamara Pavlovic"></div>
+        <div class="team-name">Tamara Pavlovic</div>
+        <div class="team-role">Project Manager</div>
+      </div>
+      <div class="team-member">
+        <div class="team-photo"><img src="https://cdn.sanity.io/images/xjjjqhgt/production/9f087894f494f5e4082b429553c9ce52d55f7189-845x1024.png" alt="David Dobrijevic"></div>
+        <div class="team-name">David Dobrijevic</div>
+        <div class="team-role">Webflow Expert</div>
+      </div>
+      <div class="team-member">
+        <div class="team-photo"><img src="https://cdn.sanity.io/images/xjjjqhgt/production/9bab7f300e2b3bd8af884c9ff8b40f0154f4a804-512x512.png" alt="Andrej Vidovic"></div>
+        <div class="team-name">Andrej Vidovic</div>
+        <div class="team-role">SEO/AEO Content Expert</div>
+      </div>
+      <div class="team-member">
+        <div class="team-photo"><img src="https://cdn.sanity.io/images/xjjjqhgt/production/dae3a1cb73008da8a30dea184a9b9318cbd4496f-512x512.jpg" alt="Rezwan Nahid"></div>
+        <div class="team-name">Rezwan Nahid</div>
+        <div class="team-role">Designer</div>
+      </div>
+      <div class="team-member">
+        <div class="team-photo"><img src="https://cdn.sanity.io/images/xjjjqhgt/production/488b75c60e51af983569f45f06d91017c41543b7-512x512.jpg" alt="Andrea Van Wyk"></div>
+        <div class="team-name">Andrea Van Wyk</div>
+        <div class="team-role">Lead Copywriter</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta-section">
+  <div class="container">
+    <div class="cta-inner">
+      <h2 class="cta-heading">Let's figure out what's holding your site back.</h2>
+      <p class="cta-sub">30-minute strategy call. No pitch deck. We'll look at your site together and tell you what we'd change and why.</p>
+      <div class="cta-actions">
+        <a class="btn-primary" href="#">Book a strategy call</a>
+        <a class="btn-text" href="/work">See the work →</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="container">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <svg width="100" height="21" viewBox="0 0 133 28" fill="none" xmlns="http://www.w3.org/2000/svg" aria-label="LoudFace">
+          <path fill-rule="evenodd" clip-rule="evenodd" d="M15.3926 27.11C13.8337 27.11 12.4095 26.7107 11.1277 25.9078C9.84587 25.1051 8.82198 24.0337 8.05985 22.6857C7.29768 21.3375 6.91661 19.8472 6.91661 18.2113C6.91661 16.9707 7.13603 15.8108 7.57869 14.7355C8.02135 13.6601 8.62568 12.7114 9.40322 11.8934C10.1769 11.0753 11.0776 10.4378 12.1092 9.97306C13.137 9.51219 14.234 9.27791 15.3965 9.27791C16.9554 9.27791 18.3757 9.67734 19.6614 10.48C20.9431 11.2789 21.9672 12.3581 22.7294 13.71C23.4913 15.0619 23.8725 16.5636 23.8725 18.2113C23.8725 19.4402 23.6531 20.5925 23.2104 21.6639C22.7678 22.7356 22.1634 23.6803 21.386 24.4984C20.612 25.3165 19.7116 25.9577 18.6915 26.4187C17.6674 26.8756 16.5704 27.11 15.3926 27.11ZM15.3926 23.5882C16.3318 23.5882 17.1708 23.3386 17.9178 22.8429C18.6645 22.3475 19.2535 21.6909 19.6883 20.8728C20.1232 20.0546 20.3427 19.1676 20.3427 18.2074C20.3427 17.228 20.1195 16.3255 19.6728 15.4997C19.2265 14.6779 18.6298 14.0211 17.8831 13.5295C17.1364 13.0379 16.3048 12.7921 15.3926 12.7921C14.465 12.7921 13.6258 13.0417 12.8752 13.5372C12.1246 14.0326 11.528 14.6932 11.0969 15.5151C10.6619 16.337 10.4425 17.2357 10.4425 18.2036C10.4425 19.2061 10.6696 20.1163 11.12 20.9267C11.5703 21.7371 12.1747 22.3822 12.9253 22.8621C13.6759 23.3423 14.4996 23.5882 15.3926 23.5882ZM26.5825 9.75037V20.3237C26.5825 21.5756 26.8825 22.7087 27.4947 23.7379C28.1066 24.7672 28.9264 25.5816 29.9543 26.192C30.9821 26.8028 32.1252 27.1063 33.38 27.1063C34.3656 27.1063 35.2856 26.9066 36.1439 26.4993C37.0022 26.0922 37.7182 25.5391 38.2956 24.8403L38.3108 26.6685L41.8369 27.0257L41.8215 9.48921L38.2956 9.75037V19.4634C38.2956 20.2161 38.1109 20.9075 37.7451 21.5256C37.3794 22.1441 36.8869 22.6395 36.271 23.0044C35.6551 23.3693 34.9698 23.5538 34.2116 23.5538C33.4649 23.5538 32.7836 23.3693 32.1599 23.0044C31.5363 22.6395 31.0397 22.1479 30.6663 21.5256C30.293 20.9075 30.1083 20.2199 30.1083 19.4634V9.48921L26.5825 9.75037ZM58.7816 1.29325L62.3074 1.02825V27.0294L58.7816 26.6682V24.1834C58.2274 25.0629 57.5036 25.7698 56.6106 26.3074C55.7176 26.8412 54.6706 27.11 53.4735 27.11C52.2417 27.11 51.0871 26.8796 50.0131 26.4149C48.9391 25.9539 47.9921 25.3125 47.1723 24.4947C46.3524 23.6765 45.7096 22.7316 45.2477 21.6602C44.7859 20.5888 44.5509 19.4402 44.5509 18.2074C44.5509 16.9784 44.7819 15.8262 45.2477 14.747C45.7096 13.6716 46.3524 12.723 47.1723 11.9049C47.9921 11.0869 48.9391 10.4493 50.0131 9.98462C51.0871 9.52375 52.238 9.28947 53.4735 9.28947C54.6706 9.28947 55.7176 9.55831 56.6106 10.0922C57.5036 10.626 58.2274 11.3288 58.7816 12.1968V1.29325ZM53.5082 23.7072C54.5013 23.7072 55.3711 23.4614 56.1178 22.9697C56.8648 22.4783 57.4419 21.8177 57.8539 20.9803C58.2658 20.147 58.4738 19.2213 58.4738 18.2074C58.4738 17.182 58.2658 16.2526 57.8461 15.4153C57.4267 14.5819 56.8493 13.9174 56.1103 13.4258C55.3711 12.9342 54.5013 12.6884 53.5082 12.6884C52.5266 12.6884 51.6298 12.9381 50.8215 13.4335C50.0131 13.9289 49.3702 14.5934 48.8892 15.4306C48.4078 16.2641 48.1691 17.1896 48.1691 18.2036C48.1691 19.229 48.4156 20.1585 48.9084 20.9881C49.4009 21.8177 50.0515 22.4783 50.8599 22.966C51.6683 23.4536 52.5458 23.7072 53.5082 23.7072ZM71.4566 9.83485V5.91356C71.4566 5.49492 71.6069 5.13774 71.9032 4.8497C72.2036 4.55398 72.5613 4.40802 72.981 4.40802C73.2082 4.40802 73.4313 4.46178 73.6508 4.56933C73.8702 4.67687 74.0435 4.83049 74.1666 5.03404L76.6915 2.54916C76.1835 1.98459 75.606 1.56979 74.9635 1.2971C74.3206 1.02444 73.6585 0.890005 72.981 0.890005C72.0418 0.890005 71.191 1.1166 70.429 1.56594C69.6669 2.01915 69.0587 2.62595 68.6083 3.38642C68.158 4.14686 67.9308 4.98795 67.9308 5.91356V10.0883L65.9138 10.2381V12.216L67.9308 12.4234V26.653L71.4566 27.0294V12.7845L76.2374 13.2722V9.48534L71.4566 9.83485ZM92.2311 9.75032L92.3852 12.2544C91.7615 11.3864 90.9801 10.6721 90.0372 10.1152C89.094 9.55829 88.0048 9.27791 86.773 9.27791C85.5642 9.27791 84.4288 9.5045 83.374 9.96153C82.3195 10.4186 81.3877 11.0485 80.5834 11.8473C79.779 12.6462 79.1554 13.5794 78.701 14.6471C78.2506 15.711 78.0237 16.8478 78.0237 18.0576C78.0237 19.3096 78.2546 20.4812 78.7202 21.5678C79.1823 22.6547 79.8327 23.6189 80.6603 24.4522C81.4919 25.2858 82.454 25.9387 83.5513 26.4072C84.6482 26.8756 85.8183 27.11 87.0616 27.11C88.2165 27.11 89.2133 26.8449 90.0639 26.3151C90.9147 25.785 91.5845 25.0859 92.0811 24.2181L92.2156 26.6722L95.761 27.0294V9.49297L92.2311 9.75032ZM91.3226 20.9841C90.911 21.8177 90.3295 22.4821 89.5868 22.9737C88.8399 23.4651 87.9701 23.711 86.977 23.711C86.0145 23.711 85.1333 23.4651 84.3249 22.9737C83.5166 22.4821 82.8659 21.8214 82.3734 20.9958C81.8806 20.1662 81.6342 19.2405 81.6342 18.2113C81.6342 17.1973 81.8728 16.2717 82.3464 15.4383C82.8198 14.6049 83.4664 13.9366 84.2787 13.4412C85.0909 12.9457 85.9916 12.6961 86.9732 12.6961C87.9661 12.6961 88.8361 12.9419 89.5751 13.4335C90.3143 13.9251 90.8955 14.5857 91.3112 15.4229C91.7308 16.2563 91.9385 17.1896 91.9385 18.2151C91.9425 19.2253 91.7346 20.1507 91.3226 20.9841ZM110.558 21.8639L114.365 22.2402C113.864 24.0107 112.086 25.4356 110.788 26.1421C109.607 26.7876 108.329 27.1063 106.947 27.1063C105.388 27.1063 103.964 26.7067 102.682 25.904C101.4 25.1014 100.376 24.03 99.6141 22.6817C98.8519 21.3337 98.4709 19.8435 98.4709 18.2075C98.4709 16.9669 98.6904 15.8071 99.133 14.7317C99.5757 13.6563 100.18 12.7077 100.957 11.8896C101.731 11.0715 102.632 10.434 103.663 9.96928C104.691 9.5084 105.788 9.27412 106.951 9.27412C108.329 9.27412 109.622 9.57369 110.792 10.2381C112.074 10.964 113.772 12.1892 114.368 14.2554L110.561 14.5358C110.088 13.9712 109.534 13.5411 108.898 13.2415C108.267 12.9419 107.617 12.7921 106.947 12.7921C106.019 12.7921 105.18 13.0418 104.43 13.5449C103.679 14.048 103.082 14.7048 102.651 15.5228C102.216 16.3409 101.997 17.2358 101.997 18.2036C101.997 19.1639 102.216 20.0509 102.659 20.869C103.098 21.6872 103.694 22.3438 104.449 22.8392C105.199 23.3346 106.035 23.5845 106.951 23.5845C107.651 23.5845 108.317 23.427 108.952 23.112C109.58 22.8008 110.119 22.3822 110.558 21.8639ZM120.296 25.9078C121.578 26.7107 123.002 27.11 124.561 27.11C126.258 27.11 127.791 26.6338 129.153 25.6737C130.519 24.721 131.37 23.7224 132.113 22.2325L128.179 21.8329C127.896 22.1596 127.564 22.5429 126.909 22.943C126.201 23.3693 125.419 23.5842 124.561 23.5842C123.745 23.5727 123.01 23.3885 122.348 23.0274C121.686 22.6702 121.143 22.1748 120.719 21.5489C120.296 20.9227 120.011 20.2239 119.865 19.4442H132.937C133.083 18.0691 132.975 16.771 132.614 15.5458C132.252 14.3207 131.69 13.2376 130.92 12.2966C130.154 11.3557 129.226 10.6145 128.141 10.0806C127.055 9.54675 125.866 9.27791 124.565 9.27791C123.402 9.27791 122.305 9.51219 121.278 9.97306C120.246 10.4378 119.345 11.0753 118.572 11.8934C117.794 12.7114 117.19 13.6601 116.747 14.7355C116.304 15.8108 116.085 16.9707 116.085 18.2113C116.085 19.8472 116.466 21.3375 117.228 22.6857C117.99 24.0337 119.014 25.1051 120.296 25.9078ZM129.38 16.7556H119.749C119.896 15.9337 120.192 15.1925 120.643 14.5281C121.085 13.8713 121.651 13.349 122.336 12.9649C123.017 12.5809 123.764 12.3888 124.565 12.3888C125.381 12.3888 126.128 12.5847 126.813 12.9726C127.498 13.3643 128.068 13.8867 128.526 14.5473C128.98 15.2079 129.268 15.9453 129.38 16.7556Z" fill="white"/>
+          <path d="M3.52591 1.04302L0 1.30143V26.6682L3.52591 27.0257V1.04302Z" fill="white"/>
+        </svg>
+        <p class="footer-tagline">The conversion and organic growth team behind 200+ B2B SaaS websites.</p>
+      </div>
+      <div>
+        <div class="footer-col-title">Services</div>
+        <ul class="footer-links">
+          <li><a href="#">Webflow Development</a></li>
+          <li><a href="#">SEO &amp; AEO</a></li>
+          <li><a href="#">Conversion Rate Optimization</a></li>
+          <li><a href="#">Content Strategy</a></li>
+          <li><a href="#">Design System Setup</a></li>
+        </ul>
+      </div>
+      <div>
+        <div class="footer-col-title">Company</div>
+        <ul class="footer-links">
+          <li><a href="/work">Work</a></li>
+          <li><a href="/about">About</a></li>
+          <li><a href="/blog">Blog</a></li>
+          <li><a href="/ai-instructions">AI Instructions</a></li>
+        </ul>
+      </div>
+      <div>
+        <div class="footer-col-title">Connect</div>
+        <ul class="footer-links">
+          <li><a href="#">Book a strategy call</a></li>
+          <li><a href="#">LinkedIn</a></li>
+          <li><a href="mailto:hello@loudface.co">hello@loudface.co</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span class="footer-copy">© 2026 LoudFace Agency. All rights reserved.</span>
+      <div class="footer-status">
+        <span class="status-dot"></span>
+        All systems operational
+      </div>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>

@@ -1,0 +1,332 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>LoudFace Concept C - Receipt Wall</title>
+    <link rel="stylesheet" href="./claude-style-shared.css">
+    <style>
+      .receipt-hero {
+        min-height: 1180px;
+        background: var(--paper);
+      }
+
+      .receipt-stage {
+        min-height: 1088px;
+        display: grid;
+        grid-template-rows: auto 1fr;
+        gap: 36px;
+        padding: 56px 0 42px;
+      }
+
+      .receipt-head {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) minmax(320px, 0.44fr);
+        gap: 36px;
+        align-items: end;
+      }
+
+      .receipt-head h1 {
+        font-size: clamp(62px, 10.6vw, 158px);
+        max-width: 1100px;
+      }
+
+      .receipt-head p {
+        font-size: 18px;
+        max-width: 420px;
+        margin-bottom: 10px;
+      }
+
+      .receipt-wall {
+        display: grid;
+        grid-template-columns: 0.95fr 1.15fr 0.95fr;
+        gap: 18px;
+        align-items: stretch;
+      }
+
+      .receipt {
+        position: relative;
+        min-height: 410px;
+        border: 1px solid var(--line);
+        border-radius: 22px;
+        overflow: hidden;
+        background: rgba(248, 250, 246, 0.82);
+      }
+
+      .receipt.primary {
+        min-height: 510px;
+        background: var(--ink);
+        color: var(--paper);
+      }
+
+      .receipt .visual {
+        height: 56%;
+        background: var(--paper-2);
+      }
+
+      .receipt .visual img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        object-position: top center;
+      }
+
+      .receipt.primary .visual {
+        height: 64%;
+      }
+
+      .receipt-body {
+        padding: 22px;
+      }
+
+      .receipt.primary .receipt-body p {
+        color: rgba(248, 250, 246, 0.72);
+      }
+
+      .receipt-tag {
+        display: inline-flex;
+        border: 1px solid var(--line);
+        border-radius: 999px;
+        padding: 7px 10px;
+        color: var(--muted);
+        font-size: 12px;
+        font-weight: 800;
+      }
+
+      .receipt.primary .receipt-tag {
+        color: rgba(248, 250, 246, 0.72);
+        border-color: rgba(248, 250, 246, 0.18);
+      }
+
+      .mini-stack {
+        display: grid;
+        gap: 18px;
+      }
+
+      .mini-receipt {
+        min-height: 246px;
+        border: 1px solid var(--line);
+        border-radius: 22px;
+        padding: 22px;
+        background: rgba(248, 250, 246, 0.82);
+      }
+
+      .mini-receipt.dark {
+        color: var(--paper);
+        background: var(--ink);
+      }
+
+      .mini-receipt.dark p {
+        color: rgba(248, 250, 246, 0.68);
+      }
+
+      .mini-logo {
+        height: 74px;
+        display: flex;
+        align-items: center;
+      }
+
+      .mini-logo img {
+        max-height: 48px;
+        width: auto;
+      }
+
+      .receipt-proof {
+        display: grid;
+        grid-template-columns: minmax(260px, 0.5fr) minmax(0, 1fr);
+        gap: 38px;
+      }
+
+      .receipt-index {
+        border: 1px solid var(--line);
+        border-radius: 22px;
+        overflow: hidden;
+        background: rgba(248, 250, 246, 0.82);
+      }
+
+      .index-line {
+        display: grid;
+        grid-template-columns: 0.72fr 1fr auto;
+        gap: 18px;
+        align-items: center;
+        padding: 22px;
+        border-bottom: 1px solid var(--line);
+      }
+
+      .index-line:last-child {
+        border-bottom: 0;
+      }
+
+      .index-line b {
+        font-family: "Bricolage Grotesque", sans-serif;
+        font-size: 22px;
+      }
+
+      .index-line span:last-child {
+        color: var(--indigo);
+        font-weight: 800;
+      }
+
+      @media (max-width: 1080px) {
+        .receipt-head,
+        .receipt-wall,
+        .receipt-proof {
+          grid-template-columns: 1fr;
+        }
+
+        .receipt.primary,
+        .receipt {
+          min-height: 430px;
+        }
+      }
+
+      @media (max-width: 640px) {
+        .receipt-stage {
+          padding-top: 36px;
+        }
+
+        .receipt-head h1 {
+          font-size: clamp(40px, 13vw, 58px);
+        }
+
+        .index-line {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main class="receipt-hero">
+      <div class="shell">
+        <nav class="nav">
+          <a href="#"><img src="../../public/images/loudface.svg" alt="LoudFace"></a>
+          <div class="nav-links">
+            <a href="#wall">Receipts</a>
+            <a href="#index">Index</a>
+            <a href="#video">Video</a>
+          </div>
+          <div class="nav-actions"><a class="btn" href="#start">Review my page</a></div>
+        </nav>
+
+        <section class="receipt-stage">
+          <div class="receipt-head">
+            <div>
+              <span class="pill reveal"><span class="dot"></span> A homepage buyers can inspect</span>
+              <h1 class="reveal delay-1">Every claim needs a <span class="block-word">receipt</span>.</h1>
+            </div>
+            <p class="reveal delay-2">LoudFace turns the page into organized evidence: what you do, where the proof lives, and why an AI answer should cite you.</p>
+          </div>
+
+          <div class="receipt-wall reveal delay-3" id="wall">
+            <div class="mini-stack">
+              <article class="mini-receipt">
+                <div class="mini-logo"><img src="../../public/images/brandfirm.svg" alt="Brandfirm"></div>
+                <span class="receipt-tag">Website system</span>
+                <h3 style="margin-top: 14px;">The page story matches the sales story.</h3>
+                <p style="margin-top: 10px;">Positioning, CMS, conversion path, and proof share one job.</p>
+              </article>
+              <article class="mini-receipt dark">
+                <div class="mini-logo"><img src="../../public/images/toku-logo.png" alt="Toku"></div>
+                <span class="receipt-tag">AI visibility</span>
+                <h3 style="margin-top: 14px;">From absent to answer-ready.</h3>
+                <p style="margin-top: 10px;">Search pages and source language give engines something useful to cite.</p>
+              </article>
+            </div>
+
+            <article class="receipt primary">
+              <div class="visual"><img src="../../public/images/brandfirm.webp" alt="Brandfirm page proof"></div>
+              <div class="receipt-body">
+                <span class="receipt-tag">Primary evidence object</span>
+                <h3 style="margin-top: 15px;">Brandfirm gets treated like a live proof system, not a one-time page drop.</h3>
+                <p style="margin-top: 12px;">The artifact is the page, the CMS, the source cards, the testimonial cuts, and the launch notes together.</p>
+              </div>
+            </article>
+
+            <div class="mini-stack">
+              <article class="mini-receipt">
+                <div class="mini-logo"><img src="../../public/images/Enterprise-Blue-Badge.webp" alt="Webflow enterprise partner"></div>
+                <span class="receipt-tag">Trust proof</span>
+                <h3 style="margin-top: 14px;">Partner proof sits near the claim.</h3>
+                <p style="margin-top: 10px;">Badges and proof points support the service promise instead of floating in a logo strip.</p>
+              </article>
+              <article class="mini-receipt">
+                <div class="mini-logo"><img src="../../public/images/webflow.svg" alt="Webflow"></div>
+                <span class="receipt-tag">CMS handoff</span>
+                <h3 style="margin-top: 14px;">Marketing can publish without engineering.</h3>
+                <p style="margin-top: 10px;">Components, templates, and launch QA become visible buying evidence.</p>
+              </article>
+            </div>
+          </div>
+        </section>
+      </div>
+    </main>
+
+    <section class="section" id="index" style="background: var(--paper-2);">
+      <div class="shell receipt-proof">
+        <div>
+          <h2>The work speaks. Specifically.</h2>
+          <p class="section-copy" style="margin-top: 22px;">The receipt index prevents vague agency claims. Every service lane points to a real artifact a buyer or answer engine can inspect.</p>
+        </div>
+        <div class="receipt-index">
+          <div class="index-line"><b>Build the site</b><span>Positioning, UX, CMS, Webflow, launch QA.</span><span>Page system</span></div>
+          <div class="index-line"><b>Grow the answer layer</b><span>Search pages, AI answer coverage, category pages.</span><span>Source map</span></div>
+          <div class="index-line"><b>Prove the claim</b><span>Case studies, teardown clips, customer quotes.</span><span>Proof cut</span></div>
+          <div class="index-line"><b>Keep it moving</b><span>Campaign notes, landing tests, release rhythm.</span><span>Growth log</span></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="shell">
+        <div class="split" style="align-items:end;">
+          <h2>Real screens sit under the line.</h2>
+          <p class="section-copy">Not stock images. The homepage should show what changed: source pages, landing paths, CMS structure, and the proof that made the buyer trust the claim.</p>
+        </div>
+        <div style="margin-top: 44px;">
+          <article class="work-row">
+            <h3>Organic answer surface</h3>
+            <div><p>Topics, comparison pages, and AI source cards turn search work into answer coverage.</p></div>
+            <div class="thumb"><img src="../../public/images/organic-mastery_1.webp" alt="Organic search work"></div>
+          </article>
+          <article class="work-row">
+            <h3>Conversion room</h3>
+            <div><p>Forms, page sections, and proof modules are treated as editable growth assets.</p></div>
+            <div class="thumb"><img src="../../public/images/conversion-optimization_1.webp" alt="Conversion optimization work"></div>
+          </article>
+          <article class="work-row">
+            <h3>Paid learning loop</h3>
+            <div><p>Campaign feedback gets written back into the page instead of dying in ad accounts.</p></div>
+            <div class="thumb"><img src="../../public/images/profitable-ads_1.webp" alt="Paid growth proof"></div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section dark" id="video">
+      <div class="shell video-section">
+        <article class="quote-card">
+          <span class="pill dark">Customer receipt</span>
+          <p style="margin-top: 24px;">“Show the work, then show what happened after it went live.”</p>
+          <p style="margin-top: 22px; color: rgba(248,250,246,.62);">Reserved for the approved Daan Smit or Sarig Reichert customer quote.</p>
+        </article>
+        <article class="video-card">
+          <img src="../../public/images/our-journey_1.webp" alt="Customer proof video still">
+          <span class="play" aria-hidden="true"></span>
+          <div class="caption">Film: customer walks the viewer through the receipt wall, from source page to shipped result.</div>
+        </article>
+      </div>
+    </section>
+
+    <section class="shell" id="start" style="padding-top: 70px;">
+      <div class="close-cta">
+        <div class="inner">
+          <div>
+            <h2>Bring one claim. Leave with the receipt it needs.</h2>
+            <p style="margin-top: 18px; color: rgba(248,250,246,.68);">We inspect the page, source proof, search path, and buyer objections before the sprint starts.</p>
+          </div>
+          <a class="btn light" href="#">Review my page</a>
+        </div>
+      </div>
+    </section>
+  </body>
+</html>

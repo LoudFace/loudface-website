@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>LoudFace Homepage Concept D - Diagonal Workshop</title>
+  <style>
+    @font-face{font-family:NeueMontreal;src:url("http://localhost:3005/fonts/NeueMontreal-Medium.woff2") format("woff2");font-weight:500}
+    @font-face{font-family:Satoshi;src:url("http://localhost:3005/fonts/Satoshi-Regular.woff2") format("woff2");font-weight:400}
+    @font-face{font-family:Satoshi;src:url("http://localhost:3005/fonts/Satoshi-Bold.woff2") format("woff2");font-weight:700}
+    :root{--ink:#17211f;--dark:#22302e;--paper:#f8faf7;--line:#dfe5df;--muted:#63706b;--indigo:#4f46e5;--orange:#ee6846}
+    *{box-sizing:border-box} html,body{overflow-x:hidden} body{margin:0;background:var(--paper);color:var(--ink);font-family:Satoshi,system-ui,sans-serif} img{display:block;max-width:100%} a{text-decoration:none;color:inherit}.wrap{max-width:1280px;margin:auto;padding:0 28px}
+    .nav{height:72px;display:flex;align-items:center;justify-content:space-between;position:relative;z-index:3}.nav img{width:126px}.nav div{display:flex;gap:24px;color:var(--muted);font-size:14px}.nav a:last-child{background:var(--ink);color:#fff;border-radius:999px;padding:12px 18px;font-weight:700}
+    .hero{position:relative;padding:70px 0 130px;overflow:hidden}.slant{position:absolute;left:-5vw;right:-5vw;bottom:-72px;height:210px;background:#fff;transform:rotate(-3deg);border-top:1px solid var(--line);border-bottom:1px solid var(--line)}.hero-grid{position:relative;z-index:2;display:grid;grid-template-columns:.92fr 1.08fr;gap:50px;align-items:center}.h1{font-family:NeueMontreal,sans-serif;font-size:clamp(54px,7.4vw,112px);line-height:.9;margin:0}.h1 .block{background:var(--orange);color:#fff;border-radius:8px;padding:0 .12em}.accent{font-family:Georgia,serif;font-style:italic;color:var(--indigo);font-weight:400}.lead{margin:24px 0;color:var(--muted);font-size:18px;line-height:1.55;max-width:570px}.actions{display:flex;gap:12px}.btn{border-radius:999px;padding:14px 18px;font-weight:700}.primary{background:var(--ink);color:#fff}.secondary{border:1px solid var(--line);background:#fff}.proof-notes{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:24px;max-width:570px}.proof-notes div{border:1px solid var(--line);border-radius:12px;background:#fff;padding:12px}.proof-notes b{display:block;font-family:NeueMontreal,sans-serif;font-size:26px;line-height:1}.proof-notes span{display:block;margin-top:5px;color:var(--muted);font-size:12px;line-height:1.3}
+    .bench{position:relative;min-height:520px}.media{position:absolute;border:1px solid var(--line);border-radius:16px;background:#fff;box-shadow:0 22px 60px rgba(23,33,31,.12);overflow:hidden}.media img{width:100%;height:100%;object-fit:cover}.media.one{width:58%;height:310px;right:7%;top:0}.media.two{width:42%;height:250px;left:0;top:160px}.media.three{width:38%;height:210px;right:0;bottom:0;background:var(--dark);color:#fff;padding:26px}.media.three h3{font-family:NeueMontreal,sans-serif;font-size:31px;line-height:1;margin:0 0 12px}.media.three p{color:#bdc9c4;line-height:1.5}.label{position:absolute;z-index:3;background:#fff;border:1px solid var(--line);border-radius:999px;padding:9px 12px;font-size:13px;color:var(--muted)}.l1{right:38%;top:28px}.l2{left:12%;top:420px}
+    .darkband{background:var(--dark);color:#fff;padding:118px 0 92px;position:relative;overflow:hidden}.darkband:before{content:"";position:absolute;left:-5vw;right:-5vw;top:-80px;height:160px;background:var(--dark);transform:rotate(-3deg)}.darkband .wrap{position:relative;z-index:2}.darkgrid{display:grid;grid-template-columns:.78fr 1.22fr;gap:46px}.darkgrid h2{font-family:NeueMontreal,sans-serif;font-size:58px;line-height:.98;margin:0}.darkgrid p{color:#c0ccc6;line-height:1.55}.cards{display:grid;grid-template-columns:1fr 1fr;gap:16px}.card{border:1px solid rgba(255,255,255,.13);border-radius:16px;background:rgba(255,255,255,.05);padding:24px}.card.light{background:#fff;color:var(--ink)}.card h3{font-family:NeueMontreal,sans-serif;font-size:30px;line-height:1;margin:0 0 12px}.card.light p{color:var(--muted)}.card img{height:140px;width:100%;object-fit:cover;border-radius:10px;margin-bottom:18px}
+    .white{padding:92px 0}.white h2{font-family:NeueMontreal,sans-serif;font-size:60px;line-height:.98;margin:0 0 28px}.workshop{display:grid;grid-template-columns:1.1fr .9fr;gap:22px}.table{border:1px solid var(--line);border-radius:16px;overflow:hidden;background:#fff}.row{display:grid;grid-template-columns:220px 1fr;border-bottom:1px solid var(--line)}.row:last-child{border-bottom:0}.row div{padding:18px}.row div:first-child{font-weight:700;background:#f1f5f0}.video{border-radius:16px;background:var(--ink);color:#fff;padding:28px;min-height:320px;display:flex;flex-direction:column;justify-content:end;background-image:linear-gradient(rgba(255,255,255,.08) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.08) 1px,transparent 1px);background-size:42px 42px}.play{width:54px;height:54px;border-radius:50%;border:1px solid rgba(255,255,255,.24);display:flex;align-items:center;justify-content:center;margin-bottom:auto}.video h3{font-family:NeueMontreal,sans-serif;font-size:34px;line-height:1;margin:0 0 10px}.video p{color:#c2ccc7}
+    @media(max-width:880px){.wrap{padding:0 18px}.nav img{width:112px}.nav div{display:none}.nav a:last-child{padding:10px 12px;font-size:12px}.hero{padding-top:38px;overflow:hidden}.hero-grid,.darkgrid,.workshop,.proof-notes{grid-template-columns:1fr}.h1{font-size:30px;line-height:1.08;overflow-wrap:break-word}.h1 .block{max-width:100%}.lead{font-size:15px}.actions{flex-direction:column}.bench{min-height:700px;overflow:hidden}.media.one,.media.two,.media.three{position:relative;left:auto;right:auto;top:auto;bottom:auto;width:100%;height:210px;margin-top:14px}.media.three{height:auto}.label{display:none}.darkband{padding-top:80px;overflow:hidden}.darkgrid h2,.white h2{font-size:30px;line-height:1.1}.cards{grid-template-columns:1fr}.card{min-width:0}.white.wrap{padding:58px 18px}.white{overflow:hidden}.row{grid-template-columns:1fr}.video{overflow:hidden}}
+  </style>
+</head>
+<body>
+  <nav class="nav wrap"><img src="http://localhost:3005/images/loudface.svg" alt="LoudFace" /><div><a>Workshop</a><a>Proof</a><a>Build</a><a>Grow</a></div><a>Book a session</a></nav>
+  <main class="hero wrap">
+    <div class="slant"></div>
+    <div class="hero-grid">
+      <section><h1 class="h1">Turn the messy site work into one <span class="block">visible</span> room.</h1><p class="lead">A diagonal workbench for SaaS teams that need the offer, website, search surface, and conversion work to move together.</p><div class="actions"><a class="btn primary">Plan the next sprint</a><a class="btn secondary">See the workbench</a></div><div class="proof-notes"><div><b>200+</b><span>B2B SaaS websites</span></div><div><b>288%</b><span>best conversion lift</span></div><div><b>0->86%</b><span>Toku AI visibility</span></div></div></section>
+      <section class="bench">
+        <span class="label l1">Case-study screen</span><span class="label l2">Launch asset</span>
+        <article class="media one"><img src="http://localhost:3005/images/brandfirm.webp" alt="Website work" /></article>
+        <article class="media two"><img src="http://localhost:3005/images/organic-mastery_1.webp" alt="Organic work" /></article>
+        <article class="media three"><h3>Proof near the claim.</h3><p>Use the workbench to show the page, the reason it changed, and what gets shipped next.</p></article>
+      </section>
+    </div>
+  </main>
+  <section class="darkband">
+    <div class="wrap darkgrid">
+      <div><h2>Build and grow interlock.</h2><p>Instead of a handoff from design to traffic to conversion, this direction shows how each surface feeds the next one.</p></div>
+      <div class="cards">
+        <article class="card light"><img src="http://localhost:3005/images/webflow-experts_1.webp" alt="Webflow" /><h3>Build the website system.</h3><p>UX, copy, CMS, Webflow build, launch QA.</p></article>
+        <article class="card"><h3>Run the growth room.</h3><p>Search, AI answer coverage, landing pages, and content all feed back into the site.</p></article>
+        <article class="card"><h3>Make proof inspectable.</h3><p>Teardown clips, screenshots, client quotes, and release notes sit beside claims.</p></article>
+        <article class="card light"><img src="http://localhost:3005/images/conversion-optimization_1.webp" alt="Conversion" /><h3>Keep the buyer loop alive.</h3><p>Post-demo pages and experiments keep momentum after launch.</p></article>
+      </div>
+    </div>
+  </section>
+  <section class="white wrap">
+    <h2>The workshop has a simple job: make buyers trust the page faster.</h2>
+    <div class="workshop">
+      <div class="table"><div class="row"><div>Offer</div><div>Clarify the promise and buying moment.</div></div><div class="row"><div>Site</div><div>Build pages, CMS, proof modules, and conversion paths.</div></div><div class="row"><div>Demand</div><div>Publish search and answer surfaces buyers can cite.</div></div><div class="row"><div>Review</div><div>Keep a recurring sprint for the pages that matter.</div></div></div>
+      <article class="video"><div class="play">▶</div><h3>Media slot: client teardown.</h3><p>Film the team walking through a page before and after the workbench.</p></article>
+    </div>
+  </section>
+</body>
+</html>

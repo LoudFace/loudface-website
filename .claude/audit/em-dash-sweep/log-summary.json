@@ -1,0 +1,557 @@
+{
+  "new-search-funnel-rankings-to-recommendations": {
+    "changes": 1,
+    "counts": {
+      "thumbnail.alt": 1
+    },
+    "tx": [
+      "AHLllZJqmUNXVQrPANznxx"
+    ]
+  },
+  "answer-engine-optimization-guide-2026": {
+    "changes": 13,
+    "counts": {
+      "content": 10,
+      "visuals": 3
+    },
+    "tx": [
+      "7ONx74QMiI10eazwuwINgT"
+    ]
+  },
+  "aeo-agency-pricing-b2b-saas-2026": {
+    "changes": 1,
+    "counts": {
+      "faq": 1
+    },
+    "tx": [
+      "7ONx74QMiI10eazwuwINsD"
+    ]
+  },
+  "best-aeo-agencies-b2b-saas-2026": {
+    "changes": 8,
+    "counts": {
+      "content": 4,
+      "excerpt": 1,
+      "visuals": 3
+    },
+    "tx": [
+      "AHLllZJqmUNXVQrPANzrRT"
+    ]
+  },
+  "best-b2b-saas-content-seo-agencies-2026": {
+    "changes": 2,
+    "counts": {
+      "content": 2
+    },
+    "tx": [
+      "DJ1Y76QLqJX8nukZ8QxjTQ"
+    ]
+  },
+  "best-b2b-saas-seo-agencies": {
+    "changes": 23,
+    "counts": {
+      "content": 12,
+      "faq": 2
+    },
+    "tx": [
+      "DJ1Y76QLqJX8nukZ8QxjfA",
+      "7ONx74QMiI10eazwuwJPyr"
+    ]
+  },
+  "how-long-do-ai-citations-take": {
+    "changes": 4,
+    "counts": {
+      "content": 3,
+      "excerpt": 1
+    },
+    "tx": [
+      "DJ1Y76QLqJX8nukZ8Qxjqu"
+    ]
+  },
+  "schema-markup-for-aeo-2026": {
+    "changes": 5,
+    "counts": {
+      "content": 1,
+      "excerpt": 1,
+      "faq": 3
+    },
+    "tx": [
+      "BOAIKFRWNleR9aRm6W2ppc"
+    ]
+  },
+  "webflow-agency-cost-b2b-saas-2026": {
+    "changes": 1,
+    "counts": {
+      "faq": 1
+    },
+    "tx": [
+      "DJ1Y76QLqJX8nukZ8Qxk8W"
+    ]
+  },
+  "webflow-vs-framer-for-b2b-saas-2026": {
+    "changes": 7,
+    "counts": {
+      "content": 6,
+      "faq": 1
+    },
+    "tx": [
+      "AHLllZJqmUNXVQrPANzrmb"
+    ]
+  },
+  "wedge-strategy-b2b-saas": {
+    "changes": 1,
+    "counts": {
+      "metaDescription": 1
+    },
+    "tx": [
+      "AHLllZJqmUNXVQrPANzrzH"
+    ]
+  },
+  "best-aeo-tools-for-b2b-saas-2026": {
+    "changes": 13,
+    "counts": {
+      "content": 6,
+      "excerpt": 2,
+      "visuals": 5
+    },
+    "tx": [
+      "BOAIKFRWNleR9aRm6W2pre"
+    ]
+  },
+  "add-html-tables-in-webflow-cms": {
+    "changes": 4,
+    "counts": {
+      "content": 1,
+      "excerpt": 2,
+      "faq": 1
+    },
+    "tx": [
+      "AHLllZJqmUNXVQrPANzsnz"
+    ]
+  },
+  "ab-testing-setup-using-delta-reference-and-confidence-intervals": {
+    "changes": 1,
+    "counts": {
+      "faq": 1
+    },
+    "tx": [
+      "BOAIKFRWNleR9aRm6W2pvi"
+    ]
+  },
+  "share-of-answer-audit-90-minutes": {
+    "changes": 4,
+    "counts": {
+      "visuals": 4
+    },
+    "tx": [
+      "7ONx74QMiI10eazwuwIVAH"
+    ]
+  },
+  "convert-figma-designs-to-webflow-pages": {
+    "changes": 3,
+    "counts": {
+      "content": 3
+    },
+    "tx": [
+      "DJ1Y76QLqJX8nukZ8QxuPW"
+    ]
+  },
+  "best-webflow-tools-and-integrations": {
+    "changes": 1,
+    "counts": {
+      "excerpt": 1
+    },
+    "tx": [
+      "DJ1Y76QLqJX8nukZ8QxueC"
+    ]
+  },
+  "building-custom-apps-in-webflow": {
+    "changes": 1,
+    "counts": {
+      "excerpt": 1
+    },
+    "tx": [
+      "DJ1Y76QLqJX8nukZ8Qxun0"
+    ]
+  },
+  "best-webflow-split-testing-tools-compared": {
+    "changes": 6,
+    "counts": {
+      "content": 5,
+      "metaDescription": 1
+    },
+    "tx": [
+      "7ONx74QMiI10eazwuwIZ5v"
+    ]
+  },
+  "add-google-calendar-on-webflow": {
+    "changes": 3,
+    "counts": {
+      "content": 2,
+      "faq": 1
+    },
+    "tx": [
+      "7ONx74QMiI10eazwuwIZKb"
+    ]
+  },
+  "pitfalls-of-choosing-wrong-webflow-vendor": {
+    "changes": 3,
+    "counts": {
+      "content": 1,
+      "faq": 1
+    },
+    "tx": [
+      "7ONx74QMiI10eazwuwIZWL",
+      "DJ1Y76QLqJX8nukZ8QzKcK"
+    ]
+  },
+  "how-to-use-figma-to-webflow-plugin": {
+    "changes": 2,
+    "counts": {
+      "faq": 2
+    },
+    "tx": [
+      "7ONx74QMiI10eazwuwIZf9"
+    ]
+  },
+  "is-webflow-good-for-seo": {
+    "changes": 7,
+    "counts": {
+      "content": 2,
+      "metaDescription": 1,
+      "faq": 4
+    },
+    "tx": [
+      "7ONx74QMiI10eazwuwIZnx"
+    ]
+  },
+  "preview-cms-pages-blog-posts": {
+    "changes": 3,
+    "counts": {
+      "content": 1,
+      "excerpt": 2
+    },
+    "tx": [
+      "7ONx74QMiI10eazwuwIa8V"
+    ]
+  },
+  "relumes-innovative-business-model": {
+    "changes": 2,
+    "counts": {
+      "content": 2
+    },
+    "tx": [
+      "DJ1Y76QLqJX8nukZ8Qxvgm"
+    ]
+  },
+  "webflow-and-auth0-guide": {
+    "changes": 5,
+    "counts": {
+      "excerpt": 1,
+      "faq": 4
+    },
+    "tx": [
+      "DJ1Y76QLqJX8nukZ8QxvsW"
+    ]
+  },
+  "webflow-ai-revolution": {
+    "changes": 1,
+    "counts": {
+      "excerpt": 1
+    },
+    "tx": [
+      "BOAIKFRWNleR9aRm6W2sQA"
+    ]
+  },
+  "understanding-webflows-cms-guide": {
+    "changes": 1,
+    "counts": {
+      "excerpt": 1
+    },
+    "tx": [
+      "7ONx74QMiI10eazwuwIcPP"
+    ]
+  },
+  "webflow-success-story": {
+    "changes": 1,
+    "counts": {
+      "excerpt": 1
+    },
+    "tx": [
+      "7ONx74QMiI10eazwuwIeFt"
+    ]
+  },
+  "webflow-connection-guide-google-analytics-and-search-console": {
+    "changes": 2,
+    "counts": {
+      "content": 1,
+      "faq": 1
+    },
+    "tx": [
+      "DJ1Y76QLqJX8nukZ8QxxCi"
+    ]
+  },
+  "webflow-vendors-compared": {
+    "changes": 1,
+    "counts": {
+      "thumbnail.alt": 1
+    },
+    "tx": [
+      "7ONx74QMiI10eazwuwIfxZ"
+    ]
+  },
+  "webflow-vs-hubspot": {
+    "changes": 1,
+    "counts": {
+      "content": 1
+    },
+    "tx": [
+      "DJ1Y76QLqJX8nukZ8QxyLA"
+    ]
+  },
+  "webflow-split-testing-setup": {
+    "changes": 1,
+    "counts": {
+      "excerpt": 1
+    },
+    "tx": [
+      "BOAIKFRWNleR9aRm6W2sjo"
+    ]
+  },
+  "webflow-devlink": {
+    "changes": 3,
+    "counts": {
+      "excerpt": 1,
+      "faq": 2
+    },
+    "tx": [
+      "7ONx74QMiI10eazwuwIi8b"
+    ]
+  },
+  "webflow-vs-wix-comparison": {
+    "changes": 6,
+    "counts": {
+      "content": 6
+    },
+    "tx": [
+      "DJ1Y76QLqJX8nukZ8QxyrS"
+    ]
+  },
+  "webflow-vs-wordpress-com": {
+    "changes": 9,
+    "counts": {
+      "content": 9
+    },
+    "tx": [
+      "7ONx74QMiI10eazwuwIiZ1"
+    ]
+  },
+  "webflow-vs-squarespace": {
+    "changes": 3,
+    "counts": {
+      "content": 2,
+      "faq": 1
+    },
+    "tx": [
+      "BOAIKFRWNleR9aRm6W2sns"
+    ]
+  },
+  "webflow-vs-wix-studio": {
+    "changes": 14,
+    "counts": {
+      "content": 11,
+      "excerpt": 1,
+      "faq": 2
+    },
+    "tx": [
+      "DJ1Y76QLqJX8nukZ8Qy1EE"
+    ]
+  },
+  "webflow-vs-wordpress-org": {
+    "changes": 8,
+    "counts": {
+      "content": 6,
+      "excerpt": 1,
+      "faq": 1
+    },
+    "tx": [
+      "BOAIKFRWNleR9aRm6W2ssc"
+    ]
+  },
+  "best-webflow-agencies": {
+    "changes": 4,
+    "counts": {
+      "excerpt": 1,
+      "metaDescription": 1,
+      "faq": 2
+    },
+    "tx": [
+      "DJ1Y76QLqJX8nukZ8Qy1Ym"
+    ]
+  },
+  "webflow-best-cms-for-marketers": {
+    "changes": 7,
+    "counts": {
+      "content": 2,
+      "excerpt": 1,
+      "faq": 4
+    },
+    "tx": [
+      "BOAIKFRWNleR9aRm6W2syi"
+    ]
+  },
+  "webflow-agency-pricing": {
+    "changes": 2,
+    "counts": {
+      "excerpt": 2
+    },
+    "tx": [
+      "7ONx74QMiI10eazwuwIjE7"
+    ]
+  },
+  "ai-enhanced-webflow-development": {
+    "changes": 6,
+    "counts": {
+      "content": 4,
+      "faq": 2
+    },
+    "tx": [
+      "BOAIKFRWNleR9aRm6W2tWa"
+    ]
+  },
+  "top-10-webflow-agency-templates": {
+    "changes": 2,
+    "counts": {
+      "excerpt": 1,
+      "faq": 1
+    },
+    "tx": [
+      "BOAIKFRWNleR9aRm6W2tZy"
+    ]
+  },
+  "seo-vs-aeo-for-webflow": {
+    "changes": 1,
+    "counts": {
+      "excerpt": 1
+    },
+    "tx": [
+      "BOAIKFRWNleR9aRm6W2tdM"
+    ]
+  },
+  "webflow-for-fintech-why-it-outperforms-traditional-cms-platforms": {
+    "changes": 6,
+    "counts": {
+      "excerpt": 2,
+      "faq": 4
+    },
+    "tx": [
+      "7ONx74QMiI10eazwuwIk21"
+    ]
+  },
+  "is-webflow-good-for-small-businesses-heres-what-you-need-to-know": {
+    "changes": 1,
+    "counts": {
+      "faq": 1
+    },
+    "tx": [
+      "DJ1Y76QLqJX8nukZ8Qy73I"
+    ]
+  },
+  "why-saas-companies-are-moving-to-webflow-in-2026-and-what-they-gain": {
+    "changes": 2,
+    "counts": {
+      "excerpt": 1,
+      "faq": 1
+    },
+    "tx": [
+      "DJ1Y76QLqJX8nukZ8Qy7F2"
+    ]
+  },
+  "what-google-sge-and-ai-search-mean-for-webflow-sites-in-2026": {
+    "changes": 7,
+    "counts": {
+      "content": 2,
+      "faq": 5
+    },
+    "tx": [
+      "7ONx74QMiI10eazwuwIkGh"
+    ]
+  },
+  "webflow-for-ecommerce": {
+    "changes": 2,
+    "counts": {
+      "faq": 2
+    },
+    "tx": [
+      "7ONx74QMiI10eazwuwIkeB"
+    ]
+  },
+  "webflow-for-healthcare": {
+    "changes": 5,
+    "counts": {
+      "faq": 5
+    },
+    "tx": [
+      "DJ1Y76QLqJX8nukZ8Qy7Za"
+    ]
+  },
+  "how-to-become-a-trusted-llm-source": {
+    "changes": 5,
+    "counts": {
+      "content": 3,
+      "excerpt": 1,
+      "faq": 1
+    },
+    "tx": [
+      "7ONx74QMiI10eazwuwIms9"
+    ]
+  },
+  "zero-click-content-that-drives-revenue": {
+    "changes": 2,
+    "counts": {
+      "content": 1,
+      "excerpt": 1
+    },
+    "tx": [
+      "7ONx74QMiI10eazwuwInFd"
+    ]
+  },
+  "share-of-answer": {
+    "changes": 6,
+    "counts": {
+      "content": 6
+    },
+    "tx": [
+      "7ONx74QMiI10eazwuwInUJ"
+    ]
+  },
+  "how-to-structure-content-for-ai-extraction": {
+    "changes": 3,
+    "counts": {
+      "content": 3
+    },
+    "tx": [
+      "DJ1Y76QLqJX8nukZ8Qy8Bk"
+    ]
+  },
+  "seo-survival-playbook": {
+    "changes": 3,
+    "counts": {
+      "content": 1,
+      "faq": 2
+    },
+    "tx": [
+      "DJ1Y76QLqJX8nukZ8Qy8NU"
+    ]
+  },
+  "eeat-in-the-age-of-ai": {
+    "changes": 8,
+    "counts": {
+      "content": 4,
+      "faq": 4
+    },
+    "tx": [
+      "7ONx74QMiI10eazwuwIpu1"
+    ]
+  }
+}

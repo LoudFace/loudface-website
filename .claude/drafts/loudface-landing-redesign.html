@@ -1,0 +1,2013 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LoudFace — B2B Website Studio</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,500;12..96,600&family=Instrument+Serif:ital@1&family=Geist:wght@400;500&display=swap');
+
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+:root {
+  --indigo: #4F46E5;
+  --indigo-dark: #3730A3;
+  --near-black: #0a0a0a;
+  --body: #525252;
+  --muted: #737373;
+  --border: #e5e5e5;
+  --border-light: #f0f0f0;
+  --dark-section: #131118;
+  --white: #ffffff;
+  --font-heading: 'Bricolage Grotesque', sans-serif;
+  --font-body: 'Geist', sans-serif;
+  --font-accent: 'Instrument Serif', serif;
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: var(--font-body);
+  background: var(--white);
+  color: var(--near-black);
+  line-height: 1.6;
+  overflow-x: hidden;
+}
+
+/* NAV */
+nav {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
+  background: rgba(255,255,255,0.94);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border-light);
+}
+
+.nav-inner {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 40px;
+  height: 64px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.wordmark {
+  font-family: var(--font-heading);
+  font-weight: 600;
+  font-size: 22px;
+  color: var(--indigo);
+  letter-spacing: -0.02em;
+  text-decoration: none;
+}
+
+.nav-links {
+  display: flex;
+  align-items: center;
+  gap: 36px;
+  list-style: none;
+}
+
+.nav-links a {
+  font-family: var(--font-body);
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--body);
+  text-decoration: none;
+  transition: color 0.15s;
+}
+
+.nav-links a:hover { color: var(--near-black); }
+
+.nav-cta {
+  background: var(--near-black);
+  color: var(--white) !important;
+  padding: 10px 20px;
+  border-radius: 100px;
+  font-size: 14px !important;
+  font-weight: 500 !important;
+  text-decoration: none;
+  transition: background 0.15s !important;
+}
+
+.nav-cta:hover { background: #1a1a1a !important; }
+
+/* HERO */
+.hero {
+  padding-top: 64px;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+}
+
+.hero-inner {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 80px 40px 80px;
+  display: grid;
+  grid-template-columns: 1fr 1.5fr;
+  gap: 80px;
+  align-items: center;
+  width: 100%;
+}
+
+.hero-left {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.hero-eyebrow {
+  font-family: var(--font-body);
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--indigo);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  margin-bottom: 20px;
+  opacity: 0;
+  transform: translateY(24px);
+  filter: blur(8px);
+  animation: rise 0.6s cubic-bezier(0.16,1,0.3,1) 0s forwards;
+}
+
+.hero-headline {
+  font-family: var(--font-heading);
+  font-weight: 600;
+  font-size: clamp(36px, 4.5vw, 60px);
+  line-height: 1.05;
+  letter-spacing: -0.03em;
+  color: var(--near-black);
+  margin-bottom: 24px;
+  opacity: 0;
+  transform: translateY(24px);
+  filter: blur(8px);
+  animation: rise 0.6s cubic-bezier(0.16,1,0.3,1) 0.15s forwards;
+}
+
+.hero-sub {
+  font-family: var(--font-body);
+  font-size: 17px;
+  color: var(--body);
+  line-height: 1.6;
+  margin-bottom: 36px;
+  max-width: 380px;
+  opacity: 0;
+  transform: translateY(24px);
+  filter: blur(8px);
+  animation: rise 0.6s cubic-bezier(0.16,1,0.3,1) 0.3s forwards;
+}
+
+.hero-ctas {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  opacity: 0;
+  transform: translateY(24px);
+  filter: blur(8px);
+  animation: rise 0.6s cubic-bezier(0.16,1,0.3,1) 0.45s forwards;
+}
+
+.btn-primary {
+  background: var(--near-black);
+  color: var(--white);
+  padding: 14px 28px;
+  border-radius: 100px;
+  font-family: var(--font-body);
+  font-size: 15px;
+  font-weight: 500;
+  text-decoration: none;
+  transition: background 0.15s, transform 0.15s;
+  display: inline-block;
+}
+
+.btn-primary:hover {
+  background: #1a1a1a;
+  transform: translateY(-1px);
+}
+
+.btn-ghost {
+  background: transparent;
+  color: var(--near-black);
+  padding: 13px 28px;
+  border-radius: 100px;
+  border: 1.5px solid var(--border);
+  font-family: var(--font-body);
+  font-size: 15px;
+  font-weight: 500;
+  text-decoration: none;
+  transition: border-color 0.15s, transform 0.15s;
+  display: inline-block;
+}
+
+.btn-ghost:hover {
+  border-color: #a3a3a3;
+  transform: translateY(-1px);
+}
+
+/* HERO CARD — SaaS Dashboard Mockup */
+.hero-right {
+  opacity: 0;
+  transform: translateY(32px);
+  filter: blur(8px);
+  animation: rise 0.7s cubic-bezier(0.16,1,0.3,1) 0.4s forwards;
+}
+
+.browser-frame {
+  background: #1e1e2e;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow:
+    0 0 0 1px rgba(255,255,255,0.08),
+    0 24px 80px rgba(0,0,0,0.28),
+    0 8px 24px rgba(0,0,0,0.16);
+  position: relative;
+}
+
+.browser-chrome {
+  background: #16161f;
+  padding: 12px 16px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+}
+
+.browser-dots {
+  display: flex;
+  gap: 6px;
+}
+
+.browser-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+}
+
+.browser-dot:nth-child(1) { background: #FF5F57; }
+.browser-dot:nth-child(2) { background: #FEBC2E; }
+.browser-dot:nth-child(3) { background: #28C840; }
+
+.browser-address {
+  flex: 1;
+  background: rgba(255,255,255,0.06);
+  border-radius: 6px;
+  padding: 5px 12px;
+  font-family: var(--font-body);
+  font-size: 12px;
+  color: rgba(255,255,255,0.4);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.browser-content {
+  display: grid;
+  grid-template-columns: 200px 1fr;
+  min-height: 420px;
+}
+
+/* Sidebar */
+.dash-sidebar {
+  background: #13131d;
+  padding: 20px 0;
+  border-right: 1px solid rgba(255,255,255,0.05);
+}
+
+.dash-logo {
+  padding: 0 16px 20px;
+  border-bottom: 1px solid rgba(255,255,255,0.05);
+  margin-bottom: 16px;
+}
+
+.dash-logo-mark {
+  font-family: var(--font-heading);
+  font-size: 16px;
+  font-weight: 600;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.dash-logo-icon {
+  width: 24px;
+  height: 24px;
+  background: var(--indigo);
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.dash-logo-icon svg { width: 14px; height: 14px; }
+
+.dash-nav-item {
+  padding: 9px 16px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-family: var(--font-body);
+  font-size: 13px;
+  color: rgba(255,255,255,0.45);
+  border-radius: 0;
+  cursor: default;
+  transition: none;
+}
+
+.dash-nav-item.active {
+  background: rgba(79,70,229,0.15);
+  color: #a5b4fc;
+  border-right: 2px solid var(--indigo);
+}
+
+.dash-nav-icon {
+  width: 16px;
+  height: 16px;
+  opacity: 0.7;
+  flex-shrink: 0;
+}
+
+/* Main dashboard area */
+.dash-main {
+  background: #1a1a2e;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.dash-topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.dash-title {
+  font-family: var(--font-heading);
+  font-size: 16px;
+  font-weight: 600;
+  color: #fff;
+}
+
+.dash-date {
+  font-family: var(--font-body);
+  font-size: 12px;
+  color: rgba(255,255,255,0.35);
+  background: rgba(255,255,255,0.06);
+  padding: 5px 10px;
+  border-radius: 6px;
+}
+
+/* Metric cards */
+.dash-metrics {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+}
+
+.dash-metric {
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.06);
+  border-radius: 8px;
+  padding: 12px 14px;
+}
+
+.dash-metric-label {
+  font-family: var(--font-body);
+  font-size: 11px;
+  color: rgba(255,255,255,0.35);
+  margin-bottom: 6px;
+  letter-spacing: 0.03em;
+}
+
+.dash-metric-value {
+  font-family: var(--font-heading);
+  font-size: 22px;
+  font-weight: 600;
+  color: #fff;
+  letter-spacing: -0.02em;
+}
+
+.dash-metric-delta {
+  font-family: var(--font-body);
+  font-size: 11px;
+  color: #34d399;
+  margin-top: 2px;
+}
+
+/* Chart area */
+.dash-chart-area {
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,255,255,0.06);
+  border-radius: 8px;
+  padding: 14px;
+  flex: 1;
+}
+
+.dash-chart-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+.dash-chart-title {
+  font-family: var(--font-body);
+  font-size: 12px;
+  font-weight: 500;
+  color: rgba(255,255,255,0.5);
+}
+
+.dash-chart-tabs {
+  display: flex;
+  gap: 4px;
+}
+
+.dash-tab {
+  font-family: var(--font-body);
+  font-size: 11px;
+  padding: 4px 8px;
+  border-radius: 4px;
+  color: rgba(255,255,255,0.3);
+}
+
+.dash-tab.active {
+  background: rgba(79,70,229,0.2);
+  color: #a5b4fc;
+}
+
+/* SVG Chart */
+.chart-svg {
+  width: 100%;
+  height: 110px;
+}
+
+/* Bottom rows */
+.dash-bottom {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.dash-table {
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,255,255,0.06);
+  border-radius: 8px;
+  padding: 12px;
+}
+
+.dash-table-title {
+  font-family: var(--font-body);
+  font-size: 11px;
+  font-weight: 500;
+  color: rgba(255,255,255,0.35);
+  margin-bottom: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.dash-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 7px 0;
+  border-bottom: 1px solid rgba(255,255,255,0.04);
+}
+
+.dash-row:last-child { border-bottom: none; }
+
+.dash-row-label {
+  font-family: var(--font-body);
+  font-size: 12px;
+  color: rgba(255,255,255,0.55);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.dash-row-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--indigo);
+  flex-shrink: 0;
+}
+
+.dash-row-dot.green { background: #34d399; }
+.dash-row-dot.amber { background: #fbbf24; }
+
+.dash-row-value {
+  font-family: var(--font-body);
+  font-size: 12px;
+  color: rgba(255,255,255,0.7);
+  font-weight: 500;
+}
+
+/* LOGOS MARQUEE */
+.logos-section {
+  border-top: 1px solid var(--border-light);
+  border-bottom: 1px solid var(--border-light);
+  padding: 24px 0;
+  overflow: hidden;
+  position: relative;
+}
+
+.logos-section::before,
+.logos-section::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 120px;
+  z-index: 2;
+  pointer-events: none;
+}
+
+.logos-section::before {
+  left: 0;
+  background: linear-gradient(to right, #fff, transparent);
+}
+
+.logos-section::after {
+  right: 0;
+  background: linear-gradient(to left, #fff, transparent);
+}
+
+.logos-track {
+  display: flex;
+  gap: 0;
+  animation: marquee 30s linear infinite;
+  width: max-content;
+}
+
+.logo-item {
+  padding: 0 48px;
+  font-family: var(--font-heading);
+  font-size: 15px;
+  font-weight: 500;
+  color: #c4c4c4;
+  letter-spacing: -0.01em;
+  white-space: nowrap;
+  user-select: none;
+  transition: color 0.2s;
+}
+
+/* CASE STUDIES */
+.case-studies {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 120px 40px;
+}
+
+.section-label {
+  font-family: var(--font-body);
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 48px;
+}
+
+.case-grid {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  grid-template-rows: auto auto;
+  gap: 16px;
+}
+
+.case-tile {
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  transition: border-color 0.2s;
+  cursor: pointer;
+}
+
+.case-tile:hover { border-color: #a3a3a3; }
+
+.case-tile-large {
+  grid-row: 1 / 3;
+}
+
+.case-mockup {
+  flex: 1;
+  min-height: 240px;
+  position: relative;
+  overflow: hidden;
+}
+
+.case-mockup-large {
+  min-height: 340px;
+}
+
+/* Case study mockup: Toku */
+.mockup-toku {
+  background: #0f0f1a;
+  padding: 20px;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.mockup-header-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.mockup-brand {
+  font-family: var(--font-heading);
+  font-size: 14px;
+  font-weight: 600;
+  color: #fff;
+}
+
+.mockup-badge {
+  font-family: var(--font-body);
+  font-size: 10px;
+  padding: 3px 8px;
+  border-radius: 100px;
+  background: rgba(79,70,229,0.2);
+  color: #a5b4fc;
+  font-weight: 500;
+}
+
+.mockup-hero-text {
+  font-family: var(--font-heading);
+  font-size: 26px;
+  font-weight: 600;
+  color: #fff;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+  max-width: 280px;
+}
+
+.mockup-hero-text span { color: #818cf8; }
+
+.mockup-stat-row {
+  display: flex;
+  gap: 12px;
+}
+
+.mockup-stat {
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 8px;
+  padding: 10px 14px;
+  flex: 1;
+}
+
+.mockup-stat-n {
+  font-family: var(--font-heading);
+  font-size: 20px;
+  font-weight: 600;
+  color: #fff;
+  letter-spacing: -0.02em;
+}
+
+.mockup-stat-l {
+  font-family: var(--font-body);
+  font-size: 11px;
+  color: rgba(255,255,255,0.35);
+  margin-top: 2px;
+}
+
+/* mockup bar chart */
+.mockup-chart {
+  display: flex;
+  align-items: flex-end;
+  gap: 6px;
+  height: 60px;
+}
+
+.mockup-bar {
+  flex: 1;
+  background: rgba(79,70,229,0.3);
+  border-radius: 3px 3px 0 0;
+  transition: background 0.2s;
+}
+
+.mockup-bar.highlight { background: var(--indigo); }
+
+/* Vercel-style mockup */
+.mockup-vercel {
+  background: #000;
+  padding: 20px;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.mockup-v-top {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.mockup-v-logo {
+  width: 20px;
+  height: 20px;
+}
+
+.mockup-v-name {
+  font-family: var(--font-body);
+  font-size: 13px;
+  font-weight: 500;
+  color: #fff;
+}
+
+.mockup-v-headline {
+  font-family: var(--font-heading);
+  font-size: 22px;
+  font-weight: 600;
+  color: #fff;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+}
+
+.mockup-v-sub {
+  font-family: var(--font-body);
+  font-size: 12px;
+  color: rgba(255,255,255,0.4);
+  line-height: 1.4;
+}
+
+.mockup-v-bar {
+  height: 1px;
+  background: rgba(255,255,255,0.08);
+}
+
+.mockup-v-metric {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.mockup-v-num {
+  font-family: var(--font-heading);
+  font-size: 32px;
+  font-weight: 600;
+  color: #fff;
+  letter-spacing: -0.03em;
+}
+
+.mockup-v-label {
+  font-family: var(--font-body);
+  font-size: 11px;
+  color: rgba(255,255,255,0.3);
+}
+
+/* Linear-style mockup */
+.mockup-linear {
+  background: #1c1c27;
+  padding: 20px;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.mockup-l-header {
+  font-family: var(--font-heading);
+  font-size: 13px;
+  font-weight: 600;
+  color: #fff;
+}
+
+.mockup-l-items {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  flex: 1;
+}
+
+.mockup-l-item {
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.06);
+  border-radius: 6px;
+  padding: 8px 10px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.mockup-l-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.mockup-l-text {
+  font-family: var(--font-body);
+  font-size: 11px;
+  color: rgba(255,255,255,0.6);
+  flex: 1;
+}
+
+.mockup-l-tag {
+  font-family: var(--font-body);
+  font-size: 10px;
+  color: rgba(255,255,255,0.25);
+  background: rgba(255,255,255,0.05);
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+
+/* Case study meta */
+.case-meta {
+  padding: 24px 28px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-top: 1px solid var(--border-light);
+}
+
+.case-meta-small {
+  padding: 18px 20px;
+}
+
+.case-company {
+  font-family: var(--font-heading);
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--near-black);
+  margin-bottom: 4px;
+}
+
+.case-company-small {
+  font-size: 15px;
+  margin-bottom: 2px;
+}
+
+.case-result {
+  font-family: var(--font-body);
+  font-size: 13px;
+  color: var(--body);
+}
+
+.case-link {
+  font-family: var(--font-body);
+  font-size: 13px;
+  color: var(--indigo);
+  text-decoration: none;
+  font-weight: 500;
+  white-space: nowrap;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+
+.case-tile:hover .case-link { opacity: 1; }
+
+/* STATS LEDGER */
+.stats-section {
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+  max-width: 1280px;
+  margin: 0 auto 0;
+  padding: 0 40px;
+}
+
+.stats-table {
+  width: 100%;
+}
+
+.stats-row {
+  display: grid;
+  grid-template-columns: 1fr auto auto;
+  align-items: center;
+  padding: 28px 0;
+  border-bottom: 1px solid var(--border-light);
+  gap: 40px;
+}
+
+.stats-row:last-child { border-bottom: none; }
+
+.stats-entity {
+  font-family: var(--font-heading);
+  font-size: 22px;
+  font-weight: 500;
+  color: var(--near-black);
+  letter-spacing: -0.01em;
+}
+
+.stats-descriptor {
+  font-family: var(--font-body);
+  font-size: 13px;
+  color: var(--muted);
+  min-width: 180px;
+  text-align: right;
+}
+
+.stats-number {
+  font-family: var(--font-heading);
+  font-size: 36px;
+  font-weight: 600;
+  color: var(--near-black);
+  letter-spacing: -0.03em;
+  min-width: 120px;
+  text-align: right;
+}
+
+/* PROCESS / FAQ — USVC Style */
+.process-section {
+  background: var(--dark-section);
+  padding: 120px 0;
+}
+
+.process-inner {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 40px;
+  display: grid;
+  grid-template-columns: 340px 1fr;
+  gap: 100px;
+  align-items: start;
+}
+
+.process-left-heading {
+  font-family: var(--font-heading);
+  font-weight: 600;
+  font-size: clamp(40px, 4vw, 56px);
+  line-height: 1.05;
+  letter-spacing: -0.03em;
+  color: #fff;
+  position: sticky;
+  top: 100px;
+}
+
+.process-accent {
+  font-family: var(--font-accent);
+  font-style: italic;
+  color: var(--indigo);
+  display: block;
+  font-size: 1.05em;
+}
+
+.process-desc {
+  font-family: var(--font-body);
+  font-size: 15px;
+  color: rgba(255,255,255,0.4);
+  line-height: 1.6;
+  margin-top: 24px;
+  font-weight: 400;
+}
+
+/* Accordion */
+.accordion {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.accordion-item {
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+}
+
+.accordion-item:first-child {
+  border-top: 1px solid rgba(255,255,255,0.08);
+}
+
+details {
+  cursor: pointer;
+}
+
+details summary {
+  list-style: none;
+  padding: 28px 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  cursor: pointer;
+  user-select: none;
+}
+
+details summary::-webkit-details-marker { display: none; }
+
+.acc-title {
+  font-family: var(--font-heading);
+  font-size: 20px;
+  font-weight: 500;
+  color: rgba(255,255,255,0.9);
+  letter-spacing: -0.01em;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.acc-num {
+  font-family: var(--font-body);
+  font-size: 12px;
+  color: rgba(255,255,255,0.25);
+  font-weight: 400;
+  min-width: 24px;
+}
+
+.acc-icon {
+  width: 28px;
+  height: 28px;
+  border: 1px solid rgba(255,255,255,0.12);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: rgba(255,255,255,0.4);
+  font-size: 18px;
+  line-height: 1;
+  transition: border-color 0.2s, color 0.2s;
+  flex-shrink: 0;
+  font-family: var(--font-body);
+}
+
+details[open] .acc-icon {
+  border-color: rgba(255,255,255,0.3);
+  color: rgba(255,255,255,0.8);
+}
+
+details[open] .acc-icon::after { content: '−'; }
+.acc-icon::after { content: '+'; }
+
+.acc-body {
+  padding: 0 0 28px 40px;
+  font-family: var(--font-body);
+  font-size: 15px;
+  color: rgba(255,255,255,0.45);
+  line-height: 1.7;
+  max-width: 560px;
+}
+
+.acc-body strong {
+  color: rgba(255,255,255,0.75);
+  font-weight: 500;
+}
+
+/* TESTIMONIAL */
+.testimonial-section {
+  background: var(--dark-section);
+  padding: 0 0 120px;
+}
+
+.testimonial-inner {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 40px;
+}
+
+.testimonial-divider {
+  height: 1px;
+  background: rgba(255,255,255,0.08);
+  margin-bottom: 80px;
+}
+
+.testimonial-layout {
+  display: grid;
+  grid-template-columns: 1fr 260px;
+  gap: 80px;
+  align-items: center;
+}
+
+.quote-card {
+  position: relative;
+  padding: 56px;
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 4px;
+}
+
+/* Corner ticks */
+.quote-card::before,
+.quote-card::after {
+  content: '►';
+  position: absolute;
+  font-size: 8px;
+  color: rgba(255,255,255,0.2);
+  line-height: 1;
+}
+
+.quote-card::before {
+  top: -1px;
+  left: -1px;
+  transform: rotate(225deg);
+}
+
+.quote-card::after {
+  bottom: -1px;
+  right: -1px;
+  transform: rotate(45deg);
+}
+
+.tick-tr,
+.tick-bl {
+  position: absolute;
+  font-size: 8px;
+  color: rgba(255,255,255,0.2);
+  line-height: 1;
+}
+
+.tick-tr {
+  top: -1px;
+  right: -1px;
+  transform: rotate(315deg);
+  content: '►';
+}
+
+.tick-bl {
+  bottom: -1px;
+  left: -1px;
+  transform: rotate(135deg);
+}
+
+.quote-text {
+  font-family: var(--font-accent);
+  font-style: italic;
+  font-size: clamp(24px, 3vw, 38px);
+  line-height: 1.35;
+  color: rgba(255,255,255,0.9);
+  margin-bottom: 32px;
+}
+
+.quote-attribution {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.quote-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: rgba(79,70,229,0.3);
+  border: 1px solid rgba(79,70,229,0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-heading);
+  font-size: 14px;
+  font-weight: 600;
+  color: #a5b4fc;
+  flex-shrink: 0;
+}
+
+.quote-name {
+  font-family: var(--font-body);
+  font-size: 14px;
+  font-weight: 500;
+  color: rgba(255,255,255,0.75);
+}
+
+.quote-role {
+  font-family: var(--font-body);
+  font-size: 13px;
+  color: rgba(255,255,255,0.3);
+}
+
+.testimonial-stat {
+  text-align: center;
+}
+
+.testimonial-stat-n {
+  font-family: var(--font-heading);
+  font-size: 72px;
+  font-weight: 600;
+  color: #fff;
+  letter-spacing: -0.04em;
+  line-height: 1;
+  display: block;
+  margin-bottom: 12px;
+}
+
+.testimonial-stat-l {
+  font-family: var(--font-body);
+  font-size: 14px;
+  color: rgba(255,255,255,0.35);
+  line-height: 1.5;
+}
+
+/* CTA SECTION */
+.cta-section {
+  padding: 140px 40px;
+  text-align: center;
+  max-width: 1280px;
+  margin: 0 auto;
+}
+
+.cta-headline {
+  font-family: var(--font-heading);
+  font-size: clamp(40px, 5vw, 68px);
+  font-weight: 600;
+  color: var(--near-black);
+  letter-spacing: -0.03em;
+  line-height: 1.05;
+  margin-bottom: 16px;
+}
+
+.color-block {
+  background: var(--indigo);
+  color: #fff;
+  padding: 2px 12px 4px;
+  border-radius: 6px;
+  display: inline-block;
+  font-style: normal;
+}
+
+.cta-sub {
+  font-family: var(--font-body);
+  font-size: 17px;
+  color: var(--body);
+  margin-bottom: 40px;
+  max-width: 440px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* FOOTER */
+footer {
+  border-top: 1px solid var(--border-light);
+  padding: 56px 40px 48px;
+}
+
+.footer-inner {
+  max-width: 1280px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr 1fr;
+  gap: 40px;
+  align-items: start;
+  margin-bottom: 56px;
+}
+
+.footer-brand .wordmark {
+  display: block;
+  margin-bottom: 12px;
+}
+
+.footer-tagline {
+  font-family: var(--font-body);
+  font-size: 13px;
+  color: var(--muted);
+  line-height: 1.5;
+  max-width: 180px;
+}
+
+.footer-col-title {
+  font-family: var(--font-body);
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--near-black);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  margin-bottom: 20px;
+}
+
+.footer-links {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.footer-links a {
+  font-family: var(--font-body);
+  font-size: 14px;
+  color: var(--body);
+  text-decoration: none;
+  transition: color 0.15s;
+}
+
+.footer-links a:hover { color: var(--near-black); }
+
+.footer-bottom {
+  max-width: 1280px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: 32px;
+  border-top: 1px solid var(--border-light);
+}
+
+.footer-copy {
+  font-family: var(--font-body);
+  font-size: 13px;
+  color: var(--muted);
+}
+
+.footer-status {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--font-body);
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.status-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #22c55e;
+  animation: pulse-dot 2s ease-in-out infinite;
+}
+
+/* ANIMATIONS */
+@keyframes rise {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+    filter: blur(0);
+  }
+}
+
+@keyframes marquee {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+
+@keyframes pulse-dot {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.4; }
+}
+
+/* RESPONSIVE */
+@media (max-width: 1024px) {
+  .hero-inner {
+    grid-template-columns: 1fr;
+    gap: 48px;
+    padding: 60px 32px;
+  }
+
+  .hero-right {
+    order: -1;
+  }
+
+  .browser-content {
+    grid-template-columns: 160px 1fr;
+    min-height: 320px;
+  }
+
+  .case-grid {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto;
+  }
+
+  .case-tile-large {
+    grid-row: auto;
+  }
+
+  .process-inner {
+    grid-template-columns: 1fr;
+    gap: 48px;
+  }
+
+  .process-left-heading {
+    position: static;
+  }
+
+  .testimonial-layout {
+    grid-template-columns: 1fr;
+    gap: 48px;
+  }
+
+  .testimonial-stat {
+    text-align: left;
+  }
+
+  .footer-inner {
+    grid-template-columns: 1fr 1fr;
+    gap: 32px;
+  }
+}
+
+@media (max-width: 768px) {
+  .nav-links {
+    display: none;
+  }
+
+  .nav-inner { padding: 0 24px; }
+
+  .hero-inner { padding: 48px 24px 64px; }
+
+  .case-studies { padding: 80px 24px; }
+
+  .stats-section { padding: 0 24px; }
+
+  .stats-row {
+    grid-template-columns: 1fr auto;
+    gap: 16px;
+  }
+
+  .stats-descriptor { display: none; }
+
+  .stats-entity { font-size: 16px; }
+  .stats-number { font-size: 28px; min-width: auto; }
+
+  .process-inner { padding: 0 24px; }
+  .testimonial-inner { padding: 0 24px; }
+
+  .quote-card { padding: 32px 28px; }
+  .quote-text { font-size: 22px; }
+
+  .cta-section { padding: 80px 24px; }
+
+  footer { padding: 48px 24px 40px; }
+
+  .footer-inner {
+    grid-template-columns: 1fr;
+    gap: 32px;
+  }
+
+  .footer-bottom {
+    flex-direction: column;
+    gap: 12px;
+    align-items: flex-start;
+  }
+
+  .browser-content {
+    grid-template-columns: 130px 1fr;
+    min-height: 260px;
+  }
+
+  .dash-metrics {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .dash-bottom { grid-template-columns: 1fr; }
+
+  .dash-metric:last-child { display: none; }
+}
+</style>
+</head>
+<body>
+
+<!-- NAVIGATION -->
+<nav>
+  <div class="nav-inner">
+    <a href="#" class="wordmark">loudface</a>
+    <ul class="nav-links">
+      <li><a href="#work">Work</a></li>
+      <li><a href="#services">Services</a></li>
+      <li><a href="#about">About</a></li>
+      <li><a href="#blog">Blog</a></li>
+      <li><a href="#contact" class="nav-cta">Book a call</a></li>
+    </ul>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-inner">
+    <div class="hero-left">
+      <p class="hero-eyebrow">B2B Website Studio</p>
+      <h1 class="hero-headline">We build B2B websites that close deals.</h1>
+      <p class="hero-sub">LoudFace designs, builds, and optimizes websites for SaaS companies growing their pipeline.</p>
+      <div class="hero-ctas">
+        <a href="#contact" class="btn-primary">Book a discovery call</a>
+        <a href="#work" class="btn-ghost">View our work</a>
+      </div>
+    </div>
+
+    <div class="hero-right">
+      <!-- Browser Frame with SaaS Dashboard Mockup -->
+      <div class="browser-frame">
+        <div class="browser-chrome">
+          <div class="browser-dots">
+            <div class="browser-dot"></div>
+            <div class="browser-dot"></div>
+            <div class="browser-dot"></div>
+          </div>
+          <div class="browser-address">
+            <svg width="10" height="10" viewBox="0 0 10 10" fill="none">
+              <circle cx="5" cy="5" r="4" stroke="rgba(255,255,255,0.3)" stroke-width="1"/>
+              <path d="M5 1v4l2.5 1.5" stroke="rgba(255,255,255,0.3)" stroke-width="1" stroke-linecap="round"/>
+            </svg>
+            app.pipeline.co/dashboard
+          </div>
+        </div>
+        <div class="browser-content">
+          <!-- Sidebar -->
+          <div class="dash-sidebar">
+            <div class="dash-logo">
+              <div class="dash-logo-mark">
+                <div class="dash-logo-icon">
+                  <svg viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M2 7L7 2L12 7L7 12L2 7Z" fill="white"/>
+                  </svg>
+                </div>
+                Pipeline
+              </div>
+            </div>
+            <div class="dash-nav-item active">
+              <svg class="dash-nav-icon" viewBox="0 0 16 16" fill="none">
+                <rect x="1" y="1" width="6" height="6" rx="1" fill="currentColor" opacity="0.6"/>
+                <rect x="9" y="1" width="6" height="6" rx="1" fill="currentColor" opacity="0.6"/>
+                <rect x="1" y="9" width="6" height="6" rx="1" fill="currentColor" opacity="0.6"/>
+                <rect x="9" y="9" width="6" height="6" rx="1" fill="currentColor" opacity="0.6"/>
+              </svg>
+              Overview
+            </div>
+            <div class="dash-nav-item">
+              <svg class="dash-nav-icon" viewBox="0 0 16 16" fill="none">
+                <path d="M2 12L6 7L9 10L13 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+              </svg>
+              Analytics
+            </div>
+            <div class="dash-nav-item">
+              <svg class="dash-nav-icon" viewBox="0 0 16 16" fill="none">
+                <circle cx="8" cy="8" r="5.5" stroke="currentColor" stroke-width="1.5"/>
+                <path d="M8 5v3l2 2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+              </svg>
+              Pipeline
+            </div>
+            <div class="dash-nav-item">
+              <svg class="dash-nav-icon" viewBox="0 0 16 16" fill="none">
+                <path d="M13 6C13 10 8 14 8 14C8 14 3 10 3 6C3 3.8 5.2 2 8 2C10.8 2 13 3.8 13 6Z" stroke="currentColor" stroke-width="1.5"/>
+                <circle cx="8" cy="6" r="1.5" fill="currentColor" opacity="0.6"/>
+              </svg>
+              Accounts
+            </div>
+            <div class="dash-nav-item">
+              <svg class="dash-nav-icon" viewBox="0 0 16 16" fill="none">
+                <path d="M2 4h12M2 8h8M2 12h10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+              </svg>
+              Reports
+            </div>
+            <div class="dash-nav-item" style="margin-top: auto;">
+              <svg class="dash-nav-icon" viewBox="0 0 16 16" fill="none">
+                <circle cx="8" cy="5" r="3" stroke="currentColor" stroke-width="1.5"/>
+                <path d="M2 14c0-3 2.7-5 6-5s6 2 6 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+              </svg>
+              Account
+            </div>
+          </div>
+
+          <!-- Main Area -->
+          <div class="dash-main">
+            <div class="dash-topbar">
+              <div class="dash-title">Revenue Dashboard</div>
+              <div class="dash-date">Jun 28, 2026</div>
+            </div>
+
+            <div class="dash-metrics">
+              <div class="dash-metric">
+                <div class="dash-metric-label">ARR</div>
+                <div class="dash-metric-value">$2.4M</div>
+                <div class="dash-metric-delta">↑ 34% vs last qtr</div>
+              </div>
+              <div class="dash-metric">
+                <div class="dash-metric-label">MRR</div>
+                <div class="dash-metric-value">$198k</div>
+                <div class="dash-metric-delta">↑ 12% MoM</div>
+              </div>
+              <div class="dash-metric">
+                <div class="dash-metric-label">Churn</div>
+                <div class="dash-metric-value">1.2%</div>
+                <div class="dash-metric-delta" style="color:#fbbf24;">↑ 0.1%</div>
+              </div>
+            </div>
+
+            <div class="dash-chart-area">
+              <div class="dash-chart-header">
+                <div class="dash-chart-title">New pipeline by month</div>
+                <div class="dash-chart-tabs">
+                  <div class="dash-tab active">6M</div>
+                  <div class="dash-tab">1Y</div>
+                  <div class="dash-tab">All</div>
+                </div>
+              </div>
+              <svg class="chart-svg" viewBox="0 0 400 110" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+                <!-- Grid lines -->
+                <line x1="0" y1="90" x2="400" y2="90" stroke="rgba(255,255,255,0.04)" stroke-width="1"/>
+                <line x1="0" y1="65" x2="400" y2="65" stroke="rgba(255,255,255,0.04)" stroke-width="1"/>
+                <line x1="0" y1="40" x2="400" y2="40" stroke="rgba(255,255,255,0.04)" stroke-width="1"/>
+                <line x1="0" y1="15" x2="400" y2="15" stroke="rgba(255,255,255,0.04)" stroke-width="1"/>
+
+                <!-- Area fill -->
+                <defs>
+                  <linearGradient id="chartFill" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stop-color="#4F46E5" stop-opacity="0.25"/>
+                    <stop offset="100%" stop-color="#4F46E5" stop-opacity="0.0"/>
+                  </linearGradient>
+                </defs>
+                <path d="M0,90 L60,78 L120,70 L180,55 L240,45 L300,30 L360,18 L400,12 L400,110 L0,110 Z" fill="url(#chartFill)"/>
+
+                <!-- Line -->
+                <path d="M0,90 L60,78 L120,70 L180,55 L240,45 L300,30 L360,18 L400,12" fill="none" stroke="#6366f1" stroke-width="2" stroke-linejoin="round"/>
+
+                <!-- Dots -->
+                <circle cx="60" cy="78" r="3" fill="#6366f1"/>
+                <circle cx="120" cy="70" r="3" fill="#6366f1"/>
+                <circle cx="180" cy="55" r="3" fill="#6366f1"/>
+                <circle cx="240" cy="45" r="3" fill="#6366f1"/>
+                <circle cx="300" cy="30" r="3" fill="#6366f1"/>
+                <circle cx="360" cy="18" r="3" fill="#6366f1"/>
+
+                <!-- Highlight dot -->
+                <circle cx="300" cy="30" r="5" fill="#4F46E5" stroke="rgba(255,255,255,0.2)" stroke-width="2"/>
+
+                <!-- Y labels -->
+                <text x="5" y="89" fill="rgba(255,255,255,0.2)" font-size="9" font-family="Geist, sans-serif">$50k</text>
+                <text x="5" y="64" fill="rgba(255,255,255,0.2)" font-size="9" font-family="Geist, sans-serif">$120k</text>
+                <text x="5" y="39" fill="rgba(255,255,255,0.2)" font-size="9" font-family="Geist, sans-serif">$190k</text>
+
+                <!-- X labels -->
+                <text x="52" y="105" fill="rgba(255,255,255,0.2)" font-size="9" font-family="Geist, sans-serif">Jan</text>
+                <text x="112" y="105" fill="rgba(255,255,255,0.2)" font-size="9" font-family="Geist, sans-serif">Feb</text>
+                <text x="172" y="105" fill="rgba(255,255,255,0.2)" font-size="9" font-family="Geist, sans-serif">Mar</text>
+                <text x="232" y="105" fill="rgba(255,255,255,0.2)" font-size="9" font-family="Geist, sans-serif">Apr</text>
+                <text x="292" y="105" fill="rgba(255,255,255,0.2)" font-size="9" font-family="Geist, sans-serif">May</text>
+                <text x="352" y="105" fill="rgba(255,255,255,0.2)" font-size="9" font-family="Geist, sans-serif">Jun</text>
+              </svg>
+            </div>
+
+            <div class="dash-bottom">
+              <div class="dash-table">
+                <div class="dash-table-title">Top Accounts</div>
+                <div class="dash-row">
+                  <div class="dash-row-label"><div class="dash-row-dot"></div>Lattice</div>
+                  <div class="dash-row-value">$48k ARR</div>
+                </div>
+                <div class="dash-row">
+                  <div class="dash-row-label"><div class="dash-row-dot green"></div>Retool</div>
+                  <div class="dash-row-value">$36k ARR</div>
+                </div>
+                <div class="dash-row">
+                  <div class="dash-row-label"><div class="dash-row-dot amber"></div>Coda</div>
+                  <div class="dash-row-value">$29k ARR</div>
+                </div>
+              </div>
+              <div class="dash-table">
+                <div class="dash-table-title">Deal Stage</div>
+                <div class="dash-row">
+                  <div class="dash-row-label">Qualified</div>
+                  <div class="dash-row-value">12 deals</div>
+                </div>
+                <div class="dash-row">
+                  <div class="dash-row-label">Proposal</div>
+                  <div class="dash-row-value">7 deals</div>
+                </div>
+                <div class="dash-row">
+                  <div class="dash-row-label">Closing</div>
+                  <div class="dash-row-value">3 deals</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CLIENT LOGOS MARQUEE -->
+<div class="logos-section" id="about">
+  <div class="logos-track" aria-hidden="true">
+    <span class="logo-item">Linear</span>
+    <span class="logo-item">Vercel</span>
+    <span class="logo-item">Raycast</span>
+    <span class="logo-item">Loom</span>
+    <span class="logo-item">Notion</span>
+    <span class="logo-item">Retool</span>
+    <span class="logo-item">Coda</span>
+    <span class="logo-item">Clerk</span>
+    <!-- Duplicate for seamless loop -->
+    <span class="logo-item">Linear</span>
+    <span class="logo-item">Vercel</span>
+    <span class="logo-item">Raycast</span>
+    <span class="logo-item">Loom</span>
+    <span class="logo-item">Notion</span>
+    <span class="logo-item">Retool</span>
+    <span class="logo-item">Coda</span>
+    <span class="logo-item">Clerk</span>
+  </div>
+</div>
+
+<!-- CASE STUDIES -->
+<section class="case-studies" id="work">
+  <p class="section-label">Selected work</p>
+
+  <div class="case-grid">
+    <!-- Large tile -->
+    <div class="case-tile case-tile-large">
+      <div class="case-mockup case-mockup-large">
+        <div class="mockup-toku" style="height: 100%;">
+          <div class="mockup-header-row">
+            <div class="mockup-brand">Toku</div>
+            <div class="mockup-badge">HR Tech · Series B</div>
+          </div>
+          <div class="mockup-hero-text">Global comp &amp; equity, <span>without the complexity.</span></div>
+          <div class="mockup-stat-row">
+            <div class="mockup-stat">
+              <div class="mockup-stat-n">40+</div>
+              <div class="mockup-stat-l">Countries covered</div>
+            </div>
+            <div class="mockup-stat">
+              <div class="mockup-stat-n">3.2×</div>
+              <div class="mockup-stat-l">Traffic growth</div>
+            </div>
+            <div class="mockup-stat">
+              <div class="mockup-stat-n">91%</div>
+              <div class="mockup-stat-l">Qualified inbound</div>
+            </div>
+          </div>
+          <div style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06); border-radius: 8px; padding: 14px; flex: 1;">
+            <div style="font-family: var(--font-body); font-size: 11px; color: rgba(255,255,255,0.3); margin-bottom: 10px; text-transform: uppercase; letter-spacing: 0.08em;">MRR growth</div>
+            <div class="mockup-chart">
+              <div class="mockup-bar" style="height: 30%;"></div>
+              <div class="mockup-bar" style="height: 38%;"></div>
+              <div class="mockup-bar" style="height: 45%;"></div>
+              <div class="mockup-bar" style="height: 52%;"></div>
+              <div class="mockup-bar" style="height: 60%;"></div>
+              <div class="mockup-bar" style="height: 68%;"></div>
+              <div class="mockup-bar highlight" style="height: 78%;"></div>
+              <div class="mockup-bar highlight" style="height: 88%;"></div>
+              <div class="mockup-bar highlight" style="height: 95%;"></div>
+              <div class="mockup-bar highlight" style="height: 100%;"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="case-meta">
+        <div>
+          <div class="case-company">Toku</div>
+          <div class="case-result">3.2× organic traffic in 8 months</div>
+        </div>
+        <a href="#" class="case-link">View case study →</a>
+      </div>
+    </div>
+
+    <!-- Small tile 1 -->
+    <div class="case-tile">
+      <div class="case-mockup">
+        <div class="mockup-vercel" style="height: 100%; min-height: 220px;">
+          <div class="mockup-v-top">
+            <svg class="mockup-v-logo" viewBox="0 0 20 20" fill="none">
+              <path d="M10 2L19 18H1L10 2Z" fill="white"/>
+            </svg>
+            <div class="mockup-v-name">Deploy</div>
+          </div>
+          <div class="mockup-v-headline">Ship faster.<br>Break less.</div>
+          <div class="mockup-v-sub">From push to production in 22 seconds. Every time.</div>
+          <div class="mockup-v-bar"></div>
+          <div class="mockup-v-metric">
+            <div>
+              <div class="mockup-v-num">22s</div>
+              <div class="mockup-v-label">avg. deploy time</div>
+            </div>
+            <div style="text-align: right;">
+              <div class="mockup-v-num" style="font-size: 20px; color: #34d399;">99.97%</div>
+              <div class="mockup-v-label">uptime SLA</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="case-meta case-meta-small">
+        <div>
+          <div class="case-company case-company-small">Vercel</div>
+          <div class="case-result">+210% demo requests in Q1</div>
+        </div>
+        <a href="#" class="case-link">View →</a>
+      </div>
+    </div>
+
+    <!-- Small tile 2 -->
+    <div class="case-tile">
+      <div class="case-mockup">
+        <div class="mockup-linear" style="height: 100%; min-height: 220px;">
+          <div class="mockup-l-header">Issues · Active sprint</div>
+          <div class="mockup-l-items">
+            <div class="mockup-l-item">
+              <div class="mockup-l-dot" style="background: #6366f1;"></div>
+              <div class="mockup-l-text">Redesign pricing page</div>
+              <div class="mockup-l-tag">In progress</div>
+            </div>
+            <div class="mockup-l-item">
+              <div class="mockup-l-dot" style="background: #34d399;"></div>
+              <div class="mockup-l-text">Ship onboarding flow v2</div>
+              <div class="mockup-l-tag">Done</div>
+            </div>
+            <div class="mockup-l-item">
+              <div class="mockup-l-dot" style="background: #fbbf24;"></div>
+              <div class="mockup-l-text">Fix mobile nav collapse</div>
+              <div class="mockup-l-tag">Review</div>
+            </div>
+            <div class="mockup-l-item">
+              <div class="mockup-l-dot" style="background: rgba(255,255,255,0.2);"></div>
+              <div class="mockup-l-text">Add social proof to hero</div>
+              <div class="mockup-l-tag">Backlog</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="case-meta case-meta-small">
+        <div>
+          <div class="case-company case-company-small">Linear</div>
+          <div class="case-result">Homepage conversion up 58%</div>
+        </div>
+        <a href="#" class="case-link">View →</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- STATS LEDGER -->
+<div class="stats-section">
+  <div class="stats-table">
+    <div class="stats-row">
+      <div class="stats-entity">SaaS brands served</div>
+      <div class="stats-descriptor">Series A through enterprise</div>
+      <div class="stats-number">47</div>
+    </div>
+    <div class="stats-row">
+      <div class="stats-entity">Average traffic growth</div>
+      <div class="stats-descriptor">12 months post-launch</div>
+      <div class="stats-number">3.2×</div>
+    </div>
+    <div class="stats-row">
+      <div class="stats-entity">Client retention rate</div>
+      <div class="stats-descriptor">Across all active engagements</div>
+      <div class="stats-number">91%</div>
+    </div>
+  </div>
+</div>
+
+<!-- PROCESS / FAQ — USVC Style -->
+<section class="process-section" id="services">
+  <div class="process-inner">
+    <div>
+      <h2 class="process-left-heading">
+        How we
+        <span class="process-accent">work.</span>
+      </h2>
+      <p class="process-desc">Four phases. No ambiguity. No scope creep. You know what's coming before we write a line of code.</p>
+    </div>
+
+    <div class="accordion">
+      <div class="accordion-item">
+        <details open>
+          <summary>
+            <div class="acc-title">
+              <span class="acc-num">01</span>
+              Build
+            </div>
+            <div class="acc-icon"></div>
+          </summary>
+          <div class="acc-body">
+            We design and build your website from positioning to production. <strong>Strategy comes first</strong> — we map your ICP, your deal motion, and what a visitor needs to see before they book a call. Design follows positioning, not templates. You get a site that could only be yours.
+          </div>
+        </details>
+      </div>
+
+      <div class="accordion-item">
+        <details>
+          <summary>
+            <div class="acc-title">
+              <span class="acc-num">02</span>
+              Rank
+            </div>
+            <div class="acc-icon"></div>
+          </summary>
+          <div class="acc-body">
+            We build content programs that earn rankings and AI citations — not blog posts for the sake of it. <strong>Every piece maps to a buying prompt</strong> your target audience is already typing. We track how often AI engines cite you, not just where you rank on Google.
+          </div>
+        </details>
+      </div>
+
+      <div class="accordion-item">
+        <details>
+          <summary>
+            <div class="acc-title">
+              <span class="acc-num">03</span>
+              Convert
+            </div>
+            <div class="acc-icon"></div>
+          </summary>
+          <div class="acc-body">
+            Traffic without conversion is a vanity metric. We instrument your site, run structured CRO experiments, and iterate based on what the data shows — not what feels right. <strong>Demo request rate is the north star.</strong> Everything else is a leading indicator.
+          </div>
+        </details>
+      </div>
+
+      <div class="accordion-item">
+        <details>
+          <summary>
+            <div class="acc-title">
+              <span class="acc-num">04</span>
+              Measure
+            </div>
+            <div class="acc-icon"></div>
+          </summary>
+          <div class="acc-body">
+            You get a live dashboard. GSC performance, AI search visibility, conversion rates — one view, updated daily. <strong>Monthly reviews are not retrospectives</strong>; they're planning sessions. We look at what moved, what didn't, and what we're changing before the next sprint.
+          </div>
+        </details>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TESTIMONIAL -->
+<section class="testimonial-section">
+  <div class="testimonial-inner">
+    <div class="testimonial-divider"></div>
+
+    <div class="testimonial-layout">
+      <div class="quote-card">
+        <span class="tick-tr">►</span>
+        <span class="tick-bl">►</span>
+        <blockquote>
+          <p class="quote-text">"LoudFace didn't just redesign our website — they rebuilt how we think about the sales conversation. Within six months we were closing deals from organic traffic we never had before."</p>
+          <div class="quote-attribution">
+            <div class="quote-avatar">NW</div>
+            <div>
+              <div class="quote-name">Natalie Wilson</div>
+              <div class="quote-role">VP Marketing, Toku</div>
+            </div>
+          </div>
+        </blockquote>
+      </div>
+
+      <div class="testimonial-stat">
+        <span class="testimonial-stat-n">12</span>
+        <p class="testimonial-stat-l">enterprise clients<br>onboarded in 2025</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA SECTION -->
+<section class="cta-section" id="contact">
+  <h2 class="cta-headline">
+    Your website should<br>
+    be <span class="color-block">closing deals.</span>
+  </h2>
+  <p class="cta-sub">Book a 30-minute discovery call. We'll tell you exactly what's holding your pipeline back.</p>
+  <a href="#" class="btn-primary" style="font-size: 16px; padding: 16px 36px;">Book a discovery call</a>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-inner">
+    <div class="footer-brand">
+      <a href="#" class="wordmark">loudface</a>
+      <p class="footer-tagline">B2B website studio for SaaS companies that close.</p>
+    </div>
+
+    <div>
+      <p class="footer-col-title">Work</p>
+      <ul class="footer-links">
+        <li><a href="#">Case studies</a></li>
+        <li><a href="#">Services</a></li>
+        <li><a href="#">Pricing</a></li>
+        <li><a href="#">Process</a></li>
+      </ul>
+    </div>
+
+    <div>
+      <p class="footer-col-title">Company</p>
+      <ul class="footer-links">
+        <li><a href="#">About</a></li>
+        <li><a href="#">Blog</a></li>
+        <li><a href="#">Careers</a></li>
+        <li><a href="#">Contact</a></li>
+      </ul>
+    </div>
+
+    <div>
+      <p class="footer-col-title">Resources</p>
+      <ul class="footer-links">
+        <li><a href="#">AI search visibility guide</a></li>
+        <li><a href="#">SaaS website audit</a></li>
+        <li><a href="#">B2B homepage teardowns</a></li>
+        <li><a href="#">Newsletter</a></li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="footer-bottom">
+    <p class="footer-copy">© 2026 LoudFace Agency Ltd. All rights reserved.</p>
+    <div class="footer-status">
+      <div class="status-dot"></div>
+      All systems operational
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>

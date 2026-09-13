@@ -1,0 +1,1163 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>LoudFace homepage concept A</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@400;500;600;700&family=Geist:wght@400;500;600;700&family=Instrument+Serif:ital@1&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --surface-25: #fdfdfb;
+        --surface-50: #fafafa;
+        --surface-75: #f7f8f5;
+        --surface-100: #f1f2ee;
+        --surface-150: #eceee9;
+        --surface-200: #e0e3dc;
+        --surface-300: #c7ccc4;
+        --surface-500: #737b72;
+        --surface-600: #535d55;
+        --surface-800: #2d3835;
+        --surface-900: #22302e;
+        --surface-950: #111917;
+        --primary-50: #eef2ff;
+        --primary-100: #e0e7ff;
+        --primary-500: #6366f1;
+        --primary-600: #4f46e5;
+        --primary-700: #4338ca;
+        --orange: #e8663d;
+        --line: rgba(34, 48, 46, 0.12);
+        --ring: rgba(79, 70, 229, 0.28);
+        --shadow: 0 18px 55px rgba(17, 25, 23, 0.09);
+        --shadow-small: 0 10px 30px rgba(17, 25, 23, 0.08);
+        --radius: 8px;
+        --heading: "Bricolage Grotesque", "Neue Montreal", system-ui, sans-serif;
+        --body: "Geist", "Satoshi", system-ui, sans-serif;
+        --serif: "Instrument Serif", Georgia, serif;
+        --ease: cubic-bezier(0.19, 1, 0.22, 1);
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html {
+        scroll-behavior: smooth;
+        max-width: 100%;
+        overflow-x: hidden;
+      }
+
+      body {
+        margin: 0;
+        max-width: 100%;
+        overflow-x: hidden;
+        background: var(--surface-50);
+        color: var(--surface-900);
+        font-family: var(--body);
+        font-size: 16px;
+        line-height: 1.5;
+        letter-spacing: 0;
+        -webkit-font-smoothing: antialiased;
+        text-rendering: geometricPrecision;
+      }
+
+      img {
+        display: block;
+        max-width: 100%;
+      }
+
+      a {
+        color: inherit;
+        text-decoration: none;
+      }
+
+      h1,
+      h2,
+      h3,
+      p,
+      span,
+      strong,
+      a {
+        overflow-wrap: break-word;
+      }
+
+      button,
+      a {
+        -webkit-tap-highlight-color: transparent;
+      }
+
+      .page-shell {
+        width: min(100%, 1480px);
+        max-width: 100%;
+        margin: 0 auto;
+        padding: 24px;
+        display: grid;
+        grid-template-columns: minmax(330px, 430px) minmax(0, 1fr);
+        gap: 24px;
+        background:
+          linear-gradient(rgba(34, 48, 46, 0.035) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(34, 48, 46, 0.035) 1px, transparent 1px);
+        background-size: 48px 48px;
+      }
+
+      .editorial-rail {
+        min-width: 0;
+        min-height: min(820px, calc(100dvh - 48px));
+        position: sticky;
+        top: 24px;
+        align-self: start;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        padding: 28px;
+        border: 1px solid var(--line);
+        border-radius: var(--radius);
+        background: rgba(253, 253, 251, 0.92);
+        box-shadow: var(--shadow-small);
+        backdrop-filter: blur(18px);
+      }
+
+      .brand-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 20px;
+      }
+
+      .brand-row img {
+        width: 136px;
+        height: auto;
+      }
+
+      .rail-link {
+        min-height: 44px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 10px 14px;
+        border: 1px solid var(--surface-200);
+        border-radius: 999px;
+        color: var(--surface-600);
+        font-size: 14px;
+        font-weight: 500;
+        transition: border-color 220ms var(--ease), color 220ms var(--ease), background 220ms var(--ease);
+      }
+
+      .rail-link:hover {
+        border-color: var(--primary-500);
+        color: var(--primary-700);
+        background: var(--primary-50);
+      }
+
+      .rail-copy {
+        padding: 64px 0 48px;
+      }
+
+      .context-line {
+        margin: 0 0 22px;
+        color: var(--surface-600);
+        font-size: 15px;
+        font-weight: 600;
+      }
+
+      h1,
+      h2,
+      h3,
+      p {
+        margin: 0;
+      }
+
+      h1 {
+        font-family: var(--heading);
+        font-size: 54px;
+        line-height: 1.02;
+        font-weight: 600;
+        letter-spacing: 0;
+      }
+
+      .serif-accent {
+        color: var(--primary-600);
+        font-family: var(--serif);
+        font-style: italic;
+        font-weight: 400;
+      }
+
+      .block-word {
+        display: inline-block;
+        padding: 0 10px 4px;
+        border-radius: 6px;
+        background: var(--orange);
+        color: var(--surface-25);
+        transform: rotate(-1deg);
+      }
+
+      .rail-body {
+        max-width: 34rem;
+        margin-top: 24px;
+        color: var(--surface-600);
+        font-size: 18px;
+        line-height: 1.58;
+      }
+
+      .rail-actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin-top: 30px;
+      }
+
+      .button {
+        min-height: 48px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 13px 18px;
+        border: 1px solid transparent;
+        border-radius: 999px;
+        font-weight: 600;
+        line-height: 1;
+        cursor: pointer;
+        transition: transform 180ms var(--ease), background 220ms var(--ease), border-color 220ms var(--ease), color 220ms var(--ease);
+      }
+
+      .button:active {
+        transform: scale(0.98);
+      }
+
+      .button.primary {
+        background: var(--surface-900);
+        color: var(--surface-25);
+      }
+
+      .button.primary:hover {
+        background: var(--surface-800);
+      }
+
+      .button.secondary {
+        background: transparent;
+        border-color: var(--surface-200);
+        color: var(--surface-900);
+      }
+
+      .button.secondary:hover {
+        border-color: var(--primary-500);
+        color: var(--primary-700);
+        background: var(--primary-50);
+      }
+
+      .rail-footer {
+        border-top: 1px solid var(--line);
+        padding-top: 22px;
+        display: grid;
+        gap: 16px;
+      }
+
+      .rail-proof {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+      }
+
+      .proof-pill {
+        min-height: 74px;
+        padding: 14px;
+        border: 1px solid var(--surface-200);
+        border-radius: var(--radius);
+        background: var(--surface-25);
+      }
+
+      .proof-pill strong {
+        display: block;
+        font-family: var(--heading);
+        font-size: 17px;
+        font-weight: 600;
+      }
+
+      .proof-pill span {
+        display: block;
+        margin-top: 5px;
+        color: var(--surface-600);
+        font-size: 13px;
+        line-height: 1.35;
+      }
+
+      .rail-note {
+        color: var(--surface-600);
+        font-size: 14px;
+        line-height: 1.45;
+      }
+
+      .content-stack {
+        display: grid;
+        gap: 24px;
+        min-width: 0;
+      }
+
+      .proof-wall {
+        display: grid;
+        grid-template-columns: repeat(12, 1fr);
+        grid-auto-rows: 112px;
+        gap: 14px;
+        min-height: min(820px, calc(100dvh - 48px));
+        align-items: stretch;
+      }
+
+      .card {
+        position: relative;
+        min-width: 0;
+        overflow: hidden;
+        border: 1px solid var(--line);
+        border-radius: var(--radius);
+        background: var(--surface-25);
+        box-shadow: var(--shadow-small);
+      }
+
+      .case-main {
+        grid-column: span 7;
+        grid-row: span 4;
+        min-height: 0;
+        display: flex;
+        flex-direction: column;
+      }
+
+      .case-main .media {
+        flex: 1;
+        min-height: 0;
+        border-bottom: 1px solid var(--line);
+        background: var(--surface-150);
+      }
+
+      .media img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+
+      .case-main .case-copy {
+        padding: 22px;
+        display: grid;
+        gap: 14px;
+      }
+
+      .label {
+        color: var(--surface-500);
+        font-size: 13px;
+        font-weight: 600;
+      }
+
+      .case-main h2 {
+        max-width: 650px;
+        font-family: var(--heading);
+        font-size: 34px;
+        line-height: 1.08;
+        font-weight: 600;
+      }
+
+      .case-main p {
+        max-width: 600px;
+        color: var(--surface-600);
+        font-size: 17px;
+        line-height: 1.55;
+      }
+
+      .case-side {
+        grid-column: span 5;
+        grid-row: span 2;
+        min-height: 0;
+        display: grid;
+        grid-template-rows: minmax(0, 1fr) auto;
+      }
+
+      .case-side .media {
+        min-height: 0;
+        background: var(--surface-150);
+        border-bottom: 1px solid var(--line);
+      }
+
+      .case-side .case-copy,
+      .case-small .case-copy {
+        padding: 16px;
+      }
+
+      .case-side h3,
+      .case-small h3,
+      .video-slot h3,
+      .proof-strip h3,
+      .engine-card h3,
+      .quote-panel h3,
+      .closing-panel h2 {
+        font-family: var(--heading);
+        font-weight: 600;
+        line-height: 1.12;
+      }
+
+      .case-side h3 {
+        font-size: 22px;
+      }
+
+      .case-side p,
+      .case-small p,
+      .proof-strip p,
+      .engine-card p,
+      .quote-panel p,
+      .closing-panel p {
+        margin-top: 8px;
+        color: var(--surface-600);
+      }
+
+      .video-slot {
+        grid-column: span 5;
+        grid-row: span 2;
+        min-height: 0;
+        padding: 20px;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        background: var(--surface-950);
+        color: var(--surface-25);
+      }
+
+      .video-slot::before {
+        content: "";
+        position: absolute;
+        inset: 18px;
+        border: 1px solid rgba(253, 253, 251, 0.18);
+        border-radius: 6px;
+        pointer-events: none;
+      }
+
+      .video-top {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 18px;
+        position: relative;
+        z-index: 1;
+      }
+
+      .video-slot .label {
+        color: rgba(253, 253, 251, 0.68);
+      }
+
+      .play-mark {
+        width: 58px;
+        height: 58px;
+        border: 1px solid rgba(253, 253, 251, 0.38);
+        border-radius: 50%;
+        display: grid;
+        place-items: center;
+        color: var(--surface-25);
+        font-size: 24px;
+        line-height: 1;
+      }
+
+      .video-slot h3 {
+        position: relative;
+        z-index: 1;
+        max-width: 360px;
+        font-size: 26px;
+      }
+
+      .video-slot p {
+        position: relative;
+        z-index: 1;
+        color: rgba(253, 253, 251, 0.72);
+        max-width: 380px;
+      }
+
+      .proof-strip {
+        grid-column: span 12;
+        grid-row: span 2;
+        min-height: 0;
+        padding: 20px;
+        display: grid;
+        grid-template-columns: 1.25fr 1fr;
+        gap: 20px;
+        align-items: center;
+      }
+
+      .logo-rack {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 10px;
+      }
+
+      .logo-cell {
+        min-height: 72px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 12px;
+        border: 1px solid var(--surface-200);
+        border-radius: var(--radius);
+        background: var(--surface-75);
+      }
+
+      .logo-cell img {
+        max-height: 34px;
+        width: auto;
+        object-fit: contain;
+      }
+
+      .logo-cell.badge img {
+        max-height: 42px;
+      }
+
+      .section-panel {
+        min-width: 0;
+        padding: 42px;
+        border: 1px solid var(--line);
+        border-radius: var(--radius);
+        background: rgba(253, 253, 251, 0.93);
+        box-shadow: var(--shadow-small);
+      }
+
+      .section-heading {
+        display: grid;
+        grid-template-columns: minmax(0, 0.95fr) minmax(260px, 0.6fr);
+        gap: 32px;
+        align-items: end;
+        margin-bottom: 24px;
+      }
+
+      .section-heading h2 {
+        font-family: var(--heading);
+        font-size: 44px;
+        line-height: 1.03;
+        font-weight: 600;
+      }
+
+      .section-heading p {
+        color: var(--surface-600);
+        font-size: 17px;
+        line-height: 1.55;
+      }
+
+      .engine-grid {
+        display: grid;
+        grid-template-columns: 1.1fr 0.9fr;
+        grid-template-areas:
+          "build grow"
+          "build proof";
+        gap: 14px;
+      }
+
+      .engine-card {
+        min-height: 300px;
+        padding: 22px;
+        border: 1px solid var(--line);
+        border-radius: var(--radius);
+        background: var(--surface-25);
+        overflow: hidden;
+      }
+
+      .engine-card.build {
+        grid-area: build;
+      }
+
+      .engine-card.grow {
+        grid-area: grow;
+      }
+
+      .engine-card.proof {
+        grid-area: proof;
+        background: var(--surface-900);
+        color: var(--surface-25);
+      }
+
+      .engine-card.proof p,
+      .engine-card.proof .label {
+        color: rgba(253, 253, 251, 0.72);
+      }
+
+      .engine-card h3 {
+        margin-top: 18px;
+        font-size: 28px;
+      }
+
+      .engine-media {
+        aspect-ratio: 16 / 9;
+        border: 1px solid var(--surface-200);
+        border-radius: var(--radius);
+        background: var(--surface-150);
+        overflow: hidden;
+      }
+
+      .engine-card.proof .engine-media {
+        border-color: rgba(253, 253, 251, 0.18);
+        background: rgba(253, 253, 251, 0.08);
+      }
+
+      .engine-media img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+
+      .handoff-list {
+        display: grid;
+        gap: 10px;
+        margin-top: 18px;
+      }
+
+      .handoff-item {
+        display: flex;
+        justify-content: space-between;
+        gap: 12px;
+        padding: 12px 0;
+        border-top: 1px solid rgba(253, 253, 251, 0.16);
+        color: var(--surface-25);
+        font-size: 15px;
+      }
+
+      .handoff-item span:last-child {
+        color: rgba(253, 253, 251, 0.64);
+      }
+
+      .quote-panel {
+        display: grid;
+        grid-template-columns: 0.78fr 1fr;
+        gap: 24px;
+        align-items: stretch;
+        padding: 0;
+        overflow: hidden;
+      }
+
+      .quote-media {
+        min-height: 360px;
+        background: var(--surface-150);
+      }
+
+      .quote-media img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+
+      .quote-copy {
+        padding: 34px 34px 34px 8px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+      }
+
+      .quote-mark {
+        color: var(--primary-600);
+        font-family: var(--serif);
+        font-size: 68px;
+        line-height: 0.8;
+      }
+
+      .quote-panel h3 {
+        margin-top: 12px;
+        font-size: 34px;
+        max-width: 680px;
+      }
+
+      .quote-panel p {
+        max-width: 560px;
+        font-size: 17px;
+        line-height: 1.55;
+      }
+
+      .closing-panel {
+        min-width: 0;
+        min-height: 430px;
+        display: grid;
+        grid-template-columns: 1fr 0.85fr;
+        gap: 28px;
+        align-items: center;
+        padding: 42px;
+        border-radius: var(--radius);
+        background:
+          linear-gradient(rgba(253, 253, 251, 0.055) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(253, 253, 251, 0.055) 1px, transparent 1px),
+          var(--surface-950);
+        background-size: 42px 42px;
+        color: var(--surface-25);
+      }
+
+      .closing-panel h2 {
+        max-width: 760px;
+        font-size: 48px;
+      }
+
+      .closing-panel p {
+        max-width: 560px;
+        color: rgba(253, 253, 251, 0.72);
+        font-size: 18px;
+        line-height: 1.55;
+      }
+
+      .closing-actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin-top: 28px;
+      }
+
+      .closing-panel .button.primary {
+        background: var(--surface-25);
+        color: var(--surface-950);
+      }
+
+      .closing-panel .button.secondary {
+        border-color: rgba(253, 253, 251, 0.2);
+        color: var(--surface-25);
+      }
+
+      .closing-panel .button.secondary:hover {
+        background: rgba(253, 253, 251, 0.08);
+        border-color: rgba(253, 253, 251, 0.36);
+        color: var(--surface-25);
+      }
+
+      .closing-board {
+        border: 1px solid rgba(253, 253, 251, 0.2);
+        border-radius: var(--radius);
+        background: rgba(253, 253, 251, 0.08);
+        overflow: hidden;
+      }
+
+      .board-row {
+        display: grid;
+        grid-template-columns: 0.78fr 1fr;
+        gap: 12px;
+        padding: 14px 16px;
+        border-top: 1px solid rgba(253, 253, 251, 0.14);
+        color: rgba(253, 253, 251, 0.8);
+        font-size: 14px;
+      }
+
+      .board-row:first-child {
+        border-top: 0;
+      }
+
+      .board-row strong {
+        color: var(--surface-25);
+        font-weight: 600;
+      }
+
+      :focus-visible {
+        outline: 2px solid var(--primary-500);
+        outline-offset: 3px;
+      }
+
+      @media (max-width: 1180px) {
+        .page-shell {
+          grid-template-columns: 360px minmax(0, 1fr);
+          padding: 18px;
+          gap: 18px;
+        }
+
+        .editorial-rail {
+          min-height: min(820px, calc(100dvh - 36px));
+          top: 18px;
+          padding: 24px;
+        }
+
+        h1 {
+          font-size: 46px;
+        }
+
+        .case-main {
+          grid-column: span 12;
+          min-height: 520px;
+        }
+
+        .case-side,
+        .video-slot {
+          grid-column: span 6;
+        }
+
+        .proof-strip,
+        .section-heading,
+        .closing-panel {
+          grid-template-columns: 1fr;
+        }
+
+        .closing-board {
+          max-width: 620px;
+        }
+      }
+
+      @media (max-width: 900px) {
+        .page-shell {
+          display: block;
+          padding: 14px;
+        }
+
+        .editorial-rail {
+          position: relative;
+          top: auto;
+          min-height: auto;
+          padding: 20px;
+          margin-bottom: 14px;
+        }
+
+        .rail-copy {
+          padding: 44px 0 32px;
+        }
+
+        h1 {
+          font-size: 40px;
+        }
+
+        .rail-body {
+          font-size: 17px;
+        }
+
+        .content-stack {
+          gap: 14px;
+        }
+
+        .proof-wall {
+          min-height: auto;
+          gap: 12px;
+          grid-auto-rows: auto;
+        }
+
+        .case-main,
+        .case-side,
+        .video-slot,
+        .proof-strip {
+          grid-column: span 12;
+          grid-row: auto;
+        }
+
+        .case-main {
+          min-height: auto;
+        }
+
+        .case-main .media {
+          min-height: 290px;
+        }
+
+        .case-side {
+          min-height: auto;
+        }
+
+        .proof-strip {
+          grid-template-columns: 1fr;
+        }
+
+        .section-panel,
+        .closing-panel {
+          padding: 26px;
+        }
+
+        .section-heading {
+          grid-template-columns: 1fr;
+          gap: 16px;
+        }
+
+        .section-heading h2,
+        .closing-panel h2 {
+          font-size: 36px;
+        }
+
+        .engine-grid {
+          grid-template-columns: 1fr;
+          grid-template-areas:
+            "build"
+            "grow"
+            "proof";
+        }
+
+        .quote-panel {
+          grid-template-columns: 1fr;
+        }
+
+        .quote-copy {
+          padding: 26px;
+        }
+
+        .quote-media {
+          min-height: 260px;
+        }
+      }
+
+      @media (max-width: 520px) {
+        .page-shell {
+          background-size: 36px 36px;
+          padding: 10px;
+        }
+
+        .brand-row {
+          align-items: flex-start;
+          justify-content: flex-start;
+        }
+
+        .brand-row img {
+          width: 124px;
+        }
+
+        .rail-link {
+          display: none;
+        }
+
+        h1 {
+          font-size: 37px;
+        }
+
+        .rail-actions,
+        .closing-actions {
+          display: grid;
+        }
+
+        .button {
+          width: 100%;
+        }
+
+        .rail-proof {
+          grid-template-columns: 1fr;
+        }
+
+        .case-main h2 {
+          font-size: 29px;
+        }
+
+        .case-main .media {
+          min-height: 240px;
+        }
+
+        .case-side .media {
+          min-height: 170px;
+        }
+
+        .logo-rack {
+          grid-template-columns: 1fr;
+        }
+
+        .section-heading h2,
+        .closing-panel h2 {
+          font-size: 32px;
+        }
+
+        .engine-card h3,
+        .video-slot h3 {
+          font-size: 24px;
+        }
+
+        .quote-panel h3 {
+          font-size: 29px;
+        }
+
+        .board-row {
+          grid-template-columns: 1fr;
+          gap: 4px;
+        }
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        *,
+        *::before,
+        *::after {
+          scroll-behavior: auto !important;
+          transition-duration: 0.01ms !important;
+          animation-duration: 0.01ms !important;
+          animation-iteration-count: 1 !important;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main class="page-shell">
+      <aside class="editorial-rail" aria-label="LoudFace offer">
+        <div>
+          <div class="brand-row">
+            <img src="../../../public/images/loudface.svg" alt="LoudFace" />
+            <a class="rail-link" href="#work-wall">See the wall</a>
+          </div>
+
+          <div class="rail-copy">
+            <p class="context-line">B2B SaaS creative and growth agency</p>
+            <h1>
+              A calmer way to make your SaaS site
+              <span class="serif-accent">credible</span>
+              and <span class="block-word">loud</span>.
+            </h1>
+            <p class="rail-body">
+              LoudFace builds the website, the offer, and the campaign surfaces around one job:
+              give buyers enough proof to believe the company before they ever talk to sales.
+            </p>
+            <div class="rail-actions" aria-label="Primary actions">
+              <a class="button primary" href="https://loudface.com/contact">Book a strategy call</a>
+              <a class="button secondary" href="#build-grow">Build and grow</a>
+            </div>
+          </div>
+        </div>
+
+        <div class="rail-footer">
+          <div class="rail-proof">
+            <div class="proof-pill">
+              <strong>Build</strong>
+              <span>Websites, landing pages, CMS systems, launch rooms.</span>
+            </div>
+            <div class="proof-pill">
+              <strong>Grow</strong>
+              <span>Offer tests, content, paid surfaces, email paths.</span>
+            </div>
+          </div>
+          <p class="rail-note">
+            This concept keeps the offer still while the work moves. The right side becomes the proof
+            wall a SaaS buyer would actually scan.
+          </p>
+        </div>
+      </aside>
+
+      <div class="content-stack">
+        <section id="work-wall" class="proof-wall" aria-label="Case study proof wall">
+          <article class="card case-main">
+            <div class="media">
+              <img src="../../../public/images/webflow-experts_1.webp" alt="Webflow system surface with connected strategy and performance blocks" />
+            </div>
+            <div class="case-copy">
+              <p class="label">Case study wall</p>
+              <h2>Make the hero object the work, not another split card.</h2>
+              <p>
+                The first screen behaves like a studio wall: website systems, campaign surfaces,
+                proofs, and media slots pinned together so the agency feels busy in the right way.
+              </p>
+            </div>
+          </article>
+
+          <article class="card case-side">
+            <div class="media">
+              <img src="../../../public/images/brandfirm.webp" alt="Brandfirm Webflow system diagram with connected interface blocks" />
+            </div>
+            <div class="case-copy">
+              <p class="label">Work surface</p>
+              <h3>Website systems that carry the sales story.</h3>
+            </div>
+          </article>
+
+          <article class="card video-slot">
+            <div class="video-top">
+              <p class="label">Video slot</p>
+              <div class="play-mark" aria-hidden="true">&gt;</div>
+            </div>
+            <div>
+              <h3>Film a two-minute teardown from the team workroom.</h3>
+              <p>Suggested footage: strategist at a wall of SaaS pages, designer annotating a flow, client result clip.</p>
+            </div>
+          </article>
+
+          <article class="card case-side">
+            <div class="media">
+              <img src="../../../public/images/conversion-optimization_1.webp" alt="Conversion page wireframe with revised content blocks" />
+            </div>
+            <div class="case-copy">
+              <p class="label">Conversion</p>
+              <h3>Landing pages built from buyer objections.</h3>
+            </div>
+          </article>
+
+          <article class="card proof-strip">
+            <div>
+              <p class="label">Client proof</p>
+              <h3>Trusted signals sit near the work, where they earn attention.</h3>
+              <p>Partner marks and review proof are treated as evidence in the wall, not a detached logo strip.</p>
+            </div>
+            <div class="logo-rack" aria-label="Proof logos">
+              <div class="logo-cell badge">
+                <img src="../../../public/images/Enterprise-Blue-Badge.webp" alt="Webflow Premium Partner Enterprise badge" />
+              </div>
+              <div class="logo-cell">
+                <img src="../../../public/images/Awwwards.svg" alt="Awwwards" />
+              </div>
+              <div class="logo-cell">
+                <img src="../../../public/images/Trustpilot.svg" alt="Trustpilot" />
+              </div>
+            </div>
+          </article>
+        </section>
+
+        <section id="build-grow" class="section-panel" aria-label="Build and grow system">
+          <div class="section-heading">
+            <h2>One team runs the <span class="serif-accent">build</span> and the growth room.</h2>
+            <p>
+              The bento is not a feature row. It is a workbench: what gets built, what gets tested,
+              and what gets handed back to the client.
+            </p>
+          </div>
+
+          <div class="engine-grid">
+            <article class="engine-card build">
+              <div class="engine-media">
+                <img src="../../../public/images/email-marketing_1.webp" alt="Email marketing workflow surface with campaign nodes" />
+              </div>
+              <p class="label">Build engine</p>
+              <h3>Launch the site with pages buyers can use.</h3>
+              <p>
+                Messaging, Webflow execution, CMS structure, and launch QA sit in one operating rhythm.
+              </p>
+            </article>
+
+            <article class="engine-card grow">
+              <div class="engine-media">
+                <img src="../../../public/images/profitable-ads_1.webp" alt="Paid acquisition map with campaign path nodes" />
+              </div>
+              <p class="label">Growth engine</p>
+              <h3>Turn campaign work into sharper pages.</h3>
+              <p>
+                Search, ads, email, and offer tests feed back into the site instead of living in a separate deck.
+              </p>
+            </article>
+
+            <article class="engine-card proof">
+              <p class="label">Client handoff</p>
+              <h3>What the room sends back.</h3>
+              <div class="handoff-list">
+                <div class="handoff-item"><span>Live Webflow build</span><span>ready to ship</span></div>
+                <div class="handoff-item"><span>Campaign surface map</span><span>ready to test</span></div>
+                <div class="handoff-item"><span>Content system</span><span>ready to run</span></div>
+              </div>
+            </article>
+          </div>
+        </section>
+
+        <section class="card quote-panel" aria-label="Client proof section">
+          <div class="quote-media">
+            <img src="../../../public/images/our-journey_1.webp" alt="Remote agency workroom with laptop call and plant" />
+          </div>
+          <div class="quote-copy">
+            <div class="quote-mark" aria-hidden="true">&ldquo;</div>
+            <p class="label">Testimonial slot</p>
+            <h3>Use a real client voice here, filmed or written, with the work surface visible beside it.</h3>
+            <p>
+              This section keeps the familiar testimonial pattern but gives it a tangible room: the client
+              story belongs next to the work that produced it.
+            </p>
+          </div>
+        </section>
+
+        <section class="closing-panel" aria-label="Closing call to action">
+          <div>
+            <p class="label">Start with the proof wall</p>
+            <h2>Bring the messy parts of growth into one calm room.</h2>
+            <p>
+              The homepage asks buyers to scan the evidence first, then book the call once the agency
+              feels specific enough to trust.
+            </p>
+            <div class="closing-actions">
+              <a class="button primary" href="https://loudface.com/contact">Book a strategy call</a>
+              <a class="button secondary" href="#work-wall">Back to work wall</a>
+            </div>
+          </div>
+
+          <div class="closing-board" aria-label="Workroom board">
+            <div class="board-row"><strong>Offer</strong><span>Clarify the buyer promise and proof points.</span></div>
+            <div class="board-row"><strong>Site</strong><span>Build pages, CMS, and conversion paths.</span></div>
+            <div class="board-row"><strong>Demand</strong><span>Run the surfaces that send better traffic back.</span></div>
+            <div class="board-row"><strong>Review</strong><span>Keep the room open after launch.</span></div>
+          </div>
+        </section>
+      </div>
+    </main>
+  </body>
+</html>

@@ -1,0 +1,1516 @@
+{
+  "total_posts": 94,
+  "skipped_redirect_count": 16,
+  "skipped_redirect": [
+    "aeo-for-webflow-how-to-make-your-site-discoverable-by-ai-search-engines",
+    "aeo-strategies-that-work",
+    "ai-first-content-architecture",
+    "how-ai-webflow-systems-reduce-development-costs-for-scaling-teams",
+    "how-to-choose-the-right-webflow-agency-for-your-brand",
+    "how-to-future-proof-your-webflow-website-for-search-and-ai-agents",
+    "is-webflow-good-for-ecommerce-the-honest-2026-review-features-costs-alternatives",
+    "the-future-of-webflow-ai-assisted-design-development-and-optimization",
+    "the-problem-with-traditional-webflow-agencies",
+    "top-webflow-agency",
+    "understanding-webflow-pricing",
+    "webflow-website-design",
+    "webflow-zapier-integration",
+    "webflows-new-brand-overhaul-and-platform-updates",
+    "why-are-startups-switching-to-webflow",
+    "why-choose-loudface-webflow-agency"
+  ],
+  "affected_post_count": 55,
+  "total_em_dashes": 221,
+  "affected": [
+    {
+      "slug": "share-of-answer-audit-90-minutes",
+      "_id": "099633fb-5731-40c8-94c0-5bf32fa7f2c3",
+      "_rev": "IiAJyG0U3TUo0O3OCyOQPi",
+      "hits": [
+        {
+          "field": "content",
+          "position": 740,
+          "snippet": ", Perplexity, and Gemini answer category-relevant questions — the AI equivalent of share of voice for organic search.</p"
+        }
+      ]
+    },
+    {
+      "slug": "answer-engine-optimization-guide-2026",
+      "_id": "32d87708-ad43-4d72-8e91-2598dfbdf4fe",
+      "_rev": "BOAIKFRWNleR9aRm6VtBcu",
+      "hits": [
+        {
+          "field": "content",
+          "position": 535,
+          "snippet": " across 75 buyer prompts on ChatGPT, Claude, and Perplexity — the brands cited are the ones doing all three.</p>\n\n<p>The"
+        },
+        {
+          "field": "content",
+          "position": 2913,
+          "snippet": "xtract cleanly. Source type, share, example domains, action — all in one table.</li>\n<li><strong>Real client outcomes wi"
+        },
+        {
+          "field": "content",
+          "position": 7632,
+          "snippet": "rganic click-through on informational queries drops further — <a href=\"https://ahrefs.com/blog/ai-overviews-reduce-click"
+        },
+        {
+          "field": "content",
+          "position": 12526,
+          "snippet": "views, Perplexity, Claude, Gemini. Weight by your buyer mix — a US SMB program weights ChatGPT and Google heavily, an en"
+        },
+        {
+          "field": "content",
+          "position": 17091,
+          "snippet": "ries in the last twelve months. The patterns keep repeating — enough that I stopped being surprised by them.</p>\n\n<h3>Ru"
+        },
+        {
+          "field": "content",
+          "position": 17781,
+          "snippet": "p>Perplexity and ChatGPT browse mode heavily weight recency — a post dated March 2026 beats a post dated 2023 on the sam"
+        },
+        {
+          "field": "content",
+          "position": 18670,
+          "snippet": "uthor is <code>Person</code>, not <code>Organization</code> — personal bylines outperform corporate bylines in every E-E"
+        },
+        {
+          "field": "content",
+          "position": 26416,
+          "snippet": "ng cited twice as often, check their backlink profile first — odds are they are in three or four listicles you are not.<"
+        },
+        {
+          "field": "content",
+          "position": 31923,
+          "snippet": "intain an open-source curated list of AEO and GEO resources — tools, research papers, agencies, schemas, and tutorials —"
+        },
+        {
+          "field": "content",
+          "position": 31982,
+          "snippet": " — tools, research papers, agencies, schemas, and tutorials — at <a href=\"https://arnelbukva.github.io/awesome-answer-en"
+        }
+      ]
+    },
+    {
+      "slug": "aeo-agency-pricing-b2b-saas-2026",
+      "_id": "blogPost-aeo-agency-pricing-b2b-saas-2026",
+      "_rev": "BOAIKFRWNleR9aRm6Vvt2K",
+      "hits": [
+        {
+          "field": "faq[1].answer",
+          "position": 85,
+          "snippet": "rs using ChatGPT, Perplexity, or Google AIO during research — yes. If you're a Series A with $1M-$5M ARR and ~$3K-$5K pa"
+        }
+      ]
+    },
+    {
+      "slug": "best-aeo-agencies-b2b-saas-2026",
+      "_id": "blogPost-best-aeo-agencies-b2b-saas-2026",
+      "_rev": "7ONx74QMiI10eazwuvlblF",
+      "hits": [
+        {
+          "field": "content",
+          "position": 2671,
+          "snippet": "efore-and-after numbers we could verify from public sources — Share of Answer, organic traffic, branded search, pipeline"
+        },
+        {
+          "field": "content",
+          "position": 6908,
+          "snippet": "n of LoudFace vs Skale vs Omniscient vs First Page Sage</a> — covers founder profiles, methodology distinctions, and pri"
+        },
+        {
+          "field": "content",
+          "position": 15164,
+          "snippet": "ine is. Run the baseline yourself before you take the calls — it changes which agency makes sense.</p>\n\n<p><strong>Where"
+        },
+        {
+          "field": "content",
+          "position": 17102,
+          "snippet": "rong> This is a living listicle. Refresh cadence is 60 days — next update due late June 2026. Rankings move with live sh"
+        },
+        {
+          "field": "excerpt",
+          "position": 93,
+          "snippet": "encies actually moving share of answer for B2B SaaS in 2026 — pricing, fit criteria, and honest limitations for each."
+        }
+      ]
+    },
+    {
+      "slug": "best-b2b-saas-content-seo-agencies-2026",
+      "_id": "blogPost-best-b2b-saas-content-seo-agencies-2026",
+      "_rev": "DJ1Y76QLqJX8nukZ8QJUgu",
+      "hits": [
+        {
+          "field": "content",
+          "position": 4312,
+          "snippet": "swer. For specific retainer ranges across the agencies here — and the AEO add-ons that change the math — see our <a href"
+        },
+        {
+          "field": "content",
+          "position": 4355,
+          "snippet": "he agencies here — and the AEO add-ons that change the math — see our <a href=\"/blog/aeo-agency-pricing-b2b-saas-2026\">2"
+        }
+      ]
+    },
+    {
+      "slug": "best-b2b-saas-seo-agencies",
+      "_id": "blogPost-best-b2b-saas-seo-agencies",
+      "_rev": "7ONx74QMiI10eazwuvlaZr",
+      "hits": [
+        {
+          "field": "content",
+          "position": 3457,
+          "snippet": " follows.</p>\n\n<p><strong>Last updated: April 2026</strong> — refreshed quarterly as AEO, SEO, and AI citation patterns "
+        },
+        {
+          "field": "content",
+          "position": 3757,
+          "snippet": "son of LoudFace, Skale, Omniscient, and First Page Sage</a> — founder profiles, methodology differences, pricing transpa"
+        },
+        {
+          "field": "content",
+          "position": 6297,
+          "snippet": "hare of your buyers actually form a shortlist. The AEO work — structured data, entity disambiguation, schema, first-part"
+        },
+        {
+          "field": "content",
+          "position": 6394,
+          "snippet": "ion, schema, first-party data that models can't hallucinate — is different enough from classic SEO that most agencies ar"
+        },
+        {
+          "field": "content",
+          "position": 8600,
+          "snippet": "5+ best B2B SaaS SEO agencies in 2026</h2>\n\n<h3>1. LoudFace — integrated SEO, Webflow/Next.js, and AEO under one team</h"
+        },
+        {
+          "field": "content",
+          "position": 9491,
+          "snippet": "d end to end:</strong></p>\n<ul>\n<li><strong>CodeOp</strong> — +49% organic traffic in 4 months, +53% impressions, +26% a"
+        },
+        {
+          "field": "content",
+          "position": 9679,
+          "snippet": "es/codeop\">Read it</a>.</li>\n<li><strong>Zeiierman</strong> — +43% organic, +46% CTR. <a href=\"https://www.loudface.co/c"
+        },
+        {
+          "field": "content",
+          "position": 9821,
+          "snippet": ">Read it</a>.</li>\n<li><strong>Outbound Specialist</strong> — $200K in launch-month revenue from the marketing site. <a "
+        },
+        {
+          "field": "content",
+          "position": 16460,
+          "snippet": "t that number. If pricing comparability is a sticking point — common when AEO sits inside the same retainer — see our <a"
+        },
+        {
+          "field": "content",
+          "position": 16508,
+          "snippet": "cking point — common when AEO sits inside the same retainer — see our <a href=\"/blog/aeo-agency-pricing-b2b-saas-2026\">2"
+        },
+        {
+          "field": "content",
+          "position": 20056,
+          "snippet": "t because LoudFace handles the marketing site.\"</em></p>\n<p>— Shin Kim, CEO, Eraser</p>\n\n<p><em>\"LoudFace stood out with"
+        },
+        {
+          "field": "content",
+          "position": 20230,
+          "snippet": ". We felt like a partner rather than a client.\"</em></p>\n<p>— Elizabete, Product Marketer, Reiterate</p>\n\n<h2>Pick an ag"
+        },
+        {
+          "field": "faq[7].answer",
+          "position": 247,
+          "snippet": "st execution partner. Avoid Animalz and Siege at this stage — the per-piece economics don't pencil out yet."
+        },
+        {
+          "field": "faq[9].answer",
+          "position": 40,
+          "snippet": "Yes if they ship AEO work alongside SEO — structured data, entity disambiguation, first-party datase"
+        }
+      ]
+    },
+    {
+      "slug": "how-long-do-ai-citations-take",
+      "_id": "blogPost-how-long-do-ai-citations-take",
+      "_rev": "4ghLmxsuhT9JgXjKVMKSqU",
+      "hits": [
+        {
+          "field": "content",
+          "position": 6576,
+          "snippet": "<li><strong>A citation on a topical question, fast</strong> — that is speed 1. One sharp page, structured correctly, on "
+        },
+        {
+          "field": "content",
+          "position": 6764,
+          "snippet": "liable citations in your category's prompt cluster</strong> — that is speed 2. Several months of weekly publishing stron"
+        },
+        {
+          "field": "content",
+          "position": 6981,
+          "snippet": "r asks an AI for a recommendation in your category</strong> — that is speed 3. 6-12 months of foundation plus citation w"
+        },
+        {
+          "field": "excerpt",
+          "position": 44,
+          "snippet": "AI citations move at three different speeds — and most agencies sell you the fast one while billing for "
+        }
+      ]
+    },
+    {
+      "slug": "schema-markup-for-aeo-2026",
+      "_id": "blogPost-schema-markup-for-aeo-2026",
+      "_rev": "7ONx74QMiI10eazwuvkg8l",
+      "hits": [
+        {
+          "field": "content",
+          "position": 13948,
+          "snippet": ". To test: View Source on the live URL (not Inspect Element — View Source). Search for <code>application/ld+json</code>."
+        },
+        {
+          "field": "excerpt",
+          "position": 54,
+          "snippet": "Generic schema posts say 'add schema and you'll rank' — that's wrong. Schema only drives AEO citations when it mat"
+        },
+        {
+          "field": "faq[4].answer",
+          "position": 4,
+          "snippet": "Yes — JSON-LD is the canonical format for AI engine schema parsi"
+        },
+        {
+          "field": "faq[6].answer",
+          "position": 153,
+          "snippet": "n the open web (LinkedIn, Crunchbase, industry directories) — schema declares identity but cross-references verify it, ("
+        },
+        {
+          "field": "faq[6].answer",
+          "position": 282,
+          "snippet": "ntent is generic with no first-party data or sharp opinions — schema makes content extractable but can't manufacture cit"
+        }
+      ]
+    },
+    {
+      "slug": "webflow-agency-cost-b2b-saas-2026",
+      "_id": "blogPost-webflow-agency-cost-b2b-saas-2026",
+      "_rev": "BOAIKFRWNleR9aRm6Vw36E",
+      "hits": [
+        {
+          "field": "faq[3].answer",
+          "position": 93,
+          "snippet": "es won't show. First: the in-house time managing the agency — typically 0.5–1.0 FTE of marketer or PM bandwidth, which a"
+        }
+      ]
+    },
+    {
+      "slug": "webflow-vs-framer-for-b2b-saas-2026",
+      "_id": "blogPost-webflow-vs-framer-for-b2b-saas-2026",
+      "_rev": "BOAIKFRWNleR9aRm6Vvuso",
+      "hits": [
+        {
+          "field": "content",
+          "position": 4904,
+          "snippet": "ng here, go build.</p>\n\n<h2>Where Webflow wins for B2B SaaS — and it's not close</h2>\n\n<p>For B2B SaaS marketing sites a"
+        },
+        {
+          "field": "content",
+          "position": 6270,
+          "snippet": "aren't. The format matters less than the extraction pattern — and Webflow's CMS gives you the surface area to engineer t"
+        },
+        {
+          "field": "content",
+          "position": 8620,
+          "snippet": "ramer. If you got two of each, the tiebreaker is question 2 — because for a B2B SaaS company in 2026, the site that does"
+        },
+        {
+          "field": "content",
+          "position": 11306,
+          "snippet": "ters. If you're already cited, the migration ROI is smaller — Webflow's strengths matter less when you're already winnin"
+        },
+        {
+          "field": "content",
+          "position": 11645,
+          "snippet": "end up with a Webflow site that performs like a Framer site — and you'll have paid for the migration twice.</li>\n</ul>\n\n"
+        },
+        {
+          "field": "content",
+          "position": 12530,
+          "snippet": "ens up custom domains at scale, SLAs, and advanced security — which matters for fintech, healthcare, and regulated categ"
+        },
+        {
+          "field": "faq[6].answer",
+          "position": 432,
+          "snippet": "tent scale) or Webflow to do Framer's job (motion-as-brand) — that's where teams burn budget."
+        }
+      ]
+    },
+    {
+      "slug": "wedge-strategy-b2b-saas",
+      "_id": "blogPost-wedge-strategy-b2b-saas",
+      "_rev": "MX8ZVHSGJki14Hclm3cC27",
+      "hits": [
+        {
+          "field": "metaDescription",
+          "position": 100,
+          "snippet": "ead term. Find a wedge category nobody owns and dominate it — here's how Toku hit 86% AI visibility by design."
+        }
+      ]
+    },
+    {
+      "slug": "best-aeo-tools-for-b2b-saas-2026",
+      "_id": "drafts.blogPost-best-aeo-tools-for-b2b-saas-2026",
+      "_rev": "weFjAg3F0H46n8pjNFcM3K",
+      "hits": [
+        {
+          "field": "content",
+          "position": 678,
+          "snippet": "ograms for B2B SaaS</a>. We're tool-users, not tool-sellers — we evaluate this stuff every quarter and drop what doesn't"
+        },
+        {
+          "field": "content",
+          "position": 5898,
+          "snippet": "></p>\n<ul>\n<li>Cheapest serious entry point in the category — $29/mo gets you 15 prompts across ChatGPT, Google AI Overv"
+        },
+        {
+          "field": "content",
+          "position": 6342,
+          "snippet": "mpts on Lite is genuinely tight for a real B2B SaaS program — most teams will need Standard ($189/mo) within a quarter</"
+        },
+        {
+          "field": "content",
+          "position": 9051,
+          "snippet": "p>\n<ul>\n<li>Pricing genuinely starts at $20/mo (Essentials) — lowest entry in the category</li>\n<li>Content-gap framing "
+        },
+        {
+          "field": "content",
+          "position": 10525,
+          "snippet": "eat with appropriate skepticism.</li>\n<li>No public pricing — enterprise-only conversation</li>\n</ul>\n\n<p><strong>Best f"
+        },
+        {
+          "field": "content",
+          "position": 12650,
+          "snippet": "had become the AI's go-to answer for stablecoin payroll</a> — and which adjacent prompts to attack next to compound that"
+        },
+        {
+          "field": "excerpt",
+          "position": 63,
+          "snippet": "honest ranking of the AEO tools we actually use at LoudFace — Peec, Otterly, AthenaHQ, Profound, Rankscale, BrandRank — "
+        },
+        {
+          "field": "excerpt",
+          "position": 121,
+          "snippet": "e — Peec, Otterly, AthenaHQ, Profound, Rankscale, BrandRank — with verified pricing and tradeoffs."
+        }
+      ]
+    },
+    {
+      "slug": "add-html-tables-in-webflow-cms",
+      "_id": "imported-blogPost-67be8ca97ac167e93ab3f7fa",
+      "_rev": "IiAJyG0U3TUo0O3OCyORNN",
+      "hits": [
+        {
+          "field": "content",
+          "position": 6299,
+          "snippet": "ide an HTML Embed element in Webflow. For Airtable: similar — share the table view via a public link and embed via ifram"
+        },
+        {
+          "field": "excerpt",
+          "position": 99,
+          "snippet": "pport tables natively. Here are the three honest approaches — native grid, raw HTML, third-party embed — and how to pick"
+        },
+        {
+          "field": "excerpt",
+          "position": 142,
+          "snippet": "onest approaches — native grid, raw HTML, third-party embed — and how to pick by where the data lives."
+        },
+        {
+          "field": "faq[1].answer",
+          "position": 382,
+          "snippet": "ve collapse on mobile. Skip HTML Embed for marketing tables — you'll lose styling control and end up rebuilding anyway.<"
+        }
+      ]
+    },
+    {
+      "slug": "ab-testing-setup-using-delta-reference-and-confidence-intervals",
+      "_id": "imported-blogPost-67be8ca9d1a0a78bc135f444",
+      "_rev": "7ONx74QMiI10eazwuvalOR",
+      "hits": [
+        {
+          "field": "faq[5].answer",
+          "position": 234,
+          "snippet": "t methodology with delta reference and confidence intervals — the same statistical approach you can run yourself in Goog"
+        }
+      ]
+    },
+    {
+      "slug": "convert-figma-designs-to-webflow-pages",
+      "_id": "imported-blogPost-67be8caa6f129dc684d04526",
+      "_rev": "IiAJyG0U3TUo0O3OCyOSwb",
+      "hits": [
+        {
+          "field": "content",
+          "position": 987,
+          "snippet": "-by-step guide that will walk you through the entire process—from organizing your Figma file to optimizing your final We"
+        },
+        {
+          "field": "content",
+          "position": 9228,
+          "snippet": " known for being user-friendly, fully utilizing its features—such as Flexbox, Grid layouts, and the Interactions Panel—d"
+        },
+        {
+          "field": "content",
+          "position": 9286,
+          "snippet": "es—such as Flexbox, Grid layouts, and the Interactions Panel—does require some experience.</p><p id=\"\">The manual conver"
+        }
+      ]
+    },
+    {
+      "slug": "best-webflow-tools-and-integrations",
+      "_id": "imported-blogPost-67be8caa7c13ea59089f532a",
+      "_rev": "7ONx74QMiI10eazwuvmBDv",
+      "hits": [
+        {
+          "field": "excerpt",
+          "position": 79,
+          "snippet": " developer ranks the 15 tools that actually speed up builds — from Airtable and ECharts to scheduling and SEO utilities."
+        }
+      ]
+    },
+    {
+      "slug": "building-custom-apps-in-webflow",
+      "_id": "imported-blogPost-67be8caacf9b98e47e93673e",
+      "_rev": "BOAIKFRWNleR9aRm6Vvy2a",
+      "hits": [
+        {
+          "field": "excerpt",
+          "position": 40,
+          "snippet": "Most businesses don't need complex apps — they need fast iteration. Learn how to build a custom web "
+        }
+      ]
+    },
+    {
+      "slug": "best-webflow-split-testing-tools-compared",
+      "_id": "imported-blogPost-67be8cab29c9c6a1b94a0c44",
+      "_rev": "BOAIKFRWNleR9aRm6VvoEw",
+      "hits": [
+        {
+          "field": "content",
+          "position": 186,
+          "snippet": ". Webflow doesn't ship native A/B testing in standard plans — Webflow Optimize is a paid add-on available across every W"
+        },
+        {
+          "field": "content",
+          "position": 15630,
+          "snippet": "ing card layout. Skip button color and other cosmetic tests — they almost never move the needle.</li>\n<li><strong>Set up"
+        },
+        {
+          "field": "content",
+          "position": 16511,
+          "snippet": "ing in any standard plan. Webflow Optimize is a paid add-on — $299/mo for standard sites (up to 25,000 page views, scali"
+        },
+        {
+          "field": "content",
+          "position": 17100,
+          "snippet": "nversions/month, A/B testing wastes more time than it saves — focus on qualitative tools like heatmaps and session recor"
+        },
+        {
+          "field": "content",
+          "position": 17502,
+          "snippet": ". Optibase, VWO, and AB Tasty test at the URL pattern level — set up a target rule like <code>/blog/*</code> or <code>/w"
+        },
+        {
+          "field": "metaDescription",
+          "position": 117,
+          "snippet": "199/mo) and six other A/B testing tools for Webflow in 2026 — ranked, priced, and benchmarked against real sample-size m"
+        }
+      ]
+    },
+    {
+      "slug": "add-google-calendar-on-webflow",
+      "_id": "imported-blogPost-67be8cab29c9c6a1b94a0c60",
+      "_rev": "IiAJyG0U3TUo0O3OCyOTIh",
+      "hits": [
+        {
+          "field": "content",
+          "position": 286,
+          "snippet": "king layer when you need site visitors to schedule meetings — both ship Webflow integrations and handle the meeting logi"
+        },
+        {
+          "field": "content",
+          "position": 865,
+          "snippet": "it to handle bookings, then realize it only displays events — buyers can't actually book a meeting through it. The nativ"
+        },
+        {
+          "field": "faq[5].answer",
+          "position": 82,
+          "snippet": "1) Scheduling logic that off-the-shelf tools cannot express — e.g., round-robin across an account team with complex tier"
+        }
+      ]
+    },
+    {
+      "slug": "pitfalls-of-choosing-wrong-webflow-vendor",
+      "_id": "imported-blogPost-67be8cab6abd92ebf2a4ea0f",
+      "_rev": "DJ1Y76QLqJX8nukZ8Q76Ls",
+      "hits": [
+        {
+          "field": "content",
+          "position": 5511,
+          "snippet": "ead:</strong> \"How does your pricing tie to client outcomes — citation rate lift, organic clicks, branded search lift, o"
+        },
+        {
+          "field": "faq[2].answer",
+          "position": 415,
+          "snippet": "ctive 6+ month engagements with you? (5) Skip the portfolio — tell me what you believe about SEO/AEO strategy in 2026."
+        }
+      ]
+    },
+    {
+      "slug": "how-to-use-figma-to-webflow-plugin",
+      "_id": "imported-blogPost-67be8cab8fec4f284279c923",
+      "_rev": "4ghLmxsuhT9JgXjKVH4vp8",
+      "hits": [
+        {
+          "field": "faq[4].answer",
+          "position": 328,
+          "snippet": "ciliation, CMS binding, interactions, or responsive testing — that work still has to happen. Net time saved per page is "
+        },
+        {
+          "field": "faq[5].answer",
+          "position": 86,
+          "snippet": "ions. (1) Figma Components do not map to Webflow Components — they import as flat trees. (2) Complex conditional Auto La"
+        }
+      ]
+    },
+    {
+      "slug": "is-webflow-good-for-seo",
+      "_id": "imported-blogPost-67be8cab8fec4f284279c94f",
+      "_rev": "Q9gEZebWZdnBIuf0rMGbbU",
+      "hits": [
+        {
+          "field": "content",
+          "position": 31,
+          "snippet": "<p><strong>TL;DR:</strong> Yes — Webflow is good for SEO in 2026. The platform ships clean "
+        },
+        {
+          "field": "content",
+          "position": 553,
+          "snippet": ", Webflow is one of the strongest SEO foundations available — but strategy decides whether you rank, not platform choice"
+        },
+        {
+          "field": "metaDescription",
+          "position": 37,
+          "snippet": "Is Webflow good for SEO in 2026? Yes — the technical foundation is one of the strongest available"
+        },
+        {
+          "field": "faq[5].answer",
+          "position": 77,
+          "snippet": ". (1) Sites genuinely needing 100,000+ pages per Collection — Webflow's CMS caps at 50,000+ on Enterprise. (2) Sites req"
+        },
+        {
+          "field": "faq[5].answer",
+          "position": 261,
+          "snippet": "ter-editor-fact-checker flows, content moderation at scale) — use Sanity, Contentful, or Storyblok. (3) Sites where the "
+        },
+        {
+          "field": "faq[5].answer",
+          "position": 382,
+          "snippet": "EO strategy depends on real-time server-side logic at scale — Webflow Cloud (2025) closed this gap somewhat, but a separ"
+        },
+        {
+          "field": "faq[6].answer",
+          "position": 244,
+          "snippet": "tent depth, keyword strategy, or internal link architecture — none of which any platform solves. Webflow gives you a str"
+        }
+      ]
+    },
+    {
+      "slug": "preview-cms-pages-blog-posts",
+      "_id": "imported-blogPost-67be8cacca41b905907c07d7",
+      "_rev": "7ONx74QMiI10eazwuvmQW5",
+      "hits": [
+        {
+          "field": "content",
+          "position": 307,
+          "snippet": "we just want a quick look to ensure everything looks perfect—from the layout to interactions and design elements. While "
+        },
+        {
+          "field": "excerpt",
+          "position": 67,
+          "snippet": "'s CMS preview isn't obvious. This guide covers every method—Designer, Editor, staging site—to check blog posts before t"
+        },
+        {
+          "field": "excerpt",
+          "position": 98,
+          "snippet": "his guide covers every method—Designer, Editor, staging site—to check blog posts before they go live."
+        }
+      ]
+    },
+    {
+      "slug": "relumes-innovative-business-model",
+      "_id": "imported-blogPost-67be8cacdf5207c1765920ab",
+      "_rev": "Q9gEZebWZdnBIuf0rMGccw",
+      "hits": [
+        {
+          "field": "content",
+          "position": 1162,
+          "snippet": "d=\"\">Relume is a library of pre-built Webflow components</a>—from headers and footers to complex sections like pricing t"
+        },
+        {
+          "field": "content",
+          "position": 3452,
+          "snippet": "r. There’s no need for external code or complex integrations—everything works within the Webflow ecosystem.</p><h3 id=\"\""
+        }
+      ]
+    },
+    {
+      "slug": "webflow-and-auth0-guide",
+      "_id": "imported-blogPost-67be8cae60f077ebbf24cbf6",
+      "_rev": "7ONx74QMiI10eazwuvmbaz",
+      "hits": [
+        {
+          "field": "excerpt",
+          "position": 67,
+          "snippet": " + Auth0 setup guide for B2B SaaS sites that need real auth — enterprise SSO, embedded portals, content gating. When it'"
+        },
+        {
+          "field": "faq[2].answer",
+          "position": 440,
+          "snippet": "lan covers it. High-volume consumer apps get expensive fast — at 10,000+ MAUs, alternative providers (Supabase Auth, Cle"
+        },
+        {
+          "field": "faq[3].answer",
+          "position": 264,
+          "snippet": "hing that requires the Client Secret has to run server-side — a Webflow Cloud function, a separate Vercel/Cloudflare Wor"
+        },
+        {
+          "field": "faq[4].answer",
+          "position": 54,
+          "snippet": "<p>Three steps. (1) Hide the gated content by default — add a CSS class like <code>auth-required</code> with <code"
+        },
+        {
+          "field": "faq[5].answer",
+          "position": 459,
+          "snippet": "flow's CMS itself does not have native auth-aware filtering — that has to be implemented in custom code.</p>"
+        }
+      ]
+    },
+    {
+      "slug": "webflow-ai-revolution",
+      "_id": "imported-blogPost-67be8caedad256a71e3ef361",
+      "_rev": "BOAIKFRWNleR9aRm6Vw5i8",
+      "hits": [
+        {
+          "field": "excerpt",
+          "position": 186,
+          "snippet": "ts cited by external AI engines like ChatGPT and Perplexity — which depends on architecture, not on Webflow features."
+        }
+      ]
+    },
+    {
+      "slug": "understanding-webflows-cms-guide",
+      "_id": "imported-blogPost-67be8caee7e9d59dd6fb1ca7",
+      "_rev": "DJ1Y76QLqJX8nukZ8QJ4hK",
+      "hits": [
+        {
+          "field": "excerpt",
+          "position": 60,
+          "snippet": "Webflow's CMS is a strong content engine for B2B SaaS sites — Collections, typed fields, multi-references, dynamic filte"
+        }
+      ]
+    },
+    {
+      "slug": "webflow-success-story",
+      "_id": "imported-blogPost-67be8caf54cbd1bf8808d97f",
+      "_rev": "DJ1Y76QLqJX8nukZ8QJwoa",
+      "hits": [
+        {
+          "field": "excerpt",
+          "position": 54,
+          "snippet": "Why LoudFace bet a B2B SaaS agency on Webflow in 2022 — the five specific reasons, the trade-offs we accepted, wha"
+        }
+      ]
+    },
+    {
+      "slug": "webflow-connection-guide-google-analytics-and-search-console",
+      "_id": "imported-blogPost-67be8caf7ac167e93ab3fcda",
+      "_rev": "BOAIKFRWNleR9aRm6Vt0PC",
+      "hits": [
+        {
+          "field": "content",
+          "position": 139,
+          "snippet": "ell-designed and optimized website is no longer a luxury</a>—it's a necessity. But how do you ensure your website is per"
+        },
+        {
+          "field": "faq[5].answer",
+          "position": 82,
+          "snippet": "tes the Measurement ID straight into Webflow's SEO settings — quick but adds a separate script per service. GTM uses one"
+        }
+      ]
+    },
+    {
+      "slug": "webflow-vs-hubspot",
+      "_id": "imported-blogPost-67be8cb02607d228673d68fb",
+      "_rev": "7ONx74QMiI10eazwuvksan",
+      "hits": [
+        {
+          "field": "content",
+          "position": 9694,
+          "snippet": "d lead scoring, HubSpot CMS is the path of least resistance — the integration tax savings outweigh the design constraint"
+        }
+      ]
+    },
+    {
+      "slug": "webflow-split-testing-setup",
+      "_id": "imported-blogPost-67be8cb06f129dc684d052de",
+      "_rev": "7ONx74QMiI10eazwuvbJrT",
+      "hits": [
+        {
+          "field": "excerpt",
+          "position": 45,
+          "snippet": "Three methods to A/B test in Webflow in 2026 — Webflow Optimize, third-party scripts, manual CMS swap. Wh"
+        }
+      ]
+    },
+    {
+      "slug": "webflow-devlink",
+      "_id": "imported-blogPost-67be8cb0cf9b98e47e936c06",
+      "_rev": "DJ1Y76QLqJX8nukZ8QJ6vI",
+      "hits": [
+        {
+          "field": "excerpt",
+          "position": 61,
+          "snippet": "ebflow DevLink bridges Webflow Designer and React codebases — sync Components into JSX files. When the design + dev inte"
+        },
+        {
+          "field": "faq[4].answer",
+          "position": 145,
+          "snippet": " periodically. (2) Accessibility is not enforced by DevLink — Webflow's Designer makes it easy to ship visually pleasing"
+        },
+        {
+          "field": "faq[4].answer",
+          "position": 429,
+          "snippet": "igner-side breaking changes can break the synced components — version pin Webflow Components and set up CI to flag sync "
+        }
+      ]
+    },
+    {
+      "slug": "webflow-vs-wix-comparison",
+      "_id": "imported-blogPost-67be8cb18309d9c295fa59c3",
+      "_rev": "BOAIKFRWNleR9aRm6Vvyme",
+      "hits": [
+        {
+          "field": "content",
+          "position": 7527,
+          "snippet": "cause of its drag-and-drop simplicity. And they’re not wrong—Wix is quite literally built to simplify your life.</p><p i"
+        },
+        {
+          "field": "content",
+          "position": 7719,
+          "snippet": " can feel like hitting a wall once you need something custom—like adjusting layouts or integrating advanced tools.</stro"
+        },
+        {
+          "field": "content",
+          "position": 8009,
+          "snippet": "/p><p id=\"\">Webflow, on the other hand, has a learning curve—it’s not something you’ll master in a day. But the possibil"
+        },
+        {
+          "field": "content",
+          "position": 8305,
+          "snippet": "trong></p><p id=\"\">Wix templates are like ready-to-eat meals—fast, convenient, and great when in a hurry. But they can f"
+        },
+        {
+          "field": "content",
+          "position": 9027,
+          "snippet": "ide\">Webflow’s CMS is built for managing dynamic content</a>—think blogs, portfolios, or even entire product catalogs.</"
+        },
+        {
+          "field": "content",
+          "position": 10728,
+          "snippet": "d by AWS and Fastly, Webflow ensures your site loads quickly—even during traffic spikes.</p><p id=\"\">Plus, it includes g"
+        }
+      ]
+    },
+    {
+      "slug": "webflow-vs-wordpress-com",
+      "_id": "imported-blogPost-67be8cb260f077ebbf24d407",
+      "_rev": "7ONx74QMiI10eazwuvlkf7",
+      "hits": [
+        {
+          "field": "content",
+          "position": 245,
+          "snippet": "ou need a platform that aligns with your goals</em></strong>—launching a dynamic blog, running a seamless e-commerce sto"
+        },
+        {
+          "field": "content",
+          "position": 406,
+          "snippet": "o.</p><p id=\"\">WordPress has been a go-to solution for years—it has quite literally powered millions of websites with it"
+        },
+        {
+          "field": "content",
+          "position": 11334,
+          "snippet": "id=\"\">It's a platform where your creativity takes precedence—no templates or rigid design systems to hold you back.</str"
+        },
+        {
+          "field": "content",
+          "position": 11925,
+          "snippet": ">However, WordPress has Elementor (which we'll discuss next)—a block-based editor that introduces drag-and-drop function"
+        },
+        {
+          "field": "content",
+          "position": 12517,
+          "snippet": "lows you to create custom collections tailored to your needs—whether it's a database of team members, case studies, or e"
+        },
+        {
+          "field": "content",
+          "position": 14019,
+          "snippet": "s the choice if you're simply looking for an SEO all-rounder—but that's not everyone's need, is it?</p><p id=\"\"><strong "
+        },
+        {
+          "field": "content",
+          "position": 14399,
+          "snippet": "</h3><p id=\"\">Webflow's hosting is powered by AWS and Fastly—these two provide enterprise-grade speed, reliability, and "
+        },
+        {
+          "field": "content",
+          "position": 15005,
+          "snippet": "dPress’s cheapest plan doesn’t give enterprise-grade hosting—it’s also 3.5 times cheaper than Webflow’s entry-level plan"
+        },
+        {
+          "field": "content",
+          "position": 15231,
+          "snippet": "plex animations and transitions directly within the Designer—no coding required.</p><p id=\"\">WordPress offers limited in"
+        }
+      ]
+    },
+    {
+      "slug": "webflow-vs-squarespace",
+      "_id": "imported-blogPost-67be8cb26abd92ebf2a4f174",
+      "_rev": "DJ1Y76QLqJX8nukZ8QJvOW",
+      "hits": [
+        {
+          "field": "content",
+          "position": 245,
+          "snippet": "ou need a platform that aligns with your goals</em></strong>—launching a dynamic blog, running a seamless e-commerce sto"
+        },
+        {
+          "field": "content",
+          "position": 11539,
+          "snippet": "e’s a clear breakdown of where Webflow and Squarespace shine—and where they fall short.</p><div data-rt-embed-type='true"
+        },
+        {
+          "field": "faq[1].answer",
+          "position": 76,
+          "snippet": "el overwhelming, but a Webflow partner can make it seamless — auditing your existing content, rebuilding in Webflow's CM"
+        }
+      ]
+    },
+    {
+      "slug": "webflow-vs-wix-studio",
+      "_id": "imported-blogPost-67be8cb32d4fc5e4d3b0ee0f",
+      "_rev": "7ONx74QMiI10eazwuvm5Lv",
+      "hits": [
+        {
+          "field": "content",
+          "position": 41,
+          "snippet": "<p><strong>Webflow vs Wix Studio in 2026 — the short answer:</strong> Webflow ($15–$25/mo on standard"
+        },
+        {
+          "field": "content",
+          "position": 785,
+          "snippet": "ou need a platform that aligns with your goals</em></strong>—launching a dynamic blog, running a seamless e-commerce sto"
+        },
+        {
+          "field": "content",
+          "position": 11533,
+          "snippet": "h3><p id=\"\">Wix Studio takes a step forward over Wix Editor — meta tag editing, sitemaps, basic schema. The underlying c"
+        },
+        {
+          "field": "content",
+          "position": 12148,
+          "snippet": " on any element.</p><p id=\"\">The bigger gap shows up in AEO — getting cited by ChatGPT, Claude, Perplexity, and Google's"
+        },
+        {
+          "field": "content",
+          "position": 16727,
+          "snippet": "ing, complex tax logic), neither platform is the right home — that's where you bolt on Stripe Billing or Chargebee on to"
+        },
+        {
+          "field": "content",
+          "position": 17014,
+          "snippet": "Neither is the right substrate for a B2B SaaS billing stack — that lives in your product app, with the marketing site do"
+        },
+        {
+          "field": "content",
+          "position": 17577,
+          "snippet": "content and website features. </strong>As your content grows—whether it’s a blog, portfolio, or product catalog—Studio’s"
+        },
+        {
+          "field": "content",
+          "position": 17628,
+          "snippet": "ent grows—whether it’s a blog, portfolio, or product catalog—Studio’s CMS begins to show its limitations. It’s suitable "
+        },
+        {
+          "field": "content",
+          "position": 18072,
+          "snippet": "ter UX. </strong>Modern websites must do more than look good—they must engage users with dynamic, interactive elements. "
+        },
+        {
+          "field": "content",
+          "position": 20853,
+          "snippet": "re’s a clear breakdown of where Webflow and Wix Studio shine—and where they fall short.</p><div data-rt-embed-type='true"
+        },
+        {
+          "field": "content",
+          "position": 23239,
+          "snippet": "\n<li>SEO performance and Core Web Vitals are non-negotiable — Webflow's static HTML output ranks faster than Wix's hybri"
+        },
+        {
+          "field": "excerpt",
+          "position": 23,
+          "snippet": "Webflow vs Wix in 2026 — Studio, Editor, and how each compares on SEO, AEO, CMS, de"
+        },
+        {
+          "field": "faq[4].answer",
+          "position": 67,
+          "snippet": "'s site plans start at $14/month, Wix Studio's at $16/month — basically equivalent. Where the cost diverges: Wix Studio "
+        },
+        {
+          "field": "faq[6].answer",
+          "position": 222,
+          "snippet": "losing organic traffic. The actual risk isn't the migration — it's rebuilding hastily without an SEO baseline."
+        }
+      ]
+    },
+    {
+      "slug": "webflow-vs-wordpress-org",
+      "_id": "imported-blogPost-67be8cb38309d9c295fa5aef",
+      "_rev": "BOAIKFRWNleR9aRm6VvxOc",
+      "hits": [
+        {
+          "field": "content",
+          "position": 245,
+          "snippet": "ou need a platform that aligns with your goals</em></strong>—launching a dynamic blog, running a seamless e-commerce sto"
+        },
+        {
+          "field": "content",
+          "position": 10113,
+          "snippet": "id=\"\">It's a platform where your creativity takes precedence—no templates or rigid design systems to hold you back.</str"
+        },
+        {
+          "field": "content",
+          "position": 10704,
+          "snippet": ">However, WordPress has Elementor (which we'll discuss next)—a block-based editor that introduces drag-and-drop function"
+        },
+        {
+          "field": "content",
+          "position": 11296,
+          "snippet": "lows you to create custom collections tailored to your needs—whether it's a database of team members, case studies, or e"
+        },
+        {
+          "field": "content",
+          "position": 12849,
+          "snippet": "</h3><p id=\"\">Webflow's hosting is powered by AWS and Fastly—these two provide enterprise-grade speed, reliability, and "
+        },
+        {
+          "field": "content",
+          "position": 13766,
+          "snippet": "plex animations and transitions directly within the Designer—no coding required.</p><p id=\"\">WordPress offers limited in"
+        },
+        {
+          "field": "excerpt",
+          "position": 120,
+          "snippet": "ess.org compare on design, SEO, e-commerce, and scalability — so you can pick the right platform."
+        },
+        {
+          "field": "faq[3].answer",
+          "position": 104,
+          "snippet": "rity patching, hosting complexity, and developer dependency — giving your team more control with less maintenance overhe"
+        }
+      ]
+    },
+    {
+      "slug": "best-webflow-agencies",
+      "_id": "imported-blogPost-68e6ba39d00043772830604c",
+      "_rev": "DJ1Y76QLqJX8nukZ8QJbw2",
+      "hits": [
+        {
+          "field": "excerpt",
+          "position": 100,
+          "snippet": "w agencies in 2026, ranked by what actually matters in 2026 — AEO architecture, 12-month engagement structure, measurabl"
+        },
+        {
+          "field": "metaDescription",
+          "position": 184,
+          "snippet": "Face, Shadow Digital, Flow Ninja, Veza, Broworks and others — with 'where they're not the best fit' on every entry."
+        },
+        {
+          "field": "faq[0].answer",
+          "position": 448,
+          "snippet": "0) Smartik (animation). Each agency has different strengths — \"where they're not the best fit\" matters as much as \"best "
+        },
+        {
+          "field": "faq[5].answer",
+          "position": 110,
+          "snippet": "rong portfolio shows the agency can produce polished design — table stakes. What separates the strongest agencies from t"
+        }
+      ]
+    },
+    {
+      "slug": "webflow-best-cms-for-marketers",
+      "_id": "imported-blogPost-690304d2f1d8715e5fb6a8c6",
+      "_rev": "Q9gEZebWZdnBIuf0rMGjQR",
+      "hits": [
+        {
+          "field": "content",
+          "position": 7008,
+          "snippet": "mplates that produce hundreds of pages from CMS Collections — geographic, role-coded, integration-coded — without engine"
+        },
+        {
+          "field": "content",
+          "position": 7052,
+          "snippet": "CMS Collections — geographic, role-coded, integration-coded — without engineering involvement.</li>\n<li><strong>AEO-read"
+        },
+        {
+          "field": "excerpt",
+          "position": 139,
+          "snippet": "mparison vs WordPress, HubSpot CMS, Sanity, and Squarespace — including when Webflow is the wrong call."
+        },
+        {
+          "field": "faq[4].answer",
+          "position": 490,
+          "snippet": "nt is Collection size (10,000 standard, 50,000+ Enterprise) — past that scale, headless CMSes fit better.</p>"
+        },
+        {
+          "field": "faq[6].answer",
+          "position": 74,
+          "snippet": "rns. (1) The marketing site has true scale (100,000+ pages) — Webflow CMS caps at 50,000+ items per Collection on Enterp"
+        },
+        {
+          "field": "faq[6].answer",
+          "position": 284,
+          "snippet": "ure. (2) The marketing team has zero design-system capacity — Webflow's Designer assumes some design awareness; teams wi"
+        },
+        {
+          "field": "faq[6].answer",
+          "position": 477,
+          "snippet": "deep in HubSpot for CRM, marketing automation, forms, email — switching the CMS to Webflow creates an integration tax th"
+        }
+      ]
+    },
+    {
+      "slug": "webflow-agency-pricing",
+      "_id": "imported-blogPost-6915d9c9d65e8ca880b46bf6",
+      "_rev": "7ONx74QMiI10eazwuvmX0F",
+      "hits": [
+        {
+          "field": "excerpt",
+          "position": 104,
+          "snippet": "r good reason. This article breaks down the four real tiers — freelancer, specialist studio, full-stack SEO + AEO agency"
+        },
+        {
+          "field": "excerpt",
+          "position": 181,
+          "snippet": "cialist studio, full-stack SEO + AEO agency, and Enterprise — and what each delivers."
+        }
+      ]
+    },
+    {
+      "slug": "ai-enhanced-webflow-development",
+      "_id": "imported-blogPost-6931a24f569228091b142bf3",
+      "_rev": "IiAJyG0U3TUo0O3OCyOZvh",
+      "hits": [
+        {
+          "field": "content",
+          "position": 1113,
+          "snippet": "oduction work. But the underlying productivity lift is real — when AI tools are applied to specific workflow stages with"
+        },
+        {
+          "field": "content",
+          "position": 2127,
+          "snippet": " design ideation. The output requires meaningful refinement — typography, spacing, brand alignment, micro-interactions —"
+        },
+        {
+          "field": "content",
+          "position": 2186,
+          "snippet": " — typography, spacing, brand alignment, micro-interactions — before it's production-ready. Skipping refinement produces"
+        },
+        {
+          "field": "content",
+          "position": 9490,
+          "snippet": "ble Peec citation rates, branded search lift on NEW queries — these are the differentiators AI can't manufacture.</li>\n<"
+        },
+        {
+          "field": "faq[1].answer",
+          "position": 396,
+          "snippet": "ion. The integration of these into specific workflow stages — not blanket replacement — is what produces real lift."
+        },
+        {
+          "field": "faq[1].answer",
+          "position": 422,
+          "snippet": "ese into specific workflow stages — not blanket replacement — is what produces real lift."
+        }
+      ]
+    },
+    {
+      "slug": "top-10-webflow-agency-templates",
+      "_id": "imported-blogPost-693fcdea6740d31faee922e9",
+      "_rev": "IiAJyG0U3TUo0O3OCyOa2K",
+      "hits": [
+        {
+          "field": "excerpt",
+          "position": 72,
+          "snippet": "flow agency templates in 2026 aren't the most polished ones — they're the ones with real component systems underneath. H"
+        },
+        {
+          "field": "faq[4].answer",
+          "position": 420,
+          "snippet": "edded chat widgets, animation libraries, multiple analytics — performance tanks before you ship)."
+        }
+      ]
+    },
+    {
+      "slug": "seo-vs-aeo-for-webflow",
+      "_id": "imported-blogPost-694e3f0dbe07c6b6b6ef5503",
+      "_rev": "zEvKM28PnGRyOrQEnaGYd2",
+      "hits": [
+        {
+          "field": "excerpt",
+          "position": 61,
+          "snippet": "EO and AEO for Webflow in 2026 are not competing strategies — they're two layers of the same discovery program. Here's w"
+        }
+      ]
+    },
+    {
+      "slug": "webflow-for-fintech-why-it-outperforms-traditional-cms-platforms",
+      "_id": "imported-blogPost-696e9240f28f0336ccaf9f62",
+      "_rev": "IiAJyG0U3TUo0O3OCyOaFa",
+      "hits": [
+        {
+          "field": "excerpt",
+          "position": 74,
+          "snippet": " one of the strongest CMS platforms for fintech B2B in 2026 — compliance-friendly hosting, AEO-ready structure, programm"
+        },
+        {
+          "field": "excerpt",
+          "position": 154,
+          "snippet": "y hosting, AEO-ready structure, programmatic page-scale CMS — and the Toku proof point that shows the program working in"
+        },
+        {
+          "field": "faq[5].answer",
+          "position": 163,
+          "snippet": "ount dashboards or queries customer portfolios in real time — Webflow's static-rendering model fits poorly. (2) Sites ne"
+        },
+        {
+          "field": "faq[5].answer",
+          "position": 255,
+          "snippet": "el fits poorly. (2) Sites needing 100,000+ regulatory pages — Webflow's CMS caps at 50,000+ items per Collection on Ente"
+        },
+        {
+          "field": "faq[5].answer",
+          "position": 493,
+          "snippet": " the marketing site in the same codebase as the product app — the trade-off is real but usually worth losing on the mark"
+        },
+        {
+          "field": "faq[6].answer",
+          "position": 524,
+          "snippet": "re on fintech sites than the traditional SEO playbook alone — getting cited by AI engines determines whether buyers even"
+        }
+      ]
+    },
+    {
+      "slug": "is-webflow-good-for-small-businesses-heres-what-you-need-to-know",
+      "_id": "imported-blogPost-696f77c8fe1f338ee5e793d4",
+      "_rev": "7ONx74QMiI10eazwuvlIjB",
+      "hits": [
+        {
+          "field": "faq[4].answer",
+          "position": 78,
+          "snippet": "Designer is closer to Figma than to a drag-and-drop builder — it exposes the actual web platform (CSS classes, flexbox, "
+        }
+      ]
+    },
+    {
+      "slug": "why-saas-companies-are-moving-to-webflow-in-2026-and-what-they-gain",
+      "_id": "imported-blogPost-6971f2f5946b89ede8617723",
+      "_rev": "DJ1Y76QLqJX8nukZ8QJGoo",
+      "hits": [
+        {
+          "field": "excerpt",
+          "position": 71,
+          "snippet": "ic reasons B2B SaaS companies are moving to Webflow in 2026 — and three patterns where they shouldn't. Real LoudFace cli"
+        },
+        {
+          "field": "faq[2].answer",
+          "position": 446,
+          "snippet": " count per Collection (10,000 standard, 50,000+ Enterprise) — past that scale, headless CMS architectures fit better.</p"
+        }
+      ]
+    },
+    {
+      "slug": "what-google-sge-and-ai-search-mean-for-webflow-sites-in-2026",
+      "_id": "imported-blogPost-69737effd2b2f2439d311697",
+      "_rev": "DJ1Y76QLqJX8nukZ8QJ8RE",
+      "hits": [
+        {
+          "field": "content",
+          "position": 7377,
+          "snippet": "m Code section handles per-page schema). The strategic work — picking the right prompts, writing the answers, choosing t"
+        },
+        {
+          "field": "content",
+          "position": 7453,
+          "snippet": "ght prompts, writing the answers, choosing the entity model — is on you.</p>\n\n<p>If you want help structuring a Webflow "
+        },
+        {
+          "field": "faq[0].answer",
+          "position": 451,
+          "snippet": "by Google's AI rather than retrieved verbatim from one page — multiple sources contribute, and the cited URLs at the bot"
+        },
+        {
+          "field": "faq[1].answer",
+          "position": 249,
+          "snippet": " By 2026 the feature is no longer labeled separately at all — it's just part of how Google search works. Older content r"
+        },
+        {
+          "field": "faq[2].answer",
+          "position": 108,
+          "snippet": "graph in the first 60 words of every page targeting a query — what AI engines extract. (2) Question-phrased H2s matching"
+        },
+        {
+          "field": "faq[5].answer",
+          "position": 153,
+          "snippet": "bflow agencies for B2B SaaS', 'what is a CMS for marketers' — these all trigger AI Overviews. Transactional queries (buy"
+        },
+        {
+          "field": "faq[6].answer",
+          "position": 458,
+          "snippet": " lane is real if you have the foundation and a sharp prompt — see our piece on <a href=\"/blog/answer-engine-optimization"
+        }
+      ]
+    },
+    {
+      "slug": "webflow-for-ecommerce",
+      "_id": "imported-blogPost-69ac46b4ee11dd124cd4fe1b",
+      "_rev": "DJ1Y76QLqJX8nukZ8QJC8C",
+      "hits": [
+        {
+          "field": "faq[0].answer",
+          "position": 149,
+          "snippet": "0 SKUs where design control matters more than catalog depth — premium furniture, designer jewelry, niche apparel, limite"
+        },
+        {
+          "field": "faq[6].answer",
+          "position": 488,
+          "snippet": "y in shopping queries (\"best designer jewelry brands 2026\") — getting cited requires the same AEO foundation as any othe"
+        }
+      ]
+    },
+    {
+      "slug": "webflow-for-healthcare",
+      "_id": "imported-blogPost-69ac472eee2885129c273d3d",
+      "_rev": "DJ1Y76QLqJX8nukZ8QJD7q",
+      "hits": [
+        {
+          "field": "faq[0].answer",
+          "position": 201,
+          "snippet": "AA-eligible, but that doesn't transfer to Webflow customers — Webflow would need to sign its own BAAs and offer them dow"
+        },
+        {
+          "field": "faq[5].answer",
+          "position": 39,
+          "snippet": "<p>Three patterns. (1) Patient portals — login-gated areas where patients view appointment history,"
+        },
+        {
+          "field": "faq[5].answer",
+          "position": 150,
+          "snippet": " history, lab results, prescriptions, or care team messages — these are PHI by definition; use Athenahealth, Epic MyChar"
+        },
+        {
+          "field": "faq[5].answer",
+          "position": 369,
+          "snippet": "medical context (symptoms, clinical detail in intake forms) — use Doxy.me, Mend, or Zoom for Healthcare (HIPAA tier). (3"
+        },
+        {
+          "field": "faq[5].answer",
+          "position": 488,
+          "snippet": "3) EHR-integrated workflows reading or writing patient data — use Epic App Orchard, Cerner App Gallery, or custom integr"
+        }
+      ]
+    },
+    {
+      "slug": "how-to-become-a-trusted-llm-source",
+      "_id": "imported-blogPost-69ac5186fa24aaa5148820ce",
+      "_rev": "BOAIKFRWNleR9aRm6VvnWu",
+      "hits": [
+        {
+          "field": "content",
+          "position": 77,
+          "snippet": "</strong> Citation Authority is what backlinks were for SEO — the trust signal that determines whether AI engines pick y"
+        },
+        {
+          "field": "content",
+          "position": 3656,
+          "snippet": " presence, consistent brand definitions across the open web — these entity signals matter more than raw backlink counts "
+        },
+        {
+          "field": "content",
+          "position": 10829,
+          "snippet": "s AI engine source selection. Built through five components — clean extractable content architecture, demonstrable E-E-A"
+        },
+        {
+          "field": "excerpt",
+          "position": 98,
+          "snippet": " AI engines use to pick sources. Built through 5 components — extractable content architecture, E-E-A-T, entity clarity,"
+        },
+        {
+          "field": "faq[0].answer",
+          "position": 282,
+          "snippet": " It's the AI-era equivalent of backlink-based SEO authority — the trust signal that determines whether AI engines pick y"
+        }
+      ]
+    },
+    {
+      "slug": "zero-click-content-that-drives-revenue",
+      "_id": "imported-blogPost-69b595b827eb048bb1f8c015",
+      "_rev": "BOAIKFRWNleR9aRm6Vvpn8",
+      "hits": [
+        {
+          "field": "content",
+          "position": 9731,
+          "snippet": "vices, and any category where buyers research before buying — zero-click is the new normal. Design for it.</p>\n\n<h2>The "
+        },
+        {
+          "field": "excerpt",
+          "position": 42,
+          "snippet": "Zero-click didn't break content marketing — it broke the assumption that visibility and value are inse"
+        }
+      ]
+    },
+    {
+      "slug": "share-of-answer",
+      "_id": "imported-blogPost-69b59735e332cbd8e8820ec7",
+      "_rev": "BOAIKFRWNleR9aRm6VvrAU",
+      "hits": [
+        {
+          "field": "content",
+          "position": 2739,
+          "snippet": "ually ask. Pick one and stick with it across your reporting — the cross-tool inconsistency is the real headache, not the"
+        },
+        {
+          "field": "content",
+          "position": 3452,
+          "snippet": "hare of Voice (SoV)</strong> is the legacy marketing metric — the percentage of category conversation a brand owns acros"
+        },
+        {
+          "field": "content",
+          "position": 3927,
+          "snippet": "s our brand get named?\" The unit is not a mention in a feed — it's a citation inside a synthesized answer that a buyer r"
+        },
+        {
+          "field": "content",
+          "position": 4428,
+          "snippet": "For B2B SaaS in 2026, SoA is the conversion-relevant metric — buyers research inside ChatGPT and Perplexity before they "
+        },
+        {
+          "field": "content",
+          "position": 6788,
+          "snippet": "s. Filter out noise by waiting 60 days between measurements — AI engine answer composition has natural variance.</li>\n</"
+        },
+        {
+          "field": "content",
+          "position": 10873,
+          "snippet": "ng>Local services.</strong> Plumbers, dentists, restaurants — buyers use Google Maps and local SERPs, not ChatGPT. SOA d"
+        }
+      ]
+    },
+    {
+      "slug": "how-to-structure-content-for-ai-extraction",
+      "_id": "imported-blogPost-69b6dd5675b0768b9f8012da",
+      "_rev": "BOAIKFRWNleR9aRm6Vvlpu",
+      "hits": [
+        {
+          "field": "content",
+          "position": 6583,
+          "snippet": "entation. Tracking via Peec AI or similar tool is essential — without baseline data, you can't measure improvement.</li>"
+        },
+        {
+          "field": "content",
+          "position": 8413,
+          "snippet": "/strong> The primary question is \"which one should I pick?\" — but the honest answer is \"it depends.\" The 40-60 word bloc"
+        },
+        {
+          "field": "content",
+          "position": 8778,
+          "snippet": " single answer. Add a 40-60 word direct-answer block anyway — the AI engine still needs a citation handle.</li>\n<li><str"
+        }
+      ]
+    },
+    {
+      "slug": "seo-survival-playbook",
+      "_id": "imported-blogPost-69b6dedc39da412664c91299",
+      "_rev": "7ONx74QMiI10eazwuvaPwf",
+      "hits": [
+        {
+          "field": "content",
+          "position": 6383,
+          "snippet": "t the hero, the CTA, and the first 3 sections as commercial — not awareness content.</li>\n<li><strong>Forms shorter, fri"
+        },
+        {
+          "field": "faq[6].answer",
+          "position": 124,
+          "snippet": " is mostly transactional intent and click retention is high — focus on CRO and branded discovery moves only. (2) Brand-n"
+        },
+        {
+          "field": "faq[6].answer",
+          "position": 237,
+          "snippet": "Brand-new categories where AI engines have no training data — AEO architecture pays off when AI engines already understa"
+        }
+      ]
+    },
+    {
+      "slug": "eeat-in-the-age-of-ai",
+      "_id": "imported-blogPost-69b6e05ed0e8070d168b785c",
+      "_rev": "7ONx74QMiI10eazwuvlArt",
+      "hits": [
+        {
+          "field": "content",
+          "position": 1089,
+          "snippet": "ngines cite competitors instead. The root cause is the same — the content has no expertise markers. The author byline is"
+        },
+        {
+          "field": "content",
+          "position": 5385,
+          "snippet": "outline and the structural scaffolding. The actual thinking — the opinions, the contrarian takes, the specific client ex"
+        },
+        {
+          "field": "content",
+          "position": 5473,
+          "snippet": "an takes, the specific client examples, the lessons learned — comes from the practitioner. The AI assists; the practitio"
+        },
+        {
+          "field": "content",
+          "position": 7355,
+          "snippet": "ource links.</strong> \"73% of B2B SaaS marketers report...\" — from where? Real data is linkable; invented data isn't.</l"
+        },
+        {
+          "field": "faq[0].answer",
+          "position": 81,
+          "snippet": "perience, Expertise, Authoritativeness, and Trustworthiness — Google's framework for evaluating content quality. It matt"
+        },
+        {
+          "field": "faq[1].answer",
+          "position": 256,
+          "snippet": "hor to have personally done the thing they're writing about — shipped the product, run the agency, served the clients — "
+        },
+        {
+          "field": "faq[1].answer",
+          "position": 314,
+          "snippet": "t — shipped the product, run the agency, served the clients — rather than just researching the topic from secondary sour"
+        },
+        {
+          "field": "faq[6].answer",
+          "position": 294,
+          "snippet": "s slowing publication cadence to preserve expertise markers — named bylines, first-party data, real client names, contra"
+        }
+      ]
+    }
+  ]
+}

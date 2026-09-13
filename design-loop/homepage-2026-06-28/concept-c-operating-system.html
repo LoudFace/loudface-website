@@ -1,0 +1,1704 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>LoudFace | Build + Grow Operating System</title>
+  <style>
+    /*
+      Intended type direction:
+      - Bricolage Grotesque for headings
+      - Geist for body, navigation, labels
+      - Instrument Serif italic only for the indigo accent words
+      Standalone file uses system fallbacks so it renders without a dev server.
+    */
+    :root {
+      --page: #f7f8f5;
+      --surface: #fbfbf8;
+      --surface-quiet: #eef0eb;
+      --surface-soft: #e5e8e1;
+      --ink: #22302e;
+      --ink-deep: #17211f;
+      --muted: #66746f;
+      --muted-strong: #4d5d58;
+      --line: rgba(34, 48, 46, 0.15);
+      --line-strong: rgba(34, 48, 46, 0.28);
+      --dark: #1e2a27;
+      --dark-deep: #16201d;
+      --dark-line: rgba(244, 245, 237, 0.16);
+      --dark-text: #f1f3eb;
+      --dark-muted: #b9c2bc;
+      --accent: #4F46E5;
+      --accent-soft: #e7e6ff;
+      --accent-line: rgba(79, 70, 229, 0.28);
+      --warm: #c9b981;
+      --green: #6f8b78;
+      --shadow-soft: 0 24px 70px rgba(34, 48, 46, 0.13);
+      --shadow-small: 0 12px 26px rgba(34, 48, 46, 0.11);
+      --ring-hairline: 1px solid var(--line);
+      --ring-dark: 1px solid var(--dark-line);
+      --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+      --ease-smooth: cubic-bezier(0.32, 0.72, 0, 1);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+      background: var(--page);
+    }
+
+    body {
+      margin: 0;
+      background: var(--page);
+      color: var(--ink);
+      font-family: "Geist", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      letter-spacing: 0;
+      -webkit-font-smoothing: antialiased;
+      text-rendering: geometricPrecision;
+    }
+
+    img {
+      display: block;
+      max-width: 100%;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    button,
+    a {
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .page {
+      overflow: hidden;
+    }
+
+    .wrap {
+      width: min(100% - 48px, 1240px);
+      margin: 0 auto;
+    }
+
+    .site-header {
+      position: sticky;
+      top: 0;
+      z-index: 40;
+      border-bottom: var(--ring-hairline);
+      background: rgba(247, 248, 245, 0.88);
+      backdrop-filter: blur(18px);
+    }
+
+    .nav {
+      min-height: 72px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 24px;
+    }
+
+    .brand {
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      min-width: 136px;
+    }
+
+    .brand img {
+      width: 124px;
+      height: auto;
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      color: var(--muted-strong);
+      font-size: 0.95rem;
+      font-weight: 520;
+    }
+
+    .nav-links a {
+      min-height: 44px;
+      display: inline-flex;
+      align-items: center;
+      padding: 0 13px;
+      border-radius: 999px;
+      transition: background-color 220ms var(--ease-out), color 220ms var(--ease-out), transform 220ms var(--ease-out);
+    }
+
+    .nav-links a:hover {
+      background: var(--surface-quiet);
+      color: var(--ink);
+      transform: translateY(-1px);
+    }
+
+    .nav-links a:active {
+      transform: scale(0.98);
+    }
+
+    .nav-cta,
+    .button {
+      min-height: 46px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      border-radius: 999px;
+      padding: 0 20px;
+      background: var(--ink);
+      color: #f5f6ef;
+      font-weight: 640;
+      font-size: 0.96rem;
+      border: var(--ring-hairline);
+      border-color: rgba(34, 48, 46, 0.44);
+      transition: transform 220ms var(--ease-out), background-color 220ms var(--ease-out), color 220ms var(--ease-out), border-color 220ms var(--ease-out);
+    }
+
+    .button.secondary {
+      background: transparent;
+      color: var(--ink);
+      border-color: var(--line-strong);
+    }
+
+    .nav-cta:hover,
+    .button:hover {
+      transform: translateY(-2px);
+      background: var(--ink-deep);
+    }
+
+    .button.secondary:hover {
+      background: var(--surface-quiet);
+      color: var(--ink);
+    }
+
+    .nav-cta:active,
+    .button:active {
+      transform: scale(0.98);
+    }
+
+    .hero {
+      padding: 58px 0 86px;
+    }
+
+    .hero-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 0.86fr) minmax(560px, 1.14fr);
+      gap: 42px;
+      align-items: center;
+    }
+
+    .hero-copy {
+      animation: blur-rise 820ms var(--ease-out) both;
+    }
+
+    .positioning {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 28px;
+    }
+
+    .pill {
+      display: inline-flex;
+      min-height: 36px;
+      align-items: center;
+      justify-content: center;
+      border-radius: 999px;
+      padding: 0 14px;
+      background: var(--surface);
+      border: var(--ring-hairline);
+      color: var(--muted-strong);
+      font-size: 0.89rem;
+      font-weight: 560;
+      white-space: nowrap;
+    }
+
+    .pill.accent {
+      color: var(--accent);
+      border-color: var(--accent-line);
+      background: var(--accent-soft);
+    }
+
+    h1,
+    h2,
+    h3,
+    .display {
+      margin: 0;
+      font-family: "Bricolage Grotesque", "Avenir Next", "Segoe UI", sans-serif;
+      font-weight: 560;
+      letter-spacing: 0;
+      line-height: 0.98;
+      color: var(--ink);
+    }
+
+    h1 {
+      max-width: 640px;
+      font-size: 5.7rem;
+    }
+
+    .serif-accent {
+      font-family: "Instrument Serif", Georgia, serif;
+      font-style: italic;
+      font-weight: 400;
+      color: var(--accent);
+    }
+
+    .hero-lede {
+      max-width: 560px;
+      margin: 28px 0 0;
+      color: var(--muted-strong);
+      font-size: 1.2rem;
+      line-height: 1.62;
+    }
+
+    .hero-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 34px;
+    }
+
+    .proof-ribbon {
+      margin-top: 34px;
+      max-width: 560px;
+      display: grid;
+      grid-template-columns: 1fr 1.2fr;
+      border: var(--ring-hairline);
+      border-radius: 18px;
+      background: rgba(251, 251, 248, 0.72);
+      overflow: hidden;
+    }
+
+    .proof-ribbon > div {
+      padding: 17px 18px;
+    }
+
+    .proof-ribbon > div + div {
+      border-left: var(--ring-hairline);
+    }
+
+    .proof-ribbon strong {
+      display: block;
+      margin-bottom: 6px;
+      font-size: 0.98rem;
+      color: var(--ink);
+    }
+
+    .proof-ribbon span {
+      color: var(--muted);
+      font-size: 0.92rem;
+      line-height: 1.45;
+    }
+
+    .cockpit-shell {
+      position: relative;
+      border-radius: 28px;
+      padding: 12px;
+      background: var(--surface);
+      border: var(--ring-hairline);
+      box-shadow: var(--shadow-soft);
+      animation: blur-rise 920ms var(--ease-out) 120ms both;
+    }
+
+    .cockpit-shell::after {
+      content: "";
+      position: absolute;
+      inset: 12px;
+      border-radius: 22px;
+      pointer-events: none;
+      box-shadow: inset 0 0 0 1px rgba(34, 48, 46, 0.08);
+    }
+
+    .browser-bar {
+      min-height: 54px;
+      display: grid;
+      grid-template-columns: 130px minmax(160px, 1fr) auto;
+      gap: 12px;
+      align-items: center;
+      padding: 0 14px 10px;
+      color: var(--muted);
+      font-size: 0.88rem;
+      font-weight: 560;
+    }
+
+    .window-title {
+      min-height: 34px;
+      display: flex;
+      align-items: center;
+      padding: 0 12px;
+      border-radius: 999px;
+      background: var(--surface-quiet);
+      color: var(--ink);
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+    }
+
+    .browser-tabs {
+      display: flex;
+      gap: 6px;
+      justify-content: center;
+      min-width: 0;
+    }
+
+    .browser-tabs span,
+    .system-state span {
+      min-height: 34px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 999px;
+      padding: 0 12px;
+      background: transparent;
+      border: var(--ring-hairline);
+      color: var(--muted-strong);
+      white-space: nowrap;
+    }
+
+    .browser-tabs span.active {
+      border-color: var(--accent-line);
+      background: var(--accent-soft);
+      color: var(--accent);
+    }
+
+    .system-state {
+      display: flex;
+      justify-content: flex-end;
+    }
+
+    .cockpit-body {
+      position: relative;
+      display: grid;
+      grid-template-columns: minmax(0, 1.08fr) minmax(270px, 0.92fr);
+      gap: 12px;
+      min-height: 586px;
+      border-radius: 20px;
+      overflow: hidden;
+      background: var(--surface-quiet);
+      border: var(--ring-hairline);
+    }
+
+    .build-screen {
+      display: grid;
+      grid-template-rows: minmax(280px, 1fr) auto;
+      min-width: 0;
+      border-right: var(--ring-hairline);
+      background: var(--surface);
+    }
+
+    .screen-media {
+      position: relative;
+      min-height: 320px;
+      overflow: hidden;
+      background: var(--surface-soft);
+    }
+
+    .screen-media img {
+      width: 100%;
+      height: 100%;
+      min-height: 320px;
+      object-fit: cover;
+      transform: scale(1.03);
+      transition: transform 700ms var(--ease-out);
+    }
+
+    .cockpit-shell:hover .screen-media img {
+      transform: scale(1.07);
+    }
+
+    .video-slot {
+      position: absolute;
+      left: 22px;
+      bottom: 22px;
+      max-width: calc(100% - 44px);
+      min-height: 56px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 15px;
+      border-radius: 18px;
+      background: rgba(247, 248, 245, 0.88);
+      border: var(--ring-hairline);
+      backdrop-filter: blur(14px);
+      color: var(--ink);
+      font-weight: 640;
+      font-size: 0.9rem;
+      line-height: 1.3;
+    }
+
+    .play-mark {
+      flex: 0 0 auto;
+      width: 34px;
+      height: 34px;
+      display: grid;
+      place-items: center;
+      border-radius: 999px;
+      background: var(--ink);
+      color: #f5f6ef;
+    }
+
+    .build-meta {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      border-top: var(--ring-hairline);
+    }
+
+    .build-meta article {
+      padding: 22px;
+    }
+
+    .build-meta article + article {
+      border-left: var(--ring-hairline);
+    }
+
+    .micro-label {
+      display: block;
+      margin-bottom: 9px;
+      color: var(--muted);
+      font-size: 0.78rem;
+      font-weight: 680;
+      letter-spacing: 0;
+      text-transform: uppercase;
+    }
+
+    .build-meta h3,
+    .node h3,
+    .ledger-card h3,
+    .proof-item h3 {
+      font-size: 1.05rem;
+      line-height: 1.18;
+    }
+
+    .build-meta p,
+    .node p,
+    .ledger-card p,
+    .proof-item p {
+      margin: 10px 0 0;
+      color: var(--muted);
+      font-size: 0.93rem;
+      line-height: 1.5;
+    }
+
+    .growth-map {
+      position: relative;
+      min-width: 0;
+      padding: 20px;
+      background: #f2f3ee;
+    }
+
+    .growth-map h2 {
+      font-size: 2.3rem;
+      line-height: 1.02;
+      max-width: 330px;
+      margin-bottom: 18px;
+    }
+
+    .connector-svg {
+      position: absolute;
+      inset: 102px 20px 74px 20px;
+      width: calc(100% - 40px);
+      height: calc(100% - 176px);
+      pointer-events: none;
+      color: rgba(79, 70, 229, 0.42);
+    }
+
+    .node-stack {
+      position: relative;
+      display: grid;
+      gap: 13px;
+      z-index: 1;
+    }
+
+    .node {
+      min-height: 112px;
+      padding: 17px;
+      border-radius: 18px;
+      background: rgba(251, 251, 248, 0.82);
+      border: var(--ring-hairline);
+      transition: transform 220ms var(--ease-out), background-color 220ms var(--ease-out), border-color 220ms var(--ease-out);
+    }
+
+    .node:hover {
+      transform: translateY(-2px);
+      border-color: var(--line-strong);
+      background: var(--surface);
+    }
+
+    .node:active {
+      transform: scale(0.99);
+    }
+
+    .node:nth-child(2) {
+      width: 88%;
+      margin-left: auto;
+    }
+
+    .node:nth-child(3) {
+      width: 92%;
+    }
+
+    .node.output {
+      border-color: var(--accent-line);
+      background: var(--accent-soft);
+    }
+
+    .node.output p {
+      color: #504f85;
+    }
+
+    .section {
+      padding: 94px 0;
+    }
+
+    .section-tight {
+      padding: 76px 0;
+    }
+
+    .section-head {
+      display: grid;
+      grid-template-columns: minmax(0, 0.92fr) minmax(280px, 0.58fr);
+      gap: 36px;
+      align-items: end;
+      margin-bottom: 42px;
+    }
+
+    .section-head h2 {
+      max-width: 820px;
+      font-size: 4.4rem;
+    }
+
+    .section-head p {
+      margin: 0;
+      color: var(--muted-strong);
+      font-size: 1.08rem;
+      line-height: 1.62;
+    }
+
+    .os-lanes {
+      display: grid;
+      grid-template-columns: minmax(0, 1.03fr) minmax(300px, 0.78fr);
+      gap: 18px;
+      align-items: stretch;
+    }
+
+    .lane {
+      border: var(--ring-hairline);
+      border-radius: 24px;
+      background: var(--surface);
+      overflow: hidden;
+    }
+
+    .lane.build {
+      min-height: 620px;
+      display: grid;
+      grid-template-rows: auto 1fr;
+    }
+
+    .lane.grow {
+      display: grid;
+      grid-template-rows: auto 1fr;
+      background: var(--ink);
+      color: var(--dark-text);
+      border-color: rgba(34, 48, 46, 0.35);
+    }
+
+    .lane-header {
+      padding: 28px;
+      display: flex;
+      justify-content: space-between;
+      gap: 20px;
+      border-bottom: var(--ring-hairline);
+    }
+
+    .lane.grow .lane-header {
+      border-bottom-color: var(--dark-line);
+    }
+
+    .lane-header h3 {
+      font-size: 2rem;
+      line-height: 1.05;
+    }
+
+    .lane-header p {
+      max-width: 420px;
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.55;
+    }
+
+    .lane.grow .lane-header p {
+      color: var(--dark-muted);
+    }
+
+    .build-canvas {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(220px, 0.64fr);
+      gap: 0;
+      min-height: 0;
+    }
+
+    .canvas-shot {
+      position: relative;
+      min-height: 430px;
+      overflow: hidden;
+      background: var(--surface-quiet);
+      clip-path: inset(0 round 0 0 0 18px);
+    }
+
+    .canvas-shot img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .cms-column {
+      display: grid;
+      grid-template-rows: 1fr 1fr;
+      border-left: var(--ring-hairline);
+    }
+
+    .cms-step {
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      min-height: 210px;
+    }
+
+    .cms-step + .cms-step {
+      border-top: var(--ring-hairline);
+    }
+
+    .cms-step h4,
+    .loop-item h4,
+    .result-row h4 {
+      margin: 0;
+      font-family: "Bricolage Grotesque", "Avenir Next", "Segoe UI", sans-serif;
+      font-size: 1.08rem;
+      line-height: 1.18;
+      font-weight: 560;
+    }
+
+    .cms-step p,
+    .loop-item p,
+    .result-row p {
+      margin: 12px 0 0;
+      color: var(--muted);
+      line-height: 1.5;
+      font-size: 0.95rem;
+    }
+
+    .grow-loop {
+      padding: 12px;
+      display: grid;
+      gap: 12px;
+    }
+
+    .loop-item {
+      padding: 20px;
+      border-radius: 18px;
+      background: rgba(244, 245, 237, 0.06);
+      border: var(--ring-dark);
+    }
+
+    .loop-item p {
+      color: var(--dark-muted);
+    }
+
+    .loop-item strong {
+      color: var(--dark-text);
+      font-weight: 640;
+    }
+
+    .proof-dark {
+      background: var(--dark);
+      color: var(--dark-text);
+      padding: 98px 0;
+    }
+
+    .proof-dark .section-head h2 {
+      color: var(--dark-text);
+    }
+
+    .proof-dark .section-head p {
+      color: var(--dark-muted);
+    }
+
+    .proof-grid {
+      display: grid;
+      grid-template-columns: minmax(340px, 0.76fr) minmax(0, 1.24fr);
+      gap: 18px;
+      align-items: stretch;
+    }
+
+    .proof-film {
+      min-height: 560px;
+      border-radius: 24px;
+      overflow: hidden;
+      border: var(--ring-dark);
+      background: var(--dark-deep);
+      position: relative;
+    }
+
+    .proof-film img {
+      width: 100%;
+      height: 100%;
+      min-height: 560px;
+      object-fit: cover;
+      opacity: 0.82;
+      filter: saturate(0.88);
+    }
+
+    .proof-film .video-slot {
+      background: rgba(30, 42, 39, 0.84);
+      border-color: var(--dark-line);
+      color: var(--dark-text);
+    }
+
+    .proof-film .play-mark {
+      background: var(--dark-text);
+      color: var(--dark);
+    }
+
+    .result-board {
+      display: grid;
+      grid-template-rows: auto 1fr;
+      border-radius: 24px;
+      overflow: hidden;
+      border: var(--ring-dark);
+      background: rgba(244, 245, 237, 0.055);
+    }
+
+    .result-header {
+      padding: 26px 28px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+      border-bottom: var(--ring-dark);
+    }
+
+    .result-header h3 {
+      color: var(--dark-text);
+    }
+
+    .badge-img {
+      width: min(240px, 42vw);
+      height: auto;
+      border-radius: 12px;
+      background: rgba(244, 245, 237, 0.08);
+    }
+
+    .result-list {
+      display: grid;
+    }
+
+    .result-row {
+      display: grid;
+      grid-template-columns: 0.74fr 1fr;
+      gap: 22px;
+      padding: 24px 28px;
+      border-bottom: var(--ring-dark);
+    }
+
+    .result-row:last-child {
+      border-bottom: 0;
+    }
+
+    .result-row h4 {
+      color: var(--dark-text);
+    }
+
+    .result-row p {
+      color: var(--dark-muted);
+    }
+
+    .evidence-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-content: start;
+    }
+
+    .evidence-tags span {
+      min-height: 34px;
+      display: inline-flex;
+      align-items: center;
+      border-radius: 999px;
+      padding: 0 12px;
+      background: rgba(244, 245, 237, 0.08);
+      color: var(--dark-muted);
+      border: var(--ring-dark);
+      font-size: 0.84rem;
+      font-weight: 560;
+    }
+
+    .ledger {
+      background: #f2f3ee;
+    }
+
+    .ledger-track {
+      display: grid;
+      grid-template-columns: 1.28fr 0.9fr 1.1fr;
+      grid-template-rows: auto auto;
+      gap: 18px;
+      align-items: stretch;
+    }
+
+    .ledger-card {
+      min-height: 360px;
+      display: grid;
+      grid-template-rows: minmax(220px, 1fr) auto;
+      border-radius: 24px;
+      border: var(--ring-hairline);
+      overflow: hidden;
+      background: var(--surface);
+      transition: transform 260ms var(--ease-out), border-color 260ms var(--ease-out), box-shadow 260ms var(--ease-out);
+    }
+
+    .ledger-card:hover {
+      transform: translateY(-4px);
+      border-color: var(--line-strong);
+      box-shadow: var(--shadow-small);
+    }
+
+    .ledger-card:active {
+      transform: scale(0.99);
+    }
+
+    .ledger-card.large {
+      grid-row: span 2;
+      min-height: 640px;
+    }
+
+    .ledger-card.wide {
+      grid-column: span 2;
+      grid-template-columns: minmax(280px, 0.95fr) minmax(0, 1fr);
+      grid-template-rows: auto;
+      min-height: 290px;
+    }
+
+    .ledger-media {
+      overflow: hidden;
+      background: var(--surface-soft);
+    }
+
+    .ledger-card.large .ledger-media {
+      clip-path: inset(0 0 0 0 round 0 0 28px 0);
+    }
+
+    .ledger-card.wide .ledger-media {
+      min-height: 290px;
+      clip-path: inset(8% 0 0 0 round 0 0 20px 0);
+    }
+
+    .ledger-media img {
+      width: 100%;
+      height: 100%;
+      min-height: 220px;
+      object-fit: cover;
+      transition: transform 700ms var(--ease-out);
+    }
+
+    .ledger-card:hover .ledger-media img {
+      transform: scale(1.045);
+    }
+
+    .ledger-copy {
+      padding: 24px;
+    }
+
+    .ledger-copy .micro-label {
+      color: var(--accent);
+    }
+
+    .testimonial {
+      padding: 90px 0 104px;
+      background: var(--page);
+    }
+
+    .watch-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 0.86fr) minmax(420px, 1.14fr);
+      gap: 18px;
+      align-items: stretch;
+    }
+
+    .quote-panel {
+      border: var(--ring-hairline);
+      border-radius: 24px;
+      background: var(--surface);
+      padding: 34px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      min-height: 420px;
+    }
+
+    .quote-panel h2 {
+      font-size: 3.3rem;
+      line-height: 1.02;
+      max-width: 560px;
+    }
+
+    .quote-panel blockquote {
+      margin: 42px 0 0;
+      color: var(--muted-strong);
+      font-size: 1.18rem;
+      line-height: 1.62;
+    }
+
+    .quote-panel cite {
+      display: block;
+      margin-top: 26px;
+      color: var(--ink);
+      font-style: normal;
+      font-weight: 640;
+    }
+
+    .watch-player {
+      min-height: 420px;
+      position: relative;
+      border-radius: 24px;
+      overflow: hidden;
+      border: var(--ring-hairline);
+      background: var(--dark);
+    }
+
+    .watch-player img {
+      width: 100%;
+      height: 100%;
+      min-height: 420px;
+      object-fit: cover;
+      opacity: 0.78;
+      filter: saturate(0.9);
+    }
+
+    .watch-player .video-slot {
+      background: rgba(30, 42, 39, 0.84);
+      color: var(--dark-text);
+      border-color: var(--dark-line);
+    }
+
+    .cta {
+      padding: 104px 0 116px;
+      background: var(--ink);
+      color: var(--dark-text);
+    }
+
+    .cta-box {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 36px;
+      align-items: end;
+    }
+
+    .cta h2 {
+      max-width: 860px;
+      color: var(--dark-text);
+      font-size: 5rem;
+      line-height: 1;
+    }
+
+    .cta p {
+      max-width: 610px;
+      margin: 24px 0 0;
+      color: var(--dark-muted);
+      font-size: 1.12rem;
+      line-height: 1.6;
+    }
+
+    .cta-actions {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+      gap: 12px;
+    }
+
+    .cta .button {
+      background: var(--dark-text);
+      color: var(--ink);
+      border-color: rgba(244, 245, 237, 0.36);
+    }
+
+    .cta .button.secondary {
+      background: transparent;
+      color: var(--dark-text);
+      border-color: var(--dark-line);
+    }
+
+    .cta .button:hover {
+      background: #e7eae0;
+    }
+
+    .cta .button.secondary:hover {
+      background: rgba(244, 245, 237, 0.08);
+    }
+
+    .fade-a { animation: blur-rise 760ms var(--ease-out) both; }
+    .fade-b { animation: blur-rise 760ms var(--ease-out) 90ms both; }
+    .fade-c { animation: blur-rise 760ms var(--ease-out) 180ms both; }
+
+    @keyframes blur-rise {
+      from {
+        opacity: 0;
+        filter: blur(12px);
+        transform: translateY(18px);
+      }
+      to {
+        opacity: 1;
+        filter: blur(0);
+        transform: translateY(0);
+      }
+    }
+
+    @media (max-width: 1120px) {
+      .hero-grid,
+      .os-lanes,
+      .proof-grid,
+      .watch-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .hero-grid {
+        gap: 36px;
+      }
+
+      h1 {
+        max-width: 900px;
+        font-size: 4.8rem;
+      }
+
+      .cockpit-body {
+        grid-template-columns: 1fr;
+      }
+
+      .build-screen {
+        border-right: 0;
+        border-bottom: var(--ring-hairline);
+      }
+
+      .growth-map {
+        min-height: 520px;
+      }
+
+      .ledger-track {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .ledger-card.large,
+      .ledger-card.wide {
+        grid-column: span 1;
+        grid-row: span 1;
+        min-height: 430px;
+        grid-template-columns: 1fr;
+        grid-template-rows: minmax(240px, 1fr) auto;
+      }
+
+      .cta-box {
+        grid-template-columns: 1fr;
+      }
+
+      .cta-actions {
+        justify-content: flex-start;
+      }
+    }
+
+    @media (max-width: 760px) {
+      .wrap {
+        width: min(100% - 32px, 1240px);
+      }
+
+      .nav {
+        min-height: 66px;
+      }
+
+      .brand img {
+        width: 112px;
+      }
+
+      .nav-links {
+        display: none;
+      }
+
+      .nav-cta {
+        min-height: 42px;
+        padding: 0 15px;
+        font-size: 0.9rem;
+      }
+
+      .hero {
+        padding: 44px 0 62px;
+      }
+
+      h1 {
+        font-size: 3.1rem;
+        line-height: 1.02;
+      }
+
+      .hero-lede {
+        font-size: 1.03rem;
+      }
+
+      .positioning {
+        gap: 8px;
+      }
+
+      .pill {
+        min-height: 34px;
+        font-size: 0.82rem;
+        padding: 0 11px;
+      }
+
+      .button {
+        width: 100%;
+      }
+
+      .proof-ribbon {
+        grid-template-columns: 1fr;
+      }
+
+      .proof-ribbon > div + div {
+        border-left: 0;
+        border-top: var(--ring-hairline);
+      }
+
+      .cockpit-shell {
+        border-radius: 22px;
+        padding: 8px;
+      }
+
+      .browser-bar {
+        grid-template-columns: 1fr;
+        padding: 0 6px 8px;
+      }
+
+      .browser-tabs {
+        justify-content: flex-start;
+        overflow-x: auto;
+        padding-bottom: 2px;
+      }
+
+      .system-state {
+        justify-content: flex-start;
+      }
+
+      .cockpit-body {
+        min-height: auto;
+        border-radius: 16px;
+      }
+
+      .screen-media,
+      .screen-media img {
+        min-height: 260px;
+      }
+
+      .video-slot {
+        left: 14px;
+        right: 14px;
+        bottom: 14px;
+        max-width: none;
+        font-size: 0.82rem;
+      }
+
+      .play-mark {
+        width: 30px;
+        height: 30px;
+      }
+
+      .build-meta,
+      .build-canvas,
+      .section-head,
+      .result-row,
+      .cta-box {
+        grid-template-columns: 1fr;
+      }
+
+      .build-meta article + article,
+      .cms-column {
+        border-left: 0;
+      }
+
+      .build-meta article + article {
+        border-top: var(--ring-hairline);
+      }
+
+      .canvas-shot,
+      .canvas-shot img {
+        min-height: 280px;
+      }
+
+      .cms-column {
+        border-top: var(--ring-hairline);
+      }
+
+      .growth-map {
+        padding: 18px;
+        min-height: auto;
+      }
+
+      .growth-map h2 {
+        font-size: 2rem;
+      }
+
+      .connector-svg {
+        display: none;
+      }
+
+      .node,
+      .node:nth-child(2),
+      .node:nth-child(3) {
+        width: 100%;
+        margin-left: 0;
+      }
+
+      .section,
+      .proof-dark,
+      .testimonial {
+        padding: 68px 0;
+      }
+
+      .section-tight {
+        padding: 58px 0;
+      }
+
+      .section-head {
+        gap: 18px;
+        margin-bottom: 28px;
+      }
+
+      .section-head h2,
+      .quote-panel h2 {
+        font-size: 2.65rem;
+        line-height: 1.04;
+      }
+
+      .lane-header {
+        display: block;
+        padding: 23px;
+      }
+
+      .lane-header h3 {
+        font-size: 1.72rem;
+        margin-bottom: 14px;
+      }
+
+      .proof-film,
+      .proof-film img,
+      .watch-player,
+      .watch-player img {
+        min-height: 360px;
+      }
+
+      .result-header {
+        display: block;
+      }
+
+      .badge-img {
+        margin-top: 16px;
+        width: min(250px, 100%);
+      }
+
+      .result-row {
+        gap: 14px;
+        padding: 22px;
+      }
+
+      .ledger-track {
+        grid-template-columns: 1fr;
+      }
+
+      .ledger-card,
+      .ledger-card.large,
+      .ledger-card.wide {
+        min-height: 0;
+      }
+
+      .ledger-media img {
+        min-height: 230px;
+      }
+
+      .quote-panel {
+        min-height: 0;
+        padding: 26px;
+      }
+
+      .quote-panel blockquote {
+        margin-top: 28px;
+        font-size: 1.02rem;
+      }
+
+      .cta {
+        padding: 72px 0 82px;
+      }
+
+      .cta h2 {
+        font-size: 3.05rem;
+      }
+
+      .cta-actions {
+        width: 100%;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *,
+      *::before,
+      *::after {
+        animation-duration: 0.001ms !important;
+        animation-iteration-count: 1 !important;
+        scroll-behavior: auto !important;
+        transition-duration: 0.001ms !important;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <header class="site-header">
+      <nav class="wrap nav" aria-label="Main navigation">
+        <a class="brand" href="#" aria-label="LoudFace home">
+          <img src="../../public/images/loudface.svg" alt="LoudFace">
+        </a>
+        <div class="nav-links" aria-label="Page sections">
+          <a href="#system">Build + Grow</a>
+          <a href="#proof">Proof</a>
+          <a href="#ledger">Work ledger</a>
+          <a href="#video">Video</a>
+        </div>
+        <a class="nav-cta" href="#cta">Plan the sprint</a>
+      </nav>
+    </header>
+
+    <main>
+      <section class="hero" aria-labelledby="hero-title">
+        <div class="wrap hero-grid">
+          <div class="hero-copy">
+            <div class="positioning" aria-label="Service focus">
+              <span class="pill accent">Build + Grow OS</span>
+              <span class="pill">B2B SaaS agency</span>
+              <span class="pill">Webflow, SEO, AEO, CRO</span>
+            </div>
+            <h1 id="hero-title">Your website should work like a <span class="serif-accent">growth</span> operating system.</h1>
+            <p class="hero-lede">LoudFace builds the site, content machine, answer-engine presence, and conversion loops together, so SaaS teams stop treating launch and growth as separate projects.</p>
+            <div class="hero-actions">
+              <a class="button" href="#cta">Map the next sprint</a>
+              <a class="button secondary" href="#ledger">See the ledger</a>
+            </div>
+            <div class="proof-ribbon" aria-label="Build and growth model">
+              <div>
+                <strong>Build side</strong>
+                <span>Brand system, Webflow CMS, launch QA, landing pages, and video-ready pages.</span>
+              </div>
+              <div>
+                <strong>Grow side</strong>
+                <span>Search capture, AEO briefs, CRO tests, lifecycle creative, and proof reporting.</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="cockpit-shell" aria-label="LoudFace growth cockpit mockup">
+            <div class="browser-bar">
+              <div class="window-title">loudface.system</div>
+              <div class="browser-tabs" aria-label="Cockpit tabs">
+                <span class="active">Build</span>
+                <span>Grow</span>
+                <span>Proof</span>
+              </div>
+              <div class="system-state"><span>Operating view</span></div>
+            </div>
+            <div class="cockpit-body">
+              <div class="build-screen">
+                <div class="screen-media">
+                  <img src="../../public/images/webflow-experts_1.webp" alt="Webflow website build preview">
+                  <div class="video-slot">
+                    <span class="play-mark" aria-hidden="true">▶</span>
+                    <span>Webflow CMS walkthrough with launch QA</span>
+                  </div>
+                </div>
+                <div class="build-meta">
+                  <article>
+                    <span class="micro-label">Website build</span>
+                    <h3>CMS structure before page sprawl.</h3>
+                    <p>Reusable sections, field logic, and publishing rules are built before the first content push.</p>
+                  </article>
+                  <article>
+                    <span class="micro-label">Launch QA</span>
+                    <h3>Brand, speed, search, and form paths checked as one release.</h3>
+                    <p>The launch checklist is attached to the growth plan, not parked in a handoff doc.</p>
+                  </article>
+                </div>
+              </div>
+
+              <div class="growth-map">
+                <h2>One command center for build work and growth loops.</h2>
+                <svg class="connector-svg" viewBox="0 0 360 380" aria-hidden="true">
+                  <path d="M42 38 C180 90 178 144 310 168" fill="none" stroke="currentColor" stroke-width="2" stroke-dasharray="7 8"/>
+                  <path d="M305 170 C170 198 190 270 48 330" fill="none" stroke="currentColor" stroke-width="2" stroke-dasharray="7 8"/>
+                  <path d="M64 50 C130 170 232 218 292 326" fill="none" stroke="rgba(34,48,46,0.24)" stroke-width="2"/>
+                </svg>
+                <div class="node-stack">
+                  <article class="node">
+                    <span class="micro-label">Webflow CMS</span>
+                    <h3>Pages ship from a managed content model.</h3>
+                    <p>Case studies, landing pages, resource hubs, and comparison pages share the same source of truth.</p>
+                  </article>
+                  <article class="node">
+                    <span class="micro-label">SEO and AEO</span>
+                    <h3>Search briefs turn into publishable page systems.</h3>
+                    <p>Topic maps, answer blocks, structured proof, and internal links are planned inside the build.</p>
+                  </article>
+                  <article class="node">
+                    <span class="micro-label">CRO loop</span>
+                    <h3>Offers, forms, and page sections become testable units.</h3>
+                    <p>Each improvement has a visible owner, evidence source, and next decision.</p>
+                  </article>
+                  <article class="node output">
+                    <span class="micro-label">Proof packet</span>
+                    <h3>Results stay attached to the work that produced them.</h3>
+                    <p>Launch notes, search movement, conversion readouts, and customer quotes stay in one proof record.</p>
+                  </article>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="system" aria-labelledby="system-title">
+        <div class="wrap">
+          <div class="section-head fade-a">
+            <h2 id="system-title">Build the site. Grow the demand. Keep both in the same <span class="serif-accent">rhythm</span>.</h2>
+            <p>The work is intentionally connected: every Webflow component, content sprint, answer-engine page, and conversion test feeds the next growth decision.</p>
+          </div>
+
+          <div class="os-lanes">
+            <article class="lane build fade-b">
+              <div class="lane-header">
+                <h3>Build layer</h3>
+                <p>A production-ready site architecture, not a pile of pretty pages waiting for someone else to operate it.</p>
+              </div>
+              <div class="build-canvas">
+                <div class="canvas-shot">
+                  <img src="../../public/images/brandfirm.webp" alt="Brandfirm website case study preview">
+                </div>
+                <div class="cms-column">
+                  <div class="cms-step">
+                    <div>
+                      <span class="micro-label">Structure</span>
+                      <h4>CMS-first page architecture</h4>
+                    </div>
+                    <p>Templates for service pages, proof pages, comparison content, and resource publishing.</p>
+                  </div>
+                  <div class="cms-step">
+                    <div>
+                      <span class="micro-label">Release</span>
+                      <h4>Launch paths with growth hooks</h4>
+                    </div>
+                    <p>Analytics, form logic, conversion events, and editorial workflows are part of the launch.</p>
+                  </div>
+                </div>
+              </div>
+            </article>
+
+            <article class="lane grow fade-c">
+              <div class="lane-header">
+                <h3>Grow layer</h3>
+                <p>Search, AEO, CRO, and lifecycle creative are treated as connected operating loops.</p>
+              </div>
+              <div class="grow-loop">
+                <div class="loop-item">
+                  <span class="micro-label">Search capture</span>
+                  <h4>Organic demand becomes page inventory.</h4>
+                  <p>Keyword themes, comparison intent, and sales questions become publishable Webflow paths.</p>
+                </div>
+                <div class="loop-item">
+                  <span class="micro-label">Answer engines</span>
+                  <h4>AEO blocks make expertise easier to extract.</h4>
+                  <p>Clear answers, proof snippets, schema-ready structure, and sourceable claims support discovery beyond classic search.</p>
+                </div>
+                <div class="loop-item">
+                  <span class="micro-label">Conversion work</span>
+                  <h4>Every offer can be inspected, changed, and measured.</h4>
+                  <p><strong>CRO is not a redesign queue.</strong> It is a steady operating habit tied to pages, forms, and buyer objections.</p>
+                </div>
+              </div>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section class="proof-dark" id="proof" aria-labelledby="proof-title">
+        <div class="wrap">
+          <div class="section-head">
+            <h2 id="proof-title">Proof/results belong inside the growth cadence.</h2>
+            <p>Instead of disconnected screenshots and status updates, the cockpit keeps work, evidence, and next decisions close together.</p>
+          </div>
+
+          <div class="proof-grid">
+            <div class="proof-film">
+              <img src="../../public/images/conversion-optimization_1.webp" alt="Conversion optimization visual">
+              <div class="video-slot">
+                <span class="play-mark" aria-hidden="true">▶</span>
+                <span>CRO review: form path and proof edits</span>
+              </div>
+            </div>
+
+            <div class="result-board" aria-label="Proof board">
+              <div class="result-header">
+                <div>
+                  <span class="micro-label">Proof board</span>
+                  <h3>Evidence is organized by growth question.</h3>
+                </div>
+                <img class="badge-img" src="../../public/images/Enterprise-Blue-Badge.webp" alt="Enterprise badge">
+              </div>
+              <div class="result-list">
+                <article class="result-row">
+                  <div>
+                    <span class="micro-label">Question</span>
+                    <h4>What shipped, and what can the team change without agency help?</h4>
+                  </div>
+                  <div class="evidence-tags">
+                    <span>CMS docs</span>
+                    <span>Launch QA</span>
+                    <span>Editor training</span>
+                  </div>
+                </article>
+                <article class="result-row">
+                  <div>
+                    <span class="micro-label">Question</span>
+                    <h4>Where is qualified demand already showing up?</h4>
+                  </div>
+                  <div class="evidence-tags">
+                    <span>Search movement</span>
+                    <span>AEO snippets</span>
+                    <span>Content gaps</span>
+                  </div>
+                </article>
+                <article class="result-row">
+                  <div>
+                    <span class="micro-label">Question</span>
+                    <h4>Which page decisions should the next sprint test?</h4>
+                  </div>
+                  <div class="evidence-tags">
+                    <span>Form paths</span>
+                    <span>Offer clarity</span>
+                    <span>Buyer objections</span>
+                  </div>
+                </article>
+                <article class="result-row">
+                  <div>
+                    <span class="micro-label">Question</span>
+                    <h4>What proof should sales and marketing reuse?</h4>
+                  </div>
+                  <div class="evidence-tags">
+                    <span>Case notes</span>
+                    <span>Video cuts</span>
+                    <span>Quote bank</span>
+                  </div>
+                </article>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section ledger" id="ledger" aria-labelledby="ledger-title">
+        <div class="wrap">
+          <div class="section-head">
+            <h2 id="ledger-title">A work ledger, not a portfolio wall.</h2>
+            <p>Each entry carries its role: what was built, what growth loop it supports, and which proof packet follows it.</p>
+          </div>
+
+          <div class="ledger-track" aria-label="Selected work ledger">
+            <article class="ledger-card large">
+              <div class="ledger-media">
+                <img src="../../public/images/organic-mastery_1.webp" alt="Organic mastery service preview">
+              </div>
+              <div class="ledger-copy">
+                <span class="micro-label">Search and AEO engine</span>
+                <h3>Topic maps become a publishing system instead of a monthly content list.</h3>
+                <p>Built for SaaS teams that need category pages, comparison pages, and resource paths to support real buying questions.</p>
+              </div>
+            </article>
+
+            <article class="ledger-card">
+              <div class="ledger-media">
+                <img src="../../public/images/profitable-ads_1.webp" alt="Profitable ads service preview">
+              </div>
+              <div class="ledger-copy">
+                <span class="micro-label">Offer loop</span>
+                <h3>Paid traffic gets page paths worth testing.</h3>
+                <p>Landing pages, offer framing, and conversion review stay tied to the same proof record.</p>
+              </div>
+            </article>
+
+            <article class="ledger-card">
+              <div class="ledger-media">
+                <img src="../../public/images/email-marketing_1.webp" alt="Email marketing service preview">
+              </div>
+              <div class="ledger-copy">
+                <span class="micro-label">Lifecycle creative</span>
+                <h3>Post-click journeys keep the same voice as the website.</h3>
+                <p>Lifecycle pages and messages reuse proof, objections, and positioning from the core system.</p>
+              </div>
+            </article>
+
+            <article class="ledger-card wide">
+              <div class="ledger-media">
+                <img src="../../public/images/conversion-optimization_1.webp" alt="Conversion optimization service preview">
+              </div>
+              <div class="ledger-copy">
+                <span class="micro-label">Conversion lab</span>
+                <h3>Site sections are designed as changeable decision points.</h3>
+                <p>The cockpit tracks which claims, offers, forms, and proof elements are ready to improve in the next sprint.</p>
+              </div>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section class="testimonial" id="video" aria-labelledby="video-title">
+        <div class="wrap watch-grid">
+          <div class="quote-panel">
+            <div>
+              <span class="micro-label">Video proof</span>
+              <h2 id="video-title">Show the model working in the client’s own words.</h2>
+            </div>
+            <blockquote>
+              “The website work and growth work finally lived in one place. Launch decisions, search priorities, and conversion ideas stopped competing for attention.”
+              <cite>Reserved for approved Brandfirm or Dimer Health customer quote</cite>
+            </blockquote>
+          </div>
+          <div class="watch-player">
+              <img src="../../public/images/our-journey_1.webp" alt="LoudFace studio and process visual">
+              <div class="video-slot">
+                <span class="play-mark" aria-hidden="true">▶</span>
+                <span>Daan Smit / Brandfirm video testimonial</span>
+              </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="cta" id="cta" aria-labelledby="cta-title">
+        <div class="wrap cta-box">
+          <div>
+            <h2 id="cta-title">Turn the website into the place growth work actually happens.</h2>
+            <p>Bring the current site, the messy content backlog, and the conversion questions. LoudFace will map the Build + Grow working model around them.</p>
+          </div>
+          <div class="cta-actions">
+            <a class="button" href="mailto:hello@loudface.com">Start the map</a>
+            <a class="button secondary" href="#system">Review the model</a>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+</body>
+</html>

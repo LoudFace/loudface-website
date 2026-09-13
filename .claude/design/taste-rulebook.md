@@ -13,6 +13,8 @@
 - 2026-07-14: Blog/article surfaces: the AEO answer block is the hero object, not a body callout - design compositions around the citable element. (/blog/[slug])
 - 2026-07-15: Templated surfaces: prefer signature moves that bind to per-page ARTIFACTS (screenshots, figures) over per-page NARRATIVES (day-by-day cadences) - narratives multiply invented-claim surface across instances. (/services/[service])
 - 2026-08-19: Case-study data sections: chart ink is house indigo (primary-600) NEVER the client brand color; instruments are card-less on dotted paper; the growth curve is the lead instrument (first, full-width); no LABEL·YEAR stamps beside section heads. (/case-studies/[slug])
+- 2026-09-05: Proposal surface: ONE ground for the body; only the header and the closing price section are dark. Every section is a heading plus exactly one instrument. Per-movement coloured bands were built and rejected. (/p/<token>)
 
 ## Answer-first pages
 - 2026-09-03: A liftable short answer is a card that straddles the hero seam with its own label pill, never a flat full-width band: the card is what makes the block read as a quotable object rather than page furniture. Applies to any answer-first page. (/methodology)
+- 2026-09-11: Case-study instruments boards use the PROPOSAL chart treatment: card-less on dotted paper, plots 220-300px tall, one indigo series per plot (impressions lead; clicks in the tooltip), LoudFace-start marker on the Google curve, NO dashed grid or guide lines anywhere (over dotted paper they read as broken dashes; Arnel saw them as broken even at proposal weight, so the proposal and the step charts lost theirs too). (/case-studies/[slug] InstrumentsBoard + ResultsInstruments, proposal ProposalCaseCharts)

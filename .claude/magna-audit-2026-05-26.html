@@ -1,0 +1,597 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Magna intel + 93-article audit — 2026-05-26</title>
+<style>
+  :root {
+    --ink: #1a1a1f; --paper: #faf8f3; --rule: #d8d3c4; --muted: #6b6660;
+    --accent: #b8431d; --magna: #5a3aa8; --us: #1e5f4e;
+    --win: #2d6a3e; --win-bg: #e8f1e7;
+    --loss: #a02828; --loss-bg: #f5e4e1;
+    --neutral: #4a4640; --neutral-bg: #ece8de;
+    --highlight: #f0ead6;
+    --spam: #6a1818; --spam-bg: #fae6e3;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: "Charter", "Iowan Old Style", "Sitka Text", Cambria, Georgia, serif;
+    background: var(--paper); color: var(--ink); line-height: 1.55;
+    font-feature-settings: "kern", "liga", "onum";
+    -webkit-font-smoothing: antialiased;
+  }
+  .container { max-width: 1100px; margin: 0 auto; padding: 64px 48px 96px; }
+
+  header { border-bottom: 2px solid var(--ink); padding-bottom: 32px; margin-bottom: 48px; }
+  .kicker {
+    font-family: ui-monospace, "SF Mono", Menlo, monospace;
+    font-size: 12px; text-transform: uppercase; letter-spacing: 0.12em;
+    color: var(--muted); margin-bottom: 16px;
+  }
+  h1 { font-size: 54px; line-height: 0.98; letter-spacing: -0.02em; font-weight: 700; margin-bottom: 20px; }
+  .dek { font-size: 21px; line-height: 1.4; color: var(--neutral); max-width: 760px; }
+
+  section { margin-bottom: 56px; }
+  section h2 {
+    font-size: 13px; text-transform: uppercase; letter-spacing: 0.14em;
+    font-family: ui-monospace, Menlo, monospace;
+    color: var(--accent); margin-bottom: 24px;
+    border-top: 1px solid var(--rule); padding-top: 16px;
+  }
+  section h3 { font-size: 26px; line-height: 1.15; letter-spacing: -0.01em; margin-bottom: 16px; font-weight: 600; }
+  section p { font-size: 17px; line-height: 1.6; max-width: 760px; margin-bottom: 14px; }
+  .lede { font-size: 21px; line-height: 1.5; }
+  .lede strong { background: var(--highlight); padding: 0 4px; }
+  .lede .red { background: var(--spam-bg); color: var(--spam); padding: 0 4px; }
+
+  /* Headline stats */
+  .stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 18px; margin-top: 8px; }
+  .stat {
+    background: white; border: 1px solid var(--rule);
+    padding: 22px 22px 20px; border-radius: 4px;
+  }
+  .stat.spam { border-left: 4px solid var(--spam); }
+  .stat .label {
+    font-family: ui-monospace, Menlo, monospace; font-size: 11px;
+    text-transform: uppercase; letter-spacing: 0.1em; color: var(--muted);
+    margin-bottom: 10px;
+  }
+  .stat .value {
+    font-size: 36px; font-weight: 700; letter-spacing: -0.02em;
+    line-height: 1; font-feature-settings: "tnum"; margin-bottom: 8px;
+  }
+  .stat .delta {
+    font-family: ui-monospace, Menlo, monospace; font-size: 13px; font-weight: 500;
+  }
+  .stat .delta.spam { color: var(--spam); }
+  .stat .delta.up { color: var(--win); }
+  .stat .delta.down { color: var(--loss); }
+  .stat .delta.flat { color: var(--muted); }
+  .stat .sub { font-size: 12px; color: var(--muted); margin-top: 6px; font-family: ui-monospace, Menlo, monospace; }
+
+  /* Badges */
+  .badge {
+    display: inline-block;
+    font-family: ui-monospace, Menlo, monospace;
+    font-size: 11px; font-weight: 600;
+    text-transform: uppercase; letter-spacing: 0.08em;
+    padding: 3px 8px; border-radius: 3px; margin-right: 6px;
+  }
+  .badge.win  { background: var(--win-bg);  color: var(--win); }
+  .badge.loss { background: var(--loss-bg); color: var(--loss); }
+  .badge.neutral { background: var(--neutral-bg); color: var(--neutral); }
+  .badge.spam { background: var(--spam-bg); color: var(--spam); }
+
+  /* Side-by-side comparison */
+  .versus { display: grid; grid-template-columns: 1fr 60px 1fr; gap: 20px; margin-top: 8px; align-items: stretch; }
+  .col {
+    background: white; border: 1px solid var(--rule);
+    padding: 22px 24px; border-radius: 4px; border-top: 4px solid;
+  }
+  .col.us { border-top-color: var(--us); }
+  .col.magna { border-top-color: var(--magna); }
+  .col-label {
+    font-family: ui-monospace, Menlo, monospace; font-size: 11px;
+    text-transform: uppercase; letter-spacing: 0.12em; margin-bottom: 8px;
+  }
+  .col.us .col-label { color: var(--us); }
+  .col.magna .col-label { color: var(--magna); }
+  .col h4 { font-size: 18px; line-height: 1.3; margin-bottom: 12px; font-weight: 600; }
+  .col .big-num {
+    font-family: ui-monospace, Menlo, monospace;
+    font-size: 44px; font-weight: 700; letter-spacing: -0.02em;
+    line-height: 1; margin: 8px 0;
+  }
+  .col.us .big-num { color: var(--us); }
+  .col.magna .big-num { color: var(--magna); }
+  .col p { font-size: 14px; line-height: 1.5; color: var(--neutral); margin: 0 0 8px; max-width: none; }
+  .vs {
+    align-self: center; text-align: center;
+    font-family: ui-monospace, Menlo, monospace;
+    font-size: 13px; letter-spacing: 0.1em; color: var(--muted);
+  }
+
+  /* Tables */
+  table {
+    width: 100%; border-collapse: collapse;
+    font-family: ui-monospace, "SF Mono", Menlo, monospace;
+    font-size: 13px; background: white; border: 1px solid var(--rule);
+    margin-top: 8px;
+  }
+  thead { background: var(--highlight); }
+  th, td { text-align: left; padding: 10px 14px; border-bottom: 1px solid var(--rule); vertical-align: top; }
+  th { font-weight: 600; font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--neutral); }
+  tbody tr:last-child td { border-bottom: none; }
+  tbody tr:hover { background: #fbfaf5; }
+  td.num, th.num { text-align: right; font-feature-settings: "tnum"; }
+  td.win-val { color: var(--win); font-weight: 600; }
+  td.loss-val { color: var(--loss); font-weight: 600; }
+  td.spam-val { color: var(--spam); font-weight: 600; }
+
+  /* Callout */
+  .callout {
+    background: white; border: 1px solid var(--rule);
+    padding: 22px 26px; border-radius: 4px;
+    border-left: 4px solid var(--accent); margin-top: 12px;
+  }
+  .callout.spam { border-left-color: var(--spam); background: #fdf6f4; }
+  .callout.win { border-left-color: var(--win); }
+  .callout h4 { font-size: 18px; line-height: 1.25; margin-bottom: 8px; font-weight: 600; }
+  .callout p { font-size: 15px; line-height: 1.55; color: var(--neutral); margin-bottom: 6px; max-width: none; }
+  .callout .num { font-family: ui-monospace, Menlo, monospace; font-weight: 600; color: var(--ink); }
+
+  /* Practice coverage bar */
+  .practice-row {
+    display: grid; grid-template-columns: 280px 100px 1fr 60px;
+    gap: 12px; align-items: center;
+    padding: 10px 0; border-bottom: 1px solid var(--rule);
+    font-size: 14px;
+  }
+  .practice-row .name { font-weight: 500; font-family: "Charter", Georgia, serif; }
+  .practice-row .count { font-family: ui-monospace, Menlo, monospace; font-size: 13px; color: var(--muted); }
+  .practice-row .bar-wrap { background: var(--neutral-bg); border-radius: 3px; height: 16px; overflow: hidden; position: relative; }
+  .practice-row .bar { height: 100%; }
+  .practice-row .bar.good { background: var(--win); }
+  .practice-row .bar.mid { background: #b8a040; }
+  .practice-row .bar.bad { background: var(--loss); }
+  .practice-row .pct { font-family: ui-monospace, Menlo, monospace; font-size: 14px; font-weight: 600; text-align: right; }
+  .practice-row.last { border-bottom: none; }
+
+  /* Recommendation cards */
+  .recs { counter-reset: rec; }
+  .rec {
+    background: white; border: 1px solid var(--rule);
+    padding: 22px 24px; border-radius: 4px; margin-bottom: 14px;
+    position: relative; padding-left: 70px;
+  }
+  .rec::before {
+    counter-increment: rec; content: counter(rec);
+    position: absolute; left: 22px; top: 18px;
+    font-family: ui-monospace, Menlo, monospace;
+    font-size: 30px; font-weight: 700; color: var(--accent); line-height: 1;
+  }
+  .rec h4 { font-size: 18px; margin-bottom: 6px; font-weight: 600; }
+  .rec p { font-size: 15px; line-height: 1.55; color: var(--neutral); max-width: none; margin-bottom: 0; }
+  .rec .meta {
+    font-family: ui-monospace, Menlo, monospace; font-size: 11px;
+    color: var(--muted); text-transform: uppercase; letter-spacing: 0.08em;
+    margin-top: 10px;
+  }
+  .rec .meta .tag {
+    display: inline-block; padding: 2px 7px; background: var(--highlight);
+    border-radius: 3px; margin-right: 8px;
+  }
+  .rec.priority::before { color: var(--accent); }
+
+  /* Anchor text monospace block */
+  .anchor-quote {
+    background: var(--ink); color: #e9e6dc; padding: 14px 18px;
+    border-radius: 4px; font-family: ui-monospace, Menlo, monospace;
+    font-size: 12px; line-height: 1.5; overflow-x: auto;
+    margin: 10px 0;
+  }
+
+  footer { margin-top: 80px; padding-top: 32px; border-top: 1px solid var(--rule); font-size: 13px; color: var(--muted); font-family: ui-monospace, Menlo, monospace; }
+  footer p { font-size: 13px; line-height: 1.6; max-width: none; margin-bottom: 6px; }
+
+  @media (max-width: 760px) {
+    .container { padding: 32px 20px; }
+    h1 { font-size: 36px; }
+    .stats-grid { grid-template-columns: repeat(2, 1fr); }
+    .versus { grid-template-columns: 1fr; }
+    .vs { padding: 4px 0; }
+    .practice-row { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <header>
+    <p class="kicker">Magna intel + 93-article audit · 2026-05-26</p>
+    <h1>Magna has zero SEO authority. They're winning AI citations on content density + spam links. The fix is content, not links.</h1>
+    <p class="dek">Both pulls landed. The Ahrefs intel reframes the threat entirely. The article audit surfaces a single ~1-day fix that touches 90 of our 93 articles. Read this top-to-bottom — the verdict changes the strategy.</p>
+  </header>
+
+  <!-- ─── Headline reframe ─── -->
+  <section>
+    <h2>The reframe — Magna has no authority</h2>
+    <p class="lede">
+      The Ahrefs pull on <code>usemagna.com</code>: <strong class="red">DR = 0.0, zero ranked keywords in US, ~5 monthly organic visits, 91% link churn (25 live ref domains out of 282 all-time)</strong>. The new links arriving are <strong class="red">~50 PBN domains in the last 7 days alone</strong>, all from one <code>seoexpress-*.store</code> network with template-named siblings, anchor text that's an SEOExpress testimonial pasted into the anchor field, and at least one anchor literally reading "JOIN OUR TELEGRAM https://t.me/s/darksidelinks."
+    </p>
+    <p class="lede">
+      <strong>They are not outranking us on SEO. There is no SEO authority to outrank.</strong> Whatever AI-citation traction they have is happening through content density (~25 well-structured AEO posts), a named founder entity page (August Tange with EEAT structure), and likely Reddit/X seeding I can't measure from Ahrefs. The link spam is going to backfire — that traffic will collapse in a Google update cycle.
+    </p>
+    <p class="lede">
+      <strong>Implication for LoudFace:</strong> don't match their authority play (it's fake). Outship them on real content + a real founder entity page. Inside two quarters the citation gap closes.
+    </p>
+  </section>
+
+  <!-- ─── Headline metrics ─── -->
+  <section>
+    <h2>Magna by the numbers</h2>
+    <div class="stats-grid">
+      <div class="stat spam">
+        <div class="label">Domain Rating</div>
+        <div class="value">0.0</div>
+        <div class="delta spam">flat 90d at zero</div>
+        <div class="sub">Ahrefs Rank: 257M</div>
+      </div>
+      <div class="stat spam">
+        <div class="label">Ranked Keywords (US)</div>
+        <div class="value">0</div>
+        <div class="delta spam">none, ever</div>
+        <div class="sub">vs LoudFace's 10</div>
+      </div>
+      <div class="stat spam">
+        <div class="label">Monthly US Org Visits</div>
+        <div class="value">~5</div>
+        <div class="delta spam">one page, no rank</div>
+        <div class="sub">vs LoudFace's ~190</div>
+      </div>
+      <div class="stat spam">
+        <div class="label">Live Ref Domains</div>
+        <div class="value">25</div>
+        <div class="delta spam">91% churn from 282</div>
+        <div class="sub">most decayed already</div>
+      </div>
+      <div class="stat spam">
+        <div class="label">New Ref Domains (7d)</div>
+        <div class="value">~50</div>
+        <div class="delta spam">~7/day spam blast</div>
+        <div class="sub">all seoexpress-*.store</div>
+      </div>
+      <div class="stat spam">
+        <div class="label">Real Publisher Links</div>
+        <div class="value">~2</div>
+        <div class="delta spam">khaleejtimes (likely paid)</div>
+        <div class="sub">essentially zero</div>
+      </div>
+      <div class="stat">
+        <div class="label">AEO Blog Posts</div>
+        <div class="value">~25</div>
+        <div class="delta neutral">the actual moat</div>
+        <div class="sub">content density</div>
+      </div>
+      <div class="stat">
+        <div class="label">Founder Entity Page</div>
+        <div class="value">✓</div>
+        <div class="delta neutral">/author/august-tange</div>
+        <div class="sub">EEAT-structured</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── Anchor profile snippet ─── -->
+  <section>
+    <h2>What their backlink profile actually says</h2>
+    <p>The top anchor text on Magna's backlink network, by ref domain count. This is the signal:</p>
+    <table>
+      <thead><tr><th>Anchor text</th><th class="num">Ref domains</th><th>Verdict</th></tr></thead>
+      <tbody>
+        <tr><td>"A friend told me about how well his blog did with SEOExpress…" <span style="color:var(--muted);">(101-char testimonial)</span></td><td class="num">101</td><td><span class="badge spam">spam</span></td></tr>
+        <tr><td>usemagna.com</td><td class="num">93</td><td><span class="badge spam">spam (raw URL)</span></td></tr>
+        <tr><td>mgna.io</td><td class="num">19</td><td><span class="badge spam">spam</span></td></tr>
+        <tr><td>"JOIN OUR TELEGRAM https://t.me/s/darksidelinks"</td><td class="num">17</td><td><span class="badge spam">spam</span></td></tr>
+        <tr><td>"OUR TELEGRAM CHANEL …"</td><td class="num">6</td><td><span class="badge spam">spam</span></td></tr>
+        <tr><td>magnamarketing.io</td><td class="num">3</td><td><span class="badge spam">spam</span></td></tr>
+      </tbody>
+    </table>
+    <p style="margin-top: 14px; font-size: 14px; color: var(--muted);">
+      Zero generic "AEO agency" or "AI search" anchors from real publishers. Zero editorial mentions. The Telegram dark-side-links anchor is the giveaway — this is a single PBN operator running automated link campaigns where the anchor text is whatever junk got auto-populated.
+    </p>
+  </section>
+
+  <!-- ─── LoudFace vs Magna comparison ─── -->
+  <section>
+    <h2>LoudFace vs Magna — head to head</h2>
+    <div class="versus">
+      <div class="col us">
+        <div class="col-label">LoudFace · loudface.co</div>
+        <h4>Real authority, scattered content density</h4>
+        <p><strong>DR:</strong> 30 (was 44 90d ago, kill list pruning)</p>
+        <p><strong>Ranked keywords:</strong> 10 (US)</p>
+        <p><strong>US org traffic:</strong> ~190/month</p>
+        <p><strong>Backlinks:</strong> mixed quality, no spam blast pattern</p>
+        <p><strong>Content:</strong> 93 articles across Webflow + SaaS + AEO + fintech (diluted entity)</p>
+        <p><strong>Author entity:</strong> Arnel Bukva as default byline (92/93 posts), no dedicated /author page</p>
+      </div>
+      <div class="vs">vs</div>
+      <div class="col magna">
+        <div class="col-label">Magna · usemagna.com</div>
+        <h4>Zero authority, concentrated content density</h4>
+        <p><strong>DR:</strong> 0.0 (flat at zero, ever)</p>
+        <p><strong>Ranked keywords:</strong> 0 (US)</p>
+        <p><strong>US org traffic:</strong> ~5/month</p>
+        <p><strong>Backlinks:</strong> 91% churn, ~50 PBN domains/week, telegram-link anchors</p>
+        <p><strong>Content:</strong> ~25 articles 100% focused on AEO/AI search (concentrated entity)</p>
+        <p><strong>Author entity:</strong> /author/august-tange, "AI Engine Optimization Expert" structured markup</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── 93-article audit ─── -->
+  <section>
+    <h2>Our 93-article audit — practice coverage</h2>
+    <p>For each of the 9 structural practices, the % of <em>applicable</em> articles that have it. Some practices apply to all (TL;DR, CTAs); others apply only to specific patterns (comparison table is listicle-only).</p>
+
+    <div class="practice-row">
+      <div class="name">TL;DR / directAnswer (≥30w)</div>
+      <div class="count">80 / 93</div>
+      <div class="bar-wrap"><div class="bar good" style="width:86%"></div></div>
+      <div class="pct" style="color:var(--win);">86%</div>
+    </div>
+    <div class="practice-row">
+      <div class="name">FAQ ≥6 items</div>
+      <div class="count">47 / 63</div>
+      <div class="bar-wrap"><div class="bar good" style="width:75%"></div></div>
+      <div class="pct" style="color:var(--win);">75%</div>
+    </div>
+    <div class="practice-row">
+      <div class="name">metaTitle ≤49 chars (truncation safe)</div>
+      <div class="count">71 / 93</div>
+      <div class="bar-wrap"><div class="bar good" style="width:76%"></div></div>
+      <div class="pct" style="color:var(--win);">76%</div>
+    </div>
+    <div class="practice-row">
+      <div class="name">Pricing tiers section</div>
+      <div class="count">4 / 7</div>
+      <div class="bar-wrap"><div class="bar mid" style="width:57%"></div></div>
+      <div class="pct" style="color:#b8a040;">57%</div>
+    </div>
+    <div class="practice-row">
+      <div class="name">Evaluation criteria table (listicle/comparison)</div>
+      <div class="count">14 / 26</div>
+      <div class="bar-wrap"><div class="bar mid" style="width:54%"></div></div>
+      <div class="pct" style="color:#b8a040;">54%</div>
+    </div>
+    <div class="practice-row">
+      <div class="name">Comparison table near top (listicle)</div>
+      <div class="count">13 / 26</div>
+      <div class="bar-wrap"><div class="bar mid" style="width:50%"></div></div>
+      <div class="pct" style="color:#b8a040;">50%</div>
+    </div>
+    <div class="practice-row">
+      <div class="name">Results timeline section (playbook)</div>
+      <div class="count">9 / 20</div>
+      <div class="bar-wrap"><div class="bar mid" style="width:45%"></div></div>
+      <div class="pct" style="color:#b8a040;">45%</div>
+    </div>
+    <div class="practice-row">
+      <div class="name">"What is X?" definition section</div>
+      <div class="count">13 / 63</div>
+      <div class="bar-wrap"><div class="bar bad" style="width:21%"></div></div>
+      <div class="pct" style="color:var(--loss);">21%</div>
+    </div>
+    <div class="practice-row last">
+      <div class="name">≥2 conversion CTAs in body</div>
+      <div class="count">3 / 93</div>
+      <div class="bar-wrap"><div class="bar bad" style="width:3%"></div></div>
+      <div class="pct" style="color:var(--loss);">3%</div>
+    </div>
+
+    <div class="callout" style="margin-top: 20px;">
+      <h4>Two glaring gaps</h4>
+      <p><strong>97% of our articles have fewer than 2 conversion CTAs.</strong> The article gets cited by an AI, the reader lands on the page, and there's nowhere obvious to go next. Citations without CTAs = traffic without pipeline. This is the single most pervasive structural issue and the easiest to fix in bulk.</p>
+      <p style="margin-top:8px;"><strong>79% of our articles where it applies are missing a "What is X?" definition section.</strong> This is the AEO category-vocabulary play — without it, AI models can't anchor the article to a category and substitute someone else's definition (like Magna's).</p>
+    </div>
+  </section>
+
+  <!-- ─── Systemic gaps by pattern ─── -->
+  <section>
+    <h2>Systemic gaps by article pattern</h2>
+    <p>These are pattern-wide gaps where the FIX is the same across many articles — exactly what a single migration script can address.</p>
+    <table>
+      <thead>
+        <tr><th>#</th><th>Pattern</th><th>Missing practice</th><th class="num">Count</th><th>Implication</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>1</td><td>All patterns</td><td>≥2 conversion CTAs</td><td class="num spam-val">90 / 93</td><td>Highest-leverage fix. Single migration script.</td></tr>
+        <tr><td>2</td><td>Playbook</td><td>"What is X?" definition</td><td class="num loss-val">18 / 20</td><td>AEO bots can't anchor to category</td></tr>
+        <tr><td>3</td><td>Listicle</td><td>"What is X?" definition</td><td class="num loss-val">10 / 13</td><td>Same problem on listicles</td></tr>
+        <tr><td>4</td><td>Comparison</td><td>"What is X?" definition</td><td class="num loss-val">8 / 13</td><td>Comparisons jump in without category framing</td></tr>
+        <tr><td>5</td><td>Playbook</td><td>Timeline section</td><td class="num loss-val">11 / 20</td><td>"How long" questions get no calendared answer</td></tr>
+        <tr><td>6</td><td>Listicle</td><td>Comparison table in first 4000 chars</td><td class="num loss-val">7 / 13</td><td>Some have tables but they're buried (e.g., <code>best-aeo-agencies-b2b-saas-2026</code> has its table at char 13,139)</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- ─── Bulk-fix opportunities ─── -->
+  <section>
+    <h2>Bulk-fix opportunities — one script, N articles</h2>
+    <table>
+      <thead>
+        <tr><th>Fix</th><th class="num">Articles</th><th>Effort</th><th>Mechanism</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>CTA pair injection</strong> — add a standard /audit + /contact block before FAQ</td>
+          <td class="num win-val">90</td>
+          <td>~3 hours</td>
+          <td>Sanity migration script + standard template</td>
+        </tr>
+        <tr>
+          <td><strong>seo-utils truncation bug fix</strong> — already designed, unblocks N articles on next deploy</td>
+          <td class="num win-val">22</td>
+          <td>~1 hour</td>
+          <td>Code change in <code>src/lib/seo-utils.ts</code> + test</td>
+        </tr>
+        <tr>
+          <td><strong>FAQ top-up to ≥6</strong> — generate additional Q&As for under-6 articles</td>
+          <td class="num">21</td>
+          <td>~half day</td>
+          <td>Per-article — needs human review of generated Qs</td>
+        </tr>
+        <tr>
+          <td><strong>TL;DR backfill</strong> — generate directAnswer for empty/short</td>
+          <td class="num">13</td>
+          <td>~2 hours</td>
+          <td>Pull intro paragraph, flag for review</td>
+        </tr>
+        <tr>
+          <td><strong>Promote buried comparison tables</strong> — move existing tables up to first 4000 chars</td>
+          <td class="num">7</td>
+          <td>~1 hour each, manual</td>
+          <td>Per-article ship-script edit</td>
+        </tr>
+        <tr>
+          <td><strong>Definition section injection</strong> — write "What is X?" section per pattern type</td>
+          <td class="num">36</td>
+          <td>~1-2 days</td>
+          <td>Per-article writing, no shortcut</td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- ─── Top fix targets ─── -->
+  <section>
+    <h2>Top 10 worst offenders — most structural debt</h2>
+    <table>
+      <thead><tr><th>#</th><th>Slug</th><th>Pattern</th><th>Missing</th><th>Note</th></tr></thead>
+      <tbody>
+        <tr><td>1</td><td><code>seo-traffic-not-converting-pipeline</code></td><td>playbook</td><td>6 of 6 practices missing</td><td>Recent ship, worth quick fix</td></tr>
+        <tr><td>2</td><td><code>best-webflow-tools-and-integrations</code></td><td>listicle</td><td>5 of 7</td><td>Old Webflow content; check kill list</td></tr>
+        <tr><td>3</td><td><code>top-webflow-agency</code></td><td>listicle</td><td>5 of 7</td><td>Old Webflow content; check kill list</td></tr>
+        <tr><td>4</td><td><code>webflow-vs-popular-alternatives</code></td><td>comparison</td><td>5 of 7</td><td>Old Webflow content</td></tr>
+        <tr><td>5</td><td><code>convert-figma-designs-to-webflow-pages</code></td><td>playbook</td><td>5 of 6</td><td>Old Webflow content; kill candidate</td></tr>
+        <tr><td>6</td><td><code>how-to-optimize-calendly-embed-load-time-on-webflow</code></td><td>playbook</td><td>5 of 6</td><td>Old Webflow content; kill candidate</td></tr>
+        <tr><td>7</td><td><code>preview-cms-pages-blog-posts</code></td><td>playbook</td><td>5 of 6</td><td>Old Webflow content; kill candidate</td></tr>
+        <tr><td>8</td><td><code>understanding-webflow-pricing</code></td><td>pricing</td><td>5 of 6</td><td>Old Webflow content</td></tr>
+        <tr><td>9</td><td><code>best-b2b-saas-content-seo-agencies-2026</code></td><td>listicle</td><td>4 of 7</td><td>Recent ship, fix worth doing</td></tr>
+        <tr><td>10</td><td><code>best-webflow-agencies</code></td><td>listicle</td><td>4 of 7</td><td>Has timeline; missing rest</td></tr>
+      </tbody>
+    </table>
+    <p style="margin-top: 14px; font-size: 14px; color: var(--muted);">
+      <strong>5 of 10 are old Webflow-era content</strong> overlapping the 2026-05-20 kill list. Editorial decision needed: kill them outright (saves work) or retrofit (only if they earn impressions). The /seo-brain Cusp Pages DB should answer which Webflow pages still pull traffic.
+    </p>
+  </section>
+
+  <!-- ─── Best templates ─── -->
+  <section>
+    <h2>Top 5 best templates — clone these</h2>
+    <table>
+      <thead><tr><th>Slug</th><th>Pattern</th><th>Practices ✓</th><th>Use as template for</th></tr></thead>
+      <tbody>
+        <tr><td><code>best-aeo-agency-fintech-companies-2026</code></td><td>listicle</td><td>6 / 7 (the one we just patched)</td><td>All new year-stamped listicles</td></tr>
+        <tr><td><code>best-aeo-tools-for-b2b-saas-2026</code></td><td>listicle</td><td>6 / 7 (4 CTAs, criteria table, 8 FAQ)</td><td>Tool-comparison listicles</td></tr>
+        <tr><td><code>answer-engine-optimization-guide-2026</code></td><td>playbook</td><td>5 / 6</td><td>Educational playbooks</td></tr>
+        <tr><td><code>b2b-saas-seo-agency-comparison-2026</code></td><td>comparison</td><td>5 / 7</td><td>X vs Y articles</td></tr>
+        <tr><td><code>why-choose-loudface-webflow-agency</code></td><td>definition</td><td>4 / 5</td><td>Definition / category-claiming articles</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- ─── Strategic recommendations ─── -->
+  <section>
+    <h2>What to ship — prioritized</h2>
+    <div class="recs">
+
+      <div class="rec priority">
+        <h4>Ship the CTA injection migration + seo-utils fix as one PR</h4>
+        <p>Two changes, one PR: (a) fix the seo-utils trailing-connective truncation bug → unblocks 22 articles' metaTitle on next deploy; (b) write a Sanity migration script that injects a standard CTA pair (one <code>/audit</code> + one <code>/contact</code>) before the FAQ section across all 90 articles missing them. Use the structure from our fintech AEO patch as the template.</p>
+        <div class="meta">
+          <span class="tag">Effort: 1 dev day</span>
+          <span class="tag">Articles fixed: 90 + 22 = 112 fixes</span>
+          <span class="tag">Highest EV</span>
+        </div>
+      </div>
+
+      <div class="rec">
+        <h4>Build <code>/author/arnel-bukva</code> entity page</h4>
+        <p>Magna's <code>/author/august-tange</code> page is structured as an EEAT-compliant expert profile ("AI Engine Optimization Expert," role, photo, structured author markup). LLMs cite named experts more readily than anonymous corporate authors. We have Arnel as the byline on 92/93 posts already; the entity page concentrates that signal. Add <code>Person</code> JSON-LD, founder credentials, links to all his bylined posts, LinkedIn URL.</p>
+        <div class="meta">
+          <span class="tag">Effort: 4-6 hours</span>
+          <span class="tag">Entity authority play</span>
+        </div>
+      </div>
+
+      <div class="rec">
+        <h4>Ship 3-5 net-new AEO posts in the next 2 weeks</h4>
+        <p>Magna's moat is content density (~25 AEO articles concentrated on the topic). Our 93 articles are split across Webflow + SaaS + AEO + fintech. Pick the 3-5 highest-priority tracked Peec prompts where we have zero coverage and ship definitive answer posts. This is the "outship them on real content" move from the verdict.</p>
+        <div class="meta">
+          <span class="tag">Effort: 2-3 days per piece</span>
+          <span class="tag">Content density</span>
+          <span class="tag">Pulls from Peec Prompt Coverage DB</span>
+        </div>
+      </div>
+
+      <div class="rec">
+        <h4>Inject "What is X?" definition sections into the top 20 AEO/fintech articles</h4>
+        <p>The 21% coverage on definition sections is the second-biggest gap and the AEO category-vocabulary play. Focus on the 20 articles tagged AEO + fintech + SaaS (high citation potential). Each is a 200-300 word section — call it 30-45 min per article. Use the section I added to the fintech AEO piece as the template.</p>
+        <div class="meta">
+          <span class="tag">Effort: ~2 days</span>
+          <span class="tag">Per-article writing, no shortcut</span>
+        </div>
+      </div>
+
+      <div class="rec">
+        <h4>Editorial decision on the 5 Webflow-era kill candidates</h4>
+        <p>5 of the 10 worst offenders are old Webflow content (top-webflow-agency, convert-figma-designs-to-webflow-pages, preview-cms-pages-blog-posts, etc.). Check Cusp Pages + GSC for impressions in last 30d. Kill anything with &lt;100 imps/month — saves all retrofit work. Retrofit only what's still pulling traffic.</p>
+        <div class="meta">
+          <span class="tag">Effort: 30 min review + redirects</span>
+          <span class="tag">Saves work downstream</span>
+        </div>
+      </div>
+
+      <div class="rec">
+        <h4>Don't buy links. Quarterly disavow housekeeping.</h4>
+        <p>None of Magna's <code>seoexpress-*.store</code> domains are pointing at LoudFace today. If their operator pivots offers, we want a clean disavow file ready. Check Search Console links report quarterly. Beyond that, don't replicate any part of their authority play — it's going to collapse in a Google update.</p>
+        <div class="meta">
+          <span class="tag">Effort: 15 min / quarter</span>
+          <span class="tag">Defensive</span>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ─── Open items ─── -->
+  <section>
+    <h2>Open items + caveats</h2>
+    <ul style="list-style: none; padding-left: 0;">
+      <li style="padding: 10px 0; font-size: 16px; line-height: 1.5; padding-left: 26px; position: relative;">
+        <span style="position:absolute;left:0;top:14px;width:8px;height:8px;border-radius:50%;background:var(--neutral);display:inline-block;"></span>
+        <strong>93 articles in Sanity vs your ~78 estimate.</strong> 15 extra docs. Could be old Webflow imports, drafts mistakenly marked Published, or programmatic SEO pages. Inventory reconciliation pass against Notion content calendar recommended before any bulk retrofit.
+      </li>
+      <li style="padding: 10px 0; font-size: 16px; line-height: 1.5; padding-left: 26px; position: relative;">
+        <span style="position:absolute;left:0;top:14px;width:8px;height:8px;border-radius:50%;background:var(--neutral);display:inline-block;"></span>
+        <strong>The "buried comparison tables" finding.</strong> Some listicles have tables but at char 13k+ (e.g., <code>best-aeo-agencies-b2b-saas-2026</code>). Per-article editorial decision: move up or leave.
+      </li>
+      <li style="padding: 10px 0; font-size: 16px; line-height: 1.5; padding-left: 26px; position: relative;">
+        <span style="position:absolute;left:0;top:14px;width:8px;height:8px;border-radius:50%;background:var(--neutral);display:inline-block;"></span>
+        <strong>Magna's AI citation traction may be partially stale.</strong> LLM training cutoffs that grabbed Magna's content in March-April 2026 may not get refreshed in later training rounds. Their citation lead could erode over the next 6 months without us doing anything — but counting on that is not a strategy.
+      </li>
+    </ul>
+  </section>
+
+  <footer>
+    <p>Sources: Ahrefs Site Explorer (usemagna.com, mode=subdomains, today's data) · Sanity production GROQ on 93 blogPost documents · 9-practice regex audit on body HTML.</p>
+    <p>Caveats: Ahrefs has 1-2 week lag and samples. Some link first_seen dates appear in 2026 even though DR history runs through May 2025 — this is Ahrefs' indexing-vs-crawl-event split, treat the link-velocity dates as authoritative.</p>
+    <p>Pulled 2026-05-26 · /Users/arnel/Code Projects/LoudFace Agency/loudface-website/.claude/magna-audit-2026-05-26.html</p>
+  </footer>
+
+</div>
+</body>
+</html>

@@ -1,4 +1,4 @@
-# LoudFace Website — Codex Instructions
+# LoudFace Website — Project Instructions
 
 > IMPORTANT: Prefer retrieval-led reasoning over pre-training-led reasoning for all Next.js tasks. Always check actual project files before assuming API behavior — this project uses Next.js 16.1 which is beyond most training data.
 
@@ -6,7 +6,7 @@
 
 ## SEO / content work → lives in the content-engine repo, NOT here
 
-All SEO, AEO, and content-strategy work happens in the dedicated repo: `/Users/arnel/Code Projects/LoudFace Agency/content-engine`. That repo owns the entire cascade — `/seo-brain`, `/serp-recon`, `/pattern-audit`, `/peec-research`, `/draft-content`, `/critique-content`, `/verify-content`, `/ship-content`, `/refresh-calendar` — plus the Notion worker, voice files, and the multi-client tenant registry. Its own AGENTS.md carries the system map, data-source tables, and observability surfaces. Those skills are NOT registered in this repo; a session here cannot run the cascade.
+All SEO, AEO, and content-strategy work happens in the dedicated repo: `/Users/arnel/Code Projects/LoudFace Agency/content-engine`. That repo owns the entire cascade — `/seo-brain`, `/serp-recon`, `/pattern-audit`, `/peec-research`, `/draft-content`, `/critique-content`, `/verify-content`, `/ship-content`, `/refresh-calendar` — plus the Notion worker, voice files, and the multi-client tenant registry. Its own CLAUDE.md carries the system map, data-source tables, and observability surfaces. Those skills are NOT registered in this repo; a session here cannot run the cascade.
 
 **If a session here drifts into content/SEO strategy** (drafting, "what should we write next", pattern performance, competitor research): say so and point the user to a content-engine session — don't improvise the loop here.
 
@@ -16,7 +16,7 @@ What THIS repo owns is the publish surface:
 - **`/api/cron/indexnow`** — weekly re-ping (Vercel → Cron Jobs tab)
 - Canonical strategy doc (Notion, pointer only — LoudFace's strategy page in the Clients DB): https://www.notion.so/366b63394d1081449728ef6e0af4cbf1
 
-Website-side SEO (meta tags, structured data, internal links, new pages) stays here: run the `seo-aeo-geo-audit` skill before shipping any page, per `.Codex/rules/seo-standards.md`.
+Website-side SEO (meta tags, structured data, internal links, new pages) stays here: run the `seo-aeo-geo-audit` skill before shipping any page, per `.claude/rules/seo-standards.md`.
 
 ## Session Protocol
 
@@ -44,7 +44,7 @@ The component system is what prevents every new session from rebuilding things t
 3. **Import from barrels only** — `import { Button, Badge, SectionContainer } from '@/components/ui'`
 4. **Update `COMPONENTS.md` after changes** — any time you add, remove, or change a component's interface
 
-See `.Codex/rules/component-system.md` for the full enforcement rules and `.Codex/rules/component-patterns.md` for code examples (page archetype, dark section recipe, carousel setup).
+See `.claude/rules/component-system.md` for the full enforcement rules and `.claude/rules/component-patterns.md` for code examples (page archetype, dark section recipe, carousel setup).
 
 ## Critical Rules (Will Break Production If Ignored)
 
@@ -56,7 +56,7 @@ The reason: future sessions read the skill markdown at invocation. Without a cha
 
 **Don't retroactively add changelogs to skills that haven't been touched recently** — the convention is "add when you change." If a skill SKILL.md doesn't have a `## Changelog` section yet, the first behavioral change you make adds it.
 
-### Session State File — `.Codex/session-state.json`
+### Session State File — `.claude/session-state.json`
 
 Tracks the "where we are" pointer that survives across sessions. `/seo-brain` reads this at session start (Step 0c) and shows a "resuming from" note if there's recent in-progress work. Skills update it when finishing significant work — at minimum: `lastBatch`, `lastSkillRun`, `lastCommit`, `nextPlannedAction`. The schema is intentionally minimal; Pending Commitments + Activity Log carry the heavier per-action detail. See the file's `_doc` field for the schema description.
 
@@ -108,7 +108,7 @@ import { asset } from '@/lib/assets';
 
 - **No `tailwind.config.ts`** — this project uses pure Tailwind v4 CSS-native config. All tokens live in the `@theme` block inside `globals.css`. There is no JS config file.
 - Use project color tokens (`primary-*`, `surface-*`, `success`, `warning`, `error`, `info`) — never default Tailwind colors like `gray-*` or `indigo-*`
-- Follow the text color hierarchy in `.Codex/rules/styling.md` — don't freestyle text colors
+- Follow the text color hierarchy in `.claude/rules/styling.md` — don't freestyle text colors
 - Check `globals.css` for available tokens before adding new ones
 - Never use `styled-jsx` — Tailwind only
 
@@ -117,10 +117,10 @@ import { asset } from '@/lib/assets';
 | What | Where |
 |---|---|
 | **Component registry** | **`COMPONENTS.md`** (read this first) |
-| Component rules & enforcement | `.Codex/rules/component-system.md` |
-| Component patterns, page archetype, dark sections | `.Codex/rules/component-patterns.md` |
-| Text color hierarchy, spacing, styling tokens | `.Codex/rules/styling.md` |
-| SEO standards | `.Codex/rules/seo-standards.md` |
+| Component rules & enforcement | `.claude/rules/component-system.md` |
+| Component patterns, page archetype, dark sections | `.claude/rules/component-patterns.md` |
+| Text color hierarchy, spacing, styling tokens | `.claude/rules/styling.md` |
+| SEO standards | `.claude/rules/seo-standards.md` |
 | Design tokens (single source) | `src/app/globals.css` (`@theme` block) |
 | UI primitives | `src/components/ui/` |
 | Page sections | `src/components/sections/` |
@@ -190,7 +190,7 @@ Never inline color math — always use these shared utilities.
 
 ### CMS Image Optimization
 
-For CMS images (Sanity CDN URLs), use the helpers from `src/lib/image-utils.ts` — full helper list + usage examples live in `.Codex/rules/component-patterns.md`. Local static images use `asset()` instead.
+For CMS images (Sanity CDN URLs), use the helpers from `src/lib/image-utils.ts` — full helper list + usage examples live in `.claude/rules/component-patterns.md`. Local static images use `asset()` instead.
 
 ## Dev & Deploy
 
@@ -243,10 +243,25 @@ These defaults are optimized for AI coding agents (and humans) working on apps t
 - If Enable Deployment Protection is enabled, use a bypass secret to directly access them
 - Add OpenTelemetry via `@vercel/otel` on Node; don't expect OTEL support on the Edge runtime
 - Enable Web Analytics + Speed Insights early
-- Use AI Gateway for model routing, set AI_GATEWAY_API_KEY, using a model string (e.g. 'anthropic/Codex-sonnet-4.6'), Gateway is already default in AI SDK
+- Use AI Gateway for model routing, set AI_GATEWAY_API_KEY, using a model string (e.g. 'anthropic/claude-sonnet-4.6'), Gateway is already default in AI SDK
   needed. Always curl https://ai-gateway.vercel.sh/v1/models first; never trust model IDs from memory
 - For durable agent loops or untrusted code: use Workflow (pause/resume/state) + Sandbox; use Vercel MCP for secure infra access
 <!-- VERCEL BEST PRACTICES END -->
+
+## Proposals (`/p/<token>`) — the body is about the client, not about us
+
+A proposal body opens with the client's own data and closes with the price. Every section starts from their situation (the standing report, the call notes) and then says what we do about it. Our process, our week, our proof are supporting material: proof lives in the sticky rail, process gets one plate. Price tiers run high to low, the recommended tier last; never discount unprompted.
+
+**Forecast blocks show quantity per paid month.** Leads per month, month by month. Never totals over a term, never cost per lead, unless Arnel asks. Every ramp and rate assumption prints on the page.
+
+**One idea, one control, one picture.** An interactive block gets at most two inputs and ONE chart that adapts. Anything else is a printed assumption, not a control. Supporting facts get one line, never a list of six rows or a second grid of tiles. If a block needs a paragraph to explain how to read it, the block is wrong.
+
+**Check before shipping a proposal body:** count the sections. If more than one third are about LoudFace (how we work, what we produced elsewhere), the body fails. Each remaining section must name a number from the client's report.
+
+**Ledger of misses**
+- 2026-09-05 · First forecast build shipped 3 sliders, 2 big numbers, 6 month tiles and 2 assumption paragraphs in one block. Arnel: "an absolute mess". Root cause: I added a control and a readout for every variable instead of choosing the single picture that answers the question.
+- 2026-09-05 · Forecast tile changed twice (12-month total, then cost per lead) before landing on leads per month. Root cause: I substituted my own summary metric instead of the quantity Arnel named.
+- 2026-09-05 · Jaris body shipped with 4 of 7 sections about LoudFace and a two-paragraph diagnosis. Root cause: I designed the proof and process blocks first and never re-read the body from the client's seat.
 
 <!-- BEGIN:nextjs-agent-rules -->
 

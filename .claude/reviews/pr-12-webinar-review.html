@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>PR #12 Review — Webinar Landing Page</title>
+<style>
+  :root{
+    --bg:#fafaf9; --card:#ffffff; --ink:#1c1917; --muted:#57534e; --faint:#a8a29e;
+    --line:#e7e5e4; --indigo:#4f46e5; --indigo-50:#eef2ff; --indigo-100:#e0e7ff;
+    --red:#dc2626; --red-50:#fef2f2; --amber:#d97706; --amber-50:#fffbeb;
+    --green:#16a34a; --green-50:#f0fdf4; --blue:#2563eb; --blue-50:#eff6ff;
+    --mono:ui-monospace,SFMono-Regular,Menlo,monospace;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+    line-height:1.55;-webkit-font-smoothing:antialiased}
+  .wrap{max-width:920px;margin:0 auto;padding:48px 24px 96px}
+  header.h{border-bottom:1px solid var(--line);padding-bottom:24px;margin-bottom:8px}
+  .kicker{font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--indigo);font-weight:700}
+  h1{font-size:30px;line-height:1.15;margin:10px 0 6px;letter-spacing:-.02em}
+  .sub{color:var(--muted);font-size:15px}
+  .meta{display:flex;flex-wrap:wrap;gap:8px;margin-top:18px}
+  .pill{font-size:12px;padding:4px 10px;border-radius:999px;border:1px solid var(--line);background:var(--card);color:var(--muted)}
+  .verdict{margin:28px 0;padding:18px 20px;border-radius:14px;border:1px solid var(--amber);background:var(--amber-50)}
+  .verdict b{color:#92400e}
+  .verdict p{margin:6px 0 0;color:#78350f;font-size:14.5px}
+  h2.sec{font-size:13px;letter-spacing:.12em;text-transform:uppercase;color:var(--faint);
+    margin:40px 0 14px;font-weight:700}
+  .f{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px 20px;margin:12px 0;
+    border-left-width:4px}
+  .f.block{border-left-color:var(--red)}
+  .f.high{border-left-color:var(--amber)}
+  .f.med{border-left-color:var(--blue)}
+  .f.low{border-left-color:var(--faint)}
+  .f.good{border-left-color:var(--green);background:var(--green-50)}
+  .ftop{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap}
+  .tag{font-size:10.5px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;padding:3px 8px;border-radius:6px;color:#fff;white-space:nowrap}
+  .tag.block{background:var(--red)} .tag.high{background:var(--amber)}
+  .tag.med{background:var(--blue)} .tag.low{background:var(--faint)} .tag.good{background:var(--green)}
+  .ftitle{font-weight:650;font-size:16px;flex:1;min-width:240px}
+  .loc{font-family:var(--mono);font-size:12px;color:var(--muted);margin-top:2px}
+  .f p{margin:10px 0 0;font-size:14.5px;color:#3a352f}
+  .f p.why{color:var(--muted);font-size:13.5px}
+  code{font-family:var(--mono);font-size:12.5px;background:var(--indigo-50);color:#3730a3;padding:1.5px 6px;border-radius:5px}
+  pre{margin:12px 0 0;background:#1c1917;color:#e7e5e4;border-radius:10px;padding:14px 16px;overflow-x:auto;
+    font-family:var(--mono);font-size:12.5px;line-height:1.6}
+  pre .del{color:#fca5a5} pre .add{color:#86efac} pre .cm{color:#a8a29e}
+  .ev{margin-top:10px;font-size:12.5px;background:var(--blue-50);border:1px solid #bfdbfe;color:#1e3a8a;
+    padding:8px 12px;border-radius:8px}
+  .ev b{color:#1e40af}
+  ul.clean{margin:10px 0 0;padding-left:18px} ul.clean li{font-size:14px;margin:5px 0;color:#3a352f}
+  .btnrow{margin-top:36px;display:flex;gap:10px;flex-wrap:wrap}
+  button{font:inherit;font-size:13px;font-weight:600;padding:10px 16px;border-radius:9px;border:1px solid var(--indigo);
+    background:var(--indigo);color:#fff;cursor:pointer}
+  button.ghost{background:#fff;color:var(--indigo)}
+  button:active{transform:translateY(1px)}
+  footer{margin-top:40px;color:var(--faint);font-size:12px;text-align:center}
+  .count{font-weight:800;color:var(--ink)}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="h">
+    <div class="kicker">Code Review</div>
+    <h1>PR #12 — Webinar landing page: AI search visibility masterclass</h1>
+    <div class="sub">Branch <code>feat/webinar-ai-search-visibility</code> → <code>main</code> · by chandana-loudface · 6 files, +532</div>
+    <div class="meta">
+      <span class="pill">2 blocking</span>
+      <span class="pill">2 high</span>
+      <span class="pill">4 medium</span>
+      <span class="pill">5 polish</span>
+      <span class="pill">Notion DB schema verified live ✓</span>
+    </div>
+  </header>
+
+  <div class="verdict">
+    <b>Verdict: Request changes.</b>
+    <p>Solid page — clean server/client split, good metadata, components used correctly. But two issues will break in production: filled-in registrations get rejected by Notion (wrong property name, confirmed against the live DB), and the form's error message is invisible (uses a purged color token). Both are small fixes. The deeper note: an almost-identical feature already exists (<code>/api/partner-apply</code> + the <code>ai-audit</code> form) — mirroring it would have avoided most of these.</p>
+  </div>
+
+  <h2 class="sec">🔴 Blocking — will fail in production</h2>
+
+  <div class="f block">
+    <div class="ftop"><span class="tag block">Blocking</span>
+      <div><div class="ftitle">LinkedIn field breaks the submission — that property doesn't exist in the Notion DB</div>
+      <div class="loc">src/app/api/webinar-register/route.ts · the <code>LinkedIn</code> spread</div></div></div>
+    <p>The route writes <code>LinkedIn: { url: linkedin }</code> whenever the optional LinkedIn field is filled. Notion rejects any property key not in the database schema with a <code>400</code> → the route returns <code>500</code> → the user sees “Failed to save registration.” Only submissions that leave LinkedIn <em>blank</em> succeed (the property is conditionally spread).</p>
+    <div class="ev"><b>Verified against the live DB</b> (“Webinar Registrations”, <code>99b40712…</code>): its properties are Name (title), Email, Company (text), Job Title (text), Consent (checkbox), Webinar (select), Registered At (created_time), and <b>Company Website</b> (url). There is <b>no LinkedIn property</b>. The <code>Webinar</code> option name and all other mappings match exactly — only this one is wrong.</p></div>
+    <pre><span class="cm">// pick one:</span>
+<span class="del">- ...(linkedin ? { LinkedIn: { url: linkedin } } : {}),</span>
+<span class="add">+ ...(linkedin ? { 'Company Website': { url: linkedin } } : {}),  // reuse existing column</span>
+<span class="cm">//   …or add a LinkedIn (url) property to the DB and keep the key.</span>
+<span class="cm">//   Decide which: the form asks for LinkedIn, the column says Company Website.</span></pre>
+    <p class="why">Note: Notion also rejects a malformed <code>url</code> value, so validate/normalise the LinkedIn input too (the field is <code>type="url"</code> but accepts <code>linkedin.com/in/...</code> without a scheme).</p>
+  </div>
+
+  <div class="f block">
+    <div class="ftop"><span class="tag block">Blocking</span>
+      <div><div class="ftitle">The error message is invisible — <code>red-*</code> tokens are purged in this project</div>
+      <div class="loc">_components/WebinarRegistrationForm.tsx · <code>bg-red-50 … text-red-600</code></div></div></div>
+    <p>The inline error uses <code>className="rounded-lg bg-red-50 px-4 py-3 text-sm text-red-600"</code>. In <code>globals.css</code> the entire red palette is cleared with <code>--color-red-*: initial</code>, and the comment there literally says such classes “silently do nothing.” So the error box renders with no background and inherited text colour — users get a failed submit with no visible feedback.</p>
+    <div class="ev"><b>Use the project semantic tokens</b> — <code>--color-error</code> / <code>--color-error-light</code> exist for exactly this (globals.css).</div>
+    <pre><span class="del">- className="rounded-lg bg-red-50 px-4 py-3 text-sm text-red-600"</span>
+<span class="add">+ className="rounded-lg bg-error-light px-4 py-3 text-sm text-error-dark"</span></pre>
+  </div>
+
+  <h2 class="sec">🟠 High — wrong behaviour / breaks house conventions</h2>
+
+  <div class="f high">
+    <div class="ftop"><span class="tag high">High</span>
+      <div><div class="ftitle">Wrong env var name — diverges from the Notion integration that's already deployed</div>
+      <div class="loc">src/app/api/webinar-register/route.ts · <code>process.env.NOTION_TOKEN</code></div></div></div>
+    <p>The route invents <code>NOTION_TOKEN</code>. The existing, working Notion route (<code>/api/partner-apply</code>) reads <code>NOTION_API_KEY</code> — already set in Vercel. The PR's “Arnel must add NOTION_TOKEN before publishing” step is likely unnecessary: reuse <code>NOTION_API_KEY</code> and share the Webinar Registrations DB with that same integration. At minimum, match the established name so there aren't two Notion secrets.</p>
+  </div>
+
+  <div class="f high">
+    <div class="ftop"><span class="tag high">High</span>
+      <div><div class="ftitle">PostHog event almost certainly never fires (and leaks raw email)</div>
+      <div class="loc">_components/WebinarRegistrationForm.tsx · <code>(window as any).posthog</code></div></div></div>
+    <p>The project lazy-loads <code>posthog-js</code> via dynamic import and keeps it out of the initial bundle — <code>window.posthog</code> is not the access path and is likely <em>undefined</em> at submit, so <code>webinar_registered</code> silently no-ops. Every other form (<code>ai-audit</code>, <code>partner-apply</code>) uses the same pattern; mirror it. Also: the house convention sends <code>email_domain</code> in capture props and reserves the raw email for <code>identify()</code> — this PR puts raw email in the event properties.</p>
+    <pre><span class="del">- if (typeof window !== 'undefined' && (window as any).posthog) {</span>
+<span class="del">-   (window as any).posthog.capture('webinar_registered', { email: data.email, … });</span>
+<span class="del">- }</span>
+<span class="add">+ void import('posthog-js').then(({ default: posthog }) => {</span>
+<span class="add">+   if (!posthog.__loaded) return;</span>
+<span class="add">+   posthog.identify(data.email.toLowerCase());</span>
+<span class="add">+   posthog.capture('webinar_registered', {</span>
+<span class="add">+     email_domain: data.email.split('@')[1] ?? '', company: data.company,</span>
+<span class="add">+     job_title: data.jobTitle, webinar: 'ai-search-visibility-july-2026',</span>
+<span class="add">+   });</span>
+<span class="add">+ });</span></pre>
+  </div>
+
+  <h2 class="sec">🔵 Medium</h2>
+
+  <div class="f med">
+    <div class="ftop"><span class="tag med">Medium</span>
+      <div><div class="ftitle">Event start time is an hour off — JSON-LD contradicts the calendar link</div>
+      <div class="loc">page.tsx · <code>EVENT_JSON_LD.startDate</code> vs the form's <code>GCAL_URL</code></div></div></div>
+    <p>JSON-LD says <code>2026-07-09T11:00:00-05:00</code> (= 16:00 UTC). The Add-to-Calendar link says <code>20260709T150000Z</code> (= 15:00 UTC = 11:00 AM Eastern). July 9 is on <b>EDT (UTC-4)</b>, not EST, so the JSON-LD offset is wrong by an hour. The calendar link is right; fix the schema offset to <code>-04:00</code>. (The “EST” in the copy is also technically EDT in July — “ET” is the safe label.)</p>
+    <pre><span class="del">- startDate: '2026-07-09T11:00:00-05:00',  endDate: '2026-07-09T12:00:00-05:00',</span>
+<span class="add">+ startDate: '2026-07-09T11:00:00-04:00',  endDate: '2026-07-09T12:00:00-04:00',</span></pre>
+  </div>
+
+  <div class="f med">
+    <div class="ftop"><span class="tag med">Medium</span>
+      <div><div class="ftitle">Event schema will fail Google's rich-result validation — missing <code>location</code></div>
+      <div class="loc">page.tsx · <code>EVENT_JSON_LD</code></div></div></div>
+    <p>With <code>eventAttendanceMode: OnlineEventAttendanceMode</code>, Google requires a <code>location</code> of type <code>VirtualLocation</code> with a <code>url</code>; without it the Event is invalid in the Rich Results Test. For an agency whose whole pitch is AEO/SEO, their own event markup should validate. Worth adding <code>performer</code> (the two speakers) and an <code>image</code> too.</p>
+    <pre><span class="add">+ location: { '@type': 'VirtualLocation', url: 'https://loudface.co/webinar/ai-search-visibility' },</span>
+<span class="add">+ performer: [{ '@type': 'Person', name: 'Arnel Bukva' }, { '@type': 'Person', name: 'Natalie Sangkagalo' }],</span></pre>
+  </div>
+
+  <div class="f med">
+    <div class="ftop"><span class="tag med">Medium</span>
+      <div><div class="ftitle">Success state promises a confirmation email that nothing sends</div>
+      <div class="loc">_components/WebinarRegistrationForm.tsx · success copy + consent label</div></div></div>
+    <p>“Check your inbox for confirmation” and the consent line (“Send me the recording…”) imply an email flow, but the route only writes a Notion row — no email is sent (same as partner-apply). Either wire a confirmation (Resend / a Notion automation) or soften the copy to “We'll email you the join link before July 9.” Don't promise an inbox event that doesn't exist.</p>
+  </div>
+
+  <div class="f med">
+    <div class="ftop"><span class="tag med">Medium</span>
+      <div><div class="ftitle">Failure mode is inverted vs the house pattern — a Notion blip = lost lead</div>
+      <div class="loc">route.ts vs partner-apply/route.ts</div></div></div>
+    <p><code>partner-apply</code> deliberately returns success even if Notion is down (“a Notion outage should not look like a form failure”) and writes best-effort. This route hard-500s to the user with no fallback capture, so any Notion hiccup loses the registration and shows a scary error. Decide intentionally: if you want guaranteed capture for a webinar seat, add a fallback (email/secondary store) rather than only surfacing the failure.</p>
+  </div>
+
+  <h2 class="sec">⚪ Polish / nits</h2>
+  <div class="f low">
+    <div class="ftop"><span class="tag low">Polish</span><div class="ftitle">Raw card markup instead of the <code>Card</code> component</div></div>
+    <ul class="clean">
+      <li>Takeaways, speakers, and agenda all hand-roll <code>rounded-2xl border bg-white p-…</code>. <code>component-system.md</code> mandates the <code>Card</code> component for card surfaces — use <code>&lt;Card&gt;</code> (it already supports the padding variants you need).</li>
+    </ul>
+  </div>
+  <div class="f low">
+    <div class="ftop"><span class="tag low">Polish</span><div class="ftitle">First use of <code>next/image</code> in the codebase</div></div>
+    <ul class="clean"><li>The project standard is <code>&lt;img&gt;</code> + <code>asset()</code> (no <code>next/image</code> imports exist anywhere in <code>src</code>). It works, but it's a convention break — either keep <code>&lt;img&gt;</code> for consistency or raise standardising on <code>next/image</code> as a separate decision.</li></ul>
+  </div>
+  <div class="f low">
+    <div class="ftop"><span class="tag low">Polish</span><div class="ftitle">A11y + validation</div></div>
+    <ul class="clean">
+      <li>The inline error <code>&lt;p&gt;</code> has no <code>role="alert"</code>/<code>aria-live</code> — screen readers won't announce a failed submit.</li>
+      <li><code>noValidate</code> disables native inline validation, so empty fields only fail after a server round-trip. Acceptable, but you lose instant client feedback.</li>
+    </ul>
+  </div>
+  <div class="f low">
+    <div class="ftop"><span class="tag low">Polish</span><div class="ftitle">SEO metadata gaps</div></div>
+    <ul class="clean"><li><code>openGraph</code> has no <code>images</code>, and there's no Twitter card — <code>seo-standards.md</code> asks for both. An OG image matters most for a page meant to be shared in DMs/Slack.</li></ul>
+  </div>
+  <div class="f low">
+    <div class="ftop"><span class="tag low">Polish</span><div class="ftitle">Pre-existing, not this PR's fault</div></div>
+    <ul class="clean"><li>No spam/rate-limit/honeypot on a public endpoint that writes to Notion — but <code>partner-apply</code> has none either, so it's a project-wide gap to fix once, globally, not a reason to block this PR.</li></ul>
+  </div>
+
+  <h2 class="sec">🟢 What's good</h2>
+  <div class="f good">
+    <ul class="clean">
+      <li>Clean Server/Client split — page is a Server Component, only the form is <code>'use client'</code>.</li>
+      <li>Components used correctly with <em>valid</em> props — verified <code>eyebrow</code>/<code>align</code> on SectionHeader, <code>id</code> on SectionContainer, <code>fullWidth</code> on Button all exist. <code>h-18 w-18</code> is fine (Tailwind v4 dynamic spacing = 72px).</li>
+      <li>Notion mappings (title/email/company/jobTitle/consent + the exact Webinar select name) all match the live schema — only LinkedIn is wrong.</li>
+      <li>Server-side validation (required fields + email regex) with a graceful JSON-parse guard.</li>
+      <li>Good metadata: canonical, OG basics, an Event schema attempt, semantic tokens used nearly everywhere.</li>
+    </ul>
+  </div>
+
+  <div class="btnrow">
+    <button onclick="copyMd()">📋 Copy as PR comment (markdown)</button>
+    <button class="ghost" onclick="window.print()">🖨 Print / Save PDF</button>
+  </div>
+  <footer>Generated for Arnel · live Notion schema checked at review time · loudface-website</footer>
+</div>
+
+<script>
+const MD = `## Review — PR #12 (webinar landing page)
+
+**Verdict: request changes.** Clean page, but 2 things break in prod. Both small. Deeper note: this duplicates the existing \`/api/partner-apply\` + \`ai-audit\` form — mirroring those would've avoided most of this.
+
+### 🔴 Blocking
+1. **LinkedIn field breaks the Notion write.** The route sends a \`LinkedIn\` property, but the live "Webinar Registrations" DB has no such property (it has \`Company Website\` (url)). Notion 400s on unknown keys → user sees "Failed to save." Only blank-LinkedIn submits succeed. Map to \`Company Website\` or add a LinkedIn property to the DB.
+2. **Error message is invisible.** Form uses \`bg-red-50\`/\`text-red-600\`; \`globals.css\` purges the red palette (\`--color-red-*: initial\`) so these classes do nothing. Use \`bg-error-light\`/\`text-error-dark\`.
+
+### 🟠 High
+3. **Wrong env var.** Uses \`NOTION_TOKEN\`; the deployed Notion route uses \`NOTION_API_KEY\`. Reuse it (share the DB with that integration) — the "add NOTION_TOKEN" step is probably unnecessary.
+4. **PostHog never fires.** \`(window as any).posthog\` — the project lazy-imports posthog-js; window.posthog is undefined at submit. Use \`void import('posthog-js').then(...)\` like the other forms, and send \`email_domain\` (not raw email) in props.
+
+### 🔵 Medium
+5. **Event time off by 1h.** JSON-LD \`-05:00\` (EST) vs the calendar link's \`15:00Z\` (= 11am EDT). July is EDT → use \`-04:00\`.
+6. **Event schema invalid** — \`OnlineEventAttendanceMode\` needs a \`VirtualLocation\` with \`url\`; add it (+ \`performer\`).
+7. **Success copy promises a confirmation email** nothing sends — wire it or soften the copy.
+8. **Failure mode inverted vs partner-apply** (which never fails the user on a Notion outage) — a Notion blip here loses the lead + shows an error. Add a fallback or fail soft.
+
+### ⚪ Polish
+- Use the \`Card\` component instead of raw \`rounded-2xl border bg-white\` (takeaways/speakers/agenda).
+- First \`next/image\` use in the repo (standard is \`<img>\` + \`asset()\`).
+- Error \`<p>\` needs \`role="alert"\`; OG missing \`images\` + no Twitter card.
+
+### 🟢 Good
+Clean server/client split; component props all valid (verified); Notion mappings match the live schema except LinkedIn; server-side validation present.`;
+function copyMd(){navigator.clipboard.writeText(MD).then(()=>{
+  const b=event.target;const t=b.textContent;b.textContent='✓ Copied';setTimeout(()=>b.textContent=t,1600);
+});}
+</script>
+</body>
+</html>

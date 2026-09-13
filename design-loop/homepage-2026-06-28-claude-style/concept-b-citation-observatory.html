@@ -1,0 +1,368 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>LoudFace Concept B - Citation Observatory</title>
+    <link rel="stylesheet" href="./claude-style-shared.css">
+    <style>
+      .observatory-hero {
+        min-height: 900px;
+        background: var(--paper);
+      }
+
+      .observatory-stage {
+        min-height: 828px;
+        display: grid;
+        grid-template-columns: minmax(0, 0.82fr) minmax(520px, 1fr);
+        gap: 44px;
+        align-items: center;
+        padding: 48px 0 54px;
+      }
+
+      .observatory-stage h1 {
+        max-width: 780px;
+      }
+
+      .observatory-stage p {
+        max-width: 560px;
+        margin-top: 24px;
+        font-size: 19px;
+      }
+
+      .query-card {
+        margin-top: 34px;
+        max-width: 620px;
+        border: 1px solid var(--line);
+        border-radius: 18px;
+        background: rgba(248, 250, 246, 0.86);
+        padding: 18px;
+      }
+
+      .query-card strong {
+        display: block;
+        font-family: "Bricolage Grotesque", sans-serif;
+        font-size: 22px;
+        line-height: 1.1;
+      }
+
+      .query-card span {
+        display: block;
+        margin-top: 10px;
+        color: var(--muted);
+      }
+
+      .observatory {
+        position: relative;
+        min-height: 690px;
+        border: 1px solid var(--line);
+        border-radius: 30px;
+        overflow: hidden;
+        background:
+          radial-gradient(circle at center, rgba(79, 70, 229, 0.15), transparent 32%),
+          linear-gradient(180deg, rgba(248, 250, 246, 0.92), rgba(237, 243, 236, 0.96));
+      }
+
+      .observatory svg {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+      }
+
+      .orbit-label {
+        position: absolute;
+        display: grid;
+        place-items: center;
+        width: 112px;
+        min-height: 56px;
+        border: 1px solid var(--line);
+        border-radius: 999px;
+        padding: 10px;
+        color: var(--ink);
+        background: rgba(248, 250, 246, 0.9);
+        font-weight: 800;
+        font-size: 13px;
+        text-align: center;
+      }
+
+      .l-chatgpt { left: 50%; top: 8%; transform: translateX(-50%); }
+      .l-perplexity { right: 8%; top: 34%; }
+      .l-claude { right: 18%; bottom: 11%; }
+      .l-aio { left: 18%; bottom: 11%; }
+      .l-gemini { left: 8%; top: 34%; }
+
+      .center-question {
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        width: min(330px, 70%);
+        min-height: 190px;
+        transform: translate(-50%, -50%);
+        border-radius: 24px;
+        padding: 24px;
+        color: var(--paper);
+        background: var(--ink);
+        box-shadow: 0 24px 70px rgba(23, 35, 31, 0.15);
+      }
+
+      .center-question b {
+        display: block;
+        font-family: "Bricolage Grotesque", sans-serif;
+        font-size: 30px;
+        line-height: 1;
+      }
+
+      .center-question span {
+        display: block;
+        margin-top: 14px;
+        color: rgba(248, 250, 246, 0.66);
+        line-height: 1.45;
+      }
+
+      .map-caption {
+        position: absolute;
+        left: 24px;
+        right: 24px;
+        bottom: 24px;
+        display: grid;
+        grid-template-columns: 1fr auto;
+        gap: 18px;
+        align-items: end;
+        color: var(--muted);
+        font-size: 13px;
+      }
+
+      .map-caption strong {
+        color: var(--ink);
+      }
+
+      .coverage-ledger {
+        display: grid;
+        grid-template-columns: 0.8fr 1.2fr;
+        gap: 36px;
+        margin-top: 52px;
+      }
+
+      .coverage-table {
+        border: 1px solid var(--line);
+        border-radius: 22px;
+        overflow: hidden;
+        background: rgba(248, 250, 246, 0.78);
+      }
+
+      .coverage-row {
+        display: grid;
+        grid-template-columns: 0.45fr 1fr 0.45fr;
+        gap: 20px;
+        padding: 22px;
+        border-bottom: 1px solid var(--line);
+        align-items: center;
+      }
+
+      .coverage-row:last-child {
+        border-bottom: 0;
+      }
+
+      .status {
+        display: inline-flex;
+        justify-content: center;
+        border-radius: 999px;
+        padding: 8px 10px;
+        color: var(--indigo);
+        background: var(--indigo-soft);
+        font-size: 12px;
+        font-weight: 800;
+      }
+
+      .proof-cluster {
+        display: grid;
+        grid-template-columns: 1.1fr 0.9fr;
+        gap: 20px;
+      }
+
+      .proof-card {
+        border: 1px solid var(--line);
+        border-radius: 22px;
+        overflow: hidden;
+        background: rgba(248, 250, 246, 0.8);
+      }
+
+      .proof-card .visual {
+        height: 220px;
+        background: var(--paper-2);
+      }
+
+      .proof-card .visual img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+
+      .proof-card .body {
+        padding: 22px;
+      }
+
+      .dark-observatory {
+        background: var(--ink);
+      }
+
+      @media (max-width: 1080px) {
+        .observatory-stage,
+        .coverage-ledger {
+          grid-template-columns: 1fr;
+        }
+
+        .observatory {
+          min-height: 620px;
+        }
+      }
+
+      @media (max-width: 640px) {
+        .observatory-stage {
+          padding-top: 34px;
+        }
+
+        .observatory {
+          min-height: 560px;
+          border-radius: 22px;
+        }
+
+        .orbit-label {
+          width: 92px;
+          min-height: 46px;
+          font-size: 11px;
+        }
+
+        .center-question {
+          width: 78%;
+          padding: 20px;
+        }
+
+        .center-question b {
+          font-size: 24px;
+        }
+
+        .map-caption,
+        .coverage-row,
+        .proof-cluster {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main class="observatory-hero">
+      <div class="shell">
+        <nav class="nav">
+          <a href="#"><img src="../../public/images/loudface.svg" alt="LoudFace"></a>
+          <div class="nav-links">
+            <a href="#coverage">Coverage</a>
+            <a href="#proof">Proof</a>
+            <a href="#video">Video</a>
+          </div>
+          <div class="nav-actions"><a class="btn" href="#start">Map my category</a></div>
+        </nav>
+
+        <section class="observatory-stage">
+          <div>
+            <span class="pill reveal"><span class="dot"></span> Citation map for AI search</span>
+            <h1 class="reveal delay-1">Which AI tools <span class="accent">name you</span> when buyers ask?</h1>
+            <p class="reveal delay-2">LoudFace maps the question set, then builds the pages and proof that make your brand citeable across answer engines.</p>
+            <div class="query-card reveal delay-3">
+              <strong>“Who should we hire to rebuild a B2B SaaS website and grow AI visibility?”</strong>
+              <span>The work starts by seeing which engines answer, which sources they trust, and where your proof is missing.</span>
+            </div>
+          </div>
+
+          <aside class="observatory reveal delay-2" aria-label="AI citation observatory map">
+            <svg viewBox="0 0 700 700" aria-hidden="true">
+              <circle cx="350" cy="350" r="250" fill="none" stroke="#d8e1d8" stroke-width="1.4"></circle>
+              <circle cx="350" cy="350" r="165" fill="none" stroke="#d8e1d8" stroke-width="1.4" stroke-dasharray="7 9"></circle>
+              <path d="M350 350 C365 210 350 132 350 94" fill="none" stroke="#4F46E5" stroke-width="4" stroke-linecap="round"></path>
+              <path d="M350 350 C484 310 570 264 618 255" fill="none" stroke="#4F46E5" stroke-width="4" stroke-linecap="round"></path>
+              <path d="M350 350 C466 456 508 552 520 618" fill="none" stroke="#4F46E5" stroke-width="4" stroke-linecap="round"></path>
+              <path d="M350 350 C240 468 198 560 180 618" fill="none" stroke="#b9c6bd" stroke-width="2" stroke-dasharray="6 10"></path>
+              <path d="M350 350 C216 314 132 266 82 254" fill="none" stroke="#b9c6bd" stroke-width="2" stroke-dasharray="6 10"></path>
+              <circle cx="350" cy="94" r="8" fill="#4F46E5"></circle>
+              <circle cx="618" cy="255" r="8" fill="#4F46E5"></circle>
+              <circle cx="520" cy="618" r="8" fill="#4F46E5"></circle>
+              <circle cx="180" cy="618" r="7" fill="#b9c6bd"></circle>
+              <circle cx="82" cy="254" r="7" fill="#b9c6bd"></circle>
+            </svg>
+            <div class="orbit-label l-chatgpt">ChatGPT cited</div>
+            <div class="orbit-label l-perplexity">Perplexity cited</div>
+            <div class="orbit-label l-claude">Claude cited</div>
+            <div class="orbit-label l-aio">Google AI gap</div>
+            <div class="orbit-label l-gemini">Gemini gap</div>
+            <div class="center-question">
+              <b>Buyer question in the center.</b>
+              <span>Lines appear only where your page, proof, and source language support the answer.</span>
+            </div>
+            <div class="map-caption"><span><strong>Observed state:</strong> Brandfirm source pages are citeable. Two engines still need stronger category proof.</span><span class="status">3 of 5 covered</span></div>
+          </aside>
+        </section>
+      </div>
+    </main>
+
+    <section class="section" id="coverage">
+      <div class="shell coverage-ledger">
+        <div>
+          <h2>A map first. Pages second.</h2>
+          <p class="section-copy" style="margin-top: 22px;">The observatory keeps the work honest. It shows which buyer questions matter, which AI tools answer them, and which proof assets need to exist before content is shipped.</p>
+        </div>
+        <div class="coverage-table">
+          <div class="coverage-row"><strong>Question cluster</strong><p>“best Webflow agency for SaaS”</p><span class="status">source page</span></div>
+          <div class="coverage-row"><strong>Proof gap</strong><p>Buyer wants conversion evidence before a call.</p><span class="status">video needed</span></div>
+          <div class="coverage-row"><strong>Build path</strong><p>Service page, case study, source cards, and comparison language.</p><span class="status">sprint ready</span></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="proof" style="background: var(--paper-2);">
+      <div class="shell">
+        <div class="split" style="align-items:end;">
+          <h2>Proof assets become citation paths.</h2>
+          <p class="section-copy">Each artifact has a job: help a buyer understand, help an AI answer accurately, and help sales stop restating basics.</p>
+        </div>
+        <div class="proof-cluster" style="margin-top: 42px;">
+          <article class="proof-card">
+            <div class="visual"><img src="../../public/images/brandfirm.webp" alt="Brandfirm homepage proof"></div>
+            <div class="body"><span class="pill">Website system</span><h3 style="margin-top: 16px;">Brandfirm page rebuilt around buyer proof.</h3><p style="margin-top: 12px;">Offer, CMS, page sections, and proof all describe the same answer.</p></div>
+          </article>
+          <article class="proof-card">
+            <div class="visual"><img src="../../public/images/organic-mastery_1.webp" alt="Organic growth proof"></div>
+            <div class="body"><span class="pill">Search surface</span><h3 style="margin-top: 16px;">Toku moves from invisible to citeable.</h3><p style="margin-top: 12px;">The category map becomes pages, answer blocks, and source language.</p></div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section dark dark-observatory" id="video">
+      <div class="shell video-section">
+        <article class="quote-card">
+          <span class="pill dark">Review room</span>
+          <p style="margin-top: 24px;">“The page should show the evidence before the pitch starts.”</p>
+          <p style="margin-top: 22px; color: rgba(248,250,246,.62);">Reserved for an approved Brandfirm, Dimer Health, or Webflow customer quote.</p>
+        </article>
+        <article class="video-card">
+          <img src="../../public/images/our-journey_1.webp" alt="Client review video still">
+          <span class="play" aria-hidden="true"></span>
+          <div class="caption">Film: customer opens the citation map and walks through which source cards changed the sales call.</div>
+        </article>
+      </div>
+    </section>
+
+    <section class="shell" id="start" style="padding-top: 70px;">
+      <div class="close-cta">
+        <div class="inner">
+          <div>
+            <h2>Bring your category. Leave with the first citation map.</h2>
+            <p style="margin-top: 18px; color: rgba(248,250,246,.68);">We inspect the questions, the engines, the proof, and the pages buyers should find.</p>
+          </div>
+          <a class="btn light" href="#">Map my category</a>
+        </div>
+      </div>
+    </section>
+  </body>
+</html>
