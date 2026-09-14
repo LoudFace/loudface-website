@@ -832,7 +832,7 @@ export const SERVICE_CONFIGS: Record<string, ServiceConfig> = {
       lede:
         'No ticket queues and no monthly recommendation decks. We own the roadmap, ship the work, and walk you through the numbers every week.',
       pillars: [
-        { kind: 'row', fig: 0, title: 'Growth audit', desc: 'Where you stand on Google, inside AI answers, and on conversion. Technical health, entity coverage, content gaps, and funnel leaks, each scored by pipeline impact so the roadmap starts where the money is.' },
+        { kind: 'row', fig: 0, title: 'Growth audit, in week one', desc: 'Where you stand on Google, inside AI answers, and on conversion, mapped in the first week while the first fixes and calibration articles are already shipping. Technical health, entity coverage, content gaps, and funnel leaks, each scored by pipeline impact so the roadmap starts where the money is.' },
         { kind: 'card', title: '90-day roadmap', desc: 'Three to five measurable goals across the four tracks, with a shared scoreboard and clear ownership. The same window we used to measure the program on our own site.' },
         { kind: 'row', fig: 2, title: 'Weekly shipping', desc: 'Content, technical fixes, structured data, conversion tests, and distribution, shipped every week by one team. One point of contact, and the task management stays on our side.' },
         { kind: 'card', title: 'Numbers, weekly', desc: 'A live walkthrough of what shipped and what moved: share of answer, rankings, conversion, pipeline. Tied to the goals on the roadmap rather than a vanity dashboard.' },
