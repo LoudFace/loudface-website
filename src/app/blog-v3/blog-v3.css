@@ -151,7 +151,7 @@
   box-shadow:inset 0 0 0 1px rgba(255,255,255,.35);}
 .blogv3 .by-av img{width:100%;height:100%;object-fit:cover;}
 .blogv3 .by-name{font-size:14.5px;font-weight:600;color:var(--paper);line-height:1.25;}
-.blogv3 .by-role{font-size:12.5px;font-weight:500;color:rgba(255,255,255,.66);line-height:1.25;margin-top:1px;}
+.blogv3 .by-role{font-size:12.5px;font-weight:500;color:rgba(255,255,255,.66);line-height:1.25;margin-top:1px;margin-left:.5em;}
 .blogv3 .by-who a{display:flex;align-items:center;gap:11px;}
 .blogv3 .by-meta{display:flex;align-items:center;gap:10px 14px;flex-wrap:wrap;font-size:13.5px;font-weight:500;color:rgba(255,255,255,.74);}
 .blogv3 .by-meta .bdot{width:4px;height:4px;border-radius:50%;background:rgba(255,255,255,.4);flex:none;}
