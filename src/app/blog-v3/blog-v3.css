@@ -46,8 +46,16 @@
   --gutter:24px;
 }
 
-/* ---- Minimal reset — zero-specificity, scoped to the blog-v3 subtree ---- */
-:where(.blogv3) *,:where(.blogv3) *::before,:where(.blogv3) *::after{ box-sizing:border-box; margin:0; padding:0; }
+/* ---- Minimal reset — zero-specificity, scoped to the blog-v3 subtree ----
+   This ONE rule lives in @layer base on purpose (2026-09-14). Unlayered, it beat every
+   Tailwind utility inside .blogv3 regardless of specificity (layered rules always lose
+   to unlayered ones), so p-6 / md:p-8 on chart and image figures rendered as padding:0
+   on every blog post. In the base layer it still resets, but utilities override it.
+   The rest of this file stays unlayered; do not wrap the whole file (see the note by
+   .idx-pagination). */
+@layer base {
+  :where(.blogv3) *,:where(.blogv3) *::before,:where(.blogv3) *::after{ box-sizing:border-box; margin:0; padding:0; }
+}
 :where(.blogv3){ -webkit-text-size-adjust:100%; }
 :where(.blogv3){
   font-family:var(--font-sans);
