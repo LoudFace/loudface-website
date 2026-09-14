@@ -88,7 +88,7 @@ export function HowItWorks() {
             </div>
             <div className="step-body">
               <h3>Kickoff</h3>
-              <p>Access setup, Scoreboard live, first initiative briefed. You meet your delivery team.</p>
+              <p>Within 48 hours of signature. Access set up, Scoreboard live, the first fixes and calibration articles shipping in the same week. You meet your delivery team and see shipped work inside five days.</p>
             </div>
             <div className="step-fig" role="img" aria-label="Diagram: Scoreboard goes live at kickoff">
               <svg viewBox="0 0 150 62" xmlns="http://www.w3.org/2000/svg">
