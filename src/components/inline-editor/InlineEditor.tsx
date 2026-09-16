@@ -16,6 +16,14 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 
 type Change = { id: string; value: string; label: string };
 type Status = { kind: 'idle' | 'saving' | 'saved' | 'error'; message?: string };
+type Publish = {
+  hash: string;
+  date: string;
+  editor: string;
+  summary: string;
+  fields: string[];
+  reverted: boolean;
+};
 
 const START = '\u{E0001}';
 const BASE = 0xe0000;
@@ -90,6 +98,8 @@ export function InlineEditor() {
   const [status, setStatus] = useState<Status>({ kind: 'idle' });
   const [assetTarget, setAssetTarget] = useState<{ id: string; current: string } | null>(null);
   const [count, setCount] = useState(0);
+  const [historyOpen, setHistoryOpen] = useState(false);
+  const [publishes, setPublishes] = useState<Publish[] | null>(null);
   const originals = useRef<Map<string, string>>(new Map());
 
   const record = useCallback((id: string, value: string, label: string) => {
@@ -138,6 +148,16 @@ export function InlineEditor() {
       placeCaret(el, event as MouseEvent);
     };
 
+    // Stage on every keystroke. Waiting for blur loses the last edit whenever
+    // the element does not give focus up — a link element being the case that
+    // caught us.
+    const onInput = (event: Event) => {
+      const el = event.currentTarget as HTMLElement;
+      const id = el.dataset.lfId!;
+      if (!originals.current.has(id)) originals.current.set(id, el.innerHTML);
+      record(id, strip(el.innerHTML), strip(el.textContent ?? '').slice(0, 42));
+    };
+
     const onBlur = (event: Event) => {
       const el = event.currentTarget as HTMLElement;
       const id = el.dataset.lfId!;
@@ -158,6 +178,9 @@ export function InlineEditor() {
       }
       if (key === 'Enter' && !(event as KeyboardEvent).shiftKey) {
         event.preventDefault();
+        event.stopPropagation();
+        el.contentEditable = 'false';
+        el.style.outline = '';
         el.blur();
       }
       if ((key === 'a' || key === 'A') && meta) {
@@ -177,6 +200,7 @@ export function InlineEditor() {
         el.addEventListener('mouseenter', onEnter);
         el.addEventListener('mouseleave', onLeave);
         el.addEventListener('click', onClick, true);
+        el.addEventListener('input', onInput);
         el.addEventListener('blur', onBlur);
         el.addEventListener('keydown', onKeyDown);
         el.style.cursor = el.dataset.lfType === 'image' ? 'pointer' : 'text';
@@ -193,28 +217,51 @@ export function InlineEditor() {
 
   const pending = Object.values(changes);
 
+
   async function save() {
     if (!pending.length) return;
     setStatus({ kind: 'saving' });
-    for (const change of pending) {
-      const response = await fetch('/api/lf-edit', {
-        method: 'POST',
-        headers: { 'content-type': 'application/json' },
-        body: JSON.stringify({ id: change.id, value: change.value }),
-      });
-      if (!response.ok) {
-        const detail = await response.json().catch(() => ({ error: response.statusText }));
-        setStatus({ kind: 'error', message: `${change.id}: ${detail.error ?? 'failed'}` });
-        return;
-      }
+    const response = await fetch('/api/lf-edit', {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({ changes: pending.map(({ id, value }) => ({ id, value })) }),
+    });
+    const result = await response.json().catch(() => ({ error: response.statusText }));
+    if (!response.ok) {
+      setStatus({ kind: 'error', message: result.error ?? 'Publish failed' });
+      return;
     }
     setChanges({});
     originals.current.clear();
     setStatus({
       kind: 'saved',
-      message: `${pending.length} change${pending.length > 1 ? 's' : ''} published`,
+      message: `${result.published} change${result.published === 1 ? '' : 's'} published`,
     });
-    setTimeout(() => window.location.reload(), 700);
+    setTimeout(() => window.location.reload(), 900);
+  }
+
+  async function openHistory() {
+    setHistoryOpen(true);
+    setPublishes(null);
+    const response = await fetch('/api/lf-edit/history');
+    const result = await response.json().catch(() => ({ publishes: [] }));
+    setPublishes(result.publishes ?? []);
+  }
+
+  async function undoPublish(hash: string) {
+    setStatus({ kind: 'saving' });
+    const response = await fetch('/api/lf-edit/undo', {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({ hash }),
+    });
+    const result = await response.json().catch(() => ({ error: response.statusText }));
+    if (!response.ok) {
+      setStatus({ kind: 'error', message: result.error ?? 'Undo failed' });
+      return;
+    }
+    setStatus({ kind: 'saved', message: 'Change undone' });
+    setTimeout(() => window.location.reload(), 900);
   }
 
   return (
@@ -240,10 +287,57 @@ export function InlineEditor() {
         <button style={ghost} onClick={() => window.location.reload()} disabled={!pending.length}>
           Discard
         </button>
-        <a style={ghost} href="/api/draft-mode/disable">
-          Exit
+        <button style={ghost} onClick={openHistory}>
+          History
+        </button>
+        <a style={ghost} href="/api/lf-edit/signout">
+          Sign out
         </a>
       </div>
+
+      {historyOpen && (
+        <div style={{ ...panel, width: 520, maxHeight: '60vh', overflow: 'auto' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <p style={{ margin: '0 0 10px', fontWeight: 700 }}>Recent publishes</p>
+            <button style={{ ...ghost, color: '#14212b', borderColor: '#cfd9e2' }} onClick={() => setHistoryOpen(false)}>
+              Close
+            </button>
+          </div>
+          {publishes === null && <p style={{ margin: 0, opacity: 0.7 }}>Loading…</p>}
+          {publishes?.length === 0 && <p style={{ margin: 0, opacity: 0.7 }}>Nothing published yet.</p>}
+          {publishes?.map((entry) => (
+            <div
+              key={entry.hash}
+              style={{
+                display: 'flex',
+                gap: 12,
+                alignItems: 'flex-start',
+                justifyContent: 'space-between',
+                padding: '10px 0',
+                borderTop: '1px solid #eef2f5',
+              }}
+            >
+              <div style={{ minWidth: 0 }}>
+                <p style={{ margin: 0, fontWeight: 600 }}>{entry.summary}</p>
+                <p style={{ margin: '2px 0 0', fontSize: 12, opacity: 0.7 }}>
+                  {new Date(entry.date).toLocaleString()} · {entry.editor}
+                  {entry.fields.length ? ` · ${entry.fields.slice(0, 3).join(', ')}` : ''}
+                </p>
+              </div>
+              {entry.reverted ? (
+                <span style={{ fontSize: 12, opacity: 0.6, whiteSpace: 'nowrap' }}>undone</span>
+              ) : (
+                <button
+                  style={{ ...button, background: '#8c1d18', padding: '6px 12px' }}
+                  onClick={() => undoPublish(entry.hash)}
+                >
+                  Undo
+                </button>
+              )}
+            </div>
+          ))}
+        </div>
+      )}
 
       {assetTarget && (
         <div style={panel}>
