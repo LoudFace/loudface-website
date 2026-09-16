@@ -1,7 +1,7 @@
 {
   "links": [
     {
-      "label": "Our Work",
+      "label": "Case studies",
       "href": "/case-studies"
     },
     {
@@ -13,7 +13,7 @@
       "href": "/about"
     },
     {
-      "label": "Pricing",
+      "label": "Plans and pricing",
       "href": "/pricing"
     }
   ],
