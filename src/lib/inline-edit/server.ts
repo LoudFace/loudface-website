@@ -44,13 +44,22 @@ export async function isEditing(): Promise<boolean> {
 const IMAGE_PATH = /^\/[^\s?]+\.(?:webp|png|jpe?g|svg|avif|gif)$/i;
 /** Addresses are left alone: changing one needs a field, not typing on a page. */
 const ADDRESS = /^(?:https?:|mailto:|tel:|#|\/)/i;
-/** Keys that hold machinery rather than client copy. */
+/**
+ * Keys that must never be marked.
+ *
+ * Two kinds: machinery (ids, classes, sizes), and text that renders into an
+ * attribute rather than onto the page. An attribute value cannot be clicked, so
+ * marking it buys nothing — and it breaks anything that matches on it. The CSS
+ * that turns the logo white matches a[aria-label="LoudFace Home"], so a marked
+ * aria-label left the logo dark on the hero.
+ */
 const MACHINE_KEY =
   /(^|[._-])(id|ids|slug|slugs|key|keys|class|className|variant|type|color|colour|width|height|order|rank|target|rel|name|icon)$/i;
+const ATTRIBUTE_KEY = /(arialabel|aria|alt|placeholder|tooltip|srlabel|srtext|datatestid)$/i;
 
 function markString(file: string, path: string[], value: string): string {
   const key = path[path.length - 1] ?? '';
-  if (MACHINE_KEY.test(key)) return value;
+  if (MACHINE_KEY.test(key) || ATTRIBUTE_KEY.test(key)) return value;
 
   const id = `${file}:${path.join('.')}`;
   if (IMAGE_PATH.test(value)) {

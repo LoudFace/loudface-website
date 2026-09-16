@@ -99,6 +99,7 @@ export function InlineEditor() {
   const [assetTarget, setAssetTarget] = useState<{ id: string; current: string } | null>(null);
   const [count, setCount] = useState(0);
   const [historyOpen, setHistoryOpen] = useState(false);
+  const [showAll, setShowAll] = useState(false);
   const [publishes, setPublishes] = useState<Publish[] | null>(null);
   const originals = useRef<Map<string, string>>(new Map());
 
@@ -215,6 +216,18 @@ export function InlineEditor() {
     return () => observer.disconnect();
   }, [record]);
 
+  // "Show me what I can edit" — the honest answer to a page where most copy is
+  // still written into the component rather than served from the content layer.
+  useEffect(() => {
+    const nodes = document.querySelectorAll<HTMLElement>('[data-lf-id]');
+    nodes.forEach((el) => {
+      if (el.isContentEditable) return;
+      el.style.outline = showAll ? '1px dashed rgba(47,125,225,.75)' : '';
+      el.style.outlineOffset = showAll ? '3px' : '';
+      el.style.backgroundColor = showAll ? 'rgba(47,125,225,.07)' : '';
+    });
+  }, [showAll, count]);
+
   const pending = Object.values(changes);
 
 
@@ -286,6 +299,12 @@ export function InlineEditor() {
         </button>
         <button style={ghost} onClick={() => window.location.reload()} disabled={!pending.length}>
           Discard
+        </button>
+        <button
+          style={{ ...ghost, background: showAll ? 'rgba(255,255,255,.18)' : 'transparent' }}
+          onClick={() => setShowAll((on) => !on)}
+        >
+          {showAll ? 'Hide editable' : 'Show editable'}
         </button>
         <button style={ghost} onClick={openHistory}>
           History

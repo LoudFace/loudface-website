@@ -28,12 +28,13 @@ const IMAGE_PATH = /^\/[^\s?]+\.(?:webp|png|jpe?g|svg|avif|gif)$/i;
 const ADDRESS = /^(?:https?:|mailto:|tel:|#|\/)/i;
 const MACHINE_KEY =
   /(^|[._-])(id|ids|slug|slugs|key|keys|class|className|variant|type|color|colour|width|height|order|rank|target|rel|name|icon)$/i;
+const ATTRIBUTE_KEY = /(arialabel|aria|alt|placeholder|tooltip|srlabel|srtext|datatestid)$/i;
 
 function expectedIds(file, value, trail = []) {
   const out = [];
   if (typeof value === 'string') {
     const key = trail[trail.length - 1] ?? '';
-    if (MACHINE_KEY.test(key)) return out;
+    if (MACHINE_KEY.test(key) || ATTRIBUTE_KEY.test(key)) return out;
     if (IMAGE_PATH.test(value)) return [`${file}:${trail.join('.')}`];
     if (ADDRESS.test(value)) return out;
     if (!value.trim()) return out;
