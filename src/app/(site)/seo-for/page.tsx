@@ -11,6 +11,8 @@ import {
   fetchHomepageData,
 } from '@/lib/cms-data';
 import { getSeoForHubContent } from '@/lib/content-utils';
+import { editor, isEditing } from '@/lib/editable';
+import { InlineEditor } from '@/components/inline-editor/InlineEditor';
 import { logoImage } from '@/lib/image-utils';
 import { asset } from '@/lib/assets';
 import {
@@ -148,6 +150,8 @@ const CODE_OWNED_AI_STARTUPS_PAGE: SeoPage = {
 
 export default async function SeoForHubPage() {
   const content = getSeoForHubContent();
+  const edit = await editor('seo-for-hub');
+  const editing = await isEditing();
   const [cmsSeoPages, cmsData] = await Promise.all([
     fetchSeoPages(),
     fetchHomepageData(),
@@ -237,23 +241,26 @@ export default async function SeoForHubPage() {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center">
           {/* Left — Copy */}
           <div className="lg:col-span-7">
-            <BulletLabel>{content.hero.eyebrow}</BulletLabel>
+            <span {...edit('hero.eyebrow')}>
+              <BulletLabel>{content.hero.eyebrow}</BulletLabel>
+            </span>
 
             <h1
               className="mt-4 text-2xl sm:text-3xl md:text-4xl lg:text-hero font-medium text-surface-900 leading-tight"
+              {...edit('hero.headline', 'html')}
               dangerouslySetInnerHTML={{ __html: content.hero.headline }}
             />
 
-            <p className="mt-6 text-lg text-surface-600 max-w-xl">
+            <p className="mt-6 text-lg text-surface-600 max-w-xl" {...edit('hero.description')}>
               {content.hero.description}
             </p>
 
             <div className="mt-8 flex flex-wrap gap-4">
               <Button variant="primary" size="lg" calTrigger>
-                {content.hero.primaryCta}
+                <span {...edit('hero.primaryCta')}>{content.hero.primaryCta}</span>
               </Button>
               <Button variant="outline" size="lg" href="#approach">
-                {content.hero.secondaryCta}
+                <span {...edit('hero.secondaryCta')}>{content.hero.secondaryCta}</span>
               </Button>
             </div>
           </div>
@@ -676,6 +683,8 @@ export default async function SeoForHubPage() {
         title="Don't See Your Industry?"
         subtitle="We work across all sectors. Book a call and we'll build a custom SEO strategy for your business."
       />
+
+      {editing && <InlineEditor />}
     </>
   );
 }
