@@ -14,7 +14,7 @@ interface PartnersProps {
   tagline?: string;
 }
 
-export function Partners({
+export async function Partners({
   testimonials,
   clients,
   starCount = 5,
@@ -22,7 +22,7 @@ export function Partners({
   starRatingSuffix,
   tagline,
 }: PartnersProps) {
-  const content = getPartnersContent();
+  const content = await getPartnersContent();
 
   const finalStarRatingPrefix = starRatingPrefix ?? content.starRatingPrefix;
   const finalStarRatingSuffix = starRatingSuffix ?? content.starRatingSuffix;

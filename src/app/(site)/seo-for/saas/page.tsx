@@ -25,13 +25,15 @@
 import type { Metadata } from 'next';
 import '../../../service-v3/service-v3.css';
 import '../../../seo-for-v3/seo-for-v3.css';
-import { getSeoForSaasContent } from '@/lib/content-utils';
+import { getSeoForSaasContent, rawContent } from '@/lib/content-utils';
+import type { SeoForSaasContent } from '@/lib/content-utils';
 import { fetchHomepageData } from '@/lib/cms-data';
 import { SeoForPageV3 } from '../../../seo-for-v3/SeoForPageV3';
 import type { Deliverable, QuoteSource, SeoForView } from '../../../seo-for-v3/SeoForPageV3';
 import { CLIENT_DOMAINS, getSeoForImages } from '../../../seo-for-v3/data';
 
-const content = getSeoForSaasContent();
+// Module scope: metadata only, never marked for editing.
+const content = rawContent<SeoForSaasContent>('seo-for-saas');
 
 export const metadata: Metadata = {
   title: content.meta.title,
@@ -73,6 +75,8 @@ function esc(value: string): string {
 }
 
 export default async function SaaSPage() {
+  // Shadows the module copy with the editable one for everything rendered.
+  const content = await getSeoForSaasContent();
   const caseStudySlugs = content.caseStudies.items.map((study) => study.slug);
   const images = await getSeoForImages(caseStudySlugs);
 

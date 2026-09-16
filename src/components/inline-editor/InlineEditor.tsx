@@ -1,49 +1,95 @@
 'use client';
 
 /**
- * Inline editor — prototype, 2026-09-16.
+ * Inline editor — mounted only while Draft Mode is on.
  *
- * Mounted only while Draft Mode is on. It finds every element the server
- * tagged with data-lf-id, lets an editor click one and type in place, and
- * sends changed values to /api/lf-edit, which writes them back into the JSON
- * file the value came from.
+ * It works out what is editable by reading the page: every string served
+ * through the content layer carries its content id, and every content image
+ * carries the same id in a query. Page components hold no editing code, so
+ * building a new page needs nothing from whoever builds it, and a redesign
+ * cannot break editing.
  *
- * Deliberately narrow: text, an image source, a link destination. No layout,
- * no section moving, no component choice.
+ * Deliberately narrow: text, and the address of a content image. No layout, no
+ * section moving, no component choice.
  */
 import { useCallback, useEffect, useRef, useState } from 'react';
 
 type Change = { id: string; value: string; label: string };
 type Status = { kind: 'idle' | 'saving' | 'saved' | 'error'; message?: string };
 
-
-/** Place the text caret at the clicked point, falling back to the end. */
-function placeCaret(el: HTMLElement, event: MouseEvent) {
-  const selection = window.getSelection();
-  if (!selection) return;
-  const doc = document as Document & {
-    caretRangeFromPoint?: (x: number, y: number) => Range | null;
-  };
-  const range = doc.caretRangeFromPoint?.(event.clientX, event.clientY);
-  if (range && el.contains(range.startContainer)) {
-    selection.removeAllRanges();
-    selection.addRange(range);
-    return;
-  }
-  const end = document.createRange();
-  end.selectNodeContents(el);
-  end.collapse(false);
-  selection.removeAllRanges();
-  selection.addRange(end);
-}
-
+const START = '\u{E0001}';
+const BASE = 0xe0000;
+const MARKS = /[\u{E0000}-\u{E007F}]/gu;
 const OUTLINE = '2px solid #2f7de1';
 const OUTLINE_HOVER = '2px dashed #9dc3f2';
+
+function decodeMark(text: string): string | null {
+  const start = text.indexOf(START);
+  if (start === -1) return null;
+  let id = '';
+  for (const char of text.slice(start + START.length)) {
+    const code = char.codePointAt(0)!;
+    if (code < BASE + 0x20 || code > BASE + 0x7e) break;
+    id += String.fromCodePoint(code - BASE);
+  }
+  return id || null;
+}
+
+const strip = (text: string) => text.replace(MARKS, '');
+
+function countMarks(el: Element | null): number {
+  if (!el) return 0;
+  let n = 0;
+  for (const char of el.textContent ?? '') if (char === START) n++;
+  return n;
+}
+
+/** The element that owns this value: climb while the parent adds no other text. */
+function fieldElement(node: Text): HTMLElement | null {
+  let el: HTMLElement | null = node.parentElement;
+  if (!el) return null;
+  for (let i = 0; i < 3; i++) {
+    const parent: HTMLElement | null = el.parentElement;
+    if (!parent || countMarks(parent) !== 1) break;
+    if ((parent.textContent ?? '').trim().length !== (el.textContent ?? '').trim().length) break;
+    el = parent;
+  }
+  return el;
+}
+
+/** Everything editable on this page, discovered from the page itself. */
+function discover(): HTMLElement[] {
+  const found: HTMLElement[] = [];
+
+  const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT);
+  for (let node = walker.nextNode(); node; node = walker.nextNode()) {
+    const text = node as Text;
+    if (!text.data.includes(START)) continue;
+    const id = decodeMark(text.data);
+    const el = fieldElement(text);
+    if (!id || !el || el.dataset.lfId || el.closest('[data-lf-chrome]')) continue;
+    el.dataset.lfId = id;
+    el.dataset.lfType = 'text';
+    found.push(el);
+  }
+
+  document.querySelectorAll<HTMLImageElement>('img[src*="lf="]').forEach((img) => {
+    if (img.dataset.lfId) return;
+    const id = new URLSearchParams((img.getAttribute('src') ?? '').split('?')[1] ?? '').get('lf');
+    if (!id) return;
+    img.dataset.lfId = id;
+    img.dataset.lfType = 'image';
+    found.push(img);
+  });
+
+  return found;
+}
 
 export function InlineEditor() {
   const [changes, setChanges] = useState<Record<string, Change>>({});
   const [status, setStatus] = useState<Status>({ kind: 'idle' });
-  const [assetTarget, setAssetTarget] = useState<{ id: string; type: string; current: string } | null>(null);
+  const [assetTarget, setAssetTarget] = useState<{ id: string; current: string } | null>(null);
+  const [count, setCount] = useState(0);
   const originals = useRef<Map<string, string>>(new Map());
 
   const record = useCallback((id: string, value: string, label: string) => {
@@ -51,7 +97,7 @@ export function InlineEditor() {
   }, []);
 
   useEffect(() => {
-    const nodes = Array.from(document.querySelectorAll<HTMLElement>('[data-lf-id]'));
+    const wired = new WeakSet<HTMLElement>();
 
     const onEnter = (event: Event) => {
       const el = event.currentTarget as HTMLElement;
@@ -69,16 +115,14 @@ export function InlineEditor() {
     const onClick = (event: Event) => {
       const el = event.currentTarget as HTMLElement;
       const id = el.dataset.lfId!;
-      const type = el.dataset.lfType ?? 'text';
 
-      if (type === 'image' || type === 'link') {
+      if (el.dataset.lfType === 'image') {
         event.preventDefault();
         event.stopPropagation();
-        const current =
-          type === 'image'
-            ? (el as HTMLImageElement).getAttribute('src') ?? ''
-            : el.getAttribute('href') ?? '';
-        setAssetTarget({ id, type, current });
+        setAssetTarget({
+          id,
+          current: ((el as HTMLImageElement).getAttribute('src') ?? '').split('?')[0],
+        });
         return;
       }
 
@@ -91,9 +135,6 @@ export function InlineEditor() {
       el.style.outline = OUTLINE;
       el.style.outlineOffset = '3px';
       el.focus();
-      // Put the caret where the editor actually clicked. Without this the
-      // caret lands at an arbitrary point and the first keystroke appears in
-      // the middle of a word.
       placeCaret(el, event as MouseEvent);
     };
 
@@ -102,26 +143,24 @@ export function InlineEditor() {
       const id = el.dataset.lfId!;
       el.contentEditable = 'false';
       el.style.outline = '';
-      const before = originals.current.get(id) ?? '';
-      if (el.innerHTML !== before) {
-        record(id, el.innerHTML, (el.textContent ?? '').slice(0, 42));
+      if (el.innerHTML !== (originals.current.get(id) ?? '')) {
+        record(id, strip(el.innerHTML), strip(el.textContent ?? '').slice(0, 42));
       }
     };
 
     const onKeyDown = (event: Event) => {
       const el = event.currentTarget as HTMLElement;
       const key = (event as KeyboardEvent).key;
+      const meta = (event as KeyboardEvent).metaKey || (event as KeyboardEvent).ctrlKey;
       if (key === 'Escape') {
-        const id = el.dataset.lfId!;
-        el.innerHTML = originals.current.get(id) ?? el.innerHTML;
+        el.innerHTML = originals.current.get(el.dataset.lfId!) ?? el.innerHTML;
         el.blur();
       }
       if (key === 'Enter' && !(event as KeyboardEvent).shiftKey) {
         event.preventDefault();
         el.blur();
       }
-      // Select-all inside the field being edited, never the whole page.
-      if ((key === 'a' || key === 'A') && ((event as KeyboardEvent).metaKey || (event as KeyboardEvent).ctrlKey)) {
+      if ((key === 'a' || key === 'A') && meta) {
         event.preventDefault();
         const selection = window.getSelection();
         const range = document.createRange();
@@ -131,26 +170,25 @@ export function InlineEditor() {
       }
     };
 
-    nodes.forEach((el) => {
-      el.addEventListener('mouseenter', onEnter);
-      el.addEventListener('mouseleave', onLeave);
-      el.addEventListener('click', onClick, true);
-      el.addEventListener('blur', onBlur);
-      el.addEventListener('keydown', onKeyDown);
-      el.style.cursor = 'text';
-    });
-
-    return () => {
+    function wire() {
+      const nodes = discover().filter((el) => !wired.has(el));
       nodes.forEach((el) => {
-        el.removeEventListener('mouseenter', onEnter);
-        el.removeEventListener('mouseleave', onLeave);
-        el.removeEventListener('click', onClick, true);
-        el.removeEventListener('blur', onBlur);
-        el.removeEventListener('keydown', onKeyDown);
-        el.style.cursor = '';
-        el.style.outline = '';
+        wired.add(el);
+        el.addEventListener('mouseenter', onEnter);
+        el.addEventListener('mouseleave', onLeave);
+        el.addEventListener('click', onClick, true);
+        el.addEventListener('blur', onBlur);
+        el.addEventListener('keydown', onKeyDown);
+        el.style.cursor = el.dataset.lfType === 'image' ? 'pointer' : 'text';
       });
-    };
+      if (nodes.length) setCount((n) => n + nodes.length);
+    }
+
+    wire();
+    // Sections that mount late: sliders, tabs, anything client-rendered.
+    const observer = new MutationObserver(() => wire());
+    observer.observe(document.body, { childList: true, subtree: true });
+    return () => observer.disconnect();
   }, [record]);
 
   const pending = Object.values(changes);
@@ -172,33 +210,34 @@ export function InlineEditor() {
     }
     setChanges({});
     originals.current.clear();
-    setStatus({ kind: 'saved', message: `${pending.length} change${pending.length > 1 ? 's' : ''} published` });
+    setStatus({
+      kind: 'saved',
+      message: `${pending.length} change${pending.length > 1 ? 's' : ''} published`,
+    });
     setTimeout(() => window.location.reload(), 700);
   }
 
-  function discard() {
-    window.location.reload();
-  }
-
   return (
-    <>
+    <div data-lf-chrome="">
       <div style={bar}>
         <span style={{ fontWeight: 700 }}>Inline editing</span>
         <span style={{ opacity: 0.75 }}>
           {status.kind === 'saving'
             ? 'Saving…'
-            : status.kind === 'error'
+            : status.kind === 'error' || status.kind === 'saved'
               ? status.message
-              : status.kind === 'saved'
-                ? status.message
-                : pending.length
-                  ? `${pending.length} unsaved`
-                  : 'Click any text, image or button'}
+              : pending.length
+                ? `${pending.length} unsaved`
+                : `${count} editable on this page`}
         </span>
-        <button style={{ ...button, opacity: pending.length ? 1 : 0.45 }} onClick={save} disabled={!pending.length}>
+        <button
+          style={{ ...button, opacity: pending.length ? 1 : 0.45 }}
+          onClick={save}
+          disabled={!pending.length}
+        >
           Publish
         </button>
-        <button style={ghost} onClick={discard} disabled={!pending.length}>
+        <button style={ghost} onClick={() => window.location.reload()} disabled={!pending.length}>
           Discard
         </button>
         <a style={ghost} href="/api/draft-mode/disable">
@@ -208,9 +247,7 @@ export function InlineEditor() {
 
       {assetTarget && (
         <div style={panel}>
-          <p style={{ margin: '0 0 8px', fontWeight: 700 }}>
-            {assetTarget.type === 'image' ? 'Image address' : 'Link destination'}
-          </p>
+          <p style={{ margin: '0 0 8px', fontWeight: 700 }}>Image address</p>
           <input
             autoFocus
             defaultValue={assetTarget.current}
@@ -219,21 +256,44 @@ export function InlineEditor() {
               if (event.key === 'Escape') setAssetTarget(null);
               if (event.key === 'Enter') {
                 const value = (event.target as HTMLInputElement).value.trim();
-                const el = document.querySelector<HTMLElement>(`[data-lf-id="${assetTarget.id}"]`);
+                const el = document.querySelector<HTMLImageElement>(
+                  `[data-lf-id="${assetTarget.id}"]`,
+                );
                 if (el && value) {
-                  if (assetTarget.type === 'image') el.setAttribute('src', value);
-                  else el.setAttribute('href', value);
+                  el.setAttribute('src', value);
                   record(assetTarget.id, value, value.slice(0, 42));
                 }
                 setAssetTarget(null);
               }
             }}
           />
-          <p style={{ margin: '8px 0 0', fontSize: 12, opacity: 0.7 }}>Enter to apply, Escape to cancel.</p>
+          <p style={{ margin: '8px 0 0', fontSize: 12, opacity: 0.7 }}>
+            Enter to apply, Escape to cancel.
+          </p>
         </div>
       )}
-    </>
+    </div>
   );
+}
+
+/** Place the text caret where the editor clicked, falling back to the end. */
+function placeCaret(el: HTMLElement, event: MouseEvent) {
+  const selection = window.getSelection();
+  if (!selection) return;
+  const doc = document as Document & {
+    caretRangeFromPoint?: (x: number, y: number) => Range | null;
+  };
+  const range = doc.caretRangeFromPoint?.(event.clientX, event.clientY);
+  if (range && el.contains(range.startContainer)) {
+    selection.removeAllRanges();
+    selection.addRange(range);
+    return;
+  }
+  const end = document.createRange();
+  end.selectNodeContents(el);
+  end.collapse(false);
+  selection.removeAllRanges();
+  selection.addRange(end);
 }
 
 const bar: React.CSSProperties = {

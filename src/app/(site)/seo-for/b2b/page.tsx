@@ -14,13 +14,15 @@
 import type { Metadata } from 'next';
 import '../../../service-v3/service-v3.css';
 import '../../../seo-for-v3/seo-for-v3.css';
-import { getSeoForB2bContent } from '@/lib/content-utils';
+import { getSeoForB2bContent, rawContent } from '@/lib/content-utils';
+import type { SeoForB2bContent } from '@/lib/content-utils';
 import { fetchHomepageData } from '@/lib/cms-data';
 import { SeoForPageV3 } from '../../../seo-for-v3/SeoForPageV3';
 import type { QuoteSource, SeoForView } from '../../../seo-for-v3/SeoForPageV3';
 import { CLIENT_DOMAINS, getSeoForImages } from '../../../seo-for-v3/data';
 
-const content = getSeoForB2bContent();
+// Module scope: metadata only, never marked for editing.
+const content = rawContent<SeoForB2bContent>('seo-for-b2b');
 
 export const metadata: Metadata = {
   title: content.meta.title,
@@ -54,6 +56,8 @@ export const metadata: Metadata = {
 };
 
 export default async function B2bPage() {
+  // Shadows the module copy with the editable one for everything rendered.
+  const content = await getSeoForB2bContent();
   const caseStudySlugs = content.caseStudies.items.map((study) => study.slug);
   const images = await getSeoForImages(caseStudySlugs);
 

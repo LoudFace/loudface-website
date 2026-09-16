@@ -12,11 +12,11 @@ interface FooterProps {
   blogPosts?: BlogPost[];
 }
 
-export function Footer({ caseStudies = [], blogPosts = [] }: FooterProps) {
+export async function Footer({ caseStudies = [], blogPosts = [] }: FooterProps) {
   // Newsletter copy — resolved server-side and passed to the client
   // NewsletterForm as props, so the client chunk never imports the
   // server-only content layer.
-  const newsletter = getNewsletterContent();
+  const newsletter = await getNewsletterContent();
 
   // Navigation data
   const companyLinks = [

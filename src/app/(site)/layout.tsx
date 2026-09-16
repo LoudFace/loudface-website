@@ -4,6 +4,8 @@ import "../globals.css";
 import Script from "next/script";
 import { cookies, draftMode, headers } from "next/headers";
 import { VisualEditing } from "next-sanity/visual-editing";
+import { primeInlineEditing } from "@/lib/inline-edit/server";
+import { InlineEditor } from "@/components/inline-editor/InlineEditor";
 import { CalHandler } from "@/components/CalHandler";
 import { SiteHeader, SiteFooter } from "@/components/SiteChrome";
 import { Footer } from "@/components/Footer";
@@ -72,8 +74,10 @@ export default async function SiteLayout({
     pathname.startsWith("/case-studies") ||
     isBlog;
   const footerData = suppressSharedFooter ? null : await fetchFooterData();
-  const navContent = getNavContent();
+  const navContent = await getNavContent();
   const isDraftMode = (await draftMode()).isEnabled;
+  // Marks this request's content so the editor can find it. One line.
+  await primeInlineEditing();
 
   // Route-dependent chrome (Header hero-theme, hreflang, shared-Footer
   // suppression) is resolved client-side in SiteChrome via usePathname(). The
@@ -127,6 +131,7 @@ window.addEventListener(e,loadCal,{once:true,passive:true});});})();`}
             Outside draft mode, no overlay JS loads, page is identical to
             published content. */}
         {isDraftMode && <VisualEditing />}
+        {isDraftMode && <InlineEditor />}
 
         {/* Consent banner + consent-gated trackers (GTM ×2, RB2B; PostHog
             reacts to the same consent state via posthog-client). EEA/UK/CH

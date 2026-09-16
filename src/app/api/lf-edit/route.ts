@@ -12,6 +12,7 @@
 import { draftMode } from 'next/headers';
 import { readFile, writeFile } from 'node:fs/promises';
 import path from 'node:path';
+import { strip as stripMarks } from '@/lib/inline-edit/mark';
 
 const CONTENT_DIR = path.join(process.cwd(), 'src', 'data', 'content');
 const FILE_NAME = /^[a-z0-9-]+$/;
@@ -20,7 +21,7 @@ const BR = '@@LF_BR@@';
 
 /** Only <br> survives; every other tag is stripped rather than escaped. */
 function clean(value: string): string {
-  return value
+  return stripMarks(value)
     .replace(/<br\s*\/?>/gi, BR)
     .replace(/<[^>]*>/g, '')
     .replace(new RegExp(BR, 'g'), '<br>')
@@ -96,7 +97,7 @@ export async function POST(request: Request) {
   }
 
   const before = target.parent[target.key] as string;
-  const after = clean(body.value);
+  const after = clean(body.value).replace(/[?&]lf=[^&\s]*/g, '');
   if (!after) return Response.json({ error: 'Value is empty' }, { status: 400 });
   if (after === before) return Response.json({ ok: true, unchanged: true });
 

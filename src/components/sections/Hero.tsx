@@ -17,7 +17,7 @@ interface HeroProps {
   industries?: Map<string, Industry>;
 }
 
-export function Hero({
+export async function Hero({
   headline,
   description,
   ctaText,
@@ -27,7 +27,7 @@ export function Hero({
   clients = new Map(),
 }: HeroProps) {
   // Load content from JSON file
-  const content = getHeroContent();
+  const content = await getHeroContent();
 
   // Use props or fall back to content defaults
   const finalHeadline = headline ?? content.headline;

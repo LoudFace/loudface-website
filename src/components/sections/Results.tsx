@@ -16,7 +16,7 @@ interface ResultsProps {
   ctaHref?: string;
 }
 
-export function Results({
+export async function Results({
   title,
   subtitle,
   videoTestimonials,
@@ -26,7 +26,7 @@ export function Results({
   ctaText,
   ctaHref,
 }: ResultsProps) {
-  const content = getResultsContent();
+  const content = await getResultsContent();
 
   const finalTitle = title ?? content.title;
   const finalSubtitle = subtitle ?? content.subtitle;

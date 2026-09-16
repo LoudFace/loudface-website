@@ -16,6 +16,7 @@
  * from a Server Component parent (see NewsletterForm ← Footer).
  */
 import 'server-only';
+import { markTree } from '@/lib/inline-edit/server';
 
 // Content file imports - add new content files here as they're created
 import ctaContent from "@/data/content/cta.json";
@@ -1054,120 +1055,130 @@ const contentRegistry: Record<string, unknown> = {
  * @param name - Content file name (without .json extension)
  * @returns The content object or undefined if not found
  */
-export function getContent<T = unknown>(name: string): T | undefined {
-  return contentRegistry[name] as T | undefined;
+/**
+ * Unmarked content, for anything that is not visible page text: metadata,
+ * JSON-LD, hand-built alt attributes, anything read at module scope.
+ * Editing marks must never reach those.
+ */
+export function rawContent<T = unknown>(name: string): T {
+  return contentRegistry[name] as T;
+}
+
+export async function getContent<T = unknown>(name: string): Promise<T | undefined> {
+  const value = contentRegistry[name] as T | undefined;
+  return value === undefined ? undefined : markTree(name, value);
 }
 
 /**
  * Get CTA section content
  */
-export function getCTAContent(): CTAContent {
-  return ctaContent as CTAContent;
+export async function getCTAContent(): Promise<CTAContent> {
+  return markTree('cta', ctaContent as CTAContent);
 }
 
 /**
  * Get Hero section content
  */
-export function getHeroContent(): HeroContent {
-  return heroContent as HeroContent;
+export async function getHeroContent(): Promise<HeroContent> {
+  return markTree('hero', heroContent as HeroContent);
 }
 
 /**
  * Get FAQ section content
  */
-export function getFAQContent(): FAQContent {
-  return faqContent as FAQContent;
+export async function getFAQContent(): Promise<FAQContent> {
+  return markTree('faq', faqContent as FAQContent);
 }
 
 /**
  * Get Approach section content
  */
-export function getApproachContent(): ApproachContent {
-  return approachContent as ApproachContent;
+export async function getApproachContent(): Promise<ApproachContent> {
+  return markTree('approach', approachContent as ApproachContent);
 }
 
 /**
  * Get Marketing section content
  */
-export function getMarketingContent(): MarketingContent {
-  return marketingContent as MarketingContent;
+export async function getMarketingContent(): Promise<MarketingContent> {
+  return markTree('marketing', marketingContent as MarketingContent);
 }
 
 /**
  * Get Partners section content
  */
-export function getPartnersContent(): PartnersContent {
-  return partnersContent as PartnersContent;
+export async function getPartnersContent(): Promise<PartnersContent> {
+  return markTree('partners', partnersContent as PartnersContent);
 }
 
 /**
  * Get Knowledge section content
  */
-export function getKnowledgeContent(): KnowledgeContent {
-  return knowledgeContent as KnowledgeContent;
+export async function getKnowledgeContent(): Promise<KnowledgeContent> {
+  return markTree('knowledge', knowledgeContent as KnowledgeContent);
 }
 
 /**
  * Get Results section content
  */
-export function getResultsContent(): ResultsContent {
-  return resultsContent as ResultsContent;
+export async function getResultsContent(): Promise<ResultsContent> {
+  return markTree('results', resultsContent as ResultsContent);
 }
 
 /**
  * Get Audit section content
  */
-export function getAuditContent(): AuditContent {
-  return auditContent as AuditContent;
+export async function getAuditContent(): Promise<AuditContent> {
+  return markTree('audit', auditContent as AuditContent);
 }
 
 /**
  * Get Case Study Slider section content
  */
-export function getCaseStudySliderContent(): CaseStudySliderContent {
-  return caseStudySliderContent as CaseStudySliderContent;
+export async function getCaseStudySliderContent(): Promise<CaseStudySliderContent> {
+  return markTree('case-study-slider', caseStudySliderContent as CaseStudySliderContent);
 }
 
 /**
  * Get navigation content
  */
-export function getNavContent(): NavContent {
-  return navContent as NavContent;
+export async function getNavContent(): Promise<NavContent> {
+  return markTree('nav', navContent as NavContent);
 }
 
 /**
  * Get Newsletter form content
  */
-export function getNewsletterContent(): NewsletterContent {
-  return newsletterContent as NewsletterContent;
+export async function getNewsletterContent(): Promise<NewsletterContent> {
+  return markTree('newsletter', newsletterContent as NewsletterContent);
 }
 
 /**
  * Get Work page content
  */
-export function getWorkContent(): WorkContent {
-  return workContent as WorkContent;
+export async function getWorkContent(): Promise<WorkContent> {
+  return markTree('work', workContent as WorkContent);
 }
 
 /**
  * Get About page content
  */
-export function getAboutContent(): AboutContent {
-  return aboutContent as AboutContent;
+export async function getAboutContent(): Promise<AboutContent> {
+  return markTree('about', aboutContent as AboutContent);
 }
 
 /**
  * Get Services Webflow page content
  */
-export function getServicesWebflowContent(): ServicesWebflowContent {
-  return servicesWebflowContent as ServicesWebflowContent;
+export async function getServicesWebflowContent(): Promise<ServicesWebflowContent> {
+  return markTree('services-webflow', servicesWebflowContent as ServicesWebflowContent);
 }
 
 /**
  * Get Services SEO/AEO page content
  */
-export function getServicesSeoAeoContent(): ServicesSeoAeoContent {
-  return servicesSeoAeoContent as ServicesSeoAeoContent;
+export async function getServicesSeoAeoContent(): Promise<ServicesSeoAeoContent> {
+  return markTree('services-seo-aeo', servicesSeoAeoContent as ServicesSeoAeoContent);
 }
 
 /**
@@ -1176,71 +1187,71 @@ export function getServicesSeoAeoContent(): ServicesSeoAeoContent {
  * hero + first-screen scorecard + what-is-GEO + GEO/AEO/SEO comparison + program
  * steps + proof + timeline + pricing + measurement (+ 7 questions) + FAQ + CTA.
  */
-export function getServicesGeoAgencyContent(): ServicesGeoAgencyContent {
-  return servicesGeoAgencyContent as ServicesGeoAgencyContent;
+export async function getServicesGeoAgencyContent(): Promise<ServicesGeoAgencyContent> {
+  return markTree('services-geo-agency', servicesGeoAgencyContent as ServicesGeoAgencyContent);
 }
 
 /**
  * Get Services CRO page content
  */
-export function getServicesCroContent(): ServicesCroContent {
-  return servicesCroContent as ServicesCroContent;
+export async function getServicesCroContent(): Promise<ServicesCroContent> {
+  return markTree('services-cro', servicesCroContent as ServicesCroContent);
 }
 
 /**
  * Get Services Copywriting page content
  */
-export function getServicesCopywritingContent(): ServicesCopywritingContent {
-  return servicesCopywritingContent as ServicesCopywritingContent;
+export async function getServicesCopywritingContent(): Promise<ServicesCopywritingContent> {
+  return markTree('services-copywriting', servicesCopywritingContent as ServicesCopywritingContent);
 }
 
 /**
  * Get Services UX/UI Design page content
  */
-export function getServicesUxUiDesignContent(): ServicesUxUiDesignContent {
-  return servicesUxUiDesignContent as ServicesUxUiDesignContent;
+export async function getServicesUxUiDesignContent(): Promise<ServicesUxUiDesignContent> {
+  return markTree('services-ux-ui-design', servicesUxUiDesignContent as ServicesUxUiDesignContent);
 }
 
 /**
  * Get Services Growth Autopilot page content
  */
-export function getServicesGrowthAutopilotContent(): ServicesGrowthAutopilotContent {
-  return servicesGrowthAutopilotContent as ServicesGrowthAutopilotContent;
+export async function getServicesGrowthAutopilotContent(): Promise<ServicesGrowthAutopilotContent> {
+  return markTree('services-growth-autopilot', servicesGrowthAutopilotContent as ServicesGrowthAutopilotContent);
 }
 
 /**
  * Get SEO for Industry hub page content
  */
-export function getSeoForHubContent(): SeoForHubContent {
-  return seoForHubContent as SeoForHubContent;
+export async function getSeoForHubContent(): Promise<SeoForHubContent> {
+  return markTree('seo-for-hub', seoForHubContent as SeoForHubContent);
 }
 
 /**
  * Get SEO for SaaS page content
  */
-export function getSeoForSaasContent(): SeoForSaasContent {
-  return seoForSaasContent as SeoForSaasContent;
+export async function getSeoForSaasContent(): Promise<SeoForSaasContent> {
+  return markTree('seo-for-saas', seoForSaasContent as SeoForSaasContent);
 }
 
 /**
  * Get SEO for B2B page content
  */
-export function getSeoForB2bContent(): SeoForB2bContent {
-  return seoForB2bContent as SeoForB2bContent;
+export async function getSeoForB2bContent(): Promise<SeoForB2bContent> {
+  return markTree('seo-for-b2b', seoForB2bContent as SeoForB2bContent);
 }
 
 /**
  * Get Homepage content
  */
-export function getHomepageContent(): HomepageContent {
-  return homepageContent as HomepageContent;
+export async function getHomepageContent(): Promise<HomepageContent> {
+  return markTree('homepage', homepageContent as HomepageContent);
 }
 
 /**
  * Get Pricing page content
  */
-export function getPricingContent(): PricingContent {
-  return pricingContent as PricingContent;
+export async function getPricingContent(): Promise<PricingContent> {
+  return markTree('pricing', pricingContent as PricingContent);
 }
 
 /**

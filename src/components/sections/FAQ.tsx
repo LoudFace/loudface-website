@@ -28,7 +28,7 @@ function stripHtml(html: string): string {
     .trim();
 }
 
-export function FAQ({
+export async function FAQ({
   title,
   subtitle,
   items,
@@ -39,7 +39,7 @@ export function FAQ({
   skipSchema = false,
   variant = 'accordion',
 }: FAQProps) {
-  const content = getFAQContent();
+  const content = await getFAQContent();
 
   const finalTitle = title ?? content.title;
   const finalSubtitle = subtitle ?? content.subtitle;

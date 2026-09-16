@@ -11,7 +11,7 @@ interface CTAProps {
   variant?: 'light' | 'dark';
 }
 
-export function CTA({
+export async function CTA({
   title,
   subtitle,
   ctaText,
@@ -19,7 +19,7 @@ export function CTA({
   variant = 'light',
 }: CTAProps) {
   // Load content from JSON file
-  const content = getCTAContent();
+  const content = await getCTAContent();
 
   // Use props or fall back to content defaults
   const finalTitle = title ?? content.title;
