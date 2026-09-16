@@ -13,9 +13,9 @@ export const metadata: Metadata = { title: 'Edit the site', robots: { index: fal
 export default async function EditSignInPage({
   searchParams,
 }: {
-  searchParams: Promise<{ sent?: string; expired?: string }>;
+  searchParams: Promise<{ sent?: string; expired?: string; link?: string }>;
 }) {
-  const { sent, expired } = await searchParams;
+  const { sent, expired, link } = await searchParams;
   const editor = await currentEditor();
 
   return (
@@ -46,10 +46,17 @@ export default async function EditSignInPage({
             </a>
           </>
         ) : sent ? (
-          <p style={{ margin: 0, color: '#52616d' }}>
-            If that address can edit this site, a sign-in link is on its way. It expires in fifteen
-            minutes.
-          </p>
+          <>
+            <p style={{ margin: 0, color: '#52616d' }}>
+              If that address can edit this site, a sign-in link is on its way. It expires in
+              fifteen minutes.
+            </p>
+            {link && process.env.NODE_ENV !== 'production' && (
+              <a href={link} style={{ ...primary, marginTop: 16 }}>
+                Open the link (development only)
+              </a>
+            )}
+          </>
         ) : (
           <>
             <p style={{ margin: '0 0 18px', color: '#52616d' }}>

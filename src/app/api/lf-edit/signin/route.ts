@@ -37,9 +37,11 @@ export async function POST(request: Request) {
           text: `Open this link to edit the site. It expires in 15 minutes.\n\n${link}\n`,
         }),
       }).catch(() => undefined);
-    } else {
-      // No mail service configured: the link goes to the server log instead.
+    } else if (process.env.NODE_ENV !== 'production') {
+      // No mail service configured: in development the link is shown on the
+      // page and logged, so testing needs no inbox.
       console.log(`\n[inline edit] sign-in link for ${email}:\n${link}\n`);
+      return Response.redirect(`${origin}/edit?sent=1&link=${encodeURIComponent(link)}`, 303);
     }
   }
 
