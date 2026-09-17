@@ -18,7 +18,12 @@ import { decodeStega, stripStega } from '../../lib/inline-edit/stega';
 import { normalizeShownText, type TextReplacement } from '../../lib/inline-edit/body-edit';
 
 type Change = { id: string; value: string; label: string };
-type Status = { kind: 'idle' | 'saving' | 'saved' | 'error'; message?: string };
+type Status = {
+  kind: 'idle' | 'saving' | 'saved' | 'checking' | 'live' | 'stale' | 'error';
+  message?: string;
+  /** Seconds elapsed since publish, shown while checking and when live. */
+  seconds?: number;
+};
 type Publish = {
   hash: string;
   date: string;
@@ -179,6 +184,28 @@ function diffBody(root: HTMLElement, snapshot: BodySnapshot): TextReplacement[] 
 
 const BODY_LIMIT_MESSAGE =
   'In the article body, only changes to existing text are saved for now — adding or removing paragraphs is not supported yet.';
+
+/** The words a publish put on the page, as plain text the live check can look for. */
+function needlesFor(values: { id: string; value: string }[], exact = false): string[] {
+  const out: string[] = [];
+  for (const { id, value } of values) {
+    if (id.endsWith(':content') || id.endsWith(':body')) {
+      if (exact) continue; // a whole restored article is not a sentence to look for
+      try {
+        const edit = JSON.parse(value) as { replacements?: { to: string }[] };
+        for (const item of edit.replacements ?? []) if (item.to.trim()) out.push(item.to);
+      } catch {
+        /* not a body edit */
+      }
+      continue;
+    }
+    const text = strip(value).replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim();
+    if (text) out.push(text.slice(0, 200));
+  }
+  return out.slice(0, 50);
+}
+
+const formatSeconds = (s: number) => `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`;
 
 export function InlineEditor() {
   const [changes, setChanges] = useState<Record<string, Change>>({});
@@ -368,13 +395,73 @@ export function InlineEditor() {
   const pending = Object.values(changes);
 
 
+  const liveCheck = useRef<{ timer: ReturnType<typeof setTimeout> | null; stop: boolean }>({ timer: null, stop: false });
+
+  /**
+   * Watch the public page until it carries the published words. `waiting` is
+   * what the bar says meanwhile ("building the site", "refreshing the page").
+   */
+  function watchUntilLive(needles: string[], waiting: string, doneWord: string) {
+    const state = liveCheck.current;
+    if (state.timer) clearTimeout(state.timer);
+    state.stop = false;
+    const started = Date.now();
+    const path = window.location.pathname;
+    const limit = 6 * 60 * 1000;
+
+    if (!needles.length) {
+      setStatus({ kind: 'live', message: `${doneWord} — nothing left to check on this page`, seconds: 0 });
+      return;
+    }
+
+    const tick = async () => {
+      if (state.stop) return;
+      const seconds = Math.round((Date.now() - started) / 1000);
+      setStatus({ kind: 'checking', message: waiting, seconds });
+      let live = false;
+      try {
+        const response = await fetch('/api/lf-edit/status', {
+          method: 'POST',
+          headers: { 'content-type': 'application/json' },
+          body: JSON.stringify({ path, needles }),
+        });
+        const result = (await response.json()) as { live?: boolean };
+        live = result.live === true;
+      } catch {
+        live = false;
+      }
+      if (state.stop) return;
+      if (live) {
+        setStatus({ kind: 'live', message: `${doneWord} — live on the public page`, seconds: Math.round((Date.now() - started) / 1000) });
+        return;
+      }
+      if (Date.now() - started > limit) {
+        setStatus({
+          kind: 'stale',
+          message: `${doneWord}, but the public page does not show it yet after six minutes. Reload to check, or ask LoudFace if it stays that way.`,
+          seconds: Math.round((Date.now() - started) / 1000),
+        });
+        return;
+      }
+      state.timer = setTimeout(tick, 4000);
+    };
+    state.timer = setTimeout(tick, 1500);
+  }
+
+  useEffect(() => () => {
+    liveCheck.current.stop = true;
+    if (liveCheck.current.timer) clearTimeout(liveCheck.current.timer);
+  }, []);
+
   async function save() {
     if (!pending.length) return;
     setStatus({ kind: 'saving' });
+    liveCheck.current.stop = true;
+    const sent = pending.map(({ id, value }) => ({ id, value }));
     const response = await fetch('/api/lf-edit', {
       method: 'POST',
       headers: { 'content-type': 'application/json' },
-      body: JSON.stringify({ changes: pending.map(({ id, value }) => ({ id, value })) }),
+      body: JSON.stringify({ changes: sent }),
     });
     const result = await response.json().catch(() => ({ error: response.statusText }));
     if (!response.ok) {
@@ -390,29 +477,34 @@ export function InlineEditor() {
     const contentCount = Math.max(0, (result.published ?? 0) - sanityCount);
     setSanityUndo(sanityCount ? sanity.map(({ id, before }) => ({ id, value: before })) : null);
 
-    const parts: string[] = [];
-    if (contentCount) parts.push(`${contentCount} change${contentCount === 1 ? '' : 's'} published`);
-    if (sanityCount) {
-      parts.push(`${sanityCount} change${sanityCount === 1 ? '' : 's'} saved to the CMS — live within a minute`);
-    }
-    const message = parts.join('; ') || 'Nothing changed';
-
-    if (result.mode === 'github' && contentCount) {
-      setStatus({ kind: 'saved', message: `${message} — site content live in about two minutes, when the build finishes` });
+    const total = contentCount + sanityCount;
+    if (!total) {
+      setStatus({ kind: 'saved', message: 'Nothing changed' });
       return;
     }
-    setStatus({ kind: 'saved', message });
-    // Sanity edits revalidate the page in place; reloading would race the
-    // revalidation and could show the old copy for a moment. Only a plain git
-    // publish (no CMS half) reloads to show the committed file straight away.
+    const saved = `${total} change${total === 1 ? '' : 's'} saved`;
+    const needles = needlesFor(sent);
+
+    // Development, content files only: the file is committed locally and the
+    // dev server re-reads it, so a reload shows it at once.
     if (contentCount && !sanityCount && result.mode !== 'github') {
+      setStatus({ kind: 'saved', message: `${saved} — committed` });
       setTimeout(() => window.location.reload(), 900);
+      return;
     }
+
+    // Everything else is confirmed against the public page, not assumed.
+    const waiting =
+      contentCount && result.mode === 'github'
+        ? `${saved} — committed, the site is building (usually 2 to 4 minutes)`
+        : `${saved} to the CMS — refreshing the public page`;
+    watchUntilLive(needles, waiting, saved);
   }
 
   async function undoSanityPublish() {
     if (!sanityUndo?.length) return;
     setStatus({ kind: 'saving' });
+    liveCheck.current.stop = true;
     const response = await fetch('/api/lf-edit', {
       method: 'POST',
       headers: { 'content-type': 'application/json' },
@@ -423,8 +515,9 @@ export function InlineEditor() {
       setStatus({ kind: 'error', message: result.error ?? 'Undo failed' });
       return;
     }
+    const restored = sanityUndo;
     setSanityUndo(null);
-    setStatus({ kind: 'saved', message: 'Reverted in the CMS — live within a minute' });
+    watchUntilLive(needlesFor(restored, true), 'Reverted in the CMS — refreshing the public page', 'Reverted');
   }
 
   async function openHistory() {
@@ -454,16 +547,24 @@ export function InlineEditor() {
 
   return (
     <div data-lf-chrome="">
+      <style>{`@keyframes lf-pulse { 0%,100% { opacity: 1 } 50% { opacity: .35 } }`}</style>
       <div style={bar}>
         <span style={{ fontWeight: 700 }}>Inline editing</span>
-        <span style={{ opacity: 0.75 }}>
-          {status.kind === 'saving'
-            ? 'Saving…'
-            : status.kind === 'error' || status.kind === 'saved'
-              ? status.message
-              : pending.length
-                ? `${pending.length} unsaved`
-                : `${count} editable on this page`}
+        <span style={{ display: 'inline-flex', alignItems: 'center', gap: 8, opacity: 0.9 }}>
+          <span aria-hidden="true" style={{ ...light, ...lightFor(status.kind, pending.length > 0) }} />
+          <span>
+            {status.kind === 'saving'
+              ? 'Saving…'
+              : status.kind === 'checking'
+                ? `${status.message} · ${formatSeconds(status.seconds ?? 0)}`
+                : status.kind === 'live'
+                  ? `${status.message}${status.seconds ? ` · took ${formatSeconds(status.seconds)}` : ''}`
+                  : status.kind === 'error' || status.kind === 'saved' || status.kind === 'stale'
+                    ? status.message
+                    : pending.length
+                      ? `${pending.length} unsaved`
+                      : `${count} editable on this page`}
+          </span>
         </span>
         <button
           style={{ ...button, opacity: pending.length ? 1 : 0.45 }}
@@ -475,7 +576,7 @@ export function InlineEditor() {
         <button style={ghost} onClick={() => window.location.reload()} disabled={!pending.length}>
           Discard
         </button>
-        {status.kind === 'saved' && sanityUndo?.length ? (
+        {(status.kind === 'saved' || status.kind === 'checking' || status.kind === 'live' || status.kind === 'stale') && sanityUndo?.length ? (
           <button style={ghost} onClick={undoSanityPublish}>
             Undo
           </button>
@@ -587,6 +688,23 @@ function placeCaret(el: HTMLElement, event: MouseEvent) {
   end.collapse(false);
   selection.removeAllRanges();
   selection.addRange(end);
+}
+
+const light: React.CSSProperties = {
+  width: 9,
+  height: 9,
+  borderRadius: '50%',
+  flexShrink: 0,
+  transition: 'background .3s, box-shadow .3s',
+};
+
+/** Grey: nothing pending. Amber: unsaved or in flight. Green: confirmed on the public page. Red: a problem. */
+function lightFor(kind: Status['kind'], dirty: boolean): React.CSSProperties {
+  if (kind === 'error' || kind === 'stale') return { background: '#e5484d', boxShadow: '0 0 0 3px rgba(229,72,77,.25)' };
+  if (kind === 'live') return { background: '#30a46c', boxShadow: '0 0 0 3px rgba(48,164,108,.25)' };
+  if (kind === 'saving' || kind === 'checking') return { background: '#f5a524', boxShadow: '0 0 0 3px rgba(245,165,36,.25)', animation: 'lf-pulse 1.2s ease-in-out infinite' };
+  if (kind === 'saved' || dirty) return { background: '#f5a524' };
+  return { background: 'rgba(255,255,255,.35)' };
 }
 
 const bar: React.CSSProperties = {
