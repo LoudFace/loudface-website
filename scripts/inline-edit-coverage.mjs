@@ -88,7 +88,7 @@ async function main() {
     console.error('Set LF_EDIT_SECRET and LF_EDITOR_EMAILS in .env.local first.');
     process.exit(2);
   }
-  const payload = `signin.${editor.toLowerCase()}.${Date.now() + 600_000}`;
+  const payload = `signin|${editor.toLowerCase()}|${Date.now() + 600_000}`; // fields are pipe-separated: an email contains dots
   const signature = createHmac('sha256', secret).update(payload).digest('base64url');
   const token = `${Buffer.from(payload).toString('base64url')}.${signature}`;
 
