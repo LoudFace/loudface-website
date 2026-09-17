@@ -34,3 +34,9 @@ jobs:
 
       - name: Typecheck
         run: npm run typecheck
+
+      # The inline editor's own tests: the sanitiser's attack corpus, and every
+      # value in src/data/content checked against the ids and the writer. Pure
+      # functions over files in the repo, so they need no secrets and no server.
+      - name: Inline editor tests
+        run: npm run test:editor

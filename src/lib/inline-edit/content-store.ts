@@ -14,7 +14,9 @@ import 'server-only';
  *     and no writable disk. Same commit, built over the API.
  *
  * Values are replaced in the file's own text rather than by re-serialising the
- * document, so a copy change stays a one-line diff a human can review.
+ * document, so a copy change stays a one-line diff a human can review. That
+ * part is pure and lives in `content-text.ts`, where a test can run it over
+ * every value in `src/data/content` without the Next runtime.
  *
  * Every commit carries a machine-readable trailer, `LF-Changes`, listing each
  * field with its old and new value. Undo on GitHub reads that trailer and puts
@@ -25,7 +27,7 @@ import { execFile } from 'node:child_process';
 import { readFile, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 import { promisify } from 'node:util';
-import { cleanValue } from './sanitize';
+import { applyToText, parseId, readField } from './content-text';
 import {
   commitDetail,
   commitFiles,
@@ -42,11 +44,23 @@ const run = promisify(execFile);
 const ROOT = process.cwd();
 const CONTENT_DIR = path.join(ROOT, 'src', 'data', 'content');
 const CONTENT_PREFIX = 'src/data/content/';
-const FILE_NAME = /^[a-z0-9-]+$/;
-const PATH_SEGMENT = /^[A-Za-z0-9_]+$/;
 const TRAILER = 'LF-Changes';
 
-export type Change = { id: string; value: string };
+/**
+ * What a client is told when this site has no way to publish. A deployed site
+ * has no working copy and no git binary, so the local store would fail with
+ * "spawn git ENOENT" — a message about our plumbing, not about their site.
+ */
+const NOT_SWITCHED_ON =
+  'Publishing is not switched on for this site yet: no GitHub credentials are configured';
+
+export { applyToText, readField } from './content-text';
+
+/**
+ * One value to write. `exact` skips cleaning and is set by the server alone,
+ * after it has verified its own undo token — never from a request body.
+ */
+export type Change = { id: string; value: string; exact?: boolean };
 export type Applied = { id: string; file: string; path: string; before: string; after: string };
 export type Mode = 'git' | 'github';
 /** What an undo put back on the page: each field and the text it now carries again. */
@@ -68,84 +82,6 @@ export function mode(): Mode {
   return hasGitHubCredentials() && repoFromEnv() ? 'github' : 'git';
 }
 
-// ---------------------------------------------------------------------------
-// Pure part: one change against one file's text
-// ---------------------------------------------------------------------------
-
-function parseId(id: string): { file: string; segments: string[]; fieldPath: string } {
-  const [file, fieldPath] = id.split(':');
-  if (!file || !fieldPath || !FILE_NAME.test(file)) throw new Error(`Bad content id: ${id}`);
-  const segments = fieldPath.split('.');
-  if (!segments.length || !segments.every((segment) => PATH_SEGMENT.test(segment))) {
-    throw new Error(`Bad field path: ${fieldPath}`);
-  }
-  return { file, segments, fieldPath };
-}
-
-function walk(root: unknown, segments: string[]): { parent: Record<string, unknown>; key: string } | null {
-  let node: unknown = root;
-  for (let i = 0; i < segments.length - 1; i++) {
-    if (typeof node !== 'object' || node === null) return null;
-    node = (node as Record<string, unknown>)[segments[i]];
-  }
-  const key = segments[segments.length - 1];
-  if (typeof node !== 'object' || node === null) return null;
-  const parent = node as Record<string, unknown>;
-  return key in parent ? { parent, key } : null;
-}
-
-/** Read one string field out of a file's text. */
-export function readField(raw: string, id: string): string {
-  const { file, segments, fieldPath } = parseId(id);
-  const target = walk(JSON.parse(raw), segments);
-  if (!target) throw new Error(`${fieldPath} does not exist in ${file}.json`);
-  const value = target.parent[target.key];
-  if (typeof value !== 'string') throw new Error('Only text values are editable');
-  return value;
-}
-
-/**
- * Write one value into a file's text. `next` is the new file text; the value is
- * cleaned against what it replaces, so plain stays plain and rich keeps its links.
- * Pass `exact` to skip cleaning (undo restores a stored value verbatim).
- */
-export function applyToText(
-  raw: string,
-  id: string,
-  value: string,
-  exact = false,
-): { next: string; before: string; after: string } {
-  const { file, segments, fieldPath } = parseId(id);
-  const json = JSON.parse(raw);
-  const target = walk(json, segments);
-  if (!target) throw new Error(`${fieldPath} does not exist in ${file}.json`);
-  if (typeof target.parent[target.key] !== 'string') throw new Error('Only text values are editable');
-
-  const before = target.parent[target.key] as string;
-  const after = exact ? value : cleanValue(value, before);
-  if (!after) throw new Error('A value cannot be emptied from the page');
-  if (after === before) return { next: raw, before, after };
-
-  // Replace the value in the file's own text so the diff stays one line. An
-  // object member is matched with its key; a list item is matched on its own,
-  // as long as the same string appears nowhere else in the file.
-  const inList = Array.isArray(target.parent);
-  const needle = inList ? JSON.stringify(before) : `${JSON.stringify(target.key)}: ${JSON.stringify(before)}`;
-  const first = raw.indexOf(needle);
-  const unique = first !== -1 && raw.indexOf(needle, first + 1) === -1;
-
-  let next: string;
-  if (unique) {
-    const replacement = inList ? JSON.stringify(after) : `${JSON.stringify(target.key)}: ${JSON.stringify(after)}`;
-    next = raw.slice(0, first) + replacement + raw.slice(first + needle.length);
-    JSON.parse(next); // never write a file we cannot read back
-  } else {
-    target.parent[target.key] = after;
-    next = JSON.stringify(json, null, 2) + '\n';
-  }
-  return { next, before, after };
-}
-
 /** Apply a batch of changes to the files they touch. `read` fetches a file's current text. */
 async function applyAll(
   changes: Change[],
@@ -157,7 +93,7 @@ async function applyAll(
   for (const change of changes) {
     const { file, fieldPath } = parseId(change.id);
     const raw = texts.get(file) ?? (await read(file));
-    const result = applyToText(raw, change.id, change.value);
+    const result = applyToText(raw, change.id, change.value, change.exact === true);
     texts.set(file, result.next);
     applied.push({ id: change.id, file, path: fieldPath, before: result.before, after: result.after });
   }
@@ -308,9 +244,7 @@ const localStore = {
 function repo(): Repo {
   const value = repoFromEnv();
   if (!value) throw new Error('LF_GITHUB_REPO is not set');
-  if (!hasGitHubCredentials()) {
-    throw new Error('Publishing is not switched on for this site yet: no GitHub credentials are configured');
-  }
+  if (!hasGitHubCredentials()) throw new Error(NOT_SWITCHED_ON);
   return value;
 }
 
@@ -404,7 +338,17 @@ const githubStore = {
 // Public surface
 // ---------------------------------------------------------------------------
 
-const store = () => (mode() === 'github' ? githubStore : localStore);
+/**
+ * The backend for this request. The working copy is a development convenience;
+ * a deployed site that ends up in `git` mode is misconfigured (a missing or
+ * misspelled LF_GITHUB_* value), and shelling out to git there would only turn
+ * that into an unreadable error, so we name the real problem instead.
+ */
+function store() {
+  if (mode() === 'github') return githubStore;
+  if (process.env.NODE_ENV === 'production') throw new Error(NOT_SWITCHED_ON);
+  return localStore;
+}
 
 /** Publish a batch of changes as one commit. Returns the commit and what changed. */
 export async function publish(changes: Change[], editor: string) {
@@ -413,7 +357,7 @@ export async function publish(changes: Change[], editor: string) {
 }
 
 /** Recent publishes, newest first. */
-export const history = (limit = 15) => store().history(limit);
+export const history = async (limit = 15) => store().history(limit);
 
 /** Undo one publish. Refuses anything that touched more than content. */
-export const undo = (hash: string, editor: string) => store().undo(hash, editor);
+export const undo = async (hash: string, editor: string) => store().undo(hash, editor);

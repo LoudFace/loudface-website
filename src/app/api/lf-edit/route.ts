@@ -4,34 +4,63 @@
  * The editor sends every value it changed. Each is written back into the file
  * it came from, then committed in the editor's name, so one publish is one
  * reviewable, revertable commit.
+ *
+ * Undo works the same way round. The response hands back a signed token per
+ * Sanity change rather than the old text, and an undo sends those tokens in.
+ * A value only ever skips cleaning when it arrives inside a token this server
+ * signed itself — a raw value from a request body is always cleaned, whatever
+ * the body claims about it.
  */
-import { currentEditor } from '@/lib/inline-edit/session';
+import { currentEditor, openValue, sealValue } from '@/lib/inline-edit/session';
+import { editorOffResponse } from '@/lib/inline-edit/guard';
 import { publish, type Change } from '@/lib/inline-edit/content-store';
 import { publishSanity } from '@/lib/inline-edit/sanity-store';
 
+/** What the editor sends: typed text, or a token this server handed out for undo. */
+type Incoming = { id?: unknown; value?: unknown; token?: unknown };
+
 export async function POST(request: Request) {
+  const off = editorOffResponse();
+  if (off) return off;
+
   const editor = await currentEditor();
   if (!editor) return Response.json({ error: 'Sign in to publish' }, { status: 401 });
 
-  let body: { changes?: unknown; exact?: unknown };
+  let body: { changes?: unknown };
   try {
     body = await request.json();
   } catch {
     return Response.json({ error: 'Body is not JSON' }, { status: 400 });
   }
 
-  const changes = Array.isArray(body.changes) ? (body.changes as Change[]) : [];
-  if (!changes.length) return Response.json({ error: 'Nothing to publish' }, { status: 400 });
-  if (changes.length > 200) return Response.json({ error: 'Too many changes at once' }, { status: 400 });
-  const exact = body.exact === true;
+  const incoming = Array.isArray(body.changes) ? (body.changes as Incoming[]) : [];
+  if (!incoming.length) return Response.json({ error: 'Nothing to publish' }, { status: 400 });
+  if (incoming.length > 200) return Response.json({ error: 'Too many changes at once' }, { status: 400 });
 
-  for (const change of changes) {
-    if (typeof change?.id !== 'string' || typeof change?.value !== 'string') {
+  const changes: Change[] = [];
+  for (const item of incoming) {
+    if (typeof item?.id !== 'string') {
       return Response.json({ error: 'Each change needs an id and a value' }, { status: 400 });
     }
-    // A page value is a sentence or two; an article body undo carries the whole stored article.
-    const limit = change.id.startsWith('sanity:') ? 400_000 : 4000;
-    if (change.value.length > limit) return Response.json({ error: 'That value is too long' }, { status: 400 });
+
+    if (typeof item.token === 'string') {
+      // An undo. The value comes out of our own signature, never off the wire,
+      // and the token has to be the one issued for this very field.
+      const sealed = openValue(item.token);
+      if (!sealed || sealed.id !== item.id) {
+        return Response.json({ error: 'That undo has expired; reload the page and try again' }, { status: 400 });
+      }
+      changes.push({ id: item.id, value: sealed.value, exact: true });
+      continue;
+    }
+
+    if (typeof item.value !== 'string') {
+      return Response.json({ error: 'Each change needs an id and a value' }, { status: 400 });
+    }
+    // A page value is a sentence or two; an article body edit carries a list of sentences.
+    const limit = item.id.startsWith('sanity:') ? 400_000 : 4000;
+    if (item.value.length > limit) return Response.json({ error: 'That value is too long' }, { status: 400 });
+    changes.push({ id: item.id, value: item.value });
   }
 
   // Our own content ids and Sanity's stega-decoded ids are independent, so a
@@ -42,7 +71,7 @@ export async function POST(request: Request) {
   let published = 0;
   let hash = '';
   let mode: string | undefined;
-  let sanity: { id: string; before: string; after: string }[] = [];
+  let sanity: { id: string; token: string; after: string }[] = [];
   const errors: string[] = [];
 
   if (contentChanges.length) {
@@ -58,9 +87,16 @@ export async function POST(request: Request) {
 
   if (sanityChanges.length) {
     try {
-      const applied = await publishSanity(sanityChanges, editor, exact);
+      const applied = await publishSanity(sanityChanges, editor);
       published += applied.filter((change) => change.before !== change.after).length;
-      sanity = applied.map(({ id, before, after }) => ({ id, before, after }));
+      // The token seals what was there before, so an undo can restore it word
+      // for word. `after` is what the page should now show: the editor looks for
+      // exactly that text on the public page. A whole article body is neither.
+      sanity = applied.map((change) => ({
+        id: change.id,
+        token: sealValue(change.id, change.before),
+        after: change.body ? '' : change.after,
+      }));
     } catch (error) {
       errors.push(error instanceof Error ? error.message : 'Sanity publish failed');
     }

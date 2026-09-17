@@ -13,21 +13,28 @@ import 'server-only';
  *
  * No git commit here — Sanity is its own source of truth and keeps its own
  * document history. That means Sanity edits do not show up in the inline
- * editor's git-backed History panel yet; `before` values are still returned
- * so the editor can offer an in-session Undo (see `route.ts`).
+ * editor's git-backed History panel yet; the route seals each `before` value
+ * into a signed token so the editor can offer an in-session Undo without ever
+ * sending the old text back through the browser (see `route.ts`).
  */
 import { getEditorWriteClient } from '../sanity.client';
 import { cleanValue } from './sanitize';
 import { applyTextReplacements, parseBodyEdit } from './body-edit';
 import { pathsFor } from '../revalidate-paths';
 
-export type SanityChange = { id: string; value: string };
+/**
+ * One value to write. `exact` skips cleaning and is set by the server alone,
+ * after it has verified its own undo token — never from a request body.
+ */
+export type SanityChange = { id: string; value: string; exact?: boolean };
 export type SanityApplied = {
   id: string;
   before: string;
   after: string;
   documentId: string;
   type: string;
+  /** The whole-article body field, which is HTML megabytes rather than a sentence. */
+  body: boolean;
 };
 
 const DOC_ID = /^[A-Za-z0-9_.-]+$/;
@@ -84,11 +91,12 @@ async function readDoc(
 }
 
 /**
- * Publish a batch of Sanity string edits. `exact` skips cleaning — undo
- * restores a stored `before` value verbatim, the same contract as the JSON
- * content store's `applyToText(..., exact)`.
+ * Publish a batch of Sanity string edits. A change marked `exact` is written
+ * verbatim; the route sets that flag only for a value it has just taken out of
+ * one of its own signed undo tokens, so nothing a client typed ever skips
+ * `cleanValue` on its way into a field the blog renders as HTML.
  */
-export async function publishSanity(changes: SanityChange[], editor: string, exact = false): Promise<SanityApplied[]> {
+export async function publishSanity(changes: SanityChange[], editor: string): Promise<SanityApplied[]> {
   void editor; // Sanity's own audit trail records the API token, not a per-editor identity yet.
   const client = getEditorWriteClient();
   const applied: SanityApplied[] = [];
@@ -112,7 +120,7 @@ export async function publishSanity(changes: SanityChange[], editor: string, exa
 
     const before = source.value;
     let after: string;
-    if (exact) {
+    if (change.exact === true) {
       after = change.value;
     } else if (isBodyPath(path)) {
       // The body arrives as a list of sentence replacements, not as HTML.
@@ -137,7 +145,7 @@ export async function publishSanity(changes: SanityChange[], editor: string, exa
     const key = `${type}:${meta?.slug ?? ''}`;
     revalidated.add(key);
 
-    applied.push({ id: change.id, before, after, documentId: publishedId, type });
+    applied.push({ id: change.id, before, after, documentId: publishedId, type, body: isBodyPath(path) });
   }
 
   const { revalidatePath } = await import('next/cache');

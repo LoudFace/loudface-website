@@ -28,12 +28,22 @@ const ENTITIES: Record<string, string> = {
   nbsp: ' ',
 };
 
+/**
+ * One numeric entity. Out of Unicode's range, String.fromCodePoint throws, and
+ * an editor pasting "&#1114112;" would take the publish down with a 500, so a
+ * code we cannot turn into a character is left as the text the editor typed.
+ */
+function fromCode(code: number, original: string): string {
+  if (!Number.isInteger(code) || code < 0 || code > 0x10ffff) return original;
+  return String.fromCodePoint(code);
+}
+
 export function decodeEntities(text: string): string {
   return text.replace(/&(#\d+|#x[0-9a-f]+|[a-z]+);/gi, (whole, name: string) => {
     const lower = name.toLowerCase();
     if (lower in ENTITIES) return ENTITIES[lower];
-    if (lower.startsWith('#x')) return String.fromCodePoint(parseInt(lower.slice(2), 16));
-    if (lower.startsWith('#')) return String.fromCodePoint(parseInt(lower.slice(1), 10));
+    if (lower.startsWith('#x')) return fromCode(parseInt(lower.slice(2), 16), whole);
+    if (lower.startsWith('#')) return fromCode(parseInt(lower.slice(1), 10), whole);
     return whole;
   });
 }
@@ -49,6 +59,29 @@ function attribute(tag: string, name: string): string | null {
   return decodeEntities(match[2] ?? match[3] ?? match[4] ?? '');
 }
 
+/**
+ * An address we are about to write into an href, with nothing left in it that
+ * could end the attribute or read as a second one. A quote break-out such as
+ * href='/x" onmouseover="alert(1)' parses as one long address; percent-encoding
+ * its quotes and spaces keeps it that way in the text we write out too.
+ */
+const encodeHref = (href: string) =>
+  href
+    .replace(/&/g, '&amp;')
+    .replace(/"/g, '%22')
+    .replace(/'/g, '%27')
+    .replace(/</g, '%3C')
+    .replace(/>/g, '%3E')
+    .replace(/`/g, '%60')
+    .replace(/\s/g, '%20');
+
+/** The one way an <a> is ever written out: rebuilt from its parsed href, nothing else kept. */
+function anchorOpenTag(attrs: string): string {
+  const href = attribute(`<a${attrs}>`, 'href')?.trim();
+  if (!href || !SAFE_HREF.test(href)) return '';
+  return `<a href="${encodeHref(href)}">`;
+}
+
 /** Keep a, strong, em, b, i and br; drop every other tag and every other attribute. */
 function cleanRich(html: string): string {
   return (
@@ -56,17 +89,19 @@ function cleanRich(html: string): string {
       // Scripts and styles go with their contents, not just their tags.
       .replace(/<(script|style)\b[^>]*>[\s\S]*?<\/\1>/gi, '')
       .replace(/<\/?(div|p)\b[^>]*>/gi, '<br>')
-      // Links are handled as pairs: a safe href keeps the link, anything else keeps only its text.
+      // Links are handled as pairs first: a safe href keeps the link, anything else keeps only its text.
       .replace(/<a\b([^>]*)>([\s\S]*?)<\/a>/gi, (whole, attrs: string, inner: string) => {
-        const href = attribute(`<a${attrs}>`, 'href');
-        if (!href || !SAFE_HREF.test(href.trim())) return inner;
-        return `<a href="${href.trim().replace(/"/g, '%22')}">${inner}</a>`;
+        const open = anchorOpenTag(attrs);
+        return open ? `${open}${inner}</a>` : inner;
       })
-      .replace(/<(\/?)([a-z][a-z0-9]*)\b([^>]*)>/gi, (whole, close: string, rawName: string) => {
+      // Every remaining tag, including an <a> that was never closed. Nothing is
+      // ever passed through as written: an anchor is rebuilt from its href, so
+      // an onmouseover or a javascript: address cannot ride along on the tag text.
+      .replace(/<(\/?)([a-z][a-z0-9]*)\b([^>]*)>/gi, (whole, close: string, rawName: string, attrs: string) => {
         const name = rawName.toLowerCase();
         if (!ALLOWED.has(name)) return '';
         if (name === 'br') return '<br>';
-        if (name === 'a') return whole.startsWith('<a href="') || close ? whole : '';
+        if (name === 'a') return close ? '</a>' : anchorOpenTag(attrs);
         return `<${close}${name}>`;
       })
       .replace(/(<br>\s*)+$/i, '')

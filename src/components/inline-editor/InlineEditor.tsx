@@ -32,7 +32,9 @@ type Publish = {
   fields: string[];
   reverted: boolean;
 };
-type SanityUndo = { id: string; value: string };
+/** What the server handed back so this session can undo its own Sanity publish:
+ *  a signed token per field, never the old text. The server alone can open it. */
+type SanityUndo = { id: string; token: string };
 
 const START = '\u{E0001}';
 const BASE = 0xe0000;
@@ -226,6 +228,8 @@ function goneFor(values: { id: string; value: string }[], originals: Map<string,
 
 const formatSeconds = (s: number) => `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`;
 
+const UNREACHABLE = 'Could not reach the site, try again';
+
 export function InlineEditor() {
   const [changes, setChanges] = useState<Record<string, Change>>({});
   const [status, setStatus] = useState<Status>({ kind: 'idle' });
@@ -255,6 +259,8 @@ export function InlineEditor() {
 
   useEffect(() => {
     const wired = new WeakSet<HTMLElement>();
+    /** The last figure sent to the bar; wire() runs on every DOM change. */
+    let counted = -1;
 
     const onEnter = (event: Event) => {
       const el = event.currentTarget as HTMLElement;
@@ -389,7 +395,13 @@ export function InlineEditor() {
         el.addEventListener('keydown', onKeyDown);
         el.style.cursor = el.dataset.lfType === 'image' ? 'pointer' : 'text';
       });
-      if (nodes.length) setCount((n) => n + nodes.length);
+      // Count what is on the page now. A running total climbed on every
+      // re-render, so a page with a slider claimed hundreds of editable fields.
+      const total = document.querySelectorAll('[data-lf-id]').length;
+      if (total !== counted) {
+        counted = total;
+        setCount(total);
+      }
     }
 
     wire();
@@ -478,24 +490,34 @@ export function InlineEditor() {
     liveCheck.current.stop = true;
     const sent = pending.map(({ id, value }) => ({ id, value }));
     const gone = goneFor(sent, originals.current);
-    const response = await fetch('/api/lf-edit', {
-      method: 'POST',
-      headers: { 'content-type': 'application/json' },
-      body: JSON.stringify({ changes: sent }),
-    });
+
+    let response: Response;
+    try {
+      response = await fetch('/api/lf-edit', {
+        method: 'POST',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({ changes: sent }),
+      });
+    } catch {
+      // The edits stay staged: the bar must never sit on "Saving…" forever.
+      setStatus({ kind: 'error', message: UNREACHABLE });
+      return;
+    }
     const result = await response.json().catch(() => ({ error: response.statusText }));
-    if (!response.ok) {
-      setStatus({ kind: 'error', message: result.error ?? 'Publish failed' });
+    // A half-failed publish answers 200 with an error in the body. Keep the
+    // staged edits in that case too, so nothing the client typed is dropped.
+    if (!response.ok || result?.ok === false || result?.error) {
+      setStatus({ kind: 'error', message: result?.error ?? 'Publish failed' });
       return;
     }
     setChanges({});
     originals.current.clear();
     bodySnapshots.current.clear();
 
-    const sanity: { id: string; before: string }[] = result.sanity ?? [];
+    const sanity: { id: string; token: string; after?: string }[] = result.sanity ?? [];
     const sanityCount = sanity.length;
     const contentCount = Math.max(0, (result.published ?? 0) - sanityCount);
-    setSanityUndo(sanityCount ? sanity.map(({ id, before }) => ({ id, value: before })) : null);
+    setSanityUndo(sanityCount ? sanity.map(({ id, token }) => ({ id, token })) : null);
 
     const total = contentCount + sanityCount;
     if (!total) {
@@ -529,39 +551,60 @@ export function InlineEditor() {
     );
     setStatus({ kind: 'saving' });
     liveCheck.current.stop = true;
-    const response = await fetch('/api/lf-edit', {
-      method: 'POST',
-      headers: { 'content-type': 'application/json' },
-      body: JSON.stringify({ changes: sanityUndo, exact: true }),
-    });
-    const result = await response.json().catch(() => ({ error: response.statusText }));
-    if (!response.ok) {
-      setStatus({ kind: 'error', message: result.error ?? 'Undo failed' });
+    let response: Response;
+    try {
+      response = await fetch('/api/lf-edit', {
+        method: 'POST',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({ changes: sanityUndo }),
+      });
+    } catch {
+      setStatus({ kind: 'error', message: UNREACHABLE });
       return;
     }
-    const restored = sanityUndo;
+    const result = await response.json().catch(() => ({ error: response.statusText }));
+    if (!response.ok || result?.ok === false || result?.error) {
+      setStatus({ kind: 'error', message: result?.error ?? 'Undo failed' });
+      return;
+    }
+    // The words to look for come back from the server, which is the only side
+    // that knows what it just restored.
+    const applied: { id: string; after?: string }[] = result.sanity ?? [];
+    const back = applied.map(({ id, after }) => ({ id, value: after ?? '' }));
+    const taken = sanityUndo.map(({ id }) => ({ id, value: '' }));
     setSanityUndo(null);
-    watchUntilLive(needlesFor(restored, true), 'Reverted in the CMS — refreshing the public page', 'Reverted', goneFor(restored, onPage));
+    watchUntilLive(needlesFor(back, true), 'Reverted in the CMS — refreshing the public page', 'Reverted', goneFor(taken, onPage));
   }
 
   async function openHistory() {
     setHistoryOpen(true);
     setPublishes(null);
-    const response = await fetch('/api/lf-edit/history');
-    const result = await response.json().catch(() => ({ publishes: [] }));
-    setPublishes(result.publishes ?? []);
+    try {
+      const response = await fetch('/api/lf-edit/history');
+      const result = await response.json().catch(() => ({ publishes: [] }));
+      setPublishes(result.publishes ?? []);
+    } catch {
+      setPublishes([]);
+      setStatus({ kind: 'error', message: UNREACHABLE });
+    }
   }
 
   async function undoPublish(hash: string) {
     setStatus({ kind: 'saving' });
-    const response = await fetch('/api/lf-edit/undo', {
-      method: 'POST',
-      headers: { 'content-type': 'application/json' },
-      body: JSON.stringify({ hash }),
-    });
+    let response: Response;
+    try {
+      response = await fetch('/api/lf-edit/undo', {
+        method: 'POST',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({ hash }),
+      });
+    } catch {
+      setStatus({ kind: 'error', message: UNREACHABLE });
+      return;
+    }
     const result = await response.json().catch(() => ({ error: response.statusText }));
-    if (!response.ok) {
-      setStatus({ kind: 'error', message: result.error ?? 'Undo failed' });
+    if (!response.ok || result?.error) {
+      setStatus({ kind: 'error', message: result?.error ?? 'Undo failed' });
       return;
     }
     setHistoryOpen(false);

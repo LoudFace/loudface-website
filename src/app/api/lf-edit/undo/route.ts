@@ -1,7 +1,11 @@
 import { currentEditor } from '@/lib/inline-edit/session';
 import { mode, undo } from '@/lib/inline-edit/content-store';
+import { editorOffResponse } from '@/lib/inline-edit/guard';
 
 export async function POST(request: Request) {
+  const off = editorOffResponse();
+  if (off) return off;
+
   const editor = await currentEditor();
   if (!editor) return Response.json({ error: 'Sign in first' }, { status: 401 });
 

@@ -4,6 +4,7 @@
 import { draftMode } from 'next/headers';
 import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
+import { editorOffResponse, safeNext } from '@/lib/inline-edit/guard';
 import {
   SESSION_COOKIE,
   createSessionToken,
@@ -12,6 +13,9 @@ import {
 } from '@/lib/inline-edit/session';
 
 export async function GET(request: Request) {
+  const off = editorOffResponse();
+  if (off) return off;
+
   const url = new URL(request.url);
   const email = readSignInToken(url.searchParams.get('token') ?? '');
   if (!email) redirect('/edit?expired=1');
@@ -19,6 +23,5 @@ export async function GET(request: Request) {
   (await cookies()).set(SESSION_COOKIE, createSessionToken(email), sessionCookieOptions);
   (await draftMode()).enable();
 
-  const next = url.searchParams.get('next');
-  redirect(next && next.startsWith('/') ? next : '/');
+  redirect(safeNext(url.searchParams.get('next')));
 }

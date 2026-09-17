@@ -38,7 +38,10 @@ export default async function EditSignInPage({
             <p style={{ margin: '0 0 18px', color: '#52616d' }}>
               Signed in as {editor}. Open any page and click the text you want to change.
             </p>
-            <a href="/" style={primary}>
+            {/* Through resume, not straight to "/": Draft Mode's own cookie ends
+                with the browser window, so a client coming back later has a good
+                session but no editing bar until this route switches it on again. */}
+            <a href="/api/lf-edit/resume?next=%2F" style={primary}>
               Go to the site
             </a>
             <a href="/api/lf-edit/signout" style={{ ...ghost, marginTop: 10 }}>

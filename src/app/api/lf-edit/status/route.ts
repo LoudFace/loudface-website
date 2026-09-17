@@ -10,6 +10,7 @@
  * The editor polls this every few seconds and stops at the first all-clear.
  */
 import { currentEditor } from '@/lib/inline-edit/session';
+import { editorOffResponse } from '@/lib/inline-edit/guard';
 
 const MARKS = /[\u{E0000}-\u{E007F}​‌‍﻿]/gu;
 
@@ -23,7 +24,12 @@ function visibleText(html: string): string {
     .replace(/&gt;/g, '>')
     .replace(/&quot;/g, '"')
     .replace(/&#39;|&apos;/g, "'")
-    .replace(/&#(\d+);/g, (_m, code: string) => String.fromCodePoint(Number(code)))
+    // A page can carry a numeric entity outside Unicode's range; String.fromCodePoint
+    // throws on one, and the live check must not fall over reading a page.
+    .replace(/&#(\d+);/g, (whole, code: string) => {
+      const point = Number(code);
+      return Number.isInteger(point) && point >= 0 && point <= 0x10ffff ? String.fromCodePoint(point) : whole;
+    })
     .replace(MARKS, '')
     .replace(/[“”]/g, '"')
     .replace(/[‘’]/g, "'")
@@ -42,6 +48,9 @@ const normalize = (text: string) =>
     .trim();
 
 export async function POST(request: Request) {
+  const off = editorOffResponse();
+  if (off) return off;
+
   if (!(await currentEditor())) return Response.json({ error: 'Sign in first' }, { status: 401 });
 
   const body = (await request.json().catch(() => null)) as { path?: unknown; needles?: unknown; absent?: unknown } | null;
@@ -58,11 +67,19 @@ export async function POST(request: Request) {
     return Response.json({ error: 'Bad request' }, { status: 400 });
   }
 
-  // Production names its public address; development talks to itself over
-  // plain http, because the forwarded https origin points at a plain port.
-  const origin =
-    process.env.LF_SITE_URL?.replace(/\/$/, '') ??
-    (process.env.NODE_ENV !== 'production' ? `http://127.0.0.1:${process.env.PORT ?? 3000}` : new URL(request.url).origin);
+  // Production names its public address, and nothing else will do: an origin
+  // built from the request's own Host header is whatever the caller sent, so
+  // the check could be pointed at another site and answer about that one.
+  // Development talks to itself over plain http, because the forwarded https
+  // origin points at a plain port.
+  const configured = process.env.LF_SITE_URL?.replace(/\/$/, '');
+  if (!configured && process.env.NODE_ENV === 'production') {
+    return Response.json(
+      { error: 'This site has no public address configured, so the live check cannot run' },
+      { status: 400 },
+    );
+  }
+  const origin = configured ?? `http://127.0.0.1:${process.env.PORT ?? 3000}`;
   let html: string;
   try {
     // A visitor's request: no cookies, so no Draft Mode, and whatever the CDN

@@ -43,12 +43,18 @@ const ENTITIES: Record<string, string> = {
   nbsp: ' ',
 };
 
+/** A code outside Unicode's range would throw; leave that entity as written. */
+function fromCode(code: number, original: string): string {
+  if (!Number.isInteger(code) || code < 0 || code > 0x10ffff) return original;
+  return String.fromCodePoint(code);
+}
+
 function decodeEntities(text: string): string {
   return text.replace(/&(#\d+|#x[0-9a-f]+|[a-z]+);/gi, (whole, name: string) => {
     const lower = name.toLowerCase();
     if (lower in ENTITIES) return ENTITIES[lower];
-    if (lower.startsWith('#x')) return String.fromCodePoint(parseInt(lower.slice(2), 16));
-    if (lower.startsWith('#')) return String.fromCodePoint(parseInt(lower.slice(1), 10));
+    if (lower.startsWith('#x')) return fromCode(parseInt(lower.slice(2), 16), whole);
+    if (lower.startsWith('#')) return fromCode(parseInt(lower.slice(1), 10), whole);
     return whole;
   });
 }
