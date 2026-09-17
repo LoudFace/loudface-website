@@ -478,6 +478,69 @@
   fill: url(#fx-hatch);
 }
 
+/* Night plate — the same figure furniture on the hero's indigo ground.
+   Line-work goes to primary-300, labels to white, so nothing reads as a
+   second surface pasted onto the stage. */
+.proposal-surface .plate.plate-night {
+  margin: 0;
+  background-color: var(--color-night-hi);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12'%3E%3Crect width='1' height='1' fill='%23a5b4fc' fill-opacity='.22'/%3E%3C/svg%3E");
+  box-shadow: inset 0 0 0 1px rgba(165, 180, 252, 0.22);
+  color: var(--color-primary-300);
+}
+
+.proposal-surface .plate.plate-night .fig-id,
+.proposal-surface .plate.plate-night .fig-meta,
+.proposal-surface .plate.plate-night .fig-yr {
+  color: var(--color-primary-300);
+}
+
+.proposal-surface .plate.plate-night text.tk {
+  fill: var(--color-primary-300);
+}
+
+.proposal-surface .plate.plate-night .s1 {
+  stroke: var(--color-primary-300);
+}
+
+.proposal-surface .plate.plate-night .wedge-geo {
+  fill: rgba(129, 140, 248, 0.26);
+  stroke: var(--color-primary-300);
+  stroke-width: 1;
+}
+
+.proposal-surface .plate.plate-night .wedge-site {
+  fill: rgba(255, 255, 255, 0.07);
+  stroke: var(--color-primary-300);
+  stroke-width: 1;
+}
+
+.proposal-surface .plate.plate-night .core {
+  fill: var(--color-night);
+  stroke: var(--color-primary-300);
+  stroke-width: 1;
+}
+
+.proposal-surface .plate.plate-night text.wl {
+  fill: #ffffff;
+  font-size: 9.5px;
+  letter-spacing: 0.08em;
+}
+
+.proposal-surface .plate.plate-night text.wh {
+  fill: rgba(255, 255, 255, 0.6);
+  font-size: 8.5px;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  text-transform: none;
+}
+
+.proposal-surface .plate.plate-night text.wc {
+  fill: #ffffff;
+  font-size: 11px;
+  letter-spacing: 0.1em;
+}
+
 /* the hatch pattern lives in a defs block outside any .plate */
 .proposal-surface .f50 {
   fill: var(--color-primary-50);

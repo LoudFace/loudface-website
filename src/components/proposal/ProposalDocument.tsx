@@ -4,6 +4,7 @@ import type { Proposal, ProposalBand, ProposalSection } from '@/sanity/lib/propo
 import { ProofRail, ProofSection, isProofSection } from './ProposalSocialProof';
 import { ProposalCaseProof } from './ProposalCaseProof';
 import { EngagementLoopPlate, PlateDefs } from './ProposalFigures';
+import { HowWeWorkRing } from './HowWeWorkRing';
 import { AskAiBlock, ForecastBlock, GateBlock, MonthsBlock, StandingBlock, TracksBlock } from './ProposalBlocks';
 
 /**
@@ -439,6 +440,7 @@ export function ProposalDocument({
         <div className={`${page} pt-12 pb-14 sm:pt-16`}>
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src="/lf-logo.svg" alt="LoudFace" className="h-6 w-auto opacity-90" />
+          <div className="lg:grid lg:grid-cols-[minmax(0,1fr)_344px] lg:items-start lg:gap-14">
           <div className="min-w-0 max-w-[62ch]">
           <h1 className="mt-9 max-w-[20ch] text-[30px] font-medium leading-[1.08] tracking-[-0.035em] sm:text-[42px]">
             {proposal.title}
@@ -466,6 +468,16 @@ export function ProposalDocument({
               {proposal.heroQuoteBy && <figcaption className="mt-2 text-[12.5px] text-white/55">{proposal.heroQuoteBy}</figcaption>}
             </figure>
           )}
+          </div>
+
+          {/* How LoudFace works, drawn once. Beside the title on a wide
+              screen, after the quote on a phone. */}
+          <div className="mt-10 max-w-[344px] lg:mt-9 lg:max-w-none">
+            <HowWeWorkRing />
+            <p className="mt-3 text-[12.5px] leading-relaxed text-white/60">
+              Design and development come with the retainer. Need a landing page? Say so, and it is live the same day.
+            </p>
+          </div>
           </div>
 
           <dl className="mt-8 flex flex-wrap gap-x-9 gap-y-3 border-t border-white/15 pt-6 text-[13px] text-white/55">
