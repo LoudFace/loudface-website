@@ -246,10 +246,14 @@ export function InlineEditor() {
     }
     setChanges({});
     originals.current.clear();
-    setStatus({
-      kind: 'saved',
-      message: `${result.published} change${result.published === 1 ? '' : 's'} published`,
-    });
+    const n = `${result.published} change${result.published === 1 ? '' : 's'}`;
+    if (result.mode === 'github') {
+      // The commit is on GitHub; the site rebuilds from it. The page keeps the
+      // edited words on screen meanwhile, so nothing looks lost.
+      setStatus({ kind: 'saved', message: `${n} published — live in about two minutes, when the build finishes` });
+      return;
+    }
+    setStatus({ kind: 'saved', message: `${n} published` });
     setTimeout(() => window.location.reload(), 900);
   }
 
@@ -273,8 +277,9 @@ export function InlineEditor() {
       setStatus({ kind: 'error', message: result.error ?? 'Undo failed' });
       return;
     }
-    setStatus({ kind: 'saved', message: 'Change undone' });
-    setTimeout(() => window.location.reload(), 900);
+    setStatus({ kind: 'saved', message: result.mode === 'github' ? 'Change undone — live in about two minutes' : 'Change undone' });
+    setHistoryOpen(false);
+    if (result.mode !== 'github') setTimeout(() => window.location.reload(), 900);
   }
 
   return (

@@ -6,7 +6,7 @@
  * reviewable, revertable commit.
  */
 import { currentEditor } from '@/lib/inline-edit/session';
-import { applyChange, commitChanges, type Applied, type Change } from '@/lib/inline-edit/content-store';
+import { publish, type Change } from '@/lib/inline-edit/content-store';
 
 export async function POST(request: Request) {
   const editor = await currentEditor();
@@ -23,17 +23,16 @@ export async function POST(request: Request) {
   if (!changes.length) return Response.json({ error: 'Nothing to publish' }, { status: 400 });
   if (changes.length > 200) return Response.json({ error: 'Too many changes at once' }, { status: 400 });
 
-  const applied: Applied[] = [];
   try {
     for (const change of changes) {
       if (typeof change?.id !== 'string' || typeof change?.value !== 'string') {
         throw new Error('Each change needs an id and a value');
       }
       if (change.value.length > 4000) throw new Error('That value is too long');
-      applied.push(await applyChange(change));
     }
-    const hash = await commitChanges(applied, editor);
-    return Response.json({ ok: true, published: applied.length, hash });
+    const result = await publish(changes, editor);
+    const published = result.applied.filter((change) => change.before !== change.after).length;
+    return Response.json({ ok: true, published, hash: result.hash, mode: result.mode });
   } catch (error) {
     const message = error instanceof Error ? error.message : 'Publish failed';
     return Response.json({ error: message, published: 0 }, { status: 400 });

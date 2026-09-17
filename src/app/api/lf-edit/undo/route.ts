@@ -1,5 +1,5 @@
 import { currentEditor } from '@/lib/inline-edit/session';
-import { undo } from '@/lib/inline-edit/content-store';
+import { mode, undo } from '@/lib/inline-edit/content-store';
 
 export async function POST(request: Request) {
   const editor = await currentEditor();
@@ -9,7 +9,7 @@ export async function POST(request: Request) {
   if (typeof body.hash !== 'string') return Response.json({ error: 'Which change?' }, { status: 400 });
 
   try {
-    return Response.json({ ok: true, hash: await undo(body.hash, editor) });
+    return Response.json({ ok: true, hash: await undo(body.hash, editor), mode: mode() });
   } catch (error) {
     return Response.json(
       { error: error instanceof Error ? error.message : 'Undo failed' },
