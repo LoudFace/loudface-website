@@ -440,7 +440,7 @@ export function ProposalDocument({
         <div className={`${page} pt-12 pb-14 sm:pt-16`}>
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src="/lf-logo.svg" alt="LoudFace" className="h-6 w-auto opacity-90" />
-          <div className="lg:grid lg:grid-cols-[minmax(0,1fr)_344px] lg:items-start lg:gap-14">
+          <div className="lg:grid lg:grid-cols-[minmax(0,1fr)_460px] lg:items-center lg:gap-12">
           <div className="min-w-0 max-w-[62ch]">
           <h1 className="mt-9 max-w-[20ch] text-[30px] font-medium leading-[1.08] tracking-[-0.035em] sm:text-[42px]">
             {proposal.title}
@@ -472,10 +472,10 @@ export function ProposalDocument({
 
           {/* How LoudFace works, drawn once. Beside the title on a wide
               screen, after the quote on a phone. */}
-          <div className="mt-10 max-w-[344px] lg:mt-9 lg:max-w-none">
+          <div className="mt-10 max-w-[460px] lg:mt-0 lg:max-w-none">
             <HowWeWorkRing />
-            <p className="mt-3 text-[12.5px] leading-relaxed text-white/60">
-              Design and development come with the retainer. Need a landing page? Say so, and it is live the same day.
+            <p className="mt-2 text-[12.5px] leading-relaxed text-white/55">
+              Design and development are part of the retainer, never billed by the hour. Need a landing page? It is live the same day you ask.
             </p>
           </div>
           </div>

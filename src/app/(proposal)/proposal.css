@@ -478,67 +478,103 @@
   fill: url(#fx-hatch);
 }
 
-/* Night plate — the same figure furniture on the hero's indigo ground.
-   Line-work goes to primary-300, labels to white, so nothing reads as a
-   second surface pasted onto the stage. */
-.proposal-surface .plate.plate-night {
+/* How LoudFace works — the ring in the hero. Drawn on the night ground
+   itself, no plate: the halves are the two outcomes, the labels sit outside
+   the ring in two columns, the result sits in the middle. */
+.proposal-surface .how-ring {
   margin: 0;
-  background-color: var(--color-night-hi);
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12'%3E%3Crect width='1' height='1' fill='%23a5b4fc' fill-opacity='.22'/%3E%3C/svg%3E");
-  box-shadow: inset 0 0 0 1px rgba(165, 180, 252, 0.22);
-  color: var(--color-primary-300);
+  font-family: var(--font-sans);
 }
 
-.proposal-surface .plate.plate-night .fig-id,
-.proposal-surface .plate.plate-night .fig-meta,
-.proposal-surface .plate.plate-night .fig-yr {
-  color: var(--color-primary-300);
+.proposal-surface .how-ring svg {
+  display: block;
+  width: 100%;
+  height: auto;
 }
 
-.proposal-surface .plate.plate-night text.tk {
+.proposal-surface .how-ring .arc {
+  fill: none;
+  stroke-width: 7;
+  stroke-linecap: round;
+}
+
+.proposal-surface .how-ring .arc-geo {
+  stroke: var(--color-primary-400);
+}
+
+.proposal-surface .how-ring .arc-site {
+  stroke: rgba(255, 255, 255, 0.82);
+}
+
+.proposal-surface .how-ring .chev {
+  fill: none;
+  stroke: rgba(255, 255, 255, 0.55);
+  stroke-width: 1.4;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.proposal-surface .how-ring .node {
+  stroke: var(--color-night);
+  stroke-width: 3;
+}
+
+.proposal-surface .how-ring .node-geo {
   fill: var(--color-primary-300);
 }
 
-.proposal-surface .plate.plate-night .s1 {
-  stroke: var(--color-primary-300);
-}
-
-.proposal-surface .plate.plate-night .wedge-geo {
-  fill: rgba(129, 140, 248, 0.26);
-  stroke: var(--color-primary-300);
-  stroke-width: 1;
-}
-
-.proposal-surface .plate.plate-night .wedge-site {
-  fill: rgba(255, 255, 255, 0.07);
-  stroke: var(--color-primary-300);
-  stroke-width: 1;
-}
-
-.proposal-surface .plate.plate-night .core {
-  fill: var(--color-night);
-  stroke: var(--color-primary-300);
-  stroke-width: 1;
-}
-
-.proposal-surface .plate.plate-night text.wl {
+.proposal-surface .how-ring .node-site {
   fill: #ffffff;
-  font-size: 9.5px;
-  letter-spacing: 0.08em;
 }
 
-.proposal-surface .plate.plate-night text.wh {
-  fill: rgba(255, 255, 255, 0.6);
-  font-size: 8.5px;
-  font-weight: 500;
-  letter-spacing: 0.02em;
-  text-transform: none;
+.proposal-surface .how-ring .lead {
+  fill: none;
+  stroke: rgba(255, 255, 255, 0.22);
+  stroke-width: 1;
 }
 
-.proposal-surface .plate.plate-night text.wc {
+.proposal-surface .how-ring text {
+  font-family: var(--font-sans);
+}
+
+.proposal-surface .how-ring .hdr {
+  font-size: 11.5px;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+}
+
+.proposal-surface .how-ring .hdr-geo {
+  fill: var(--color-primary-300);
+}
+
+.proposal-surface .how-ring .hdr-site {
+  fill: rgba(255, 255, 255, 0.85);
+}
+
+.proposal-surface .how-ring .lbl {
   fill: #ffffff;
+  font-size: 12.5px;
+  font-weight: 600;
+  letter-spacing: -0.005em;
+}
+
+.proposal-surface .how-ring .how {
+  fill: rgba(255, 255, 255, 0.55);
   font-size: 11px;
-  letter-spacing: 0.1em;
+  font-weight: 450;
+}
+
+.proposal-surface .how-ring .core {
+  fill: #ffffff;
+  font-size: 26px;
+  font-weight: 500;
+  letter-spacing: -0.03em;
+}
+
+.proposal-surface .how-ring .core-sub {
+  fill: rgba(255, 255, 255, 0.55);
+  font-size: 10.5px;
+  font-weight: 500;
 }
 
 /* the hatch pattern lives in a defs block outside any .plate */

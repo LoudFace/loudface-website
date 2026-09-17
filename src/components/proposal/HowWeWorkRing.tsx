@@ -1,97 +1,96 @@
 /**
- * FIG.000 — how LoudFace works, drawn once for every proposal.
+ * How LoudFace works, drawn once for every proposal.
  *
  * Arnel, 2026-09-18: prospects could not tell whether we are a content
  * agency, a backlink agency or a web-design agency. The answer is one
- * sentence — GEO brings the buyers, the site converts them — and this ring
- * draws it: six things we do, grouped into those two outcomes, with the
- * result in the middle. Pure SVG in the house plate idiom, night variant so
- * it can sit in the hero beside the title without a second surface.
+ * sentence — GEO brings the buyers, the site converts them — and this figure
+ * draws it: a ring in two halves, three things we do on each half, the
+ * result in the middle.
  *
- * Text is deliberately sparse. One label and one "how" line per segment;
- * the offer itself lives in the sections below.
+ * Drawn straight on the hero ground, no plate. Labels sit OUTSIDE the ring
+ * in two columns so nothing is squeezed into a wedge, and the column headers
+ * are what give the halves their meaning. The first draft put nine-point
+ * caps inside pie wedges under blueprint furniture and was rejected on sight.
  */
 
-const CX = 180;
-const CY = 184;
-const R_OUT = 150;
-const R_IN = 88;
-const R_MID = (R_OUT + R_IN) / 2;
+const CX = 230;
+const CY = 156;
+const R = 82;
 
-/** Angle in degrees from 12 o'clock, clockwise, to a point on radius r. */
 function pt(deg: number, r: number) {
   const a = ((deg - 90) * Math.PI) / 180;
   return [CX + r * Math.cos(a), CY + r * Math.sin(a)] as const;
 }
 
-/** An annular wedge from a0 to a1 degrees (clockwise from 12 o'clock). */
-function wedge(a0: number, a1: number) {
-  const [x0, y0] = pt(a0, R_OUT);
-  const [x1, y1] = pt(a1, R_OUT);
-  const [x2, y2] = pt(a1, R_IN);
-  const [x3, y3] = pt(a0, R_IN);
-  const large = a1 - a0 > 180 ? 1 : 0;
-  return `M${x0.toFixed(1)} ${y0.toFixed(1)}A${R_OUT} ${R_OUT} 0 ${large} 1 ${x1.toFixed(1)} ${y1.toFixed(1)}L${x2.toFixed(1)} ${y2.toFixed(1)}A${R_IN} ${R_IN} 0 ${large} 0 ${x3.toFixed(1)} ${y3.toFixed(1)}Z`;
+/** Arc from a0 to a1 degrees (clockwise from 12 o'clock) on radius R. */
+function arc(a0: number, a1: number) {
+  const [x0, y0] = pt(a0, R);
+  const [x1, y1] = pt(a1, R);
+  return `M${x0.toFixed(1)} ${y0.toFixed(1)}A${R} ${R} 0 0 1 ${x1.toFixed(1)} ${y1.toFixed(1)}`;
 }
 
-type Segment = { a0: number; a1: number; label: string[]; how: string; side: 'geo' | 'site' };
+type Node = { deg: number; label: string; how: string };
 
-/* Clockwise from 12 o'clock. The right half is the site, the left half is
-   GEO, so the two headline capabilities sit at the top, either side of the
-   split. */
-const SEGMENTS: Segment[] = [
-  { a0: 0, a1: 60, label: ['DESIGN'], how: 'top designers', side: 'site' },
-  { a0: 60, a1: 120, label: ['DEVELOPMENT'], how: 'same-day pages', side: 'site' },
-  { a0: 120, a1: 180, label: ['CONVERSION'], how: 'split tests', side: 'site' },
-  { a0: 180, a1: 240, label: ['TRUST'], how: 'reviews · listings', side: 'geo' },
-  { a0: 240, a1: 300, label: ['ORGANIC', 'VISIBILITY'], how: 'pages that rank', side: 'geo' },
-  { a0: 300, a1: 360, label: ['GEO'], how: 'content · off-site', side: 'geo' },
+const SITE: Node[] = [
+  { deg: 30, label: 'Design', how: 'top designers' },
+  { deg: 90, label: 'Development', how: 'same-day pages' },
+  { deg: 150, label: 'Conversion', how: 'split tests' },
 ];
 
+const GEO: Node[] = [
+  { deg: 330, label: 'GEO', how: 'content and off-site' },
+  { deg: 270, label: 'Organic visibility', how: 'pages that rank' },
+  { deg: 210, label: 'Trust', how: 'reviews and listings' },
+];
+
+const COL_L = 138; // right edge of the left label column
+const COL_R = 322; // left edge of the right label column
+
 export function HowWeWorkRing() {
+  const node = (n: Node, side: 'geo' | 'site') => {
+    const [x, y] = pt(n.deg, R);
+    const dir = side === 'site' ? 1 : -1;
+    const colX = side === 'site' ? COL_R : COL_L;
+    // Leader: out of the node along its radius, then level to the column.
+    const [ex, ey] = pt(n.deg, R + 14);
+    return (
+      <g key={n.label}>
+        <path d={`M${ex.toFixed(1)} ${ey.toFixed(1)}L${(colX - dir * 10).toFixed(1)} ${ey.toFixed(1)}`} className="lead" />
+        <circle cx={x} cy={y} r="6" className={`node node-${side}`} />
+        <text x={colX} y={ey - 2} textAnchor={side === 'site' ? 'start' : 'end'} className="lbl">
+          {n.label}
+        </text>
+        <text x={colX} y={ey + 12} textAnchor={side === 'site' ? 'start' : 'end'} className="how">
+          {n.how}
+        </text>
+      </g>
+    );
+  };
+
   return (
-    <figure className="plate plate-night" data-print-keep>
-      <span className="fig-id" aria-hidden="true">FIG.000</span>
-      <span className="fig-meta" aria-hidden="true">[ HOW WE WORK ]</span>
-      <span className="fig-yr" aria-hidden="true">[ 2026 ]</span>
-      <svg viewBox="0 0 360 372" role="img" aria-labelledby="plate-howwework">
-        <title id="plate-howwework">
-          How LoudFace works: GEO, organic visibility and trust bring the buyers; design, development and conversion work turn them into leads on your site. One team, one retainer, no hourly billing.
+    <figure className="how-ring" data-print-keep>
+      <svg viewBox="0 0 460 300" role="img" aria-labelledby="how-ring-title">
+        <title id="how-ring-title">
+          How LoudFace works: GEO, organic visibility and trust bring the buyers; design, development and conversion work turn them into leads on your site.
         </title>
 
-        {/* the two outcomes, one per half */}
-        <text x={CX - 12} y="22" textAnchor="end" className="tk">GEO BRINGS THE BUYERS</text>
-        <text x={CX + 12} y="22" textAnchor="start" className="tk">THE SITE CONVERTS THEM</text>
-        <path d={`M${CX} 12V${CY - R_OUT - 4}`} className="s1" strokeDasharray="2 3" />
-        <path d={`M${CX} ${CY + R_OUT + 4}V${CY + R_OUT + 18}`} className="s1" strokeDasharray="2 3" />
+        {/* column headers: the two outcomes */}
+        <text x={COL_L} y="24" textAnchor="end" className="hdr hdr-geo">GEO brings the buyers</text>
+        <text x={COL_R} y="24" textAnchor="start" className="hdr hdr-site">The site converts them</text>
 
-        {/* six segments */}
-        {SEGMENTS.map((s) => {
-          const mid = (s.a0 + s.a1) / 2;
-          const [lx, ly] = pt(mid, R_MID);
-          const lines = s.label.length;
-          const top = ly - (lines - 1) * 5.5 - 2;
-          return (
-            <g key={s.label.join()}>
-              <path d={wedge(s.a0 + 0.6, s.a1 - 0.6)} className={s.side === 'geo' ? 'wedge-geo' : 'wedge-site'} />
-              {s.label.map((line, i) => (
-                <text key={line} x={lx} y={top + i * 11} textAnchor="middle" className="wl">
-                  {line}
-                </text>
-              ))}
-              <text x={lx} y={top + (lines - 1) * 11 + 12} textAnchor="middle" className="wh">
-                {s.how}
-              </text>
-            </g>
-          );
-        })}
+        {/* the ring, two halves, a small gap at top and bottom */}
+        <path d={arc(184, 356)} className="arc arc-geo" />
+        <path d={arc(4, 176)} className="arc arc-site" />
+        {/* flow: buyers move from the GEO half into the site half */}
+        <path d={`M${CX - 3} ${CY - R - 5}l4.5 5-4.5 5`} className="chev" />
+        <path d={`M${CX + 3} ${CY + R + 5}l-4.5-5 4.5-5`} className="chev" />
 
-        {/* the result, in the middle */}
-        <circle cx={CX} cy={CY} r={R_IN - 8} className="core" />
-        <text x={CX} y={CY - 6} textAnchor="middle" className="wc">MORE LEADS</text>
-        <text x={CX} y={CY + 9} textAnchor="middle" className="wh">from AI and Google search</text>
+        {GEO.map((n) => node(n, 'geo'))}
+        {SITE.map((n) => node(n, 'site'))}
 
-        <text x={CX} y="366" textAnchor="middle" className="tk">ONE TEAM · ONE RETAINER · NO HOURLY BILLING</text>
+        {/* the result */}
+        <text x={CX} y={CY + 3} textAnchor="middle" className="core">Leads</text>
+        <text x={CX} y={CY + 22} textAnchor="middle" className="core-sub">from AI and Google search</text>
       </svg>
     </figure>
   );
