@@ -9,8 +9,8 @@ export async function POST(request: Request) {
   if (typeof body.hash !== 'string') return Response.json({ error: 'Which change?' }, { status: 400 });
 
   try {
-    const { hash, restored } = await undo(body.hash, editor);
-    return Response.json({ ok: true, hash, restored, mode: mode() });
+    const { hash, restored, removed } = await undo(body.hash, editor);
+    return Response.json({ ok: true, hash, restored, removed, mode: mode() });
   } catch (error) {
     return Response.json(
       { error: error instanceof Error ? error.message : 'Undo failed' },

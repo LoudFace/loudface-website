@@ -205,6 +205,25 @@ function needlesFor(values: { id: string; value: string }[], exact = false): str
   return out.slice(0, 50);
 }
 
+/** The words a change took OFF the page, from what each element held before. */
+function goneFor(values: { id: string; value: string }[], originals: Map<string, string>): string[] {
+  const out: { id: string; value: string }[] = [];
+  for (const { id, value } of values) {
+    if (id.endsWith(':content') || id.endsWith(':body')) {
+      try {
+        const edit = JSON.parse(value) as { replacements?: { from: string }[] };
+        for (const item of edit.replacements ?? []) if (item.from.trim()) out.push({ id: `${id}:sentence`, value: item.from });
+      } catch {
+        /* not a body edit */
+      }
+      continue;
+    }
+    const before = originals.get(id);
+    if (before !== undefined) out.push({ id, value: before });
+  }
+  return needlesFor(out);
+}
+
 const formatSeconds = (s: number) => `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`;
 
 export function InlineEditor() {
@@ -401,7 +420,7 @@ export function InlineEditor() {
    * Watch the public page until it carries the published words. `waiting` is
    * what the bar says meanwhile ("building the site", "refreshing the page").
    */
-  function watchUntilLive(needles: string[], waiting: string, doneWord: string) {
+  function watchUntilLive(needles: string[], waiting: string, doneWord: string, absent: string[] = []) {
     const state = liveCheck.current;
     if (state.timer) clearTimeout(state.timer);
     state.stop = false;
@@ -423,7 +442,7 @@ export function InlineEditor() {
         const response = await fetch('/api/lf-edit/status', {
           method: 'POST',
           headers: { 'content-type': 'application/json' },
-          body: JSON.stringify({ path, needles }),
+          body: JSON.stringify({ path, needles, absent }),
         });
         const result = (await response.json()) as { live?: boolean };
         live = result.live === true;
@@ -458,6 +477,7 @@ export function InlineEditor() {
     setStatus({ kind: 'saving' });
     liveCheck.current.stop = true;
     const sent = pending.map(({ id, value }) => ({ id, value }));
+    const gone = goneFor(sent, originals.current);
     const response = await fetch('/api/lf-edit', {
       method: 'POST',
       headers: { 'content-type': 'application/json' },
@@ -498,11 +518,15 @@ export function InlineEditor() {
       contentCount && result.mode === 'github'
         ? `${saved} — committed, the site is building (usually 2 to 4 minutes)`
         : `${saved} to the CMS — refreshing the public page`;
-    watchUntilLive(needles, waiting, saved);
+    watchUntilLive(needles, waiting, saved, gone);
   }
 
   async function undoSanityPublish() {
     if (!sanityUndo?.length) return;
+    // What the page shows right now is what the undo takes away.
+    const onPage = new Map(
+      sanityUndo.map(({ id }) => [id, document.querySelector<HTMLElement>(`[data-lf-id="${id}"]`)?.innerHTML ?? '']),
+    );
     setStatus({ kind: 'saving' });
     liveCheck.current.stop = true;
     const response = await fetch('/api/lf-edit', {
@@ -517,7 +541,7 @@ export function InlineEditor() {
     }
     const restored = sanityUndo;
     setSanityUndo(null);
-    watchUntilLive(needlesFor(restored, true), 'Reverted in the CMS — refreshing the public page', 'Reverted');
+    watchUntilLive(needlesFor(restored, true), 'Reverted in the CMS — refreshing the public page', 'Reverted', goneFor(restored, onPage));
   }
 
   async function openHistory() {
@@ -548,8 +572,14 @@ export function InlineEditor() {
     }
     // Same light as a publish: the words that came back are what to look for.
     const restored = Array.isArray(result.restored) ? (result.restored as { id: string; value: string }[]) : [];
+    const removed = Array.isArray(result.removed) ? (result.removed as { id: string; value: string }[]) : [];
     setStatus({ kind: 'saved', message: 'Change undone — committed' });
-    watchUntilLive(needlesFor(restored, true), 'Change undone — committed, the site is building (usually 2 to 4 minutes)', 'Change undone');
+    watchUntilLive(
+      needlesFor(restored, true),
+      'Change undone — committed, the site is building (usually 2 to 4 minutes)',
+      'Change undone',
+      needlesFor(removed, true),
+    );
   }
 
   return (

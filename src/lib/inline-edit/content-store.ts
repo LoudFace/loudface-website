@@ -50,7 +50,7 @@ export type Change = { id: string; value: string };
 export type Applied = { id: string; file: string; path: string; before: string; after: string };
 export type Mode = 'git' | 'github';
 /** What an undo put back on the page: each field and the text it now carries again. */
-export type Undone = { hash: string; restored: Change[] };
+export type Undone = { hash: string; restored: Change[]; removed: Change[] };
 
 export type Publish = {
   hash: string;
@@ -293,7 +293,11 @@ const localStore = {
     const who = author(editor);
     await git(['-c', `user.name=${who.name}`, '-c', `user.email=${who.email}`, 'revert', '--no-edit', hash]);
     if (process.env.LF_EDIT_PUSH === '1') await git(['push', 'origin', 'HEAD']);
-    return { hash: (await git(['rev-parse', 'HEAD'])).trim(), restored: recorded.map(({ id, before }) => ({ id, value: before })) };
+    return {
+      hash: (await git(['rev-parse', 'HEAD'])).trim(),
+      restored: recorded.map(({ id, before }) => ({ id, value: before })),
+      removed: recorded.map(({ id, after }) => ({ id, value: after })),
+    };
   },
 };
 
@@ -388,7 +392,11 @@ const githubStore = {
       },
       editor,
     );
-    return { hash: hashOut, restored: recorded.map(({ id, before }) => ({ id, value: before })) };
+    return {
+      hash: hashOut,
+      restored: recorded.map(({ id, before }) => ({ id, value: before })),
+      removed: recorded.map(({ id, after }) => ({ id, value: after })),
+    };
   },
 };
 

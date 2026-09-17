@@ -44,10 +44,17 @@ const normalize = (text: string) =>
 export async function POST(request: Request) {
   if (!(await currentEditor())) return Response.json({ error: 'Sign in first' }, { status: 401 });
 
-  const body = (await request.json().catch(() => null)) as { path?: unknown; needles?: unknown } | null;
+  const body = (await request.json().catch(() => null)) as { path?: unknown; needles?: unknown; absent?: unknown } | null;
   const path = typeof body?.path === 'string' ? body.path : '';
-  const needles = Array.isArray(body?.needles) ? (body!.needles as unknown[]).filter((n): n is string => typeof n === 'string') : [];
-  if (!path.startsWith('/') || path.startsWith('//') || !needles.length || needles.length > 50) {
+  const strings = (value: unknown) =>
+    Array.isArray(value) ? (value as unknown[]).filter((n): n is string => typeof n === 'string') : [];
+  const needles = strings(body?.needles);
+  // Words that must be GONE before the change counts as live. Without this, an
+  // undo of "About LoudFace" -> "About LoudFace today" looks live at once,
+  // because the restored words are still inside the old ones. A short string
+  // or one that is part of a needle is skipped: it could never disappear.
+  const absent = strings(body?.absent);
+  if (!path.startsWith('/') || path.startsWith('//') || !needles.length || needles.length > 50 || absent.length > 50) {
     return Response.json({ error: 'Bad request' }, { status: 400 });
   }
 
@@ -69,9 +76,11 @@ export async function POST(request: Request) {
   }
 
   const page = visibleText(html);
-  const found = needles.map((needle) => {
-    const wanted = normalize(needle);
-    return wanted.length === 0 || page.includes(wanted);
-  });
-  return Response.json({ ok: true, status: 200, found, live: found.every(Boolean) });
+  const wantedAll = needles.map(normalize);
+  const found = wantedAll.map((wanted) => wanted.length === 0 || page.includes(wanted));
+  const gone = absent
+    .map(normalize)
+    .filter((old) => old.length >= 12 && !wantedAll.some((wanted) => wanted.includes(old)))
+    .map((old) => !page.includes(old));
+  return Response.json({ ok: true, status: 200, found, gone, live: found.every(Boolean) && gone.every(Boolean) });
 }
