@@ -272,9 +272,13 @@ export function ProofRail({
 
       {playable.length > 0 && (
         <div>
-          <RailLabel>In their own words</RailLabel>
-          <div className="mt-3">
-            <ProposalClipStrip clips={playable} variant={clipsVariant} />
+          {clipsVariant === 'grid' && <RailLabel>In their own words</RailLabel>}
+          <div className={clipsVariant === 'grid' ? 'mt-3' : ''}>
+            <ProposalClipStrip
+              clips={playable}
+              variant={clipsVariant}
+              label={clipsVariant === 'grid' ? undefined : <RailLabel>In their own words</RailLabel>}
+            />
           </div>
         </div>
       )}

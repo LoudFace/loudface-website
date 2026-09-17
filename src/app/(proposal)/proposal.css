@@ -305,43 +305,38 @@
 /* ── The clip strip ────────────────────────────────────────────────────
    Same rules as the review marquee: it moves for a mouse, pauses under one,
    and is a plain row for touch, reduced motion and paper. */
+/* The clip strip. A scroll-snap row paged by two arrows on its label row;
+   touch scrolls it natively. The scrollbar is hidden because the arrows are
+   the affordance, and the tiles are what show there is more. */
 .proposal-strip {
-  overflow: hidden;
-  -webkit-mask-image: linear-gradient(to right, transparent 0, #000 4%, #000 96%, transparent 100%);
-  mask-image: linear-gradient(to right, transparent 0, #000 4%, #000 96%, transparent 100%);
+  overflow-x: auto;
+  overflow-y: hidden;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.proposal-strip::-webkit-scrollbar {
+  display: none;
 }
 
 .proposal-strip-track {
   display: flex;
   width: max-content;
-  animation-name: proposal-strip-scroll;
-  animation-timing-function: linear;
-  animation-iteration-count: infinite;
-  will-change: transform;
 }
 
 .proposal-strip-item {
   margin-right: 18px;
+  scroll-snap-align: start;
 }
 
-.proposal-strip:hover .proposal-strip-track,
-.proposal-strip:focus .proposal-strip-track,
-.proposal-strip:focus-within .proposal-strip-track {
-  animation-play-state: paused;
+.proposal-strip-item:last-child {
+  margin-right: 0;
 }
 
 .proposal-strip:focus-visible {
   outline: 2px solid var(--color-primary-500);
   outline-offset: 2px;
-}
-
-@keyframes proposal-strip-scroll {
-  from {
-    transform: translate3d(0, 0, 0);
-  }
-  to {
-    transform: translate3d(-50%, 0, 0);
-  }
 }
 
 /* The clip modal. A native <dialog>, so Esc and focus trapping are free. */
@@ -368,23 +363,6 @@
 
 .proposal-dialog-inner {
   padding: 0;
-}
-
-@media (prefers-reduced-motion: reduce), (hover: none), (pointer: coarse) {
-  .proposal-strip {
-    overflow-x: auto;
-    -webkit-mask-image: none;
-    mask-image: none;
-    padding-inline: 1.25rem;
-  }
-
-  .proposal-strip-track {
-    animation: none;
-  }
-
-  .proposal-strip-dup {
-    display: none !important;
-  }
 }
 
 @media print {

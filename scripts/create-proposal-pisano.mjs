@@ -152,7 +152,7 @@ const clipStrip = {
 const proofRail = {
   heading: 'Reviewed on',
   platforms: withKeys([
-    { _type: 'reviewPlatform', platform: 'clutch', rating: 5, reviewCount: 1, note: 'verified', url: 'https://clutch.co/profile/loudface' },
+    { _type: 'reviewPlatform', platform: 'clutch', rating: 5, reviewCount: 2, note: 'verified', url: 'https://clutch.co/profile/loudface' },
     { _type: 'reviewPlatform', platform: 'google', rating: 5, reviewCount: 4, url: 'https://share.google/YNQOFTomnSaSIlSgb' },
     { _type: 'reviewPlatform', platform: 'trustpilot', rating: 4.3, reviewCount: 9, note: 'every one 5 stars', url: 'https://www.trustpilot.com/review/loudface.co' },
   ]),

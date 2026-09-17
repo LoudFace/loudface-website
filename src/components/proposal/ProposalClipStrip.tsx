@@ -15,19 +15,72 @@ import type { ProposalRailClip } from '@/sanity/lib/proposalsClient';
  * `variant="grid"` is the alternative: native-shape tiles packed two across.
  * Honest about the shapes, but taller and more ragged.
  *
- * The strip is CSS scroll-snap — no carousel library. The lightbox is a
- * native <dialog>: Escape closes it, focus is trapped, the backdrop is free.
- * Nothing downloads until a clip is opened.
+ * The strip is a CSS scroll-snap row — no carousel library — with two
+ * minimal arrows on the label row that page it one tile at a time. Each arrow
+ * hides at its own end so the row never looks like it has more than it does
+ * (Arnel, 2026-09-18: readers could not tell the strip scrolled). The lightbox
+ * is a native <dialog>: Escape closes it, focus is trapped, the backdrop is
+ * free. Nothing downloads until a clip is opened.
  */
 export function ProposalClipStrip({
   clips,
   variant = 'strip',
+  label,
 }: {
   clips: ProposalRailClip[];
   variant?: 'strip' | 'grid';
+  /** Small-caps label drawn on the same row as the arrows. */
+  label?: React.ReactNode;
 }) {
   const [open, setOpen] = useState<ProposalRailClip | null>(null);
   const dialogRef = useRef<HTMLDialogElement>(null);
+  const stripRef = useRef<HTMLDivElement>(null);
+  const [ends, setEnds] = useState({ atStart: true, atEnd: true });
+
+  // Which arrows to show: read the real scroll position, never assume from
+  // the clip count, because tile width depends on the rail width.
+  useEffect(() => {
+    const el = stripRef.current;
+    if (!el || variant !== 'strip') return;
+    const read = () => {
+      const max = el.scrollWidth - el.clientWidth;
+      setEnds({ atStart: el.scrollLeft <= 2, atEnd: el.scrollLeft >= max - 2 });
+    };
+    read();
+    el.addEventListener('scroll', read, { passive: true });
+    const ro = new ResizeObserver(read);
+    ro.observe(el);
+    return () => {
+      el.removeEventListener('scroll', read);
+      ro.disconnect();
+    };
+  }, [variant, clips.length]);
+
+  const page = (dir: 1 | -1) => {
+    const el = stripRef.current;
+    if (!el) return;
+    // One tile plus its gap, measured from the first two tiles so the step
+    // stays right whatever the stylesheet sets.
+    const items = el.querySelectorAll<HTMLElement>('.proposal-strip-item');
+    const step =
+      items.length > 1 ? items[1].offsetLeft - items[0].offsetLeft : el.clientWidth * 0.8;
+    el.scrollBy({ left: dir * step, behavior: 'smooth' });
+  };
+
+  const arrow = (dir: 1 | -1, hidden: boolean) => (
+    <button
+      type="button"
+      onClick={() => page(dir)}
+      aria-label={dir === 1 ? 'Next clip' : 'Previous clip'}
+      tabIndex={hidden ? -1 : 0}
+      className={`flex h-6 w-6 items-center justify-center rounded-full border border-surface-200 bg-white text-surface-700 transition-opacity hover:border-surface-400 hover:text-surface-950 ${hidden ? 'pointer-events-none opacity-0' : 'opacity-100'}`}
+      data-print="hide"
+    >
+      <svg width="10" height="10" viewBox="0 0 10 10" fill="none" aria-hidden="true">
+        <path d={dir === 1 ? 'M3.5 1.5 7 5l-3.5 3.5' : 'M6.5 1.5 3 5l3.5 3.5'} stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" />
+      </svg>
+    </button>
+  );
 
   useEffect(() => {
     const d = dialogRef.current;
@@ -96,13 +149,26 @@ export function ProposalClipStrip({
           )}
         </div>
       ) : (
-        <div className="proposal-strip" data-print-keep>
-          <div className="proposal-strip-track">
-            {clips.map((clip) => (
-              <div key={clip._key} className="proposal-strip-item">
-                {tile(clip, 'aspect-[4/5]')}
-              </div>
-            ))}
+        <div data-print-keep>
+          {(label || clips.length > 1) && (
+            <div className="mb-3 flex items-center justify-between gap-3">
+              <div className="min-w-0">{label}</div>
+              {clips.length > 1 && (
+                <div className="flex shrink-0 items-center gap-1.5" data-print="hide">
+                  {arrow(-1, ends.atStart)}
+                  {arrow(1, ends.atEnd)}
+                </div>
+              )}
+            </div>
+          )}
+          <div ref={stripRef} className="proposal-strip">
+            <div className="proposal-strip-track">
+              {clips.map((clip) => (
+                <div key={clip._key} className="proposal-strip-item">
+                  {tile(clip, 'aspect-[4/5]')}
+                </div>
+              ))}
+            </div>
           </div>
         </div>
       )}
