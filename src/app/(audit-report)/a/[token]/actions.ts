@@ -62,5 +62,5 @@ export async function unlockAudit(
     maxAge: ACCESS_COOKIE_MAX_AGE,
   });
 
-  redirect(`/a/${token}`);
+  redirect(`/a/${token}?unlocked=1`);
 }

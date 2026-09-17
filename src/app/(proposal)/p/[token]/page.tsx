@@ -98,6 +98,8 @@ export default async function ProposalPage({ params, searchParams }: ProposalPag
       <ProposalAnalytics
         token={token}
         clientName={proposal.clientName}
+        readerEmail={proposal.readerEmail}
+        readerName={proposal.preparedFor?.[0]}
         state="unlocked"
         justUnlocked={query?.unlocked === '1'}
       />

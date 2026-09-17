@@ -310,6 +310,8 @@ export interface Proposal {
   proofRail?: ProposalProofRail;
   sections?: ProposalSection[];
   contactEmail?: string;
+  /** The reader's own email. Used only to identify them in analytics. */
+  readerEmail?: string;
 }
 
 /* ── Queries ──────────────────────────────────────────────────────────── */
@@ -326,7 +328,7 @@ const GATE_QUERY = `*[_type == "proposal" && token == $token][0]{
 /** Runs only after the cookie has been verified. */
 const CONTENT_QUERY = `*[_type == "proposal" && token == $token][0]{
   title, clientName, preparedFor, token, validUntil, status,
-  heroSummary, heroQuote, heroQuoteBy, priceLine, contactEmail,
+  heroSummary, heroQuote, heroQuoteBy, priceLine, contactEmail, readerEmail,
   clipStrip{ heading, clips[]{ _key, videoUrl, posterUrl, label, orientation, name, duration } },
   proofRail{
     heading, quotesHeading,
@@ -464,6 +466,8 @@ export interface Audit {
   measuredOn?: string;
   sections?: AuditSection[];
   contactEmail?: string;
+  /** The reader's own email. Used only to identify them in analytics. */
+  readerEmail?: string;
 }
 
 const AUDIT_GATE_QUERY = `*[_type == "audit" && token == $token][0]{
@@ -473,7 +477,7 @@ const AUDIT_GATE_QUERY = `*[_type == "audit" && token == $token][0]{
 /** Runs only after the cookie has been verified. */
 const AUDIT_CONTENT_QUERY = `*[_type == "audit" && token == $token][0]{
   title, clientName, preparedFor, token, validUntil, status,
-  eyebrow, headline, standfirst, subject, measuredOn, contactEmail,
+  eyebrow, headline, standfirst, subject, measuredOn, contactEmail, readerEmail,
   sections[]{
     ...,
     tiles[]{ _key, value, label, tone },

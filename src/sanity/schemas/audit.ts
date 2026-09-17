@@ -569,6 +569,14 @@ const audit = defineType({
       group: 'content',
       initialValue: 'arnel@loudface.co',
     }),
+    defineField({
+      name: 'readerEmail',
+      title: 'Reader email',
+      type: 'string',
+      group: 'content',
+      description: 'The person this goes to. Once they unlock the page, PostHog files the visit and the session replay under this email.',
+      validation: (rule) => rule.email(),
+    }),
   ],
   preview: {
     select: { title: 'title', clientName: 'clientName', status: 'status' },

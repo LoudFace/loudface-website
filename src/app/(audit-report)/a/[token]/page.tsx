@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import { cookies } from 'next/headers';
 import { notFound } from 'next/navigation';
 import { AuditDocument } from '@/components/audit-report/AuditDocument';
+import { ProposalAnalytics } from '@/components/proposal/ProposalAnalytics';
 import { isProposalLive, verifyAccessCookie } from '@/lib/proposal-access';
 import { auditCookieName, isValidProposalToken } from '@/lib/proposal-token';
 import { fetchAuditContent, fetchAuditGate } from '@/sanity/lib/proposalsClient';
@@ -54,9 +55,10 @@ export function generateMetadata(): Metadata {
 
 interface AuditPageProps {
   params: Promise<{ token: string }>;
+  searchParams?: Promise<Record<string, string | string[] | undefined>>;
 }
 
-export default async function AuditPage({ params }: AuditPageProps) {
+export default async function AuditPage({ params, searchParams }: AuditPageProps) {
   const { token } = await params;
 
   // Shape check first — a junk URL should never reach the Content Lake.
@@ -73,10 +75,32 @@ export default async function AuditPage({ params }: AuditPageProps) {
   );
 
   // Nothing below this point knows anything about the audit but its token.
-  if (!unlocked) return <AccessGate token={token} />;
+  if (!unlocked) {
+    return (
+      <>
+        <AccessGate token={token} />
+        <ProposalAnalytics token={token} surface="audit" state="locked" />
+      </>
+    );
+  }
 
   const audit = await fetchAuditContent(token);
   if (!audit) notFound();
 
-  return <AuditDocument audit={audit} />;
+  const query = await searchParams;
+
+  return (
+    <>
+      <AuditDocument audit={audit} />
+      <ProposalAnalytics
+        token={token}
+        surface="audit"
+        clientName={audit.clientName}
+        readerEmail={audit.readerEmail}
+        readerName={audit.preparedFor?.[0]}
+        state="unlocked"
+        justUnlocked={query?.unlocked === '1'}
+      />
+    </>
+  );
 }

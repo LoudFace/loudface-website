@@ -1016,6 +1016,14 @@ const proposal = defineType({
       validation: (rule) => rule.email(),
     }),
     defineField({
+      name: 'readerEmail',
+      title: 'Reader email',
+      type: 'string',
+      group: 'access',
+      description: 'The person this goes to. Once they unlock the page, PostHog files the visit and the session replay under this email.',
+      validation: (rule) => rule.email(),
+    }),
+    defineField({
       name: 'heroSummary',
       title: 'Hero summary',
       type: 'proposalRichText',
