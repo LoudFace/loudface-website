@@ -111,9 +111,19 @@ export async function readFileAt(repo: Repo, path: string, ref: string): Promise
   return Buffer.from(data.content, 'base64').toString('utf8');
 }
 
+/**
+ * One file in a commit: text for a content file, base64 for an uploaded image.
+ *
+ * The blob API takes either, as long as the `encoding` field says which. Sending
+ * a picture as `utf-8` does not fail — it silently mangles every byte above 127,
+ * which is most of a JPEG — so the two cases are separate shapes here rather
+ * than a string plus a flag someone can forget to set.
+ */
+export type CommitFile = { text: string } | { base64: string };
+
 export type CommitInput = {
   parent: string;
-  files: Record<string, string>; // path -> new text
+  files: Record<string, CommitFile>; // path -> new content
   message: string;
   author: { name: string; email: string };
 };
@@ -126,7 +136,11 @@ export async function commitFiles(repo: Repo, input: CommitInput): Promise<strin
     Object.entries(input.files).map(async ([path, content]) => {
       const blob = await api<{ sha: string }>(`${base(repo)}/git/blobs`, {
         method: 'POST',
-        body: JSON.stringify({ content, encoding: 'utf-8' }),
+        body: JSON.stringify(
+          'text' in content
+            ? { content: content.text, encoding: 'utf-8' }
+            : { content: content.base64, encoding: 'base64' },
+        ),
       });
       return { path, mode: '100644', type: 'blob', sha: blob.sha };
     }),

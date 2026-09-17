@@ -21,6 +21,8 @@ import { getEditorWriteClient } from '../sanity.client';
 import { cleanValue } from './sanitize';
 import { applyTextReplacements, parseBodyEdit } from './body-edit';
 import { pathsFor } from '../revalidate-paths';
+import { findAssetRefs, SANITY_ASSET_ID, sharedAssetRefusal } from './image-edit';
+import type { ImageUndoEntry } from './session';
 
 /**
  * One value to write. `exact` skips cleaning and is set by the server alone,
@@ -148,11 +150,162 @@ export async function publishSanity(changes: SanityChange[], editor: string): Pr
     applied.push({ id: change.id, before, after, documentId: publishedId, type, body: isBodyPath(path) });
   }
 
-  const { revalidatePath } = await import('next/cache');
-  for (const key of revalidated) {
-    const [type, slug] = key.split(':');
-    for (const path of pathsFor(type, slug || undefined)) revalidatePath(path);
-  }
+  await revalidateDocuments(revalidated);
 
   return applied;
+}
+
+/**
+ * Refresh every page a set of documents renders onto. `keys` are `type:slug`
+ * pairs, the same shape the webhook's `pathsFor` takes, so a Sanity edit made
+ * from the page and one made in Studio invalidate exactly the same routes.
+ */
+async function revalidateDocuments(keys: Set<string>): Promise<void> {
+  if (!keys.size) return;
+  const { revalidatePath } = await import('next/cache');
+  for (const key of keys) {
+    const separator = key.indexOf(':');
+    const type = key.slice(0, separator);
+    const slug = key.slice(separator + 1);
+    for (const path of pathsFor(type, slug || undefined)) revalidatePath(path);
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Images
+// ---------------------------------------------------------------------------
+
+/**
+ * A Sanity document as we need it here: its own fields, whatever they are,
+ * because the picture could be at any path and we have to go and look.
+ */
+type SanityDoc = Record<string, unknown> & { _id: string; _type?: string };
+
+/**
+ * A path this module is willing to patch.
+ *
+ * Every path it patches was produced by its own walk over a document it just
+ * read, so this is a second lock on a door that is already shut — but the paths
+ * also travel to the browser inside an undo token and come back, and a signature
+ * proves who wrote a value, not that the value is sane.
+ */
+const ASSET_PATH = /^[A-Za-z0-9_]+(?:\[(?:\d+|_key=="[^"\\]*")\]|\.[A-Za-z0-9_]+)*\.asset\._ref$/;
+
+export type ImageReplaced = {
+  newAssetId: string;
+  /** The new picture's address on Sanity's CDN, so the editor can watch for it. */
+  url: string;
+  /** How many fields now point at the new asset, drafts counted separately. */
+  replaced: number;
+  /** What each of those fields pointed at before, for the undo token. */
+  previous: ImageUndoEntry[];
+};
+
+/** Which pages a document renders onto, as the `type:slug` key `revalidateDocuments` takes. */
+const routeKey = (doc: SanityDoc): string => {
+  const slug = (doc.slug as { current?: unknown } | undefined)?.current;
+  return `${doc._type ?? 'unknown'}:${typeof slug === 'string' ? slug : ''}`;
+};
+
+/** A draft's id is the published id with `drafts.` in front; strip it to compare. */
+const publishedOf = (id: string) => (id.startsWith('drafts.') ? id.slice('drafts.'.length) : id);
+
+/**
+ * Replace one Sanity image everywhere it is used, from a file the editor chose.
+ *
+ * Sanity assets are immutable and content-addressed: the bytes decide the id and
+ * the URL, so there is no such thing as overwriting a picture in place. The
+ * replacement is therefore an upload followed by a re-point of every reference,
+ * on the published document and on its draft where one exists, so the live site
+ * and the Studio never disagree about which image this is.
+ *
+ * The old asset is left alone. Deleting it would break any document we did not
+ * look at, and Sanity bills for storage, not for tidiness.
+ */
+export async function replaceImageAsset(
+  assetId: string,
+  bytes: Buffer,
+  filename: string,
+  contentType: string,
+): Promise<ImageReplaced> {
+  if (!SANITY_ASSET_ID.test(assetId)) throw new Error(`Bad Sanity asset id: ${assetId}`);
+  const client = getEditorWriteClient();
+
+  // Published documents only: a draft is found through its published id below,
+  // and counting both would make a single page look like two places.
+  const documents = await client.fetch<SanityDoc[]>(
+    `*[!(_id in path("drafts.**")) && references($assetId)]`,
+    { assetId },
+  );
+  if (!documents.length) {
+    throw new Error('That image is not used by any published page, so there is nothing to replace');
+  }
+  const refusal = sharedAssetRefusal(documents.length);
+  if (refusal) throw new Error(refusal);
+
+  const draftIds = documents.map((doc) => `drafts.${doc._id}`);
+  const drafts = await client.fetch<SanityDoc[]>(`*[_id in $ids]`, { ids: draftIds });
+
+  // Upload only once the document side is known to be safe: an upload cannot be
+  // taken back, and a refusal after it would leave an orphan asset behind.
+  const asset = await client.assets.upload('image', bytes, { filename, contentType });
+
+  const previous: ImageUndoEntry[] = [];
+  const routes = new Set<string>();
+  const byRoute = new Map(documents.map((doc) => [doc._id, routeKey(doc)]));
+
+  for (const doc of [...documents, ...drafts]) {
+    const paths = findAssetRefs(doc, assetId).filter((path) => ASSET_PATH.test(path));
+    if (!paths.length) continue;
+
+    const set: Record<string, string> = {};
+    for (const path of paths) {
+      set[path] = asset._id;
+      previous.push({ documentId: doc._id, path, previousRef: assetId });
+    }
+    await client.patch(doc._id).set(set).commit({ autoGenerateArrayKeys: true });
+    routes.add(byRoute.get(publishedOf(doc._id)) ?? routeKey(doc));
+  }
+
+  if (!previous.length) {
+    throw new Error('That image could not be found on the page it belongs to; change it in Studio');
+  }
+
+  await revalidateDocuments(routes);
+  return { newAssetId: asset._id, url: asset.url, replaced: previous.length, previous };
+}
+
+/**
+ * Put previous image references back, exactly as they were.
+ *
+ * The entries come out of a token this server signed, so the refs are written
+ * verbatim — the same rule the text undo follows. Returns the asset ids that are
+ * on the page again, which is what the status light then looks for.
+ */
+export async function restoreImageAssets(
+  entries: ImageUndoEntry[],
+): Promise<{ restored: number; refs: string[] }> {
+  const client = getEditorWriteClient();
+
+  const byDocument = new Map<string, Record<string, string>>();
+  for (const entry of entries) {
+    if (!ASSET_PATH.test(entry.path)) throw new Error(`Bad Sanity path: ${entry.path}`);
+    if (!DOC_ID.test(entry.documentId)) throw new Error(`Bad Sanity document id: ${entry.documentId}`);
+    if (!SANITY_ASSET_ID.test(entry.previousRef)) throw new Error(`Bad Sanity asset id: ${entry.previousRef}`);
+    const set = byDocument.get(entry.documentId) ?? {};
+    set[entry.path] = entry.previousRef;
+    byDocument.set(entry.documentId, set);
+  }
+
+  let restored = 0;
+  for (const [documentId, set] of byDocument) {
+    await client.patch(documentId).set(set).commit({ autoGenerateArrayKeys: true });
+    restored += Object.keys(set).length;
+  }
+
+  const ids = [...byDocument.keys()].map(publishedOf);
+  const documents = await client.fetch<SanityDoc[]>(`*[_id in $ids]`, { ids });
+  await revalidateDocuments(new Set(documents.map(routeKey)));
+
+  return { restored, refs: [...new Set(entries.map((entry) => entry.previousRef))] };
 }

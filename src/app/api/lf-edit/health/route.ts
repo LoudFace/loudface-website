@@ -36,5 +36,9 @@ export async function GET() {
     email: { sender: Boolean(process.env.LF_EDIT_FROM), resendKey: Boolean(process.env.RESEND_API_KEY) },
     siteUrl: Boolean(process.env.LF_SITE_URL),
     sanityWriteToken: Boolean(process.env.LF_SANITY_WRITE_TOKEN),
+    // Replacing a picture from the page. It needs nothing of its own: a Sanity
+    // image rides on `sanityWriteToken`, a content image on the GitHub
+    // credentials above, so this says the route is here and nothing more.
+    imageUploads: true,
   });
 }

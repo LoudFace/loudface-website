@@ -24,10 +24,11 @@ import 'server-only';
  * gave it. A later edit is never silently overwritten.
  */
 import { execFile } from 'node:child_process';
-import { readFile, writeFile } from 'node:fs/promises';
+import { mkdir, readFile, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 import { promisify } from 'node:util';
 import { applyToText, parseId, readField } from './content-text';
+import { UPLOAD_DIR } from './image-edit';
 import {
   commitDetail,
   commitFiles,
@@ -36,6 +37,7 @@ import {
   headSha,
   readFileAt,
   repoFromEnv,
+  type CommitFile,
   type Repo,
 } from './github';
 
@@ -44,6 +46,13 @@ const run = promisify(execFile);
 const ROOT = process.cwd();
 const CONTENT_DIR = path.join(ROOT, 'src', 'data', 'content');
 const CONTENT_PREFIX = 'src/data/content/';
+/**
+ * The one folder outside the content files a publish may also write to: images
+ * an editor uploaded from the page. Undo puts the JSON path back; the picture
+ * itself stays where it is, because nothing else in the repository can tell
+ * whether some other page started pointing at it in the meantime.
+ */
+const UPLOAD_PREFIX = `${UPLOAD_DIR}/`;
 const TRAILER = 'LF-Changes';
 
 /**
@@ -62,6 +71,12 @@ export { applyToText, readField } from './content-text';
  */
 export type Change = { id: string; value: string; exact?: boolean };
 export type Applied = { id: string; file: string; path: string; before: string; after: string };
+/**
+ * A file that rides along in the same commit as the content change that points
+ * at it — today only an uploaded image. One commit, so a page never goes live
+ * naming a picture the repository does not have yet.
+ */
+export type ExtraFile = { path: string; base64: string };
 export type Mode = 'git' | 'github';
 /** What an undo put back on the page: each field and the text it now carries again. */
 export type Undone = { hash: string; restored: Change[]; removed: Change[] };
@@ -101,6 +116,14 @@ async function applyAll(
   const files: Record<string, string> = {};
   for (const [file, text] of texts) files[`${CONTENT_PREFIX}${file}.json`] = text;
   return { files, applied };
+}
+
+/** The content files as text plus any uploaded files as bytes, ready for one commit. */
+function commitMap(texts: Record<string, string>, extras: ExtraFile[] = []): Record<string, CommitFile> {
+  const out: Record<string, CommitFile> = {};
+  for (const [file, text] of Object.entries(texts)) out[file] = { text };
+  for (const extra of extras) out[extra.path] = { base64: extra.base64 };
+  return out;
 }
 
 // ---------------------------------------------------------------------------
@@ -175,6 +198,14 @@ function toPublishes(
 
 const author = (editor: string) => ({ name: `${editor.split('@')[0]} (site editor)`, email: editor });
 
+/**
+ * May undo touch this file? Content files, yes. Images an editor uploaded from
+ * the page, yes: the commit that added one also changed the JSON path pointing
+ * at it, and putting that path back is the whole undo. Anything else is code,
+ * and code is undone in code.
+ */
+const isUndoable = (file: string) => file.startsWith(CONTENT_PREFIX) || file.startsWith(UPLOAD_PREFIX);
+
 // ---------------------------------------------------------------------------
 // Backend: the working copy (development)
 // ---------------------------------------------------------------------------
@@ -185,15 +216,23 @@ async function git(args: string[]): Promise<string> {
 }
 
 const localStore = {
-  async publish(changes: Change[], editor: string): Promise<{ hash: string; applied: Applied[] }> {
+  async publish(
+    changes: Change[],
+    editor: string,
+    extras: ExtraFile[] = [],
+  ): Promise<{ hash: string; applied: Applied[] }> {
     const { files, applied } = await applyAll(changes, (file) =>
       readFile(path.join(CONTENT_DIR, `${file}.json`), 'utf8'),
     );
     const real = applied.filter((change) => change.before !== change.after);
-    if (!real.length) return { hash: '', applied };
+    if (!real.length && !extras.length) return { hash: '', applied };
 
     for (const [file, text] of Object.entries(files)) await writeFile(path.join(ROOT, file), text, 'utf8');
-    const paths = Object.keys(files);
+    for (const extra of extras) {
+      await mkdir(path.dirname(path.join(ROOT, extra.path)), { recursive: true });
+      await writeFile(path.join(ROOT, extra.path), Buffer.from(extra.base64, 'base64'));
+    }
+    const paths = [...Object.keys(files), ...extras.map((extra) => extra.path)];
     await git(['add', ...paths]);
     if (!(await git(['status', '--porcelain', '--', ...paths]))) return { hash: '', applied };
 
@@ -223,7 +262,7 @@ const localStore = {
   async undo(hash: string, editor: string): Promise<Undone> {
     if (!/^[0-9a-f]{7,40}$/.test(hash)) throw new Error('Not a commit');
     const touched = (await git(['show', '--name-only', '--format=', hash])).split('\n').filter(Boolean);
-    const outside = touched.filter((file) => !file.startsWith(CONTENT_PREFIX));
+    const outside = touched.filter((file) => !isUndoable(file));
     if (outside.length) throw new Error(`That change also touched ${outside[0]}; undo it in code, not here`);
     const recorded = trailerOf(await git(['show', '--no-patch', '--format=%B', hash])) ?? [];
     const who = author(editor);
@@ -251,7 +290,7 @@ function repo(): Repo {
 /** Build and push a commit on the current head; retry once if the branch moved meanwhile. */
 async function commitOnHead(
   target: Repo,
-  build: (head: string) => Promise<{ files: Record<string, string>; message: string } | null>,
+  build: (head: string) => Promise<{ files: Record<string, CommitFile>; message: string } | null>,
   editor: string,
 ): Promise<string> {
   for (let attempt = 0; attempt < 2; attempt++) {
@@ -270,7 +309,11 @@ async function commitOnHead(
 }
 
 const githubStore = {
-  async publish(changes: Change[], editor: string): Promise<{ hash: string; applied: Applied[] }> {
+  async publish(
+    changes: Change[],
+    editor: string,
+    extras: ExtraFile[] = [],
+  ): Promise<{ hash: string; applied: Applied[] }> {
     const target = repo();
     let applied: Applied[] = [];
     const hash = await commitOnHead(
@@ -278,8 +321,8 @@ const githubStore = {
       async (head) => {
         const result = await applyAll(changes, (file) => readFileAt(target, `${CONTENT_PREFIX}${file}.json`, head));
         applied = result.applied;
-        if (!applied.some((change) => change.before !== change.after)) return null;
-        return { files: result.files, message: messageOf(summaryOf(applied), applied) };
+        if (!applied.some((change) => change.before !== change.after) && !extras.length) return null;
+        return { files: commitMap(result.files, extras), message: messageOf(summaryOf(applied), applied) };
       },
       editor,
     );
@@ -294,7 +337,7 @@ const githubStore = {
     if (!/^[0-9a-f]{7,40}$/.test(hash)) throw new Error('Not a commit');
     const target = repo();
     const detail = await commitDetail(target, hash);
-    const outside = detail.files.filter((file) => !file.startsWith(CONTENT_PREFIX));
+    const outside = detail.files.filter((file) => !isUndoable(file));
     if (outside.length) throw new Error(`That change also touched ${outside[0]}; undo it in code, not here`);
 
     const recorded = trailerOf(detail.message);
@@ -320,7 +363,7 @@ const githubStore = {
         for (const [file, text] of texts) files[`${CONTENT_PREFIX}${file}.json`] = text;
         const summary = detail.message.split('\n')[0];
         return {
-          files,
+          files: commitMap(files),
           message: messageOf(`Revert "${summary}"`, applied, `This reverts commit ${detail.sha}.`),
         };
       },
@@ -350,9 +393,13 @@ function store() {
   return localStore;
 }
 
-/** Publish a batch of changes as one commit. Returns the commit and what changed. */
-export async function publish(changes: Change[], editor: string) {
-  const result = await store().publish(changes, editor);
+/**
+ * Publish a batch of changes as one commit. Returns the commit and what changed.
+ * `extras` are files committed alongside — an uploaded image and the JSON value
+ * naming it land together, so no deploy ever serves a path that is not there.
+ */
+export async function publish(changes: Change[], editor: string, extras: ExtraFile[] = []) {
+  const result = await store().publish(changes, editor, extras);
   return { ...result, mode: mode() };
 }
 

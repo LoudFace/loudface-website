@@ -53,17 +53,32 @@ export async function POST(request: Request) {
 
   if (!(await currentEditor())) return Response.json({ error: 'Sign in first' }, { status: 401 });
 
-  const body = (await request.json().catch(() => null)) as { path?: unknown; needles?: unknown; absent?: unknown } | null;
+  const body = (await request.json().catch(() => null)) as
+    | { path?: unknown; needles?: unknown; absent?: unknown; markup?: unknown }
+    | null;
   const path = typeof body?.path === 'string' ? body.path : '';
   const strings = (value: unknown) =>
     Array.isArray(value) ? (value as unknown[]).filter((n): n is string => typeof n === 'string') : [];
   const needles = strings(body?.needles);
+  /**
+   * Strings that must appear in the page's raw HTML rather than in its words.
+   * A replaced image changes no sentence at all: what changes is an asset id or
+   * a file path inside a `src`, which the visible-text check never sees.
+   */
+  const markup = strings(body?.markup);
   // Words that must be GONE before the change counts as live. Without this, an
   // undo of "About LoudFace" -> "About LoudFace today" looks live at once,
   // because the restored words are still inside the old ones. A short string
   // or one that is part of a needle is skipped: it could never disappear.
   const absent = strings(body?.absent);
-  if (!path.startsWith('/') || path.startsWith('//') || !needles.length || needles.length > 50 || absent.length > 50) {
+  if (
+    !path.startsWith('/') ||
+    path.startsWith('//') ||
+    (!needles.length && !markup.length) ||
+    needles.length > 50 ||
+    absent.length > 50 ||
+    markup.length > 50
+  ) {
     return Response.json({ error: 'Bad request' }, { status: 400 });
   }
 
@@ -85,11 +100,25 @@ export async function POST(request: Request) {
     // A visitor's request: no cookies, so no Draft Mode, and whatever the CDN
     // is serving right now — which is exactly the question being asked.
     const response = await fetch(`${origin}${path}`, { cache: 'no-store', headers: { accept: 'text/html' } });
-    if (!response.ok) return Response.json({ ok: false, status: response.status, found: needles.map(() => false) });
+    if (!response.ok) {
+      return Response.json({
+        ok: false,
+        status: response.status,
+        found: needles.map(() => false),
+        markup: markup.map(() => false),
+      });
+    }
     html = await response.text();
   } catch (error) {
     const detail = process.env.NODE_ENV === 'production' ? undefined : String(error);
-    return Response.json({ ok: false, status: 0, found: needles.map(() => false), origin, detail });
+    return Response.json({
+      ok: false,
+      status: 0,
+      found: needles.map(() => false),
+      markup: markup.map(() => false),
+      origin,
+      detail,
+    });
   }
 
   const page = visibleText(html);
@@ -99,5 +128,17 @@ export async function POST(request: Request) {
     .map(normalize)
     .filter((old) => old.length >= 12 && !wantedAll.some((wanted) => wanted.includes(old)))
     .map((old) => !page.includes(old));
-  return Response.json({ ok: true, status: 200, found, gone, live: found.every(Boolean) && gone.every(Boolean) });
+  // The raw HTML, not the visible text: an image's address is in an attribute,
+  // and `/_next/image?url=…` percent-encodes it, so both forms are accepted.
+  const inMarkup = markup.map(
+    (wanted) => html.includes(wanted) || html.includes(encodeURIComponent(wanted)),
+  );
+  return Response.json({
+    ok: true,
+    status: 200,
+    found,
+    gone,
+    markup: inMarkup,
+    live: found.every(Boolean) && gone.every(Boolean) && inMarkup.every(Boolean),
+  });
 }

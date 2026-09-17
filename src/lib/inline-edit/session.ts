@@ -125,6 +125,49 @@ export function openValue(token: string): { id: string; value: string } | null {
   return { id: data.id, value: data.value };
 }
 
+/**
+ * One field that pointed at an image before it was replaced.
+ *
+ * An image undo cannot work like a text undo: what has to go back is a
+ * reference, in a named field, on a named document — often several of them at
+ * once, because one picture can appear in a document's draft and its published
+ * copy. So the server writes the whole list down, signs it, and only ever
+ * restores refs that come back inside its own signature.
+ */
+export type ImageUndoEntry = { documentId: string; path: string; previousRef: string };
+
+export function sealImageUndo(entries: ImageUndoEntry[]): string {
+  return pack(
+    JSON.stringify({ kind: 'undo-image', entries, expires: Date.now() + UNDO_HOURS * 3_600_000 }),
+  );
+}
+
+/** The fields inside an image undo token, or null: unsigned, altered or expired. */
+export function openImageUndo(token: string): ImageUndoEntry[] | null {
+  const payload = unpack(token);
+  if (!payload) return null;
+  let data: { kind?: unknown; entries?: unknown; expires?: unknown };
+  try {
+    data = JSON.parse(payload);
+  } catch {
+    return null;
+  }
+  if (data.kind !== 'undo-image' || !Array.isArray(data.entries) || !data.entries.length) return null;
+  if (typeof data.expires !== 'number' || data.expires < Date.now()) return null;
+  const entries: ImageUndoEntry[] = [];
+  for (const entry of data.entries as ImageUndoEntry[]) {
+    if (
+      typeof entry?.documentId !== 'string' ||
+      typeof entry?.path !== 'string' ||
+      typeof entry?.previousRef !== 'string'
+    ) {
+      return null;
+    }
+    entries.push({ documentId: entry.documentId, path: entry.path, previousRef: entry.previousRef });
+  }
+  return entries;
+}
+
 export const createSignInToken = (email: string) => seal('signin', email, SIGN_IN_MINUTES);
 export const readSignInToken = (token: string) => open('signin', token);
 export const createSessionToken = (email: string) => seal('session', email, SESSION_HOURS * 60);
