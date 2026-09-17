@@ -124,14 +124,17 @@ export function applyToText(
   if (!after) throw new Error('A value cannot be emptied from the page');
   if (after === before) return { next: raw, before, after };
 
-  // Replace the value in the file's own text so the diff stays one line.
-  const needle = `${JSON.stringify(target.key)}: ${JSON.stringify(before)}`;
+  // Replace the value in the file's own text so the diff stays one line. An
+  // object member is matched with its key; a list item is matched on its own,
+  // as long as the same string appears nowhere else in the file.
+  const inList = Array.isArray(target.parent);
+  const needle = inList ? JSON.stringify(before) : `${JSON.stringify(target.key)}: ${JSON.stringify(before)}`;
   const first = raw.indexOf(needle);
   const unique = first !== -1 && raw.indexOf(needle, first + 1) === -1;
 
   let next: string;
   if (unique) {
-    const replacement = `${JSON.stringify(target.key)}: ${JSON.stringify(after)}`;
+    const replacement = inList ? JSON.stringify(after) : `${JSON.stringify(target.key)}: ${JSON.stringify(after)}`;
     next = raw.slice(0, first) + replacement + raw.slice(first + needle.length);
     JSON.parse(next); // never write a file we cannot read back
   } else {

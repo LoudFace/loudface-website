@@ -45,7 +45,8 @@ function sign(payload: string): string {
 }
 
 function seal(kind: 'signin' | 'session', email: string, minutes: number): string {
-  const payload = `${kind}.${email.toLowerCase()}.${Date.now() + minutes * 60_000}`;
+  // Fields are separated by a pipe: an email address contains dots.
+  const payload = `${kind}|${email.toLowerCase()}|${Date.now() + minutes * 60_000}`;
   return `${Buffer.from(payload).toString('base64url')}.${sign(payload)}`;
 }
 
@@ -58,7 +59,7 @@ function open(kind: 'signin' | 'session', token: string): string | null {
   const given = Buffer.from(signature);
   if (expected.length !== given.length || !timingSafeEqual(expected, given)) return null;
 
-  const [tokenKind, email, expiry] = payload.split('.');
+  const [tokenKind, email, expiry] = payload.split('|');
   if (tokenKind !== kind) return null;
   if (!email || !expiry || Number(expiry) < Date.now()) return null;
   return email;
