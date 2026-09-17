@@ -462,7 +462,7 @@ export const PROOF: { heading: string; cards: ProofCard[] } = {
       label: 'Our own domain',
       headline: 'We ran this method on loudface.co and published the full record.',
       figure: '12.95%',
-      figureLabel: 'of AI answers name us, 30 days to 2 September 2026',
+      figureLabel: 'of AI answers name us across the three engines, 30 days to 2 September 2026. Per engine: ChatGPT 18.1%, Perplexity 12.6%, Google AI Overviews 8.0%.',
       body: (
         <>
           We ran this method on loudface.co and published the{' '}
@@ -471,8 +471,9 @@ export const PROOF: { heading: string; cards: ProofCard[] } = {
           with a June 30-day blend across the three engines of 9.4%. April was 8 brand
           mentions across 2,747 monitored answers. June was 1,434 mentions, on a much larger pool of
           answers. In the 30 days to 2 September 2026, we are named in 12.95% of AI answers on our
-          tracked prompt set, and our average position when cited is 2.8, across a tracked panel of 50
-          brands.
+          tracked prompt set across the three engines together. Per engine, that is 18.1% on ChatGPT,
+          12.6% on Perplexity and 8.0% on Google AI Overviews. Our average position when cited is 2.8,
+          across a tracked panel of 50 brands.
         </>
       ),
       href: '/case-studies/loudface-aeo-case-study',
@@ -480,7 +481,7 @@ export const PROOF: { heading: string; cards: ProofCard[] } = {
       receipts: [
         { term: 'Client', detail: 'LoudFace (our own domain)' },
         { term: 'Prompt', detail: 'Our tracked prompt set for the B2B SaaS growth-agency category' },
-        { term: 'Before to after', detail: '0.18% of AI answers in April 2026 to 12.95%, at an average position of 2.8, against a tracked panel of 50 brands' },
+        { term: 'Before to after', detail: '0.18% of AI answers in April 2026 to 12.95% across the three engines (ChatGPT 18.1%, Perplexity 12.6%, Google AI Overviews 8.0%), at an average position of 2.8, against a tracked panel of 50 brands' },
         { term: 'Engines', detail: 'ChatGPT, Perplexity and Google AI Overviews' },
         { term: 'Window', detail: 'April 2026 to the 30 days ending 2 September 2026' },
         {
