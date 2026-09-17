@@ -1,9 +1,10 @@
 /** CoverCTA — the one dark "cover-stack" closing section: a full-bleed cover image, a floating client card, and the final call. */
 import Image from 'next/image';
+import type { HomeV3CoverCtaContent } from '@/lib/content-utils';
 
 const CDN = 'https://cdn.sanity.io/images/xjjjqhgt/production/';
 
-export function CoverCTA() {
+export function CoverCTA({ content }: { content: HomeV3CoverCtaContent }) {
   return (
     <section className="cover" id="book">
       {/* `.cover-img` is position:absolute;inset:0;width:100%;height:100% — CSS owns
@@ -23,16 +24,16 @@ export function CoverCTA() {
       <div className="cover-veil" aria-hidden="true"></div>
       <div className="container cover-in">
         <div className="cover-meta rv">
-          <span>LoudFace — strategy call</span>
-          <span>B2B SaaS only</span>
+          <span>{content.metaLeft}</span>
+          <span>{content.metaRight}</span>
         </div>
         <div className="cover-mid">
           <div className="cover-obj" aria-hidden="true">
             <div className="cover-card">
-              <div className="bar"><b></b><b></b><b></b><span>liqid.de</span></div>
+              <div className="bar"><b></b><b></b><b></b><span>{content.cardDomain}</span></div>
               <div className="shot">
                 {/* Fixed-size card (~390px, hidden on mobile) — no `sizes`, so the
-                    default 1x/2x srcset applies and the w=1000 source caps it. */}
+                    default 1x/2x candidate applies and the w=1000 source caps it. */}
                 <Image
                   src={`${CDN}5f21404454406eee90732e4e1c8655e0c8c6013b-3024x3629.webp?w=1000&h=640&fit=crop&crop=top&fm=webp&q=82`}
                   alt=""
@@ -42,21 +43,21 @@ export function CoverCTA() {
                   loading="lazy"
                 />
               </div>
-              <span className="rpill"><i></i><b>100+ pages launched</b><span>LIQID</span></span>
+              <span className="rpill"><i></i><b>{content.cardBadge}</b><span>{content.cardBadgeClient}</span></span>
             </div>
           </div>
-          <h2 className="rv">Let’s figure out what’s holding your site back.</h2>
+          <h2 className="rv">{content.headline}</h2>
           <p className="rv" style={{ transitionDelay: '.08s' }}>
-            30-minute strategy call. No pitch deck. We’ll look at your site together and tell you what we’d change and why.
+            {content.body}
           </p>
           <div className="cover-cta rv" style={{ transitionDelay: '.16s' }}>
-            <a href="#book-modal" data-cal-trigger="" className="btn btn-white btn-lg">Book a strategy call</a>
-            <span className="slots"><i className="dot"></i>2h response time</span>
+            <a href="#book-modal" data-cal-trigger="" className="btn btn-white btn-lg">{content.ctaText}</a>
+            <span className="slots"><i className="dot"></i>{content.responseTime}</span>
           </div>
         </div>
         <div className="cover-credit rv">
-          <span>Cover — Montblanc, built by LoudFace</span>
-          <span>loudface.co</span>
+          <span>{content.creditLeft}</span>
+          <span>{content.creditRight}</span>
         </div>
       </div>
     </section>

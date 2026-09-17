@@ -44,6 +44,7 @@ import seoForHubContent from "@/data/content/seo-for-hub.json";
 import seoForSaasContent from "@/data/content/seo-for-saas.json";
 import seoForB2bContent from "@/data/content/seo-for-b2b.json";
 import homepageContent from "@/data/content/homepage.json";
+import homepageV3Content from "@/data/content/homepage-v3.json";
 import pricingContent from "@/data/content/pricing.json";
 import contactContent from "@/data/content/contact.json";
 import servicesContent from "@/data/content/services.json";
@@ -377,6 +378,195 @@ export interface AboutContent {
   awards: AboutAwardsContent;
   faq: AboutFaqContent;
   coverCta: AboutCoverCtaContent;
+}
+
+/**
+ * Homepage v3 (home-v3/*) content shape. Case-study slugs, image assets, CSS
+ * classes, and layout flags (wide/delay/live/kind) stay curated in the
+ * components — only the human-readable copy lives here.
+ */
+export interface HomeV3HeroVariantContent {
+  eyebrowLabel: string;
+  eyebrowNote: string;
+  headline: string;
+  /** Renders a <br /> after `headline` when true (the "test" variant only). */
+  headlineBreak: boolean;
+  /** Text between the break and the highlighted span, e.g. "Make sure it ". */
+  headlineHighlightPrefix: string;
+  /** Rendered inside <span className="soft">; empty string renders nothing. */
+  headlineHighlight: string;
+  sub: string;
+  ctaText: string;
+  responseTime: string;
+  aiRowLabel: string;
+}
+
+export interface HomeV3WorkCard {
+  metric: string;
+  clientLabel: string;
+}
+
+export interface HomeV3HeroContent {
+  control: HomeV3HeroVariantContent;
+  test: HomeV3HeroVariantContent;
+  work: {
+    colA: HomeV3WorkCard[];
+    colB: HomeV3WorkCard[];
+  };
+}
+
+export interface HomeV3LogosContent {
+  label: string;
+}
+
+export interface HomeV3Plate {
+  /** Kept as HTML (rendered via dangerouslySetInnerHTML) to preserve &mdash;/&rsquo; entities verbatim. */
+  heading: string;
+  body: string;
+}
+
+export interface HomeV3ProblemContent {
+  eyebrow: string;
+  headline: string;
+  ruleTag: string;
+  bandText: string;
+  bandCtaText: string;
+  /** Exactly 5, matching PLATES order in home-v3/_plates.ts. */
+  plates: HomeV3Plate[];
+}
+
+export interface HomeV3Capability {
+  label: string;
+}
+
+export interface HomeV3Phase {
+  phase: string;
+  word: string;
+  body: string;
+  detail: string;
+  capabilities: HomeV3Capability[];
+}
+
+export interface HomeV3WhatWeDoContent {
+  eyebrow: string;
+  headline: string;
+  sub: string;
+  connectText: string;
+  /** Exactly 2: grow, then deliver — matching PHASES order in home-v3/WhatWeDo.tsx. */
+  phases: HomeV3Phase[];
+}
+
+export interface HomeV3SelectedWorkTile {
+  metric: string;
+  clientLabel: string;
+}
+
+export interface HomeV3SelectedWorkContent {
+  eyebrow: string;
+  headline: string;
+  sub: string;
+  ctaText: string;
+  /** Exactly 7, matching TILES order in home-v3/SelectedWork.tsx. */
+  tiles: HomeV3SelectedWorkTile[];
+}
+
+export interface HomeV3StatTile {
+  value: string;
+  label: string;
+  description: string;
+  tagClient: string;
+  tagLabel: string;
+}
+
+export interface HomeV3QuoteTile {
+  quote: string;
+  who: string;
+}
+
+export interface HomeV3ResultsContent {
+  headline: string;
+  statTiles: HomeV3StatTile[];
+  quoteTiles: HomeV3QuoteTile[];
+}
+
+export interface HomeV3Step {
+  gate: string;
+  title: string;
+  body: string;
+}
+
+export interface HomeV3ProcessContent {
+  headline: string;
+  subtitle: string;
+  /** Exactly 4, matching STEPS order in home-v3/ProcessSteps.tsx. */
+  steps: HomeV3Step[];
+}
+
+export interface HomeV3FaqStat {
+  value: string;
+  label: string;
+}
+
+export interface HomeV3FaqItem {
+  question: string;
+  answer: string;
+}
+
+export interface HomeV3FaqContent {
+  eyebrowLabel: string;
+  headline: string;
+  lead: string;
+  ctaText: string;
+  responseTime: string;
+  stats: HomeV3FaqStat[];
+  /** Matches FAQS order in home-v3/FaqSection.tsx; the "open" flag stays curated there. */
+  items: HomeV3FaqItem[];
+}
+
+export interface HomeV3CoverCtaContent {
+  metaLeft: string;
+  metaRight: string;
+  cardDomain: string;
+  cardBadge: string;
+  cardBadgeClient: string;
+  headline: string;
+  body: string;
+  ctaText: string;
+  responseTime: string;
+  creditLeft: string;
+  creditRight: string;
+}
+
+export interface HomeV3FooterLink {
+  label: string;
+}
+
+export interface HomeV3FooterColumn {
+  heading: string;
+  links: HomeV3FooterLink[];
+}
+
+export interface HomeV3FooterContent {
+  blurb: string;
+  badgeText: string;
+  siteColumn: HomeV3FooterColumn;
+  companyColumn: HomeV3FooterColumn;
+  aiColumn: HomeV3FooterColumn;
+  legalText: string;
+  legalLinks: HomeV3FooterLink[];
+}
+
+export interface HomepageV3Content {
+  hero: HomeV3HeroContent;
+  logos: HomeV3LogosContent;
+  problem: HomeV3ProblemContent;
+  whatWeDo: HomeV3WhatWeDoContent;
+  selectedWork: HomeV3SelectedWorkContent;
+  results: HomeV3ResultsContent;
+  process: HomeV3ProcessContent;
+  faq: HomeV3FaqContent;
+  coverCta: HomeV3CoverCtaContent;
+  footer: HomeV3FooterContent;
 }
 
 export interface ServicesWebflowStat {
@@ -1478,6 +1668,7 @@ const contentRegistry: Record<string, unknown> = {
   "seo-for-saas": seoForSaasContent,
   "seo-for-b2b": seoForB2bContent,
   homepage: homepageContent,
+  "homepage-v3": homepageV3Content,
   pricing: pricingContent,
   contact: contactContent,
   services: servicesContent,
@@ -1678,6 +1869,13 @@ export async function getSeoForB2bContent(): Promise<SeoForB2bContent> {
  */
 export async function getHomepageContent(): Promise<HomepageContent> {
   return markTree('homepage', homepageContent as HomepageContent);
+}
+
+/**
+ * Get Homepage v3 (home-v3/*) content
+ */
+export async function getHomepageV3Content(): Promise<HomepageV3Content> {
+  return markTree('homepage-v3', homepageV3Content as HomepageV3Content);
 }
 
 /**

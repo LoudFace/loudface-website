@@ -1,5 +1,6 @@
 import { PLATE_DEFS, PLATES } from './_plates';
 import { BlueprintPlate } from './BlueprintPlate';
+import type { HomeV3ProblemContent } from '@/lib/content-utils';
 
 /**
  * ProblemSection — "Five ways your site is quietly costing you deals" on the
@@ -7,7 +8,7 @@ import { BlueprintPlate } from './BlueprintPlate';
  * "if two of these sound familiar" band. PLATE_DEFS holds the shared SVG
  * <defs> (arrowhead marker + hatch pattern) included once for all plates.
  */
-export function ProblemSection() {
+export function ProblemSection({ content }: { content: HomeV3ProblemContent }) {
   return (
     <section className="problem">
       {/* shared arrowhead + hatch defs — included once, referenced by every plate */}
@@ -15,27 +16,27 @@ export function ProblemSection() {
 
       <div className="container">
         <span className="eyebrow rv">
-          <i aria-hidden="true"></i>The problem
+          <i aria-hidden="true"></i>{content.eyebrow}
         </span>
         <h2 className="display rv" style={{ transitionDelay: '.04s' }}>
-          Five ways your site is quietly costing you deals<span className="ghost">.</span>
+          {content.headline}<span className="ghost">.</span>
         </h2>
         <div className="light-rule rv" style={{ transitionDelay: '.08s' }} aria-hidden="true">
-          <span className="rule-tag">FIG.001–005 · FIELD NOTES FROM 200+ BUILDS</span>
+          <span className="rule-tag">{content.ruleTag}</span>
         </div>
 
         <div className="figgrid">
           {PLATES.map((p, i) => (
-            <BlueprintPlate key={i} p={p} />
+            <BlueprintPlate key={i} p={p} content={content.plates[i]} />
           ))}
         </div>
 
         <div className="pband rv" style={{ transitionDelay: '.08s' }}>
           <p>
-            <i aria-hidden="true"></i>If two of these sound familiar, the rest of this page is for you.
+            <i aria-hidden="true"></i>{content.bandText}
           </p>
           <a href="#book" data-cal-trigger="" className="pband-btn">
-            Book a strategy call{' '}
+            {content.bandCtaText}{' '}
             <svg viewBox="0 0 13 13" fill="none" stroke="currentColor" strokeWidth="1.6" aria-hidden="true">
               <path d="M1.5 6.5h10M8 2.5l4 4-4 4" />
             </svg>

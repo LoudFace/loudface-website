@@ -1,5 +1,6 @@
 import Image from 'next/image';
 import { LOGOS } from './_logos';
+import type { HomeV3LogosContent } from '@/lib/content-utils';
 
 /**
  * LogosTicker — client-logo marquee on the saturated indigo strip.
@@ -12,12 +13,12 @@ import { LOGOS } from './_logos';
  * therefore the -50% seamless loop) breaks. No `sizes`: these are fixed-size, so
  * the default 1x/2x srcset is exactly right and cheapest.
  */
-export function LogosTicker() {
+export function LogosTicker({ content }: { content: HomeV3LogosContent }) {
   return (
     <section className="logos" aria-label="Clients">
       <div className="logos-head">
         <span className="logos-label rv">
-          <i aria-hidden="true"></i>The B2B SaaS teams we&rsquo;ve built and grown for
+          <i aria-hidden="true"></i>{content.label}
         </span>
       </div>
       <div className="ticker">

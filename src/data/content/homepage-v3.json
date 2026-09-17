@@ -1,0 +1,199 @@
+{
+  "hero": {
+    "control": {
+      "eyebrowLabel": "AI-native organic growth",
+      "eyebrowNote": "B2B SaaS",
+      "headline": "Get discovered across Google and AI search. Turn visibility into customers.",
+      "headlineBreak": false,
+      "headlineHighlightPrefix": "",
+      "headlineHighlight": "",
+      "sub": "LoudFace is a full-stack organic growth agency for B2B SaaS and fintech, with AI visibility measured per engine. We run GEO, SEO, AEO, content, and conversion to get companies discovered across Google and AI search. We implement across your stack when the program needs it.",
+      "ctaText": "Book a strategy call",
+      "responseTime": "2h response time",
+      "aiRowLabel": "See what AI says about us"
+    },
+    "test": {
+      "eyebrowLabel": "B2B SaaS",
+      "eyebrowNote": "200+ sites shipped",
+      "headline": "Your buyers ask AI first.",
+      "headlineBreak": true,
+      "headlineHighlightPrefix": "Make sure it ",
+      "headlineHighlight": "names you.",
+      "sub": "LoudFace is a full-stack organic growth agency for B2B SaaS and fintech, with AI visibility measured per engine. Toku reached 97.8% visibility on its category’s top AI-search prompt. We add delivery work across your stack when it supports the program.",
+      "ctaText": "Book a strategy call",
+      "responseTime": "2h response time",
+      "aiRowLabel": "See what AI says about us"
+    },
+    "work": {
+      "colA": [
+        { "metric": "0 → 97.8% AI visibility", "clientLabel": "Toku" },
+        { "metric": "32.7% AI share", "clientLabel": "Delshad Legal" },
+        { "metric": "12.9% AI share", "clientLabel": "Genie Teacher" },
+        { "metric": "288% conversion lift", "clientLabel": "Dimer Health" }
+      ],
+      "colB": [
+        { "metric": "11.7x impressions", "clientLabel": "TradeMomentum" },
+        { "metric": "10.5% AI visibility", "clientLabel": "Stealth Fintech" },
+        { "metric": "10.4% of AI answers", "clientLabel": "LoudFace" },
+        { "metric": "$200K sales in 30 days", "clientLabel": "Outbound" }
+      ]
+    }
+  },
+  "logos": {
+    "label": "The B2B SaaS teams we’ve built and grown for"
+  },
+  "problem": {
+    "eyebrow": "The problem",
+    "headline": "Five ways your site is quietly costing you deals",
+    "ruleTag": "FIG.001–005 · FIELD NOTES FROM 200+ BUILDS",
+    "bandText": "If two of these sound familiar, the rest of this page is for you.",
+    "bandCtaText": "Book a strategy call",
+    "plates": [
+      { "heading": "Your homepage explains what you built, not why anyone should care.", "body": "Visitors land, skim, and leave &mdash; the layer that says why it matters was never built." },
+      { "heading": "Marketing owns a website they can&rsquo;t update without engineering.", "body": "Every copy change rides a ticket through the dev queue. Two to six weeks, every time." },
+      { "heading": "You redesigned six months ago and organic traffic still hasn&rsquo;t moved.", "body": "New design, same rankings &mdash; invisible to the buyers searching for what you sell." },
+      { "heading": "Buyers ask ChatGPT, Perplexity, and Claude who to shortlist.", "body": "The shortlist forms inside the answer &mdash; and it names your competitors, not you." },
+      { "heading": "Your site gets traffic, but the conversion rate hasn&rsquo;t changed in a year.", "body": "Traffic without conversion is a vanity metric, and nobody is running experiments." }
+    ]
+  },
+  "whatWeDo": {
+    "eyebrow": "What we do",
+    "headline": "One growth system, across your stack",
+    "sub": "Organic growth and conversion work together. We start with the highest-impact surface, then fix what blocks discovery or customers.",
+    "connectText": "The audit sets the starting point. It may be visibility, content, conversion, or implementation.",
+    "phases": [
+      {
+        "phase": "Core program",
+        "word": "Grow",
+        "body": "We run GEO, SEO, AEO, content, and conversion work to get B2B SaaS companies discovered across Google and AI search. We turn that visibility into customers.",
+        "detail": "The program starts with the surface that has the clearest route to customers.",
+        "capabilities": [
+          { "label": "Generative Engine Optimization" },
+          { "label": "Technical SEO" },
+          { "label": "AI Search Optimization (AEO)" },
+          { "label": "Content Strategy" },
+          { "label": "Conversion Rate Optimization" }
+        ]
+      },
+      {
+        "phase": "When needed",
+        "word": "Deliver",
+        "body": "When the audit finds a conversion or implementation gap, we fix it across your stack. That can mean positioning, copy, UX/UI, Webflow, or another delivery path.",
+        "detail": "Delivery work supports the organic growth program. It does not define it.",
+        "capabilities": [
+          { "label": "Conversion Copywriting" },
+          { "label": "UX/UI Design" },
+          { "label": "Webflow Development" },
+          { "label": "CMS Architecture" },
+          { "label": "Design System Setup" }
+        ]
+      }
+    ]
+  },
+  "selectedWork": {
+    "eyebrow": "Selected work",
+    "headline": "The work speaks. Specifically.",
+    "sub": "Named clients, measured results, live links. No case-study theater.",
+    "ctaText": "See all the work",
+    "tiles": [
+      { "metric": "0 → 97.8% AI visibility", "clientLabel": "Toku" },
+      { "metric": "32.7% AI share of voice", "clientLabel": "Delshad Legal" },
+      { "metric": "12.9% AI share of voice", "clientLabel": "Genie Teacher" },
+      { "metric": "11.7x organic impressions", "clientLabel": "TradeMomentum" },
+      { "metric": "10.5% AI visibility", "clientLabel": "Stealth Fintech" },
+      { "metric": "5+ microsite pages launched", "clientLabel": "Montblanc" },
+      { "metric": "$200K sales in 30 days", "clientLabel": "Outbound Specialist" }
+    ]
+  },
+  "results": {
+    "headline": "Numbers, not adjectives",
+    "statTiles": [
+      { "value": "288%", "label": "Increase in conversions", "description": "Measured over six months of CRO work on the Dimer Health site.", "tagClient": "Dimer Health", "tagLabel": "CRO" },
+      { "value": "0 → 97.8%", "label": "AI visibility on the core prompt", "description": "From absent to cited on the answer that matters in Toku’s category.", "tagClient": "Toku", "tagLabel": "AEO" }
+    ],
+    "quoteTiles": [
+      { "quote": "It was very refreshing working with you compared to other agencies we’re working with.", "who": "Anthony Dean — Radisson Hotels Group" },
+      { "quote": "We are extremely happy with the landing page LoudFace built for us on Webflow.", "who": "Daan Smit — CEO & Founder, Brandfirm" }
+    ]
+  },
+  "process": {
+    "headline": "How an engagement works",
+    "subtitle": "No 47-slide proposals. No three-month discovery phases. Here’s what actually happens.",
+    "steps": [
+      { "gate": "Week 0", "title": "Strategy call", "body": "We talk for 30 minutes. You tell us what’s broken, what you’ve tried, and what good looks like. We tell you honestly whether we’re the right fit. If we are, we send a scope and timeline within 48 hours." },
+      { "gate": "Weeks 1–4", "title": "Set the growth plan", "body": "We audit discovery, content, conversion, and the current stack. Then we start the work with the clearest route to customers. If a site or page is the constraint, we scope the delivery work." },
+      { "gate": "Weeks 4–6 · Live", "title": "Ship and measure", "body": "We ship the agreed work, set up analytics where needed, and establish baseline metrics. No vanity dashboards. We track the numbers that connect to pipeline: organic traffic, conversion rates, form submissions, and qualified lead volume." },
+      { "gate": "Month 3+", "title": "Grow and optimize", "body": "SEO, AEO, and CRO kick in. We publish content, optimize pages, and run conversion experiments. You get a monthly report with what we did, what moved, and what we’re doing next." }
+    ]
+  },
+  "faq": {
+    "eyebrowLabel": "FAQ",
+    "headline": "Before you book.",
+    "lead": "Straight answers to the questions every B2B SaaS team asks us. Everything else, bring to the call.",
+    "ctaText": "Book a strategy call",
+    "responseTime": "2h response time",
+    "stats": [
+      { "value": "200+", "label": "Projects completed" },
+      { "value": "288%", "label": "Increase in conversions, Dimer Health" },
+      { "value": "4+", "label": "Years as Webflow Enterprise Partner" },
+      { "value": "4–6 wks", "label": "Average time to launch" }
+    ],
+    "items": [
+      { "question": "What types of companies do you work with?", "answer": "B2B SaaS companies, primarily Series A and later. Our clients typically have a product in market, a marketing team (even if it’s one person), and a website that isn’t pulling its weight. We’ve worked across verticals — fintech, healthtech, devtools, HR tech, cybersecurity — but the common thread is always B2B SaaS." },
+      { "question": "How do you choose the delivery stack?", "answer": "We start with the growth program, not a platform. Webflow is one delivery option when it fits the current site, team, and scope. We use another stack when it serves discovery, conversion, or operations better." },
+      { "question": "Can we start with one service?", "answer": "Yes. You can start with GEO, SEO, AEO, content, conversion, or a defined implementation project. We recommend the first scope after the audit. You can add work later when it supports the result." },
+      { "question": "How long does a website project take?", "answer": "Most builds go from kickoff to launch in 4-6 weeks. That includes strategy, copywriting, design, and Webflow development. Larger projects with complex CMS structures or multiple product lines can take 8-10 weeks. We’ll give you a specific timeline in the scoping call before you commit to anything." },
+      { "question": "What does the growth engagement look like month to month?", "answer": "We run SEO (technical and content), AEO (AI search optimization), and CRO (conversion experiments) on a monthly retainer. You get a dedicated team, weekly async updates, and a monthly performance review. We track organic traffic, keyword rankings, conversion rates, and qualified leads. Minimum engagement is three months — SEO needs at least that long to show meaningful results." },
+      { "question": "We already have a website. Can you optimize it without rebuilding?", "answer": "Sometimes. We can run SEO, AEO, and CRO on a stack we can work with efficiently. If the site is the bottleneck because it is slow, hard to update, or poorly structured for search, we will tell you. Then we scope only the delivery work that removes the constraint." }
+    ]
+  },
+  "coverCta": {
+    "metaLeft": "LoudFace — strategy call",
+    "metaRight": "B2B SaaS only",
+    "cardDomain": "liqid.de",
+    "cardBadge": "100+ pages launched",
+    "cardBadgeClient": "LIQID",
+    "headline": "Let’s figure out what’s holding your site back.",
+    "body": "30-minute strategy call. No pitch deck. We’ll look at your site together and tell you what we’d change and why.",
+    "ctaText": "Book a strategy call",
+    "responseTime": "2h response time",
+    "creditLeft": "Cover — Montblanc, built by LoudFace",
+    "creditRight": "loudface.co"
+  },
+  "footer": {
+    "blurb": "The full-stack organic growth agency for B2B SaaS and fintech. AI visibility measured per engine.",
+    "badgeText": "Webflow Enterprise Partner — 4+ years",
+    "siteColumn": {
+      "heading": "Site",
+      "links": [
+        { "label": "Work" },
+        { "label": "Services" },
+        { "label": "Methodology" },
+        { "label": "Pricing" }
+      ]
+    },
+    "companyColumn": {
+      "heading": "Company",
+      "links": [
+        { "label": "About" },
+        { "label": "Blog" },
+        { "label": "Careers" },
+        { "label": "Book a call" }
+      ]
+    },
+    "aiColumn": {
+      "heading": "See what AI says about us",
+      "links": [
+        { "label": "ChatGPT" },
+        { "label": "Claude" },
+        { "label": "Perplexity" }
+      ]
+    },
+    "legalText": "LoudFace. All rights reserved.",
+    "legalLinks": [
+      { "label": "Privacy" },
+      { "label": "Terms" },
+      { "label": "Cookies" }
+    ]
+  }
+}

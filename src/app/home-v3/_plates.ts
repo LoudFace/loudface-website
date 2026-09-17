@@ -11,7 +11,7 @@ export const PLATE_DEFS = `<svg width="0" height="0" style="position:absolute" a
       </pattern>
     </defs>
   </svg>`;
-export type Plate = { wide: boolean; delay: string; plate: string; h3: string; p: string };
+export type Plate = { wide: boolean; delay: string; plate: string };
 export const PLATES: Plate[] = [
   { wide: false, delay: `.1s`, plate: `<span class="fig-id" aria-hidden="true">FIG.001</span>
           <span class="fig-meta" aria-hidden="true">[ HOMEPAGE &mdash; EXPLODED VIEW ]</span>
@@ -44,7 +44,7 @@ export const PLATES: Plate[] = [
             <path d="M126 154H188" fill="none" stroke="var(--color-primary-600)" stroke-width="1" marker-end="url(#fx-arr)"/>
             <text x="120" y="233" text-anchor="end">MISSING LAYER</text>
             <path d="M126 230H184" fill="none" stroke="var(--color-primary-600)" stroke-width="1" marker-end="url(#fx-arr)"/>
-          </svg>`, h3: `Your homepage explains what you built, not why anyone should care.`, p: `Visitors land, skim, and leave &mdash; the layer that says why it matters was never built.` },
+          </svg>` },
   { wide: false, delay: `.14s`, plate: `<span class="fig-id" aria-hidden="true">FIG.002</span>
           <span class="fig-meta" aria-hidden="true">[ PUBLISHING PIPELINE ]</span>
           <span class="fig-yr" aria-hidden="true">[ 2026 ]</span>
@@ -86,7 +86,7 @@ export const PLATES: Plate[] = [
             <text x="348" y="224" class="tk">CYCLE TIME: 2&ndash;6 WEEKS</text>
             <path d="M168 252H514M168 247V257M514 247V257" fill="none" stroke="var(--color-primary-600)" stroke-width="1"/>
             <text x="341" y="272" text-anchor="middle">EVERY COPY CHANGE TAKES THIS ROUTE</text>
-          </svg>`, h3: `Marketing owns a website they can&rsquo;t update without engineering.`, p: `Every copy change rides a ticket through the dev queue. Two to six weeks, every time.` },
+          </svg>` },
   { wide: false, delay: `.1s`, plate: `<span class="fig-id" aria-hidden="true">FIG.003</span>
           <span class="fig-meta" aria-hidden="true">[ ORGANIC SESSIONS &mdash; 12 MO ]</span>
           <span class="fig-yr" aria-hidden="true">[ 2026 ]</span>
@@ -120,7 +120,7 @@ export const PLATES: Plate[] = [
             </g>
             <text x="516" y="206" text-anchor="end" class="tk">ACTUAL &mdash; NO LIFT</text>
             <path d="M470 201L482 185" fill="none" stroke="var(--color-primary-600)" stroke-width="1" marker-end="url(#fx-arr)"/>
-          </svg>`, h3: `You redesigned six months ago and organic traffic still hasn&rsquo;t moved.`, p: `New design, same rankings &mdash; invisible to the buyers searching for what you sell.` },
+          </svg>` },
   { wide: false, delay: `.14s`, plate: `<span class="fig-id" aria-hidden="true">FIG.004</span>
           <span class="fig-meta" aria-hidden="true">[ AI ANSWER SHEET ]</span>
           <span class="fig-yr" aria-hidden="true">[ 2026 ]</span>
@@ -178,7 +178,7 @@ export const PLATES: Plate[] = [
             <path d="M188 250C226 248 250 244 270 240" fill="none" stroke="var(--color-primary-600)" stroke-width="1" stroke-dasharray="4 3"/>
             <path d="M275 234L283 242M283 234L275 242" fill="none" stroke="var(--color-primary-600)" stroke-width="2" stroke-linecap="round"/>
             <text x="204" y="272" class="tk">NEVER RETRIEVED</text>
-          </svg>`, h3: `Buyers ask ChatGPT, Perplexity, and Claude who to shortlist.`, p: `The shortlist forms inside the answer &mdash; and it names your competitors, not you.` },
+          </svg>` },
   { wide: true, delay: `.1s`, plate: `<span class="fig-id" aria-hidden="true">FIG.005</span>
           <span class="fig-meta" aria-hidden="true">[ CONVERSION FUNNEL ]</span>
           <span class="fig-yr" aria-hidden="true">[ 2026 ]</span>
@@ -208,5 +208,5 @@ export const PLATES: Plate[] = [
             <path d="M1066 90L1048 126" fill="none" stroke="var(--color-primary-600)" stroke-width="1" marker-end="url(#fx-arr)"/>
             <text x="726" y="250" class="tk">LEAK &mdash; UNTESTED PAGES</text>
             <path d="M722 246L708 243" fill="none" stroke="var(--color-primary-600)" stroke-width="1" marker-end="url(#fx-arr)"/>
-          </svg>`, h3: `Your site gets traffic, but the conversion rate hasn&rsquo;t changed in a year.`, p: `Traffic without conversion is a vanity metric, and nobody is running experiments.` },
+          </svg>` },
 ];
