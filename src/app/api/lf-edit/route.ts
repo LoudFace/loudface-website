@@ -29,7 +29,9 @@ export async function POST(request: Request) {
     if (typeof change?.id !== 'string' || typeof change?.value !== 'string') {
       return Response.json({ error: 'Each change needs an id and a value' }, { status: 400 });
     }
-    if (change.value.length > 4000) return Response.json({ error: 'That value is too long' }, { status: 400 });
+    // A page value is a sentence or two; an article body undo carries the whole stored article.
+    const limit = change.id.startsWith('sanity:') ? 400_000 : 4000;
+    if (change.value.length > limit) return Response.json({ error: 'That value is too long' }, { status: 400 });
   }
 
   // Our own content ids and Sanity's stega-decoded ids are independent, so a

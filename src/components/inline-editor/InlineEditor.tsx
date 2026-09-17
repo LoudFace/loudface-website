@@ -15,6 +15,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { VERCEL_STEGA_REGEX } from '@vercel/stega';
 import { decodeStega, stripStega } from '../../lib/inline-edit/stega';
+import { normalizeShownText, type TextReplacement } from '../../lib/inline-edit/body-edit';
 
 type Change = { id: string; value: string; label: string };
 type Status = { kind: 'idle' | 'saving' | 'saved' | 'error'; message?: string };
@@ -34,7 +35,7 @@ const MARKS = /[\u{E0000}-\u{E007F}]/gu;
 const OUTLINE = '2px solid #2f7de1';
 const OUTLINE_HOVER = '2px dashed #9dc3f2';
 /** Sanity fields the editor never makes clickable: the whole-article body. */
-const NO_EDIT_PATH = new Set(['content', 'body']);
+const BODY_PATH = new Set(['content', 'body']);
 /** A text node inside any of these never becomes an editable field. */
 const BLOCKED_ANCESTORS = 'script, style, title, noscript, template, [data-lf-chrome]';
 
@@ -99,9 +100,22 @@ function discover(): HTMLElement[] {
     }
 
     // Sanity's own marker: a stega payload decoding to a Studio edit link.
-    // The blog article body (`content`/`body`) stays read-only in this pass.
     const stega = decodeStega(text.data);
-    if (!stega || NO_EDIT_PATH.has(stega.path)) continue;
+    if (!stega) continue;
+
+    // The article body is one HTML field. Its marker sits at the very end of
+    // the rendered HTML, so the editable element is the container the page
+    // names with data-lf-body, and the edit is described sentence by sentence
+    // (see body-edit.ts) rather than as HTML.
+    if (BODY_PATH.has(stega.path)) {
+      const body = text.parentElement?.closest<HTMLElement>('[data-lf-body]');
+      if (!body || body.dataset.lfId) continue;
+      body.dataset.lfId = `sanity:${stega.id}:${stega.path}`;
+      body.dataset.lfType = 'html';
+      found.push(body);
+      continue;
+    }
+
     const el = fieldElement(text);
     if (!el || el.dataset.lfId || el.closest('[data-lf-chrome]')) continue;
     el.dataset.lfId = `sanity:${stega.id}:${stega.path}`;
@@ -121,6 +135,51 @@ function discover(): HTMLElement[] {
   return found;
 }
 
+/** Text nodes of a body container, in order, skipping the editor's own chrome. */
+function bodyTextNodes(root: HTMLElement): Text[] {
+  const out: Text[] = [];
+  const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT);
+  for (let node = walker.nextNode(); node; node = walker.nextNode()) {
+    const text = node as Text;
+    if (text.parentElement?.closest('[data-lf-chrome]')) continue;
+    out.push(text);
+  }
+  return out;
+}
+
+type BodySnapshot = { nodes: Text[]; texts: string[] };
+
+const snapshotBody = (root: HTMLElement): BodySnapshot => {
+  const nodes = bodyTextNodes(root);
+  return { nodes, texts: nodes.map((node) => normalizeShownText(strip(node.data))) };
+};
+
+/**
+ * Describe what changed in a body since its snapshot as sentence replacements.
+ * Returns null when the structure changed (a text node added, removed or
+ * merged): that is a paragraph-level edit, which the stored HTML cannot take
+ * safely yet.
+ */
+function diffBody(root: HTMLElement, snapshot: BodySnapshot): TextReplacement[] | null {
+  const current = bodyTextNodes(root);
+  if (current.length !== snapshot.nodes.length) return null;
+  const replacements: TextReplacement[] = [];
+  for (let i = 0; i < current.length; i++) {
+    if (current[i] !== snapshot.nodes[i]) return null;
+    const before = snapshot.texts[i];
+    const after = normalizeShownText(strip(current[i].data));
+    if (before === after) continue;
+    if (!before.trim()) return null; // typing into a blank gap between tags
+    let occurrence = 0;
+    for (let j = 0; j < i; j++) if (snapshot.texts[j].includes(before)) occurrence++;
+    replacements.push({ from: before, to: after, occurrence });
+  }
+  return replacements;
+}
+
+const BODY_LIMIT_MESSAGE =
+  'In the article body, only changes to existing text are saved for now — adding or removing paragraphs is not supported yet.';
+
 export function InlineEditor() {
   const [changes, setChanges] = useState<Record<string, Change>>({});
   const [status, setStatus] = useState<Status>({ kind: 'idle' });
@@ -131,12 +190,21 @@ export function InlineEditor() {
   const [publishes, setPublishes] = useState<Publish[] | null>(null);
   const [sanityUndo, setSanityUndo] = useState<SanityUndo[] | null>(null);
   const originals = useRef<Map<string, string>>(new Map());
+  const bodySnapshots = useRef<Map<string, BodySnapshot>>(new Map());
 
   const record = useCallback((id: string, value: string, label: string) => {
     setChanges((prev) => ({ ...prev, [id]: { id, value, label } }));
     // A new edit invalidates the "before" snapshot from the last Sanity
     // publish — undoing it now would clobber this newer change.
     setSanityUndo(null);
+  }, []);
+  const unstage = useCallback((id: string) => {
+    setChanges((prev) => {
+      if (!(id in prev)) return prev;
+      const next = { ...prev };
+      delete next[id];
+      return next;
+    });
   }, []);
 
   useEffect(() => {
@@ -170,9 +238,13 @@ export function InlineEditor() {
       }
 
       if (el.isContentEditable) return;
+      // A click on a link inside the article body must edit, not navigate.
       event.preventDefault();
       event.stopPropagation();
       if (!originals.current.has(id)) originals.current.set(id, el.innerHTML);
+      if (el.dataset.lfType === 'html' && !bodySnapshots.current.has(id)) {
+        bodySnapshots.current.set(id, snapshotBody(el));
+      }
       el.contentEditable = 'true';
       el.spellcheck = true;
       el.style.outline = OUTLINE;
@@ -184,10 +256,31 @@ export function InlineEditor() {
     // Stage on every keystroke. Waiting for blur loses the last edit whenever
     // the element does not give focus up — a link element being the case that
     // caught us.
+    const stageBody = (el: HTMLElement, id: string) => {
+      const snapshot = bodySnapshots.current.get(id);
+      if (!snapshot) return;
+      const replacements = diffBody(el, snapshot);
+      if (replacements === null) {
+        unstage(id);
+        setStatus({ kind: 'error', message: BODY_LIMIT_MESSAGE });
+        return;
+      }
+      if (!replacements.length) {
+        unstage(id);
+        return;
+      }
+      setStatus((prev) => (prev.kind === 'error' && prev.message === BODY_LIMIT_MESSAGE ? { kind: 'idle' } : prev));
+      record(id, JSON.stringify({ replacements }), `Article: ${replacements.length} sentence${replacements.length === 1 ? '' : 's'}`);
+    };
+
     const onInput = (event: Event) => {
       const el = event.currentTarget as HTMLElement;
       const id = el.dataset.lfId!;
       if (!originals.current.has(id)) originals.current.set(id, el.innerHTML);
+      if (el.dataset.lfType === 'html') {
+        stageBody(el, id);
+        return;
+      }
       record(id, strip(el.innerHTML), strip(el.textContent ?? '').slice(0, 42));
     };
 
@@ -196,6 +289,10 @@ export function InlineEditor() {
       const id = el.dataset.lfId!;
       el.contentEditable = 'false';
       el.style.outline = '';
+      if (el.dataset.lfType === 'html') {
+        if (el.innerHTML !== (originals.current.get(id) ?? '')) stageBody(el, id);
+        return;
+      }
       if (el.innerHTML !== (originals.current.get(id) ?? '')) {
         record(id, strip(el.innerHTML), strip(el.textContent ?? '').slice(0, 42));
       }
@@ -206,12 +303,20 @@ export function InlineEditor() {
       const key = (event as KeyboardEvent).key;
       const meta = (event as KeyboardEvent).metaKey || (event as KeyboardEvent).ctrlKey;
       if (key === 'Escape') {
-        el.innerHTML = originals.current.get(el.dataset.lfId!) ?? el.innerHTML;
+        const id = el.dataset.lfId!;
+        el.innerHTML = originals.current.get(id) ?? el.innerHTML;
+        bodySnapshots.current.delete(id);
+        unstage(id);
         el.blur();
       }
       if (key === 'Enter' && !(event as KeyboardEvent).shiftKey) {
         event.preventDefault();
         event.stopPropagation();
+        // A new paragraph in the article body cannot be saved yet; say so instead of splitting the DOM.
+        if (el.dataset.lfType === 'html') {
+          setStatus({ kind: 'error', message: BODY_LIMIT_MESSAGE });
+          return;
+        }
         el.contentEditable = 'false';
         el.style.outline = '';
         el.blur();
@@ -246,7 +351,7 @@ export function InlineEditor() {
     const observer = new MutationObserver(() => wire());
     observer.observe(document.body, { childList: true, subtree: true });
     return () => observer.disconnect();
-  }, [record]);
+  }, [record, unstage]);
 
   // "Show me what I can edit" — the honest answer to a page where most copy is
   // still written into the component rather than served from the content layer.
@@ -278,6 +383,7 @@ export function InlineEditor() {
     }
     setChanges({});
     originals.current.clear();
+    bodySnapshots.current.clear();
 
     const sanity: { id: string; before: string }[] = result.sanity ?? [];
     const sanityCount = sanity.length;

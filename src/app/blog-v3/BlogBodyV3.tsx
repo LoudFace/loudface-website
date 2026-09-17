@@ -23,7 +23,7 @@ export function BlogBodyV3({ html, visuals }: BlogBodyV3Props) {
   const list = visuals ?? [];
 
   if (list.length === 0) {
-    return <div className="prose" dangerouslySetInnerHTML={{ __html: html }} />;
+    return <div className="prose" data-lf-body="" dangerouslySetInnerHTML={{ __html: html }} />;
   }
 
   const segments = splitAtH2(html);
@@ -33,7 +33,7 @@ export function BlogBodyV3({ html, visuals }: BlogBodyV3Props) {
     list.filter((v) => v.position?.anchor === 'after-h2' && v.position.h2Index === h2Index);
 
   return (
-    <div className="prose">
+    <div className="prose" data-lf-body="">
       {segments.map((segment, i) => (
         <Fragment key={`seg-${i}`}>
           <div className="pblock" dangerouslySetInnerHTML={{ __html: segment }} />

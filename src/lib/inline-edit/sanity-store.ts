@@ -18,6 +18,7 @@ import 'server-only';
  */
 import { getEditorWriteClient } from '../sanity.client';
 import { cleanValue } from './sanitize';
+import { applyTextReplacements, parseBodyEdit } from './body-edit';
 import { pathsFor } from '../revalidate-paths';
 
 export type SanityChange = { id: string; value: string };
@@ -33,11 +34,12 @@ const DOC_ID = /^[A-Za-z0-9_.-]+$/;
 const NAME_SEGMENT = /^[a-zA-Z0-9_]+/;
 const KEY_SEGMENT = /^\[_key\s*==\s*"[^"\\]*"\]/;
 
-/** Reject the whole-article body field, and anything that is not a plain field path. */
+/** The article body: one HTML field, edited by text replacement, never rewritten (see body-edit.ts). */
+const BODY_PATHS = new Set(['content', 'body']);
+export const isBodyPath = (path: string) => BODY_PATHS.has(path);
+
+/** Accept plain field paths only: names, dots and `[_key=="x"]` selectors. */
 function validatePath(path: string): void {
-  if (path === 'content' || path === 'body') {
-    throw new Error('The article body is not editable here yet');
-  }
   const first = NAME_SEGMENT.exec(path);
   if (!first) throw new Error(`Bad Sanity path: ${path}`);
   let rest = path.slice(first[0].length);
@@ -109,7 +111,15 @@ export async function publishSanity(changes: SanityChange[], editor: string, exa
     if (typeof source.value !== 'string') throw new Error(`${path} on ${publishedId} is not a plain text field`);
 
     const before = source.value;
-    const after = exact ? change.value : cleanValue(change.value, before);
+    let after: string;
+    if (exact) {
+      after = change.value;
+    } else if (isBodyPath(path)) {
+      // The body arrives as a list of sentence replacements, not as HTML.
+      after = applyTextReplacements(before, parseBodyEdit(change.value).replacements);
+    } else {
+      after = cleanValue(change.value, before);
+    }
     if (!after) throw new Error('A value cannot be emptied from the page');
 
     if (after !== before) {
