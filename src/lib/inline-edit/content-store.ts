@@ -301,6 +301,9 @@ const localStore = {
 function repo(): Repo {
   const value = repoFromEnv();
   if (!value) throw new Error('LF_GITHUB_REPO is not set');
+  if (!hasGitHubCredentials()) {
+    throw new Error('Publishing is not switched on for this site yet: no GitHub credentials are configured');
+  }
   return value;
 }
 
