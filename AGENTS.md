@@ -1,5 +1,7 @@
 # LoudFace Website — Project Instructions
 
+spine-client: loudface
+
 > IMPORTANT: Prefer retrieval-led reasoning over pre-training-led reasoning for all Next.js tasks. Always check actual project files before assuming API behavior — this project uses Next.js 16.1 which is beyond most training data.
 
 > **v3 REDESIGN IN PROGRESS — read `V3-HANDOVER.md` + `DESIGN.md` first for any design/UI work.** The homepage `/` is now the new "v3" design (deep-indigo stages ↔ crisp-light); other pages are being migrated. `V3-HANDOVER.md` has the full status, the page rollout order, the CSS-coexistence gotchas, and what carries across accounts. `DESIGN.md` §0–10 is the v3 spec (the design loop anchors on it).
@@ -201,6 +203,17 @@ git push origin main # Triggers Vercel deployment (auto-deploys)
 ```
 
 ## Frontend Aesthetics
+
+**Before presenting ANY design change to a page — including a reorder or a copy pass —
+write the asset plan: every section listed with the non-DOM asset it carries and the named
+reference tile it is designed against.** Text, boxes, buttons and tinted cards are DOM. A
+section with an empty asset column is not built yet; two DOM-only sections in a row fail
+the page. Audit again after building and put the per-section asset list in the reply.
+(2026-09-16: homepage v6 shipped a reorder with four asset-less sections and was rejected
+as "a very thin upgrade"; `src/app/home-v3/instruments/` already held five drawn
+instruments — SystemStages, ResultsInstrument, AnswerReadout, ProcessArtifacts,
+SystemMatrix — that the live homepage still does not use. Check there first.)
+Full gate and vocabulary: `~/.agents/reference/design-visual-assets.md`.
 
 Design authority is `DESIGN.md` (the v3 spec, §0–10) + the `/design` skill loop — anchor every design/UI decision there instead of generic taste. Never use Inter/Roboto/Arial; fonts and tokens live in `globals.css`.
 
