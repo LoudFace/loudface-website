@@ -18,6 +18,12 @@ import { ensurePostHog } from '@/lib/posthog-client';
  * events and the session replay all file under one name in PostHog. The
  * access code is only ever sent to one person, so the email is theirs.
  *
+ * Our own opens: anyone at LoudFace who opens a proposal to check it would
+ * otherwise be filed as the client. Visiting any proposal or audit link once
+ * with `?internal=1` sets a year-long `lf_internal` cookie in that browser;
+ * from then on its visits skip identify and carry `internal: true`, and the
+ * Proposals dashboard filters them out.
+ *
  * Consent: ensurePostHog() refuses to load for anyone whose region requires
  * opt-in and who has not accepted (see src/lib/consent.ts). Nothing here
  * bypasses that. Renders no DOM.
@@ -58,13 +64,25 @@ export function ProposalAnalytics({
     let disposed = false;
     let observer: IntersectionObserver | null = null;
 
-    const base: Record<string, unknown> = { proposal_token: token, proposal_state: state, surface };
+    // Mark this browser as ours when asked, then read the mark.
+    if (typeof document !== 'undefined') {
+      const url = new URL(window.location.href);
+      if (url.searchParams.get('internal') === '1') {
+        document.cookie = `lf_internal=1; path=/; max-age=${60 * 60 * 24 * 365}; SameSite=Lax; Secure`;
+        url.searchParams.delete('internal');
+        window.history.replaceState(null, '', `${url.pathname}${url.search}${url.hash}`);
+      }
+    }
+    const internal =
+      typeof document !== 'undefined' && /(?:^|;\s*)lf_internal=1(?:;|$)/.test(document.cookie);
+
+    const base: Record<string, unknown> = { proposal_token: token, proposal_state: state, surface, internal };
     if (clientName) base.client_name = clientName;
 
     ensurePostHog().then((posthog) => {
       if (!posthog || disposed) return;
 
-      if (state === 'unlocked' && readerEmail) {
+      if (state === 'unlocked' && readerEmail && !internal) {
         const traits: Record<string, unknown> = { email: readerEmail };
         if (readerName) traits.name = readerName;
         if (clientName) traits.company = clientName;
