@@ -540,9 +540,16 @@ export function InlineEditor() {
       setStatus({ kind: 'error', message: result.error ?? 'Undo failed' });
       return;
     }
-    setStatus({ kind: 'saved', message: result.mode === 'github' ? 'Change undone — live in about two minutes' : 'Change undone' });
     setHistoryOpen(false);
-    if (result.mode !== 'github') setTimeout(() => window.location.reload(), 900);
+    if (result.mode !== 'github') {
+      setStatus({ kind: 'saved', message: 'Change undone' });
+      setTimeout(() => window.location.reload(), 900);
+      return;
+    }
+    // Same light as a publish: the words that came back are what to look for.
+    const restored = Array.isArray(result.restored) ? (result.restored as { id: string; value: string }[]) : [];
+    setStatus({ kind: 'saved', message: 'Change undone — committed' });
+    watchUntilLive(needlesFor(restored, true), 'Change undone — committed, the site is building (usually 2 to 4 minutes)', 'Change undone');
   }
 
   return (

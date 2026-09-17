@@ -49,6 +49,8 @@ const TRAILER = 'LF-Changes';
 export type Change = { id: string; value: string };
 export type Applied = { id: string; file: string; path: string; before: string; after: string };
 export type Mode = 'git' | 'github';
+/** What an undo put back on the page: each field and the text it now carries again. */
+export type Undone = { hash: string; restored: Change[] };
 
 export type Publish = {
   hash: string;
@@ -282,15 +284,16 @@ const localStore = {
     return toPublishes(commits, limit);
   },
 
-  async undo(hash: string, editor: string): Promise<string> {
+  async undo(hash: string, editor: string): Promise<Undone> {
     if (!/^[0-9a-f]{7,40}$/.test(hash)) throw new Error('Not a commit');
     const touched = (await git(['show', '--name-only', '--format=', hash])).split('\n').filter(Boolean);
     const outside = touched.filter((file) => !file.startsWith(CONTENT_PREFIX));
     if (outside.length) throw new Error(`That change also touched ${outside[0]}; undo it in code, not here`);
+    const recorded = trailerOf(await git(['show', '--no-patch', '--format=%B', hash])) ?? [];
     const who = author(editor);
     await git(['-c', `user.name=${who.name}`, '-c', `user.email=${who.email}`, 'revert', '--no-edit', hash]);
     if (process.env.LF_EDIT_PUSH === '1') await git(['push', 'origin', 'HEAD']);
-    return git(['rev-parse', 'HEAD']);
+    return { hash: (await git(['rev-parse', 'HEAD'])).trim(), restored: recorded.map(({ id, before }) => ({ id, value: before })) };
   },
 };
 
@@ -349,7 +352,7 @@ const githubStore = {
     return toPublishes(await commitsTouching(repo(), CONTENT_PREFIX.replace(/\/$/, ''), limit * 2), limit);
   },
 
-  async undo(hash: string, editor: string): Promise<string> {
+  async undo(hash: string, editor: string): Promise<Undone> {
     if (!/^[0-9a-f]{7,40}$/.test(hash)) throw new Error('Not a commit');
     const target = repo();
     const detail = await commitDetail(target, hash);
@@ -359,7 +362,7 @@ const githubStore = {
     const recorded = trailerOf(detail.message);
     if (!recorded?.length) throw new Error('That publish predates undo and has to be reverted in code');
 
-    return commitOnHead(
+    const hashOut = await commitOnHead(
       target,
       async (head) => {
         const texts = new Map<string, string>();
@@ -385,6 +388,7 @@ const githubStore = {
       },
       editor,
     );
+    return { hash: hashOut, restored: recorded.map(({ id, before }) => ({ id, value: before })) };
   },
 };
 
