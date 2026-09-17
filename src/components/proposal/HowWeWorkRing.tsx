@@ -43,19 +43,25 @@ const GEO: Node[] = [
   { deg: 210, label: 'Trust', how: 'reviews and listings' },
 ];
 
-const COL_L = 138; // right edge of the left label column
-const COL_R = 322; // left edge of the right label column
+const COL_L = CX - R - 18; // right edge of the left label column
+const COL_R = CX + R + 18; // left edge of the right label column
 
 export function HowWeWorkRing() {
   const node = (n: Node, side: 'geo' | 'site') => {
     const [x, y] = pt(n.deg, R);
     const dir = side === 'site' ? 1 : -1;
     const colX = side === 'site' ? COL_R : COL_L;
-    // Leader: out of the node along its radius, then level to the column.
+    // Leader: a short radial tick off the node, then level to the column.
+    // The level part is skipped where it would have to run backwards into
+    // the label (the two nodes on the horizontal axis).
+    const [sx, sy] = pt(n.deg, R + 8);
     const [ex, ey] = pt(n.deg, R + 14);
+    const endX = colX - dir * 6;
+    const level = dir === 1 ? endX > ex + 4 : endX < ex - 4;
+    const d = `M${sx.toFixed(1)} ${sy.toFixed(1)}L${ex.toFixed(1)} ${ey.toFixed(1)}` + (level ? `L${endX.toFixed(1)} ${ey.toFixed(1)}` : '');
     return (
       <g key={n.label}>
-        <path d={`M${ex.toFixed(1)} ${ey.toFixed(1)}L${(colX - dir * 10).toFixed(1)} ${ey.toFixed(1)}`} className="lead" />
+        <path d={d} className="lead" />
         <circle cx={x} cy={y} r="6" className={`node node-${side}`} />
         <text x={colX} y={ey - 2} textAnchor={side === 'site' ? 'start' : 'end'} className="lbl">
           {n.label}
@@ -69,7 +75,7 @@ export function HowWeWorkRing() {
 
   return (
     <figure className="how-ring" data-print-keep>
-      <svg viewBox="0 0 460 300" role="img" aria-labelledby="how-ring-title">
+      <svg viewBox="0 0 470 300" role="img" aria-labelledby="how-ring-title">
         <title id="how-ring-title">
           How LoudFace works: GEO, organic visibility and trust bring the buyers; design, development and conversion work turn them into leads on your site.
         </title>
