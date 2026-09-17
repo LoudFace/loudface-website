@@ -1,0 +1,228 @@
+{
+  "hero": {
+    "eyebrowBrand": "Webflow Enterprise Partner",
+    "eyebrowYears": "4+ years",
+    "headline": "The work is the pitch.",
+    "headlineHighlight": "Not the deck.",
+    "description": "Seven services, one team — behind 200+ B2B SaaS websites. Below is the actual work, and every site is tagged with the services that shipped it. Find the outcome you want, then follow the tag to the service that did it.",
+    "ctaText": "Book a strategy call",
+    "seeAllText": "See all seven services"
+  },
+  "logos": {
+    "lead": "Built and grown for B2B SaaS teams shipping real products"
+  },
+  "exhibits": {
+    "eyebrow": "Selected work",
+    "headline": "What shipped —",
+    "headlineHighlight": "and what shipped it.",
+    "intro": "Three sites, three different mixes of the same seven services. Each label credits the work behind it — follow a tag to the service.",
+    "noteText": "Tap a service to open it",
+    "creditsLabel": "Services that shipped it",
+    "outcomeLabel": "Outcome",
+    "items": [
+      {
+        "rpill": "WEBFLOW AT SCALE",
+        "tag": "Build track",
+        "dom": "liqid.de · Wealth management",
+        "what": "A component-first Webflow rebuild for a regulated fintech — every page assembles from reusable blocks, so their in-house team launches and edits without a developer in the loop.",
+        "credits": [
+          {
+            "label": "Webflow design & dev"
+          },
+          {
+            "label": "UX/UI design"
+          },
+          {
+            "label": "CRO"
+          }
+        ],
+        "outPrefix": "Marketing ships new pages on its own — ",
+        "outHighlight": "no dev queue, no rebuilds.",
+        "outSuffix": "",
+        "clientName": "LIQID"
+      },
+      {
+        "rpill": "0 → 97.8% AI VISIBILITY",
+        "tag": "Growth track",
+        "dom": "toku.com · Payroll & compliance",
+        "what": "An answer-engine program aimed at the buying question — when someone asks an AI which vendor to use, Toku had to be in the answer. We built the pages and signals that get a brand cited by name.",
+        "credits": [
+          {
+            "label": "SEO & AEO"
+          },
+          {
+            "label": "GEO"
+          },
+          {
+            "label": "Growth Autopilot"
+          }
+        ],
+        "outPrefix": "",
+        "outHighlight": "0 → 97.8% AI visibility",
+        "outSuffix": " — cited by name when buyers ask AI who to hire.",
+        "clientName": "Toku"
+      },
+      {
+        "rpill": "PRODUCT-GRADE PAGES",
+        "tag": "Build track",
+        "dom": "eraser.io · Developer tooling",
+        "what": "Marketing pages for a design-and-diagram tool whose audience notices craft. Copy, layout, and build had to hold the product’s own visual standard — so we ran all three together.",
+        "credits": [
+          {
+            "label": "Webflow design & dev"
+          },
+          {
+            "label": "Copywriting"
+          },
+          {
+            "label": "UX/UI design"
+          }
+        ],
+        "outPrefix": "Launch pages that read like ",
+        "outHighlight": "the product built them.",
+        "outSuffix": "",
+        "clientName": "Eraser"
+      }
+    ],
+    "stats": [
+      {
+        "value": "200+",
+        "label": "B2B SaaS sites shipped"
+      },
+      {
+        "value": "288%",
+        "label": "Best conversion increase",
+        "source": "Dimer Health · CRO · six-month optimization"
+      },
+      {
+        "value": "7",
+        "label": "Services, one team"
+      }
+    ]
+  },
+  "index": {
+    "headline": "One offer,",
+    "headlineHighlight": "two tracks.",
+    "intro": "Build ships and sharpens the site. Growth compounds the traffic and the AI answers. Most teams start on one track — the strongest run both, because the site you ship feeds the traffic you grow, and back again.",
+    "buildNum": "Track A",
+    "buildLabel": "Build",
+    "buildTagline": "Ship & sharpen the site",
+    "growNum": "Track B",
+    "growLabel": "Growth",
+    "growTagline": "Compound the traffic",
+    "growNote": "SEO/AEO and GEO look like twins. They’re not — the panel below draws the line.",
+    "bothGlyph": "A + B",
+    "bothText": "Run one track or both. When you run both, the same team owns the whole loop — nothing gets re-briefed between the people who build and the people who grow.",
+    "amtPrefix": "Engagements from ",
+    "amtValue": "$5k/mo",
+    "entries": [
+      {
+        "slug": "geo-agency",
+        "blurb": "Get cited by ChatGPT, Perplexity & AI Overviews",
+        "serviceName": "Generative Engine Optimization"
+      },
+      {
+        "slug": "seo-aeo",
+        "blurb": "Visibility across search and AI engines",
+        "serviceName": "SEO & AEO"
+      },
+      {
+        "slug": "organic-growth",
+        "blurb": "The full category program: search, answer engines, content, conversion",
+        "serviceName": "Organic growth program"
+      },
+      {
+        "slug": "cro",
+        "blurb": "Data-driven optimization that converts",
+        "serviceName": "Conversion rate optimization"
+      },
+      {
+        "slug": "growth-autopilot",
+        "blurb": "SEO, AEO & CRO as one integrated system",
+        "serviceName": "Growth Autopilot"
+      },
+      {
+        "slug": "copywriting",
+        "blurb": "Persuasive content that connects",
+        "serviceName": "Copywriting"
+      },
+      {
+        "slug": "ux-ui-design",
+        "blurb": "Conversion-focused design systems",
+        "serviceName": "UX/UI design"
+      },
+      {
+        "slug": "webflow",
+        "blurb": "Scalable builds optimized for performance",
+        "serviceName": "Webflow design & development"
+      }
+    ]
+  },
+  "clarifier": {
+    "kicker": "The distinction people miss",
+    "headlineLine1": "Two kinds of",
+    "headlineHighlight": "AI",
+    "headlineSuffix": " visibility.",
+    "intro": "“SEO/AEO” and “GEO” get used interchangeably. They answer two different questions — and need two different programs.",
+    "seo": {
+      "abbr": "SEO / AEO",
+      "question": "Is your site found?",
+      "bodyPrefix": "We make ",
+      "bodyBold": "your pages",
+      "bodySuffix": " rank on Google and get pulled into AI Overviews, ChatGPT, and Perplexity when someone searches your category. The work lives on your site; the win is your page showing up.",
+      "unitPrefix": "The unit: ",
+      "unitBold": "your rankings, impressions, and citations",
+      "unitSuffix": " — your own URLs, surfaced.",
+      "linkText": "Explore SEO & AEO"
+    },
+    "geo": {
+      "abbr": "GEO",
+      "question": "Does AI recommend you?",
+      "bodyPrefix": "When a buyer asks an AI “which vendor should we use?”, GEO is the work that makes ",
+      "bodyBold": "you",
+      "bodySuffix": " the name it returns — whether or not your page ranks. It’s about being the answer, not owning the link.",
+      "unitPrefix": "The unit: ",
+      "unitBold": "share of answer",
+      "unitSuffix": " — how often AI names you, across engines.",
+      "proof": "How we took Toku from unranked to cited by name — that’s the exhibit above.",
+      "linkText": "Explore GEO"
+    }
+  },
+  "faq": {
+    "headline": "Questions before",
+    "headlineHighlight": "the call.",
+    "items": [
+      {
+        "question": "Can I hire you for just one service?",
+        "answer": "Yes. An engagement can start with GEO, SEO, AEO, content, conversion, or stack-specific delivery. We add work when it supports the result. The same team keeps the context as the scope grows."
+      },
+      {
+        "question": "What’s the real difference between SEO/AEO and GEO?",
+        "answer": "SEO/AEO makes your own pages visible in search and AI answers — measured in rankings and citations of your URLs. GEO makes AI engines recommend you by name when buyers ask who to hire — measured as share of answer. Related work, different scoreboards. The panel above lays it out side by side.",
+        "answerHtml": "<strong>SEO/AEO</strong> makes your own pages visible in search and AI answers — measured in rankings and citations of your URLs. <strong>GEO</strong> makes AI engines recommend you by name when buyers ask who to hire — measured as share of answer. Related work, different scoreboards. The panel above lays it out side by side."
+      },
+      {
+        "question": "Do the build team and the growth team actually talk?",
+        "answer": "They’re the same team. The people who ship your site are the people who run its SEO, conversion, and AI-visibility work — so the site is built to be found and to convert from day one, not retrofitted later."
+      },
+      {
+        "question": "How fast do you respond?",
+        "answer": "Within about two hours during working hours. You get one team and a direct line, not a ticket queue that routes your question to whoever’s free."
+      },
+      {
+        "question": "How do we start?",
+        "answer": "A 30-minute strategy call. We look at your site together and tell you which of the eight services it actually needs, which to skip, and where they would move the needle first. No pitch deck."
+      }
+    ]
+  },
+  "coverCta": {
+    "eyebrowLeft": "LoudFace — strategy call",
+    "eyebrowRight": "B2B SaaS only",
+    "headline": "Not sure which services you need? That’s the call.",
+    "description": "30 minutes, no pitch deck. We’ll look at your site together and tell you which of the seven would move the needle first — and which you can skip for now.",
+    "ctaText": "Book a strategy call",
+    "responseTime": "One team — build and growth",
+    "creditLeft": "Cover — Montblanc, built by LoudFace",
+    "creditRight": "loudface.co"
+  }
+}

@@ -1,4 +1,5 @@
-import { SERVICES, type ServiceEntry } from './data';
+import type { ServicesIndexContent, ServicesIndexEntry } from '@/lib/content-utils';
+import { TRACK_BY_SLUG } from './data';
 
 /**
  * ServicesIndex — the deep-indigo 7-service directory, grouped into the approved
@@ -16,12 +17,12 @@ const GoIcon = () => (
   </svg>
 );
 
-function Row({ s }: { s: ServiceEntry }) {
+function Row({ s }: { s: ServicesIndexEntry }) {
   return (
     <li>
       <a className="svc-row" href={`/services/${s.slug}`}>
         <span className="sr-txt">
-          <b>{s.name}</b>
+          <b>{s.serviceName}</b>
           <span>{s.blurb}</span>
         </span>
         <span className="sr-go" aria-hidden="true">
@@ -32,21 +33,19 @@ function Row({ s }: { s: ServiceEntry }) {
   );
 }
 
-export function ServicesIndex() {
-  const build = SERVICES.filter((s) => s.track === 'build');
-  const grow = SERVICES.filter((s) => s.track === 'grow');
+export function ServicesIndex({ content }: { content: ServicesIndexContent }) {
+  const build = content.entries.filter((s) => TRACK_BY_SLUG[s.slug] === 'build');
+  const grow = content.entries.filter((s) => TRACK_BY_SLUG[s.slug] === 'grow');
 
   return (
     <section className="svc" id="services" aria-label="All seven services">
       <div className="container">
         <div className="svc-head rv">
           <h2 className="display on-dark">
-            One offer, <span className="ghost">two tracks.</span>
+            {content.headline} <span className="ghost">{content.headlineHighlight}</span>
           </h2>
           <p className="lede on-dark">
-            Build ships and sharpens the site. Growth compounds the traffic and the AI answers. Most
-            teams start on one track — the strongest run both, because the site you ship feeds the
-            traffic you grow, and back again.
+            {content.intro}
           </p>
         </div>
 
@@ -55,10 +54,10 @@ export function ServicesIndex() {
           <article className="track build rv">
             <div className="track-top">
               <div>
-                <span className="track-num">Track A</span>
-                <h3>Build</h3>
+                <span className="track-num">{content.buildNum}</span>
+                <h3>{content.buildLabel}</h3>
               </div>
-              <span className="track-tagline">Ship &amp; sharpen the site</span>
+              <span className="track-tagline">{content.buildTagline}</span>
             </div>
             <ul className="svc-list">
               {build.map((s) => (
@@ -71,10 +70,10 @@ export function ServicesIndex() {
           <article className="track grow rv" style={{ ['--d' as string]: '.08s' }}>
             <div className="track-top">
               <div>
-                <span className="track-num">Track B</span>
-                <h3>Growth</h3>
+                <span className="track-num">{content.growNum}</span>
+                <h3>{content.growLabel}</h3>
               </div>
-              <span className="track-tagline">Compound the traffic</span>
+              <span className="track-tagline">{content.growTagline}</span>
             </div>
             <ul className="svc-list">
               {grow.map((s) => (
@@ -82,18 +81,17 @@ export function ServicesIndex() {
               ))}
             </ul>
             <p className="track-note">
-              SEO/AEO and GEO look like twins. They’re not — the panel below draws the line.
+              {content.growNote}
             </p>
           </article>
 
           <div className="svc-both rv" style={{ ['--d' as string]: '.14s' }}>
-            <span className="glyph">A + B</span>
+            <span className="glyph">{content.bothGlyph}</span>
             <p>
-              Run one track or both. When you run both, the same team owns the whole loop — nothing
-              gets re-briefed between the people who build and the people who grow.
+              {content.bothText}
             </p>
             <span className="amt">
-              Engagements from <em>$5k/mo</em>
+              {content.amtPrefix}<em>{content.amtValue}</em>
             </span>
           </div>
         </div>

@@ -1,4 +1,4 @@
-import { CONTACT_FAQ } from './data';
+import type { ContactFaqContent } from '@/lib/content-utils';
 
 /**
  * Faq — light editorial accordion ("the honest answers"): aside with a Cal CTA
@@ -6,23 +6,23 @@ import { CONTACT_FAQ } from './data';
  * ./data (same source the page's FAQPage JSON-LD is generated from). First
  * item opens by default.
  */
-export function Faq() {
+export function Faq({ content }: { content: ContactFaqContent }) {
   return (
     <section className="faq" aria-label="Frequently asked questions">
       <div className="wrap faq__grid">
         <div className="faq__aside rv">
-          <h2>The honest answers.</h2>
-          <p>Five things people usually want to know before they put a call on the calendar.</p>
+          <h2>{content.headline}</h2>
+          <p>{content.intro}</p>
           <a href="#book-modal" data-cal-trigger className="btn btn-primary">
-            Book an intro call <span className="btn-arrow" aria-hidden="true">&rarr;</span>
+            {content.ctaText} <span className="btn-arrow" aria-hidden="true">&rarr;</span>
           </a>
         </div>
 
         <div className="faq__list rv" style={{ ['--d' as string]: '.08s' }}>
-          {CONTACT_FAQ.map((item, i) => (
-            <details key={item.q} open={i === 0}>
-              <summary>{item.q}</summary>
-              <p>{item.a}</p>
+          {content.items.map((item, i) => (
+            <details key={item.question} open={i === 0}>
+              <summary>{item.question}</summary>
+              <p>{item.answer}</p>
             </details>
           ))}
         </div>

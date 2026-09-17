@@ -1,0 +1,110 @@
+{
+  "hero": {
+    "eyebrow": "2h response time",
+    "headlinePrefix": "The ",
+    "headlineHighlight": "first move",
+    "headlineSuffix": " is a 30-minute call.",
+    "description": "No forms to fill, no discovery deck, no sales gauntlet. Book the call, we look at your site together, and you leave knowing exactly what’s holding it back, whether or not we end up working together.",
+    "ctaText": "Book an intro call",
+    "emailPrefix": "or email ",
+    "cardKicker": "The first move",
+    "cardChip": "Free · 30 min",
+    "cardTitle": "Intro call",
+    "cardMetaVideo": "Video call",
+    "cardMetaFounder": "With our founder",
+    "cardLabel": "What we’ll cover",
+    "agenda": [
+      "What’s holding your site back",
+      "Where the revenue leaks",
+      "Whether we’re the right fit"
+    ]
+  },
+  "logos": {
+    "lead": "The team behind 200+ B2B SaaS websites"
+  },
+  "nextSteps": {
+    "headlinePrefix": "Booking is the ",
+    "headlineHighlight": "first move",
+    "headlineSuffix": ", not a form to fill.",
+    "subtitle": "One click sets a real sequence in motion. Here’s the exact path every LoudFace engagement runs, starting the moment you hit the button.",
+    "steps": [
+      {
+        "title": "You book the call",
+        "chip": "now",
+        "body": "The button opens our calendar. Pick a slot that works and you're on the thread. That's the whole sign-up: no intake questionnaire standing between you and a conversation."
+      },
+      {
+        "title": "The intro call",
+        "chip": "30 min",
+        "body": "Thirty minutes over video. We pull up your live site, you tell us where it hurts, and we give you an honest read on what we'd change and why. It's useful whether or not we work together."
+      },
+      {
+        "title": "The plan, in writing",
+        "chip": "2h response",
+        "body": "Within two working hours of the call you get a written recap and a proposed shape of work. Clear scope, one flat rate, cancel anytime."
+      },
+      {
+        "title": "Kickoff",
+        "chip": "weekly ships",
+        "body": "Approve it and the weekly ship cadence begins. You get a direct line to the people actually doing the work, not an account manager relaying messages in between."
+      }
+    ]
+  },
+  "offices": {
+    "eyebrow": "Where we are",
+    "headlinePrefix": "Two cities. ",
+    "headlineHighlight": "One team",
+    "headlineSuffix": " on the other end.",
+    "subtitle": "Wherever your message lands, the same people answer it, typically within two hours during working hours. No ticket queue, no offshore relay.",
+    "cities": [
+      { "city": "San Francisco", "lines": ["2261 Market Street STE 46212", "San Francisco, CA 94114"] },
+      { "city": "Dubai", "lines": ["Dubai Silicon Oasis, DDP", "Building A1, UAE"] }
+    ],
+    "localLabel": "local",
+    "facts": {
+      "reply": { "number": "2h", "label": "Typical reply", "description": " to a new enquiry, during working hours." },
+      "years": { "number": "4", "numberSuffix": "+", "label": "Years", "description": " as a Webflow Enterprise Partner." },
+      "sites": { "number": "200", "numberSuffix": "+", "label": "B2B SaaS sites", "description": " designed, built and grown." }
+    },
+    "founderQuote": "“You’ll talk to the people who’ll actually do the work, never an account manager.”"
+  },
+  "faq": {
+    "headline": "The honest answers.",
+    "intro": "Five things people usually want to know before they put a call on the calendar.",
+    "ctaText": "Book an intro call",
+    "items": [
+      {
+        "question": "What actually happens on the call?",
+        "answer": "Thirty minutes over video. We pull up your live site, you tell us what's not working, and we give you a straight read on what we'd change and why. You walk away with something useful: a clear next step, whether or not we work together."
+      },
+      {
+        "question": "Is this a sales pitch?",
+        "answer": "No. It's a working session, not a pitch. If we're not the right team for what you need, we'll say so, and usually point you somewhere better. We'd rather pass than take on work we can't make great."
+      },
+      {
+        "question": "Who will I be talking to?",
+        "answer": "One of the people who'd actually run your project, often Arnel, the founder. Never a salesperson or an account manager reading off a script. The people on the call are the people on the work."
+      },
+      {
+        "question": "What if I'm not ready to commit?",
+        "answer": "Then don't. Book it as a second opinion. Plenty of the calls we take are with teams just pressure-testing an idea or a redesign. No obligation, and no follow-up sequence chasing you afterward."
+      },
+      {
+        "question": "How much does it cost to work together?",
+        "answer": "Engagements start from $5k/mo, custom-scoped to your goals, cancel anytime. We confirm the exact scope on the call so you know precisely what that buys before anything starts."
+      }
+    ]
+  },
+  "coverCta": {
+    "eyebrowLeft": "LoudFace — intro call",
+    "eyebrowRight": "B2B SaaS only",
+    "headlinePrefix": "Let’s make the ",
+    "headlineHighlight": "first move",
+    "headlineSuffix": ".",
+    "description": "Thirty minutes, no pitch deck. We’ll look at your site together and tell you exactly what we’d change.",
+    "ctaText": "Book an intro call",
+    "responseTime": "2h response time, every tier",
+    "creditLeft": "Cover — Montblanc, built by LoudFace",
+    "creditRight": "loudface.co"
+  }
+}

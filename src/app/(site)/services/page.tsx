@@ -25,6 +25,7 @@
 export const revalidate = 60;
 
 import type { Metadata } from 'next';
+import { getServicesContent } from '@/lib/content-utils';
 import '../../services-v3/services-v3.css';
 import { getServicesImages, SERVICES_FAQ, SERVICES } from '../../services-v3/data';
 import { HeroServices } from '../../services-v3/HeroServices';
@@ -68,7 +69,7 @@ export const metadata: Metadata = {
 };
 
 export default async function ServicesPage() {
-  const images = await getServicesImages();
+  const [images, content] = await Promise.all([getServicesImages(), getServicesContent()]);
 
   const breadcrumbSchema = {
     '@context': 'https://schema.org',
@@ -88,7 +89,7 @@ export default async function ServicesPage() {
     itemListElement: SERVICES.map((s, i) => ({
       '@type': 'ListItem',
       position: i + 1,
-      name: s.name,
+      name: s.serviceName,
       url: `${SITE}/services/${s.slug}`,
     })),
   };
@@ -135,13 +136,13 @@ export default async function ServicesPage() {
 
       {/* .svv3 scopes the bespoke resets so they can't touch the shared Header/Footer/Cal chrome. */}
       <div className="svv3">
-        <HeroServices images={images} />
-        <LogosMarquee />
-        <Exhibits images={images} />
-        <ServicesIndex />
-        <Clarifier />
-        <Faq />
-        <CoverCTA images={images} />
+        <HeroServices images={images} content={content.hero} />
+        <LogosMarquee content={content.logos} />
+        <Exhibits images={images} content={content.exhibits} />
+        <ServicesIndex content={content.index} />
+        <Clarifier content={content.clarifier} />
+        <Faq content={content.faq} />
+        <CoverCTA images={images} content={content.coverCta} />
         {/* Shared v3 footer (same component as the homepage/About/Pricing). Rendered
             inside .svv3 so the re-scoped .ft footer CSS in services-v3.css applies
             with full isolation — home-v3.css is NOT imported here. */}

@@ -1,4 +1,5 @@
 import { CONTACT_EMAIL } from './data';
+import type { ContactHeroContent } from '@/lib/content-utils';
 
 /**
  * HeroContact — the electric full-bleed hero: copy column (eyebrow + h1 + sub
@@ -18,26 +19,24 @@ const tick = (
 
 const d = (v: string) => ({ ['--d' as string]: v });
 
-export function HeroContact() {
+export function HeroContact({ content }: { content: ContactHeroContent }) {
   return (
     <header className="hero" aria-label="Contact LoudFace">
       <div className="wrap hero__inner">
         <div className="hero__copy">
-          <span className="eyebrow eyebrow--dark rv">2h response time</span>
+          <span className="eyebrow eyebrow--dark rv">{content.eyebrow}</span>
           <h1 className="rv" style={d('.06s')}>
-            The <span className="hl">first move</span> is a 30-minute call.
+            {content.headlinePrefix}<span className="hl">{content.headlineHighlight}</span>{content.headlineSuffix}
           </h1>
           <p className="hero__sub rv" style={d('.12s')} data-speakable>
-            No forms to fill, no discovery deck, no sales gauntlet. Book the call, we look at your
-            site together, and you leave knowing exactly what&rsquo;s holding it back, whether or
-            not we end up working together.
+            {content.description}
           </p>
           <div className="hero__ctas rv" style={d('.18s')}>
             <a href="#book-modal" data-cal-trigger className="btn btn-white">
-              Book an intro call <span className="btn-arrow" aria-hidden="true">&rarr;</span>
+              {content.ctaText} <span className="btn-arrow" aria-hidden="true">&rarr;</span>
             </a>
             <a href={`mailto:${CONTACT_EMAIL}`} className="hero__email">
-              or email <u>{CONTACT_EMAIL}</u>
+              {content.emailPrefix}<u>{CONTACT_EMAIL}</u>
             </a>
           </div>
         </div>
@@ -46,25 +45,25 @@ export function HeroContact() {
         <div className="hero__panel rv" style={d('.14s')}>
           <div className="ecard">
             <div className="ecard__top">
-              <span className="ecard__kick">The first move</span>
-              <span className="ecard__chip">Free &middot; 30 min</span>
+              <span className="ecard__kick">{content.cardKicker}</span>
+              <span className="ecard__chip">{content.cardChip}</span>
             </div>
-            <h2>Intro call</h2>
+            <h2>{content.cardTitle}</h2>
             <div className="ecard__meta">
-              <span>Video call</span>
+              <span>{content.cardMetaVideo}</span>
               <span className="sep" aria-hidden="true"></span>
-              <span>With our founder</span>
+              <span>{content.cardMetaFounder}</span>
             </div>
             <div className="ecard__rule" aria-hidden="true"></div>
-            <div className="ecard__label">What we&rsquo;ll cover</div>
+            <div className="ecard__label">{content.cardLabel}</div>
             <ul className="agenda">
-              <li>{tick} What&rsquo;s holding your site back</li>
-              <li>{tick} Where the revenue leaks</li>
-              <li>{tick} Whether we&rsquo;re the right fit</li>
+              <li>{tick} {content.agenda[0]}</li>
+              <li>{tick} {content.agenda[1]}</li>
+              <li>{tick} {content.agenda[2]}</li>
             </ul>
             <div className="ecard__cta">
               <a href="#book-modal" data-cal-trigger className="btn btn-white btn-full">
-                Book an intro call <span className="btn-arrow" aria-hidden="true">&rarr;</span>
+                {content.ctaText} <span className="btn-arrow" aria-hidden="true">&rarr;</span>
               </a>
             </div>
           </div>

@@ -1,12 +1,66 @@
 {
   "hero": {
-    "eyebrow": "Pricing",
-    "headline": "We run your website and growth.<br>You run your business.",
-    "description": "We embed into your team as your always-on web and growth partner, owning the roadmap, execution, and results so you don't have to."
+    "eyebrowBrand": "Pricing",
+    "eyebrowSub": "autopilot",
+    "headline": "We run your website and growth.",
+    "headlineHighlight": "You run your business.",
+    "description": "We embed into your team as your always-on web and growth partner, owning the roadmap, execution, and results so you don't have to.",
+    "anchorLabel": "Engagements start from",
+    "anchorPrice": "$5k",
+    "anchorPeriod": "mo",
+    "tiers": [
+      {
+        "tagline": "One focused track. Full ownership.",
+        "description": "For teams that need a single, dedicated workstream executed end-to-end without the overhead of managing it.",
+        "features": [
+          "1 active initiative at a time",
+          "Weekly showcase to review progress",
+          "Weekly maintenance batch to keep things tight",
+          "Choose one track: Build or Growth"
+        ],
+        "hint": "Move to Dual when you need both tracks running in parallel.",
+        "ctaText": "Start with Solo",
+        "tierName": "Solo Autopilot"
+      },
+      {
+        "tagline": "Two parallel tracks. Real momentum.",
+        "description": "For teams ready to ship site improvements and scale organic visibility at the same time. Build + Growth running simultaneously, with tighter feedback loops.",
+        "features": [
+          "Run Build + Growth at the same time",
+          "Double the showcase and maintenance cadence",
+          "Structured testing: we run growth experiments, measure results, and double down on what works"
+        ],
+        "hint": "Move to Scale when you need 3+ parallel initiatives or multi-stakeholder coordination.",
+        "featured": true,
+        "badge": "Most Popular",
+        "ctaText": "Start with Dual",
+        "tierName": "Dual Autopilot"
+      },
+      {
+        "tagline": "Multi-track. Maximum velocity.",
+        "description": "For companies that need full-spectrum execution across multiple workstreams: design, development, SEO, content, and experiments all moving simultaneously.",
+        "features": [
+          "3–4 concurrent initiatives instead of 2",
+          "Rolling maintenance with priority handling, no batching delays",
+          "Multi-stakeholder coordination for complex orgs",
+          "Optional standups if your team prefers live sync"
+        ],
+        "ctaText": "Start with Scale",
+        "tierName": "Scale Autopilot"
+      }
+    ],
+    "qualifierPrefix": "Built for B2B SaaS, fintech, and funded companies (Series A–C) that need a web partner, ",
+    "qualifierHighlight": "not a vendor."
+  },
+  "logos": {
+    "lead": "Trusted by B2B SaaS teams shipping real products"
   },
   "howItWorks": {
-    "title": "How It Works",
-    "highlightWord": "Works",
+    "headline": "From intro call to shipping,",
+    "headlineHighlight": "in four moves.",
+    "intro": "No lengthy onboarding, no bloated statements of work. We learn the gap, scope the first initiatives, and start shipping on a weekly cadence.",
+    "ctaText": "Book an intro call",
+    "responseTime": "2h response time, every tier",
     "steps": [
       {
         "number": "01",
@@ -21,93 +75,147 @@
       {
         "number": "03",
         "title": "Kickoff",
-        "description": "Access setup, Scoreboard live, first initiative briefed. You meet your delivery team."
+        "description": "Within 48 hours of signature. Access set up, Scoreboard live, the first fixes and calibration articles shipping in the same week. You meet your delivery team and see shipped work inside five days."
       },
       {
         "number": "04",
         "title": "We ship, weekly",
         "description": "Showcases land in your inbox. Work flows on cadence. You approve, we ship, repeat."
       }
-    ]
-  },
-  "plans": {
-    "qualifier": "Built for B2B SaaS, fintech, and funded companies (Series A–C) that need a web partner, not a vendor.",
-    "tiers": [
-      {
-        "name": "Solo Autopilot",
-        "tagline": "One focused track. Full ownership.",
-        "description": "For teams that need a single, dedicated workstream executed end-to-end without the overhead of managing it.",
-        "changes": [
-          "1 active initiative at a time",
-          "Weekly showcase to review progress",
-          "Weekly maintenance batch to keep things tight",
-          "Choose one track: Build or Growth"
-        ],
-        "upgradeHint": "Move to Dual when you need both tracks running in parallel.",
-        "featured": false
-      },
-      {
-        "name": "Dual Autopilot",
-        "tagline": "Two parallel tracks. Real momentum.",
-        "description": "For teams ready to ship site improvements and scale organic visibility at the same time. Build + Growth running simultaneously, with tighter feedback loops.",
-        "changes": [
-          "Run Build + Growth at the same time",
-          "Double the showcase and maintenance cadence",
-          "Structured testing: we run growth experiments, measure results, and double down on what works"
-        ],
-        "upgradeHint": "Move to Scale when you need 3+ parallel initiatives or multi-stakeholder coordination.",
-        "featured": true,
-        "badge": "Most Popular"
-      },
-      {
-        "name": "Scale Autopilot",
-        "tagline": "Multi-track. Maximum velocity.",
-        "description": "For companies that need full-spectrum execution across multiple workstreams: design, development, SEO, content, and experiments all moving simultaneously.",
-        "changes": [
-          "3–4 concurrent initiatives instead of 2",
-          "Rolling maintenance with priority handling, no batching delays",
-          "Multi-stakeholder coordination for complex orgs",
-          "Optional standups if your team prefers live sync"
-        ],
-        "upgradeHint": null,
-        "featured": false
-      }
-    ]
+    ],
+    "capsuleText": "[ Fixed monthly · async by default · 2h response ]"
   },
   "tracks": {
-    "title": "Two Tracks, One Goal",
-    "highlightWord": "Tracks",
-    "subtitle": "Every engagement runs on one or both tracks. Solo clients pick one. Dual and Scale run both in parallel.",
-    "items": [
+    "headline": "Two tracks,",
+    "headlineHighlight": "one goal.",
+    "intro": "Every engagement runs on one or both tracks. Solo clients pick one. Dual and Scale run both in parallel.",
+    "build": {
+      "badge": "TRACK A",
+      "title": "Build",
+      "tagline": "Ship and optimize your site",
+      "description": "Conversion optimization, landing pages, UX/UI, and implementation across your stack. Webflow is one delivery option when it fits the work.",
+      "tags": [
+        "CRO",
+        "Landing pages",
+        "UI iteration",
+        "Webflow",
+        "Development"
+      ]
+    },
+    "growth": {
+      "badge": "TRACK B",
+      "title": "Growth",
+      "tagline": "Scale organic visibility",
+      "description": "SEO, AEO (AI search optimization), content systems, and distribution experiments. Everything that drives qualified traffic to your site.",
+      "tags": [
+        "SEO",
+        "AEO",
+        "Content systems",
+        "Distribution"
+      ]
+    },
+    "connectorGlyph": "A + B",
+    "connectorText": "Solo picks one track. Dual and Scale run both in parallel — the site you ship feeds the traffic you grow, and back again."
+  },
+  "compare": {
+    "eyebrow": "Compare the tiers",
+    "headline": "Same team,",
+    "headlineHighlight": "more velocity.",
+    "intro": "Each tier turns up the number of initiatives, the cadence, and the coordination. The strategic layer never changes.",
+    "columns": {
+      "feature": "Feature",
+      "solo": "Solo",
+      "soloTag": "One track",
+      "dual": "Dual",
+      "dualTag": "Most popular",
+      "scale": "Scale",
+      "scaleTag": "Multi-track"
+    },
+    "rows": [
       {
-        "icon": "build",
-        "label": "Build",
-        "tagline": "Ship and optimize your site",
-        "description": "Webflow design, development, landing pages, conversion optimization, and continuous UI iteration. Everything that makes your website perform."
+        "label": "Tracks",
+        "solo": "Build or Growth",
+        "dual": "Build + Growth",
+        "scale": "Multi-track"
       },
       {
-        "icon": "growth",
-        "label": "Growth",
-        "tagline": "Scale organic visibility",
-        "description": "SEO, AEO (AI search optimization), content systems, and distribution experiments. Everything that drives qualified traffic to your site."
+        "label": "Active initiatives",
+        "solo": "1",
+        "dual": "2",
+        "scale": "3–4",
+        "emph": true
+      },
+      {
+        "label": "Showcases",
+        "solo": "1/week",
+        "dual": "2/week",
+        "scale": "3+/week (or rolling)"
+      },
+      {
+        "label": "Maintenance",
+        "solo": "1 batch/week",
+        "dual": "2 batches/week",
+        "scale": "Rolling / priority"
+      },
+      {
+        "label": "Response time",
+        "solo": "2h",
+        "dual": "2h",
+        "scale": "2h",
+        "emph": true
+      },
+      {
+        "label": "Strategic layer",
+        "solo": "Scoreboard, Monthly Memo, Quarterly Focus",
+        "dual": "Everything in Solo + structured testing",
+        "scale": "Everything in Dual + multi-stakeholder governance"
+      },
+      {
+        "label": "Meetings",
+        "solo": "Async by default",
+        "dual": "Async by default",
+        "scale": "Optional standups"
+      }
+    ],
+    "footnote": "Every engagement is scoped to your goals. Pricing depends on tier, scope, and complexity. Book an intro call and we’ll recommend the right fit."
+  },
+  "includes": {
+    "eyebrow": "Every plan",
+    "headline": "What every plan",
+    "headlineHighlight": "includes.",
+    "intro": "The tier decides your velocity. These seven never change — they come with Solo, Dual, and Scale alike.",
+    "items": [
+      {
+        "title": "Full Autopilot ownership",
+        "description": "We own the roadmap, planning, and execution. You approve, we ship."
+      },
+      {
+        "title": "2h response time",
+        "description": "Fast async communication during business hours."
+      },
+      {
+        "title": "Scoreboard",
+        "description": "Live dashboard tracking what's in progress, what shipped, and what's next."
+      },
+      {
+        "title": "Monthly Memo",
+        "description": "Strategic summary of what happened, what we learned, and where we're headed."
+      },
+      {
+        "title": "Quarterly Focus",
+        "description": "All work aligned around one high-impact objective each quarter."
+      },
+      {
+        "title": "Showcases",
+        "description": "Regular walkthroughs of work-in-progress before anything goes live."
+      },
+      {
+        "title": "Maintenance",
+        "description": "Ongoing fixes, updates, and polish batched into your cadence."
       }
     ]
   },
-  "comparison": {
-    "title": "Compare the Tiers",
-    "highlightWord": "Tiers",
-    "rows": [
-      { "label": "Tracks", "solo": "Build or Growth", "dual": "Build + Growth", "scale": "Multi-track" },
-      { "label": "Active initiatives", "solo": "1", "dual": "2", "scale": "3–4" },
-      { "label": "Showcases", "solo": "1/week", "dual": "2/week", "scale": "3+/week (or rolling)" },
-      { "label": "Maintenance", "solo": "1 batch/week", "dual": "2 batches/week", "scale": "Rolling / priority" },
-      { "label": "Response time", "solo": "2h", "dual": "2h", "scale": "2h" },
-      { "label": "Strategic layer", "solo": "Scoreboard, Monthly Memo, Quarterly Focus", "dual": "Everything in Solo + structured testing", "scale": "Everything in Dual + multi-stakeholder governance" },
-      { "label": "Meetings", "solo": "Async by default", "dual": "Async by default", "scale": "Optional standups" }
-    ],
-    "footnote": "Every engagement is scoped to your goals. Pricing depends on tier, scope, and complexity. Book an intro call and we'll recommend the right fit."
-  },
-  "beyondRetainers": {
+  "specialArrangements": {
     "title": "Special Arrangements",
     "description": "Every engagement runs through a retainer, but we flex the structure when it makes sense:",
     "options": [
@@ -122,21 +230,30 @@
     ],
     "ctaText": "Talk to Us About Your Scope"
   },
-  "included": {
-    "title": "What Every Plan Includes",
-    "highlightWord": "Includes",
-    "items": [
-      { "feature": "Full Autopilot ownership", "description": "We own the roadmap, planning, and execution. You approve, we ship" },
-      { "feature": "2h response time", "description": "Fast async communication during business hours" },
-      { "feature": "Scoreboard", "description": "Live dashboard tracking what's in progress, what shipped, and what's next" },
-      { "feature": "Monthly Memo", "description": "Strategic summary of what happened, what we learned, and where we're headed" },
-      { "feature": "Quarterly Focus", "description": "All work aligned around one high-impact objective each quarter" },
-      { "feature": "Showcases", "description": "Regular walkthroughs of work-in-progress before anything goes live" },
-      { "feature": "Maintenance", "description": "Ongoing fixes, updates, and polish batched into your cadence" }
-    ]
+  "exhibits": {
+    "headline": "What our clients",
+    "headlineHighlight": "say."
   },
   "faq": {
-    "title": "Frequently Asked Questions",
+    "panelTitleHighlight": "Still",
+    "panelTitleRest": "have questions?",
+    "panelText": "We’re here to help you with any inquiries.",
+    "ctaText": "Book a strategy call",
+    "stats": [
+      {
+        "value": "$5k",
+        "period": "mo",
+        "label": "engagements start from"
+      },
+      {
+        "value": "2h",
+        "label": "response time, every tier"
+      },
+      {
+        "value": "1–4",
+        "label": "active initiatives by tier"
+      }
+    ],
     "items": [
       {
         "question": "How is pricing determined?",
@@ -148,7 +265,8 @@
       },
       {
         "question": "What's the difference between Build and Growth?",
-        "answer": "<strong>Build</strong> focuses on your Webflow site: launches, redesigns, landing pages, conversion optimization, and continuous UI iteration. <strong>Growth</strong> focuses on organic visibility: SEO, AEO (AI search optimization), content systems, and distribution experiments. At Dual and above, you run both simultaneously."
+        "answer": "Build focuses on conversion and implementation across your stack: launches, redesigns, landing pages, and continuous UI iteration. Webflow is one delivery option. Growth focuses on organic visibility through GEO, SEO, AEO, and content. At Dual and above, you run both simultaneously.",
+        "answerHtml": "<strong>Build</strong> focuses on conversion and implementation across your stack: launches, redesigns, landing pages, and continuous UI iteration. Webflow is one delivery option. <strong>Growth</strong> focuses on organic visibility through GEO, SEO, AEO, and content. At Dual and above, you run both simultaneously."
       },
       {
         "question": "What does \"Autopilot\" actually mean?",
@@ -164,9 +282,15 @@
       }
     ]
   },
-  "cta": {
-    "title": "Stop managing. Start shipping.",
-    "subtitle": "Book a 30-minute intro call. We'll recommend the right tier for your goals.",
-    "ctaText": "Book an Intro Call"
+  "coverCta": {
+    "eyebrowLeft": "LoudFace — intro call",
+    "eyebrowRight": "B2B SaaS · fintech · Series A–C",
+    "headline": "Stop managing. Start shipping.",
+    "description": "Book a 30-minute intro call. We’ll recommend the right tier for your goals.",
+    "ctaText": "Book an Intro Call",
+    "exploreLabel": "Or explore our work",
+    "exploreLinkText": "case studies →",
+    "creditLeft": "Cover — Montblanc, built by LoudFace",
+    "creditRight": "loudface.co"
   }
 }

@@ -1,5 +1,6 @@
 import Image from 'next/image';
 import type { ExhibitTestimonial } from './data';
+import type { PricingExhibitsContent } from '@/lib/content-utils';
 
 /**
  * Exhibits — "What our clients say": deep-stage 3-up exhibit gallery with big
@@ -8,14 +9,20 @@ import type { ExhibitTestimonial } from './data';
  */
 const DELAYS = ['0s', '.08s', '.16s'];
 
-export function Exhibits({ testimonials }: { testimonials: ExhibitTestimonial[] }) {
+export function Exhibits({
+  testimonials,
+  content,
+}: {
+  testimonials: ExhibitTestimonial[];
+  content: PricingExhibitsContent;
+}) {
   if (testimonials.length === 0) return null;
   return (
     <section className="exh diag" aria-label="What our clients say">
       <div className="container">
         <div className="exh-head rv">
           <h2 className="display on-dark">
-            What our clients <span className="ghost">say.</span>
+            {content.headline} <span className="ghost">{content.headlineHighlight}</span>
           </h2>
         </div>
         <div className="exh-grid">

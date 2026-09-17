@@ -1,4 +1,5 @@
 import Image from 'next/image';
+import type { PricingContent } from '@/lib/content-utils';
 import { LOGOS } from '../home-v3/_logos';
 
 /**
@@ -13,10 +14,10 @@ import { LOGOS } from '../home-v3/_logos';
  * the seamless -50% loop) breaks. No `sizes`: fixed-size ⇒ the default 1x/2x srcset
  * is both correct and cheapest, and the w=300 source caps the output.
  */
-export function LogosMarquee() {
+export function LogosMarquee({ content }: { content: PricingContent['logos'] }) {
   return (
     <section className="logos" aria-label="Trusted by">
-      <p className="logos-lead">Trusted by B2B SaaS teams shipping real products</p>
+      <p className="logos-lead">{content.lead}</p>
       <div className="marq">
         <div className="marq-track">
           {LOGOS.map((l) => (

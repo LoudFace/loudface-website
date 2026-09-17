@@ -13,6 +13,7 @@
  * hours, 30-minute call. No slot counts, no scarcity claims.
  */
 import { fetchHomepageData } from '@/lib/cms-data';
+import { rawContent, type ContactContent } from '@/lib/content-utils';
 import type { TeamMember } from '@/lib/types';
 
 export interface ContactFounder {
@@ -40,28 +41,17 @@ export async function getContactFounder(): Promise<ContactFounder> {
   }
 }
 
-export const CONTACT_FAQ: { q: string; a: string }[] = [
-  {
-    q: 'What actually happens on the call?',
-    a: "Thirty minutes over video. We pull up your live site, you tell us what's not working, and we give you a straight read on what we'd change and why. You walk away with something useful: a clear next step, whether or not we work together.",
-  },
-  {
-    q: 'Is this a sales pitch?',
-    a: "No. It's a working session, not a pitch. If we're not the right team for what you need, we'll say so, and usually point you somewhere better. We'd rather pass than take on work we can't make great.",
-  },
-  {
-    q: 'Who will I be talking to?',
-    a: "One of the people who'd actually run your project, often Arnel, the founder. Never a salesperson or an account manager reading off a script. The people on the call are the people on the work.",
-  },
-  {
-    q: "What if I'm not ready to commit?",
-    a: "Then don't. Book it as a second opinion. Plenty of the calls we take are with teams just pressure-testing an idea or a redesign. No obligation, and no follow-up sequence chasing you afterward.",
-  },
-  {
-    q: 'How much does it cost to work together?',
-    a: 'Engagements start from $5k/mo, custom-scoped to your goals, cancel anytime. We confirm the exact scope on the call so you know precisely what that buys before anything starts.',
-  },
-];
+/**
+ * FAQ content — single source for the accordion AND the FAQPage schema.
+ * Reads the unmarked source (rawContent), never the async getter's marked
+ * tree — this file is also read at module scope by page.tsx to build
+ * JSON-LD, and inline-edit markers must never reach structured data. The
+ * accordion itself (contact-v3/Faq.tsx) renders the marked, editable
+ * version instead, via its own `content` prop from getContactContent().
+ */
+export const CONTACT_FAQ: { q: string; a: string }[] = rawContent<ContactContent>(
+  'contact'
+).faq.items.map((item) => ({ q: item.question, a: item.answer }));
 
 /** Office data — single source for the visible tiles AND the ContactPage JSON-LD. */
 export const OFFICES = [

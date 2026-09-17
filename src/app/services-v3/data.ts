@@ -13,6 +13,7 @@
  * source of truth the accordion renders.
  */
 export { getHomeV3Images as getServicesImages, type HomeImages as ServicesImages } from '../home-v3/data';
+import { rawContent, type ServicesContent } from '@/lib/content-utils';
 
 export interface ServicesFaqItem {
   q: string;
@@ -20,31 +21,17 @@ export interface ServicesFaqItem {
   aHtml?: string; // optional rich variant (<strong>) — feeds the accordion
 }
 
-/** FAQ content — single source for the accordion AND the FAQPage JSON-LD. */
-export const SERVICES_FAQ: ServicesFaqItem[] = [
-  {
-    q: 'Can I hire you for just one service?',
-    a: 'Yes. An engagement can start with GEO, SEO, AEO, content, conversion, or stack-specific delivery. We add work when it supports the result. The same team keeps the context as the scope grows.',
-  },
-  {
-    q: 'What’s the real difference between SEO/AEO and GEO?',
-    a: 'SEO/AEO makes your own pages visible in search and AI answers — measured in rankings and citations of your URLs. GEO makes AI engines recommend you by name when buyers ask who to hire — measured as share of answer. Related work, different scoreboards. The panel above lays it out side by side.',
-    aHtml:
-      '<strong>SEO/AEO</strong> makes your own pages visible in search and AI answers — measured in rankings and citations of your URLs. <strong>GEO</strong> makes AI engines recommend you by name when buyers ask who to hire — measured as share of answer. Related work, different scoreboards. The panel above lays it out side by side.',
-  },
-  {
-    q: 'Do the build team and the growth team actually talk?',
-    a: 'They’re the same team. The people who ship your site are the people who run its SEO, conversion, and AI-visibility work — so the site is built to be found and to convert from day one, not retrofitted later.',
-  },
-  {
-    q: 'How fast do you respond?',
-    a: 'Within about two hours during working hours. You get one team and a direct line, not a ticket queue that routes your question to whoever’s free.',
-  },
-  {
-    q: 'How do we start?',
-    a: 'A 30-minute strategy call. We look at your site together and tell you which of the eight services it actually needs, which to skip, and where they would move the needle first. No pitch deck.',
-  },
-];
+/**
+ * FAQ content — single source for the accordion AND the FAQPage JSON-LD.
+ * Reads the unmarked source (rawContent), never the async getter's marked
+ * tree — this file is also read at module scope by page.tsx to build
+ * JSON-LD, and inline-edit markers must never reach structured data. The
+ * accordion itself (services-v3/Faq.tsx) renders the marked, editable
+ * version instead, via its own `content` prop from getServicesContent().
+ */
+export const SERVICES_FAQ: ServicesFaqItem[] = rawContent<ServicesContent>('services').faq.items.map(
+  (item) => ({ q: item.question, a: item.answer, aHtml: item.answerHtml })
+);
 
 /**
  * The eight services, in the buyer-outcome order they appear in the directory.
@@ -52,18 +39,32 @@ export const SERVICES_FAQ: ServicesFaqItem[] = [
  */
 export interface ServiceEntry {
   slug: string; // child route under /services
-  name: string;
+  serviceName: string;
   blurb: string;
-  track: 'build' | 'grow';
 }
 
-export const SERVICES: ServiceEntry[] = [
-  { slug: 'geo-agency', name: 'Generative Engine Optimization', blurb: 'Get cited by ChatGPT, Perplexity & AI Overviews', track: 'grow' },
-  { slug: 'seo-aeo', name: 'SEO & AEO', blurb: 'Visibility across search and AI engines', track: 'grow' },
-  { slug: 'organic-growth', name: 'Organic growth program', blurb: 'The full category program: search, answer engines, content, conversion', track: 'grow' },
-  { slug: 'cro', name: 'Conversion rate optimization', blurb: 'Data-driven optimization that converts', track: 'build' },
-  { slug: 'growth-autopilot', name: 'Growth Autopilot', blurb: 'SEO, AEO & CRO as one integrated system', track: 'grow' },
-  { slug: 'copywriting', name: 'Copywriting', blurb: 'Persuasive content that connects', track: 'build' },
-  { slug: 'ux-ui-design', name: 'UX/UI design', blurb: 'Conversion-focused design systems', track: 'build' },
-  { slug: 'webflow', name: 'Webflow design & development', blurb: 'Scalable builds optimized for performance', track: 'build' },
-];
+/**
+ * Directory entries — single source for the ItemList JSON-LD (see page.tsx).
+ * Reads the unmarked source (rawContent) for the same reason as SERVICES_FAQ
+ * above; the directory itself (services-v3/ServicesIndex.tsx) renders the
+ * marked, editable version via its own `content` prop.
+ */
+export const SERVICES: ServiceEntry[] = rawContent<ServicesContent>('services').index.entries;
+
+/**
+ * Build vs. Growth track, keyed by slug. Kept out of services.json on purpose:
+ * ServicesIndex.tsx compares this with `===` to split the two directory
+ * lists, and a value that goes through markTree in draft mode gets an
+ * invisible edit-marker appended — the `===` would silently stop matching
+ * and both lists would render empty. This is plain code, never marked.
+ */
+export const TRACK_BY_SLUG: Record<string, 'build' | 'grow'> = {
+  'geo-agency': 'grow',
+  'seo-aeo': 'grow',
+  'organic-growth': 'grow',
+  cro: 'build',
+  'growth-autopilot': 'grow',
+  copywriting: 'build',
+  'ux-ui-design': 'build',
+  webflow: 'build',
+};

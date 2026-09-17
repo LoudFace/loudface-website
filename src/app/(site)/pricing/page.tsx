@@ -18,6 +18,7 @@
 export const revalidate = 60;
 
 import type { Metadata } from 'next';
+import { getPricingContent } from '@/lib/content-utils';
 import '../../pricing-v3/pricing-v3.css';
 import { getPricingTestimonials, PRICING_FAQ } from '../../pricing-v3/data';
 import { HeroPricing } from '../../pricing-v3/HeroPricing';
@@ -67,7 +68,10 @@ export const metadata: Metadata = {
 };
 
 export default async function PricingPage() {
-  const testimonials = await getPricingTestimonials();
+  const [testimonials, content] = await Promise.all([
+    getPricingTestimonials(),
+    getPricingContent(),
+  ]);
 
   const breadcrumbSchema = {
     '@context': 'https://schema.org',
@@ -117,16 +121,16 @@ export default async function PricingPage() {
 
       {/* .prv3 scopes the bespoke resets so they can't touch the shared Header/Footer/Cal chrome. */}
       <div className="prv3">
-        <HeroPricing />
-        <LogosMarquee />
-        <HowItWorks />
-        <Tracks />
-        <Compare />
-        <Includes />
-        <SpecialArrangements />
-        <Exhibits testimonials={testimonials} />
-        <Faq />
-        <CoverCTA />
+        <HeroPricing content={content.hero} />
+        <LogosMarquee content={content.logos} />
+        <HowItWorks content={content.howItWorks} />
+        <Tracks content={content.tracks} />
+        <Compare content={content.compare} />
+        <Includes content={content.includes} />
+        <SpecialArrangements content={content.specialArrangements} />
+        <Exhibits testimonials={testimonials} content={content.exhibits} />
+        <Faq content={content.faq} />
+        <CoverCTA content={content.coverCta} />
         {/* Shared v3 footer (same component as the homepage/About). Rendered inside
             .prv3 so the re-scoped .ft footer CSS in pricing-v3.css applies with full
             isolation — home-v3.css is NOT imported here. */}

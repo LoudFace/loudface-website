@@ -1,5 +1,6 @@
 import Image from 'next/image';
 import type { HomeImages } from '../home-v3/data';
+import type { ServicesHeroContent } from '@/lib/content-utils';
 
 /**
  * HeroServices — the deep-indigo "the work is the pitch" hero: a strict copy
@@ -83,30 +84,34 @@ function Column({ set, cls, images }: { set: WallCard[]; cls: string; images?: H
   );
 }
 
-export function HeroServices({ images }: { images?: HomeImages } = {}) {
+export function HeroServices({
+  images,
+  content,
+}: {
+  images?: HomeImages;
+  content: ServicesHeroContent;
+}) {
   return (
     <section className="hero" aria-label="Services overview">
       <div className="hero-grid">
         <div className="hero-copy">
           <span className="hero-eyebrow rv">
-            <b>Webflow Enterprise Partner</b>
-            <em>4+ years</em>
+            <b>{content.eyebrowBrand}</b>
+            <em>{content.eyebrowYears}</em>
           </span>
           <h1 className="rv" style={{ ['--d' as string]: '.06s' }}>
-            The work is the pitch.<br />
-            <span className="soft">Not the deck.</span>
+            {content.headline}<br />
+            <span className="soft">{content.headlineHighlight}</span>
           </h1>
           <p className="hero-sub rv" style={{ ['--d' as string]: '.12s' }}>
-            Seven services, one team — behind 200+ B2B SaaS websites. Below is the actual work, and
-            every site is tagged with the services that shipped it. Find the outcome you want, then
-            follow the tag to the service that did it.
+            {content.description}
           </p>
           <div className="hero-cta rv" style={{ ['--d' as string]: '.18s' }}>
             <a href="#book" data-cal-trigger className="btn btn-white btn-lg btn-pill">
-              Book a strategy call
+              {content.ctaText}
             </a>
             <a href="#services" className="tlink">
-              See all seven services
+              {content.seeAllText}
               <svg viewBox="0 0 24 24" aria-hidden="true">
                 <path d="M5 12h14M13 6l6 6-6 6" />
               </svg>

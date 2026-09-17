@@ -3,57 +3,43 @@
  * horizontally with edge fades + a sticky feature column; the scroll-state
  * class (.is-scrolled-x) is toggled by PricingV3Scripts.
  */
+import type { PricingCompareContent } from '@/lib/content-utils';
+
 const d = (v: string) => ({ ['--d' as string]: v });
 
-const ROWS: { label: string; solo: string; dual: string; scale: string; emph?: boolean }[] = [
-  { label: 'Tracks', solo: 'Build or Growth', dual: 'Build + Growth', scale: 'Multi-track' },
-  { label: 'Active initiatives', solo: '1', dual: '2', scale: '3–4', emph: true },
-  { label: 'Showcases', solo: '1/week', dual: '2/week', scale: '3+/week (or rolling)' },
-  { label: 'Maintenance', solo: '1 batch/week', dual: '2 batches/week', scale: 'Rolling / priority' },
-  { label: 'Response time', solo: '2h', dual: '2h', scale: '2h', emph: true },
-  {
-    label: 'Strategic layer',
-    solo: 'Scoreboard, Monthly Memo, Quarterly Focus',
-    dual: 'Everything in Solo + structured testing',
-    scale: 'Everything in Dual + multi-stakeholder governance',
-  },
-  { label: 'Meetings', solo: 'Async by default', dual: 'Async by default', scale: 'Optional standups' },
-];
-
-export function Compare() {
+export function Compare({ content }: { content: PricingCompareContent }) {
   return (
     <section className="compare" id="compare">
       <div className="container">
         <div className="compare-head rv">
           <span className="eyebrow">
-            <i></i>Compare the tiers
+            <i></i>{content.eyebrow}
           </span>
           <h2 className="display">
-            Same team, <span className="ghost">more velocity.</span>
+            {content.headline} <span className="ghost">{content.headlineHighlight}</span>
           </h2>
           <p className="lede">
-            Each tier turns up the number of initiatives, the cadence, and the coordination. The
-            strategic layer never changes.
+            {content.intro}
           </p>
         </div>
         <div className="ctable-wrap rv" style={d('.06s')}>
           <table className="ctable">
             <thead>
               <tr>
-                <th scope="col">Feature</th>
+                <th scope="col">{content.columns.feature}</th>
                 <th scope="col">
-                  Solo<span className="th-tag">One track</span>
+                  {content.columns.solo}<span className="th-tag">{content.columns.soloTag}</span>
                 </th>
                 <th scope="col" className="col-feat">
-                  Dual<span className="th-tag">Most popular</span>
+                  {content.columns.dual}<span className="th-tag">{content.columns.dualTag}</span>
                 </th>
                 <th scope="col">
-                  Scale<span className="th-tag">Multi-track</span>
+                  {content.columns.scale}<span className="th-tag">{content.columns.scaleTag}</span>
                 </th>
               </tr>
             </thead>
             <tbody>
-              {ROWS.map((r) => (
+              {content.rows.map((r) => (
                 <tr key={r.label}>
                   <th scope="row">{r.label}</th>
                   <td className={r.emph ? 'emph' : undefined}>{r.solo}</td>
@@ -71,8 +57,7 @@ export function Compare() {
           </svg>
         </p>
         <p className="compare-foot rv">
-          Every engagement is scoped to your goals. Pricing depends on tier, scope, and complexity.
-          Book an intro call and we&rsquo;ll recommend the right fit.
+          {content.footnote}
         </p>
       </div>
     </section>

@@ -5,33 +5,7 @@
  * calendar is aria-hidden and static (illustrative month, not live data) —
  * the four steps already read in full on the left.
  */
-const STEPS = [
-  {
-    title: 'You book the call',
-    chip: 'now',
-    body:
-      "The button opens our calendar. Pick a slot that works and you're on the thread. That's the whole sign-up: no intake questionnaire standing between you and a conversation.",
-    origin: true,
-  },
-  {
-    title: 'The intro call',
-    chip: '30 min',
-    body:
-      "Thirty minutes over video. We pull up your live site, you tell us where it hurts, and we give you an honest read on what we'd change and why. It's useful whether or not we work together.",
-  },
-  {
-    title: 'The plan, in writing',
-    chip: '2h response',
-    body:
-      'Within two working hours of the call you get a written recap and a proposed shape of work. Clear scope, one flat rate, cancel anytime.',
-  },
-  {
-    title: 'Kickoff',
-    chip: 'weekly ships',
-    body:
-      'Approve it and the weekly ship cadence begins. You get a direct line to the people actually doing the work, not an account manager relaying messages in between.',
-  },
-];
+import type { ContactNextStepsContent } from '@/lib/content-utils';
 
 const chev = (path: string) => (
   <svg viewBox="0 0 10 10" fill="none" aria-hidden="true">
@@ -48,24 +22,23 @@ const DAYS: [string, '' | 'muted' | 'avail' | 'sel'][] = [
   ['25', 'avail'], ['26', ''], ['27', ''], ['28', ''], ['29', ''], ['30', ''], ['31', ''],
 ];
 
-export function NextSteps() {
+export function NextSteps({ content }: { content: ContactNextStepsContent }) {
   return (
     <section className="next" aria-label="What happens after you book">
       <div className="wrap next__grid">
         <div className="next__left">
           <div className="next__head rv">
             <h2>
-              Booking is the <span className="hl-l">first move</span>, not a form to fill.
+              {content.headlinePrefix}<span className="hl-l">{content.headlineHighlight}</span>{content.headlineSuffix}
             </h2>
             <p className="next__sub">
-              One click sets a real sequence in motion. Here&rsquo;s the exact path every LoudFace
-              engagement runs, starting the moment you hit the button.
+              {content.subtitle}
             </p>
           </div>
 
           <div className="steps rv" style={{ ['--d' as string]: '.08s' }}>
-            {STEPS.map((s) => (
-              <div className={`step${s.origin ? ' step--origin' : ''}`} key={s.title}>
+            {content.steps.map((s, i) => (
+              <div className={`step${i === 0 ? ' step--origin' : ''}`} key={s.title}>
                 <div className="step__row">
                   <h3>{s.title}</h3>
                   <span className="step__chip">{s.chip}</span>

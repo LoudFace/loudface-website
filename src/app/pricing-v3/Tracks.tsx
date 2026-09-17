@@ -5,37 +5,36 @@
  * no invented numeric claims).
  */
 import Image from 'next/image';
+import type { PricingTracksContent } from '@/lib/content-utils';
 const CDN = 'https://cdn.sanity.io/images/xjjjqhgt/production/';
 const d = (v: string) => ({ ['--d' as string]: v });
 
-export function Tracks() {
+export function Tracks({ content }: { content: PricingTracksContent }) {
   return (
     <section className="tracks diag" id="tracks">
       <div className="container">
         <div className="tracks-head rv">
           <h2 className="display on-dark">
-            Two tracks, <span className="ghost">one goal.</span>
+            {content.headline} <span className="ghost">{content.headlineHighlight}</span>
           </h2>
           <p className="lede on-dark">
-            Every engagement runs on one or both tracks. Solo clients pick one. Dual and Scale run
-            both in parallel.
+            {content.intro}
           </p>
         </div>
         <div className="tracks-grid">
           <article className="tk is-lead rv">
-            <span className="tk-num">TRACK A</span>
-            <h3>Build</h3>
-            <p className="tagline">Ship and optimize your site</p>
+            <span className="tk-num">{content.build.badge}</span>
+            <h3>{content.build.title}</h3>
+            <p className="tagline">{content.build.tagline}</p>
             <p>
-              Conversion optimization, landing pages, UX/UI, and implementation across your stack. Webflow is one
-              delivery option when it fits the work.
+              {content.build.description}
             </p>
             <div className="tk-tags">
-              <span className="tk-tag">CRO</span>
-              <span className="tk-tag">Landing pages</span>
-              <span className="tk-tag">UI iteration</span>
-              <span className="tk-tag">Webflow</span>
-              <span className="tk-tag">Development</span>
+              <span className="tk-tag">{content.build.tags[0]}</span>
+              <span className="tk-tag">{content.build.tags[1]}</span>
+              <span className="tk-tag">{content.build.tags[2]}</span>
+              <span className="tk-tag">{content.build.tags[3]}</span>
+              <span className="tk-tag">{content.build.tags[4]}</span>
             </div>
             <div className="tk-shot" aria-hidden="true">
               <Image
@@ -54,18 +53,17 @@ export function Tracks() {
             </div>
           </article>
           <article className="tk is-lead rv" style={d('.08s')}>
-            <span className="tk-num">TRACK B</span>
-            <h3>Growth</h3>
-            <p className="tagline">Scale organic visibility</p>
+            <span className="tk-num">{content.growth.badge}</span>
+            <h3>{content.growth.title}</h3>
+            <p className="tagline">{content.growth.tagline}</p>
             <p>
-              SEO, AEO (AI search optimization), content systems, and distribution experiments.
-              Everything that drives qualified traffic to your site.
+              {content.growth.description}
             </p>
             <div className="tk-tags">
-              <span className="tk-tag">SEO</span>
-              <span className="tk-tag">AEO</span>
-              <span className="tk-tag">Content systems</span>
-              <span className="tk-tag">Distribution</span>
+              <span className="tk-tag">{content.growth.tags[0]}</span>
+              <span className="tk-tag">{content.growth.tags[1]}</span>
+              <span className="tk-tag">{content.growth.tags[2]}</span>
+              <span className="tk-tag">{content.growth.tags[3]}</span>
             </div>
             <div className="tk-fig" aria-hidden="true">
               <svg viewBox="0 0 480 252" preserveAspectRatio="xMidYMid slice">
@@ -97,10 +95,9 @@ export function Tracks() {
             </div>
           </article>
           <div className="tk-both rv" style={d('.14s')}>
-            <span className="glyph">A + B</span>
+            <span className="glyph">{content.connectorGlyph}</span>
             <p>
-              Solo picks one track. Dual and Scale run both in parallel &mdash; the site you ship
-              feeds the traffic you grow, and back again.
+              {content.connectorText}
             </p>
           </div>
         </div>

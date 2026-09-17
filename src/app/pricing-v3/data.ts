@@ -14,6 +14,7 @@
  */
 import { fetchCollection } from '@/lib/cms-data';
 import { optimizeImage } from '@/lib/image-utils';
+import { rawContent, type PricingContent } from '@/lib/content-utils';
 import type { Testimonial } from '@/lib/types';
 
 export interface ExhibitTestimonial {
@@ -82,32 +83,14 @@ export async function getPricingTestimonials(): Promise<ExhibitTestimonial[]> {
   return picked;
 }
 
-/** FAQ content — single source for the accordion AND the FAQPage schema. */
-export const PRICING_FAQ: { q: string; a: string; aHtml?: string }[] = [
-  {
-    q: 'How is pricing determined?',
-    a: 'Pricing is based on your tier, scope, and complexity. Every engagement starts with an intro call where we assess your needs and recommend the right fit.',
-  },
-  {
-    q: 'Can I switch tiers?',
-    a: 'Yes. Scale up when you need more velocity, scale down when things stabilize. We keep it flexible.',
-  },
-  {
-    q: "What's the difference between Build and Growth?",
-    a: 'Build focuses on conversion and implementation across your stack: launches, redesigns, landing pages, and continuous UI iteration. Webflow is one delivery option. Growth focuses on organic visibility through GEO, SEO, AEO, and content. At Dual and above, you run both simultaneously.',
-    aHtml:
-      '<strong>Build</strong> focuses on conversion and implementation across your stack: launches, redesigns, landing pages, and continuous UI iteration. Webflow is one delivery option. <strong>Growth</strong> focuses on organic visibility through GEO, SEO, AEO, and content. At Dual and above, you run both simultaneously.',
-  },
-  {
-    q: 'What does "Autopilot" actually mean?',
-    a: "It means we don't wait for you to tell us what to do. We own the roadmap, prioritize based on impact, and ship proactively. You stay in the loop through showcases, the Scoreboard, and async updates, but you're not managing us.",
-  },
-  {
-    q: 'Do you offer one-off projects?',
-    a: 'Yes. We offer fixed-scope projects with a defined deliverable, price, and timeline. We also offer performance-based deals where part of our fee is tied to results. Book an intro call to discuss.',
-  },
-  {
-    q: "What if I'm not sure which plan I need?",
-    a: "That's exactly what the intro call is for. We'll walk through your goals, current setup, and bandwidth to recommend the right tier.",
-  },
-];
+/**
+ * FAQ content — single source for the accordion AND the FAQPage schema.
+ * Reads the unmarked source (rawContent), never the async getter's marked
+ * tree — this file is also read at module scope by page.tsx to build
+ * JSON-LD, and inline-edit markers must never reach structured data. The
+ * accordion itself (pricing-v3/Faq.tsx) renders the marked, editable
+ * version instead, via its own `content` prop from getPricingContent().
+ */
+export const PRICING_FAQ: { q: string; a: string; aHtml?: string }[] = rawContent<PricingContent>(
+  'pricing'
+).faq.items.map((item) => ({ q: item.question, a: item.answer, aHtml: item.answerHtml }));

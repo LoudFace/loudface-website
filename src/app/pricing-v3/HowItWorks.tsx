@@ -4,26 +4,27 @@
  * SVG figure (Satoshi uppercase labels, marching-ants flow line, one flickering
  * live node).
  */
+import type { PricingHowItWorksContent } from '@/lib/content-utils';
+
 const d = (v: string) => ({ ['--d' as string]: v });
 
-export function HowItWorks() {
+export function HowItWorks({ content }: { content: PricingHowItWorksContent }) {
   return (
     <section className="how" id="how">
       <div className="container how-grid">
         <div className="how-head rv">
           <h2 className="display">
-            From intro call to shipping, <span className="ghost">in four moves.</span>
+            {content.headline} <span className="ghost">{content.headlineHighlight}</span>
           </h2>
           <p className="lede">
-            No lengthy onboarding, no bloated statements of work. We learn the gap, scope the first
-            initiatives, and start shipping on a weekly cadence.
+            {content.intro}
           </p>
           <div className="how-cta">
             <a className="btn btn-ink btn-md btn-pill" href="#book-modal" data-cal-trigger="">
-              Book an intro call
+              {content.ctaText}
             </a>
             <span className="slots">
-              <i className="dot"></i>2h response time, every tier
+              <i className="dot"></i>{content.responseTime}
             </span>
           </div>
         </div>
@@ -32,14 +33,13 @@ export function HowItWorks() {
             <div className="step-tick">
               <i></i>
               <b className="tab">
-                01<em>/04</em>
+                {content.steps[0].number}<em>/04</em>
               </b>
             </div>
             <div className="step-body">
-              <h3>Intro call</h3>
+              <h3>{content.steps[0].title}</h3>
               <p>
-                30 minutes. We learn your goals, current setup, and the gap. We recommend the right
-                tier.
+                {content.steps[0].description}
               </p>
             </div>
             <div className="step-fig" role="img" aria-label="Diagram: your goals mapped to the right tier">
@@ -57,14 +57,13 @@ export function HowItWorks() {
             <div className="step-tick">
               <i></i>
               <b className="tab">
-                02<em>/04</em>
+                {content.steps[1].number}<em>/04</em>
               </b>
             </div>
             <div className="step-body">
-              <h3>Scoping &amp; proposal</h3>
+              <h3>{content.steps[1].title}</h3>
               <p>
-                We map out the first initiatives, define success metrics, and send a fixed monthly
-                proposal.
+                {content.steps[1].description}
               </p>
             </div>
             <div className="step-fig" role="img" aria-label="Diagram: initiatives compiled into a fixed monthly proposal">
@@ -83,12 +82,12 @@ export function HowItWorks() {
             <div className="step-tick">
               <i></i>
               <b className="tab">
-                03<em>/04</em>
+                {content.steps[2].number}<em>/04</em>
               </b>
             </div>
             <div className="step-body">
-              <h3>Kickoff</h3>
-              <p>Within 48 hours of signature. Access set up, Scoreboard live, the first fixes and calibration articles shipping in the same week. You meet your delivery team and see shipped work inside five days.</p>
+              <h3>{content.steps[2].title}</h3>
+              <p>{content.steps[2].description}</p>
             </div>
             <div className="step-fig" role="img" aria-label="Diagram: Scoreboard goes live at kickoff">
               <svg viewBox="0 0 150 62" xmlns="http://www.w3.org/2000/svg">
@@ -105,12 +104,12 @@ export function HowItWorks() {
             <div className="step-tick">
               <i></i>
               <b className="tab">
-                04<em>/04</em>
+                {content.steps[3].number}<em>/04</em>
               </b>
             </div>
             <div className="step-body">
-              <h3>We ship, weekly</h3>
-              <p>Showcases land in your inbox. Work flows on cadence. You approve, we ship, repeat.</p>
+              <h3>{content.steps[3].title}</h3>
+              <p>{content.steps[3].description}</p>
             </div>
             <div className="step-fig" role="img" aria-label="Diagram: weekly showcase, approve, ship loop">
               <svg viewBox="0 0 150 62" xmlns="http://www.w3.org/2000/svg">
@@ -127,7 +126,7 @@ export function HowItWorks() {
               </svg>
             </div>
           </div>
-          <div className="steps-cap">[ Fixed monthly &middot; async by default &middot; 2h response ]</div>
+          <div className="steps-cap">{content.capsuleText}</div>
         </div>
       </div>
     </section>

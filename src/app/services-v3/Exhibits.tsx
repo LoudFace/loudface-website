@@ -1,5 +1,5 @@
-import type { ReactNode } from 'react';
 import type { HomeImages } from '../home-v3/data';
+import type { ServicesExhibitsContent, ServicesExhibitItem } from '@/lib/content-utils';
 
 /**
  * Exhibits — the page signature. Three shipped sites, each on a shared night
@@ -20,20 +20,15 @@ const ArrowIcon = () => (
   </svg>
 );
 
-type Credit = { label: ReactNode; href: string };
+type Credit = { href: string };
 
+/** Structural only (image resolution + route hrefs) — the copy lives in ServicesExhibitsContent. */
 type Exhibit = {
   slug: string;
   domain: string;
   asset: string;
   alt: string;
-  rpill: string;
-  tag: string;
-  name: string;
-  dom: string;
-  what: string;
   credits: Credit[];
-  out: ReactNode;
 };
 
 const EXHIBITS: Exhibit[] = [
@@ -42,67 +37,37 @@ const EXHIBITS: Exhibit[] = [
     domain: 'liqid.de',
     asset: '5f21404454406eee90732e4e1c8655e0c8c6013b-3024x3629.webp',
     alt: 'LIQID website built by LoudFace on Webflow',
-    rpill: 'WEBFLOW AT SCALE',
-    tag: 'Build track',
-    name: 'LIQID',
-    dom: 'liqid.de · Wealth management',
-    what: 'A component-first Webflow rebuild for a regulated fintech — every page assembles from reusable blocks, so their in-house team launches and edits without a developer in the loop.',
-    credits: [
-      { label: <>Webflow design &amp; dev</>, href: '/services/webflow' },
-      { label: 'UX/UI design', href: '/services/ux-ui-design' },
-      { label: 'CRO', href: '/services/cro' },
-    ],
-    out: (
-      <>
-        Marketing ships new pages on its own — <span className="hot">no dev queue, no rebuilds.</span>
-      </>
-    ),
+    credits: [{ href: '/services/webflow' }, { href: '/services/ux-ui-design' }, { href: '/services/cro' }],
   },
   {
     slug: 'toku-ai-cited-pipeline',
     domain: 'toku.com',
     asset: 'cafcfa6fadc9ea6d1d38391eda626fd12ff5e5a0-2880x1800.png',
     alt: 'Toku website grown by LoudFace for AI visibility',
-    rpill: '0 → 97.8% AI VISIBILITY',
-    tag: 'Growth track',
-    name: 'Toku',
-    dom: 'toku.com · Payroll & compliance',
-    what: 'An answer-engine program aimed at the buying question — when someone asks an AI which vendor to use, Toku had to be in the answer. We built the pages and signals that get a brand cited by name.',
-    credits: [
-      { label: <>SEO &amp; AEO</>, href: '/services/seo-aeo' },
-      { label: 'GEO', href: '/services/geo-agency' },
-      { label: 'Growth Autopilot', href: '/services/growth-autopilot' },
-    ],
-    out: (
-      <>
-        <span className="hot">0 → 97.8% AI visibility</span> — cited by name when buyers ask AI who to hire.
-      </>
-    ),
+    credits: [{ href: '/services/seo-aeo' }, { href: '/services/geo-agency' }, { href: '/services/growth-autopilot' }],
   },
   {
     slug: 'eraser',
     domain: 'eraser.io',
     asset: '2a7d29fdc9302c8482d70b73041e6c58ec9229a6-1440x1845.webp',
     alt: 'Eraser website built by LoudFace',
-    rpill: 'PRODUCT-GRADE PAGES',
-    tag: 'Build track',
-    name: 'Eraser',
-    dom: 'eraser.io · Developer tooling',
-    what: 'Marketing pages for a design-and-diagram tool whose audience notices craft. Copy, layout, and build had to hold the product’s own visual standard — so we ran all three together.',
-    credits: [
-      { label: <>Webflow design &amp; dev</>, href: '/services/webflow' },
-      { label: 'Copywriting', href: '/services/copywriting' },
-      { label: 'UX/UI design', href: '/services/ux-ui-design' },
-    ],
-    out: (
-      <>
-        Launch pages that read like <span className="hot">the product built them.</span>
-      </>
-    ),
+    credits: [{ href: '/services/webflow' }, { href: '/services/copywriting' }, { href: '/services/ux-ui-design' }],
   },
 ];
 
-function ExhibitBlock({ ex, images }: { ex: Exhibit; images?: HomeImages }) {
+function ExhibitBlock({
+  ex,
+  item,
+  creditsLabel,
+  outcomeLabel,
+  images,
+}: {
+  ex: Exhibit;
+  item: ServicesExhibitItem;
+  creditsLabel: string;
+  outcomeLabel: string;
+  images?: HomeImages;
+}) {
   const src = (images?.[ex.slug] ?? CDN + ex.asset) + CROP;
   return (
     <article className="exhibit rv">
@@ -122,87 +87,110 @@ function ExhibitBlock({ ex, images }: { ex: Exhibit; images?: HomeImages }) {
         </div>
         <span className="rpill">
           <i></i>
-          <b>{ex.rpill}</b>
-          <span>{ex.name}</span>
+          <b>{item.rpill}</b>
+          <span>{item.clientName}</span>
         </span>
       </div>
       <div className="ex-label">
         <span className="ex-tag">
           <i></i>
-          {ex.tag}
+          {item.tag}
         </span>
         <div className="ex-name">
-          <h3>{ex.name}</h3>
-          <span className="dom">{ex.dom}</span>
+          <h3>{item.clientName}</h3>
+          <span className="dom">{item.dom}</span>
         </div>
-        <p className="ex-what">{ex.what}</p>
+        <p className="ex-what">{item.what}</p>
         <div className="ex-credits">
           <span className="mono-label">
-            <i></i>Services that shipped it
+            <i></i>{creditsLabel}
           </span>
           <div className="credits">
             {ex.credits.map((c, i) => (
               <a className="credit" href={c.href} key={i}>
-                {c.label} <ArrowIcon />
+                {item.credits[i]?.label} <ArrowIcon />
               </a>
             ))}
           </div>
         </div>
         <p className="ex-out">
-          <em>Outcome</em>
-          <b>{ex.out}</b>
+          <em>{outcomeLabel}</em>
+          <b>{item.outPrefix}<span className="hot">{item.outHighlight}</span>{item.outSuffix}</b>
         </p>
       </div>
     </article>
   );
 }
 
-export function Exhibits({ images }: { images?: HomeImages } = {}) {
+export function Exhibits({
+  images,
+  content,
+}: {
+  images?: HomeImages;
+  content: ServicesExhibitsContent;
+}) {
   return (
     <section className="exhibits" id="work" aria-label="Selected work and the services behind it">
       <div className="container">
         <div className="ex-head">
           <div className="rv">
             <span className="eyebrow">
-              <i></i>Selected work
+              <i></i>{content.eyebrow}
             </span>
             <h2 className="display">
-              What shipped — <span className="ghost">and what shipped it.</span>
+              {content.headline} <span className="ghost">{content.headlineHighlight}</span>
             </h2>
             <p className="sub">
-              Three sites, three different mixes of the same seven services. Each label credits the
-              work behind it — follow a tag to the service.
+              {content.intro}
             </p>
           </div>
-          <span className="ex-note rv">Tap a service to open it</span>
+          <span className="ex-note rv">{content.noteText}</span>
         </div>
 
         <div className="exlist">
-          <ExhibitBlock ex={EXHIBITS[0]} images={images} />
-          <ExhibitBlock ex={EXHIBITS[1]} images={images} />
+          <ExhibitBlock
+            ex={EXHIBITS[0]}
+            item={content.items[0]}
+            creditsLabel={content.creditsLabel}
+            outcomeLabel={content.outcomeLabel}
+            images={images}
+          />
+          <ExhibitBlock
+            ex={EXHIBITS[1]}
+            item={content.items[1]}
+            creditsLabel={content.creditsLabel}
+            outcomeLabel={content.outcomeLabel}
+            images={images}
+          />
 
           {/* Interlude — a stat strip, not a 4th exhibit. */}
           <div className="ex-stats rv">
             <div className="es-nums">
               <div className="esf">
-                <b>200+</b>
-                <span>B2B SaaS sites shipped</span>
+                <b>{content.stats[0].value}</b>
+                <span>{content.stats[0].label}</span>
               </div>
               <div className="esf">
-                <b>288%</b>
-                <span>Best conversion increase</span>
+                <b>{content.stats[1].value}</b>
+                <span>{content.stats[1].label}</span>
                 <span className="esf-src">
-                  <i></i>Dimer Health · CRO · six-month optimization
+                  <i></i>{content.stats[1].source}
                 </span>
               </div>
               <div className="esf">
-                <b>7</b>
-                <span>Services, one team</span>
+                <b>{content.stats[2].value}</b>
+                <span>{content.stats[2].label}</span>
               </div>
             </div>
           </div>
 
-          <ExhibitBlock ex={EXHIBITS[2]} images={images} />
+          <ExhibitBlock
+            ex={EXHIBITS[2]}
+            item={content.items[2]}
+            creditsLabel={content.creditsLabel}
+            outcomeLabel={content.outcomeLabel}
+            images={images}
+          />
         </div>
       </div>
     </section>

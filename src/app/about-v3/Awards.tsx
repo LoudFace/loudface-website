@@ -1,7 +1,8 @@
 /** Awards (B) — dark stage, ghost words + real accreditation badges. */
 import { asset } from '@/lib/assets';
+import type { AboutAwardsContent } from '@/lib/content-utils';
 
-export function Awards() {
+export function Awards({ content }: { content: AboutAwardsContent }) {
   return (
     <section className="awards diag">
       <span className="ghostword gw-1" aria-hidden="true">recognized</span>
@@ -9,10 +10,10 @@ export function Awards() {
       <div className="container">
         <div className="awards-head">
           <span className="eyebrow glass rv">
-            <i></i>Our achievements
+            <i></i>{content.eyebrow}
           </span>
           <h2 className="display on-dark rv" style={{ ['--d' as string]: '.05s' }}>
-            Accreditations &amp; awards
+            {content.headline}
           </h2>
         </div>
         <div className="award-cards">
@@ -29,8 +30,8 @@ export function Awards() {
                 alt="Webflow Enterprise Partner badge"
               />
             </div>
-            <h3>Webflow Enterprise Partner</h3>
-            <p>Building on Webflow since 2019. Early adopters then, Enterprise-tier partners now.</p>
+            <h3>{content.items[0].title}</h3>
+            <p>{content.items[0].description}</p>
           </article>
           <article className="acard rv" style={{ ['--d' as string]: '.07s' }}>
             <div className="acard-badges">
@@ -38,10 +39,9 @@ export function Awards() {
                 <img src={asset('/images/Awwwards.svg')} width={64} height={64} alt="" />
               </span>
             </div>
-            <h3>Awwwards Honorable Nominee</h3>
+            <h3>{content.items[1].title}</h3>
             <p>
-              Honorable mention for design craft on client work. Function first, but it has to
-              look the part.
+              {content.items[1].description}
             </p>
           </article>
           <article className="acard rv" style={{ ['--d' as string]: '.14s' }}>
@@ -50,12 +50,12 @@ export function Awards() {
                 <img src={asset('/images/Trustpilot.svg')} width={64} height={64} alt="" />
               </span>
             </div>
-            <h3>Trustpilot Top-Rated Agency</h3>
-            <p>Top-rated by the clients we ship for: the review column of the ledger.</p>
+            <h3>{content.items[2].title}</h3>
+            <p>{content.items[2].description}</p>
           </article>
         </div>
         <p className="awards-close rv">
-          We&rsquo;ve picked up a few awards along the way. <b>The work came first.</b>
+          {content.closingText}<b>{content.closingHighlight}</b>
         </p>
       </div>
     </section>

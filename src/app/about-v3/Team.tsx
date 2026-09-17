@@ -19,6 +19,7 @@
  */
 import Image from 'next/image';
 import Link from 'next/link';
+import type { AboutTeamSectionContent } from '@/lib/content-utils';
 import { splitColumns, teamPhoto, type TeamPerson } from './data';
 import { TeamModals } from './TeamModals';
 
@@ -50,7 +51,7 @@ function Tcard({ p, delay }: { p: TeamPerson; delay: number }) {
   );
 }
 
-function TeamDialog({ p }: { p: TeamPerson }) {
+function TeamDialog({ p, fullProfileText }: { p: TeamPerson; fullProfileText: string }) {
   return (
     <dialog id={`tm-${p.slug}`} className="tmodal" aria-labelledby={`tm-${p.slug}-name`}>
       <div className="tmodal-panel">
@@ -82,7 +83,7 @@ function TeamDialog({ p }: { p: TeamPerson }) {
           {p.fact && <p className="tmodal-fact">{p.fact}</p>}
           {p.quote && <q className="tmodal-quote">{p.quote}</q>}
           <Link href={`/team/${p.slug}`} className="tmodal-link">
-            Full profile <span aria-hidden="true">&rarr;</span>
+            {fullProfileText} <span aria-hidden="true">&rarr;</span>
           </Link>
         </div>
       </div>
@@ -90,7 +91,13 @@ function TeamDialog({ p }: { p: TeamPerson }) {
   );
 }
 
-export function Team({ team }: { team: TeamPerson[] }) {
+export function Team({
+  team,
+  content,
+}: {
+  team: TeamPerson[];
+  content: AboutTeamSectionContent;
+}) {
   const columns = splitColumns(team);
 
   return (
@@ -98,12 +105,11 @@ export function Team({ team }: { team: TeamPerson[] }) {
       <div className="container">
         <div className="a-team-head rv">
           <p className="a-kick on-dark">
-            <i></i>The team
+            <i></i>{content.eyebrow}
           </p>
-          <h2>Expert team committed to your growth.</h2>
+          <h2>{content.headline}</h2>
           <p className="a-team-sub">
-            People hellbent on making your business win the online game. This is everyone, no
-            layers between you and them.
+            {content.subtitle}
           </p>
         </div>
         <div className="a-ladder">
@@ -120,7 +126,7 @@ export function Team({ team }: { team: TeamPerson[] }) {
       {/* Per-member modals — server-rendered inside .abv3 so the scoped modal CSS
           applies and the /team/ links stay in the SSR HTML for crawlers. */}
       {team.map((p) => (
-        <TeamDialog key={p.slug} p={p} />
+        <TeamDialog key={p.slug} p={p} fullProfileText={content.fullProfileText} />
       ))}
       <TeamModals />
     </section>

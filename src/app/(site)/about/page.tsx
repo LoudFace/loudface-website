@@ -21,6 +21,7 @@ export const revalidate = 60;
 
 import type { Metadata } from 'next';
 import '../../about-v3/about-v3.css';
+import { getAboutContent } from '@/lib/content-utils';
 import { getAboutTeam } from '../../about-v3/data';
 import { HeroAbout } from '../../about-v3/HeroAbout';
 import { Ledger } from '../../about-v3/Ledger';
@@ -63,7 +64,7 @@ export const metadata: Metadata = {
 };
 
 export default async function AboutPage() {
-  const team = await getAboutTeam();
+  const [team, content] = await Promise.all([getAboutTeam(), getAboutContent()]);
 
   const breadcrumbSchema = {
     '@context': 'https://schema.org',
@@ -131,14 +132,14 @@ export default async function AboutPage() {
 
       {/* .abv3 scopes the bespoke resets so they can't touch the shared Header/Footer/Cal chrome. */}
       <div className="abv3">
-        <HeroAbout team={team} />
-        <Ledger teamCount={team.length} />
-        <Story team={team} />
-        <Team team={team} />
-        <Values />
-        <Awards />
-        <Faq teamCount={team.length} />
-        <CoverCTA />
+        <HeroAbout team={team} content={content.hero} />
+        <Ledger teamCount={team.length} content={content.ledger} />
+        <Story team={team} content={content.story} />
+        <Team team={team} content={content.team} />
+        <Values content={content.values} />
+        <Awards content={content.awards} />
+        <Faq teamCount={team.length} content={content.faq} />
+        <CoverCTA content={content.coverCta} />
         {/* Shared v3 footer (same as the homepage). Rendered inside .abv3 so its
             re-scoped footer CSS in about-v3.css applies with full isolation —
             home-v3.css is NOT imported here (its global component classes would

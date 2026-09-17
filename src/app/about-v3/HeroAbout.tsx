@@ -6,9 +6,16 @@
  * this section carries NO nav of its own.
  */
 import Image from 'next/image';
+import type { AboutHeroContent } from '@/lib/content-utils';
 import { splitColumns, teamPhoto, type TeamPerson } from './data';
 
-export function HeroAbout({ team }: { team: TeamPerson[] }) {
+export function HeroAbout({
+  team,
+  content,
+}: {
+  team: TeamPerson[];
+  content: AboutHeroContent;
+}) {
   const [colA, colB, colC] = splitColumns(team);
   const columns = [colA, colB, colC];
 
@@ -18,22 +25,21 @@ export function HeroAbout({ team }: { team: TeamPerson[] }) {
       <div className="hero-grid">
         <div className="hero-copy">
           <span className="hero-eyebrow rv">
-            <b>About LoudFace</b>
-            <em>since 2019</em>
+            <b>{content.eyebrowBrand}</b>
+            <em>{content.eyebrowSince}</em>
           </span>
           <h1 className="rv" data-speakable style={{ ['--d' as string]: '.06s' }}>
-            The team behind <span className="soft">B2B SaaS organic growth.</span>
+            {content.headline} <span className="soft">{content.headlineHighlight}</span>
           </h1>
           <p className="hero-sub rv" data-speakable style={{ ['--d' as string]: '.12s' }}>
-            The full-stack organic growth agency for B2B SaaS and fintech. AI visibility measured per engine.
-            We run GEO, SEO, AEO, content, and conversion. {team.length} of us work remotely from Dubai for global SaaS teams.
+            {content.description}{team.length}{content.descriptionSuffix}
           </p>
           <div className="hero-cta rv" style={{ ['--d' as string]: '.18s' }}>
             <a className="btn btn-white btn-lg" href="#book" data-cal-trigger="">
-              Book an intro call
+              {content.ctaText}
             </a>
             <span className="slots">
-              <i className="dot"></i>2h response time
+              <i className="dot"></i>{content.responseTime}
             </span>
             <span className="hero-cta-div" aria-hidden="true"></span>
             <a className="hero-meta" href="#team">
@@ -55,7 +61,7 @@ export function HeroAbout({ team }: { team: TeamPerson[] }) {
                 ))}
               </span>
               <span className="hero-meta-tx">
-                Meet the whole team <span aria-hidden="true">&darr;</span>
+                {content.meetTeamText} <span aria-hidden="true">&darr;</span>
               </span>
             </a>
           </div>

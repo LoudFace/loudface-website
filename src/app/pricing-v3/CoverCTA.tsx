@@ -5,11 +5,12 @@
  * in-page `href="#book"` anchors land here; the CTA opens the Cal modal.
  */
 import Image from 'next/image';
+import type { PricingCoverCtaContent } from '@/lib/content-utils';
 
 const CDN = 'https://cdn.sanity.io/images/xjjjqhgt/production/';
 const d = (v: string) => ({ ['--d' as string]: v });
 
-export function CoverCTA() {
+export function CoverCTA({ content }: { content: PricingCoverCtaContent }) {
   return (
     <section className="cover" id="book">
       {/* `.cover-img` is position:absolute;inset:0;width:100%;height:100% — CSS owns
@@ -29,8 +30,8 @@ export function CoverCTA() {
       <div className="cover-veil" aria-hidden="true"></div>
       <div className="container cover-in">
         <div className="cover-meta rv">
-          <span>LoudFace &mdash; intro call</span>
-          <span>B2B SaaS &middot; fintech &middot; Series A&ndash;C</span>
+          <span>{content.eyebrowLeft}</span>
+          <span>{content.eyebrowRight}</span>
         </div>
         <div className="cover-mid">
           <div className="cover-obj" aria-hidden="true">
@@ -60,28 +61,28 @@ export function CoverCTA() {
               </span>
             </div>
           </div>
-          <h2 className="rv">Stop managing. Start shipping.</h2>
+          <h2 className="rv">{content.headline}</h2>
           <p className="rv" style={d('.08s')}>
-            Book a 30-minute intro call. We&rsquo;ll recommend the right tier for your goals.
+            {content.description}
           </p>
           <div className="cover-cta rv" style={d('.16s')}>
             <a href="#book-modal" data-cal-trigger="" className="btn btn-white btn-lg">
-              Book an Intro Call
+              {content.ctaText}
             </a>
             <span className="slots">
-              <span className="dot"></span>Or explore our work&nbsp;
+              <span className="dot"></span>{content.exploreLabel}&nbsp;
               <a
                 href="/case-studies"
                 style={{ color: 'var(--color-white)', borderBottom: '1px solid rgba(255,255,255,.4)', paddingBottom: '1px' }}
               >
-                case studies &rarr;
+                {content.exploreLinkText}
               </a>
             </span>
           </div>
         </div>
         <div className="cover-credit rv">
-          <span>Cover &mdash; Montblanc, built by LoudFace</span>
-          <span>loudface.co</span>
+          <span>{content.creditLeft}</span>
+          <span>{content.creditRight}</span>
         </div>
       </div>
     </section>

@@ -3,33 +3,7 @@
  * A's panel copy + Q&A. Native <details> needs no client JS, so this stays a
  * server component. The "Team members" stat is derived from the live CMS count.
  */
-const FAQS: { q: string; a: string; open?: boolean }[] = [
-  {
-    q: 'What services do you offer?',
-    a: 'We run GEO, SEO, AEO, content, and conversion programs for B2B SaaS companies. We add design and implementation work across the current stack when it removes a discovery or conversion constraint.',
-    open: true,
-  },
-  {
-    q: 'Who do you work with?',
-    a: 'We primarily work with B2B companies looking to improve their digital presence and conversion rates. Our clients range from funded startups to established enterprises across various industries including SaaS, professional services, and technology.',
-  },
-  {
-    q: 'How does Webflow fit into your work?',
-    a: 'Webflow is an optional delivery capability. We use it for builds and migrations when it fits the client stack and scope. The organic growth program comes first.',
-  },
-  {
-    q: 'Where is LoudFace based?',
-    a: "We're a fully remote team with members across different time zones. This allows us to work efficiently with clients globally while maintaining excellent communication and project delivery.",
-  },
-  {
-    q: 'How do I get started?',
-    a: "The best way to get started is to book an intro call with our team. During this call, we'll discuss your goals, current challenges, and how we can help. No obligation - just a conversation to see if we're a good fit.",
-  },
-  {
-    q: 'What is your pricing?',
-    a: "Our pricing varies based on project scope and requirements. We offer both project-based and retainer arrangements. During our initial call, we'll discuss your needs and provide a custom quote tailored to your specific goals and budget.",
-  },
-];
+import { rawContent, type AboutContent, type AboutFaqContent } from '@/lib/content-utils';
 
 // Strip any markup before it lands in JSON-LD (answers are plain text today, but this
 // keeps the schema safe if a future edit slips in a <br> or similar).
@@ -40,16 +14,18 @@ function stripHtml(html: string): string {
     .trim();
 }
 
-export function Faq({ teamCount }: { teamCount: number }) {
+export function Faq({ teamCount, content }: { teamCount: number; content: AboutFaqContent }) {
+  // JSON-LD reads the unmarked source (rawContent), never the async getter's
+  // marked tree — inline-edit markers must never reach structured data.
   const faqSchema = {
     '@context': 'https://schema.org',
     '@type': 'FAQPage',
-    mainEntity: FAQS.map((f) => ({
+    mainEntity: rawContent<AboutContent>('about').faq.items.map((f) => ({
       '@type': 'Question',
-      name: f.q,
+      name: f.question,
       acceptedAnswer: {
         '@type': 'Answer',
-        text: stripHtml(f.a),
+        text: stripHtml(f.answer),
       },
     })),
   };
@@ -63,42 +39,41 @@ export function Faq({ teamCount }: { teamCount: number }) {
       />
       <div className="container faq-grid">
         <aside className="faq-panel rv" aria-label="Frequently asked questions summary">
-          <h3>Still weighing it up?</h3>
+          <h3>{content.panelTitle}</h3>
           <p className="pl">
-            We&rsquo;re here to help with anything you&rsquo;re still weighing up. No obligation,
-            just a conversation to see if we&rsquo;re a good fit.
+            {content.panelText}
           </p>
           <a className="btn btn-pill btn-white btn-md" href="#book" data-cal-trigger="">
-            Book a strategy call
+            {content.ctaText}
           </a>
           <div className="fstats">
             <div className="fstat">
-              <b className="tab">100+</b>
-              <span>Companies served</span>
+              <b className="tab">{content.stats[0].value}</b>
+              <span>{content.stats[0].label}</span>
             </div>
             <div className="fstat">
-              <b className="tab">7+</b>
-              <span>Years on Webflow</span>
+              <b className="tab">{content.stats[1].value}</b>
+              <span>{content.stats[1].label}</span>
             </div>
             <div className="fstat">
               <b className="tab">{teamCount}</b>
-              <span>Team members</span>
+              <span>{content.stats[2].label}</span>
             </div>
             <div className="fstat">
-              <b className="tab">288%</b>
-              <span>Conversion lift, Dimer Health</span>
+              <b className="tab">{content.stats[3].value}</b>
+              <span>{content.stats[3].label}</span>
             </div>
           </div>
         </aside>
 
         <div className="acc rv" style={{ ['--d' as string]: '.08s' }}>
-          {FAQS.map((f) => (
-            <details key={f.q} open={f.open || undefined}>
+          {content.items.map((f) => (
+            <details key={f.question} open={f.open || undefined}>
               <summary>
-                {f.q}
+                {f.question}
                 <span className="mk" aria-hidden="true"></span>
               </summary>
-              <p className="ans">{f.a}</p>
+              <p className="ans">{f.answer}</p>
             </details>
           ))}
         </div>

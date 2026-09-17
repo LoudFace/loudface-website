@@ -3,30 +3,31 @@
  * visibility (SEO/AEO) vs being recommended by AI (GEO). Light stage,
  * oversized type IS the composition. Both cards link to their child route.
  */
+import type { ServicesClarifierContent } from '@/lib/content-utils';
+
 const inkBold = { color: 'var(--ink)', fontWeight: 600 } as const;
 
-export function Clarifier() {
+export function Clarifier({ content }: { content: ServicesClarifierContent }) {
   return (
     <section className="clarify" id="seo-vs-geo" aria-label="SEO/AEO versus GEO">
       <div className="container">
         <div className="clarify-head rv">
           <span className="mono-label kicker">
-            <i></i>The distinction people miss
+            <i></i>{content.kicker}
           </span>
           <h2 className="clarify-big">
-            Two kinds of<br />
-            <span className="g1">AI</span> visibility.
+            {content.headlineLine1}<br />
+            <span className="g1">{content.headlineHighlight}</span>{content.headlineSuffix}
           </h2>
           <p className="clarify-sub">
-            “SEO/AEO” and “GEO” get used interchangeably. They answer two different questions — and
-            need two different programs.
+            {content.intro}
           </p>
         </div>
 
         <div className="clarify-two">
           <article className="cw rv">
             <div className="cw-top">
-              <span className="cw-abbr">SEO / AEO</span>
+              <span className="cw-abbr">{content.seo.abbr}</span>
               <span className="cw-glyph" aria-hidden="true">
                 <svg viewBox="0 0 24 24">
                   <circle cx="11" cy="11" r="7" />
@@ -34,18 +35,16 @@ export function Clarifier() {
                 </svg>
               </span>
             </div>
-            <h3>Is your site found?</h3>
+            <h3>{content.seo.question}</h3>
             <p>
-              We make <b style={inkBold}>your pages</b> rank on Google and get pulled into AI
-              Overviews, ChatGPT, and Perplexity when someone searches your category. The work lives
-              on your site; the win is your page showing up.
+              {content.seo.bodyPrefix}<b style={inkBold}>{content.seo.bodyBold}</b>{content.seo.bodySuffix}
             </p>
             <div className="cw-unit">
-              The unit: <b>your rankings, impressions, and citations</b> — your own URLs, surfaced.
+              {content.seo.unitPrefix}<b>{content.seo.unitBold}</b>{content.seo.unitSuffix}
             </div>
             <div className="cw-foot">
               <a className="cw-link" href="/services/seo-aeo">
-                Explore SEO &amp; AEO{' '}
+                {content.seo.linkText}{' '}
                 <svg viewBox="0 0 24 24" aria-hidden="true">
                   <path d="M5 12h14M13 6l6 6-6 6" />
                 </svg>
@@ -55,28 +54,28 @@ export function Clarifier() {
 
           <article className="cw geo rv" style={{ ['--d' as string]: '.08s' }}>
             <div className="cw-top">
-              <span className="cw-abbr">GEO</span>
+              <span className="cw-abbr">{content.geo.abbr}</span>
               <span className="cw-glyph" aria-hidden="true">
                 <svg viewBox="0 0 24 24">
                   <path d="M12 3l2.4 5 5.6.7-4 3.9 1 5.5L12 15.4 6.9 18l1-5.5-4-3.9L9.6 8z" />
                 </svg>
               </span>
             </div>
-            <h3>Does AI recommend you?</h3>
+            <h3>{content.geo.question}</h3>
             <p>
-              When a buyer asks an AI “which vendor should we use?”, GEO is the work that makes{' '}
-              <b style={inkBold}>you</b> the name it returns — whether or not your page ranks. It’s
-              about being the answer, not owning the link.
+              {content.geo.bodyPrefix}
+              <b style={inkBold}>{content.geo.bodyBold}</b>
+              {content.geo.bodySuffix}
             </p>
             <div className="cw-unit">
-              The unit: <b>share of answer</b> — how often AI names you, across engines.
+              {content.geo.unitPrefix}<b>{content.geo.unitBold}</b>{content.geo.unitSuffix}
             </div>
             <p className="cw-proof">
-              <i></i>How we took Toku from unranked to cited by name — that’s the exhibit above.
+              <i></i>{content.geo.proof}
             </p>
             <div className="cw-foot">
               <a className="cw-link" href="/services/geo-agency">
-                Explore GEO{' '}
+                {content.geo.linkText}{' '}
                 <svg viewBox="0 0 24 24" aria-hidden="true">
                   <path d="M5 12h14M13 6l6 6-6 6" />
                 </svg>

@@ -6,10 +6,11 @@
  * carries data-cal-trigger so it opens the Cal modal.
  */
 import Image from 'next/image';
+import type { AboutCoverCtaContent } from '@/lib/content-utils';
 
 const CDN = 'https://cdn.sanity.io/images/xjjjqhgt/production/';
 
-export function CoverCTA() {
+export function CoverCTA({ content }: { content: AboutCoverCtaContent }) {
   return (
     <section className="cover" id="book">
       {/* `.cover-img` is position:absolute;inset:0;width:100%;height:100% — CSS owns
@@ -29,8 +30,8 @@ export function CoverCTA() {
       <div className="cover-veil" aria-hidden="true"></div>
       <div className="container cover-in">
         <div className="cover-meta rv">
-          <span>LoudFace &mdash; strategy call</span>
-          <span>B2B SaaS only</span>
+          <span>{content.eyebrowLeft}</span>
+          <span>{content.eyebrowRight}</span>
         </div>
         <div className="cover-mid">
           <div className="cover-obj" aria-hidden="true">
@@ -60,23 +61,22 @@ export function CoverCTA() {
               </span>
             </div>
           </div>
-          <h2 className="rv">Let&rsquo;s figure out what&rsquo;s holding your site back.</h2>
+          <h2 className="rv">{content.headline}</h2>
           <p className="rv" style={{ ['--d' as string]: '.08s' }}>
-            30-minute strategy call. No pitch deck. We&rsquo;ll look at your site together and tell
-            you what we&rsquo;d change and why.
+            {content.description}
           </p>
           <div className="cover-cta rv" style={{ ['--d' as string]: '.16s' }}>
             <a href="#book-modal" data-cal-trigger="" className="btn btn-white btn-lg">
-              Book a strategy call
+              {content.ctaText}
             </a>
             <span className="slots">
-              <span className="dot"></span>2h response time, every tier
+              <span className="dot"></span>{content.responseTime}
             </span>
           </div>
         </div>
         <div className="cover-credit rv">
-          <span>Cover &mdash; Montblanc, built by LoudFace</span>
-          <span>loudface.co</span>
+          <span>{content.creditLeft}</span>
+          <span>{content.creditRight}</span>
         </div>
       </div>
     </section>

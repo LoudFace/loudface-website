@@ -1,88 +1,173 @@
 {
   "hero": {
-    "badge": "A team that was built to help your team",
-    "badgeIcon": "/images/handshake-emoji.webp",
-    "headline": "Building better ways to market products and services",
-    "highlightWords": ["better", "services"],
-    "description": "LoudFace is a B2B SaaS web design, SEO, and growth agency that delivers tangible results - from launch to lead generation. Based in Dubai, serving global SaaS teams.",
-    "ctaText": "Book an intro call"
+    "eyebrowBrand": "About LoudFace",
+    "eyebrowSince": "since 2019",
+    "headline": "The team behind",
+    "headlineHighlight": "B2B SaaS organic growth.",
+    "description": "The full-stack organic growth agency for B2B SaaS and fintech. AI visibility measured per engine. We run GEO, SEO, AEO, content, and conversion. ",
+    "descriptionSuffix": " of us work remotely from Dubai for global SaaS teams.",
+    "ctaText": "Book an intro call",
+    "responseTime": "2h response time",
+    "meetTeamText": "Meet the whole team"
   },
-  "counter": {
-    "stats": [
+  "ledger": {
+    "eyebrow": "The ledger",
+    "headline": "Six numbers,",
+    "headlineHighlight": "sources attached.",
+    "intro": "Every engagement leaves a paper trail. This is ours: pulled from real client work between 2019 and today. Where a number has a client, the client is named.",
+    "operationLabel": "The operation",
+    "outcomesLabel": "The outcomes",
+    "rows": [
       {
-        "number": "6+",
-        "label": "Team Members",
-        "description": "Our team of developers, designers and marketers has continued to grow YoY, with each member bringing a unique set of skills and experiences to the table."
+        "title": "Team members",
+        "description": "Designers, developers, and marketers. Every engagement is staffed from the same",
+        "descriptionSuffix": "-person bench: the people below are the people on your project."
       },
       {
-        "number": "100+",
-        "label": "Ambitious Companies Served",
-        "description": "We've been fortunate enough to work alongside some of the most ambitious companies, all different in industry, but all with a desire to grow and succeed."
+        "title": "Companies served",
+        "description": "From funded startups to enterprises like Montblanc and Radisson. Different industries, same job: a site that has to earn its keep.",
+        "fig": "100+"
       },
       {
-        "number": "7+",
-        "label": "Years Young",
-        "description": "We've been around for some time as the first adopters of Webflow, and have since grown to become one of the leading Webflow agencies in the industry."
+        "title": "Years on Webflow",
+        "description": "Early adopters in 2019, back when it was the risky choice. Webflow Enterprise Partner today.",
+        "fig": "7+"
+      },
+      {
+        "title": "Increase in conversions",
+        "description": "Measured across the Dimer Health engagement over a six-month optimization period.",
+        "fig": "288%",
+        "chipClient": "Dimer Health",
+        "chipTag": "CRO"
+      },
+      {
+        "title": "AI visibility on the core prompt",
+        "description": "From absent to cited on the answer that matters in Toku’s category.",
+        "fig": "0 → 97.8%",
+        "chipClient": "Toku",
+        "chipTag": "AEO"
+      },
+      {
+        "title": "Sales in the first 30 days",
+        "description": "Attributed in the month after the rebuilt site went live.",
+        "fig": "$200K",
+        "chipClient": "Outbound Specialist",
+        "chipTag": "Launch"
       }
     ],
-    "awardBadge": "/images/10-best-website-creator-2024.svg"
+    "closingText": "Every line above comes from a shipped engagement. Clients named, periods stated.",
+    "closingLinkText": "Explore the work"
   },
-  "journey": {
-    "badge": "Our journey",
-    "headline": "A marketing agency in search of leverage to help our clients grow",
-    "description": "Founded with a passion for design and numbers, LoudFace has become a leader in Webflow, and design-first marketing agencies. With a team of experienced professionals, we've helped hundreds of businesses achieve their online goals. From small startups to large enterprises, we've worked with a diverse range of clients, each with unique challenges and opportunities.",
-    "image": "/images/our-journey_1.webp"
-  },
-  "team": {
-    "badge": "Our team",
-    "title": "Expert team committed to your growth",
-    "highlightWord": "committed",
-    "subtitle": "People hellbent on making your business win the online game",
-    "ctaCard": {
-      "indicator": "2h response time",
-      "headline": "Ready to work with leading experts?",
-      "description": "At LoudFace, we take pride in our industry-leading team of Webflow developers, SEO specialists, and conversion rate optimization experts. If you want to work with the best, let's talk.",
-      "ctaText": "Book an intro call"
-    }
-  },
-  "awards": {
-    "badge": "Our achievements",
-    "title": "Accreditations & awards",
-    "description": "We love working with growing companies that want to grow substantially over the next couple of years. We've picked up a few awards along the way.",
-    "ctaText": "Get in touch",
-    "items": [
+  "story": {
+    "founderHeadline": "Straight from the founder.",
+    "founderQuotePrefix": "I started LoudFace chasing a hunch: that ",
+    "founderQuoteEmphasis": "design and numbers",
+    "founderQuoteSuffix": " belonged on the same team, not in separate agencies handing off a brief. Seven years later that’s still the whole bet.",
+    "founderName": "Arnel Bukva",
+    "founderRole": "Founder & Head of Growth",
+    "logoPanelHeadline": "Hundreds of teams later.",
+    "logoPanelSubtitle": "A few of the companies we’ve built and grown for.",
+    "enterpriseHeadline": "From small startups to large enterprises.",
+    "enterpriseDescription": "We’ve helped hundreds of businesses reach their online goals, each with different challenges and opportunities. Today we’re a small remote team based in Dubai, working with SaaS companies around the world.",
+    "timeline": [
       {
-        "icon": "/images/webflow.svg",
-        "title": "Webflow Enterprise Partner",
-        "description": "We aim to empower businesses with design and Webflow website development services. Webflow's recognition of our work is a testament to our commitment to excellence."
+        "year": "2019",
+        "description": "Arnel starts LoudFace, betting on Webflow before most agencies had heard of it. The first enterprise engagement lands, and the design-plus-code model starts to prove itself at scale."
       },
       {
-        "icon": "/images/Awwwards.svg",
-        "title": "Awwwards Honorable Nominee",
-        "description": "Being recognized by Awwwards is a testament to our design-first approach. We consistently build and design websites that are not only functional but also aesthetically pleasing."
+        "year": "2022",
+        "description": "SEO and conversion work folds into every build. Growth becomes the retainer, not an upsell."
       },
       {
-        "icon": "/images/Trustpilot.svg",
-        "title": "Trustpilot Top-Rated Agency",
-        "description": "Our clients' satisfaction is our top priority. By maintaining a stellar rating on Trustpilot, we demonstrate our commitment to delivering exceptional service and results."
+        "year": "2024",
+        "description": "Team grows to six. Already a Webflow Enterprise Partner — one of a small number of agencies worldwide."
+      },
+      {
+        "year": "2026",
+        "description": "AI-search visibility joins the stack. 200+ sites shipped, 100+ companies served."
       }
     ]
   },
+  "values": {
+    "headline": "We build the site.",
+    "headlineHighlight": "Then we grow it.",
+    "build": {
+      "label": "Build",
+      "prefix": "Positioning, copy, design, and code: shipped as one piece of work, on ",
+      "linkText": "Webflow",
+      "suffix": "."
+    },
+    "grow": {
+      "label": "Grow",
+      "prefix": "SEO, conversion optimization, and ",
+      "linkText": "AI-search visibility",
+      "suffix": ", run month after month."
+    },
+    "oneTeam": {
+      "label": "One team",
+      "description": "Seven people, no account layers. You work directly with the experts doing the work."
+    }
+  },
+  "team": {
+    "eyebrow": "The team",
+    "headline": "Expert team committed to your growth.",
+    "subtitle": "People hellbent on making your business win the online game. This is everyone, no layers between you and them.",
+    "fullProfileText": "Full profile"
+  },
+  "awards": {
+    "eyebrow": "Our achievements",
+    "headline": "Accreditations & awards",
+    "items": [
+      {
+        "title": "Webflow Enterprise Partner",
+        "description": "Building on Webflow since 2019. Early adopters then, Enterprise-tier partners now."
+      },
+      {
+        "title": "Awwwards Honorable Nominee",
+        "description": "Honorable mention for design craft on client work. Function first, but it has to look the part."
+      },
+      {
+        "title": "Trustpilot Top-Rated Agency",
+        "description": "Top-rated by the clients we ship for: the review column of the ledger."
+      }
+    ],
+    "closingText": "We’ve picked up a few awards along the way. ",
+    "closingHighlight": "The work came first."
+  },
   "faq": {
-    "title": "Frequently asked questions",
-    "highlightWord": "questions",
+    "panelTitle": "Still weighing it up?",
+    "panelText": "We’re here to help with anything you’re still weighing up. No obligation, just a conversation to see if we’re a good fit.",
+    "ctaText": "Book a strategy call",
+    "stats": [
+      {
+        "value": "100+",
+        "label": "Companies served"
+      },
+      {
+        "value": "7+",
+        "label": "Years on Webflow"
+      },
+      {
+        "label": "Team members"
+      },
+      {
+        "value": "288%",
+        "label": "Conversion lift, Dimer Health"
+      }
+    ],
     "items": [
       {
         "question": "What services do you offer?",
-        "answer": "We specialize in full-service digital marketing, with a focus on Webflow development, SEO, and conversion rate optimization. Our expertise includes custom website design and development, comprehensive SEO strategies, landing page optimization, and ongoing marketing consultation."
+        "answer": "We run GEO, SEO, AEO, content, and conversion programs for B2B SaaS companies. We add design and implementation work across the current stack when it removes a discovery or conversion constraint.",
+        "open": true
       },
       {
         "question": "Who do you work with?",
         "answer": "We primarily work with B2B companies looking to improve their digital presence and conversion rates. Our clients range from funded startups to established enterprises across various industries including SaaS, professional services, and technology."
       },
       {
-        "question": "Why do you specialize in Webflow?",
-        "answer": "Webflow offers the perfect balance of design flexibility and development efficiency. It allows us to create custom, high-performance websites without the limitations of traditional CMS platforms, while still giving clients the ability to manage their content easily."
+        "question": "How does Webflow fit into your work?",
+        "answer": "Webflow is an optional delivery capability. We use it for builds and migrations when it fits the client stack and scope. The organic growth program comes first."
       },
       {
         "question": "Where is LoudFace based?",
@@ -96,13 +181,16 @@
         "question": "What is your pricing?",
         "answer": "Our pricing varies based on project scope and requirements. We offer both project-based and retainer arrangements. During our initial call, we'll discuss your needs and provide a custom quote tailored to your specific goals and budget."
       }
-    ],
-    "footerText": "We're here to help with anything you're still weighing up.",
-    "footerCtaText": "Book an intro call"
+    ]
   },
-  "finalCta": {
-    "title": "Ready to scale your site?",
-    "description": "Don't let another day pass with an underperforming website. Let's build something that actually moves the needle for your business.",
-    "ctaText": "Book an intro call"
+  "coverCta": {
+    "eyebrowLeft": "LoudFace — strategy call",
+    "eyebrowRight": "B2B SaaS only",
+    "headline": "Let’s figure out what’s holding your site back.",
+    "description": "30-minute strategy call. No pitch deck. We’ll look at your site together and tell you what we’d change and why.",
+    "ctaText": "Book a strategy call",
+    "responseTime": "2h response time, every tier",
+    "creditLeft": "Cover — Montblanc, built by LoudFace",
+    "creditRight": "loudface.co"
   }
 }

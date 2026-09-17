@@ -4,36 +4,41 @@
  * figures are editorial and stay literal.
  */
 import Link from 'next/link';
+import type { AboutLedgerContent } from '@/lib/content-utils';
 
-export function Ledger({ teamCount }: { teamCount: number }) {
+export function Ledger({
+  teamCount,
+  content,
+}: {
+  teamCount: number;
+  content: AboutLedgerContent;
+}) {
   return (
     <section className="ledger" id="ledger">
       <div className="container">
         <div className="ledger-head rv">
           <div>
             <span className="eyebrow">
-              <i></i>The ledger
+              <i></i>{content.eyebrow}
             </span>
             <h2 className="display" style={{ marginTop: '20px' }}>
-              Six numbers, <span className="ghost">sources attached.</span>
+              {content.headline} <span className="ghost">{content.headlineHighlight}</span>
             </h2>
             <p className="lede">
-              Every engagement leaves a paper trail. This is ours: pulled from real client work
-              between 2019 and today. Where a number has a client, the client is named.
+              {content.intro}
             </p>
           </div>
         </div>
 
         <div className="ledger-list">
-          <div className="lgroup rv">The operation</div>
+          <div className="lgroup rv">{content.operationLabel}</div>
           <div className="lrow rv">
             <div className="lname">
-              <h3>Team members</h3>
+              <h3>{content.rows[0].title}</h3>
               <span className="leader" aria-hidden="true"></span>
             </div>
             <p>
-              Designers, developers, and marketers. Every engagement is staffed from the same
-              {teamCount}-person bench: the people below are the people on your project.
+              {content.rows[0].description}{teamCount}{content.rows[0].descriptionSuffix}
             </p>
             <div className="lfig">
               <div className="fig tab">{teamCount}</div>
@@ -41,82 +46,80 @@ export function Ledger({ teamCount }: { teamCount: number }) {
           </div>
           <div className="lrow rv" style={{ ['--d' as string]: '.05s' }}>
             <div className="lname">
-              <h3>Companies served</h3>
+              <h3>{content.rows[1].title}</h3>
               <span className="leader" aria-hidden="true"></span>
             </div>
             <p>
-              From funded startups to enterprises like Montblanc and Radisson. Different
-              industries, same job: a site that has to earn its keep.
+              {content.rows[1].description}
             </p>
             <div className="lfig">
-              <div className="fig tab">100+</div>
+              <div className="fig tab">{content.rows[1].fig}</div>
             </div>
           </div>
           <div className="lrow rv" style={{ ['--d' as string]: '.1s' }}>
             <div className="lname">
-              <h3>Years on Webflow</h3>
+              <h3>{content.rows[2].title}</h3>
               <span className="leader" aria-hidden="true"></span>
             </div>
             <p>
-              Early adopters in 2019, back when it was the risky choice. Webflow Enterprise
-              Partner today.
+              {content.rows[2].description}
             </p>
             <div className="lfig">
-              <div className="fig tab">7+</div>
+              <div className="fig tab">{content.rows[2].fig}</div>
             </div>
           </div>
 
-          <div className="lgroup rv">The outcomes</div>
+          <div className="lgroup rv">{content.outcomesLabel}</div>
           <div className="lrow rv">
             <div className="lname">
-              <h3>Increase in conversions</h3>
+              <h3>{content.rows[3].title}</h3>
               <span className="leader" aria-hidden="true"></span>
             </div>
-            <p>Measured across the Dimer Health engagement over a six-month optimization period.</p>
+            <p>{content.rows[3].description}</p>
             <div className="lfig">
-              <div className="fig tab">288%</div>
+              <div className="fig tab">{content.rows[3].fig}</div>
               <span className="lchip">
                 <i></i>
-                <b>Dimer Health</b>
-                <span>CRO</span>
+                <b>{content.rows[3].chipClient}</b>
+                <span>{content.rows[3].chipTag}</span>
               </span>
             </div>
           </div>
           <div className="lrow rv" style={{ ['--d' as string]: '.05s' }}>
             <div className="lname">
-              <h3>AI visibility on the core prompt</h3>
+              <h3>{content.rows[4].title}</h3>
               <span className="leader" aria-hidden="true"></span>
             </div>
-            <p>From absent to cited on the answer that matters in Toku&rsquo;s category.</p>
+            <p>{content.rows[4].description}</p>
             <div className="lfig">
-              <div className="fig tab">0&thinsp;&rarr;&thinsp;97.8%</div>
+              <div className="fig tab">{content.rows[4].fig}</div>
               <span className="lchip">
                 <i></i>
-                <b>Toku</b>
-                <span>AEO</span>
+                <b>{content.rows[4].chipClient}</b>
+                <span>{content.rows[4].chipTag}</span>
               </span>
             </div>
           </div>
           <div className="lrow rv" style={{ ['--d' as string]: '.1s' }}>
             <div className="lname">
-              <h3>Sales in the first 30 days</h3>
+              <h3>{content.rows[5].title}</h3>
               <span className="leader" aria-hidden="true"></span>
             </div>
-            <p>Attributed in the month after the rebuilt site went live.</p>
+            <p>{content.rows[5].description}</p>
             <div className="lfig">
-              <div className="fig tab">$200K</div>
+              <div className="fig tab">{content.rows[5].fig}</div>
               <span className="lchip">
                 <i></i>
-                <b>Outbound Specialist</b>
-                <span>Launch</span>
+                <b>{content.rows[5].chipClient}</b>
+                <span>{content.rows[5].chipTag}</span>
               </span>
             </div>
           </div>
 
           <div className="lclose rv">
-            <p>Every line above comes from a shipped engagement. Clients named, periods stated.</p>
+            <p>{content.closingText}</p>
             <Link href="/work">
-              Explore the work <span aria-hidden="true">&rarr;</span>
+              {content.closingLinkText} <span aria-hidden="true">&rarr;</span>
             </Link>
           </div>
         </div>

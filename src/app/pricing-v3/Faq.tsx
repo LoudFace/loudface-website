@@ -1,4 +1,4 @@
-import { PRICING_FAQ } from './data';
+import type { PricingFaqContent } from '@/lib/content-utils';
 
 /**
  * Faq — light section: indigo composite panel (Cal CTA + at-a-glance stats)
@@ -7,47 +7,47 @@ import { PRICING_FAQ } from './data';
  */
 const d = (v: string) => ({ ['--d' as string]: v });
 
-export function Faq() {
+export function Faq({ content }: { content: PricingFaqContent }) {
   return (
     <section className="faq" id="faq">
       <div className="container faq-grid">
         <aside className="faq-panel rv" aria-label="Pricing questions summary">
           <h3>
-            <span className="soft-em">Still</span> have questions?
+            <span className="soft-em">{content.panelTitleHighlight}</span> {content.panelTitleRest}
           </h3>
-          <p className="pl">We&rsquo;re here to help you with any inquiries.</p>
+          <p className="pl">{content.panelText}</p>
           <a className="btn btn-pill btn-white btn-md" href="#book-modal" data-cal-trigger="">
-            Book a strategy call
+            {content.ctaText}
           </a>
           <div className="fstats" aria-label="At a glance">
             <div className="fstat">
               <b className="tab">
-                $5k<span style={{ fontSize: '14px' }}>/mo</span>
+                {content.stats[0].value}<span style={{ fontSize: '14px' }}>/{content.stats[0].period}</span>
               </b>
-              <span>engagements start from</span>
+              <span>{content.stats[0].label}</span>
             </div>
             <div className="fstat">
-              <b className="tab">2h</b>
-              <span>response time, every tier</span>
+              <b className="tab">{content.stats[1].value}</b>
+              <span>{content.stats[1].label}</span>
             </div>
             <div className="fstat">
-              <b className="tab">1&ndash;4</b>
-              <span>active initiatives by tier</span>
+              <b className="tab">{content.stats[2].value}</b>
+              <span>{content.stats[2].label}</span>
             </div>
           </div>
         </aside>
 
         <div className="acc rv" style={d('.08s')}>
-          {PRICING_FAQ.map((item, i) => (
-            <details key={item.q} open={i === 0}>
+          {content.items.map((item, i) => (
+            <details key={item.question} open={i === 0}>
               <summary>
-                {item.q}
+                {item.question}
                 <span className="mk" aria-hidden="true"></span>
               </summary>
-              {item.aHtml ? (
-                <p className="ans" dangerouslySetInnerHTML={{ __html: item.aHtml }} />
+              {item.answerHtml ? (
+                <p className="ans" dangerouslySetInnerHTML={{ __html: item.answerHtml }} />
               ) : (
-                <p className="ans">{item.a}</p>
+                <p className="ans">{item.answer}</p>
               )}
             </details>
           ))}

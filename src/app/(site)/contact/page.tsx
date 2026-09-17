@@ -30,6 +30,7 @@
 export const revalidate = 60;
 
 import type { Metadata } from 'next';
+import { getContactContent } from '@/lib/content-utils';
 import '../../contact-v3/contact-v3.css';
 import { getContactFounder, CONTACT_FAQ, OFFICES, CONTACT_EMAIL } from '../../contact-v3/data';
 import { HeroContact } from '../../contact-v3/HeroContact';
@@ -72,7 +73,7 @@ export const metadata: Metadata = {
 };
 
 export default async function ContactPage() {
-  const founder = await getContactFounder();
+  const [founder, content] = await Promise.all([getContactFounder(), getContactContent()]);
 
   const breadcrumbSchema = {
     '@context': 'https://schema.org',
@@ -150,12 +151,12 @@ export default async function ContactPage() {
 
       {/* .ctv3 scopes the bespoke resets so they can't touch the shared Header/Footer/Cal chrome. */}
       <div className="ctv3">
-        <HeroContact />
-        <LogosMarquee />
-        <NextSteps />
-        <OfficesBand founder={founder} />
-        <Faq />
-        <CoverCTA />
+        <HeroContact content={content.hero} />
+        <LogosMarquee content={content.logos} />
+        <NextSteps content={content.nextSteps} />
+        <OfficesBand founder={founder} content={content.offices} />
+        <Faq content={content.faq} />
+        <CoverCTA content={content.coverCta} />
         {/* Shared v3 footer (same component as the homepage/About/Pricing/Services).
             Rendered inside .ctv3 so the re-scoped .ft footer CSS in contact-v3.css
             applies with full isolation — home-v3.css is NOT imported here. */}

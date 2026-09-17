@@ -7,6 +7,7 @@
  * The blueprint plate SVG is the canonical house recipe, ported verbatim.
  */
 import Image from 'next/image';
+import type { AboutStoryContent } from '@/lib/content-utils';
 import { teamPhoto, type TeamPerson } from './data';
 
 const SANITY_CDN = 'https://cdn.sanity.io/images/xjjjqhgt/production/';
@@ -24,7 +25,13 @@ const CLIENT_LOGOS: { asset: string; alt: string; h: number }[] = [
   { asset: '6a79052d6d3db7428b73436f15350c87e0cefa3b-339x109.png', alt: 'Toku', h: 96 },
 ];
 
-export function Story({ team }: { team: TeamPerson[] }) {
+export function Story({
+  team,
+  content,
+}: {
+  team: TeamPerson[];
+  content: AboutStoryContent;
+}) {
   const founder = team.find((p) => p.slug === 'arnel-bukva') ?? team[0];
 
   return (
@@ -32,15 +39,15 @@ export function Story({ team }: { team: TeamPerson[] }) {
       <div className="container">
         <div className="a-srow">
           <div className="rv">
-            <h2>Straight from the founder.</h2>
+            <h2>{content.founderHeadline}</h2>
             <figure className="a-fnote">
               <svg className="a-fnote-q" viewBox="0 0 32 24" aria-hidden="true">
                 <path d="M0 24V13.8C0 6 4.9.7 12.6 0l1 3.4C8.4 4.7 5.9 7.7 5.6 11.4h6.2V24H0Zm18 0V13.8C18 6 22.9.7 30.6 0l1 3.4c-5.2 1.3-7.7 4.3-8 8h6.2V24H18Z" />
               </svg>
               <blockquote>
-                I started LoudFace chasing a hunch: that <em>design and numbers</em> belonged on
-                the same team, not in separate agencies handing off a brief. Seven years later
-                that&rsquo;s still the whole bet.
+                {content.founderQuotePrefix}
+                <em>{content.founderQuoteEmphasis}</em>
+                {content.founderQuoteSuffix}
               </blockquote>
               {/* Founder avatar: w/h are the SOURCE dims (96), not the 44px display
                   box — `.a-fnote figcaption img` pins width/height:44px in CSS, so
@@ -51,8 +58,8 @@ export function Story({ team }: { team: TeamPerson[] }) {
                   <Image src={teamPhoto(founder.photoBase, 96, 96)} width={96} height={96} quality={82} alt="" />
                 )}
                 <span>
-                  <b>Arnel Bukva</b>
-                  <small>Founder &amp; Head of Growth</small>
+                  <b>{content.founderName}</b>
+                  <small>{content.founderRole}</small>
                 </span>
               </figcaption>
             </figure>
@@ -121,8 +128,8 @@ export function Story({ team }: { team: TeamPerson[] }) {
 
         <div className="a-srow flip">
           <figure className="a-logo-panel a-s-media rv" style={{ ['--d' as string]: '.1s' }}>
-            <h3>Hundreds of teams later.</h3>
-            <p className="a-lp-sub">A few of the companies we&rsquo;ve built and grown for.</p>
+            <h3>{content.logoPanelHeadline}</h3>
+            <p className="a-lp-sub">{content.logoPanelSubtitle}</p>
             <div className="a-lp-grid">
               {CLIENT_LOGOS.map((l) => (
                 // `.a-lp-grid img` pins height:20px;width:100% in CSS, so w/h only
@@ -132,38 +139,29 @@ export function Story({ team }: { team: TeamPerson[] }) {
             </div>
           </figure>
           <div className="rv">
-            <h2>From small startups to large enterprises.</h2>
+            <h2>{content.enterpriseHeadline}</h2>
             <p>
-              We&rsquo;ve helped hundreds of businesses reach their online goals, each with
-              different challenges and opportunities. Today we&rsquo;re a small remote team
-              based in Dubai, working with SaaS companies around the world.
+              {content.enterpriseDescription}
             </p>
           </div>
         </div>
 
         <ol className="a-timeline rv" style={{ ['--d' as string]: '.06s' }}>
           <li>
-            <b>2019</b>
-            <span>
-              Arnel starts LoudFace, betting on Webflow before most agencies had heard of it.
-              The first enterprise engagement lands, and the design-plus-code model starts to
-              prove itself at scale.
-            </span>
+            <b>{content.timeline[0].year}</b>
+            <span>{content.timeline[0].description}</span>
           </li>
           <li>
-            <b>2022</b>
-            <span>SEO and conversion work folds into every build. Growth becomes the retainer, not an upsell.</span>
+            <b>{content.timeline[1].year}</b>
+            <span>{content.timeline[1].description}</span>
           </li>
           <li>
-            <b>2024</b>
-            <span>
-              Team grows to six. Already a Webflow Enterprise Partner &mdash; one of a small
-              number of agencies worldwide.
-            </span>
+            <b>{content.timeline[2].year}</b>
+            <span>{content.timeline[2].description}</span>
           </li>
           <li>
-            <b>2026</b>
-            <span>AI-search visibility joins the stack. 200+ sites shipped, 100+ companies served.</span>
+            <b>{content.timeline[3].year}</b>
+            <span>{content.timeline[3].description}</span>
           </li>
         </ol>
       </div>

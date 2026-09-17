@@ -575,7 +575,7 @@ export function ServicePageV3({ config, images }: { config: ServiceConfig; image
             {siblings.map((s) => (
               <Link className="rel-row" href={`/services/${s.slug}`} key={s.slug}>
                 <span className="rr-txt">
-                  <b>{s.name}</b>
+                  <b>{s.serviceName}</b>
                   <span>{s.blurb}</span>
                 </span>
                 <span className="rr-go" aria-hidden="true">
