@@ -188,7 +188,6 @@ const doc = {
     'Being in the first three, with the giants, when people search. That will be the perfect call for me.',
   heroQuoteBy: 'Şirin Komban, on our call, 17 September 2026',
   heroSummary: [
-    para([{ text: '3-month engagement · everything included · no setup fee', bold: true }]),
     para(
       'We make Pisano one of the first three names an AI assistant returns when an enterprise CX team asks which platform to shortlist. Consideration questions only. Branded questions are already won and stay out of the target.'
     ),
