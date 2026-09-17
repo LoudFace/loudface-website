@@ -383,3 +383,113 @@ export function fetchProposalGate(token: string): Promise<ProposalGate | null> {
 export function fetchProposalContent(token: string): Promise<Proposal | null> {
   return query<Proposal>(CONTENT_QUERY, token);
 }
+
+/* ── Audits ───────────────────────────────────────────────────────────────
+   Same dataset, same gate rules, same reason for both: an audit names a
+   prospect's weaknesses in writing. `/a/<token>` is read exactly like
+   `/p/<token>` — gate facts first, content strictly after the cookie
+   verifies. Not to be confused with /audit/<id>, the automated lead-magnet
+   deck, which is public and lives in src/lib/audit/. */
+
+export interface AuditScoreTile {
+  _key: string;
+  value: string;
+  label: string;
+  tone?: 'bad' | 'good' | 'neutral';
+}
+
+export interface AuditTableRow {
+  _key: string;
+  cells: string[];
+  highlight?: boolean;
+}
+
+export interface AuditBar {
+  _key: string;
+  label: string;
+  value: string;
+  fraction: number;
+  self?: boolean;
+}
+
+export interface AuditMove {
+  _key: string;
+  title: string;
+  body: string;
+  meta?: string;
+}
+
+export interface AuditMethodRow {
+  _key: string;
+  measurement: string;
+  source: string;
+  pulled: string;
+}
+
+export type AuditSection =
+  | { _type: 'auditVerdictSection'; _key: string; heading?: string; band?: ProposalBand;
+      leftValue: string; leftLabel?: string; leftSource?: string;
+      rightValue: string; rightLabel?: string; rightSource?: string; connector?: string }
+  | { _type: 'auditScorecardSection'; _key: string; heading?: string; band?: ProposalBand; tiles?: AuditScoreTile[] }
+  | { _type: 'richTextSection'; _key: string; heading?: string; band?: ProposalBand; body?: PortableTextBlock[] }
+  | { _type: 'auditTableSection'; _key: string; heading?: string; band?: ProposalBand; intro?: string;
+      columns?: string[]; numericColumns?: number[]; pillColumns?: number[];
+      rows?: AuditTableRow[]; note?: string }
+  | { _type: 'auditBarsSection'; _key: string; heading?: string; band?: ProposalBand; intro?: string;
+      bars?: AuditBar[]; note?: string }
+  | { _type: 'auditFindingSection'; _key: string; tag: string; body?: PortableTextBlock[]; tone?: 'alert' | 'ok' }
+  | { _type: 'auditQuoteSection'; _key: string; heading?: string; band?: ProposalBand;
+      attribution: string; quote: string; note?: string }
+  | { _type: 'auditPlanSection'; _key: string; heading?: string; band?: ProposalBand; intro?: string; moves?: AuditMove[] }
+  | { _type: 'auditMethodSection'; _key: string; heading?: string; rows?: AuditMethodRow[]; note?: string };
+
+export interface AuditGate {
+  token: string;
+  accessCode: string;
+  validUntil: string;
+  status: ProposalStatus;
+}
+
+export interface Audit {
+  title: string;
+  clientName: string;
+  preparedFor?: string[];
+  token: string;
+  validUntil: string;
+  status: ProposalStatus;
+  eyebrow?: string;
+  headline: string;
+  standfirst?: PortableTextBlock[];
+  subject?: string;
+  measuredOn?: string;
+  sections?: AuditSection[];
+  contactEmail?: string;
+}
+
+const AUDIT_GATE_QUERY = `*[_type == "audit" && token == $token][0]{
+  token, accessCode, validUntil, status
+}`;
+
+/** Runs only after the cookie has been verified. */
+const AUDIT_CONTENT_QUERY = `*[_type == "audit" && token == $token][0]{
+  title, clientName, preparedFor, token, validUntil, status,
+  eyebrow, headline, standfirst, subject, measuredOn, contactEmail,
+  sections[]{
+    ...,
+    tiles[]{ _key, value, label, tone },
+    rows[]{ _key, cells, highlight, measurement, source, pulled },
+    bars[]{ _key, label, value, fraction, self },
+    moves[]{ _key, title, body, meta },
+    columns, numericColumns, pillColumns, band
+  }
+}`;
+
+/** Access facts only. Safe to call before the gate is passed. */
+export function fetchAuditGate(token: string): Promise<AuditGate | null> {
+  return query<AuditGate>(AUDIT_GATE_QUERY, token);
+}
+
+/** The readable audit. NEVER call this before verifying the access cookie. */
+export function fetchAuditContent(token: string): Promise<Audit | null> {
+  return query<Audit>(AUDIT_CONTENT_QUERY, token);
+}

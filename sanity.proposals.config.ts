@@ -1,6 +1,7 @@
 import { defineConfig } from 'sanity';
 import { structureTool } from 'sanity/structure';
 import { proposalSchemaTypes } from './src/sanity/schemas/proposal';
+import { auditSchemaTypes } from './src/sanity/schemas/audit';
 
 /**
  * Proposals Studio — a SECOND, separate Sanity workspace at /studio/proposals.
@@ -10,10 +11,10 @@ import { proposalSchemaTypes } from './src/sanity/schemas/proposal';
  * 1. Different dataset. `production` is a PUBLIC dataset — anyone who knows the
  *    project ID can read every document in it. Proposal pricing must never sit
  *    there, so proposals live in the private `proposals` dataset instead.
- * 2. Different schema list. `proposal` is registered ONLY here. If it were in
- *    src/sanity/schemas/index.ts it would also appear in the production Studio,
- *    where one wrong click would write a client's pricing into the public
- *    dataset.
+ * 2. Different schema list. `proposal` and `audit` are registered ONLY here.
+ *    If either were in src/sanity/schemas/index.ts it would also appear in the
+ *    production Studio, where one wrong click would write a client's pricing —
+ *    or a prospect's weaknesses — into the public dataset.
  *
  * Two single-workspace configs rather than one multi-workspace array: Sanity
  * matches a workspace by the FIRST basePath that matches the URL, so nesting
@@ -23,12 +24,12 @@ import { proposalSchemaTypes } from './src/sanity/schemas/proposal';
  */
 export default defineConfig({
   name: 'proposals',
-  title: 'LoudFace Proposals',
+  title: 'LoudFace Proposals & Audits',
   projectId: 'xjjjqhgt',
   dataset: 'proposals',
   basePath: '/studio/proposals',
   plugins: [structureTool()],
   schema: {
-    types: proposalSchemaTypes,
+    types: [...proposalSchemaTypes, ...auditSchemaTypes],
   },
 });

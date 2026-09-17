@@ -50,3 +50,9 @@ export function isValidProposalToken(value: string | undefined | null): value is
 export function proposalCookieName(token: string): string {
   return `lf_p_${token}`;
 }
+
+/** The httpOnly cookie for an audit at /a/<token>. Separate namespace from a
+ *  proposal so unlocking one never unlocks the other. */
+export function auditCookieName(token: string): string {
+  return `lf_a_${token}`;
+}
