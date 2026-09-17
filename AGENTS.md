@@ -170,9 +170,17 @@ Default is Server Component. Only add `'use client'` when you need interactivity
 - Rich text is stored as raw HTML strings (not Portable Text) for backward compatibility.
 - Images are on Sanity CDN (`cdn.sanity.io`) — GROQ projects them as `{ url, alt }` matching the `CmsImage` type.
 
-### Static Content
+### Static Content and the client inline editor — read before adding a page
 
-Text content lives in JSON files under `src/data/content/`. Access via getter functions in `src/lib/content-utils.ts`. Use `dangerouslySetInnerHTML` only when HTML content is genuinely expected (CMS content, JSON with `<br>` tags).
+Text content lives in JSON files under `src/data/content/`, one per page, read through the async getters in `src/lib/content-utils.ts`. Metadata reads `rawContent()`. Use `dangerouslySetInnerHTML` only when HTML content is genuinely expected (CMS content, JSON with `<br>` tags).
+
+This site runs the client inline editor, live since 2026-09-17: a signed-in editor clicks text on the page, publishes, one commit lands on `main` in their name, and a light turns green once the public page carries the words. The rules that keep it working live in the `site-engineering` skill, `references/inline-editor.md`, section "Rules for every teammate and agent adding a page or content". Read them before adding a page, a content file or a key. The short form:
+
+- Copy goes in JSON, never in a component. Keys are `[A-Za-z0-9_]`; never `name`, `id`, `slug`, or an attribute name (`alt`, `ariaLabel`, `placeholder`, `tooltip`); those are never editable.
+- Never transform a content value in a component (`split`, `slice`, `toUpperCase`, `===`); shape it in the JSON.
+- An article body is edited by sentence: the container carries `data-lf-body=""` and nothing else. No page carries editing code; the editor finds values by reading the page.
+- Before pushing a page change: `npm run test:editor` and `node scripts/inline-edit-coverage.mjs <the routes you touched>`.
+- Editors are the addresses in `LF_EDITOR_EMAILS` on Vercel. When someone says it is broken, open `/api/lf-edit/health` while signed in before reading env vars.
 
 ### Cal.com Booking
 
