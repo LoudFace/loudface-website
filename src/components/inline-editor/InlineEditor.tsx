@@ -13,6 +13,8 @@
  * section moving, no component choice.
  */
 import { useCallback, useEffect, useRef, useState } from 'react';
+import { VERCEL_STEGA_REGEX } from '@vercel/stega';
+import { decodeStega, stripStega } from '../../lib/inline-edit/stega';
 
 type Change = { id: string; value: string; label: string };
 type Status = { kind: 'idle' | 'saving' | 'saved' | 'error'; message?: string };
@@ -24,12 +26,17 @@ type Publish = {
   fields: string[];
   reverted: boolean;
 };
+type SanityUndo = { id: string; value: string };
 
 const START = '\u{E0001}';
 const BASE = 0xe0000;
 const MARKS = /[\u{E0000}-\u{E007F}]/gu;
 const OUTLINE = '2px solid #2f7de1';
 const OUTLINE_HOVER = '2px dashed #9dc3f2';
+/** Sanity fields the editor never makes clickable: the whole-article body. */
+const NO_EDIT_PATH = new Set(['content', 'body']);
+/** A text node inside any of these never becomes an editable field. */
+const BLOCKED_ANCESTORS = 'script, style, title, noscript, template, [data-lf-chrome]';
 
 function decodeMark(text: string): string | null {
   const start = text.indexOf(START);
@@ -43,12 +50,19 @@ function decodeMark(text: string): string | null {
   return id || null;
 }
 
-const strip = (text: string) => text.replace(MARKS, '');
+/** Both marker kinds removed: our own tag-character ids, and Sanity's stega. */
+const strip = (text: string) => stripStega(text.replace(MARKS, ''));
 
+/** Text nodes inside script/style/title/noscript/template, or our own chrome, are never editable. */
+const blocked = (node: Text): boolean => Boolean(node.parentElement?.closest(BLOCKED_ANCESTORS));
+
+/** How many marked fields (ours or Sanity's) live in this subtree. */
 function countMarks(el: Element | null): number {
   if (!el) return 0;
+  const text = el.textContent ?? '';
   let n = 0;
-  for (const char of el.textContent ?? '') if (char === START) n++;
+  for (const char of text) if (char === START) n++;
+  n += text.match(VERCEL_STEGA_REGEX)?.length ?? 0;
   return n;
 }
 
@@ -72,11 +86,25 @@ function discover(): HTMLElement[] {
   const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT);
   for (let node = walker.nextNode(); node; node = walker.nextNode()) {
     const text = node as Text;
-    if (!text.data.includes(START)) continue;
-    const id = decodeMark(text.data);
+    if (blocked(text)) continue;
+
+    if (text.data.includes(START)) {
+      const id = decodeMark(text.data);
+      const el = fieldElement(text);
+      if (!id || !el || el.dataset.lfId || el.closest('[data-lf-chrome]')) continue;
+      el.dataset.lfId = id;
+      el.dataset.lfType = 'text';
+      found.push(el);
+      continue;
+    }
+
+    // Sanity's own marker: a stega payload decoding to a Studio edit link.
+    // The blog article body (`content`/`body`) stays read-only in this pass.
+    const stega = decodeStega(text.data);
+    if (!stega || NO_EDIT_PATH.has(stega.path)) continue;
     const el = fieldElement(text);
-    if (!id || !el || el.dataset.lfId || el.closest('[data-lf-chrome]')) continue;
-    el.dataset.lfId = id;
+    if (!el || el.dataset.lfId || el.closest('[data-lf-chrome]')) continue;
+    el.dataset.lfId = `sanity:${stega.id}:${stega.path}`;
     el.dataset.lfType = 'text';
     found.push(el);
   }
@@ -101,10 +129,14 @@ export function InlineEditor() {
   const [historyOpen, setHistoryOpen] = useState(false);
   const [showAll, setShowAll] = useState(false);
   const [publishes, setPublishes] = useState<Publish[] | null>(null);
+  const [sanityUndo, setSanityUndo] = useState<SanityUndo[] | null>(null);
   const originals = useRef<Map<string, string>>(new Map());
 
   const record = useCallback((id: string, value: string, label: string) => {
     setChanges((prev) => ({ ...prev, [id]: { id, value, label } }));
+    // A new edit invalidates the "before" snapshot from the last Sanity
+    // publish — undoing it now would clobber this newer change.
+    setSanityUndo(null);
   }, []);
 
   useEffect(() => {
@@ -246,15 +278,47 @@ export function InlineEditor() {
     }
     setChanges({});
     originals.current.clear();
-    const n = `${result.published} change${result.published === 1 ? '' : 's'}`;
-    if (result.mode === 'github') {
-      // The commit is on GitHub; the site rebuilds from it. The page keeps the
-      // edited words on screen meanwhile, so nothing looks lost.
-      setStatus({ kind: 'saved', message: `${n} published — live in about two minutes, when the build finishes` });
+
+    const sanity: { id: string; before: string }[] = result.sanity ?? [];
+    const sanityCount = sanity.length;
+    const contentCount = Math.max(0, (result.published ?? 0) - sanityCount);
+    setSanityUndo(sanityCount ? sanity.map(({ id, before }) => ({ id, value: before })) : null);
+
+    const parts: string[] = [];
+    if (contentCount) parts.push(`${contentCount} change${contentCount === 1 ? '' : 's'} published`);
+    if (sanityCount) {
+      parts.push(`${sanityCount} change${sanityCount === 1 ? '' : 's'} saved to the CMS — live within a minute`);
+    }
+    const message = parts.join('; ') || 'Nothing changed';
+
+    if (result.mode === 'github' && contentCount) {
+      setStatus({ kind: 'saved', message: `${message} — site content live in about two minutes, when the build finishes` });
       return;
     }
-    setStatus({ kind: 'saved', message: `${n} published` });
-    setTimeout(() => window.location.reload(), 900);
+    setStatus({ kind: 'saved', message });
+    // Sanity edits revalidate the page in place; reloading would race the
+    // revalidation and could show the old copy for a moment. Only a plain git
+    // publish (no CMS half) reloads to show the committed file straight away.
+    if (contentCount && !sanityCount && result.mode !== 'github') {
+      setTimeout(() => window.location.reload(), 900);
+    }
+  }
+
+  async function undoSanityPublish() {
+    if (!sanityUndo?.length) return;
+    setStatus({ kind: 'saving' });
+    const response = await fetch('/api/lf-edit', {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({ changes: sanityUndo, exact: true }),
+    });
+    const result = await response.json().catch(() => ({ error: response.statusText }));
+    if (!response.ok) {
+      setStatus({ kind: 'error', message: result.error ?? 'Undo failed' });
+      return;
+    }
+    setSanityUndo(null);
+    setStatus({ kind: 'saved', message: 'Reverted in the CMS — live within a minute' });
   }
 
   async function openHistory() {
@@ -305,6 +369,11 @@ export function InlineEditor() {
         <button style={ghost} onClick={() => window.location.reload()} disabled={!pending.length}>
           Discard
         </button>
+        {status.kind === 'saved' && sanityUndo?.length ? (
+          <button style={ghost} onClick={undoSanityPublish}>
+            Undo
+          </button>
+        ) : null}
         <button
           style={{ ...ghost, background: showAll ? 'rgba(255,255,255,.18)' : 'transparent' }}
           onClick={() => setShowAll((on) => !on)}

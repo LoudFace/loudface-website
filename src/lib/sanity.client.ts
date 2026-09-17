@@ -50,6 +50,29 @@ export const writeClient = createClient({
 });
 
 /**
+ * Server-only client the inline editor publishes through.
+ * Separate token from `writeClient` (`LF_SANITY_WRITE_TOKEN`, not
+ * `SANITY_API_TOKEN`) so an editor's write scope can be revoked or rotated
+ * without touching whatever migrations and webhooks use `writeClient` for.
+ * `getEditorWriteClient` throws a readable error when the token is unset,
+ * rather than silently patching with no auth and failing deep in the SDK.
+ */
+export const editorWriteClient = createClient({
+  projectId,
+  dataset,
+  apiVersion,
+  useCdn: false,
+  token: process.env.LF_SANITY_WRITE_TOKEN,
+});
+
+export function getEditorWriteClient() {
+  if (!process.env.LF_SANITY_WRITE_TOKEN) {
+    throw new Error('Sanity publishing is not switched on for this site yet');
+  }
+  return editorWriteClient;
+}
+
+/**
  * Draft-aware server client. Reads Next.js draft-mode state and returns:
  *   - draft mode ON  → authenticated client, drafts perspective, stega encoding
  *     (powers Visual Editing — click-to-edit overlays in /studio/presentation)
