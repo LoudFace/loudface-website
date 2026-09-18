@@ -212,6 +212,11 @@ function collect(root: HTMLElement, found: HTMLElement[]): void {
       if (!id || !el || el.closest('[data-lf-chrome]')) continue;
       releaseStaleAncestors(el, root);
       if (el.dataset.lfId) continue;
+      // Several values as bare text inside one element: the element can only
+      // answer for one of them, and an edit would write the whole paragraph
+      // into that one field. Each value needs an element of its own; until the
+      // page gives it one, none of them is editable here.
+      if (countMarks(el) !== 1) continue;
       el.dataset.lfId = id;
       el.dataset.lfType = 'text';
       found.push(el);
