@@ -15,6 +15,7 @@ import { currentEditor, openValue, sealValue } from '@/lib/inline-edit/session';
 import { editorOffResponse } from '@/lib/inline-edit/guard';
 import { publish, type Change } from '@/lib/inline-edit/content-store';
 import { publishSanity } from '@/lib/inline-edit/sanity-store';
+import { commitUrl, recordEdit, siteIdentity, type ReceiptChange } from '@/lib/inline-edit/receipt';
 
 /** A publish is a commit built over the GitHub API; give it room to finish. */
 export const maxDuration = 60;
@@ -78,6 +79,11 @@ export async function POST(request: Request) {
   let published = 0;
   let hash = '';
   let mode: string | undefined;
+  // What the edit changed, for the receipt on the client's results timeline.
+  // A Sanity publish makes no commit at all, so without this it leaves no
+  // trace anywhere outside the CMS (2026-09-18).
+  const receiptChanges: ReceiptChange[] = [];
+  let receiptRef = '';
   let sanity: { id: string; token: string; after: string; draftKept: boolean }[] = [];
   // Whether the pages a Sanity patch touches were actually refreshed. The words
   // are in the CMS either way; a false here only means the public page catches
@@ -91,6 +97,10 @@ export async function POST(request: Request) {
       published += result.applied.filter((change) => change.before !== change.after).length;
       hash = result.hash;
       mode = result.mode;
+      for (const change of result.applied) {
+        if (change.before !== change.after) receiptChanges.push(change);
+      }
+      if (hash) receiptRef = hash;
     } catch (error) {
       errors.push(error instanceof Error ? error.message : 'Publish failed');
     }
@@ -105,6 +115,11 @@ export async function POST(request: Request) {
       // The token seals what was there before, so an undo can restore it word
       // for word. `after` is what the page should now show: the editor looks for
       // exactly that text on the public page. A whole article body is neither.
+      for (const change of applied) {
+        if (change.before !== change.after) receiptChanges.push(change);
+      }
+      // No commit exists for a Sanity patch; the document is the reference.
+      if (!receiptRef && applied.length) receiptRef = applied[0].documentId;
       sanity = applied.map((change) => ({
         id: change.id,
         token: sealValue(change.id, change.before),
@@ -119,6 +134,20 @@ export async function POST(request: Request) {
   if (errors.length && !published) {
     return Response.json({ error: errors.join('; '), published: 0 }, { status: 400 });
   }
+
+  // One receipt for the whole publish, sent and forgotten. Nothing below waits
+  // for it and nothing it does can fail the publish.
+  if (receiptChanges.length) {
+    recordEdit({
+      action: 'publish',
+      changes: receiptChanges,
+      editorEmail: editor,
+      ref: receiptRef,
+      referer: request.headers.get('referer'),
+      refUrl: hash ? commitUrl(siteIdentity().repo, hash) : undefined,
+    });
+  }
+
   return Response.json({
     ok: errors.length === 0,
     published,
