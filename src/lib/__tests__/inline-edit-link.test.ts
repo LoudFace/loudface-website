@@ -34,6 +34,7 @@ import {
   hrefMatches,
   isAddressKey,
   isSafeHref,
+  linkProofs,
   normalizeHrefForMatch,
   siblingAddressKeys,
 } from '../inline-edit/link-edit';
@@ -687,5 +688,88 @@ describe('a request with no counts on it', () => {
     assert.equal(countAnchors(anchorsIn(page), BLOG), 2);
     assert.equal(fewEnoughAnchors(anchorsIn(page), { ...BLOG, atMost: 1 }), false);
     assert.equal(enoughAnchors(anchorsIn(page), { ...BLOG, atLeast: 2 }), true);
+  });
+});
+
+/**
+ * The counts the light waits for, taken at Publish rather than at Apply.
+ *
+ * Taking them at Apply read the page one instant before the anchor changed,
+ * which is right exactly once. Apply the same link twice, or apply, close the
+ * panel and apply again, and the second count came off a page that already
+ * carried the first change: the light then waited for one link too many, or for
+ * one too few to have gone, and sat amber until it gave up after six minutes.
+ *
+ * Counted here from the page as it stands when Publish is pressed — every
+ * staged change already on it — so applying twice, or reloading the panel in
+ * between, cannot change the answer.
+ */
+describe('linkProofs', () => {
+  /** A nav and a footer, each with its own Blog link; the nav's has moved. */
+  const AFTER_ONE_MOVE = anchorsIn(
+    '<nav><a href="/case-studies">Blog</a><a href="/pricing">Pricing</a></nav>' +
+      '<footer><a href="/blog">Blog</a></footer>',
+  );
+
+  it('asks for the links the page now carries, counting the ones nobody touched', () => {
+    const { links, linksAbsent } = linkProofs(AFTER_ONE_MOVE, [
+      { from: '/blog', to: '/case-studies', text: 'Blog' },
+    ]);
+    assert.deepEqual(links, [{ href: '/case-studies', text: 'Blog', atLeast: 1 }]);
+    // The footer's own Blog link stays, and is counted rather than waited for.
+    assert.deepEqual(linksAbsent, [{ href: '/blog', text: 'Blog', atMost: 1 }]);
+  });
+
+  it('gives the same answer when the same link is applied twice', () => {
+    // Second Apply: the edit still starts from /blog, and the page is read
+    // again. The old code counted the already-changed page as the "before".
+    const page = anchorsIn('<nav><a href="/pricing">Blog</a></nav><footer><a href="/blog">Blog</a></footer>');
+    const once = linkProofs(page, [{ from: '/blog', to: '/pricing', text: 'Blog' }]);
+    const twice = linkProofs(page, [{ from: '/blog', to: '/pricing', text: 'Blog' }]);
+    assert.deepEqual(once, twice);
+    assert.deepEqual(once.links, [{ href: '/pricing', text: 'Blog', atLeast: 1 }]);
+    assert.deepEqual(once.linksAbsent, [{ href: '/blog', text: 'Blog', atMost: 1 }]);
+  });
+
+  it('counts two links sent to the same page as two', () => {
+    const page = anchorsIn('<a href="/pricing">Plans</a><a href="/pricing">Plans</a>');
+    const { links } = linkProofs(page, [
+      { from: '/a', to: '/pricing', text: 'Plans' },
+      { from: '/b', to: '/pricing', text: 'Plans' },
+    ]);
+    assert.deepEqual(links, [{ href: '/pricing', text: 'Plans', atLeast: 2 }]);
+  });
+
+  it('leaves out a link with no words of its own', () => {
+    // Nothing tells an icon-only link apart from any other link to that page;
+    // the caller falls back to looking for the address in the HTML.
+    const { links, linksAbsent } = linkProofs(anchorsIn('<a href="/x"><svg></svg></a>'), [
+      { from: '/y', to: '/x', text: '' },
+    ]);
+    assert.deepEqual(links, []);
+    assert.deepEqual(linksAbsent, []);
+  });
+
+  it('leaves out a link put back where it started', () => {
+    const { links, linksAbsent } = linkProofs(AFTER_ONE_MOVE, [{ from: '/blog', to: '/blog', text: 'Blog' }]);
+    assert.deepEqual(links, []);
+    assert.deepEqual(linksAbsent, []);
+  });
+
+  it('never asks for an address to be gone that another link was just sent to', () => {
+    // Two links swapped destinations: both addresses are still on the page, so
+    // "no Blog link points at /blog" could never come true.
+    const page = anchorsIn('<a href="/case-studies">Blog</a><a href="/blog">Blog</a>');
+    const { linksAbsent } = linkProofs(page, [
+      { from: '/blog', to: '/case-studies', text: 'Blog' },
+      { from: '/case-studies', to: '/blog', text: 'Blog' },
+    ]);
+    assert.deepEqual(linksAbsent, []);
+  });
+
+  it('counts across trailing-slash spellings, as the page scan does', () => {
+    const page = anchorsIn('<a href="/case-studies/">Blog</a>');
+    const { links } = linkProofs(page, [{ from: '/blog', to: '/case-studies', text: 'Blog' }]);
+    assert.deepEqual(links, [{ href: '/case-studies', text: 'Blog', atLeast: 1 }]);
   });
 });

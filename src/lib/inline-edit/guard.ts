@@ -30,3 +30,25 @@ export function safeNext(value: string | null | undefined, fallback = '/'): stri
   if (!value.startsWith('/') || value.startsWith('//') || value.includes('\\')) return fallback;
   return value;
 }
+
+/**
+ * Should a page show the "Resume editing" chip?
+ *
+ * Draft Mode's cookie dies with the browser window; the session cookie lives
+ * eight hours. A client who closed the tab after lunch came back to their own
+ * site with no bar, no chip and nothing to click — the only way back in was a
+ * fresh email. The layout can see both facts (the session cookie is httpOnly
+ * and readable on the server), so it offers the way back.
+ *
+ * No session means no chip, which is what keeps an anonymous visitor's HTML
+ * byte-identical to a site without the editor. Draft Mode already on means the
+ * editor is up and the chip would be noise.
+ */
+export function showResumeChip(session: string | null | undefined, draftMode: boolean): boolean {
+  return Boolean(session) && !draftMode;
+}
+
+/** Where that chip sends them: back to this same page, with Draft Mode on again. */
+export function resumeHref(pathname: string): string {
+  return `/api/lf-edit/resume?next=${encodeURIComponent(safeNext(pathname))}`;
+}

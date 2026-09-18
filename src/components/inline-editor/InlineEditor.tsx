@@ -25,10 +25,18 @@ import {
   countAnchors,
   isSafeHref,
   linkCaseFor,
+  linkProofs,
   normalizeText,
   type AnchorTarget,
   type LinkCase,
+  type LinkEdit,
 } from '../../lib/inline-edit/link-edit';
+import {
+  EMPTY_FIELD_MESSAGE,
+  enterAction,
+  isEmptyValue,
+  pasteInsert,
+} from '../../lib/inline-edit/sanitize';
 import { ADDRESS } from '../../lib/inline-edit/mark-tree';
 import { landedRecently } from '../../lib/inline-edit/publish-history';
 import { DRAFT_KEPT_NOTE } from '../../lib/inline-edit/sanity-rules';
@@ -52,11 +60,10 @@ import {
  * looked for as visible text at all — a link's destination is in an attribute,
  * and the words around it did not change.
  *
- * `links` and `linksAbsent` are the same question asked properly for a link:
- * the anchor with these words points here now, and no anchor with these words
- * still points there. An address on its own is not proof — a nav that already
- * links to `/case-studies` makes a move of "Blog" to `/case-studies` look live
- * before the site has built.
+ * What a moved link needs the light to count is NOT here: it is worked out at
+ * Publish, from the page as it then stands, by `linkProofs`. Counting it at the
+ * moment of the change was right exactly once — a second Apply counted a page
+ * that already carried the first one.
  */
 type Change = {
   id: string;
@@ -64,16 +71,12 @@ type Change = {
   label: string;
   file?: File;
   markup?: string[];
-  links?: AnchorTarget[];
-  linksAbsent?: AnchorTarget[];
   address?: boolean;
 };
 /** Anything a `record` call wants to say about a change beyond its value. */
 type ChangeExtra = {
   file?: File;
   markup?: string[];
-  links?: AnchorTarget[];
-  linksAbsent?: AnchorTarget[];
   address?: boolean;
 };
 /** One link in the Links panel: what it says, where it points, and where that address lives. */
@@ -116,6 +119,8 @@ const BODY_PATH = new Set(['content', 'body']);
 const BLOCKED_ANCESTORS = 'script, style, title, noscript, template, [data-lf-chrome]';
 /** Smaller than this on screen and it is an icon or a spacer, not a picture to replace. */
 const SMALLEST_IMAGE = 24;
+/** How long a burst of page changes is allowed to settle before one re-scan. */
+const RESCAN_DELAY = 150;
 /** What the file picker offers. The server still reads the file's own first bytes. */
 const IMAGE_TYPES = 'image/png,image/jpeg,image/webp,image/gif';
 
@@ -160,11 +165,23 @@ function fieldElement(node: Text): HTMLElement | null {
   return el;
 }
 
-/** Everything editable on this page, discovered from the page itself. */
-function discover(): HTMLElement[] {
+/**
+ * Everything editable inside these subtrees, discovered from the page itself.
+ *
+ * It takes roots rather than always reading the whole document because it runs
+ * again on every change to the page. A site with a carousel changes the page
+ * several times a second, and re-reading every text node and every `<img>` each
+ * time is the whole cost of discovery. On mount it is handed the body; after
+ * that, only what just appeared.
+ */
+function discover(roots: HTMLElement[]): HTMLElement[] {
   const found: HTMLElement[] = [];
+  for (const root of roots) collect(root, found);
+  return found;
+}
 
-  const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT);
+function collect(root: HTMLElement, found: HTMLElement[]): void {
+  const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT);
   for (let node = walker.nextNode(); node; node = walker.nextNode()) {
     const text = node as Text;
     if (blocked(text)) continue;
@@ -207,7 +224,7 @@ function discover(): HTMLElement[] {
   // the marker: `next/image` rewrites the address to
   // `/_next/image?url=%2Fimages%2Fx.webp%3Flf%3D…`, which is why the old
   // `img[src*="lf="]` selector matched nothing on a page built with it.
-  document.querySelectorAll<HTMLImageElement>('img').forEach((img) => {
+  const image = (img: HTMLImageElement) => {
     if (img.dataset.lfId || img.closest('[data-lf-chrome]')) return;
     const src = img.getAttribute('src') ?? '';
     if (!src || isSvgSource(src)) return;
@@ -219,9 +236,9 @@ function discover(): HTMLElement[] {
     img.dataset.lfId = id;
     img.dataset.lfType = 'image';
     found.push(img);
-  });
-
-  return found;
+  };
+  if (root instanceof HTMLImageElement) image(root);
+  root.querySelectorAll<HTMLImageElement>('img').forEach(image);
 }
 
 /** A Sanity picture's asset document id, as an editable id, or null. */
@@ -330,38 +347,17 @@ function anchorLabel(el: Element | null): string {
  *
  * The editor's own bar is left out: it is not on the page a visitor gets.
  */
-function countOnPage(href: string, text: string): number {
-  const anchors = [...document.querySelectorAll('a')]
+function pageAnchors(): AnchorTarget[] {
+  return [...document.querySelectorAll('a')]
     .filter((anchor) => !anchor.closest('[data-lf-chrome]'))
     .map((anchor) => ({
       href: anchor.getAttribute('href') ?? '',
       text: normalizeText(strip(anchor.textContent ?? '')),
     }));
-  return countAnchors(anchors, { href, text });
 }
 
-/**
- * What the status light should check for one link that was just moved.
- *
- * The anchor's own words separate this link from most others, but not from a
- * copy of itself: the footer's "Blog" link points at /blog whatever the nav
- * does. So both halves are counts taken off the page before it is changed —
- * one more anchor under the new address, one fewer under the old one — and a
- * duplicate elsewhere is part of the sum rather than the answer.
- *
- * An icon-only link has no words to count by, so it keeps the older, weaker
- * check on the address alone rather than leaving the light stuck.
- *
- * Call this BEFORE the new address is put on the anchor: it is counting the
- * page as it stands.
- */
-function linkProof(row: LinkRow, to: string): ChangeExtra {
-  const text = anchorLabel(row.anchor);
-  if (!text) return { markup: [`href="${to}"`] };
-  return {
-    links: [{ href: to, text, atLeast: countOnPage(to, text) + 1 }],
-    linksAbsent: [{ href: row.href, text, atMost: Math.max(countOnPage(row.href, text) - 1, 0) }],
-  };
+function countOnPage(href: string, text: string): number {
+  return countAnchors(pageAnchors(), { href, text });
 }
 
 /**
@@ -482,18 +478,44 @@ export function InlineEditor({ children }: { children?: React.ReactNode }) {
   const [linkNote, setLinkNote] = useState('');
   /** Which row is waiting on the server to say where its address lives. */
   const [linkBusy, setLinkBusy] = useState<number | null>(null);
+  /** The field a client has just emptied, and where to put the note about it. */
+  const [emptyField, setEmptyField] = useState<{ id: string; at: Point } | null>(null);
   const originals = useRef<Map<string, string>>(new Map());
   const bodySnapshots = useRef<Map<string, BodySnapshot>>(new Map());
   /** Link changes staged for an article body, by body id; they ride along with its sentences. */
   const bodyLinks = useRef<Map<string, LinkReplacement[]>>(new Map());
   /**
-   * What the live check should count for each staged body link: by article, then
-   * by the address that link left. Counted when the client applies the change,
-   * because that is the only moment the page still shows the state before it.
+   * Every link this session moved, by the change it is staged against and by the
+   * anchor it sits on. The anchor is the key so a second move of the same link
+   * extends the first: what the published page will say it left is the address
+   * it had before anybody touched it, not the one a previous Apply put on it.
+   * The counts themselves are worked out at Publish (see `linkProofs`).
    */
-  const bodyProofs = useRef<Map<string, Map<string, { present: AnchorTarget; absent: AnchorTarget }>>>(
-    new Map(),
-  );
+  const linkEdits = useRef<Map<string, Map<HTMLAnchorElement, LinkEdit>>>(new Map());
+
+  /** Remember one move. Called BEFORE the new address goes on the anchor. */
+  const rememberLink = useCallback((changeId: string, anchor: HTMLAnchorElement, to: string) => {
+    const perChange = linkEdits.current.get(changeId) ?? new Map<HTMLAnchorElement, LinkEdit>();
+    const first = perChange.get(anchor);
+    perChange.set(anchor, {
+      from: first?.from ?? anchor.getAttribute('href') ?? '',
+      to,
+      text: anchorLabel(anchor),
+    });
+    linkEdits.current.set(changeId, perChange);
+  }, []);
+
+  /** The counts the light should ask for, read off the page as it stands now. */
+  const proofsFor = useCallback((ids: string[]) => {
+    const edits: LinkEdit[] = [];
+    for (const id of ids) for (const edit of linkEdits.current.get(id)?.values() ?? []) edits.push(edit);
+    const moved = edits.filter((edit) => edit.from.trim() !== edit.to.trim());
+    const { links, linksAbsent } = linkProofs(pageAnchors(), moved);
+    // A link with no words of its own cannot be told apart from any other link
+    // to the same page, so it keeps the older, weaker check on the address.
+    const markup = moved.filter((edit) => !normalizeText(edit.text)).map((edit) => `href="${edit.to}"`);
+    return { links, linksAbsent, markup };
+  }, []);
   const picker = useRef<HTMLInputElement | null>(null);
   /** Which image the picker was opened for, and the preview addresses to release. */
   const picking = useRef<string | null>(null);
@@ -501,9 +523,11 @@ export function InlineEditor({ children }: { children?: React.ReactNode }) {
 
   const record = useCallback((id: string, value: string, label: string, extra: ChangeExtra = {}) => {
     setChanges((prev) => ({ ...prev, [id]: { id, value, label, ...extra } }));
-    // A new edit invalidates the "before" snapshot from the last Sanity
-    // publish — undoing it now would clobber this newer change.
-    setSanityUndo(null);
+    // Typing does NOT take Undo away any more. It used to: the button vanished
+    // the moment a client touched the keyboard, which is exactly when somebody
+    // who has just published the wrong words reaches for it. The token stays
+    // until the next publish or Discard, and pressing it throws away the
+    // typing in those fields and says so.
   }, []);
   const unstage = useCallback((id: string) => {
     setChanges((prev) => {
@@ -584,29 +608,7 @@ export function InlineEditor({ children }: { children?: React.ReactNode }) {
       const parts: string[] = [];
       if (replacements.length) parts.push(`${replacements.length} sentence${replacements.length === 1 ? '' : 's'}`);
       if (links.length) parts.push(`${links.length} link${links.length === 1 ? '' : 's'}`);
-      // A link's address is in an attribute, so the live check reads the page's
-      // HTML for it — but it reads the anchors and counts them, not the page as
-      // one string. The counts were taken when the client applied each change,
-      // which is the only moment the page still showed the state before it.
-      const proofs = bodyProofs.current.get(id);
-      const moved: AnchorTarget[] = [];
-      const left: AnchorTarget[] = [];
-      const markup: string[] = [];
-      for (const link of links) {
-        const proof = proofs?.get(link.from);
-        // A link with no words of its own cannot be counted apart from any other
-        // link to the same page, so it keeps the older check on the address.
-        if (!proof) markup.push(`href="${link.to}"`);
-        else {
-          moved.push(proof.present);
-          left.push(proof.absent);
-        }
-      }
-      record(id, JSON.stringify({ replacements, links }), `Article: ${parts.join(', ')}`, {
-        links: moved,
-        linksAbsent: left,
-        markup,
-      });
+      record(id, JSON.stringify({ replacements, links }), `Article: ${parts.join(', ')}`);
     },
     [record, unstage],
   );
@@ -712,6 +714,15 @@ export function InlineEditor({ children }: { children?: React.ReactNode }) {
         stageBody(el, id);
         return;
       }
+      // Emptying a field is refused by the store, and the client used to hear
+      // about it at Publish — three edits later, with no idea which field. Say
+      // it here, beside the field, and leave it unstaged until there are words.
+      if (isEmptyValue(el.innerHTML)) {
+        unstage(id);
+        setEmptyField({ id, at: pointFor(el) });
+        return;
+      }
+      setEmptyField((prev) => (prev?.id === id ? null : prev));
       record(id, strip(el.innerHTML), strip(el.textContent ?? '').slice(0, 42));
     };
 
@@ -720,6 +731,7 @@ export function InlineEditor({ children }: { children?: React.ReactNode }) {
       const id = el.dataset.lfId!;
       el.contentEditable = 'false';
       el.style.outline = '';
+      setEmptyField((prev) => (prev?.id === id ? null : prev));
       if (el.dataset.lfType === 'html') {
         if (el.innerHTML !== (originals.current.get(id) ?? '')) stageBody(el, id);
         return;
@@ -733,27 +745,39 @@ export function InlineEditor({ children }: { children?: React.ReactNode }) {
       const el = event.currentTarget as HTMLElement;
       const key = (event as KeyboardEvent).key;
       const meta = (event as KeyboardEvent).metaKey || (event as KeyboardEvent).ctrlKey;
+      const id = el.dataset.lfId!;
       if (key === 'Escape') {
-        const id = el.dataset.lfId!;
         el.innerHTML = originals.current.get(id) ?? el.innerHTML;
         bodySnapshots.current.delete(id);
         bodyLinks.current.delete(id);
-        bodyProofs.current.delete(id);
+        linkEdits.current.delete(id);
         unstage(id);
+        setEmptyField(null);
         setLinkPanel(null);
         el.blur();
       }
-      if (key === 'Enter' && !(event as KeyboardEvent).shiftKey) {
-        event.preventDefault();
-        event.stopPropagation();
-        // A new paragraph in the article body cannot be saved yet; say so instead of splitting the DOM.
-        if (el.dataset.lfType === 'html') {
-          setStatus({ kind: 'error', message: BODY_LIMIT_MESSAGE });
-          return;
+      if (key === 'Enter') {
+        // Enter finishes the edit; Shift+Enter is a line break, but only where
+        // one survives the trip to disk — a value that already carries tags, or
+        // the article body. In a plain field the cleaner takes it back out, so
+        // Enter with or without Shift means the same thing there.
+        const stored = originals.current.get(id) ?? el.innerHTML;
+        const action = enterAction(key, (event as KeyboardEvent).shiftKey, {
+          stored,
+          body: el.dataset.lfType === 'html',
+        });
+        if (action === 'break') {
+          event.preventDefault();
+          event.stopPropagation();
+          document.execCommand('insertHTML', false, '<br>');
         }
-        el.contentEditable = 'false';
-        el.style.outline = '';
-        el.blur();
+        if (action === 'commit') {
+          event.preventDefault();
+          event.stopPropagation();
+          el.contentEditable = 'false';
+          el.style.outline = '';
+          el.blur();
+        }
       }
       if ((key === 'a' || key === 'A') && meta) {
         event.preventDefault();
@@ -765,14 +789,38 @@ export function InlineEditor({ children }: { children?: React.ReactNode }) {
       }
     };
 
-    function wire() {
-      const nodes = discover().filter((el) => !wired.has(el));
+    /**
+     * A paste puts on the page what a publish would store, and nothing else.
+     *
+     * A browser pastes the clipboard's own HTML: Word's spans, another site's
+     * classes and colours. None of it survives the publish, so the page showed
+     * the client something that would silently change under them at the next
+     * reload. The clipboard goes through the same rule the publish uses.
+     */
+    const onPaste = (event: Event) => {
+      const el = event.currentTarget as HTMLElement;
+      const id = el.dataset.lfId!;
+      const clipboard = (event as ClipboardEvent).clipboardData;
+      if (!clipboard) return;
+      event.preventDefault();
+      const insert = pasteInsert(
+        { html: clipboard.getData('text/html'), text: clipboard.getData('text/plain') },
+        { stored: originals.current.get(id) ?? el.innerHTML, body: el.dataset.lfType === 'html' },
+      );
+      if (!insert.value) return;
+      document.execCommand(insert.mode === 'html' ? 'insertHTML' : 'insertText', false, insert.value);
+    };
+
+    function wire(roots: HTMLElement[], why: string) {
+      const started = performance.now();
+      const nodes = discover(roots).filter((el) => !wired.has(el));
       nodes.forEach((el) => {
         wired.add(el);
         el.addEventListener('mouseenter', onEnter);
         el.addEventListener('mouseleave', onLeave);
         el.addEventListener('click', onClick, true);
         el.addEventListener('input', onInput);
+        el.addEventListener('paste', onPaste);
         el.addEventListener('blur', onBlur);
         el.addEventListener('keydown', onKeyDown);
         el.style.cursor = el.dataset.lfType === 'image' ? 'pointer' : 'text';
@@ -784,13 +832,47 @@ export function InlineEditor({ children }: { children?: React.ReactNode }) {
         counted = total;
         setCount(total);
       }
+      // Development only: the one number that says whether discovery is cheap.
+      if (process.env.NODE_ENV !== 'production') {
+        console.log(
+          `[lf-edit] ${why}: ${roots.length} root(s), ${nodes.length} new, ${total} editable, ${(performance.now() - started).toFixed(2)}ms`,
+        );
+      }
     }
 
-    wire();
-    // Sections that mount late: sliders, tabs, anything client-rendered.
-    const observer = new MutationObserver(() => wire());
+    wire([document.body], 'first scan');
+
+    // Sections that mount late: sliders, tabs, anything client-rendered. Three
+    // rules, because this used to re-read the whole document on every DOM
+    // change a page made — and an animated page makes dozens a second:
+    //   - only what was added is scanned, not the document;
+    //   - our own chrome, and the element being typed into, are skipped, since
+    //     neither can contain anything new to edit;
+    //   - a burst of changes is one scan, 150ms after the last of them.
+    const waiting = new Set<HTMLElement>();
+    let rescan: ReturnType<typeof setTimeout> | null = null;
+    const observer = new MutationObserver((records) => {
+      for (const entry of records) {
+        for (const node of entry.addedNodes) {
+          const el = node.nodeType === Node.ELEMENT_NODE ? (node as HTMLElement) : node.parentElement;
+          if (!el || typeof el.closest !== 'function') continue;
+          if (el.closest('[data-lf-chrome]') || el.closest('[contenteditable="true"]')) continue;
+          waiting.add(el);
+        }
+      }
+      if (!waiting.size || rescan) return;
+      rescan = setTimeout(() => {
+        rescan = null;
+        const roots = [...waiting].filter((el) => el.isConnected);
+        waiting.clear();
+        if (roots.length) wire(roots, 'rescan');
+      }, RESCAN_DELAY);
+    });
     observer.observe(document.body, { childList: true, subtree: true });
-    return () => observer.disconnect();
+    return () => {
+      observer.disconnect();
+      if (rescan) clearTimeout(rescan);
+    };
   }, [record, unstage, openPicker, stageBody]);
 
   /**
@@ -972,13 +1054,14 @@ export function InlineEditor({ children }: { children?: React.ReactNode }) {
     const gone = goneFor(visible, originals.current);
     const needles: string[] = [];
     const markup: string[] = [];
-    const links: AnchorTarget[] = [];
-    const linksAbsent: AnchorTarget[] = [];
-    for (const change of staged) {
-      if (change.markup) markup.push(...change.markup);
-      if (change.links) links.push(...change.links);
-      if (change.linksAbsent) linksAbsent.push(...change.linksAbsent);
-    }
+    for (const change of staged) if (change.markup) markup.push(...change.markup);
+    // Every link this session moved, counted now, off the page the client is
+    // looking at — which already carries every staged change. Counting at Apply
+    // was right for the first change and wrong for the second.
+    const proof = proofsFor(staged.map((change) => change.id));
+    const links = proof.links;
+    const linksAbsent = proof.linksAbsent;
+    markup.push(...proof.markup);
     const saveOrder: string[] = [];
 
     let contentCount = 0;
@@ -1012,11 +1095,11 @@ export function InlineEditor({ children }: { children?: React.ReactNode }) {
         originals.current.clear();
         bodySnapshots.current.clear();
         bodyLinks.current.clear();
-        bodyProofs.current.clear();
+        linkEdits.current.clear();
         setLinkPanel(null);
         watchUntilLive(
           needlesFor(visible),
-          `${saved} — committed, the site is building (usually 2 to 4 minutes)`,
+          `${saved} — committed, the site is building (usually 1 to 2 minutes)`,
           saved,
           gone,
           markup,
@@ -1084,8 +1167,9 @@ export function InlineEditor({ children }: { children?: React.ReactNode }) {
     originals.current.clear();
     bodySnapshots.current.clear();
     bodyLinks.current.clear();
-    bodyProofs.current.clear();
+    linkEdits.current.clear();
     setLinkPanel(null);
+    setEmptyField(null);
     setImageUndo(imageTokens.length ? imageTokens : null);
 
     const words = contentCount + sanityCount;
@@ -1119,7 +1203,7 @@ export function InlineEditor({ children }: { children?: React.ReactNode }) {
 
     // Everything else is confirmed against the public page, not assumed.
     const waiting = building
-      ? `${saved} — committed, the site is building (usually 2 to 4 minutes)`
+      ? `${saved} — committed, the site is building (usually 1 to 2 minutes)`
       : pictures
         ? `${saved} — refreshing the public page`
         : `${saved} to the CMS — refreshing the public page`;
@@ -1178,11 +1262,11 @@ export function InlineEditor({ children }: { children?: React.ReactNode }) {
         setLinkNote(result?.reason ?? 'This link\u2019s address is not in a field this editor can change.');
         return;
       }
-      // Counted first: `linkProof` reads the page as it stands, and the next
-      // line is what changes it.
-      const proof = linkProof(row, value);
+      // Remembered before the address changes, so the move keeps the address
+      // it started from however many times it is applied.
+      rememberLink(result.id, row.anchor, value);
       row.anchor.setAttribute('href', value);
-      record(result.id, value, value.slice(0, 42), { address: true, ...proof });
+      record(result.id, value, value.slice(0, 42), { address: true });
     } else if (row.kind === 'body') {
       // Which of the links pointing at this same address it is, counted the
       // way the server counts them in the stored HTML: in document order,
@@ -1203,34 +1287,14 @@ export function InlineEditor({ children }: { children?: React.ReactNode }) {
       if (earlier) earlier.to = value;
       else staged.push({ from, to: value, occurrence });
       bodyLinks.current.set(panel.id, staged);
-      const text = anchorLabel(row.anchor);
-      if (text) {
-        // The address this link started from, which is what the published
-        // article will say it left — not the one it is sitting on after an
-        // earlier move in this same session.
-        const key = earlier ? earlier.from : from;
-        const proofs = bodyProofs.current.get(panel.id) ?? new Map();
-        const kept = proofs.get(key);
-        proofs.set(key, {
-          present: { href: value, text, atLeast: countOnPage(value, text) + 1 },
-          // Counted once, when the link first left: by the second move it has
-          // already gone, and counting again would forget the ones that stay.
-          absent: kept?.absent ?? { href: key, text, atMost: Math.max(countOnPage(key, text) - 1, 0) },
-        });
-        bodyProofs.current.set(panel.id, proofs);
-      }
+      rememberLink(panel.id, row.anchor, value);
       row.anchor.setAttribute('href', value);
       stageBody(panel.root, panel.id);
     } else {
       if (!originals.current.has(panel.id)) originals.current.set(panel.id, panel.root.innerHTML);
-      const proof = linkProof(row, value);
+      rememberLink(panel.id, row.anchor, value);
       row.anchor.setAttribute('href', value);
-      record(
-        panel.id,
-        strip(panel.root.innerHTML),
-        strip(panel.root.textContent ?? '').slice(0, 42),
-        proof,
-      );
+      record(panel.id, strip(panel.root.innerHTML), strip(panel.root.textContent ?? '').slice(0, 42));
     }
 
     setLinkPanel({ ...panel, rows: panel.rows.map((item, i) => (i === index ? { ...item, href: value } : item)) });
@@ -1243,6 +1307,12 @@ export function InlineEditor({ children }: { children?: React.ReactNode }) {
    * pictures, or both. Words go back through the publish route with the token
    * that sealed them; pictures go through the undo route, which is where every
    * undo lives. One light watches the result of both.
+   *
+   * It is offered until the next publish or Discard, typing included. It used
+   * to disappear the moment a client touched the keyboard, which is the moment
+   * somebody who has just published the wrong words reaches for it. If they
+   * have typed into one of the fields this undo covers, that typing is thrown
+   * away with it — only in those fields — and the bar says so.
    */
   async function undoLast() {
     const textTokens = sanityUndo ?? [];
@@ -1254,6 +1324,21 @@ export function InlineEditor({ children }: { children?: React.ReactNode }) {
     const needles: string[] = [];
     const absent: string[] = [];
     const markup: string[] = [];
+
+    // Unsaved typing in the very fields being put back: it is about to be
+    // overwritten on the live site anyway, so the page goes back to what the
+    // publish left there before the undo reads it.
+    const discarded = textTokens.map(({ id }) => id).filter((id) => id in changes);
+    for (const id of discarded) {
+      const el = document.querySelector<HTMLElement>(`[data-lf-id="${CSS.escape(id)}"]`);
+      const before = originals.current.get(id);
+      if (el && before !== undefined) el.innerHTML = before;
+      originals.current.delete(id);
+    }
+    if (discarded.length) unstageAll(discarded);
+    const cost = discarded.length
+      ? ` Your unsaved typing in ${discarded.length} field${discarded.length === 1 ? '' : 's'} was thrown away with it.`
+      : '';
 
     if (textTokens.length) {
       // What the page shows right now is what the undo takes away.
@@ -1308,7 +1393,13 @@ export function InlineEditor({ children }: { children?: React.ReactNode }) {
     }
     setImageUndo(null);
 
-    watchUntilLive(needles, 'Reverted in the CMS — refreshing the public page', 'Reverted', absent, markup);
+    watchUntilLive(
+      needles,
+      `Reverted in the CMS — refreshing the public page.${cost}`,
+      `Reverted.${cost}`,
+      absent,
+      markup,
+    );
   }
 
   async function openHistory() {
@@ -1389,7 +1480,7 @@ export function InlineEditor({ children }: { children?: React.ReactNode }) {
     setStatus({ kind: 'saved', message: `${doneWord} — committed` });
     watchUntilLive(
       needlesFor(restoredText, true),
-      `${doneWord} — committed, the site is building (usually 2 to 4 minutes)`,
+      `${doneWord} — committed, the site is building (usually 1 to 2 minutes)`,
       doneWord,
       needlesFor(removedText, true),
       markup,
@@ -1398,28 +1489,10 @@ export function InlineEditor({ children }: { children?: React.ReactNode }) {
     );
   }
 
-  /**
-   * Replace one picture, started from the Media panel rather than from the page.
-   * Same flow as clicking it: the panel behind the file dialog offers the
-   * address box for the rare case a file is not what was meant.
-   */
-  function pickImage(id: string) {
-    const el = document.querySelector<HTMLImageElement>(`img[data-lf-id="${id}"]`);
-    const original = originals.current.get(id) ?? el?.getAttribute('src') ?? '';
-    setAssetTarget({
-      id,
-      current: realImageSource(original).split('?')[0],
-      content: !id.startsWith(SANITY_IMAGE_PREFIX),
-      address: false,
-      at: el ? pointFor(el) : { x: 120, y: 120 },
-    });
-    openPicker(id);
-  }
-
-  const undoable = Boolean(
-    (status.kind === 'saved' || status.kind === 'checking' || status.kind === 'live' || status.kind === 'stale') &&
-      (sanityUndo?.length || imageUndo?.length),
-  );
+  // Offered for as long as there is something to put back. The old version also
+  // asked what the light was saying, which hid the button behind any error and
+  // behind the client's own next keystroke.
+  const undoable = Boolean(sanityUndo?.length || imageUndo?.length);
 
   return (
     <EditorShell
@@ -1435,7 +1508,6 @@ export function InlineEditor({ children }: { children?: React.ReactNode }) {
       publishes={publishes}
       onOpenHistory={openHistory}
       onUndoPublish={undoPublish}
-      onPickImage={pickImage}
       overlays={
         <div data-lf-chrome="">
           {/* One picker for the whole page. It is opened from the click on an image,
@@ -1450,6 +1522,16 @@ export function InlineEditor({ children }: { children?: React.ReactNode }) {
               event.target.value = '';
             }}
           />
+
+          {/* Said where it happened, while it is happening. */}
+          {emptyField && (
+            <div style={{ ...popoverAt(emptyField.at, 260), padding: '12px 14px' }}>
+              <strong style={{ display: 'block', fontWeight: 600, color: '#b42318' }}>{EMPTY_FIELD_MESSAGE}</strong>
+              <p style={{ ...note, marginTop: 4 }}>
+                Type something, or press Escape to put the old words back. Nothing is staged meanwhile.
+              </p>
+            </div>
+          )}
 
           {linkPanel && (
             <div style={popoverAt(linkPanel.at, 380)}>

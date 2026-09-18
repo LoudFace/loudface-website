@@ -5,8 +5,14 @@
  *
  * It owns no editing logic. The brain stays in InlineEditor.tsx: discovery,
  * staging, publishing, the status light. This file is the surface that brain is
- * shown on — a top bar, a rail of five panels, and a framed canvas the site
+ * shown on — a top bar, a rail of three panels, and a framed canvas the site
  * itself scrolls inside.
+ *
+ * Three panels, not five: History, Editors, Settings. A client asked for a very
+ * light editing surface, and Pages was a list of links the site's own menu
+ * already gives them, Media a second way into the picture they can click on the
+ * page. The health rows went with them — they answer a question LoudFace asks
+ * (`/api/lf-edit/health`, still there), never the client.
  *
  * The canvas is the scroll container on purpose. The site's header is
  * `sticky top-0`, and a sticky element sticks to its nearest scrolling
@@ -36,9 +42,6 @@ export type ShellPublish = {
 type Invited = { email: string; addedBy: string; addedAt: string };
 /** `owner` says whether the person reading the panel may change the list at all. */
 type Access = { owners: { email: string }[]; editors: Invited[]; you: string; owner: boolean };
-type Health = Record<string, unknown>;
-/** One route from the sitemap, as the Pages panel lists it. */
-type Route = { path: string; group: string };
 
 export type EditorShellProps = {
   children: React.ReactNode;
@@ -54,8 +57,6 @@ export type EditorShellProps = {
   publishes: ShellPublish[] | null;
   onOpenHistory: () => void;
   onUndoPublish: (hash: string, doneWord?: string) => void;
-  /** Start the existing replace flow for one image on the page. */
-  onPickImage: (id: string) => void;
   /** Popovers that must sit above the canvas: the link panel, the image panel, the file picker. */
   overlays?: React.ReactNode;
 };
@@ -72,21 +73,9 @@ const PANEL_WIDTH = 320;
 const Z = 2147483000;
 const AVATAR_COLOURS = ['#4f46e5', '#0ea5e9', '#f97316', '#16a34a', '#db2777'];
 
-type Tab = 'pages' | 'media' | 'history' | 'editors' | 'settings';
+type Tab = 'history' | 'editors' | 'settings';
 
 const TABS: { id: Tab; label: string; icon: React.ReactNode }[] = [
-  { id: 'pages', label: 'Pages', icon: <Icon d="M4 5h16v14H4zM4 10h16" /> },
-  {
-    id: 'media',
-    label: 'Media',
-    icon: (
-      <Icon>
-        <rect x="3" y="5" width="18" height="14" rx="2" />
-        <path d="m3 16 5-5 4 4 3-3 6 6" />
-        <circle cx="16" cy="9" r="1.5" />
-      </Icon>
-    ),
-  },
   { id: 'history', label: 'History', icon: <Icon d="M3 12a9 9 0 1 0 3-6.7M3 3v5h5M12 7v5l3 2" /> },
   {
     id: 'editors',
@@ -109,6 +98,10 @@ const TABS: { id: Tab; label: string; icon: React.ReactNode }[] = [
     ),
   },
 ];
+
+/** The eye in the top bar, open when the dotted outlines are on. */
+const EYE_OPEN = 'M2 12s3.6-6.5 10-6.5S22 12 22 12s-3.6 6.5-10 6.5S2 12 2 12Z';
+const EYE_SHUT = 'M3 3l18 18M10.6 6.1A9.9 9.9 0 0 1 12 6c6.4 0 10 6 10 6a17 17 0 0 1-3.6 4.2M6.3 7.9A17 17 0 0 0 2 12s3.6 6 10 6a10 10 0 0 0 3.2-.5';
 
 function Icon({ d, children, size = 18 }: { d?: string; children?: React.ReactNode; size?: number }) {
   return (
@@ -151,28 +144,6 @@ function pageTitle(): string {
   return (short.length > 34 ? `${short.slice(0, 33)}…` : short) || 'This page';
 }
 
-/** Every route in the sitemap, as paths grouped by their first segment. */
-function parseSitemap(xml: string): Route[] {
-  const doc = new DOMParser().parseFromString(xml, 'application/xml');
-  const seen = new Set<string>();
-  const out: Route[] = [];
-  for (const loc of doc.querySelectorAll('loc')) {
-    const href = loc.textContent?.trim();
-    if (!href) continue;
-    let path: string;
-    try {
-      path = new URL(href).pathname.replace(/\/$/, '') || '/';
-    } catch {
-      continue;
-    }
-    if (seen.has(path)) continue;
-    seen.add(path);
-    const segment = path === '/' ? '' : path.split('/')[1];
-    out.push({ path, group: segment ? segment.replace(/-/g, ' ') : 'Main pages' });
-  }
-  return out;
-}
-
 export function EditorShell(props: EditorShellProps) {
   const { children, status, pendingCount, editableCount, showAll, onShowAll } = props;
   const [tab, setTab] = useState<Tab | null>(null);
@@ -185,9 +156,6 @@ export function EditorShell(props: EditorShellProps) {
   const [accessNote, setAccessNote] = useState('');
   const [inviteEmail, setInviteEmail] = useState('');
   const [inviting, setInviting] = useState(false);
-  const [routes, setRoutes] = useState<Route[] | null>(null);
-  const [health, setHealth] = useState<Health | null>(null);
-  const [images, setImages] = useState<{ id: string; src: string }[]>([]);
   const [title, setTitle] = useState('This page');
   const [host, setHost] = useState('');
   const canvas = useRef<HTMLDivElement | null>(null);
@@ -278,27 +246,6 @@ export function EditorShell(props: EditorShellProps) {
     const open = tab === next ? null : next;
     setTab(open);
     if (open === 'history') props.onOpenHistory();
-    if (open === 'pages' && routes === null) {
-      fetch('/sitemap.xml')
-        .then((response) => response.text())
-        .then((xml) => setRoutes(parseSitemap(xml)))
-        .catch(() => setRoutes([]));
-    }
-    if (open === 'settings' && health === null) {
-      fetch('/api/lf-edit/health')
-        .then((response) => response.json())
-        .then((result) => setHealth(result as Health))
-        .catch(() => setHealth({}));
-    }
-    // The pictures on the page, read from the same discovery the editor did.
-    if (open === 'media') {
-      setImages(
-        [...document.querySelectorAll<HTMLImageElement>('img[data-lf-id]')].map((img) => ({
-          id: img.dataset.lfId!,
-          src: img.currentSrc || img.src,
-        })),
-      );
-    }
   };
 
   async function invite() {
@@ -412,6 +359,21 @@ export function EditorShell(props: EditorShellProps) {
                 {status.text}
               </span>
             )}
+            {/* One click, next to the light, instead of three clicks into a
+                panel: a client who cannot find anything to type in needs this
+                first, not last. The switch in Settings is the same state. */}
+            <button
+              style={{ ...iconBtn, color: showAll ? BRAND : MUTE, background: showAll ? '#eef2ff' : 'transparent' }}
+              title="Show what can be edited"
+              aria-label="Show what can be edited"
+              aria-pressed={showAll}
+              onClick={() => onShowAll(!showAll)}
+            >
+              <Icon size={17}>
+                <path d={showAll ? EYE_OPEN : EYE_SHUT} />
+                {showAll && <circle cx="12" cy="12" r="2.6" />}
+              </Icon>
+            </button>
             {!mobile && <span style={separator} />}
             <span style={{ display: 'flex' }}>
               {people.slice(0, 2).map((email, index) => (
@@ -561,8 +523,6 @@ export function EditorShell(props: EditorShellProps) {
               </button>
             </div>
             <div style={panelBody}>
-              {tab === 'pages' && <Pages routes={routes} />}
-              {tab === 'media' && <Media images={images} onPick={props.onPickImage} />}
               {tab === 'history' && (
                 <History
                   publishes={props.publishes}
@@ -587,15 +547,7 @@ export function EditorShell(props: EditorShellProps) {
                 />
               )}
               {tab === 'settings' && (
-                <Settings
-                  you={you}
-                  health={health}
-                  showAll={showAll}
-                  onShowAll={onShowAll}
-                  editableCount={editableCount}
-                  status={status}
-                  dot={dot}
-                />
+                <Settings you={you} showAll={showAll} onShowAll={onShowAll} editableCount={editableCount} />
               )}
             </div>
           </section>
@@ -614,65 +566,6 @@ export function EditorShell(props: EditorShellProps) {
         </div>
 
         {props.overlays}
-      </div>
-    </>
-  );
-}
-
-function Pages({ routes }: { routes: Route[] | null }) {
-  const here = typeof window === 'undefined' ? '/' : window.location.pathname.replace(/\/$/, '') || '/';
-  if (routes === null) return <p style={quiet}>Reading the site&rsquo;s pages…</p>;
-  if (!routes.length) return <p style={quiet}>The list of pages could not be read.</p>;
-  const groups = new Map<string, Route[]>();
-  for (const route of routes) {
-    const list = groups.get(route.group) ?? [];
-    list.push(route);
-    groups.set(route.group, list);
-  }
-  return (
-    <>
-      {[...groups].map(([group, list]) => (
-        <div key={group} style={{ marginBottom: 14 }}>
-          <p style={groupLabel}>{group}</p>
-          {list.map((route) => {
-            const current = route.path === here;
-            return (
-              <a
-                key={route.path}
-                href={route.path}
-                style={{
-                  ...listRow,
-                  color: current ? BRAND : INK,
-                  background: current ? '#eef2ff' : 'transparent',
-                  fontWeight: current ? 600 : 400,
-                }}
-              >
-                <span style={ellipsis}>{route.path}</span>
-                {current && <span style={{ fontSize: 11, color: BRAND }}>you are here</span>}
-              </a>
-            );
-          })}
-        </div>
-      ))}
-    </>
-  );
-}
-
-function Media({ images, onPick }: { images: { id: string; src: string }[]; onPick: (id: string) => void }) {
-  if (!images.length) return <p style={quiet}>No replaceable pictures on this page.</p>;
-  return (
-    <>
-      <p style={{ ...quiet, marginBottom: 10 }}>Click a picture to replace it. It goes onto the site when you press Publish.</p>
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
-        {images.map((image) => (
-          <button key={image.id} style={thumbBtn} onClick={() => onPick(image.id)} title={image.id}>
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src={image.src} alt="" style={{ width: '100%', height: 78, objectFit: 'cover', display: 'block' }} />
-            <span style={{ ...ellipsis, display: 'block', padding: '6px 8px', fontSize: 11, color: MUTE, textAlign: 'left' }}>
-              {image.id}
-            </span>
-          </button>
-        ))}
       </div>
     </>
   );
@@ -808,44 +701,21 @@ function Editors({
   );
 }
 
-/** The health answers, in the order a person would ask them, as plain labels. */
-function healthRows(health: Health): { label: string; on: boolean; note?: string }[] {
-  const github = (health.github ?? {}) as Record<string, unknown>;
-  const editors = (health.editors ?? {}) as Record<string, unknown>;
-  const email = (health.email ?? {}) as Record<string, unknown>;
-  return [
-    { label: 'Editing switched on', on: health.inlineEditingEnabled === true },
-    { label: 'Where changes are saved', on: Boolean(health.store), note: String(health.store ?? 'not set') },
-    { label: 'GitHub credentials', on: github.credentials === true },
-    { label: 'Repository', on: Boolean(github.repo), note: `${github.repo ?? 'not set'}${github.branch ? ` · ${github.branch}` : ''}` },
-    {
-      label: 'People with access',
-      on: Number(editors.owners ?? 0) + Number(editors.invited ?? 0) > 0,
-      note: `${editors.owners ?? 0} owner, ${editors.invited ?? 0} invited`,
-    },
-    { label: 'Invitation email', on: email.sender === true && email.resendKey === true },
-    { label: 'Public site address', on: health.siteUrl === true },
-    { label: 'CMS publishing', on: health.sanityWriteToken === true },
-    { label: 'Picture uploads', on: health.imageUploads === true },
-  ];
-}
-
+/**
+ * Settings, and only what a client has any use for: who they are, the way out,
+ * and the switch that shows them what is editable. The health rows that used to
+ * sit here answer a LoudFace question and stayed at /api/lf-edit/health.
+ */
 function Settings({
   you,
-  health,
   showAll,
   onShowAll,
   editableCount,
-  status,
-  dot,
 }: {
   you: string;
-  health: Health | null;
   showAll: boolean;
   onShowAll: (on: boolean) => void;
   editableCount: number;
-  status: ShellStatus;
-  dot: (tone: ShellTone, size?: number) => React.ReactNode;
 }) {
   return (
     <>
@@ -889,24 +759,6 @@ function Settings({
       <p style={{ ...quiet, marginTop: 8 }}>
         {editableCount} editable {editableCount === 1 ? 'thing' : 'things'} on this page.
       </p>
-      <p style={{ ...quiet, marginTop: 4, display: 'flex', alignItems: 'center', gap: 7 }}>
-        {dot(status.tone)}
-        {status.title || status.text}
-      </p>
-
-      <p style={{ ...groupLabel, marginTop: 18 }}>Is this site set up to publish?</p>
-      {health === null && <p style={quiet}>Checking…</p>}
-      {health &&
-        healthRows(health).map((row) => (
-          <div key={row.label} style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '5px 0' }}>
-            <span
-              aria-hidden="true"
-              style={{ width: 8, height: 8, borderRadius: '50%', flexShrink: 0, background: row.on ? '#16a34a' : '#c3ccd6' }}
-            />
-            <span style={{ ...ellipsis, flex: 1 }}>{row.label}</span>
-            {row.note && <span style={{ fontSize: 11, color: MUTE, ...ellipsis, maxWidth: 130 }}>{row.note}</span>}
-          </div>
-        ))}
     </>
   );
 }
@@ -1129,16 +981,6 @@ const listItem: React.CSSProperties = {
   justifyContent: 'space-between',
   padding: '10px 0',
   borderTop: `1px solid ${LINE}`,
-};
-const thumbBtn: React.CSSProperties = {
-  border: `1px solid ${LINE}`,
-  borderRadius: 10,
-  overflow: 'hidden',
-  background: '#fff',
-  padding: 0,
-  cursor: 'pointer',
-  display: 'block',
-  width: '100%',
 };
 const field: React.CSSProperties = {
   width: '100%',

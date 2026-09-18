@@ -397,3 +397,62 @@ export function addressLabelPrefix(id: string): string | null {
   const dot = id.lastIndexOf('.');
   return dot > colon ? id.slice(0, dot + 1) : null;
 }
+
+// ---------------------------------------------------------------------------
+// What the light should count, worked out once, at Publish
+// ---------------------------------------------------------------------------
+
+/** One link a client moved: where it pointed, where it points now, its words. */
+export type LinkEdit = { from: string; to: string; text: string };
+
+/**
+ * The counts the status light should ask the public page for.
+ *
+ * These used to be taken the moment the client pressed Apply, from the page as
+ * it stood one instant before the anchor changed. That is right exactly once.
+ * Apply the same link twice, move two links to the same page, or apply, close
+ * the panel and apply again, and the "before" the second count was taken from
+ * already carried the first change — so the sums the light waited for were one
+ * too many or one too few, and it sat amber until it gave up.
+ *
+ * Counted here instead, from the page as it stands when Publish is pressed:
+ * every staged change is already on it, so the number of anchors saying a thing
+ * now is the number the built page should say. `anchors` is that page; `edits`
+ * are the moves, with the address each link started from.
+ *
+ * A link with no words of its own is left out: there is nothing to tell it
+ * apart from any other link to the same page, and the caller falls back to
+ * looking for the address in the HTML.
+ */
+export function linkProofs(
+  anchors: AnchorTarget[],
+  edits: LinkEdit[],
+): { links: AnchorTarget[]; linksAbsent: AnchorTarget[] } {
+  const real = edits.filter((edit) => normalizeText(edit.text).length > 0 && edit.from.trim() !== edit.to.trim());
+  const links: AnchorTarget[] = [];
+  const linksAbsent: AnchorTarget[] = [];
+  const seenTo = new Set<string>();
+  const seenFrom = new Set<string>();
+  const key = (href: string, text: string) => JSON.stringify([href.trim(), normalizeText(text)]);
+
+  for (const edit of real) {
+    const to = key(edit.to, edit.text);
+    if (seenTo.has(to)) continue;
+    seenTo.add(to);
+    links.push({ href: edit.to, text: edit.text, atLeast: countAnchors(anchors, { href: edit.to, text: edit.text }) });
+  }
+  for (const edit of real) {
+    const from = key(edit.from, edit.text);
+    // A link moved away and another moved in under the same words is one
+    // address the page still carries; asking for it to be gone would never
+    // come true.
+    if (seenFrom.has(from) || seenTo.has(from)) continue;
+    seenFrom.add(from);
+    linksAbsent.push({
+      href: edit.from,
+      text: edit.text,
+      atMost: countAnchors(anchors, { href: edit.from, text: edit.text }),
+    });
+  }
+  return { links, linksAbsent };
+}

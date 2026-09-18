@@ -5,6 +5,8 @@ import Script from "next/script";
 import { cookies, draftMode, headers } from "next/headers";
 import { VisualEditing } from "next-sanity/visual-editing";
 import { primeInlineEditing } from "@/lib/inline-edit/server";
+import { currentEditor } from "@/lib/inline-edit/session";
+import { resumeHref, showResumeChip } from "@/lib/inline-edit/guard";
 import { InlineEditor } from "@/components/inline-editor/InlineEditor";
 import { CalHandler } from "@/components/CalHandler";
 import { SiteHeader, SiteFooter } from "@/components/SiteChrome";
@@ -79,6 +81,12 @@ export default async function SiteLayout({
   // Marks this request's content so the editor can find it. One line.
   await primeInlineEditing();
 
+  // Draft Mode's cookie dies with the browser window; the session cookie lasts
+  // eight hours. A client coming back after lunch therefore had a valid session
+  // and no bar. The session cookie is httpOnly, so only this server can see it:
+  // that visitor gets a chip back into editing, and nobody else gets a byte.
+  const resumeChip = showResumeChip(await currentEditor(), isDraftMode);
+
   // Route-dependent chrome (Header hero-theme, hreflang, shared-Footer
   // suppression) is resolved client-side in SiteChrome via usePathname(). The
   // request pathname is used here only to skip footer data on routes that carry
@@ -113,6 +121,39 @@ export default async function SiteLayout({
             that scrolls, so the sticky header sticks under the editor bar
             instead of over it. Outside Draft Mode nothing here changes. */}
         {isDraftMode ? <InlineEditor>{site}</InlineEditor> : site}
+
+        {/* Only ever rendered for a signed-in editor. An anonymous request has
+            no session cookie, so this is nothing at all and the HTML a visitor
+            gets is the same as on a site without the editor. */}
+        {resumeChip && (
+          <a
+            data-lf-chrome=""
+            href={resumeHref(pathname)}
+            style={{
+              position: "fixed",
+              left: 16,
+              bottom: 16,
+              zIndex: 2147482000,
+              display: "inline-flex",
+              alignItems: "center",
+              gap: 8,
+              height: 36,
+              padding: "0 14px",
+              borderRadius: 999,
+              background: "#14212b",
+              color: "#fff",
+              font: "500 13px/1 Inter, ui-sans-serif, system-ui, -apple-system, sans-serif",
+              textDecoration: "none",
+              boxShadow: "0 8px 24px rgba(20,33,43,.22)",
+            }}
+          >
+            <span
+              aria-hidden="true"
+              style={{ width: 8, height: 8, borderRadius: "50%", background: "#4ade80", flexShrink: 0 }}
+            />
+            You are signed in · Resume editing
+          </a>
+        )}
 
         {/* GTM + RB2B live in ConsentManager below — consent-gated AND still
             deferred to first interaction, so the TBT-near-zero behavior the

@@ -165,3 +165,70 @@ export function isStale(stored: string, expected: string | undefined): boolean {
   if (typeof expected !== 'string') return false;
   return cleanValue(expected, stored) !== stored;
 }
+
+// ---------------------------------------------------------------------------
+// What the two keys a client presses most actually do
+// ---------------------------------------------------------------------------
+
+/** What pressing Enter in an editable field should do. */
+export type EnterAction = 'commit' | 'break' | 'ignore';
+
+/**
+ * Enter and Shift+Enter, decided by what the field holds rather than by what
+ * the browser feels like doing.
+ *
+ * Enter always commits: it is the only key a client tries when they have
+ * finished a sentence, and a browser's own answer (a new `<div>`) is thrown
+ * away by the cleaner anyway. Shift+Enter is a line break, and only where a
+ * line break can survive the trip: a value that already carries tags, or an
+ * article body. In a plain field it would be cleaned back out on the way to
+ * disk, so it commits too rather than pretending.
+ */
+export function enterAction(
+  key: string,
+  shiftKey: boolean,
+  { stored, body = false }: { stored: string; body?: boolean },
+): EnterAction {
+  if (key !== 'Enter') return 'ignore';
+  if (!shiftKey) return 'commit';
+  return body || isRich(stored) ? 'break' : 'commit';
+}
+
+/** What to insert for one paste, and whether it is text or markup. */
+export type PasteInsert = { mode: 'text'; value: string } | { mode: 'html'; value: string };
+
+/**
+ * What a paste should actually put on the page.
+ *
+ * A browser pastes whatever the clipboard carries — Word's spans, a site's
+ * classes, a colour — and the page then showed something the publish would
+ * never store, so the client's own screen lied to them until the next reload.
+ * The rule is the one the publish uses: a plain field takes the plain text, a
+ * rich field takes the same small set of tags `cleanValue` keeps, and the
+ * article body takes plain text because its stored HTML is written back
+ * sentence by sentence.
+ */
+export function pasteInsert(
+  { html, text }: { html: string; text: string },
+  { stored, body = false }: { stored: string; body?: boolean },
+): PasteInsert {
+  // The clipboard's own plain text first: it is what the person copied, with
+  // none of the source page's markup to strip back off.
+  if (body || !isRich(stored)) return { mode: 'text', value: cleanValue(text || html, '') };
+  const value = cleanValue(html || text, stored);
+  return value.includes('<') ? { mode: 'html', value } : { mode: 'text', value };
+}
+
+/**
+ * Has this field been emptied? Asked on every keystroke, so the refusal arrives
+ * where the client made it rather than at Publish, three edits later.
+ *
+ * The same question the store asks: a value that cleans away to nothing is one
+ * the publish refuses with "A value cannot be emptied from the page".
+ */
+export function isEmptyValue(edited: string): boolean {
+  return cleanValue(edited, '').trim().length === 0;
+}
+
+/** The one line a client sees the moment they empty a field. */
+export const EMPTY_FIELD_MESSAGE = 'A field cannot be left empty';
