@@ -502,7 +502,13 @@ export function InlineEditor() {
         return;
       }
 
-      if (el.isContentEditable) return;
+      if (el.isContentEditable) {
+        // Already editing. A second click, or a double-click to select a word,
+        // must never follow the link: measured 2026-09-18, it left the page
+        // mid-edit. Keep the caret where the click landed and stay.
+        if (el.closest('a')) event.preventDefault();
+        return;
+      }
       // A click on a link inside the article body must edit, not navigate.
       event.preventDefault();
       event.stopPropagation();
