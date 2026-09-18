@@ -180,6 +180,26 @@ function discover(roots: HTMLElement[]): HTMLElement[] {
   return found;
 }
 
+/**
+ * An element keeps its editable id when the page re-renders it with different
+ * children. Delshad's hero, 2026-09-18: the paragraph held one rotating line at
+ * mount and took slide one's id; the editor then stacked all five lines inside
+ * the same paragraph. The paragraph still answered for slide one, its text was
+ * all five lines, and every publish was refused as "someone changed" the field.
+ * An id belongs to the element that holds exactly one mark; an ancestor that
+ * now holds more, or none, gives its id back.
+ */
+function releaseStaleAncestors(el: HTMLElement, root: HTMLElement): void {
+  for (let up = el.parentElement; up && up !== root.parentElement; up = up.parentElement) {
+    if (up.dataset.lfId && up.dataset.lfType === 'text' && countMarks(up) !== 1) {
+      delete up.dataset.lfId;
+      delete up.dataset.lfType;
+      up.style.outline = '';
+      if (up.isContentEditable) up.contentEditable = 'false';
+    }
+  }
+}
+
 function collect(root: HTMLElement, found: HTMLElement[]): void {
   const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT);
   for (let node = walker.nextNode(); node; node = walker.nextNode()) {
@@ -189,7 +209,9 @@ function collect(root: HTMLElement, found: HTMLElement[]): void {
     if (text.data.includes(START)) {
       const id = decodeMark(text.data);
       const el = fieldElement(text);
-      if (!id || !el || el.dataset.lfId || el.closest('[data-lf-chrome]')) continue;
+      if (!id || !el || el.closest('[data-lf-chrome]')) continue;
+      releaseStaleAncestors(el, root);
+      if (el.dataset.lfId) continue;
       el.dataset.lfId = id;
       el.dataset.lfType = 'text';
       found.push(el);
@@ -627,6 +649,7 @@ export function InlineEditor({ children }: { children?: React.ReactNode }) {
 
     const onEnter = (event: Event) => {
       const el = event.currentTarget as HTMLElement;
+      if (!el.dataset.lfId) return;
       if (el.isContentEditable) return;
       el.style.outline = OUTLINE_HOVER;
       el.style.outlineOffset = '3px';
@@ -640,6 +663,7 @@ export function InlineEditor({ children }: { children?: React.ReactNode }) {
 
     const onClick = (event: Event) => {
       const el = event.currentTarget as HTMLElement;
+      if (!el.dataset.lfId) return;
       const id = el.dataset.lfId!;
 
       if (el.dataset.lfType === 'image') {
