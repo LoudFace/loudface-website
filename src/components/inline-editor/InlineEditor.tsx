@@ -21,6 +21,7 @@ import {
   type TextReplacement,
 } from '../../lib/inline-edit/body-edit';
 import { isSafeHref, linkCaseFor, type LinkCase } from '../../lib/inline-edit/link-edit';
+import { ADDRESS } from '../../lib/inline-edit/mark-tree';
 import {
   MAX_IMAGE_BYTES,
   SANITY_IMAGE_PREFIX,
@@ -1137,12 +1138,19 @@ export function InlineEditor() {
     // Same light as a publish: the words that came back are what to look for.
     const restored = Array.isArray(result.restored) ? (result.restored as { id: string; value: string }[]) : [];
     const removed = Array.isArray(result.removed) ? (result.removed as { id: string; value: string }[]) : [];
+    // A restored address is not visible text: it comes back as an attribute,
+    // so the light looks for it in the markup, the same way a publish does.
+    const isAddress = (value: string) => ADDRESS.test(value.trim());
+    const restoredText = restored.filter((change) => !isAddress(change.value));
+    const removedText = removed.filter((change) => !isAddress(change.value));
+    const markup = restored.filter((change) => isAddress(change.value)).map((change) => `href="${change.value.trim()}"`);
     setStatus({ kind: 'saved', message: 'Change undone — committed' });
     watchUntilLive(
-      needlesFor(restored, true),
+      needlesFor(restoredText, true),
       'Change undone — committed, the site is building (usually 2 to 4 minutes)',
       'Change undone',
-      needlesFor(removed, true),
+      needlesFor(removedText, true),
+      markup,
     );
   }
 
