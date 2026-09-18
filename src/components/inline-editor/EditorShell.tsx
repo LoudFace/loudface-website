@@ -5,14 +5,16 @@
  *
  * It owns no editing logic. The brain stays in InlineEditor.tsx: discovery,
  * staging, publishing, the status light. This file is the surface that brain is
- * shown on — a top bar, a rail of three panels, and a framed canvas the site
+ * shown on — a top bar, a rail of four panels, and a framed canvas the site
  * itself scrolls inside.
  *
- * Three panels, not five: History, Editors, Settings. A client asked for a very
- * light editing surface, and Pages was a list of links the site's own menu
- * already gives them, Media a second way into the picture they can click on the
- * page. The health rows went with them — they answer a question LoudFace asks
- * (`/api/lf-edit/health`, still there), never the client.
+ * Four panels: Pages, History, Editors, Settings. Pages is the sitemap as a
+ * list, and it is the one way to get from one page of the site to another
+ * without leaving the editor — the site's own menu does not reach every page,
+ * and a client asked for it back. Media and the health rows stay out: every
+ * picture Media listed is one the client can click on the page, and the health
+ * rows answer a question LoudFace asks (`/api/lf-edit/health`, still there),
+ * never the client.
  *
  * The canvas is the scroll container on purpose. The site's header is
  * `sticky top-0`, and a sticky element sticks to its nearest scrolling
@@ -26,6 +28,7 @@
  * the whole page.
  */
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { usePathname, useRouter } from 'next/navigation';
 import { undoneSummary } from '../../lib/inline-edit/publish-history';
 
 export type ShellTone = 'ok' | 'busy' | 'bad' | 'idle';
@@ -42,6 +45,8 @@ export type ShellPublish = {
 type Invited = { email: string; addedBy: string; addedAt: string };
 /** `owner` says whether the person reading the panel may change the list at all. */
 type Access = { owners: { email: string }[]; editors: Invited[]; you: string; owner: boolean };
+/** One route from the sitemap, as the Pages panel lists it. */
+type Route = { path: string; group: string };
 
 export type EditorShellProps = {
   children: React.ReactNode;
@@ -73,9 +78,10 @@ const PANEL_WIDTH = 320;
 const Z = 2147483000;
 const AVATAR_COLOURS = ['#4f46e5', '#0ea5e9', '#f97316', '#16a34a', '#db2777'];
 
-type Tab = 'history' | 'editors' | 'settings';
+type Tab = 'pages' | 'history' | 'editors' | 'settings';
 
 const TABS: { id: Tab; label: string; icon: React.ReactNode }[] = [
+  { id: 'pages', label: 'Pages', icon: <Icon d="M4 5h16v14H4zM4 10h16" /> },
   { id: 'history', label: 'History', icon: <Icon d="M3 12a9 9 0 1 0 3-6.7M3 3v5h5M12 7v5l3 2" /> },
   {
     id: 'editors',
@@ -144,6 +150,28 @@ function pageTitle(): string {
   return (short.length > 34 ? `${short.slice(0, 33)}…` : short) || 'This page';
 }
 
+/** Every route in the sitemap, as paths grouped by their first segment. */
+function parseSitemap(xml: string): Route[] {
+  const doc = new DOMParser().parseFromString(xml, 'application/xml');
+  const seen = new Set<string>();
+  const out: Route[] = [];
+  for (const loc of doc.querySelectorAll('loc')) {
+    const href = loc.textContent?.trim();
+    if (!href) continue;
+    let path: string;
+    try {
+      path = new URL(href).pathname.replace(/\/$/, '') || '/';
+    } catch {
+      continue;
+    }
+    if (seen.has(path)) continue;
+    seen.add(path);
+    const segment = path === '/' ? '' : path.split('/')[1];
+    out.push({ path, group: segment ? segment.replace(/-/g, ' ') : 'Main pages' });
+  }
+  return out;
+}
+
 export function EditorShell(props: EditorShellProps) {
   const { children, status, pendingCount, editableCount, showAll, onShowAll } = props;
   const [tab, setTab] = useState<Tab | null>(null);
@@ -156,9 +184,12 @@ export function EditorShell(props: EditorShellProps) {
   const [accessNote, setAccessNote] = useState('');
   const [inviteEmail, setInviteEmail] = useState('');
   const [inviting, setInviting] = useState(false);
+  const [routes, setRoutes] = useState<Route[] | null>(null);
   const [title, setTitle] = useState('This page');
   const [host, setHost] = useState('');
   const canvas = useRef<HTMLDivElement | null>(null);
+  const router = useRouter();
+  const here = usePathname();
 
   // The document must not scroll: the canvas is the scrollport, which is what
   // keeps the site's sticky header under the editor bar instead of over it.
@@ -246,6 +277,27 @@ export function EditorShell(props: EditorShellProps) {
     const open = tab === next ? null : next;
     setTab(open);
     if (open === 'history') props.onOpenHistory();
+    if (open === 'pages' && routes === null) {
+      fetch('/sitemap.xml')
+        .then((response) => response.text())
+        .then((xml) => setRoutes(parseSitemap(xml)))
+        .catch(() => setRoutes([]));
+    }
+  };
+
+  /**
+   * Go to another page of the site without leaving the editor.
+   *
+   * This is the same move a link click inside the canvas makes: a router push,
+   * so only the page under the shell is replaced. A plain full page load would
+   * work too — the editor comes back from the cookies — but it would throw away
+   * every edit staged and not yet published. The canvas is the scrollport, so
+   * it is the thing that goes back to the top, not the document.
+   */
+  const goToPage = (path: string) => {
+    if (path === here) return;
+    router.push(path);
+    canvas.current?.scrollTo({ top: 0 });
   };
 
   async function invite() {
@@ -523,6 +575,7 @@ export function EditorShell(props: EditorShellProps) {
               </button>
             </div>
             <div style={panelBody}>
+              {tab === 'pages' && <Pages routes={routes} here={here} onGo={goToPage} />}
               {tab === 'history' && (
                 <History
                   publishes={props.publishes}
@@ -567,6 +620,57 @@ export function EditorShell(props: EditorShellProps) {
 
         {props.overlays}
       </div>
+    </>
+  );
+}
+
+/**
+ * The site's own sitemap as a list, grouped by first segment, the page you are
+ * on marked. Clicking one hands it to the shell, which pushes the route.
+ */
+function Pages({ routes, here, onGo }: { routes: Route[] | null; here: string; onGo: (path: string) => void }) {
+  const current = here.replace(/\/$/, '') || '/';
+  if (routes === null) return <p style={quiet}>Reading the site&rsquo;s pages…</p>;
+  if (!routes.length) return <p style={quiet}>The list of pages could not be read.</p>;
+  const groups = new Map<string, Route[]>();
+  for (const route of routes) {
+    const list = groups.get(route.group) ?? [];
+    list.push(route);
+    groups.set(route.group, list);
+  }
+  return (
+    <>
+      {[...groups].map(([group, list]) => (
+        <div key={group} style={{ marginBottom: 14 }}>
+          <p style={groupLabel}>{group}</p>
+          {list.map((route) => {
+            const on = route.path === current;
+            return (
+              <a
+                key={route.path}
+                href={route.path}
+                aria-current={on ? 'page' : undefined}
+                onClick={(event) => {
+                  // A modified click still belongs to the browser: a client who
+                  // means "open this in a new tab" should get one.
+                  if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey || event.button !== 0) return;
+                  event.preventDefault();
+                  onGo(route.path);
+                }}
+                style={{
+                  ...listRow,
+                  color: on ? BRAND : INK,
+                  background: on ? '#eef2ff' : 'transparent',
+                  fontWeight: on ? 600 : 400,
+                }}
+              >
+                <span style={ellipsis}>{route.path}</span>
+                {on && <span style={{ fontSize: 11, color: BRAND }}>you are here</span>}
+              </a>
+            );
+          })}
+        </div>
+      ))}
     </>
   );
 }
