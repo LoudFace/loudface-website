@@ -10,7 +10,7 @@
  * The editor polls this every few seconds and stops at the first all-clear.
  */
 import { currentEditor } from '@/lib/inline-edit/session';
-import { assetFileName } from '@/lib/inline-edit/image-edit';
+import { assetFileName, markupVariants } from '@/lib/inline-edit/image-edit';
 import { editorOffResponse } from '@/lib/inline-edit/guard';
 
 const MARKS = /[\u{E0000}-\u{E007F}​‌‍﻿]/gu;
@@ -135,7 +135,7 @@ export async function POST(request: Request) {
   // name does, so that form is what is looked for.
   const inMarkup = markup.map((wanted) => {
     const served = assetFileName(wanted) ?? wanted;
-    return html.includes(served) || html.includes(encodeURIComponent(served));
+    return markupVariants(served).some((form) => html.includes(form) || html.includes(encodeURIComponent(form)));
   });
   return Response.json({
     ok: true,

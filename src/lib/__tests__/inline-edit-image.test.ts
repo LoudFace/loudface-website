@@ -1,4 +1,4 @@
-import { assetFileName } from '../inline-edit/image-edit';
+import { assetFileName, markupVariants } from '../inline-edit/image-edit';
 /**
  * Tests for src/lib/inline-edit/image-edit.ts.
  *
@@ -305,5 +305,16 @@ describe('assetFileName', () => {
   it('leaves anything else alone', () => {
     assert.equal(assetFileName('/images/uploads/2026-09/photo-abcdef12.png'), null);
     assert.equal(assetFileName('image-not-an-id'), null);
+  });
+});
+
+describe('markupVariants', () => {
+  it('accepts an address with or without its trailing slash', () => {
+    assert.deepEqual(markupVariants('href="/blog/"'), ['href="/blog/"', 'href="/blog"']);
+    assert.deepEqual(markupVariants('href="/blog"'), ['href="/blog"', 'href="/blog/"']);
+  });
+  it('leaves the root and non-attribute strings alone', () => {
+    assert.deepEqual(markupVariants('href="/"'), ['href="/"']);
+    assert.deepEqual(markupVariants('6dc35a9a-512x512.png'), ['6dc35a9a-512x512.png']);
   });
 });

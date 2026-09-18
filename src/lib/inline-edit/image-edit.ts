@@ -269,3 +269,19 @@ export function assetFileName(assetId: string): string | null {
   const match = /^image-([a-f0-9]+)-(\d+x\d+)-([a-z0-9]+)$/i.exec(assetId.trim());
   return match ? `${match[1]}-${match[2]}.${match[3]}` : null;
 }
+
+/**
+ * The forms an address attribute can take on the page. Next.js writes
+ * `href="/blog/"` as `href="/blog"` (trailingSlash is off), so a change that is
+ * live can be absent from the HTML as typed. Both spellings count.
+ */
+export function markupVariants(wanted: string): string[] {
+  const out = new Set([wanted]);
+  const attr = /^(href|src)="([^"]*)"$/.exec(wanted);
+  if (attr) {
+    const [, name, value] = attr;
+    if (value.length > 1 && value.endsWith('/')) out.add(`${name}="${value.slice(0, -1)}"`);
+    else if (value.startsWith('/') || /^https?:\/\/[^/]+$/.test(value)) out.add(`${name}="${value}/"`);
+  }
+  return [...out];
+}
