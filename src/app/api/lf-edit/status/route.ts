@@ -10,6 +10,7 @@
  * The editor polls this every few seconds and stops at the first all-clear.
  */
 import { currentEditor } from '@/lib/inline-edit/session';
+import { assetFileName } from '@/lib/inline-edit/image-edit';
 import { editorOffResponse } from '@/lib/inline-edit/guard';
 
 const MARKS = /[\u{E0000}-\u{E007F}​‌‍﻿]/gu;
@@ -130,9 +131,12 @@ export async function POST(request: Request) {
     .map((old) => !page.includes(old));
   // The raw HTML, not the visible text: an image's address is in an attribute,
   // and `/_next/image?url=…` percent-encodes it, so both forms are accepted.
-  const inMarkup = markup.map(
-    (wanted) => html.includes(wanted) || html.includes(encodeURIComponent(wanted)),
-  );
+  // A Sanity asset id never appears in a page as written; its served file
+  // name does, so that form is what is looked for.
+  const inMarkup = markup.map((wanted) => {
+    const served = assetFileName(wanted) ?? wanted;
+    return html.includes(served) || html.includes(encodeURIComponent(served));
+  });
   return Response.json({
     ok: true,
     status: 200,

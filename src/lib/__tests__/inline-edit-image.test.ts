@@ -1,3 +1,4 @@
+import { assetFileName } from '../inline-edit/image-edit';
 /**
  * Tests for src/lib/inline-edit/image-edit.ts.
  *
@@ -294,5 +295,15 @@ describe('a picture too many pages share', () => {
       'This image is used in 4 places; change it in Studio',
     );
     assert.equal(sharedAssetRefusal(17), 'This image is used in 17 places; change it in Studio');
+  });
+});
+
+describe('assetFileName', () => {
+  it('turns an asset id into the file name the page serves', () => {
+    assert.equal(assetFileName('image-6dc35a9a32be283462bcb3c6d9a0cca5c1063f1f-512x512-png'), '6dc35a9a32be283462bcb3c6d9a0cca5c1063f1f-512x512.png');
+  });
+  it('leaves anything else alone', () => {
+    assert.equal(assetFileName('/images/uploads/2026-09/photo-abcdef12.png'), null);
+    assert.equal(assetFileName('image-not-an-id'), null);
   });
 });

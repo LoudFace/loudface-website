@@ -259,3 +259,13 @@ export function sharedAssetRefusal(documents: number): string | null {
   if (documents <= MAX_ASSET_DOCUMENTS) return null;
   return `This image is used in ${documents} places; change it in Studio`;
 }
+
+/**
+ * A Sanity asset id as it appears in a page: `image-<hash>-<w>x<h>-<ext>` is
+ * served as `<hash>-<w>x<h>.<ext>` inside the CDN address. The status light
+ * looks for the served form, because the id form never occurs in the HTML.
+ */
+export function assetFileName(assetId: string): string | null {
+  const match = /^image-([a-f0-9]+)-(\d+x\d+)-([a-z0-9]+)$/i.exec(assetId.trim());
+  return match ? `${match[1]}-${match[2]}.${match[3]}` : null;
+}
