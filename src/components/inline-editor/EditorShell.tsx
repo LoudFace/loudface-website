@@ -203,6 +203,30 @@ export function EditorShell(props: EditorShellProps) {
     };
   }, []);
 
+  // The site's own code reads the document scroll: the header decides "past the
+  // hero" from window.scrollY and listens to window 'scroll'. With the canvas
+  // as the scrollport those never move, and on loudface.co the header stayed
+  // transparent over white sections (measured live, 2026-09-18). While the shell
+  // is up, window.scrollY and pageYOffset answer with the canvas position and
+  // every canvas scroll is re-announced on window. Restored on unmount.
+  useEffect(() => {
+    const el = canvas.current;
+    if (!el) return;
+    const own = { scrollY: Object.getOwnPropertyDescriptor(window, 'scrollY'), pageYOffset: Object.getOwnPropertyDescriptor(window, 'pageYOffset') };
+    const read = () => el.scrollTop;
+    Object.defineProperty(window, 'scrollY', { get: read, configurable: true });
+    Object.defineProperty(window, 'pageYOffset', { get: read, configurable: true });
+    const announce = () => window.dispatchEvent(new Event('scroll'));
+    el.addEventListener('scroll', announce, { passive: true });
+    return () => {
+      el.removeEventListener('scroll', announce);
+      for (const [name, desc] of Object.entries(own)) {
+        if (desc) Object.defineProperty(window, name, desc);
+        else delete (window as unknown as Record<string, unknown>)[name];
+      }
+    };
+  }, []);
+
   useEffect(() => {
     const query = window.matchMedia('(max-width: 767px)');
     const read = () => setMobile(query.matches);
