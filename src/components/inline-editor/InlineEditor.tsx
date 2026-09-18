@@ -22,8 +22,10 @@ import {
 } from '../../lib/inline-edit/body-edit';
 import {
   addressLabelPrefix,
+  countAnchors,
   isSafeHref,
   linkCaseFor,
+  normalizeText,
   type AnchorTarget,
   type LinkCase,
 } from '../../lib/inline-edit/link-edit';
@@ -323,18 +325,43 @@ function anchorLabel(el: Element | null): string {
 }
 
 /**
+ * How many links on the page being looked at right now point there under those
+ * words — read by the same rules the live check reads the public page by.
+ *
+ * The editor's own bar is left out: it is not on the page a visitor gets.
+ */
+function countOnPage(href: string, text: string): number {
+  const anchors = [...document.querySelectorAll('a')]
+    .filter((anchor) => !anchor.closest('[data-lf-chrome]'))
+    .map((anchor) => ({
+      href: anchor.getAttribute('href') ?? '',
+      text: normalizeText(strip(anchor.textContent ?? '')),
+    }));
+  return countAnchors(anchors, { href, text });
+}
+
+/**
  * What the status light should check for one link that was just moved.
  *
- * The anchor's own words are what separate this link from every other link to
- * the same page, so they travel with both addresses: the new one, which must
- * now be under those words, and the old one, which must not. An icon-only link
- * has no words to separate it by, so it keeps the older, weaker check on the
- * address alone rather than leaving the light stuck.
+ * The anchor's own words separate this link from most others, but not from a
+ * copy of itself: the footer's "Blog" link points at /blog whatever the nav
+ * does. So both halves are counts taken off the page before it is changed —
+ * one more anchor under the new address, one fewer under the old one — and a
+ * duplicate elsewhere is part of the sum rather than the answer.
+ *
+ * An icon-only link has no words to count by, so it keeps the older, weaker
+ * check on the address alone rather than leaving the light stuck.
+ *
+ * Call this BEFORE the new address is put on the anchor: it is counting the
+ * page as it stands.
  */
 function linkProof(row: LinkRow, to: string): ChangeExtra {
   const text = anchorLabel(row.anchor);
   if (!text) return { markup: [`href="${to}"`] };
-  return { links: [{ href: to, text }], linksAbsent: [{ href: row.href, text }] };
+  return {
+    links: [{ href: to, text, atLeast: countOnPage(to, text) + 1 }],
+    linksAbsent: [{ href: row.href, text, atMost: Math.max(countOnPage(row.href, text) - 1, 0) }],
+  };
 }
 
 /**
@@ -424,6 +451,14 @@ export function InlineEditor() {
   const bodySnapshots = useRef<Map<string, BodySnapshot>>(new Map());
   /** Link changes staged for an article body, by body id; they ride along with its sentences. */
   const bodyLinks = useRef<Map<string, LinkReplacement[]>>(new Map());
+  /**
+   * What the live check should count for each staged body link: by article, then
+   * by the address that link left. Counted when the client applies the change,
+   * because that is the only moment the page still shows the state before it.
+   */
+  const bodyProofs = useRef<Map<string, Map<string, { present: AnchorTarget; absent: AnchorTarget }>>>(
+    new Map(),
+  );
   const picker = useRef<HTMLInputElement | null>(null);
   /** Which image the picker was opened for, and the preview addresses to release. */
   const picking = useRef<string | null>(null);
@@ -515,24 +550,27 @@ export function InlineEditor() {
       if (replacements.length) parts.push(`${replacements.length} sentence${replacements.length === 1 ? '' : 's'}`);
       if (links.length) parts.push(`${links.length} link${links.length === 1 ? '' : 's'}`);
       // A link's address is in an attribute, so the live check reads the page's
-      // HTML for it — but it reads the anchor, not the whole page: the address
-      // with the words that link shows. The words come off the page, where the
-      // new address is already set, so the anchor is found by it.
+      // HTML for it — but it reads the anchors and counts them, not the page as
+      // one string. The counts were taken when the client applied each change,
+      // which is the only moment the page still showed the state before it.
+      const proofs = bodyProofs.current.get(id);
       const moved: AnchorTarget[] = [];
       const left: AnchorTarget[] = [];
+      const markup: string[] = [];
       for (const link of links) {
-        const anchor = [...el.querySelectorAll('a')].find(
-          (candidate) => (candidate.getAttribute('href') ?? '') === link.to,
-        );
-        const text = anchorLabel(anchor ?? null);
-        moved.push({ href: link.to, text });
-        // Without words, "that address is gone" would be a question about every
-        // link on the page, so it is not asked at all.
-        if (text) left.push({ href: link.from, text });
+        const proof = proofs?.get(link.from);
+        // A link with no words of its own cannot be counted apart from any other
+        // link to the same page, so it keeps the older check on the address.
+        if (!proof) markup.push(`href="${link.to}"`);
+        else {
+          moved.push(proof.present);
+          left.push(proof.absent);
+        }
       }
       record(id, JSON.stringify({ replacements, links }), `Article: ${parts.join(', ')}`, {
         links: moved,
         linksAbsent: left,
+        markup,
       });
     },
     [record, unstage],
@@ -664,6 +702,7 @@ export function InlineEditor() {
         el.innerHTML = originals.current.get(id) ?? el.innerHTML;
         bodySnapshots.current.delete(id);
         bodyLinks.current.delete(id);
+        bodyProofs.current.delete(id);
         unstage(id);
         setLinkPanel(null);
         el.blur();
@@ -925,6 +964,7 @@ export function InlineEditor() {
     originals.current.clear();
     bodySnapshots.current.clear();
     bodyLinks.current.clear();
+    bodyProofs.current.clear();
     setLinkPanel(null);
     setImageUndo(imageTokens.length ? imageTokens : null);
 
@@ -1009,8 +1049,11 @@ export function InlineEditor() {
         setLinkNote(result?.reason ?? 'This link\u2019s address is not in a field this editor can change.');
         return;
       }
+      // Counted first: `linkProof` reads the page as it stands, and the next
+      // line is what changes it.
+      const proof = linkProof(row, value);
       row.anchor.setAttribute('href', value);
-      record(result.id, value, value.slice(0, 42), { address: true, ...linkProof(row, value) });
+      record(result.id, value, value.slice(0, 42), { address: true, ...proof });
     } else if (row.kind === 'body') {
       // Which of the links pointing at this same address it is, counted the
       // way the server counts them in the stored HTML: in document order,
@@ -1031,16 +1074,33 @@ export function InlineEditor() {
       if (earlier) earlier.to = value;
       else staged.push({ from, to: value, occurrence });
       bodyLinks.current.set(panel.id, staged);
+      const text = anchorLabel(row.anchor);
+      if (text) {
+        // The address this link started from, which is what the published
+        // article will say it left — not the one it is sitting on after an
+        // earlier move in this same session.
+        const key = earlier ? earlier.from : from;
+        const proofs = bodyProofs.current.get(panel.id) ?? new Map();
+        const kept = proofs.get(key);
+        proofs.set(key, {
+          present: { href: value, text, atLeast: countOnPage(value, text) + 1 },
+          // Counted once, when the link first left: by the second move it has
+          // already gone, and counting again would forget the ones that stay.
+          absent: kept?.absent ?? { href: key, text, atMost: Math.max(countOnPage(key, text) - 1, 0) },
+        });
+        bodyProofs.current.set(panel.id, proofs);
+      }
       row.anchor.setAttribute('href', value);
       stageBody(panel.root, panel.id);
     } else {
       if (!originals.current.has(panel.id)) originals.current.set(panel.id, panel.root.innerHTML);
+      const proof = linkProof(row, value);
       row.anchor.setAttribute('href', value);
       record(
         panel.id,
         strip(panel.root.innerHTML),
         strip(panel.root.textContent ?? '').slice(0, 42),
-        linkProof(row, value),
+        proof,
       );
     }
 
@@ -1264,8 +1324,14 @@ export function InlineEditor() {
         markup.push(`href="${to}"`);
         continue;
       }
-      links.push({ href: to, text });
-      if (from && isAddress(from)) linksAbsent.push({ href: from, text });
+      // The mirror of a publish, counted on the page as it stands: one more
+      // link under the restored address, one fewer under the one being taken
+      // away. Without the count the light would go green at once, because the
+      // footer's own link to the restored address is already there.
+      links.push({ href: to, text, atLeast: countOnPage(to, text) + 1 });
+      if (from && isAddress(from)) {
+        linksAbsent.push({ href: from, text, atMost: Math.max(countOnPage(from, text) - 1, 0) });
+      }
     }
     setStatus({ kind: 'saved', message: `${doneWord} — committed` });
     watchUntilLive(

@@ -13,20 +13,28 @@
  *   - `needles`: these words are on the page;
  *   - `absent`: those words are off it;
  *   - `markup`: this image address is in the HTML;
- *   - `links` / `linksAbsent`: this anchor, under these words, points here now
- *     and no longer points there.
+ *   - `links` / `linksAbsent`: this many anchors, under these words, point here
+ *     now (`atLeast`), and no more than this many still point there (`atMost`).
  *
  * The last pair exists because an address on its own proves nothing. Changing
  * the nav's "Blog" link to `/case-studies` on a nav that already carries a
  * "Case studies" link turned the light green three seconds after the commit,
  * before the site had built. The anchor scan asks about the link that was
  * edited, not about the address.
+ *
+ * It asks in counts, not in yes or no, because the same words point at the same
+ * page more than once: the footer's "Blog" link never moves, so "no Blog link
+ * points at /blog any more" is false for ever and the light stayed amber for
+ * the whole wait. The editor counts both pairs before it changes anything and
+ * says what the sums should be; a request with no counts on it means one and
+ * none, which is what an older editor asked for.
  */
 import { currentEditor } from '@/lib/inline-edit/session';
 import { assetFileName, markupVariants } from '@/lib/inline-edit/image-edit';
 import {
-  anchorCarries,
   anchorsIn,
+  enoughAnchors,
+  fewEnoughAnchors,
   normalizeText,
   visibleText,
   type AnchorTarget,
@@ -52,16 +60,29 @@ export async function POST(request: Request) {
   const path = typeof body?.path === 'string' ? body.path : '';
   const strings = (value: unknown) =>
     Array.isArray(value) ? (value as unknown[]).filter((n): n is string => typeof n === 'string') : [];
-  /** One link the editor changed: where it points now and the words it shows. */
+  /** A count a browser sent: a whole number of anchors, or nothing at all. */
+  const count = (value: unknown) =>
+    typeof value === 'number' && Number.isInteger(value) && value >= 0 && value <= 500 ? value : undefined;
+  /**
+   * One link the editor changed: where it points now, the words it shows, and
+   * how many anchors the page should end up with saying that.
+   */
   const anchors = (value: unknown): AnchorTarget[] =>
     Array.isArray(value)
-      ? (value as unknown[]).filter(
-          (item): item is AnchorTarget =>
-            !!item &&
-            typeof item === 'object' &&
-            typeof (item as AnchorTarget).href === 'string' &&
-            typeof (item as AnchorTarget).text === 'string',
-        )
+      ? (value as unknown[])
+          .filter(
+            (item): item is AnchorTarget =>
+              !!item &&
+              typeof item === 'object' &&
+              typeof (item as AnchorTarget).href === 'string' &&
+              typeof (item as AnchorTarget).text === 'string',
+          )
+          .map((item) => ({
+            href: item.href,
+            text: item.text,
+            atLeast: count(item.atLeast),
+            atMost: count(item.atMost),
+          }))
       : [];
   const needles = strings(body?.needles);
   /**
@@ -150,10 +171,13 @@ export async function POST(request: Request) {
     return markupVariants(served).some((form) => html.includes(form) || html.includes(encodeURIComponent(form)));
   });
   // Every anchor on the page, read once: the address it points at and the words
-  // it shows. A changed link is live when one anchor carries both halves.
+  // it shows. A changed link is live when the page carries as many anchors
+  // saying that as the editor said it should, and no more of the old ones than
+  // it said would be left — a footer link nobody touched is counted, not
+  // mistaken for the change.
   const onPage = anchorsIn(html);
-  const linksLive = links.map((link) => anchorCarries(onPage, link));
-  const linksGone = linksAbsent.map((link) => !anchorCarries(onPage, link));
+  const linksLive = links.map((link) => enoughAnchors(onPage, link));
+  const linksGone = linksAbsent.map((link) => fewEnoughAnchors(onPage, link));
   return Response.json({
     ok: true,
     status: 200,

@@ -259,8 +259,15 @@ export function normalizeText(text: string): string {
     .trim();
 }
 
-/** One anchor on the page: where it points and the words it shows. */
-export type AnchorTarget = { href: string; text: string };
+/**
+ * One anchor on the page: where it points and the words it shows.
+ *
+ * `atLeast` and `atMost` turn it into a question about a count rather than
+ * about existence. The same words can point at the same page in two places —
+ * the nav's "Blog" and the footer's "Blog" — so "is there one" and "is there
+ * none" are both answered by the copy nobody edited.
+ */
+export type AnchorTarget = { href: string; text: string; atLeast?: number; atMost?: number };
 
 /**
  * One `<a>` and its contents. Attributes may be in any order and quoted either
@@ -327,19 +334,53 @@ export function hrefMatches(anchorHref: string, wanted: string): boolean {
 }
 
 /**
- * Is one of these anchors the link that was asked about — this address under
- * these words?
+ * Is this anchor the link that was asked about — this address under these words?
  *
  * The words are matched by containment, not only by equality: a label can be
  * drawn with an icon or a counter beside it inside the same anchor. An empty
  * label asks about the address alone, which is the old, weaker question; the
  * status route never sends one for the "it is gone" half.
  */
-export function anchorCarries(anchors: AnchorTarget[], wanted: AnchorTarget): boolean {
+function carries(anchor: AnchorTarget, wanted: AnchorTarget): boolean {
   const label = normalizeText(wanted.text);
-  return anchors.some(
-    (anchor) => hrefMatches(anchor.href, wanted.href) && (!label || anchor.text.includes(label)),
-  );
+  return hrefMatches(anchor.href, wanted.href) && (!label || anchor.text.includes(label));
+}
+
+/** How many anchors on this page point there under those words. */
+export function countAnchors(anchors: AnchorTarget[], wanted: AnchorTarget): number {
+  return anchors.filter((anchor) => carries(anchor, wanted)).length;
+}
+
+/** Is at least one such anchor on the page? Kept for a check with no count on it. */
+export function anchorCarries(anchors: AnchorTarget[], wanted: AnchorTarget): boolean {
+  return countAnchors(anchors, wanted) > 0;
+}
+
+/**
+ * Has the moved link arrived — counting, not just looking?
+ *
+ * "Is there an anchor saying Blog that points at /case-studies" was still the
+ * wrong question on 2026-09-18: the footer has its own Blog link, so the
+ * mirror check on the old address could never come true and the light sat
+ * amber for the whole wait. The editor counts both pairs on the page it is
+ * looking at and says how many there should be afterwards, so a duplicate
+ * somewhere else on the page is part of the sum instead of an answer.
+ *
+ * `atLeast` missing means one, which is what an older editor's request means.
+ */
+export function enoughAnchors(anchors: AnchorTarget[], wanted: AnchorTarget): boolean {
+  const least = Number.isInteger(wanted.atLeast) ? Math.max(wanted.atLeast!, 0) : 1;
+  return countAnchors(anchors, wanted) >= least;
+}
+
+/**
+ * Has the moved link left — counting the ones that stay?
+ *
+ * `atMost` missing means none, which is what an older editor's request means.
+ */
+export function fewEnoughAnchors(anchors: AnchorTarget[], wanted: AnchorTarget): boolean {
+  const most = Number.isInteger(wanted.atMost) ? Math.max(wanted.atMost!, 0) : 0;
+  return countAnchors(anchors, wanted) <= most;
 }
 
 /**

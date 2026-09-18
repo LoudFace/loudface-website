@@ -27,6 +27,9 @@ import {
   addressLabelPrefix,
   anchorCarries,
   anchorsIn,
+  countAnchors,
+  enoughAnchors,
+  fewEnoughAnchors,
   findSiblingAddressId,
   hrefMatches,
   isAddressKey,
@@ -577,5 +580,112 @@ describe('addressLabelPrefix', () => {
 
   it('answers null for something that is not a content id', () => {
     assert.equal(addressLabelPrefix('nonsense'), null);
+  });
+});
+
+// ---------------------------------------------------------------------------
+// Counting, because the same link is on the page twice
+// ---------------------------------------------------------------------------
+
+/**
+ * The nav and the footer, which is the whole of the second fault.
+ *
+ * Both say "Blog" and both point at `/blog`. The client moved the nav one to
+ * `/case-studies`. Asking "does any Blog link still point at /blog" answers yes
+ * for ever, because the footer never changes, so the light sat amber for the
+ * full six minutes on 2026-09-18 with the change already live.
+ */
+const PAGE_BEFORE = `<nav><a href="/case-studies">Case studies</a><a href="/blog"><span>Blog</span></a></nav>
+<footer><a class="text-xs" href="/blog">Blog</a><a href="/contact">Contact</a></footer>`;
+
+/** The same page once the nav link has moved. The footer is untouched. */
+const PAGE_AFTER = PAGE_BEFORE.replace('<a href="/blog"><span>Blog</span></a>', '<a href="/case-studies"><span>Blog</span></a>');
+
+/** What the editor counts before it changes anything, and what it then asks for. */
+const BLOG = { href: '/blog', text: 'Blog' };
+const MOVED = { href: '/case-studies', text: 'Blog' };
+
+describe('countAnchors', () => {
+  it('counts both copies of the same link', () => {
+    assert.equal(countAnchors(anchorsIn(PAGE_BEFORE), BLOG), 2);
+  });
+
+  it('counts none before the change, one after it', () => {
+    assert.equal(countAnchors(anchorsIn(PAGE_BEFORE), MOVED), 0);
+    assert.equal(countAnchors(anchorsIn(PAGE_AFTER), MOVED), 1);
+  });
+
+  it('does not count a link whose words are different', () => {
+    assert.equal(countAnchors(anchorsIn(PAGE_AFTER), { href: '/case-studies', text: 'Case studies' }), 1);
+  });
+});
+
+describe('the publish of a link the footer also carries', () => {
+  // Before: 2 anchors say Blog → /blog, 0 say Blog → /case-studies.
+  // So the published page must have at least 1 of the new pair and at most 1
+  // of the old one: the footer's.
+  const wanted = { ...MOVED, atLeast: 0 + 1 };
+  const gone = { ...BLOG, atMost: 2 - 1 };
+
+  it('is not live while the nav link has not moved', () => {
+    assert.equal(enoughAnchors(anchorsIn(PAGE_BEFORE), wanted), false);
+    assert.equal(fewEnoughAnchors(anchorsIn(PAGE_BEFORE), gone), false);
+  });
+
+  it('is live once it has, with the footer link left alone', () => {
+    assert.equal(enoughAnchors(anchorsIn(PAGE_AFTER), wanted), true);
+    assert.equal(fewEnoughAnchors(anchorsIn(PAGE_AFTER), gone), true);
+  });
+
+  it('would have gone green too early, and stayed amber for ever, without the counts', () => {
+    // The two older questions, on the same fixtures: yes before the change,
+    // and no after it.
+    assert.equal(anchorCarries(anchorsIn(PAGE_BEFORE), BLOG), true);
+    assert.equal(anchorCarries(anchorsIn(PAGE_AFTER), BLOG), true);
+  });
+});
+
+describe('the undo of that publish', () => {
+  // Counted on the page as it stands, which is PAGE_AFTER: 1 anchor says
+  // Blog → /blog (the footer), 1 says Blog → /case-studies (the nav).
+  const wanted = { ...BLOG, atLeast: 1 + 1 };
+  const gone = { ...MOVED, atMost: 1 - 1 };
+
+  it('is not live while the nav link still points at the new page', () => {
+    assert.equal(enoughAnchors(anchorsIn(PAGE_AFTER), wanted), false);
+    assert.equal(fewEnoughAnchors(anchorsIn(PAGE_AFTER), gone), false);
+  });
+
+  it('is live once both Blog links point at /blog again', () => {
+    assert.equal(enoughAnchors(anchorsIn(PAGE_BEFORE), wanted), true);
+    assert.equal(fewEnoughAnchors(anchorsIn(PAGE_BEFORE), gone), true);
+  });
+
+  it('is the case the footer would have answered on its own', () => {
+    // One anchor already says Blog → /blog before the undo has done anything.
+    assert.equal(anchorCarries(anchorsIn(PAGE_AFTER), BLOG), true);
+  });
+});
+
+describe('a request with no counts on it', () => {
+  it('still means one of the new pair', () => {
+    assert.equal(enoughAnchors(anchorsIn(NAV_AFTER), { href: '/case-studies', text: 'Blog' }), true);
+    assert.equal(enoughAnchors(anchorsIn(NAV_BEFORE), { href: '/case-studies', text: 'Blog' }), false);
+  });
+
+  it('still means none of the old pair', () => {
+    assert.equal(fewEnoughAnchors(anchorsIn(NAV_AFTER), { href: '/blog', text: 'Blog' }), true);
+    assert.equal(fewEnoughAnchors(anchorsIn(NAV_BEFORE), { href: '/blog', text: 'Blog' }), false);
+  });
+
+  it('reads a count of zero as zero, not as nothing', () => {
+    assert.equal(enoughAnchors(anchorsIn(NAV_BEFORE), { href: '/nowhere', text: 'Blog', atLeast: 0 }), true);
+  });
+
+  it('counts across trailing-slash and encoded spellings alike', () => {
+    const page = `<a href="/blog/">Blog</a><a href="${encodeURIComponent('/blog')}">Blog</a>`;
+    assert.equal(countAnchors(anchorsIn(page), BLOG), 2);
+    assert.equal(fewEnoughAnchors(anchorsIn(page), { ...BLOG, atMost: 1 }), false);
+    assert.equal(enoughAnchors(anchorsIn(page), { ...BLOG, atLeast: 2 }), true);
   });
 });
