@@ -19,9 +19,15 @@
  * page split with an auto-link still contains the sentence as a substring, so
  * it still matches.
  *
+ * A link's destination travels the same way. The editor sends the address the
+ * link points at now, the address it should point at, and which occurrence of
+ * that address in the element it means. The server rewrites exactly that one
+ * `href` and leaves every other byte alone.
+ *
  * Shared by the client (to describe the edit) and the server (to apply it).
  * No server-only import, no DOM use.
  */
+import { ADDRESS_REFUSAL, isSafeHref } from './link-edit';
 
 export type TextReplacement = {
   /** The text node's content before the edit, as shown on the page. */
@@ -32,7 +38,16 @@ export type TextReplacement = {
   occurrence: number;
 };
 
-export type BodyEdit = { replacements: TextReplacement[] };
+export type LinkReplacement = {
+  /** The address the link points at now, exactly as the page shows it. */
+  from: string;
+  /** The address it should point at. */
+  to: string;
+  /** Which link to take when several point at the same address: 0 = first in the element. */
+  occurrence: number;
+};
+
+export type BodyEdit = { replacements: TextReplacement[]; links: LinkReplacement[] };
 
 const ENTITIES: Record<string, string> = {
   amp: '&',
@@ -121,6 +136,60 @@ export function applyTextReplacements(storedHtml: string, replacements: TextRepl
   return tokens.map((token) => token.text).join('');
 }
 
+/**
+ * Every `href="…"` or `href='…'` in the stored HTML, in the order it is written.
+ *
+ * The quote character is captured so the replacement keeps it: the point of
+ * this module is that nothing but the one changed run of bytes moves, and
+ * turning every single-quoted attribute in an article into a double-quoted one
+ * would make a link change look like a rewrite of the whole body.
+ */
+const HREF_ATTRIBUTE = /href\s*=\s*(["'])([^"']*)\1/g;
+
+/**
+ * Change where one link points, inside stored HTML, without touching anything
+ * else.
+ *
+ * Addresses are compared as the page shows them, the way text is: a stored
+ * `href="/a?x=1&amp;y=2"` is the same link as the `/a?x=1&y=2` a browser hands
+ * back, so the stored value is decoded before it is matched, and the new one is
+ * encoded again on the way in.
+ */
+export function applyLinkReplacements(storedHtml: string, links: LinkReplacement[]): string {
+  let html = storedHtml;
+
+  for (const link of links) {
+    const from = link.from.trim();
+    const to = link.to.trim();
+    if (!from) throw new Error('A link change needs the address it replaces');
+    if (!isSafeHref(to)) throw new Error(ADDRESS_REFUSAL);
+    if (from === to) continue;
+
+    let seen = 0;
+    let placed = false;
+    HREF_ATTRIBUTE.lastIndex = 0;
+    let match: RegExpExecArray | null;
+    while ((match = HREF_ATTRIBUTE.exec(html)) !== null) {
+      if (decodeEntities(match[2]).trim() !== from) continue;
+      if (seen++ < link.occurrence) continue;
+
+      const quote = match[1];
+      // `isSafeHref` has already refused quotes, angle brackets and spaces, so
+      // an ampersand is the only character left that has to be written as an
+      // entity for the attribute to mean what it says.
+      const written = `href=${quote}${to.replace(/&/g, '&amp;')}${quote}`;
+      html = html.slice(0, match.index) + written + html.slice(match.index + match[0].length);
+      placed = true;
+      break;
+    }
+    if (!placed) {
+      throw new Error(`Could not find a link to ${from.slice(0, 80)} in the stored article`);
+    }
+  }
+
+  return html;
+}
+
 /** Parse the value an editor sends for a body field. */
 export function parseBodyEdit(value: string): BodyEdit {
   let parsed: unknown;
@@ -130,10 +199,12 @@ export function parseBodyEdit(value: string): BodyEdit {
     throw new Error('The article body edit is not readable');
   }
   const edit = parsed as Partial<BodyEdit>;
-  if (!edit || !Array.isArray(edit.replacements) || !edit.replacements.length) {
+  const replacements = Array.isArray(edit?.replacements) ? edit.replacements : [];
+  const links = Array.isArray(edit?.links) ? edit.links : [];
+  if (!replacements.length && !links.length) {
     throw new Error('The article body edit holds no changes');
   }
-  for (const item of edit.replacements) {
+  for (const item of replacements) {
     if (
       typeof item?.from !== 'string' ||
       typeof item?.to !== 'string' ||
@@ -144,5 +215,16 @@ export function parseBodyEdit(value: string): BodyEdit {
     }
     if (item.to.length > 20_000) throw new Error('That paragraph is too long');
   }
-  return { replacements: edit.replacements as TextReplacement[] };
+  for (const item of links) {
+    if (
+      typeof item?.from !== 'string' ||
+      typeof item?.to !== 'string' ||
+      typeof item?.occurrence !== 'number' ||
+      item.occurrence < 0
+    ) {
+      throw new Error('The article body edit is malformed');
+    }
+    if (!isSafeHref(item.to)) throw new Error(ADDRESS_REFUSAL);
+  }
+  return { replacements: replacements as TextReplacement[], links: links as LinkReplacement[] };
 }

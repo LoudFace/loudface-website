@@ -33,6 +33,17 @@ function at(root: unknown, path: string[]): unknown {
   return node;
 }
 
+/**
+ * A different value to write into this field.
+ *
+ * A field holding an address keeps holding an address — `applyToText` refuses
+ * anything else there — so an image path is edited into another image path
+ * rather than into a sentence. Everything else takes a word on the end.
+ */
+function probe(value: { value: string; image: boolean }): string {
+  return value.image ? value.value.replace(/(\.[A-Za-z0-9]+)$/, '-x$1') : `${value.value} x`;
+}
+
 /** A copy of the parsed file with one field replaced. */
 function withField(data: unknown, path: string[], value: string): unknown {
   const copy = JSON.parse(JSON.stringify(data));
@@ -50,7 +61,7 @@ describe('applyToText over every content value', () => {
       assert.ok(markable.length > 0, `${file.name} has no editable strings at all`);
 
       for (const value of markable) {
-        const result = applyToText(file.raw, value.id, `${value.value} x`);
+        const result = applyToText(file.raw, value.id, probe(value));
 
         assert.equal(result.before, value.value, `${value.id}: read the wrong old value`);
         assert.notEqual(result.after, result.before, `${value.id}: the edit did not change anything`);

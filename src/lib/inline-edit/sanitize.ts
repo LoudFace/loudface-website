@@ -16,7 +16,12 @@
 import { strip as stripMarks } from './mark';
 
 const ALLOWED = new Set(['a', 'strong', 'em', 'b', 'i', 'br']);
-const SAFE_HREF = /^(?:https?:\/\/|mailto:|tel:|\/|#)/i;
+/**
+ * The one rule for what an address may be, shared rather than copied: the
+ * editor's own link field and the publish route both check against this, so a
+ * client never sees a field accept something the server then refuses.
+ */
+export const SAFE_HREF = /^(?:https?:\/\/|mailto:|tel:|\/|#)/i;
 
 const ENTITIES: Record<string, string> = {
   amp: '&',

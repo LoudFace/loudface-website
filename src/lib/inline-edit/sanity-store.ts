@@ -19,7 +19,7 @@ import 'server-only';
  */
 import { getEditorWriteClient } from '../sanity.client';
 import { cleanValue } from './sanitize';
-import { applyTextReplacements, parseBodyEdit } from './body-edit';
+import { applyLinkReplacements, applyTextReplacements, parseBodyEdit } from './body-edit';
 import { pathsFor } from '../revalidate-paths';
 import { findAssetRefs, SANITY_ASSET_ID, sharedAssetRefusal } from './image-edit';
 import type { ImageUndoEntry } from './session';
@@ -125,8 +125,11 @@ export async function publishSanity(changes: SanityChange[], editor: string): Pr
     if (change.exact === true) {
       after = change.value;
     } else if (isBodyPath(path)) {
-      // The body arrives as a list of sentence replacements, not as HTML.
-      after = applyTextReplacements(before, parseBodyEdit(change.value).replacements);
+      // The body arrives as a list of sentence replacements and link changes,
+      // never as HTML. Sentences first, so a link whose words also changed is
+      // still found by the address it carries rather than by its text.
+      const edit = parseBodyEdit(change.value);
+      after = applyLinkReplacements(applyTextReplacements(before, edit.replacements), edit.links);
     } else {
       after = cleanValue(change.value, before);
     }

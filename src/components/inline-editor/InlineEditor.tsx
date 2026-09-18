@@ -15,7 +15,12 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { VERCEL_STEGA_REGEX } from '@vercel/stega';
 import { decodeStega, stripStega } from '../../lib/inline-edit/stega';
-import { normalizeShownText, type TextReplacement } from '../../lib/inline-edit/body-edit';
+import {
+  normalizeShownText,
+  type LinkReplacement,
+  type TextReplacement,
+} from '../../lib/inline-edit/body-edit';
+import { isSafeHref, linkCaseFor, type LinkCase } from '../../lib/inline-edit/link-edit';
 import {
   MAX_IMAGE_BYTES,
   SANITY_IMAGE_PREFIX,
@@ -26,8 +31,29 @@ import {
   sanityAssetIdFromUrl,
 } from '../../lib/inline-edit/image-edit';
 
-/** A staged edit. `file` is set when the editor picked a picture instead of typing. */
-type Change = { id: string; value: string; label: string; file?: File };
+/**
+ * A staged edit.
+ *
+ * `file` is set when the editor picked a picture instead of typing. `markup` is
+ * what the status light should look for in the public page's raw HTML rather
+ * than in its words, and `address` says the value is an address, so it is never
+ * looked for as visible text at all — a link's destination is in an attribute,
+ * and the words around it did not change.
+ */
+type Change = {
+  id: string;
+  value: string;
+  label: string;
+  file?: File;
+  markup?: string[];
+  address?: boolean;
+};
+/** Anything a `record` call wants to say about a change beyond its value. */
+type ChangeExtra = { file?: File; markup?: string[]; address?: boolean };
+/** One link in the Links panel: what it says, where it points, and where that address lives. */
+type LinkRow = { text: string; href: string; anchor: HTMLAnchorElement; kind: LinkCase };
+/** The Links panel: the element that was clicked and every link inside it. */
+type LinkPanel = { id: string; root: HTMLElement; rows: LinkRow[] };
 type Status = {
   kind: 'idle' | 'saving' | 'saved' | 'checking' | 'live' | 'stale' | 'error';
   message?: string;
@@ -238,6 +264,28 @@ function diffBody(root: HTMLElement, snapshot: BodySnapshot): TextReplacement[] 
 const BODY_LIMIT_MESSAGE =
   'In the article body, only changes to existing text are saved for now — adding or removing paragraphs is not supported yet.';
 
+/** What a client is told when what they typed in the address field is not one. */
+const BAD_ADDRESS_MESSAGE =
+  'That does not look like a web address. Use /a-page, https://…, mailto:…, tel:… or #a-section.';
+
+/** The most links one panel lists. Past this it is a page of links, not an element with some. */
+const MAX_LINK_ROWS = 60;
+
+/**
+ * Every link the Links panel should offer for one editable element.
+ *
+ * Three shapes, all of which a client reads as "this link": the element is the
+ * link, the element sits inside one (a marked label inside an `<a>`), or the
+ * element contains some (a rich sentence, an article body).
+ */
+function linksFor(root: HTMLElement): HTMLAnchorElement[] {
+  const own = root.closest<HTMLAnchorElement>('a');
+  if (own) return [own];
+  return [...root.querySelectorAll<HTMLAnchorElement>('a')]
+    .filter((anchor) => !anchor.closest('[data-lf-chrome]'))
+    .slice(0, MAX_LINK_ROWS);
+}
+
 /** The words a publish put on the page, as plain text the live check can look for. */
 function needlesFor(values: { id: string; value: string }[], exact = false): string[] {
   const out: string[] = [];
@@ -297,15 +345,24 @@ export function InlineEditor() {
   const [sanityUndo, setSanityUndo] = useState<SanityUndo[] | null>(null);
   /** Signed tokens from this session's image publishes, one per image. */
   const [imageUndo, setImageUndo] = useState<string[] | null>(null);
+  /** The Links panel: which element it belongs to and what it is offering. */
+  const [linkPanel, setLinkPanel] = useState<LinkPanel | null>(null);
+  /** What is typed in each address field, by row. */
+  const [linkDrafts, setLinkDrafts] = useState<Record<number, string>>({});
+  const [linkNote, setLinkNote] = useState('');
+  /** Which row is waiting on the server to say where its address lives. */
+  const [linkBusy, setLinkBusy] = useState<number | null>(null);
   const originals = useRef<Map<string, string>>(new Map());
   const bodySnapshots = useRef<Map<string, BodySnapshot>>(new Map());
+  /** Link changes staged for an article body, by body id; they ride along with its sentences. */
+  const bodyLinks = useRef<Map<string, LinkReplacement[]>>(new Map());
   const picker = useRef<HTMLInputElement | null>(null);
   /** Which image the picker was opened for, and the preview addresses to release. */
   const picking = useRef<string | null>(null);
   const previews = useRef<string[]>([]);
 
-  const record = useCallback((id: string, value: string, label: string, file?: File) => {
-    setChanges((prev) => ({ ...prev, [id]: { id, value, label, file } }));
+  const record = useCallback((id: string, value: string, label: string, extra: ChangeExtra = {}) => {
+    setChanges((prev) => ({ ...prev, [id]: { id, value, label, ...extra } }));
     // A new edit invalidates the "before" snapshot from the last Sanity
     // publish — undoing it now would clobber this newer change.
     setSanityUndo(null);
@@ -357,9 +414,45 @@ export function InlineEditor() {
         el.removeAttribute('sizes');
       }
       setStatus({ kind: 'idle' });
-      record(id, file.name, file.name, file);
+      record(id, file.name, file.name, { file });
     },
     [record],
+  );
+
+  /**
+   * Describe an article body's staged edit and record it.
+   *
+   * One value carries both halves: the sentences that changed and the links
+   * whose destination changed. It is rebuilt from scratch on every keystroke
+   * and on every Apply, so the two never drift apart.
+   */
+  const stageBody = useCallback(
+    (el: HTMLElement, id: string) => {
+      const snapshot = bodySnapshots.current.get(id);
+      if (!snapshot) return;
+      const replacements = diffBody(el, snapshot);
+      if (replacements === null) {
+        unstage(id);
+        setStatus({ kind: 'error', message: BODY_LIMIT_MESSAGE });
+        return;
+      }
+      const links = bodyLinks.current.get(id) ?? [];
+      if (!replacements.length && !links.length) {
+        unstage(id);
+        return;
+      }
+      setStatus((prev) => (prev.kind === 'error' && prev.message === BODY_LIMIT_MESSAGE ? { kind: 'idle' } : prev));
+
+      const parts: string[] = [];
+      if (replacements.length) parts.push(`${replacements.length} sentence${replacements.length === 1 ? '' : 's'}`);
+      if (links.length) parts.push(`${links.length} link${links.length === 1 ? '' : 's'}`);
+      record(id, JSON.stringify({ replacements, links }), `Article: ${parts.join(', ')}`, {
+        // A link's address is in an attribute, so the live check reads the
+        // page's HTML for it rather than its words.
+        markup: links.map((link) => `href="${link.to}"`),
+      });
+    },
+    [record, unstage],
   );
 
   useEffect(
@@ -422,28 +515,32 @@ export function InlineEditor() {
       el.style.outlineOffset = '3px';
       el.focus();
       placeCaret(el, event as MouseEvent);
+
+      // Links in or around this element get a panel of their own: their words
+      // are editable in place, their destination is not a thing you type onto
+      // a page, so it needs a field.
+      const anchors = linksFor(el);
+      const rows = anchors
+        .map((anchor) => {
+          const kind = linkCaseFor(anchor, el);
+          return kind
+            ? {
+                text: strip(anchor.textContent ?? '').trim() || '(no words)',
+                href: anchor.getAttribute('href') ?? '',
+                anchor,
+                kind,
+              }
+            : null;
+        })
+        .filter((row): row is LinkRow => row !== null && Boolean(row.href));
+      setLinkNote('');
+      setLinkDrafts({});
+      setLinkPanel(rows.length ? { id, root: el, rows } : null);
     };
 
     // Stage on every keystroke. Waiting for blur loses the last edit whenever
     // the element does not give focus up — a link element being the case that
     // caught us.
-    const stageBody = (el: HTMLElement, id: string) => {
-      const snapshot = bodySnapshots.current.get(id);
-      if (!snapshot) return;
-      const replacements = diffBody(el, snapshot);
-      if (replacements === null) {
-        unstage(id);
-        setStatus({ kind: 'error', message: BODY_LIMIT_MESSAGE });
-        return;
-      }
-      if (!replacements.length) {
-        unstage(id);
-        return;
-      }
-      setStatus((prev) => (prev.kind === 'error' && prev.message === BODY_LIMIT_MESSAGE ? { kind: 'idle' } : prev));
-      record(id, JSON.stringify({ replacements }), `Article: ${replacements.length} sentence${replacements.length === 1 ? '' : 's'}`);
-    };
-
     const onInput = (event: Event) => {
       const el = event.currentTarget as HTMLElement;
       const id = el.dataset.lfId!;
@@ -477,7 +574,9 @@ export function InlineEditor() {
         const id = el.dataset.lfId!;
         el.innerHTML = originals.current.get(id) ?? el.innerHTML;
         bodySnapshots.current.delete(id);
+        bodyLinks.current.delete(id);
         unstage(id);
+        setLinkPanel(null);
         el.blur();
       }
       if (key === 'Enter' && !(event as KeyboardEvent).shiftKey) {
@@ -528,7 +627,7 @@ export function InlineEditor() {
     const observer = new MutationObserver(() => wire());
     observer.observe(document.body, { childList: true, subtree: true });
     return () => observer.disconnect();
-  }, [record, unstage, openPicker]);
+  }, [record, unstage, openPicker, stageBody]);
 
   // "Show me what I can edit" — the honest answer to a page where most copy is
   // still written into the component rather than served from the content layer.
@@ -551,6 +650,16 @@ export function InlineEditor() {
     document.addEventListener('keydown', onKey);
     return () => document.removeEventListener('keydown', onKey);
   }, [editorsOpen]);
+
+  // The same for the Links panel, whose fields are outside the edited element.
+  useEffect(() => {
+    if (!linkPanel) return;
+    const onKey = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') setLinkPanel(null);
+    };
+    document.addEventListener('keydown', onKey);
+    return () => document.removeEventListener('keydown', onKey);
+  }, [linkPanel]);
 
   const pending = Object.values(changes);
 
@@ -635,10 +744,16 @@ export function InlineEditor() {
     liveCheck.current.stop = true;
 
     const images = pending.filter((change) => change.file);
-    const sent = pending.filter((change) => !change.file).map(({ id, value }) => ({ id, value }));
-    const gone = goneFor(sent, originals.current);
+    const staged = pending.filter((change) => !change.file);
+    const sent = staged.map(({ id, value }) => ({ id, value }));
+    // An address is never visible text, so it is left out of the words the
+    // light looks for and out of the words it expects to have disappeared;
+    // what it looks for instead is the `href` itself, in the page's HTML.
+    const visible = staged.filter((change) => !change.address).map(({ id, value }) => ({ id, value }));
+    const gone = goneFor(visible, originals.current);
     const needles: string[] = [];
     const markup: string[] = [];
+    for (const change of staged) if (change.markup) markup.push(...change.markup);
     const saveOrder: string[] = [];
 
     let contentCount = 0;
@@ -673,7 +788,7 @@ export function InlineEditor() {
       contentCount = Math.max(0, (result.published ?? 0) - sanityCount);
       store = result.mode;
       setSanityUndo(sanityCount ? sanity.map(({ id, token }) => ({ id, token })) : null);
-      needles.push(...needlesFor(sent));
+      needles.push(...needlesFor(visible));
       saveOrder.push(...sent.map((change) => change.id));
     }
 
@@ -710,6 +825,8 @@ export function InlineEditor() {
     setChanges({});
     originals.current.clear();
     bodySnapshots.current.clear();
+    bodyLinks.current.clear();
+    setLinkPanel(null);
     setImageUndo(imageTokens.length ? imageTokens : null);
 
     const words = contentCount + sanityCount;
@@ -747,6 +864,91 @@ export function InlineEditor() {
       for (const id of ids) delete next[id];
       return next;
     });
+
+  /**
+   * Point one link somewhere else.
+   *
+   * The address changes on the page at once, so the client sees the result
+   * before they publish, and the change is staged the same way a typed word is.
+   * Which field it is staged against depends on where the address lives:
+   *
+   *   - sibling: the server is asked which content field holds this address,
+   *     and that field is staged, so the publish is an ordinary content commit;
+   *   - rich: the address is part of a value the page renders as HTML, so the
+   *     whole value is re-staged and the sanitizer rebuilds the anchor;
+   *   - body: the address is named in the article's edit list, the way a
+   *     sentence is, and the server rewrites that one href in the stored HTML.
+   */
+  async function applyLink(row: LinkRow, index: number) {
+    const panel = linkPanel;
+    if (!panel || linkBusy !== null) return;
+
+    const value = (linkDrafts[index] ?? row.href).trim();
+    if (!isSafeHref(value)) {
+      setLinkNote(BAD_ADDRESS_MESSAGE);
+      return;
+    }
+    if (value === row.href) {
+      setLinkNote('That is where it already points.');
+      return;
+    }
+
+    if (row.kind === 'sibling') {
+      setLinkBusy(index);
+      let result: { id?: string | null; reason?: string };
+      try {
+        const query = `id=${encodeURIComponent(panel.id)}&href=${encodeURIComponent(row.href)}`;
+        const response = await fetch(`/api/lf-edit/link?${query}`);
+        result = await response.json().catch(() => ({}));
+      } catch {
+        setLinkBusy(null);
+        setLinkNote(UNREACHABLE);
+        return;
+      }
+      setLinkBusy(null);
+      if (!result?.id) {
+        setLinkNote(result?.reason ?? 'This link\u2019s address is not in a field this editor can change.');
+        return;
+      }
+      row.anchor.setAttribute('href', value);
+      record(result.id, value, value.slice(0, 42), { address: true, markup: [`href="${value}"`] });
+    } else if (row.kind === 'body') {
+      // Which of the links pointing at this same address it is, counted the
+      // way the server counts them in the stored HTML: in document order,
+      // before anything is changed.
+      const from = row.anchor.getAttribute('href') ?? '';
+      const occurrence = [...panel.root.querySelectorAll('a')]
+        .filter((anchor) => (anchor.getAttribute('href') ?? '') === from)
+        .indexOf(row.anchor);
+      if (occurrence === -1) {
+        setLinkNote('That link is no longer on the page; reload and try again.');
+        return;
+      }
+      const staged = bodyLinks.current.get(panel.id) ?? [];
+      // Moving the same link twice is still one change against the stored
+      // article: the second edit extends the first rather than chasing an
+      // address that only ever existed in this browser.
+      const earlier = staged.find((link) => link.to === from);
+      if (earlier) earlier.to = value;
+      else staged.push({ from, to: value, occurrence });
+      bodyLinks.current.set(panel.id, staged);
+      row.anchor.setAttribute('href', value);
+      stageBody(panel.root, panel.id);
+    } else {
+      if (!originals.current.has(panel.id)) originals.current.set(panel.id, panel.root.innerHTML);
+      row.anchor.setAttribute('href', value);
+      record(
+        panel.id,
+        strip(panel.root.innerHTML),
+        strip(panel.root.textContent ?? '').slice(0, 42),
+        { markup: [`href="${value}"`] },
+      );
+    }
+
+    setLinkPanel({ ...panel, rows: panel.rows.map((item, i) => (i === index ? { ...item, href: value } : item)) });
+    setLinkDrafts((prev) => ({ ...prev, [index]: value }));
+    setLinkNote('Changed on the page. Press Publish to put it on the live site.');
+  }
 
   /**
    * Take back this session's last publish: the Sanity words, the Sanity
@@ -1120,6 +1322,53 @@ export function InlineEditor() {
         </div>
       )}
 
+      {linkPanel && (
+        <div style={{ ...panel, width: 560, maxHeight: '60vh', overflow: 'auto' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <p style={{ margin: '0 0 10px', fontWeight: 700 }}>
+              {linkPanel.rows.length === 1 ? 'Where this link points' : 'Where these links point'}
+            </p>
+            <button
+              style={{ ...ghost, color: '#14212b', borderColor: '#cfd9e2' }}
+              onClick={() => setLinkPanel(null)}
+            >
+              Close
+            </button>
+          </div>
+
+          {linkPanel.rows.map((link, index) => (
+            <div key={`${link.href}-${index}`} style={{ ...row, display: 'block' }}>
+              <p style={{ margin: 0, fontWeight: 600, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                {link.text}
+              </p>
+              <div style={{ display: 'flex', gap: 8, marginTop: 6 }}>
+                <input
+                  value={linkDrafts[index] ?? link.href}
+                  style={{ ...input, flex: 1 }}
+                  onChange={(event) => setLinkDrafts((prev) => ({ ...prev, [index]: event.target.value }))}
+                  onKeyDown={(event) => {
+                    if (event.key === 'Enter') applyLink(link, index);
+                    if (event.key === 'Escape') setLinkPanel(null);
+                  }}
+                />
+                <button
+                  style={{ ...button, opacity: linkBusy === index ? 0.45 : 1 }}
+                  onClick={() => applyLink(link, index)}
+                  disabled={linkBusy === index}
+                >
+                  {linkBusy === index ? 'Checking\u2026' : 'Apply'}
+                </button>
+              </div>
+            </div>
+          ))}
+
+          <p style={{ margin: '10px 0 0', fontSize: 12, opacity: 0.75, minHeight: 16 }}>
+            {linkNote ||
+              'A page on this site starts with /. A page elsewhere starts with https://. Enter to apply, Escape to close.'}
+          </p>
+        </div>
+      )}
+
       {/* One picker for the whole page. It is opened from the click on an image,
           which is the only moment a browser will open a file dialog at all. */}
       <input
@@ -1322,3 +1571,5 @@ const input: React.CSSProperties = {
   borderRadius: 8,
   font: '13px ui-sans-serif, system-ui, sans-serif',
 };
+
+

@@ -9,6 +9,8 @@
  * document, so a copy change stays a one-line diff a human can review.
  */
 import { cleanValue } from './sanitize';
+import { ADDRESS } from './mark-tree';
+import { ADDRESS_REFUSAL, isAddressKey, isSafeHref } from './link-edit';
 
 const FILE_NAME = /^[a-z0-9-]+$/;
 const PATH_SEGMENT = /^[A-Za-z0-9_]+$/;
@@ -78,6 +80,21 @@ export function applyToText(
   const after = exact ? value : cleanValue(value, before);
   if (!after) throw new Error('A value cannot be emptied from the page');
   if (after === before) return { next: raw, before, after };
+
+  /**
+   * A field that holds an address keeps holding an address.
+   *
+   * Two ways a value is known to be one: the key says so (`href`, `url`,
+   * `ctaHref`), or the value it replaces was already address-shaped. Either
+   * way, `cleanValue` is no protection here — it strips tags, and a lone
+   * `javascript:alert(1)` has none — so the address rule is applied on top of
+   * it. Not for a value the server signed itself: an undo restores the exact
+   * text a field held before, and that text has already passed this once.
+   */
+  const key = segments[segments.length - 1];
+  if (!exact && (isAddressKey(key) || ADDRESS.test(before)) && !isSafeHref(after)) {
+    throw new Error(ADDRESS_REFUSAL);
+  }
 
   // Replace the value in the file's own text so the diff stays one line. An
   // object member is matched with its key; a list item is matched on its own,
