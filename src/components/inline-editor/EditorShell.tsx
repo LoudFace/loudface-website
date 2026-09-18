@@ -29,6 +29,7 @@
  */
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
+import { pauseHref } from '../../lib/inline-edit/guard';
 import { undoneSummary } from '../../lib/inline-edit/publish-history';
 
 export type ShellTone = 'ok' | 'busy' | 'bad' | 'idle';
@@ -178,6 +179,8 @@ export function EditorShell(props: EditorShellProps) {
   const [mobile, setMobile] = useState(false);
   /** Discard asks first: the bar turns into the question, never a browser dialog. */
   const [confirmDiscard, setConfirmDiscard] = useState(false);
+  /** "View site" asks first too, but only when there is something to lose. */
+  const [confirmView, setConfirmView] = useState(false);
   /** The ⋯ menu on a phone, where Discard and Undo do not fit in the bar. */
   const [overflow, setOverflow] = useState(false);
   const [access, setAccess] = useState<Access | null>(null);
@@ -190,6 +193,18 @@ export function EditorShell(props: EditorShellProps) {
   const canvas = useRef<HTMLDivElement | null>(null);
   const router = useRouter();
   const here = usePathname();
+
+  /**
+   * Leave the editor and look at the published page.
+   *
+   * A full page load, not a client-side push: the route has to set a cookie and
+   * turn Draft Mode off, and only a real request to the server can do that.
+   * Staged edits live in this page's memory, so the reload throws them away —
+   * which is why anything staged is confirmed first.
+   */
+  const viewSite = useCallback(() => {
+    window.location.href = pauseHref(here);
+  }, [here]);
 
   // The document must not scroll: the canvas is the scrollport, which is what
   // keeps the site's sticky header under the editor bar instead of over it.
@@ -449,7 +464,25 @@ export function EditorShell(props: EditorShellProps) {
             )}
             <span style={separator} />
 
-            {confirmDiscard ? (
+            {confirmView ? (
+              <>
+                <span style={{ color: MUTE, whiteSpace: 'nowrap' }}>
+                  Leaving loses {pendingCount} unsaved change{pendingCount === 1 ? '' : 's'}.
+                </span>
+                <button
+                  style={{ ...btn, color: '#b42318', borderColor: '#f3c9c4' }}
+                  onClick={() => {
+                    setConfirmView(false);
+                    viewSite();
+                  }}
+                >
+                  View site
+                </button>
+                <button style={{ ...btn, ...primaryBtn }} onClick={() => setConfirmView(false)}>
+                  Keep editing
+                </button>
+              </>
+            ) : confirmDiscard ? (
               <>
                 <span style={{ color: MUTE, whiteSpace: 'nowrap' }}>
                   Throw away {pendingCount} unsaved change{pendingCount === 1 ? '' : 's'}?
@@ -469,6 +502,23 @@ export function EditorShell(props: EditorShellProps) {
               </>
             ) : (
               <>
+                {/* The off switch. The client wanted to see their own site as
+                    it really is — animations running, nothing outlined — and
+                    then come back. The session stays; a chip on the page brings
+                    them back in one click. */}
+                {!mobile && (
+                  <button
+                    style={btn}
+                    title="See the site as a visitor does"
+                    onClick={() => (pendingCount ? setConfirmView(true) : viewSite())}
+                  >
+                    <Icon size={16}>
+                      <path d={EYE_OPEN} />
+                      <circle cx="12" cy="12" r="2.6" />
+                    </Icon>
+                    View site
+                  </button>
+                )}
                 {!mobile && (
                   <button
                     style={{ ...btn, opacity: pendingCount ? 1 : 0.6 }}
@@ -600,7 +650,14 @@ export function EditorShell(props: EditorShellProps) {
                 />
               )}
               {tab === 'settings' && (
-                <Settings you={you} showAll={showAll} onShowAll={onShowAll} editableCount={editableCount} />
+                <Settings
+                  you={you}
+                  showAll={showAll}
+                  onShowAll={onShowAll}
+                  editableCount={editableCount}
+                  pendingCount={pendingCount}
+                  onViewSite={() => (pendingCount ? setConfirmView(true) : viewSite())}
+                />
               )}
             </div>
           </section>
@@ -815,11 +872,15 @@ function Settings({
   showAll,
   onShowAll,
   editableCount,
+  pendingCount,
+  onViewSite,
 }: {
   you: string;
   showAll: boolean;
   onShowAll: (on: boolean) => void;
   editableCount: number;
+  pendingCount: number;
+  onViewSite: () => void;
 }) {
   return (
     <>
@@ -828,6 +889,21 @@ function Settings({
       <a href="/api/lf-edit/signout" style={{ ...btn, display: 'inline-flex', textDecoration: 'none', marginTop: 6 }}>
         Sign out
       </a>
+
+      {/* The bar has room for this on a desktop; a phone reads it here. */}
+      <p style={{ ...groupLabel, marginTop: 18 }}>The editor</p>
+      <button onClick={onViewSite} style={{ ...btn, display: 'inline-flex' }}>
+        <Icon size={16}>
+          <path d={EYE_OPEN} />
+          <circle cx="12" cy="12" r="2.6" />
+        </Icon>
+        View site
+      </button>
+      <p style={{ ...quiet, marginTop: 8 }}>
+        Turns the editor off and shows the page as a visitor sees it. You stay signed in: a button on
+        the page brings you back.
+        {pendingCount ? ' Publish first — unsaved changes are lost.' : ''}
+      </p>
 
       <p style={{ ...groupLabel, marginTop: 18 }}>This page</p>
       <button

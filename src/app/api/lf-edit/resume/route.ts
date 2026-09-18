@@ -7,10 +7,10 @@
  * email. This route turns Draft Mode back on for a session that is still good,
  * and sends them to the page they asked for.
  */
-import { draftMode } from 'next/headers';
+import { cookies, draftMode } from 'next/headers';
 import { redirect } from 'next/navigation';
 import { currentEditor } from '@/lib/inline-edit/session';
-import { editorOffResponse, safeNext } from '@/lib/inline-edit/guard';
+import { PAUSED_COOKIE, editorOffResponse, safeNext } from '@/lib/inline-edit/guard';
 
 export async function GET(request: Request) {
   const off = editorOffResponse();
@@ -19,6 +19,8 @@ export async function GET(request: Request) {
   const next = safeNext(new URL(request.url).searchParams.get('next'));
   if (!(await currentEditor())) redirect('/edit');
 
+  // Back in the editor, so the "Edit this page" chip has nothing left to offer.
+  (await cookies()).delete(PAUSED_COOKIE);
   (await draftMode()).enable();
   redirect(next);
 }

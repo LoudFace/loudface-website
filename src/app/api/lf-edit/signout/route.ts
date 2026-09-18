@@ -1,13 +1,15 @@
 import { cookies, draftMode } from 'next/headers';
 import { redirect } from 'next/navigation';
 import { SESSION_COOKIE } from '@/lib/inline-edit/session';
-import { editorOffResponse } from '@/lib/inline-edit/guard';
+import { PAUSED_COOKIE, editorOffResponse } from '@/lib/inline-edit/guard';
 
 export async function GET() {
   const off = editorOffResponse();
   if (off) return off;
 
-  (await cookies()).delete(SESSION_COOKIE);
+  const jar = await cookies();
+  jar.delete(SESSION_COOKIE);
+  jar.delete(PAUSED_COOKIE);
   (await draftMode()).disable();
   redirect('/');
 }

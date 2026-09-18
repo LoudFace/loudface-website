@@ -6,8 +6,9 @@ import { cookies, draftMode, headers } from "next/headers";
 import { VisualEditing } from "next-sanity/visual-editing";
 import { primeInlineEditing } from "@/lib/inline-edit/server";
 import { currentEditor } from "@/lib/inline-edit/session";
-import { resumeHref, showResumeChip } from "@/lib/inline-edit/guard";
+import { PAUSED_COOKIE, resumeHref, showResumeChip } from "@/lib/inline-edit/guard";
 import { InlineEditor } from "@/components/inline-editor/InlineEditor";
+import { EditChip } from "@/components/inline-editor/EditChip";
 import { CalHandler } from "@/components/CalHandler";
 import { SiteHeader, SiteFooter } from "@/components/SiteChrome";
 import { Footer } from "@/components/Footer";
@@ -85,7 +86,11 @@ export default async function SiteLayout({
   // eight hours. A client coming back after lunch therefore had a valid session
   // and no bar. The session cookie is httpOnly, so only this server can see it:
   // that visitor gets a chip back into editing, and nobody else gets a byte.
-  const resumeChip = showResumeChip(await currentEditor(), isDraftMode);
+  // "View site" leaves this mark and turns Draft Mode off. EditChip offers the
+  // way back from the browser in that case, so the server-rendered chip below
+  // stands down and the client never sees two chips at once.
+  const paused = requestCookies.get(PAUSED_COOKIE)?.value === "1";
+  const resumeChip = showResumeChip(await currentEditor(), isDraftMode, paused);
 
   // Route-dependent chrome (Header hero-theme, hreflang, shared-Footer
   // suppression) is resolved client-side in SiteChrome via usePathname(). The
@@ -121,6 +126,12 @@ export default async function SiteLayout({
             that scrolls, so the sticky header sticks under the editor bar
             instead of over it. Outside Draft Mode nothing here changes. */}
         {isDraftMode ? <InlineEditor>{site}</InlineEditor> : site}
+
+        {/* The way back after "View site". It renders null on the server and on
+            the first client render, then reads the lf-paused cookie in the
+            browser — so it costs an anonymous visitor no request, no header and
+            not one byte of HTML. */}
+        {!isDraftMode && <EditChip />}
 
         {/* Only ever rendered for a signed-in editor. An anonymous request has
             no session cookie, so this is nothing at all and the HTML a visitor

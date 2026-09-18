@@ -42,13 +42,63 @@ export function safeNext(value: string | null | undefined, fallback = '/'): stri
  *
  * No session means no chip, which is what keeps an anonymous visitor's HTML
  * byte-identical to a site without the editor. Draft Mode already on means the
- * editor is up and the chip would be noise.
+ * editor is up and the chip would be noise. Paused means the client pressed
+ * "View site" on purpose: `EditChip` offers the way back from the browser, so
+ * this server-rendered one stands down and they never see two chips at once.
  */
-export function showResumeChip(session: string | null | undefined, draftMode: boolean): boolean {
-  return Boolean(session) && !draftMode;
+export function showResumeChip(
+  session: string | null | undefined,
+  draftMode: boolean,
+  paused = false,
+): boolean {
+  return Boolean(session) && !draftMode && !paused;
 }
 
 /** Where that chip sends them: back to this same page, with Draft Mode on again. */
 export function resumeHref(pathname: string): string {
   return `/api/lf-edit/resume?next=${encodeURIComponent(safeNext(pathname))}`;
+}
+
+/**
+ * The editor is paused.
+ *
+ * "View site" turns Draft Mode off and leaves the session alone, so the client
+ * sees their own site exactly as a visitor does — animations and all — and can
+ * come back without another email. The mark is a cookie because the page's own
+ * script has to read it: `EditChip` renders from it, and the layout stays free
+ * of any extra server work for an anonymous visitor.
+ *
+ * Not httpOnly for that reason, and it carries nothing: the value is the single
+ * character `1`. The session cookie next to it stays httpOnly and is still the
+ * only thing that lets anybody edit.
+ */
+export const PAUSED_COOKIE = 'lf-paused';
+
+/** As long as a session can last, so the mark never outlives the way back in. */
+const PAUSED_HOURS = 8;
+
+export const pausedCookieOptions = {
+  httpOnly: false as const,
+  sameSite: 'lax' as const,
+  secure: process.env.NODE_ENV === 'production',
+  path: '/',
+  maxAge: PAUSED_HOURS * 60 * 60,
+};
+
+/**
+ * Is the paused mark in this `document.cookie` string?
+ *
+ * Matched on a whole name, never a substring: a cookie called
+ * `not-lf-paused=1` must not turn the chip on.
+ */
+export function isPaused(cookieString: string | null | undefined): boolean {
+  if (!cookieString) return false;
+  return cookieString
+    .split(';')
+    .some((part) => part.trim() === `${PAUSED_COOKIE}=1`);
+}
+
+/** Where "View site" sends them: this same page, with the editor off. */
+export function pauseHref(pathname: string): string {
+  return `/api/lf-edit/pause?next=${encodeURIComponent(safeNext(pathname))}`;
 }

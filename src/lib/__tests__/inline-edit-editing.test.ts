@@ -15,7 +15,7 @@
 
 import { describe, it } from 'node:test';
 import assert from 'node:assert/strict';
-import { resumeHref, showResumeChip } from '../inline-edit/guard';
+import { isPaused, pauseHref, resumeHref, showResumeChip } from '../inline-edit/guard';
 import { EMPTY_FIELD_MESSAGE, enterAction, isEmptyValue, pasteInsert } from '../inline-edit/sanitize';
 
 const PLAIN = 'Growth for B2B SaaS';
@@ -138,5 +138,50 @@ describe('isEmptyValue', () => {
 
   it('has one line, and it is the one the publish would have said later', () => {
     assert.equal(EMPTY_FIELD_MESSAGE, 'A field cannot be left empty');
+  });
+});
+
+describe('isPaused', () => {
+  it('sees the mark "View site" leaves behind', () => {
+    assert.equal(isPaused('lf-paused=1'), true);
+    assert.equal(isPaused('a=b; lf-paused=1; c=d'), true);
+    assert.equal(isPaused(' lf-paused=1 ; other=2'), true);
+  });
+
+  it('says nothing for a browser that never paused', () => {
+    // The whole rule the chip depends on: no mark, no chip, so an anonymous
+    // visitor gets the page a site without the editor would serve.
+    assert.equal(isPaused(''), false);
+    assert.equal(isPaused(null), false);
+    assert.equal(isPaused(undefined), false);
+    assert.equal(isPaused('lf_edit_session=abc; theme=dark'), false);
+  });
+
+  it('matches a whole cookie name, never a substring of one', () => {
+    // `not-lf-paused=1` and `lf-paused-until=1` are other people's cookies.
+    assert.equal(isPaused('not-lf-paused=1'), false);
+    assert.equal(isPaused('lf-paused-until=1'), false);
+    assert.equal(isPaused('lf-paused=0'), false);
+  });
+});
+
+describe('pauseHref', () => {
+  it('sends "View site" back to the page the client is looking at', () => {
+    assert.equal(pauseHref('/articles'), '/api/lf-edit/pause?next=%2Farticles');
+  });
+
+  it('refuses a target that is not a path on this site', () => {
+    // Same rule as resume: an open redirect out of the editor would be a way to
+    // send a signed-in client somewhere else with one link.
+    assert.equal(pauseHref('//evil.example.com'), '/api/lf-edit/pause?next=%2F');
+    assert.equal(pauseHref('https://evil.example.com'), '/api/lf-edit/pause?next=%2F');
+  });
+});
+
+describe('showResumeChip, once the client has paused on purpose', () => {
+  it('stands down so two chips never appear at once', () => {
+    // Paused means EditChip is offering the way back from the browser.
+    assert.equal(showResumeChip('arnel@loudface.co', false, true), false);
+    assert.equal(showResumeChip('arnel@loudface.co', false, false), true);
   });
 });
