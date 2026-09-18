@@ -1,0 +1,36 @@
+{
+  "slug": "genie-teacher-organic-growth",
+  "note": "Genie Teacher, public client. Front-left: the homepage. Back-right: the OSSLT guide, the hub page with the most Google impressions (90 days to 15 Sep 2026). Card: the headline Google figure from the 18 Sep 2026 refresh.",
+  "theme": {
+    "background": "linear-gradient(140deg, #2f4fd0 0%, #3d63e0 50%, #5b7df0 100%)",
+    "bloom": "radial-gradient(1100px 780px at 14% 26%, rgba(255,255,255,.16), transparent 68%), radial-gradient(900px 700px at 92% 88%, rgba(30,50,160,.35), transparent 70%)",
+    "cardBg": "#f8f9ff",
+    "cardValue": "#2f4fd0",
+    "cardMuted": "rgba(15,23,42,.52)",
+    "cardRule": "rgba(47,79,208,.22)"
+  },
+  "panels": [
+    {
+      "url": "https://genieteacher.com/blogs/osslt-explained",
+      "chrome": "genieteacher.com/blogs/osslt-explained",
+      "scrollTo": 260,
+      "clipHeight": 760,
+      "style": { "left": 640, "top": 50, "width": 900, "z": 1 }
+    },
+    {
+      "url": "https://genieteacher.com/",
+      "chrome": "genieteacher.com",
+      "clipHeight": 720,
+      "style": { "left": -40, "top": 330, "width": 1000, "z": 2 }
+    }
+  ],
+  "card": {
+    "label": "Google impressions per day",
+    "value": "150×",
+    "valueSize": 96,
+    "caption": "May 2026 average → 1–15 Sep 2026,\nGoogle Search Console",
+    "right": 62,
+    "bottom": 92,
+    "width": 430
+  }
+}
