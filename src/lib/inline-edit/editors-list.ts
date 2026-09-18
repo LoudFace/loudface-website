@@ -141,17 +141,16 @@ export function serializeEditors(list: EditorList): string {
 }
 
 /** How long a sign-in link lasts, in minutes. */
-export const SIGN_IN_MINUTES = 15;
+export const SIGN_IN_MINUTES = 12 * 60;
 export const INVITE_LINK_MINUTES = 12 * 60;
 /** An invite counts as fresh for this long after it was committed. */
 export const FRESH_INVITE_MINUTES = 15;
 
 /**
- * The first link after an invite lasts 12 hours (Arnel, 2026-09-18: "Can we
- * make it a 12-hour invite?"); a person asking for a link at /edit later gets
- * the everyday 15 minutes. "Fresh" is read off the invite's own timestamp in
- * the editor file, so nothing has to be passed between the team app and the
- * site: the address was added a moment ago, therefore this is the invitation.
+ * Every link lasts 12 hours (Arnel, 2026-09-18: "when an invite is sent to them, or a
+ * validation link, all of these things need to be 12-hour ones. Plain and simple.").
+ * A busy client opens the email when they get to it. The invitation differs only in
+ * its wording, which names who invited them.
  */
 export function freshInvite(editors: Editor[], email: string, now = new Date()): Editor | null {
   const wanted = normalizeEmail(email);

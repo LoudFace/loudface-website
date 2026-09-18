@@ -35,7 +35,7 @@ export async function sendSignInLink(email: string, origin: string): Promise<Sig
   const subject = invite ? `You can now edit ${host}` : 'Your link to edit the site';
   const text = invite
     ? `${invite.addedBy || 'LoudFace'} invited you to edit ${host}.\n\nOpen this link to start. It lasts 12 hours. You can change text, pictures and links on the page and press Publish; the site shows you when the change is live.\n\n${link}\n\nLater, type your email at https://${host}/edit for a new link any time.\n`
-    : `Open this link to edit the site. It expires in 15 minutes.\n\n${link}\n`;
+    : `Open this link to edit the site. It lasts 12 hours.\n\n${link}\n`;
   const key = process.env.RESEND_API_KEY;
   const from = process.env.LF_EDIT_FROM;
   if (!key || !from) {

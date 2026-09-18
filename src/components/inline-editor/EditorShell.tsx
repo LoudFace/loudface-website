@@ -268,7 +268,7 @@ export function EditorShell(props: EditorShellProps) {
       setInviteEmail('');
       setAccessNote(
         result.mailed
-          ? `Invitation sent to ${email}. The link in it lasts 15 minutes; they can ask for a new one at /edit any time.`
+          ? `Invitation sent to ${email}. The link in it lasts 12 hours; they can ask for a new one at /edit any time.`
           : `${email} now has access, but the invitation email could not be sent. Ask them to open /edit and request a link.`,
       );
     } catch {

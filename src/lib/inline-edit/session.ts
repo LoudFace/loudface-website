@@ -6,7 +6,7 @@ import 'server-only';
  * A client signs in with an email address that has access to this site: one of
  * ours from `LF_EDITOR_EMAILS`, or somebody they invited from the Editors panel
  * (`editors.ts`, `src/data/editors.json`).
- * They get a link that works once and lasts fifteen minutes; clicking it leaves
+ * They get a link that works once and lasts 12 hours; clicking it leaves
  * them with a session cookie and Draft Mode on. No password, no GitHub account,
  * no CMS seat.
  *

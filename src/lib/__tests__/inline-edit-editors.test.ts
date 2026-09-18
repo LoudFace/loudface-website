@@ -255,10 +255,11 @@ describe('freshInvite', () => {
     assert.equal(signInMinutesFor(invite), INVITE_LINK_MINUTES);
     assert.equal(INVITE_LINK_MINUTES, 720);
   });
-  it('an address added yesterday, or unknown, gets the everyday 15 minutes', () => {
+  it('an address added yesterday, or unknown, still gets a 12-hour link, without the invitation wording', () => {
     assert.equal(freshInvite(editors, 'old@client.com', now), null);
     assert.equal(freshInvite(editors, 'nobody@client.com', now), null);
     assert.equal(signInMinutesFor(null), SIGN_IN_MINUTES);
+    assert.equal(SIGN_IN_MINUTES, 720);
   });
   it('a timestamp in the future or unreadable is not fresh', () => {
     assert.equal(freshInvite([{ email: 'a@b.co', addedBy: '', addedAt: '2026-09-18T12:30:00Z' }], 'a@b.co', now), null);

@@ -52,7 +52,7 @@ export default async function EditSignInPage({
           <>
             <p style={{ margin: 0, color: '#52616d' }}>
               If that address can edit this site, a sign-in link is on its way. It expires in
-              fifteen minutes.
+              12 hours.
             </p>
             {link && process.env.NODE_ENV !== 'production' && (
               <a href={link} style={{ ...primary, marginTop: 16 }}>
