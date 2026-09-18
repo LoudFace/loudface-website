@@ -15,7 +15,7 @@
 
 import { describe, it } from 'node:test';
 import assert from 'node:assert/strict';
-import { isPublishSummary, revertedShas, undoneSummary } from '../inline-edit/publish-history';
+import { isPublishSummary, landedRecently, revertedShas, undoneSummary } from '../inline-edit/publish-history';
 
 /** A publish, its undo, and the undo of that undo — the three git really writes. */
 const PUBLISH = 'a'.repeat(40);
@@ -83,5 +83,63 @@ describe('isPublishSummary', () => {
   it('leaves out a commit this editor did not make', () => {
     assert.equal(isPublishSummary('Editors: added sam@example.com'), false);
     assert.equal(isPublishSummary('fix: the hero grid on mobile'), false);
+  });
+});
+
+/**
+ * Did a publish whose answer never arrived actually land?
+ *
+ * A commit can be made and the response lost — a dropped connection, a function
+ * that outlived its request. The editor then reported "could not reach the
+ * site" over words that were already on the repository, and a client who
+ * pressed Publish again made a second commit of the same change.
+ */
+describe('landedRecently', () => {
+  const NOW = Date.parse('2026-09-18T12:00:00.000Z');
+  const row = (over: Partial<{ date: string; editor: string; fields: string[] }> = {}) => ({
+    date: '2026-09-18T11:59:30.000Z',
+    editor: 'client@example.com',
+    fields: ['about:hero.title', 'about:hero.blurb'],
+    ...over,
+  });
+
+  it('accepts the newest row when it is this person, just now, with these fields', () => {
+    assert.equal(landedRecently([row()], 'client@example.com', ['about:hero.title'], NOW), true);
+  });
+
+  it('compares addresses the way every other part of the editor does', () => {
+    assert.equal(landedRecently([row()], 'Client@Example.com ', ['about:hero.title'], NOW), true);
+  });
+
+  it('refuses a row somebody else made', () => {
+    assert.equal(landedRecently([row()], 'someone@else.com', ['about:hero.title'], NOW), false);
+  });
+
+  it('refuses a row from before this sitting', () => {
+    const old = row({ date: '2026-09-18T11:50:00.000Z' });
+    assert.equal(landedRecently([old], 'client@example.com', ['about:hero.title'], NOW), false);
+  });
+
+  it('refuses a row that does not cover every field that was sent', () => {
+    // Half the publish landing is not the publish landing: the rest stays staged.
+    assert.equal(
+      landedRecently([row()], 'client@example.com', ['about:hero.title', 'about:cta.label'], NOW),
+      false,
+    );
+  });
+
+  it('refuses an empty history, an empty list of fields and an unreadable date', () => {
+    assert.equal(landedRecently([], 'client@example.com', ['about:hero.title'], NOW), false);
+    assert.equal(landedRecently([row()], 'client@example.com', [], NOW), false);
+    assert.equal(landedRecently([row({ date: 'never' })], 'client@example.com', ['about:hero.title'], NOW), false);
+  });
+
+  it('only ever looks at the newest row', () => {
+    // An older publish of the same fields is not proof that this one landed.
+    const older = row({ date: '2026-09-18T11:40:00.000Z' });
+    assert.equal(
+      landedRecently([row({ editor: 'someone@else.com' }), older], 'client@example.com', ['about:hero.title'], NOW),
+      false,
+    );
   });
 });

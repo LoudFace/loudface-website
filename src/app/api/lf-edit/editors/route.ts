@@ -7,7 +7,10 @@
  * neither can be undone there as if it were a change to the site's words.
  *
  * Owners (`LF_EDITOR_EMAILS`) are LoudFace. They are not in the file, cannot be
- * invited twice and cannot be removed from the site.
+ * invited twice and cannot be removed from the site. They are also the only
+ * people who may change the list: an invited editor could otherwise invite
+ * anybody, or remove the colleague who invited them, and the site's owner would
+ * find out from the commit log.
  *
  * Removing somebody stops them signing in again. It does not end a session they
  * already hold: sessions are signed, not stored, so there is nothing to revoke.
@@ -30,6 +33,12 @@ import {
 } from '@/lib/inline-edit/editors-list';
 import { sendSignInLink } from '@/lib/inline-edit/signin-mail';
 import { headers } from 'next/headers';
+
+/** An invite or a removal is a commit through the GitHub API; give it room. */
+export const maxDuration = 60;
+
+/** What an invited editor is told when they try to change who edits the site. */
+const OWNERS_ONLY = 'Only a LoudFace owner can change who edits this site';
 
 const INVITE_WINDOW_MS = 60 * 60_000;
 const INVITES_PER_WINDOW = 10;
@@ -63,12 +72,15 @@ async function panel(editor: string): Promise<{
   owners: { email: string }[];
   editors: Editor[];
   you: string;
+  /** Whether the person reading the panel may change the list at all. */
+  owner: boolean;
 }> {
   const { list } = await loadEditors();
   return {
     owners: owners().map((email) => ({ email })),
     editors: list.editors,
     you: normalizeEmail(editor),
+    owner: isOwner(owners(), editor),
   };
 }
 
@@ -95,6 +107,8 @@ export async function POST(request: Request) {
 
   const editor = await currentEditor();
   if (!editor) return Response.json({ error: 'Sign in first' }, { status: 401 });
+
+  if (!isOwner(owners(), editor)) return Response.json({ error: OWNERS_ONLY }, { status: 403 });
 
   const body = (await request.json().catch(() => ({}))) as { email?: unknown };
   const email = typeof body.email === 'string' ? normalizeEmail(body.email) : '';
@@ -138,6 +152,8 @@ export async function DELETE(request: Request) {
 
   const editor = await currentEditor();
   if (!editor) return Response.json({ error: 'Sign in first' }, { status: 401 });
+
+  if (!isOwner(owners(), editor)) return Response.json({ error: OWNERS_ONLY }, { status: 403 });
 
   const body = (await request.json().catch(() => ({}))) as { email?: unknown };
   const email = typeof body.email === 'string' ? normalizeEmail(body.email) : '';

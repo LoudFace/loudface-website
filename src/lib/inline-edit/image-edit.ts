@@ -21,11 +21,18 @@
  * encoded as `%3D` inside the `url` parameter. `realImageSource` undoes it.
  */
 
-/** The largest file an editor may put on a page. Bigger than this is a photo straight off a camera. */
-export const MAX_IMAGE_BYTES = 4 * 1024 * 1024;
+/**
+ * The largest file an editor may put on a page.
+ *
+ * Under Vercel's own ceiling: a serverless function refuses a request body over
+ * 4.5 MB before our code runs, and form-data encoding adds to the file's size,
+ * so a 4 MB cap could be refused by the platform with an error nobody here
+ * wrote. Three leaves room for the envelope and is still a large photograph.
+ */
+export const MAX_IMAGE_BYTES = 3 * 1024 * 1024;
 
 /** The plain message for a file over the cap. Identical in the browser and on the server. */
-export const TOO_BIG_MESSAGE = 'That image is over 4 MB; export it smaller and try again';
+export const TOO_BIG_MESSAGE = 'That image is over 3 MB; export it smaller and try again';
 
 /** The plain message for anything whose first bytes are not one of the four formats we accept. */
 export const NOT_AN_IMAGE_MESSAGE =
@@ -205,6 +212,20 @@ export function slugForUpload(name: string): string {
 export function uploadPathFor(name: string, sha1: string, ext: string, now = new Date()): string {
   const month = `${now.getUTCFullYear()}-${String(now.getUTCMonth() + 1).padStart(2, '0')}`;
   return `${UPLOAD_DIR}/${month}/${slugForUpload(name)}-${sha1.slice(0, 8).toLowerCase()}.${ext}`;
+}
+
+/**
+ * The file already in the repository holding these exact bytes, or null.
+ *
+ * The name carries eight characters of the file's own sha1, so the same picture
+ * uploaded again lands on the same name — but under the month it was uploaded
+ * in, so re-uploading it in October used to add a second copy of the same bytes
+ * under `2026-10/`. The repository is a git history: every copy is kept for
+ * ever. This looks for the hash in what is already there and reuses that path.
+ */
+export function existingUploadPath(paths: string[], sha1: string, ext: string): string | null {
+  const tail = `-${sha1.slice(0, 8).toLowerCase()}.${ext}`;
+  return paths.find((path) => path.startsWith(`${UPLOAD_DIR}/`) && path.endsWith(tail)) ?? null;
 }
 
 /** The address a page uses for a file committed at that repository path. */

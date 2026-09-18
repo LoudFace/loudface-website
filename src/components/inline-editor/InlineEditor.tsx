@@ -30,6 +30,8 @@ import {
   type LinkCase,
 } from '../../lib/inline-edit/link-edit';
 import { ADDRESS } from '../../lib/inline-edit/mark-tree';
+import { landedRecently } from '../../lib/inline-edit/publish-history';
+import { DRAFT_KEPT_NOTE } from '../../lib/inline-edit/sanity-rules';
 import { EditorShell, type ShellStatus } from './EditorShell';
 import {
   MAX_IMAGE_BYTES,
@@ -422,6 +424,47 @@ const formatSeconds = (s: number) => `${Math.floor(s / 60)}:${String(s % 60).pad
 
 const UNREACHABLE = 'Could not reach the site, try again';
 
+/** What a client is told when the eight hours ran out mid-edit. */
+const SESSION_ENDED = 'Your session ended. Sign in again; your edits are kept on this device.';
+
+/** What a Sanity publish says when the pages could not be refreshed for it. */
+const SLOW_REFRESH = 'Saved. The page may take up to a minute to refresh.';
+
+// ---------------------------------------------------------------------------
+// Edits kept across a session that ended
+// ---------------------------------------------------------------------------
+
+/** One staged text edit, as it survives a sign-in. Pictures are not kept: a
+ *  chosen file cannot be written down and read back. */
+type KeptEdit = { id: string; value: string; label: string };
+
+/** Per page, per browser tab: a client with two pages open keeps both. */
+const keptKey = () => `lf-edit:staged:${window.location.pathname}`;
+
+function keepStaged(edits: KeptEdit[]): void {
+  try {
+    if (edits.length) window.sessionStorage.setItem(keptKey(), JSON.stringify(edits));
+  } catch {
+    /* private window, or storage full: the edits are simply not kept */
+  }
+}
+
+/** Whatever was kept for this page, taken out: restoring it twice would be wrong. */
+function takeStaged(): KeptEdit[] {
+  try {
+    const raw = window.sessionStorage.getItem(keptKey());
+    window.sessionStorage.removeItem(keptKey());
+    const parsed = raw ? (JSON.parse(raw) as unknown) : [];
+    if (!Array.isArray(parsed)) return [];
+    return parsed.filter(
+      (entry): entry is KeptEdit =>
+        typeof (entry as KeptEdit)?.id === 'string' && typeof (entry as KeptEdit)?.value === 'string',
+    );
+  } catch {
+    return [];
+  }
+}
+
 export function InlineEditor({ children }: { children?: React.ReactNode }) {
   const [changes, setChanges] = useState<Record<string, Change>>({});
   const [status, setStatus] = useState<Status>({ kind: 'idle' });
@@ -750,6 +793,37 @@ export function InlineEditor({ children }: { children?: React.ReactNode }) {
     return () => observer.disconnect();
   }, [record, unstage, openPicker, stageBody]);
 
+  /**
+   * Put back edits from a session that ended before they were published.
+   *
+   * A session lasts eight hours and a client who is interrupted comes back to a
+   * Publish that answers 401. The words were kept in this tab (see `keepStaged`)
+   * and are re-applied the first time this page has something editable on it —
+   * which is after discovery has run, hence the wait on `count`.
+   */
+  const restoredKept = useRef(false);
+  useEffect(() => {
+    if (restoredKept.current || !count) return;
+    restoredKept.current = true;
+    const kept = takeStaged();
+    if (!kept.length) return;
+
+    let put = 0;
+    for (const edit of kept) {
+      const el = document.querySelector<HTMLElement>(`[data-lf-id="${CSS.escape(edit.id)}"]`);
+      // Text only. An image was never kept, and an article body is a list of
+      // sentence replacements against a snapshot this page no longer has.
+      if (!el || el.dataset.lfType !== 'text') continue;
+      if (!originals.current.has(edit.id)) originals.current.set(edit.id, el.innerHTML);
+      el.innerHTML = edit.value;
+      record(edit.id, edit.value, edit.label || strip(el.textContent ?? '').slice(0, 42));
+      put += 1;
+    }
+    if (put) {
+      setStatus({ kind: 'idle', message: `${put} edit${put === 1 ? '' : 's'} restored from before your session ended.` });
+    }
+  }, [count, record]);
+
   // "Show me what I can edit" — the honest answer to a page where most copy is
   // still written into the component rather than served from the content layer.
   useEffect(() => {
@@ -853,6 +927,36 @@ export function InlineEditor({ children }: { children?: React.ReactNode }) {
    * half-done; if a picture then fails, everything already saved is unstaged and
    * the bar names the picture that did not go.
    */
+  /**
+   * What the page rendered for one field, so the server can refuse a publish
+   * over somebody else's newer edit. An article body is left out: its edit is a
+   * list of sentence replacements, which the server checks against the stored
+   * HTML sentence by sentence already.
+   */
+  function expectedFor(id: string): string | undefined {
+    const el = document.querySelector<HTMLElement>(`[data-lf-id="${CSS.escape(id)}"]`);
+    if (el?.dataset.lfType === 'html') return undefined;
+    const raw = originals.current.get(id);
+    return raw === undefined ? undefined : strip(raw);
+  }
+
+  /**
+   * Did a publish whose answer never arrived actually land?
+   *
+   * Asked of History, once, and only after the request itself failed. A commit
+   * can be made and the response lost; saying "could not reach the site" then
+   * had clients publish the same words twice.
+   */
+  async function publishLanded(ids: string[]): Promise<boolean> {
+    try {
+      const response = await fetch('/api/lf-edit/history');
+      const result = (await response.json().catch(() => ({}))) as { publishes?: Publish[]; you?: string };
+      return landedRecently(result.publishes ?? [], result.you ?? '', ids, Date.now());
+    } catch {
+      return false;
+    }
+  }
+
   async function save() {
     if (!pending.length) return;
     setStatus({ kind: 'saving' });
@@ -860,7 +964,7 @@ export function InlineEditor({ children }: { children?: React.ReactNode }) {
 
     const images = pending.filter((change) => change.file);
     const staged = pending.filter((change) => !change.file);
-    const sent = staged.map(({ id, value }) => ({ id, value }));
+    const sent = staged.map(({ id, value }) => ({ id, value, expected: expectedFor(id) }));
     // An address is never visible text, so it is left out of the words the
     // light looks for and out of the words it expects to have disappeared;
     // what it looks for instead is the `href` itself, in the page's HTML.
@@ -883,6 +987,9 @@ export function InlineEditor({ children }: { children?: React.ReactNode }) {
     let cmsImages = 0;
     let store: string | undefined;
     const imageTokens: string[] = [];
+    /** Extra sentences the bar adds after "N changes saved". */
+    const notes: string[] = [];
+    let refreshed = true;
 
     if (sent.length) {
       let response: Response;
@@ -893,8 +1000,36 @@ export function InlineEditor({ children }: { children?: React.ReactNode }) {
           body: JSON.stringify({ changes: sent }),
         });
       } catch {
-        // The edits stay staged: the bar must never sit on "Saving…" forever.
-        setStatus({ kind: 'error', message: UNREACHABLE });
+        // The request failed, which is not the same as the publish failing. Ask
+        // History whether the commit is there; if it is not, the edits stay
+        // staged and the bar says so rather than sitting on "Saving…" forever.
+        if (!(await publishLanded(sent.map((change) => change.id)))) {
+          setStatus({ kind: 'error', message: UNREACHABLE });
+          return;
+        }
+        const saved = `${sent.length} change${sent.length === 1 ? '' : 's'} saved`;
+        setChanges({});
+        originals.current.clear();
+        bodySnapshots.current.clear();
+        bodyLinks.current.clear();
+        bodyProofs.current.clear();
+        setLinkPanel(null);
+        watchUntilLive(
+          needlesFor(visible),
+          `${saved} — committed, the site is building (usually 2 to 4 minutes)`,
+          saved,
+          gone,
+          markup,
+          links,
+          linksAbsent,
+        );
+        return;
+      }
+      // The session ran out. Keep the words in this tab so signing in again
+      // brings them back instead of losing an afternoon's typing.
+      if (response.status === 401) {
+        keepStaged(staged.map(({ id, value, label }) => ({ id, value, label })));
+        setStatus({ kind: 'error', message: SESSION_ENDED });
         return;
       }
       const result = await response.json().catch(() => ({ error: response.statusText }));
@@ -904,10 +1039,12 @@ export function InlineEditor({ children }: { children?: React.ReactNode }) {
         setStatus({ kind: 'error', message: result?.error ?? 'Publish failed' });
         return;
       }
-      const sanity: { id: string; token: string; after?: string }[] = result.sanity ?? [];
+      const sanity: { id: string; token: string; after?: string; draftKept?: boolean }[] = result.sanity ?? [];
       sanityCount = sanity.length;
       contentCount = Math.max(0, (result.published ?? 0) - sanityCount);
       store = result.mode;
+      refreshed = result.revalidated !== false;
+      if (sanity.some((change) => change.draftKept === true)) notes.push(DRAFT_KEPT_NOTE);
       setSanityUndo(sanityCount ? sanity.map(({ id, token }) => ({ id, token })) : null);
       needles.push(...needlesFor(visible));
       saveOrder.push(...sent.map((change) => change.id));
@@ -961,13 +1098,22 @@ export function InlineEditor({ children }: { children?: React.ReactNode }) {
     if (words) parts.push(`${words} change${words === 1 ? '' : 's'}`);
     if (pictures) parts.push(`${pictures} image${pictures === 1 ? '' : 's'}`);
     const saved = `${parts.join(' and ')} saved`;
+    const tail = notes.length ? ` ${notes.join(' ')}` : '';
 
     // Development, repository only: the commit is made in the working copy and
     // the dev server re-reads it, so a reload shows it at once.
     const building = (contentCount || repoImages) && store === 'github';
     if (!building && !sanityCount && !cmsImages) {
-      setStatus({ kind: 'saved', message: `${saved} — committed` });
+      setStatus({ kind: 'saved', message: `${saved} — committed${tail}` });
       setTimeout(() => window.location.reload(), 900);
+      return;
+    }
+
+    // The words are in the CMS but the pages could not be told to refresh. That
+    // is a page a minute behind, not a publish that failed, and watching for
+    // words that are not there yet would only end in a red light.
+    if (!refreshed && !contentCount && !repoImages) {
+      setStatus({ kind: 'saved', message: `${SLOW_REFRESH}${tail}` });
       return;
     }
 
@@ -977,7 +1123,7 @@ export function InlineEditor({ children }: { children?: React.ReactNode }) {
       : pictures
         ? `${saved} — refreshing the public page`
         : `${saved} to the CMS — refreshing the public page`;
-    watchUntilLive(needles, waiting, saved, gone, markup, links, linksAbsent);
+    watchUntilLive(needles, `${waiting}${tail}`, `${saved}${tail}`, gone, markup, links, linksAbsent);
   }
 
   const unstageAll = (ids: string[]) =>
@@ -1362,7 +1508,7 @@ export function InlineEditor({ children }: { children?: React.ReactNode }) {
               <button style={{ ...pillBtn, ...pillPrimary, marginTop: 4 }} onClick={() => openPicker(assetTarget.id)}>
                 Choose a picture…
               </button>
-              <p style={note}>PNG, JPEG, WebP or GIF, up to 4 MB. It goes onto the site when you press Publish.</p>
+              <p style={note}>PNG, JPEG, WebP or GIF, up to 3 MB. It goes onto the site when you press Publish.</p>
 
               {assetTarget.content && !assetTarget.address && (
                 <button style={linkButton} onClick={() => setAssetTarget({ ...assetTarget, address: true })}>
@@ -1426,6 +1572,11 @@ function shellStatus(status: Status, unsaved: number): ShellStatus {
     return { tone: 'ok', text: status.seconds ? `Live · took ${seconds}` : 'Live', title: status.message };
   }
   if (status.kind === 'saved') return { tone: 'busy', text: 'Saved', title: status.message };
+  // Nothing is happening but there is something to say — edits put back after a
+  // session ended. It outranks the count, which the client can see anyway.
+  if (status.kind === 'idle' && status.message) {
+    return { tone: 'ok', text: status.message, title: status.message };
+  }
   if (unsaved) return { tone: 'busy', text: `${unsaved} unsaved` };
   return { tone: 'ok', text: 'Live' };
 }

@@ -18,17 +18,20 @@ import 'server-only';
  * sending the old text back through the browser (see `route.ts`).
  */
 import { getEditorWriteClient } from '../sanity.client';
-import { cleanValue } from './sanitize';
+import { cleanValue, isStale, staleMessage } from './sanitize';
 import { applyLinkReplacements, applyTextReplacements, parseBodyEdit } from './body-edit';
 import { pathsFor } from '../revalidate-paths';
+import { documentRefusal, draftDecision, shouldDeleteAsset } from './sanity-rules';
 import { findAssetRefs, SANITY_ASSET_ID, sharedAssetRefusal } from './image-edit';
 import type { ImageUndoEntry } from './session';
 
 /**
  * One value to write. `exact` skips cleaning and is set by the server alone,
  * after it has verified its own undo token — never from a request body.
+ * `expected` is what the page rendered, so a field somebody else changed in the
+ * meantime is refused rather than overwritten.
  */
-export type SanityChange = { id: string; value: string; exact?: boolean };
+export type SanityChange = { id: string; value: string; exact?: boolean; expected?: string };
 export type SanityApplied = {
   id: string;
   before: string;
@@ -37,6 +40,8 @@ export type SanityApplied = {
   type: string;
   /** The whole-article body field, which is HTML megabytes rather than a sentence. */
   body: boolean;
+  /** A Studio draft of this field said something else and was not touched. */
+  draftKept: boolean;
 };
 
 const DOC_ID = /^[A-Za-z0-9_.-]+$/;
@@ -83,13 +88,19 @@ function parseCompositeId(id: string): { documentId: string; path: string } {
 const publishedIdOf = (documentId: string) =>
   documentId.startsWith('drafts.') ? documentId.slice('drafts.'.length) : documentId;
 
+type DocRead = { exists: boolean; value: unknown; type?: string; slug?: string };
+
+/** One document's field value, its type and its slug: one round trip, not three. */
 async function readDoc(
   client: ReturnType<typeof getEditorWriteClient>,
   id: string,
   path: string,
-): Promise<{ exists: boolean; value: unknown }> {
-  const result = await client.fetch<{ value: unknown } | null>(`*[_id == $id][0]{ "value": ${path} }`, { id });
-  return { exists: result !== null, value: result?.value };
+): Promise<DocRead> {
+  const result = await client.fetch<{ value: unknown; _type?: string; slug?: string } | null>(
+    `*[_id == $id][0]{ _type, "slug": slug.current, "value": ${path} }`,
+    { id },
+  );
+  return { exists: result !== null, value: result?.value, type: result?._type, slug: result?.slug };
 }
 
 /**
@@ -98,11 +109,14 @@ async function readDoc(
  * one of its own signed undo tokens, so nothing a client typed ever skips
  * `cleanValue` on its way into a field the blog renders as HTML.
  */
-export async function publishSanity(changes: SanityChange[], editor: string): Promise<SanityApplied[]> {
+export async function publishSanity(
+  changes: SanityChange[],
+  editor: string,
+): Promise<{ applied: SanityApplied[]; revalidated: boolean }> {
   void editor; // Sanity's own audit trail records the API token, not a per-editor identity yet.
   const client = getEditorWriteClient();
   const applied: SanityApplied[] = [];
-  const revalidated = new Set<string>();
+  const routes = new Set<string>();
 
   for (const change of changes) {
     const { documentId, path } = parseCompositeId(change.id);
@@ -113,14 +127,26 @@ export async function publishSanity(changes: SanityChange[], editor: string): Pr
       readDoc(client, publishedId, path),
       readDoc(client, draftId, path),
     ]);
-    if (!published.exists && !draft.exists) throw new Error(`${publishedId}: document not found in Sanity`);
+    // The published document is the one the site renders and the only one this
+    // route writes. A document that exists as a draft alone has never been on
+    // the public page, so there is nothing here to edit from it.
+    if (!published.exists) {
+      throw new Error(`${publishedId}: this page has not been published in Studio yet`);
+    }
+    const refusal = documentRefusal(publishedId, published.type);
+    if (refusal) throw new Error(refusal);
+    if (typeof published.value !== 'string') {
+      throw new Error(`${path} on ${publishedId} is not a plain text field`);
+    }
 
-    // The draft is what the editor is actually looking at in Draft Mode; fall
-    // back to the published value only for a document with no draft.
-    const source = draft.exists ? draft : published;
-    if (typeof source.value !== 'string') throw new Error(`${path} on ${publishedId} is not a plain text field`);
+    // What the published document says NOW is the "before". Reading the draft
+    // instead used to promote an unfinished Studio edit the moment a client
+    // changed any word on the page.
+    const before = published.value;
+    if (change.exact !== true && !isBodyPath(path) && isStale(before, change.expected)) {
+      throw new Error(staleMessage(path));
+    }
 
-    const before = source.value;
     let after: string;
     if (change.exact === true) {
       after = change.value;
@@ -135,42 +161,55 @@ export async function publishSanity(changes: SanityChange[], editor: string): Pr
     }
     if (!after) throw new Error('A value cannot be emptied from the page');
 
+    const decision = draftDecision(draft.exists, draft.value, before);
     if (after !== before) {
-      const targets = [draft.exists ? draftId : null, published.exists ? publishedId : null].filter(
-        (id): id is string => Boolean(id),
-      );
-      await Promise.all(targets.map((id) => client.patch(id).set({ [path]: after }).commit({ autoGenerateArrayKeys: true })));
+      await client.patch(publishedId).set({ [path]: after }).commit({ autoGenerateArrayKeys: true });
+      if (decision === 'patch') {
+        await client.patch(draftId).set({ [path]: after }).commit({ autoGenerateArrayKeys: true });
+      }
     }
 
-    const meta = await client.fetch<{ _type?: string; slug?: string }>(
-      `*[_id == $id][0]{ _type, "slug": slug.current }`,
-      { id: published.exists ? publishedId : draftId },
-    );
-    const type = meta?._type ?? 'unknown';
-    const key = `${type}:${meta?.slug ?? ''}`;
-    revalidated.add(key);
-
-    applied.push({ id: change.id, before, after, documentId: publishedId, type, body: isBodyPath(path) });
+    routes.add(`${published.type ?? 'unknown'}:${published.slug ?? ''}`);
+    applied.push({
+      id: change.id,
+      before,
+      after,
+      documentId: publishedId,
+      type: published.type ?? 'unknown',
+      body: isBodyPath(path),
+      draftKept: decision === 'keep',
+    });
   }
 
-  await revalidateDocuments(revalidated);
+  const revalidated = await revalidateDocuments(routes);
 
-  return applied;
+  return { applied, revalidated };
 }
 
 /**
  * Refresh every page a set of documents renders onto. `keys` are `type:slug`
  * pairs, the same shape the webhook's `pathsFor` takes, so a Sanity edit made
  * from the page and one made in Studio invalidate exactly the same routes.
+ *
+ * It never throws. The words are already in Sanity by the time this runs, so a
+ * refresh that fails is a page that catches up on its own within a minute — not
+ * a failed publish, and reporting it as one had clients pressing Publish again.
+ * Returns false in that case, and the editor says the page may be a minute late.
  */
-async function revalidateDocuments(keys: Set<string>): Promise<void> {
-  if (!keys.size) return;
-  const { revalidatePath } = await import('next/cache');
-  for (const key of keys) {
-    const separator = key.indexOf(':');
-    const type = key.slice(0, separator);
-    const slug = key.slice(separator + 1);
-    for (const path of pathsFor(type, slug || undefined)) revalidatePath(path);
+async function revalidateDocuments(keys: Set<string>): Promise<boolean> {
+  if (!keys.size) return true;
+  try {
+    const { revalidatePath } = await import('next/cache');
+    for (const key of keys) {
+      const separator = key.indexOf(':');
+      const type = key.slice(0, separator);
+      const slug = key.slice(separator + 1);
+      for (const path of pathsFor(type, slug || undefined)) revalidatePath(path);
+    }
+    return true;
+  } catch (error) {
+    console.error(`[inline edit] could not refresh the pages after a Sanity patch: ${String(error)}`);
+    return false;
   }
 }
 
@@ -222,8 +261,11 @@ const publishedOf = (id: string) => (id.startsWith('drafts.') ? id.slice('drafts
  * on the published document and on its draft where one exists, so the live site
  * and the Studio never disagree about which image this is.
  *
- * The old asset is left alone. Deleting it would break any document we did not
- * look at, and Sanity bills for storage, not for tidiness.
+ * A draft is only ever re-pointed where it still shows the same picture: the
+ * walk looks for `asset._ref === <the old asset>`, so a draft whose Studio
+ * editor has already chosen a different picture is left exactly as it is.
+ *
+ * The old asset goes only if nothing points at it any more — see below.
  */
 export async function replaceImageAsset(
   assetId: string,
@@ -275,7 +317,37 @@ export async function replaceImageAsset(
   }
 
   await revalidateDocuments(routes);
+  await removeUnusedAsset(client, assetId);
   return { newAssetId: asset._id, url: asset.url, replaced: previous.length, previous };
+}
+
+/**
+ * Delete the picture that was just replaced, if nothing points at it.
+ *
+ * Every replacement used to leave its old file in the project for ever, and a
+ * client who swaps the same hero picture weekly pays for all of them. The count
+ * covers drafts as well as published documents, so an unfinished Studio edit
+ * still showing the old picture keeps it. A failure here is logged and nothing
+ * more: the replacement itself has already worked, and tidying is not worth
+ * turning into an error a client reads.
+ *
+ * The cost, stated plainly: the in-session Undo for a replaced picture puts the
+ * old asset's reference back, and a reference to a deleted asset shows nothing.
+ * `LF_EDIT_KEEP_REPLACED_IMAGES=1` turns the deletion off for a site where that
+ * undo matters more than the storage.
+ */
+async function removeUnusedAsset(
+  client: ReturnType<typeof getEditorWriteClient>,
+  assetId: string,
+): Promise<void> {
+  if (process.env.LF_EDIT_KEEP_REPLACED_IMAGES === '1') return;
+  try {
+    const references = await client.fetch<number>(`count(*[references($assetId)])`, { assetId });
+    if (!shouldDeleteAsset(references)) return;
+    await client.delete(assetId);
+  } catch (error) {
+    console.error(`[inline edit] could not delete the replaced asset ${assetId}: ${String(error)}`);
+  }
 }
 
 /**

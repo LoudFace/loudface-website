@@ -6,6 +6,30 @@
  * (`src/lib/inline-edit/sanity-store.ts`, right after a patch), so both agree
  * on what a `blogPost`, `caseStudy`, etc. actually renders onto.
  */
+/**
+ * The document types this site renders, and therefore the only ones the inline
+ * editor may patch.
+ *
+ * Exactly the `case` labels of `pathsFor` below: a type that is not one of them
+ * falls through to the homepage purge, which means nobody knows where it is
+ * shown, so an editor clicking on the page is not what changed it. The test
+ * `inline-edit-sanity.test.ts` fails if the two lists drift apart.
+ */
+export const EDITABLE_TYPES = new Set([
+  'blogPost',
+  'research',
+  'caseStudy',
+  'teamMember',
+  'testimonial',
+  'client',
+  'blogFaq',
+  'seoPage',
+  'industry',
+  'serviceCategory',
+  'category',
+  'technology',
+]);
+
 export function pathsFor(type: string | undefined, slug: string | undefined): string[] {
   // Always invalidate the LLM indexes — they aggregate all content.
   const always = ['/llms.txt', '/llms-full.txt', '/sitemap.xml'];

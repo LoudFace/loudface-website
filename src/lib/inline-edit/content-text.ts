@@ -8,7 +8,7 @@
  * Values are replaced in the file's own text rather than by re-serialising the
  * document, so a copy change stays a one-line diff a human can review.
  */
-import { cleanValue } from './sanitize';
+import { cleanValue, isStale, staleMessage } from './sanitize';
 import { ADDRESS } from './mark-tree';
 import { ADDRESS_REFUSAL, isAddressKey, isSafeHref } from './link-edit';
 
@@ -63,12 +63,19 @@ export function readField(raw: string, id: string): string {
  * cleaned against what it replaces, so plain stays plain and rich keeps its links.
  * Pass `exact` to skip cleaning — only ever for a value this server signed itself
  * (an undo token), never for one that arrived in a request body.
+ *
+ * `expected` is the value the page rendered. When it is given and the file now
+ * holds something else, the whole publish is refused: two people editing the
+ * same sentence in one sitting used to mean the second Publish silently threw
+ * the first away. An undo skips the check, because it restores a value this
+ * server signed and has already checked against the commit it undoes.
  */
 export function applyToText(
   raw: string,
   id: string,
   value: string,
   exact = false,
+  expected?: string,
 ): { next: string; before: string; after: string } {
   const { file, segments, fieldPath } = parseId(id);
   const json = JSON.parse(raw);
@@ -77,6 +84,7 @@ export function applyToText(
   if (typeof target.parent[target.key] !== 'string') throw new Error('Only text values are editable');
 
   const before = target.parent[target.key] as string;
+  if (!exact && isStale(before, expected)) throw new Error(staleMessage(fieldPath));
   const after = exact ? value : cleanValue(value, before);
   if (!after) throw new Error('A value cannot be emptied from the page');
   if (after === before) return { next: raw, before, after };

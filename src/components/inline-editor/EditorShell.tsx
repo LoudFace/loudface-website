@@ -34,7 +34,8 @@ export type ShellPublish = {
   reverted: boolean;
 };
 type Invited = { email: string; addedBy: string; addedAt: string };
-type Access = { owners: { email: string }[]; editors: Invited[]; you: string };
+/** `owner` says whether the person reading the panel may change the list at all. */
+type Access = { owners: { email: string }[]; editors: Invited[]; you: string; owner: boolean };
 type Health = Record<string, unknown>;
 /** One route from the sitemap, as the Pages panel lists it. */
 type Route = { path: string; group: string };
@@ -176,6 +177,10 @@ export function EditorShell(props: EditorShellProps) {
   const { children, status, pendingCount, editableCount, showAll, onShowAll } = props;
   const [tab, setTab] = useState<Tab | null>(null);
   const [mobile, setMobile] = useState(false);
+  /** Discard asks first: the bar turns into the question, never a browser dialog. */
+  const [confirmDiscard, setConfirmDiscard] = useState(false);
+  /** The ⋯ menu on a phone, where Discard and Undo do not fit in the bar. */
+  const [overflow, setOverflow] = useState(false);
   const [access, setAccess] = useState<Access | null>(null);
   const [accessNote, setAccessNote] = useState('');
   const [inviteEmail, setInviteEmail] = useState('');
@@ -429,23 +434,85 @@ export function EditorShell(props: EditorShellProps) {
               </span>
             )}
             <span style={separator} />
-            {!mobile && (
-              <button style={{ ...btn, opacity: pendingCount ? 1 : 0.6 }} onClick={props.onDiscard} disabled={!pendingCount}>
-                Discard
-              </button>
+
+            {confirmDiscard ? (
+              <>
+                <span style={{ color: MUTE, whiteSpace: 'nowrap' }}>
+                  Throw away {pendingCount} unsaved change{pendingCount === 1 ? '' : 's'}?
+                </span>
+                <button
+                  style={{ ...btn, color: '#b42318', borderColor: '#f3c9c4' }}
+                  onClick={() => {
+                    setConfirmDiscard(false);
+                    props.onDiscard();
+                  }}
+                >
+                  Discard
+                </button>
+                <button style={{ ...btn, ...primaryBtn }} onClick={() => setConfirmDiscard(false)}>
+                  Keep
+                </button>
+              </>
+            ) : (
+              <>
+                {!mobile && (
+                  <button
+                    style={{ ...btn, opacity: pendingCount ? 1 : 0.6 }}
+                    onClick={() => setConfirmDiscard(true)}
+                    disabled={!pendingCount}
+                  >
+                    Discard
+                  </button>
+                )}
+                {!mobile && props.canUndo && (
+                  <button style={btn} onClick={props.onUndo}>
+                    Undo
+                  </button>
+                )}
+                {/* A phone has no room for three buttons, and hiding Discard and
+                    Undo left a client on a phone with no way to take an edit
+                    back. They live behind ⋯ instead. */}
+                {mobile && (pendingCount > 0 || props.canUndo) && (
+                  <span style={{ position: 'relative' }}>
+                    <button style={iconBtn} aria-label="More actions" onClick={() => setOverflow(!overflow)}>
+                      <Icon d="M5 12h.01M12 12h.01M19 12h.01" />
+                    </button>
+                    {overflow && (
+                      <span style={overflowMenu}>
+                        <button
+                          style={{ ...btn, border: 0, justifyContent: 'flex-start', opacity: pendingCount ? 1 : 0.6 }}
+                          disabled={!pendingCount}
+                          onClick={() => {
+                            setOverflow(false);
+                            setConfirmDiscard(true);
+                          }}
+                        >
+                          Discard
+                        </button>
+                        {props.canUndo && (
+                          <button
+                            style={{ ...btn, border: 0, justifyContent: 'flex-start' }}
+                            onClick={() => {
+                              setOverflow(false);
+                              props.onUndo();
+                            }}
+                          >
+                            Undo
+                          </button>
+                        )}
+                      </span>
+                    )}
+                  </span>
+                )}
+                <button
+                  style={{ ...btn, ...primaryBtn, opacity: pendingCount ? 1 : 0.65 }}
+                  onClick={props.onPublish}
+                  disabled={!pendingCount}
+                >
+                  Publish
+                </button>
+              </>
             )}
-            {!mobile && props.canUndo && (
-              <button style={btn} onClick={props.onUndo}>
-                Undo
-              </button>
-            )}
-            <button
-              style={{ ...btn, ...primaryBtn, opacity: pendingCount ? 1 : 0.65 }}
-              onClick={props.onPublish}
-              disabled={!pendingCount}
-            >
-              Publish
-            </button>
           </div>
         </header>
 
@@ -692,14 +759,23 @@ function Editors({
               {addedOn(person.addedAt)}
             </p>
           </div>
-          <button style={{ ...btn, color: '#b42318', borderColor: '#f3c9c4' }} onClick={() => onRemove(person.email)}>
-            Remove
-          </button>
+          {access.owner && (
+            <button style={{ ...btn, color: '#b42318', borderColor: '#f3c9c4' }} onClick={() => onRemove(person.email)}>
+              Remove
+            </button>
+          )}
         </div>
       ))}
 
       {access && !access.editors.length && <p style={{ ...quiet, marginTop: 10 }}>Nobody else has been invited yet.</p>}
 
+      {/* Only LoudFace changes who edits a site. An invited editor sees the list
+          and one line saying where to ask, rather than buttons that 403. */}
+      {access && !access.owner && (
+        <p style={{ ...quiet, marginTop: 14 }}>Ask LoudFace to add or remove editors.</p>
+      )}
+
+      {access?.owner && (
       <div style={{ display: 'flex', gap: 8, marginTop: 14 }}>
         <input
           type="email"
@@ -720,10 +796,13 @@ function Editors({
           {inviting ? 'Inviting…' : 'Invite'}
         </button>
       </div>
+      )}
 
       <p style={{ ...quiet, marginTop: 10, minHeight: 16 }}>
         {note ||
-          'An invitation is a sign-in link by email. Removing someone stops new sign-ins; a session they already have ends within 8 hours.'}
+          (access?.owner
+            ? 'An invitation is a sign-in link by email. Removing someone stops new sign-ins; a session they already have ends within 8 hours.'
+            : '')}
       </p>
     </>
   );
@@ -896,6 +975,22 @@ const crumb: React.CSSProperties = {
 };
 
 const separator: React.CSSProperties = { width: 1, height: 20, background: LINE, flexShrink: 0 };
+
+/** The ⋯ menu on a phone: Discard and Undo, under the button that opens them. */
+const overflowMenu: React.CSSProperties = {
+  position: 'absolute',
+  top: 34,
+  right: 0,
+  display: 'flex',
+  flexDirection: 'column',
+  minWidth: 132,
+  padding: 4,
+  borderRadius: 10,
+  background: '#fff',
+  border: `1px solid ${LINE}`,
+  boxShadow: '0 12px 30px rgba(20,33,43,.16)',
+  zIndex: 7,
+};
 
 const avatar: React.CSSProperties = {
   width: 26,

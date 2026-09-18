@@ -51,3 +51,39 @@ export function revertedShas(messages: string[]): Set<string> {
 export function undoneSummary(summary: string): string | null {
   return REVERT_SUMMARY.exec(summary)?.[1] ?? null;
 }
+
+/** One row of History, as much of it as the "did it land?" question needs. */
+export type LandedEntry = { date: string; editor: string; fields: string[] };
+
+/** How recent a publish has to be to be the one this browser just sent. */
+const LANDED_WINDOW_MS = 2 * 60_000;
+
+/**
+ * Did the publish this browser just sent actually land?
+ *
+ * A commit can succeed and the answer to it never arrive: a dropped connection,
+ * a function that outlived its request. The editor then said "could not reach
+ * the site" over a change that was already on the repository, and a client who
+ * pressed Publish again made a second commit of the same words.
+ *
+ * So a failed publish asks History instead of guessing. The newest row counts
+ * as this publish when the same person made it, within the last two minutes,
+ * and it names every field that was sent. Anything else is a real failure and
+ * the edits stay staged.
+ */
+export function landedRecently(
+  history: LandedEntry[],
+  editor: string,
+  ids: string[],
+  now: number,
+): boolean {
+  const newest = history[0];
+  if (!newest || !ids.length) return false;
+  if (newest.editor.trim().toLowerCase() !== editor.trim().toLowerCase()) return false;
+
+  const at = new Date(newest.date).getTime();
+  if (!Number.isFinite(at) || now - at > LANDED_WINDOW_MS || at - now > LANDED_WINDOW_MS) return false;
+
+  const covered = new Set(newest.fields);
+  return ids.every((id) => covered.has(id));
+}

@@ -112,6 +112,21 @@ export async function readFileAt(repo: Repo, path: string, ref: string): Promise
 }
 
 /**
+ * Every file under one folder at a commit, as repository paths.
+ *
+ * One recursive tree call rather than a walk per month folder. A repository too
+ * big for one response comes back truncated; that is reported as an empty list,
+ * and the caller falls back to writing the file it was going to write anyway.
+ */
+export async function listFilesUnder(repo: Repo, prefix: string, ref: string): Promise<string[]> {
+  const tree = await api<{ tree: { path: string; type: string }[]; truncated?: boolean }>(
+    `${base(repo)}/git/trees/${ref}?recursive=1`,
+  );
+  if (tree.truncated) return [];
+  return tree.tree.filter((entry) => entry.type === 'blob' && entry.path.startsWith(prefix)).map((entry) => entry.path);
+}
+
+/**
  * One file in a commit: text for a content file, base64 for an uploaded image.
  *
  * The blob API takes either, as long as the `encoding` field says which. Sending

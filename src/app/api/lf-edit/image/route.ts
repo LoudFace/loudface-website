@@ -19,17 +19,27 @@
 import { createHash } from 'node:crypto';
 import { currentEditor, sealImageUndo } from '@/lib/inline-edit/session';
 import { editorOffResponse } from '@/lib/inline-edit/guard';
-import { publish } from '@/lib/inline-edit/content-store';
+import { publish, uploadedFiles } from '@/lib/inline-edit/content-store';
 import { replaceImageAsset } from '@/lib/inline-edit/sanity-store';
 import {
   MAX_IMAGE_BYTES,
   NOT_AN_IMAGE_MESSAGE,
   TOO_BIG_MESSAGE,
+  existingUploadPath,
   parseImageEditId,
   publicPathFor,
   sniffImageType,
   uploadPathFor,
 } from '@/lib/inline-edit/image-edit';
+
+/**
+ * Reading the file, uploading it to Sanity or committing it over the GitHub
+ * API is several seconds of work. The default ten would cut a slow upload off
+ * halfway. Vercel's own limit on the request itself is 4.5 MB, which is why
+ * `MAX_IMAGE_BYTES` is three: a bigger file never reaches this code at all, and
+ * the error would come from the platform rather than from a sentence we wrote.
+ */
+export const maxDuration = 60;
 
 const bad = (message: string, status = 400) => Response.json({ error: message }, { status });
 
@@ -83,15 +93,22 @@ export async function POST(request: Request) {
   // unique, so the same picture uploaded twice reuses one file and a different
   // picture can never overwrite one a live page still points at.
   const sha1 = createHash('sha1').update(bytes).digest('hex');
-  const repositoryPath = uploadPathFor(name, sha1, kind.ext);
+  // The same picture may already be in the repository under an earlier month.
+  // Point at that file rather than committing a second copy of the same bytes:
+  // a git history keeps every blob for ever, and nothing else changes for the
+  // page, which gets the same address either way.
+  const already = existingUploadPath(await uploadedFiles(), sha1, kind.ext);
+  const repositoryPath = already ?? uploadPathFor(name, sha1, kind.ext);
   const publicPath = publicPathFor(repositoryPath);
 
   try {
     // No `exact` flag: a path is plain text, so it costs nothing to send it
     // through the same cleaner every other published value goes through.
-    const result = await publish([{ id: target.id, value: publicPath }], editor, [
-      { path: repositoryPath, base64: bytes.toString('base64') },
-    ]);
+    const result = await publish(
+      [{ id: target.id, value: publicPath }],
+      editor,
+      already ? [] : [{ path: repositoryPath, base64: bytes.toString('base64') }],
+    );
     return Response.json({ ok: true, mode: result.mode, path: publicPath, hash: result.hash });
   } catch (error) {
     return bad(error instanceof Error ? error.message : 'That image could not be published');

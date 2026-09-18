@@ -24,7 +24,7 @@ import 'server-only';
  * gave it. A later edit is never silently overwritten.
  */
 import { execFile } from 'node:child_process';
-import { mkdir, readFile, writeFile } from 'node:fs/promises';
+import { mkdir, readFile, readdir, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 import { promisify } from 'node:util';
 import { applyToText, parseId, readField } from './content-text';
@@ -36,6 +36,7 @@ import {
   commitsTouching,
   hasGitHubCredentials,
   headSha,
+  listFilesUnder,
   readFileAt,
   repoFromEnv,
   type CommitFile,
@@ -70,7 +71,7 @@ export { applyToText, readField } from './content-text';
  * One value to write. `exact` skips cleaning and is set by the server alone,
  * after it has verified its own undo token — never from a request body.
  */
-export type Change = { id: string; value: string; exact?: boolean };
+export type Change = { id: string; value: string; exact?: boolean; expected?: string };
 export type Applied = { id: string; file: string; path: string; before: string; after: string };
 /**
  * A file that rides along in the same commit as the content change that points
@@ -109,7 +110,7 @@ async function applyAll(
   for (const change of changes) {
     const { file, fieldPath } = parseId(change.id);
     const raw = texts.get(file) ?? (await read(file));
-    const result = applyToText(raw, change.id, change.value, change.exact === true);
+    const result = applyToText(raw, change.id, change.value, change.exact === true, change.expected);
     texts.set(file, result.next);
     applied.push({ id: change.id, file, path: fieldPath, before: result.before, after: result.after });
   }
@@ -274,6 +275,17 @@ const localStore = {
     return git(['rev-parse', 'HEAD']);
   },
 
+  async uploads(): Promise<string[]> {
+    try {
+      const names = await readdir(path.join(ROOT, UPLOAD_DIR), { recursive: true, withFileTypes: true });
+      return names
+        .filter((entry) => entry.isFile())
+        .map((entry) => `${entry.parentPath.replace(`${ROOT}/`, '')}/${entry.name}`);
+    } catch {
+      return []; // nothing uploaded yet
+    }
+  },
+
   async history(limit: number): Promise<Publish[]> {
     const log = await git(['log', `-n${limit * 2}`, '--format=%H%x1f%aI%x1f%ae%x1f%B%x1e', '--', CONTENT_PREFIX]);
     if (!log) return [];
@@ -364,6 +376,18 @@ const githubStore = {
     return commitOnHead(repo(), async () => ({ files: { [file]: { text } }, message }), editor);
   },
 
+  async uploads(): Promise<string[]> {
+    const target = repo();
+    try {
+      return await listFilesUnder(target, `${UPLOAD_DIR}/`, await headSha(target));
+    } catch (error) {
+      // Not being able to look is not a reason to fail an upload; the file is
+      // simply committed under its own name, as it was before this check.
+      console.error(`[inline edit] could not list ${UPLOAD_DIR}: ${String(error)}`);
+      return [];
+    }
+  },
+
   async history(limit: number): Promise<Publish[]> {
     return toPublishes(await commitsTouching(repo(), CONTENT_PREFIX.replace(/\/$/, ''), limit * 2), limit);
   },
@@ -447,6 +471,13 @@ export async function publish(changes: Change[], editor: string, extras: ExtraFi
  */
 export const commitFile = async (file: string, text: string, message: string, editor: string) =>
   store().commitFile(file, text, message, editor);
+
+/**
+ * Every uploaded picture already in the repository, as repository paths. The
+ * image route looks its file's hash up in here and reuses a path rather than
+ * committing the same bytes a second time.
+ */
+export const uploadedFiles = async (): Promise<string[]> => store().uploads();
 
 /** Recent publishes, newest first. */
 export const history = async (limit = 15) => store().history(limit);

@@ -21,7 +21,10 @@ import { describe, it } from 'node:test';
 import assert from 'node:assert/strict';
 import {
   MAX_ASSET_DOCUMENTS,
+  MAX_IMAGE_BYTES,
+  TOO_BIG_MESSAGE,
   contentIdFromImageSrc,
+  existingUploadPath,
   findAssetRefs,
   isSvgSource,
   parseImageEditId,
@@ -316,5 +319,64 @@ describe('markupVariants', () => {
   it('leaves the root and non-attribute strings alone', () => {
     assert.deepEqual(markupVariants('href="/"'), ['href="/"']);
     assert.deepEqual(markupVariants('6dc35a9a-512x512.png'), ['6dc35a9a-512x512.png']);
+  });
+});
+
+/**
+ * The cap, and the sentence that goes with it.
+ *
+ * Vercel refuses a request body over 4.5 MB before any of our code runs, and
+ * form-data encoding adds to the file's own size, so a 4 MB cap could be
+ * refused by the platform with a message nobody here wrote.
+ */
+describe('the size cap', () => {
+  it('sits under the platform ceiling', () => {
+    assert.equal(MAX_IMAGE_BYTES, 3 * 1024 * 1024);
+    assert.ok(MAX_IMAGE_BYTES < 4.5 * 1024 * 1024);
+  });
+
+  it('says the same number the panel says', () => {
+    assert.match(TOO_BIG_MESSAGE, /over 3 MB/);
+  });
+});
+
+/**
+ * The same picture, uploaded again.
+ *
+ * The name carries eight characters of the file's own sha1, but under the month
+ * it was uploaded in — so re-uploading a picture in October wrote a second copy
+ * of the same bytes. A git history keeps every copy for ever.
+ */
+describe('existingUploadPath', () => {
+  const HASH = 'ab12cd34ef567890';
+  const paths = [
+    'public/images/uploads/2026-08/team-photo-ab12cd34.jpg',
+    'public/images/uploads/2026-09/office-99887766.png',
+  ];
+
+  it('finds the file already holding these bytes, whatever month it is in', () => {
+    assert.equal(existingUploadPath(paths, HASH, 'jpg'), 'public/images/uploads/2026-08/team-photo-ab12cd34.jpg');
+  });
+
+  it('answers null for a picture nobody has uploaded', () => {
+    assert.equal(existingUploadPath(paths, 'ffffffffffff', 'jpg'), null);
+  });
+
+  it('does not confuse two formats of the same bytes', () => {
+    assert.equal(existingUploadPath(paths, HASH, 'png'), null);
+  });
+
+  it('reads an upper-case hash the same way the path writes it', () => {
+    assert.equal(existingUploadPath(paths, 'AB12CD34EF567890', 'jpg'), paths[0]);
+  });
+
+  it('never reaches outside the uploads folder', () => {
+    // A file somewhere else in the repository is code or design, not an upload,
+    // and pointing a page at it would be a path this editor never wrote.
+    assert.equal(existingUploadPath(['public/images/team-ab12cd34.jpg'], HASH, 'jpg'), null);
+  });
+
+  it('answers null for an empty repository', () => {
+    assert.equal(existingUploadPath([], HASH, 'jpg'), null);
   });
 });

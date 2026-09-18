@@ -20,7 +20,8 @@
     "visuals:generate": "tsx scripts/visuals/run.ts",
     "visuals:setup": "playwright install chromium",
     "visuals:publish": "tsx scripts/publish-draft.ts",
-    "sync-drip-template": "node scripts/sync-drip-template.mjs"
+    "sync-drip-template": "node scripts/sync-drip-template.mjs",
+    "check:editor": "node scripts/inline-edit-check.mjs"
   },
   "dependencies": {
     "@base-ui/react": "^1.7.0",
@@ -35,6 +36,7 @@
     "@sanity/image-url": "^2.1.1",
     "@sanity/vision": "^6.9.0",
     "@tabler/icons-react": "^3.46.0",
+    "@vercel/stega": "^1.1.0",
     "@visx/brush": "^4.0.1-alpha.0",
     "@visx/curve": "^4.0.1-alpha.0",
     "@visx/event": "^4.0.1-alpha.0",
@@ -68,6 +70,7 @@
     "react-use-measure": "^2.1.7",
     "redis": "^6.2.0",
     "sanity": "^6.9.0",
+    "server-only": "^0.0.1",
     "tailwind-merge": "^3.6.0",
     "three": "^0.185.1",
     "zod": "^4.4.3"

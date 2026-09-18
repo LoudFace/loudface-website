@@ -16,8 +16,11 @@ import { editorOffResponse } from '@/lib/inline-edit/guard';
 import { publish, type Change } from '@/lib/inline-edit/content-store';
 import { publishSanity } from '@/lib/inline-edit/sanity-store';
 
+/** A publish is a commit built over the GitHub API; give it room to finish. */
+export const maxDuration = 60;
+
 /** What the editor sends: typed text, or a token this server handed out for undo. */
-type Incoming = { id?: unknown; value?: unknown; token?: unknown };
+type Incoming = { id?: unknown; value?: unknown; token?: unknown; expected?: unknown };
 
 export async function POST(request: Request) {
   const off = editorOffResponse();
@@ -60,7 +63,11 @@ export async function POST(request: Request) {
     // A page value is a sentence or two; an article body edit carries a list of sentences.
     const limit = item.id.startsWith('sanity:') ? 400_000 : 4000;
     if (item.value.length > limit) return Response.json({ error: 'That value is too long' }, { status: 400 });
-    changes.push({ id: item.id, value: item.value });
+    // What the page showed when it was opened. The store compares it with what
+    // is stored now and refuses the publish if somebody else got there first.
+    const expected =
+      typeof item.expected === 'string' && item.expected.length <= limit ? item.expected : undefined;
+    changes.push({ id: item.id, value: item.value, expected });
   }
 
   // Our own content ids and Sanity's stega-decoded ids are independent, so a
@@ -71,7 +78,11 @@ export async function POST(request: Request) {
   let published = 0;
   let hash = '';
   let mode: string | undefined;
-  let sanity: { id: string; token: string; after: string }[] = [];
+  let sanity: { id: string; token: string; after: string; draftKept: boolean }[] = [];
+  // Whether the pages a Sanity patch touches were actually refreshed. The words
+  // are in the CMS either way; a false here only means the public page catches
+  // up on its own, which the editor says rather than calling the publish failed.
+  let revalidated = true;
   const errors: string[] = [];
 
   if (contentChanges.length) {
@@ -87,7 +98,9 @@ export async function POST(request: Request) {
 
   if (sanityChanges.length) {
     try {
-      const applied = await publishSanity(sanityChanges, editor);
+      const result = await publishSanity(sanityChanges, editor);
+      const applied = result.applied;
+      revalidated = result.revalidated;
       published += applied.filter((change) => change.before !== change.after).length;
       // The token seals what was there before, so an undo can restore it word
       // for word. `after` is what the page should now show: the editor looks for
@@ -96,6 +109,7 @@ export async function POST(request: Request) {
         id: change.id,
         token: sealValue(change.id, change.before),
         after: change.body ? '' : change.after,
+        draftKept: change.draftKept,
       }));
     } catch (error) {
       errors.push(error instanceof Error ? error.message : 'Sanity publish failed');
@@ -111,6 +125,7 @@ export async function POST(request: Request) {
     hash,
     mode,
     sanity,
+    revalidated,
     ...(errors.length ? { error: errors.join('; ') } : {}),
   });
 }

@@ -7,6 +7,7 @@
  * signed-in editor is required, so this is not a way to fingerprint the site.
  */
 import { currentEditor, owners } from '@/lib/inline-edit/session';
+import { isOwner } from '@/lib/inline-edit/editors-list';
 import { editorOffResponse, inlineEditingEnabled } from '@/lib/inline-edit/guard';
 import { mode } from '@/lib/inline-edit/content-store';
 import { hasGitHubCredentials, repoFromEnv } from '@/lib/inline-edit/github';
@@ -16,7 +17,8 @@ export async function GET() {
   const off = editorOffResponse();
   if (off) return off;
 
-  if (!(await currentEditor())) return Response.json({ error: 'Sign in first' }, { status: 401 });
+  const editor = await currentEditor();
+  if (!editor) return Response.json({ error: 'Sign in first' }, { status: 401 });
 
   const repo = repoFromEnv();
   // Which copy of the editor list answered matters: 'bundled' means the branch
@@ -24,6 +26,9 @@ export async function GET() {
   // yet. 'github' is the live one.
   const { list, source } = await loadEditors();
   return Response.json({
+    // Who is asking. An owner may change who edits the site; an invited editor
+    // may not, and the panel hides the buttons rather than letting them fail.
+    you: { owner: isOwner(owners(), editor) },
     inlineEditingEnabled: inlineEditingEnabled(),
     store: mode(),
     github: {

@@ -140,3 +140,28 @@ export function cleanValue(edited: string, stored: string): string {
   if (isRich(stored)) return cleanRich(unmarked);
   return cleanPlain(unmarked, /<br\s*\/?>/i.test(stored));
 }
+
+// ---------------------------------------------------------------------------
+// Has somebody else changed this field since the page was opened?
+// ---------------------------------------------------------------------------
+
+/** The one sentence a client sees when their page is out of date. */
+export const staleMessage = (field: string) =>
+  `Someone changed ${field} since you opened the page; reload and try again`;
+
+/**
+ * Is the stored value no longer the one the page rendered?
+ *
+ * The editor sends `expected`: the value the page showed when it was opened,
+ * marks stripped. That is browser HTML, and the stored value is not, so the two
+ * are compared after `cleanValue` has put the browser's copy through exactly the
+ * whitespace and tag rules a publish would — otherwise every second publish
+ * would be refused over a space the browser inserted.
+ *
+ * No `expected` means an older editor, or a value this server signed itself
+ * (an undo), and neither is checked.
+ */
+export function isStale(stored: string, expected: string | undefined): boolean {
+  if (typeof expected !== 'string') return false;
+  return cleanValue(expected, stored) !== stored;
+}

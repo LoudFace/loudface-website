@@ -40,3 +40,12 @@ jobs:
       # functions over files in the repo, so they need no secrets and no server.
       - name: Inline editor tests
         run: npm run test:editor
+
+      # The five house rules of the editor that can be checked by reading the
+      # repository: the bar behind a Draft Mode gate, getters through markTree,
+      # metadata off the marked getters, no component transforming a content
+      # value, and content keys the publish route accepts. The sixth rule —
+      # no marker in what an anonymous visitor gets — needs the live site and
+      # stays in the runbook.
+      - name: Inline editor rules
+        run: npm run check:editor

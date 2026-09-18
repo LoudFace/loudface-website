@@ -41,6 +41,9 @@ import {
 } from '@/lib/inline-edit/link-edit';
 import { editorOffResponse } from '@/lib/inline-edit/guard';
 
+/** One fetch of the public page and a scan of its HTML; short on purpose. */
+export const maxDuration = 30;
+
 export async function POST(request: Request) {
   const off = editorOffResponse();
   if (off) return off;

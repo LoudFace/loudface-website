@@ -12,6 +12,9 @@ import { mode, undo } from '@/lib/inline-edit/content-store';
 import { restoreImageAssets } from '@/lib/inline-edit/sanity-store';
 import { editorOffResponse } from '@/lib/inline-edit/guard';
 
+/** An undo is a revert commit over the GitHub API, or a batch of Sanity patches. */
+export const maxDuration = 60;
+
 export async function POST(request: Request) {
   const off = editorOffResponse();
   if (off) return off;
