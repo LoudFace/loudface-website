@@ -22,6 +22,10 @@
  *     by naming the address to replace and which occurrence of it (see
  *     `body-edit.ts`).
  *
+ * The last section is the other end of the same question: reading the anchors
+ * back off the public page, so the status light can prove that the link it
+ * changed is the link that moved.
+ *
  * Everything here is pure string and structure work. No `server-only`, no
  * request, no DOM call — `linkCaseFor` reads two elements it is handed but
  * never touches the document — so both sides of the editor use the same rules
@@ -29,6 +33,7 @@
  */
 import { SAFE_HREF } from './sanitize';
 import { idFor } from './mark-tree';
+import { markupVariants } from './image-edit';
 
 /** The one message a client sees when what they typed is not an address. */
 export const ADDRESS_REFUSAL = 'That does not look like a web address';
@@ -198,4 +203,156 @@ export function linkCaseFor(anchor: LinkNode, editableRoot: EditableRoot): LinkC
   if (anchor === editableRoot || anchor.contains(editableRoot)) return 'sibling';
   if (editableRoot.contains(anchor)) return 'rich';
   return null;
+}
+
+// ---------------------------------------------------------------------------
+// Reading the anchors back off the public page
+// ---------------------------------------------------------------------------
+
+/**
+ * The invisible characters a marked page carries: our own tag-character ids and
+ * the zero-width spellings Sanity's stega uses. They sit inside the words, so
+ * they come out before any comparison.
+ */
+const MARKS = /[\u{E0000}-\u{E007F}​‌‍﻿]/gu;
+
+/**
+ * A page's words, as a person reads them.
+ *
+ * This is the rule the status light has always used on a whole page; it lives
+ * here now because the anchor scan has to read an anchor's words by exactly the
+ * same rule. Two normalisations that drift apart would make the light answer
+ * about a label the client never saw.
+ */
+export function visibleText(html: string): string {
+  return html
+    .replace(/<(script|style|noscript|template)\b[^>]*>[\s\S]*?<\/\1>/gi, ' ')
+    .replace(/<[^>]+>/g, ' ')
+    .replace(/&nbsp;/g, ' ')
+    .replace(/&amp;/g, '&')
+    .replace(/&lt;/g, '<')
+    .replace(/&gt;/g, '>')
+    .replace(/&quot;/g, '"')
+    .replace(/&#39;|&apos;/g, "'")
+    // A page can carry a numeric entity outside Unicode's range; String.fromCodePoint
+    // throws on one, and the live check must not fall over reading a page.
+    .replace(/&#(\d+);/g, (whole, code: string) => {
+      const point = Number(code);
+      return Number.isInteger(point) && point >= 0 && point <= 0x10ffff ? String.fromCodePoint(point) : whole;
+    })
+    .replace(MARKS, '')
+    .replace(/[“”]/g, '"')
+    .replace(/[‘’]/g, "'")
+    .replace(/\s+/g, ' ');
+}
+
+/** One string the editor is looking for, reduced the same way the page's words are. */
+export function normalizeText(text: string): string {
+  return text
+    .replace(/<[^>]+>/g, ' ')
+    .replace(MARKS, '')
+    .replace(/[“”]/g, '"')
+    .replace(/[‘’]/g, "'")
+    .replace(/&nbsp;/g, ' ')
+    .replace(/&amp;/g, '&')
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
+/** One anchor on the page: where it points and the words it shows. */
+export type AnchorTarget = { href: string; text: string };
+
+/**
+ * One `<a>` and its contents. Attributes may be in any order and quoted either
+ * way, and anything may be nested inside — a span, an icon, a mark character.
+ * An attribute value carrying a literal `>` would cut the tag short, which no
+ * address of ours can and no real label does.
+ */
+const ANCHOR = /<a\b([^>]*)>([\s\S]*?)<\/a\s*>/gi;
+const HREF_ATTR = /(?:^|[\s/])href\s*=\s*(?:"([^"]*)"|'([^']*)'|([^\s"'=<>`]+))/i;
+
+/**
+ * Every anchor in a page's raw HTML, with its address and its visible words.
+ *
+ * This is what the status light needed and never had. Asking whether an address
+ * appears anywhere in the HTML answers a different question: a nav that already
+ * links to `/case-studies` makes a change of `Blog` to `/case-studies` look live
+ * the second it is committed, before the site has even built.
+ */
+export function anchorsIn(html: string): AnchorTarget[] {
+  const out: AnchorTarget[] = [];
+  for (const match of html.matchAll(ANCHOR)) {
+    const found = HREF_ATTR.exec(match[1] ?? '');
+    if (!found) continue;
+    const href = (found[1] ?? found[2] ?? found[3] ?? '').trim().replace(/&amp;/g, '&');
+    if (!href) continue;
+    out.push({ href, text: visibleText(match[2] ?? '').trim() });
+  }
+  return out;
+}
+
+/**
+ * Every spelling of one address that means the same page.
+ *
+ * `markupVariants` owns the trailing-slash rule, because Next writes `/blog/`
+ * out as `/blog`. The percent-encoded form is here for an address a page hands
+ * to another route inside a query.
+ */
+export function hrefForms(href: string): string[] {
+  const value = href.trim();
+  const out = new Set<string>();
+  for (const form of markupVariants(`href="${value}"`)) {
+    const inner = /^href="([^"]*)"$/.exec(form)?.[1];
+    if (inner === undefined) continue;
+    out.add(inner);
+    out.add(encodeURIComponent(inner));
+  }
+  if (!out.size) out.add(value);
+  return [...out];
+}
+
+/** Do these two addresses name the same page, however each is spelled? */
+export function hrefMatches(anchorHref: string, wanted: string): boolean {
+  const forms = new Set(hrefForms(wanted));
+  const candidates = new Set([anchorHref.trim()]);
+  try {
+    candidates.add(decodeURIComponent(anchorHref.trim()));
+  } catch {
+    /* a half-encoded address is compared as written */
+  }
+  for (const candidate of candidates) {
+    for (const form of hrefForms(candidate)) if (forms.has(form)) return true;
+  }
+  return false;
+}
+
+/**
+ * Is one of these anchors the link that was asked about — this address under
+ * these words?
+ *
+ * The words are matched by containment, not only by equality: a label can be
+ * drawn with an icon or a counter beside it inside the same anchor. An empty
+ * label asks about the address alone, which is the old, weaker question; the
+ * status route never sends one for the "it is gone" half.
+ */
+export function anchorCarries(anchors: AnchorTarget[], wanted: AnchorTarget): boolean {
+  const label = normalizeText(wanted.text);
+  return anchors.some(
+    (anchor) => hrefMatches(anchor.href, wanted.href) && (!label || anchor.text.includes(label)),
+  );
+}
+
+/**
+ * The id prefix a link's label shares with its address.
+ *
+ * An undo hands back `nav:links.1.href` and nothing else. The words that link
+ * shows are a sibling of it, `nav:links.1.label`, so everything up to the last
+ * segment is what the page is searched for. `home:href` has no siblings to look
+ * at and answers null, and the caller then falls back to the address alone.
+ */
+export function addressLabelPrefix(id: string): string | null {
+  const colon = id.indexOf(':');
+  if (colon === -1) return null;
+  const dot = id.lastIndexOf('.');
+  return dot > colon ? id.slice(0, dot + 1) : null;
 }

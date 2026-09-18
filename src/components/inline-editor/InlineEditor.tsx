@@ -20,8 +20,15 @@ import {
   type LinkReplacement,
   type TextReplacement,
 } from '../../lib/inline-edit/body-edit';
-import { isSafeHref, linkCaseFor, type LinkCase } from '../../lib/inline-edit/link-edit';
+import {
+  addressLabelPrefix,
+  isSafeHref,
+  linkCaseFor,
+  type AnchorTarget,
+  type LinkCase,
+} from '../../lib/inline-edit/link-edit';
 import { ADDRESS } from '../../lib/inline-edit/mark-tree';
+import { undoneSummary } from '../../lib/inline-edit/publish-history';
 import {
   MAX_IMAGE_BYTES,
   SANITY_IMAGE_PREFIX,
@@ -40,6 +47,12 @@ import {
  * than in its words, and `address` says the value is an address, so it is never
  * looked for as visible text at all — a link's destination is in an attribute,
  * and the words around it did not change.
+ *
+ * `links` and `linksAbsent` are the same question asked properly for a link:
+ * the anchor with these words points here now, and no anchor with these words
+ * still points there. An address on its own is not proof — a nav that already
+ * links to `/case-studies` makes a move of "Blog" to `/case-studies` look live
+ * before the site has built.
  */
 type Change = {
   id: string;
@@ -47,10 +60,18 @@ type Change = {
   label: string;
   file?: File;
   markup?: string[];
+  links?: AnchorTarget[];
+  linksAbsent?: AnchorTarget[];
   address?: boolean;
 };
 /** Anything a `record` call wants to say about a change beyond its value. */
-type ChangeExtra = { file?: File; markup?: string[]; address?: boolean };
+type ChangeExtra = {
+  file?: File;
+  markup?: string[];
+  links?: AnchorTarget[];
+  linksAbsent?: AnchorTarget[];
+  address?: boolean;
+};
 /** One link in the Links panel: what it says, where it points, and where that address lives. */
 type LinkRow = { text: string; href: string; anchor: HTMLAnchorElement; kind: LinkCase };
 /** The Links panel: the element that was clicked and every link inside it. */
@@ -287,6 +308,52 @@ function linksFor(root: HTMLElement): HTMLAnchorElement[] {
     .slice(0, MAX_LINK_ROWS);
 }
 
+/**
+ * The words one link shows, with both marker kinds taken out.
+ *
+ * This is the half of a link that tells it apart from every other link pointing
+ * at the same page, so it rides along with the address into the live check.
+ */
+function anchorLabel(el: Element | null): string {
+  if (!el) return '';
+  return strip(el.textContent ?? '')
+    .replace(/\s+/g, ' ')
+    .trim()
+    .slice(0, 200);
+}
+
+/**
+ * What the status light should check for one link that was just moved.
+ *
+ * The anchor's own words are what separate this link from every other link to
+ * the same page, so they travel with both addresses: the new one, which must
+ * now be under those words, and the old one, which must not. An icon-only link
+ * has no words to separate it by, so it keeps the older, weaker check on the
+ * address alone rather than leaving the light stuck.
+ */
+function linkProof(row: LinkRow, to: string): ChangeExtra {
+  const text = anchorLabel(row.anchor);
+  if (!text) return { markup: [`href="${to}"`] };
+  return { links: [{ href: to, text }], linksAbsent: [{ href: row.href, text }] };
+}
+
+/**
+ * The element on the page showing the words that belong to one address field.
+ *
+ * `addressLabelPrefix` turns `nav:links.1.href` into `nav:links.1.`, which every
+ * sibling of that address shares, including its label. Only a match inside an
+ * `<a>` counts: that is the link whose words the live check needs. Null when
+ * there is no such element, and the caller then checks the address alone.
+ */
+function labelElementFor(id: string): HTMLElement | null {
+  const prefix = addressLabelPrefix(id);
+  if (!prefix) return null;
+  for (const el of document.querySelectorAll<HTMLElement>(`[data-lf-id^="${CSS.escape(prefix)}"]`)) {
+    if (el.closest('a')) return el;
+  }
+  return null;
+}
+
 /** The words a publish put on the page, as plain text the live check can look for. */
 function needlesFor(values: { id: string; value: string }[], exact = false): string[] {
   const out: string[] = [];
@@ -447,10 +514,25 @@ export function InlineEditor() {
       const parts: string[] = [];
       if (replacements.length) parts.push(`${replacements.length} sentence${replacements.length === 1 ? '' : 's'}`);
       if (links.length) parts.push(`${links.length} link${links.length === 1 ? '' : 's'}`);
+      // A link's address is in an attribute, so the live check reads the page's
+      // HTML for it — but it reads the anchor, not the whole page: the address
+      // with the words that link shows. The words come off the page, where the
+      // new address is already set, so the anchor is found by it.
+      const moved: AnchorTarget[] = [];
+      const left: AnchorTarget[] = [];
+      for (const link of links) {
+        const anchor = [...el.querySelectorAll('a')].find(
+          (candidate) => (candidate.getAttribute('href') ?? '') === link.to,
+        );
+        const text = anchorLabel(anchor ?? null);
+        moved.push({ href: link.to, text });
+        // Without words, "that address is gone" would be a question about every
+        // link on the page, so it is not asked at all.
+        if (text) left.push({ href: link.from, text });
+      }
       record(id, JSON.stringify({ replacements, links }), `Article: ${parts.join(', ')}`, {
-        // A link's address is in an attribute, so the live check reads the
-        // page's HTML for it rather than its words.
-        markup: links.map((link) => `href="${link.to}"`),
+        links: moved,
+        linksAbsent: left,
       });
     },
     [record, unstage],
@@ -684,6 +766,10 @@ export function InlineEditor() {
     absent: string[] = [],
     /** Strings that must be in the page's HTML rather than its words: an image's address. */
     markup: string[] = [],
+    /** Links that must point where they were sent, under the words they show. */
+    links: AnchorTarget[] = [],
+    /** The same words, which must no longer point at the old address. */
+    linksAbsent: AnchorTarget[] = [],
   ) {
     const state = liveCheck.current;
     if (state.timer) clearTimeout(state.timer);
@@ -692,7 +778,7 @@ export function InlineEditor() {
     const path = window.location.pathname;
     const limit = 6 * 60 * 1000;
 
-    if (!needles.length && !markup.length) {
+    if (!needles.length && !markup.length && !links.length) {
       setStatus({ kind: 'live', message: `${doneWord} — nothing left to check on this page`, seconds: 0 });
       return;
     }
@@ -706,7 +792,7 @@ export function InlineEditor() {
         const response = await fetch('/api/lf-edit/status', {
           method: 'POST',
           headers: { 'content-type': 'application/json' },
-          body: JSON.stringify({ path, needles, absent, markup }),
+          body: JSON.stringify({ path, needles, absent, markup, links, linksAbsent }),
         });
         const result = (await response.json()) as { live?: boolean };
         live = result.live === true;
@@ -760,7 +846,13 @@ export function InlineEditor() {
     const gone = goneFor(visible, originals.current);
     const needles: string[] = [];
     const markup: string[] = [];
-    for (const change of staged) if (change.markup) markup.push(...change.markup);
+    const links: AnchorTarget[] = [];
+    const linksAbsent: AnchorTarget[] = [];
+    for (const change of staged) {
+      if (change.markup) markup.push(...change.markup);
+      if (change.links) links.push(...change.links);
+      if (change.linksAbsent) linksAbsent.push(...change.linksAbsent);
+    }
     const saveOrder: string[] = [];
 
     let contentCount = 0;
@@ -862,7 +954,7 @@ export function InlineEditor() {
       : pictures
         ? `${saved} — refreshing the public page`
         : `${saved} to the CMS — refreshing the public page`;
-    watchUntilLive(needles, waiting, saved, gone, markup);
+    watchUntilLive(needles, waiting, saved, gone, markup, links, linksAbsent);
   }
 
   const unstageAll = (ids: string[]) =>
@@ -918,7 +1010,7 @@ export function InlineEditor() {
         return;
       }
       row.anchor.setAttribute('href', value);
-      record(result.id, value, value.slice(0, 42), { address: true, markup: [`href="${value}"`] });
+      record(result.id, value, value.slice(0, 42), { address: true, ...linkProof(row, value) });
     } else if (row.kind === 'body') {
       // Which of the links pointing at this same address it is, counted the
       // way the server counts them in the stored HTML: in document order,
@@ -948,7 +1040,7 @@ export function InlineEditor() {
         panel.id,
         strip(panel.root.innerHTML),
         strip(panel.root.textContent ?? '').slice(0, 42),
-        { markup: [`href="${value}"`] },
+        linkProof(row, value),
       );
     }
 
@@ -1117,7 +1209,14 @@ export function InlineEditor() {
     }
   }
 
-  async function undoPublish(hash: string) {
+  /**
+   * Take one publish back off the live site.
+   *
+   * `doneWord` is what the light calls the result, because this same button
+   * undoes an undo: on a revert commit it puts the change back, and telling a
+   * client that was "undone" would be the opposite of what happened.
+   */
+  async function undoPublish(hash: string, doneWord = 'Change undone') {
     setStatus({ kind: 'saving' });
     let response: Response;
     try {
@@ -1137,7 +1236,7 @@ export function InlineEditor() {
     }
     setHistoryOpen(false);
     if (result.mode !== 'github') {
-      setStatus({ kind: 'saved', message: 'Change undone' });
+      setStatus({ kind: 'saved', message: doneWord });
       setTimeout(() => window.location.reload(), 900);
       return;
     }
@@ -1149,14 +1248,34 @@ export function InlineEditor() {
     const isAddress = (value: string) => ADDRESS.test(value.trim());
     const restoredText = restored.filter((change) => !isAddress(change.value));
     const removedText = removed.filter((change) => !isAddress(change.value));
-    const markup = restored.filter((change) => isAddress(change.value)).map((change) => `href="${change.value.trim()}"`);
-    setStatus({ kind: 'saved', message: 'Change undone — committed' });
+    const markup: string[] = [];
+    const links: AnchorTarget[] = [];
+    const linksAbsent: AnchorTarget[] = [];
+    for (const change of restored.filter((entry) => isAddress(entry.value))) {
+      const to = change.value.trim();
+      // The undo hands back `nav:links.1.href` and no words. The words are the
+      // field beside it, so the page is searched for anything under
+      // `nav:links.1.` that sits in a link, and that is the label.
+      const text = anchorLabel(labelElementFor(change.id));
+      const from = removed.find((entry) => entry.id === change.id)?.value.trim() ?? '';
+      if (!text) {
+        // No label found: keep the older check on the address alone, so an undo
+        // is never held up by a page this browser cannot read the label off.
+        markup.push(`href="${to}"`);
+        continue;
+      }
+      links.push({ href: to, text });
+      if (from && isAddress(from)) linksAbsent.push({ href: from, text });
+    }
+    setStatus({ kind: 'saved', message: `${doneWord} — committed` });
     watchUntilLive(
       needlesFor(restoredText, true),
-      'Change undone — committed, the site is building (usually 2 to 4 minutes)',
-      'Change undone',
+      `${doneWord} — committed, the site is building (usually 2 to 4 minutes)`,
+      doneWord,
       needlesFor(removedText, true),
       markup,
+      links,
+      linksAbsent,
     );
   }
 
@@ -1224,7 +1343,13 @@ export function InlineEditor() {
           </div>
           {publishes === null && <p style={{ margin: 0, opacity: 0.7 }}>Loading…</p>}
           {publishes?.length === 0 && <p style={{ margin: 0, opacity: 0.7 }}>Nothing published yet.</p>}
-          {publishes?.map((entry) => (
+          {publishes?.map((entry) => {
+            // A revert commit is a commit, so it shows up here like any other.
+            // Undoing one puts the change back on the live site, which is a
+            // redo; the row says so, and the button is labelled for what it
+            // does rather than for what the row above it does.
+            const undid = undoneSummary(entry.summary);
+            return (
             <div
               key={entry.hash}
               style={{
@@ -1237,7 +1362,7 @@ export function InlineEditor() {
               }}
             >
               <div style={{ minWidth: 0 }}>
-                <p style={{ margin: 0, fontWeight: 600 }}>{entry.summary}</p>
+                <p style={{ margin: 0, fontWeight: 600 }}>{undid ? `undo of ${undid}` : entry.summary}</p>
                 <p style={{ margin: '2px 0 0', fontSize: 12, opacity: 0.7 }}>
                   {new Date(entry.date).toLocaleString()} · {entry.editor}
                   {entry.fields.length ? ` · ${entry.fields.slice(0, 3).join(', ')}` : ''}
@@ -1247,14 +1372,15 @@ export function InlineEditor() {
                 <span style={{ fontSize: 12, opacity: 0.6, whiteSpace: 'nowrap' }}>undone</span>
               ) : (
                 <button
-                  style={{ ...button, background: '#8c1d18', padding: '6px 12px' }}
-                  onClick={() => undoPublish(entry.hash)}
+                  style={{ ...button, background: undid ? '#14212b' : '#8c1d18', padding: '6px 12px' }}
+                  onClick={() => undoPublish(entry.hash, undid ? 'Change put back' : 'Change undone')}
                 >
-                  Undo
+                  {undid ? 'Redo' : 'Undo'}
                 </button>
               )}
             </div>
-          ))}
+            );
+          })}
         </div>
       )}
 

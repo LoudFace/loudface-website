@@ -8,45 +8,30 @@
  * content-file edit shows up once the build has finished and deployed.
  *
  * The editor polls this every few seconds and stops at the first all-clear.
+ *
+ * Four questions, because a page can change in four ways:
+ *   - `needles`: these words are on the page;
+ *   - `absent`: those words are off it;
+ *   - `markup`: this image address is in the HTML;
+ *   - `links` / `linksAbsent`: this anchor, under these words, points here now
+ *     and no longer points there.
+ *
+ * The last pair exists because an address on its own proves nothing. Changing
+ * the nav's "Blog" link to `/case-studies` on a nav that already carries a
+ * "Case studies" link turned the light green three seconds after the commit,
+ * before the site had built. The anchor scan asks about the link that was
+ * edited, not about the address.
  */
 import { currentEditor } from '@/lib/inline-edit/session';
 import { assetFileName, markupVariants } from '@/lib/inline-edit/image-edit';
+import {
+  anchorCarries,
+  anchorsIn,
+  normalizeText,
+  visibleText,
+  type AnchorTarget,
+} from '@/lib/inline-edit/link-edit';
 import { editorOffResponse } from '@/lib/inline-edit/guard';
-
-const MARKS = /[\u{E0000}-\u{E007F}​‌‍﻿]/gu;
-
-function visibleText(html: string): string {
-  return html
-    .replace(/<(script|style|noscript|template)\b[^>]*>[\s\S]*?<\/\1>/gi, ' ')
-    .replace(/<[^>]+>/g, ' ')
-    .replace(/&nbsp;/g, ' ')
-    .replace(/&amp;/g, '&')
-    .replace(/&lt;/g, '<')
-    .replace(/&gt;/g, '>')
-    .replace(/&quot;/g, '"')
-    .replace(/&#39;|&apos;/g, "'")
-    // A page can carry a numeric entity outside Unicode's range; String.fromCodePoint
-    // throws on one, and the live check must not fall over reading a page.
-    .replace(/&#(\d+);/g, (whole, code: string) => {
-      const point = Number(code);
-      return Number.isInteger(point) && point >= 0 && point <= 0x10ffff ? String.fromCodePoint(point) : whole;
-    })
-    .replace(MARKS, '')
-    .replace(/[“”]/g, '"')
-    .replace(/[‘’]/g, "'")
-    .replace(/\s+/g, ' ');
-}
-
-const normalize = (text: string) =>
-  text
-    .replace(/<[^>]+>/g, ' ')
-    .replace(MARKS, '')
-    .replace(/[“”]/g, '"')
-    .replace(/[‘’]/g, "'")
-    .replace(/&nbsp;/g, ' ')
-    .replace(/&amp;/g, '&')
-    .replace(/\s+/g, ' ')
-    .trim();
 
 export async function POST(request: Request) {
   const off = editorOffResponse();
@@ -55,11 +40,29 @@ export async function POST(request: Request) {
   if (!(await currentEditor())) return Response.json({ error: 'Sign in first' }, { status: 401 });
 
   const body = (await request.json().catch(() => null)) as
-    | { path?: unknown; needles?: unknown; absent?: unknown; markup?: unknown }
+    | {
+        path?: unknown;
+        needles?: unknown;
+        absent?: unknown;
+        markup?: unknown;
+        links?: unknown;
+        linksAbsent?: unknown;
+      }
     | null;
   const path = typeof body?.path === 'string' ? body.path : '';
   const strings = (value: unknown) =>
     Array.isArray(value) ? (value as unknown[]).filter((n): n is string => typeof n === 'string') : [];
+  /** One link the editor changed: where it points now and the words it shows. */
+  const anchors = (value: unknown): AnchorTarget[] =>
+    Array.isArray(value)
+      ? (value as unknown[]).filter(
+          (item): item is AnchorTarget =>
+            !!item &&
+            typeof item === 'object' &&
+            typeof (item as AnchorTarget).href === 'string' &&
+            typeof (item as AnchorTarget).text === 'string',
+        )
+      : [];
   const needles = strings(body?.needles);
   /**
    * Strings that must appear in the page's raw HTML rather than in its words.
@@ -72,13 +75,20 @@ export async function POST(request: Request) {
   // because the restored words are still inside the old ones. A short string
   // or one that is part of a needle is skipped: it could never disappear.
   const absent = strings(body?.absent);
+  const links = anchors(body?.links);
+  // The old destination, under the same label. A label with no words to match
+  // would ask "is this address anywhere on the page", which is the question
+  // that was wrong in the first place, so those are dropped.
+  const linksAbsent = anchors(body?.linksAbsent).filter((link) => normalizeText(link.text).length > 0);
   if (
     !path.startsWith('/') ||
     path.startsWith('//') ||
-    (!needles.length && !markup.length) ||
+    (!needles.length && !markup.length && !links.length) ||
     needles.length > 50 ||
     absent.length > 50 ||
-    markup.length > 50
+    markup.length > 50 ||
+    links.length > 50 ||
+    linksAbsent.length > 50
   ) {
     return Response.json({ error: 'Bad request' }, { status: 400 });
   }
@@ -107,6 +117,7 @@ export async function POST(request: Request) {
         status: response.status,
         found: needles.map(() => false),
         markup: markup.map(() => false),
+        links: links.map(() => false),
       });
     }
     html = await response.text();
@@ -117,16 +128,17 @@ export async function POST(request: Request) {
       status: 0,
       found: needles.map(() => false),
       markup: markup.map(() => false),
+      links: links.map(() => false),
       origin,
       detail,
     });
   }
 
   const page = visibleText(html);
-  const wantedAll = needles.map(normalize);
+  const wantedAll = needles.map(normalizeText);
   const found = wantedAll.map((wanted) => wanted.length === 0 || page.includes(wanted));
   const gone = absent
-    .map(normalize)
+    .map(normalizeText)
     .filter((old) => old.length >= 12 && !wantedAll.some((wanted) => wanted.includes(old)))
     .map((old) => !page.includes(old));
   // The raw HTML, not the visible text: an image's address is in an attribute,
@@ -137,12 +149,24 @@ export async function POST(request: Request) {
     const served = assetFileName(wanted) ?? wanted;
     return markupVariants(served).some((form) => html.includes(form) || html.includes(encodeURIComponent(form)));
   });
+  // Every anchor on the page, read once: the address it points at and the words
+  // it shows. A changed link is live when one anchor carries both halves.
+  const onPage = anchorsIn(html);
+  const linksLive = links.map((link) => anchorCarries(onPage, link));
+  const linksGone = linksAbsent.map((link) => !anchorCarries(onPage, link));
   return Response.json({
     ok: true,
     status: 200,
     found,
     gone,
     markup: inMarkup,
-    live: found.every(Boolean) && gone.every(Boolean) && inMarkup.every(Boolean),
+    links: linksLive,
+    linksGone,
+    live:
+      found.every(Boolean) &&
+      gone.every(Boolean) &&
+      inMarkup.every(Boolean) &&
+      linksLive.every(Boolean) &&
+      linksGone.every(Boolean),
   });
 }

@@ -24,7 +24,11 @@ import { describe, it } from 'node:test';
 import assert from 'node:assert/strict';
 import {
   ADDRESS_REFUSAL,
+  addressLabelPrefix,
+  anchorCarries,
+  anchorsIn,
   findSiblingAddressId,
+  hrefMatches,
   isAddressKey,
   isSafeHref,
   normalizeHrefForMatch,
@@ -420,5 +424,158 @@ describe('parseBodyEdit with links', () => {
       () => parseBodyEdit(JSON.stringify({ links: [{ from: '/a', to: '/b' }] })),
       /malformed/,
     );
+  });
+});
+
+// ---------------------------------------------------------------------------
+// Reading the anchors back off the live page
+// ---------------------------------------------------------------------------
+
+/**
+ * The nav as Next writes it, and the whole of fault one in one fixture.
+ *
+ * Two links. One already points at `/case-studies`. The client moved the other
+ * one, "Blog", to the same page. Asking whether `href="/case-studies"` appears
+ * anywhere in this HTML answers yes before the site has built, which is exactly
+ * what turned the light green on www.loudface.co on 2026-09-18.
+ */
+const NAV_BEFORE = `<nav class="flex gap-6" aria-label="Main">
+  <a class="text-sm font-medium" href="/case-studies" data-lf-id="nav:links.0.label">Case&nbsp;studies</a>
+  <a href='/blog' class="text-sm font-medium"><span data-lf-id="nav:links.1.label">Blog</span></a>
+</nav>`;
+
+/** The same nav once the change is really live: "Blog" points at the new page. */
+const NAV_AFTER = NAV_BEFORE.replace("href='/blog'", `href="/case-studies"`);
+
+describe('anchorsIn', () => {
+  it('reads every anchor with its address and its words', () => {
+    const anchors = anchorsIn(NAV_BEFORE);
+    assert.deepEqual(anchors, [
+      { href: '/case-studies', text: 'Case studies' },
+      { href: '/blog', text: 'Blog' },
+    ]);
+  });
+
+  it('reads an address written before the class and one written after it', () => {
+    const anchors = anchorsIn(
+      `<a href="/a" class="x">A</a><a class="y" data-thing="1" href="/b">B</a>`,
+    );
+    assert.deepEqual(anchors.map((anchor) => anchor.href), ['/a', '/b']);
+  });
+
+  it('reads single quotes, double quotes and no quotes alike', () => {
+    const anchors = anchorsIn(`<a href='/a'>A</a><a href="/b">B</a><a href=/c>C</a>`);
+    assert.deepEqual(anchors.map((anchor) => anchor.href), ['/a', '/b', '/c']);
+  });
+
+  it('takes the words out of nested tags', () => {
+    const anchors = anchorsIn(
+      `<a href="/pricing"><span class="i"><svg></svg></span><span>See <b>pricing</b></span></a>`,
+    );
+    assert.deepEqual(anchors, [{ href: '/pricing', text: 'See pricing' }]);
+  });
+
+  it('decodes entities and straightens quotes, the way the page check does', () => {
+    const anchors = anchorsIn(`<a href="/x">Tom&#39;s &#8220;plan&#8221; &amp; ours</a>`);
+    assert.equal(anchors[0].text, `Tom's "plan" & ours`);
+  });
+
+  it('takes the editor’s invisible markers out of the words', () => {
+    const anchors = anchorsIn(`<a href="/x">\u{E0001}\u{E006E}Blog​</a>`);
+    assert.equal(anchors[0].text, 'Blog');
+  });
+
+  it('skips an anchor with no address at all', () => {
+    assert.deepEqual(anchorsIn(`<a name="top">Top</a><a href="/x">X</a>`), [
+      { href: '/x', text: 'X' },
+    ]);
+  });
+
+  it('does not mistake another attribute ending in href for the address', () => {
+    assert.deepEqual(anchorsIn(`<a data-href="/wrong" href="/right">R</a>`), [
+      { href: '/right', text: 'R' },
+    ]);
+  });
+
+  it('finds nothing in a page with no links', () => {
+    assert.deepEqual(anchorsIn('<p>No links here at all.</p>'), []);
+  });
+});
+
+describe('hrefMatches', () => {
+  it('matches a page that wrote the address with a trailing slash', () => {
+    assert.equal(hrefMatches('/case-studies/', '/case-studies'), true);
+  });
+
+  it('matches a change typed with a trailing slash against a page without one', () => {
+    assert.equal(hrefMatches('/case-studies', '/case-studies/'), true);
+  });
+
+  it('matches the percent-encoded form', () => {
+    assert.equal(hrefMatches(encodeURIComponent('/case-studies'), '/case-studies'), true);
+  });
+
+  it('does not match a different page whose address starts the same', () => {
+    assert.equal(hrefMatches('/case-studies-2026', '/case-studies'), false);
+  });
+});
+
+describe('anchorCarries — the status light for one link', () => {
+  it('says no while the nav still points "Blog" at the old page', () => {
+    // The fault, in one line: `/case-studies` IS in this HTML, under the other
+    // link. The link that was edited has not moved.
+    assert.ok(NAV_BEFORE.includes('href="/case-studies"'));
+    assert.equal(anchorCarries(anchorsIn(NAV_BEFORE), { href: '/case-studies', text: 'Blog' }), false);
+  });
+
+  it('says yes once "Blog" itself points at the new page', () => {
+    assert.equal(anchorCarries(anchorsIn(NAV_AFTER), { href: '/case-studies', text: 'Blog' }), true);
+  });
+
+  it('still sees the untouched link under its own words', () => {
+    assert.equal(
+      anchorCarries(anchorsIn(NAV_AFTER), { href: '/case-studies', text: 'Case studies' }),
+      true,
+    );
+  });
+
+  it('the old destination is gone from that label, and only from that label', () => {
+    // What `linksAbsent` asks: no anchor saying "Blog" points at /blog any more.
+    assert.equal(anchorCarries(anchorsIn(NAV_BEFORE), { href: '/blog', text: 'Blog' }), true);
+    assert.equal(anchorCarries(anchorsIn(NAV_AFTER), { href: '/blog', text: 'Blog' }), false);
+  });
+
+  it('accepts a page that wrote the new address with a trailing slash', () => {
+    const page = NAV_BEFORE.replace("href='/blog'", `href="/case-studies/"`);
+    assert.equal(anchorCarries(anchorsIn(page), { href: '/case-studies', text: 'Blog' }), true);
+  });
+
+  it('matches a label drawn with something else beside it in the same link', () => {
+    const page = `<a href="/blog"><span>Blog</span><span class="badge">12</span></a>`;
+    assert.equal(anchorCarries(anchorsIn(page), { href: '/blog', text: 'Blog' }), true);
+  });
+
+  it('falls back to the address alone when the link has no words', () => {
+    const page = `<a href="/blog" aria-label="Blog"><svg></svg></a>`;
+    assert.equal(anchorCarries(anchorsIn(page), { href: '/blog', text: '' }), true);
+    assert.equal(anchorCarries(anchorsIn(page), { href: '/elsewhere', text: '' }), false);
+  });
+});
+
+describe('addressLabelPrefix', () => {
+  it('turns a restored address id into the prefix its label shares', () => {
+    assert.equal(addressLabelPrefix('nav:links.1.href'), 'nav:links.1.');
+  });
+
+  it('answers the same prefix for the label beside it', () => {
+    assert.equal(addressLabelPrefix('nav:links.1.label'), 'nav:links.1.');
+  });
+
+  it('answers null for a field with no siblings, so the caller falls back', () => {
+    assert.equal(addressLabelPrefix('home:href'), null);
+  });
+
+  it('answers null for something that is not a content id', () => {
+    assert.equal(addressLabelPrefix('nonsense'), null);
   });
 });

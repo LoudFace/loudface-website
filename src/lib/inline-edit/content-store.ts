@@ -28,6 +28,7 @@ import { mkdir, readFile, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 import { promisify } from 'node:util';
 import { applyToText, parseId, readField } from './content-text';
+import { isPublishSummary, revertedShas } from './publish-history';
 import { UPLOAD_DIR } from './image-edit';
 import {
   commitDetail,
@@ -168,18 +169,14 @@ function fieldsOf(message: string): string[] {
   return [...message.matchAll(/^- (\S+)/gm)].map((match) => match[1]);
 }
 
-const isPublish = (summary: string) =>
-  summary.startsWith('Content:') || summary.startsWith('Revert "Content:');
-
 function toPublishes(
   commits: { sha: string; date: string; email: string; message: string }[],
   limit: number,
 ): Publish[] {
-  const reverted = new Set(
-    commits.flatMap((commit) =>
-      [...commit.message.matchAll(/This reverts commit ([0-9a-f]{40})/g)].map((match) => match[1]),
-    ),
-  );
+  // Which commits a later one has undone. A revert of a revert names its target
+  // the same way, so a row that has itself been undone is marked as undone —
+  // that is what stops the History panel offering to undo an undo twice.
+  const reverted = revertedShas(commits.map((commit) => commit.message));
   return commits
     .map((commit) => {
       const summary = commit.message.split('\n')[0];
@@ -192,7 +189,7 @@ function toPublishes(
         reverted: reverted.has(commit.sha),
       };
     })
-    .filter((entry) => isPublish(entry.summary))
+    .filter((entry) => isPublishSummary(entry.summary))
     .slice(0, limit);
 }
 
