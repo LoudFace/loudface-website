@@ -281,7 +281,7 @@ export function markupVariants(wanted: string): string[] {
   if (attr) {
     const [, name, value] = attr;
     if (value.length > 1 && value.endsWith('/')) out.add(`${name}="${value.slice(0, -1)}"`);
-    else if (value.startsWith('/') || /^https?:\/\/[^/]+$/.test(value)) out.add(`${name}="${value}/"`);
+    else if ((value.startsWith('/') && value.length > 1) || /^https?:\/\/[^/]+$/.test(value)) out.add(`${name}="${value}/"`);
   }
   return [...out];
 }
