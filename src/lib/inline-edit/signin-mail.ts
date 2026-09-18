@@ -11,6 +11,8 @@ import 'server-only';
  * link in a log is a way in.
  */
 import { createSignInToken } from './session';
+import { loadEditors } from './editors';
+import { freshInvite, signInMinutesFor } from './editors-list';
 
 export type SignInMail = {
   /** The link itself. Never logged, never put in a response a stranger can read. */
@@ -23,7 +25,17 @@ export type SignInMail = {
 
 /** Build the link for `email` and, if a mail service is configured, send it. */
 export async function sendSignInLink(email: string, origin: string): Promise<SignInMail> {
-  const link = `${origin.replace(/\/$/, '')}/api/lf-edit/verify?token=${createSignInToken(email)}`;
+  // A freshly invited address gets the invitation: a 12-hour link and a line
+  // naming who invited them. Everyone else gets the everyday 15-minute link.
+  const { list } = await loadEditors().catch(() => ({ list: { editors: [] } }));
+  const invite = freshInvite(list.editors, email);
+  const minutes = signInMinutesFor(invite);
+  const host = origin.replace(/^https?:\/\//, '').replace(/\/$/, '');
+  const link = `${origin.replace(/\/$/, '')}/api/lf-edit/verify?token=${createSignInToken(email, minutes)}`;
+  const subject = invite ? `You can now edit ${host}` : 'Your link to edit the site';
+  const text = invite
+    ? `${invite.addedBy || 'LoudFace'} invited you to edit ${host}.\n\nOpen this link to start. It lasts 12 hours. You can change text, pictures and links on the page and press Publish; the site shows you when the change is live.\n\n${link}\n\nLater, type your email at https://${host}/edit for a new link any time.\n`
+    : `Open this link to edit the site. It expires in 15 minutes.\n\n${link}\n`;
   const key = process.env.RESEND_API_KEY;
   const from = process.env.LF_EDIT_FROM;
   if (!key || !from) {
@@ -41,8 +53,8 @@ export async function sendSignInLink(email: string, origin: string): Promise<Sig
     body: JSON.stringify({
       from,
       to: email,
-      subject: 'Your link to edit the site',
-      text: `Open this link to edit the site. It expires in 15 minutes.\n\n${link}\n`,
+      subject,
+      text,
     }),
   }).catch(() => null);
 

@@ -20,7 +20,7 @@ import { loadEditors } from './editors';
 import { mergeAccess } from './editors-list';
 
 export const SESSION_COOKIE = 'lf_edit_session';
-const SIGN_IN_MINUTES = 15;
+import { SIGN_IN_MINUTES } from './editors-list';
 const SESSION_HOURS = 8;
 /** An undo token is useful for as long as the session that was handed it. */
 const UNDO_HOURS = SESSION_HOURS;
@@ -183,7 +183,7 @@ export function openImageUndo(token: string): ImageUndoEntry[] | null {
   return entries;
 }
 
-export const createSignInToken = (email: string) => seal('signin', email, SIGN_IN_MINUTES);
+export const createSignInToken = (email: string, minutes = SIGN_IN_MINUTES) => seal('signin', email, minutes);
 export const readSignInToken = (token: string) => open('signin', token);
 export const createSessionToken = (email: string) => seal('session', email, SESSION_HOURS * 60);
 

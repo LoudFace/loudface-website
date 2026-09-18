@@ -22,6 +22,7 @@ import {
   withoutEditor,
   type EditorList,
 } from '../inline-edit/editors-list';
+import { freshInvite, signInMinutesFor, INVITE_LINK_MINUTES, SIGN_IN_MINUTES } from '../inline-edit/editors-list';
 
 const OWNERS = ['arnel@loudface.co', 'hello@loudface.co'];
 const NOW = '2026-09-18T10:00:00.000Z';
@@ -239,5 +240,28 @@ describe('serializeEditors', () => {
     ).split('\n');
     const added = after.filter((line) => !before.includes(line));
     assert.ok(added.length <= 6, `an invite rewrote too much:\n${added.join('\n')}`);
+  });
+});
+
+describe('freshInvite', () => {
+  const now = new Date('2026-09-18T12:00:00Z');
+  const editors = [
+    { email: 'new@client.com', addedBy: 'arnel@loudface.co', addedAt: '2026-09-18T11:50:00Z' },
+    { email: 'old@client.com', addedBy: 'arnel@loudface.co', addedAt: '2026-09-17T11:50:00Z' },
+  ];
+  it('an address added minutes ago is a fresh invite and gets 12 hours', () => {
+    const invite = freshInvite(editors, 'New@Client.com', now);
+    assert.equal(invite?.addedBy, 'arnel@loudface.co');
+    assert.equal(signInMinutesFor(invite), INVITE_LINK_MINUTES);
+    assert.equal(INVITE_LINK_MINUTES, 720);
+  });
+  it('an address added yesterday, or unknown, gets the everyday 15 minutes', () => {
+    assert.equal(freshInvite(editors, 'old@client.com', now), null);
+    assert.equal(freshInvite(editors, 'nobody@client.com', now), null);
+    assert.equal(signInMinutesFor(null), SIGN_IN_MINUTES);
+  });
+  it('a timestamp in the future or unreadable is not fresh', () => {
+    assert.equal(freshInvite([{ email: 'a@b.co', addedBy: '', addedAt: '2026-09-18T12:30:00Z' }], 'a@b.co', now), null);
+    assert.equal(freshInvite([{ email: 'a@b.co', addedBy: '', addedAt: 'yesterday' }], 'a@b.co', now), null);
   });
 });
