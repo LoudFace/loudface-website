@@ -1,3 +1,9 @@
 {
-  "editors": []
+  "editors": [
+    {
+      "email": "editor-test@loudface.co",
+      "addedBy": "arnel@loudface.co",
+      "addedAt": "2026-09-18T08:44:07.223Z"
+    }
+  ]
 }
