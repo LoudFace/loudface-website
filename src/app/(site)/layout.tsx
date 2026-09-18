@@ -83,6 +83,24 @@ export default async function SiteLayout({
   // suppression) is resolved client-side in SiteChrome via usePathname(). The
   // request pathname is used here only to skip footer data on routes that carry
   // their own FooterV3.
+  const site = (
+    <>
+      {/* Skip link for keyboard accessibility */}
+      <a href="#main-content" className="skip-link">
+        Skip to main content
+      </a>
+
+      <SiteHeader navContent={navContent} />
+
+      <main id="main-content">{children}</main>
+
+      {/* Homepage + About + Pricing + Services + Contact + Case Studies (gallery + detail) + Blog (index + posts) ship their own v3 footers; every other page uses the shared one. */}
+      <SiteFooter>
+        <Footer caseStudies={footerData?.caseStudies} blogPosts={footerData?.blogPosts} />
+      </SiteFooter>
+    </>
+  );
+
   return (
     <div
       className="font-sans antialiased overflow-x-clip"
@@ -90,19 +108,11 @@ export default async function SiteLayout({
       data-lf-did={postHogDistinctId}
     >
       <PostHogProvider>
-        {/* Skip link for keyboard accessibility */}
-        <a href="#main-content" className="skip-link">
-          Skip to main content
-        </a>
-
-        <SiteHeader navContent={navContent} />
-
-        <main id="main-content">{children}</main>
-
-        {/* Homepage + About + Pricing + Services + Contact + Case Studies (gallery + detail) + Blog (index + posts) ship their own v3 footers; every other page uses the shared one. */}
-        <SiteFooter>
-          <Footer caseStudies={footerData?.caseStudies} blogPosts={footerData?.blogPosts} />
-        </SiteFooter>
+        {/* The site itself. In Draft Mode it is handed to the editor shell,
+            which frames it in a canvas of its own; that canvas is the element
+            that scrolls, so the sticky header sticks under the editor bar
+            instead of over it. Outside Draft Mode nothing here changes. */}
+        {isDraftMode ? <InlineEditor>{site}</InlineEditor> : site}
 
         {/* GTM + RB2B live in ConsentManager below — consent-gated AND still
             deferred to first interaction, so the TBT-near-zero behavior the
@@ -131,7 +141,6 @@ window.addEventListener(e,loadCal,{once:true,passive:true});});})();`}
             Outside draft mode, no overlay JS loads, page is identical to
             published content. */}
         {isDraftMode && <VisualEditing />}
-        {isDraftMode && <InlineEditor />}
 
         {/* Consent banner + consent-gated trackers (GTM ×2, RB2B; PostHog
             reacts to the same consent state via posthog-client). EEA/UK/CH

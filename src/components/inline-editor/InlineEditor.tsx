@@ -30,7 +30,7 @@ import {
   type LinkCase,
 } from '../../lib/inline-edit/link-edit';
 import { ADDRESS } from '../../lib/inline-edit/mark-tree';
-import { undoneSummary } from '../../lib/inline-edit/publish-history';
+import { EditorShell, type ShellStatus } from './EditorShell';
 import {
   MAX_IMAGE_BYTES,
   SANITY_IMAGE_PREFIX,
@@ -77,7 +77,9 @@ type ChangeExtra = {
 /** One link in the Links panel: what it says, where it points, and where that address lives. */
 type LinkRow = { text: string; href: string; anchor: HTMLAnchorElement; kind: LinkCase };
 /** The Links panel: the element that was clicked and every link inside it. */
-type LinkPanel = { id: string; root: HTMLElement; rows: LinkRow[] };
+type LinkPanel = { id: string; root: HTMLElement; rows: LinkRow[]; at: Point };
+/** Where a popover opens: the bottom-left corner of what was clicked, in viewport pixels. */
+type Point = { x: number; y: number };
 type Status = {
   kind: 'idle' | 'saving' | 'saved' | 'checking' | 'live' | 'stale' | 'error';
   message?: string;
@@ -92,10 +94,6 @@ type Publish = {
   fields: string[];
   reverted: boolean;
 };
-/** One invited person, as the Editors panel shows them. */
-type Invited = { email: string; addedBy: string; addedAt: string };
-/** Everything the Editors panel draws: our fixed addresses, the invited, and who is asking. */
-type Access = { owners: { email: string }[]; editors: Invited[]; you: string };
 /** What the server handed back so this session can undo its own Sanity publish:
  *  a signed token per field, never the old text. The server alone can open it. */
 type SanityUndo = { id: string; token: string };
@@ -103,7 +101,7 @@ type SanityUndo = { id: string; token: string };
  * The image panel. `content` is true for a picture whose path lives in one of
  * our content files — only those have an address that can be typed instead.
  */
-type AssetTarget = { id: string; current: string; content: boolean; address: boolean };
+type AssetTarget = { id: string; current: string; content: boolean; address: boolean; at: Point };
 
 const START = '\u{E0001}';
 const BASE = 0xe0000;
@@ -424,17 +422,11 @@ const formatSeconds = (s: number) => `${Math.floor(s / 60)}:${String(s % 60).pad
 
 const UNREACHABLE = 'Could not reach the site, try again';
 
-export function InlineEditor() {
+export function InlineEditor({ children }: { children?: React.ReactNode }) {
   const [changes, setChanges] = useState<Record<string, Change>>({});
   const [status, setStatus] = useState<Status>({ kind: 'idle' });
   const [assetTarget, setAssetTarget] = useState<AssetTarget | null>(null);
   const [count, setCount] = useState(0);
-  const [historyOpen, setHistoryOpen] = useState(false);
-  const [editorsOpen, setEditorsOpen] = useState(false);
-  const [access, setAccess] = useState<Access | null>(null);
-  const [inviting, setInviting] = useState(false);
-  const [inviteEmail, setInviteEmail] = useState('');
-  const [accessNote, setAccessNote] = useState('');
   const [showAll, setShowAll] = useState(false);
   const [publishes, setPublishes] = useState<Publish[] | null>(null);
   const [sanityUndo, setSanityUndo] = useState<SanityUndo[] | null>(null);
@@ -614,6 +606,7 @@ export function InlineEditor() {
           current: realImageSource(original).split('?')[0],
           content: !id.startsWith(SANITY_IMAGE_PREFIX),
           address: false,
+          at: pointFor(el),
         });
         // Straight into the file dialog: choosing a picture is what almost
         // everyone clicking a picture means to do. The panel behind it offers
@@ -662,7 +655,7 @@ export function InlineEditor() {
         .filter((row): row is LinkRow => row !== null && Boolean(row.href));
       setLinkNote('');
       setLinkDrafts({});
-      setLinkPanel(rows.length ? { id, root: el, rows } : null);
+      setLinkPanel(rows.length ? { id, root: el, rows, at: pointFor(el) } : null);
     };
 
     // Stage on every keystroke. Waiting for blur loses the last edit whenever
@@ -768,16 +761,6 @@ export function InlineEditor() {
       el.style.backgroundColor = showAll ? 'rgba(47,125,225,.07)' : '';
     });
   }, [showAll, count]);
-
-  // Escape closes the Editors panel wherever the focus happens to be.
-  useEffect(() => {
-    if (!editorsOpen) return;
-    const onKey = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') setEditorsOpen(false);
-    };
-    document.addEventListener('keydown', onKey);
-    return () => document.removeEventListener('keydown', onKey);
-  }, [editorsOpen]);
 
   // The same for the Links panel, whose fields are outside the edited element.
   useEffect(() => {
@@ -1183,7 +1166,6 @@ export function InlineEditor() {
   }
 
   async function openHistory() {
-    setHistoryOpen(true);
     setPublishes(null);
     try {
       const response = await fetch('/api/lf-edit/history');
@@ -1192,80 +1174,6 @@ export function InlineEditor() {
     } catch {
       setPublishes([]);
       setStatus({ kind: 'error', message: UNREACHABLE });
-    }
-  }
-
-  /**
-   * Who has access. The list is a file in the repository, so this is a read of
-   * the branch head rather than of anything this browser holds.
-   */
-  async function openEditors() {
-    setEditorsOpen(true);
-    setAccess(null);
-    setAccessNote('');
-    setInviteEmail('');
-    try {
-      const response = await fetch('/api/lf-edit/editors');
-      const result = await response.json().catch(() => ({}));
-      if (!response.ok || result?.error) {
-        setAccessNote(result?.error ?? 'The list of editors could not be read');
-        return;
-      }
-      setAccess(result as Access);
-    } catch {
-      setAccessNote(UNREACHABLE);
-    }
-  }
-
-  async function invite() {
-    const email = inviteEmail.trim();
-    if (!email || inviting) return;
-    setInviting(true);
-    setAccessNote('');
-    try {
-      const response = await fetch('/api/lf-edit/editors', {
-        method: 'POST',
-        headers: { 'content-type': 'application/json' },
-        body: JSON.stringify({ email }),
-      });
-      const result = await response.json().catch(() => ({}));
-      if (!response.ok || result?.error) {
-        setAccessNote(result?.error ?? 'That invitation could not be sent');
-        return;
-      }
-      setAccess(result as Access);
-      setInviteEmail('');
-      setAccessNote(
-        result.mailed
-          ? `Invitation sent to ${email}. The link in it lasts 15 minutes; they can ask for a new one at /edit any time.`
-          : `${email} now has access, but the invitation email could not be sent. Ask them to open /edit and request a link.`,
-      );
-    } catch {
-      setAccessNote(UNREACHABLE);
-    } finally {
-      setInviting(false);
-    }
-  }
-
-  async function removeEditor(email: string) {
-    setAccessNote('');
-    try {
-      const response = await fetch('/api/lf-edit/editors', {
-        method: 'DELETE',
-        headers: { 'content-type': 'application/json' },
-        body: JSON.stringify({ email }),
-      });
-      const result = await response.json().catch(() => ({}));
-      if (!response.ok || result?.error) {
-        setAccessNote(result?.error ?? 'That person could not be removed');
-        return;
-      }
-      setAccess(result as Access);
-      // A session is signed, not stored, so there is nothing to revoke: the one
-      // they are holding runs out on its own within eight hours.
-      setAccessNote('Removed. Their current session ends within 8 hours.');
-    } catch {
-      setAccessNote(UNREACHABLE);
     }
   }
 
@@ -1294,7 +1202,6 @@ export function InlineEditor() {
       setStatus({ kind: 'error', message: result?.error ?? 'Undo failed' });
       return;
     }
-    setHistoryOpen(false);
     if (result.mode !== 'github') {
       setStatus({ kind: 'saved', message: doneWord });
       setTimeout(() => window.location.reload(), 900);
@@ -1345,318 +1252,188 @@ export function InlineEditor() {
     );
   }
 
-  return (
-    <div data-lf-chrome="">
-      <style>{`@keyframes lf-pulse { 0%,100% { opacity: 1 } 50% { opacity: .35 } }`}</style>
-      <div style={bar}>
-        <span style={{ fontWeight: 700 }}>Inline editing</span>
-        <span style={{ display: 'inline-flex', alignItems: 'center', gap: 8, opacity: 0.9 }}>
-          <span aria-hidden="true" style={{ ...light, ...lightFor(status.kind, pending.length > 0) }} />
-          <span>
-            {status.kind === 'saving'
-              ? 'Saving…'
-              : status.kind === 'checking'
-                ? `${status.message} · ${formatSeconds(status.seconds ?? 0)}`
-                : status.kind === 'live'
-                  ? `${status.message}${status.seconds ? ` · took ${formatSeconds(status.seconds)}` : ''}`
-                  : status.kind === 'error' || status.kind === 'saved' || status.kind === 'stale'
-                    ? status.message
-                    : pending.length
-                      ? `${pending.length} unsaved`
-                      : `${count} editable on this page`}
-          </span>
-        </span>
-        <button
-          style={{ ...button, opacity: pending.length ? 1 : 0.45 }}
-          onClick={save}
-          disabled={!pending.length}
-        >
-          Publish
-        </button>
-        <button style={ghost} onClick={() => window.location.reload()} disabled={!pending.length}>
-          Discard
-        </button>
-        {(status.kind === 'saved' || status.kind === 'checking' || status.kind === 'live' || status.kind === 'stale') &&
-        (sanityUndo?.length || imageUndo?.length) ? (
-          <button style={ghost} onClick={undoLast}>
-            Undo
-          </button>
-        ) : null}
-        <button
-          style={{ ...ghost, background: showAll ? 'rgba(255,255,255,.18)' : 'transparent' }}
-          onClick={() => setShowAll((on) => !on)}
-        >
-          {showAll ? 'Hide editable' : 'Show editable'}
-        </button>
-        <button style={ghost} onClick={openHistory}>
-          History
-        </button>
-        <button style={ghost} onClick={openEditors}>
-          Editors
-        </button>
-        <a style={ghost} href="/api/lf-edit/signout">
-          Sign out
-        </a>
-      </div>
+  /**
+   * Replace one picture, started from the Media panel rather than from the page.
+   * Same flow as clicking it: the panel behind the file dialog offers the
+   * address box for the rare case a file is not what was meant.
+   */
+  function pickImage(id: string) {
+    const el = document.querySelector<HTMLImageElement>(`img[data-lf-id="${id}"]`);
+    const original = originals.current.get(id) ?? el?.getAttribute('src') ?? '';
+    setAssetTarget({
+      id,
+      current: realImageSource(original).split('?')[0],
+      content: !id.startsWith(SANITY_IMAGE_PREFIX),
+      address: false,
+      at: el ? pointFor(el) : { x: 120, y: 120 },
+    });
+    openPicker(id);
+  }
 
-      {historyOpen && (
-        <div style={{ ...panel, width: 520, maxHeight: '60vh', overflow: 'auto' }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-            <p style={{ margin: '0 0 10px', fontWeight: 700 }}>Recent publishes</p>
-            <button style={{ ...ghost, color: '#14212b', borderColor: '#cfd9e2' }} onClick={() => setHistoryOpen(false)}>
-              Close
-            </button>
-          </div>
-          {publishes === null && <p style={{ margin: 0, opacity: 0.7 }}>Loading…</p>}
-          {publishes?.length === 0 && <p style={{ margin: 0, opacity: 0.7 }}>Nothing published yet.</p>}
-          {publishes?.map((entry) => {
-            // A revert commit is a commit, so it shows up here like any other.
-            // Undoing one puts the change back on the live site, which is a
-            // redo; the row says so, and the button is labelled for what it
-            // does rather than for what the row above it does.
-            const undid = undoneSummary(entry.summary);
-            return (
-            <div
-              key={entry.hash}
-              style={{
-                display: 'flex',
-                gap: 12,
-                alignItems: 'flex-start',
-                justifyContent: 'space-between',
-                padding: '10px 0',
-                borderTop: '1px solid #eef2f5',
-              }}
-            >
-              <div style={{ minWidth: 0 }}>
-                <p style={{ margin: 0, fontWeight: 600 }}>{undid ? `undo of ${undid}` : entry.summary}</p>
-                <p style={{ margin: '2px 0 0', fontSize: 12, opacity: 0.7 }}>
-                  {new Date(entry.date).toLocaleString()} · {entry.editor}
-                  {entry.fields.length ? ` · ${entry.fields.slice(0, 3).join(', ')}` : ''}
-                </p>
+  const undoable = Boolean(
+    (status.kind === 'saved' || status.kind === 'checking' || status.kind === 'live' || status.kind === 'stale') &&
+      (sanityUndo?.length || imageUndo?.length),
+  );
+
+  return (
+    <EditorShell
+      status={shellStatus(status, pending.length)}
+      pendingCount={pending.length}
+      editableCount={count}
+      onPublish={save}
+      onDiscard={() => window.location.reload()}
+      canUndo={undoable}
+      onUndo={undoLast}
+      showAll={showAll}
+      onShowAll={setShowAll}
+      publishes={publishes}
+      onOpenHistory={openHistory}
+      onUndoPublish={undoPublish}
+      onPickImage={pickImage}
+      overlays={
+        <div data-lf-chrome="">
+          {/* One picker for the whole page. It is opened from the click on an image,
+              which is the only moment a browser will open a file dialog at all. */}
+          <input
+            ref={picker}
+            type="file"
+            accept={IMAGE_TYPES}
+            style={{ display: 'none' }}
+            onChange={(event) => {
+              chooseFile(event.target.files?.[0]);
+              event.target.value = '';
+            }}
+          />
+
+          {linkPanel && (
+            <div style={popoverAt(linkPanel.at, 380)}>
+              <div style={popHead}>
+                <strong style={{ fontWeight: 600 }}>
+                  {linkPanel.rows.length === 1 ? 'Where this link points' : 'Where these links point'}
+                </strong>
+                <button style={closeBtn} onClick={() => setLinkPanel(null)} aria-label="Close">
+                  ×
+                </button>
               </div>
-              {entry.reverted ? (
-                <span style={{ fontSize: 12, opacity: 0.6, whiteSpace: 'nowrap' }}>undone</span>
-              ) : (
-                <button
-                  style={{ ...button, background: undid ? '#14212b' : '#8c1d18', padding: '6px 12px' }}
-                  onClick={() => undoPublish(entry.hash, undid ? 'Change put back' : 'Change undone')}
-                >
-                  {undid ? 'Redo' : 'Undo'}
+
+              <div style={{ maxHeight: '46vh', overflow: 'auto' }}>
+                {linkPanel.rows.map((link, index) => (
+                  <div key={`${link.href}-${index}`} style={{ padding: '10px 0', borderTop: `1px solid ${LINE}` }}>
+                    <p style={{ margin: 0, fontWeight: 600, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                      {link.text}
+                    </p>
+                    <div style={{ display: 'flex', gap: 8, marginTop: 6 }}>
+                      <input
+                        value={linkDrafts[index] ?? link.href}
+                        style={{ ...field, flex: 1, minWidth: 0 }}
+                        onChange={(event) => setLinkDrafts((prev) => ({ ...prev, [index]: event.target.value }))}
+                        onKeyDown={(event) => {
+                          if (event.key === 'Enter') applyLink(link, index);
+                          if (event.key === 'Escape') setLinkPanel(null);
+                        }}
+                      />
+                      <button
+                        style={{ ...pillBtn, ...pillPrimary, opacity: linkBusy === index ? 0.5 : 1 }}
+                        onClick={() => applyLink(link, index)}
+                        disabled={linkBusy === index}
+                      >
+                        {linkBusy === index ? 'Checking\u2026' : 'Apply'}
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              <p style={note}>
+                {linkNote ||
+                  'A page on this site starts with /. A page elsewhere starts with https://. Enter to apply, Escape to close.'}
+              </p>
+            </div>
+          )}
+
+          {assetTarget && (
+            <div style={popoverAt(assetTarget.at, 320)}>
+              <div style={popHead}>
+                <strong style={{ fontWeight: 600 }}>Replace image</strong>
+                <button style={closeBtn} onClick={() => setAssetTarget(null)} aria-label="Close">
+                  ×
+                </button>
+              </div>
+              <button style={{ ...pillBtn, ...pillPrimary, marginTop: 4 }} onClick={() => openPicker(assetTarget.id)}>
+                Choose a picture…
+              </button>
+              <p style={note}>PNG, JPEG, WebP or GIF, up to 4 MB. It goes onto the site when you press Publish.</p>
+
+              {assetTarget.content && !assetTarget.address && (
+                <button style={linkButton} onClick={() => setAssetTarget({ ...assetTarget, address: true })}>
+                  Use an address instead
                 </button>
               )}
-            </div>
-            );
-          })}
-        </div>
-      )}
 
-      {editorsOpen && (
-        <div style={{ ...panel, width: 520, maxHeight: '60vh', overflow: 'auto' }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-            <p style={{ margin: '0 0 10px', fontWeight: 700 }}>Who can edit this site</p>
-            <button
-              style={{ ...ghost, color: '#14212b', borderColor: '#cfd9e2' }}
-              onClick={() => setEditorsOpen(false)}
-            >
-              Close
-            </button>
-          </div>
-
-          {access === null && !accessNote && <p style={{ margin: 0, opacity: 0.7 }}>Loading…</p>}
-
-          {access?.owners.map((owner) => (
-            <div key={owner.email} style={row}>
-              <div style={{ minWidth: 0 }}>
-                <p style={{ margin: 0, fontWeight: 600 }}>{owner.email}</p>
-                <p style={{ margin: '2px 0 0', fontSize: 12, opacity: 0.7 }}>owner · LoudFace</p>
-              </div>
-            </div>
-          ))}
-
-          {access?.editors.map((person) => (
-            <div key={person.email} style={row}>
-              <div style={{ minWidth: 0 }}>
-                <p style={{ margin: 0, fontWeight: 600 }}>
-                  {person.email}
-                  {person.email === access.you ? ' (you)' : ''}
-                </p>
-                <p style={{ margin: '2px 0 0', fontSize: 12, opacity: 0.7 }}>
-                  editor · added by {person.addedBy.split('@')[0] || 'someone'}
-                  {addedOn(person.addedAt)}
-                </p>
-              </div>
-              <button
-                style={{ ...button, background: '#8c1d18', padding: '6px 12px' }}
-                onClick={() => removeEditor(person.email)}
-              >
-                Remove
-              </button>
-            </div>
-          ))}
-
-          {access && !access.editors.length && (
-            <p style={{ margin: '10px 0 0', fontSize: 12, opacity: 0.7 }}>
-              Nobody else has been invited yet.
-            </p>
-          )}
-
-          <div style={{ display: 'flex', gap: 8, marginTop: 14 }}>
-            <input
-              type="email"
-              placeholder="colleague@company.com"
-              value={inviteEmail}
-              disabled={inviting}
-              style={{ ...input, flex: 1 }}
-              onChange={(event) => setInviteEmail(event.target.value)}
-              onKeyDown={(event) => {
-                if (event.key === 'Enter') invite();
-              }}
-            />
-            <button
-              style={{ ...button, opacity: inviting || !inviteEmail.trim() ? 0.45 : 1 }}
-              onClick={invite}
-              disabled={inviting || !inviteEmail.trim()}
-            >
-              {inviting ? 'Inviting…' : 'Invite'}
-            </button>
-          </div>
-
-          <p style={{ margin: '10px 0 0', fontSize: 12, opacity: 0.75, minHeight: 16 }}>
-            {accessNote ||
-              'An invitation is a sign-in link by email. Removing someone stops new sign-ins; a session they already have ends within 8 hours.'}
-          </p>
-        </div>
-      )}
-
-      {linkPanel && (
-        <div style={{ ...panel, width: 560, maxHeight: '60vh', overflow: 'auto' }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-            <p style={{ margin: '0 0 10px', fontWeight: 700 }}>
-              {linkPanel.rows.length === 1 ? 'Where this link points' : 'Where these links point'}
-            </p>
-            <button
-              style={{ ...ghost, color: '#14212b', borderColor: '#cfd9e2' }}
-              onClick={() => setLinkPanel(null)}
-            >
-              Close
-            </button>
-          </div>
-
-          {linkPanel.rows.map((link, index) => (
-            <div key={`${link.href}-${index}`} style={{ ...row, display: 'block' }}>
-              <p style={{ margin: 0, fontWeight: 600, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                {link.text}
-              </p>
-              <div style={{ display: 'flex', gap: 8, marginTop: 6 }}>
-                <input
-                  value={linkDrafts[index] ?? link.href}
-                  style={{ ...input, flex: 1 }}
-                  onChange={(event) => setLinkDrafts((prev) => ({ ...prev, [index]: event.target.value }))}
-                  onKeyDown={(event) => {
-                    if (event.key === 'Enter') applyLink(link, index);
-                    if (event.key === 'Escape') setLinkPanel(null);
-                  }}
-                />
-                <button
-                  style={{ ...button, opacity: linkBusy === index ? 0.45 : 1 }}
-                  onClick={() => applyLink(link, index)}
-                  disabled={linkBusy === index}
-                >
-                  {linkBusy === index ? 'Checking\u2026' : 'Apply'}
-                </button>
-              </div>
-            </div>
-          ))}
-
-          <p style={{ margin: '10px 0 0', fontSize: 12, opacity: 0.75, minHeight: 16 }}>
-            {linkNote ||
-              'A page on this site starts with /. A page elsewhere starts with https://. Enter to apply, Escape to close.'}
-          </p>
-        </div>
-      )}
-
-      {/* One picker for the whole page. It is opened from the click on an image,
-          which is the only moment a browser will open a file dialog at all. */}
-      <input
-        ref={picker}
-        type="file"
-        accept={IMAGE_TYPES}
-        style={{ display: 'none' }}
-        onChange={(event) => {
-          chooseFile(event.target.files?.[0]);
-          event.target.value = '';
-        }}
-      />
-
-      {assetTarget && (
-        <div style={panel}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-            <p style={{ margin: '0 0 8px', fontWeight: 700 }}>Replace image</p>
-            <button
-              style={{ ...ghost, color: '#14212b', borderColor: '#cfd9e2' }}
-              onClick={() => setAssetTarget(null)}
-            >
-              Close
-            </button>
-          </div>
-          <button style={button} onClick={() => openPicker(assetTarget.id)}>
-            Choose a picture…
-          </button>
-          <p style={{ margin: '8px 0 0', fontSize: 12, opacity: 0.7 }}>
-            PNG, JPEG, WebP or GIF, up to 4 MB. It goes onto the site when you press Publish.
-          </p>
-
-          {assetTarget.content && !assetTarget.address && (
-            <button
-              style={linkButton}
-              onClick={() => setAssetTarget({ ...assetTarget, address: true })}
-            >
-              Use an address instead
-            </button>
-          )}
-
-          {assetTarget.content && assetTarget.address && (
-            <>
-              <p style={{ margin: '12px 0 6px', fontWeight: 600 }}>Image address</p>
-              <input
-                autoFocus
-                defaultValue={assetTarget.current}
-                style={input}
-                onKeyDown={(event) => {
-                  if (event.key === 'Escape') setAssetTarget(null);
-                  if (event.key === 'Enter') {
-                    const value = (event.target as HTMLInputElement).value.trim();
-                    const el = document.querySelector<HTMLImageElement>(
-                      `[data-lf-id="${assetTarget.id}"]`,
-                    );
-                    if (el && value) {
-                      if (!originals.current.has(assetTarget.id)) {
-                        originals.current.set(assetTarget.id, el.getAttribute('src') ?? '');
+              {assetTarget.content && assetTarget.address && (
+                <>
+                  <p style={{ margin: '12px 0 6px', fontWeight: 600 }}>Image address</p>
+                  <input
+                    autoFocus
+                    defaultValue={assetTarget.current}
+                    style={field}
+                    onKeyDown={(event) => {
+                      if (event.key === 'Escape') setAssetTarget(null);
+                      if (event.key === 'Enter') {
+                        const value = (event.target as HTMLInputElement).value.trim();
+                        const el = document.querySelector<HTMLImageElement>(`[data-lf-id="${assetTarget.id}"]`);
+                        if (el && value) {
+                          if (!originals.current.has(assetTarget.id)) {
+                            originals.current.set(assetTarget.id, el.getAttribute('src') ?? '');
+                          }
+                          el.setAttribute('src', value);
+                          el.removeAttribute('srcset');
+                          el.removeAttribute('sizes');
+                          record(assetTarget.id, value, value.slice(0, 42));
+                        }
+                        setAssetTarget(null);
                       }
-                      el.setAttribute('src', value);
-                      el.removeAttribute('srcset');
-                      el.removeAttribute('sizes');
-                      record(assetTarget.id, value, value.slice(0, 42));
-                    }
-                    setAssetTarget(null);
-                  }
-                }}
-              />
-              <p style={{ margin: '8px 0 0', fontSize: 12, opacity: 0.7 }}>
-                Enter to apply, Escape to cancel.
-              </p>
-            </>
+                    }}
+                  />
+                  <p style={note}>Enter to apply, Escape to cancel.</p>
+                </>
+              )}
+            </div>
           )}
         </div>
-      )}
-    </div>
+      }
+    >
+      {children}
+    </EditorShell>
   );
 }
 
-/** " on 18 September 2026", or nothing at all if the stamp is missing or unreadable. */
-function addedOn(addedAt: string): string {
-  const when = new Date(addedAt);
-  return addedAt && !Number.isNaN(when.getTime()) ? ` on ${when.toLocaleDateString()}` : '';
+/**
+ * The status light, in the words the top bar has room for.
+ *
+ * The states themselves are untouched — this only shortens what they say. The
+ * full sentence rides along as the element's title, and the Settings panel
+ * shows it in full.
+ */
+function shellStatus(status: Status, unsaved: number): ShellStatus {
+  const seconds = formatSeconds(status.seconds ?? 0);
+  if (status.kind === 'error' || status.kind === 'stale') {
+    return { tone: 'bad', text: status.message ?? 'Something went wrong', title: status.message };
+  }
+  if (status.kind === 'saving') return { tone: 'busy', text: 'Saving…' };
+  if (status.kind === 'checking') return { tone: 'busy', text: `Building · ${seconds}`, title: status.message };
+  if (status.kind === 'live') {
+    return { tone: 'ok', text: status.seconds ? `Live · took ${seconds}` : 'Live', title: status.message };
+  }
+  if (status.kind === 'saved') return { tone: 'busy', text: 'Saved', title: status.message };
+  if (unsaved) return { tone: 'busy', text: `${unsaved} unsaved` };
+  return { tone: 'ok', text: 'Live' };
+}
+
+/** Where a popover opens: under the left edge of what was clicked. */
+function pointFor(el: HTMLElement): { x: number; y: number } {
+  const box = el.getBoundingClientRect();
+  return { x: box.left, y: box.bottom + 8 };
 }
 
 /** Place the text caret where the editor clicked, falling back to the end. */
@@ -1679,73 +1456,90 @@ function placeCaret(el: HTMLElement, event: MouseEvent) {
   selection.addRange(end);
 }
 
-const light: React.CSSProperties = {
-  width: 9,
-  height: 9,
-  borderRadius: '50%',
-  flexShrink: 0,
-  transition: 'background .3s, box-shadow .3s',
-};
+const LINE = '#e6ebf0';
+const BRAND = '#4f46e5';
+const FONT = 'Inter, ui-sans-serif, system-ui, -apple-system, sans-serif';
 
-/** Grey: nothing pending. Amber: unsaved or in flight. Green: confirmed on the public page. Red: a problem. */
-function lightFor(kind: Status['kind'], dirty: boolean): React.CSSProperties {
-  if (kind === 'error' || kind === 'stale') return { background: '#e5484d', boxShadow: '0 0 0 3px rgba(229,72,77,.25)' };
-  if (kind === 'live') return { background: '#30a46c', boxShadow: '0 0 0 3px rgba(48,164,108,.25)' };
-  if (kind === 'saving' || kind === 'checking') return { background: '#f5a524', boxShadow: '0 0 0 3px rgba(245,165,36,.25)', animation: 'lf-pulse 1.2s ease-in-out infinite' };
-  if (kind === 'saved' || dirty) return { background: '#f5a524' };
-  return { background: 'rgba(255,255,255,.35)' };
+/**
+ * A popover, anchored under what was clicked and kept inside the canvas.
+ *
+ * Both panels used to be pinned to the bottom-left corner beside the old bar.
+ * Anchored is the whole point of the shell: the fields sit beside the thing
+ * they change, not in a corner the client has to look away to find.
+ */
+function popoverAt(at: { x: number; y: number }, width: number): React.CSSProperties {
+  const margin = 12;
+  const maxLeft = (typeof window === 'undefined' ? 1440 : window.innerWidth) - width - margin;
+  const maxTop = (typeof window === 'undefined' ? 900 : window.innerHeight) - 220;
+  return {
+    position: 'fixed',
+    left: Math.max(72, Math.min(at.x, Math.max(72, maxLeft))),
+    top: Math.max(64, Math.min(at.y, Math.max(64, maxTop))),
+    width,
+    zIndex: 2147483001,
+    padding: 14,
+    borderRadius: 12,
+    background: '#fff',
+    border: `1px solid ${LINE}`,
+    color: '#14212b',
+    font: `13px/1.45 ${FONT}`,
+    boxShadow: '0 16px 40px rgba(20,33,43,.18), 0 1px 2px rgba(20,33,43,.06)',
+  };
 }
 
-const bar: React.CSSProperties = {
-  position: 'fixed',
-  left: 16,
-  bottom: 16,
-  zIndex: 2147483000,
+const popHead: React.CSSProperties = {
   display: 'flex',
   alignItems: 'center',
-  gap: 12,
-  padding: '10px 14px',
-  borderRadius: 999,
-  background: '#0d1b2a',
-  color: '#fff',
-  font: '13px/1.2 ui-sans-serif, system-ui, sans-serif',
-  boxShadow: '0 10px 30px rgba(0,0,0,.25)',
+  justifyContent: 'space-between',
+  gap: 10,
+  marginBottom: 4,
 };
 
-const button: React.CSSProperties = {
+const closeBtn: React.CSSProperties = {
+  width: 26,
+  height: 26,
   border: 0,
-  borderRadius: 999,
-  padding: '7px 14px',
-  background: '#2f7de1',
-  color: '#fff',
-  font: '600 13px ui-sans-serif, system-ui, sans-serif',
-  cursor: 'pointer',
-};
-
-const ghost: React.CSSProperties = {
-  border: '1px solid rgba(255,255,255,.28)',
-  borderRadius: 999,
-  padding: '6px 12px',
+  borderRadius: 8,
   background: 'transparent',
-  color: '#fff',
-  font: '13px ui-sans-serif, system-ui, sans-serif',
+  color: '#5b6b7a',
+  fontSize: 18,
+  lineHeight: 1,
   cursor: 'pointer',
-  textDecoration: 'none',
 };
 
-const panel: React.CSSProperties = {
-  position: 'fixed',
-  left: 16,
-  bottom: 74,
-  zIndex: 2147483000,
-  width: 420,
-  padding: 14,
-  borderRadius: 12,
+const pillBtn: React.CSSProperties = {
+  display: 'inline-flex',
+  alignItems: 'center',
+  height: 32,
+  padding: '0 12px',
+  borderRadius: 8,
+  border: `1px solid ${LINE}`,
   background: '#fff',
-  color: '#0d1b2a',
-  font: '13px/1.4 ui-sans-serif, system-ui, sans-serif',
-  boxShadow: '0 16px 40px rgba(0,0,0,.22)',
+  color: '#14212b',
+  font: `500 13px ${FONT}`,
+  cursor: 'pointer',
+  whiteSpace: 'nowrap',
 };
+
+const pillPrimary: React.CSSProperties = {
+  background: BRAND,
+  borderColor: BRAND,
+  color: '#fff',
+  fontWeight: 600,
+};
+
+const field: React.CSSProperties = {
+  width: '100%',
+  height: 32,
+  padding: '0 10px',
+  border: `1px solid ${LINE}`,
+  borderRadius: 8,
+  background: '#fff',
+  color: '#14212b',
+  font: `13px ${FONT}`,
+};
+
+const note: React.CSSProperties = { margin: '10px 0 0', fontSize: 12, color: '#5b6b7a', minHeight: 16 };
 
 /** A plain-text button that reads as a link: the secondary way to change a picture. */
 const linkButton: React.CSSProperties = {
@@ -1754,28 +1548,8 @@ const linkButton: React.CSSProperties = {
   padding: 0,
   border: 0,
   background: 'transparent',
-  color: '#2f7de1',
-  font: '13px ui-sans-serif, system-ui, sans-serif',
+  color: BRAND,
+  font: `13px ${FONT}`,
   textDecoration: 'underline',
   cursor: 'pointer',
 };
-
-/** One person in the Editors panel, laid out like one publish in History. */
-const row: React.CSSProperties = {
-  display: 'flex',
-  gap: 12,
-  alignItems: 'flex-start',
-  justifyContent: 'space-between',
-  padding: '10px 0',
-  borderTop: '1px solid #eef2f5',
-};
-
-const input: React.CSSProperties = {
-  width: '100%',
-  padding: '9px 10px',
-  border: '1px solid #cfd9e2',
-  borderRadius: 8,
-  font: '13px ui-sans-serif, system-ui, sans-serif',
-};
-
-
