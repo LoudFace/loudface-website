@@ -333,14 +333,14 @@ export async function replaceImageAsset(
  *
  * The cost, stated plainly: the in-session Undo for a replaced picture puts the
  * old asset's reference back, and a reference to a deleted asset shows nothing.
- * `LF_EDIT_KEEP_REPLACED_IMAGES=1` turns the deletion off for a site where that
- * undo matters more than the storage.
+ * Undo matters more than storage, so the old asset is KEPT unless the site opts
+ * in with `LF_EDIT_DELETE_REPLACED_IMAGES=1` (Arnel, 2026-09-18).
  */
 async function removeUnusedAsset(
   client: ReturnType<typeof getEditorWriteClient>,
   assetId: string,
 ): Promise<void> {
-  if (process.env.LF_EDIT_KEEP_REPLACED_IMAGES === '1') return;
+  if (process.env.LF_EDIT_DELETE_REPLACED_IMAGES !== '1') return;
   try {
     const references = await client.fetch<number>(`count(*[references($assetId)])`, { assetId });
     if (!shouldDeleteAsset(references)) return;
