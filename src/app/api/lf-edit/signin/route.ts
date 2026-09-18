@@ -7,7 +7,8 @@
  * caller, which is plenty for a person and useless for a mailbox flood.
  */
 import { headers } from 'next/headers';
-import { createSignInToken, isAllowed } from '@/lib/inline-edit/session';
+import { isAllowed } from '@/lib/inline-edit/session';
+import { sendSignInLink } from '@/lib/inline-edit/signin-mail';
 import { editorOffResponse } from '@/lib/inline-edit/guard';
 
 /** The address the visitor actually used, not the port we listen on. */
@@ -53,34 +54,14 @@ export async function POST(request: Request) {
   // whether the address was allow-listed.
   const flooding = [tooMany(`ip:${caller}`), tooMany(`email:${email.toLowerCase()}`)].some(Boolean);
 
-  if (email && isAllowed(email) && !flooding) {
-    const link = `${origin}/api/lf-edit/verify?token=${createSignInToken(email)}`;
-    const key = process.env.RESEND_API_KEY;
-    const from = process.env.LF_EDIT_FROM;
-
-    if (key && from) {
-      const sent = await fetch('https://api.resend.com/emails', {
-        method: 'POST',
-        headers: { authorization: `Bearer ${key}`, 'content-type': 'application/json' },
-        body: JSON.stringify({
-          from,
-          to: email,
-          subject: 'Your link to edit the site',
-          text: `Open this link to edit the site. It expires in 15 minutes.\n\n${link}\n`,
-        }),
-      }).catch(() => null);
-
-      // A refused send used to look exactly like a delivered one: the client
-      // waited for a mail that was never going out. The log carries the reason,
-      // never the link — a sign-in link in a log is a way in.
-      if (!sent || !sent.ok) {
-        const detail = sent ? `${sent.status} ${(await sent.text().catch(() => '')).slice(0, 300)}` : 'no response';
-        console.error(`[inline edit] Resend did not accept the sign-in email: ${detail}`);
-      }
-    } else if (process.env.NODE_ENV !== 'production') {
+  if (email && !flooding && (await isAllowed(email))) {
+    // The mail itself, its logging and its neutral failure live in
+    // signin-mail.ts: the Editors panel sends the same message to an invited
+    // colleague, and one message is one place to keep right.
+    const { link, configured } = await sendSignInLink(email, origin);
+    if (!configured && process.env.NODE_ENV !== 'production') {
       // No mail service configured: in development the link is shown on the
-      // page and logged, so testing needs no inbox.
-      console.log(`\n[inline edit] sign-in link for ${email}:\n${link}\n`);
+      // page, so testing needs no inbox.
       return Response.redirect(`${origin}/edit?sent=1&link=${encodeURIComponent(link)}`, 303);
     }
   }

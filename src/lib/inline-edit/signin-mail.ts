@@ -1,0 +1,57 @@
+import 'server-only';
+
+/**
+ * The sign-in email, in one place.
+ *
+ * Both the sign-in page and the Editors panel send the same mail: an invited
+ * person and a returning one get an identical link, so there is one message to
+ * keep right and one place a failure is logged.
+ *
+ * The log carries the reason a send was refused, never the link — a sign-in
+ * link in a log is a way in.
+ */
+import { createSignInToken } from './session';
+
+export type SignInMail = {
+  /** The link itself. Never logged, never put in a response a stranger can read. */
+  link: string;
+  /** A mail service is configured on this site. */
+  configured: boolean;
+  /** The mail service accepted it. False when it refused, or when none is configured. */
+  mailed: boolean;
+};
+
+/** Build the link for `email` and, if a mail service is configured, send it. */
+export async function sendSignInLink(email: string, origin: string): Promise<SignInMail> {
+  const link = `${origin.replace(/\/$/, '')}/api/lf-edit/verify?token=${createSignInToken(email)}`;
+  const key = process.env.RESEND_API_KEY;
+  const from = process.env.LF_EDIT_FROM;
+  if (!key || !from) {
+    if (process.env.NODE_ENV !== 'production') {
+      // No mail service configured: in development the link is logged, so
+      // testing needs no inbox.
+      console.log(`\n[inline edit] sign-in link for ${email}:\n${link}\n`);
+    }
+    return { link, configured: false, mailed: false };
+  }
+
+  const sent = await fetch('https://api.resend.com/emails', {
+    method: 'POST',
+    headers: { authorization: `Bearer ${key}`, 'content-type': 'application/json' },
+    body: JSON.stringify({
+      from,
+      to: email,
+      subject: 'Your link to edit the site',
+      text: `Open this link to edit the site. It expires in 15 minutes.\n\n${link}\n`,
+    }),
+  }).catch(() => null);
+
+  // A refused send used to look exactly like a delivered one: the client waited
+  // for a mail that was never going out.
+  if (!sent || !sent.ok) {
+    const detail = sent ? `${sent.status} ${(await sent.text().catch(() => '')).slice(0, 300)}` : 'no response';
+    console.error(`[inline edit] Resend did not accept the sign-in email: ${detail}`);
+    return { link, configured: true, mailed: false };
+  }
+  return { link, configured: true, mailed: true };
+}

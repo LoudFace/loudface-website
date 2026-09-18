@@ -3,7 +3,9 @@ import 'server-only';
 /**
  * Who is allowed to edit.
  *
- * A client signs in with an email address we have allow-listed for this site.
+ * A client signs in with an email address that has access to this site: one of
+ * ours from `LF_EDITOR_EMAILS`, or somebody they invited from the Editors panel
+ * (`editors.ts`, `src/data/editors.json`).
  * They get a link that works once and lasts fifteen minutes; clicking it leaves
  * them with a session cookie and Draft Mode on. No password, no GitHub account,
  * no CMS seat.
@@ -14,6 +16,8 @@ import 'server-only';
 import { createHmac, timingSafeEqual } from 'node:crypto';
 import { cookies } from 'next/headers';
 import { hasGitHubCredentials } from './github';
+import { loadEditors } from './editors';
+import { mergeAccess } from './editors-list';
 
 export const SESSION_COOKIE = 'lf_edit_session';
 const SIGN_IN_MINUTES = 15;
@@ -47,17 +51,28 @@ function secret(): string {
   return 'development-only-inline-edit-secret';
 }
 
-export function allowedEditors(): string[] {
+/**
+ * Our own addresses, from `LF_EDITOR_EMAILS`. These are the owners: fixed, set
+ * outside the site, and not removable from the Editors panel.
+ */
+export function owners(): string[] {
   return (process.env.LF_EDITOR_EMAILS ?? '')
     .split(',')
     .map((entry) => entry.trim().toLowerCase())
     .filter(Boolean);
 }
 
-export function isAllowed(email: string): boolean {
-  const list = allowedEditors();
-  if (!list.length) return false;
-  return list.includes(email.trim().toLowerCase());
+/**
+ * May this address sign in? The owners plus everyone invited into
+ * `src/data/editors.json`, read at the branch head, so an invite works within a
+ * minute and without a build.
+ */
+export async function isAllowed(email: string): Promise<boolean> {
+  const wanted = email.trim().toLowerCase();
+  if (!wanted) return false;
+  if (owners().includes(wanted)) return true;
+  const { list } = await loadEditors();
+  return mergeAccess([], list.editors).includes(wanted);
 }
 
 function sign(payload: string): string {

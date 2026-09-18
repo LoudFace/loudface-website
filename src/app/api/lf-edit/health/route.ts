@@ -6,10 +6,11 @@
  * and names only. No token, no key and no secret is ever in the response, and a
  * signed-in editor is required, so this is not a way to fingerprint the site.
  */
-import { allowedEditors, currentEditor } from '@/lib/inline-edit/session';
+import { currentEditor, owners } from '@/lib/inline-edit/session';
 import { editorOffResponse, inlineEditingEnabled } from '@/lib/inline-edit/guard';
 import { mode } from '@/lib/inline-edit/content-store';
 import { hasGitHubCredentials, repoFromEnv } from '@/lib/inline-edit/github';
+import { loadEditors } from '@/lib/inline-edit/editors';
 
 export async function GET() {
   const off = editorOffResponse();
@@ -18,6 +19,10 @@ export async function GET() {
   if (!(await currentEditor())) return Response.json({ error: 'Sign in first' }, { status: 401 });
 
   const repo = repoFromEnv();
+  // Which copy of the editor list answered matters: 'bundled' means the branch
+  // head could not be read, so an invite made in the last minutes may not work
+  // yet. 'github' is the live one.
+  const { list, source } = await loadEditors();
   return Response.json({
     inlineEditingEnabled: inlineEditingEnabled(),
     store: mode(),
@@ -32,7 +37,7 @@ export async function GET() {
       repo: repo ? `${repo.owner}/${repo.name}` : null,
       branch: repo?.branch ?? null,
     },
-    editors: allowedEditors().length,
+    editors: { owners: owners().length, invited: list.editors.length, source },
     email: { sender: Boolean(process.env.LF_EDIT_FROM), resendKey: Boolean(process.env.RESEND_API_KEY) },
     siteUrl: Boolean(process.env.LF_SITE_URL),
     sanityWriteToken: Boolean(process.env.LF_SANITY_WRITE_TOKEN),

@@ -42,6 +42,10 @@ type Publish = {
   fields: string[];
   reverted: boolean;
 };
+/** One invited person, as the Editors panel shows them. */
+type Invited = { email: string; addedBy: string; addedAt: string };
+/** Everything the Editors panel draws: our fixed addresses, the invited, and who is asking. */
+type Access = { owners: { email: string }[]; editors: Invited[]; you: string };
 /** What the server handed back so this session can undo its own Sanity publish:
  *  a signed token per field, never the old text. The server alone can open it. */
 type SanityUndo = { id: string; token: string };
@@ -283,6 +287,11 @@ export function InlineEditor() {
   const [assetTarget, setAssetTarget] = useState<AssetTarget | null>(null);
   const [count, setCount] = useState(0);
   const [historyOpen, setHistoryOpen] = useState(false);
+  const [editorsOpen, setEditorsOpen] = useState(false);
+  const [access, setAccess] = useState<Access | null>(null);
+  const [inviting, setInviting] = useState(false);
+  const [inviteEmail, setInviteEmail] = useState('');
+  const [accessNote, setAccessNote] = useState('');
   const [showAll, setShowAll] = useState(false);
   const [publishes, setPublishes] = useState<Publish[] | null>(null);
   const [sanityUndo, setSanityUndo] = useState<SanityUndo[] | null>(null);
@@ -532,6 +541,16 @@ export function InlineEditor() {
       el.style.backgroundColor = showAll ? 'rgba(47,125,225,.07)' : '';
     });
   }, [showAll, count]);
+
+  // Escape closes the Editors panel wherever the focus happens to be.
+  useEffect(() => {
+    if (!editorsOpen) return;
+    const onKey = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') setEditorsOpen(false);
+    };
+    document.addEventListener('keydown', onKey);
+    return () => document.removeEventListener('keydown', onKey);
+  }, [editorsOpen]);
 
   const pending = Object.values(changes);
 
@@ -815,6 +834,80 @@ export function InlineEditor() {
     }
   }
 
+  /**
+   * Who has access. The list is a file in the repository, so this is a read of
+   * the branch head rather than of anything this browser holds.
+   */
+  async function openEditors() {
+    setEditorsOpen(true);
+    setAccess(null);
+    setAccessNote('');
+    setInviteEmail('');
+    try {
+      const response = await fetch('/api/lf-edit/editors');
+      const result = await response.json().catch(() => ({}));
+      if (!response.ok || result?.error) {
+        setAccessNote(result?.error ?? 'The list of editors could not be read');
+        return;
+      }
+      setAccess(result as Access);
+    } catch {
+      setAccessNote(UNREACHABLE);
+    }
+  }
+
+  async function invite() {
+    const email = inviteEmail.trim();
+    if (!email || inviting) return;
+    setInviting(true);
+    setAccessNote('');
+    try {
+      const response = await fetch('/api/lf-edit/editors', {
+        method: 'POST',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({ email }),
+      });
+      const result = await response.json().catch(() => ({}));
+      if (!response.ok || result?.error) {
+        setAccessNote(result?.error ?? 'That invitation could not be sent');
+        return;
+      }
+      setAccess(result as Access);
+      setInviteEmail('');
+      setAccessNote(
+        result.mailed
+          ? `Invitation sent to ${email}. The link in it lasts 15 minutes; they can ask for a new one at /edit any time.`
+          : `${email} now has access, but the invitation email could not be sent. Ask them to open /edit and request a link.`,
+      );
+    } catch {
+      setAccessNote(UNREACHABLE);
+    } finally {
+      setInviting(false);
+    }
+  }
+
+  async function removeEditor(email: string) {
+    setAccessNote('');
+    try {
+      const response = await fetch('/api/lf-edit/editors', {
+        method: 'DELETE',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({ email }),
+      });
+      const result = await response.json().catch(() => ({}));
+      if (!response.ok || result?.error) {
+        setAccessNote(result?.error ?? 'That person could not be removed');
+        return;
+      }
+      setAccess(result as Access);
+      // A session is signed, not stored, so there is nothing to revoke: the one
+      // they are holding runs out on its own within eight hours.
+      setAccessNote('Removed. Their current session ends within 8 hours.');
+    } catch {
+      setAccessNote(UNREACHABLE);
+    }
+  }
+
   async function undoPublish(hash: string) {
     setStatus({ kind: 'saving' });
     let response: Response;
@@ -897,6 +990,9 @@ export function InlineEditor() {
         <button style={ghost} onClick={openHistory}>
           History
         </button>
+        <button style={ghost} onClick={openEditors}>
+          Editors
+        </button>
         <a style={ghost} href="/api/lf-edit/signout">
           Sign out
         </a>
@@ -943,6 +1039,84 @@ export function InlineEditor() {
               )}
             </div>
           ))}
+        </div>
+      )}
+
+      {editorsOpen && (
+        <div style={{ ...panel, width: 520, maxHeight: '60vh', overflow: 'auto' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <p style={{ margin: '0 0 10px', fontWeight: 700 }}>Who can edit this site</p>
+            <button
+              style={{ ...ghost, color: '#14212b', borderColor: '#cfd9e2' }}
+              onClick={() => setEditorsOpen(false)}
+            >
+              Close
+            </button>
+          </div>
+
+          {access === null && !accessNote && <p style={{ margin: 0, opacity: 0.7 }}>Loading…</p>}
+
+          {access?.owners.map((owner) => (
+            <div key={owner.email} style={row}>
+              <div style={{ minWidth: 0 }}>
+                <p style={{ margin: 0, fontWeight: 600 }}>{owner.email}</p>
+                <p style={{ margin: '2px 0 0', fontSize: 12, opacity: 0.7 }}>owner · LoudFace</p>
+              </div>
+            </div>
+          ))}
+
+          {access?.editors.map((person) => (
+            <div key={person.email} style={row}>
+              <div style={{ minWidth: 0 }}>
+                <p style={{ margin: 0, fontWeight: 600 }}>
+                  {person.email}
+                  {person.email === access.you ? ' (you)' : ''}
+                </p>
+                <p style={{ margin: '2px 0 0', fontSize: 12, opacity: 0.7 }}>
+                  editor · added by {person.addedBy.split('@')[0] || 'someone'}
+                  {addedOn(person.addedAt)}
+                </p>
+              </div>
+              <button
+                style={{ ...button, background: '#8c1d18', padding: '6px 12px' }}
+                onClick={() => removeEditor(person.email)}
+              >
+                Remove
+              </button>
+            </div>
+          ))}
+
+          {access && !access.editors.length && (
+            <p style={{ margin: '10px 0 0', fontSize: 12, opacity: 0.7 }}>
+              Nobody else has been invited yet.
+            </p>
+          )}
+
+          <div style={{ display: 'flex', gap: 8, marginTop: 14 }}>
+            <input
+              type="email"
+              placeholder="colleague@company.com"
+              value={inviteEmail}
+              disabled={inviting}
+              style={{ ...input, flex: 1 }}
+              onChange={(event) => setInviteEmail(event.target.value)}
+              onKeyDown={(event) => {
+                if (event.key === 'Enter') invite();
+              }}
+            />
+            <button
+              style={{ ...button, opacity: inviting || !inviteEmail.trim() ? 0.45 : 1 }}
+              onClick={invite}
+              disabled={inviting || !inviteEmail.trim()}
+            >
+              {inviting ? 'Inviting…' : 'Invite'}
+            </button>
+          </div>
+
+          <p style={{ margin: '10px 0 0', fontSize: 12, opacity: 0.75, minHeight: 16 }}>
+            {accessNote ||
+              'An invitation is a sign-in link by email. Removing someone stops new sign-ins; a session they already have ends within 8 hours.'}
+          </p>
         </div>
       )}
 
@@ -1022,6 +1196,12 @@ export function InlineEditor() {
       )}
     </div>
   );
+}
+
+/** " on 18 September 2026", or nothing at all if the stamp is missing or unreadable. */
+function addedOn(addedAt: string): string {
+  const when = new Date(addedAt);
+  return addedAt && !Number.isNaN(when.getTime()) ? ` on ${when.toLocaleDateString()}` : '';
 }
 
 /** Place the text caret where the editor clicked, falling back to the end. */
@@ -1123,6 +1303,16 @@ const linkButton: React.CSSProperties = {
   font: '13px ui-sans-serif, system-ui, sans-serif',
   textDecoration: 'underline',
   cursor: 'pointer',
+};
+
+/** One person in the Editors panel, laid out like one publish in History. */
+const row: React.CSSProperties = {
+  display: 'flex',
+  gap: 12,
+  alignItems: 'flex-start',
+  justifyContent: 'space-between',
+  padding: '10px 0',
+  borderTop: '1px solid #eef2f5',
 };
 
 const input: React.CSSProperties = {

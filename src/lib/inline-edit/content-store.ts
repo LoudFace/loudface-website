@@ -206,6 +206,23 @@ const author = (editor: string) => ({ name: `${editor.split('@')[0]} (site edito
  */
 const isUndoable = (file: string) => file.startsWith(CONTENT_PREFIX) || file.startsWith(UPLOAD_PREFIX);
 
+/**
+ * Who may edit is not content, and undo must not touch it.
+ *
+ * An invite and a removal are commits like any other, but reverting one from
+ * the History panel would silently give somebody back access, or take it away,
+ * with no row in the Editors panel explaining it. The Editors panel is the one
+ * place that list changes. (These commits carry no `LF-Changes` trailer either,
+ * so they never appear in History in the first place; this is the second lock.)
+ */
+const EDITORS_FILE = 'src/data/editors.json';
+
+function refuseEditorsCommit(message: string, files: string[] = []): void {
+  if (message.split('\n')[0].startsWith('Editors:') || files.includes(EDITORS_FILE)) {
+    throw new Error('Editors are managed from the Editors panel');
+  }
+}
+
 // ---------------------------------------------------------------------------
 // Backend: the working copy (development)
 // ---------------------------------------------------------------------------
@@ -245,6 +262,21 @@ const localStore = {
     return { hash: await git(['rev-parse', 'HEAD']), applied };
   },
 
+  async commitFile(file: string, text: string, message: string, editor: string): Promise<string> {
+    await mkdir(path.dirname(path.join(ROOT, file)), { recursive: true });
+    await writeFile(path.join(ROOT, file), text, 'utf8');
+    await git(['add', file]);
+    if (!(await git(['status', '--porcelain', '--', file]))) return '';
+
+    const who = author(editor);
+    await git([
+      '-c', `user.name=${who.name}`, '-c', `user.email=${who.email}`,
+      'commit', '-m', message, '--only', file,
+    ]);
+    if (process.env.LF_EDIT_PUSH === '1') await git(['push', 'origin', 'HEAD']);
+    return git(['rev-parse', 'HEAD']);
+  },
+
   async history(limit: number): Promise<Publish[]> {
     const log = await git(['log', `-n${limit * 2}`, '--format=%H%x1f%aI%x1f%ae%x1f%B%x1e', '--', CONTENT_PREFIX]);
     if (!log) return [];
@@ -262,9 +294,11 @@ const localStore = {
   async undo(hash: string, editor: string): Promise<Undone> {
     if (!/^[0-9a-f]{7,40}$/.test(hash)) throw new Error('Not a commit');
     const touched = (await git(['show', '--name-only', '--format=', hash])).split('\n').filter(Boolean);
+    const message = await git(['show', '--no-patch', '--format=%B', hash]);
+    refuseEditorsCommit(message, touched);
     const outside = touched.filter((file) => !isUndoable(file));
     if (outside.length) throw new Error(`That change also touched ${outside[0]}; undo it in code, not here`);
-    const recorded = trailerOf(await git(['show', '--no-patch', '--format=%B', hash])) ?? [];
+    const recorded = trailerOf(message) ?? [];
     const who = author(editor);
     await git(['-c', `user.name=${who.name}`, '-c', `user.email=${who.email}`, 'revert', '--no-edit', hash]);
     if (process.env.LF_EDIT_PUSH === '1') await git(['push', 'origin', 'HEAD']);
@@ -329,6 +363,10 @@ const githubStore = {
     return { hash, applied };
   },
 
+  async commitFile(file: string, text: string, message: string, editor: string): Promise<string> {
+    return commitOnHead(repo(), async () => ({ files: { [file]: { text } }, message }), editor);
+  },
+
   async history(limit: number): Promise<Publish[]> {
     return toPublishes(await commitsTouching(repo(), CONTENT_PREFIX.replace(/\/$/, ''), limit * 2), limit);
   },
@@ -337,6 +375,7 @@ const githubStore = {
     if (!/^[0-9a-f]{7,40}$/.test(hash)) throw new Error('Not a commit');
     const target = repo();
     const detail = await commitDetail(target, hash);
+    refuseEditorsCommit(detail.message, detail.files);
     const outside = detail.files.filter((file) => !isUndoable(file));
     if (outside.length) throw new Error(`That change also touched ${outside[0]}; undo it in code, not here`);
 
@@ -402,6 +441,15 @@ export async function publish(changes: Change[], editor: string, extras: ExtraFi
   const result = await store().publish(changes, editor, extras);
   return { ...result, mode: mode() };
 }
+
+/**
+ * Commit one whole file, in the editor's name, through whichever backend this
+ * site publishes with. Used by the Editors panel: an invite is a commit like
+ * any other, but it carries no `LF-Changes` trailer, so it is not a publish —
+ * it never shows in History and can never be undone as if it were content.
+ */
+export const commitFile = async (file: string, text: string, message: string, editor: string) =>
+  store().commitFile(file, text, message, editor);
 
 /** Recent publishes, newest first. */
 export const history = async (limit = 15) => store().history(limit);
