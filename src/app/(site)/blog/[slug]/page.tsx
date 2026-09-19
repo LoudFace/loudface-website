@@ -42,6 +42,8 @@ import { Faq } from '../../../blog-v3/Faq';
 import { AuthorBento } from '../../../blog-v3/AuthorBento';
 import { RelatedGallery, type RelatedPost } from '../../../blog-v3/RelatedGallery';
 import { CoverCTA } from '../../../blog-v3/CoverCTA';
+import { NextStep } from '../../../blog-v3/NextStep';
+import { BUYER_INTENT_SLUGS } from '../../../blog-v3/buyer-intent-slugs';
 import { BlogV3Scripts } from '../../../blog-v3/Scripts';
 import { FooterV3 } from '../../../home-v3/FooterV3';
 
@@ -303,6 +305,8 @@ export default async function BlogPostPage({ params }: PageProps) {
               <ReadingRail toc={toc} articleUrl={canonicalUrl} articleTitle={post.name} />
             </div>
           </section>
+
+          {BUYER_INTENT_SLUGS.has(slug) && <NextStep />}
 
           {showFaq && <Faq items={faqItems} />}
 

@@ -18,6 +18,7 @@
  * claims beyond the recomputed partner years.
  */
 import type { ReactNode } from 'react';
+import Link from 'next/link';
 
 export { getHomeV3Images as getServiceImages, type HomeImages } from '../home-v3/data';
 
@@ -100,7 +101,7 @@ export interface ServiceConfig {
     eyebrow: string;
     h2: string;
     domLine: ReactNode;
-    what: string;
+    what: ReactNode;
     annots: { em: string; span: string }[];
     out?: ExhibitOut;
     outText?: string;
@@ -249,8 +250,13 @@ export const SERVICE_CONFIGS: Record<string, ServiceConfig> = {
           <b>Dimer Health</b> · dimerhealth.com · Digital health
         </>
       ),
-      what:
-        'A component-first Webflow rebuild for a regulated health brand — then a six-month conversion program on top of it. Same team built the site and optimized it, so nothing got re-briefed between the people who ship and the people who grow.',
+      what: (
+        <>
+          <Link href="/case-studies/dimer-health">A component-first Webflow rebuild for a regulated health brand</Link> — then a
+          six-month conversion program on top of it. Same team built the site and optimized it, so nothing got re-briefed
+          between the people who ship and the people who grow.
+        </>
+      ),
       annots: [
         { em: 'Component-first', span: 'Every page from reusable blocks' },
         { em: 'Split-test ready', span: 'Variants in minutes, not sprints' },

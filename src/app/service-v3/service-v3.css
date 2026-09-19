@@ -266,6 +266,8 @@
 .svcv3 .ex-dom{margin-top:16px;display:inline-flex;align-items:center;gap:10px;font-size:13px;font-weight:500;color:var(--color-primary-200);}
 .svcv3 .ex-dom b{color:var(--paper);font-weight:600;}
 .svcv3 .ex-what{margin-top:20px;font-size:16.5px;line-height:1.64;color:var(--color-primary-100);max-width:44ch;text-wrap:pretty;}
+.svcv3 .ex-what a{color:var(--paper);text-decoration:underline;text-decoration-color:rgba(199,210,254,.5);text-underline-offset:3px;transition:color .2s var(--ease-out),text-decoration-color .2s var(--ease-out);}
+.svcv3 .ex-what a:hover,.svcv3 .ex-what a:focus-visible{color:var(--color-primary-200);text-decoration-color:var(--color-primary-200);}
 .svcv3 .ex-out{margin-top:30px;display:flex;align-items:flex-end;gap:20px;flex-wrap:wrap;}
 .svcv3 .ex-num{font-family:var(--font-heading);font-weight:500;font-size:clamp(3.4rem,6vw,5rem);line-height:.86;letter-spacing:-.04em;color:var(--paper);}
 .svcv3 .ex-out-txt{padding-bottom:6px;}
