@@ -30,6 +30,7 @@
  * only the publish and undo routes import it.
  */
 import { createHmac } from 'node:crypto';
+import { after } from 'next/server';
 
 /** One field the editor changed, and the words on either side of the change. */
 export type ReceiptChange = { id: string; before: string; after: string };
@@ -152,7 +153,10 @@ export function recordEdit(input: {
   try {
     const { repo, site } = siteIdentity();
     if (!repo) return;
-    void sendReceipt({
+    // Runs once the response has gone out. A bare promise was frozen with the
+    // function on Vercel the moment the route returned, and no receipt ever
+    // left the site (measured 2026-09-18: the first real edit had no mark).
+    after(() => sendReceipt({
       repo,
       site,
       action: input.action,
@@ -162,7 +166,7 @@ export function recordEdit(input: {
       changes: input.changes,
       ref: input.ref,
       ...(input.refUrl ? { refUrl: input.refUrl } : {}),
-    }).catch(() => undefined);
+    }).catch(() => undefined));
   } catch {
     // A receipt is never the reason a publish fails.
   }
