@@ -6,6 +6,19 @@
 import Link from 'next/link';
 import type { AboutLedgerContent } from '@/lib/content-utils';
 
+/** Wraps one substring of an editorial string in a Link, leaving the rest as plain text. */
+function linkedText(text: string, phrase: string, href: string) {
+  const idx = text.indexOf(phrase);
+  if (idx === -1) return text;
+  return (
+    <>
+      {text.slice(0, idx)}
+      <Link href={href}>{phrase}</Link>
+      {text.slice(idx + phrase.length)}
+    </>
+  );
+}
+
 export function Ledger({
   teamCount,
   content,
@@ -90,7 +103,7 @@ export function Ledger({
               <h3>{content.rows[4].title}</h3>
               <span className="leader" aria-hidden="true"></span>
             </div>
-            <p>{content.rows[4].description}</p>
+            <p>{linkedText(content.rows[4].description, 'the answer that matters in Toku’s category', '/case-studies/toku-ai-cited-pipeline')}</p>
             <div className="lfig">
               <div className="fig tab">{content.rows[4].fig}</div>
               <span className="lchip">

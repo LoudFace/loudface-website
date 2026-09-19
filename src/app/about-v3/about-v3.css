@@ -201,6 +201,8 @@
 .abv3 .lname .leader{flex:1 1 auto;min-width:20px;height:1px;margin:0 0 4px 12px;
   background-image:radial-gradient(circle,var(--paper-line) 1px,transparent 1.3px);background-size:6px 1px;background-repeat:repeat-x;}
 .abv3 .lrow p{grid-area:detail;font-size:14.5px;line-height:1.55;color:var(--body);max-width:44ch;}
+.abv3 .lrow p a{color:var(--primary-700);font-weight:600;text-decoration:underline;text-decoration-color:var(--primary-200);text-underline-offset:2px;}
+.abv3 .lrow p a:hover{color:var(--primary-800);text-decoration-color:var(--primary-500);}
 .abv3 .lfig{grid-area:fig;justify-self:end;text-align:right;}
 .abv3 .lfig .fig{font-family:var(--font-heading);font-weight:500;font-size:clamp(1.9rem,3.4vw,2.9rem);letter-spacing:-.03em;line-height:1;color:var(--primary-600);white-space:nowrap;font-variant-numeric:tabular-nums;}
 .abv3 .lfig .lchip{margin-top:10px;}
