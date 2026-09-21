@@ -54,6 +54,21 @@ export function showResumeChip(
   return Boolean(session) && !draftMode && !paused;
 }
 
+/**
+ * Should the page carry the editor at all?
+ *
+ * Only with both facts: Draft Mode on, and a session that still opens. Draft
+ * Mode's cookie lasts the browser window; the session lasts eight hours. A tab
+ * left open overnight therefore reaches the morning with Draft Mode on and no
+ * session, and a bar rendered from Draft Mode alone would offer buttons that
+ * all answer "sign in" (measured 2026-09-21: "View site" landed on /edit).
+ * Draft Mode alone is also what Sanity's Presentation tool switches on for a
+ * Studio preview, and that preview gets no editing bar.
+ */
+export function editorIsUp(session: string | null | undefined, draftMode: boolean): boolean {
+  return draftMode && Boolean(session);
+}
+
 /** Where that chip sends them: back to this same page, with Draft Mode on again. */
 export function resumeHref(pathname: string): string {
   return `/api/lf-edit/resume?next=${encodeURIComponent(safeNext(pathname))}`;

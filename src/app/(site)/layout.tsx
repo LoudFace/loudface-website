@@ -6,7 +6,7 @@ import { cookies, draftMode, headers } from "next/headers";
 import { VisualEditing } from "next-sanity/visual-editing";
 import { primeInlineEditing } from "@/lib/inline-edit/server";
 import { currentEditor } from "@/lib/inline-edit/session";
-import { PAUSED_COOKIE, resumeHref, showResumeChip } from "@/lib/inline-edit/guard";
+import { PAUSED_COOKIE, editorIsUp, resumeHref, showResumeChip } from "@/lib/inline-edit/guard";
 import { InlineEditor } from "@/components/inline-editor/InlineEditor";
 import { EditChip } from "@/components/inline-editor/EditChip";
 import { CalHandler } from "@/components/CalHandler";
@@ -90,7 +90,15 @@ export default async function SiteLayout({
   // way back from the browser in that case, so the server-rendered chip below
   // stands down and the client never sees two chips at once.
   const paused = requestCookies.get(PAUSED_COOKIE)?.value === "1";
-  const resumeChip = showResumeChip(await currentEditor(), isDraftMode, paused);
+  const editor = await currentEditor();
+  const resumeChip = showResumeChip(editor, isDraftMode, paused);
+  // The editor needs both: Draft Mode on AND a session that is still good.
+  // Draft Mode's cookie lasts as long as the browser window, the session eight
+  // hours, so an editor who left a tab open overnight came back to a bar whose
+  // every button answered "sign in" (2026-09-21: "View site" landed on /edit).
+  // Draft Mode alone is also what Sanity's Presentation tool turns on, and that
+  // preview must not grow an editing bar it cannot use.
+  const editing = editorIsUp(editor, isDraftMode);
 
   // Route-dependent chrome (Header hero-theme, hreflang, shared-Footer
   // suppression) is resolved client-side in SiteChrome via usePathname(). The
@@ -125,13 +133,42 @@ export default async function SiteLayout({
             which frames it in a canvas of its own; that canvas is the element
             that scrolls, so the sticky header sticks under the editor bar
             instead of over it. Outside Draft Mode nothing here changes. */}
-        {isDraftMode ? <InlineEditor>{site}</InlineEditor> : site}
+        {editing ? <InlineEditor>{site}</InlineEditor> : site}
 
         {/* The way back after "View site". It renders null on the server and on
             the first client render, then reads the lf-paused cookie in the
             browser — so it costs an anonymous visitor no request, no header and
             not one byte of HTML. */}
-        {!isDraftMode && <EditChip />}
+        {!editing && <EditChip />}
+
+        {/* Draft Mode is on but nobody is signed in to edit: a session that ran
+            out under an open tab, or a Sanity preview. The page is showing
+            drafts, so say so, and give the one click that switches it off. */}
+        {isDraftMode && !editor && (
+          <a
+            data-lf-chrome=""
+            href={`/api/draft-mode/disable?redirect=${encodeURIComponent(pathname)}`}
+            style={{
+              position: "fixed",
+              left: 16,
+              bottom: 16,
+              zIndex: 2147482000,
+              display: "inline-flex",
+              alignItems: "center",
+              gap: 8,
+              height: 36,
+              padding: "0 14px",
+              borderRadius: 999,
+              background: "#14212b",
+              color: "#fff",
+              font: "500 13px/1 Inter, ui-sans-serif, system-ui, -apple-system, sans-serif",
+              textDecoration: "none",
+              boxShadow: "0 8px 24px rgba(20,33,43,.22)",
+            }}
+          >
+            Preview is on · View the live site
+          </a>
+        )}
 
         {/* Only ever rendered for a signed-in editor. An anonymous request has
             no session cookie, so this is nothing at all and the HTML a visitor
