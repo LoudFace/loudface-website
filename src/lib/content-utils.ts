@@ -1494,7 +1494,7 @@ export interface ContactContent {
 /**
  * Services hub page content (services-v3 design, the /services index only).
  *
- * The 8 individual /services/<slug> pages are a separate, shared-template
+ * The 9 individual /services/<slug> pages are a separate, shared-template
  * system (service-v3/ServicePageV3.tsx + service-v3/data.tsx) where the copy
  * is embedded directly in JSX config fields — out of scope for this content
  * layer for now; extracting it safely means redesigning that shared

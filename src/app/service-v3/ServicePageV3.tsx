@@ -28,6 +28,8 @@ import {
 } from './data';
 import { SERVICES } from '../services-v3/data';
 
+const COUNT_WORD: Record<number, string> = { 5: 'five', 6: 'six', 7: 'seven', 8: 'eight', 9: 'nine' };
+
 /* image crops (match the approved mockup) */
 const CROP_HERO = '?w=1080&h=836&fit=crop&crop=top&fm=webp&q=82';
 const CROP_SUB = '?w=760&h=522&fit=crop&crop=top&fm=webp&q=82';
@@ -179,8 +181,15 @@ function Frag({ art, images }: { art: Artifact; images?: HomeImages }) {
 
 export function ServicePageV3({ config, images }: { config: ServiceConfig; images?: HomeImages }) {
   const c = config;
-  const track = c.proof.track;
+  /* Pulled into locals so the optional-slot narrowing below survives into the
+     .map() callbacks — property narrowing on `c` would not. */
+  const { deliver, runway, exhibit, proof } = c;
+  const track = proof?.track;
   const siblings = SERVICES.filter((s) => s.slug !== c.slug);
+  /* The rail's count used to be the literal word "seven". It is derived now so a
+     page that is not itself in the SERVICES directory (it lists all eight, not
+     seven) does not claim a number it is not showing. The eight directory pages
+     still land on seven, so their wording is unchanged. */
 
   return (
     <>
@@ -282,215 +291,246 @@ export function ServicePageV3({ config, images }: { config: ServiceConfig; image
         </section>
 
         {/* ============ DELIVERABLES — object wall ============ */}
-        <section className="deliver" id="whats-included" aria-label="What's included">
-          <div className="container">
-            <div className="deliver-head rv">
-              <h2 className="display">{c.deliver.title}</h2>
-              <p className="lede">{c.deliver.lede}</p>
-            </div>
-            <div className="wall-grid">
-              {c.deliver.tiles.map((t, i) => {
-                const span = t.span ?? spanFor(c.deliver.tiles.length, i);
-                const isWide = span === 'wide';
-                const body = (
-                  <div className={isWide ? 'dt-body' : undefined}>
-                    <div className="dt-top">
-                      <span className="dt-glyph" aria-hidden="true">
-                        <svg viewBox="0 0 24 24">{GLYPHS[i % GLYPHS.length]}</svg>
-                      </span>
-                      <h3>{t.title}</h3>
-                    </div>
-                    <p>{t.desc}</p>
-                    {t.chips && t.chips.length > 0 ? (
-                      <div className="dt-chips">
-                        {t.chips.map((ch) => (
-                          <span className="dt-chip" key={ch}>
-                            {ch}
-                          </span>
-                        ))}
-                      </div>
-                    ) : null}
+        {/* ============ LONG-FORM BODY (optional) ============
+            Verbatim article copy for service pages whose text is signed off in
+            the content engine and must not be reshaped into slot copy. Renders
+            into the house `.sf-prose` / `.sf-body` block from seo-for-v3.css —
+            already `.svcv3`-scoped and already the reading column on
+            /seo-for/*, /privacy, /terms and /cookies, so this adds no new
+            visual language. The page importing this slot must also import
+            seo-for-v3.css. */}
+        {c.body ? (
+          <section className="sf-prose" aria-label={c.body.title ?? 'Overview'}>
+            <div className="container">
+              <div className="sf-prose-in">
+                {c.body.title ? (
+                  <div className="sf-prose-head rv">
+                    <h2 className="display">{c.body.title}</h2>
                   </div>
-                );
-                return (
-                  <article
-                    className={`dtile ${span} rv`}
-                    style={i % 2 ? { ['--d' as string]: '.06s' } : undefined}
-                    key={t.title}
-                  >
-                    {body}
-                    {isWide && t.frag ? <Frag art={t.frag} images={images} /> : null}
-                  </article>
-                );
-              })}
+                ) : null}
+                <div className="sf-body rv" dangerouslySetInnerHTML={{ __html: c.body.html }} />
+              </div>
             </div>
-          </div>
-        </section>
+          </section>
+        ) : null}
 
-        {/* ============ PROCESS RUNWAY ============ */}
-        <section className="runway" id="how-we-work" aria-label="How we work">
-          <div className="container">
-            <div className="runway-head rv">
-              <h2 className="display on-dark">{c.runway.title}</h2>
-              <p className="lede on-dark">{c.runway.lede}</p>
-            </div>
-            <div className="run-list">
-              {c.runway.pillars.map((p, i) => {
-                if (p.kind === 'card') {
-                  return (
-                    <div className="run-cards rv" key={p.title}>
-                      <article className="rcard">
-                        <span className="rc-glyph" aria-hidden="true">
-                          <svg viewBox="0 0 24 24">{RC_GLYPHS[i % RC_GLYPHS.length]}</svg>
+        {deliver ? (
+          <section className="deliver" id="whats-included" aria-label="What's included">
+            <div className="container">
+              <div className="deliver-head rv">
+                <h2 className="display">{deliver.title}</h2>
+                <p className="lede">{deliver.lede}</p>
+              </div>
+              <div className="wall-grid">
+                {deliver.tiles.map((t, i) => {
+                  const span = t.span ?? spanFor(deliver.tiles.length, i);
+                  const isWide = span === 'wide';
+                  const body = (
+                    <div className={isWide ? 'dt-body' : undefined}>
+                      <div className="dt-top">
+                        <span className="dt-glyph" aria-hidden="true">
+                          <svg viewBox="0 0 24 24">{GLYPHS[i % GLYPHS.length]}</svg>
                         </span>
-                        <h3>{p.title}</h3>
-                        <p>{p.desc}</p>
-                      </article>
+                        <h3>{t.title}</h3>
+                      </div>
+                      <p>{t.desc}</p>
+                      {t.chips && t.chips.length > 0 ? (
+                        <div className="dt-chips">
+                          {t.chips.map((ch) => (
+                            <span className="dt-chip" key={ch}>
+                              {ch}
+                            </span>
+                          ))}
+                        </div>
+                      ) : null}
                     </div>
                   );
-                }
-                const alt = i >= 2; // second blueprint row mirrors
-                return (
-                  <div className={`run-row rv${alt ? ' alt' : ''}`} key={p.title}>
-                    <div className="run-txt">
-                      <h3>{p.title}</h3>
-                      <p>{p.desc}</p>
-                    </div>
-                    <div className="run-fig" aria-hidden="true">
-                      <Blueprint v={p.fig ?? 0} />
-                    </div>
-                  </div>
-                );
-              })}
+                  return (
+                    <article
+                      className={`dtile ${span} rv`}
+                      style={i % 2 ? { ['--d' as string]: '.06s' } : undefined}
+                      key={t.title}
+                    >
+                      {body}
+                      {isWide && t.frag ? <Frag art={t.frag} images={images} /> : null}
+                    </article>
+                  );
+                })}
+              </div>
             </div>
-          </div>
-        </section>
+          </section>
+        ) : null}
+
+        {/* ============ PROCESS RUNWAY ============ */}
+        {runway ? (
+          <section className="runway" id="how-we-work" aria-label="How we work">
+            <div className="container">
+              <div className="runway-head rv">
+                <h2 className="display on-dark">{runway.title}</h2>
+                <p className="lede on-dark">{runway.lede}</p>
+              </div>
+              <div className="run-list">
+                {runway.pillars.map((p, i) => {
+                  if (p.kind === 'card') {
+                    return (
+                      <div className="run-cards rv" key={p.title}>
+                        <article className="rcard">
+                          <span className="rc-glyph" aria-hidden="true">
+                            <svg viewBox="0 0 24 24">{RC_GLYPHS[i % RC_GLYPHS.length]}</svg>
+                          </span>
+                          <h3>{p.title}</h3>
+                          <p>{p.desc}</p>
+                        </article>
+                      </div>
+                    );
+                  }
+                  const alt = i >= 2; // second blueprint row mirrors
+                  return (
+                    <div className={`run-row rv${alt ? ' alt' : ''}`} key={p.title}>
+                      <div className="run-txt">
+                        <h3>{p.title}</h3>
+                        <p>{p.desc}</p>
+                      </div>
+                      <div className="run-fig" aria-hidden="true">
+                        <Blueprint v={p.fig ?? 0} />
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          </section>
+        ) : null}
 
         {/* ============ FEATURED EXHIBIT — cinematic stage ============ */}
-        <section className="exhibit" id="featured" aria-label={`Featured work — ${c.exhibit.h2}`}>
-          {/* Full-bleed cinematic canvas ⇒ sizes="100vw". The w=1800 source caps it. */}
-          <Image
-            className="ex-canvas"
-            src={artifactSrc(c.exhibit.art, images, CROP_CANVAS)}
-            alt={c.exhibit.art.alt}
-            width={1800}
-            height={1000}
-            sizes="100vw"
-            quality={82}
-            loading="lazy"
-          />
-          <div className="ex-veil" aria-hidden="true"></div>
+        {exhibit ? (
+          <section className="exhibit" id="featured" aria-label={`Featured work — ${exhibit.h2}`}>
+            {/* Full-bleed cinematic canvas ⇒ sizes="100vw". The w=1800 source caps it. */}
+            <Image
+              className="ex-canvas"
+              src={artifactSrc(exhibit.art, images, CROP_CANVAS)}
+              alt={exhibit.art.alt}
+              width={1800}
+              height={1000}
+              sizes="100vw"
+              quality={82}
+              loading="lazy"
+            />
+            <div className="ex-veil" aria-hidden="true"></div>
 
-          {c.exhibit.annots.map((a, i) => (
-            <span className={`ex-annot ex-a${i + 1}`} aria-hidden="true" key={a.em}>
-              <em>{a.em}</em>
-              <span>{a.span}</span>
-            </span>
-          ))}
-
-          <div className="container ex-in">
-            <div className="ex-body">
-              <span className="eyebrow glass rv">
-                <i></i>
-                {c.exhibit.eyebrow}
+            {exhibit.annots.map((a, i) => (
+              <span className={`ex-annot ex-a${i + 1}`} aria-hidden="true" key={a.em}>
+                <em>{a.em}</em>
+                <span>{a.span}</span>
               </span>
-              <h2 className="rv" style={{ ['--d' as string]: '.06s' }}>
-                {c.exhibit.h2}
-              </h2>
-              <p className="ex-dom rv" style={{ ['--d' as string]: '.1s' }}>
-                {c.exhibit.domLine}
-              </p>
-              <p className="ex-what rv" style={{ ['--d' as string]: '.14s' }}>
-                {c.exhibit.what}
-              </p>
-              <div className="ex-chips rv" style={{ ['--d' as string]: '.16s' }} aria-hidden="true">
-                {c.exhibit.annots.map((a) => (
-                  <span className="ex-chip" key={a.em}>
-                    {a.em}
-                  </span>
-                ))}
-              </div>
-              {c.exhibit.out ? (
-                <div className="ex-out rv" style={{ ['--d' as string]: '.18s' }}>
-                  <span className="ex-num">{c.exhibit.out.num}</span>
-                  <span className="ex-out-txt">
-                    <b>{c.exhibit.out.label}</b>
-                    <span className="ex-src">
-                      <i></i>
-                      {c.exhibit.out.src}
-                    </span>
-                  </span>
-                </div>
-              ) : c.exhibit.outText ? (
-                <p className="ex-what rv" style={{ ['--d' as string]: '.18s', color: 'var(--color-white)', fontWeight: 600 }}>
-                  {c.exhibit.outText}
+            ))}
+
+            <div className="container ex-in">
+              <div className="ex-body">
+                <span className="eyebrow glass rv">
+                  <i></i>
+                  {exhibit.eyebrow}
+                </span>
+                <h2 className="rv" style={{ ['--d' as string]: '.06s' }}>
+                  {exhibit.h2}
+                </h2>
+                <p className="ex-dom rv" style={{ ['--d' as string]: '.1s' }}>
+                  {exhibit.domLine}
                 </p>
-              ) : null}
-              <div className="ex-cta rv" style={{ ['--d' as string]: '.22s' }}>
-                <Link href={c.exhibit.ctaHref} className="tlink">
-                  {c.exhibit.ctaLabel}
-                  <Arrow />
-                </Link>
+                <p className="ex-what rv" style={{ ['--d' as string]: '.14s' }}>
+                  {exhibit.what}
+                </p>
+                <div className="ex-chips rv" style={{ ['--d' as string]: '.16s' }} aria-hidden="true">
+                  {exhibit.annots.map((a) => (
+                    <span className="ex-chip" key={a.em}>
+                      {a.em}
+                    </span>
+                  ))}
+                </div>
+                {exhibit.out ? (
+                  <div className="ex-out rv" style={{ ['--d' as string]: '.18s' }}>
+                    <span className="ex-num">{exhibit.out.num}</span>
+                    <span className="ex-out-txt">
+                      <b>{exhibit.out.label}</b>
+                      <span className="ex-src">
+                        <i></i>
+                        {exhibit.out.src}
+                      </span>
+                    </span>
+                  </div>
+                ) : exhibit.outText ? (
+                  <p className="ex-what rv" style={{ ['--d' as string]: '.18s', color: 'var(--color-white)', fontWeight: 600 }}>
+                    {exhibit.outText}
+                  </p>
+                ) : null}
+                <div className="ex-cta rv" style={{ ['--d' as string]: '.22s' }}>
+                  <Link href={exhibit.ctaHref} className="tlink">
+                    {exhibit.ctaLabel}
+                    <Arrow />
+                  </Link>
+                </div>
               </div>
             </div>
-          </div>
-        </section>
+          </section>
+        ) : null}
 
         {/* ============ PROOF BAND ============ */}
-        <section className="proof" aria-label="Why teams trust the work">
-          <div className="container">
-            <div className="proof-head rv">
-              <h2 className="display">{c.proof.title}</h2>
-              <p className="lede">{c.proof.lede}</p>
-            </div>
-            <div className="proof-grid">
-              <article className="pcard pc-hero rv">
-                <span className="pk">{c.proof.hero.num}</span>
-                <div>
-                  <span className="pl">{c.proof.hero.label}</span>
-                  {c.proof.hero.src ? (
-                    <span className="pc-src">
-                      <i></i>
-                      {c.proof.hero.src}
-                    </span>
-                  ) : null}
-                </div>
-              </article>
-              <div className="proof-col">
-                <div className="proof-row">
-                  <article className="pcard pc-a rv" style={{ ['--d' as string]: '.06s' }}>
-                    <span className="pk">200+</span>
-                    <span className="pl">
-                      {track === 'grow' ? 'B2B brands grown across SaaS, fintech & AI' : 'B2B SaaS websites shipped'}
+        {proof ? (
+          <section className="proof" aria-label="Why teams trust the work">
+            <div className="container">
+              <div className="proof-head rv">
+                <h2 className="display">{proof.title}</h2>
+                <p className="lede">{proof.lede}</p>
+              </div>
+              <div className="proof-grid">
+                <article className="pcard pc-hero rv">
+                  <span className="pk">{proof.hero.num}</span>
+                  <div>
+                    <span className="pl">{proof.hero.label}</span>
+                    {proof.hero.src ? (
+                      <span className="pc-src">
+                        <i></i>
+                        {proof.hero.src}
+                      </span>
+                    ) : null}
+                  </div>
+                </article>
+                <div className="proof-col">
+                  <div className="proof-row">
+                    <article className="pcard pc-a rv" style={{ ['--d' as string]: '.06s' }}>
+                      <span className="pk">200+</span>
+                      <span className="pl">
+                        {track === 'grow' ? 'B2B brands grown across SaaS, fintech & AI' : 'B2B SaaS websites shipped'}
+                      </span>
+                    </article>
+                    <article className="pcard pc-b rv" style={{ ['--d' as string]: '.1s' }}>
+                      <span className="pk">{proof.extra.num}</span>
+                      <span className="pl">{proof.extra.label}</span>
+                    </article>
+                  </div>
+                  <article className="pcard pc-partner rv" style={{ ['--d' as string]: '.06s' }}>
+                    <span className="pk">4+ years</span>
+                    <img
+                      src="/images/Enterprise-Blue-Badge.webp"
+                      alt="Webflow Enterprise Partner badge"
+                      width={660}
+                      height={85}
+                      loading="lazy"
+                    />
+                    <span className="pl">Webflow Enterprise Partner — 4+ years of delivery experience.</span>
+                  </article>
+                  <article className="pcard pc-badges rv" style={{ ['--d' as string]: '.1s' }}>
+                    <span className="bl">Recognized by the platforms that set the bar</span>
+                    <span className="bset">
+                      <img src="/images/Awwwards.svg" alt="Awwwards Honorable Nominee" width={36} height={36} loading="lazy" />
+                      <img src="/images/Trustpilot.svg" alt="Trustpilot Top-Rated Agency" width={36} height={36} loading="lazy" />
                     </span>
                   </article>
-                  <article className="pcard pc-b rv" style={{ ['--d' as string]: '.1s' }}>
-                    <span className="pk">{c.proof.extra.num}</span>
-                    <span className="pl">{c.proof.extra.label}</span>
-                  </article>
                 </div>
-                <article className="pcard pc-partner rv" style={{ ['--d' as string]: '.06s' }}>
-                  <span className="pk">4+ years</span>
-                  <img
-                    src="/images/Enterprise-Blue-Badge.webp"
-                    alt="Webflow Enterprise Partner badge"
-                    width={660}
-                    height={85}
-                    loading="lazy"
-                  />
-                  <span className="pl">Webflow Enterprise Partner — 4+ years of delivery experience.</span>
-                </article>
-                <article className="pcard pc-badges rv" style={{ ['--d' as string]: '.1s' }}>
-                  <span className="bl">Recognized by the platforms that set the bar</span>
-                  <span className="bset">
-                    <img src="/images/Awwwards.svg" alt="Awwwards Honorable Nominee" width={36} height={36} loading="lazy" />
-                    <img src="/images/Trustpilot.svg" alt="Trustpilot Top-Rated Agency" width={36} height={36} loading="lazy" />
-                  </span>
-                </article>
               </div>
             </div>
-          </div>
-        </section>
+          </section>
+        ) : null}
 
         {c.comparison ? (
           <section className="comparison" aria-labelledby="service-comparison-title">
@@ -562,7 +602,7 @@ export function ServicePageV3({ config, images }: { config: ServiceConfig; image
           <div className="rel-head rv">
             <div>
               <span className="klabel on-dark">
-                <i></i>One of seven
+                <i></i>One of {COUNT_WORD[siblings.length] ?? siblings.length}
               </span>
               <h2 className="display on-dark">{c.rel.title}</h2>
             </div>

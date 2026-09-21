@@ -34,6 +34,7 @@ export async function Footer({ caseStudies = [], blogPosts = [] }: FooterProps) 
     { label: 'SEO/AEO', href: '/services/seo-aeo' },
     { label: 'Organic Growth', href: '/services/organic-growth' },
     { label: 'GEO', href: '/services/geo-agency' },
+    { label: 'AI Overviews', href: '/services/ai-overviews' },
     { label: 'CRO', href: '/services/cro' },
     { label: 'Growth Autopilot', href: '/services/growth-autopilot' },
   ];

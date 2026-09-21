@@ -85,6 +85,7 @@ const QUICK_FACTS: Array<{ label: string; value: string }> = [
 
 const SERVICES: Array<{ name: string; href: string; blurb: string }> = [
   { name: 'Generative Engine Optimization (GEO)', href: '/services/geo-agency', blurb: 'Getting your brand cited and recommended by AI engines (ChatGPT, Perplexity, Google AI Overviews), measured as share of answer.' },
+  { name: 'Google AI Overviews Optimization', href: '/services/ai-overviews', blurb: 'Google AI Overviews specifically: retrieval and extraction work on Google\u2019s own surface, with per-prompt visibility and average cited position reported weekly.' },
   { name: 'SEO & AEO', href: '/services/seo-aeo', blurb: 'Dual-track optimization for Google and AI answer engines (ChatGPT, Perplexity, Claude, Google AI).' },
   { name: 'Organic Growth Program', href: '/services/organic-growth', blurb: 'GEO, SEO, AEO, content, and conversion work tied to customer discovery.' },
   { name: 'Conversion Rate Optimization (CRO)', href: '/services/cro', blurb: 'Experiment-driven testing to turn existing traffic into pipeline.' },

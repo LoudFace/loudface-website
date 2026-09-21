@@ -122,6 +122,11 @@
         "serviceName": "Generative Engine Optimization"
       },
       {
+        "slug": "ai-overviews",
+        "blurb": "Google's own AI answers, reported per prompt every week",
+        "serviceName": "Google AI Overviews Optimization"
+      },
+      {
         "slug": "seo-aeo",
         "blurb": "Visibility across search and AI engines",
         "serviceName": "SEO & AEO"

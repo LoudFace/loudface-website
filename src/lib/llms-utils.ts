@@ -246,6 +246,7 @@ export async function fetchLlmsData(includeContent = false): Promise<LlmsData> {
       { title: 'SEO & AEO', url: `${SITE_URL}/services/seo-aeo`, description: 'Search engine optimization and answer engine optimization. Dual-track growth for Google and AI search. The flagship service.' },
       { title: 'Organic Growth', url: `${SITE_URL}/services/organic-growth`, description: 'SEO, AEO, content and CRO run as one compounding system for B2B SaaS.' },
       { title: 'Generative Engine Optimization (GEO)', url: `${SITE_URL}/services/geo-agency`, description: 'AI-native generative engine optimization agency for B2B SaaS. Get cited in ChatGPT, Perplexity, and Google AI Overviews, measured as share of answer.' },
+      { title: 'Google AI Overviews Optimization', url: `${SITE_URL}/services/ai-overviews`, description: 'Google AI Overviews optimization for B2B SaaS. Retrieval and extraction work on Google\u2019s own surface, reported per prompt every week.' },
       { title: 'Copywriting', url: `${SITE_URL}/services/copywriting`, description: 'B2B SaaS website copy that converts. Messaging frameworks, page copy, and content strategy.' },
       { title: 'Conversion Rate Optimization', url: `${SITE_URL}/services/cro`, description: 'Data-driven CRO using A/B testing, heatmaps, and funnel analysis to increase conversion rates.' },
       { title: 'UX/UI Design', url: `${SITE_URL}/services/ux-ui-design`, description: 'Conversion-focused design for B2B SaaS websites. Research-driven layouts and interaction design.' },

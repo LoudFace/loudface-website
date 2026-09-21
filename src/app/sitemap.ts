@@ -122,6 +122,11 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 0.9,
     },
     {
+      url: `${baseUrl}/services/ai-overviews`,
+      changeFrequency: 'monthly',
+      priority: 0.9,
+    },
+    {
       url: `${baseUrl}/services/webflow`,
       changeFrequency: 'monthly',
       priority: 0.9,

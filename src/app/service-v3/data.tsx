@@ -19,6 +19,7 @@
  */
 import type { ReactNode } from 'react';
 import Link from 'next/link';
+import { AI_OVERVIEWS_BODY_HTML, AI_OVERVIEWS_FAQ } from './ai-overviews-body';
 
 export { getHomeV3Images as getServiceImages, type HomeImages } from '../home-v3/data';
 
@@ -94,9 +95,17 @@ export interface ServiceConfig {
     frag: Artifact;
   };
   logosLead: string;
-  deliver: { title: ReactNode; lede: string; tiles: DeliverTile[] };
-  runway: { title: ReactNode; lede: string; pillars: RunPillar[] };
-  exhibit: {
+  /**
+   * Optional long-form body, rendered verbatim into the house `.sf-prose` /
+   * `.sf-body` reading block (seo-for-v3.css, already `.svcv3`-scoped and
+   * already used by /seo-for/*, /privacy, /terms, /cookies). Used by pages
+   * whose copy is a verified article rather than template slot copy; those
+   * pages omit the slot sections below, which is why they are optional.
+   */
+  body?: { title?: string; html: string };
+  deliver?: { title: ReactNode; lede: string; tiles: DeliverTile[] };
+  runway?: { title: ReactNode; lede: string; pillars: RunPillar[] };
+  exhibit?: {
     art: Artifact;
     eyebrow: string;
     h2: string;
@@ -108,7 +117,7 @@ export interface ServiceConfig {
     ctaLabel: string;
     ctaHref: string;
   };
-  proof: {
+  proof?: {
     track: 'build' | 'grow';
     title: ReactNode;
     lede: string;
@@ -1049,6 +1058,60 @@ export const SERVICE_CONFIGS: Record<string, ServiceConfig> = {
       metaRight: 'B2B SaaS only',
       creditLeft: 'Cover · Toku, grown by LoudFace',
       obj: { ...shot('toku', ''), rpillLabel: 'GEO program', rpillClient: 'Toku' },
+    },
+  },
+
+  /* ========================= GOOGLE AI OVERVIEWS =========================
+     Copy: the dual-verified article from the content engine
+     (spine-id a2a04f97-6633-4f55-ae3c-00f21c24a213, body sha256 6e36476d…).
+     It is an article, not slot copy — 2,245 words carrying 16 inline citations
+     to Google's own documentation, five direct quotations and a four-column
+     table — so it rides the `body` slot verbatim and this config omits the
+     deliver / runway / exhibit / proof / comparison slots rather than have the
+     copy rewritten to fit them. Hero sub = the verified directAnswer; cover
+     copy = the verified closing CTA lines. Nothing here is newly written.
+     ===================================================================== */
+  'ai-overviews': {
+    slug: 'ai-overviews',
+    ariaLabel: 'Google AI Overviews optimization for B2B SaaS',
+    hero: {
+      eyebrow: 'Google AI Overviews · AEO · AI search',
+      h1: (
+        <>
+          Google AI Overviews Optimization for B2B SaaS: <span className="soft">what we do and how it is measured.</span>
+        </>
+      ),
+      blurb:
+        'AI Overviews answers from the Google Search index. There is no separate AI ranking system to optimize for. We make your pages retrievable and quotable for the fan-out queries those answers are built from, then report per-prompt visibility and average cited position in AI Overviews every week. Engagements start from $5k a month.',
+      secondary: AUDIT,
+      chip: { value: '$5k/mo', label: 'Engagements start from' },
+      main: { ...shot('toku', 'Toku, cited in Google AI Overviews after LoudFace’s program'), rpillLabel: 'AI Overviews program', rpillClient: 'Toku' },
+      frag: shot('montblanc', ''),
+    },
+    logosLead: 'AI-answer visibility built for B2B SaaS teams',
+    body: { html: AI_OVERVIEWS_BODY_HTML },
+    faq: {
+      title: (
+        <>
+          Common questions about <span className="ghost">AI Overviews.</span>
+        </>
+      ),
+      items: AI_OVERVIEWS_FAQ,
+    },
+    rel: {
+      title: (
+        <>
+          AI Overviews rarely wins <span className="ghost">alone.</span>
+        </>
+      ),
+      note: 'Google’s surfaces sit inside the wider program. The same team that earns your citations writes the pages and ships the site, so nothing gets re-briefed between them.',
+    },
+    cover: {
+      h2: 'Book an intro call.',
+      p: 'Thirty minutes over video on what is holding the site back, where the revenue leaks, and whether we are the right fit.',
+      metaRight: 'B2B SaaS only',
+      creditLeft: 'Cover · Toku, grown by LoudFace',
+      obj: { ...shot('toku', ''), rpillLabel: 'AI Overviews program', rpillClient: 'Toku' },
     },
   },
 

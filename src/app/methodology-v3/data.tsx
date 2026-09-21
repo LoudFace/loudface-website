@@ -709,6 +709,7 @@ export const PRICING = {
     { href: '/pricing', label: 'The full pricing breakdown' },
     { href: '/services/seo-aeo', label: 'SEO and AEO program' },
     { href: '/services/geo-agency', label: 'GEO program' },
+    { href: '/services/ai-overviews', label: 'AI Overviews program' },
   ],
 } as const;
 

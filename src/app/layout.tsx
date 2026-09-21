@@ -191,6 +191,7 @@ const organizationSchema = {
     name: "LoudFace Services",
     itemListElement: [
       { "@type": "Offer", itemOffered: { "@type": "Service", name: "Generative Engine Optimization" } },
+      { "@type": "Offer", itemOffered: { "@type": "Service", name: "Google AI Overviews Optimization" } },
       { "@type": "Offer", itemOffered: { "@type": "Service", name: "SEO & AEO" } },
       { "@type": "Offer", itemOffered: { "@type": "Service", name: "Organic Growth Program" } },
       { "@type": "Offer", itemOffered: { "@type": "Service", name: "Growth Autopilot" } },

@@ -60,6 +60,7 @@ export const SERVICES: ServiceEntry[] = rawContent<ServicesContent>('services').
  */
 export const TRACK_BY_SLUG: Record<string, 'build' | 'grow'> = {
   'geo-agency': 'grow',
+  'ai-overviews': 'grow',
   'seo-aeo': 'grow',
   'organic-growth': 'grow',
   cro: 'build',

@@ -30,6 +30,13 @@
           "href": "/services/geo-agency"
         },
         {
+          "icon": "/images/growth-autopilot-icon.svg",
+          "iconAlt": "Google AI Overviews icon",
+          "title": "Google AI Overviews",
+          "description": "Google's own AI answers, reported per prompt every week.",
+          "href": "/services/ai-overviews"
+        },
+        {
           "icon": "/images/stair-group.svg",
           "iconAlt": "SEO/AEO icon",
           "title": "SEO/AEO",
