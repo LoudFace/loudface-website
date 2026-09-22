@@ -3,7 +3,7 @@
  *
  * Arnel, 2026-09-18: prospects could not tell whether we are a content
  * agency, a backlink agency or a web-design agency. The answer is one
- * sentence — GEO brings the buyers, the site converts them — and this figure
+ * sentence — SEO and GEO bring the buyers, the site converts them — and this figure
  * draws it: a ring in two halves, the result in the middle.
  *
  * Arnel, 2026-09-22 (Faith): the first ring carried six labelled nodes with
@@ -13,7 +13,7 @@
  * line under it, the chevrons that show the direction, the result inside.
  */
 
-const CX = 280;
+const CX = 310;
 const CY = 150;
 const R = 104;
 
@@ -34,9 +34,9 @@ const GAP = 22; // between the arc and its label
 export function HowWeWorkRing() {
   return (
     <figure className="how-ring" data-print-keep>
-      <svg viewBox="0 0 560 300" role="img" aria-labelledby="how-ring-title">
+      <svg viewBox="0 0 620 300" role="img" aria-labelledby="how-ring-title">
         <title id="how-ring-title">
-          How LoudFace works: GEO brings the buyers, the site converts them, and the result is leads from AI and Google search.
+          How LoudFace works: SEO and GEO bring the buyers, the site converts them, and the result is leads from AI and Google search.
         </title>
 
         {/* the ring, two halves, a small gap at top and bottom */}
@@ -46,11 +46,15 @@ export function HowWeWorkRing() {
         <path d={`M${CX - 3} ${CY - R - 5}l4.5 5-4.5 5`} className="chev" />
         <path d={`M${CX + 3} ${CY + R + 5}l-4.5-5 4.5-5`} className="chev" />
 
-        {/* left half: what brings them */}
-        <text x={CX - R - GAP} y={CY - 6} textAnchor="end" className="lbl lbl-geo">
-          GEO brings the buyers
+        {/* left half: what brings them. Two lines — Arnel wanted SEO named
+            beside GEO (2026-09-22), and the phrase no longer fits on one. */}
+        <text x={CX - R - GAP} y={CY - 16} textAnchor="end" className="lbl lbl-geo">
+          SEO and GEO (AI-search)
         </text>
-        <text x={CX - R - GAP} y={CY + 12} textAnchor="end" className="how">
+        <text x={CX - R - GAP} y={CY + 2} textAnchor="end" className="lbl lbl-geo">
+          bring the buyers
+        </text>
+        <text x={CX - R - GAP} y={CY + 20} textAnchor="end" className="how">
           content, listings, reviews
         </text>
 

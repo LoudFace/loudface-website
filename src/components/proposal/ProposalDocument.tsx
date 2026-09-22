@@ -4,6 +4,7 @@ import type { Proposal, ProposalBand, ProposalSection } from '@/sanity/lib/propo
 import { ProofRail, ProofSection, isProofSection } from './ProposalSocialProof';
 import { ProposalCaseProof } from './ProposalCaseProof';
 import { EngagementLoopPlate, PlateDefs } from './ProposalFigures';
+import { ProposalLogoStrip } from './ProposalLogoStrip';
 import { HowWeWorkRing } from './HowWeWorkRing';
 import { AskAiBlock, ForecastBlock, GateBlock, MonthsBlock, StandingBlock, TracksBlock } from './ProposalBlocks';
 
@@ -490,7 +491,9 @@ export function ProposalDocument({
           </div>
           </div>
 
-          <dl className="mt-8 flex flex-wrap gap-x-9 gap-y-3 border-t border-white/15 pt-6 text-[13px] text-white/55">
+          <ProposalLogoStrip />
+
+          <dl className="mt-7 flex flex-wrap gap-x-9 gap-y-3 text-[13px] text-white/55">
             {proposal.preparedFor && proposal.preparedFor.length > 0 && (
               <div>
                 <dt className="inline">Prepared for </dt>

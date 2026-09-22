@@ -879,3 +879,86 @@
     color: inherit !important;
   }
 }
+
+/* ── Client logos in the hero ─────────────────────────────────────────────
+   Loom / Structured / Granola on Mobbin (2026-09-22): a small label, one row
+   of logos knocked to white, the ends faded. The Sanity logos are dark ink on
+   transparent, so brightness(0) invert(1) whitens the artwork and leaves the
+   transparency alone. The track carries the set twice, so -50% loops without
+   a seam; print and reduced motion get a static wrap instead. */
+.proposal-surface .proposal-logos {
+  margin-top: 34px;
+  border-top: 1px solid rgb(255 255 255 / 0.15);
+  padding-top: 22px;
+}
+.proposal-surface .proposal-logos-lead {
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgb(255 255 255 / 0.5);
+}
+.proposal-surface .proposal-marq {
+  position: relative;
+  margin-top: 16px;
+  overflow: hidden;
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 3%, #000 92%, transparent);
+  mask-image: linear-gradient(90deg, transparent, #000 3%, #000 92%, transparent);
+}
+.proposal-surface .proposal-marq-track {
+  display: flex;
+  align-items: center;
+  gap: clamp(38px, 5vw, 66px);
+  width: max-content;
+  animation: proposal-marq 46s linear infinite;
+}
+.proposal-surface .proposal-marq:hover .proposal-marq-track {
+  animation-play-state: paused;
+}
+@keyframes proposal-marq {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+.proposal-surface .proposal-marq-logo {
+  display: flex;
+  align-items: center;
+  flex: none;
+}
+.proposal-surface .proposal-marq-logo img {
+  height: clamp(19px, 2.1vw, 24px);
+  width: auto;
+  display: block;
+  filter: brightness(0) invert(1);
+  opacity: 0.62;
+  transition: opacity 0.2s ease-out;
+}
+.proposal-surface .proposal-marq-logo:hover img {
+  opacity: 1;
+}
+@media (prefers-reduced-motion: reduce) {
+  .proposal-surface .proposal-marq-track {
+    animation: none;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    width: auto;
+    gap: 30px;
+  }
+}
+@media print {
+  .proposal-surface .proposal-marq {
+    -webkit-mask-image: none;
+    mask-image: none;
+  }
+  .proposal-surface .proposal-marq-track {
+    animation: none;
+    flex-wrap: wrap;
+    width: auto;
+  }
+  /* On paper the band is white, so the logos keep their own ink. */
+  .proposal-surface .proposal-marq-logo img {
+    filter: none;
+    opacity: 1;
+  }
+  .proposal-surface .proposal-marq-logo:nth-child(n + 10) {
+    display: none;
+  }
+}
