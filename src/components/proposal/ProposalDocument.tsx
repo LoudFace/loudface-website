@@ -326,6 +326,13 @@ export function ProposalDocument({
     (rail?.platforms?.length ?? 0) > 0 || (rail?.quotes?.length ?? 0) > 0 || clips.length > 0
   );
 
+  // The rail runs beside the light sections only. The first dark band is the
+  // close, and a sticky rail of white cards scrolling over it looked broken.
+  const firstDark = sections.findIndex(
+    (section) => (section as { band?: ProposalBand }).band === 'dark'
+  );
+  const railEnd = firstDark === -1 ? sections.length : firstDark;
+
   // With a rail the page is wider, so the document column keeps roughly the
   // measure it has today and the rail sits in space the window already had.
   const page = hasRail ? 'mx-auto max-w-[1180px] px-5 sm:px-8' : 'mx-auto max-w-4xl px-5 sm:px-8';
@@ -390,9 +397,10 @@ export function ProposalDocument({
     );
   };
 
-  const renderSections = (boxed: boolean) => {
+  const renderSections = (boxed: boolean, from = 0, to = sections.length, reserveRail = true) => {
     const groups: { band: ProposalBand; items: { section: ProposalSection; index: number }[] }[] = [];
-    sections.forEach((section, index) => {
+    sections.slice(from, to).forEach((section, offset) => {
+      const index = from + offset;
       const band = bandOf(section);
       const last = groups[groups.length - 1];
       if (last && last.band === band && band !== 'plain') last.items.push({ section, index });
@@ -421,7 +429,9 @@ export function ProposalDocument({
             data-print-keep
             className={`proposal-bleed ${bandClass[group.band]}`}
           >
-            <div className="mx-auto max-w-[1180px] py-3 lg:pr-[384px]">{inner}</div>
+            <div className={`mx-auto max-w-[1180px] py-3 ${reserveRail ? 'lg:pr-[384px]' : ''}`}>
+              {inner}
+            </div>
           </div>
         );
       }
@@ -494,7 +504,7 @@ export function ProposalDocument({
       {hasRail ? (
         <div className={page}>
           <div className="lg:grid lg:grid-cols-[minmax(0,1fr)_328px] lg:gap-14">
-            <div className="min-w-0">{renderSections(true)}</div>
+            <div className="min-w-0">{renderSections(true, 0, railEnd)}</div>
             {/* Sticky, so the ratings are still on screen at the price. */}
             <aside data-proposal-rail="aside" className="hidden lg:block">
               <div className="sticky top-8 mt-10">
@@ -502,6 +512,13 @@ export function ProposalDocument({
               </div>
             </aside>
           </div>
+          {/* The close sits BELOW the grid, so the rail stops rather than
+              riding white cards down over the dark band (Arnel, 2026-09-22).
+              The band keeps the rail's width reserved so the copy stays in
+              the same column as everything above it. */}
+          {railEnd < sections.length && (
+            <div className="min-w-0">{renderSections(true, railEnd, sections.length, false)}</div>
+          )}
           {/* No column on a phone, and none on paper. Same content, in flow. */}
           <div data-proposal-rail="inline" className="border-t border-surface-200 py-9 lg:hidden">
             <ProofRail rail={rail} clips={clips} clipsVariant={clipsVariant} />
