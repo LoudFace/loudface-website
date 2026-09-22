@@ -48,7 +48,7 @@ function Prose({ value, className = '' }: { value: PortableTextBlock[]; classNam
   );
 }
 
-function SectionHeading({ children, dark = false }: { children: React.ReactNode; dark?: boolean }) {
+export function SectionHeading({ children, dark = false }: { children: React.ReactNode; dark?: boolean }) {
   return (
     <h2
       className={`text-[22px] sm:text-[26px] font-medium tracking-[-0.03em] leading-tight ${
@@ -259,7 +259,7 @@ function BulletBlock({
   );
 }
 
-function SectionBody({
+export function SectionBody({
   section,
   clientName,
   dark = false,

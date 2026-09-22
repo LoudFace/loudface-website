@@ -1053,6 +1053,21 @@ const proposal = defineType({
       description: 'e.g. "$5,000/mo flat. 3-month minimum, then month to month."',
     }),
     defineField({
+      name: 'design',
+      title: 'Design',
+      type: 'string',
+      group: 'content',
+      initialValue: 'classic',
+      options: {
+        list: [
+          { title: 'Classic', value: 'classic' },
+          { title: 'Cards (electric hero, card sections)', value: 'cards' },
+        ],
+        layout: 'radio',
+      },
+      description: 'Cards is the layout picked on 23 September 2026. Classic is everything sent before it.',
+    }),
+    defineField({
       name: 'clipStrip',
       title: 'Clip strip',
       type: 'object',

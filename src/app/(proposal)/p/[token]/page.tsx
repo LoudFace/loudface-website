@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import { cookies } from 'next/headers';
 import { notFound } from 'next/navigation';
 import { ProposalAnalytics } from '@/components/proposal/ProposalAnalytics';
+import { ProposalCardsDocument } from '@/components/proposal/ProposalCardsDocument';
 import { ProposalDocument } from '@/components/proposal/ProposalDocument';
 import { isProposalLive, verifyAccessCookie } from '@/lib/proposal-access';
 import { isValidProposalToken, proposalCookieName } from '@/lib/proposal-token';
@@ -94,7 +95,7 @@ export default async function ProposalPage({ params, searchParams }: ProposalPag
 
   return (
     <>
-      <ProposalDocument proposal={proposal} />
+      {proposal.design === 'cards' ? <ProposalCardsDocument proposal={proposal} /> : <ProposalDocument proposal={proposal} />}
       <ProposalAnalytics
         token={token}
         clientName={proposal.clientName}

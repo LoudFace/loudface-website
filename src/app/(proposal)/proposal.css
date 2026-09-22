@@ -962,3 +962,79 @@
     display: none;
   }
 }
+
+/* ── Card layout (design: 'cards', Arnel's pick 2026-09-23) ──────────────────
+   Electric hero stage transcribed from /pricing (.prv3 .hero): the rulebook's
+   hero tonality law puts page heroes on electric indigo, not night. */
+.proposal-surface .pc-electric {
+  position: relative;
+  background: var(--color-primary-600);
+  background-image:
+    radial-gradient(120% 92% at 50% 116%, rgba(129, 140, 248, 0.55) 0%, rgba(99, 102, 241, 0) 58%),
+    radial-gradient(90% 70% at 84% -8%, rgba(165, 180, 252, 0.3) 0%, rgba(99, 102, 241, 0) 46%),
+    linear-gradient(158deg, var(--color-primary-700) 0%, var(--color-primary-600) 44%, var(--color-primary-500) 100%);
+}
+.proposal-surface .pc-electric::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(78% 60% at 50% -8%, rgba(79, 70, 229, 0.34) 0%, rgba(79, 70, 229, 0) 62%);
+}
+.proposal-surface .pc-eyebrow {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+  min-height: 34px;
+  padding: 4px 6px 4px 15px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.1);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.18), 0 1px 0 rgba(255, 255, 255, 0.12) inset;
+  font-size: 13px;
+  font-weight: 500;
+  color: #fff;
+}
+.proposal-surface .pc-eyebrow b { font-weight: 600; }
+.proposal-surface .pc-eyebrow em {
+  font-style: normal;
+  display: inline-flex;
+  align-items: center;
+  height: 22px;
+  padding: 0 9px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.92);
+  color: var(--color-primary-700);
+  font-size: 11px;
+  font-weight: 600;
+}
+.proposal-surface .pc-anchor {
+  margin-top: 24px;
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 11px;
+  min-height: 40px;
+  padding: 6px 18px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.08);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.2);
+}
+.proposal-surface .pc-anchor .amt { font-weight: 600; font-size: 15px; color: #fff; }
+.proposal-surface .pc-anchor .lbl { font-size: 13.5px; font-weight: 500; color: rgba(255, 255, 255, 0.75); }
+
+/* the two-streams visual */
+.proposal-surface .pc-vt { fill: #fff; font: 600 23px/1 var(--font-heading, var(--font-sans)); letter-spacing: -0.02em; }
+.proposal-surface .pc-vi { fill: rgba(255, 255, 255, 0.82); font: 500 13.5px/1 var(--font-sans); }
+.proposal-surface .pc-vcore { fill: #fff; font: 600 22px/1 var(--font-heading, var(--font-sans)); letter-spacing: -0.02em; }
+.proposal-surface .pc-vcs { fill: rgba(255, 255, 255, 0.68); font: 500 11.5px/1 var(--font-sans); }
+@media (prefers-reduced-motion: reduce) { .proposal-surface .pc-traveller { display: none; } }
+
+/* design-work mosaic: hovering one design dims the rest (FocusCards, no JS) */
+.proposal-surface .pc-focus-item { transition: opacity 0.25s cubic-bezier(0.16, 1, 0.3, 1); }
+.proposal-surface .pc-focus:hover .pc-focus-item:not(:hover) { opacity: 0.55; }
+@media (prefers-reduced-motion: reduce) { .proposal-surface .pc-focus-item { transition: none; } }
+@media print {
+  .proposal-surface .pc-electric { background: none !important; color: inherit !important; }
+  .proposal-surface .pc-traveller { display: none; }
+}
