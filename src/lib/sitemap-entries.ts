@@ -1,18 +1,16 @@
-import { MetadataRoute } from 'next';
+import type { MetadataRoute } from 'next';
 import { fetchSitemapData } from '@/lib/cms-data';
 import nextConfig from '../../next.config';
-import { TEAM_HIDDEN } from './about-v3/data';
+import { TEAM_HIDDEN } from '@/app/about-v3/data';
 
-// Without this the sitemap is generated ONCE at build time and then frozen: every post
-// published between deploys is absent from it, so Google never learns the URL exists.
-// Measured 2026-08-25 — Sanity held 103 published posts, the live sitemap listed 83, and
-// /blog/ai-cites-you-wrong-fix-stale-facts (published 24 Aug, HTTP 200, self-canonical) was
-// simply missing. /llms.txt carried it correctly, because that route already sets this.
+// The URL list behind /sitemap.xml (src/app/sitemap.xml/route.ts).
 //
-// The Sanity webhook does call revalidatePath('/sitemap.xml'), but a metadata route is not a
-// page route and that purge does not reliably reach it — so this is the load-bearing control,
-// not a backstop. One hour matches llms.txt so the two indexes cannot drift far apart.
-export const revalidate = 3600;
+// History: this was app/sitemap.ts, a metadata route. A metadata route cannot be made
+// reliably fresh on Vercel. With `revalidate = 3600` and an hourly tagged CMS cache it
+// still omitted posts for hours after they were published (2026-08-25: 83 of 103 posts;
+// 2026-09-23: /blog/ai-visibility-audit and /blog/directive-consulting-alternatives
+// missing while /llms.txt listed both). The route handler now reads Sanity with no cache
+// and serves Cache-Control: no-store, so every request sees every published document.
 
 /**
  * A sitemap <lastmod> is only useful while it is ACCURATE. Google uses it while
@@ -32,7 +30,7 @@ function lastMod(candidate?: string | null): { lastModified?: Date } {
   return { lastModified: date };
 }
 
-export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
+export async function buildSitemapEntries(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = 'https://www.loudface.co';
 
   // Static pages
@@ -250,4 +248,27 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const redirectedPaths = new Set(redirectRules.map((rule) => rule.source));
 
   return allPages.filter((page) => !redirectedPaths.has(page.url.replace(baseUrl, '')));
+}
+
+const escapeXml = (value: string) =>
+  value
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&apos;');
+
+/** Same element order and date format Next.js used for the metadata route. */
+export function renderSitemapXml(entries: MetadataRoute.Sitemap): string {
+  const urls = entries.map((entry) => {
+    const lines = [`<loc>${escapeXml(entry.url)}</loc>`];
+    if (entry.lastModified) {
+      const date = entry.lastModified instanceof Date ? entry.lastModified : new Date(entry.lastModified);
+      lines.push(`<lastmod>${date.toISOString()}</lastmod>`);
+    }
+    if (entry.changeFrequency) lines.push(`<changefreq>${entry.changeFrequency}</changefreq>`);
+    if (entry.priority !== undefined) lines.push(`<priority>${entry.priority}</priority>`);
+    return `<url>\n${lines.join('\n')}\n</url>`;
+  });
+  return `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${urls.join('\n')}\n</urlset>\n`;
 }

@@ -32,6 +32,7 @@ export const EDITABLE_TYPES = new Set([
 
 export function pathsFor(type: string | undefined, slug: string | undefined): string[] {
   // Always invalidate the LLM indexes — they aggregate all content.
+  // /sitemap.xml is a no-store route handler; purging it is a no-op kept so the path list stays complete.
   const always = ['/llms.txt', '/llms-full.txt', '/sitemap.xml'];
 
   switch (type) {

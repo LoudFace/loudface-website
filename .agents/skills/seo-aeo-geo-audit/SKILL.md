@@ -210,7 +210,7 @@ For each page, check:
 - [ ] HTTPS enforced
 - [ ] No crawl budget waste: parameterized URLs (`?sort=`, `?filter=`) not generating infinite crawlable paths
 - [ ] No session IDs or tracking params in crawlable URLs
-- [ ] **Sitemap/gallery filter alignment** — `sitemap.ts` and each index page (`case-studies/page.tsx`, `blog/page.tsx`, `seo-for/page.tsx`) must use the **same filter criteria** for which items to include. If the sitemap includes items that the gallery page filters out, those items become orphan pages (in sitemap, zero internal links). Check that both use the same `.filter()` predicate (e.g., both filter by `slug` or both filter by `paragraph-summary`).
+- [ ] **Sitemap/gallery filter alignment** — `src/lib/sitemap-entries.ts` and each index page (`case-studies/page.tsx`, `blog/page.tsx`, `seo-for/page.tsx`) must use the **same filter criteria** for which items to include. If the sitemap includes items that the gallery page filters out, those items become orphan pages (in sitemap, zero internal links). Check that both use the same `.filter()` predicate (e.g., both filter by `slug` or both filter by `paragraph-summary`).
 
 ### Step 7: Canonical & Pagination Audit
 
@@ -761,7 +761,7 @@ Grep pattern="generateMetadata" glob="*.tsx" path="src/app"
 # Check all early returns / error paths for robots: { index: false }
 
 # Find hardcoded dates in sitemap (should be dynamic)
-Grep pattern="new Date\(" glob="sitemap.ts" path="src/app"
+Grep pattern="new Date\(" glob="sitemap-entries.ts" path="src/lib"
 
 # --- CANONICAL & PAGINATION ---
 
@@ -769,7 +769,7 @@ Grep pattern="new Date\(" glob="sitemap.ts" path="src/app"
 Grep pattern="canonical:" glob="*.tsx" path="src/app"
 
 # Check if paginated URLs are in sitemap (they shouldn't be)
-Grep pattern="page=" glob="sitemap.ts" path="src/app"
+Grep pattern="page=" glob="sitemap-entries.ts" path="src/lib"
 
 # Find duplicate meta descriptions (compare description strings across files)
 Grep pattern="description:" glob="*.tsx" path="src/app" -A 1
@@ -825,7 +825,7 @@ Grep pattern="datePublished|dateModified" glob="*.tsx" path="src/app/blog"
 Grep pattern="published-date|last-updated|dateTime" glob="*.tsx" path="src/app/blog"
 
 # Check sitemap uses dynamic dates
-Grep pattern="lastModified" glob="sitemap.ts" path="src/app"
+Grep pattern="lastModified" glob="sitemap-entries.ts" path="src/lib"
 
 # --- GEO: QUOTABILITY ---
 

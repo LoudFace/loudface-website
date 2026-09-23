@@ -176,7 +176,7 @@ When implementing structured data, use these patterns:
 ### Existing Infrastructure
 - WebSite schema (in layout.tsx)
 - Organization schema (in layout.tsx)
-- `src/app/sitemap.ts` (generates sitemap.xml)
+- `src/lib/sitemap-entries.ts` (URL list) + `src/app/sitemap.xml/route.ts` (uncached handler that serves sitemap.xml)
 - `src/app/robots.ts` (generates robots.txt)
 
 ### Not Yet Implemented

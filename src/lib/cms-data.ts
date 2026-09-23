@@ -478,12 +478,15 @@ const cacheForSeconds = (revalidate: number, ...tags: string[]) => ({
 
 const cacheFor = (...tags: string[]) => cacheForSeconds(CMS_REVALIDATE_SECONDS, ...tags);
 
-// The sitemap has a separate, small projection and a shorter cache than page
-// content. Page content can stay cached for 24 hours because the Sanity
-// webhook purges its tags. A missed webhook must not hide a newly published
-// URL from the sitemap for the same 24 hours.
-const SITEMAP_REVALIDATE_SECONDS = 3600;
-const sitemapCacheFor = (...tags: string[]) => cacheForSeconds(SITEMAP_REVALIDATE_SECONDS, ...tags);
+// The sitemap reads Sanity with no cache at all. A one-hour tagged cache here
+// still left newly published posts out of /sitemap.xml for hours (2026-09-23:
+// /llms.txt listed two new posts while the sitemap omitted both), because the
+// webhook's tag purge does not reliably reach it. The projection is small and
+// fetchSitemapData makes it a single CDN-served request per sitemap hit.
+// cacheMode 'noStale' stops the API CDN from answering with a stale list while it refreshes,
+// so a request right after a publish already includes the new URL. Trade-off, accepted: if
+// Sanity is down, /sitemap.xml returns 500 for that request instead of an old list; crawlers retry.
+const SITEMAP_NO_STORE = { cache: 'no-store', cacheMode: 'noStale' } as const;
 
 const fetchCaseStudies = cache((): Promise<CaseStudy[]> =>
   withRetry(() =>
@@ -802,49 +805,32 @@ export interface SitemapData {
 /**
  * Fetch only the URL and date fields needed by the sitemap.
  *
- * This must not use the 24-hour page-list cache. The sitemap route itself is
- * revalidated hourly, but a nested 24-hour CMS fetch would still serve the old
- * URL list during that regeneration window. A dedicated one-hour projection
- * keeps the Sanity request small while bounding the stale sitemap window when
- * a publish webhook is missed.
+ * Uncached on purpose: /sitemap.xml is a no-store route handler, and every
+ * request must see every published document. See SITEMAP_NO_STORE.
  */
 export async function fetchSitemapData(): Promise<SitemapData> {
-  const [caseStudies, blogPosts, seoPages, teamMembers] = await Promise.all([
-    withRetry(() =>
-      cachedReadClient.fetch<SitemapData['caseStudies']>(
-        `*[_type == "caseStudy" && defined(slug.current)] { "slug": slug.current, "_updatedAt": _updatedAt }`,
-        {},
-        sitemapCacheFor(cmsTypeTag('caseStudy')),
-      ),
+  // One query, one Sanity request per sitemap hit, served by the API CDN (`client` uses
+  // the CDN in production). CDN reads count against the larger 1M/month allowance, not the
+  // 250k/month uncached one that returns 402 site-wide when exhausted. The CDN's short lag
+  // is covered by cacheMode 'noStale' (see SITEMAP_NO_STORE).
+  const data = await withRetry(() =>
+    client.fetch<SitemapData>(
+      `{
+        "caseStudies": *[_type == "caseStudy" && defined(slug.current)] { "slug": slug.current, "_updatedAt": _updatedAt },
+        "blogPosts": *[_type == "blogPost" && defined(slug.current)] | order(publishedDate desc) { "slug": slug.current, "published-date": publishedDate, "last-updated": lastUpdated },
+        "seoPages": *[_type == "seoPage" && defined(slug.current)] { "slug": slug.current, "_updatedAt": _updatedAt },
+        "teamMembers": *[_type == "teamMember" && defined(slug.current)] { "slug": slug.current, "_updatedAt": _updatedAt }
+      }`,
+      {},
+      SITEMAP_NO_STORE,
     ),
-    withRetry(() =>
-      cachedReadClient.fetch<SitemapData['blogPosts']>(
-        `*[_type == "blogPost" && defined(slug.current)] | order(publishedDate desc) { "slug": slug.current, "published-date": publishedDate, "last-updated": lastUpdated }`,
-        {},
-        sitemapCacheFor(cmsTypeTag('blogPost')),
-      ),
-    ),
-    withRetry(() =>
-      cachedReadClient.fetch<SitemapData['seoPages']>(
-        `*[_type == "seoPage" && defined(slug.current)] { "slug": slug.current, "_updatedAt": _updatedAt }`,
-        {},
-        sitemapCacheFor(cmsTypeTag('seoPage')),
-      ),
-    ),
-    withRetry(() =>
-      cachedReadClient.fetch<SitemapData['teamMembers']>(
-        `*[_type == "teamMember" && defined(slug.current)] { "slug": slug.current, "_updatedAt": _updatedAt }`,
-        {},
-        sitemapCacheFor(cmsTypeTag('teamMember')),
-      ),
-    ),
-  ]);
+  );
 
   return {
-    caseStudies: caseStudies.filter((study) => !isHiddenCaseStudySlug(study.slug)),
-    blogPosts,
-    seoPages,
-    teamMembers,
+    caseStudies: data.caseStudies.filter((study) => !isHiddenCaseStudySlug(study.slug)),
+    blogPosts: data.blogPosts,
+    seoPages: data.seoPages,
+    teamMembers: data.teamMembers,
   };
 }
 

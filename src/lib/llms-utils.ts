@@ -24,7 +24,7 @@ const AGENCY_SUMMARY =
 
 /**
  * Paths that 301/308 elsewhere, from next.config.ts — the same single source of truth
- * sitemap.ts filters against.
+ * sitemap (src/lib/sitemap-entries.ts) filters against.
  *
  * llms.txt previously listed every published Sanity doc, including 19 folded posts that
  * redirect away (measured 2026-08-25). Every one of those is a wasted fetch for a crawler and a

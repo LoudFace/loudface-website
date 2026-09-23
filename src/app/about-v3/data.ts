@@ -31,7 +31,7 @@ export const TEAM_ORDER: string[] = [
  *
  * Removing a slug from TEAM_ORDER is NOT enough: getAboutTeam() appends any CMS
  * member missing from that list, so a removed person reappears at the end. This
- * set is the actual exclusion. It also drives the sitemap (src/app/sitemap.ts),
+ * set is the actual exclusion. It also drives the sitemap (src/lib/sitemap-entries.ts),
  * so a hidden member cannot survive as an indexed orphan page.
  *
  * Keep the CMS record. Hiding is reversible; deleting loses the history and
