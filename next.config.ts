@@ -336,6 +336,13 @@ const nextConfig: NextConfig = {
         destination: '/blog/webflow-best-cms-for-marketers',
         permanent: true,
       },
+      // "The AI Demand Engine" post unpublished 2026-09-23 (it walked through an
+      // internal system). The server-logs playbook states the same thesis.
+      {
+        source: '/blog/track-ai-bot-404s-cloudflare-notion',
+        destination: '/blog/server-logs-ai-bot-traffic-playbook',
+        permanent: true,
+      },
       // Broken blog slugs → closest matching live posts
       {
         source: '/blog/webflow-vs-framer',

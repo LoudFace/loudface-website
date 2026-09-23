@@ -10,6 +10,10 @@
  * SPLITS it into slots; it never rewrites it. Any wording change has to go back
  * through the content loop and re-hash, or the verification trail is void.
  *
+ * 2026-09-23: four Stage 5, FAQ and metrics-table strings were cut back to idea
+ * level under the LoudFace voice rule "Never reveal the secret sauce". The spine
+ * body hash above predates that edit.
+ *
  * Two mechanical rules this file enforces:
  *   - Zero em-dashes anywhere in the strings below.
  *   - The FAQ lives here as its own field (never folded into body prose) so it can
@@ -230,12 +234,12 @@ export const STAGES: Stage[] = [
       {
         kind: 'lead',
         lead: 'A source behind every claim.',
-        text: 'Every factual statement in a draft is tied to a persisted primary source and listed in a claims manifest that travels with the draft. A statistic with no source does not reach a page.',
+        text: 'Every factual statement in a draft is tied to a primary source we keep on file. A statistic with no source does not reach a page.',
       },
       {
         kind: 'lead',
         lead: 'A gate before anything ships.',
-        text: 'Deterministic checks reject stock phrasing and unsourced numbers, and any self-praise our own record does not support. A second reviewer, with no memory of writing the piece, then re-reads it against the voice rules and re-checks every claim against its source. A page that states a price, or a number a buyer can check, needs two independent approvals before it goes live.',
+        text: 'Every draft is checked for plain language and sourcing, and every claim is re-checked against its source before the page goes live.',
       },
       {
         kind: 'p',
@@ -360,7 +364,7 @@ export const MEASURE = {
     {
       metric: 'Citations of your URLs',
       answers: 'Which of your pages does the engine actually use as a source?',
-      source: 'Peec AI, url-report, cross-checked against server logs where your hosting gives us access to them',
+      source: 'Peec AI, cross-checked against server logs where your hosting gives us access to them',
     },
     {
       metric: 'Position when cited',
@@ -750,7 +754,7 @@ export const METHODOLOGY_FAQ: FaqItem[] = [
   },
   {
     q: 'How is your content different from thin programmatic pages?',
-    a: 'Every page is built from material only you and we hold: your per-engine measurement, your experts’ own corrections proposed as knowledge base entries that you approve before they are written in, and a primary source behind every factual claim. A gate then blocks unsourced numbers and stock phrasing. Volume is cheap. Material nobody else holds is what earns citations.',
+    a: 'Every page is built from material only you and we hold: your per-engine measurement, your experts’ own corrections proposed as knowledge base entries that you approve before they are written in, and a primary source behind every factual claim. Nothing ships until every claim is checked against its source. Volume is cheap. Material nobody else holds is what earns citations.',
   },
   {
     q: 'Do you use schema markup, llms.txt or word-count tricks?',
