@@ -1,0 +1,48 @@
+{
+  "slug": "loudface-aeo-case-study",
+  "note": "LoudFace's own AEO case study. Front-left: the loudface.co homepage. Back-right: the fintech AEO listicle, the most-cited LoudFace page in Peec AI over 1–22 Sep 2026 (729 citations). Card: result1 from the 23 Sep 2026 refresh, word for word. The homepage's case-study grid still carries this study's previous thumbnail and its '10.4% of AI answers' pill (hard-coded in src/app/home-v3/HeroV3.tsx), so that one card is hidden in the shot rather than showing a stale number.",
+  "theme": {
+    "background": "linear-gradient(140deg, #0c0a2e 0%, #1a1466 48%, #3b24c9 100%)",
+    "bloom": "radial-gradient(1100px 780px at 14% 26%, rgba(82,34,255,.34), transparent 68%), radial-gradient(900px 700px at 92% 88%, rgba(99,72,255,.30), transparent 70%)",
+    "cardBg": "#f8f7ff",
+    "cardValue": "#1b1466",
+    "cardMuted": "rgba(15,23,42,.52)",
+    "cardRule": "rgba(82,34,255,.22)"
+  },
+  "panels": [
+    {
+      "url": "https://www.loudface.co/blog/best-aeo-agency-fintech-companies-2026",
+      "chrome": "loudface.co/blog/best-aeo-agency-fintech-companies-2026",
+      "clipHeight": 760,
+      "style": {
+        "left": 640,
+        "top": 50,
+        "width": 900,
+        "z": 1
+      }
+    },
+    {
+      "url": "https://www.loudface.co/",
+      "chrome": "loudface.co",
+      "clipHeight": 720,
+      "style": {
+        "left": -40,
+        "top": 330,
+        "width": 1000,
+        "z": 2
+      },
+      "hideSelectors": [
+        "article.wcard:has(img[src*=\"776d1fdb8b4da0aa4566e62d79efacdecb24cca2\"])"
+      ]
+    }
+  ],
+  "card": {
+    "label": "AI visibility on non-branded prompts",
+    "value": "0.13% → 15.3%",
+    "valueSize": 56,
+    "caption": "Apr 2026 → 1–22 Sep 2026,\nPeec AI",
+    "right": 62,
+    "bottom": 92,
+    "width": 470
+  }
+}
