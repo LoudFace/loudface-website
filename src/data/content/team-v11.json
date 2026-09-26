@@ -1,0 +1,25 @@
+{
+  "labels": {
+    "eyebrow": "The LoudFace team",
+    "crumbAbout": "About",
+    "bookCta": "Book a call",
+    "teamLink": "Meet the team",
+    "linkedin": "LinkedIn",
+    "worksOn": "Works on",
+    "writingEyebrow": "Writing",
+    "writingTitle": "Articles by",
+    "writingLedeSuffix": "articles on AI search, SEO and B2B growth.",
+    "moreTitle": "Every article",
+    "teamEyebrow": "The team",
+    "teamTitle": "A few of the people",
+    "teamTitleGhost": "you would work with.",
+    "teamLede": "Everyone on an account runs it end to end; there is no hand-off between a strategist and a doer.",
+    "resultsEyebrow": "Results",
+    "showAll": "Show every article"
+  },
+  "titles": {
+    "tamaraPavlovic": "Lead SEO, AEO & GEO Specialist",
+    "andreaVanWyk": "Lead SEO, AEO & GEO Specialist",
+    "abhayTyagi": "Lead SEO, AEO & GEO Specialist"
+  }
+}

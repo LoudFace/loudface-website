@@ -32,7 +32,7 @@
         ],
         "hint": "Move to Scale when you need 3+ parallel initiatives or multi-stakeholder coordination.",
         "featured": true,
-        "badge": "Most Popular",
+        "badge": "Most popular",
         "ctaText": "Start with Dual",
         "tierName": "Dual Autopilot"
       },
@@ -90,7 +90,7 @@
     "headlineHighlight": "one goal.",
     "intro": "Every engagement runs on one or both tracks. Solo clients pick one. Dual and Scale run both in parallel.",
     "build": {
-      "badge": "TRACK A",
+      "badge": "Track A",
       "title": "Build",
       "tagline": "Ship and optimize your site",
       "description": "Conversion optimization, landing pages, UX/UI, and implementation across your stack. Webflow is one delivery option when it fits the work.",
@@ -103,7 +103,7 @@
       ]
     },
     "growth": {
-      "badge": "TRACK B",
+      "badge": "Track B",
       "title": "Growth",
       "tagline": "Scale organic visibility",
       "description": "SEO, AEO (AI search optimization), content systems, and distribution experiments. Everything that drives qualified traffic to your site.",
@@ -216,7 +216,7 @@
     ]
   },
   "specialArrangements": {
-    "title": "Special Arrangements",
+    "title": "Special arrangements",
     "description": "Every engagement runs through a retainer, but we flex the structure when it makes sense:",
     "options": [
       {
@@ -228,7 +228,7 @@
         "description": "For the right partnership, we tie part of our fee to results. You pay for outcomes, not hours. Available case-by-case."
       }
     ],
-    "ctaText": "Talk to Us About Your Scope"
+    "ctaText": "Talk to us about your scope"
   },
   "exhibits": {
     "headline": "What our clients",

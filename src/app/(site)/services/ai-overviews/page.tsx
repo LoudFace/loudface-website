@@ -1,5 +1,5 @@
 /**
- * Google AI Overviews service page (/services/ai-overviews) — v3 service
+ * Google AI Overviews service page (/services/ai-overviews) — v11 service
  * template, same shell as /services/geo-agency.
  *
  * Copy is the dual-verified article from the content engine (spine-id
@@ -16,10 +16,16 @@
 export const revalidate = 60;
 
 import type { Metadata } from 'next';
-import '../../../service-v3/service-v3.css';
+import '../../../home-v11/home-v11.css';
+import '../../../service-v11/service-v11.css';
+import '../../../service-v11/cro-sections.css';
+import '../../../service-v11/svc.css';
 import '../../../seo-for-v3/seo-for-v3.css';
-import { getServiceImages, getServiceConfig } from '../../../service-v3/data';
-import { ServicePageV3 } from '../../../service-v3/ServicePageV3';
+import { getHomeV11Content } from '@/lib/content-utils';
+import { getServiceImages } from '../../../service-v3/data';
+import { getServiceConfigV11 } from '../../../service-v11/configs';
+import { getHomeV11Data } from '../../../home-v11/data';
+import { ServicePageV11 } from '../../../service-v11/ServicePageV11';
 import { buildServiceJsonLd } from '../../../service-v3/jsonld';
 
 const DESCRIPTION =
@@ -49,8 +55,9 @@ export const metadata: Metadata = {
 };
 
 export default async function AiOverviewsServicePage() {
-  const config = getServiceConfig('ai-overviews')!;
-  const images = await getServiceImages();
+  // The v11 page's config (the v3 config, or its v11 override); the FAQPage JSON-LD reads the FAQ this page shows.
+  const config = getServiceConfigV11('ai-overviews')!;
+  const [images, home, data] = await Promise.all([getServiceImages(), getHomeV11Content(), getHomeV11Data()]);
   const jsonLd = buildServiceJsonLd({
     slug: 'ai-overviews',
     serviceType: 'Google AI Overviews Optimization',
@@ -61,11 +68,11 @@ export default async function AiOverviewsServicePage() {
   });
 
   return (
-    <div className="svcv3">
+    <>
       {jsonLd.map((s, i) => (
         <script key={i} type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(s) }} />
       ))}
-      <ServicePageV3 config={config} images={images} />
-    </div>
+      <ServicePageV11 config={config} images={images} home={home} data={data} />
+    </>
   );
 }

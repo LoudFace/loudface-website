@@ -1,0 +1,185 @@
+{
+  "cover": {
+    "eyebrow": "AI visibility audit",
+    "domainLabel": "Site"
+  },
+  "scorecard": {
+    "title": "AI market position",
+    "gradeLabel": "Overall grade",
+    "gradeNote": "Based on brand recognition, category discovery, share of voice & platform coverage",
+    "metrics": {
+      "brand": "Brand recognition",
+      "discovery": "Discovery visibility",
+      "voice": "Share of voice",
+      "standing": "Competitive standing",
+      "coverage": "Platform coverage"
+    },
+    "unranked": "Unranked",
+    "unrankedNote": "Not enough category signal to rank yet",
+    "status": {
+      "green": "Strong",
+      "amber": "Needs work",
+      "red": "Critical"
+    }
+  },
+  "benchmark": {
+    "eyebrow": "Category benchmark",
+    "brand": "Brand recognition",
+    "discovery": "Discovery visibility",
+    "voice": "Share of voice"
+  },
+  "confidence": {
+    "wrongTitle": "AI platforms likely described a different entity",
+    "lowTitle": "Low signal: limited AI knowledge about this brand",
+    "partialTitle": "Some results are incomplete"
+  },
+  "method": {
+    "lede": "A rigorous protocol evaluating how ChatGPT, Claude, Gemini & Perplexity perceive, rank, and recommend your brand.",
+    "queriesUnit": "queries",
+    "noteTitle": "A note on platform coverage",
+    "note": "ChatGPT's scraped responses sometimes omit source URLs, so its citation rate can appear lower than its actual on-screen behavior. Gemini has limited recall on emerging brands and may return empty responses for some queries. Claude and Perplexity reliably return both full text and citations across all three phases."
+  },
+  "baseline": {
+    "eyebrow": "Phase 1 · Brand baseline",
+    "title": "Direct brand queries",
+    "method": "Identity, reputation, quality, pricing, competitive framing, customer fit",
+    "ledeLead": "Based on",
+    "ledeTail": "direct brand queries, here is how AI platforms currently perceive and represent",
+    "scoreLabel": "Brand recognition score",
+    "tableTitle": "Named when asked directly",
+    "rightTitle": "What AI gets right",
+    "rightEmpty": "We couldn't extract specific factual claims about your brand from AI responses. See the gaps and inaccuracies for details on where AI falls short.",
+    "gapsTitle": "Knowledge gaps",
+    "wrongTitle": "Potential inaccuracies",
+    "wrongEmpty": "No significant inaccuracies or gaps were detected in AI responses."
+  },
+  "competitors": {
+    "eyebrow": "Phase 2 · Competitor context",
+    "title": "Alternative-to searches",
+    "method": "Top competitors auto-detected, recommendation rate",
+    "ledeLead": "When users search for alternatives to your competitors, does",
+    "ledeTail": "get recommended?",
+    "tableTitle": "Named when asked for alternatives",
+    "rateLabel": "Competitive recommendation rate",
+    "trackedTitle": "Competitors tracked"
+  },
+  "category": {
+    "eyebrow": "Phase 3 · Category visibility",
+    "title": "General solution discovery",
+    "method": "Shortlisting + buyer-persona intent prompts",
+    "ledeLead": "When users search for",
+    "ledeMid": "solutions, does",
+    "ledeTail": "appear?",
+    "tableTitle": "Category discovery",
+    "chartTitle": "Discovery visibility",
+    "chartBody": "How often AI platforms name each brand in their answers to these category questions.",
+    "chartSelfA": "is named in",
+    "chartSelfB": "of these answers, a",
+    "chartSelfC": "share of voice: its share of all mentions of the tracked brands.",
+    "leadA": "leads, named in",
+    "leadB": "of these answers.",
+    "gapA": "needs to close a",
+    "gapB": "pp gap to compete."
+  },
+  "position": {
+    "eyebrow": "AI market position",
+    "title": "Competitive landscape",
+    "ledeLead": "Where",
+    "ledeTail": "sits relative to competitors in AI visibility and recommendation rates.",
+    "x": "Discovery visibility",
+    "y": "Share of voice",
+    "valuesKey": "Values shown:",
+    "note": "Higher and further right is better. Your brand is highlighted."
+  },
+  "platforms": {
+    "eyebrow": "Platform breakdown",
+    "title": "Per-platform performance",
+    "lede": "How each AI platform perceives your brand across all audit queries.",
+    "basisLead": "Measured on the",
+    "basisTail": "direct brand queries (phase 1).",
+    "engineLabel": "Platform",
+    "mentions": "Mentioned",
+    "cites": "Cites your site",
+    "sentimentLabel": "Sentiment",
+    "sentiment": {
+      "positive": "Positive",
+      "neutral": "Neutral",
+      "negative": "Negative"
+    },
+    "insightLabel": "What it means",
+    "sourcesTitle": "Top sources cited"
+  },
+  "why": {
+    "eyebrow": "Why this matters",
+    "title": "AI is becoming the new search",
+    "lede": "Millions of users now rely on AI assistants to discover and evaluate products. Your brand's presence in these conversations directly impacts buying decisions.",
+    "answerFrom": "From this audit:",
+    "answerSearch": "unbranded search.",
+    "notNamed": "was not named.",
+    "lineLead": "If",
+    "lineTail": "is not showing up in AI responses, you're losing deals to competitors who are — and the worst part is you don't even know it."
+  },
+  "actions": {
+    "eyebrow": "Action plan",
+    "title": "Recommended next steps",
+    "lede": "Prioritized recommendations to close gaps and improve your AI visibility.",
+    "priority": {
+      "high": "High priority",
+      "medium": "Medium priority",
+      "low": "Low priority"
+    },
+    "serviceLead": "The service we run for this:",
+    "serviceLink": "See the service we run for this"
+  },
+  "cta": {
+    "title": "Ready to fix your AI visibility?",
+    "note": "30 minutes. No commitment. We'll walk through your audit together."
+  },
+  "start": {
+    "eyebrow": "Free tool",
+    "title": "AI Visibility Audit",
+    "body": "Discover how ChatGPT, Claude, Gemini & Perplexity see your brand. Get a free audit with actionable insights in minutes.",
+    "gets": [
+      "Brand recognition across 4 major AI platforms",
+      "Competitive positioning & share of voice",
+      "Category visibility in unbranded searches",
+      "Actionable recommendations to improve AI visibility"
+    ]
+  },
+  "progress": {
+    "eyebrow": "AI visibility audit",
+    "title": "Your audit is running",
+    "progressLabel": "Progress",
+    "steps": [
+      {
+        "key": "01",
+        "title": "Brand baseline",
+        "body": "Asking each engine about your brand by name"
+      },
+      {
+        "key": "02",
+        "title": "Competitor context",
+        "body": "Finding your competitors and testing alternative-to searches"
+      },
+      {
+        "key": "03",
+        "title": "Category visibility",
+        "body": "Running unbranded searches in your category"
+      },
+      {
+        "key": "04",
+        "title": "Scores and action plan",
+        "body": "Calculating your scores and building your plan"
+      }
+    ],
+    "done": "Done",
+    "now": "Running",
+    "next": "Next",
+    "note": "This typically takes 2-5 minutes. You can bookmark this page and come back.",
+    "failedTitle": "Audit Failed",
+    "failedBody": "Something went wrong while running your audit. This is usually temporary.",
+    "slowTitle": "This is taking longer than expected",
+    "slowBody": "We'll follow up by email once your audit is ready, or you can try again now.",
+    "retry": "Try Again"
+  }
+}

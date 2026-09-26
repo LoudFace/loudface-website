@@ -1,28 +1,26 @@
 /**
- * Homepage — v3 design (componentized).
+ * Homepage — v11 (approved 2026-09-24 as /dev-preview/home-v11; switched 2026-09-26).
  *
- * The client-approved v3 redesign, composed from the home-v3 section components
- * inside the (site) group so it inherits the shared Header/Footer + PostHog/GTM/
- * Cal chrome. The shared Header renders in its dark-hero variant on `/` (wired in
- * (site)/layout.tsx). Bespoke styling is home-v3.css, imported route-scoped here
- * (it does NOT load on other (site) pages). Case-study screenshots come from
- * Sanity by slug (getHomeV3Images) with hardcoded fallbacks, so the page never
- * blanks even if the CMS is unreachable — which is why the old assertCmsData
- * build-guard is no longer needed on this route.
- *
- * SEO metadata + the speakable JSON-LD below are preserved verbatim from the
- * previous homepage. Previous implementation is in git history if a revert is
- * needed.
+ * Composed from src/app/home-v11/* inside the (site) group, so it keeps the shared header, consent and Cal chrome.
+ * The copy is home-v11.json (getHomeV11Content), the charts come from getHomeV11Data. SEO metadata and the speakable
+ * JSON-LD are unchanged from the v3 homepage. The v3 homepage ran the PostHog hero experiment
+ * (homepage-hero-argument); the v11 homepage has one hero, so it no longer evaluates that flag.
  */
 import type { Metadata } from 'next';
-import { cookies, headers } from 'next/headers';
-import '../home-v3/home-v3.css';
-import { HomeV3Body } from '../home-v3/HomeV3Body';
-import type { HeroVariant } from '../home-v3/HeroV3';
-import { HomepageV3Scripts } from '../homepage-v3/Scripts';
-import { getHomeV3Images } from '../home-v3/data';
-import { CONSENT_COOKIE, isTrackingAllowedServer, POSTHOG_DISTINCT_ID_COOKIE } from '@/lib/consent';
-import { getHomepageHeroVariant } from '@/lib/posthog-server';
+import '../home-v11/home-v11.css';
+import { getHomeV11Content } from '@/lib/content-utils';
+import { getHomeV11Data } from '../home-v11/data';
+import { HeroV11 } from '../home-v11/HeroV11';
+import { LogoGrid } from '../home-v11/LogoGrid';
+import { Bento } from '../home-v11/Bento';
+import { Results } from '../home-v11/Results';
+import { Route } from '../home-v11/Route';
+import { GrowthPlan } from '../home-v11/GrowthPlan';
+import { Testimonials } from '../home-v11/Testimonials';
+import { Team } from '../home-v11/Team';
+import { Closing } from '../home-v11/Closing';
+import { FooterV11 } from '../home-v11/FooterV11';
+import { Reveal } from '../home-v11/Reveal';
 
 export const metadata: Metadata = {
   title: 'AI-Native B2B SaaS Organic Growth Agency',
@@ -63,22 +61,7 @@ const speakableSchema = {
 };
 
 export default async function HomePage() {
-  // Resolve consent and the stable visitor ID before PostHog is touched. This
-  // keeps denied and not-yet-consented visitors out of both evaluation and
-  // exposure tracking, while allowed visitors get their hero in the first HTML.
-  const [requestCookies, requestHeaders] = await Promise.all([cookies(), headers()]);
-  const country = requestHeaders.get('cf-ipcountry') ?? requestHeaders.get('x-vercel-ip-country');
-  const consentValue = requestCookies.get(CONSENT_COOKIE)?.value;
-  const distinctId = requestCookies.get(POSTHOG_DISTINCT_ID_COOKIE)?.value;
-  const userAgent = requestHeaders.get('user-agent');
-  const trackingAllowed = isTrackingAllowedServer(consentValue, country);
-
-  const [images, heroVariant]: [Awaited<ReturnType<typeof getHomeV3Images>>, HeroVariant] = await Promise.all([
-    getHomeV3Images(),
-    trackingAllowed && distinctId
-      ? getHomepageHeroVariant(distinctId, userAgent)
-      : Promise.resolve('control' as const),
-  ]);
+  const [c, data] = await Promise.all([getHomeV11Content(), getHomeV11Data()]);
 
   return (
     <>
@@ -87,11 +70,19 @@ export default async function HomePage() {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(speakableSchema) }}
       />
 
-      {/* .hpv3 scopes the bespoke resets so they can't touch the shared Header/Footer.
-          Fonts + tokens live (global) in home-v3.css now — no separate brand.css link. */}
-      <HomeV3Body images={images} heroVariant={heroVariant} exposeHeroVariant />
-
-      <HomepageV3Scripts />
+      <div className="v11">
+        <HeroV11 c={c.hero} data={data} />
+        <LogoGrid c={c.logos} />
+        <Bento c={c.bento} />
+        <Results c={c.results} data={data} />
+        <Route c={c.route} spark={data?.results.delshad ?? null} />
+        <GrowthPlan c={c.plan} />
+        <Testimonials c={c.testimonials} />
+        <Team c={c.team} />
+        <Closing c={c.closing} />
+        <FooterV11 c={c.footer} ratings={c.testimonials.ratings} />
+        <Reveal />
+      </div>
     </>
   );
 }

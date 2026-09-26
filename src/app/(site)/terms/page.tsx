@@ -1,5 +1,5 @@
 /**
- * Terms of Service — migrated to v3 on 2026-08-01.
+ * Terms of Service — on the v11 legal template since 2026-09-26 (migrated to v3 on 2026-08-01).
  *
  * The terms TEXT is unchanged, clause for clause: this migration only moves it
  * off the pre-v3 light layout (SectionContainer + `prose-policy` + hardcoded
@@ -18,11 +18,13 @@
  * the SEO audit's finding (the bare "Terms of Service" wasted half the SERP line).
  */
 import type { Metadata } from 'next';
-import '../../service-v3/service-v3.css';
-import '../../seo-for-v3/seo-for-v3.css';
-import '../../legal-v3/legal-v3.css';
-import { LegalPageV3 } from '../../legal-v3/LegalPageV3';
-import type { LegalSection } from '../../legal-v3/LegalPageV3';
+import '../../home-v11/home-v11.css';
+import '../../service-v11/service-v11.css';
+import '../../service-v11/svc.css';
+import '../../legal-v11/legal.css';
+import { getHomeV11Content, getLegalV11Content } from '@/lib/content-utils';
+import { LegalPageV11 } from '../../legal-v11/LegalPageV11';
+import { TERMS_VIEW } from '../../legal-v11/terms';
 
 export const metadata: Metadata = {
   // 52 chars with the layout's " | LoudFace" suffix — the bare "Terms of Service"
@@ -51,128 +53,8 @@ export const metadata: Metadata = {
   },
 };
 
-const SECTIONS: LegalSection[] = [
-  {
-    id: 'acceptance-of-terms',
-    heading: '1. Acceptance of Terms',
-    body: (
-      <p>
-        By accessing and using loudface.co, you accept and agree to be bound by these Terms of
-        Service.
-      </p>
-    ),
-  },
-  {
-    id: 'our-services',
-    heading: '2. Our Services',
-    body: (
-      <p>
-        LOUDFACE - FZCO provides design, development, SEO, and other marketing services.
-      </p>
-    ),
-  },
-  {
-    id: 'user-obligations',
-    heading: '3. User Obligations',
-    body: (
-      <ul>
-        <li>
-          <strong>Compliance:</strong> You agree to comply with all applicable laws and regulations
-          when using our Site.
-        </li>
-        <li>
-          <strong>Respect Intellectual Property:</strong> You must respect all intellectual property
-          rights associated with content on our Site.
-        </li>
-        <li>
-          <strong>No Spamming:</strong> Unauthorized advertising, promotional materials, or any form
-          of solicitation is prohibited.
-        </li>
-      </ul>
-    ),
-  },
-  {
-    id: 'prohibited-activities',
-    heading: '4. Prohibited Activities',
-    body: (
-      <>
-        <p>You agree not to:</p>
-        <ul>
-          <li>
-            Engage in hacking, phishing, or any harmful activities intended to damage or interfere
-            with our Site.
-          </li>
-          <li>Upload or transmit viruses or malicious code.</li>
-          <li>Attempt to gain unauthorized access to any portion of the Site.</li>
-        </ul>
-      </>
-    ),
-  },
-  {
-    id: 'intellectual-property-rights',
-    heading: '5. Intellectual Property Rights',
-    body: (
-      <p>
-        All content on the Site, including text, graphics, logos, and images, is the property of
-        LOUDFACE - FZCO and is protected by copyright and other intellectual property laws.
-      </p>
-    ),
-  },
-  {
-    id: 'limitation-of-liability',
-    heading: '6. Limitation of Liability',
-    body: (
-      <p>
-        Under no circumstances shall LOUDFACE - FZCO be liable for any direct, indirect, incidental,
-        special, or consequential damages resulting from your use of the Site or inability to access
-        the Site.
-      </p>
-    ),
-  },
-  {
-    id: 'termination',
-    heading: '7. Termination',
-    body: (
-      <p>
-        We reserve the right to terminate or suspend your access to the Site at our sole discretion,
-        without prior notice, for conduct that we believe violates these Terms or is harmful to other
-        users.
-      </p>
-    ),
-  },
-  {
-    id: 'governing-law',
-    heading: '8. Governing Law',
-    body: (
-      <p>
-        These Terms shall be governed by and construed in accordance with the laws of Dubai, UAE,
-        without regard to its conflict of law provisions.
-      </p>
-    ),
-  },
-  {
-    id: 'changes-to-terms',
-    heading: '9. Changes to Terms',
-    body: (
-      <p>
-        We may modify these Terms of Service at any time. Your continued use of the Site after any
-        such changes constitutes your acceptance of the new Terms.
-      </p>
-    ),
-  },
-  {
-    id: 'contact-us',
-    heading: '10. Contact Us',
-    body: (
-      <p>
-        For any questions regarding these Terms, please contact us at:{' '}
-        <a href="mailto:hello@loudface.co">hello@loudface.co</a>
-      </p>
-    ),
-  },
-];
-
-export default function TermsOfServicePage() {
+export default async function TermsOfServicePage() {
+  const [home, c] = await Promise.all([getHomeV11Content(), getLegalV11Content()]);
   const breadcrumbSchema = {
     '@context': 'https://schema.org',
     '@type': 'BreadcrumbList',
@@ -183,19 +65,12 @@ export default function TermsOfServicePage() {
   };
 
   return (
-    <div className="svcv3">
+    <>
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
       />
-      <LegalPageV3
-        view={{
-          eyebrow: 'Legal',
-          h1: 'Terms of Service',
-          lastUpdated: 'February 2026',
-          sections: SECTIONS,
-        }}
-      />
-    </div>
+      <LegalPageV11 view={TERMS_VIEW} home={home} labels={c.labels} />
+    </>
   );
 }

@@ -1,0 +1,88 @@
+/* Webinar v11 (/webinar/ai-search-visibility). Loads after home-v11.css, service-v11.css, svc.css and audit.css. */
+.wb .ghost { color: #8a86a6; }
+
+/* 1 · hero with the ticket */
+.wb-hero { margin-top: -64px; padding: 116px 0 80px; background: #ffffff; color: var(--ink); }
+.wb-hero-grid { display: grid; grid-template-columns: minmax(0, 1fr); gap: 48px; }
+.wb-hero h1 { margin-top: 20px; font-family: var(--font-heading); font-weight: 500; font-size: 40px; line-height: 1.04; letter-spacing: -0.042em; text-wrap: balance; }
+.wb-sub { margin-top: 20px; font-size: 18px; line-height: 1.55; color: var(--body); max-width: 560px; text-wrap: pretty; }
+.wb-ticket { display: flex; flex-direction: column; border-radius: 24px; overflow: hidden; color: #ffffff; background: radial-gradient(ellipse 90% 90% at 90% 100%, #7068f0 0%, #4f46e5 45%, #3a33c7 100%); box-shadow: 0 24px 60px rgba(40,30,120,0.28); }
+.wb-ticket-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 16px; padding: 28px 28px 24px; border-bottom: 1px dashed rgba(255,255,255,0.35); }
+.wb-when b { display: block; font-family: var(--font-heading); font-weight: 500; font-size: 24px; letter-spacing: -0.02em; }
+.wb-when span { display: block; margin-top: 6px; font-size: 15px; color: #dcd9fe; }
+.wb-logos { display: flex; align-items: center; gap: 10px; color: #c9c5fb; font-size: 14px; }
+.wb-logos img { height: 18px; width: auto; }
+.wb-logos .is-wf { height: 15px; filter: brightness(0) invert(1); }
+.wb-stat { padding: 28px; }
+.wb-stat b { display: block; font-family: var(--font-heading); font-weight: 500; font-size: 72px; line-height: 1; letter-spacing: -0.05em; }
+.wb-stat span { display: block; margin-top: 10px; font-size: 15px; color: #dcd9fe; max-width: 320px; }
+.wb-ticket-people { display: flex; flex-direction: column; gap: 12px; margin-top: auto; padding: 22px 28px 26px; background: rgba(10,6,60,0.22); }
+.wb-mini { display: flex; align-items: center; gap: 12px; }
+.wb-mini img { width: 44px; height: 44px; border-radius: 99px; object-fit: cover; box-shadow: 0 0 0 2px rgba(255,255,255,0.5); }
+.wb-mini b { display: block; font-size: 15px; font-weight: 500; }
+.wb-mini i { display: block; font-style: normal; font-size: 13.5px; color: #c9c5fb; }
+@media (min-width: 768px) { .wb-hero h1 { font-size: 52px; } }
+@media (min-width: 1024px) { .wb-hero-grid { grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); gap: 72px; align-items: start; } }
+@media (min-width: 1280px) { .wb-hero { padding: 150px 0 104px; } .wb-hero h1 { font-size: 60px; } }
+
+/* the live consent gate in v11 dress */
+.wb-gate { margin-top: 32px; }
+.wb-gate > div { align-items: flex-start !important; gap: 20px !important; }
+.wb-gate > div > div { align-items: flex-start !important; }
+.wb-gate label { max-width: 560px !important; }
+.wb-gate label span { font-style: normal !important; font-size: 12.5px !important; line-height: 1.55 !important; color: var(--muted) !important; }
+.wb-gate label input { width: 18px !important; height: 18px !important; accent-color: var(--ind); }
+.wb-gate a[href^="https://riverside"], .wb-gate button { height: 50px; padding: 0 28px !important; border-radius: 999px !important; background: var(--ink) !important; color: #ffffff !important; font-size: 16px !important; font-weight: 500; }
+.wb-gate button:disabled { background: #cfcdde !important; color: #ffffff !important; opacity: 1 !important; }
+.wb-gate p { font-size: 13.5px !important; color: var(--quiet) !important; }
+.wb-gate.is-card { margin: 0; padding: 28px; border-radius: 24px; background: #ffffff; }
+
+/* 2 · takeaways beside the answer */
+.wb-learn { display: grid; grid-template-columns: minmax(0, 1fr); gap: 48px; }
+.wb-chat-ground { display: flex; align-items: center; justify-content: center; padding: 48px 20px; border-radius: 24px; background: radial-gradient(ellipse 80% 90% at 100% 100%, #b7aaf2 0%, rgba(183,170,242,0) 70%), #ebe6fd; }
+.wb-chat-ground .v11-chat { box-shadow: 0 2px 4px rgba(10,6,50,0.08), 0 24px 48px rgba(10,6,50,0.16); }
+.wb-takeaways { margin: 32px 0 0; padding: 0; list-style: none; border-top: 1px solid var(--line); }
+.wb-takeaways li { padding: 18px 0; border-bottom: 1px solid var(--line); font-size: 17px; line-height: 1.55; color: var(--ink); text-wrap: pretty; }
+@media (min-width: 1024px) { .wb-learn { grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: 72px; align-items: center; } .wb-chat-ground { padding: 88px 40px; } }
+
+/* 3 · speakers */
+.wb-speakers { display: grid; grid-template-columns: minmax(0, 1fr); gap: 40px 24px; }
+.wb-speaker { margin: 0; }
+.wb-speaker img { display: block; width: 100%; max-width: 320px; aspect-ratio: 1; object-fit: cover; border-radius: 20px; }
+.wb-speaker b { display: block; margin-top: 20px; font-family: var(--font-heading); font-weight: 500; font-size: 22px; letter-spacing: -0.015em; color: var(--ink); }
+.wb-speaker .is-role { display: block; margin-top: 4px; font-size: 15px; font-weight: 500; color: var(--ind); }
+.wb-speaker p { margin-top: 12px; font-size: 15.5px; line-height: 1.6; color: var(--body); text-wrap: pretty; }
+@media (min-width: 768px) { .wb-speakers { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+
+/* 4 · the run of show */
+.wb-run { display: flex; gap: 4px; height: 56px; border-radius: 14px; overflow: hidden; }
+.wb-run span { display: flex; align-items: flex-end; padding: 10px 12px; background: var(--ind); color: #ffffff; min-width: 0; }
+.wb-run span.is-b { background: #8b84f0; }
+.wb-run b { font-size: 13px; font-weight: 500; white-space: nowrap; }
+.wb-agenda { margin: 28px 0 0; padding: 0; list-style: none; border-top: 1px solid var(--line); }
+.wb-agenda li { display: grid; grid-template-columns: 88px minmax(0, 1fr); gap: 16px; padding: 18px 0; border-bottom: 1px solid var(--line); }
+.wb-agenda .is-d { font-size: 15px; color: var(--quiet); }
+.wb-agenda .is-t { font-family: var(--font-heading); font-weight: 500; font-size: 20px; letter-spacing: -0.012em; color: var(--ink); }
+
+/* 5 · registration */
+.wb-closing-grid { position: relative; display: grid; grid-template-columns: minmax(0, 1fr); gap: 32px; }
+@media (min-width: 1024px) { .wb-closing-grid { grid-template-columns: minmax(0, 1fr) 520px; gap: 72px; align-items: center; } }
+
+/* 6 · the audit */
+.wb-audit { display: grid; grid-template-columns: minmax(0, 1fr); gap: 48px; }
+.wb-audit-h { margin-top: 18px; font-family: var(--font-heading); font-weight: 500; font-size: 34px; line-height: 1.1; letter-spacing: -0.03em; color: var(--ink); text-wrap: balance; }
+.wb-audit p { margin-top: 16px; font-size: 17px; line-height: 1.6; color: var(--body); max-width: 520px; }
+.wb-audit-cta { display: flex; flex-wrap: wrap; align-items: center; gap: 16px; margin-top: 28px; font-size: 14px; color: var(--quiet); }
+.wb-audit-pic { padding: 28px 18px; border-radius: 24px; background: radial-gradient(ellipse 80% 90% at 100% 100%, #b7aaf2 0%, rgba(183,170,242,0) 70%), #ebe6fd; }
+@media (min-width: 1024px) { .wb-audit { grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: 72px; align-items: center; } .wb-audit-pic { padding: 40px 36px; } }
+.wb-closing { min-height: 560px; display: flex; align-items: center; } .wb-closing .v11-wrap { position: relative; }
+@media (max-width: 767px) {
+  .wb-ticket-top { flex-direction: column-reverse; gap: 14px; }
+  .wb-stat b { font-size: 56px; }
+}
+/* after the session: the date it took place and the way to the recording */
+.wb-past { margin-top: 28px; }
+.wb-past p { font-size: 16px; line-height: 1.55; color: var(--body); max-width: 520px; }
+.wb-past b { font-weight: 500; color: var(--ink); }
+.wb-past .v11-btn { margin-top: 18px; }
+.wb-speaker img { object-position: center top; }

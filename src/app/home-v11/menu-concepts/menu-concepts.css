@@ -1,0 +1,100 @@
+/* Three directions for the header menus (MenuConcepts.tsx). Board-only until Arnel picks one; built on chrome.css. */
+
+.mc-drop { --quiet: #6f6c88; }
+
+/* ---------- shared rows: a title and its one-liner, no icon */
+.mc-cols { display: grid; margin-bottom: 14px; }
+.mc-cols.is-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.mc-cols.is-ind { grid-template-columns: minmax(0, 2fr) minmax(0, 1fr); }
+.mc-col { display: flex; flex-direction: column; min-width: 0; padding: 0 8px; }
+.mc-cols .mc-col + .mc-col { border-left: 1px solid var(--line); }
+.mc-k { padding: 4px 14px 8px; font-size: 13px; font-weight: 500; color: var(--quiet); }
+.mc-grid2 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0 4px; }
+
+.mc-row { display: flex; flex-direction: column; gap: 3px; padding: 11px 14px; border-radius: 12px; color: var(--ink); text-decoration: none;
+  transition: background-color var(--fast) var(--ease); }
+.mc-row b { display: flex; align-items: center; gap: 7px; font-size: 15.5px; font-weight: 500; line-height: 1.3; letter-spacing: -0.005em; }
+.mc-row b svg { flex-shrink: 0; color: var(--ind); opacity: 0; transform: translateX(-3px); transition: opacity var(--dur) var(--ease), transform var(--dur) var(--ease); }
+.mc-row > span { font-size: 14px; line-height: 1.45; color: var(--muted); }
+.mc-row > span.is-q { font-size: 13.5px; color: var(--quiet); }
+.mc-row:hover, .mc-row.is-on { background: var(--warm); }
+.mc-row:hover b, .mc-row.is-on b { color: var(--ind); }
+.mc-row:hover b svg, .mc-row.is-on b svg { opacity: 1; transform: none; }
+
+/* ---------- A · type-led */
+.mc-a .v11-nav-main { padding-bottom: 10px; }
+
+/* ---------- B · one real picture at the top of each column, on one pale tint (never a rainbow) */
+.mc-b.v11-nav-panel { grid-template-columns: minmax(0, 1fr); }
+.mc-b .mc-col { padding: 0 12px; }
+.mc-pic-fig { margin: 0 0 16px; }
+.mc-pic { position: relative; height: 196px; border-radius: 14px; overflow: hidden; background: #efedfb; }
+.mc-pic-fig figcaption { margin-top: 10px; padding: 0 2px; font-size: 13px; line-height: 1.4; color: var(--quiet); }
+.mc-pic.is-chat .v11-chat { position: absolute; left: 24px; top: 24px; width: 372px; height: 260px;
+  box-shadow: 0 1px 2px rgba(20,16,60,0.08), 0 18px 40px rgba(46,38,86,0.18); }
+.mc-pic.is-chart { padding: 14px 14px 0; }
+.mc-pic.is-chart .mc-chart-fig, .mc-pic.is-chart .mc-chart { position: relative; }
+.mc-chart-fig { display: flex; align-items: baseline; gap: 10px; padding: 14px 16px 0; border-radius: 12px 12px 0 0; background: #ffffff; }
+.mc-chart-fig b { font-family: var(--font-heading); font-weight: 500; font-size: 30px; line-height: 1; letter-spacing: -0.04em; color: var(--ink); }
+.mc-chart-fig span { font-size: 13px; color: var(--muted); }
+.mc-chart { height: 130px; padding: 4px 8px 0; background: #ffffff; }
+.mc-pic.is-site .sk-browser { position: absolute; left: 28px; top: 24px; width: 440px;
+  box-shadow: 0 1px 2px rgba(20,16,60,0.08), 0 18px 40px rgba(46,38,86,0.2); }
+.mc-pic.is-site .sk-browser > img { width: 100%; height: 280px; object-fit: cover; object-position: top; }
+.mc-pic.is-logos { display: flex; align-items: center; padding: 18px; }
+.mc-logo-wall { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; width: 100%; }
+.mc-logo-wall span { display: flex; align-items: center; justify-content: center; height: 72px; border-radius: 10px; background: #ffffff; }
+
+/* ---------- C · a plain list beside one large preview of the item pointed at */
+.mc-c.v11-nav-panel { grid-template-columns: minmax(0, 380px) minmax(0, 1fr); grid-template-areas: "head head" "list prev" "foot foot"; gap: 0 8px; }
+.mc-c-head { grid-area: head; padding: 18px 16px 0; }
+.mc-c-head .v11-nav-head { margin-bottom: 8px; }
+.mc-c-list { grid-area: list; display: flex; flex-direction: column; padding: 0 16px 12px; }
+.mc-c .mc-col { padding: 0; }
+.mc-c .mc-col + .mc-col { margin-top: 8px; }
+.mc-c .mc-row { padding: 9px 14px; }
+.mc-c .v11-nav-all { padding-left: 14px; }
+.mc-c-foot { grid-area: foot; padding: 0 16px 10px; }
+.mc-preview { grid-area: prev; display: flex; flex-direction: column; min-width: 0; padding: 8px; border-radius: 14px; background: var(--warm); }
+.mc-stage { position: relative; flex: 1; min-height: 380px; border-radius: 12px; overflow: hidden; }
+.mc-art { position: absolute; left: 44px; top: 40px; width: 700px; }
+.mc-art .sk-browser { box-shadow: 0 1px 2px rgba(20,16,60,0.08), 0 24px 60px rgba(46,38,86,0.22); }
+.mc-art .sk-browser > img { width: 100%; height: 640px; object-fit: cover; object-position: top; }
+.mc-card { position: absolute; left: 28px; bottom: 28px; width: 290px; }
+.mc-card > * { box-shadow: 0 2px 4px rgba(20,16,60,0.08), 0 24px 50px rgba(46,38,86,0.2); }
+.mc-stage.is-chat .v11-chat { position: absolute; left: 50%; top: 50%; width: 460px; height: 330px; transform: translate(-50%, -50%);
+  box-shadow: 0 1px 2px rgba(20,16,60,0.08), 0 24px 60px rgba(46,38,86,0.22); }
+.mc-preview-copy { display: flex; flex-direction: column; gap: 4px; padding: 16px 12px 10px; }
+.mc-preview-copy b { font-family: var(--font-heading); font-weight: 500; font-size: 22px; line-height: 1.15; letter-spacing: -0.02em; color: var(--ink); }
+.mc-preview-copy span { font-size: 14.5px; line-height: 1.5; color: var(--body); max-width: 560px; }
+
+/* ---------- C with an icon before each title (2026-09-27): a 36px slot, so both icon styles line the text up alike,
+   and eleven industries still fit a 900px-tall screen */
+.mc-c.has-icons .mc-row { flex-direction: row; align-items: center; gap: 12px; padding: 3px 12px 3px 6px; }
+.mc-c.has-icons .mc-k, .mc-c.has-icons .v11-nav-all { padding-left: 8px; }
+.mc-ico { flex-shrink: 0; display: inline-flex; align-items: center; justify-content: center; width: 36px; height: 36px; }
+.mc-ico img { display: block; object-fit: contain; }
+.mc-ico.is-iso img { width: 32px; height: 32px; }
+.mc-ico.is-tile { width: 30px; height: 30px; margin: 3px; border-radius: 8px; background: linear-gradient(180deg, #6d63ff 0%, #3d38cf 100%);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.35), 0 1px 2px rgba(20, 16, 60, 0.18), 0 4px 10px rgba(61, 56, 207, 0.22); }
+.mc-ico.is-tile img { width: 17px; height: 17px; }
+
+/* ---------- the board route: the header's own panel steps aside for the concept */
+.mc-board .mc-frame header .v11-nav-drop { display: none !important; }
+/* the specimen page's own cookie notice and the dev badge stay off the board */
+body:has(.mc-board) [aria-label="Cookie consent"], body:has(.mc-board) nextjs-portal { display: none !important; }
+.mc-board .mc-frame.is-light { height: 900px; }
+.mc-board .mc-frame.is-stage { height: 840px; background: #3d38cf; }
+.mc-backdrop { position: absolute; inset: 0; }
+.mc-backdrop img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: 50% 30%; }
+.mc-backdrop .v11-hero-veil { position: absolute; inset: 0; }
+.mc-frame-k { padding: 40px 0 14px; background: #ffffff; text-align: center; font-size: 15px; font-weight: 500; color: var(--muted); }
+
+/* ---------- B with an icon beside each title and its one-liner (2026-09-27, Arnel: "do this one with the isometric icons") */
+.mc-a.has-icons .mc-row, .mc-b.has-icons .mc-row { flex-direction: row; align-items: flex-start; gap: 12px; padding: 10px 12px 10px 8px; }
+.mc-a.has-icons .mc-row .mc-ico, .mc-b.has-icons .mc-row .mc-ico { margin-top: 1px; }
+.mc-row-txt { display: flex; flex-direction: column; gap: 3px; min-width: 0; }
+.mc-row-txt > span { font-size: 14px; line-height: 1.45; color: var(--muted); }
+.mc-row-txt > span.is-q { font-size: 13.5px; color: var(--quiet); }
+/* the wrapper is a span, so the one-liner rule above must not reach the title inside it */
+.mc-row > .mc-row-txt { font-size: inherit; line-height: inherit; color: inherit; }

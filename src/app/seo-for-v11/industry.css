@@ -1,0 +1,188 @@
+/* Industry pages v11 (/seo-for/<industry>). Loads after home-v11.css, service-v11.css, svc.css and cro-sections.css.
+   Harvest tiles are named in IndustryPageV11.tsx. */
+.in .ghost { color: #8a86a6; }
+
+/* 1 · hero: the market named, then the work for it */
+.in-hero { position: relative; margin-top: -64px; padding: 116px 0 72px; background: #ffffff; color: var(--ink); }
+.in-hero-top { display: grid; grid-template-columns: minmax(0, 1fr); gap: 24px; }
+.in-hero h1 { margin-top: 22px; font-family: var(--font-heading); font-weight: 500; font-size: 42px; line-height: 1.02; letter-spacing: -0.045em; max-width: 780px; text-wrap: balance; }
+.in-hero-side p { font-size: 17px; line-height: 1.6; color: var(--body); max-width: 480px; text-wrap: pretty; }
+.in-hero-side p.is-lead { font-family: var(--font-heading); font-weight: 500; font-size: 20px; line-height: 1.35; letter-spacing: -0.015em; color: var(--ink); margin-bottom: 12px; }
+.in-hero-ctas { display: flex; flex-wrap: wrap; align-items: center; gap: 22px; margin-top: 26px; }
+.in-hero-ctas .v11-link { min-height: 44px; }
+.in-work { margin-top: 56px; }
+.in-work-label { font-size: 14px; font-weight: 500; color: var(--quiet); padding-bottom: 14px; border-bottom: 1px solid var(--line); margin-bottom: 20px; }
+.in-work-row { display: grid; grid-template-columns: minmax(0, 1fr); gap: 28px; }
+.in-card { display: flex; flex-direction: column; gap: 16px; color: var(--ink); }
+.in-card-shot { aspect-ratio: 16 / 10; border-radius: 16px; overflow: hidden; background: var(--warm); }
+.in-card-shot img { display: block; width: 100%; height: 100%; object-fit: cover; transition: transform var(--slow) var(--ease); }
+.in-card:hover .in-card-shot img { transform: scale(1.03); }
+.in-card-copy { display: flex; flex-direction: column; gap: 6px; }
+.in-card-copy .is-client { font-size: 14px; font-weight: 500; color: var(--quiet); }
+.in-card-copy .is-num { font-family: var(--font-heading); font-weight: 500; font-size: 30px; line-height: 1.05; letter-spacing: -0.04em; color: var(--ink); }
+.in-card-copy .is-title { font-family: var(--font-heading); font-weight: 500; font-size: 19px; line-height: 1.3; letter-spacing: -0.015em; color: var(--ink); text-wrap: pretty; }
+.in-card-copy .is-num + .is-title { font-family: var(--font-body); font-weight: 400; font-size: 15px; line-height: 1.5; letter-spacing: 0; color: var(--body); }
+.in-card-copy .is-go { display: inline-flex; align-items: center; gap: 6px; margin-top: 6px; font-size: 14px; font-weight: 500; color: var(--ind); }
+@media (min-width: 768px) {
+  .in-hero h1 { font-size: 56px; }
+  .in-work-row { grid-template-columns: repeat(2, 1fr); }
+}
+@media (min-width: 1024px) {
+  .in-hero-top { grid-template-columns: minmax(0, 1fr) minmax(0, 440px); gap: 64px; align-items: start; }
+  .in-hero-side { padding-top: 44px; }
+  .in-work-row.is-3 { grid-template-columns: repeat(3, 1fr); }
+  .in-work-row.is-4 { grid-template-columns: repeat(4, 1fr); gap: 24px; }
+}
+@media (min-width: 1280px) { .in-hero { padding: 150px 0 96px; } .in-hero h1 { font-size: 68px; } }
+
+/* 2 · the problem: the example answer beside the three problems */
+.in-pain { display: grid; grid-template-columns: minmax(0, 1fr); gap: 40px; }
+.in-pain-pic { margin: 0; }
+.in-pain-ground { display: flex; align-items: center; justify-content: center; padding: 48px 20px; border-radius: 24px; background: radial-gradient(ellipse 80% 90% at 100% 100%, #b7aaf2 0%, rgba(183,170,242,0) 70%), #ebe6fd; }
+.in-pain-ground .v11-chat { box-shadow: 0 2px 4px rgba(10,6,50,0.08), 0 24px 48px rgba(10,6,50,0.16); }
+.in-pain-pic figcaption { margin-top: 14px; font-size: 14px; line-height: 1.5; color: var(--quiet); max-width: 460px; }
+.in-pains { margin: 0; padding: 0; list-style: none; border-top: 1px solid var(--line); }
+.in-pains li { padding: 26px 0; border-bottom: 1px solid var(--line); }
+.in-pains h3 { font-family: var(--font-heading); font-weight: 500; font-size: 23px; line-height: 1.2; letter-spacing: -0.02em; color: var(--ink); text-wrap: balance; }
+.in-pains p { margin-top: 10px; font-size: 16px; line-height: 1.6; color: var(--body); max-width: 560px; text-wrap: pretty; }
+.in-pains p.is-sub { color: var(--ink); font-weight: 500; }
+@media (min-width: 1024px) {
+  .in-pain { grid-template-columns: minmax(0, 5fr) minmax(0, 6fr); gap: 72px; align-items: start; }
+  .in-pain-ground { padding: 72px 40px; }
+}
+
+/* 3 · the program tiles: each layer's work as a short list above its chart */
+.in-layer-items { margin: 4px 0 0; padding: 0; list-style: none; display: flex; flex-direction: column; }
+.in-layer-items li { padding: 8px 0; border-top: 1px solid rgba(26,16,64,0.12); font-size: 14px; line-height: 1.4; }
+.sv-tile.is-ind .in-layer-items li { border-top-color: rgba(255,255,255,0.22); color: #ffffff; }
+
+/* 4 · results: the figures, then the charts */
+.in-charts { margin-top: 48px; }
+
+/* 5 · the offer under the program sheet */
+.in-offer { display: flex; flex-direction: column; gap: 20px; margin-top: 32px; padding: 28px 0 0; border-top: 1px solid var(--line); }
+.in-offer h3 { font-family: var(--font-heading); font-weight: 500; font-size: 24px; letter-spacing: -0.02em; color: var(--ink); }
+.in-offer p { margin-top: 8px; font-size: 16px; line-height: 1.6; color: var(--body); max-width: 640px; }
+@media (min-width: 1024px) { .in-offer { flex-direction: row; align-items: center; justify-content: space-between; gap: 48px; } .in-offer .v11-btn { flex-shrink: 0; } }
+
+/* 6 · the long read beside what's included */
+.in-detail { display: grid; grid-template-columns: minmax(0, 1fr); gap: 40px; }
+.in-prose { margin-top: 0; max-width: 720px; }
+.in-prose h2, .in-prose h3 { margin: 36px 0 12px; font-family: var(--font-heading); font-weight: 500; font-size: 26px; line-height: 1.2; letter-spacing: -0.02em; color: var(--ink); }
+.in-prose h3 { font-size: 21px; }
+.in-prose p, .in-prose ul, .in-prose ol { margin-bottom: 18px; }
+.in-prose ul, .in-prose ol { padding-left: 20px; }
+.in-prose table { width: 100%; border-collapse: collapse; margin: 24px 0; font-size: 15px; }
+.in-prose th, .in-prose td { text-align: left; vertical-align: top; padding: 12px 14px 12px 0; border-bottom: 1px solid var(--line); }
+.in-prose th { font-weight: 500; color: var(--ink); border-bottom-color: var(--ink); }
+.in-prose a { color: var(--ind); text-decoration: underline; text-underline-offset: 3px; }
+.in-included { align-self: start; padding: 28px; border-radius: 22px; background: #ffffff; box-shadow: inset 0 0 0 1px var(--line); }
+.v11-white .in-included { background: var(--warm); box-shadow: none; }
+.in-included h3 { font-family: var(--font-heading); font-weight: 500; font-size: 20px; letter-spacing: -0.015em; color: var(--ink); }
+.in-included ul { margin: 14px 0 0; padding: 0; list-style: none; }
+.in-included li { display: flex; flex-direction: column; gap: 4px; padding: 14px 0; border-top: 1px solid var(--line); }
+.in-included b { font-weight: 500; font-size: 15px; color: var(--ink); }
+.in-included span { font-size: 14px; line-height: 1.5; color: var(--muted); }
+.in-detail.is-solo .in-included { max-width: 760px; }
+@media (min-width: 1024px) { .in-detail { grid-template-columns: minmax(0, 720px) minmax(0, 400px); justify-content: space-between; gap: 72px; } }
+
+/* 9 · related reading and the other markets */
+.in-more { display: grid; grid-template-columns: minmax(0, 1fr); gap: 56px; }
+.in-links-title { font-family: var(--font-heading); font-weight: 500; font-size: 30px; letter-spacing: -0.03em; color: var(--ink); }
+.in-links-lede { margin-top: 10px; font-size: 16px; line-height: 1.6; color: var(--body); max-width: 520px; }
+.in-links ul { margin: 22px 0 0; padding: 0; list-style: none; border-top: 1px solid var(--line); }
+.in-links li a { display: flex; align-items: center; gap: 16px; padding: 16px 0; border-bottom: 1px solid var(--line); color: var(--ink); min-height: 44px; }
+.in-links .is-t { flex: 1; font-family: var(--font-heading); font-weight: 500; font-size: 18px; letter-spacing: -0.012em; }
+.in-links .is-m { font-size: 14px; color: var(--quiet); }
+.in-links li a svg { color: var(--quiet); transition: transform var(--dur) var(--ease), color var(--dur) var(--ease); }
+.in-links li a:hover .is-t, .in-links li a:hover svg { color: var(--ind); }
+.in-links li a:hover svg { transform: translateX(2px); }
+.in-links ul.is-grid { display: grid; grid-template-columns: minmax(0, 1fr); column-gap: 32px; }
+@media (min-width: 768px) { .in-links ul.is-grid { grid-template-columns: repeat(2, 1fr); } }
+@media (min-width: 1024px) { .in-more { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 72px; } .in-more > .in-links:only-child { grid-column: 1 / -1; } .in-more > .in-links:only-child ul.is-grid { grid-template-columns: repeat(4, 1fr); } }
+
+/* ===== the long reads (IndustryArticleV11): HR tech, AI startups, EdTech ===== */
+.ia-lead { display: grid; grid-template-columns: minmax(0, 1fr); gap: 28px; margin-top: 56px; }
+.ia-answer { padding: 32px 28px; border-radius: 24px; background: radial-gradient(ellipse 90% 90% at 90% 100%, #7068f0 0%, #4f46e5 45%, #3a33c7 100%); color: #dcd9fe; }
+.ia-answer-k { font-size: 14px; font-weight: 500; color: #ffffff; display: flex; align-items: center; gap: 10px; }
+.ia-answer-k::before { content: ''; width: 7px; height: 7px; border-radius: 99px; background: #ffffff; }
+.ia-answer p { margin-top: 18px; font-family: var(--font-heading); font-weight: 500; font-size: 21px; line-height: 1.42; letter-spacing: -0.012em; color: #ffffff; text-wrap: pretty; }
+.ia-proof { margin: 0; display: flex; flex-direction: column; gap: 14px; }
+.ia-proof .sk-browser img { aspect-ratio: 16 / 10; object-fit: cover; object-position: top; }
+.ia-proof figcaption, .ia-figure figcaption { display: flex; flex-direction: column; gap: 2px; font-size: 14px; line-height: 1.5; color: var(--quiet); }
+.ia-proof figcaption span:first-child { color: var(--ink); font-weight: 500; }
+.ia-panel { border-radius: 16px; overflow: hidden; background: #ffffff; box-shadow: 0 0 0 1px var(--line), 0 18px 40px rgba(10,6,50,0.08); }
+.ia-panel-body { padding: 26px 28px 20px; }
+.ia-panel-title { font-size: 14px; font-weight: 500; color: var(--quiet); }
+.ia-panel ul { margin: 12px 0 0; padding: 0; list-style: none; }
+.ia-panel li { display: grid; grid-template-columns: minmax(0, 170px) minmax(0, 1fr); gap: 16px; align-items: baseline; padding: 16px 0; border-top: 1px solid var(--line); }
+.ia-panel li b { font-family: var(--font-heading); font-weight: 500; font-size: 28px; line-height: 1.05; letter-spacing: -0.035em; color: var(--ind); }
+.ia-panel li span { font-size: 15px; line-height: 1.5; color: var(--body); }
+@media (min-width: 1024px) {
+  .ia-lead { grid-template-columns: minmax(0, 6fr) minmax(0, 6fr); gap: 32px; align-items: stretch; }
+  .ia-answer { padding: 44px 44px 40px; display: flex; flex-direction: column; }
+  .ia-answer p { font-size: 24px; }
+}
+.ia-intro { display: grid; grid-template-columns: minmax(0, 1fr); gap: 16px; margin: -8px 0 40px; }
+.ia-intro p { font-size: 17px; line-height: 1.65; color: var(--body); max-width: 620px; text-wrap: pretty; }
+.ia-intro a, .ia-body .v11-prose a { color: var(--ind); text-decoration: underline; text-underline-offset: 3px; }
+@media (min-width: 1024px) { .ia-intro { grid-template-columns: 1fr 1fr; gap: 48px; } }
+.ia-table .sv-table th[scope="row"] { font-family: var(--font-heading); font-weight: 500; font-size: 17px; letter-spacing: -0.01em; color: var(--ink); }
+.ia-note { margin-top: 24px; font-size: 16px; line-height: 1.6; color: var(--body); max-width: 760px; }
+.ia-body { min-width: 0; max-width: 760px; }
+.ia-part + .ia-part { margin-top: 56px; padding-top: 56px; border-top: 1px solid var(--line); }
+.ia-part h2 { font-family: var(--font-heading); font-weight: 500; font-size: 32px; line-height: 1.12; letter-spacing: -0.03em; color: var(--ink); text-wrap: balance; }
+.ia-part .v11-prose { margin-top: 18px; }
+.ia-part .v11-prose p, .ia-part .v11-prose ol, .ia-part .v11-prose ul { margin-bottom: 18px; }
+.ia-part .v11-prose ol, .ia-part .v11-prose ul { padding-left: 22px; }
+.ia-part .v11-prose li { margin-bottom: 8px; }
+.ia-figure { margin: 28px 0 0; display: flex; flex-direction: column; gap: 12px; }
+.ia-figure .sk-browser img { aspect-ratio: 16 / 10; object-fit: cover; object-position: top; }
+
+/* ===== the hub (IndustryHubV11) ===== */
+.hb-band { margin-top: 48px; }
+@media (min-width: 768px) { .sv-band.hb-band { grid-template-columns: repeat(4, 1fr); } }
+.hb-grid { display: grid; grid-template-columns: minmax(0, 1fr); gap: 36px 24px; margin-top: 48px; }
+.hb-card { display: flex; flex-direction: column; gap: 16px; color: var(--ink); }
+.hb-card:hover .in-card-shot img { transform: scale(1.03); }
+.hb-card-copy { position: relative; display: flex; flex-direction: column; gap: 6px; padding-right: 28px; }
+.hb-card-copy .is-label { font-size: 14px; font-weight: 500; color: var(--ind); }
+.hb-card-copy .is-head { font-family: var(--font-heading); font-weight: 500; font-size: 21px; line-height: 1.22; letter-spacing: -0.018em; text-wrap: balance; }
+.hb-card-copy .is-proof { margin-top: 4px; font-size: 14px; line-height: 1.5; color: var(--body); }
+.hb-card-copy .is-proof b { font-weight: 500; color: var(--ink); }
+.hb-card-copy .is-client { color: var(--quiet); }
+.hb-card-copy .is-go { position: absolute; top: 0; right: 0; color: var(--quiet); transition: color var(--dur) var(--ease), transform var(--dur) var(--ease); }
+.hb-card:hover .is-go { color: var(--ind); transform: translate(2px, -2px); }
+@media (min-width: 768px) { .hb-grid { grid-template-columns: repeat(2, 1fr); } }
+@media (min-width: 1024px) { .hb-grid { grid-template-columns: repeat(3, 1fr); gap: 48px 24px; } }
+.hb-chats { display: grid; grid-template-columns: minmax(0, 1fr); gap: 24px; padding: 40px 20px; border-radius: 24px; background: radial-gradient(ellipse 80% 90% at 100% 100%, #b7aaf2 0%, rgba(183,170,242,0) 70%), #ebe6fd; }
+.hb-chat { margin: 0; display: flex; flex-direction: column; align-items: center; gap: 14px; }
+.hb-chat .v11-chat { box-shadow: 0 2px 4px rgba(10,6,50,0.08), 0 24px 48px rgba(10,6,50,0.16); }
+.hb-chat figcaption { font-size: 14px; font-weight: 500; color: #2e2656; }
+.hb-chats-note { margin-top: 14px; font-size: 14px; color: var(--quiet); }
+.hb-props { margin: 40px 0 0; padding: 0; list-style: none; display: grid; grid-template-columns: minmax(0, 1fr); border-top: 1px solid var(--line); }
+.hb-props li { padding: 26px 0; border-bottom: 1px solid var(--line); }
+.hb-props h3 { font-family: var(--font-heading); font-weight: 500; font-size: 22px; letter-spacing: -0.02em; color: var(--ink); }
+.hb-props p { margin-top: 10px; font-size: 16px; line-height: 1.6; color: var(--body); text-wrap: pretty; }
+@media (min-width: 1024px) {
+  .hb-chats { grid-template-columns: repeat(3, 1fr); padding: 56px 32px 48px; }
+  .hb-props { grid-template-columns: repeat(3, 1fr); column-gap: 40px; }
+  .hb-props li { border-bottom: 0; }
+}
+
+/* review fixes 2026-09-26: the chat grows with its answer so the input never covers the sources */
+.in .v11-chat { height: auto; padding-bottom: 62px; }
+/* phone: the hero's covers scroll sideways instead of stacking four screens deep; wide tables scroll inside their frame */
+@media (max-width: 767px) {
+  .in-work-row { grid-auto-flow: column; grid-template-columns: none; grid-auto-columns: 82%; overflow-x: auto; scrollbar-width: none; padding-bottom: 4px; }
+  .in-work-row::-webkit-scrollbar { display: none; }
+  .ia-table .sv-table { min-width: 720px; }
+}
+.ia-shot { display: block; width: 100%; aspect-ratio: 16 / 10; object-fit: cover; object-position: top; border-radius: 16px; }
+@media (min-width: 1024px) { .hb-grid.is-4 { grid-template-columns: repeat(4, 1fr); } }
+.hb-grid.is-4 { margin-top: 0; }
+.in-posts { margin-top: 56px; }
+.v11-faq-head .in-offer { flex-direction: column; align-items: flex-start; gap: 0; margin-top: 32px; padding-top: 24px; border-top: 1px solid var(--line); max-width: 420px; }
+.v11-faq-head .in-offer h3 { font-size: 21px; }
+.v11-faq-head .in-offer .v11-btn { margin-top: 20px; }
+.hb-chat { height: 100%; } .hb-chat figcaption { margin-top: auto; }

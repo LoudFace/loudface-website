@@ -1,0 +1,15 @@
+{
+  "hero": {
+    "title": "Smart move.",
+    "titleGhost": "Talk soon.",
+    "body": "On our call, we'll dig into what you need help with, whether that's a strategic partnership or a defined scope you need us to execute.",
+    "bookedLabel": "Booked"
+  },
+  "wait": {
+    "title": "While you wait",
+    "cards": [
+      { "href": "/case-studies", "title": "Browse our case studies", "body": "See the results we've driven for teams like yours" },
+      { "href": "/blog", "title": "Read our latest insights", "body": "Growth tactics and web strategy for B2B SaaS" }
+    ]
+  }
+}

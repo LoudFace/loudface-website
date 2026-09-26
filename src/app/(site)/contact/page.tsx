@@ -1,46 +1,25 @@
 /**
- * Contact — v3 design (componentized). NET-NEW route.
+ * Contact — v11 (switched 2026-09-26).
  *
- * Faithful port of the approved contact-v3 "first-move" concept (electric hero
- * + booking panel + engagement thread), composed from the contact-v3 section
- * components inside the (site) group so it inherits the shared Header/Footer +
- * PostHog/GTM/Cal chrome. The shared Header renders in its dark-hero variant
- * on /contact (wired in (site)/layout.tsx), and the shared Footer is
- * suppressed there so only the v3 FooterV3 (same component as the other v3
- * pages) renders. Bespoke styling is contact-v3.css, imported route-scoped
- * here and scoped under .ctv3 via :where() so it can't leak onto shared chrome.
+ * Composed from src/app/contact-v11 inside the (site) group: the booking card, what happens next (NextSteps, with
+ * the example screens from pricing-v11.json), the offices, the FAQ. There is deliberately NO contact form and NO
+ * newsletter form on this page; the conversion is the Cal.com modal (data-cal-trigger → CalHandler) plus a mailto
+ * link. Copy in contact.json. SEO metadata and the JSON-LD (BreadcrumbList, ContactPage with both office addresses,
+ * FAQPage from the same contact.json FAQ the page shows, speakable) are unchanged.
  *
- * There is deliberately NO contact form and NO newsletter form on this page —
- * the sole conversion mechanism is the Cal.com modal (data-cal-trigger →
- * CalHandler), plus a mailto escape hatch. The newsletter API is a known
- * silent no-op; do not add a form here that posts to it.
- *
- * Live Sanity data: the founder headshot (teamMember arnel-bukva, same fetch
- * the About page uses; initials fallback). SEO: canonical /contact,
- * BreadcrumbList + ContactPage JSON-LD — the ContactPage schema carries BOTH
- * office PostalAddresses (San Francisco previously had zero structured-data
- * presence anywhere on the site; this page fixes that) + a contactPoint with
- * the public email. FAQPage JSON-LD is generated from the same CONTACT_FAQ
- * items the accordion renders.
- *
- * NOTE: /contact previously 301-redirected to / (next.config.ts +
- * LEGACY_URL_MAP in seo-utils.ts). Both entries were removed (2026-07-15) so
- * this page can resolve. Do NOT re-add them.
+ * NOTE: /contact previously 301-redirected to / (next.config.ts + LEGACY_URL_MAP in seo-utils.ts). Both entries were
+ * removed (2026-07-15) so this page can resolve. Do NOT re-add them.
  */
 export const revalidate = 60;
 
 import type { Metadata } from 'next';
-import { getContactContent } from '@/lib/content-utils';
-import '../../contact-v3/contact-v3.css';
-import { getContactFounder, CONTACT_FAQ, OFFICES, CONTACT_EMAIL } from '../../contact-v3/data';
-import { HeroContact } from '../../contact-v3/HeroContact';
-import { LogosMarquee } from '../../contact-v3/LogosMarquee';
-import { NextSteps } from '../../contact-v3/NextSteps';
-import { OfficesBand } from '../../contact-v3/OfficesBand';
-import { Faq } from '../../contact-v3/Faq';
-import { CoverCTA } from '../../contact-v3/CoverCTA';
-import { FooterV3 } from '../../home-v3/FooterV3';
-import { ContactV3Scripts } from '../../contact-v3/Scripts';
+import { getContactContent, getHomeV11Content, getPricingV11Content } from '@/lib/content-utils';
+import '../../home-v11/home-v11.css';
+import '../../service-v11/service-v11.css';
+import '../../service-v11/svc.css';
+import '../../contact-v11/contact.css';
+import { CONTACT_FAQ, OFFICES, CONTACT_EMAIL } from '../../contact-v3/data';
+import { ContactV11 } from '../../contact-v11/ContactV11';
 
 const SITE = 'https://www.loudface.co';
 
@@ -73,7 +52,7 @@ export const metadata: Metadata = {
 };
 
 export default async function ContactPage() {
-  const [founder, content] = await Promise.all([getContactFounder(), getContactContent()]);
+  const [c, home, x] = await Promise.all([getContactContent(), getHomeV11Content(), getPricingV11Content()]);
 
   const breadcrumbSchema = {
     '@context': 'https://schema.org',
@@ -132,38 +111,10 @@ export default async function ContactPage() {
 
   return (
     <>
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
-      />
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(contactPageSchema) }}
-      />
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
-      />
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(speakableSchema) }}
-      />
-
-      {/* .ctv3 scopes the bespoke resets so they can't touch the shared Header/Footer/Cal chrome. */}
-      <div className="ctv3">
-        <HeroContact content={content.hero} />
-        <LogosMarquee content={content.logos} />
-        <NextSteps content={content.nextSteps} />
-        <OfficesBand founder={founder} content={content.offices} />
-        <Faq content={content.faq} />
-        <CoverCTA content={content.coverCta} />
-        {/* Shared v3 footer (same component as the homepage/About/Pricing/Services).
-            Rendered inside .ctv3 so the re-scoped .ft footer CSS in contact-v3.css
-            applies with full isolation — home-v3.css is NOT imported here. */}
-        <FooterV3 />
-      </div>
-
-      <ContactV3Scripts />
+      {[breadcrumbSchema, contactPageSchema, faqSchema, speakableSchema].map((schema, i) => (
+        <script key={i} type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }} />
+      ))}
+      <ContactV11 c={c} home={home} steps={x.steps} />
     </>
   );
 }

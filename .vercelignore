@@ -1,0 +1,4 @@
+# Local design material: Mobbin harvests, concept builds and Paper import files. Gigabytes, never part of the site;
+# listed so a CLI deploy from a working copy cannot upload them.
+design-lab/
+.paper-import/

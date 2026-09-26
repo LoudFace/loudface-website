@@ -1,91 +1,17 @@
-import { ImageResponse } from 'next/og';
+import { partnersShare } from '../../og-v11/share';
 
-// Node runtime (not edge): the image uses no external fonts/assets, and only the
-// Node runtime honors `revalidate` for ISR caching. Under `runtime = 'edge'` the
-// route is always dynamic and `revalidate` is silently ignored (regenerated per
-// request). On Node it's generated once and cached ~31 days. Edge is also
-// deprecated as of Next.js 16.3.
-// Static content — regenerate at most once every ~31 days instead of per request.
+// Node runtime (not edge): the image reads its fonts from /public, and only the Node runtime honors `revalidate` for
+// ISR caching. Generated once and cached ~31 days.
 export const revalidate = 2678400;
 export const alt = '10% lifetime commission — LoudFace Partner Program';
 export const size = { width: 1200, height: 630 };
 export const contentType = 'image/png';
 
+/** The partner program's share card in v11 (og-v11/share.tsx): the offer over a drawn payout run. */
 export default async function Image() {
-  return new ImageResponse(
-    (
-      <div
-        style={{
-          background: 'linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 100%)',
-          width: '100%',
-          height: '100%',
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'flex-start',
-          justifyContent: 'center',
-          padding: '80px',
-          position: 'relative',
-        }}
-      >
-        <div
-          style={{
-            position: 'absolute',
-            top: 40,
-            left: 80,
-            fontSize: 24,
-            color: '#888',
-            letterSpacing: '0.1em',
-          }}
-        >
-          LOUDFACE
-        </div>
-        <div
-          style={{
-            fontSize: 88,
-            fontWeight: 700,
-            color: '#fff',
-            lineHeight: 1.05,
-            maxWidth: '88%',
-            letterSpacing: '-0.02em',
-          }}
-        >
-          10% lifetime commission
-        </div>
-        <div
-          style={{
-            fontSize: 32,
-            color: '#c4b5fd',
-            marginTop: 28,
-            maxWidth: '85%',
-            lineHeight: 1.4,
-          }}
-        >
-          Refer one B2B SaaS client. Earn for as long as they stay.
-        </div>
-        <div
-          style={{
-            position: 'absolute',
-            bottom: 40,
-            left: 80,
-            display: 'flex',
-            alignItems: 'center',
-            gap: 12,
-            fontSize: 20,
-            color: '#666',
-          }}
-        >
-          <span
-            style={{
-              width: 8,
-              height: 8,
-              borderRadius: 999,
-              background: '#a78bfa',
-            }}
-          />
-          loudface.co/partners
-        </div>
-      </div>
-    ),
-    { ...size },
-  );
+  return partnersShare({
+    line: '10% lifetime commission',
+    sub: 'Refer one B2B SaaS client. Earn for as long as they stay.',
+    url: 'loudface.co/partners',
+  });
 }

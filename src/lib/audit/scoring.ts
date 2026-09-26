@@ -355,7 +355,7 @@ export function generateActionItems(
     items.push({
       priority: 'high',
       title: 'Correct the biggest factual error',
-      description: `AI platforms are saying: "${firstInaccuracy}" Fix the canonical page on your site (About, homepage, or the relevant product page) and add Organization / Product schema so models re-learn from authoritative markup.`,
+      description: `AI platforms are saying: "${firstInaccuracy}" Fix the canonical page on your site (About, homepage, or the relevant product page) so the answer engines retrieve the correct fact from your own site.`,
       linkedService: '/services/seo-aeo',
     });
   }
@@ -381,7 +381,7 @@ export function generateActionItems(
     items.push({
       priority: 'high',
       title: `Publish ${topGap.suggestedPath}`,
-      description: `AI is missing: "${gapText}" Create this page on your site so AI has a canonical source to cite. Use the gap as the H1 question, answer directly in the first paragraph, add schema markup, and earn a few links to it.`,
+      description: `AI is missing: "${gapText}" Create this page on your site so AI has a canonical source to cite. Use the gap as the H1 question, answer directly in the first paragraph, and earn a few links to it.`,
       linkedService: '/services/copywriting',
     });
   } else if (brandBaseline.gaps.length > 0) {
@@ -389,7 +389,7 @@ export function generateActionItems(
     items.push({
       priority: 'high',
       title: 'Fix the most visible knowledge gap',
-      description: `AI is missing: "${firstGap}" Publish a dedicated page on your site answering this directly (headline = question, first paragraph = direct answer, schema-marked up), then earn links to it.`,
+      description: `AI is missing: "${firstGap}" Publish a dedicated page on your site answering this directly (headline = question, first paragraph = direct answer), then earn links to it.`,
       linkedService: '/services/copywriting',
     });
   }
@@ -403,7 +403,7 @@ export function generateActionItems(
     items.push({
       priority: 'high',
       title: 'Become your own primary source',
-      description: `AI mentions you in ${mentionedCount} responses but only cites your site in ${citedCount} of them. You are not the canonical source on your own brand. Audit which pages AI could cite (about, pricing, products, case studies) and make them the authoritative answer — clear H1s, schema markup, inline facts AI can quote.`,
+      description: `AI mentions you in ${mentionedCount} responses but only cites your site in ${citedCount} of them. You are not the canonical source on your own brand. Audit which pages AI could cite (about, pricing, products, case studies) and make them the authoritative answer — clear H1s and inline facts AI can quote.`,
       linkedService: '/services/seo-aeo',
     });
   }
@@ -442,7 +442,7 @@ export function generateActionItems(
       priority: 'high',
       title: 'Build AI visibility from scratch',
       description:
-        'Your brand has no meaningful AI presence yet. Start with a comprehensive content + structured-data foundation: a canonical about page, a pricing page, case studies with schema, and strong Organization markup. Earning editorial mentions comes next.',
+        'Your brand has no meaningful AI presence yet. Start with a content foundation AI can retrieve: a canonical about page, a pricing page, and case studies. Earning editorial mentions comes next.',
       linkedService: '/services/growth-autopilot',
     });
   }

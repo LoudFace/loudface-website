@@ -1,54 +1,19 @@
 import type { Metadata } from 'next';
-import Link from 'next/link';
-import { SectionContainer, Button } from '@/components/ui';
+import './home-v11/home-v11.css';
+import './lost-v11/lost.css';
+import { LostPageV11 } from './lost-v11/LostPageV11';
 
+/**
+ * The 404 page — v11 (switched 2026-09-26). The message, the way back, the live page's four links, and the two files
+ * that list every URL (for a crawler that lands here). Copy in lost-v11.json. An unmatched URL gets this page as full
+ * server HTML, without the site header. A notFound() inside a site route (a deleted post) is drawn by the browser: its
+ * server HTML is an empty shell, as it was on the v3 site.
+ */
 export const metadata: Metadata = {
   title: 'Page Not Found',
   robots: { index: false, follow: true },
 };
 
 export default function NotFound() {
-  return (
-    <SectionContainer padding="lg">
-      <div className="max-w-lg mx-auto text-center py-16">
-        <p className="text-8xl font-medium text-surface-200 select-none">404</p>
-
-        <h1 className="mt-6 text-2xl sm:text-3xl font-medium text-surface-900">
-          Page not found
-        </h1>
-
-        <p className="mt-4 text-lg text-surface-600">
-          The page you&apos;re looking for doesn&apos;t exist or has been moved.
-        </p>
-
-        <div className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4">
-          <Button variant="primary" size="lg" href="/">
-            Back to home
-          </Button>
-          <Button variant="outline" size="lg" href="/case-studies">
-            View our work
-          </Button>
-        </div>
-
-        <div className="mt-12 pt-8 border-t border-surface-200">
-          <p className="text-sm text-surface-500 mb-4">Or try one of these:</p>
-          <div className="flex flex-wrap justify-center gap-x-6 gap-y-2">
-            <Link href="/blog" className="text-sm text-surface-600 hover:text-primary-600 transition-colors">Blog</Link>
-            <Link href="/about" className="text-sm text-surface-600 hover:text-primary-600 transition-colors">About us</Link>
-            <Link href="/services/seo-aeo" className="text-sm text-surface-600 hover:text-primary-600 transition-colors">SEO Services</Link>
-            <Link href="/services/webflow" className="text-sm text-surface-600 hover:text-primary-600 transition-colors">Webflow</Link>
-          </div>
-        </div>
-
-        {/* A dead end for a person, but an AI crawler can recover from it —
-            these are the two files that list every URL on the site. */}
-        <p className="mt-8 text-xs text-surface-400">
-          Looking for a full index?{' '}
-          <a href="/sitemap.xml" className="underline hover:text-surface-600 transition-colors">sitemap.xml</a>
-          {' · '}
-          <a href="/llms.txt" className="underline hover:text-surface-600 transition-colors">llms.txt</a>
-        </p>
-      </div>
-    </SectionContainer>
-  );
+  return <LostPageV11 kind="notFound" />;
 }

@@ -1,0 +1,53 @@
+/* The v11 component library page: labels and specimen layout only. Every specimen uses the real component's own CSS. */
+.kit-cover { margin-top: -64px; padding: 150px 0 88px; color: #ffffff; background: linear-gradient(180deg, #030c5a 0%, #041173 40%, #3d38cf 100%); }
+.kit-cover h1 { font-family: var(--font-heading); font-weight: 500; font-size: 84px; line-height: 0.97; letter-spacing: -0.047em; margin-top: 20px; }
+.kit-cover p { font-size: 18px; line-height: 1.5; color: #e4e2fe; margin-top: 22px; max-width: 620px; }
+.kit-sec { padding: 72px 0 88px; }
+.kit-sec.is-white { background: #ffffff; }
+.kit-sec.is-warm { background: var(--warm); }
+.kit-sec.is-stage { background: linear-gradient(180deg, #030c5a 0%, #04188f 55%, #3d38cf 100%); }
+.kit-label { display: grid; grid-template-columns: 260px 1fr; gap: 6px 32px; padding-bottom: 20px; margin-bottom: 40px; border-bottom: 1px solid var(--line); }
+.kit-sec.is-stage .kit-label { border-color: rgba(255,255,255,0.2); }
+.kit-name { grid-row: span 2; font-family: var(--font-heading); font-weight: 500; font-size: 26px; letter-spacing: -0.025em; color: var(--ink); }
+.kit-file { font-size: 13px; color: var(--quiet); font-family: var(--font-mono, ui-monospace, monospace); }
+.kit-rule { font-size: 15px; line-height: 1.5; color: var(--body); max-width: 760px; }
+.kit-sec.is-stage .kit-name { color: #ffffff; }
+.kit-sec.is-stage .kit-file { color: #c9c5fb; }
+.kit-sec.is-stage .kit-rule { color: #e4e2fe; }
+.kit-swatches { display: grid; grid-template-columns: repeat(8, 1fr); gap: 20px 16px; }
+.kit-swatch { display: flex; flex-direction: column; gap: 6px; }
+.kit-swatch span { height: 72px; border-radius: 14px; box-shadow: inset 0 0 0 1px rgba(26,16,64,0.08); }
+.kit-swatch b { font-size: 13.5px; font-weight: 500; color: var(--ink); margin-top: 4px; }
+.kit-swatch em { font-style: normal; font-size: 12px; line-height: 1.4; color: var(--quiet); }
+.kit-type { display: flex; flex-direction: column; }
+.kit-type > div { display: grid; grid-template-columns: 220px 1fr; align-items: baseline; gap: 32px; padding: 18px 0; border-bottom: 1px solid var(--line); }
+.kit-type em { font-style: normal; font-size: 12.5px; color: var(--quiet); }
+.kit-type .t-display { font-family: var(--font-heading); font-weight: 500; font-size: 84px; line-height: 0.97; letter-spacing: -0.047em; color: var(--ink); }
+.kit-type .t-h1 { font-family: var(--font-heading); font-weight: 500; font-size: 62px; line-height: 1; letter-spacing: -0.045em; color: var(--ink); }
+.kit-type .t-h2 { font-family: var(--font-heading); font-weight: 500; font-size: 52px; line-height: 1.03; letter-spacing: -0.037em; color: var(--ink); }
+.kit-type .t-h2 .ghost { color: #a3a0bd; }
+.kit-type .t-tile { font-family: var(--font-heading); font-weight: 500; font-size: 26px; letter-spacing: -0.025em; color: var(--ink); }
+.kit-type .t-card { font-family: var(--font-heading); font-weight: 500; font-size: 22px; letter-spacing: -0.02em; }
+.kit-type .t-card b { font-weight: 500; color: var(--ink); }
+.kit-type .t-card span { color: var(--quiet); }
+.kit-type .t-body { font-size: 17px; line-height: 1.5; color: var(--body); }
+.kit-type .t-label { font-size: 14px; font-weight: 500; color: var(--muted); }
+.kit-type .t-cap { font-size: 12.5px; color: var(--quiet); }
+.kit-type .t-metric { font-family: var(--font-heading); font-weight: 500; font-size: 96px; line-height: 0.95; letter-spacing: -0.05em; color: var(--ink); }
+.kit-row { display: flex; flex-wrap: wrap; gap: 32px; align-items: flex-start; }
+.kit-row.is-tight { gap: 8px; }
+.kit-col { display: flex; flex-direction: column; align-items: flex-start; gap: 18px; }
+.kit-stage-mini { display: flex; gap: 10px; padding: 32px; border-radius: 20px; background: linear-gradient(160deg, #041173 0%, #3d38cf 100%); }
+.kit-stage-grid { display: grid; grid-template-columns: 300px 1fr; gap: 48px; align-items: start; }
+.kit-embed > section { padding: 0; background: none; }
+.kit-embed .v11-wrap { width: 100%; }
+.kit-cross .v11-rcase { min-height: 140px; }
+.kit-type .t-h2 .ghost { color: #8a86a6; }
+.kit-menus { display: flex; flex-direction: column; gap: 32px; }
+.kit-phone { width: 390px; border-radius: 22px; background: #ffffff; box-shadow: 0 0 0 1px var(--line); overflow: hidden; }
+.kit-row.is-top { align-items: flex-start; }
+.kit-w300 { width: 300px; }
+.kit-w460 { width: 460px; }
+.kit-w560 { width: 560px; }
+.kit-posts { margin-top: 48px; }
+.kit .v11-consent.is-static { width: 408px; }

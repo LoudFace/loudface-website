@@ -1,0 +1,174 @@
+{
+  "eyebrows": {
+    "chain": "Retrieve, cite, name",
+    "revenue": "Measured against revenue",
+    "stages": "The Answer Chain",
+    "measure": "The readings",
+    "engines": "Engines",
+    "proof": "Results",
+    "limits": "Honest limits",
+    "start": "Where to start"
+  },
+  "hero": {
+    "chartTitle": "Share of answers, per engine",
+    "fromLabel": "June",
+    "toLabel": "August"
+  },
+  "funnel": {
+    "title": "ChatGPT, 40 of the 120 answers",
+    "base": "Answers sampled",
+    "retrieved": "Retrieved a loudface.co page",
+    "named": "Named LoudFace"
+  },
+  "divergence": {
+    "pairs": [
+      {
+        "label": "Mentions of LoudFace",
+        "before": 968,
+        "after": 1905,
+        "beforeText": "968",
+        "afterText": "1,905"
+      },
+      {
+        "label": "Citations of our URLs",
+        "before": 4075,
+        "after": 4183,
+        "beforeText": "4,075",
+        "afterText": "4,183"
+      }
+    ]
+  },
+  "stagesTitle": "The eight stages",
+  "stagePrefix": "Stage",
+  "stageMore": "Read the full stage",
+  "report": {
+    "title": "Report, per engine, through to revenue",
+    "meta": "Our own domain",
+    "linkHead": "Link in the chain",
+    "readingHead": "Our reading",
+    "rows": [
+      {
+        "reading": "12.95%",
+        "detail": "ChatGPT 18.1%, Perplexity 12.6%, Google AI Overviews 8.0%, 30 days to 2 September 2026"
+      },
+      {
+        "reading": "",
+        "detail": "Google Search Console, your own property"
+      },
+      {
+        "reading": "68",
+        "detail": "AI-referred visitors in 28 days, 54 of them from ChatGPT",
+        "floor": true
+      },
+      {
+        "reading": "2 of 43",
+        "detail": "captured leads in 90 days carried an AI engine as first touch",
+        "floor": true
+      },
+      {
+        "reading": "Not yet",
+        "detail": "We hold no evidenced revenue figure attributable to AI search yet"
+      }
+    ]
+  },
+  "sheet": {
+    "file": "The Answer Chain · measurement",
+    "meta": "Your company"
+  },
+  "engineTiles": {
+    "tracked": [
+      "ChatGPT",
+      "Perplexity",
+      "Google AI Overviews"
+    ],
+    "untracked": [
+      "Gemini",
+      "Claude",
+      "Copilot"
+    ]
+  },
+  "proofCharts": {
+    "ownDomain": {
+      "beforeLabel": "April 2026",
+      "afterLabel": "30 days to 2 Sep 2026",
+      "pairs": [
+        {
+          "label": "Share of AI answers",
+          "before": 0.18,
+          "after": 12.95,
+          "beforeText": "0.18%",
+          "afterText": "12.95%"
+        }
+      ],
+      "perEngineTitle": "Per engine, 30 days to 2 Sep 2026",
+      "perEngine": [
+        {
+          "label": "ChatGPT",
+          "value": 18.1,
+          "text": "18.1%"
+        },
+        {
+          "label": "Perplexity",
+          "value": 12.6,
+          "text": "12.6%"
+        },
+        {
+          "label": "Google AI Overviews",
+          "value": 8.0,
+          "text": "8.0%"
+        }
+      ]
+    },
+    "genieTeacher": {
+      "beforeLabel": "25 May 2026",
+      "afterLabel": "24 Aug 2026",
+      "pairs": [
+        {
+          "label": "Share of voice",
+          "before": 2.26,
+          "after": 12.94,
+          "beforeText": "2.26%",
+          "afterText": "12.94%"
+        },
+        {
+          "label": "Visibility",
+          "before": 5.26,
+          "after": 9.17,
+          "beforeText": "5.26%",
+          "afterText": "9.17%"
+        }
+      ]
+    },
+    "stealthFintech": {
+      "beforeLabel": "15 Jun 2026",
+      "afterLabel": "Peak, 3 Aug 2026",
+      "pairs": [
+        {
+          "label": "AI visibility",
+          "before": 0.53,
+          "after": 10.46,
+          "beforeText": "0.53%",
+          "afterText": "10.46%"
+        }
+      ]
+    },
+    "trademomentum": {
+      "beforeLabel": "6 Jul 2026",
+      "afterLabel": "24 Aug 2026",
+      "pairs": [
+        {
+          "label": "AI visibility, trading communities",
+          "before": 8.8,
+          "after": 34.4,
+          "beforeText": "8.8%",
+          "afterText": "34.4%"
+        }
+      ]
+    }
+  },
+  "studyFigure": "6,616",
+  "studyFigureLabel": "citations of loudface.co, the most-cited source domain in the study",
+  "receiptsLabel": "Receipts",
+  "googleSource": "Google Search Central",
+  "faqTitle": "Questions buyers ask"
+}

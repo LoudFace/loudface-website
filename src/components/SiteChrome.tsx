@@ -2,6 +2,8 @@
 
 import { usePathname } from "next/navigation";
 import { Header, type HeaderProps } from "@/components/Header";
+import type { NavV11Data } from "@/app/home-v11/NavV11";
+import { isV11Route, isV3PreviewRoute } from "@/lib/v11-routes";
 
 const SITE_ORIGIN = "https://www.loudface.co";
 
@@ -18,50 +20,19 @@ const SITE_ORIGIN = "https://www.loudface.co";
 
 interface RouteChrome {
   heroTheme: "dark" | undefined;
-  /** True on v3 routes that ship their own in-page FooterV3. */
+  /** True on routes that render their own footer (FooterV11, or FooterV3 on the old review routes). */
   suppressSharedFooter: boolean;
 }
 
 function deriveRouteChrome(pathname: string): RouteChrome {
-  // Blog (index + posts) is v3: electric-hero dark Header + its own FooterV3.
-  const isBlog = pathname === "/blog" || pathname.startsWith("/blog/");
-  // Service child pages (/services/<slug>) are v3, same treatment as the hub.
-  const isServiceChild = pathname.startsWith("/services/");
-  // Every /seo-for/<industry> page is v3 — programmatic and both bespoke
-  // siblings (/seo-for/saas migrated 2026-08-01). The /seo-for hub is separate.
-  const isSeoForIndustry = pathname.startsWith("/seo-for/");
-  // Team profile pages (/team/<slug>) are v3.
-  const isTeamProfile = pathname.startsWith("/team/");
-  // /careers is v3: electric hero + its own FooterV3.
-  const isCareers = pathname === "/careers";
-  // /methodology is v3: electric hero + its own FooterV3.
-  const isMethodology = pathname === "/methodology";
-
-  const isV3 =
-    pathname === "/" ||
-    pathname === "/about" ||
-    pathname === "/pricing" ||
-    pathname === "/services" ||
-    isServiceChild ||
-    isSeoForIndustry ||
-    isTeamProfile ||
-    isCareers ||
-    isMethodology ||
-    pathname === "/ai-instructions" ||
-    pathname === "/contact" ||
-    // Policy pages on the shared LegalPageV3 template.
-    pathname === "/privacy" ||
-    pathname === "/terms" ||
-    pathname === "/cookies" ||
-    pathname.startsWith("/case-studies") ||
-    isBlog;
-
-  // The Header dark-hero variant additionally covers /home-preview.
-  const heroThemeDark = isV3 || pathname === "/home-preview";
-
+  // Every v11 page starts on the dark-hero header treatment; a light hero marks itself data-hero="light" and
+  // home-v11.css turns the header ink until it scrolls. Every v11 page renders FooterV11 itself.
+  // The pre-v11 review routes that compose a v3 body keep that treatment too, FooterV3 included; the other
+  // old review routes keep the plain header and the shared footer they were built with.
+  const ownFooter = isV11Route(pathname) || isV3PreviewRoute(pathname);
   return {
-    heroTheme: heroThemeDark ? "dark" : undefined,
-    suppressSharedFooter: isV3,
+    heroTheme: ownFooter ? "dark" : undefined,
+    suppressSharedFooter: ownFooter,
   };
 }
 
@@ -69,9 +40,10 @@ function deriveRouteChrome(pathname: string): RouteChrome {
  * Renders the hreflang alternates + the Header in its correct hero-theme
  * variant for the current route. React hoists the <link> tags into <head>.
  */
-export function SiteHeader({ navContent }: { navContent: HeaderProps["content"] }) {
+export function SiteHeader({ navContent, navV11 }: { navContent: HeaderProps["content"]; navV11?: NavV11Data }) {
   const pathname = usePathname();
   const { heroTheme } = deriveRouteChrome(pathname);
+  const v11 = isV11Route(pathname) && navV11 ? navV11 : undefined;
   const hreflangHref = pathname === "/" ? SITE_ORIGIN : `${SITE_ORIGIN}${pathname}`;
 
   return (
@@ -80,14 +52,14 @@ export function SiteHeader({ navContent }: { navContent: HeaderProps["content"] 
           fallback for AI engines unsure of locale targeting. */}
       <link rel="alternate" hrefLang="en" href={hreflangHref} />
       <link rel="alternate" hrefLang="x-default" href={hreflangHref} />
-      <Header heroTheme={heroTheme} content={navContent} />
+      <Header heroTheme={heroTheme} content={navContent} v11={v11} />
     </>
   );
 }
 
 /**
- * Renders the shared Footer (passed as a server-rendered child) on every
- * route EXCEPT the v3 routes that carry their own in-page FooterV3.
+ * Renders the shared Footer (passed as a server-rendered child) only on the
+ * old review routes that do not carry a footer of their own.
  */
 export function SiteFooter({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();

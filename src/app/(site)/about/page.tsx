@@ -1,38 +1,27 @@
 /**
- * About — v3 design (componentized).
+ * About — v11 (the approved board; switched 2026-09-26).
  *
- * Faithful port of the client-approved about-v3 composite, composed from the
- * about-v3 section components inside the (site) group so it inherits the shared
- * Header/Footer + PostHog/GTM/Cal chrome. The shared Header renders in its
- * dark-hero variant on /about (wired in (site)/layout.tsx), and the shared
- * Footer is suppressed there so only the v3 FooterV3 (same as the homepage)
- * renders. Bespoke
- * styling is about-v3.css, imported route-scoped here (it does NOT load on other
- * (site) pages) and scoped under .abv3 via :where() so it can't leak onto shared
- * chrome.
- *
- * Team members come live from Sanity (getAboutTeam) — the hero mosaic, the team
- * ladder, and the derived headcount figures all read from that array, so the
- * page stays correct as the team changes. Per-person fact/quote copy is
- * editorial (TEAM_COPY in ./data). SEO metadata (canonical) + the JSON-LD blocks
- * are preserved from the previous about page.
+ * Composed from src/app/about-v11 inside the (site) group. Copy in about-v11.json; the charts come from
+ * getHomeV11Data. The team list for the AboutPage JSON-LD still comes live from Sanity (getAboutTeam), and the
+ * FAQPage JSON-LD is built from the FAQ this page shows (about-v11.json, read unmarked through rawContent).
+ * SEO metadata and the other JSON-LD blocks are unchanged from the v3 page.
  */
 export const revalidate = 60;
 
 import type { Metadata } from 'next';
-import '../../about-v3/about-v3.css';
-import { getAboutContent } from '@/lib/content-utils';
+import '../../home-v11/home-v11.css';
+import '../../service-v11/service-v11.css';
+import '../../service-v11/cro-sections.css';
+import '../../service-v11/svc.css';
+import '../../about-v11/about.css';
+import { getAboutV11Content, getHomeV11Content, rawContent, type AboutV11Content } from '@/lib/content-utils';
 import { getAboutTeam } from '../../about-v3/data';
-import { HeroAbout } from '../../about-v3/HeroAbout';
-import { Ledger } from '../../about-v3/Ledger';
-import { Story } from '../../about-v3/Story';
-import { Team } from '../../about-v3/Team';
-import { Values } from '../../about-v3/Values';
-import { Awards } from '../../about-v3/Awards';
-import { Faq } from '../../about-v3/Faq';
-import { CoverCTA } from '../../about-v3/CoverCTA';
-import { FooterV3 } from '../../home-v3/FooterV3';
-import { AboutV3Scripts } from '../../about-v3/Scripts';
+import { getHomeV11Data } from '../../home-v11/data';
+import { AboutV11 } from '../../about-v11/AboutV11';
+import { teamTitle } from '@/lib/team-titles';
+
+// Plain text for JSON-LD: the answers are plain today; this keeps the schema clean if one gains markup.
+const stripHtml = (html: string) => html.replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim();
 
 export const metadata: Metadata = {
   // No pipe + brand suffix here: the (site) layout's title template ("%s | LoudFace")
@@ -64,7 +53,7 @@ export const metadata: Metadata = {
 };
 
 export default async function AboutPage() {
-  const [team, content] = await Promise.all([getAboutTeam(), getAboutContent()]);
+  const [team, c, home, data] = await Promise.all([getAboutTeam(), getAboutV11Content(), getHomeV11Content(), getHomeV11Data()]);
 
   const breadcrumbSchema = {
     '@context': 'https://schema.org',
@@ -109,45 +98,28 @@ export default async function AboutPage() {
         employee: team.map((member) => ({
           '@type': 'Person',
           name: member.name,
-          jobTitle: member.role || undefined,
+          jobTitle: teamTitle(member.slug, member.role) || undefined,
         })),
       }),
     },
   };
 
+  const faqSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: rawContent<AboutV11Content>('about-v11').faq.items.map((f) => ({
+      '@type': 'Question',
+      name: f.question,
+      acceptedAnswer: { '@type': 'Answer', text: stripHtml(f.answer) },
+    })),
+  };
+
   return (
     <>
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
-      />
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(aboutSchema) }}
-      />
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(speakableSchema) }}
-      />
-
-      {/* .abv3 scopes the bespoke resets so they can't touch the shared Header/Footer/Cal chrome. */}
-      <div className="abv3">
-        <HeroAbout team={team} content={content.hero} />
-        <Ledger teamCount={team.length} content={content.ledger} />
-        <Story team={team} content={content.story} />
-        <Team team={team} content={content.team} />
-        <Values content={content.values} />
-        <Awards content={content.awards} />
-        <Faq teamCount={team.length} content={content.faq} />
-        <CoverCTA content={content.coverCta} />
-        {/* Shared v3 footer (same as the homepage). Rendered inside .abv3 so its
-            re-scoped footer CSS in about-v3.css applies with full isolation —
-            home-v3.css is NOT imported here (its global component classes would
-            leak onto the about sections). */}
-        <FooterV3 />
-      </div>
-
-      <AboutV3Scripts />
+      {[breadcrumbSchema, aboutSchema, speakableSchema, faqSchema].map((schema, i) => (
+        <script key={i} type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }} />
+      ))}
+      <AboutV11 c={c} home={home} data={data} />
     </>
   );
 }

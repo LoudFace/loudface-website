@@ -1,0 +1,188 @@
+/* Service template v11: loads after home-v11.css and reuses its tokens, grounds, sheets and marks.
+   Three layouts: phone (< 768), tablet (768 to 1279), desktop (1280 and up). */
+
+/* secondary words in a heading (ServiceConfig titles carry span.ghost / span.soft) */
+/* #8a86a6 holds 3:1 for large text on white, warm and cream (#a3a0bd fell to ~2.4:1; a11y audit 2026-09-25) */
+.v11 .v11-h2 .ghost, .v11 .v11-h2 .soft { color: #8a86a6; }
+.v11-svc-hero h1 .soft, .v11-svc-hero h1 .ghost { color: #b9b4fb; }
+
+/* =========================================================== hero: the electric stage with the client's site */
+.v11-svc-hero { position: relative; overflow: hidden; margin-top: -64px; color: #ffffff; padding: 132px 0 72px;
+  background: radial-gradient(ellipse 70% 80% at 85% 100%, #6c64f2 0%, rgba(108,100,242,0) 70%), linear-gradient(180deg, #030c5a 0%, #04188f 55%, #3d38cf 100%); }
+.v11-svc-hero-inner { display: grid; gap: 48px; align-items: center; }
+.v11-svc-hero-copy h1 { font-family: var(--font-heading); font-weight: 500; font-size: 44px; line-height: 1; letter-spacing: -0.045em; margin-top: 18px; text-wrap: balance; }
+.v11-svc-hero-blurb { font-size: 17px; line-height: 1.55; color: #e4e2fe; margin-top: 22px; max-width: 520px; text-wrap: pretty; }
+.v11-svc-hero-chip { display: inline-flex; align-items: baseline; gap: 10px; margin-top: 32px; padding-top: 18px; border-top: 1px solid rgba(255,255,255,0.18); font-size: 14px; color: #dcd9fe; }
+.v11-svc-hero-chip .is-num { font-family: var(--font-heading); font-weight: 500; font-size: 30px; letter-spacing: -0.03em; color: #ffffff; }
+.v11-svc-hero-art { position: relative; }
+.v11-svc-hero-pill { position: absolute; left: 20px; bottom: -16px; display: flex; align-items: center; gap: 8px; height: 36px; padding: 0 14px 0 10px; border-radius: 999px; background: #ffffff; color: var(--ink); font-size: 13px; box-shadow: 0 12px 30px rgba(10,6,50,0.3); }
+.v11-svc-hero-pill b { font-weight: 500; }
+@media (min-width: 768px) { .v11-svc-hero { padding: 152px 0 96px; } .v11-svc-hero-copy h1 { font-size: 56px; } }
+@media (min-width: 1280px) {
+  .v11-svc-hero { padding: 168px 0 112px; }
+  .v11-svc-hero-inner { grid-template-columns: minmax(0, 1fr) minmax(0, 1.08fr); gap: 64px; }
+  .v11-svc-hero-copy h1 { font-size: 64px; }
+}
+
+/* a client's site in a browser frame, at true size */
+.v11-browser { border-radius: 14px; overflow: hidden; background: #ffffff; box-shadow: 0 2px 4px rgba(10,6,50,0.12), 0 30px 70px rgba(10,6,50,0.35); }
+.v11-browser-bar { display: flex; align-items: center; gap: 14px; height: 38px; padding: 0 14px; background: #f6f6f8; box-shadow: inset 0 -1px 0 var(--line); }
+.v11-browser-url { flex: 1; max-width: 260px; margin: 0 auto; height: 22px; display: flex; align-items: center; justify-content: center; border-radius: 6px; background: #ffffff; box-shadow: inset 0 0 0 1px var(--line); font-size: 12px; color: var(--quiet); }
+.v11-browser img { display: block; width: 100%; height: auto; }
+
+/* =========================================================== what the program covers: crosshair grid */
+.v11-dgrid { position: relative; display: grid; grid-template-columns: minmax(0, 1fr); border-top: 1px solid var(--line); border-left: 1px solid var(--line); }
+@media (min-width: 768px) { .v11-dgrid { grid-template-columns: repeat(2, 1fr); } }
+@media (min-width: 1280px) { .v11-dgrid { grid-template-columns: repeat(3, 1fr); } .v11-dgrid.is-4 { grid-template-columns: repeat(2, 1fr); } }
+.v11-dcell { position: relative; padding: 28px 26px 30px; border-right: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+@media (min-width: 1280px) { .v11-dcell { padding: 34px 32px 36px; } }
+.v11-dcell-title { font-family: var(--font-heading); font-weight: 500; font-size: 21px; line-height: 1.2; letter-spacing: -0.02em; }
+.v11-dcell-desc { font-size: 14.5px; line-height: 1.6; color: var(--body); margin-top: 12px; text-wrap: pretty; }
+.v11-dcell-chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 18px; }
+.v11-dcell-chips span { display: flex; align-items: center; height: 26px; padding: 0 9px; border-radius: 7px; background: #ffffff; box-shadow: inset 0 0 0 1px var(--line); font-size: 12.5px; color: var(--body); }
+.v11-dcell-frag { margin-top: 22px; border-radius: 10px; overflow: hidden; box-shadow: 0 0 0 1px var(--line); }
+.v11-dcell-frag img { display: block; width: 100%; height: auto; }
+/* the last cell of an odd count spans the rest of its row on desktop */
+@media (min-width: 1280px) {
+  .v11-dgrid.is-5 .v11-dcell:nth-child(4) { grid-column: span 1; }
+  .v11-dgrid.is-5 .v11-dcell:nth-child(5) { grid-column: span 2; }
+  .v11-dgrid.is-7 .v11-dcell:nth-child(7) { grid-column: span 3; }
+  .v11-dgrid.is-8 .v11-dcell:nth-child(7) { grid-column: span 1; }
+  .v11-dgrid.is-8 .v11-dcell:nth-child(8) { grid-column: span 2; }
+}
+@media (min-width: 768px) and (max-width: 1279px) {
+  .v11-dgrid.is-3 .v11-dcell:nth-child(3), .v11-dgrid.is-5 .v11-dcell:nth-child(5), .v11-dgrid.is-7 .v11-dcell:nth-child(7) { grid-column: span 2; }
+}
+
+/* =========================================================== the program as a written plan on the brand plate */
+.v11-svc-plate { border-radius: 28px; padding: 28px 16px; display: flex; justify-content: center;
+  background: radial-gradient(ellipse 60% 70% at 12% 18%, #fcd68a 0%, rgba(252,214,138,0) 70%), radial-gradient(ellipse 55% 70% at 92% 88%, #4f46e5 0%, rgba(79,70,229,0) 72%), linear-gradient(120deg, #f59a7b 0%, #c9bdf5 52%, #8c82f0 100%); }
+@media (min-width: 768px) { .v11-svc-plate { padding: 64px 48px; } }
+@media (min-width: 1280px) { .v11-svc-plate { padding: 80px 64px; } }
+.v11-sheet.is-program { width: 100%; max-width: 820px; }
+.v11-program-row { display: grid; gap: 8px; padding: 20px 0; border-top: 1px solid #eceaf2; }
+.v11-program-row:last-child { border-bottom: 1px solid #eceaf2; }
+.v11-program-title { font-family: var(--font-heading); font-weight: 500; font-size: 19px; letter-spacing: -0.015em; }
+.v11-program-row.is-card .v11-program-title { font-size: 16px; color: var(--ind); font-family: var(--font-sans); letter-spacing: 0; }
+.v11-program-row p { font-size: 14.5px; line-height: 1.6; color: #3b3854; text-wrap: pretty; }
+@media (min-width: 768px) { .v11-program-row { grid-template-columns: 220px 1fr; gap: 32px; } }
+
+/* =========================================================== featured result */
+.v11-exhibit { display: grid; gap: 40px; align-items: center; }
+@media (min-width: 1280px) { .v11-exhibit { grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr); gap: 72px; } }
+.v11-exhibit-copy .v11-h2 { margin-top: 16px; }
+.v11-exhibit-dom { font-size: 14px; color: var(--quiet); margin-top: 16px; }
+.v11-exhibit-dom b { font-weight: 500; color: var(--ink); }
+.v11-exhibit-what { font-size: 16px; line-height: 1.6; color: var(--body); margin-top: 16px; text-wrap: pretty; }
+.v11-exhibit-annots { margin-top: 24px; border-top: 1px solid var(--line); }
+.v11-exhibit-annots > div { display: flex; flex-wrap: wrap; gap: 4px 12px; padding: 12px 0; border-bottom: 1px solid var(--line); font-size: 14px; color: var(--body); }
+.v11-exhibit-annots .is-em { font-weight: 500; color: var(--ink); min-width: 150px; }
+.v11-exhibit-out { margin: 28px 0 24px; }
+.v11-exhibit-out .is-num { font-family: var(--font-heading); font-weight: 500; font-size: 56px; line-height: 1; letter-spacing: -0.045em; color: var(--ind); }
+.v11-exhibit-out .is-label { font-size: 15px; font-weight: 500; margin-top: 8px; }
+.v11-exhibit-out .is-src { font-size: 13px; color: var(--quiet); margin-top: 4px; }
+
+/* =========================================================== proof */
+.v11-pgrid { display: grid; grid-template-columns: minmax(0, 1fr); border-top: 1px solid var(--line); border-left: 1px solid var(--line); }
+@media (min-width: 768px) { .v11-pgrid { grid-template-columns: 1.4fr 1fr; } }
+.v11-pcell { position: relative; padding: 32px 28px 34px; border-right: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+@media (min-width: 1280px) { .v11-pcell { padding: 44px 40px 46px; } }
+.v11-pcell .is-num { font-family: var(--font-heading); font-weight: 500; font-size: 56px; line-height: 1; letter-spacing: -0.045em; }
+.v11-pcell.is-hero .is-num { font-size: 72px; color: var(--ind); }
+@media (min-width: 1280px) { .v11-pcell.is-hero .is-num { font-size: 96px; } }
+.v11-pcell .is-label { font-size: 15px; line-height: 1.5; color: var(--body); margin-top: 14px; max-width: 360px; }
+.v11-pcell .is-src { font-size: 13px; color: var(--quiet); margin-top: 8px; }
+
+/* =========================================================== comparison table */
+.v11-table-wrap { overflow-x: auto; border-radius: 18px; background: #ffffff; box-shadow: inset 0 0 0 1px var(--line); }
+.v11-table { width: 100%; min-width: 720px; border-collapse: collapse; font-size: 14.5px; }
+.v11-table th, .v11-table td { text-align: left; vertical-align: top; padding: 18px 22px; border-bottom: 1px solid var(--line); line-height: 1.5; }
+.v11-table thead th { font-size: 13px; font-weight: 500; color: var(--quiet); }
+.v11-table tbody th { font-weight: 500; color: var(--ink); width: 22%; }
+.v11-table td { color: var(--body); }
+.v11-table tbody tr:last-child > * { border-bottom: 0; }
+
+/* =========================================================== questions */
+.v11-faq { display: grid; gap: 32px; }
+@media (min-width: 1280px) { .v11-faq { grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr); gap: 72px; } }
+.v11-faq-list { border-top: 1px solid var(--line); }
+.v11-faq-item { border-bottom: 1px solid var(--line); }
+.v11-faq-item summary { display: flex; align-items: center; justify-content: space-between; gap: 24px; padding: 22px 0; cursor: pointer; list-style: none; font-family: var(--font-heading); font-weight: 500; font-size: 18px; letter-spacing: -0.01em; }
+.v11-faq-item summary::-webkit-details-marker { display: none; }
+.v11-faq-item summary:hover { color: var(--ind); }
+.v11-faq-plus { position: relative; flex-shrink: 0; width: 14px; height: 14px; }
+/* The vertical bar is drawn, not rotated: Paper pins every transform origin to the top left, so a rotated bar
+   imported as an L (2026-09-25). Open, the bar collapses and the minus remains. */
+.v11-faq-plus::before, .v11-faq-plus::after { content: ""; position: absolute; border-radius: 2px; background: currentColor; transition: transform var(--dur) var(--ease); }
+.v11-faq-plus::before { left: 0; top: 6.25px; width: 14px; height: 1.5px; }
+.v11-faq-plus::after { left: 6.25px; top: 0; width: 1.5px; height: 14px; }
+.v11-faq-item[open] .v11-faq-plus::after { transform: scaleY(0); }
+.v11-faq-a { padding: 0 40px 24px 0; font-size: 15.5px; line-height: 1.65; color: var(--body); text-wrap: pretty; }
+.v11-faq-a a { color: var(--ind); text-decoration: underline; text-underline-offset: 3px; }
+/* CMS answers (blog, case studies, industries) can arrive wrapped in paragraphs */
+.v11-faq-a > p { margin: 0; } .v11-faq-a > p + p { margin-top: 0.75em; }
+
+/* =========================================================== sibling services */
+.v11-rel { display: grid; grid-template-columns: minmax(0, 1fr); border-top: 1px solid var(--line); }
+@media (min-width: 768px) { .v11-rel { grid-template-columns: repeat(2, 1fr); column-gap: 40px; } }
+.v11-rel-item { display: grid; grid-template-columns: 1fr auto; gap: 4px 16px; padding: 20px 0; border-bottom: 1px solid var(--line); }
+.v11-rel-item .is-name { font-family: var(--font-heading); font-weight: 500; font-size: 19px; letter-spacing: -0.015em; transition: color var(--dur) var(--ease); }
+.v11-rel-item .is-blurb { grid-column: 1; font-size: 14px; line-height: 1.5; color: var(--body); }
+.v11-rel-item .is-go { grid-column: 2; grid-row: 1 / span 2; align-self: center; display: flex; color: var(--quiet); transition: transform var(--dur) var(--ease), color var(--dur) var(--ease); }
+.v11-rel-item:hover .is-name, .v11-rel-item:hover .is-go { color: var(--ind); }
+.v11-rel-item:hover .is-go { transform: translate(2px, -2px); }
+
+/* =========================================================== long-form body */
+.v11-prose-wrap { max-width: 760px; }
+.v11-prose { margin-top: 28px; font-size: 17px; line-height: 1.7; color: var(--body); }
+.v11-prose > * + * { margin-top: 18px; }
+.v11-prose h2, .v11-prose h3 { font-family: var(--font-heading); font-weight: 500; color: var(--ink); letter-spacing: -0.02em; margin-top: 40px; }
+.v11-prose h2 { font-size: 28px; line-height: 1.15; }
+.v11-prose h3 { font-size: 21px; line-height: 1.25; }
+.v11-prose a { color: var(--ind); text-decoration: underline; text-underline-offset: 3px; }
+.v11-prose ul, .v11-prose ol { padding-left: 22px; }
+.v11-prose ul { list-style: disc; } .v11-prose ol { list-style: decimal; }
+.v11-prose li + li { margin-top: 8px; }
+.v11-prose strong { font-weight: 500; color: var(--ink); }
+
+/* =========================================================== v2: built from the homepage's sections */
+/* hero: the homepage stage without the photograph; the results rail carries the picture */
+.v11-hero.is-service { background: linear-gradient(180deg, #030c5a 0px, #020e6e 260px, #04188f 560px, #3d38cf 860px); }
+.v11-hero.is-service .v11-svc-copy { min-height: 0; padding-bottom: 64px; }
+.v11-hero.is-service .v11-svc-copy h1 { font-size: 44px; margin-top: 18px; max-width: 900px; }
+.v11-hero.is-service .v11-svc-copy p { max-width: 560px; }
+.v11-hero .v11-svc-hero-chip { display: flex; }
+@media (min-width: 768px) { .v11-hero.is-service .v11-svc-copy h1 { font-size: 60px; } }
+@media (min-width: 1280px) {
+  .v11-hero.is-service .v11-svc-copy { display: flex; align-items: flex-end; gap: 64px; }
+  .v11-hero.is-service .v11-svc-main { flex: 1; min-width: 0; }
+  .v11-hero.is-service .v11-svc-copy h1 { font-size: 72px; }
+  .v11-hero.is-service .v11-svc-hero-chip { flex-shrink: 0; flex-direction: column; align-items: flex-start; gap: 6px; margin: 0; padding: 0 0 6px 28px; border-top: 0; border-left: 1px solid rgba(255,255,255,0.2); max-width: 240px; }
+  .v11-hero.is-service .v11-svc-hero-chip .is-num { font-size: 72px; line-height: 0.95; letter-spacing: -0.05em; }
+}
+
+/* what the program covers: colour tiles in the homepage bento's four colours */
+.v11-dtiles { display: grid; grid-template-columns: minmax(0, 1fr); gap: 16px; }
+@media (min-width: 768px) { .v11-dtiles { grid-template-columns: repeat(2, 1fr); gap: 20px; } }
+@media (min-width: 1280px) { .v11-dtiles { grid-template-columns: repeat(6, 1fr); gap: 24px; } .v11-dtile { grid-column: span 2; } .v11-dtiles.is-4 .v11-dtile, .v11-dtiles.is-5 .v11-dtile:nth-child(-n+2), .v11-dtiles.is-7 .v11-dtile:nth-child(-n+4) { grid-column: span 3; } }
+@media (min-width: 768px) and (max-width: 1279px) { .v11-dtiles.is-3 .v11-dtile:last-child, .v11-dtiles.is-5 .v11-dtile:last-child, .v11-dtiles.is-7 .v11-dtile:last-child { grid-column: span 2; } }
+.v11-dtile { position: relative; display: flex; flex-direction: column; min-height: 240px; padding: 28px 28px 30px; border-radius: 24px; overflow: hidden; }
+@media (min-width: 1280px) { .v11-dtile { min-height: 280px; padding: 32px 32px 34px; } }
+.v11-dtile .v11-dcell-title { font-size: 26px; line-height: 1.12; letter-spacing: -0.025em; max-width: 380px; text-wrap: balance; }
+.v11-dtile .v11-dcell-desc { margin-top: auto; padding-top: 28px; max-width: 460px; }
+.v11-dtile.is-ind { background: radial-gradient(ellipse 90% 90% at 90% 100%, #7068f0 0%, #4f46e5 45%, #3a33c7 100%); color: #ffffff; }
+.v11-dtile.is-ind .v11-dcell-desc { color: #dcd9fe; }
+.v11-dtile.is-lav { background: radial-gradient(ellipse 80% 90% at 100% 100%, #b7aaf2 0%, rgba(183,170,242,0) 70%), #ebe6fd; }
+.v11-dtile.is-peach { background: radial-gradient(ellipse 80% 90% at 100% 100%, #f59a7b 0%, rgba(245,154,123,0) 70%), #fde6dc; }
+.v11-dtile.is-sand { background: radial-gradient(ellipse 80% 90% at 100% 100%, #f2c768 0%, rgba(242,199,104,0) 70%), #fcefcf; }
+.v11-dtile.is-lav .v11-dcell-desc { color: #2e2656; }
+.v11-dtile.is-peach .v11-dcell-desc { color: #3d1a10; }
+.v11-dtile.is-sand .v11-dcell-desc { color: #3d3113; }
+.v11-dtile .v11-dcell-chips span { background: rgba(255,255,255,0.7); box-shadow: none; }
+
+/* featured result as the homepage's crosshair case */
+.v11-exhibit-case .v11-exhibit-dom { margin-top: 0; font-size: 15px; }
+.v11-exhibit-case .v11-exhibit-annots { margin-top: 20px; }
+.v11-exhibit-case .v11-rcase-big .is-num { color: var(--ind); }
+.v11-exhibit-cta { margin-top: 24px; }
+.v11-exhibit-case .v11-browser { margin-top: 12px; box-shadow: 0 0 0 1px var(--line), 0 18px 40px rgba(20,16,60,0.12); }

@@ -1,0 +1,74 @@
+/* Case studies index v11. Loads after home-v11.css, service-v11.css and svc.css. Tiles named in WorkIndexV11.tsx. */
+
+.wk .ghost { color: #8a86a6; }
+.wk-tap { min-height: 44px; }
+
+/* =========================================================== 1 · the promise, then the flagship studies' charts */
+.wk-hero { position: relative; margin-top: -64px; padding: 124px 0 72px; background: #ffffff; color: var(--ink); }
+.wk-hero-grid { display: grid; grid-template-columns: minmax(0, 1fr); gap: 24px; align-items: end; }
+.wk-hero-eyebrow { display: inline-flex; align-items: center; gap: 10px; height: 34px; padding: 0 6px 0 14px; border-radius: 99px; background: #ffffff; box-shadow: 0 0 0 1px var(--line); font-size: 14px; font-weight: 500; }
+.wk-hero-eyebrow .is-sub { display: flex; align-items: center; height: 24px; padding: 0 10px; border-radius: 99px; background: var(--ink); color: #ffffff; font-size: 13px; }
+.wk-hero h1 { margin-top: 24px; font-family: var(--font-heading); font-weight: 500; font-size: 46px; line-height: 1; letter-spacing: -0.045em; text-wrap: balance; }
+.wk-hero-copy > p { margin-top: 22px; max-width: 480px; font-size: 17px; line-height: 1.55; color: var(--body); text-wrap: pretty; }
+.wk-hero-ctas { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 22px; margin-top: 28px; }
+.wk-hero-proof { margin-top: 56px; }
+@media (min-width: 768px) { .wk-hero h1 { font-size: 60px; } }
+@media (min-width: 1024px) {
+  .wk-hero { padding: 150px 0 96px; }
+  .wk-hero h1 { font-size: 84px; line-height: 0.98; }
+  .wk-hero-proof { margin-top: 72px; }
+}
+
+/* =========================================================== 2 · the archive */
+.wk-filter { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; padding-bottom: 20px; border-bottom: 1px solid var(--line); }
+.wk-filter .is-label { width: 100%; margin-bottom: 4px; font-size: 13px; color: var(--quiet); }
+.wk-chip { display: inline-flex; align-items: center; gap: 8px; height: 40px; padding: 0 8px 0 14px; border-radius: 10px; background: #f4f3fa; font-size: 14px; font-weight: 500; color: var(--ink); transition: background var(--dur) var(--ease); }
+.wk-chip:hover { background: #ebe9f6; }
+.wk-chip b { display: flex; align-items: center; height: 24px; padding: 0 8px; border-radius: 7px; background: #ffffff; font-size: 12px; font-weight: 500; color: var(--quiet); }
+.wk-chip.is-on { background: var(--ink); color: #ffffff; }
+.wk-chip.is-on b { background: rgba(255,255,255,0.16); color: #ffffff; }
+.wk-group { padding-top: 56px; scroll-margin-top: 80px; }
+.wk-group-head { display: flex; align-items: baseline; justify-content: space-between; gap: 16px; margin-bottom: 24px; }
+.wk-group-head h2 { font-family: var(--font-heading); font-weight: 500; font-size: 32px; letter-spacing: -0.035em; color: var(--ink); }
+.wk-group-head span { font-size: 14px; color: var(--quiet); }
+.wk-grid { display: grid; grid-template-columns: minmax(0, 1fr); gap: 16px; }
+/* a study: its thumbnail on the client's own colour, then the result and the title */
+.wk-card { display: flex; flex-direction: column; min-width: 0; border-radius: 22px; background: #ffffff; box-shadow: 0 0 0 1px var(--line); overflow: hidden; color: var(--ink); transition: transform var(--dur) var(--ease), box-shadow var(--dur) var(--ease); }
+.wk-card:hover { transform: translateY(-3px); box-shadow: 0 0 0 1px var(--line), 0 22px 44px rgba(40,30,90,0.12); }
+.wk-card-pic { position: relative; padding: 22px 22px 0; background: radial-gradient(ellipse 90% 90% at 88% 100%, var(--c-glow) 0%, var(--c-clear) 70%), var(--c-base); overflow: hidden; }
+.wk-card-pic img { display: block; width: 100%; height: 200px; object-fit: cover; object-position: top; border-radius: 10px 10px 0 0; box-shadow: 0 1px 2px rgba(20,16,60,0.1), 0 18px 36px rgba(40,30,90,0.18); }
+.wk-card-body { display: flex; flex-direction: column; gap: 10px; padding: 20px 22px 22px; }
+.wk-card-top { display: flex; align-items: center; justify-content: space-between; gap: 12px; min-height: 28px; }
+.wk-card-logo { display: block; height: 22px; width: auto; max-width: 150px; object-fit: contain; object-position: left; }
+.wk-card-name { font-family: var(--font-heading); font-weight: 500; font-size: 17px; letter-spacing: -0.015em; }
+.wk-card-go { display: flex; align-items: center; justify-content: center; width: 30px; height: 30px; border-radius: 99px; background: #f4f3fa; flex-shrink: 0; }
+.wk-card-result { display: flex; align-items: baseline; flex-wrap: wrap; gap: 4px 10px; }
+.wk-card-result b { font-family: var(--font-heading); font-weight: 500; font-size: 30px; line-height: 1; letter-spacing: -0.04em; white-space: nowrap; }
+.wk-card-result span { font-size: 13px; line-height: 1.4; color: var(--quiet); }
+.wk-card-title { font-size: 14.5px; line-height: 1.45; color: var(--body); text-wrap: pretty; }
+.wk-card-sum { font-size: 15px; line-height: 1.6; color: var(--body); text-wrap: pretty; }
+.wk-card-cta { display: inline-flex; align-items: center; gap: 8px; margin-top: 6px; font-size: 14.5px; font-weight: 500; color: var(--ind); }
+@media (min-width: 768px) { .wk-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (min-width: 1024px) {
+  .wk-filter .is-label { width: auto; margin: 0 8px 0 0; }
+  .wk-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 20px; }
+  /* the lead study: two thirds wide, picture beside the words */
+  .wk-card.is-lead { grid-column: span 2; grid-row: span 2; }
+  .wk-card.is-lead .wk-card-pic { padding: 36px 36px 0; }
+  .wk-card.is-lead .wk-card-pic img { height: 420px; }
+  .wk-card.is-lead .wk-card-body { padding: 26px 32px 30px; }
+  .wk-card.is-lead .wk-card-result b { font-size: 48px; }
+  .wk-card.is-lead .wk-card-title { font-family: var(--font-heading); font-weight: 500; font-size: 24px; line-height: 1.2; letter-spacing: -0.02em; color: var(--ink); }
+}
+
+/* =========================================================== 3 · numbers and how to read them */
+.wk .v11-keys + .v11-keys { border-top: 0; }
+.wk-read { display: grid; grid-template-columns: minmax(0, 1fr); gap: 28px; margin-top: 56px; padding: 32px; border-radius: 24px; background: #ffffff; box-shadow: 0 0 0 1px var(--line); }
+.wk-read-main h3 { font-family: var(--font-heading); font-weight: 500; font-size: 28px; line-height: 1.1; letter-spacing: -0.03em; color: var(--ink); text-wrap: balance; }
+.wk-read-main p { margin-top: 14px; font-size: 15.5px; line-height: 1.6; color: var(--body); max-width: 560px; text-wrap: pretty; }
+.wk-read-points { display: flex; flex-direction: column; gap: 18px; margin: 0; padding: 0; list-style: none; }
+.wk-read-points li { display: flex; flex-direction: column; gap: 4px; padding-top: 18px; border-top: 1px solid var(--line); }
+.wk-read-points li:first-child { padding-top: 0; border-top: 0; }
+.wk-read-points b { font-size: 15px; font-weight: 500; color: var(--ink); }
+.wk-read-points span { font-size: 14px; line-height: 1.5; color: var(--body); text-wrap: pretty; }
+@media (min-width: 1024px) { .wk-read { grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr); gap: 56px; padding: 44px; } }

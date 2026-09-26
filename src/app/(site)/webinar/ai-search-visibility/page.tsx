@@ -1,8 +1,19 @@
+/**
+ * Webinar (AI search visibility masterclass) — v11 (switched 2026-09-26).
+ *
+ * Composed from src/app/webinar-v11 inside the (site) group: the title and the live consent gate (WebinarConsentGate,
+ * registration unchanged) beside the ticket, takeaways beside the Toku answer, the speakers, the agenda drawn to
+ * scale, and the audit. After hero.startsAt (webinar-ai-search.json) the page stops selling a seat and points to the
+ * recording in the recap post. SEO metadata and the Event JSON-LD are unchanged.
+ */
 import type { Metadata } from 'next';
-import Image from 'next/image';
-import { SectionContainer, SectionHeader, Button, Card } from '@/components/ui';
-import { asset } from '@/lib/assets';
-import { WebinarConsentGate } from './_components/WebinarConsentGate';
+import '../../../home-v11/home-v11.css';
+import '../../../service-v11/service-v11.css';
+import '../../../service-v11/svc.css';
+import '../../../audit-v11/audit.css';
+import '../../../webinar-v11/webinar.css';
+import { getAiAuditContent, getHomeV11Content, getWebinarAiSearchContent } from '@/lib/content-utils';
+import { WebinarV11 } from '../../../webinar-v11/WebinarV11';
 import { RIVERSIDE_REGISTRATION_URL } from './_components/config';
 
 export const metadata: Metadata = {
@@ -66,232 +77,16 @@ const EVENT_JSON_LD = {
   },
 };
 
-const SPEAKERS = [
-  {
-    name: 'Arnel Bukva',
-    title: 'Founder, LoudFace',
-    image: '/images/speakers/arnel-bukva.jpg',
-    bio: 'Founder of LoudFace, a Webflow Premium Partner agency specialising in SEO, AEO, and CRO for B2B SaaS. Led the strategy that took Toku from 0 to 86% AI visibility on its core buyer search prompt.',
-  },
-  {
-    name: 'Ella Theisinger',
-    title: 'Solutions Engineer, Webflow',
-    image: '/images/speakers/ella-theisinger.jpg',
-    bio: "Ella Theisinger is a Solutions Engineer at Webflow based in London, working with businesses across EMEA. She brings a customer-facing perspective on how platform choices shape a website's ability to perform in an AI-driven search landscape.",
-  },
-  {
-    name: 'Natalie Sangkagalo',
-    title: 'Head of Marketing, Toku',
-    image: '/images/speakers/natalie-sangkagalo.jpg',
-    bio: "Heads marketing at Toku, the stablecoin-payroll platform at the centre of this masterclass. Natalie walks through the strategy from the client side — what changed, what didn't, and what it means for pipeline.",
-  },
-];
+export default async function WebinarPage() {
+  const [c, audit, home] = await Promise.all([getWebinarAiSearchContent(), getAiAuditContent(), getHomeV11Content()]);
 
-const TAKEAWAYS = [
-  'The exact content structure LoudFace used to make Toku appear in ChatGPT, Perplexity, and Google AI Overviews — so you can replicate it on your own site.',
-  'A simple framework to audit your AI visibility in under 20 minutes and identify the highest-impact changes.',
-  'The specific on-page and technical changes made to Toku\'s site — with principles that apply to any platform, not just Webflow.',
-  'How to get your brand named in AI answers for the exact search prompts your buyers are already running — with results you can track.',
-];
-
-const AGENDA = [
-  { duration: '5 min', title: 'Welcome & speaker intros' },
-  { duration: '10 min', title: 'Why AI search is skipping your website' },
-  { duration: '10 min', title: 'The Toku case study: from 0 to 86%' },
-  { duration: '10 min', title: 'The exact changes: content, structure, platform' },
-  { duration: '5 min', title: 'Your AI visibility audit framework' },
-  { duration: '10 min', title: 'Live Q&A' },
-];
-
-export default function WebinarPage() {
   return (
     <>
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(EVENT_JSON_LD) }}
       />
-
-      {/* Hero */}
-      <SectionContainer padding="lg" className="text-center">
-        <div className="mb-4">
-          <span className="inline-flex items-center gap-2 rounded-full bg-primary-50 px-4 py-1.5 text-sm font-semibold text-primary-600">
-            <span className="h-1.5 w-1.5 rounded-full bg-primary-600" />
-            LoudFace × Webflow · Live Masterclass
-          </span>
-        </div>
-
-        {/* Proof stat */}
-        <div className="mb-6">
-          <p className="font-heading text-7xl font-medium tracking-tight text-primary-600 md:text-8xl">
-            0 → 86%
-          </p>
-          <p className="mt-2 text-base text-surface-500">
-            AI visibility on Toku&apos;s core buyer search prompt
-          </p>
-        </div>
-
-        <h1 className="mx-auto mb-4 max-w-3xl text-4xl font-medium leading-tight tracking-tight text-surface-900 sm:text-5xl">
-          Why your website is{' '}
-          <span className="text-primary-600">invisible in AI search</span>{' '}
-          — and how to fix it
-        </h1>
-
-        <p className="mx-auto mb-6 max-w-xl text-lg text-surface-600">
-          A 50-minute live breakdown of the exact content architecture, on-page changes, and
-          platform decisions that took Toku from 0 → 86% on AI visibility.{' '}
-          <br className="hidden sm:block" />
-          Every step, no theory.
-        </p>
-
-        <p className="mb-8 text-lg font-medium text-surface-700">
-          Thursday, July 9, 2026 &nbsp;·&nbsp; 11:00 AM ET &nbsp;·&nbsp; Live + Q&amp;A
-        </p>
-
-        <WebinarConsentGate source="hero" />
-
-        {/* Proof bar */}
-        <div className="mx-auto mt-12 flex max-w-2xl flex-wrap items-center justify-center gap-6 rounded-2xl border border-surface-200 bg-white px-8 py-5">
-          <div className="flex items-center gap-3">
-            <img
-              src={asset('/images/toku-logo.png')}
-              alt="Toku"
-              width={52}
-              height={20}
-              loading="lazy"
-              className="h-5 w-auto"
-            />
-            <span className="text-sm text-surface-600">
-              went from <strong className="text-surface-900">0 → 86%</strong> AI visibility on its core search prompt
-            </span>
-          </div>
-          <div className="hidden h-6 w-px bg-surface-200 sm:block" />
-          <img
-            src={asset('/images/webflow-logo.png')}
-            alt="Webflow"
-            width={143}
-            height={24}
-            loading="lazy"
-            className="h-6 w-auto"
-          />
-        </div>
-      </SectionContainer>
-
-      {/* Takeaways */}
-      <SectionContainer padding="default" className="bg-surface-50">
-        <SectionHeader
-          eyebrow="What you'll learn"
-          title="What you'll leave with"
-          align="center"
-          className="mb-10"
-        />
-        <div className="grid gap-4 sm:grid-cols-2">
-          {TAKEAWAYS.map((item, i) => (
-            <Card key={i} padding="lg" hover={false}>
-              <p className="mb-3 font-mono text-xs font-bold text-primary-600">
-                {String(i + 1).padStart(2, '0')}
-              </p>
-              <p className="text-sm leading-relaxed text-surface-600">{item}</p>
-            </Card>
-          ))}
-        </div>
-      </SectionContainer>
-
-      {/* Speakers */}
-      <SectionContainer padding="default">
-        <SectionHeader
-          eyebrow="Speakers"
-          title="Who's in the room"
-          align="center"
-          className="mb-10"
-        />
-        <div className="mx-auto grid max-w-5xl gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {SPEAKERS.map((speaker) => (
-            <Card key={speaker.name} padding="lg" hover={false}>
-              <Image
-                src={asset(speaker.image)}
-                alt={speaker.name}
-                width={72}
-                height={72}
-                quality={82}
-                className="mb-5 h-18 w-18 rounded-full object-cover"
-              />
-              <p className="text-lg font-medium text-surface-900">{speaker.name}</p>
-              <p className="mb-4 text-sm font-semibold text-primary-600">{speaker.title}</p>
-              <p className="text-sm leading-relaxed text-surface-600">{speaker.bio}</p>
-            </Card>
-          ))}
-        </div>
-      </SectionContainer>
-
-      {/* Agenda */}
-      <SectionContainer padding="default" className="bg-surface-50">
-        <SectionHeader
-          eyebrow="Agenda"
-          title="50 minutes, structured"
-          align="center"
-          className="mb-10"
-        />
-        <Card
-          padding="none"
-          hover={false}
-          className="mx-auto max-w-lg divide-y divide-surface-200"
-        >
-          {AGENDA.map((item, i) => (
-            <div key={i} className="flex items-center gap-4 px-6 py-4">
-              <span className="w-14 text-right font-mono text-xs text-surface-400">
-                {item.duration}
-              </span>
-              <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-primary-50 text-xs font-bold text-primary-600">
-                {i + 1}
-              </span>
-              <span className="text-sm text-surface-800">{item.title}</span>
-            </div>
-          ))}
-        </Card>
-      </SectionContainer>
-
-      {/* Registration */}
-      <SectionContainer
-        id="register"
-        padding="lg"
-        className="bg-primary-50 text-center"
-      >
-        <p className="mb-2 text-xs font-bold uppercase tracking-widest text-primary-600">
-          Register
-        </p>
-        <h2 className="mb-3 text-2xl font-medium text-surface-900 sm:text-3xl">
-          Save your seat
-        </h2>
-        <p className="mx-auto mb-8 max-w-sm text-base text-surface-600">
-          Thursday, July 9, 2026 &middot; 11:00 AM ET &middot; Live + Q&amp;A
-        </p>
-        <WebinarConsentGate source="register" />
-      </SectionContainer>
-
-      {/* AI Audit CTA */}
-      <SectionContainer padding="default" className="bg-white">
-        <div className="mx-auto flex max-w-3xl flex-col items-center gap-8 sm:flex-row sm:gap-12">
-          <div className="flex-1">
-            <p className="mb-2 text-xs font-bold uppercase tracking-widest text-primary-600">
-              Before the masterclass
-            </p>
-            <h2 className="mb-3 text-2xl font-medium leading-snug text-surface-900">
-              Your competitors are winning deals on ChatGPT searches.
-              How far behind are you?
-            </h2>
-            <p className="text-sm leading-relaxed text-surface-600">
-              Run a free AI Visibility Audit and find out exactly where your site stands before
-              you join the masterclass — so you know what to focus on when you&apos;re in the room.
-            </p>
-          </div>
-          <div className="shrink-0 text-center">
-            <Button variant="secondary" size="lg" href="/ai-audit">
-              Run my free audit →
-            </Button>
-            <p className="mt-2 text-xs text-surface-400">Takes 2 minutes. No signup needed.</p>
-          </div>
-        </div>
-      </SectionContainer>
+      <WebinarV11 c={c} audit={audit} home={home} />
     </>
   );
 }

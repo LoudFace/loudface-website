@@ -1,0 +1,24 @@
+/* Thank-you v11 (/thank-you). Loads after home-v11.css, service-v11.css, svc.css, contact.css and industry.css. */
+.ty .ghost { color: #8a86a6; }
+.ty-hero { margin-top: -64px; padding: 116px 0 80px; background: #ffffff; color: var(--ink); }
+.ty-hero-grid { display: grid; grid-template-columns: minmax(0, 1fr); gap: 48px; }
+.ty-tick { display: flex; align-items: center; justify-content: center; width: 56px; height: 56px; border-radius: 99px; background: #e3f5ea; }
+.ty-hero h1 { margin-top: 28px; font-family: var(--font-heading); font-weight: 500; font-size: 48px; line-height: 1.02; letter-spacing: -0.045em; text-wrap: balance; }
+.ty-body { margin-top: 22px; font-size: 19px; line-height: 1.55; color: var(--body); max-width: 520px; text-wrap: pretty; }
+.ty-booked { padding: 4px 10px; border-radius: 99px; background: #e3f5ea; color: #1b7f4b; font-size: 13px; font-weight: 500; }
+.ty-slot { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; margin-top: 18px; padding: 14px 16px; border-radius: 14px; background: var(--warm); }
+.ty-slot b { font-family: var(--font-heading); font-weight: 500; font-size: 20px; letter-spacing: -0.015em; }
+.ty-slot span { font-size: 14px; color: var(--muted); }
+@media (min-width: 768px) { .ty-hero h1 { font-size: 64px; } }
+@media (min-width: 1024px) { .ty-hero-grid { grid-template-columns: minmax(0, 1fr) minmax(0, 460px); gap: 72px; align-items: center; } }
+@media (min-width: 1280px) { .ty-hero { padding: 150px 0 104px; } .ty-hero h1 { font-size: 80px; } }
+.ty-cards { display: grid; grid-template-columns: minmax(0, 1fr); gap: 32px 24px; }
+.ty-card { display: flex; flex-direction: column; gap: 8px; color: var(--ink); }
+.ty-card .in-card-shot { margin-bottom: 10px; }
+.ty-card:hover .in-card-shot img { transform: scale(1.03); }
+.ty-card .is-t { display: flex; align-items: center; justify-content: space-between; gap: 12px; font-family: var(--font-heading); font-weight: 500; font-size: 24px; letter-spacing: -0.02em; }
+.ty-card .is-t svg { color: var(--quiet); }
+.ty-card:hover .is-t, .ty-card:hover .is-t svg { color: var(--ind); }
+.ty-card .is-b { font-size: 16px; color: var(--body); }
+@media (min-width: 768px) { .ty-cards { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+.ty-card .in-card-shot { aspect-ratio: 16 / 9; box-shadow: 0 0 0 1px var(--line); } .ty-card .in-card-shot img { object-position: center top; }

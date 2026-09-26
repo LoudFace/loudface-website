@@ -1,0 +1,541 @@
+{
+  "hero": {
+    "headline": "When buyers ask AI, <br>be the answer.",
+    "body": "We design, build and write the pages ChatGPT, Perplexity and Gemini cite, and grow the ones Google ranks. Measured in leads, not traffic.",
+    "ctaPrimary": "Book a strategy call",
+    "ctaSecondary": "See the work",
+    "bandLabel": "Results, measured from the day we started",
+    "pinNote": "marks the day LoudFace started",
+    "imageAlt": "A hand holding a phone showing an AI answer that names a LoudFace client",
+    "prevAriaLabel": "Previous results",
+    "nextAriaLabel": "Next results",
+    "slides": [
+      {
+        "tag": "AI answers",
+        "client": "LoudFace",
+        "metric": "15.3%",
+        "caption": "of non-branded AI answers name us, up from 0.13%",
+        "periodStart": "Apr 2026",
+        "periodEnd": "Sep 2026",
+        "tip": "of AI answers"
+      },
+      {
+        "tag": "Search",
+        "client": "Genie Teacher",
+        "metric": "150×",
+        "caption": "Google impressions a day",
+        "periodStart": "Apr 2026",
+        "periodEnd": "Sep 2026",
+        "tip": "the May average"
+      },
+      {
+        "tag": "Leads",
+        "client": "Delshad Legal",
+        "metric": "2.5×",
+        "caption": "case enquiries a week since August",
+        "periodStart": "Jun 2026",
+        "periodEnd": "Sep 2026",
+        "tip": "the weeks before August"
+      },
+      {
+        "tag": "Clicks",
+        "client": "TradeMomentum",
+        "metric": "7.2×",
+        "caption": "Google clicks a week, over a year",
+        "periodStart": "Aug 2025",
+        "periodEnd": "Aug 2026",
+        "tip": "a December week"
+      },
+      {
+        "tag": "AI answers",
+        "client": "Stealth fintech",
+        "metric": "0.5% → 10.5%",
+        "caption": "AI visibility in ten weeks",
+        "periodStart": "Jun 2026",
+        "periodEnd": "Aug 2026",
+        "tip": "AI visibility"
+      },
+      {
+        "tag": "Leads",
+        "client": "Genie Teacher",
+        "metric": "7.8×",
+        "caption": "lead requests in the first week of September",
+        "periodStart": "Jul 2026",
+        "periodEnd": "Sep 2026",
+        "tip": "the weeks before September"
+      }
+    ]
+  },
+  "logos": {
+    "label": "TRUSTED BY",
+    "count": "50+ TEAMS",
+    "body": "SaaS, fintech and service brands we design, build and grow.",
+    "tag": "Case study",
+    "genie": "Genie Teacher"
+  },
+  "bento": {
+    "eyebrow": "What we do",
+    "heading": "The site, Google and AI answers, <br>run by one team",
+    "body": "One retainer covers design, build, SEO, AEO and GEO, content and conversion. One team, one report, one set of numbers.",
+    "tiles": [
+      {
+        "label": "AI answers",
+        "heading": "Get named when buyers ask AI who to shortlist",
+        "metric": "97.8%",
+        "caption": "of answers name Toku"
+      },
+      {
+        "label": "Search",
+        "heading": "Grow the pages Google already wants to rank",
+        "metric": "150×",
+        "caption": "Google impressions a day",
+        "client": "Genie Teacher"
+      },
+      {
+        "label": "Design",
+        "heading": "Positioning, copy and design that earn trust",
+        "metric": "+288%",
+        "caption": "conversions after the redesign"
+      },
+      {
+        "label": "Build on Webflow",
+        "heading": "A site your team can edit on day one",
+        "metric": "1,082+",
+        "caption": "CMS pages moved to Webflow"
+      }
+    ],
+    "chat": {
+      "model": "ChatGPT",
+      "question": "Best stablecoin payroll providers?",
+      "answerLead": "For stablecoin payroll,",
+      "answerBrand": "Toku",
+      "answerTail": "is the most complete option.",
+      "sourcesLabel": "Sources",
+      "sourceOne": "toku.com",
+      "sourceTwo": "Comparison site",
+      "inputHint": "Ask anything"
+    }
+  },
+  "results": {
+    "eyebrow": "Results",
+    "heading": "Measured in leads, <br>not traffic",
+    "body": "The pin marks the day LoudFace started. Every number is the client’s own, from Search Console, Peec AI and their analytics.",
+    "against": "against",
+    "caseLink": "Case study",
+    "cases": [
+      {
+        "client": "Delshad Legal",
+        "claim": "grew case enquiries 2.5× a week and search visibility 6.3×",
+        "metric": "6.3×",
+        "metricLabel": "Google impressions a day, against the March average",
+        "chartLabel": "Google impressions a day",
+        "source": "Search Console",
+        "tip": "the March average"
+      },
+      {
+        "client": "Genie Teacher",
+        "claim": "grew Google impressions 150× from May to September",
+        "chartLabel": "Google impressions a day",
+        "source": "Search Console",
+        "tip": "the May average"
+      },
+      {
+        "client": "TradeMomentum",
+        "claim": "grew Google clicks 7.2× in a year",
+        "chartLabel": "Google clicks a week",
+        "source": "Search Console",
+        "tip": "a December week"
+      },
+      {
+        "client": "LoudFace",
+        "claim": "went from 0.13% to 15.3% of non-branded AI answers",
+        "chartLabel": "Share of AI answers",
+        "source": "Peec AI",
+        "tip": "of AI answers"
+      }
+    ]
+  },
+  "route": {
+    "eyebrow": "How an engagement runs",
+    "heading": "A call, a plan, <br>then work every month",
+    "body": "No 47-slide proposals and no three-month discovery phase.",
+    "steps": [
+      {
+        "when": "Week 0",
+        "heading": "Strategy call",
+        "body": "30 minutes on what is broken and what good looks like.",
+        "outcome": "A written scope in 48 hours"
+      },
+      {
+        "when": "Weeks 1 to 4",
+        "heading": "Growth plan",
+        "body": "We survey discovery, content, conversion and your stack.",
+        "outcome": "A written route to customers"
+      },
+      {
+        "when": "Weeks 4 to 6",
+        "heading": "Ship and measure",
+        "body": "The agreed work goes live, and the numbers get a baseline.",
+        "outcome": "Analytics tied to pipeline"
+      },
+      {
+        "when": "Month 3 onward",
+        "heading": "Grow and get found",
+        "body": "Content, page updates and tests, every month.",
+        "outcome": "One report on what moved"
+      }
+    ],
+    "call": {
+      "heading": "Strategy call with Arnel",
+      "meta": "30 min · Video call",
+      "days": [
+        {
+          "weekday": "Mon",
+          "date": "5"
+        },
+        {
+          "weekday": "Tue",
+          "date": "6"
+        },
+        {
+          "weekday": "Wed",
+          "date": "7"
+        },
+        {
+          "weekday": "Thu",
+          "date": "8"
+        },
+        {
+          "weekday": "Fri",
+          "date": "9"
+        }
+      ],
+      "slots": [
+        "10:00",
+        "10:30",
+        "11:00"
+      ]
+    },
+    "plan": {
+      "heading": "Growth plan",
+      "meta": "· first 90 days",
+      "rows": [
+        "AI answers",
+        "Search",
+        "Design",
+        "Build"
+      ]
+    },
+    "track": {
+      "heading": "Tracking",
+      "meta": "set before month one",
+      "live": "Live",
+      "tools": [
+        {
+          "tool": "Search Console",
+          "use": "Google"
+        },
+        {
+          "tool": "Peec AI",
+          "use": "AI answers"
+        },
+        {
+          "tool": "PostHog",
+          "use": "Leads"
+        }
+      ]
+    },
+    "report": {
+      "heading": "Monthly report",
+      "meta": "Delshad Legal · Sep",
+      "chipOneMetric": "2.5×",
+      "chipOneLabel": "case enquiries a week",
+      "chipTwoMetric": "1st of 12",
+      "chipTwoLabel": "law firms in AI answers",
+      "tip": "the March average"
+    },
+    "youGet": "You get:"
+  },
+  "plan": {
+    "eyebrow": "Plan and reporting",
+    "heading": "A plan in week one. <br>A report every month.",
+    "body": "Written by the strategist who runs your account: what moved, why it moved, and what we would do next. AI agents do the tracking; people make the calls.",
+    "tabs": [
+      {
+        "kicker": "Week one",
+        "title": "The plan"
+      },
+      {
+        "kicker": "Every Friday",
+        "title": "The note"
+      },
+      {
+        "kicker": "Every month",
+        "title": "The report"
+      },
+      {
+        "kicker": "On the call",
+        "title": "What we do next"
+      }
+    ],
+    "brand": "LoudFace",
+    "sign": "Arnel Bukva",
+    "signRole": "Founder, your strategist",
+    "planDoc": {
+      "meta": "Growth plan · Your company · week one",
+      "betLabel": "The bet",
+      "bet": "Own the AI answers for “best payroll software for startups” within 90 days.",
+      "betBody": "Buyers now ask ChatGPT before they search. Today you appear in 6% of those answers and the leader in 12%. The fastest route is comparison and answer pages on the prompts your buyers already use.",
+      "daysLabel": "The first 90 days",
+      "months": [
+        {
+          "month": "Month 1",
+          "work": "Prompt research, positioning, technical fixes"
+        },
+        {
+          "month": "Month 2",
+          "work": "Answer and comparison pages, new site pages"
+        },
+        {
+          "month": "Month 3",
+          "work": "Scale what worked, conversion tests"
+        }
+      ],
+      "measureLabel": "How we will measure it",
+      "measure": "Share of AI answers, organic sign-ups and pipeline from organic, reported monthly."
+    },
+    "note": {
+      "meta": "Friday 26 Sep · week 7",
+      "greeting": "Hi Sam,",
+      "body": "Three comparison pages went live on Tuesday. Two of them are already cited by Perplexity, which is faster than we expected.",
+      "nextLabel": "Next week",
+      "next": "Brief the pricing comparison page and fix the two pages that dropped out of Google’s AI overview.",
+      "askLabel": "One thing from you",
+      "ask": "Can your product lead review the payroll comparison by Wednesday?",
+      "signOff": "Arnel, your strategist"
+    },
+    "report": {
+      "meta": "Month 2 report · Your company · 3 Oct",
+      "summaryLabel": "1 · Summary",
+      "headline": "Your share of AI answers more than doubled, to 14.2%.",
+      "body": "Most of the gain came in the four weeks after the answer pages went live. Comparison pages did the heavy lifting: they earned 7 of the 9 new citations in ChatGPT and Perplexity. Your strongest competitor held flat at 12%.",
+      "figure": "Figure 1. Share of AI answers, weekly",
+      "figureNote": "You vs. top competitor",
+      "pin": "Answer pages live",
+      "start": "Kickoff",
+      "end": "Week 8",
+      "didLabel": "2 · What we did",
+      "did": [
+        {
+          "figure": "12",
+          "line": "answer pages published"
+        },
+        {
+          "figure": "41",
+          "line": "technical fixes shipped"
+        },
+        {
+          "figure": "212",
+          "line": "organic sign-ups, up 46%"
+        }
+      ],
+      "recLabel": "3 · Our recommendation",
+      "rec": "Put month 3 into comparison pages.",
+      "recBody": "They won 7 of 9 new citations. We would write six more, pause two blog posts a month, and show you the effect in the next report. Same hours, no new budget."
+    },
+    "markup": {
+      "figure": "Figure 1 · Share of AI answers, weekly",
+      "meta": "Your company · Month 2 report · page 2",
+      "doubled": "more than doubled!",
+      "live": "answer pages went live",
+      "flat": "competitor stuck at 12%",
+      "verdict": "So: put month 3 into comparison pages. Same hours. – Arnel"
+    },
+    "srText": "How reporting works: a written growth plan in week one, a note from your strategist every Friday, and a monthly report with a recommendation you decide on together. The example shows a client whose share of AI answers rose from 6.1% to 14.2% in eight weeks."
+  },
+  "testimonials": {
+    "eyebrow": "What clients say",
+    "heading": "In their words, with <br>the numbers",
+    "ratings": [
+      {
+        "platform": "Clutch",
+        "score": "4.8",
+        "detail": "2 reviews, both verified"
+      },
+      {
+        "platform": "Google",
+        "score": "5.0",
+        "detail": "4 reviews"
+      },
+      {
+        "platform": "Trustpilot",
+        "score": "4.3",
+        "detail": "9 reviews, every one 5 stars"
+      }
+    ],
+    "videos": [
+      {
+        "duration": "1:35",
+        "quote": "“One of the landing pages they designed has generated over $1M in sales so far.”",
+        "person": "Maksim Polupanov",
+        "jobTitle": "CEO, Outbound Specialist",
+        "source": "Trustpilot"
+      },
+      {
+        "duration": "0:29",
+        "quote": "“From start to finish, the team exceeded expectations.”",
+        "person": "Sarig Reichert",
+        "jobTitle": "CPO, Dimer Health",
+        "source": "Trustpilot"
+      },
+      {
+        "duration": "1:53",
+        "quote": "“LoudFace really stood out with their approach and let’s get this done attitude.”",
+        "person": "Elizabete",
+        "jobTitle": "Product Marketer, Reiterate",
+        "source": ""
+      }
+    ],
+    "cards": [
+      {
+        "metric": "97.8%",
+        "caption": "AI visibility on its top prompt, up from 0",
+        "quote": "“You guys are the experts. I can rely on you to drive the plan, and I’m probably going to say yes to almost everything.”",
+        "person": "Kenneth O’Friel",
+        "jobTitle": "CEO, Toku",
+        "source": ""
+      },
+      {
+        "metric": "150×",
+        "caption": "Google impressions a day, May to September",
+        "quote": "“Working with LoudFace has been refreshing; we were surprised by their passion.”",
+        "person": "Kevin Wong",
+        "jobTitle": "Genie Teacher",
+        "source": "Clutch",
+        "initial": "K",
+        "brand": "Genie Teacher"
+      },
+      {
+        "metric": "4 leads",
+        "caption": "in the first 24 hours, from paid-ad traffic",
+        "quote": "“We began receiving leads immediately after the launch of our campaign.”",
+        "person": "Daan Smit",
+        "jobTitle": "CEO and Founder, Brandfirm",
+        "source": "Trustpilot"
+      }
+    ]
+  },
+  "team": {
+    "eyebrow": "The team",
+    "heading": "Some of the people on your account",
+    "body": "Senior strategists, writers and search specialists. You meet them on the first call and they stay with you through every monthly report.",
+    "people": [
+      {
+        "person": "Arnel Bukva",
+        "jobTitle": "Founder and Head of Growth",
+        "does": "Runs the strategy call and your growth plan"
+      },
+      {
+        "person": "Tamara Pavlovic",
+        "jobTitle": "Lead SEO, AEO & GEO Specialist",
+        "does": "Runs client accounts end to end, from Montblanc to seed-stage SaaS"
+      },
+      {
+        "person": "Andrea Van Wyk",
+        "jobTitle": "Lead SEO, AEO & GEO Specialist",
+        "does": "Runs client accounts end to end, with a sharp eye for positioning and page copy"
+      },
+      {
+        "person": "Abhay Tyagi",
+        "jobTitle": "Lead SEO, AEO & GEO Specialist",
+        "does": "Six-plus years in organic search, now running accounts across SEO, AEO and GEO"
+      }
+    ],
+    "noteHeading": "No account managers in between.",
+    "noteBody": "AI agents handle the research, QA and weekly tracking. Our people run them and sign off every piece of work.",
+    "benchHeading": "And the rest of the team",
+    "benchBody": "Behind them, senior Webflow developers, designers, writers and link builders join your account as your plan calls for them. One lead stays accountable for all of it.",
+    "benchRoles": [
+      "Webflow developers",
+      "Designers",
+      "Writers",
+      "Link builders",
+      "Data analysts"
+    ]
+  },
+  "closing": {
+    "eyebrow": "A 30-minute strategy call",
+    "heading": "Find out where AI answers <br>put you today.",
+    "agenda": [
+      {
+        "heading": "Your visibility in AI answers now",
+        "body": "ChatGPT, Perplexity, Gemini and AI Overviews"
+      },
+      {
+        "heading": "Which pages they read",
+        "body": "The sources behind the answers in your category"
+      },
+      {
+        "heading": "What we would do first",
+        "body": "A written scope within 48 hours"
+      }
+    ],
+    "emailLead": "Prefer email? Write to",
+    "email": "hello@loudface.co",
+    "reply": "We reply within two hours during working hours"
+  },
+  "footer": {
+    "brand": "LoudFace",
+    "blurb": "Websites, search and AI answers for B2B SaaS and fintech teams. One team, one report, one set of numbers.",
+    "partner": "Webflow Enterprise Partner",
+    "offices": [
+      {
+        "city": "Dubai",
+        "address": "Dubai Silicon Oasis, DDP <br>Building A1, UAE"
+      },
+      {
+        "city": "San Francisco",
+        "address": "Working with teams <br>across the US"
+      }
+    ],
+    "columns": [
+      {
+        "heading": "Services",
+        "links": [
+          "AI answers (AEO and GEO)",
+          "SEO",
+          "Webflow development",
+          "Design",
+          "Conversion"
+        ]
+      },
+      {
+        "heading": "Company",
+        "links": [
+          "Case studies",
+          "Methodology",
+          "About",
+          "Pricing",
+          "Blog",
+          "Careers"
+        ]
+      },
+      {
+        "heading": "Get in touch",
+        "links": [
+          "Book a strategy call",
+          "hello@loudface.co",
+          "LinkedIn",
+          "X"
+        ]
+      }
+    ],
+    "legal": "© 2026 LoudFace",
+    "privacy": "Privacy",
+    "terms": "Terms",
+    "cookies": "Cookies",
+    "iconCredit": "Menu icons: Isocons",
+    "iconLicence": "CC BY 4.0",
+    "iconChange": "recoloured"
+  }
+}

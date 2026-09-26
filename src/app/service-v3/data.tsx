@@ -39,7 +39,7 @@ export function artifactSrc(a: Artifact, images: Record<string, string> | undefi
 }
 
 /* ---- the eight real client shots we draw from (slugs match getServiceImages) ---- */
-const SHOTS = {
+export const SHOTS = {
   liqid: { slug: 'liqid', asset: '5f21404454406eee90732e4e1c8655e0c8c6013b-3024x3629.webp', domain: 'liqid.de' },
   eraser: { slug: 'eraser', asset: '2a7d29fdc9302c8482d70b73041e6c58ec9229a6-1440x1845.webp', domain: 'eraser.io' },
   dimer: { slug: 'dimer-health', asset: 'a0f4750b896ced6ffca9c5869623b15614f312ba-1440x10131.webp', domain: 'dimerhealth.com' },
@@ -165,7 +165,7 @@ export const SERVICE_CONFIGS: Record<string, ServiceConfig> = {
       blurb:
         'We build component-first Webflow websites your team can actually build on. Spin up landing pages in hours, split test everything, and watch your conversion rates climb.',
       secondary: SEE_WORK,
-      chip: { value: '200+', label: 'B2B SaaS sites shipped' },
+      chip: { value: '50+', label: 'B2B teams we have built sites for' },
       main: { ...shot('liqid', 'LIQID website built by LoudFace on Webflow'), rpillLabel: 'Webflow build', rpillClient: 'LIQID' },
       frag: shot('eraser', ''),
     },
@@ -446,7 +446,7 @@ export const SERVICE_CONFIGS: Record<string, ServiceConfig> = {
       blurb:
         'The visitors who land on your site are fewer, but they’re ready to act — if your site lets them. We run CRO programs that treat every page as a revenue conversation, not a brochure.',
       secondary: SEE_WORK,
-      chip: { value: '288%', label: 'Conversion lift, Dimer Health' },
+      chip: { value: '+288%', label: 'conversions after the redesign, Dimer Health' },
       main: { ...shot('dimer', 'Dimer Health conversion program by LoudFace'), rpillLabel: 'CRO program', rpillClient: 'Dimer Health' },
       frag: shot('outbound', ''),
     },
@@ -672,9 +672,9 @@ export const SERVICE_CONFIGS: Record<string, ServiceConfig> = {
         </>
       ),
       blurb:
-        'LoudFace is a full-stack organic growth agency for B2B SaaS and fintech, with AI visibility measured per engine. We run SEO, AEO, and GEO as one program, so you can rank on Google and get cited inside ChatGPT, Perplexity, and Google AI Overviews when buyers ask which vendor to pick. We ran the playbook on our own site: 0.18% to 10.35% of our category’s AI answers in 90 days.',
+        'LoudFace is a full-stack organic growth agency for B2B SaaS and fintech, with AI visibility measured per engine. We run SEO, AEO, and GEO as one program, so you can rank on Google and get cited inside ChatGPT, Perplexity, and Google AI Overviews when buyers ask which vendor to pick. We ran the playbook on our own site: 0.13% to 15.3% of non-branded AI answers between April and September 2026.',
       secondary: AUDIT,
-      chip: { value: '0.18% → 10.35%', label: 'LoudFace’s own site, 90 days' },
+      chip: { value: '0.13% → 15.3%', label: 'LoudFace’s own site, April to September 2026' },
       main: { ...shot('toku', 'Toku website grown by LoudFace for AI visibility'), rpillLabel: 'SEO & AEO', rpillClient: 'Toku' },
       frag: shot('hoxhunt', ''),
     },
@@ -739,11 +739,11 @@ export const SERVICE_CONFIGS: Record<string, ServiceConfig> = {
       ),
       lede:
         'The authority that ranks you on Google is what teaches an AI engine to trust you. We build SEO, AEO, and GEO into one program instead of three invoices. Toku, on the prompt “best stablecoin payroll providers”, went from near zero to 97.8% of AI answers, the highest of any brand on that prompt in the 30-day read ending 19 August 2026.',
-      hero: { num: '0.18% → 10.35%', label: 'of our category’s AI answers in 90 days, running the same playbook on our own site', src: 'LoudFace · first-party study' },
+      hero: { num: '0.13% → 15.3%', label: 'of non-branded AI answers between April and September 2026, running the same playbook on our own site', src: 'LoudFace · Peec AI' },
       extra: { num: '97.8%', label: 'Toku AI visibility on its core stablecoin-payroll prompt (30-day Peec reading ending 19 August 2026; average cited position 3.1 on that prompt)' },
     },
     comparison: {
-      title: "SEO vs AEO vs GEO: what's the difference?",
+      title: 'SEO vs AEO vs GEO: what’s the difference?',
       highlightWord: 'difference?',
       intro: 'Three disciplines, three jobs. Most agencies sell one and rebrand it as all three. Here is the honest split.',
       columns: ['Discipline', 'What it optimizes for', 'Where you show up'],
@@ -780,7 +780,7 @@ export const SERVICE_CONFIGS: Record<string, ServiceConfig> = {
         { q: 'How do you measure AI visibility?', aHtml: 'We track a set of buyer prompts across the engines and measure how often your brand is cited, at what position, and against which competitors. The core metrics are visibility, share of answer, and average position inside the answer, reported weekly and tied back to branded search and pipeline. The methodology is public: <a href="/blog/we-ran-aeo-on-ourselves">we published the 90-day study we ran on our own site</a>.' },
         { q: 'How fast can AI citations land?', aHtml: 'Faster than most agencies admit and slower than most vendors promise, depending on the surface. Google AI Overviews can pick up a well-structured page within days because it rides Google’s index. ChatGPT and Perplexity citations usually take weeks of consistent publishing. Dominant visibility on a competitive prompt cluster takes a quarter or more. We set expectations by surface instead of quoting one blended number.' },
         { q: 'How much does an AEO agency cost?', aHtml: 'Most B2B SaaS SEO and AEO programs at LoudFace start <strong>from $5k per month</strong> as a continuous Autopilot retainer; fixed-scope engagements run inside a retainer with a three-month minimum. After the foundation audit you get a fixed monthly proposal scoped to the goals in your 90-day roadmap. <a href="/pricing">See full pricing and tiers.</a>' },
-        { q: 'How long before I see results?', aHtml: 'Technical fixes and early AEO wins often move inside the first 30 to 60 days. Content authority and organic rankings compound over 90 to 180 days. We set 90-day goals and report against them honestly, with no inflated projections. Running this program on our own site moved us from 0.18% to 10.35% of our category’s AI answers between April and June 2026.' },
+        { q: 'How long before I see results?', aHtml: 'Technical fixes and early AEO wins often move inside the first 30 to 60 days. Content authority and organic rankings compound over 90 to 180 days. We set 90-day goals and report against them honestly, with no inflated projections. Running this program on our own site moved us from 0.13% to 15.3% of non-branded AI answers between April and September 2026.' },
         { q: 'Do you only work with Webflow sites?', aHtml: 'No. Webflow is a delivery capability we happen to be deep in rather than a requirement. The program runs the same on Next.js, Sanity, WordPress, or whatever your marketing site is built on. If you are on Webflow, the same team ships the site changes without a handoff.' },
         { q: 'What happens in the first 90 days of an AEO engagement?', aHtml: 'Kickoff within 48 hours of signature, then a packed week one: access, technical fixes (canonical tags, sitemap, H1s, schema), the per-engine baseline that opens <a href="/methodology">our published eight-stage methodology</a>, one fixed entity sentence, a 90-day roadmap with three to five measurable goals, and the first calibration articles drafted and reviewed with you. You see shipped work inside five days. From there the program ships weekly: entity-first content, technical fixes, structured data, and distribution, with a weekly showcase and a written report every Friday. Months two and three run 20 or more articles a month and 8 to 12 off-site placements a month, and that is where the first movement in AI visibility and the first attributed leads usually land.' },
         { q: 'What results should an AEO agency show you?', aHtml: 'Receipts, not decks. Per-prompt visibility with position, the actual AI answers your buyers see, and movement tied to a named measurement window. If an agency cannot show which prompts it moved and when, it is reporting activity rather than results. For HR software, see our <a href="/seo-for/hr-tech">SEO, AEO and GEO approach for HR tech SaaS</a>.' },
@@ -815,9 +815,9 @@ export const SERVICE_CONFIGS: Record<string, ServiceConfig> = {
         </>
       ),
       blurb:
-        'One senior team runs SEO, AEO and GEO, content, and CRO as a single organic growth program. We ran the same playbook on our own site: 0.18% to 10.35% of our category’s AI answers in 90 days.',
+        'One senior team runs SEO, AEO and GEO, content, and CRO as a single organic growth program. We ran the same playbook on our own site: 0.13% to 15.3% of non-branded AI answers between April and September 2026.',
       secondary: AUDIT,
-      chip: { value: '0.18% → 10.35%', label: 'LoudFace’s own site, 90 days' },
+      chip: { value: '150×', label: 'Google impressions a day, Genie Teacher' },
       main: { ...shot('hoxhunt', 'Hoxhunt website, a LoudFace client engagement'), rpillLabel: 'Organic growth', rpillClient: 'Hoxhunt' },
       frag: shot('dimer', ''),
     },
@@ -882,7 +882,7 @@ export const SERVICE_CONFIGS: Record<string, ServiceConfig> = {
       ),
       lede:
         'Paid stops the day the budget stops. An organic program keeps compounding: every cited page makes the next citation easier, and every ranking feeds the next one.',
-      hero: { num: '0.18% → 10.35%', label: 'of our category’s AI answers in 90 days, running the same playbook on our own site', src: 'LoudFace · first-party study' },
+      hero: { num: '0.13% → 15.3%', label: 'of non-branded AI answers between April and September 2026, running the same playbook on our own site', src: 'LoudFace · Peec AI' },
       extra: { num: '+49%', label: 'CodeOp organic clicks up 49% and impressions up 43% in four months' },
     },
     comparison: {
@@ -919,7 +919,7 @@ export const SERVICE_CONFIGS: Record<string, ServiceConfig> = {
         { q: 'What is the difference between organic growth and performance marketing?', aHtml: 'Performance marketing buys demand while the budget runs: paid search, paid social, retargeting. Organic growth builds assets that keep working after they ship: pages that rank, get cited by AI engines, and convert. Most B2B SaaS needs both for a while, with paid tapering as the organic channel compounds.' },
         { q: 'What does the program include?', aHtml: 'Four tracks on one roadmap: search and answer engines (SEO plus AEO/GEO), a weekly content engine, conversion optimization, and authority building. One team ships all four, so work does not queue between agencies. The deep dives live on the <a href="/services/seo-aeo">SEO &amp; AEO</a>, <a href="/services/geo-agency">GEO</a>, and <a href="/services/cro">CRO</a> pages, and the delivery system behind the program is <a href="/services/growth-autopilot">Growth Autopilot</a>.' },
         { q: 'How is this different from hiring an SEO agency?', aHtml: 'A pure SEO retainer optimizes one channel. An organic growth program treats rankings as one input to pipeline: it adds AI-engine citations, the content that earns them, and the conversion layer built to turn visits into booked calls. You get one roadmap and one accountable team instead of three vendors pointing at each other.' },
-        { q: 'How long until organic growth shows results?', aHtml: 'Early technical and AEO wins move inside the first 30 to 60 days. Content authority and rankings compound over 90 to 180 days. Running this program on our own site moved us from 0.18% to 10.35% of our category’s AI answers between April and June 2026, and the <a href="/blog/we-ran-aeo-on-ourselves">full study is public</a>.' },
+        { q: 'How long until organic growth shows results?', aHtml: 'Early technical and AEO wins move inside the first 30 to 60 days. Content authority and rankings compound over 90 to 180 days. Running this program on our own site moved us from 0.13% to 15.3% of non-branded AI answers between April and September 2026, and the <a href="/blog/we-ran-aeo-on-ourselves">full study is public</a>.' },
         { q: 'How much does an organic growth agency cost?', aHtml: 'LoudFace programs start <strong>from $5k per month</strong> as a continuous Autopilot retainer; fixed-scope engagements run inside a retainer with a three-month minimum. After the growth audit you get a fixed monthly proposal scoped to your 90-day roadmap. <a href="/pricing">See full pricing and tiers.</a>' },
         { q: 'Should we stop running paid ads?', aHtml: 'Usually no. Paid captures demand you cannot reach organically yet, and it is the fastest way to test messaging. The goal is sequencing: keep paid where it pays back while the organic program builds the channel that lowers blended acquisition cost over time.' },
         { q: 'Who is the program for?', aHtml: 'B2B SaaS from Series A to Series C, roughly $1M ARR and up, that wants pipeline from search and AI answers without hiring a four-person in-house team. If you are earlier than that, the honest advice is founder-led content first.' },
@@ -1084,7 +1084,7 @@ export const SERVICE_CONFIGS: Record<string, ServiceConfig> = {
       blurb:
         'AI Overviews answers from the Google Search index. There is no separate AI ranking system to optimize for. We make your pages retrievable and quotable for the fan-out queries those answers are built from, then report per-prompt visibility and average cited position in AI Overviews every week. Engagements start from $5k a month.',
       secondary: AUDIT,
-      chip: { value: '$5k/mo', label: 'Engagements start from' },
+      chip: { value: '6.3×', label: 'Google impressions a day, Delshad Legal' },
       main: { ...shot('toku', 'Toku, cited in Google AI Overviews after LoudFace’s program'), rpillLabel: 'AI Overviews program', rpillClient: 'Toku' },
       frag: shot('montblanc', ''),
     },
@@ -1129,7 +1129,7 @@ export const SERVICE_CONFIGS: Record<string, ServiceConfig> = {
       blurb:
         'We run SEO, AEO, and CRO as one integrated system — so your website stops being a brochure and starts generating qualified pipeline.',
       secondary: AUDIT,
-      chip: { value: '200+', label: 'B2B brands grown' },
+      chip: { value: '50+', label: 'B2B teams grown' },
       main: { ...shot('toku', 'Toku grown by LoudFace’s integrated growth system'), rpillLabel: 'Growth system', rpillClient: 'Toku' },
       frag: shot('dimer', ''),
     },

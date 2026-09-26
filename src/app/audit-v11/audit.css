@@ -1,0 +1,95 @@
+/* Free AI visibility audit v11 (/ai-audit). Loads after home-v11.css, service-v11.css, svc.css and cro-sections.css. */
+.au .ghost { color: #8a86a6; }
+
+/* 1 · hero */
+.au-hero { margin-top: -64px; padding: 116px 0 80px; background: #ffffff; color: var(--ink); }
+.au-hero-grid { display: grid; grid-template-columns: minmax(0, 1fr); gap: 48px; }
+.au-hero h1 { margin-top: 20px; font-family: var(--font-heading); font-weight: 500; font-size: 40px; line-height: 1.04; letter-spacing: -0.042em; text-wrap: balance; }
+.au-sub { margin-top: 20px; font-size: 18px; line-height: 1.55; color: var(--body); max-width: 520px; text-wrap: pretty; }
+.au-pic { margin: 0; }
+.au-ground { padding: 28px 18px; border-radius: 24px; background: radial-gradient(ellipse 80% 90% at 100% 100%, #b7aaf2 0%, rgba(183,170,242,0) 70%), #ebe6fd; }
+.au-pic figcaption { margin-top: 12px; font-size: 13.5px; color: var(--quiet); }
+.au-gets { margin-top: 28px; }
+.au-gets h2 { font-size: 14px; font-weight: 500; color: var(--quiet); padding-bottom: 10px; border-bottom: 1px solid var(--line); }
+.au-gets ul { margin: 0; padding: 0; list-style: none; display: grid; grid-template-columns: minmax(0, 1fr); column-gap: 28px; }
+.au-gets li { padding: 12px 0; border-bottom: 1px solid var(--line); font-size: 15px; line-height: 1.45; color: var(--ink); }
+@media (min-width: 768px) { .au-hero h1 { font-size: 52px; } .au-gets ul { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (min-width: 1024px) { .au-hero-grid { grid-template-columns: minmax(0, 6fr) minmax(0, 6fr); gap: 64px; align-items: start; } .au-ground { padding: 40px 36px; } }
+@media (min-width: 1280px) { .au-hero { padding: 150px 0 104px; } .au-hero h1 { font-size: 60px; } }
+
+/* the live form, in v11 dress */
+.au-form { margin-top: 32px; max-width: 520px; }
+.au-form label { font-size: 14px !important; color: var(--ink) !important; }
+.au-form input { height: 50px; border-radius: 14px !important; border-color: var(--line) !important; font-size: 16px !important; color: var(--ink) !important; background: #ffffff !important; }
+.au-form input:focus-visible { outline: 2px solid var(--ind) !important; outline-offset: 2px; }
+.au-form button[type="submit"] { height: 52px; border-radius: 999px !important; background: var(--ink) !important; font-size: 16px !important; }
+.au-form button[type="submit"]:hover { background: var(--ind) !important; }
+.au-form .text-error { color: #c2410c; }
+.au-form.is-card { margin: 0; padding: 28px; border-radius: 24px; background: #ffffff; color: var(--ink); max-width: none; }
+
+/* the report windows */
+.au-rep { border-radius: 16px; background: #ffffff; box-shadow: 0 2px 4px rgba(10,6,50,0.06), 0 24px 48px rgba(10,6,50,0.12); padding: 20px 22px 22px; color: var(--ink); }
+.au-rep-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding-bottom: 14px; border-bottom: 1px solid var(--line); }
+.au-rep-head .is-brand { display: flex; align-items: center; gap: 8px; font-family: var(--font-heading); font-weight: 500; font-size: 15px; }
+.au-rep-head .is-meta { font-size: 12.5px; color: var(--quiet); }
+.au-grade { display: flex; align-items: center; gap: 14px; padding: 16px 0 6px; }
+.au-grade .is-g { display: flex; align-items: center; justify-content: center; width: 52px; height: 52px; border-radius: 14px; background: #e3f5ea; color: #1b7f4b; font-family: var(--font-heading); font-weight: 500; font-size: 30px; }
+.au-grade .is-k { font-size: 14px; font-weight: 500; }
+.au-metrics { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; margin-top: 12px; }
+.au-metric { display: flex; flex-direction: column; gap: 4px; padding: 12px 14px; border-radius: 12px; background: #f7f7fa; }
+.au-metric .is-k { font-size: 12.5px; color: var(--muted); }
+.au-metric .is-v { font-family: var(--font-heading); font-weight: 500; font-size: 26px; letter-spacing: -0.03em; }
+.au-metric .is-s { font-size: 12.5px; font-weight: 500; }
+.au-metric .is-s.is-good { color: #1b7f4b; }
+.au-metric .is-s.is-warn { color: #b45309; }
+.au-voice { margin-top: 18px; padding-top: 14px; border-top: 1px solid var(--line); display: flex; flex-direction: column; gap: 8px; }
+.au-voice-k { font-size: 13px; font-weight: 500; color: var(--muted); margin-bottom: 2px; }
+.au-bar { display: grid; grid-template-columns: 84px minmax(0, 1fr) 40px; align-items: center; gap: 10px; font-size: 13px; }
+.au-bar .is-track { height: 8px; border-radius: 99px; background: #efeef5; overflow: hidden; }
+.au-bar .is-track i { display: block; height: 100%; border-radius: 99px; background: #c9c5e6; }
+.au-bar.is-self .is-track i { background: var(--ind); }
+.au-bar.is-self .is-n, .au-bar.is-self .is-v { font-weight: 500; color: var(--ind); }
+.au-bar .is-v { text-align: right; color: var(--muted); }
+@media (min-width: 1280px) { .au-metrics { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+
+/* 2 · the problem and the query table */
+.au-problem { display: grid; grid-template-columns: minmax(0, 1fr); gap: 48px; }
+.au-problem p { margin-top: 16px; font-size: 17px; line-height: 1.6; color: var(--body); max-width: 560px; }
+.au-problem .au-lede { margin-top: 24px; font-size: 19px; color: var(--ink); }
+.au-problem p.is-strong { color: var(--ink); font-weight: 500; }
+.au-problem h3 { margin-top: 40px; font-size: 14px; font-weight: 500; color: var(--quiet); padding-bottom: 10px; border-bottom: 1px solid var(--line); max-width: 560px; }
+.au-reveals { margin: 0 0 32px; padding: 0; list-style: none; max-width: 560px; }
+.au-reveals li { padding: 12px 0; border-bottom: 1px solid var(--line); font-size: 15.5px; line-height: 1.45; color: var(--ink); }
+.au-q-pic { padding: 24px 16px; border-radius: 24px; background: radial-gradient(ellipse 80% 90% at 100% 100%, #b7aaf2 0%, rgba(183,170,242,0) 70%), #ebe6fd; }
+.au-q-top { display: flex; align-items: baseline; gap: 12px; padding: 16px 0 10px; }
+.au-q-top b { font-family: var(--font-heading); font-weight: 500; font-size: 30px; letter-spacing: -0.03em; color: #b45309; }
+.au-q-top span { font-size: 14px; color: var(--muted); }
+.au-q-row { display: grid; grid-template-columns: minmax(0, 1fr) repeat(4, 44px); align-items: center; gap: 6px; padding: 10px 0; border-top: 1px solid var(--line); font-size: 13.5px; line-height: 1.35; }
+.au-q-row.is-head { border-top: 0; padding: 6px 0; }
+.au-q-row .is-eng { display: flex; flex-direction: column; align-items: center; gap: 4px; font-size: 12.5px; color: var(--quiet); }
+.au-q-row .is-eng img { border-radius: 5px; }
+.au-q-row .is-m { display: flex; justify-content: center; }
+@media (min-width: 768px) { .au-q-row { grid-template-columns: minmax(0, 1fr) repeat(4, 64px); } }
+@media (min-width: 1024px) { .au-problem { grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: 72px; align-items: start; } .au-q-pic { padding: 40px 36px; } }
+
+/* 4 · closing with the form */
+.au-closing-grid { position: relative; display: grid; grid-template-columns: minmax(0, 1fr); gap: 32px; }
+@media (min-width: 1024px) { .au-closing-grid { grid-template-columns: minmax(0, 1fr) 480px; gap: 72px; align-items: center; } }
+@media (min-width: 1280px) { .au-metrics { grid-template-columns: repeat(6, minmax(0, 1fr)); } .au-metric { grid-column: span 2; } .au-metric:nth-child(-n+2) { grid-column: span 3; } }
+/* tones shared by the landing example and the real report */
+.au-grade .is-g.is-warn { background: #fdf1dc; color: #b45309; }
+.au-grade .is-g.is-bad { background: #fdece4; color: #c2410c; }
+.au-metric .is-s.is-bad { color: #c2410c; }
+.au-metric .is-note { font-size: 12px; line-height: 1.4; color: var(--quiet); }
+.au-q-top.is-good b { color: #1b7f4b; }
+.au-q-top.is-bad b { color: #c2410c; }
+/* phone: the query table keeps the question readable (icons only, tighter frame) */
+@media (max-width: 767px) {
+  .au-q-pic, .au-ground { padding: 12px 8px; }
+  .au-rep { padding: 16px 14px 18px; }
+  /* as the homepage's sheets on a phone: the window keeps its title on one line and drops the audit line */
+  .au-rep-head .is-meta { display: none; }
+  .au-rep-head .is-brand { white-space: nowrap; }
+  .au-q-row { grid-template-columns: minmax(0, 1fr) repeat(4, 30px); gap: 4px; }
+  .au-q-row .is-eng span { display: none; }
+}

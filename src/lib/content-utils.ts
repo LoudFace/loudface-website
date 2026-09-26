@@ -45,6 +45,26 @@ import seoForSaasContent from "@/data/content/seo-for-saas.json";
 import seoForB2bContent from "@/data/content/seo-for-b2b.json";
 import homepageContent from "@/data/content/homepage.json";
 import homepageV3Content from "@/data/content/homepage-v3.json";
+import homeV11Content from "@/data/content/home-v11.json";
+import aboutV11Content from "@/data/content/about-v11.json";
+import pricingV11Content from "@/data/content/pricing-v11.json";
+import workV11Content from "@/data/content/work-v11.json";
+import blogV11Content from "@/data/content/blog-v11.json";
+import industryV11Content from "@/data/content/industry-v11.json";
+import teamV11Content from "@/data/content/team-v11.json";
+import aiAuditContent from "@/data/content/ai-audit.json";
+import webinarAiSearchContent from "@/data/content/webinar-ai-search.json";
+import partnersV11Content from "@/data/content/partners-v11.json";
+import thankYouContent from "@/data/content/thank-you.json";
+import careersV11Content from "@/data/content/careers-v11.json";
+import legalV11Content from "@/data/content/legal-v11.json";
+import consentContent from "@/data/content/consent.json";
+import methodologyV11Content from "@/data/content/methodology-v11.json";
+import aiInstructionsV11Content from "@/data/content/ai-instructions-v11.json";
+import auditReportV11Content from "@/data/content/audit-report-v11.json";
+import seoForHrTechContent from "@/data/content/seo-for-hr-tech.json";
+import seoForAiStartupsContent from "@/data/content/seo-for-ai-startups.json";
+import seoForEdtechContent from "@/data/content/seo-for-edtech.json";
 import pricingContent from "@/data/content/pricing.json";
 import contactContent from "@/data/content/contact.json";
 import servicesContent from "@/data/content/services.json";
@@ -201,6 +221,8 @@ export interface NavContent {
   menuToggleAriaLabel: string;
   mobileMenuAriaLabel: string;
   mobileNavigationAriaLabel: string;
+  /** The v11 menus' own copy (industries with their lead client, the proof card); the services list is shared. */
+  v11: typeof navContent.v11;
 }
 
 export interface NewsletterContent {
@@ -1428,6 +1450,10 @@ export interface ContactNextStepsContent {
   subtitle: string;
   /** Exactly 4 steps; the illustrative calendar companion card is aria-hidden decoration and stays in code. */
   steps: ContactNextStep[];
+  eyebrow?: string;
+  /** The v11 second step's example screen (contact-v11/NextSteps.tsx). */
+  screenTitle?: string;
+  screenTime?: string;
 }
 
 export interface ContactCity {
@@ -1669,6 +1695,26 @@ const contentRegistry: Record<string, unknown> = {
   "seo-for-b2b": seoForB2bContent,
   homepage: homepageContent,
   "homepage-v3": homepageV3Content,
+  "home-v11": homeV11Content,
+  "about-v11": aboutV11Content,
+  "pricing-v11": pricingV11Content,
+  "work-v11": workV11Content,
+  "blog-v11": blogV11Content,
+  "industry-v11": industryV11Content,
+  "team-v11": teamV11Content,
+  "ai-audit": aiAuditContent,
+  "webinar-ai-search": webinarAiSearchContent,
+  "partners-v11": partnersV11Content,
+  "thank-you": thankYouContent,
+  "careers-v11": careersV11Content,
+  "legal-v11": legalV11Content,
+  consent: consentContent,
+  "methodology-v11": methodologyV11Content,
+  "ai-instructions-v11": aiInstructionsV11Content,
+  "audit-report-v11": auditReportV11Content,
+  "seo-for-hr-tech": seoForHrTechContent,
+  "seo-for-ai-startups": seoForAiStartupsContent,
+  "seo-for-edtech": seoForEdtechContent,
   pricing: pricingContent,
   contact: contactContent,
   services: servicesContent,
@@ -1768,6 +1814,18 @@ export async function getCaseStudySliderContent(): Promise<CaseStudySliderConten
  */
 export async function getNavContent(): Promise<NavContent> {
   return markTree('nav', navContent as NavContent);
+}
+
+/** Methodology v11's own labels and chart figures; the page copy itself stays in methodology-v3/data.tsx (approved, hash-verified). */
+export type MethodologyV11Content = typeof methodologyV11Content;
+export async function getMethodologyV11Content(): Promise<MethodologyV11Content> {
+  return markTree('methodology-v11', methodologyV11Content as MethodologyV11Content);
+}
+
+/** The cookie notice's copy (the v11 card; the legacy banner still carries its own). */
+export type ConsentContent = typeof consentContent;
+export async function getConsentContent(): Promise<ConsentContent> {
+  return markTree('consent', consentContent as ConsentContent);
 }
 
 /**
@@ -1876,6 +1934,91 @@ export async function getHomepageContent(): Promise<HomepageContent> {
  */
 export async function getHomepageV3Content(): Promise<HomepageV3Content> {
   return markTree('homepage-v3', homepageV3Content as HomepageV3Content);
+}
+
+/** Homepage v11 (dev-preview/home-v11) content. */
+export type HomeV11Content = typeof homeV11Content;
+export async function getHomeV11Content(): Promise<HomeV11Content> {
+  return markTree('home-v11', homeV11Content);
+}
+
+/** About v11 (dev-preview/home-v11-about) content. */
+export type AboutV11Content = typeof aboutV11Content;
+export async function getAboutV11Content(): Promise<AboutV11Content> {
+  return markTree('about-v11', aboutV11Content);
+}
+export type PricingV11Content = typeof pricingV11Content;
+/** Pricing v11's example pictures (boards, steps, documents); the page copy stays in pricing.json. */
+export async function getPricingV11Content(): Promise<PricingV11Content> {
+  return markTree('pricing-v11', pricingV11Content);
+}
+export type WorkV11Content = typeof workV11Content;
+/** The v11 case studies index copy (the live page kept its copy in components). */
+export async function getWorkV11Content(): Promise<WorkV11Content> {
+  return markTree('work-v11', workV11Content);
+}
+export type IndustryV11Content = typeof industryV11Content;
+/** The v11 industry pages' own labels and example pictures; each page's copy stays in its JSON or Sanity document. */
+export async function getIndustryV11Content(): Promise<IndustryV11Content> {
+  return markTree('industry-v11', industryV11Content);
+}
+/** The three /seo-for long reads (HR tech, AI startups, EdTech), moved from their components on 2026-09-26. */
+const SEO_FOR_ARTICLES = { 'hr-tech': 'seo-for-hr-tech', 'ai-startups': 'seo-for-ai-startups', edtech: 'seo-for-edtech' } as const;
+export type SeoForArticleSlug = keyof typeof SEO_FOR_ARTICLES;
+export const SEO_FOR_ARTICLE_SLUGS = Object.keys(SEO_FOR_ARTICLES) as SeoForArticleSlug[];
+export async function getSeoForArticleContent<T>(slug: SeoForArticleSlug): Promise<T> {
+  const name = SEO_FOR_ARTICLES[slug];
+  return markTree(name, contentRegistry[name] as never) as T;
+}
+export type TeamV11Content = typeof teamV11Content;
+/** The v11 team profile labels and the operator-model titles (DESIGN.md §5 People); bios stay in Sanity. */
+export async function getTeamV11Content(): Promise<TeamV11Content> {
+  return markTree('team-v11', teamV11Content);
+}
+export type AiAuditContent = typeof aiAuditContent;
+/** The /ai-audit page copy (moved out of its page component on 2026-09-26) and the example report it shows. */
+export async function getAiAuditContent(): Promise<AiAuditContent> {
+  return markTree('ai-audit', aiAuditContent);
+}
+export type WebinarAiSearchContent = typeof webinarAiSearchContent;
+/** The /webinar/ai-search-visibility page copy, moved out of its page component on 2026-09-26. */
+export async function getWebinarAiSearchContent(): Promise<WebinarAiSearchContent> {
+  return markTree('webinar-ai-search', webinarAiSearchContent);
+}
+export type PartnersV11Content = typeof partnersV11Content;
+/** The v11 /partners page copy, moved out of its page component on 2026-09-26 (partners.json keeps the legacy strip labels). */
+export async function getPartnersV11Content(): Promise<PartnersV11Content> {
+  return markTree('partners-v11', partnersV11Content);
+}
+export type ThankYouContent = typeof thankYouContent;
+/** The /thank-you page copy, moved out of its page component on 2026-09-26. */
+export async function getThankYouContent(): Promise<ThankYouContent> {
+  return markTree('thank-you', thankYouContent);
+}
+export type CareersV11Content = typeof careersV11Content;
+/** The v11 /careers copy (the live page kept it in its component; moved here unchanged on 2026-09-26). */
+export async function getCareersV11Content(): Promise<CareersV11Content> {
+  return markTree('careers-v11', careersV11Content);
+}
+export type LegalV11Content = typeof legalV11Content;
+/** The v11 legal pages' two labels; the policy text itself stays in src/app/legal-v11/*.tsx. */
+export async function getLegalV11Content(): Promise<LegalV11Content> {
+  return markTree('legal-v11', legalV11Content);
+}
+export type AiInstructionsV11Content = typeof aiInstructionsV11Content;
+/** The v11 /ai-instructions copy (the live page keeps its own constants until it switches), moved unchanged 2026-09-26. */
+export async function getAiInstructionsV11Content(): Promise<AiInstructionsV11Content> {
+  return markTree('ai-instructions-v11', aiInstructionsV11Content);
+}
+export type AuditReportV11Content = typeof auditReportV11Content;
+/** The v11 audit report's labels (the automated /audit/<id> report); sentences built from results stay in the component. */
+export async function getAuditReportV11Content(): Promise<AuditReportV11Content> {
+  return markTree('audit-report-v11', auditReportV11Content);
+}
+export type BlogV11Content = typeof blogV11Content;
+/** The v11 blog index and post template labels. */
+export async function getBlogV11Content(): Promise<BlogV11Content> {
+  return markTree('blog-v11', blogV11Content);
 }
 
 /**

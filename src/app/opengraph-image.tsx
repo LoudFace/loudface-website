@@ -1,73 +1,17 @@
-import { ImageResponse } from 'next/og';
+import { homeShare } from './og-v11/share';
 
-// Node runtime (not edge): the image uses no external fonts/assets, and only the
-// Node runtime honors `revalidate` for ISR caching. Under `runtime = 'edge'` the
-// route is always dynamic and `revalidate` is silently ignored (regenerated per
-// request). On Node it's generated once and cached ~31 days.
-// Static content — regenerate at most once every ~31 days instead of per request.
+// Node runtime (not edge): the image reads its fonts and photograph from /public, and only the Node runtime honors
+// `revalidate` for ISR caching. Generated once and cached ~31 days.
 export const revalidate = 2678400;
 export const alt = 'LoudFace - AI-Native B2B SaaS Organic Growth';
 export const size = { width: 1200, height: 630 };
 export const contentType = 'image/png';
 
+/** The site's default share card in v11 (og-v11/share.tsx): the homepage photograph with the line beside it. */
 export default async function Image() {
-  return new ImageResponse(
-    (
-      <div
-        style={{
-          background: 'linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 100%)',
-          width: '100%',
-          height: '100%',
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'flex-start',
-          justifyContent: 'center',
-          padding: '80px',
-        }}
-      >
-        <div
-          style={{
-            fontSize: 28,
-            color: '#888',
-            marginBottom: 20,
-            letterSpacing: '0.1em',
-          }}
-        >
-          LOUDFACE
-        </div>
-        <div
-          style={{
-            fontSize: 56,
-            fontWeight: 700,
-            color: '#fff',
-            lineHeight: 1.2,
-            maxWidth: '80%',
-          }}
-        >
-          AI-Native Organic Growth for B2B SaaS
-        </div>
-        <div
-          style={{
-            fontSize: 24,
-            color: '#aaa',
-            marginTop: 24,
-            maxWidth: '70%',
-            lineHeight: 1.5,
-          }}
-        >
-          GEO, SEO, AEO, content, and conversion across your stack
-        </div>
-        <div
-          style={{
-            fontSize: 18,
-            color: '#666',
-            marginTop: 40,
-          }}
-        >
-          www.loudface.co
-        </div>
-      </div>
-    ),
-    { ...size }
-  );
+  return homeShare({
+    line: 'AI-Native Organic Growth for B2B SaaS',
+    sub: 'GEO, SEO, AEO, content, and conversion across your stack',
+    url: 'www.loudface.co',
+  });
 }

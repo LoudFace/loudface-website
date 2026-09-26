@@ -1,0 +1,77 @@
+{
+  "hero": {
+    "eyebrow": "Careers at LoudFace",
+    "headline": "Come build",
+    "headlineGhost": "with us at LoudFace.",
+    "body": "We are a small remote team building and growing websites for B2B SaaS companies, and for brands like Montblanc and Radisson. We care about what you have shipped.",
+    "rolesCta": "See open roles",
+    "applyCta": "Send an open application"
+  },
+  "roles": {
+    "eyebrow": "Open roles",
+    "title": "Open",
+    "titleGhost": "roles",
+    "emptyTitle": "No open roles",
+    "emptyTitleGhost": "right now.",
+    "countOne": "1 role open",
+    "countMany": "roles open",
+    "apply": "Apply",
+    "unavailable": "We could not load our current openings just now. Please try again shortly — or send an application anyway, which reaches us either way.",
+    "empty": "We hire in bursts, and we read what comes in between them. Send us your work anyway — a real person reads it, and we keep the ones we like on file for when a role does open.",
+    "hireTitle": "What we hire for",
+    "disciplines": [
+      "Design",
+      "Webflow development",
+      "Project management",
+      "Organic search (SEO / AEO)",
+      "Copywriting"
+    ],
+    "applyFor": "Apply for"
+  },
+  "how": {
+    "eyebrow": "How we hire",
+    "title": "How this",
+    "titleGhost": "actually goes",
+    "lede": "We are a small remote team. There is no applicant-tracking maze here, and no take-home project before anyone has spoken to you.",
+    "linkLabel": "Send an application",
+    "steps": [
+      {
+        "title": "You fill in one form",
+        "body": "A few minutes. The questions change with the role, and most ask for a short intro video, because we would rather meet you than read about you."
+      },
+      {
+        "title": "A person reads it",
+        "body": "Not a keyword filter. We look at what you have actually shipped — not where you studied, and not how long your CV is."
+      },
+      {
+        "title": "If it is a fit, we talk",
+        "body": "A call with the team first. Arnel, who founded LoudFace, takes the final conversation and the final decision himself."
+      }
+    ],
+    "founder": "Arnel Bukva",
+    "founderNote": "takes the final conversation"
+  },
+  "closing": {
+    "eyebrow": "LoudFace — hiring · Remote team",
+    "title": "Not sure which role you fit?",
+    "body": "Pick the closest one and tell us what you have built. We would rather see the work and sort out the title afterwards.",
+    "cta": "Apply to LoudFace",
+    "note": "A person reads every one"
+  },
+  "apply": {
+    "eyebrow": "Apply to LoudFace",
+    "titleFor": "Apply for",
+    "title": "Come build",
+    "titleGhost": "with us.",
+    "intro": "We're a small remote team headquartered in Dubai, with an office in the United States. We work with leading companies such as Toku, Eraser, Montblanc, and Radisson Hotels.",
+    "basisLead": "We do not hire based on your CV or the number of courses you have taken. We hire based on:",
+    "basis": [
+      "how well you fit our culture",
+      "the results you achieved in previous roles",
+      "your grit"
+    ],
+    "note": "One form, a few minutes. A person reads every one.",
+    "loading": "Loading the form…",
+    "teamTitle": "Who reads it"
+  }
+}

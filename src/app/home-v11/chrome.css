@@ -1,0 +1,156 @@
+/* v11 site chrome: the Services and Industries menus, the phone menu and the cookie card (2026-09-26).
+   The header sits outside .v11, so each root sets the v11 tokens itself; values are home-v11.css's.
+   Only v11 routes render these classes (src/lib/v11-routes.ts), so the live chrome is unchanged. */
+
+.v11-nav-drop, .v11-nav-phone, .v11-consent {
+  --ink: #1a1040; --body: #4a4466; --muted: #6b6788; --line: #e4e4ea; --warm: #f6f6f6; --ind: #4f46e5;
+  --ease: cubic-bezier(.2, .7, .2, 1); --fast: .15s; --dur: .2s;
+  font-family: var(--font-sans); -webkit-font-smoothing: antialiased; line-height: 1.5; text-align: left;
+}
+.v11-nav-drop *, .v11-nav-phone *, .v11-consent * { box-sizing: border-box; }
+.v11-nav-drop img, .v11-nav-phone img, .v11-consent img, .v11-nav-drop svg, .v11-nav-phone svg, .v11-consent svg { display: block; max-width: none; }
+
+/* =========================================================== desktop menus
+   The slot sits under the header and spans the content width; the trigger's container is left static so the slot
+   measures against the header. */
+.v11-nav-drop {
+  position: absolute; top: 100%; left: 50%; z-index: 50;
+  width: min(1296px, calc(100vw - 48px)); padding-top: 6px;
+  opacity: 0; visibility: hidden; pointer-events: none; transform: translate(-50%, -6px);
+  transition: opacity var(--dur) var(--ease), transform var(--dur) var(--ease), visibility var(--dur);
+}
+.v11-nav-drop.is-open { opacity: 1; visibility: visible; pointer-events: auto; transform: translate(-50%, 0); }
+
+.v11-nav-panel {
+  display: grid; grid-template-columns: minmax(0, 1fr) 320px; gap: 8px;
+  padding: 8px; border-radius: 22px; background: #ffffff; color: var(--ink);
+  box-shadow: 0 2px 4px rgba(26, 16, 64, 0.05), 0 28px 64px -16px rgba(26, 16, 64, 0.32);
+}
+@media (min-width: 1280px) { .v11-nav-panel { grid-template-columns: minmax(0, 1fr) 372px; } }
+
+.v11-nav-main { display: flex; flex-direction: column; min-width: 0; padding: 18px 16px 10px; }
+.v11-nav-head { display: flex; align-items: baseline; gap: 12px; padding: 0 12px 16px; margin-bottom: 10px; border-bottom: 1px solid var(--line); }
+.v11-nav-head b { font-size: 15px; font-weight: 500; color: var(--ink); white-space: nowrap; }
+.v11-nav-head span { font-size: 14px; color: var(--muted); }
+
+.v11-nav-groups { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); margin-bottom: 14px; }
+.v11-nav-groups.is-ind { grid-template-columns: minmax(0, 2fr) minmax(0, 1fr); }
+/* hairline columns (menu A, picked 2026-09-27) */
+.v11-nav-group { display: flex; flex-direction: column; min-width: 0; padding: 0 8px; }
+.v11-nav-group + .v11-nav-group { border-left: 1px solid var(--line); }
+.v11-nav-group-k { padding: 4px 12px 8px; font-size: 13px; font-weight: 500; color: var(--quiet); }
+.v11-nav-rows { display: grid; grid-template-columns: minmax(0, 1fr); gap: 0 4px; }
+.v11-nav-group.is-wide .v11-nav-rows { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+@media (max-width: 1279px) { .v11-nav-panel { grid-template-columns: minmax(0, 1fr); } .v11-nav-feature { display: none; } }
+
+/* a row: the page's isometric drawing, its name (an arrow shows on hover) and its one-liner or buyer question */
+.v11-nav-item { display: flex; align-items: flex-start; gap: 12px; padding: 10px 12px 10px 8px; border-radius: 12px; color: var(--ink);
+  text-decoration: none; transition: background-color var(--fast) var(--ease); }
+.v11-nav-item:hover, .v11-nav-item:focus-visible { background: var(--warm); }
+.v11-nav-ico { display: flex; align-items: center; justify-content: center; flex-shrink: 0; width: 36px; height: 36px; margin-top: 1px; }
+.v11-nav-ico img { width: 32px; height: 32px; object-fit: contain; }
+.v11-nav-text { display: flex; flex-direction: column; gap: 3px; min-width: 0; }
+.v11-nav-text b { display: flex; align-items: center; gap: 7px; font-size: 15.5px; font-weight: 500; line-height: 1.3; letter-spacing: -0.005em;
+  color: var(--ink); transition: color var(--fast) var(--ease); }
+.v11-nav-text b svg { flex-shrink: 0; color: var(--ind); opacity: 0; transform: translateX(-3px);
+  transition: opacity var(--dur) var(--ease), transform var(--dur) var(--ease); }
+.v11-nav-item:hover .v11-nav-text b, .v11-nav-item:focus-visible .v11-nav-text b { color: var(--ind); }
+.v11-nav-item:hover .v11-nav-text b svg, .v11-nav-item:focus-visible .v11-nav-text b svg { opacity: 1; transform: none; }
+.v11-nav-sub { font-size: 14px; line-height: 1.45; color: var(--muted); }
+.v11-nav-sub.is-q { font-size: 13.5px; color: var(--quiet); }
+/* the quote marks are drawn here, so the question stays the page's own value for the inline editor */
+.v11-nav-sub.is-q::before { content: "\201C"; }
+.v11-nav-sub.is-q::after { content: "\201D"; }
+.v11-nav-panel .v11-nav-all { display: flex; align-items: center; gap: 8px; padding: 10px 12px; font-size: 15px; font-weight: 500; color: var(--ind); text-decoration: none;
+  transition: color var(--dur) var(--ease); }
+.v11-nav-all svg, .v11-nav-link svg { transition: transform var(--dur) var(--ease); }
+.v11-nav-panel .v11-nav-all:hover, .v11-nav-panel .v11-nav-link:hover { color: var(--ink); }
+.v11-nav-all:hover svg, .v11-nav-link:hover svg { transform: translateX(3px); }
+
+.v11-nav-foot { display: flex; align-items: center; gap: 12px; margin-top: auto; padding: 14px 12px 4px; border-top: 1px solid var(--line); }
+.v11-nav-faces { display: flex; flex-shrink: 0; }
+.v11-nav-faces img { width: 26px; height: 26px; border-radius: 999px; box-shadow: 0 0 0 2px #ffffff; }
+.v11-nav-faces img + img { margin-left: -7px; }
+.v11-nav-prompt { font-size: 14px; color: var(--muted); }
+.v11-nav-go { padding: 0; border: 0; background: none; cursor: pointer; font: inherit; font-size: 14px; font-weight: 500; color: var(--ind);
+  transition: color var(--dur) var(--ease); }
+.v11-nav-go:hover { color: var(--ink); }
+
+/* the featured card: one picture that explains the menu, on a pale tint of its own */
+.v11-nav-feature { position: relative; display: flex; flex-direction: column; min-width: 0; min-height: 420px; padding: 24px 24px 0; border-radius: 14px; overflow: hidden; }
+.v11-nav-feature.is-lav { background: radial-gradient(ellipse 80% 90% at 100% 100%, #b7aaf2 0%, rgba(183,170,242,0) 70%), #ebe6fd; color: #2e2656; }
+.v11-nav-feature.is-warm { background: var(--warm); color: var(--ink); padding-bottom: 22px; }
+.v11-nav-tag { display: flex; align-items: center; gap: 10px; font-size: 14px; font-weight: 500; }
+.v11-nav-tag i { width: 7px; height: 7px; border-radius: 99px; background: currentColor; }
+.v11-nav-feature-h { margin-top: 12px; font-family: var(--font-heading); font-weight: 500; font-size: 22px; line-height: 1.14; letter-spacing: -0.02em; color: var(--ink); text-wrap: balance; }
+.v11-nav-fig { display: flex; align-items: baseline; gap: 8px; margin-top: 14px; }
+.v11-nav-fig b { font-family: var(--font-heading); font-weight: 500; font-size: 30px; line-height: 1; letter-spacing: -0.04em; color: var(--ink); }
+.v11-nav-fig span { font-size: 14px; color: #2e2656; }
+/* the answer window at true size, running off the card's lower edge like the homepage tile */
+.v11-nav-ui { margin-top: 22px; margin-right: -64px; }
+.v11-nav-ui .v11-chat { box-shadow: 0 2px 4px rgba(10,6,50,0.10), 0 18px 40px rgba(10,6,50,0.22); }
+
+.v11-nav-big { margin-top: 14px; font-family: var(--font-heading); font-weight: 500; font-size: 56px; line-height: 1; letter-spacing: -0.045em; color: var(--ink); }
+.v11-nav-cap { margin-top: 8px; font-size: 14px; line-height: 1.45; color: var(--body); max-width: 250px; }
+.v11-nav-logos { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px; margin-top: 22px; }
+.v11-nav-logos span { display: flex; align-items: center; justify-content: center; height: 58px; border-radius: 10px; background: #ffffff; }
+.v11-nav-panel .v11-nav-link { display: inline-flex; align-items: center; gap: 7px; margin-top: auto; padding-top: 18px; font-size: 14.5px; font-weight: 500; color: var(--ind);
+  text-decoration: none; transition: color var(--dur) var(--ease); }
+
+/* =========================================================== phone menu */
+.v11-nav-phone { display: flex; flex-direction: column; padding: 4px 20px 32px; color: var(--ink); }
+.v11-nav-phone-group { display: flex; flex-direction: column; }
+.v11-nav-phone-link { display: flex; align-items: center; justify-content: space-between; width: 100%; min-height: 60px; padding: 0; border: 0;
+  border-bottom: 1px solid var(--line); background: none; cursor: pointer; font-family: var(--font-heading); font-size: 22px; font-weight: 500;
+  letter-spacing: -0.02em; color: var(--ink); text-decoration: none; text-align: left; }
+.v11-nav-phone-link svg { color: var(--muted); transition: transform var(--dur) var(--ease); }
+.v11-nav-phone-link svg.is-on { transform: rotate(180deg); }
+.v11-nav-phone-list { display: flex; flex-direction: column; gap: 10px; padding: 8px 0 14px; border-bottom: 1px solid var(--line); }
+.v11-nav-phone-sub { display: flex; flex-direction: column; }
+.v11-nav-phone-sub .v11-nav-group-k { padding: 6px 0 2px; }
+.v11-nav-phone-item { display: flex; align-items: center; gap: 12px; min-height: 48px; font-size: 16px; font-weight: 500; color: var(--ink); text-decoration: none; }
+.v11-nav-phone-item small { margin-left: auto; font-size: 13px; font-weight: 400; color: var(--muted); }
+.v11-nav-phone-item .v11-nav-ico { width: 32px; height: 32px; margin-top: 0; }
+.v11-nav-phone-item .v11-nav-ico img { width: 28px; height: 28px; }
+.v11-nav-phone .v11-nav-phone-item.is-all { gap: 8px; color: var(--ind); }
+.v11-nav-phone-cta { display: flex; align-items: center; justify-content: center; height: 52px; margin-top: 28px; border: 0; border-radius: 999px;
+  background: var(--ink); color: #ffffff; cursor: pointer; font: inherit; font-size: 16px; font-weight: 500; }
+.v11-nav-phone-cta:active { transform: scale(0.98); }
+
+/* =========================================================== cookie card
+   A white card in the lower-left corner on a computer; a bar across the bottom on a phone, where the explanation
+   opens from "Cookies & analytics". */
+.v11-consent { position: fixed; z-index: 50; left: 24px; bottom: 24px; width: 408px; padding: 20px 20px 18px; border-radius: 20px;
+  background: #ffffff; color: var(--ink); box-shadow: 0 2px 4px rgba(26, 16, 64, 0.06), 0 24px 56px -12px rgba(26, 16, 64, 0.30); }
+.v11-consent.is-static { position: relative; left: auto; bottom: auto; z-index: auto; }
+.v11-consent-head { display: flex; align-items: center; gap: 10px; font-size: 15px; font-weight: 500; }
+.v11-consent-head svg { color: var(--ind); }
+.v11-consent-text { margin-top: 10px; font-size: 14px; line-height: 1.55; color: var(--body); text-wrap: pretty; }
+.v11-consent .v11-consent-text a { color: var(--ink); text-decoration: underline; text-underline-offset: 2px; }
+.v11-consent .v11-consent-text a:hover { color: var(--ind); }
+.v11-consent-acts { display: flex; align-items: center; gap: 8px; margin-top: 16px; }
+.v11-consent-btn { display: inline-flex; align-items: center; justify-content: center; height: 44px; padding: 0 18px; border: 0; border-radius: 999px;
+  cursor: pointer; font: inherit; font-size: 14.5px; font-weight: 500; white-space: nowrap;
+  transition: background-color var(--dur) var(--ease), box-shadow var(--dur) var(--ease); }
+.v11-consent-btn:active { transform: scale(0.98); }
+.v11-consent-btn { background: #ffffff; color: var(--ink); box-shadow: inset 0 0 0 1.5px #d6d3e6; }
+.v11-consent-btn:hover { box-shadow: inset 0 0 0 1.5px var(--ink); }
+.v11-consent-toggle { display: none; }
+@media (max-width: 639px) {
+  .v11-consent { left: 0; right: 0; bottom: 0; width: auto; padding: 10px 12px calc(10px + env(safe-area-inset-bottom)); border-radius: 18px 18px 0 0; }
+  .v11-consent.is-static { width: 100%; }
+  .v11-consent-head { display: none; }
+  .v11-consent-text { display: none; margin: 4px 0 10px; }
+  .v11-consent.is-expanded .v11-consent-text { display: block; }
+  .v11-consent-acts { gap: 6px; margin-top: 0; }
+  .v11-consent-toggle { display: flex; flex: 1; min-width: 0; min-height: 44px; align-items: center; gap: 6px; padding: 0; border: 0; background: none;
+    cursor: pointer; font: inherit; font-size: 14px; font-weight: 500; color: var(--ink); text-align: left; }
+  .v11-consent-toggle span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .v11-consent-toggle svg { flex-shrink: 0; color: var(--muted); transition: transform var(--dur) var(--ease); }
+  .v11-consent.is-expanded .v11-consent-toggle svg { transform: rotate(180deg); }
+  .v11-consent-btn { height: 44px; padding: 0 12px; font-size: 14px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .v11-nav-drop, .v11-nav-drop *, .v11-nav-phone *, .v11-consent * { transition: none !important; }
+}

@@ -5,6 +5,8 @@ import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { asset } from "@/lib/assets";
+import { IndustriesPanelV11, PhoneMenuV11, ServicesPanelV11, type NavV11Data } from "@/app/home-v11/NavV11";
+import { strip } from '@/lib/inline-edit/mark';
 
 interface NavLink {
   label: string;
@@ -47,6 +49,10 @@ interface HeaderContent {
 export interface HeaderProps {
   heroTheme?: "dark";
   content: HeaderContent;
+  /** The v11 menus' data; when set, the dropdowns and the phone menu draw in v11 (SiteChrome passes it on v11 routes). */
+  v11?: NavV11Data;
+  /** Opens one menu on first render, for the chrome preview board. */
+  initialOpen?: "services" | "industries";
 }
 
 // Clean line-icons for the v3 (deep-indigo) dropdown — indigo-300 stroke, keyed by item href.
@@ -109,14 +115,14 @@ function unlockScroll() {
   window.scrollTo({ top: savedScrollY, left: 0, behavior: "instant" });
 }
 
-export function Header({ heroTheme, content }: HeaderProps) {
+export function Header({ heroTheme, content, v11, initialOpen }: HeaderProps) {
   const pathname = usePathname();
   const {
     links: navLinks,
     dropdowns: { services: servicesDropdown, industries: industriesDropdown },
     dropdownCta,
   } = content;
-  const [openDropdown, setOpenDropdown] = useState<string | null>(null);
+  const [openDropdown, setOpenDropdown] = useState<string | null>(initialOpen ?? null);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [mobileAccordion, setMobileAccordion] = useState<string | null>(null);
   const [scrolled, setScrolled] = useState(false);
@@ -252,6 +258,46 @@ export function Header({ heroTheme, content }: HeaderProps) {
   const toggleMobileAccordion = (name: string) => {
     setMobileAccordion(mobileAccordion === name ? null : name);
   };
+
+  // v11: the same trigger and hover behaviour; the panel spans the content width under the header, so the trigger's
+  // container stays static and the panel measures against <header>.
+  const renderDropdownV11 = (dropdown: Dropdown, name: "services" | "industries", data: NavV11Data) => (
+    <div
+      ref={(el) => {
+        dropdownRefs.current[name] = el;
+      }}
+      className={`dropdown-container ${openDropdown === name ? "is-open" : ""}`}
+      onMouseEnter={() => handleDropdownEnter(name)}
+      onMouseLeave={handleDropdownLeave}
+    >
+      <button
+        type="button"
+        onClick={(e) => {
+          e.stopPropagation();
+          toggleDropdown(name);
+        }}
+        className={`nav-link flex items-center gap-1.5 px-3 py-2 text-nav font-sans font-medium text-surface-600 hover:text-surface-900 hover:bg-surface-50 ${openDropdown === name ? "bg-surface-50 text-surface-900" : ""} rounded-lg transition-colors cursor-pointer bg-transparent border-none`}
+        aria-expanded={openDropdown === name}
+        aria-haspopup="true"
+      >
+        {dropdown.label}
+        <svg
+          className={`w-3.5 h-3.5 transition-transform duration-300 ease-out ${openDropdown === name ? "rotate-180" : ""}`}
+          viewBox="0 0 16 16"
+          fill="none"
+        >
+          <path d="M4 6L8 10L12 6" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+        </svg>
+      </button>
+      <div className={`v11-nav-drop ${openDropdown === name ? "is-open" : ""}`} role="menu" aria-label={strip(dropdown.label)}>
+        {name === "services" ? (
+          <ServicesPanelV11 dropdown={dropdown} v11={data} cta={dropdownCta} onPick={() => setOpenDropdown(null)} />
+        ) : (
+          <IndustriesPanelV11 dropdown={dropdown} v11={data} cta={dropdownCta} onPick={() => setOpenDropdown(null)} />
+        )}
+      </div>
+    </div>
+  );
 
   const renderDropdown = (dropdown: Dropdown, name: string) => (
     <div
@@ -399,8 +445,8 @@ export function Header({ heroTheme, content }: HeaderProps) {
                     {link.label}
                   </Link>
                 ))}
-                {renderDropdown(servicesDropdown, "services")}
-                {renderDropdown(industriesDropdown, "industries")}
+                {v11 ? renderDropdownV11(servicesDropdown, "services", v11) : renderDropdown(servicesDropdown, "services")}
+                {v11 ? renderDropdownV11(industriesDropdown, "industries", v11) : renderDropdown(industriesDropdown, "industries")}
               </nav>
             </div>
 
@@ -462,6 +508,18 @@ export function Header({ heroTheme, content }: HeaderProps) {
         }}
         className="m-0 w-full max-w-none h-[calc(100dvh-61px)] max-h-none fixed top-[61px] inset-x-0 border-0 p-0 bg-white overflow-y-auto z-40 lg:!hidden backdrop:bg-transparent"
       >
+        {v11 ? (
+          <nav aria-label={content.mobileNavigationAriaLabel}>
+            <PhoneMenuV11
+              links={navLinks}
+              services={servicesDropdown}
+              industries={industriesDropdown}
+              v11={v11}
+              ctaText={content.ctaText}
+              onPick={() => setMobileMenuOpen(false)}
+            />
+          </nav>
+        ) : (
         <nav className="p-6" aria-label={content.mobileNavigationAriaLabel}>
           {navLinks.map((link) => (
             <Link
@@ -574,6 +632,7 @@ export function Header({ heroTheme, content }: HeaderProps) {
             </button>
           </div>
         </nav>
+        )}
       </dialog>
     </header>
   );

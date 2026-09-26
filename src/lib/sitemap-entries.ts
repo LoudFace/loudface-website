@@ -1,6 +1,6 @@
 import type { MetadataRoute } from 'next';
 import { fetchSitemapData } from '@/lib/cms-data';
-import nextConfig from '../../next.config';
+import { getRedirectedPaths } from '@/lib/redirected-paths';
 import { TEAM_HIDDEN } from '@/app/about-v3/data';
 
 // The URL list behind /sitemap.xml (src/app/sitemap.xml/route.ts).
@@ -96,6 +96,13 @@ export async function buildSitemapEntries(): Promise<MetadataRoute.Sitemap> {
       url: `${baseUrl}/careers`,
       changeFrequency: 'monthly',
       priority: 0.5,
+    },
+    // The AI search visibility masterclass (9 July 2026). Indexable, so it belongs here; after the event the page
+    // points to the recording and the recap post.
+    {
+      url: `${baseUrl}/webinar/ai-search-visibility`,
+      changeFrequency: 'yearly',
+      priority: 0.4,
     },
     // Services hub (net-new v3 page; previously 301'd to /services/webflow)
     {
@@ -244,8 +251,7 @@ export async function buildSitemapEntries(): Promise<MetadataRoute.Sitemap> {
   // source of truth for "this URL no longer canonically exists" (incident:
   // best-generative-engine-optimization-agencies-2026 stayed published after
   // its fold and lingered in the sitemap, 2026-07-12).
-  const redirectRules = (await nextConfig.redirects?.()) ?? [];
-  const redirectedPaths = new Set(redirectRules.map((rule) => rule.source));
+  const redirectedPaths = await getRedirectedPaths();
 
   return allPages.filter((page) => !redirectedPaths.has(page.url.replace(baseUrl, '')));
 }

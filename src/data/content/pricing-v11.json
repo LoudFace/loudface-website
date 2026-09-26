@@ -1,0 +1,163 @@
+{
+  "seal": {
+    "ring": "Fixed monthly · async by default · 2h response · ",
+    "lead": "Engagements from",
+    "note": "Scoped on the intro call"
+  },
+  "boards": [
+    {
+      "label": "This week · example",
+      "lanes": [
+        {
+          "track": "Build",
+          "task": "Pricing page rebuild",
+          "state": "In review"
+        }
+      ]
+    },
+    {
+      "label": "This week · example",
+      "lanes": [
+        {
+          "track": "Build",
+          "task": "Pricing page rebuild",
+          "state": "In review"
+        },
+        {
+          "track": "Growth",
+          "task": "Comparison pages, 4 of 6",
+          "state": "Shipping"
+        }
+      ]
+    },
+    {
+      "label": "This week · example",
+      "lanes": [
+        {
+          "track": "Build",
+          "task": "Pricing page rebuild",
+          "state": "In review"
+        },
+        {
+          "track": "Growth",
+          "task": "Comparison pages, 4 of 6",
+          "state": "Shipping"
+        },
+        {
+          "track": "Growth",
+          "task": "Answer blocks, 12 pages",
+          "state": "Shipping"
+        },
+        {
+          "track": "Build",
+          "task": "Demo path test, variant B",
+          "state": "Live"
+        }
+      ]
+    }
+  ],
+  "steps": {
+    "when": [
+      "Today",
+      "After the call",
+      "Within 48 hours",
+      "Every week"
+    ],
+    "call": {
+      "title": "Intro call",
+      "slot": "Thursday · 14:00",
+      "slotDay": "Thursday",
+      "slotTimes": [
+        {
+          "t": "09:00"
+        },
+        {
+          "t": "11:30"
+        },
+        {
+          "t": "14:00",
+          "on": true
+        },
+        {
+          "t": "16:30"
+        }
+      ],
+      "with": "30 minutes with Arnel",
+      "status": "Booked"
+    },
+    "proposal": {
+      "title": "Proposal · example",
+      "rows": [
+        {
+          "k": "Tier",
+          "v": "Dual Autopilot"
+        },
+        {
+          "k": "First initiatives",
+          "v": "Pricing page, comparisons"
+        },
+        {
+          "k": "Success metric",
+          "v": "Demo requests a month"
+        }
+      ],
+      "total": "Fixed monthly"
+    },
+    "kickoff": {
+      "from": "Tamara, LoudFace",
+      "time": "Mon 09:12",
+      "message": "Access is set up and the Scoreboard is live. First fixes ship on Thursday."
+    },
+    "showcase": {
+      "subject": "Showcase · week 3",
+      "rows": [
+        "Pricing page shipped",
+        "2 comparison pages in review",
+        "Demo path test started"
+      ]
+    }
+  },
+  "tracks": {
+    "buildLabel": "Radisson, a site we built",
+    "growthChartTitle": "Case enquiries per week",
+    "growthChartSource": "Delshad Legal, PostHog"
+  },
+  "includes": {
+    "groups": [
+      "Ownership",
+      "Rhythm",
+      "Direction"
+    ],
+    "scoreboard": {
+      "title": "Scoreboard",
+      "shipped": "Shipped",
+      "doing": "In progress",
+      "next": "Next",
+      "live": "Live",
+      "shippedCount": "12",
+      "doingCount": "2",
+      "nextCount": "5"
+    },
+    "memo": {
+      "title": "Monthly Memo · September",
+      "lines": [
+        "What happened",
+        "What we learned",
+        "Where we are headed"
+      ]
+    },
+    "focus": {
+      "title": "Quarterly Focus · Q4",
+      "objective": "Double demo requests from organic search"
+    },
+    "ownershipState": "On"
+  },
+  "faq": {
+    "personName": "Arnel Bukva",
+    "personRole": "Founder",
+    "email": "arnel@loudface.co"
+  },
+  "proof": {
+    "linkText": "Explore case studies"
+  }
+}

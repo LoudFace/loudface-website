@@ -1,0 +1,168 @@
+{
+  "hero": {
+    "eyebrow": "Free AI visibility audit",
+    "headline": "Your competitors are winning deals on ChatGPT searches.",
+    "headlineGhost": "How far behind are you?",
+    "sub": "Check where your brand stands across ChatGPT, Claude, Gemini, and Perplexity searches — versus your top competitors.",
+    "benefitsTitle": "What you get:",
+    "benefits": [
+      "Your brand’s AI search presence score",
+      "Side-by-side competitor comparison across AI platforms",
+      "One fix you can implement within a week",
+      "A personal Loom from Arnel on AEO gaps killing your pipeline visibility"
+    ]
+  },
+  "problem": {
+    "title": "B2B buyers have changed how they shortlist vendors.",
+    "p1": "They're not starting on Google. They're asking ChatGPT and buying from whoever shows up in that answer.",
+    "p2": "If your competitor is showing up in that answer and you're not, the deal starts without you.",
+    "p3": "Your AI search presence should catch up to this shift.",
+    "revealsTitle": "Run the AI visibility audit to see:",
+    "reveals": [
+      "Your AI search presence score across ChatGPT, Claude, Gemini, and Perplexity",
+      "Side-by-side comparison vs your top 3 competitors",
+      "The exact queries your buyers are running on AI platforms",
+      "The gap between your Google rankings and your AI visibility",
+      "A personal Loom from Arnel detailing one specific thing you can fix this week"
+    ],
+    "cta": "Run My Audit"
+  },
+  "faq": {
+    "title": "Common questions",
+    "items": [
+      {
+        "question": "Do I have to book a call?",
+        "answer": "No. You get the full report first. If you want to talk through what it means, there’s an option to book time with Arnel after delivery. No pressure."
+      },
+      {
+        "question": "How is this different from a generic SEO audit?",
+        "answer": "It’s not an SEO audit. We’re measuring AI search visibility — whether your brand gets cited by ChatGPT, Claude, Gemini, and Perplexity when your buyers search for solutions. Most tools don’t track this at all."
+      },
+      {
+        "question": "What do you do with my information?",
+        "answer": "We run your audit and send you the report. That’s it. No spam, no auto-enrollment in a sequence."
+      }
+    ]
+  },
+  "final": {
+    "title": "Run your free AI visibility audit",
+    "note": "No spam. No auto-enrollment. Just your audit."
+  },
+  "example": {
+    "label": "Example report",
+    "company": "Acme Corp",
+    "caption": "An example report for a sample company. Yours is built from your own site and competitors.",
+    "scorecardTitle": "AI market position",
+    "gradeLabel": "Overall grade",
+    "grade": "B",
+    "metrics": [
+      {
+        "label": "Brand recognition",
+        "value": "88%",
+        "status": "Strong",
+        "good": true
+      },
+      {
+        "label": "Discovery visibility",
+        "value": "35%",
+        "status": "Needs work",
+        "good": false
+      },
+      {
+        "label": "Share of voice",
+        "value": "13%",
+        "status": "Needs work",
+        "good": false
+      },
+      {
+        "label": "Competitive standing",
+        "value": "#4",
+        "status": "Critical",
+        "good": false,
+        "tone": "bad"
+      },
+      {
+        "label": "Platform coverage",
+        "value": "4/4",
+        "status": "Strong",
+        "good": true
+      }
+    ],
+    "queriesTitle": "Category discovery",
+    "queriesNote": "Does an unbranded search name Acme Corp?",
+    "queriesScore": "35%",
+    "engines": [
+      "ChatGPT",
+      "Claude",
+      "Gemini",
+      "Perplexity"
+    ],
+    "queries": [
+      {
+        "prompt": "Best project management software in 2026",
+        "hits": [
+          false,
+          false,
+          false,
+          true
+        ]
+      },
+      {
+        "prompt": "Top project management tools for SaaS",
+        "hits": [
+          true,
+          false,
+          false,
+          true
+        ]
+      },
+      {
+        "prompt": "What project management solution should I use?",
+        "hits": [
+          false,
+          false,
+          false,
+          false
+        ]
+      },
+      {
+        "prompt": "Recommended project management platforms for businesses",
+        "hits": [
+          false,
+          false,
+          true,
+          true
+        ]
+      },
+      {
+        "prompt": "Best project management for early-stage startups",
+        "hits": [
+          true,
+          false,
+          false,
+          true
+        ]
+      }
+    ],
+    "voiceTitle": "Share of voice",
+    "voice": [
+      {
+        "brand": "Asana",
+        "value": 32
+      },
+      {
+        "brand": "Monday.com",
+        "value": 23
+      },
+      {
+        "brand": "ClickUp",
+        "value": 18
+      },
+      {
+        "brand": "Acme Corp",
+        "value": 13,
+        "self": true
+      }
+    ]
+  }
+}

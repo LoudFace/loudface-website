@@ -1,0 +1,199 @@
+/* About v11. Loads after home-v11.css, service-v11.css, cro-sections.css and svc.css.
+   Desktop values set against the 2026-09-25 About harvest tiles named in AboutV11.tsx, then reviewed against
+   better-ui / better-typography and an adversarial design pass (2026-09-25). */
+
+/* the quieter half of a heading: #8a86a6 holds 3:1 on cream, white and warm (#a3a0bd fell to ~2.4:1) */
+.ab .ghost { color: #8a86a6; }
+.ab-tap { min-height: 44px; }
+
+/* =========================================================== 1 · hero: the leads on their own colours, on cream */
+.ab-hero2 { position: relative; margin-top: -64px; padding: 128px 0 64px; background: #f7f4ee; color: var(--ink); overflow: clip; }
+.ab-hero-eyebrow { display: inline-flex; align-items: center; gap: 10px; height: 34px; padding: 0 6px 0 14px; border-radius: 99px; font-size: 13.5px; font-weight: 500; }
+.ab-hero-eyebrow.is-light { background: #ffffff; box-shadow: 0 0 0 1px #e8e3d8; color: var(--ink); }
+.ab-hero-eyebrow .is-since { display: flex; align-items: center; height: 24px; padding: 0 10px; border-radius: 99px; background: var(--ink); color: #ffffff; font-size: 12.5px; }
+.ab-hero2 h1 { font-family: var(--font-heading); font-weight: 500; font-size: 46px; line-height: 1; letter-spacing: -0.045em; margin-top: 24px; text-wrap: balance; }
+.ab-hero2-top { display: grid; grid-template-columns: minmax(0, 1fr); gap: 28px; }
+.ab-hero2-side p { font-size: 17px; line-height: 1.55; color: var(--body); max-width: 460px; text-wrap: pretty; }
+.ab-hero2-ctas { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 22px; margin-top: 24px; }
+.ab-hero-reply { display: flex; align-items: center; gap: 8px; margin-top: 16px; font-size: 13.5px; color: var(--quiet); }
+.ab-hero-reply .is-dot { width: 8px; height: 8px; border-radius: 99px; background: #1b9e5f; box-shadow: 0 0 0 4px rgba(27,158,95,0.16); }
+
+.ab-crew { display: grid; grid-template-columns: 1fr 1fr; gap: 40px 12px; margin-top: 64px; }
+.ab-member { margin: 0; min-width: 0; }
+.ab-member-card { position: relative; aspect-ratio: 306 / 300; border-radius: 22px; container-type: inline-size; }
+.ab-member.is-lav .ab-member-card { background: radial-gradient(ellipse 80% 70% at 50% 100%, #d4cbfa 0%, rgba(212,203,250,0) 70%), #e9e3fd; }
+.ab-member.is-peach .ab-member-card { background: radial-gradient(ellipse 80% 70% at 50% 100%, #f9c2ab 0%, rgba(249,194,171,0) 70%), #fde3d7; }
+.ab-member.is-sand .ab-member-card { background: radial-gradient(ellipse 80% 70% at 50% 100%, #f4d78f 0%, rgba(244,215,143,0) 70%), #fcedc8; }
+.ab-member.is-mint .ab-member-card { background: radial-gradient(ellipse 80% 70% at 50% 100%, #b5e6cd 0%, rgba(181,230,205,0) 70%), #dcf2e6; }
+/* the frame clips the photo to the card's sides and rounded bottom but leaves 40cqw open above, so the head can rise */
+.ab-member-frame { position: absolute; left: 0; right: 0; bottom: 0; top: -40cqw; overflow: hidden; border-radius: 0 0 22px 22px; }
+.ab-member-cut { position: absolute; display: block; height: auto; max-width: none; }
+/* one face size (50cqw wide) and one eye line (face top 2cqw below the card's top) for all four, measured with Vision */
+.ab-member.is-1 .ab-member-cut { width: 163.6cqw; left: -31.9cqw; top: 2.7cqw; }
+.ab-member.is-2 .ab-member-cut { width: 130cqw; left: -14.9cqw; top: 10.9cqw; }
+.ab-member.is-3 .ab-member-cut { width: 100cqw; left: 0; top: 18.1cqw; }
+.ab-member.is-4 .ab-member-cut { width: 158.6cqw; left: -29.7cqw; top: 4.7cqw; }
+.ab-member figcaption { padding: 16px 2px 0; }
+.ab-member .is-name { font-family: var(--font-heading); font-weight: 500; font-size: 19px; letter-spacing: -0.015em; color: var(--ink);  display: block; text-decoration: none; }
+.ab-member a.is-name:hover { text-decoration: underline; text-underline-offset: 3px; text-decoration-thickness: 1px; }
+.ab-member a.is-name:focus-visible { outline: 2px solid var(--ind); outline-offset: 3px; border-radius: 4px; }
+.ab-member .is-role { margin-top: 2px; font-size: 13.5px; font-weight: 500; color: var(--ind); }
+.ab-member figcaption p { margin-top: 8px; font-size: 14px; line-height: 1.5; color: var(--body); text-wrap: pretty; }
+/* the bench behind the four */
+.ab-bench { display: grid; grid-template-columns: minmax(0, 1fr); gap: 16px; margin-top: 48px; padding-top: 28px; border-top: 1px solid #e6e0d3; }
+.ab-bench-plus { display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; border-radius: 99px; background: #ffffff; color: var(--ind); box-shadow: 0 0 0 1px #e6e0d3; }
+.ab-bench-copy .is-head { font-family: var(--font-heading); font-weight: 500; font-size: 19px; letter-spacing: -0.015em; }
+.ab-bench-copy p { margin-top: 4px; font-size: 15px; line-height: 1.55; color: var(--body); max-width: 620px; text-wrap: pretty; }
+.ab-bench-roles { display: flex; flex-wrap: wrap; gap: 8px; list-style: none; margin: 0; padding: 0; }
+.ab-bench-roles li { display: flex; align-items: center; height: 32px; padding: 0 12px; border-radius: 8px; background: #ffffff; color: var(--ink); font-size: 13px; font-weight: 500; box-shadow: 0 0 0 1px #e6e0d3; }
+@media (min-width: 768px) { .ab-hero2 h1 { font-size: 58px; } }
+@media (min-width: 1024px) {
+  .ab-hero2 { padding: 150px 0 72px; }
+  .ab-hero2-top { grid-template-columns: minmax(0, 1fr) 440px; gap: 64px; align-items: end; }
+  .ab-hero2 h1 { font-size: 72px; line-height: 0.98; }
+  .ab-crew { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 24px; margin-top: 104px; }
+  .ab-bench { grid-template-columns: 44px minmax(0, 1fr) auto; align-items: center; gap: 24px; margin-top: 56px; }
+  .ab-bench-roles { max-width: 560px; justify-content: flex-end; }
+}
+
+/* =========================================================== 2 · the founder's letter, handwritten on paper, and the years */
+.ab-story { display: grid; grid-template-columns: minmax(0, 1fr); gap: 56px; align-items: start; }
+@media (min-width: 1024px) { .ab-story { grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); gap: 80px; align-items: center; } }
+/* the desk: a lavender tile the letter lies on */
+.ab-desk { position: relative; padding: 40px 22px 52px; border-radius: 28px;
+  background: radial-gradient(ellipse 80% 80% at 90% 100%, #cfc4f8 0%, rgba(207,196,248,0) 70%), #ebe6fd; }
+@media (min-width: 1024px) { .ab-desk { padding: 72px 76px 84px 64px; } }
+.ab-sheet { position: relative; padding: 34px 28px 30px; border-radius: 3px; transform: rotate(-1.6deg);
+  background: radial-gradient(ellipse 120% 90% at 20% 0%, #fffefa 0%, #fbf8ef 60%, #f6f1e4 100%);
+  box-shadow: 0 1px 1px rgba(40,30,80,0.06), 0 2px 6px rgba(40,30,80,0.06), 0 24px 48px rgba(40,30,110,0.18); }
+@media (min-width: 1024px) { .ab-sheet { padding: 52px 60px 46px; } }
+.ab-sheet.is-under { position: absolute; inset: 40px 22px 52px; transform: rotate(2.4deg); background: #f3eee1; box-shadow: 0 1px 1px rgba(40,30,80,0.05), 0 16px 34px rgba(40,30,110,0.12); }
+@media (min-width: 1024px) { .ab-sheet.is-under { inset: 72px 76px 84px 64px; } }
+.ab-sheet-head { display: flex; align-items: center; gap: 10px; padding-bottom: 18px; margin-bottom: 26px; border-bottom: 1px solid #e8e1cf; font-size: 13px; font-weight: 500; color: #7c7664; }
+/* the letter itself: real text in a ballpoint print, in blue ink, the key phrase in red pen */
+.ab-pen { font-family: var(--font-pen), cursive; font-size: 23px; line-height: 1.6; color: #20306f; text-wrap: pretty; }
+.ab-pen + .ab-pen { margin-top: 18px; }
+.ab-pen .is-em { color: #c8472a; }
+@media (min-width: 1024px) { .ab-pen { font-size: 27px; } }
+.ab-sheet-sign { display: flex; flex-direction: column; align-items: flex-start; margin-top: 22px; }
+.ab-sheet-sign .is-sig { font-family: var(--font-sign), cursive; font-size: 64px; line-height: 1; color: #20306f; transform: rotate(-5deg); transform-origin: left center; margin: 4px 0 6px 6px; }
+.ab-sheet-sign .is-name { font-size: 14px; font-weight: 500; color: var(--ink); }
+.ab-sheet-sign .is-role { font-size: 13px; color: #7c7664; }
+/* Arnel's photo, clipped to the corner of the letter */
+.ab-polaroid { position: absolute; top: 14px; right: 18px; width: 108px; margin: 0; padding: 7px 7px 20px; background: #ffffff; transform: rotate(7deg); box-shadow: 0 1px 2px rgba(30,20,60,0.12), 0 14px 26px rgba(30,20,60,0.18); }
+.ab-polaroid img { display: block; width: 94px; height: 110px; object-fit: cover; object-position: top; background: #d9d0fb; }
+.ab-clip { position: absolute; top: 2px; right: 76px; transform: rotate(8deg); }
+@media (min-width: 1024px) {
+  /* the photo sits in the sheet's top-right corner, clear of the letter's first line */
+  .ab-polaroid { top: 22px; right: 18px; width: 150px; padding: 9px 9px 28px; }
+  .ab-polaroid img { width: 132px; height: 152px; }
+  .ab-clip { top: 8px; right: 110px; }
+}
+.ab-story-side .v11-h2 { margin-top: 16px; }
+.ab-years { list-style: none; margin: 40px 0 0; padding: 0; border-left: 1px solid var(--line); }
+.ab-years li { position: relative; padding: 0 0 28px 30px; }
+/* the dot sits on the year's centre line (28px type, line-height 1) */
+.ab-years li::before { content: ""; position: absolute; left: -5px; top: 9.5px; width: 9px; height: 9px; border-radius: 99px; background: #ffffff; box-shadow: inset 0 0 0 2px var(--ind); }
+.ab-years li:last-child { padding-bottom: 0; }
+.ab-years li:last-child::before { background: var(--ind); }
+.ab-years .is-year { display: block; font-family: var(--font-heading); font-weight: 500; font-size: 28px; line-height: 1; letter-spacing: -0.035em; color: var(--ink); }
+.ab-years p { margin-top: 8px; font-size: 15px; line-height: 1.55; color: var(--body); max-width: 460px; text-wrap: pretty; }
+
+/* =========================================================== 3 · the ledger */
+.ab-ledger { display: grid; grid-template-columns: minmax(0, 1fr); gap: 16px; }
+@media (min-width: 1024px) {
+  .ab-ledger { grid-template-columns: repeat(6, minmax(0, 1fr)); }
+  .ab-ledger > .ab-fig { grid-column: span 2; }
+  .ab-ledger > .ab-ledger-quote, .ab-ledger > .ab-facts { grid-column: span 3; }
+}
+.ab-fig { min-height: 0; transition: transform var(--dur) var(--ease), box-shadow var(--dur) var(--ease); }
+.ab-fig:hover { transform: translateY(-2px); box-shadow: 0 18px 40px rgba(40,30,90,0.14); }
+.ab-fig.is-lav { background: radial-gradient(ellipse 90% 90% at 90% 100%, #cfc4f8 0%, rgba(207,196,248,0) 70%), #ebe6fd; color: var(--body); }
+.ab-fig.is-peach { background: radial-gradient(ellipse 90% 90% at 90% 100%, #f8b89e 0%, rgba(248,184,158,0) 70%), #fde6dc; color: var(--body); }
+.ab-fig.is-sand { background: radial-gradient(ellipse 90% 90% at 90% 100%, #f5d68a 0%, rgba(245,214,138,0) 70%), #fcefcf; color: var(--body); }
+/* one fixed row for the logos, so the three figures start on the same line whatever the logo's height */
+.ab-fig-top { display: flex; justify-content: space-between; align-items: center; gap: 12px; height: 30px; }
+.ab-fig-value { margin-top: 48px; font-family: var(--font-heading); font-weight: 500; font-size: 64px; line-height: 0.95; letter-spacing: -0.05em; color: var(--ink); white-space: nowrap; }
+@media (min-width: 1280px) { .ab-fig-value { font-size: 72px; } }
+.ab-fig-title { font-size: 17px; font-weight: 500; color: var(--ink); }
+.ab-fig-desc { font-size: 14px; line-height: 1.5; color: var(--body); max-width: 380px; text-wrap: pretty; }
+.ab-fig .ab-fig-desc { margin-bottom: 18px; }
+.ab-fig-foot { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-top: auto; padding-top: 14px; border-top: 1px solid rgba(26,16,64,0.1); font-size: 13px; color: var(--muted); }
+.ab-fig-foot .is-go { display: flex; align-items: center; gap: 6px; font-weight: 500; color: var(--ind); }
+.ab-ledger-quote { display: flex; }
+.ab-ledger-quote .v11-quote { flex: 1; }
+.ab-facts { display: flex; flex-direction: column; gap: 24px; padding: 28px; border-radius: 24px; background: #ffffff; box-shadow: 0 0 0 1px var(--line); }
+.ab-facts-row { display: grid; grid-template-columns: minmax(0, 1fr); gap: 24px; }
+@media (min-width: 640px) { .ab-facts-row { grid-template-columns: 1fr 1fr; } }
+.ab-fact { display: flex; flex-direction: column; gap: 10px; }
+.ab-fact .ab-fig-value { margin-top: 0; font-size: 56px; }
+.ab-badges { display: flex; flex-wrap: wrap; gap: 8px; margin-top: auto; padding-top: 18px; border-top: 1px solid #efeef5; }
+.ab-badge { display: flex; align-items: center; gap: 8px; height: 36px; padding: 0 12px 0 8px; border-radius: 10px; background: #f6f5f9; font-size: 13px; font-weight: 500; color: var(--ink); }
+.ab-badge img { width: 22px; height: 22px; }
+.ab-ledger-foot { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 12px 16px; margin-top: 24px; font-size: 14px; color: var(--quiet); }
+
+/* =========================================================== 4 · how we work */
+.ab-ways { display: grid; grid-template-columns: minmax(0, 1fr); gap: 16px; }
+@media (min-width: 1024px) { .ab-ways { grid-template-columns: repeat(2, minmax(0, 1fr)); } .ab-way-build { grid-column: 1 / -1; } }
+.ab-ways .sv-tile-tag { font-size: 22px; font-family: var(--font-heading); letter-spacing: -0.02em; }
+.ab-ways .sv-tile.is-lav { background: radial-gradient(ellipse 90% 90% at 90% 100%, #cfc4f8 0%, rgba(207,196,248,0) 70%), #ebe6fd; color: var(--body); }
+.ab-ways .sv-tile.is-peach { background: radial-gradient(ellipse 90% 90% at 90% 100%, #f8b89e 0%, rgba(248,184,158,0) 70%), #fde6dc; color: var(--body); }
+.ab-ways .sv-tile-art { padding-top: 28px; }
+/* the wide lead tile: the words left, a site we built at 1:1 bleeding off the tile's bottom and right */
+.ab-way-build { display: grid; grid-template-columns: minmax(0, 1fr); gap: 24px; overflow: hidden; padding-bottom: 0; }
+.ab-way-build-copy { display: flex; flex-direction: column; gap: 12px; }
+.ab-way-build .sv-tile-desc { font-family: var(--font-heading); font-size: 20px; line-height: 1.35; letter-spacing: -0.015em; color: #ffffff; max-width: 340px; }
+.ab-way-cap { margin-top: 8px; font-size: 13px; color: #c9c5fb; }
+.ab-way-build-site { align-self: end; margin: 0 -28px -1px 0; }
+.ab-way-build-site .sk-browser { border-radius: 14px 0 0 0; box-shadow: 0 2px 4px rgba(10,6,50,0.2), 0 30px 70px rgba(4,6,60,0.45); }
+.ab-way-build-site .sk-browser > img { height: 240px; }
+@media (min-width: 1024px) {
+  .ab-way-build { grid-template-columns: 360px minmax(0, 1fr); gap: 56px; padding: 40px 0 0 40px; min-height: 440px; }
+  .ab-way-build-copy { padding-bottom: 40px; }
+  .ab-way-build .sv-tile-desc { font-size: 26px; line-height: 1.3; }
+  .ab-way-cap { margin-top: auto; }
+  .ab-way-build-site { margin: 0; }
+  .ab-way-build-site .sk-browser > img { height: 380px; }
+}
+.ab-grow-ui { padding-bottom: 8px; }
+.ab-msg { display: flex; align-items: flex-start; gap: 10px; padding: 12px 0 2px; border-top: 1px solid #efeef5; }
+.ab-msg-av { display: flex; align-items: center; justify-content: center; flex-shrink: 0; width: 28px; height: 28px; border-radius: 8px; background: #fde3d7; color: #b4532f; }
+.ab-msg-av.is-lf { background: #eef0ff; }
+.ab-msg-head { display: flex; align-items: baseline; gap: 8px; font-size: 12.5px; color: var(--quiet); }
+.ab-msg-head b { font-weight: 500; color: var(--ink); }
+.ab-msg p { margin-top: 3px; font-size: 13.5px; line-height: 1.5; color: var(--body); text-wrap: pretty; }
+
+/* =========================================================== 5 · where our clients are */
+.ab-map { position: relative; }
+.ab-map > img { display: block; width: 100%; height: auto; }
+.ab-pins { position: absolute; inset: 0; }
+.ab-pin { position: absolute; width: 0; height: 0; }
+.ab-pin::after { content: ""; position: absolute; background: rgba(26,16,64,0.28); }
+.ab-pin.is-up::after, .ab-pin.is-down::after { left: 0; width: 1px; height: 12px; }
+.ab-pin.is-up::after { bottom: 0; }
+.ab-pin.is-down::after { top: 0; }
+.ab-pin.is-left::after, .ab-pin.is-right::after { top: 0; width: 12px; height: 1px; }
+.ab-pin.is-left::after { right: 0; }
+.ab-pin.is-right::after { left: 0; }
+.ab-pin-label { display: inline-flex; align-items: center; gap: 7px; height: 32px; padding: 0 12px; border-radius: 99px; background: #ffffff; white-space: nowrap; font-size: 13px; font-weight: 500; color: var(--ink); box-shadow: 0 0 0 1px rgba(20,16,60,0.06), 0 10px 22px rgba(20,16,60,0.14); transition: box-shadow var(--dur) var(--ease); }
+.ab-pin-label .is-icon { width: 18px; height: 18px; border-radius: 5px; }
+.ab-pin-label b { font-weight: 500; }
+.ab-pin .ab-pin-label { position: absolute; }
+.ab-pin:hover .ab-pin-label { box-shadow: 0 0 0 1.5px var(--ind), 0 10px 22px rgba(20,16,60,0.16); }
+.ab-pin.is-up .ab-pin-label { left: 0; bottom: 12px; transform: translateX(-50%); }
+.ab-pin.is-down .ab-pin-label { left: 0; top: 12px; transform: translateX(-50%); }
+.ab-pin.is-left .ab-pin-label { right: 12px; top: 0; transform: translateY(-50%); }
+.ab-pin.is-right .ab-pin-label { left: 12px; top: 0; transform: translateY(-50%); }
+.ab-home { position: absolute; display: flex; align-items: center; gap: 8px; height: 36px; padding: 0 12px 0 7px; border-radius: 99px; background: var(--ink); color: #ffffff; font-size: 13.5px; transform: translate(-22px, -50%); box-shadow: 0 10px 24px rgba(20,16,60,0.25); }
+.ab-home b { font-weight: 500; }
+.ab-pins-list { display: none; }
+@media (max-width: 767px) {
+  .ab-pin { display: none; }
+  .ab-home { height: 28px; padding: 0 5px; transform: translate(-14px, -50%); }
+  .ab-home b { display: none; }
+  .ab-pins-list { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 20px; }
+}
+
+/* =========================================================== 6 · questions */
+.ab-faq-sub { font-size: 16px; line-height: 1.55; color: var(--body); margin-top: 16px; max-width: 380px; }
+.ab-faq .v11-faq-a { max-width: 62ch; }

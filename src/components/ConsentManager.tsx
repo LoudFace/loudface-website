@@ -2,7 +2,11 @@
 
 import { useCallback, useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import { Button } from '@/components/ui';
+import { ConsentCardV11 } from '@/app/home-v11/ConsentCard';
+import type { ConsentContent } from '@/lib/content-utils';
+import { isV11Route } from '@/lib/v11-routes';
 import {
   CONSENT_EVENT,
   type ConsentValue,
@@ -121,6 +125,8 @@ function loadTrackersOnInteraction() {
 interface ConsentManagerProps {
   /** Server-derived from the request's country header: EEA/UK/CH → true. */
   requiresConsent: boolean;
+  /** The v11 card's copy (consent.json); the card replaces the bar on v11 routes (src/lib/v11-routes.ts). */
+  v11Content?: ConsentContent;
 }
 
 /**
@@ -141,7 +147,8 @@ interface ConsentManagerProps {
  * explanatory copy collapses. See the bottom-band contract below and the
  * matching rules in globals.css.
  */
-export function ConsentManager({ requiresConsent }: ConsentManagerProps) {
+export function ConsentManager({ requiresConsent, v11Content }: ConsentManagerProps) {
+  const pathname = usePathname();
   const [choice, setChoice] = useState<ConsentValue | null>(null);
   const [mounted, setMounted] = useState(false);
   const [expanded, setExpanded] = useState(false);
@@ -229,6 +236,21 @@ export function ConsentManager({ requiresConsent }: ConsentManagerProps) {
   }, [showBanner]);
 
   if (!showBanner) return null;
+
+  if (v11Content && isV11Route(pathname)) {
+    return (
+      <ConsentCardV11
+        c={v11Content}
+        gpc={hasGPCSignal()}
+        expanded={expanded}
+        onToggle={() => setExpanded((v) => !v)}
+        onAccept={accept}
+        onDecline={decline}
+        detailId={CONSENT_DETAIL_ID}
+        cardRef={bannerRef}
+      />
+    );
+  }
 
   return (
     <div

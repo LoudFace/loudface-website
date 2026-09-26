@@ -1,0 +1,74 @@
+/* CRO page exploration: the results grid and the A/B test section, in the v11 language. */
+
+/* results: a crosshair grid, one wide video case, then charts and numbers */
+.cro-grid { position: relative; display: grid; grid-template-columns: repeat(3, 1fr); border-top: 1px solid var(--line); border-left: 1px solid var(--line); }
+.cro-cell { position: relative; display: flex; flex-direction: column; padding: 30px 30px 28px; border-right: 1px solid var(--line); border-bottom: 1px solid var(--line); min-width: 0; }
+.cro-cell.is-video { grid-column: span 2; flex-direction: row; gap: 32px; align-items: stretch; }
+.cro-video { flex: 1.15; min-width: 0; }
+.cro-video .v11-video-still { height: 100%; min-height: 320px; aspect-ratio: auto; border-radius: 16px; }
+.cro-video-copy { flex: 1; display: flex; flex-direction: column; }
+.cro-video-copy > img { align-self: flex-start; height: 26px; width: auto; }
+.cro-tag { display: flex; gap: 6px; font-size: 13px; color: var(--muted); }
+.cro-tag .is-tag { font-weight: 500; color: var(--ink); }
+.cro-big { font-family: var(--font-heading); font-weight: 500; font-size: 64px; line-height: 0.95; letter-spacing: -0.05em; color: var(--ink); margin-top: 22px; }
+.cro-big.is-ind { color: var(--ind); }
+.cro-big.is-orange { color: #f8612d; }
+.cro-cap { font-size: 14px; color: var(--muted); margin-top: 10px; text-wrap: balance; }
+.cro-quote { font-family: var(--font-heading); font-weight: 500; font-size: 19px; line-height: 1.3; letter-spacing: -0.015em; color: var(--ink); margin-top: auto; padding-top: 24px; text-wrap: pretty; }
+.cro-who { display: flex; align-items: center; gap: 10px; margin-top: 18px; padding-top: 14px; border-top: 1px solid var(--line); font-size: 13px; color: var(--muted); }
+.cro-who .is-name { font-weight: 500; color: var(--ink); margin-right: 6px; }
+.cro-who img { width: 32px; height: 32px; border-radius: 99px; object-fit: cover; }
+.cro-who > span { display: flex; flex-direction: column; }
+.cro-who .cro-review { display: flex; align-items: center; gap: 6px; margin-left: auto; font-size: 13.5px; font-weight: 500; color: var(--ind); white-space: nowrap; }
+.cro-who .cro-review:hover { color: #3a33c7; }
+.cro-bars { width: 100%; height: auto; margin-top: auto; padding-top: 24px; overflow: visible; }
+.cro-bars .is-axis { font-size: 11px; fill: #a3a0b8; font-family: inherit; }
+.cro-chart { margin-top: auto; padding-top: 20px; }
+.cro-dates { display: flex; justify-content: space-between; font-size: 11.5px; color: #a3a0b8; margin-top: 8px; }
+.cro-logo { align-self: flex-start; height: 22px; width: auto; }
+.cro-brand { display: flex; align-items: center; gap: 10px; font-family: var(--font-heading); font-weight: 500; font-size: 18px; letter-spacing: -0.015em; color: var(--ink); }
+.cro-brand img { width: 28px; height: 28px; border-radius: 8px; }
+.cro-initial { display: flex; align-items: center; justify-content: center; flex-shrink: 0; width: 32px; height: 32px; border-radius: 99px; background: var(--ind); color: #ffffff; font-size: 13px; font-weight: 600; }
+
+/* how a test runs: two variants side by side and the readout */
+.cro-ab { display: grid; grid-template-columns: 1fr 1fr 0.9fr; gap: 24px; align-items: stretch; }
+.cro-variant { display: flex; flex-direction: column; gap: 12px; }
+.cro-variant-label { display: flex; align-items: center; gap: 10px; font-size: 14px; font-weight: 500; color: var(--ink); }
+.cro-variant-label .is-pill { display: flex; align-items: center; justify-content: center; width: 26px; height: 26px; border-radius: 8px; background: #ecebf3; font-size: 13px; }
+.cro-variant.is-b .is-pill { background: var(--ind); color: #ffffff; }
+.cro-variant-label .is-split { margin-left: auto; font-weight: 400; font-size: 12.5px; color: var(--muted); }
+.cro-page { flex: 1; border-radius: 16px; overflow: hidden; background: #ffffff; box-shadow: 0 0 0 1px var(--line), 0 18px 40px rgba(20,16,60,0.08); }
+.cro-variant.is-b .cro-page { box-shadow: 0 0 0 2px var(--ind), 0 24px 50px rgba(79,70,229,0.22); }
+.cro-page-bar { display: flex; align-items: center; height: 34px; padding: 0 14px; background: #f6f6f8; box-shadow: inset 0 -1px 0 var(--line); }
+.cro-page-body { display: flex; flex-direction: column; padding: 22px 26px 28px; }
+.cro-page-nav { display: flex; gap: 10px; align-items: center; }
+.cro-page-nav i { display: block; width: 34px; height: 7px; border-radius: 4px; background: #e4e4ea; }
+.cro-page-nav i.is-logo { width: 56px; height: 12px; background: var(--ink); margin-right: auto; }
+.cro-page-h { font-family: var(--font-heading); font-weight: 500; font-size: 27px; line-height: 1.08; letter-spacing: -0.03em; color: var(--ink); margin-top: 36px; text-wrap: balance; }
+.cro-page-h.is-a { color: #6b6788; }
+.cro-page-p { font-size: 13.5px; line-height: 1.5; color: var(--muted); margin-top: 12px; }
+.cro-page-cta { align-self: flex-start; display: flex; align-items: center; height: 38px; padding: 0 16px; border-radius: 99px; background: var(--ind); color: #ffffff; font-size: 13.5px; font-weight: 500; margin-top: 22px; }
+.cro-page-cta.is-ghost { background: none; color: var(--muted); box-shadow: inset 0 0 0 1px #d9d7e6; }
+.cro-page-logos { display: flex; gap: 12px; margin-top: 28px; padding-top: 16px; border-top: 1px solid #efeef5; }
+.cro-page-logos i { display: block; width: 46px; height: 10px; border-radius: 3px; background: #d9d7e6; }
+.cro-readout { align-self: end; display: flex; flex-direction: column; border-radius: 18px; background: #ffffff; padding: 20px 22px; box-shadow: 0 0 0 1px rgba(20,16,60,0.06), 0 24px 60px rgba(20,16,60,0.14); }
+.cro-readout-head { display: flex; justify-content: space-between; align-items: center; font-size: 12.5px; color: var(--muted); padding-bottom: 12px; }
+.cro-readout-head .is-win { display: flex; align-items: center; height: 22px; padding: 0 8px; border-radius: 6px; background: #e3f5ea; color: #1b7f4b; font-weight: 500; }
+.cro-readout-row { display: flex; flex-direction: column; gap: 3px; padding: 10px 0; border-top: 1px solid #efeef5; font-size: 13.5px; color: var(--ink); }
+.cro-readout-row .is-k { font-size: 12px; color: var(--muted); }
+.cro-readout-bars { display: flex; flex-direction: column; gap: 10px; padding: 16px 0; border-top: 1px solid #efeef5; }
+.cro-readout-bars > div { display: flex; align-items: center; gap: 10px; font-size: 13px; color: var(--muted); }
+.cro-readout-bars i { display: block; height: 22px; border-radius: 5px; background: #ecebf3; }
+.cro-readout-bars .is-b i { background: repeating-linear-gradient(135deg, rgba(79,70,229,0.35) 0 2px, transparent 2px 6px), #eef0ff; box-shadow: inset 0 0 0 1.5px var(--ind); }
+.cro-readout-bars b { font-family: var(--font-heading); font-weight: 500; font-size: 17px; color: var(--ink); }
+.cro-readout-bars .is-b b { color: var(--ind); }
+.cro-readout-foot { display: flex; justify-content: space-between; gap: 12px; padding-top: 12px; border-top: 1px solid #efeef5; font-size: 12px; color: var(--muted); }
+
+/* wide cells and the plain-number cell */
+.cro-cell.is-wide { grid-column: span 2; }
+.cro-cell.is-quote .cro-quote { font-size: 24px; max-width: 640px; }
+.cro-stat-art { margin-top: auto; padding-top: 24px; }
+@media (max-width: 1023px) { .cro-grid { grid-template-columns: minmax(0, 1fr); } .cro-cell.is-video, .cro-cell.is-wide { grid-column: auto; flex-direction: column; } }
+/* a quote with no figure (the figure shows elsewhere on the page): the words are the cell's picture */
+.cro-cell.is-plain .cro-quote { margin-top: 32px; font-size: 28px; line-height: 1.2; letter-spacing: -0.025em; }
+.cro-cell.is-plain .cro-who { margin-top: auto; }

@@ -1,0 +1,167 @@
+{
+  "labels": {
+    "primaryCta": "Book a strategy call",
+    "secondaryCta": "See how we work",
+    "readStudy": "Read the case study",
+    "painEyebrow": "The problem",
+    "chatCaption": "Example. Your buyer asks an AI engine for a shortlist, and the answer names someone else.",
+    "layersEyebrow": "The program",
+    "resultsEyebrow": "Results",
+    "approachEyebrow": "How we work",
+    "sheetMeta": "Your company",
+    "detailEyebrow": "In detail",
+    "includedTitle": "What's included",
+    "voicesEyebrow": "Clients",
+    "postsTitle": "Related reading",
+    "otherTitle": "SEO for other industries",
+    "otherLede": "The same team and method, applied to how each market searches and buys.",
+    "teamsTag": "Clients",
+    "teamsBig": "50+",
+    "teamsCap": "B2B teams whose sites we designed, built and grew",
+    "onThisPage": "On this page",
+    "answerEyebrow": "The short answer",
+    "workTitle": "Related case studies",
+    "hubChatCaption": "Example. Your buyer asks an AI engine for a shortlist; what the answer draws on depends on the market.",
+    "croPills": [
+      "Headline states the outcome",
+      "One next step above the fold",
+      "Proof on the first screen"
+    ]
+  },
+  "other": [
+    {
+      "href": "/seo-for/saas",
+      "label": "SaaS"
+    },
+    {
+      "href": "/seo-for/b2b",
+      "label": "B2B"
+    },
+    {
+      "href": "/seo-for/fintech",
+      "label": "Fintech"
+    },
+    {
+      "href": "/seo-for/startups",
+      "label": "Startups"
+    },
+    {
+      "href": "/seo-for/ai-startups",
+      "label": "AI startups"
+    },
+    {
+      "href": "/seo-for/cybersecurity",
+      "label": "Cybersecurity"
+    },
+    {
+      "href": "/seo-for/devtools",
+      "label": "Developer tools"
+    },
+    {
+      "href": "/seo-for/healthcare",
+      "label": "Healthcare"
+    },
+    {
+      "href": "/seo-for/hr-tech",
+      "label": "HR tech"
+    },
+    {
+      "href": "/seo-for/edtech",
+      "label": "EdTech"
+    },
+    {
+      "href": "/seo-for/ecommerce",
+      "label": "E-commerce"
+    }
+  ],
+  "chat": {
+    "saas": {
+      "model": "ChatGPT",
+      "question": "Best onboarding software for a B2B SaaS team?",
+      "answerLead": "Most teams shortlist",
+      "answerBrand": "the vendors with comparison pages",
+      "answerTail": "based on G2 reviews and alternatives pages.",
+      "sourcesLabel": "Sources",
+      "sourceOne": "g2.com",
+      "sourceTwo": "Alternatives page",
+      "inputHint": "Ask anything"
+    },
+    "b2b": {
+      "model": "ChatGPT",
+      "question": "Best vendors for a mid-size B2B team?",
+      "answerLead": "Buyers are pointed to",
+      "answerBrand": "the vendors with ROI and security pages",
+      "answerTail": "based on analyst lists and review sites.",
+      "sourcesLabel": "Sources",
+      "sourceOne": "Analyst list",
+      "sourceTwo": "Review site",
+      "inputHint": "Ask anything"
+    },
+    "fintech": {
+      "model": "ChatGPT",
+      "question": "Best embedded payments provider?",
+      "answerLead": "Platforms with",
+      "answerBrand": "published fee tables",
+      "answerTail": "are named first, based on pricing and compliance pages.",
+      "sourcesLabel": "Sources",
+      "sourceOne": "Pricing page",
+      "sourceTwo": "Trust page",
+      "inputHint": "Ask anything"
+    },
+    "startups": {
+      "model": "ChatGPT",
+      "question": "Best project tracker for a ten-person startup?",
+      "answerLead": "Small teams are pointed to",
+      "answerBrand": "the category leaders",
+      "answerTail": "because they own the pages that rank for the question.",
+      "sourcesLabel": "Sources",
+      "sourceOne": "Review site",
+      "sourceTwo": "Comparison site",
+      "inputHint": "Ask anything"
+    },
+    "ecommerce": {
+      "model": "ChatGPT",
+      "question": "Best store for a premium leather wallet?",
+      "answerLead": "Shoppers are sent to",
+      "answerBrand": "marketplace listings",
+      "answerTail": "based on gift guides and product reviews.",
+      "sourcesLabel": "Sources",
+      "sourceOne": "Gift guide",
+      "sourceTwo": "Marketplace",
+      "inputHint": "Ask anything"
+    },
+    "healthcare": {
+      "model": "ChatGPT",
+      "question": "Best post-hospital care program near me?",
+      "answerLead": "Answers favour",
+      "answerBrand": "providers with named clinicians",
+      "answerTail": "based on hospital pages and health directories.",
+      "sourcesLabel": "Sources",
+      "sourceOne": "Hospital site",
+      "sourceTwo": "Health directory",
+      "inputHint": "Ask anything"
+    },
+    "cybersecurity": {
+      "model": "ChatGPT",
+      "question": "Best phishing training for a 500-person team?",
+      "answerLead": "Security teams are pointed to",
+      "answerBrand": "the vendors analysts rank",
+      "answerTail": "based on analyst reports and review sites.",
+      "sourcesLabel": "Sources",
+      "sourceOne": "Analyst report",
+      "sourceTwo": "Review site",
+      "inputHint": "Ask anything"
+    },
+    "devtools": {
+      "model": "ChatGPT",
+      "question": "Best diagramming tool for an engineering team?",
+      "answerLead": "Developers are pointed to",
+      "answerBrand": "the tools with public docs",
+      "answerTail": "based on documentation, forums and comparison posts.",
+      "sourcesLabel": "Sources",
+      "sourceOne": "Developer forum",
+      "sourceTwo": "Docs site",
+      "inputHint": "Ask anything"
+    }
+  }
+}

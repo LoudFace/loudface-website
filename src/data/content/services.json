@@ -4,9 +4,9 @@
     "eyebrowYears": "4+ years",
     "headline": "The work is the pitch.",
     "headlineHighlight": "Not the deck.",
-    "description": "Seven services, one team — behind 200+ B2B SaaS websites. Below is the actual work, and every site is tagged with the services that shipped it. Find the outcome you want, then follow the tag to the service that did it.",
+    "description": "Nine services, one team — behind 200+ B2B SaaS websites. Below is the actual work, and every site is tagged with the services that shipped it. Find the outcome you want, then follow the tag to the service that did it.",
     "ctaText": "Book a strategy call",
-    "seeAllText": "See all seven services"
+    "seeAllText": "See all nine services"
   },
   "logos": {
     "lead": "Built and grown for B2B SaaS teams shipping real products"
@@ -15,7 +15,7 @@
     "eyebrow": "Selected work",
     "headline": "What shipped —",
     "headlineHighlight": "and what shipped it.",
-    "intro": "Three sites, three different mixes of the same seven services. Each label credits the work behind it — follow a tag to the service.",
+    "intro": "Three sites, three different mixes of the same nine services. Each label credits the work behind it — follow a tag to the service.",
     "noteText": "Tap a service to open it",
     "creditsLabel": "Services that shipped it",
     "outcomeLabel": "Outcome",
@@ -95,7 +95,7 @@
         "source": "Dimer Health · CRO · six-month optimization"
       },
       {
-        "value": "7",
+        "value": "9",
         "label": "Services, one team"
       }
     ]
@@ -216,7 +216,7 @@
       },
       {
         "question": "How do we start?",
-        "answer": "A 30-minute strategy call. We look at your site together and tell you which of the eight services it actually needs, which to skip, and where they would move the needle first. No pitch deck."
+        "answer": "A 30-minute strategy call. We look at your site together and tell you which of the nine services it actually needs, which to skip, and where they would move the needle first. No pitch deck."
       }
     ]
   },
@@ -224,7 +224,7 @@
     "eyebrowLeft": "LoudFace — strategy call",
     "eyebrowRight": "B2B SaaS only",
     "headline": "Not sure which services you need? That’s the call.",
-    "description": "30 minutes, no pitch deck. We’ll look at your site together and tell you which of the seven would move the needle first — and which you can skip for now.",
+    "description": "30 minutes, no pitch deck. We’ll look at your site together and tell you which of the nine would move the needle first — and which you can skip for now.",
     "ctaText": "Book a strategy call",
     "responseTime": "One team — build and growth",
     "creditLeft": "Cover — Montblanc, built by LoudFace",

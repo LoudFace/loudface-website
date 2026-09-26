@@ -1,0 +1,219 @@
+{
+  "hero": {
+    "eyebrow": "LoudFace Partner Program",
+    "h1": "Refer a client. Earn 10% of their retainer for as long as they stay with us.",
+    "sub": "No caps. No expiry. The LoudFace Partner Program is built for fractional CMOs, growth advisors, and consultants who advise clients but don't want to run execution.",
+    "cta": "Apply in 2 minutes"
+  },
+  "statement": {
+    "title": "Partner statement",
+    "label": "Example",
+    "client": "Your referral",
+    "retainer": "$15,000 / month retainer",
+    "rate": "10% · paid by the 5th",
+    "monthLabel": "Month",
+    "payout": "$1,500",
+    "totalLabel": "Paid to you after 12 months",
+    "total": "$18,000",
+    "status": "Paid",
+    "chartLabel": "Paid to you, running total"
+  },
+  "earnings": {
+    "eyebrow": "What you'd actually earn",
+    "title": "Math beats adjectives.",
+    "lede": "10% of the client's monthly retainer, paid every month they stay active. Here's how that compounds.",
+    "columns": [
+      "Client retainer",
+      "Your monthly payout",
+      "After 12 months",
+      "After 24 months"
+    ],
+    "rows": [
+      {
+        "retainer": "$10,000 / month",
+        "monthly": "$1,000",
+        "y1": "$12,000",
+        "y2": "$24,000"
+      },
+      {
+        "retainer": "$15,000 / month",
+        "monthly": "$1,500",
+        "y1": "$18,000",
+        "y2": "$36,000"
+      },
+      {
+        "retainer": "$25,000 / month",
+        "monthly": "$2,500",
+        "y1": "$30,000",
+        "y2": "$60,000"
+      }
+    ],
+    "note": "Hypothetical based on our average retainer length. We'll replace this with real partner numbers once the first 2–3 cohort commissions clear."
+  },
+  "steps": {
+    "title": "Simple structure.",
+    "titleGhost": "Serious upside.",
+    "items": [
+      {
+        "title": "Apply (5 minutes)",
+        "body": "Quick form. We review every application manually and reply within 48 hours with either approval, or a no with a reason.",
+        "detail": "We keep the partner network selective. This works best when both sides are the right fit."
+      },
+      {
+        "title": "Get your partner kit",
+        "body": "Approved partners receive:",
+        "bullets": [
+          "A unique UTM-tagged link (or a warm-intro template if you prefer that route)",
+          "A partner agreement that takes 2 minutes to read",
+          "Direct Slack/email access to Arnel (CEO) for deal questions"
+        ],
+        "detail": ""
+      },
+      {
+        "title": "Refer a client",
+        "body": "Send them your link, or introduce us over email. We handle discovery, scoping, proposal, and onboarding. You stay in your advisory seat.",
+        "detail": ""
+      },
+      {
+        "title": "Get paid every month they stay",
+        "body": "10% of their retainer, paid by the 5th of every month, for as long as they’re a client. Not 6 months. Not 12 months. Lifetime.",
+        "detail": "First payment lands 30 days after their first invoice is paid."
+      }
+    ],
+    "stepLabel": "Step",
+    "ui": [
+      [
+        {
+          "k": "Application received",
+          "v": "Reply within 48h",
+          "tone": "ok"
+        }
+      ],
+      [
+        {
+          "k": "loudface.co/?utm_source=partner",
+          "v": "",
+          "tone": "mono"
+        },
+        {
+          "k": "Partner agreement",
+          "v": "1 page",
+          "tone": "quiet"
+        }
+      ],
+      [
+        {
+          "k": "To",
+          "v": "arnel@loudface.co",
+          "tone": "label"
+        },
+        {
+          "k": "Subject",
+          "v": "Intro: your client × LoudFace",
+          "tone": "label"
+        }
+      ],
+      [
+        {
+          "k": "$1,500",
+          "v": "Paid · by the 5th",
+          "tone": "ok"
+        }
+      ]
+    ]
+  },
+  "terms": {
+    "earnEyebrow": "What you earn",
+    "earnTitle": "10% of retainer, every month they stay.",
+    "earnBody": "Paid by the 5th. No caps. No expiry. Most referral programs offer a one-time finder's fee. Ours pays every month the engagement is active.",
+    "qualifyEyebrow": "Who qualifies",
+    "qualifyTitle": "$10K/month minimum retainer.",
+    "qualifyBody": "Referrals must have a minimum retainer of at least $10K/month. Anything below isn't a fit — for them or for us.",
+    "cta": "Apply in 2 minutes"
+  },
+  "why": {
+    "eyebrow": "Why partner with LoudFace",
+    "title": "Your reputation goes out with every recommendation. We work like we know that.",
+    "items": [
+      "SEO + AEO + CRO as one integrated system. One team, one strategy, one accountability.",
+      "We report on pipeline and revenue. Not vanity metrics.",
+      "We work as an extension of your advisory, not a replacement.",
+      "Sites designed, built and grown for 50+ B2B teams. 4+ years as a Webflow Enterprise Partner.",
+      "Average launch in <6 weeks. Most agencies quote 12–16."
+    ]
+  },
+  "voices": {
+    "title": "The clients you'd be referring to us",
+    "lede": "A few words from the founders and operators we work with day-to-day."
+  },
+  "criteria": {
+    "eyebrow": "Partner criteria",
+    "title": "We're selective about who we partner with, and we expect the same standard in return.",
+    "rightTitle": "You're the right fit if:",
+    "right": [
+      "You're a fractional CMO, growth advisor, or marketing consultant",
+      "Your clients are businesses that need growth execution",
+      "You advise on strategy but don't run growth execution in-house",
+      "You're confident enough in your recommendations to put your name behind them",
+      "You make 1–3 client recommendations per quarter where LoudFace’s service would be a real solve"
+    ],
+    "notTitle": "This isn't the right fit if:",
+    "not": [
+      "You run a competing full-service agency",
+      "Your clients are primarily B2C or e-commerce",
+      "You're looking for a white-label or reseller arrangement",
+      "You expect us to do the selling and your only role is the introduction — the intro is half the work; the recommendation needs to be warm and contextual"
+    ]
+  },
+  "faq": {
+    "title": "Common questions about the partner program",
+    "items": [
+      {
+        "question": "Do I have to sign anything formal?",
+        "answer": "Yes — a 1-page partner agreement covering commission terms, payout cadence, and confidentiality. Takes 2 minutes to read. We’ll send it on approval."
+      },
+      {
+        "question": "How do you track who referred who?",
+        "answer": "Two ways. Either share your unique UTM-tagged link with your client (we attribute the lead automatically when they apply), or send a warm intro to arnel@loudface.co — we tag the lead to your account manually. Both methods are valid and pay out identically."
+      },
+      {
+        "question": "When do I get paid?",
+        "answer": "Monthly. First payout lands 30 days after your referral’s first invoice is paid. After that, by the 5th of every month, as long as they’re an active client. Paid via Wise, PayPal, or bank transfer (international friendly)."
+      },
+      {
+        "question": "What happens if my referral cancels in month 1?",
+        "answer": "If the client churns within the first 60 days, the commission is clawed back from your next payout. After 60 days, no clawback — it’s yours."
+      },
+      {
+        "question": "Can I refer someone I’m currently advising?",
+        "answer": "Yes. That’s our ideal partner setup — you advise on strategy, we run execution. Just be transparent with your client that you’re earning a referral fee. We’ll never disclose it without your sign-off."
+      },
+      {
+        "question": "What if my referral wants to negotiate scope or pricing?",
+        "answer": "We handle all that. Your job ends at the intro. We’ll keep you looped in on the deal status (lost / won / paused) within 5 business days of close or no-go."
+      },
+      {
+        "question": "Is there a cap on how many referrals I can make?",
+        "answer": "No. The more you refer, the more you earn. Top partners earn $30k+/year."
+      },
+      {
+        "question": "Why 10% lifetime and not a one-time fee?",
+        "answer": "Because a one-time fee turns referrals into a transaction. Lifetime payouts mean we both win when the client wins, and we both lose when they churn. It keeps our incentives aligned with yours and your client’s."
+      },
+      {
+        "question": "What does the partner agreement actually cover?",
+        "answer": "Commission rate (10%), payout schedule (monthly), tracking method, clawback terms (60 days), confidentiality on client info, and a 12-month notice clause if either side wants to wind down."
+      }
+    ]
+  },
+  "apply": {
+    "eyebrow": "Apply now",
+    "title": "One conversation. One referral. 10% for as long as they stay.",
+    "body": "Apply below. We respond within 48 hours, and the form takes about 2 minutes. If we're not a fit, we'll tell you why."
+  },
+  "final": {
+    "title": "Have a client we should meet?",
+    "body": "If you're advising clients on growth and want to refer execution, this conversation is worth having.",
+    "cta": "Apply to the Partner Program"
+  }
+}

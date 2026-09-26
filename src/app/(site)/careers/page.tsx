@@ -1,41 +1,19 @@
 /**
- * Careers Page — /careers
+ * Careers — v11 (switched 2026-09-26).
  *
- * The public, INDEXABLE front door for hiring. Its sibling `/careers/apply` is
- * deliberately noindex (it is reached from job postings we place, not from
- * search) — this page is the one search engines and AI assistants should find,
- * and the one that belongs in the sitemap. Do not make /careers/apply
- * indexable to "fix" the link between them.
- *
- * The open-role list is read live from the Notion database "Hiring Openings"
- * via fetchOpenRoles(). Notion is the source of truth: Arnel and the
- * `hiring-ops` skill open and close roles there, and this page follows with no
- * code change. Only rows whose `Opening status` is exactly "Open" are shown.
- *
- * A failed Notion read renders "we could not load our openings", NEVER
- * "no open roles" — see OpenRolesResult in careers-data.ts for why that
- * distinction is load-bearing.
- *
- * AS OF 2026-08-27 THERE ARE NO OPEN ROLES. Every row in Hiring Openings is
- * Paused, so the empty state is what this page actually renders today — it is
- * the default state, not an edge case. A Notion outage renders a DIFFERENT
- * state (see above) — it must never borrow this one's wording.
- *
- * NO JobPosting STRUCTURED DATA. Google's JobPosting schema puts listings into
- * Google Jobs; emitting it for roles that are not really open would publish
- * vacancies that do not exist. If real roles come back and we want them in
- * Google Jobs, that schema gets added THEN, generated from the live rows, with
- * validThrough set — never hardcoded.
+ * Composed from src/app/careers-v11 inside the (site) group. Open roles come live from Notion (fetchOpenRoles); the
+ * page copy is careers-v11.json. SEO metadata and the BreadcrumbList JSON-LD are unchanged.
  */
 export const revalidate = 3600;
 
 import type { Metadata } from 'next';
-import '../../service-v3/service-v3.css';
-import '../../careers-v3/careers-v3.css';
-import { CareersPageV3 } from '../../careers-v3/CareersPageV3';
-import { FooterV3 } from '../../home-v3/FooterV3';
-import { ServiceV3Scripts } from '../../service-v3/Scripts';
+import '../../home-v11/home-v11.css';
+import '../../service-v11/service-v11.css';
+import '../../service-v11/svc.css';
+import '../../careers-v11/careers.css';
 import { fetchOpenRoles } from '@/lib/careers-data';
+import { getCareersV11Content, getHomeV11Content } from '@/lib/content-utils';
+import { CareersV11 } from '../../careers-v11/CareersV11';
 
 const SITE_URL = 'https://www.loudface.co';
 const PAGE_URL = `${SITE_URL}/careers`;
@@ -76,17 +54,15 @@ const breadcrumbJsonLd = {
 };
 
 export default async function CareersPage() {
-  const result = await fetchOpenRoles();
+  const [result, c, home] = await Promise.all([fetchOpenRoles(), getCareersV11Content(), getHomeV11Content()]);
 
   return (
-    <div className="svcv3">
+    <>
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
       />
-      <CareersPageV3 result={result} />
-      <FooterV3 />
-      <ServiceV3Scripts />
-    </div>
+      <CareersV11 result={result} home={home} c={c} />
+    </>
   );
 }

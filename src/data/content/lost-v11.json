@@ -1,0 +1,36 @@
+{
+  "notFound": {
+    "code": "404",
+    "title": "Page not found",
+    "body": "The page you're looking for doesn't exist or has been moved.",
+    "primary": "Back to home",
+    "secondary": "View our work"
+  },
+  "error": {
+    "code": "500",
+    "title": "Something went wrong",
+    "body": "An unexpected error occurred. Please try again.",
+    "primary": "Try again",
+    "secondary": "Back to home"
+  },
+  "waysTitle": "Or try one of these:",
+  "ways": [
+    {
+      "href": "/blog",
+      "label": "Blog"
+    },
+    {
+      "href": "/about",
+      "label": "About us"
+    },
+    {
+      "href": "/services/seo-aeo",
+      "label": "SEO Services"
+    },
+    {
+      "href": "/services/webflow",
+      "label": "Webflow"
+    }
+  ],
+  "indexLead": "Looking for a full index?"
+}

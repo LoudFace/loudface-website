@@ -1,5 +1,5 @@
 /**
- * GEO Agency service page (/services/geo-agency) — v3 "artifact stage" template
+ * GEO Agency service page (/services/geo-agency) — v11 service template (since 2026-09-26)
  * (componentized). Copy: services-geo-agency.json (adapted into
  * SERVICE_CONFIGS['geo-agency']). The GEO↔AEO disambiguation from the hub is
  * respected; the "seven questions to ask a GEO agency" checklist is preserved as
@@ -8,9 +8,15 @@
 export const revalidate = 60;
 
 import type { Metadata } from 'next';
-import '../../../service-v3/service-v3.css';
-import { getServiceImages, getServiceConfig } from '../../../service-v3/data';
-import { ServicePageV3 } from '../../../service-v3/ServicePageV3';
+import '../../../home-v11/home-v11.css';
+import '../../../service-v11/service-v11.css';
+import '../../../service-v11/cro-sections.css';
+import '../../../service-v11/svc.css';
+import { getHomeV11Content } from '@/lib/content-utils';
+import { getServiceImages } from '../../../service-v3/data';
+import { getServiceConfigV11 } from '../../../service-v11/configs';
+import { getHomeV11Data } from '../../../home-v11/data';
+import { ServicePageV11 } from '../../../service-v11/ServicePageV11';
 import { buildServiceJsonLd } from '../../../service-v3/jsonld';
 
 export const metadata: Metadata = {
@@ -40,8 +46,9 @@ export const metadata: Metadata = {
 };
 
 export default async function GeoAgencyServicePage() {
-  const config = getServiceConfig('geo-agency')!;
-  const images = await getServiceImages();
+  // The v11 page's config (the v3 config, or its v11 override); the FAQPage JSON-LD reads the FAQ this page shows.
+  const config = getServiceConfigV11('geo-agency')!;
+  const [images, home, data] = await Promise.all([getServiceImages(), getHomeV11Content(), getHomeV11Data()]);
   const jsonLd = buildServiceJsonLd({
     slug: 'geo-agency',
     serviceType: 'Generative Engine Optimization',
@@ -52,11 +59,11 @@ export default async function GeoAgencyServicePage() {
   });
 
   return (
-    <div className="svcv3">
+    <>
       {jsonLd.map((s, i) => (
         <script key={i} type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(s) }} />
       ))}
-      <ServicePageV3 config={config} images={images} />
-    </div>
+      <ServicePageV11 config={config} images={images} home={home} data={data} />
+    </>
   );
 }

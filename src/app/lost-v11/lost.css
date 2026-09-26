@@ -1,0 +1,21 @@
+/* The root 404 and error pages can render outside the site layout (no globals.css there): give them the same type
+   aliases globals.css defines, so the page never falls back to a serif. Inside the site layout the values match. */
+.lost { --font-sans: var(--font-satoshi), system-ui, -apple-system, BlinkMacSystemFont, sans-serif; --font-heading: var(--font-neue-montreal), system-ui, sans-serif; }
+/* 404 and error v11. Loads after home-v11.css. */
+.lost-page { margin-top: -64px; padding: 116px 0 96px; background: #ffffff; color: var(--ink); }
+.lost h1 { margin-top: 20px; font-family: var(--font-heading); font-weight: 500; font-size: 52px; line-height: 1; letter-spacing: -0.045em; }
+.lost-body { margin-top: 18px; font-size: 19px; line-height: 1.55; color: var(--body); max-width: 560px; }
+.lost-ctas { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 28px; }
+.lost-k { margin-top: 72px; margin-bottom: 12px; font-size: 14px; font-weight: 500; color: var(--quiet); }
+.lost-ways { display: grid; grid-template-columns: minmax(0, 1fr); margin: 0; padding: 0; list-style: none; border-top: 1px solid var(--line); max-width: 880px; }
+.lost-ways li { border-bottom: 1px solid var(--line); }
+.lost-ways a { display: flex; align-items: center; justify-content: space-between; gap: 16px; min-height: 64px; padding: 0 4px;
+  font-family: var(--font-heading); font-weight: 500; font-size: 22px; letter-spacing: -0.02em; color: var(--ink); transition: color var(--dur) var(--ease); }
+.lost-ways a svg { color: var(--ind); transition: transform var(--dur) var(--ease); }
+.lost-ways a:hover { color: var(--ind); }
+.lost-ways a:hover svg { transform: translate(2px, -2px); }
+@media (min-width: 768px) { .lost-ways { grid-template-columns: 1fr 1fr; column-gap: 40px; } }
+.lost-index { margin-top: 40px; font-size: 13.5px; color: var(--quiet); }
+.lost-index a { color: var(--muted); text-decoration: underline; text-underline-offset: 3px; }
+@media (min-width: 768px) { .lost h1 { font-size: 72px; } }
+@media (min-width: 1280px) { .lost-page { padding: 150px 0 120px; } .lost h1 { font-size: 88px; } }

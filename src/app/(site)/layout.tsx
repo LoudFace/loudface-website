@@ -17,7 +17,9 @@ import { PostHogProvider } from "@/components/PostHogProvider";
 import { ConsentManager } from "@/components/ConsentManager";
 import { countryRequiresConsent, POSTHOG_DISTINCT_ID_COOKIE } from "@/lib/consent";
 import { SanityLive } from "@/lib/sanity.live";
-import { getNavContent } from "@/lib/content-utils";
+import { getConsentContent, getNavContent } from "@/lib/content-utils";
+import { isV11Route, isV3PreviewRoute } from "@/lib/v11-routes";
+import { getNavV11Data } from "../home-v11/nav-data";
 
 /**
  * (site) Layout
@@ -48,36 +50,14 @@ export default async function SiteLayout({
   const consentRequired = countryRequiresConsent(country);
   const postHogDistinctId = requestCookies.get(POSTHOG_DISTINCT_ID_COOKIE)?.value;
 
-  const isBlog = pathname === "/blog" || pathname.startsWith("/blog/");
-  const isServiceChild = pathname.startsWith("/services/");
-  // Keep this list in sync with deriveRouteChrome() in SiteChrome.tsx.
-  // Every /seo-for/<industry> route — programmatic and bespoke — now renders
-  // the v3 template with its own FooterV3. (/seo-for/saas was the last holdout;
-  // migrated 2026-08-01.)
-  const isSeoForIndustry = pathname.startsWith("/seo-for/");
-  const isTeamProfile = pathname.startsWith("/team/");
-  // /careers ships its own FooterV3.
-  const isCareers = pathname === "/careers";
-  // /methodology ships its own FooterV3.
-  const isMethodology = pathname === "/methodology";
-  const suppressSharedFooter =
-    pathname === "/" ||
-    pathname === "/about" ||
-    pathname === "/pricing" ||
-    pathname === "/services" ||
-    isServiceChild ||
-    isSeoForIndustry ||
-    isTeamProfile ||
-    isCareers ||
-    isMethodology ||
-    pathname === "/contact" ||
-    pathname === "/ai-instructions" ||
-    // Policy pages on LegalPageV3 (/terms + /cookies join when they migrate).
-    pathname === "/privacy" ||
-    pathname.startsWith("/case-studies") ||
-    isBlog;
+  // Every v11 page renders FooterV11 itself, so the shared footer (and its CMS fetch) is only for the old review
+  // routes that carry no footer of their own. Same rule as deriveRouteChrome() in SiteChrome.tsx.
+  const suppressSharedFooter = isV11Route(pathname) || isV3PreviewRoute(pathname);
   const footerData = suppressSharedFooter ? null : await fetchFooterData();
-  const navContent = await getNavContent();
+  const [navContent, consentContent] = await Promise.all([getNavContent(), getConsentContent()]);
+  // The v11 menus (every route since the v11 switch, see src/lib/v11-routes.ts): nav.json's v11 block, the homepage's
+  // AI-answers tile for the Services card and each industry page's buyer question (home-v11/nav-data.ts).
+  const navV11 = await getNavV11Data();
   const isDraftMode = (await draftMode()).isEnabled;
   // Marks this request's content so the editor can find it. One line.
   await primeInlineEditing();
@@ -103,7 +83,7 @@ export default async function SiteLayout({
   // Route-dependent chrome (Header hero-theme, hreflang, shared-Footer
   // suppression) is resolved client-side in SiteChrome via usePathname(). The
   // request pathname is used here only to skip footer data on routes that carry
-  // their own FooterV3.
+  // their own footer.
   const site = (
     <>
       {/* Skip link for keyboard accessibility */}
@@ -111,11 +91,11 @@ export default async function SiteLayout({
         Skip to main content
       </a>
 
-      <SiteHeader navContent={navContent} />
+      <SiteHeader navContent={navContent} navV11={navV11} />
 
       <main id="main-content">{children}</main>
 
-      {/* Homepage + About + Pricing + Services + Contact + Case Studies (gallery + detail) + Blog (index + posts) ship their own v3 footers; every other page uses the shared one. */}
+      {/* Every v11 page ships FooterV11 itself; the shared footer is left for the old review routes only. */}
       <SiteFooter>
         <Footer caseStudies={footerData?.caseStudies} blogPosts={footerData?.blogPosts} />
       </SiteFooter>
@@ -237,7 +217,7 @@ window.addEventListener(e,loadCal,{once:true,passive:true});});})();`}
             elsewhere trackers load on first interaction with opt-out via
             /cookies. Replaces the old unconditional gtm-deferred and
             rb2b-pixel script tags. */}
-        <ConsentManager requiresConsent={consentRequired} />
+        <ConsentManager requiresConsent={consentRequired} v11Content={consentContent} />
       </PostHogProvider>
     </div>
   );

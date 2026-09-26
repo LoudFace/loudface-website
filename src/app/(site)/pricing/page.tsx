@@ -1,37 +1,22 @@
 /**
- * Pricing — v3 design (componentized).
+ * Pricing — v11 (the approved pricing v1 board; switched 2026-09-26).
  *
- * Faithful port of the approved pricing-v3 "stage-tiers" hybrid concept,
- * composed from the pricing-v3 section components inside the (site) group so
- * it inherits the shared Header/Footer + PostHog/GTM/Cal chrome. The shared
- * Header renders in its dark-hero variant on /pricing (wired in
- * (site)/layout.tsx), and the shared Footer is suppressed there so only the
- * v3 FooterV3 (same component as the homepage/About) renders. Bespoke styling
- * is pricing-v3.css, imported route-scoped here and scoped under .prv3 via
- * :where() so it can't leak onto shared chrome.
- *
- * Live Sanity data: testimonials (getPricingTestimonials — Toku/Eraser/Icypeas
- * with headshots) and the client-logo marquee (same logo set as the homepage
- * band). SEO metadata is preserved from the previous pricing page; the
- * FAQPage schema is generated from the new FAQ content (PRICING_FAQ).
+ * Composed from src/app/pricing-v11 inside the (site) group. Copy in pricing.json (the live page's words) and
+ * pricing-v11.json (the plan boards, steps and examples); the charts come from getHomeV11Data. SEO metadata and the
+ * JSON-LD are unchanged; the FAQPage schema reads the same pricing.json FAQ the page shows (PRICING_FAQ).
  */
 export const revalidate = 60;
 
 import type { Metadata } from 'next';
-import { getPricingContent } from '@/lib/content-utils';
-import '../../pricing-v3/pricing-v3.css';
-import { getPricingTestimonials, PRICING_FAQ } from '../../pricing-v3/data';
-import { HeroPricing } from '../../pricing-v3/HeroPricing';
-import { LogosMarquee } from '../../pricing-v3/LogosMarquee';
-import { HowItWorks } from '../../pricing-v3/HowItWorks';
-import { Tracks } from '../../pricing-v3/Tracks';
-import { Compare } from '../../pricing-v3/Compare';
-import { Includes, SpecialArrangements } from '../../pricing-v3/Includes';
-import { Exhibits } from '../../pricing-v3/Exhibits';
-import { Faq } from '../../pricing-v3/Faq';
-import { CoverCTA } from '../../pricing-v3/CoverCTA';
-import { FooterV3 } from '../../home-v3/FooterV3';
-import { PricingV3Scripts } from '../../pricing-v3/Scripts';
+import { getHomeV11Content, getPricingContent, getPricingV11Content } from '@/lib/content-utils';
+import '../../home-v11/home-v11.css';
+import '../../service-v11/service-v11.css';
+import '../../service-v11/cro-sections.css';
+import '../../service-v11/svc.css';
+import '../../pricing-v11/pricing.css';
+import { PRICING_FAQ } from '../../pricing-v3/data';
+import { getHomeV11Data } from '../../home-v11/data';
+import { PricingV11 } from '../../pricing-v11/PricingV11';
 
 export const metadata: Metadata = {
   title: 'Pricing: Solo, Dual & Scale Autopilot Plans',
@@ -68,10 +53,7 @@ export const metadata: Metadata = {
 };
 
 export default async function PricingPage() {
-  const [testimonials, content] = await Promise.all([
-    getPricingTestimonials(),
-    getPricingContent(),
-  ]);
+  const [c, x, home, data] = await Promise.all([getPricingContent(), getPricingV11Content(), getHomeV11Content(), getHomeV11Data()]);
 
   const breadcrumbSchema = {
     '@context': 'https://schema.org',
@@ -105,39 +87,10 @@ export default async function PricingPage() {
 
   return (
     <>
-      {/* Structured Data */}
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
-      />
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(speakableSchema) }}
-      />
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
-      />
-
-      {/* .prv3 scopes the bespoke resets so they can't touch the shared Header/Footer/Cal chrome. */}
-      <div className="prv3">
-        <HeroPricing content={content.hero} />
-        <LogosMarquee content={content.logos} />
-        <HowItWorks content={content.howItWorks} />
-        <Tracks content={content.tracks} />
-        <Compare content={content.compare} />
-        <Includes content={content.includes} />
-        <SpecialArrangements content={content.specialArrangements} />
-        <Exhibits testimonials={testimonials} content={content.exhibits} />
-        <Faq content={content.faq} />
-        <CoverCTA content={content.coverCta} />
-        {/* Shared v3 footer (same component as the homepage/About). Rendered inside
-            .prv3 so the re-scoped .ft footer CSS in pricing-v3.css applies with full
-            isolation — home-v3.css is NOT imported here. */}
-        <FooterV3 />
-      </div>
-
-      <PricingV3Scripts />
+      {[breadcrumbSchema, speakableSchema, faqSchema].map((schema, i) => (
+        <script key={i} type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }} />
+      ))}
+      <PricingV11 c={c} x={x} home={home} data={data} />
     </>
   );
 }

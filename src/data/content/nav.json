@@ -132,5 +132,109 @@
   "mainNavigationAriaLabel": "Main navigation",
   "menuToggleAriaLabel": "Toggle menu",
   "mobileMenuAriaLabel": "Mobile menu",
-  "mobileNavigationAriaLabel": "Mobile navigation"
+  "mobileNavigationAriaLabel": "Mobile navigation",
+  "v11": {
+    "serviceGroups": [
+      {
+        "label": "AI answers and search",
+        "hrefs": [
+          "/services/geo-agency",
+          "/services/ai-overviews",
+          "/services/seo-aeo"
+        ]
+      },
+      {
+        "label": "Growth programs",
+        "hrefs": [
+          "/services/organic-growth",
+          "/services/growth-autopilot",
+          "/services/cro"
+        ]
+      },
+      {
+        "label": "Site and content",
+        "hrefs": [
+          "/services/webflow",
+          "/services/ux-ui-design",
+          "/services/copywriting"
+        ]
+      }
+    ],
+    "industryGroups": [
+      {
+        "label": "By sector",
+        "hrefs": [
+          "/seo-for/fintech",
+          "/seo-for/cybersecurity",
+          "/seo-for/devtools",
+          "/seo-for/healthcare",
+          "/seo-for/hr-tech",
+          "/seo-for/edtech",
+          "/seo-for/ecommerce"
+        ]
+      },
+      {
+        "label": "By stage and model",
+        "hrefs": [
+          "/seo-for/saas",
+          "/seo-for/b2b",
+          "/seo-for/startups",
+          "/seo-for/ai-startups"
+        ]
+      }
+    ],
+    "industries": [
+      {
+        "label": "SaaS",
+        "href": "/seo-for/saas"
+      },
+      {
+        "label": "B2B",
+        "href": "/seo-for/b2b"
+      },
+      {
+        "label": "Fintech",
+        "href": "/seo-for/fintech"
+      },
+      {
+        "label": "Startups",
+        "href": "/seo-for/startups"
+      },
+      {
+        "label": "AI startups",
+        "href": "/seo-for/ai-startups"
+      },
+      {
+        "label": "Cybersecurity",
+        "href": "/seo-for/cybersecurity"
+      },
+      {
+        "label": "Developer tools",
+        "href": "/seo-for/devtools"
+      },
+      {
+        "label": "Healthcare",
+        "href": "/seo-for/healthcare"
+      },
+      {
+        "label": "HR tech",
+        "href": "/seo-for/hr-tech"
+      },
+      {
+        "label": "EdTech",
+        "href": "/seo-for/edtech"
+      },
+      {
+        "label": "E-commerce",
+        "href": "/seo-for/ecommerce"
+      }
+    ],
+    "allIndustries": "All industries",
+    "allIndustriesHref": "/seo-for",
+    "clientsTag": "Clients",
+    "clientsBig": "50+",
+    "clientsCap": "B2B teams whose sites we designed, built and grew",
+    "clientsLink": "See the case studies",
+    "clientsHref": "/case-studies"
+  }
 }

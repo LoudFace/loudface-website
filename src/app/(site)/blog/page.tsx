@@ -1,28 +1,26 @@
 /**
- * Blog Index Page — v3, derived from the "answer-first" concept vocabulary:
- * an electric compact hero → a light gallery of night exhibit cards (the concept's
- * related-post card language, with indigo gradient plates for the 13% of posts
- * with no thumbnail) → cover CTA → FooterV3.
+ * Blog index — v11 (switched 2026-09-26).
  *
- * Category badges are read-only (no filter UI existed on the old index and none is
- * invented). Pagination (12/page), metadata, and the Blog + BreadcrumbList JSON-LD
- * are preserved from the previous index verbatim.
+ * Composed from src/app/blog-v11 inside the (site) group: the newest article as the cover beside the title, then the
+ * rest of the page's posts, twelve a page, with every page linked as a plain server-rendered link (the crawl path to
+ * older posts). Copy in blog-v11.json. Metadata (each paginated page its own canonical) and the Blog + BreadcrumbList
+ * JSON-LD (the current page's posts) are unchanged.
  *
  * ISR: revalidates every 60s so new posts and thumbnail changes surface.
  */
 export const revalidate = 60;
 
 import type { Metadata } from 'next';
+import { notFound } from 'next/navigation';
 import { fetchBlogIndexData } from '@/lib/cms-data';
 import { formatReadTime } from '@/lib/blog-utils';
-import { Pagination } from '@/components/ui';
-import type { Category } from '@/lib/types';
-
-import '../../blog-v3/blog-v3.css';
-import { PostCard } from '../../blog-v3/PostCard';
-import { CoverCTA } from '../../blog-v3/CoverCTA';
-import { BlogV3Scripts } from '../../blog-v3/Scripts';
-import { FooterV3 } from '../../home-v3/FooterV3';
+import { getRedirectedPaths } from '@/lib/redirected-paths';
+import { getBlogV11Content, getHomeV11Content } from '@/lib/content-utils';
+import '../../home-v11/home-v11.css';
+import '../../service-v11/service-v11.css';
+import '../../service-v11/svc.css';
+import '../../blog-v11/blog.css';
+import { BlogIndexV11 } from '../../blog-v11/BlogIndexV11';
 
 const POSTS_PER_PAGE = 12;
 
@@ -68,22 +66,20 @@ export default async function BlogPage({
   searchParams: Promise<{ page?: string }>;
 }) {
   const { page: pageParam } = await searchParams;
-  const currentPage = Math.max(1, parseInt(pageParam || '1', 10));
+  const [c, home, { blogPosts: allPosts, categories }, redirected] = await Promise.all([getBlogV11Content(), getHomeV11Content(), fetchBlogIndexData(), getRedirectedPaths()]);
+  // A post folded into another article still has a published Sanity document; its URL 301s, so the index does not
+  // link it (the sitemap drops the same paths).
+  const blogPosts = allPosts.filter((post) => !redirected.has(`/blog/${post.slug}`));
 
-  const { blogPosts, categories } = await fetchBlogIndexData();
-
-  // Pagination
-  const totalPages = Math.ceil(blogPosts.length / POSTS_PER_PAGE);
-  const safePage = Math.min(currentPage, Math.max(1, totalPages));
+  // Pagination. A page past the last one is a 404, not a copy of the last page under its own canonical.
+  const totalPages = Math.max(1, Math.ceil(blogPosts.length / POSTS_PER_PAGE));
+  const requested = Math.max(1, parseInt(pageParam || '1', 10) || 1);
+  if (requested > totalPages) notFound();
+  const safePage = requested;
   const paginatedPosts = blogPosts.slice(
     (safePage - 1) * POSTS_PER_PAGE,
     safePage * POSTS_PER_PAGE,
   );
-
-  function getCategory(id: string | undefined): Category | undefined {
-    if (!id) return undefined;
-    return categories.get(id);
-  }
 
   // Structured Data — only include current page's posts (verbatim).
   const blogSchema = {
@@ -109,76 +105,20 @@ export default async function BlogPage({
     ],
   };
 
+  const posts = paginatedPosts.map((p) => ({
+    href: `/blog/${p.slug}`,
+    title: p.name,
+    categoryName: p.category ? categories.get(p.category)?.name : undefined,
+    thumbnailUrl: p.thumbnail?.url,
+    readTime: formatReadTime(p['time-to-read']),
+    date: p['published-date'],
+  }));
+
   return (
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(blogSchema) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }} />
-
-      <div className="blogv3">
-        {/* Electric compact hero (HERO LAW; carries .hero for the dark Header flip) */}
-        <section className="lead hero idx-lead" aria-label="Blog">
-          <div className="container lead-in">
-            <div className="lead-cat rvi"><span className="eyebrow glass"><i></i>Insights &amp; guides</span></div>
-            <h1 className="rvi" style={{ ['--d' as string]: '.06s' }}>The LoudFace Blog</h1>
-            <p className="lead-sub rvi" style={{ ['--d' as string]: '.12s' }}>
-              Actionable GEO, SEO, AEO, content, and conversion insights for B2B SaaS. Webflow delivery guides sit
-              alongside them when implementation matters.
-            </p>
-            {blogPosts.length > 0 && (
-              <span className="idx-count rvi" style={{ ['--d' as string]: '.18s' }}>
-                <i></i>{blogPosts.length} article{blogPosts.length === 1 ? '' : 's'} and counting
-              </span>
-            )}
-          </div>
-        </section>
-
-        {/* Light gallery of exhibit cards */}
-        <section className="index-body" id="articles">
-          <div className="container">
-            <div className="idx-head">
-              <h2 className="rv">Latest <span className="hot">articles</span></h2>
-              <p className="rv" style={{ ['--d' as string]: '.06s' }}>Stay updated with our latest insights and resources.</p>
-            </div>
-
-            {paginatedPosts.length === 0 ? (
-              <p className="idx-empty">No blog posts found. Check back soon.</p>
-            ) : (
-              <>
-                <div className="idx-grid">
-                  {paginatedPosts.map((post, i) => {
-                    const category = getCategory(post.category);
-                    return (
-                      <PostCard
-                        key={post.slug}
-                        href={`/blog/${post.slug}`}
-                        title={post.name}
-                        categoryName={category?.name}
-                        thumbnailUrl={post.thumbnail?.url}
-                        readTime={formatReadTime(post['time-to-read'])}
-                        delay={`${(Math.min(i, 5) * 0.05).toFixed(2)}s`}
-                      />
-                    );
-                  })}
-                </div>
-
-                <div className="idx-pagination">
-                  <Pagination
-                    currentPage={safePage}
-                    totalPages={totalPages}
-                    basePath="/blog"
-                    scrollTargetId="articles"
-                  />
-                </div>
-              </>
-            )}
-          </div>
-        </section>
-
-        <CoverCTA />
-        <FooterV3 />
-      </div>
-
-      <BlogV3Scripts />
+      <BlogIndexV11 c={c} home={home} posts={posts} total={blogPosts.length} page={safePage} pages={totalPages} />
     </>
   );
 }

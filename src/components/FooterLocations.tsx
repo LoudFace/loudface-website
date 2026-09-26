@@ -6,7 +6,7 @@ const LOCATIONS = [
   {
     city: 'San Francisco',
     timezone: 'America/Los_Angeles',
-    address: ['2261 Market Street STE 46212', 'San Francisco, CA 94114, USA'],
+    address: ['2261 Market Street STE 85181', 'San Francisco, CA 94114, USA'],
   },
   {
     city: 'Dubai',

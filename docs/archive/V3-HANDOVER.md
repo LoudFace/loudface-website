@@ -1,3 +1,5 @@
+> **Archived 2026-09-25.** v3 handover, history only. The current design authority is `DESIGN.md` (v11).
+
 # v3 Redesign — Handover
 
 Self-contained state + next steps for the LoudFace **v3 site redesign**. Written so a fresh Claude

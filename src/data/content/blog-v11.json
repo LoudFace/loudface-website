@@ -1,0 +1,41 @@
+{
+  "index": {
+    "eyebrow": "Insights & guides",
+    "headline": "The LoudFace",
+    "headlineHighlight": "Blog.",
+    "description": "Actionable GEO, SEO, AEO, content, and conversion insights for B2B SaaS. Webflow delivery guides sit alongside them when implementation matters.",
+    "countLabel": "articles and counting",
+    "latestLabel": "Latest article",
+    "readLabel": "Read the article",
+    "gridHeadline": "Latest",
+    "gridHeadlineHighlight": "articles.",
+    "gridBody": "Stay updated with our latest insights and resources.",
+    "pageLabel": "Page"
+  },
+  "post": {
+    "home": "Home",
+    "blog": "Blog",
+    "by": "By",
+    "updated": "Updated",
+    "answerLabel": "The short answer",
+    "tocLabel": "On this page",
+    "ctaHeading": "Book a free SEO/AEO audit",
+    "ctaBody": "A 30-minute call on where your brand stands in search and AI answers.",
+    "ctaText": "Schedule a call",
+    "nextHeading": "Next step",
+    "nextBody": "See where your brand stands in AI answers before you shortlist anyone.",
+    "nextCta": "Get your free AI visibility audit",
+    "faqHeadline": "Frequently asked",
+    "faqHeadlineHighlight": "questions.",
+    "faqBody": "Answers to the questions readers ask most about this topic.",
+    "authorLabel": "Written by",
+    "recordLabel": "On the record",
+    "published": "Published",
+    "lastUpdated": "Last updated",
+    "category": "Category",
+    "readingTime": "Reading time",
+    "relatedHeadline": "Keep",
+    "relatedHeadlineHighlight": "reading.",
+    "closingHeading": "Ready to grow your business?"
+  }
+}

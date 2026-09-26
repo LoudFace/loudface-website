@@ -1,34 +1,23 @@
 /**
- * /methodology: the Answer Chain methodology page.
+ * Methodology — v11 (switched 2026-09-26).
  *
- * Route shape copies /pricing and /services/geo-agency exactly: the public URL
- * comes from the `(site)` route group (the group name is not part of the URL),
- * and the page composes section components that live in `src/app/methodology-v3/`
- * with a route-scoped stylesheet. That is why this file is short: it wires
- * metadata, structured data and the concept together, nothing else.
- *
- * Chrome: the shared (site) Header renders in its dark-hero variant and the
- * shared Footer is suppressed, both registered for `/methodology` in
- * SiteChrome.tsx + (site)/layout.tsx, so the page ships the same v3 FooterV3 the
- * homepage, About and Pricing do. Shared chrome is transcribed, never redesigned.
- *
- * THE PICK, 2026-09-03. Three concepts were built and Arnel picked: "Let's go
- * with option B, but the short answer: I want to use the option A design." So
- * this route renders concept B, the instrument, and concept B carries concept
- * A's short-answer block inside it. Concepts A and C, and the three
- * dev-preview routes that rendered them, were deleted when this page shipped
- * to production on 2026-09-03.
- *
- * The copy is approved and fixed: see methodology-v3/data.tsx for the trail.
+ * Composed from src/app/methodology-v11 inside the (site) group. The words are the approved, hash-verified copy in
+ * methodology-v3/data.tsx; methodology-v11.json holds the labels and chart figures; the start section reuses the
+ * audit landing's example report window (ai-audit.json). SEO metadata and the JSON-LD (buildMethodologyJsonLd, built
+ * from the same approved copy) are unchanged.
  */
 export const revalidate = 60;
 
 import type { Metadata } from 'next';
-import '../../methodology-v3/methodology-base.css';
-import '../../methodology-v3/concept-b.css';
-import { MethodologyConceptB } from '../../methodology-v3/concepts/ConceptB';
+import '../../home-v11/home-v11.css';
+import '../../service-v11/service-v11.css';
+import '../../service-v11/svc.css';
+import '../../service-v11/cro-sections.css';
+import '../../audit-v11/audit.css';
+import '../../methodology-v11/methodology.css';
+import { getAiAuditContent, getHomeV11Content, getMethodologyV11Content } from '@/lib/content-utils';
 import { buildMethodologyJsonLd } from '../../methodology-v3/jsonld';
-import { MethodologyScripts } from '../../methodology-v3/Scripts';
+import { MethodologyV11 } from '../../methodology-v11/MethodologyV11';
 
 const DESCRIPTION =
   'The Answer Chain is LoudFace’s eight-stage GEO method for getting a B2B SaaS named in AI answers, measured against revenue outcomes rather than vanity metrics. Engagements start from $5,000 a month.';
@@ -58,11 +47,12 @@ export const metadata: Metadata = {
   },
 };
 
-export default function MethodologyPage() {
+export default async function MethodologyPage() {
   const jsonLd = buildMethodologyJsonLd();
+  const [c, home, audit] = await Promise.all([getMethodologyV11Content(), getHomeV11Content(), getAiAuditContent()]);
 
   return (
-    <div className="mth mth-b">
+    <>
       {jsonLd.map((s, i) => (
         <script
           key={i}
@@ -70,8 +60,7 @@ export default function MethodologyPage() {
           dangerouslySetInnerHTML={{ __html: JSON.stringify(s) }}
         />
       ))}
-      <MethodologyConceptB />
-      <MethodologyScripts />
-    </div>
+      <MethodologyV11 c={c} home={home} audit={audit} />
+    </>
   );
 }

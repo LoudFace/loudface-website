@@ -1,0 +1,167 @@
+{
+  "meta": {
+    "title": "SEO, AEO and GEO for AI Startups",
+    "description": "SEO, AEO and GEO for AI startups. Build the data-handling, governance, accuracy and documentation pages a security reviewer checks before they buy."
+  },
+  "hero": {
+    "eyebrow": "AI startups",
+    "h1": "SEO, AEO and GEO for AI Startups",
+    "sub": "Your buyer is a security reviewer with a questionnaire and an engineer with a free trial. Your website has to satisfy both before anyone books a call.",
+    "primaryCta": "Book an intro call",
+    "secondaryCta": "See the buyer questions"
+  },
+  "proof": {
+    "domain": "bluefyn.ai",
+    "panel": {
+      "title": "Bluefyn, first 30 days against the latest 30 days",
+      "stats": [
+        {
+          "value": "More than 5x",
+          "label": "AI visibility on a fixed set of tracked buyer prompts"
+        },
+        {
+          "value": "13x",
+          "label": "ChatGPT visibility over the same two windows"
+        },
+        {
+          "value": "Under 2",
+          "label": "Average position when named, latest window"
+        }
+      ]
+    },
+    "note": [
+      "AI verification product. Figures from the Bluefyn programme."
+    ]
+  },
+  "answer": {
+    "label": "The short answer",
+    "text": "An AI startup wins or loses in the security review long before the demo closes anything. LoudFace connects SEO for Google, AEO for answer engines, and GEO for generative search through website and content work. We build the pages a buyer opens before the first call: how you handle their data, which governance framework you map to, what your SOC 2 report actually covers, what happens when your model provider changes, and how accurate the output is. Then we measure visibility against agreed commercial signals."
+  },
+  "intro": [
+    "An AI-native startup sells a model, an agent, or an AI-first application to businesses or developers. That is a different sale from software that happens to use AI inside. The questions arrive earlier, they come from legal and security as often as from the buyer, and most of them are answered on a page or not at all.",
+    "Missing pages stall deals quietly. If a security reviewer cannot find your retention answer, or an engineer cannot find your evaluation results, you drop out of the shortlist before anyone tries the product."
+  ],
+  "questions": {
+    "title": "The AI-startup buyer questions your site needs to answer",
+    "columns": [
+      "Buyer question",
+      "Evidence that answers it",
+      "Page that should carry it"
+    ],
+    "rows": [
+      [
+        "Do you train on our data, and how long do you keep it?",
+        "The training answer, the retention period, the residency option, and the named control that switches each one off",
+        "A data-handling page that separates training, retention and residency"
+      ],
+      [
+        "Which AI governance framework do you map to?",
+        "The framework you name, the functions you map against, and the technical documentation you keep if you provide a general-purpose model",
+        "A governance page naming the framework and the documentation you hold"
+      ],
+      [
+        "What does your SOC 2 report actually cover?",
+        "The report itself, its scope, its period and its auditor",
+        "A trust page that offers the report and states its scope"
+      ],
+      [
+        "What happens when your model provider changes?",
+        "The models you run on, the indemnity you inherit, the mitigations you carry, and what you indemnify yourself",
+        "A model-dependency page written with your legal owner"
+      ],
+      [
+        "How accurate is it, and how do you know?",
+        "The eval you run, the dataset, the grader, and the result you accept before a release ships",
+        "An accuracy page that publishes the eval instead of the word benchmarked"
+      ],
+      [
+        "Can an engineer evaluate this without talking to sales?",
+        "A model card or README with intended use, limitations, training data and evaluation results, plus a quickstart that works",
+        "Public documentation, a model card, and a repository a developer can read"
+      ]
+    ],
+    "note": "Each row is one decision, owned by one person, resolved on one page. A security reviewer should not read your product tour to find a retention window, and an engineer should not book a call to see an evaluation result."
+  },
+  "parts": [
+    {
+      "title": "SEO for an AI startup starts with the security review",
+      "html": "<p>The first question is almost always about data, and it is really three questions with three different answers. OpenAI answers all three in its own documentation. On training, its per-endpoint table reads No in the \"Data used for training\" column for every listed API endpoint. On retention, it states that \"By default, abuse monitoring logs are generated for all API feature usage and retained for up to 30 days, unless longer retention is required by law, or is reasonably necessary to protect our services or any third party from harm.\" On residency, it states that \"Data residency does not apply to system data, which may be processed and stored outside the selected region.\" Read the <a href=\"https://platform.openai.com/docs/guides/your-data\">OpenAI data controls documentation</a> and then write the same three answers for your own product.</p><p>A page that answers only the training question fails the review. So does a page that promises residency without naming the exception.</p><p>Governance is the second question, and the framework a buyer names is usually the NIST AI Risk Management Framework. NIST is explicit that it \"is intended for voluntary use and to improve the ability to incorporate trustworthiness considerations into the design, development, use, and evaluation of AI products, services, and systems.\" It is a voluntary framework and it is not a law. Its core runs on four functions: Govern, Map, Measure, and Manage. Say which of the four you can evidence today. Read <a href=\"https://www.nist.gov/itl/ai-risk-management-framework\">NIST's own page</a> before you write that section.</p><p>If you provide a general-purpose model into the European market, the obligations are already live. The European Commission states that \"The AI Act rules on GPAI became effective in August 2025\", and that \"The transparency rules of the AI Act will come into effect in August 2026.\" The first named provider obligation in <a href=\"https://artificialintelligenceact.eu/article/53/\">Article 53</a> is a document: providers must \"draw up and keep up-to-date the technical documentation of the model, including its training and testing process and the results of its evaluation\". If you hold that document, the page should say so.</p><p>Then there is the badge problem. SOC is an assurance service, and the <a href=\"https://www.aicpa-cima.com/resources/landing/system-and-organization-controls-soc-suite-of-services\">AICPA</a> defines it as \"a suite of service offerings CPAs may provide in connection with system-level controls of a service organization or entity-level controls of other organizations.\" The standard-setter is now warning about its own signal, carrying the headline \"Promises of 'fast and easy' threaten SOC credibility\" on that page. A logo answers less than it once did. The fix is to offer the report and state its scope.</p><p>The last one catches every startup built on someone else's model. Microsoft describes its Customer Copyright Commitment as \"a provision in the Microsoft Product Terms that describes Microsoft's obligation to defend customers against certain third-party intellectual property claims relating to Output Content\", and conditions it on named mitigations the customer carries, starting with the rule that \"The customer offering must include a metaprompt directing the model to prevent copyright infringement in its output\". Google Cloud scopes its own indemnity to an enumerated service list. You inherit a conditional, service-scoped indemnity. Your buyer will ask what you indemnify. That belongs on a page.</p>"
+    },
+    {
+      "title": "Training and answer eligibility are separate switches",
+      "html": "<p>Blocking AI crawlers is an avoidable mistake on an AI startup's website, and it usually comes from one confusion. Every platform runs separate agents for separate jobs, and only some of them decide whether you appear in an answer.</p><p>OpenAI names the one that matters: \"OAI-SearchBot is used to surface websites in search results in ChatGPT's search features\", and \"Sites that are opted out of OAI-SearchBot will not be shown in ChatGPT search answers\". It also states the split plainly, that a webmaster \"can allow OAI-SearchBot in order to appear in search results while disallowing GPTBot to indicate that crawled content should not be used for training OpenAI's generative AI foundation models\". Read the <a href=\"https://platform.openai.com/docs/bots\">OpenAI bots documentation</a> with your infrastructure owner.</p><p>Perplexity draws the same line: \"PerplexityBot is designed to surface and link websites in search results on Perplexity. It is not used to crawl content for AI foundation models.\" Anthropic states the cost of getting it wrong: \"Disabling Claude-SearchBot on your site prevents our system from indexing your content for search optimization, which may reduce your site's visibility and accuracy in user search results.\" And Google separates the two completely, stating that \"Google-Extended does not impact a site's inclusion in Google Search nor is it used as a ranking signal in Google Search.\" Google-Extended governs Gemini training and grounding. It is not a Search switch.</p><p>There is a second failure that no robots.txt file will reveal. Perplexity states that \"If you're using a Web Application Firewall (WAF) to protect your site, you may need to explicitly whitelist Perplexity's bots to ensure they can access your content\". A bot allowed in robots.txt and blocked at the edge looks identical to a bot that was never invited. The highest-fidelity way to know which agent actually arrived is the server log, which is why we read them where the hosting allows it. Logs and probability-based visibility tools complement each other, so we use both. Our <a href=\"/blog/server-logs-ai-bot-traffic-playbook\">log-file playbook</a> sets out the method.</p><p>Google, for its part, publishes no separate entry ticket. It states that \"There are no additional requirements to appear in AI Overviews or AI Mode, nor other special optimizations necessary\", that a page must be \"indexed and eligible to be shown in Google Search with a snippet\", and that \"There's also no special schema.org structured data that you need to add.\" What it does name is access and text: crawling allowed in robots.txt \"and by any CDN or hosting infrastructure\", and \"important content is available in textual form\". Those two items describe many AI startup websites. Read <a href=\"https://developers.google.com/search/docs/appearance/ai-features\">Google's AI features documentation</a> and check both.</p><p>One more mechanic changes how many pages you need. Google documents that its AI surfaces may issue \"multiple related searches across subtopics and data sources\" to build one response. One long page does not answer a fan-out. A set of pages that each resolve one question does.</p>"
+    },
+    {
+      "title": "Publish the accuracy evidence a developer will check",
+      "html": "<p>The most useful number for an AI startup selling to engineers is a trust statistic. Stack Overflow's 2025 Developer Survey reports that \"84% of respondents are using or planning to use AI tools in their development process\", and, in the same survey, that \"More developers actively distrust the accuracy of AI tools (46%) than trust it (33%)\". Positive sentiment fell from over 70% in 2023 and 2024 to 60% in 2025. The survey states its own scope: \"49,009 responses from 177 countries are used in these survey results.\"</p><p>Read that pairing carefully. Engineers already accept that AI tools work. They need to know yours is accurate enough to be accountable for. Accuracy evidence is the conversion asset.</p><p>So publish the eval. OpenAI defines evals as tests that \"test model outputs to ensure they meet style and content criteria that you specify\", run \"especially when upgrading or trying new models\". An eval claim without a dataset and a grader is the AI equivalent of research-backed with no study. Name the dataset, name the grader, name the threshold you ship at.</p><p>The same rule governs your documentation surface. Hugging Face defines the model card as the README of a model repository and says what it should describe: the model, \"its intended uses &amp; potential limitations, including biases and ethical considerations\", the training parameters, the datasets used to train the model, and \"the model's evaluation results\". It also notes that the YAML metadata block in that README supports discovery of the model. GitHub says the same thing about repositories: \"A README is often the first item a visitor will see when visiting your repository\", and topics exist so \"other people find and contribute to your project\". For an AI startup, the model card and the README are search assets.</p>"
+    },
+    {
+      "title": "Name the company so an engine can tell it apart",
+      "html": "<p>An AI startup named after a common noun is competing with the dictionary. Google documents the fix. Organization structured data on the home page can help Google understand the organization, and one of the disambiguation properties is sameAs, which Google defines as \"The URL of a page on another website with additional information about your organization\". Pair that with one category sentence repeated on every surface you control. An engine can only repeat language it can find. Our guide to <a href=\"/blog/entity-disambiguation-b2b-saas\">entity disambiguation</a> covers the work in full.</p><p>Comparison pages are the other surface you own outright. The review sites run on algorithms: G2 states that \"A software's G2 Score is calculated using two scoring components: Satisfaction and Market Presence\", that \"Because recent reviews are more relevant to buyers, older reviews are weighted less\", and that its reviews \"do not constitute expert opinions based on objective criteria\". You cannot edit that. You can publish your own comparison and alternatives pages, and a buyer choosing between two products will read them.</p>"
+    },
+    {
+      "title": "Results from three AI-native clients",
+      "html": "<p>Bluefyn (bluefyn.ai) builds \"The Proof Layer\", an AI verification product. On a fixed set of tracked buyer prompts, comparing the first 30 days of the programme against the latest 30 days, AI visibility rose more than 5x and share of voice rose more than 5x against an unfiltered competitor set. ChatGPT visibility rose 13x. Average position when named improved to under 2. The two 30-day windows are 83 days apart, end to end.</p><p>Pond (joinpond.ai) runs an AI workforce marketplace. AI visibility tripled from a near-zero base in the first four weeks, and average position when named improved from about 3 to about 2. The base is small and the programme is four weeks old, so read it as a standing start.</p><p>Eraser (eraser.io) describes itself as \"AI for diagrams that matter\", and its own site states, \"Create technical diagrams using AI\". The <a href=\"/case-studies/eraser\">Eraser case study</a> covers a website redesign and the maintenance work that followed it, and it publishes no percentage, no multiplier and no window.</p><p>All three sell an AI product rather than software that uses AI internally. Outside the AI-native vertical, the <a href=\"/case-studies/stealth-fintech-ai-visibility\">Stealth Fintech</a> and <a href=\"/case-studies/genie-teacher-organic-growth\">Genie Teacher</a> case studies document the same method in other categories. The Bluefyn and Pond figures are AI visibility, share of voice and average position readings. None of them is a revenue figure.</p>",
+      "panel": {
+        "title": "Pond, first 14 days against the latest 14 days",
+        "stats": [
+          {
+            "value": "Tripled",
+            "label": "AI visibility, from a near-zero base"
+          },
+          {
+            "value": "4x",
+            "label": "Share of voice against an unfiltered competitor set"
+          },
+          {
+            "value": "About 2",
+            "label": "Average position when named, from about 3"
+          }
+        ]
+      }
+    },
+    {
+      "title": "Measure discovery work against the commercial signal",
+      "html": "<p>Rankings, mentions and traffic show whether people find your material. On their own they do not prove that the work produced revenue.</p><p>LoudFace measures AI search work against revenue outcomes. Share of answers, citations, position when cited and sentiment are tracked on each engine separately, and clicks and impressions come from your own Search Console property. We set the source, the window, the attribution limit and the owner before anyone draws a conclusion.</p><p>We also publish our own limits. LoudFace holds no evidenced revenue figure attributable to AI search yet, and says so on the <a href=\"/methodology\">methodology page</a> rather than leading with the chart that went up. Expect the same honesty about your programme.</p>"
+    },
+    {
+      "title": "Start with the pages your security questionnaire keeps asking for",
+      "html": "<p>The fastest useful backlog is already in your sales inbox. Look at what your team attaches after a demo, and at the questions that reappear in every security review. Those attachments should be indexed pages.</p><p>Then decide which pages need to exist first:</p><ol><li>A category page that states what the product is, who uses it, and what it replaces.</li><li>A data-handling page that separates training, retention and residency, each with its control.</li><li>A governance page that names the framework you map to and the documentation you hold.</li><li>An accuracy page that publishes the eval, the dataset and the grader.</li><li>A model card, a README and a quickstart an engineer can finish without a call.</li></ol><p>If you are comparing agencies, read our guide to the <a href=\"/blog/best-seo-aeo-agencies-ai-startups-2026\">best SEO and AEO agencies for AI startups</a>.</p><p>LoudFace scopes the work around your category, your buyer, your current site and your commercial goals. Start with an <a href=\"/ai-audit\">AI visibility audit</a> when you need your AI search presence scored against your competitors, with one fix you can implement within a week. Engagements start from $5k/mo, and the <a href=\"/pricing\">pricing page</a> explains the Solo, Dual, and Scale plan structure.</p>"
+    }
+  ],
+  "faq": {
+    "title": "Frequently asked questions",
+    "items": [
+      {
+        "question": "What does SEO for an AI startup cover?",
+        "answer": "It covers the website and content that help a technical buyer, a security reviewer and a budget owner find and evaluate your product through Google. For a model, an agent or an AI-first application, that usually means category, data-handling, governance, accuracy, comparison and documentation pages. Each of those three readers stops at a different page, so each page has to answer one of them completely."
+      },
+      {
+        "question": "How do AEO and GEO apply to an AI-native product?",
+        "answer": "The engines treat generative engine optimization (GEO) as the head term, with answer engine optimization and AI search optimization as synonyms. The work makes the important answers on your site easy to extract when a buyer asks an AI system about your category, your data handling or your accuracy. It uses direct answer blocks, cited evidence and consistent terminology. It does not guarantee that an engine will recommend you."
+      },
+      {
+        "question": "Should we block AI crawlers?",
+        "answer": "Training and answer eligibility are separate switches. OpenAI states that a site can allow OAI-SearchBot to appear in ChatGPT search results while disallowing GPTBot so its content is not used for training. Perplexity draws the same split, and Google-Extended controls Gemini training and grounding without affecting Google Search inclusion or ranking. Block the training agents if you want to. Blocking the search agents costs you buyer visibility."
+      },
+      {
+        "question": "Does LoudFace have AI-native clients?",
+        "answer": "Yes, three. Bluefyn is an AI verification product, and on a fixed prompt set its AI visibility rose more than 5x across two 30-day windows 83 days apart, with ChatGPT up 13x and average position when named improving to under 2. Pond is an AI workforce marketplace, and its AI visibility tripled from a near-zero base in the first four weeks. Eraser describes itself as \"AI for diagrams that matter\", and its case study publishes no AI-search figure. None of these is a revenue figure."
+      },
+      {
+        "question": "Do comparison and review pages still matter for an AI startup?",
+        "answer": "Yes, and the review sites are algorithms rather than analyst opinions. G2 states that its score is computed from Satisfaction and Market Presence, that older reviews are weighted less, and that its reviews do not constitute expert opinions based on objective criteria. You control your own comparison and alternatives pages completely, so build those first and treat the review programme as continuous."
+      },
+      {
+        "question": "How does LoudFace measure this work?",
+        "answer": "LoudFace measures AI search work against revenue outcomes, not vanity metrics. Share of answers, citations, position when cited and sentiment are tracked on each engine separately, and clicks and impressions come from your own Search Console property. The measurement plan names the source, the window, the attribution limit and the owner before anyone draws a conclusion. LoudFace holds no evidenced revenue figure attributable to AI search yet, and says so."
+      }
+    ]
+  },
+  "cover": {
+    "label": "Intro call",
+    "title": "Talk to us when you need a clear scope.",
+    "text": "Not a promise that more pages alone will win a security review.",
+    "cta": "Book an intro call"
+  }
+}

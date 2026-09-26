@@ -1,42 +1,25 @@
 /**
- * Services (hub) — v3 design (componentized).
+ * Services (hub) — v11 (switched 2026-09-26).
  *
- * Net-new /services hub. Faithful port of the approved services-v3 "proof-stack"
- * concept (the shipped work argues the services; each exhibit credits the
- * services that built it, chips route to the child pages). Composed from the
- * services-v3 section components inside the (site) group so it inherits the
- * shared Header/Footer + PostHog/GTM/Cal chrome. The shared Header renders in
- * its dark-hero variant on /services (wired in (site)/layout.tsx), and the
- * shared Footer is suppressed there so only the v3 FooterV3 (same component as
- * the homepage/About/Pricing) renders. Bespoke styling is services-v3.css,
- * imported route-scoped here and scoped under .svv3 via :where() so it can't
- * leak onto shared chrome.
+ * Composed from src/app/services-v11 inside the (site) group. Copy in services.json; the service pictures come from
+ * Sanity by slug (getServiceImages). SEO metadata and the JSON-LD (BreadcrumbList, the ItemList of services, FAQPage
+ * from the same services.json FAQ the page shows, speakable) are unchanged.
  *
- * Live Sanity data: the hero work-wall + the three exhibit screenshots come from
- * Sanity by slug (getServicesImages — the same helper/slug set the homepage
- * SelectedWork uses) with hardcoded CDN fallbacks. The 7-service directory rows,
- * the exhibit credit chips, and the clarifier all link to the real child routes.
- * SEO: canonical /services, BreadcrumbList + ItemList (7 services) + FAQPage
- * JSON-LD (the FAQ items are single-sourced with the accordion).
- *
- * NOTE: /services previously 301-redirected to /services/webflow (next.config.ts).
- * That redirect was removed so this hub can resolve. Do NOT re-add it.
+ * NOTE: /services previously 301-redirected to /services/webflow (next.config.ts). That redirect was removed so this
+ * hub can resolve. Do NOT re-add it.
  */
 export const revalidate = 60;
 
 import type { Metadata } from 'next';
-import { getServicesContent } from '@/lib/content-utils';
-import '../../services-v3/services-v3.css';
-import { getServicesImages, SERVICES_FAQ, SERVICES } from '../../services-v3/data';
-import { HeroServices } from '../../services-v3/HeroServices';
-import { LogosMarquee } from '../../services-v3/LogosMarquee';
-import { Exhibits } from '../../services-v3/Exhibits';
-import { ServicesIndex } from '../../services-v3/ServicesIndex';
-import { Clarifier } from '../../services-v3/Clarifier';
-import { Faq } from '../../services-v3/Faq';
-import { CoverCTA } from '../../services-v3/CoverCTA';
-import { FooterV3 } from '../../home-v3/FooterV3';
-import { ServicesV3Scripts } from '../../services-v3/Scripts';
+import { getHomeV11Content, getServicesContent } from '@/lib/content-utils';
+import '../../home-v11/home-v11.css';
+import '../../service-v11/service-v11.css';
+import '../../service-v11/cro-sections.css';
+import '../../service-v11/svc.css';
+import '../../services-v11/hub.css';
+import { SERVICES_FAQ, SERVICES } from '../../services-v3/data';
+import { getServiceImages } from '../../service-v3/data';
+import { ServicesHubV11 } from '../../services-v11/ServicesHubV11';
 
 const SITE = 'https://www.loudface.co';
 
@@ -69,7 +52,7 @@ export const metadata: Metadata = {
 };
 
 export default async function ServicesPage() {
-  const [images, content] = await Promise.all([getServicesImages(), getServicesContent()]);
+  const [c, home, images] = await Promise.all([getServicesContent(), getHomeV11Content(), getServiceImages()]);
 
   const breadcrumbSchema = {
     '@context': 'https://schema.org',
@@ -117,39 +100,10 @@ export default async function ServicesPage() {
 
   return (
     <>
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
-      />
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(servicesListSchema) }}
-      />
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
-      />
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(speakableSchema) }}
-      />
-
-      {/* .svv3 scopes the bespoke resets so they can't touch the shared Header/Footer/Cal chrome. */}
-      <div className="svv3">
-        <HeroServices images={images} content={content.hero} />
-        <LogosMarquee content={content.logos} />
-        <Exhibits images={images} content={content.exhibits} />
-        <ServicesIndex content={content.index} />
-        <Clarifier content={content.clarifier} />
-        <Faq content={content.faq} />
-        <CoverCTA images={images} content={content.coverCta} />
-        {/* Shared v3 footer (same component as the homepage/About/Pricing). Rendered
-            inside .svv3 so the re-scoped .ft footer CSS in services-v3.css applies
-            with full isolation — home-v3.css is NOT imported here. */}
-        <FooterV3 />
-      </div>
-
-      <ServicesV3Scripts />
+      {[breadcrumbSchema, servicesListSchema, faqSchema, speakableSchema].map((schema, i) => (
+        <script key={i} type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }} />
+      ))}
+      <ServicesHubV11 c={c} home={home} images={images} />
     </>
   );
 }

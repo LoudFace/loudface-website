@@ -1,0 +1,185 @@
+/* Case study v11. Loads after home-v11.css, service-v11.css, cro-sections.css and svc.css.
+   Order and density from Graphite's Fourthwall study and the Mobbin case-study harvest (2026-09-25):
+   the headline beside the client's site, the key results as big figures, the charts alone, then the client. */
+
+/* =========================================================== hero: headline and summary beside the client's site */
+.cs-hero { padding: 120px 0 64px; }
+.cs-hero-grid { display: grid; grid-template-columns: minmax(0, 1fr); gap: 44px; align-items: center; }
+.cs-crumbs { display: flex; flex-wrap: wrap; gap: 8px; font-size: 13px; color: #c9c5fb; margin-bottom: 28px; }
+.cs-crumbs a { color: #ffffff; opacity: 0.8; }
+.cs-crumbs a:hover { opacity: 1; }
+.cs-hero-logo { display: block; height: 26px; width: auto; max-width: 180px; margin-bottom: 24px; }
+.cs-hero h1 { font-size: 40px; line-height: 1.02; margin-top: 0; }
+.cs-hero-summary { font-size: 17px; line-height: 1.6; color: #e4e2fe; margin-top: 22px; max-width: 560px; text-wrap: pretty; }
+.cs-hero .v11-hero-ctas { margin-top: 30px; }
+.cs-hero-site { position: relative; }
+.cs-hero-site .sk-browser { box-shadow: 0 2px 4px rgba(10,6,50,0.2), 0 40px 90px rgba(4,6,60,0.55); }
+.cs-hero-site .sk-browser > img { height: 320px; object-position: left top; }
+@media (min-width: 768px) { .cs-hero h1 { font-size: 50px; } }
+@media (min-width: 1280px) {
+  .cs-hero { min-height: 0; padding: 150px 0 104px; }
+  .cs-hero > .v11-wrap { display: block; min-height: 0; }
+  .cs-hero-grid { grid-template-columns: minmax(0, 560px) minmax(0, 1fr); gap: 72px; }
+  .cs-hero h1 { font-size: 56px; }
+  .cs-hero-site .sk-browser { width: 820px; }
+  .cs-hero-site .sk-browser > img { height: 480px; }
+}
+
+/* hero option B (result): the same photographed stage without the phone, the result as the picture */
+.cs-hero.is-result .v11-hero-photo.is-backdrop { left: 0; right: auto; width: 100%; object-position: 0% 50%; }
+.cs-hero.is-result .cs-hero-pic { position: relative; min-width: 0; }
+.cs-hero.is-result .v11-slide.is-hero { background: rgba(255,255,255,0.07); box-shadow: inset 0 0 0 1px rgba(255,255,255,0.18), 0 40px 90px rgba(4,6,60,0.35); backdrop-filter: none; }
+.cs-hero-video { margin: 0; }
+.cs-hero-video .v11-video-still { aspect-ratio: 16 / 9; border-radius: 18px; box-shadow: 0 2px 4px rgba(10,6,50,0.2), 0 40px 90px rgba(4,6,60,0.5); }
+.cs-hero-video figcaption { margin-top: 20px; }
+.cs-hero-video figcaption p { font-family: var(--font-heading); font-weight: 500; font-size: 22px; line-height: 1.3; letter-spacing: -0.015em; color: #ffffff; text-wrap: pretty; }
+.cs-hero-video figcaption span { display: flex; gap: 8px; margin-top: 10px; font-size: 14px; color: #c9c5fb; }
+.cs-hero-video figcaption b { font-weight: 500; color: #ffffff; }
+@media (min-width: 1280px) { .cs-hero.is-result { min-height: 820px; padding: 150px 0 104px; } }
+@media (max-width: 767px) { .cs-hero.is-result .v11-hero-photo.is-backdrop { position: absolute; order: 0; height: 100%; margin: 0; -webkit-mask-image: none; mask-image: none; z-index: -2; } }
+
+/* hero (report, the default since 2026-09-25): the title on white, then a wide panel in the client's own tint
+   (--c-base, --c-glow from getTintColors) holding the lead result as a report card, or the site we built */
+.cs-hero3 { position: relative; margin-top: -64px; padding: 112px 0 56px; background: #ffffff; color: var(--ink); overflow: clip; }
+.cs-crumbs.is-light { color: var(--quiet); }
+.cs-crumbs.is-light a { color: var(--ink); opacity: 1; }
+.cs-crumbs.is-light a:hover { color: var(--ind); }
+.cs-hero3-top { display: grid; grid-template-columns: minmax(0, 1fr); gap: 24px; }
+.cs-hero3-logo { display: block; height: 30px; width: auto; max-width: 200px; }
+.cs-hero3-brand { display: flex; align-items: center; gap: 10px; font-family: var(--font-heading); font-weight: 500; font-size: 20px; letter-spacing: -0.015em; }
+.cs-hero3-brand img { width: 30px; height: 30px; border-radius: 8px; }
+.cs-hero3 h1 { font-family: var(--font-heading); font-weight: 500; font-size: 40px; line-height: 1.02; letter-spacing: -0.045em; margin-top: 22px; text-wrap: balance; }
+.cs-hero3-side p { font-size: 16px; line-height: 1.6; color: var(--body); max-width: 520px; text-wrap: pretty; }
+.cs-hero3-ctas { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 32px; }
+.cs-hero3-stage { position: relative; margin-top: 40px; padding: 16px; border-radius: 24px;
+  background: radial-gradient(ellipse 70% 90% at 88% 100%, var(--c-glow) 0%, var(--c-clear) 70%), var(--c-base); }
+.cs-report { padding: 22px 18px 14px; border-radius: 18px; background: #ffffff; box-shadow: 0 1px 2px rgba(20,16,60,0.06), 0 30px 60px rgba(40,30,90,0.16); }
+.cs-report-top { display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 8px 32px; margin-bottom: 14px; }
+.cs-report-fig { font-family: var(--font-heading); font-weight: 500; font-size: 64px; line-height: 0.9; letter-spacing: -0.05em; color: var(--ink); }
+.cs-report-note { font-size: 13.5px; line-height: 1.45; color: var(--quiet); max-width: 360px; text-wrap: pretty; }
+.cs-hero3-stage.is-site { padding-bottom: 0; overflow: hidden; }
+.cs-hero3-stage.is-site .sk-browser { border-radius: 14px 14px 0 0; box-shadow: 0 1px 2px rgba(20,16,60,0.08), 0 30px 60px rgba(40,30,90,0.18); }
+.cs-hero3-stage.is-site .sk-browser > img { height: 300px; }
+.cs-hero3-card { position: relative; z-index: 2; width: min(300px, calc(100% - 16px)); margin: -96px 0 16px 8px; }
+.cs-hero3-card-t { font-size: 13px; line-height: 1.45; color: var(--body); }
+/* the mobile site beside the desktop one: a flat phone on the stage's right edge */
+.cs-hero3-phone { display: none; }
+@media (min-width: 768px) {
+  .cs-hero3-stage.has-phone { padding-right: 180px; }
+  .cs-hero3-phone { position: absolute; right: 32px; bottom: 28px; display: block; width: 190px; padding: 6px; border-radius: 32px; background: #1a1040;
+    box-shadow: 0 2px 4px rgba(20,16,60,0.2), 0 30px 60px rgba(40,30,90,0.32); }
+  .cs-hero3-phone img { display: block; width: 100%; height: 372px; object-fit: cover; object-position: top; border-radius: 26px; }
+}
+@media (min-width: 768px) { .cs-hero3 h1 { font-size: 52px; } .cs-report-fig { font-size: 88px; } }
+@media (min-width: 1024px) {
+  .cs-hero3 { padding: 140px 0 64px; }
+  .cs-hero3-top { grid-template-columns: minmax(0, 1fr) 480px; gap: 72px; align-items: start; }
+  .cs-hero3-side { padding-top: 6px; }
+  .cs-hero3 h1 { font-size: 60px; line-height: 1; }
+  .cs-hero3-stage { margin-top: 56px; padding: 48px 56px; border-radius: 28px; }
+  .cs-report { padding: 32px 36px 20px; border-radius: 20px; }
+  .cs-report-fig { font-size: 104px; }
+  .cs-hero3-stage.is-site { padding: 56px 72px 0; }
+  .cs-hero3-stage.is-site.has-phone { padding: 56px 300px 0 72px; }
+  .cs-hero3-phone { right: 72px; bottom: 44px; width: 250px; padding: 8px; border-radius: 40px; }
+  .cs-hero3-phone img { height: 500px; border-radius: 32px; }
+  .cs-hero3-stage.is-site .sk-browser > img { height: 520px; }
+  .cs-hero3-card { position: absolute; left: 40px; bottom: 28px; width: 300px; margin: 0; }
+}
+
+/* =========================================================== key results, then the charts alone (ChartPanel in crosshair cells) */
+.cs-charts { position: relative; display: grid; grid-template-columns: minmax(0, 1fr); margin-top: 56px; border-top: 1px solid var(--line); border-left: 1px solid var(--line); }
+.cs-chart { position: relative; min-width: 0; padding: 26px 24px 18px; border-right: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+@media (min-width: 1024px) {
+  .cs-charts { grid-template-columns: repeat(2, minmax(0, 1fr)); margin-top: 72px; }
+  .cs-charts.is-rest-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .cs-chart { padding: 32px 32px 22px; }
+  .cs-chart.is-lead { grid-column: 1 / -1; padding: 36px 40px 26px; }
+  .cs-charts.is-rest-1 { grid-template-columns: minmax(0, 2fr) minmax(0, 1fr); }
+  .cs-charts.is-rest-1 .cs-chart.is-lead { grid-column: auto; }
+  /* the lead chart is in the hero: the supporting charts share the row */
+  .cs-charts.is-nolead.is-rest-1 { grid-template-columns: minmax(0, 1fr); }
+}
+.cs-engines-grid { display: grid; grid-template-columns: 190px 1fr 1fr; gap: 16px 20px; align-items: center; margin-top: 12px; }
+.cs-engine-row { display: contents; }
+.cs-engine-row .is-name { display: flex; align-items: center; gap: 10px; font-size: 14px; color: var(--ink); }
+.cs-engine-row .is-bar { display: flex; align-items: center; gap: 10px; }
+.cs-engine-row .is-bar i { display: block; height: 12px; min-width: 3px; border-radius: 99px; background: #dcdbe6; }
+.cs-engine-row .is-bar.is-after i { background: repeating-linear-gradient(135deg, rgba(79,70,229,0.35) 0 2px, transparent 2px 6px), #eef0ff; box-shadow: inset 0 0 0 1.5px var(--ind); }
+.cs-engine-row .is-bar b { font-size: 13px; font-weight: 500; color: var(--muted); white-space: nowrap; }
+.cs-engine-row .is-bar.is-after b { color: var(--ind); }
+@media (max-width: 767px) { .cs-engines-grid { grid-template-columns: 1fr 1fr; } .cs-engine-row .is-name { grid-column: 1 / -1; } }
+
+/* how the figures were measured: closed by default, one line when closed */
+.cs-notes { margin-top: 20px; }
+.cs-notes summary { display: inline-flex; align-items: center; gap: 12px; cursor: pointer; list-style: none; font-size: 13.5px; font-weight: 500; color: var(--muted); }
+.cs-notes summary::-webkit-details-marker { display: none; }
+.cs-notes summary:hover { color: var(--ind); }
+.cs-notes .v11-faq-plus { width: 10px; height: 10px; }
+.cs-notes .v11-faq-plus::before { top: 4.25px; width: 10px; }
+.cs-notes .v11-faq-plus::after { left: 4.25px; height: 10px; }
+.cs-notes[open] .v11-faq-plus::after { transform: scaleY(0); }
+.cs-notes dl { display: grid; grid-template-columns: minmax(0, 1fr); gap: 16px 40px; margin: 18px 0 0; padding-top: 18px; border-top: 1px solid var(--line); }
+@media (min-width: 1024px) { .cs-notes dl { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+.cs-notes dt { font-size: 13px; font-weight: 500; color: var(--ink); }
+.cs-notes dd { margin: 6px 0 0; font-size: 13px; line-height: 1.55; color: var(--quiet); text-wrap: pretty; }
+
+/* =========================================================== the project: the client's voice beside what we did (proof grid) */
+.cs-grid .cs-did.is-full { grid-column: 1 / -1; }
+.cs-did-facts { margin: 18px 0 0; }
+.cs-did-facts > div { display: flex; justify-content: space-between; gap: 16px; padding: 12px 0; border-bottom: 1px solid #efeef5; font-size: 14px; }
+.cs-did-facts dt { color: var(--quiet); }
+.cs-did-facts dd { margin: 0; font-weight: 500; color: var(--ink); text-align: right; }
+.cs-did-group { margin-top: 22px; }
+.cs-did-k { font-size: 12.5px; color: var(--quiet); }
+.cs-pills { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+.cs-pills a, .cs-pills span { display: flex; align-items: center; height: 30px; padding: 0 11px; border-radius: 8px; background: #eef0ff; color: var(--ind); font-size: 13px; font-weight: 500; }
+.cs-pills a:hover { background: #e2e5ff; }
+.cs-pills.is-quiet span { background: #f2f1f6; color: var(--body); font-weight: 400; }
+.cs-measured { display: flex; flex-direction: column; gap: 10px; margin-top: 12px; }
+.cs-measured span { display: flex; align-items: center; gap: 10px; font-size: 14px; color: var(--ink); }
+.cs-measured img { border-radius: 5px; }
+@media (min-width: 1024px) {
+  .cs-grid .cro-cell.is-quote .cro-quote { font-size: 26px; line-height: 1.28; max-width: 700px; }
+  /* a video and a full review stack on the left; what we did runs down the right beside both */
+  .cs-grid .cs-did.is-rows-2 { grid-column: 3; grid-row: 1 / span 2; }
+}
+/* the full review: a long quote reads at body-heading size, not pull-quote size */
+.cs-grid .cs-review .cro-quote { margin-top: 0; padding-top: 0; font-size: 19px; line-height: 1.5; letter-spacing: -0.008em; max-width: 720px; }
+@media (min-width: 1024px) { .cs-grid .cro-cell.is-quote.cs-review .cro-quote { font-size: 21px; line-height: 1.48; } }
+
+/* =========================================================== the story */
+/* minmax(0, 1fr): a wide table in the article must not stretch the column past a phone screen (Toku, 2026-09-26) */
+.cs-story { display: grid; grid-template-columns: minmax(0, 1fr); gap: 40px; }
+@media (min-width: 1024px) { .cs-story { grid-template-columns: 260px minmax(0, 760px); gap: 88px; } }
+.cs-rail { display: flex; flex-direction: column; gap: 16px; align-self: start; position: sticky; top: 96px; }
+.cs-rail .sv-toc { position: static; width: 100%; }
+.cs-cta { padding: 22px; border-radius: 20px; color: #ffffff; background: radial-gradient(ellipse 90% 90% at 90% 100%, #7068f0 0%, #4f46e5 45%, #3a33c7 100%); }
+.cs-cta .v11-av { box-shadow: 0 0 0 2px #4f46e5; }
+.cs-cta-h { font-family: var(--font-heading); font-weight: 500; font-size: 21px; letter-spacing: -0.02em; margin-top: 16px; }
+.cs-cta p { font-size: 13.5px; line-height: 1.5; color: #dcd9fe; margin-top: 6px; }
+.cs-cta .v11-btn { margin-top: 18px; width: 100%; justify-content: center; }
+.cs-body p, .cs-body li { font-size: 17.5px; line-height: 1.72; }
+.cs-body h2 { font-size: 34px; margin: 72px 0 18px; }
+.cs-body h2:first-child { margin-top: 0; }
+.cs-body strong { color: var(--ink); font-weight: 500; }
+.cs-body figure, .cs-body figure.cs-wide { margin: 40px 0; }
+.cs-body figure img, .cs-body > img { display: block; width: 100%; height: auto; margin: 0; border-radius: 18px; box-shadow: 0 0 0 1px var(--line), 0 20px 44px rgba(20,16,60,0.08); }
+@media (min-width: 1280px) { .cs-body figure { width: calc(100% + 188px); max-width: none; } }
+.cs-body figcaption { font-size: 13px; color: var(--quiet); margin-top: 12px; }
+
+/* =========================================================== questions and related work */
+.cs-faq-sub { font-size: 16px; line-height: 1.55; color: var(--body); margin-top: 16px; max-width: 360px; }
+.cs-all { flex-shrink: 0; font-size: 15px; color: var(--ind); font-weight: 500; }
+.cs-related { display: grid; grid-template-columns: minmax(0, 1fr); gap: 24px; }
+@media (min-width: 1024px) { .cs-related { grid-template-columns: repeat(3, 1fr); } }
+.cs-rel { display: flex; flex-direction: column; border-radius: 22px; overflow: hidden; background: #ffffff; box-shadow: 0 0 0 1px var(--line); transition: box-shadow var(--dur) var(--ease), transform var(--dur) var(--ease); }
+.cs-rel:hover { box-shadow: 0 0 0 1px #d6d4e6, 0 20px 44px rgba(20,16,60,0.1); transform: translateY(-2px); }
+.cs-rel-img { display: block; aspect-ratio: 16 / 10; overflow: hidden; background: #f2f1f7; }
+.cs-rel-img img { width: 100%; height: 100%; object-fit: cover; object-position: top; }
+.cs-rel-tag { padding: 22px 24px 0; font-size: 13px; font-weight: 500; color: var(--ink); }
+.cs-rel-t { padding: 8px 24px 0; font-family: var(--font-heading); font-weight: 500; font-size: 21px; line-height: 1.2; letter-spacing: -0.02em; color: var(--ink); text-wrap: balance; }
+.cs-rel-result { display: flex; flex-direction: column; gap: 6px; padding: 20px 24px 0; margin-top: auto; }
+.cs-rel-result b { font-family: var(--font-heading); font-weight: 500; font-size: 36px; line-height: 1; letter-spacing: -0.04em; color: var(--ind); }
+.cs-rel-result span { font-size: 13px; line-height: 1.45; color: var(--quiet); }
+.cs-rel-go { display: flex; align-items: center; gap: 6px; padding: 18px 24px 22px; margin-top: 18px; border-top: 1px solid #efeef5; font-size: 14px; font-weight: 500; color: var(--ind); }

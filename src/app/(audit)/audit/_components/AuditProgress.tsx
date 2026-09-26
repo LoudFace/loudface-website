@@ -2,6 +2,8 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import type { AuditReportV11Content } from '@/lib/content-utils';
+import { AuditProgressV11 } from '../../../audit-v11/report/AuditFlowV11';
 
 interface AuditProgressProps {
   id: string;
@@ -10,6 +12,8 @@ interface AuditProgressProps {
   /** Seed the failed state directly from the server record so a known-failed
    * audit doesn't flash the in-progress UI while the first poll resolves. */
   initialFailed?: boolean;
+  /** The v11 screen's copy (audit-report-v11.json); this component keeps the polling, AuditProgressV11 draws it. */
+  c: AuditReportV11Content;
 }
 
 // Ceiling on how long we'll keep polling before giving up and telling the
@@ -70,7 +74,7 @@ const PHASE_TAGLINES: Record<string, string[]> = {
   ],
 };
 
-export function AuditProgress({ id, initialProgress, initialPhase, initialFailed = false }: AuditProgressProps) {
+export function AuditProgress({ id, initialProgress, initialPhase, initialFailed = false, c }: AuditProgressProps) {
   const router = useRouter();
   const [progress, setProgress] = useState(initialProgress);
   const [phase, setPhase] = useState(initialPhase);
@@ -153,122 +157,19 @@ export function AuditProgress({ id, initialProgress, initialPhase, initialFailed
     return () => clearInterval(interval);
   }, []);
 
-  if (failed) {
-    return (
-      <div className="flex min-h-dvh items-center justify-center bg-surface-950 px-4">
-        <div className="text-center max-w-md">
-          <div className="w-16 h-16 rounded-full bg-error/10 flex items-center justify-center mx-auto mb-6">
-            <svg className="w-8 h-8 text-error" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-              <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
-            </svg>
-          </div>
-          <h1 className="text-2xl font-heading font-medium text-white mb-3">
-            Audit Failed
-          </h1>
-          <p className="text-surface-400 mb-8">
-            Something went wrong while running your audit. This is usually temporary.
-          </p>
-          <button
-            onClick={() => router.push('/ai-audit')}
-            className="rounded-lg bg-primary-600 px-6 py-3 text-white font-medium hover:bg-primary-500 transition-colors"
-          >
-            Try Again
-          </button>
-        </div>
-      </div>
-    );
-  }
-
-  if (timedOut) {
-    return (
-      <div className="flex min-h-dvh items-center justify-center bg-surface-950 px-4">
-        <div className="text-center max-w-md">
-          <div className="w-16 h-16 rounded-full bg-warning/10 flex items-center justify-center mx-auto mb-6">
-            <svg className="w-8 h-8 text-warning" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-              <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v3.75m9-.75a9 9 0 11-18 0 9 9 0 0118 0zm-9 3.75h.008v.008H12v-.008z" />
-            </svg>
-          </div>
-          <h1 className="text-2xl font-heading font-medium text-white mb-3">
-            This is taking longer than expected
-          </h1>
-          <p className="text-surface-400 mb-8">
-            We&apos;ll follow up by email once your audit is ready, or you can try again now.
-          </p>
-          <button
-            onClick={() => router.push('/ai-audit')}
-            className="rounded-lg bg-primary-600 px-6 py-3 text-white font-medium hover:bg-primary-500 transition-colors"
-          >
-            Try Again
-          </button>
-        </div>
-      </div>
-    );
-  }
-
   const phaseNum = getPhaseNumber(phase);
   const taglines = PHASE_TAGLINES[phaseNum] ?? [];
   const tagline = taglines.length ? taglines[taglineIdx % taglines.length] : '';
 
+  // The v11 screen draws all three states; "try again" leads to the audit landing page, as before.
   return (
-    <div className="flex min-h-dvh items-center justify-center bg-surface-950 px-4">
-      <div className="text-center max-w-lg w-full">
-        {/* Animated radar-like pulse — gated behind motion-safe so
-            prefers-reduced-motion users don't get perpetual pulsing rings. */}
-        <div className="relative w-32 h-32 mx-auto mb-10">
-          <div className="absolute inset-0 rounded-full border border-primary-600/20 motion-safe:animate-ping" style={{ animationDuration: '2s' }} />
-          <div className="absolute inset-3 rounded-full border border-primary-600/30 motion-safe:animate-ping" style={{ animationDuration: '2s', animationDelay: '0.3s' }} />
-          <div className="absolute inset-6 rounded-full border border-primary-600/40 motion-safe:animate-ping" style={{ animationDuration: '2s', animationDelay: '0.6s' }} />
-          <div className="absolute inset-0 flex items-center justify-center">
-            <span className="text-3xl font-heading font-medium text-white">
-              {phaseNum}
-            </span>
-          </div>
-        </div>
-
-        {/* Phase description — announced to screen readers only when the
-            text actually changes (React bails on identical-string re-renders,
-            so this doesn't chatter every 3s poll). */}
-        <p
-          role="status"
-          aria-live="polite"
-          className="text-lg text-surface-300 mb-2 min-h-[1.75rem]"
-        >
-          {phase}
-        </p>
-
-        {/* Rotating sub-tagline — communicates active work */}
-        <p
-          key={tagline}
-          className="text-2xs text-surface-500 mb-8 min-h-[1rem] uppercase tracking-[0.1em] motion-safe:animate-fade-in"
-        >
-          {tagline}
-        </p>
-
-        {/* Progress bar */}
-        <div className="w-full max-w-xs mx-auto">
-          <div className="flex items-center justify-between text-sm text-surface-500 mb-2">
-            <span>Progress</span>
-            <span className="tabular-nums">{progress}%</span>
-          </div>
-          <div
-            role="progressbar"
-            aria-valuenow={progress}
-            aria-valuemin={0}
-            aria-valuemax={100}
-            className="h-1.5 bg-surface-800 rounded-full overflow-hidden"
-          >
-            <div
-              className="h-full bg-primary-600 rounded-full transition-all duration-700 ease-out"
-              style={{ width: `${progress}%` }}
-            />
-          </div>
-        </div>
-
-        {/* Reassurance */}
-        <p className="text-2xs text-surface-500 mt-8">
-          This typically takes 2-5 minutes. You can bookmark this page and come back.
-        </p>
-      </div>
-    </div>
+    <AuditProgressV11
+      c={c}
+      progress={progress}
+      phase={phase}
+      phaseNum={phaseNum}
+      tagline={tagline}
+      state={failed ? 'failed' : timedOut ? 'slow' : 'running'}
+    />
   );
 }

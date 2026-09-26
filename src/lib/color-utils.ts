@@ -41,6 +41,12 @@ function parseColorToRgb(color: string): { r: number; g: number; b: number } | n
     };
   }
 
+  // Try hsl/hsla format (several CMS client colours are stored as hsla(...))
+  const hslMatch = trimmed.match(/hsla?\s*\(\s*([\d.]+)\s*,\s*([\d.]+)%\s*,\s*([\d.]+)%/i);
+  if (hslMatch) {
+    return hslToRgb(parseFloat(hslMatch[1]), parseFloat(hslMatch[2]), parseFloat(hslMatch[3]));
+  }
+
   return null;
 }
 
@@ -208,4 +214,20 @@ export function getContrastColor(bgColor: string | undefined): string {
 
   const luminance = getLuminance(rgb.r, rgb.g, rgb.b);
   return luminance > 0.4 ? 'var(--color-surface-950)' : 'white';
+}
+
+/**
+ * A brand colour's light grounds, for a page that carries a client's colour without flooding it (the v11 case
+ * study hero): `base` is the colour 90% of the way to white, `glow` the colour at 35% opacity for a soft bloom,
+ * `clear` the same colour fully transparent (the bloom's outer stop) and `solid` the colour itself.
+ */
+export function getTintColors(color: string | undefined, fallback = '#4f46e5'): { base: string; glow: string; clear: string; solid: string } {
+  const rgb = parseColorToRgb(color ?? '') ?? parseColorToRgb(fallback) ?? { r: 79, g: 70, b: 229 };
+  const mix = (v: number) => Math.round(v + (255 - v) * 0.9);
+  return {
+    base: `rgb(${mix(rgb.r)}, ${mix(rgb.g)}, ${mix(rgb.b)})`,
+    glow: `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, 0.35)`,
+    clear: `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, 0)`,
+    solid: `rgb(${rgb.r}, ${rgb.g}, ${rgb.b})`,
+  };
 }

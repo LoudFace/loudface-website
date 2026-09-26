@@ -213,6 +213,8 @@ export default function RootLayout({
       <head>
         {/* Preconnect hints for performance */}
         <link rel="preconnect" href="https://cdn.sanity.io" crossOrigin="" />
+        {/* images load without CORS, so they need their own connection: the crossOrigin one above serves fetches and fonts only */}
+        <link rel="preconnect" href="https://cdn.sanity.io" />
         <link rel="dns-prefetch" href="https://app.cal.com" />
         <link rel="dns-prefetch" href="https://www.googletagmanager.com" />
 

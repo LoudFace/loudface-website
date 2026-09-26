@@ -1,0 +1,192 @@
+{
+  "hero": {
+    "eyebrowBrand": "About LoudFace",
+    "eyebrowSince": "since 2019",
+    "headline": "The team behind",
+    "headlineHighlight": "B2B SaaS organic growth.",
+    "description": "The full-stack organic growth agency for B2B SaaS and fintech. AI visibility measured per engine. We run GEO, SEO, AEO, content, and conversion, from offices in Dubai and the US, for SaaS teams worldwide.",
+    "ctaText": "Book an intro call",
+    "responseTime": "2h response time",
+    "secondaryText": "Explore the work"
+  },
+  "story": {
+    "eyebrow": "Our story",
+    "founderHeadline": "Straight from the founder.",
+    "letterhead": "LoudFace, Dubai",
+    "founderQuotePrefix": "I started LoudFace chasing a hunch: that ",
+    "founderQuoteEmphasis": "design and numbers",
+    "founderQuoteSuffix": " belonged on the same team, not in separate agencies handing off a brief.",
+    "founderQuoteClose": "Seven years later that’s still the whole bet.",
+    "founderSignature": "Arnel",
+    "founderName": "Arnel Bukva",
+    "founderRole": "Founder & Head of Growth",
+    "timeline": [
+      {
+        "year": "2019",
+        "description": "Arnel starts LoudFace, betting on Webflow before most agencies had heard of it. The first enterprise engagement lands, and the design-plus-code model starts to prove itself at scale."
+      },
+      {
+        "year": "2022",
+        "description": "SEO and conversion work folds into every build. Growth becomes the retainer, not an upsell."
+      },
+      {
+        "year": "2024",
+        "description": "A Webflow Enterprise Partner, one of a small number of agencies worldwide."
+      },
+      {
+        "year": "2026",
+        "description": "AI-search visibility joins the stack. 200+ sites shipped, 50+ teams served."
+      }
+    ]
+  },
+  "ledger": {
+    "eyebrow": "The ledger",
+    "headline": "Six numbers,",
+    "headlineHighlight": "sources attached.",
+    "intro": "Every engagement leaves a paper trail. This is ours: pulled from real client work between 2019 and today. Where a number has a client, the client is named.",
+    "rows": [
+      {
+        "title": "Increase in conversions",
+        "description": "Measured across the Dimer Health engagement over a six-month optimization period.",
+        "fig": "288%",
+        "chipClient": "Dimer Health",
+        "chipTag": "CRO",
+        "period": "Six months"
+      },
+      {
+        "title": "AI visibility on the core prompt",
+        "description": "From absent to cited on the answer that matters in Toku’s category.",
+        "fig": "0 → 97.8%",
+        "chipClient": "Toku",
+        "chipTag": "AEO",
+        "period": "August 2026"
+      },
+      {
+        "title": "Sales in the first 30 days",
+        "description": "Attributed in the month after the rebuilt site went live.",
+        "fig": "$200K",
+        "chipClient": "Outbound Specialist",
+        "chipTag": "Launch",
+        "period": "First 30 days"
+      },
+      {
+        "title": "Teams served",
+        "description": "From funded startups to enterprises like Montblanc and Radisson. Different industries, same job: a site that has to earn its keep.",
+        "fig": "50+"
+      },
+      {
+        "title": "Years on Webflow",
+        "description": "Early adopters in 2019, back when it was the risky choice. Webflow Enterprise Partner today.",
+        "fig": "7+"
+      }
+    ],
+    "closingText": "Every line above comes from a shipped engagement. Clients named, periods stated.",
+    "closingLinkText": "Explore the work",
+    "caseLinkText": "Case study",
+    "badges": [
+      "Webflow Enterprise Partner",
+      "Awwwards Honorable Mention"
+    ]
+  },
+  "team": {
+    "people": [
+      {
+        "person": "Arnel Bukva",
+        "jobTitle": "Founder & Head of Growth",
+        "fact": "Started LoudFace on Webflow in 2019, back when almost no agency would touch it."
+      },
+      {
+        "person": "Tamara Pavlovic",
+        "jobTitle": "Lead SEO, AEO & GEO Specialist",
+        "fact": "Runs client accounts end to end, from Montblanc to seed-stage SaaS."
+      },
+      {
+        "person": "Andrea Van Wyk",
+        "jobTitle": "Lead SEO, AEO & GEO Specialist",
+        "fact": "Runs client accounts end to end, with a sharp eye for positioning and page copy."
+      },
+      {
+        "person": "Abhay Tyagi",
+        "jobTitle": "Lead SEO, AEO & GEO Specialist",
+        "fact": "Six-plus years in organic search, now running accounts across SEO, AEO and GEO."
+      }
+    ],
+    "benchHeading": "And the rest of the team",
+    "benchBody": "Behind them, senior Webflow developers, designers, writers and link builders join your account as your plan calls for them. One lead stays accountable for all of it.",
+    "benchRoles": [
+      "Webflow developers",
+      "Designers",
+      "Writers",
+      "Link builders",
+      "Data analysts"
+    ]
+  },
+  "values": {
+    "eyebrow": "How we work",
+    "headline": "We build the site.",
+    "headlineHighlight": "Then we grow it.",
+    "build": {
+      "label": "Build",
+      "description": "Positioning, copy, design, and code: shipped as one piece of work, on Webflow.",
+      "siteLabel": "Montblanc, a site we built"
+    },
+    "grow": {
+      "label": "Grow",
+      "description": "SEO, conversion optimization, and AI-search visibility, run month after month.",
+      "chartTitle": "Google clicks per week",
+      "chartSource": "TradeMomentum, Google Search Console"
+    },
+    "oneTeam": {
+      "label": "One team",
+      "description": "No account layers. You work directly with the experts doing the work.",
+      "thread": {
+        "channel": "#yourcompany-loudface",
+        "label": "example",
+        "from": "Tamara, LoudFace",
+        "time": "Fri 16:02",
+        "message": "Friday update: the pricing page shipped, two comparison pages are in review, and the monthly report lands on Monday.",
+        "reply": "Perfect, thanks. See you Monday.",
+        "replyFrom": "You"
+      }
+    }
+  },
+  "place": {
+    "eyebrow": "Where we are",
+    "headline": "From small startups",
+    "headlineHighlight": "to large enterprises.",
+    "description": "We’ve helped 50+ teams reach their online goals, each with different challenges and opportunities. Today we work from offices in Dubai and the US, with SaaS companies around the world.",
+    "home": "Dubai",
+    "homeUs": "San Francisco",
+    "pinsLabel": "A few of the clients behind the pins"
+  },
+  "faq": {
+    "headline": "Still weighing it up?",
+    "panelText": "We’re here to help with anything you’re still weighing up. No obligation, just a conversation to see if we’re a good fit.",
+    "items": [
+      {
+        "question": "What services do you offer?",
+        "answer": "We run GEO, SEO, AEO, content, and conversion programs for B2B SaaS companies. We add design and implementation work across the current stack when it removes a discovery or conversion constraint."
+      },
+      {
+        "question": "Who do you work with?",
+        "answer": "We primarily work with B2B companies looking to improve their digital presence and conversion rates. Our clients range from funded startups to established enterprises across various industries including SaaS, professional services, and technology."
+      },
+      {
+        "question": "How does Webflow fit into your work?",
+        "answer": "Webflow is an optional delivery capability. We use it for builds and migrations when it fits the client stack and scope. The organic growth program comes first."
+      },
+      {
+        "question": "Where is LoudFace based?",
+        "answer": "We have offices in Dubai and the US, and the team works across time zones. That lets us work closely with clients in the Middle East, Europe and North America, with the same weekly rhythm for every account."
+      },
+      {
+        "question": "How do I get started?",
+        "answer": "The best way to get started is to book an intro call with our team. During this call, we'll discuss your goals, current challenges, and how we can help. No obligation - just a conversation to see if we're a good fit."
+      },
+      {
+        "question": "What is your pricing?",
+        "answer": "Our pricing varies based on project scope and requirements. We offer both project-based and retainer arrangements. During our initial call, we'll discuss your needs and provide a custom quote tailored to your specific goals and budget."
+      }
+    ]
+  }
+}

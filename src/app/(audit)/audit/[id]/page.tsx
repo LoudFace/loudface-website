@@ -2,8 +2,14 @@ import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { getAuditRecord, getRedis } from '@/lib/audit/pipeline';
 import { getBenchmarkContext } from '@/lib/audit/benchmarks';
+import { getAuditReportV11Content, getHomeV11Content } from '@/lib/content-utils';
+import '../../../home-v11/home-v11.css';
+import '../../../service-v11/service-v11.css';
+import '../../../service-v11/svc.css';
+import '../../../audit-v11/audit.css';
+import '../../../audit-v11/report/report.css';
 import { AuditProgress } from '../_components/AuditProgress';
-import { AuditDeck } from '../_components/AuditDeck';
+import { AuditReportV11 } from '../../../audit-v11/report/AuditReportV11';
 
 export const metadata: Metadata = {
   title: 'Your AI Visibility Audit',
@@ -15,7 +21,7 @@ export default async function AuditResultsPage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
-  const record = await getAuditRecord(id);
+  const [record, c, home] = await Promise.all([getAuditRecord(id), getAuditReportV11Content(), getHomeV11Content()]);
 
   if (!record) {
     notFound();
@@ -28,6 +34,7 @@ export default async function AuditResultsPage({
         id={id}
         initialProgress={record.progress}
         initialPhase={record.currentPhase}
+        c={c}
       />
     );
   }
@@ -41,11 +48,12 @@ export default async function AuditResultsPage({
         initialProgress={record.progress}
         initialPhase={record.currentPhase}
         initialFailed
+        c={c}
       />
     );
   }
 
-  // Complete — render the audit deck
+  // Complete — render the report (v11; same inputs the v3 deck took)
   if (!record.results) {
     notFound();
   }
@@ -70,14 +78,18 @@ export default async function AuditResultsPage({
   }
 
   return (
-    <AuditDeck
-      results={record.results}
-      companyName={record.input.companyName}
-      domain={record.input.url}
-      auditDate={record.completedAt || record.createdAt}
-      entityConfidence={entityConfidence}
-      partialDataReason={partialDataReason}
-      benchmarkContext={benchmarkContext}
+    <AuditReportV11
+      r={{
+        results: record.results,
+        companyName: record.input.companyName,
+        domain: record.input.url,
+        auditDate: record.completedAt || record.createdAt,
+        entityConfidence,
+        partialDataReason,
+        benchmarkContext,
+      }}
+      c={c}
+      home={home}
     />
   );
 }

@@ -1,5 +1,8 @@
 # Styling Tokens
 
+> **Scope: legacy Tailwind components** (`src/components/`, pre-v11 pages). v11 pages (`src/app/*-v11/`) use the
+> `.v11` tokens and follow `DESIGN.md`; where this file and `DESIGN.md` disagree on a v11 page, `DESIGN.md` wins.
+
 Quick reference for design tokens. For component patterns (buttons, cards, etc.), see `component-patterns.md`.
 
 ## Colors

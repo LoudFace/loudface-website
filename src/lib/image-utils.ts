@@ -162,3 +162,33 @@ export function caseStudyThumbnail(url: string | undefined): {
     srcset: generateSrcset(url, [400, 600, 800, 1200], 80, 'webp', 750),
   };
 }
+
+/* ============================================================ Vercel's image cache */
+
+/** Next's default image widths (next.config sets none of its own). The optimizer answers 400 to any other `w`. */
+const OPTIMIZER_WIDTHS = [16, 32, 48, 64, 96, 128, 256, 384, 640, 750, 828, 1080, 1200, 1920, 2048, 3840];
+
+const throughCache = (url: string | undefined): url is string =>
+  !!url && url.startsWith('https://cdn.sanity.io/images/') && !/\.svg(?:\?|$)/i.test(url);
+
+/**
+ * A Sanity image served through Vercel's image cache (`/_next/image`) instead of cdn.sanity.io. next.config caches
+ * these for 31 days, which is what keeps the project under Sanity's bandwidth quota: images served straight from
+ * cdn.sanity.io blew it in July 2026 and the whole CMS returned 402 until the cycle reset. The v11 pages drew raw
+ * `<img>` tags on Sanity URLs until the launch review found it (2026-09-26); every CMS image on them goes through here.
+ * `width` is the widest this slot ever needs and snaps up to an allowed optimizer width; the optimizer never enlarges.
+ * SVGs and anything that is not a Sanity image come back unchanged.
+ */
+export function cachedCmsImage(url: string | undefined, width: number, quality: 75 | 82 = 82): string | undefined {
+  if (!throughCache(url)) return url;
+  const w = OPTIMIZER_WIDTHS.find((x) => x >= width) ?? 3840;
+  return `/_next/image?url=${encodeURIComponent(url)}&w=${w}&q=${quality}`;
+}
+
+/** The same Sanity image at several widths, all through Vercel's image cache; undefined when it cannot go through it. */
+export function cachedCmsSrcSet(url: string | undefined, widths: number[], quality: 75 | 82 = 82): string | undefined {
+  if (!throughCache(url)) return undefined;
+  return widths
+    .map((w) => `${cachedCmsImage(url, w, quality)} ${OPTIMIZER_WIDTHS.find((x) => x >= w) ?? 3840}w`)
+    .join(', ');
+}

@@ -1,0 +1,103 @@
+{
+ "hero": {
+  "eyebrow": "LoudFace × Webflow · Live Masterclass",
+  "statValue": "0 → 86%",
+  "statLabel": "AI visibility on Toku's core buyer search prompt",
+  "h1": "Why your website is",
+  "h1Ghost": "invisible in AI search",
+  "h1End": "— and how to fix it",
+  "sub": "A 50-minute live breakdown of the exact content architecture, on-page changes, and platform decisions that took Toku from 0 → 86% on AI visibility. Every step, no theory.",
+  "date": "Thursday, July 9, 2026",
+  "time": "11:00 AM ET",
+  "format": "Live + Q&A",
+  "proof": "went from 0 → 86% AI visibility on its core search prompt",
+  "startsAt": "2026-07-09T15:00:00Z"
+ },
+ "takeaways": {
+  "eyebrow": "What you'll learn",
+  "title": "What you'll leave with",
+  "items": [
+   "The exact content structure LoudFace used to make Toku appear in ChatGPT, Perplexity, and Google AI Overviews — so you can replicate it on your own site.",
+   "A simple framework to audit your AI visibility in under 20 minutes and identify the highest-impact changes.",
+   "The specific on-page and technical changes made to Toku's site — with principles that apply to any platform, not just Webflow.",
+   "How to get your brand named in AI answers for the exact search prompts your buyers are already running — with results you can track."
+  ]
+ },
+ "speakers": {
+  "eyebrow": "Speakers",
+  "title": "Who's in the room",
+  "people": [
+   {
+    "photo": "arnel-bukva",
+    "person": "Arnel Bukva",
+    "role": "Founder, LoudFace",
+    "bio": "Founder of LoudFace, a Webflow Premium Partner agency specialising in SEO, AEO, and CRO for B2B SaaS. Led the strategy that took Toku from 0 to 86% AI visibility on its core buyer search prompt."
+   },
+   {
+    "photo": "ella-theisinger",
+    "person": "Ella Theisinger",
+    "role": "Solutions Engineer, Webflow",
+    "bio": "Ella Theisinger is a Solutions Engineer at Webflow based in London, working with businesses across EMEA. She brings a customer-facing perspective on how platform choices shape a website's ability to perform in an AI-driven search landscape."
+   },
+   {
+    "photo": "natalie-sangkagalo",
+    "person": "Natalie Sangkagalo",
+    "role": "Head of Marketing, Toku",
+    "bio": "Heads marketing at Toku, the stablecoin-payroll platform at the centre of this masterclass. Natalie walks through the strategy from the client side — what changed, what didn't, and what it means for pipeline."
+   }
+  ]
+ },
+ "agenda": {
+  "eyebrow": "Agenda",
+  "title": "50 minutes, structured",
+  "items": [
+   {
+    "minutes": 5,
+    "duration": "5 min",
+    "title": "Welcome & speaker intros"
+   },
+   {
+    "minutes": 10,
+    "duration": "10 min",
+    "title": "Why AI search is skipping your website"
+   },
+   {
+    "minutes": 10,
+    "duration": "10 min",
+    "title": "The Toku case study: from 0 to 86%"
+   },
+   {
+    "minutes": 10,
+    "duration": "10 min",
+    "title": "The exact changes: content, structure, platform"
+   },
+   {
+    "minutes": 5,
+    "duration": "5 min",
+    "title": "Your AI visibility audit framework"
+   },
+   {
+    "minutes": 10,
+    "duration": "10 min",
+    "title": "Live Q&A"
+   }
+  ]
+ },
+ "register": {
+  "eyebrow": "Register",
+  "title": "Save your seat"
+ },
+ "audit": {
+  "eyebrow": "Before the masterclass",
+  "title": "Your competitors are winning deals on ChatGPT searches. How far behind are you?",
+  "body": "Run a free AI Visibility Audit and find out exactly where your site stands before you join the masterclass — so you know what to focus on when you're in the room.",
+  "cta": "Run my free audit",
+  "note": "Takes 2 minutes. No signup needed."
+ },
+ "past": {
+  "note": "This session took place on",
+  "cta": "Watch the recording",
+  "href": "/blog/ai-search-visibility-webinar-recap",
+  "recapLabel": "The recording and the takeaways are in the recap."
+ }
+}

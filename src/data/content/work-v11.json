@@ -1,0 +1,43 @@
+{
+  "hero": {
+    "eyebrow": "Selected work",
+    "studiesLabel": "studies",
+    "headline": "Real results.",
+    "headlineHighlight": "Receipts attached.",
+    "description": "Every study below is a real B2B SaaS engagement we shipped: no stock mockups, no invented numbers. Filter by what you came for.",
+    "ctaText": "Book a strategy call",
+    "jumpText": "Jump to the studies",
+    "receiptLabel": "Published results from four of the studies"
+  },
+  "archive": {
+    "filterLabel": "Filter by what you came for",
+    "allLabel": "All",
+    "caseLinkText": "Read the study"
+  },
+  "proof": {
+    "eyebrow": "The numbers",
+    "headline": "Numbers we'll put",
+    "headlineHighlight": "our name next to.",
+    "body": "Two are sourced to the exact engagement and named client. The rest are how we operate: the same facts every study on this page inherits.",
+    "items": [
+      { "value": "200+", "label": "B2B SaaS websites shipped" },
+      { "value": "4+ yrs", "label": "Webflow Enterprise Partner" },
+      { "value": "~2h", "label": "Response during working hours" },
+      { "value": "0 → 97.8%", "label": "Toku AI visibility on its core prompt", "note": "Toku · GEO" },
+      { "value": "288%", "label": "Conversion increase", "note": "Dimer Health · CRO · six months" }
+    ]
+  },
+  "receipts": {
+    "headline": "Every screenshot is work we shipped.",
+    "headlineHighlight": "Every number is the engagement.",
+    "body": "No borrowed logos, no rounded-up wins. If a study names a client, we worked with that client. If it shows a number, it came from that project, and where it's a headline outcome, we say who and over what period.",
+    "points": [
+      { "title": "Named clients, real domains", "text": "The studies credit the client by name and link to the site we shipped." },
+      { "title": "Outcomes you can trace", "text": "Each stat maps to the shipped work, not a pitch-deck projection or a stat we couldn't stand behind." },
+      { "title": "Every chart names its source", "text": "Where a study shows a chart, it says where the numbers came from (Search Console, Peec AI or PostHog) and the dates they cover." }
+    ]
+  },
+  "closing": {
+    "heading": "Want results like these?"
+  }
+}

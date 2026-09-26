@@ -66,7 +66,7 @@ export function EntityConfidenceBanner({ signal, variant = 'full' }: EntityConfi
  * else is treated as a standalone sentence so we don't stack "The AI responses
  * appear to describe The AI platforms..." style duplicates.
  */
-function formatWrongEntity(raw: string): string {
+export function formatWrongEntity(raw: string): string {
   const trimmed = raw.trim().replace(/\s+/g, ' ');
   if (!trimmed) return '';
 
