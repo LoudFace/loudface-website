@@ -8,6 +8,8 @@ import { ArrowLeft, ArrowRight } from './ui';
  * outer two are inert clones. Whenever the scroll settles outside the middle copy it jumps back by exactly one
  * copy, which looks identical, so the arrows never run out. It advances on its own every few seconds and
  * pauses on hover, focus, touch and reduced motion. Inside the inline editor only the real copy shows.
+ * The view is kept within half a copy of the middle one (2026-09-27): jumping only after a whole copy needed more
+ * scroll room than a wide screen has (at 2560px the rail stopped for good). Touch scrolls it natively.
  */
 const COPIES = [0, 1, 2];
 const AUTO_MS = 4500;
@@ -32,13 +34,13 @@ export function HeroSlider({
   };
   const slideWidth = () => track.current?.querySelector<HTMLElement>('.v11-slide')?.offsetWidth ?? 300;
 
-  /** Keep the view inside the middle copy; the jump is invisible because the copies are identical. */
+  /** Keep the view within half a copy of the middle one; the jump is invisible because the copies are identical. */
   const normalise = useCallback(() => {
     const el = track.current;
     const w = copyWidth();
     if (!el || !w) return;
-    if (el.scrollLeft < w - 4) el.scrollLeft += w;
-    else if (el.scrollLeft >= 2 * w - 4) el.scrollLeft -= w;
+    if (el.scrollLeft < w / 2) el.scrollLeft += w;
+    else if (el.scrollLeft >= 1.5 * w) el.scrollLeft -= w;
   }, []);
 
   useEffect(() => {

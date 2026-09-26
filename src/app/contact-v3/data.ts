@@ -81,4 +81,4 @@ export const OFFICES = [
   },
 ] as const;
 
-export const CONTACT_EMAIL = 'hello@loudface.co';
+export const CONTACT_EMAIL = 'arnel@loudface.co';

@@ -1,7 +1,7 @@
 'use client';
 
 import { curveCatmullRom } from '@visx/curve';
-import { useEffect, useId, useState, type CSSProperties, type ReactNode } from 'react';
+import { useEffect, useId, useRef, useState, type CSSProperties, type ReactNode } from 'react';
 import { Area, AreaChart, Background, Bar, BarChart, ChartTooltip, PatternLines } from '@/components/charts';
 import { PatternArea } from '@/components/charts/pattern-area';
 import { useChartStable } from '@/components/charts/chart-context';
@@ -58,6 +58,28 @@ function usePoint(series: Series, i: number): [number, number] {
   return [x, c.yScale(v)];
 }
 
+/**
+ * The "LoudFace starts · 5 Jul" pill, in plain SVG for the same iPhone Safari reason as the pin: a rounded rect sized
+ * to its text once the text is measured (a length estimate until then). `left`: the pill starts at x; otherwise it ends there.
+ */
+function StartLabel({ x, y, left, stage, children }: { x: number; y: number; left: boolean; stage: boolean; children: ReactNode }) {
+  const ref = useRef<SVGTextElement>(null);
+  const [w, setW] = useState(118);
+  useEffect(() => {
+    const t = ref.current;
+    if (t) setW(Math.ceil(t.getComputedTextLength()) + 12);
+  }, [children]);
+  const x0 = left ? x : x - w;
+  return (
+    <g>
+      <rect x={x0} y={y - 9} width={w} height={18} rx={5} fill={stage ? 'rgba(255,255,255,0.16)' : '#eeecfb'} />
+      <text ref={ref} x={x0 + 6} y={y} dominantBaseline="central" fontSize={10.5} fontWeight={500} fill={stage ? '#ffffff' : '#4a4466'}>
+        {children}
+      </text>
+    </g>
+  );
+}
+
 /** LoudFace pin with its guide line and the "Start · 5 Jul" pill. */
 function StartPin({ series, size, tone, prefix, pinTop }: { series: Series; size: number; tone: Tone; prefix?: ReactNode; pinTop: number }) {
   const c = useChartStable();
@@ -66,22 +88,25 @@ function StartPin({ series, size, tone, prefix, pinTop }: { series: Series; size
   const inner = Math.round(size * 0.7);
   const guide = tone === 'stage' ? 'rgba(255,255,255,0.4)' : tone === 'ink' ? '#8c80d8' : '#dddaef';
   const labelLeft = x < c.innerWidth - 90;
+  const uid = `lfpin${useId().replace(/[^a-zA-Z0-9_-]/g, '')}`;
   return (
     <g pointerEvents="none">
       <line x1={x} x2={x} y1={y + size / 2 + 2} y2={c.innerHeight} stroke={guide} strokeWidth={1} />
-      <foreignObject x={x - size / 2 - 2} y={y - size / 2 - 2} width={size + 4} height={size + 4} overflow="visible">
-        <span className="v11-pin" style={{ position: 'relative', display: 'block', left: 2, top: 2, width: size, height: size, boxShadow: size >= 24 ? '0 0 0 1.5px #d8d5ea, 0 3px 8px rgba(40,20,120,0.22)' : '0 0 0 1.5px #ffffff, 0 2px 6px rgba(40,20,120,0.25)' }}>
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src="/lf-logo.svg" alt="" width={inner} height={inner} style={{ left: (size - inner) / 2, top: (size - inner) / 2 }} />
-        </span>
-      </foreignObject>
+      {/* Plain SVG, not HTML in a foreignObject: iPhone Safari drew that HTML away from its place, over the big
+          figure (2026-09-27). The ring, the logo clipped to a circle and a soft shadow, as before. */}
+      <defs>
+        <clipPath id={`${uid}-clip`}><circle cx={x} cy={y} r={inner / 2} /></clipPath>
+        <filter id={`${uid}-shadow`} x="-60%" y="-60%" width="220%" height="220%">
+          <feDropShadow dx="0" dy={size >= 24 ? 3 : 2} stdDeviation={size >= 24 ? 4 : 3} floodColor="#281478" floodOpacity={size >= 24 ? 0.22 : 0.25} />
+        </filter>
+      </defs>
+      <circle cx={x} cy={y} r={size / 2 + 1.5} fill={size >= 24 ? '#d8d5ea' : '#ffffff'} filter={`url(#${uid}-shadow)`} />
+      <circle cx={x} cy={y} r={size / 2} fill="#5222ff" />
+      <image href="/lf-logo.svg" x={x - inner / 2} y={y - inner / 2} width={inner} height={inner} clipPath={`url(#${uid}-clip)`} />
       {prefix && (
-        <foreignObject x={labelLeft ? x + size / 2 + 3 : x - 80} y={y - 9} width={80} height={18} overflow="visible">
-          <span className={`v11-startpill ${tone === 'stage' ? 'is-stage' : ''}`} style={{ position: 'relative', display: 'inline-flex', left: 0, top: 0 }}>
-            <span>{prefix}</span>
-            <span>&nbsp;· {dayMonth(series.start)}</span>
-          </span>
-        </foreignObject>
+        <StartLabel x={labelLeft ? x + size / 2 + 3 : x - size / 2 - 3} y={y} left={labelLeft} stage={tone === 'stage'}>
+          {prefix}{`\u00a0· ${dayMonth(series.start)}`}
+        </StartLabel>
       )}
       <title>{`LoudFace starts · ${dayMonth(series.start)}`}</title>
     </g>

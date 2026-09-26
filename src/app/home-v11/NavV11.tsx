@@ -17,7 +17,7 @@ import './chrome.css';
  * case study link); the clients stay in the featured card. Copy: nav.json (the live dropdown items plus the `v11` block) and the homepage's AI-answers tile.
  * 2026-09-27 (Arnel picked menu A with isometric icons on the Paper page "Menus · pick one"): type-led rows on hairline
  * columns, each led by an Isocons isometric line drawing in indigo (public/images/home-v11/menu-icons/iso, one per page,
- * CC BY 4.0, credited in the footer); each industry shows the buyer question its page answers.
+ * CC BY 4.0; the footer credit was removed on 2026-09-27 at Arnel's request); each industry shows the buyer question its page answers.
  */
 
 export interface NavItem { title: string; description: string; href: string }

@@ -143,12 +143,12 @@ const organizationSchema = {
     addressLocality: "Dubai",
     addressCountry: "AE",
   },
-  email: "hello@loudface.co",
+  email: "arnel@loudface.co",
   contactPoint: [
     {
       "@type": "ContactPoint",
       contactType: "sales",
-      email: "hello@loudface.co",
+      email: "arnel@loudface.co",
       url: "https://www.loudface.co/contact",
       areaServed: "Worldwide",
       availableLanguage: ["English"],
@@ -156,7 +156,7 @@ const organizationSchema = {
     {
       "@type": "ContactPoint",
       contactType: "customer support",
-      email: "hello@loudface.co",
+      email: "arnel@loudface.co",
       url: "https://www.loudface.co/contact",
       areaServed: "Worldwide",
       availableLanguage: ["English"],

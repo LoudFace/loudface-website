@@ -43,11 +43,11 @@ export const growthAutopilot: ExtrasFn = ({ home, data }) => {
       <GrowthBoard title="yourcompany × LoudFace" meta="SEO, AEO and CRO · one team · example" cols={[
         { k: 'Shipped', tone: 'done', tasks: [
           { tag: 'SEO', t: 'Technical fixes: redirects and schema', who: 'abhay-tyagi', when: 'Week 2' },
-          { tag: 'CRO', t: 'Pricing page: the new plan table', who: 'rezwan-nahid', when: 'Week 3' },
+          { tag: 'CRO', t: 'Pricing page: the new plan table', who: 'abhay-tyagi', when: 'Week 3' },
         ] },
         { k: 'In progress', tone: 'doing', tasks: [
           { tag: 'AEO', t: 'Answer blocks on 12 priority pages', who: 'andrea-van-wyk', when: 'Week 4' },
-          { tag: 'CRO', t: 'Demo path test, variant B', who: 'david-dobrijevic', when: 'Week 4' },
+          { tag: 'CRO', t: 'Demo path test, variant B', who: 'tamara-pavlovic', when: 'Week 4' },
         ] },
         { k: 'Next', tone: 'next', tasks: [
           { tag: 'SEO', t: 'Comparison cluster: four pages', who: 'andrea-van-wyk', when: 'Week 5' },

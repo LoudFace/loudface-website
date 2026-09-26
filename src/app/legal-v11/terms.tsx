@@ -119,7 +119,7 @@ const SECTIONS: LegalSection[] = [
     body: (
       <p>
         For any questions regarding these Terms, please contact us at:{' '}
-        <a href="mailto:hello@loudface.co">hello@loudface.co</a>
+        <a href="mailto:arnel@loudface.co">arnel@loudface.co</a>
       </p>
     ),
   },

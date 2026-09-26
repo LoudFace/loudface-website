@@ -23,7 +23,7 @@ import { strip } from '@/lib/inline-edit/mark';
 
 const TONE = ['is-lav', 'is-ind', 'is-peach'];
 /** Who runs each lane in the plan pictures, by lane position (the same four lanes grow from Solo to Scale). */
-const LANE_WHO = ['rezwan-nahid', 'andrea-van-wyk', 'abhay-tyagi', 'david-dobrijevic'];
+const LANE_WHO = ['tamara-pavlovic', 'andrea-van-wyk', 'abhay-tyagi', 'arnel-bukva'];
 /** The seven "every plan" items, grouped under the three column heads in pricing-v11.json includes.groups. */
 const INCLUDE_GROUPS = [[0, 1, 6], [2, 5], [3, 4]];
 

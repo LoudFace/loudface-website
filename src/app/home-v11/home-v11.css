@@ -170,7 +170,8 @@
 .v11-slide-metric.is-compact { font-size: 40px; }
 .v11-slide-metric.is-static { position: static; padding-left: 10px; }
 .v11-slide-dates { display: flex; justify-content: space-between; padding: 0 10px; margin-top: 8px; font-size: 11px; color: #c9c5fb; }
-.v11-slide-cap { padding: 0 10px; font-size: 12.5px; color: #d4d1fd; margin-top: 10px; white-space: nowrap; }
+/* captions wrap: "of non-branded AI answers name us, up from 0.13%" ran past its slide on one line (2026-09-27) */
+.v11-slide-cap { padding: 0 10px; font-size: 12.5px; line-height: 1.45; color: #d4d1fd; margin-top: 10px; text-wrap: pretty; }
 /* StageChart, size "hero": one result as the picture of an inner-page hero */
 .v11-slide.is-hero { width: auto; flex-shrink: 1; padding: 18px 20px 18px; border-radius: 20px; background: rgba(255,255,255,0.06); box-shadow: inset 0 0 0 1px rgba(255,255,255,0.16); }
 .v11-slide.is-hero::after { display: none; }
@@ -670,7 +671,6 @@ a.v11-rating:hover { opacity: 0.75; }
 .v11-footer-legal { font-size: 13px; color: var(--muted); }
 .v11-footer-legal a { transition: color var(--dur) var(--ease); }
 .v11-footer-legal a:hover { color: var(--ink); }
-.v11-footer-credit { display: block; margin-top: 6px; font-size: 12.5px; color: var(--quiet); }
 /* the wordmark sits by padding and margin, not absolute offsets: Paper drops nested left/top (2026-09-25) */
 .v11-footer-stage { position: relative; height: 330px; overflow: hidden; margin-top: 40px; padding-top: 118px; background: radial-gradient(ellipse 70% 120% at 50% 100%, #6a61ee 0%, #4f46e5 50%, #3d38cf 100%); }
 .v11-footer-wordmark { display: block; margin-left: max(calc((100% - 1296px) / 2), var(--gut)); width: min(1296px, calc(100% - 2 * var(--gut))); height: auto; }

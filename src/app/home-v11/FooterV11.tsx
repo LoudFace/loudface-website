@@ -24,7 +24,7 @@ const FLAGS = [FLAG_UAE, FLAG_US];
 const HREFS: (string | null)[][] = [
   ['/services/geo-agency', '/services/seo-aeo', '/services/webflow', '/services/ux-ui-design', '/services/cro'],
   ['/case-studies', '/methodology', '/about', '/pricing', '/blog', '/careers'],
-  [null, 'mailto:hello@loudface.co', 'https://www.linkedin.com/company/loudface/', 'https://x.com/meetloudface'],
+  [null, 'mailto:arnel@loudface.co', 'https://www.linkedin.com/company/loudface/', 'https://x.com/meetloudface'],
 ];
 
 function FooterLink({ href, children }: { href: string | null; children: ReactNode }) {
@@ -72,10 +72,6 @@ export function FooterV11({ c, ratings }: { c: HomeV11Content['footer']; ratings
           </div>
           <div className="v11-footer-legal">
             <span>{c.legal}</span> · <Link href="/privacy"><span>{c.privacy}</span></Link> · <Link href="/terms"><span>{c.terms}</span></Link> · <Link href="/cookies"><span>{c.cookies}</span></Link>
-            {/* the attribution Isocons' licence asks for (the menus' isometric icons, 2026-09-27) */}
-            <span className="v11-footer-credit">
-              <a href="https://www.isocons.app/" rel="noopener"><span>{c.iconCredit}</span></a> (<a href="https://creativecommons.org/licenses/by/4.0/" rel="noopener license"><span>{c.iconLicence}</span></a>), <span>{c.iconChange}</span>
-            </span>
           </div>
         </div>
       </div>

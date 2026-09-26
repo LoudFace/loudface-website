@@ -481,7 +481,7 @@
       }
     ],
     "emailLead": "Prefer email? Write to",
-    "email": "hello@loudface.co",
+    "email": "arnel@loudface.co",
     "reply": "We reply within two hours during working hours"
   },
   "footer": {
@@ -524,7 +524,7 @@
         "heading": "Get in touch",
         "links": [
           "Book a strategy call",
-          "hello@loudface.co",
+          "arnel@loudface.co",
           "LinkedIn",
           "X"
         ]
@@ -533,9 +533,6 @@
     "legal": "© 2026 LoudFace",
     "privacy": "Privacy",
     "terms": "Terms",
-    "cookies": "Cookies",
-    "iconCredit": "Menu icons: Isocons",
-    "iconLicence": "CC BY 4.0",
-    "iconChange": "recoloured"
+    "cookies": "Cookies"
   }
 }

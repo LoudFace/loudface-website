@@ -47,7 +47,7 @@ const SECTIONS: LegalSection[] = [
         LOUDFACE - FZCO (&ldquo;we,&rdquo; &ldquo;us,&rdquo; or &ldquo;our&rdquo;) operates
         loudface.co (the &ldquo;Site&rdquo;). We are the data controller for the personal
         information described in this policy. Questions go to{' '}
-        <a href="mailto:hello@loudface.co">hello@loudface.co</a>.
+        <a href="mailto:arnel@loudface.co">arnel@loudface.co</a>.
       </p>
     ),
   },
@@ -181,7 +181,7 @@ const SECTIONS: LegalSection[] = [
         </p>
         <p>
           To exercise any of these rights, email{' '}
-          <a href="mailto:hello@loudface.co">hello@loudface.co</a> — we respond within 30 days. If
+          <a href="mailto:arnel@loudface.co">arnel@loudface.co</a> — we respond within 30 days. If
           you&rsquo;re in the EEA or UK and believe we haven&rsquo;t resolved your concern, you can
           complain to your local data protection authority.
         </p>
@@ -224,7 +224,7 @@ const SECTIONS: LegalSection[] = [
     heading: '12. Contact Us',
     body: (
       <p>
-        LOUDFACE - FZCO · <a href="mailto:hello@loudface.co">hello@loudface.co</a>
+        LOUDFACE - FZCO · <a href="mailto:arnel@loudface.co">arnel@loudface.co</a>
       </p>
     ),
   },

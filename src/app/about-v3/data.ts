@@ -37,7 +37,8 @@ export const TEAM_ORDER: string[] = [
  * Keep the CMS record. Hiding is reversible; deleting loses the history and
  * breaks any byline or case-study reference pointing at it.
  */
-export const TEAM_HIDDEN: ReadonlySet<string> = new Set(['chandana-pitta']);
+// Rezwan and David left the team (Arnel, 2026-09-27); their profiles 301 to Arnel's (next.config.ts).
+export const TEAM_HIDDEN: ReadonlySet<string> = new Set(['chandana-pitta', 'rezwan-nahid', 'david-dobrijevic']);
 
 /** Per-person fact + quote (editorial, not in CMS). Keyed by slug. */
 export const TEAM_COPY: Record<string, { fact: string; quote?: string }> = {
