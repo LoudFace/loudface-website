@@ -152,7 +152,10 @@
 /* minmax(0, 1fr): a wide table in the article must not stretch the column past a phone screen (Toku, 2026-09-26) */
 .cs-story { display: grid; grid-template-columns: minmax(0, 1fr); gap: 40px; }
 @media (min-width: 1024px) { .cs-story { grid-template-columns: 260px minmax(0, 760px); gap: 88px; } }
-.cs-rail { display: flex; flex-direction: column; gap: 16px; align-self: start; position: sticky; top: 96px; }
+/* sticky only beside the article: in one column the rail stuck under the header and the story scrolled beneath it
+   (Arnel, 2026-09-27) */
+.cs-rail { display: flex; flex-direction: column; gap: 16px; align-self: start; }
+@media (min-width: 1024px) { .cs-rail { position: sticky; top: 96px; } }
 .cs-rail .sv-toc { position: static; width: 100%; }
 .cs-cta { padding: 22px; border-radius: 20px; color: #ffffff; background: radial-gradient(ellipse 90% 90% at 90% 100%, #7068f0 0%, #4f46e5 45%, #3a33c7 100%); }
 .cs-cta .v11-av { box-shadow: 0 0 0 2px #4f46e5; }
