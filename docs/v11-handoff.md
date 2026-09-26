@@ -129,10 +129,12 @@ styles once the old review routes are gone.
   Website · v11", page "Menus · pick one"; boards drawn by `/dev-preview/menu-concepts` and `/dev-preview/menu-icons`).
   The live menus and the phone menu carry it; the Phosphor app-tile set lost and was deleted.
 
+- After launch (Arnel, 2026-09-27): the contact email is arnel@loudface.co everywhere (footer, schema, legal pages);
+  Rezwan and David have left, so their profiles 301 to /team/arnel-bukva and current team members replace their faces;
+  the menus' icon credit left the footer at his request (Isocons is CC BY 4.0, which asks for a credit).
+
 ## Still open (copy and facts, not blocking)
 
-- Contact email: /contact and the pricing FAQ show arnel@loudface.co (as on the approved boards); the footer, the
-  ContactPage schema and the v3 contact page use hello@loudface.co.
 - The three testimonial videos (2 to 12 MB) stream from Sanity when a visitor presses play. Moving them to Vercel
   would take them off Sanity's bandwidth meter.
 - Inline editor gaps carried over from v3: a headline written as plain text beside its highlighted part cannot be
