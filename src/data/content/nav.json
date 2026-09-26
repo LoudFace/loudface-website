@@ -229,7 +229,9 @@
         "href": "/seo-for/ecommerce"
       }
     ],
-    "allIndustries": "All industries",
+    "allServices": "All services",
+      "allServicesHref": "/services",
+      "allIndustries": "All industries",
     "allIndustriesHref": "/seo-for",
     "clientsTag": "Clients",
     "clientsBig": "50+",

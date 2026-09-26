@@ -31,6 +31,9 @@ export interface NavV11Data {
   /** The industries in two labelled groups, by page. */
   industryGroups: NavGroup[];
   industries: NavIndustry[];
+  /** The services hub under the last Services column; nothing else links it since the v11 service pages (2026-09-27). */
+  allServices: string;
+  allServicesHref: string;
   allIndustries: string;
   allIndustriesHref: string;
   clientsTag: string;
@@ -87,7 +90,7 @@ export function ServicesPanelV11({ dropdown, v11, cta, onPick }: { dropdown: Nav
       <div className="v11-nav-main">
         <div className="v11-nav-head"><b>{dropdown.label}</b><span>{dropdown.description}</span></div>
         <div className="v11-nav-groups">
-          {v11.serviceGroups.map((g) => (
+          {v11.serviceGroups.map((g, gi) => (
             <div key={g.label} className="v11-nav-group">
               <span className="v11-nav-group-k">{g.label}</span>
               {pick(dropdown.items, g.hrefs).map((item) => (
@@ -96,6 +99,11 @@ export function ServicesPanelV11({ dropdown, v11, cta, onPick }: { dropdown: Nav
                   <span className="v11-nav-text"><b><span>{item.title}</span><ArrowRight /></b><span className="v11-nav-sub">{item.description}</span></span>
                 </Link>
               ))}
+              {gi === v11.serviceGroups.length - 1 && (
+                <Link href={v11.allServicesHref} className="v11-nav-all" role="menuitem" onClick={onPick}>
+                  <span>{v11.allServices}</span><ArrowRight />
+                </Link>
+              )}
             </div>
           ))}
         </div>
@@ -205,6 +213,9 @@ export function PhoneMenuV11({ links, services, industries, v11, ctaText, onPick
                 ))}
               </div>
             ))}
+            <Link href={v11.allServicesHref} className="v11-nav-phone-item is-all" onClick={onPick}>
+              <span>{v11.allServices}</span><ArrowRight />
+            </Link>
           </div>
         )}
       </div>
