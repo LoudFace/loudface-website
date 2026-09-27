@@ -10,7 +10,7 @@ import { FooterV11 } from '../home-v11/FooterV11';
 import { KeyResults } from '../home-v11/KeyResults';
 import { LogoGrid } from '../home-v11/LogoGrid';
 import { Reveal } from '../home-v11/Reveal';
-import { ArrowRight, ArrowUpRight, SectionHeadNode } from '../home-v11/ui';
+import { ArrowRight, ArrowUpRight, SectionHeadNode, img } from '../home-v11/ui';
 import { caseSeries, leadKind, sourceName, splitTitle, standaloneCharts } from '../case-v11/series';
 import { LiveChart, type ValueFormat } from '../home-v11/LiveChart';
 import { BeforeAfterChart } from '../home-v11/BeforeAfterChart';
@@ -112,15 +112,32 @@ function StepColumns({ steps }: { steps: Steps }) {
  * A results study as one wide row (Arnel, 2026-09-27, pointing at graphite.io's case studies): the client, the study
  * and its lead figure on the left; its own chart, with axis and the "LoudFace starts" pin, across the right.
  */
+/**
+ * The studies' own logos, already white, for the rows on the stage: none of these studies carries a logo in Sanity
+ * (Arnel, 2026-09-27: "use the actual logos here of each brand"). Files from the brands' sites (openbrand for Delshad),
+ * trimmed; Genie recoloured white. The stealth study keeps its name as text. Delshad's lockup is tall, so it runs larger.
+ */
+const ROW_LOGOS: Record<string, { file: string; w: number; h: number; size?: number }> = {
+  'toku-ai-cited-pipeline': { file: 'logos/toku-white.png', w: 285, h: 80 },
+  'loudface-aeo-case-study': { file: 'wordmark-white.svg', w: 133, h: 28 },
+  'trademomentum-niche-aeo-organic-growth': { file: 'logos/trademomentum-white.png', w: 380, h: 76, size: 30 },
+  'delshad-legal-content-engine': { file: 'logos/delshad-white.png', w: 355, h: 100, size: 44 },
+  'genie-teacher-organic-growth': { file: 'logos/genie-white.png', w: 201, h: 64, size: 28 },
+};
+
 function StudyRow({ s, clients, chart, onStage }: { s: Study; clients: Map<string, Client>; chart: CardChart; onStage?: boolean }) {
   const name = nameOf(s, clients);
   const logo = s['client-logo']?.url;
+  const own = !logo ? ROW_LOGOS[s.slug] : undefined;
   const r = s['result-1---title'] ? splitTitle(s['result-1---title']) : undefined;
   return (
     <Link href={`/case-studies/${s.slug}`} className="wk-row">
       <div className="wk-row-copy">
         {/* eslint-disable-next-line @next/next/no-img-element */}
-        {logo ? <img loading="lazy" className="wk-card-logo" src={cachedCmsImage(logo, 384)} alt={name} /> : <span className="wk-card-name">{name}</span>}
+        {logo ? <img loading="lazy" className="wk-card-logo" src={cachedCmsImage(logo, 384)} alt={name} /> : own ? (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img loading="lazy" className="wk-card-logo is-own" src={img(own.file)} alt={name} width={own.w} height={own.h} style={{ height: own.size ?? 24 }} />
+        ) : <span className="wk-card-name">{name}</span>}
         <p className="wk-row-title">{s['project-title'] || s.name}</p>
         {/* an "a → b" pair runs twice as wide as a single figure, so it takes the smaller size */}
         <div className={`wk-row-num ${(s['result-1---number'] ?? '').length > 7 ? 'is-long' : ''}`}>
@@ -278,8 +295,8 @@ export function WorkIndexV11({ c, home, data, studies, clients, charts, rows, st
               <section className="v11-sec v11-white wk-archive is-top" id="archive"><div className="v11-wrap">{chips}</div></section>
               <section className="wk-stage" id="results">
                 <div className="v11-wrap">
+                  {/* no heading over the charts (Arnel, 2026-09-27): the rows open the stage on their own */}
                   <div className="wk-group" id="headline">
-                    <div className="wk-group-head"><h2>{c.archive.headlineTitle}</h2><span>{headline.length} {c.hero.studiesLabel}</span></div>
                     <div className="wk-rows">{headline.map(({ s, chart }) => <StudyRow key={s.slug} s={s} clients={clients} chart={chart} onStage />)}</div>
                   </div>
                   {more.length > 0 && (
