@@ -33,12 +33,12 @@
 .wk-group-head span { font-size: 14px; color: var(--quiet); }
 .wk-grid { display: grid; grid-template-columns: minmax(0, 1fr); gap: 16px; }
 /* a study: its thumbnail on the client's own colour, then the result and the title */
-.wk-card { display: flex; flex-direction: column; min-width: 0; border-radius: 22px; background: #ffffff; box-shadow: 0 0 0 1px var(--line); overflow: hidden; color: var(--ink); transition: transform var(--dur) var(--ease), box-shadow var(--dur) var(--ease); }
+.wk-card { display: flex; flex-direction: column; min-width: 0; border-radius: 0; background: #ffffff; box-shadow: 0 0 0 1px var(--line); overflow: hidden; color: var(--ink); transition: transform var(--dur) var(--ease), box-shadow var(--dur) var(--ease); }
 .wk-card:hover { transform: translateY(-3px); box-shadow: 0 0 0 1px var(--line), 0 22px 44px rgba(40,30,90,0.12); }
 .wk-card-pic { position: relative; padding: 22px 22px 0; background: radial-gradient(ellipse 90% 90% at 88% 100%, var(--c-glow) 0%, var(--c-clear) 70%), var(--c-base); overflow: hidden; }
-.wk-card-pic img { display: block; width: 100%; height: 200px; object-fit: cover; object-position: top; border-radius: 10px 10px 0 0; box-shadow: 0 1px 2px rgba(20,16,60,0.1), 0 18px 36px rgba(40,30,90,0.18); }
+.wk-card-pic img { display: block; width: 100%; height: 200px; object-fit: cover; object-position: top; border-radius: 0; box-shadow: 0 1px 2px rgba(20,16,60,0.1), 0 18px 36px rgba(40,30,90,0.18); }
 /* chart cards (board concept, 2026-09-27): the study's own chart on a white report panel, where the shot sat */
-.wk-card-chart { position: relative; padding: 10px 6px 12px; border-radius: 10px 10px 0 0; background: #ffffff; box-shadow: 0 1px 2px rgba(20,16,60,0.1), 0 18px 36px rgba(40,30,90,0.18); }
+.wk-card-chart { position: relative; padding: 10px 6px 12px; border-radius: 0; background: #ffffff; box-shadow: 0 1px 2px rgba(20,16,60,0.1), 0 18px 36px rgba(40,30,90,0.18); }
 .wk-card-chart.is-pair { padding: 14px 18px 4px; }
 /* a published pair ("0 → 97.8%") as two wide columns with their figures at card-number size */
 .wk-card-chart.is-pair .v11-ba-group { gap: 18px; }
@@ -86,7 +86,7 @@
 /* results studies as wide chart rows (graphite.io/five-percent/case-studies, 2026-09-27): the study on the left, its
    own chart across the right, one hairline card per study */
 .wk-rows { display: flex; flex-direction: column; gap: 18px; margin-bottom: 18px; }
-.wk-row { display: grid; grid-template-columns: minmax(0, 1fr); border-radius: 22px; background: #ffffff; box-shadow: 0 0 0 1px var(--line); color: var(--ink); overflow: hidden;
+.wk-row { display: grid; grid-template-columns: minmax(0, 1fr); border-radius: 0; background: #ffffff; box-shadow: 0 0 0 1px var(--line); color: var(--ink); overflow: hidden;
   transition: box-shadow var(--dur) var(--ease); }
 .wk-row:hover { box-shadow: 0 0 0 1px var(--line), 0 22px 44px rgba(40,30,90,0.1); }
 .wk-row-copy { display: flex; flex-direction: column; gap: 14px; padding: 28px 28px 24px; }
@@ -134,7 +134,7 @@
 /* the smaller results on the stage: one row of equal glass cards under the headline rows (2026-09-27) */
 .wk-group.is-more { padding-top: 64px; }
 .wk-minis { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 14px; }
-.wk-mini { display: flex; flex-direction: column; gap: 18px; min-width: 0; padding: 20px 20px 22px; border-radius: 18px; color: #ffffff;
+.wk-mini { display: flex; flex-direction: column; gap: 18px; min-width: 0; padding: 20px 20px 22px; border-radius: 0; color: #ffffff;
   background: rgba(255,255,255,0.06); box-shadow: inset 0 0 0 1px rgba(255,255,255,0.16); transition: background-color var(--dur) var(--ease), box-shadow var(--dur) var(--ease); }
 .wk-mini:hover { background: rgba(255,255,255,0.1); box-shadow: inset 0 0 0 1px rgba(255,255,255,0.24); }
 .wk-mini .wk-card-logo { height: 20px; max-width: 130px; filter: brightness(0) invert(1); }
