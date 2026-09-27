@@ -139,16 +139,25 @@
 .cs-measured { display: flex; flex-direction: column; gap: 10px; margin-top: 12px; }
 .cs-measured span { display: flex; align-items: center; gap: 10px; font-size: 14px; color: var(--ink); }
 .cs-measured img { border-radius: 5px; }
-/* the box across the full grid (a study with no video or quote beside it): each fact and group is a column, label above
-   value, instead of the sidebar's label-left value-right rows (Arnel, 2026-09-27: "United States" sat alone on the far right) */
+/* the box across the full grid (a study with no video or quote beside it): a spec strip, like the key results row. Each
+   fact and group is a column between hairlines, label above value, and the tools sit on one line (Arnel, 2026-09-27:
+   the sidebar's label-left value-right rows left "United States" alone on the far right; loose columns still read odd) */
 @media (min-width: 768px) {
-  .cs-grid .cs-did.is-full { flex-direction: row; flex-wrap: wrap; column-gap: 40px; align-items: flex-start; }
+  .cs-grid .cs-did.is-full { flex-direction: row; flex-wrap: wrap; align-items: stretch; row-gap: 22px; }
   .cs-did.is-full .cro-tag { flex-basis: 100%; }
-  .cs-did.is-full .cs-did-facts > div, .cs-did.is-full .cs-did-group { flex: 1 1 0; min-width: 170px; }
   .cs-did.is-full .cs-did-facts { display: contents; }
-  .cs-did.is-full .cs-did-facts > div { flex-direction: column; justify-content: flex-start; gap: 10px; margin-top: 22px; padding: 0; border: 0; }
+  .cs-did.is-full .cs-did-facts > div, .cs-did.is-full .cs-did-group { display: flex; flex: 1 1 0; min-width: 160px; flex-direction: column; justify-content: flex-start; gap: 12px; margin: 0; padding: 2px 28px; border: 0; border-left: 1px solid var(--line); }
+  .cs-did.is-full .cro-tag + .cs-did-facts > div:first-child, .cs-did.is-full .cro-tag + .cs-did-group, .cs-did.is-full .cs-did-facts:empty + .cs-did-group { padding-left: 0; border-left: 0; }
   .cs-did.is-full .cs-did-facts dt { font-size: 12.5px; }
-  .cs-did.is-full .cs-did-facts dd { text-align: left; font-size: 14px; }
+  .cs-did.is-full .cs-did-facts dd { text-align: left; font-size: 15px; }
+  .cs-did.is-full .cs-pills, .cs-did.is-full .cs-measured { margin-top: 0; }
+  .cs-did.is-full .cs-measured { flex-direction: row; flex-wrap: wrap; gap: 10px 20px; }
+  .cs-did.is-full .cs-pills span, .cs-did.is-full .cs-pills a { white-space: nowrap; }
+}
+/* a tablet fits three columns a row: no hairlines, which would open a wrapped row with a stray rule */
+@media (min-width: 768px) and (max-width: 1023px) {
+  .cs-grid .cs-did.is-full { column-gap: 32px; }
+  .cs-did.is-full .cs-did-facts > div, .cs-did.is-full .cs-did-group { min-width: 200px; padding: 0; border-left: 0; }
 }
 @media (min-width: 1024px) {
   .cs-grid .cro-cell.is-quote .cro-quote { font-size: 26px; line-height: 1.28; max-width: 700px; }
