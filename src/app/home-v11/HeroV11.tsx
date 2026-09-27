@@ -10,6 +10,7 @@ import { Eyebrow, LfMark, img } from './ui';
 const SLIDES: { series: keyof HomeV11Data['hero']; href: string; format: ValueFormat; compact?: boolean }[] = [
   { series: 'lf', format: 'pct', href: '/case-studies/loudface-aeo-case-study' },
   { series: 'genie', format: 'index', href: '/case-studies/genie-teacher-organic-growth' },
+  { series: 'health', format: 'index', href: '/case-studies/anonymous-health-tech-organic-growth' },
   { series: 'delshad', format: 'index', href: '/case-studies/delshad-legal-content-engine' },
   { series: 'tm', format: 'indexWeek', href: '/case-studies/trademomentum-niche-aeo-organic-growth' },
   { series: 'stealth', format: 'pct', href: '/case-studies/stealth-fintech-ai-visibility', compact: true },

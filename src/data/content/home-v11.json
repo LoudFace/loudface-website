@@ -29,6 +29,15 @@
         "tip": "the May average"
       },
       {
+        "tag": "Search",
+        "client": "Anonymous health tech",
+        "metric": "3.9×",
+        "caption": "Google impressions a day, in six months",
+        "periodStart": "Oct 2025",
+        "periodEnd": "Jun 2026",
+        "tip": "the December average"
+      },
+      {
         "tag": "Leads",
         "client": "Delshad Legal",
         "metric": "2.5×",

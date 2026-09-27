@@ -32,6 +32,7 @@ const SLUGS = {
   delshad: 'delshad-legal-content-engine',
   tm: 'trademomentum-niche-aeo-organic-growth',
   stealth: 'stealth-fintech-ai-visibility',
+  health: 'anonymous-health-tech-organic-growth',
 } as const;
 
 type Key = keyof typeof SLUGS;
@@ -77,7 +78,7 @@ function weekly(points: { date?: string; clicks: number }[], from: string, to: s
 }
 
 export interface HomeV11Data {
-  hero: Record<'lf' | 'genie' | 'delshad' | 'tm' | 'stealth' | 'genieLeads', Series>;
+  hero: Record<'lf' | 'genie' | 'delshad' | 'tm' | 'stealth' | 'genieLeads', Series> & { health?: Series };
   results: Record<'delshad' | 'genie' | 'tm' | 'lf', Series>;
   bentoGenie: Series;
 }
@@ -94,7 +95,7 @@ export const getHomeV11Data = cache(async (): Promise<HomeV11Data | null> => {
     return null;
   }
   const ins = (k: Key) => rows.find((r) => r.slug === SLUGS[k])?.instruments ?? {};
-  const lf = ins('lf'), genie = ins('genie'), delshad = ins('delshad'), tm = ins('tm'), stealth = ins('stealth');
+  const lf = ins('lf'), genie = ins('genie'), delshad = ins('delshad'), tm = ins('tm'), stealth = ins('stealth'), health = ins('health');
   if (!lf.topicClimb || !genie.indexedTrend || !delshad.indexedTrend || !tm.indexedTrend) return null;
 
   const lfDates = lf.topicClimb.points.map((p) => p.week);
@@ -110,6 +111,7 @@ export const getHomeV11Data = cache(async (): Promise<HomeV11Data | null> => {
     if (d >= '2026-08-01' && d <= '2026-08-31' && tmRolled[i] > (tmRolled[tmAug] ?? -1)) tmAug = i;
   });
   const stealthPts = stealth.topicClimb?.points ?? [];
+  const hTrend = health.indexedTrend?.points.filter((p) => p.date) ?? [];
 
   const genieImpressions: Series = {
     dates: gTrend.map((p) => p.date as string),
@@ -133,6 +135,12 @@ export const getHomeV11Data = cache(async (): Promise<HomeV11Data | null> => {
         values: rolling(stealthPts.map((p) => p.value * 100), 5),
         start: '2026-06-15',
       },
+      // the anonymous health-tech study (2026-09-27): Google impressions a day, indexed to its December = 100
+      health: hTrend.length ? {
+        dates: hTrend.map((p) => p.date as string),
+        values: rolling(hTrend.map((p) => p.impressions), 7),
+        start: health.engagementStart ?? '2026-01-06',
+      } : undefined,
       genieLeads: {
         dates: (genie.leadGrowth?.points ?? []).map((p) => p.week),
         values: (genie.leadGrowth?.points ?? []).map((p) => p.value),
