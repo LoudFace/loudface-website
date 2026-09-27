@@ -44,7 +44,8 @@ export function BlogPostV11({ c, home, v, nextStep = false }: { c: BlogV11Conten
                   <img src={cachedCmsImage(v.author.avatarUrl, 128)} alt="" width={40} height={40} />
                 ) : <span className="bp-mono">{initials(v.author?.name)}</span>}
                 <div>
-                  <b>{v.author ? v.author.name : 'LoudFace'}</b>
+                  {/* the byline names the author's page, as the author card at the foot does (Arnel, 2026-09-27) */}
+                  {v.author?.slug ? <Link href={`/team/${v.author.slug}`} rel="author" className="bp-byline-name"><b>{v.author.name}</b></Link> : <b>{v.author ? v.author.name : 'LoudFace'}</b>}
                   <span>{published}{updated && <> · {t.updated} {updated}</>} · {v.readTime}</span>
                 </div>
               </div>
@@ -140,7 +141,7 @@ export function BlogPostV11({ c, home, v, nextStep = false }: { c: BlogV11Conten
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   {v.author.avatarUrl ? <img loading="lazy" src={cachedCmsImage(v.author.avatarUrl, 128)} alt="" width={64} height={64} /> : <span className="bp-mono is-big">{initials(v.author.name)}</span>}
                   <div>
-                    {v.author.slug ? <Link href={`/team/${v.author.slug}`}><b>{v.author.name}</b></Link> : <b>{v.author.name}</b>}
+                    {v.author.slug ? <Link href={`/team/${v.author.slug}`} rel="author"><b>{v.author.name}</b></Link> : <b>{v.author.name}</b>}
                     {v.author.jobTitle && <span>{v.author.jobTitle}</span>}
                   </div>
                 </div>

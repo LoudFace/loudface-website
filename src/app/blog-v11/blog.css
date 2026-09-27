@@ -146,3 +146,7 @@
 .bp-record dd.is-fresh i { width: 7px; height: 7px; border-radius: 99px; background: #1b9e5f; }
 .bp-record .bp-kicker { margin-bottom: 6px; }
 @media (min-width: 1024px) { .bp-author { grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr); } }
+
+/* the byline's author name links to their profile */
+.bp-byline-name { color: inherit; text-decoration: none; }
+.bp-byline-name:hover b { color: var(--ind); }
