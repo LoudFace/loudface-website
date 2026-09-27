@@ -139,6 +139,17 @@
 .cs-measured { display: flex; flex-direction: column; gap: 10px; margin-top: 12px; }
 .cs-measured span { display: flex; align-items: center; gap: 10px; font-size: 14px; color: var(--ink); }
 .cs-measured img { border-radius: 5px; }
+/* the box across the full grid (a study with no video or quote beside it): each fact and group is a column, label above
+   value, instead of the sidebar's label-left value-right rows (Arnel, 2026-09-27: "United States" sat alone on the far right) */
+@media (min-width: 768px) {
+  .cs-grid .cs-did.is-full { flex-direction: row; flex-wrap: wrap; column-gap: 40px; align-items: flex-start; }
+  .cs-did.is-full .cro-tag { flex-basis: 100%; }
+  .cs-did.is-full .cs-did-facts > div, .cs-did.is-full .cs-did-group { flex: 1 1 0; min-width: 170px; }
+  .cs-did.is-full .cs-did-facts { display: contents; }
+  .cs-did.is-full .cs-did-facts > div { flex-direction: column; justify-content: flex-start; gap: 10px; margin-top: 22px; padding: 0; border: 0; }
+  .cs-did.is-full .cs-did-facts dt { font-size: 12.5px; }
+  .cs-did.is-full .cs-did-facts dd { text-align: left; font-size: 14px; }
+}
 @media (min-width: 1024px) {
   .cs-grid .cro-cell.is-quote .cro-quote { font-size: 26px; line-height: 1.28; max-width: 700px; }
   /* a video and a full review stack on the left; what we did runs down the right beside both */

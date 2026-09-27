@@ -324,8 +324,9 @@
 
 /* KeyResults: big figures, one short label each, on hairlines (Graphite / Mobbin Amigo, Mixpanel) */
 .v11-keys { display: grid; grid-template-columns: minmax(0, 1fr); border-top: 1px solid var(--line); }
-.v11-key { display: flex; flex-direction: column; gap: 10px; padding: 28px 0 30px; border-bottom: 1px solid var(--line); min-width: 0; }
-.v11-key-value { font-family: var(--font-heading); font-weight: 500; font-size: 64px; line-height: 0.95; letter-spacing: -0.05em; color: var(--ink); white-space: nowrap; }
+.v11-key { display: flex; flex-direction: column; gap: 10px; padding: 28px 0 30px; border-bottom: 1px solid var(--line); min-width: 0; container-type: inline-size; }
+/* the figures stay on one line; a long one ("0.53% → 10.46%") shrinks the whole row until it fits its column (--n: its characters) */
+.v11-key-value { font-family: var(--font-heading); font-weight: 500; font-size: min(64px, 100cqi / (var(--n, 1) * 0.5)); line-height: 0.95; letter-spacing: -0.05em; color: var(--ink); white-space: nowrap; }
 .v11-key-label { font-size: 16px; line-height: 1.4; font-weight: 500; color: var(--ink); max-width: 340px; text-wrap: balance; }
 .v11-key-note { font-size: 13px; line-height: 1.45; color: var(--quiet); max-width: 340px; text-wrap: pretty; }
 @media (min-width: 1024px) {
@@ -334,8 +335,8 @@
   .v11-keys.is-4 { grid-template-columns: repeat(4, 1fr); }
   .v11-key { padding: 34px 32px 36px; border-bottom: 0; border-left: 1px solid var(--line); }
   .v11-key:first-child { padding-left: 0; border-left: 0; }
-  .v11-key-value { font-size: 88px; }
-  .v11-keys.is-4 .v11-key-value { font-size: 64px; }
+  .v11-key-value { font-size: min(88px, 100cqi / (var(--n, 1) * 0.5)); }
+  .v11-keys.is-4 .v11-key-value { font-size: min(64px, 100cqi / (var(--n, 1) * 0.5)); }
 }
 
 /* ChartPanel: one chart, its title and source, nothing else */

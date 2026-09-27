@@ -1,4 +1,5 @@
-import type { ReactNode } from 'react';
+import type { CSSProperties, ReactNode } from 'react';
+import { strip } from '@/lib/inline-edit/mark';
 
 /**
  * KeyResults: a case's published results as big figures with a short label each, on hairlines. Modelled on
@@ -13,9 +14,12 @@ export interface KeyResult {
   note?: ReactNode;
 }
 
+/** Characters in the longest figure: the row sizes every figure to fit its column (2026-09-27, "0.53% → 10.46%" ran into its neighbour). */
+const longest = (items: KeyResult[]) => Math.max(1, ...items.map((k) => (typeof k.value === 'string' ? strip(k.value).length : 1)));
+
 export function KeyResults({ items }: { items: KeyResult[] }) {
   return (
-    <div className={`v11-keys is-${items.length}`}>
+    <div className={`v11-keys is-${items.length}`} style={{ '--n': longest(items) } as CSSProperties}>
       {items.map((k, i) => (
         <div key={i} className="v11-key">
           <div className="v11-key-value">{k.value}</div>

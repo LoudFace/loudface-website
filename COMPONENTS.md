@@ -405,7 +405,7 @@ at `/dev-preview/home-v11-kit` and on the Paper page "Design system · v11". Not
 | `QuoteCard` | `home-v11/Testimonials.tsx` | Client number and quote on the client's tint | No |
 | `SectionHeadNode` | `home-v11/ui.tsx` | `SectionHead` for headings passed as markup | No |
 | `ChatWindow` | `home-v11/Bento.tsx` | The ChatGPT answer window at true size. Props: `c` (the chat copy), `className?` (`is-hero` = service hero picture size), `sourceIcon?` (the first source's favicon, default Toku; `null` = plain placeholder for an example answer) | No |
-| `KeyResults` | `home-v11/KeyResults.tsx` | Big figures with a short label and a quiet note each. Props: `items: { value, label, note? }[]` | No |
+| `KeyResults` | `home-v11/KeyResults.tsx` | Big figures with a short label and a quiet note each. Props: `items: { value, label, note? }[]`. Figures stay on one line; the row shrinks every figure together until the longest string value fits its column (`--n`, container units) | No |
 | `ChartPanel` | `home-v11/ChartPanel.tsx` | One live chart with title and source only. Props: `title`, `source?`, `series`, `format`, `tip`, `lead?` (full width, labelled pin), `height?` | Yes (LiveChart) |
 | `BeforeAfterChart` | `home-v11/BeforeAfterChart.tsx` | Published before → after readings as grouped columns. Props: `pairs: { label, before, after, beforeText, afterText }[]`, `beforeLabel?`, `afterLabel?`, `height?` (default 250) | No |
 | Proof cells | `service-v11/kit.tsx` | `VideoCell`, `BarsCell`, `ChartCell`, `QuoteCell`, `StatCell` for `.cro-grid`. `QuoteCell` takes `logoUrl` (CMS logo) or `brandIcon` (app icon beside the name), `faceUrl` or `initial`, `review` (`{ href, label }`, the published review link) and `className` | No |
