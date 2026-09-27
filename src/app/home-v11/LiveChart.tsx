@@ -48,7 +48,8 @@ function useStartX(series: Series) {
     const a = utc(series.dates[k - 1]).getTime(), b = utc(series.dates[k]).getTime();
     return cx(k - 1) + ((cx(k) - cx(k - 1)) * (s - a)) / Math.max(b - a, 1);
   }
-  return c.xScale(utc(series.start));
+  // a start before the first reading sits on the left edge; its label still names the real day
+  return Math.max(c.xScale(utc(series.start)), 2);
 }
 
 function usePoint(series: Series, i: number): [number, number] {
@@ -155,7 +156,7 @@ function StaticAxis({ series, tone = 'light' }: { series: Series; tone?: Tone })
     );
   }
   const a = utc(series.dates[0]).getTime(), b = utc(series.dates[n - 1]).getTime();
-  const t0 = Math.min(a, utc(series.start).getTime());
+  const t0 = a;
   // Under 360px of plot (a phone), four month labels touch, so only the first and last are drawn.
   const steps = c.innerWidth < 360 ? [0, 3] : [0, 1, 2, 3];
   return (

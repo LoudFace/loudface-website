@@ -14,7 +14,9 @@ function rolling(values: number[], n: number): number[] {
   });
 }
 
-const startOf = (start: string | undefined, dates: string[]) => (start && start >= dates[0] ? start : dates[0]);
+// The real start day, even when the data begins later (a tracker installed after the work began): the pin's label must
+// print the day we started, never the first data day (2026-09-27: Delshad's pin read 10 Jun for a 4 Jun start).
+const startOf = (start: string | undefined, dates: string[]) => start ?? dates[0];
 
 /** The published range a caption opens with ("2.26% to 13.6%, 25 May …"), or null. */
 function captionRange(caption: string) {
