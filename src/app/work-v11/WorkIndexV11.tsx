@@ -11,7 +11,10 @@ import { KeyResults } from '../home-v11/KeyResults';
 import { LogoGrid } from '../home-v11/LogoGrid';
 import { Reveal } from '../home-v11/Reveal';
 import { ArrowRight, ArrowUpRight, SectionHeadNode } from '../home-v11/ui';
-import { splitTitle } from '../case-v11/series';
+import { caseSeries, leadKind, sourceName, splitTitle, standaloneCharts } from '../case-v11/series';
+import { LiveChart, type ValueFormat } from '../home-v11/LiveChart';
+import { BeforeAfterChart } from '../home-v11/BeforeAfterChart';
+import type { Series } from '../home-v11/data';
 import { strip } from '@/lib/inline-edit/mark';
 import { cachedCmsImage, cachedCmsSrcSet } from '@/lib/image-utils';
 
@@ -32,20 +35,148 @@ const DISCIPLINE_ID: Record<string, string> = {
 const FALLBACK = 'Web Design & Branding';
 const THUMB = '?w=1000&h=625&fit=crop&crop=top&fm=webp&q=80';
 
+/**
+ * The picture a card can draw from the study's own data (Arnel, 2026-09-27: "each case study is instead a chart, at
+ * least for the ones that are performance-based"): the chart the study page leads with when its series stands alone,
+ * or the study's own "a → b" figures as two columns. Null when the study publishes neither; the card keeps its shot.
+ */
+type Steps = { title: string; source?: string; points: { label: string; value: string }[] };
+type CardChart = { kind: 'steps'; steps: Steps; title: string; source?: string } | { kind: 'series'; series: Series; format: ValueFormat; tip: string; title: string; source?: string } | { kind: 'pair'; before: number; after: number; beforeText: string; afterText: string; title: string; source?: string };
+const TIP = { ai: 'of AI answers', google: 'of the baseline day', leads: 'of the baseline weeks' } as const;
+function cardChart(s: Study, indexed = false, steps?: Record<string, Steps>): CardChart | null {
+  // a study's own published readings over time, from work-v11.json (Toku: three Peec reads, 2026-09-27)
+  const st = s.slug ? steps?.[s.slug] : undefined;
+  if (st) return { kind: 'steps', steps: st, title: st.title, source: st.source };
+  const c = standaloneCharts(caseSeries(s.instruments));
+  if (c.ai || c.google || c.leads) {
+    const k = leadKind(c, s['result-1---title'] ?? '');
+    if (k === 'google' && c.google) return { kind: 'series', series: c.google.series, format: 'index', tip: TIP.google, title: 'Google impressions per day', source: sourceName(c.google.source) };
+    if (k === 'ai' && c.ai) return { kind: 'series', series: c.ai.series, format: 'pct', tip: TIP.ai, title: chartTitle(c.ai.title), source: sourceName(c.ai.source) };
+    if (k === 'leads' && c.leads) return { kind: 'series', series: c.leads.series, format: 'index', tip: TIP.leads, title: chartTitle(c.leads.title), source: sourceName(c.leads.source) };
+  }
+  const m = (s['result-1---number'] ?? '').match(/^\s*([\d.]+)(%?)\s*→\s*([\d.]+)(%?)\s*$/);
+  if (m) return { kind: 'pair', before: Number(m[1]), after: Number(m[3]), beforeText: `${m[1]}${m[2] || m[4]}`, afterText: `${m[3]}${m[4]}`, title: splitTitle(s['result-1---title'] ?? '').label };
+  if (!indexed) return null;
+  // A single published growth figure ("+49%", "2×") drawn as start → end, indexed to the start (Arnel, 2026-09-27:
+  // "why don't they also have charts?"). Only the ratio is published, so the columns carry no raw counts.
+  const title = splitTitle(s['result-1---title'] ?? '').label;
+  const pct = (s['result-1---number'] ?? '').match(/^\s*\+\s*([\d.]+)\s*%\s*$/);
+  if (pct) return { kind: 'pair', before: 100, after: 100 + Number(pct[1]), beforeText: 'Start', afterText: `+${pct[1]}%`, title, source: 'Indexed to the start' };
+  const mult = (s['result-1---number'] ?? '').match(/^\s*([\d.]+)\s*[×x]\s*$/i);
+  if (mult) return { kind: 'pair', before: 1, after: Number(mult[1]), beforeText: '1×', afterText: `${mult[1]}×`, title, source: 'Indexed to the start' };
+  return null;
+}
+/** A chart's title without its cadence suffix (", weekly"), as on the study page. */
+const chartTitle = (t: string) => t.replace(/,\s*(weekly|daily|indexed)$/i, '').split('·')[0].trim();
+const monthYear = (iso: string) => new Date(`${iso.slice(0, 10)}T00:00:00Z`).toLocaleDateString('en-GB', { month: 'short', year: 'numeric', timeZone: 'UTC' });
+
+function ChartPic({ chart, lead }: { chart: CardChart; lead?: boolean }) {
+  const h = lead ? 400 : 190;
+  if (chart.kind === 'steps') return <div className="wk-card-chart is-pair"><StepColumns steps={chart.steps} /></div>;
+  if (chart.kind === 'pair') {
+    return (
+      <div className="wk-card-chart is-pair">
+        <BeforeAfterChart pairs={[{ label: '', before: chart.before, after: chart.after, beforeText: chart.beforeText, afterText: chart.afterText }]} height={h} />
+      </div>
+    );
+  }
+  const d = chart.series.dates;
+  return (
+    <div className="wk-card-chart">
+      <LiveChart series={chart.series} height={h} margin={{ top: 34, right: 14, bottom: 6, left: 12 }} dots={false} hatch lineWidth={lead ? 2 : 1.75} barGap={chart.series.bars ? 0.42 : 0.5} pin={lead ? 24 : 20} end="halo" tip={chart.tip} format={chart.format} />
+      <div className="wk-card-dates"><span>{monthYear(d[0])}</span><span>{monthYear(d[d.length - 1])}</span></div>
+    </div>
+  );
+}
+
+/** Published readings over time as rising columns, the last one lit; heights read from the figures themselves. */
+function StepColumns({ steps }: { steps: Steps }) {
+  const vals = steps.points.map((p) => parseFloat(strip(p.value)) || 0);
+  const max = Math.max(...vals, 0.0001) * 1.18;
+  return (
+    <div className="wk-steps">
+      <div className="wk-steps-plot">
+        {steps.points.map((p, i) => (
+          <div key={p.label} className={`wk-steps-col ${i === steps.points.length - 1 ? 'is-last' : ''}`}>
+            <b>{p.value}</b>
+            <i style={{ height: `${(vals[i] / max) * 100}%` }} />
+          </div>
+        ))}
+      </div>
+      <div className="wk-steps-keys">{steps.points.map((p) => <span key={p.label}>{p.label}</span>)}</div>
+    </div>
+  );
+}
+
+/**
+ * A results study as one wide row (Arnel, 2026-09-27, pointing at graphite.io's case studies): the client, the study
+ * and its lead figure on the left; its own chart, with axis and the "LoudFace starts" pin, across the right.
+ */
+function StudyRow({ s, clients, chart, onStage }: { s: Study; clients: Map<string, Client>; chart: CardChart; onStage?: boolean }) {
+  const name = nameOf(s, clients);
+  const logo = s['client-logo']?.url;
+  const r = s['result-1---title'] ? splitTitle(s['result-1---title']) : undefined;
+  return (
+    <Link href={`/case-studies/${s.slug}`} className="wk-row">
+      <div className="wk-row-copy">
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        {logo ? <img loading="lazy" className="wk-card-logo" src={cachedCmsImage(logo, 384)} alt={name} /> : <span className="wk-card-name">{name}</span>}
+        <p className="wk-row-title">{s['project-title'] || s.name}</p>
+        {/* an "a → b" pair runs twice as wide as a single figure, so it takes the smaller size */}
+        <div className={`wk-row-num ${(s['result-1---number'] ?? '').length > 7 ? 'is-long' : ''}`}>
+          <b>{s['result-1---number']}</b>
+          {r && <span>{r.label}</span>}
+        </div>
+      </div>
+      <div className="wk-row-chart">
+        <div className="wk-row-k"><span>{chart.title}</span>{chart.source && <span className="is-src">{chart.source}</span>}</div>
+        {chart.kind === 'steps' ? <StepColumns steps={chart.steps} /> : chart.kind === 'series' ? (
+          <LiveChart series={chart.series} height={300} margin={{ top: 46, right: 18, bottom: 30, left: 14 }} tone={onStage ? 'stage' : 'light'} axis dots={false} hatch lineWidth={2} barGap={chart.series.bars ? 0.42 : 0.5} pin={24} startPrefix="LoudFace starts" end="halo" tip={chart.tip} format={chart.format} />
+        ) : (
+          <div className="wk-row-pair"><BeforeAfterChart pairs={[{ label: '', before: chart.before, after: chart.after, beforeText: chart.beforeText, afterText: chart.afterText }]} height={300} /></div>
+        )}
+      </div>
+    </Link>
+  );
+}
+
+/** A smaller results study on the stage: its client, its lead figure, what it measures and the study (2026-09-27). */
+function ResultCard({ s, clients }: { s: Study; clients: Map<string, Client> }) {
+  const name = nameOf(s, clients);
+  const logo = s['client-logo']?.url;
+  const r = s['result-1---title'] ? splitTitle(s['result-1---title']) : undefined;
+  return (
+    <Link href={`/case-studies/${s.slug}`} className="wk-mini">
+      <div className="wk-card-top">
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        {logo ? <img loading="lazy" className="wk-card-logo" src={cachedCmsImage(logo, 384)} alt={name} /> : <span className="wk-card-name">{name}</span>}
+        <span className="wk-card-go" aria-hidden="true"><ArrowUpRight /></span>
+      </div>
+      <div className="wk-mini-num">
+        <b>{s['result-1---number']}</b>
+        {r && <span>{r.label}</span>}
+      </div>
+      <p className="wk-mini-title">{s['project-title'] || s.name}</p>
+    </Link>
+  );
+}
+
 const nameOf = (s: Study, clients: Map<string, Client>) => (s.client && clients.get(s.client)?.name) || s.name.split(':')[0].trim();
 const primary = (s: Study) => (Array.isArray(s.disciplines) && s.disciplines[0]) || FALLBACK;
 
-function Card({ s, clients, lead, cta }: { s: Study; clients: Map<string, Client>; lead?: boolean; cta: string }) {
+function Card({ s, clients, lead, cta, charts }: { s: Study; clients: Map<string, Client>; lead?: boolean; cta: string; charts?: boolean }) {
   const name = nameOf(s, clients);
   const t = getTintColors(s['client-color']);
   const r = s['result-1---title'] ? splitTitle(s['result-1---title']) : undefined;
   const logo = s['client-logo']?.url;
   const thumb = s['main-project-image-thumbnail']?.url;
+  const chart = charts ? cardChart(s) : null;
   return (
     <Link href={`/case-studies/${s.slug}`} className={`wk-card ${lead ? 'is-lead' : ''}`} style={{ '--c-base': t.base, '--c-glow': t.glow, '--c-clear': t.clear } as CSSProperties}>
-      <div className="wk-card-pic">
+      <div className={`wk-card-pic ${chart ? 'has-chart' : ''}`}>
+        {chart && <ChartPic chart={chart} lead={lead} />}
         {/* eslint-disable-next-line @next/next/no-img-element */}
-        {thumb && <img src={cachedCmsImage(`${thumb}${THUMB}`, 1080)} srcSet={cachedCmsSrcSet(`${thumb}${THUMB}`, [640, 1080])} sizes="(max-width: 767px) 92vw, 50vw" alt={s['main-project-image-thumbnail']?.alt || name} loading="lazy" width={1000} height={625} />}
+        {!chart && thumb && <img src={cachedCmsImage(`${thumb}${THUMB}`, 1080)} srcSet={cachedCmsSrcSet(`${thumb}${THUMB}`, [640, 1080])} sizes="(max-width: 767px) 92vw, 50vw" alt={s['main-project-image-thumbnail']?.alt || name} loading="lazy" width={1000} height={625} />}
       </div>
       <div className="wk-card-body">
         <div className="wk-card-top">
@@ -67,7 +198,7 @@ function Card({ s, clients, lead, cta }: { s: Study; clients: Map<string, Client
   );
 }
 
-export function WorkIndexV11({ c, home, data, studies, clients }: { c: WorkV11Content; home: HomeV11Content; data: HomeV11Data | null; studies: Study[]; clients: Map<string, Client> }) {
+export function WorkIndexV11({ c, home, data, studies, clients, charts, rows, stage }: { c: WorkV11Content; home: HomeV11Content; data: HomeV11Data | null; studies: Study[]; clients: Map<string, Client>; charts?: boolean; rows?: boolean; stage?: boolean }) {
   const list = studies.filter((s) => s.slug);
   const groups = DISCIPLINES.map((d) => ({
     d,
@@ -96,23 +227,79 @@ export function WorkIndexV11({ c, home, data, studies, clients }: { c: WorkV11Co
       </section>
 
       {/* 2 · the archive, grouped by what the study was for (153 Retool filter row, 185 Maze cards) */}
-      <section className="v11-sec v11-white wk-archive" id="archive">
-        <div className="v11-wrap">
+      {(() => {
+        const filter = (
           <div className="wk-filter" aria-label={strip(c.archive.filterLabel)}>
             <span className="is-label">{c.archive.filterLabel}</span>
             <a href="#archive" className="wk-chip is-on"><span>{c.archive.allLabel}</span><b>{list.length}</b></a>
             {groups.map((g) => <a key={g.d} href={`#${DISCIPLINE_ID[g.d]}`} className="wk-chip"><span>{g.d}</span><b>{g.items.length}</b></a>)}
           </div>
-          {groups.map((g, gi) => (
-            <div key={g.d} className="wk-group" id={DISCIPLINE_ID[g.d]}>
-              <div className="wk-group-head"><h2>{g.d}</h2><span>{g.items.length} {c.hero.studiesLabel}</span></div>
+        );
+        const group = (g: (typeof groups)[number], gi: number, onStage = false) => (
+          <div key={g.d} className="wk-group" id={DISCIPLINE_ID[g.d]}>
+            <div className="wk-group-head"><h2>{g.d}</h2><span>{g.items.length} {c.hero.studiesLabel}</span></div>
+            {rows ? (() => {
+              // results studies with their own chart as wide rows, the rest as cards under them
+              const charted = g.items.map((s) => ({ s, chart: cardChart(s, true) })).filter((x): x is { s: Study; chart: CardChart } => !!x.chart);
+              const rest = g.items.filter((s) => !charted.some((x) => x.s === s));
+              return (
+                <>
+                  {charted.length > 0 && <div className="wk-rows">{charted.map(({ s, chart }) => <StudyRow key={s.slug} s={s} clients={clients} chart={chart} onStage={onStage} />)}</div>}
+                  {rest.length > 0 && <div className="wk-grid">{rest.map((s) => <Card key={s.slug} s={s} clients={clients} cta={c.archive.caseLinkText} />)}</div>}
+                </>
+              );
+            })() : (
               <div className="wk-grid">
-                {g.items.map((s, i) => <Card key={s.slug} s={s} clients={clients} lead={gi === 0 && i === 0} cta={c.archive.caseLinkText} />)}
+                {g.items.map((s, i) => <Card key={s.slug} s={s} clients={clients} lead={gi === 0 && i === 0} cta={c.archive.caseLinkText} charts={charts} />)}
               </div>
+            )}
+          </div>
+        );
+        // stage variant (Arnel, 2026-09-27: "too white"): the results studies on the homepage's indigo stage
+        if (stage) {
+          // Headline results (a chart of their own) on the stage, then the smaller results as one row of equal cards,
+          // then the design studies on white (Arnel, 2026-09-27: "a headline section and then smaller cards").
+          const results = groups.filter((g) => g.d !== 'Web Design & Branding').flatMap((g) => g.items);
+          const steps: Record<string, Steps> = Object.fromEntries(c.steps.map((x) => [x.slug, x]));
+          const headline = results.map((s) => ({ s, chart: cardChart(s, false, steps) })).filter((x): x is { s: Study; chart: CardChart } => !!x.chart);
+          const more = results.filter((s) => !headline.some((x) => x.s === s));
+          const rest = groups.filter((g) => g.d === 'Web Design & Branding');
+          const chips = (
+            <div className="wk-filter" aria-label={strip(c.archive.filterLabel)}>
+              <span className="is-label">{c.archive.filterLabel}</span>
+              <a href="#archive" className="wk-chip is-on"><span>{c.archive.allLabel}</span><b>{list.length}</b></a>
+              {/* two tabs, not one per block (Arnel, 2026-09-27): the growth results on the stage, then the design work */}
+              <a href="#results" className="wk-chip"><span>{c.archive.growthChip}</span><b>{results.length}</b></a>
+              {rest.map((g) => <a key={g.d} href={`#${DISCIPLINE_ID[g.d]}`} className="wk-chip"><span>{c.archive.designChip}</span><b>{g.items.length}</b></a>)}
             </div>
-          ))}
-        </div>
-      </section>
+          );
+          return (
+            <>
+              <section className="v11-sec v11-white wk-archive is-top" id="archive"><div className="v11-wrap">{chips}</div></section>
+              <section className="wk-stage" id="results">
+                <div className="v11-wrap">
+                  <div className="wk-group" id="headline">
+                    <div className="wk-group-head"><h2>{c.archive.headlineTitle}</h2><span>{headline.length} {c.hero.studiesLabel}</span></div>
+                    <div className="wk-rows">{headline.map(({ s, chart }) => <StudyRow key={s.slug} s={s} clients={clients} chart={chart} onStage />)}</div>
+                  </div>
+                  {more.length > 0 && (
+                    <div className="wk-group is-more" id="more">
+                      <div className="wk-group-head"><h2>{c.archive.moreTitle}</h2><span>{more.length} {c.hero.studiesLabel}</span></div>
+                      <div className="wk-minis">{more.map((s) => <ResultCard key={s.slug} s={s} clients={clients} />)}</div>
+                    </div>
+                  )}
+                </div>
+              </section>
+              <section className="v11-sec v11-white wk-archive is-rest"><div className="v11-wrap">{rest.map((g, i) => group(g, i + 1))}</div></section>
+            </>
+          );
+        }
+        return (
+          <section className="v11-sec v11-white wk-archive" id="archive">
+            <div className="v11-wrap">{filter}{groups.map((g, gi) => group(g, gi))}</div>
+          </section>
+        );
+      })()}
 
       <LogoGrid c={home.logos} />
 

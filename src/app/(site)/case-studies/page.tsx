@@ -104,7 +104,7 @@ export default async function WorkPage() {
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(collectionSchema) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }} />
-      <WorkIndexV11 c={c} home={home} data={data} studies={studies} clients={cms.clients} />
+      <WorkIndexV11 c={c} home={home} data={data} studies={studies} clients={cms.clients} stage />
     </>
   );
 }

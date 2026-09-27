@@ -12,8 +12,24 @@
   "archive": {
     "filterLabel": "Filter by what you came for",
     "allLabel": "All",
-    "caseLinkText": "Read the study"
+    "caseLinkText": "Read the study",
+    "headlineTitle": "Headline results",
+    "moreTitle": "More results",
+    "growthChip": "Organic growth",
+    "designChip": "Web design & branding"
   },
+  "steps": [
+    {
+      "slug": "toku-ai-cited-pipeline",
+      "title": "Toku's AI visibility on the category's top stablecoin payroll prompt",
+      "source": "Peec AI",
+      "points": [
+        { "label": "Before, early 2026", "value": "0%" },
+        { "label": "Spring 2026", "value": "86%" },
+        { "label": "30 days to 19 Aug 2026", "value": "97.8%" }
+      ]
+    }
+  ],
   "proof": {
     "eyebrow": "The numbers",
     "headline": "Numbers we'll put",

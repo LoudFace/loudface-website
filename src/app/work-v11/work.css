@@ -37,6 +37,16 @@
 .wk-card:hover { transform: translateY(-3px); box-shadow: 0 0 0 1px var(--line), 0 22px 44px rgba(40,30,90,0.12); }
 .wk-card-pic { position: relative; padding: 22px 22px 0; background: radial-gradient(ellipse 90% 90% at 88% 100%, var(--c-glow) 0%, var(--c-clear) 70%), var(--c-base); overflow: hidden; }
 .wk-card-pic img { display: block; width: 100%; height: 200px; object-fit: cover; object-position: top; border-radius: 10px 10px 0 0; box-shadow: 0 1px 2px rgba(20,16,60,0.1), 0 18px 36px rgba(40,30,90,0.18); }
+/* chart cards (board concept, 2026-09-27): the study's own chart on a white report panel, where the shot sat */
+.wk-card-chart { position: relative; padding: 10px 6px 12px; border-radius: 10px 10px 0 0; background: #ffffff; box-shadow: 0 1px 2px rgba(20,16,60,0.1), 0 18px 36px rgba(40,30,90,0.18); }
+.wk-card-chart.is-pair { padding: 14px 18px 4px; }
+/* a published pair ("0 → 97.8%") as two wide columns with their figures at card-number size */
+.wk-card-chart.is-pair .v11-ba-group { gap: 18px; }
+.wk-card-chart.is-pair .v11-ba-col { width: 30%; max-width: 150px; }
+.wk-card-chart.is-pair .v11-ba-col b { font-family: var(--font-heading); font-size: 22px; letter-spacing: -0.03em; color: var(--ink); }
+.wk-card-chart.is-pair .v11-ba-col.is-after b { color: var(--ind); }
+.wk-card.is-lead .wk-card-chart.is-pair .v11-ba-col b { font-size: 34px; }
+.wk-card-dates { display: flex; justify-content: space-between; padding: 6px 12px 0; font-size: 11.5px; color: var(--quiet); }
 .wk-card-body { display: flex; flex-direction: column; gap: 10px; padding: 20px 22px 22px; }
 .wk-card-top { display: flex; align-items: center; justify-content: space-between; gap: 12px; min-height: 28px; }
 .wk-card-logo { display: block; height: 22px; width: auto; max-width: 150px; object-fit: contain; object-position: left; }
@@ -72,3 +82,80 @@
 .wk-read-points b { font-size: 15px; font-weight: 500; color: var(--ink); }
 .wk-read-points span { font-size: 14px; line-height: 1.5; color: var(--body); text-wrap: pretty; }
 @media (min-width: 1024px) { .wk-read { grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr); gap: 56px; padding: 44px; } }
+
+/* results studies as wide chart rows (graphite.io/five-percent/case-studies, 2026-09-27): the study on the left, its
+   own chart across the right, one hairline card per study */
+.wk-rows { display: flex; flex-direction: column; gap: 18px; margin-bottom: 18px; }
+.wk-row { display: grid; grid-template-columns: minmax(0, 1fr); border-radius: 22px; background: #ffffff; box-shadow: 0 0 0 1px var(--line); color: var(--ink); overflow: hidden;
+  transition: box-shadow var(--dur) var(--ease); }
+.wk-row:hover { box-shadow: 0 0 0 1px var(--line), 0 22px 44px rgba(40,30,90,0.1); }
+.wk-row-copy { display: flex; flex-direction: column; gap: 14px; padding: 28px 28px 24px; }
+.wk-row-title { font-family: var(--font-heading); font-weight: 500; font-size: 22px; line-height: 1.2; letter-spacing: -0.02em; text-wrap: pretty; max-width: 340px; }
+.wk-row-num { display: flex; flex-direction: column; gap: 6px; margin-top: 8px; }
+.wk-row-num b { font-family: var(--font-heading); font-weight: 500; font-size: 56px; line-height: 1; letter-spacing: -0.05em; white-space: nowrap; }
+.wk-row-num.is-long b { font-size: 40px; }
+.wk-row-num span { font-size: 14px; line-height: 1.45; color: var(--quiet); max-width: 300px; }
+.wk-row-chart { min-width: 0; padding: 22px 22px 16px; border-top: 1px solid var(--line); }
+.wk-row-k { display: flex; justify-content: space-between; gap: 12px; font-size: 13px; font-weight: 500; color: var(--body); }
+.wk-row-k .is-src { font-weight: 400; color: var(--quiet); white-space: nowrap; }
+.wk-row-pair { padding: 12px 18% 0; }
+.wk-row-pair .v11-ba-col { width: 30%; max-width: 150px; }
+.wk-row-pair .v11-ba-col b { font-family: var(--font-heading); font-size: 26px; letter-spacing: -0.03em; color: var(--ink); }
+.wk-row-pair .v11-ba-col.is-after b { color: var(--ind); }
+@media (min-width: 1024px) {
+  .wk-row { grid-template-columns: 380px minmax(0, 1fr); }
+  .wk-row-copy { justify-content: space-between; padding: 34px 32px 32px; }
+  .wk-row-num { margin-top: auto; }
+  .wk-row-num b { font-size: 76px; }
+  .wk-row-num.is-long b { font-size: 46px; }
+  .wk-row-chart { border-top: 0; border-left: 1px solid var(--line); padding: 26px 26px 18px; }
+}
+
+/* stage variant (Arnel, 2026-09-27: "too white"): the results studies on the homepage hero's indigo, rows as glass
+   panels with white type and the charts drawn white, as on the homepage results rail */
+.wk-archive.is-top { padding-bottom: 8px; }
+.wk-archive.is-rest { padding-top: 8px; }
+.wk-stage { scroll-margin-top: 64px; color: #ffffff; padding: 8px 0 72px; background: radial-gradient(ellipse 70% 60% at 85% 100%, #6c64f2 0%, rgba(108,100,242,0) 70%), linear-gradient(180deg, #030c5a 0%, #04188f 45%, #3d38cf 100%); }
+.wk-stage .wk-group-head h2 { color: #ffffff; }
+.wk-stage .wk-group-head span { color: #c9c5fb; }
+.wk-stage .wk-row { background: rgba(255,255,255,0.06); box-shadow: inset 0 0 0 1px rgba(255,255,255,0.16); color: #ffffff; }
+.wk-stage .wk-row:hover { background: rgba(255,255,255,0.1); box-shadow: inset 0 0 0 1px rgba(255,255,255,0.24); }
+.wk-stage .wk-row-chart { border-color: rgba(255,255,255,0.16); }
+.wk-stage .wk-row-k { color: #e4e2fe; }
+.wk-stage .wk-row-k .is-src, .wk-stage .wk-row-num span { color: #c9c5fb; }
+.wk-stage .wk-row .wk-card-logo { filter: brightness(0) invert(1); }
+.wk-stage .wk-card { color: var(--ink); }
+.wk-stage .wk-row-pair .v11-ba-plot { border-color: rgba(255,255,255,0.22); }
+.wk-stage .wk-row-pair .v11-ba-col i { background: rgba(255,255,255,0.22); }
+.wk-stage .wk-row-pair .v11-ba-col.is-after i { background: #ffffff; }
+.wk-stage .wk-row-pair .v11-ba-col b, .wk-stage .wk-row-pair .v11-ba-col.is-after b { color: #ffffff; }
+
+/* the smaller results on the stage: one row of equal glass cards under the headline rows (2026-09-27) */
+.wk-group.is-more { padding-top: 64px; }
+.wk-minis { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 14px; }
+.wk-mini { display: flex; flex-direction: column; gap: 18px; min-width: 0; padding: 20px 20px 22px; border-radius: 18px; color: #ffffff;
+  background: rgba(255,255,255,0.06); box-shadow: inset 0 0 0 1px rgba(255,255,255,0.16); transition: background-color var(--dur) var(--ease), box-shadow var(--dur) var(--ease); }
+.wk-mini:hover { background: rgba(255,255,255,0.1); box-shadow: inset 0 0 0 1px rgba(255,255,255,0.24); }
+.wk-mini .wk-card-logo { height: 20px; max-width: 130px; filter: brightness(0) invert(1); }
+.wk-mini .wk-card-go { width: 28px; height: 28px; background: rgba(255,255,255,0.14); color: #ffffff; }
+.wk-mini-num { display: flex; flex-direction: column; gap: 6px; }
+.wk-mini-num b { font-family: var(--font-heading); font-weight: 500; font-size: 40px; line-height: 1; letter-spacing: -0.045em; white-space: nowrap; }
+.wk-mini-num span { font-size: 13.5px; line-height: 1.4; color: #c9c5fb; }
+.wk-mini-title { margin-top: auto; min-height: calc(14px * 1.45 * 2 + 15px); padding-top: 14px; border-top: 1px solid rgba(255,255,255,0.14); font-size: 14px; line-height: 1.45; color: #e4e2fe; text-wrap: pretty; }
+@media (min-width: 1280px) { .wk-minis { grid-template-columns: repeat(5, minmax(0, 1fr)); } }
+
+/* published readings over time as rising columns (Toku, 2026-09-27: "is there any way to show a progression?") */
+.wk-steps { display: flex; flex-direction: column; padding: 18px 8% 0; }
+.wk-steps-plot { display: flex; align-items: stretch; justify-content: center; gap: 22px; height: 250px; border-bottom: 1px solid var(--line); }
+.wk-steps-col { display: flex; flex-direction: column; align-items: center; justify-content: flex-end; width: 22%; max-width: 150px; }
+.wk-steps-col b { margin-bottom: 10px; font-family: var(--font-heading); font-weight: 500; font-size: 24px; letter-spacing: -0.03em; color: var(--ink); white-space: nowrap; }
+.wk-steps-col i { display: block; width: 100%; min-height: 3px; border-radius: 4px 4px 0 0; background: #dcdbe6; }
+.wk-steps-col.is-last i { background: var(--ind); }
+.wk-steps-col.is-last b { color: var(--ind); }
+.wk-steps-keys { display: flex; justify-content: center; gap: 22px; padding-top: 10px; }
+.wk-steps-keys span { width: 22%; max-width: 150px; text-align: center; font-size: 12px; line-height: 1.35; color: var(--quiet); }
+.wk-stage .wk-steps-plot { border-color: rgba(255,255,255,0.22); }
+.wk-stage .wk-steps-col i { background: rgba(255,255,255,0.28); }
+.wk-stage .wk-steps-col.is-last i { background: #ffffff; }
+.wk-stage .wk-steps-col b, .wk-stage .wk-steps-col.is-last b { color: #ffffff; }
+.wk-stage .wk-steps-keys span { color: #c9c5fb; }
