@@ -4,7 +4,12 @@
     {
       "name": "next-dev",
       "runtimeExecutable": "/opt/homebrew/bin/node",
-      "runtimeArgs": ["node_modules/.bin/next", "dev", "--hostname", "0.0.0.0"],
+      "runtimeArgs": [
+        "node_modules/.bin/next",
+        "dev",
+        "--hostname",
+        "0.0.0.0"
+      ],
       "port": 3005,
       "autoPort": true,
       "env": {
@@ -14,15 +19,58 @@
       }
     },
     {
+      "name": "next-prod",
+      "runtimeExecutable": "/opt/homebrew/bin/node",
+      "runtimeArgs": [
+        "node_modules/.bin/next",
+        "start",
+        "--port",
+        "3006"
+      ],
+      "port": 3006,
+      "env": {
+        "PATH": "/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin",
+        "NEXT_PUBLIC_SANITY_PROJECT_ID": "xjjjqhgt",
+        "NEXT_PUBLIC_SANITY_DATASET": "production"
+      }
+    },
+    {
+      "name": "next-prod-staged",
+      "runtimeExecutable": "/opt/homebrew/bin/node",
+      "runtimeArgs": [
+        "/private/tmp/claude-501/-Users-arnel-Code-Projects-LoudFace-Agency-loudface-website/14897f44-135b-414f-abbb-28f003f4ebbb/scratchpad/deploy/node_modules/.bin/next",
+        "start",
+        "/private/tmp/claude-501/-Users-arnel-Code-Projects-LoudFace-Agency-loudface-website/14897f44-135b-414f-abbb-28f003f4ebbb/scratchpad/deploy",
+        "--port",
+        "3007"
+      ],
+      "port": 3007,
+      "env": {
+        "PATH": "/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin"
+      }
+    },
+    {
       "name": "design-preview",
       "runtimeExecutable": "python3",
-      "runtimeArgs": ["-m", "http.server", "7788", "--directory", ".claude/drafts/landing-redesign"],
+      "runtimeArgs": [
+        "-m",
+        "http.server",
+        "7788",
+        "--directory",
+        ".claude/drafts/landing-redesign"
+      ],
       "port": 7788
     },
     {
       "name": "usvc-preview",
       "runtimeExecutable": "python3",
-      "runtimeArgs": ["-m", "http.server", "7799", "--directory", ".claude/design/usvc-round"],
+      "runtimeArgs": [
+        "-m",
+        "http.server",
+        "7799",
+        "--directory",
+        ".claude/design/usvc-round"
+      ],
       "port": 7799
     }
   ]

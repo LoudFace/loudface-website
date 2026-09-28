@@ -1,0 +1,52 @@
+/* ObjectSystem — SIGMA's three-object row, then the live monolith stage. */
+
+:where(.hpv3) .os{background:var(--paper);padding:104px 0 0;}
+:where(.hpv3) .os-head{max-width:760px;margin-bottom:46px;}
+:where(.hpv3) .os-eyebrow{display:inline-flex;align-items:center;gap:8px;font-size:11.5px;font-weight:600;
+  letter-spacing:.14em;text-transform:uppercase;color:var(--mut);}
+:where(.hpv3) .os-eyebrow i{width:5px;height:5px;border-radius:50%;background:var(--primary-600,#4f46e5);}
+:where(.hpv3) .os-head h2{margin:14px 0 0;font-family:var(--font-heading);font-weight:500;
+  font-size:clamp(30px,3.4vw,46px);line-height:1.06;letter-spacing:-.025em;color:var(--ink);}
+:where(.hpv3) .os-head h2 .ghost{color:var(--surface-300);}
+
+:where(.hpv3) .os-row{display:grid;grid-template-columns:repeat(3,1fr);gap:40px;padding-bottom:104px;}
+:where(.hpv3) .os-cell{margin:0;}
+/* The object sits on its own ground, not in a card: no border, no elevation. */
+:where(.hpv3) .os-shot{border-radius:14px;overflow:hidden;background:#f2f2f4;}
+:where(.hpv3) .os-shot img{display:block;width:100%;height:auto;}
+:where(.hpv3) .os-cell figcaption{padding-top:22px;border-top:1px solid var(--paper-line);margin-top:22px;}
+:where(.hpv3) .os-n{margin:0;font-size:11px;font-weight:600;letter-spacing:.16em;color:var(--surface-400);
+  font-variant-numeric:tabular-nums;}
+:where(.hpv3) .os-title{margin:10px 0 0;font-family:var(--font-heading);font-weight:500;font-size:22px;
+  letter-spacing:-.02em;color:var(--ink);}
+:where(.hpv3) .os-body{margin:9px 0 0;font-size:14.5px;line-height:1.55;color:var(--body);text-wrap:pretty;}
+
+/* The live stage: object and copy hold their own halves. Centring the copy over
+   the object put the headline straight on the brightest part of the glass — the
+   references (Zellerfeld, Samara, Shopify Editions) all give the object its own
+   side and let the type sit on clean ground. */
+:where(.hpv3) .os-stage{position:relative;background:#0b0920;overflow:hidden;
+  display:grid;grid-template-columns:1.05fr .95fr;align-items:center;min-height:600px;}
+:where(.hpv3) .os-stage-copy{position:relative;z-index:2;padding:110px 40px 110px clamp(24px,7vw,110px);
+  max-width:620px;text-align:left;}
+:where(.hpv3) .os-stage-copy h3{margin:0;font-family:var(--font-heading);font-weight:500;
+  font-size:clamp(28px,3.2vw,44px);line-height:1.08;letter-spacing:-.025em;color:#fff;text-wrap:balance;}
+:where(.hpv3) .os-stage-copy h3 .ghost{color:rgba(255,255,255,.34);}
+:where(.hpv3) .os-stage-copy p{margin:18px 0 0;font-size:16.5px;line-height:1.6;
+  color:rgba(255,255,255,.78);text-wrap:pretty;max-width:46ch;}
+:where(.hpv3) .os-stage-canvas{position:relative;align-self:stretch;min-height:600px;}
+/* Atmosphere bleeding out from behind the object, and a soft wash back toward
+   the copy so the split never reads as two pasted halves. */
+:where(.hpv3) .os-stage-canvas::before{content:'';position:absolute;inset:-10%;z-index:0;
+  background:radial-gradient(52% 46% at 52% 52%, rgba(79,70,229,.40) 0%, rgba(11,9,32,0) 70%);}
+:where(.hpv3) .os-stage-canvas::after{content:'';position:absolute;inset:0;z-index:1;
+  background:linear-gradient(90deg, #0b0920 0%, rgba(11,9,32,.7) 16%, rgba(11,9,32,0) 52%);}
+
+@media (max-width:920px){
+  :where(.hpv3) .os-row{grid-template-columns:1fr;gap:48px;padding-bottom:76px;}
+  :where(.hpv3) .os{padding-top:76px;}
+  :where(.hpv3) .os-stage{grid-template-columns:1fr;min-height:0;}
+  :where(.hpv3) .os-stage-copy{padding:72px 24px 24px;max-width:none;}
+  :where(.hpv3) .os-stage-canvas{min-height:380px;}
+  :where(.hpv3) .os-stage-canvas::after{background:linear-gradient(180deg, #0b0920 0%, rgba(11,9,32,0) 28%);}
+}

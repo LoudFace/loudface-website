@@ -1,0 +1,40 @@
+/* IsometricSystem — Mercury's exploded layer stack, in the v3 night palette. */
+
+:where(.hpv3) .iso{background:var(--night);color:#fff;padding:104px 0 112px;overflow:hidden;}
+:where(.hpv3) .iso-head{max-width:720px;}
+:where(.hpv3) .iso-eyebrow{display:inline-flex;align-items:center;gap:8px;font-size:11.5px;font-weight:600;
+  letter-spacing:.14em;text-transform:uppercase;color:rgba(255,255,255,.62);}
+:where(.hpv3) .iso-eyebrow i{width:5px;height:5px;border-radius:50%;background:#818cf8;}
+:where(.hpv3) .iso-head h2{margin:14px 0 0;font-family:var(--font-heading);font-weight:500;
+  font-size:clamp(30px,3.4vw,46px);line-height:1.06;letter-spacing:-.025em;color:#fff;text-wrap:balance;}
+:where(.hpv3) .iso-head h2 .ghost{color:rgba(255,255,255,.34);}
+:where(.hpv3) .iso-lede{margin:14px 0 0;max-width:54ch;font-size:16px;line-height:1.55;
+  color:rgba(255,255,255,.76);text-wrap:pretty;}
+
+:where(.hpv3) .iso-plate{margin-top:26px;}
+:where(.hpv3) .iso-plate svg{display:block;width:100%;height:auto;overflow:visible;}
+
+/* Captions live in the SVG so they stay locked to their leader lines. */
+:where(.hpv3) .iso-cap-label{fill:rgba(255,255,255,.5);font-size:11px;font-weight:600;
+  letter-spacing:.14em;text-transform:uppercase;}
+:where(.hpv3) .iso-cap-title{fill:#fff;font-family:var(--font-heading);font-size:19px;font-weight:500;
+  letter-spacing:-.015em;}
+:where(.hpv3) .iso-cap-body{fill:rgba(255,255,255,.62);font-size:13px;}
+
+/* Each slab settles into place; the stack reads bottom-up as it does. */
+:where(.hpv3) .iso-slab{opacity:0;transform:translateY(18px);
+  transition:opacity .7s cubic-bezier(.22,.61,.36,1), transform .7s cubic-bezier(.22,.61,.36,1);}
+:where(.hpv3) .rv.in .iso-slab,
+:where(.hpv3) .iso-plate.in .iso-slab{opacity:1;transform:none;}
+
+@media (prefers-reduced-motion:reduce){
+  :where(.hpv3) .iso-slab{opacity:1;transform:none;transition:none;}
+}
+
+@media (max-width:880px){
+  :where(.hpv3) .iso{padding:76px 0 84px;}
+  /* Captions stop fitting beside the stack; the plate scrolls instead of shrinking
+     the geometry into illegibility. */
+  :where(.hpv3) .iso-plate{overflow-x:auto;-webkit-overflow-scrolling:touch;}
+  :where(.hpv3) .iso-plate svg{min-width:880px;}
+}

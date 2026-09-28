@@ -1,0 +1,131 @@
+/* Concept-only helpers. Plain CSS so nothing depends on Tailwind picking up an
+   untracked folder. */
+.proposal-surface .c-dots {
+  background-image: radial-gradient(rgba(10, 10, 10, 0.11) 1px, transparent 1px);
+  background-size: 14px 14px;
+}
+.proposal-surface .c-dots-dark {
+  background-image: radial-gradient(rgba(255, 255, 255, 0.10) 1px, transparent 1px);
+  background-size: 14px 14px;
+}
+/* FocusCards (Aceternity), rebuilt without JS: hovering one design dims the
+   rest. Opacity only, no blur, no movement. */
+.proposal-surface .c-focus-item { transition: opacity 0.25s cubic-bezier(0.16, 1, 0.3, 1); }
+.proposal-surface .c-focus:hover .c-focus-item:not(:hover) { opacity: 0.55; }
+@media (prefers-reduced-motion: reduce) { .proposal-surface .c-focus-item { transition: none; } }
+
+/* ── Electric hero stage — transcribed from /pricing (.prv3 .hero), the
+   approved page-hero treatment (rulebook hero tonality law, 2026-07-12). ── */
+.proposal-surface .c-electric {
+  position: relative;
+  color: #fff;
+  background: var(--color-primary-600);
+  background-image:
+    radial-gradient(120% 92% at 50% 116%, rgba(129, 140, 248, 0.55) 0%, rgba(99, 102, 241, 0) 58%),
+    radial-gradient(90% 70% at 84% -8%, rgba(165, 180, 252, 0.3) 0%, rgba(99, 102, 241, 0) 46%),
+    linear-gradient(158deg, var(--color-primary-700) 0%, var(--color-primary-600) 44%, var(--color-primary-500) 100%);
+}
+.proposal-surface .c-electric::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(78% 60% at 50% -8%, rgba(79, 70, 229, 0.34) 0%, rgba(79, 70, 229, 0) 62%);
+}
+.proposal-surface .c-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 34px;
+  padding: 4px 6px 4px 15px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.1);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.18), 0 1px 0 rgba(255, 255, 255, 0.12) inset;
+  font-size: 13px;
+  font-weight: 500;
+  color: #fff;
+  flex-wrap: wrap;
+}
+.proposal-surface .c-eyebrow b { font-weight: 600; }
+.proposal-surface .c-eyebrow em {
+  font-style: normal;
+  display: inline-flex;
+  align-items: center;
+  height: 22px;
+  padding: 0 9px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.92);
+  color: var(--color-primary-800, #3730a3);
+  font-size: 11px;
+  font-weight: 600;
+}
+.proposal-surface .c-anchor {
+  margin-top: 24px;
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 11px;
+  min-height: 40px;
+  padding: 6px 18px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.08);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.2);
+}
+.proposal-surface .c-anchor .amt { font-weight: 600; font-size: 15px; color: #fff; }
+.proposal-surface .c-anchor .lbl { font-size: 13.5px; font-weight: 500; color: rgba(255, 255, 255, 0.75); }
+
+/* The ring straight on the electric stage: the indigo half moves to a light
+   lavender so it still reads against primary-600. */
+.proposal-surface .c-ring-electric .how-ring .arc-geo { stroke: var(--color-primary-200); }
+.proposal-surface .c-ring-electric .how-ring .arc-site { stroke: #fff; }
+.proposal-surface .c-ring-electric .how-ring .lbl-geo { fill: var(--color-primary-100); }
+.proposal-surface .c-ring-electric .how-ring .how,
+.proposal-surface .c-ring-electric .how-ring .core-sub { fill: rgba(255, 255, 255, 0.72); }
+.proposal-surface .c-ring-electric .how-ring .chev { stroke: rgba(255, 255, 255, 0.8); }
+
+/* ── Hero visuals: SVG type ─────────────────────────────────────────────── */
+.proposal-surface .v2-h { fill: #fff; font: 600 24px/1 var(--font-heading, var(--font-sans)); letter-spacing: -0.02em; }
+.proposal-surface .v2-s { fill: rgba(255, 255, 255, 0.72); font: 500 14.5px/1 var(--font-sans); }
+.proposal-surface .v2-core { fill: #fff; font: 600 21px/1 var(--font-heading, var(--font-sans)); letter-spacing: -0.02em; }
+.proposal-surface .v2-cs { fill: rgba(255, 255, 255, 0.6); font: 500 11.5px/1 var(--font-sans); }
+.proposal-surface .v3-g { fill: #fff; font: 600 17px/1 var(--font-heading, var(--font-sans)); letter-spacing: -0.01em; }
+.proposal-surface .v3-gs { fill: rgba(255, 255, 255, 0.65); font: 500 12px/1 var(--font-sans); }
+.proposal-surface .v3-t { fill: #fff; font: 600 15px/1 var(--font-sans); }
+.proposal-surface .v3-s { fill: rgba(255, 255, 255, 0.68); font: 500 12px/1 var(--font-sans); }
+.proposal-surface .v3-site { fill: #0a0a0a; font: 600 13px/1 var(--font-sans); }
+.proposal-surface .v3-btn { fill: #fff; font: 600 10.5px/1 var(--font-sans); }
+.proposal-surface .v3-btn2 { fill: #3f3f46; font: 600 10.5px/1 var(--font-sans); }
+.proposal-surface .v3-p { fill: #fff; font: 600 15px/1 var(--font-sans); }
+.proposal-surface .v3-o { fill: #fff; font: 600 12.5px/1 var(--font-sans); }
+@media (prefers-reduced-motion: reduce) { .proposal-surface .c-traveller { display: none; } }
+
+/* ── Offer visuals, round two (V5–V7): shared SVG type ───────────────────── */
+.proposal-surface .vx-eb { fill: #e0e7ff; font: 600 12.5px/1 var(--font-sans); letter-spacing: 0.01em; }
+.proposal-surface .vx-t { fill: #fff; font: 600 27px/1 var(--font-heading, var(--font-sans)); letter-spacing: -0.025em; }
+.proposal-surface .vx-i { fill: rgba(255, 255, 255, 0.8); font: 500 15px/1 var(--font-sans); }
+.proposal-surface .vx-t-m { fill: #fff; font: 600 23px/1 var(--font-heading, var(--font-sans)); letter-spacing: -0.02em; }
+.proposal-surface .vx-i-m { fill: rgba(255, 255, 255, 0.82); font: 500 13.5px/1 var(--font-sans); }
+.proposal-surface .vx-core { fill: #fff; font: 600 26px/1 var(--font-heading, var(--font-sans)); letter-spacing: -0.025em; }
+.proposal-surface .vx-core-m { fill: #fff; font: 600 22px/1 var(--font-heading, var(--font-sans)); letter-spacing: -0.02em; }
+.proposal-surface .vx-core-s { fill: #fff; font: 600 20px/1 var(--font-heading, var(--font-sans)); letter-spacing: -0.02em; }
+.proposal-surface .vx-core-d { fill: #171445; font: 600 32px/1 var(--font-heading, var(--font-sans)); letter-spacing: -0.03em; }
+.proposal-surface .vx-core-d-m { fill: #171445; font: 600 25px/1 var(--font-heading, var(--font-sans)); letter-spacing: -0.025em; }
+.proposal-surface .vx-cs { fill: rgba(255, 255, 255, 0.68); font: 500 11.5px/1 var(--font-sans); }
+.proposal-surface .vx-cs-s { fill: rgba(255, 255, 255, 0.66); font: 500 10.5px/1 var(--font-sans); }
+.proposal-surface .vx-cs-d { fill: rgba(23, 20, 69, 0.62); font: 500 13px/1 var(--font-sans); }
+
+/* V5: the two circles slide together once, then the overlap lights up. */
+.proposal-surface .v5-in-l { animation: v5-in-l 1.2s cubic-bezier(0.16, 1, 0.3, 1) both; }
+.proposal-surface .v5-in-r { animation: v5-in-r 1.2s cubic-bezier(0.16, 1, 0.3, 1) both; }
+.proposal-surface .v5-in-t { animation: v5-in-t 1.2s cubic-bezier(0.16, 1, 0.3, 1) both; }
+.proposal-surface .v5-in-b { animation: v5-in-b 1.2s cubic-bezier(0.16, 1, 0.3, 1) both; }
+.proposal-surface .v5-lens { animation: v5-fade 0.8s 0.9s ease-out both; }
+@keyframes v5-in-l { from { transform: translateX(-80px); opacity: 0; } to { transform: none; opacity: 1; } }
+@keyframes v5-in-r { from { transform: translateX(80px); opacity: 0; } to { transform: none; opacity: 1; } }
+@keyframes v5-in-t { from { transform: translateY(-60px); opacity: 0; } to { transform: none; opacity: 1; } }
+@keyframes v5-in-b { from { transform: translateY(60px); opacity: 0; } to { transform: none; opacity: 1; } }
+@keyframes v5-fade { from { opacity: 0; } to { opacity: 1; } }
+@media (prefers-reduced-motion: reduce) {
+  .proposal-surface .v5-in-l, .proposal-surface .v5-in-r, .proposal-surface .v5-in-t,
+  .proposal-surface .v5-in-b, .proposal-surface .v5-lens { animation: none; }
+}
