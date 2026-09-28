@@ -37,6 +37,7 @@ const page = 'mx-auto max-w-[1180px] px-5 sm:px-8';
 const panel = 'mt-6 rounded-[22px] bg-primary-50/70 p-3 sm:p-4';
 const card = 'rounded-2xl bg-white shadow-[0_1px_2px_rgba(10,10,10,0.05),0_8px_24px_-16px_rgba(30,27,75,0.18)]';
 
+/* The house pair. A proposal can replace it with its own `promises` when a line does not fit the lead. */
 const PROMISES = ['No designer or developer to hire', 'Measured in leads, not traffic'];
 
 /* Our own client work from the design-samples Figma file, first screen each. */
@@ -110,6 +111,7 @@ function validUntil(value: string) {
 /* ── hero ─────────────────────────────────────────────────────────────── */
 function Hero({ proposal }: { proposal: Proposal }) {
   const [amt, ...rest] = (proposal.priceLine ?? '').split(', ');
+  const promises = proposal.promises?.length ? proposal.promises : PROMISES;
   return (
     <header className="pc-electric overflow-hidden text-white">
       <div className={`relative z-[1] ${page} pb-12 pt-10 sm:pt-12`}>
@@ -133,7 +135,7 @@ function Hero({ proposal }: { proposal: Proposal }) {
               </p>
             )}
             <ul className="mt-6 space-y-2">
-              {PROMISES.map((p) => (
+              {promises.map((p) => (
                 <li key={p} className="flex items-center gap-2.5 text-[15px] font-medium">
                   <span className="flex h-5 w-5 items-center justify-center rounded-full bg-white/15">
                     <svg viewBox="0 0 16 16" className="h-3 w-3" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
@@ -339,7 +341,9 @@ function Months({ section }: { section: Sec<'monthsSection'> }) {
 function Pricing({ section, clientName }: { section: Sec<'pricingTiersSection'>; clientName: string }) {
   const num = (p?: string) => Number(String(p ?? '').replace(/[^\d]/g, '')) || 0;
   const tiers = section.tiers ?? [];
-  const ordered = [...tiers.filter((t) => t.recommended), ...tiers.filter((t) => !t.recommended).sort((a, b) => num(a.price) - num(b.price))];
+  // A price in words ("Let's talk") has no number, so it goes last rather than first.
+  const rank = (p?: string) => num(p) || Infinity;
+  const ordered = [...tiers.filter((t) => t.recommended), ...tiers.filter((t) => !t.recommended).sort((a, b) => rank(a.price) - rank(b.price))];
   const short = clientName.split(' ')[0];
   return (
     <>

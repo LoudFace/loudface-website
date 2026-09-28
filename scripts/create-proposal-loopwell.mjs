@@ -3,11 +3,16 @@
  * Seed the Loopwell proposal (Sean Looney: Loopwell, Loop Studios, Looney
  * Content) into the PRIVATE `proposals` Sanity dataset.
  *
- * Written from the 28 Sep 2026 intro call with Sean Looney. Numbers are live
- * readings from the same day: Ahrefs domain rating and organic keywords for
- * loopwithus.com, loopstudiosinc.com, looneycontent.com and
- * looney-advertising.com; the loopwithus.com sitemap (85 Insights articles,
- * tag pages excluded); DataForSEO Google Ads CPC for "team building nj".
+ * Written from the 28 Sep 2026 intro call with Sean Looney, in the card layout
+ * (design: cards). Numbers are live readings from the same day: Ahrefs domain
+ * rating and organic keywords for loopwithus.com, loopstudiosinc.com,
+ * looneycontent.com and looney-advertising.com; the loopwithus.com sitemap
+ * (85 blog articles, tag pages excluded); DataForSEO Google Ads CPC for
+ * "team building nj".
+ *
+ * The live document keeps its first token and code. To rewrite it in place:
+ *   node scripts/create-proposal-loopwell.mjs --status=sent \
+ *     --token=<the existing token> --code=<the existing code>
  *
  * Usage:
  *   node scripts/create-proposal-loopwell.mjs --dry-run
@@ -172,11 +177,14 @@ const proofRail = {
 };
 
 /* ── the document ─────────────────────────────────────────────────────── */
+/* Card layout (design: 'cards'), the one picked on 23 Sep 2026. The cards hero
+ * shows the title, the price line split at its first ", " into amount and
+ * label, and two promises; it does not show heroSummary or heroQuote. */
 
 const doc = {
   _type: 'proposal',
   _id: `proposal.loopwell.${accessToken.slice(0, 10)}`,
-  title: 'Loopwell x LoudFace: booking 80 Maple Avenue from Google and AI search',
+  title: 'Offsites and events at Loopwell, found on Google and ChatGPT',
   clientName: 'Loopwell',
   preparedFor: ['Sean Looney'],
   token: accessToken,
@@ -184,40 +192,38 @@ const doc = {
   validUntil: VALID_UNTIL,
   status: STATUS,
   contactEmail: 'arnel@loudface.co',
-  priceLine: '$5,000/mo per company. 3-month minimum, then month to month.',
-  heroQuote: "When we're not shooting here, the studio is just empty ... that's just lost revenue every day.",
-  heroQuoteBy: 'Sean Looney, on our call, 28 September 2026',
-  heroSummary: [
-    para(
-      "We make 80 Maple Avenue the place Google and ChatGPT name when a company near New York looks for an offsite, a team day or an event space. We'd start with Loopwell. It has the strongest site of your three, and Adaptify already runs on it, so you'll see exactly what we add."
-    ),
-  ],
+  design: 'cards',
+  priceLine: '$5,000/mo, per company. 3-month minimum, then month to month.',
+  /* Sean has in-house designers, so the house line "No designer or developer to hire" does not fit him. */
+  promises: ['Works inside your Squarespace site', 'Measured in enquiries, not traffic'],
   clipStrip,
   proofRail,
   sections: [
-    /* 1 · where you are: three numbers, nothing more */
-    section('standingSection', {
+    /* 1 · where you are: the Today card, beside the three monthly outcomes */
+    section('richTextSection', {
       heading: 'Where you are',
-      band: 'tint',
-      stats: [
-        stat('85', 'articles in Loopwell’s Insights section. Ahrefs finds one venue or event search it ranks for: "meditation event", 10 searches a month', true),
-        stat('7 / 100', 'Loop Studios’ domain rating on Ahrefs. It ranks on Google for its own name and nothing else'),
-        stat('#5', 'for "advertising agency nj", held by looney-advertising.com. The new looneycontent.com ranks for nothing yet'),
+      body: [
+        para(
+          "When the building isn't booked, it sits empty. Google and ChatGPT rarely show Loopwell or Loop Studios to a company looking for an offsite or an event space near New York."
+        ),
+        para(
+          'Loopwell has 85 articles on its blog, and Ahrefs finds one venue or event search it ranks for: "meditation event", at 10 searches a month. Loop Studios has a domain rating of 7 out of 100 and ranks for its own name only. Peerspace, PartySlate and Eventective take those searches instead.'
+        ),
+        para(
+          'One free note for the Looney rebrand: looney-advertising.com still ranks #5 for "advertising agency nj". When it goes, redirect every old page to its new one, or that ranking goes with it.'
+        ),
       ],
-      closing:
-        "Volume isn't the gap. The pages don't answer what a company planning an offsite asks, and very few other sites say Loopwell or Loop Studios is the place to go. So Peerspace, PartySlate and Eventective take those searches. One free note on the rebrand: when looney-advertising.com goes, redirect every old page to its new one, or that #5 goes with it.",
     }),
 
-    /* 2 · what we do */
+    /* 2 · what we do. The first item of each track is its headline cadence (the pill). */
     section('tracksSection', {
       heading: 'What we do',
-      band: 'white',
       intro: 'Three tracks for Loopwell, all starting in week one.',
       tracks: [
         track('On your site', [
-          trackItem('Week 1', 'One page each for corporate offsites, team retreats, private events and wellness days, with rooms, capacity, packages and who has booked the space'),
           trackItem('5 a week', "Articles built from your team's own knowledge: Nicole's corporate programmes, the author series, the 750 experiences. Not keyword templates"),
-          trackItem('Month 2', "The 85 Insights articles reviewed. The ones that bring nothing get folded into pages that do"),
+          trackItem('Week 1', 'One page each for corporate offsites, team retreats, private events and wellness days, with rooms, capacity, packages and who has booked the space'),
+          trackItem('Month 2', 'The 85 blog articles reviewed. The ones that bring nothing get folded into pages that do'),
         ]),
         track('Off your site', [
           trackItem('2-3 a week', 'Mentions on the sites Google and AI answers already trust for NJ and NYC venues: PartySlate, Eventective, Peerspace, Tagvenue, local event roundups'),
@@ -226,16 +232,15 @@ const doc = {
         ]),
         track('Your website', [
           trackItem('Day 1', "We work inside Squarespace. Your designers keep the site, and we don't redesign anything you don't ask for"),
-          trackItem('Week 1', 'Venue and event schema, an llms.txt, and one owner per search between Loopwell and Loop Studios, so the two sites stop competing for the same event bookings'),
+          trackItem('Week 1', 'Venue and event schema, an llms.txt, and one owner per search between Loopwell and Loop Studios, so the two sites stop competing for the same bookings'),
           trackItem('Same day', 'A landing page when you need one, for a season, an event or a campaign'),
         ]),
       ],
     }),
 
-    /* 3 · what Sean raised on the call */
+    /* 3 · what Sean raised on the call. Every lead ends in "?", so the cards layout draws it as a chat. */
     section('bulletListSection', {
       heading: 'What you asked on the call',
-      band: 'white',
       items: [
         bullet(
           "Isn't this what Adaptify does?",
@@ -251,22 +256,22 @@ const doc = {
         ),
         bullet(
           'Why a company and not one person?',
-          "You get a system that has already produced results for our clients, a strategist who runs it day to day, and me if anything feels off. If one person is out, the work keeps going."
+          'You get a system that has already produced results for our clients, a strategist who runs it day to day, and me if anything feels off. If one person is out, the work keeps going.'
         ),
         bullet(
           "You don't need a website. Does the price drop?",
-          'No. The $5,000 pays for the content, the outreach and the reporting. The site work is there when you need a page. When you don\'t, that time goes into content and outreach.'
+          "No. The $5,000 pays for the content, the outreach and the reporting. The site work is there when you need a page. When you don't, that time goes into content and outreach."
         ),
       ],
     }),
 
-    /* 4 · the first 90 days */
+    /* 4 · the first 90 days. Each month's `proves` also fills the "Where we take it" card. */
     section('monthsSection', {
       heading: 'The first 90 days',
       intro: 'Contractual minimums. We ship above them.',
       months: [
         month('Month 1', 'Foundations', ['Offsite, retreat and event pages live', 'One owner per search: Loopwell or Loop Studios', 'Schema and llms.txt', '20 articles', 'Baseline in ChatGPT, Perplexity, Claude and Google AI'], 'Loopwell read as a venue, not only a club'),
-        month('Month 2', 'Backing it up', ['20+ articles', '8-12 placements', 'Directory listings current and consistent', 'Insights section cleaned up'], 'Loopwell ranking for offsite and event searches'),
+        month('Month 2', 'Backing it up', ['20+ articles', '8-12 placements', 'Directory listings current and consistent', 'Blog cleaned up'], 'Loopwell ranking for offsite and event searches'),
         month('Month 3', 'The decision', ['20+ articles', '8-12 placements', 'Enquiries and bookings reviewed', 'Go or no-go on Loop Studios'], 'AI answers name Loopwell for NJ offsites'),
       ],
       note: 'Most clients see the curve turn by the end of month two. If nothing moves in three months, something is wrong and we tell you.',
@@ -287,7 +292,7 @@ const doc = {
     /* 6 · proof */
     section('caseProofSection', {
       heading: 'The same work, at four other companies',
-      intro: "Ask and we'll put you in touch with any of these clients directly.",
+      intro: "Ask and we'll put you in touch with one of these clients directly.",
       chartsPerCase: 1,
       slugs: [
         'delshad-legal-content-engine',
@@ -297,30 +302,29 @@ const doc = {
       ],
     }),
 
-    /* 7 · investment */
+    /* 7 · investment. The recommended tier comes first; a price in words sorts last. */
     section('pricingTiersSection', {
       heading: 'Investment',
       band: 'dark',
       anchor:
         '"Team building nj" costs $20 a click on Google Ads. $5,000 buys 250 of those clicks for one month, and they stop the day the budget does. The pages and mentions we build stay.',
       tiers: [
-        tier('All three', "Let's talk", undefined, 'Loopwell, Loop Studios and Looney Content on one plan. We price it together.'),
-        tier('Two companies', '$10,000', 'per month', 'Loopwell and Loop Studios. One building, two sites, one plan.'),
         tier('One company', '$5,000', 'per month', 'Loopwell. 5 articles a week, 2-3 placements a week, site work in Squarespace, full reporting.', true),
+        tier('Two companies', '$10,000', 'per month', 'Loopwell and Loop Studios. One building, two sites, one plan.'),
+        tier('All three', "Let's talk", undefined, 'Loopwell, Loop Studios and Looney Content on one plan. We price it together.'),
       ],
       note: 'Start with one. Add Loop Studios when Loopwell has earned it. 3-month minimum per company, then month to month. No setup fee.',
     }),
 
-    /* 8 · terms */
+    /* 8 · terms: four cards, the "Next step" one in white */
     section('bulletListSection', {
       heading: 'Terms and next step',
       band: 'dark',
       items: [
         bullet('Three months, billed monthly in USD.', 'The minimum gives the work a fair shot at proving itself. After it, month to month.'),
         bullet('You own everything.', 'Every page, article and listing stays yours if we stop.'),
-        bullet('Kickoff the week you sign.', 'With Squarespace access and a short thought-leadership form from your team, the first pieces go live that Friday.'),
-        bullet('Later, for your clients:', "once you've seen it work on your own companies, we can talk about Looney Content offering it to your clients."),
-        bullet('Next step:', 'reply to my email with the company you want to start with, and we send the agreement.'),
+        bullet('Later, for your clients.', "Once you've seen it work on your own companies, we can talk about Looney Content offering it to your clients."),
+        bullet('Next step:', "reply to my email with the company you want to start with, and we'll send the agreement. With Squarespace access and a short form from your team, the first pieces go live that Friday."),
       ],
     }),
   ],

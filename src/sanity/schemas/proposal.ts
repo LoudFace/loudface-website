@@ -1068,6 +1068,17 @@ const proposal = defineType({
       description: 'Cards is the layout picked on 23 September 2026. Classic is everything sent before it.',
     }),
     defineField({
+      name: 'promises',
+      title: 'Hero promises',
+      type: 'array',
+      group: 'content',
+      of: [defineArrayMember({ type: 'string' })],
+      validation: (rule) => rule.max(2),
+      hidden: ({ document }) => document?.design !== 'cards',
+      description:
+        'Cards only. Two short lines under the price. Leave empty for the house pair: "No designer or developer to hire" and "Measured in leads, not traffic". Replace them when a line does not fit the lead.',
+    }),
+    defineField({
       name: 'clipStrip',
       title: 'Clip strip',
       type: 'object',
