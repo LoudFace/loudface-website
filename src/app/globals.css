@@ -482,6 +482,19 @@ html {
     padding-right: var(--scroll-lock-gutter, 0px);
   }
 
+  /* --- Scroll lock (Cal.com booking modal) ---
+   * Cal's embed.js locks the page with `body.style.overflow = "hidden"`, the
+   * no-op described above, so the page scrolled behind the open modal (a swipe
+   * on the backdrop moved it on iOS Safari). Lock html while the modal shows.
+   * The key is the host's inline visibility: Cal's show() sets it on open and
+   * on every close path (X, backdrop, Escape). Its `state` attribute is not a
+   * usable key: the X button hides the modal without setting state="closed".
+   * html overflow alone keeps window.scrollY, so nothing needs restoring.
+   */
+  html:has(> body > cal-modal-box[style*="visibility: visible"]) {
+    overflow: hidden;
+  }
+
   .sr-only {
     position: absolute;
     width: 1px;
