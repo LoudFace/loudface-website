@@ -68,3 +68,4 @@ public/preview/
 
 # Proposal document backups — they carry client pricing.
 scripts/backups/
+.feedback-data/

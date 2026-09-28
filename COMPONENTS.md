@@ -531,6 +531,24 @@ nothing about the proposal except its token.
 
 ---
 
+## Feedback Components (`src/components/feedback/`)
+
+The private client feedback tool. Invisible on the public site: nothing
+renders and no widget code downloads unless the browser opened a private
+link (`/fb/<token>`). Not exported from any barrel. Operator guide:
+`docs/FEEDBACK.md`.
+
+| Component | File | Description |
+|-----------|------|-------------|
+| `FeedbackLoader` | `FeedbackLoader.tsx` | Client component, mounted once in the root layout. Reads the `lf_fb_on` flag cookie and only then `React.lazy`-loads the widget (not `next/dynamic`, which preloads the chunk for everyone). Skips `/studio`, `/feedback/board` and `/p/`. No props. |
+| `FeedbackWidget` | `FeedbackWidget.tsx` | Client component. The Feedback button, the element picker (hover outline, click to pick, Escape cancels; the page gets no clicks while it runs), the screenshot (the picked element's nearest painted section via `modern-screenshot`, the element outlined in red), the New request form and the My requests list with reply threads. Handles `?fb_focus=<id>` from the board. Renders nothing unless `/api/feedback/session` confirms the signed cookie. Self-styled with `feedback.module.css` (v11 token values copied; it must work on pages that do not load `globals.css`). The launcher follows the consent bottom-band contract with `lf-lifts-for-consent`. |
+| `formatDate` / `formatDateTime` / `pageLabel` | `format.ts` | Shared with the team board. |
+
+The team board is `src/app/(feedback)/feedback/board/Board.tsx` (team links
+only, 404 otherwise).
+
+---
+
 ## Barrel Exports
 
 ```

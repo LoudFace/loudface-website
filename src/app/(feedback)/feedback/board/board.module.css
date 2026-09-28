@@ -1,0 +1,90 @@
+/* Team board. Standalone like the widget: no site stylesheet loads here. */
+.root {
+  --ink: #1a1040; --body: #4a4466; --muted: #6b6788; --line: #e4e4ea; --warm: #f6f6f6; --ind: #4f46e5;
+  min-height: 100vh;
+  padding: 28px 32px 48px;
+  background: var(--warm);
+  color: var(--ink);
+  font-family: var(--font-satoshi), system-ui, -apple-system, 'Segoe UI', sans-serif;
+  font-size: 14px;
+  line-height: 1.45;
+  -webkit-font-smoothing: antialiased;
+}
+.root *, .root *::before, .root *::after { box-sizing: border-box; }
+.root :where(button, select, input, textarea) { font: inherit; color: inherit; }
+
+.top { display: flex; justify-content: space-between; align-items: flex-end; gap: 16px; margin-bottom: 20px; flex-wrap: wrap; }
+.title { margin: 0; font-family: var(--font-neue-montreal), var(--font-satoshi), sans-serif; font-size: 28px; font-weight: 500; letter-spacing: -0.01em; }
+.sub { margin: 4px 0 0; color: var(--muted); }
+.topActions { display: flex; gap: 16px; }
+.link { color: var(--ind); text-decoration: none; }
+.link:hover { text-decoration: underline; }
+
+.toolbar { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-bottom: 16px; }
+.segment { display: inline-flex; padding: 3px; border-radius: 10px; background: #fff; border: 1px solid var(--line); }
+.seg, .segOn { padding: 6px 12px; border: 0; border-radius: 7px; background: none; cursor: pointer; color: var(--muted); font-weight: 500; }
+.segOn { background: var(--ink); color: #fff; }
+.select { height: 36px; padding: 0 10px; border: 1px solid var(--line); border-radius: 10px; background: #fff; }
+.check { display: inline-flex; align-items: center; gap: 6px; color: var(--body); }
+.error { color: #b42318; }
+.empty { padding: 48px; text-align: center; color: var(--muted); background: #fff; border: 1px dashed var(--line); border-radius: 14px; }
+
+.main { display: flex; gap: 16px; align-items: flex-start; }
+.content { flex: 1; min-width: 0; }
+
+.columns { display: grid; grid-auto-flow: column; grid-auto-columns: minmax(230px, 1fr); gap: 12px; overflow-x: auto; padding-bottom: 8px; }
+.column { display: flex; flex-direction: column; gap: 8px; min-height: 120px; padding: 10px; border-radius: 12px; background: #eceaf2; }
+.colHead { margin: 2px 4px 4px; font-size: 13px; font-weight: 500; display: flex; justify-content: space-between; }
+.colHead span, .groupHead span:last-child { color: var(--muted); font-weight: 400; }
+
+.card { display: flex; flex-direction: column; gap: 6px; width: 100%; padding: 12px; border: 1px solid var(--line); border-radius: 10px; background: #fff; text-align: left; cursor: pointer; }
+.card:hover { border-color: var(--muted); }
+.cardOn { border-color: var(--ind); box-shadow: 0 0 0 1px var(--ind); }
+.cardTop { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+.cardNote { display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+.meta { font-size: 12px; color: var(--muted); }
+.ref { font-family: var(--font-geist-mono), ui-monospace, monospace; font-size: 12px; color: var(--muted); }
+
+.urgency { padding: 2px 8px; border-radius: 999px; font-size: 11px; font-weight: 500; white-space: nowrap; }
+.u_urgent { background: #fef3f2; color: #b42318; }
+.u_this_week { background: #fff7ed; color: #9a3412; }
+.u_no_rush { background: var(--warm); color: var(--muted); }
+
+.group { margin-bottom: 20px; }
+.groupHead { display: flex; gap: 8px; align-items: baseline; margin: 0 0 8px; font-size: 15px; font-weight: 500; }
+.groupGrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 8px; }
+
+.table { width: 100%; border-collapse: collapse; background: #fff; border: 1px solid var(--line); border-radius: 12px; overflow: hidden; }
+.table th, .table td { padding: 10px 12px; border-bottom: 1px solid var(--line); text-align: left; vertical-align: top; font-size: 13px; }
+.table th { color: var(--muted); font-weight: 500; background: #fafafb; white-space: nowrap; }
+.table tbody tr { cursor: pointer; }
+.table tbody tr:hover, .rowOn { background: #f5f5ff; }
+.tdNote { max-width: 360px; }
+
+.drawer { position: sticky; top: 16px; width: 400px; flex-shrink: 0; max-height: calc(100vh - 32px); overflow-y: auto; display: flex; flex-direction: column; gap: 14px; padding: 18px; border: 1px solid var(--line); border-radius: 14px; background: #fff; }
+.drawerHead { display: flex; justify-content: space-between; align-items: center; }
+.close { width: 32px; height: 32px; border: 0; border-radius: 8px; background: none; font-size: 22px; cursor: pointer; color: var(--muted); }
+.close:hover { background: var(--warm); }
+.note { margin: 0; font-size: 15px; white-space: pre-wrap; }
+.edit { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.edit label, .fact { display: flex; flex-direction: column; gap: 4px; font-size: 12px; color: var(--muted); }
+.fact { color: var(--muted); }
+.fact { font-size: 12px; }
+.edit select, .edit input { height: 36px; padding: 0 8px; border: 1px solid var(--line); border-radius: 8px; background: #fff; color: var(--ink); font-size: 13px; }
+.shot { width: 100%; border: 1px solid var(--line); border-radius: 8px; }
+.facts { display: grid; grid-template-columns: 90px 1fr; gap: 6px 12px; margin: 0; font-size: 13px; }
+.facts dt { color: var(--muted); }
+.facts dd { margin: 0; word-break: break-word; }
+.h3 { margin: 4px 0 0; font-size: 13px; font-weight: 500; }
+.thread { display: flex; flex-direction: column; gap: 8px; }
+.msg, .msgTeam { display: flex; flex-direction: column; gap: 2px; padding: 8px 10px; border-radius: 10px; background: var(--warm); white-space: pre-wrap; font-size: 13px; }
+.msgTeam { background: #eef2ff; }
+.textarea { width: 100%; padding: 8px 10px; border: 1px solid var(--line); border-radius: 8px; resize: vertical; }
+.button { align-self: flex-start; height: 36px; padding: 0 14px; border: 0; border-radius: 8px; background: var(--ind); color: #fff; cursor: pointer; font-weight: 500; }
+.history { margin: 0; padding-left: 16px; font-size: 12px; color: var(--muted); display: flex; flex-direction: column; gap: 2px; }
+
+@media (max-width: 900px) {
+  .root { padding: 20px 16px 40px; }
+  .main { flex-direction: column; }
+  .drawer { position: static; width: 100%; max-height: none; }
+}

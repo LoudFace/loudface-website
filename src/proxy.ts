@@ -81,8 +81,11 @@ export default function proxy(request: NextRequest) {
     !pathname.startsWith('/api/') &&
     !pathname.startsWith('/studio') &&
     // Gated proposals are documents for one named reader, not a public page
-    // with a Markdown twin. Nothing under /p/ is content-negotiable.
-    !pathname.startsWith('/p/');
+    // with a Markdown twin. Nothing under /p/ is content-negotiable. The same
+    // holds for the private feedback link and board.
+    !pathname.startsWith('/p/') &&
+    !pathname.startsWith('/fb/') &&
+    !pathname.startsWith('/feedback/');
 
   if (negotiable && prefersMarkdown(request.headers.get('accept'))) {
     const segments = pathname.replace(/\.md$/, '').split('/').filter(Boolean);

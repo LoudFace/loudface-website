@@ -294,3 +294,7 @@ This version has breaking changes — APIs, conventions, and file structure may 
 This block is written and re-added by `next dev` — verify at `node_modules/next/dist/server/lib/generate-agent-files.js`. Removing it from a diff only re-creates the uncommitted change; committing it with your work keeps the tree clean.
 
 <!-- END:nextjs-agent-rules -->
+
+## Client feedback tool (`/fb/<token>`, `/feedback/board`) — private, off by default
+
+A hidden feedback button, request panel and team board (built 2026-09-28, test phase, Tamara only). It stays invisible and every route answers 404 until `FEEDBACK_ACCESS` and `FEEDBACK_COOKIE_SECRET` exist in the environment. Never link to it from the public site and never remove the flag-cookie gate in `FeedbackLoader`: a normal visitor must download none of its code. Records are Spine-shaped and go through the `FeedbackStore` interface so the store can move to the Spine without touching the UI. Full guide: `docs/FEEDBACK.md`.
