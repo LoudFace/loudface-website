@@ -11,7 +11,7 @@ export const img = (p: string) => asset(`/images/home-v11/${p}`);
  * file name, never new bytes at the old path: add the suffix here and name both files to match
  * (scripts/design/team-photos.py writes them).
  */
-const PHOTO_SUFFIX: Record<string, string> = { 'arnel-bukva': '-v3', 'tamara-pavlovic': '-v3', 'andrea-van-wyk': '-v3', 'abhay-tyagi': '-v3' };
+const PHOTO_SUFFIX: Record<string, string> = { 'arnel-bukva': '-v3', 'tamara-pavlovic': '-v3', 'andrea-van-wyk': '-v5', 'abhay-tyagi': '-v3' };
 const photoName = (slug: string) => `${slug}${PHOTO_SUFFIX[slug] ?? ''}`;
 export const personPhoto = (slug: string) => img(`team/${photoName(slug)}.jpg`);
 export const personAvatar = (slug: string) => img(`avatars/${photoName(slug)}.png`);

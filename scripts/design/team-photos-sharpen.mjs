@@ -5,9 +5,11 @@
 // Reads design-lab/v11-image-originals/team/<slug>-slack.png, writes <slug>.jpg beside it (2048x2048). Compare the
 // two at 1:1 before using the result: the prompt forbids retouching, but check the face is still the same person.
 // Then run team-photos.py. About $0.11 an image (September 2026).
-// Never ask the model to re-pose a person or redraw their face: on 2026-09-28 three re-posed versions of Andrea were
-// rejected ("none of them look like her", the chin came out too strong). Sharpen only; a different pose needs a real
-// photo from the shoot.
+// Not for andrea-van-wyk: her Slack photo faced the camera, so andrea-van-wyk.jpg is a re-posed portrait (GPT Image
+// 2.5 Flare, approved by Arnel 2026-09-29) and andrea-van-wyk-frontal.jpg her sharpened original. Re-posing a real
+// person only works from their own photo alone, with their expression kept: colleagues' photos as references bled
+// their jaws in and three versions were rejected ("none of them look like her"). Check jaw width and mouth-to-chin
+// length against the original with face landmarks, and let Arnel judge the likeness before it goes live.
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { generateImage } from 'ai';
