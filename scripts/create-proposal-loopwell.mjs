@@ -193,7 +193,8 @@ const doc = {
   status: STATUS,
   contactEmail: 'arnel@loudface.co',
   design: 'cards',
-  priceLine: '$5,000/mo, per company. 3-month minimum, then month to month.',
+  /* The label after ", " must fit one line at phone width, like Faith's. */
+  priceLine: '$5,000/mo, per company. 3-month minimum.',
   /* Sean has in-house designers, so the house line "No designer or developer to hire" does not fit him. */
   promises: ['Works inside your Squarespace site', 'Measured in enquiries, not traffic'],
   clipStrip,
@@ -204,13 +205,10 @@ const doc = {
       heading: 'Where you are',
       body: [
         para(
-          "When the building isn't booked, it sits empty. Google and ChatGPT rarely show Loopwell or Loop Studios to a company looking for an offsite or an event space near New York."
+          "When the building isn't booked, it sits empty. Google and ChatGPT rarely show Loopwell or Loop Studios to a company planning an offsite near New York."
         ),
         para(
-          'Loopwell has 85 articles on its blog, and Ahrefs finds one venue or event search it ranks for: "meditation event", at 10 searches a month. Loop Studios has a domain rating of 7 out of 100 and ranks for its own name only. Peerspace, PartySlate and Eventective take those searches instead.'
-        ),
-        para(
-          'One free note for the Looney rebrand: looney-advertising.com still ranks #5 for "advertising agency nj". When it goes, redirect every old page to its new one, or that ranking goes with it.'
+          'Loopwell has 85 blog articles, and Ahrefs finds one venue search they rank for: "meditation event", at 10 searches a month. Peerspace, PartySlate and Eventective take the rest.'
         ),
       ],
     }),
@@ -221,19 +219,19 @@ const doc = {
       intro: 'Three tracks for Loopwell, all starting in week one.',
       tracks: [
         track('On your site', [
-          trackItem('5 a week', "Articles built from your team's own knowledge: Nicole's corporate programmes, the author series, the 750 experiences. Not keyword templates"),
-          trackItem('Week 1', 'One page each for corporate offsites, team retreats, private events and wellness days, with rooms, capacity, packages and who has booked the space'),
-          trackItem('Month 2', 'The 85 blog articles reviewed. The ones that bring nothing get folded into pages that do'),
+          trackItem('5 a week', "Articles from your team's own knowledge: corporate programmes, the author series, the 750 experiences"),
+          trackItem('Week 1', 'Pages for offsites, retreats, private events and wellness days, with rooms, capacity and packages'),
+          trackItem('Month 2', 'The 85 blog articles reviewed. The weak ones get merged into pages that work'),
         ]),
         track('Off your site', [
-          trackItem('2-3 a week', 'Mentions on the sites Google and AI answers already trust for NJ and NYC venues: PartySlate, Eventective, Peerspace, Tagvenue, local event roundups'),
-          trackItem(null, 'A review ask after every corporate event, so Google and Yelp show the bookings you already have'),
+          trackItem('2-3 a week', 'Mentions on the venue sites Google and AI answers trust: PartySlate, Eventective, Peerspace, Tagvenue'),
+          trackItem(null, 'A review ask after every corporate event'),
           trackItem(null, 'How ChatGPT, Perplexity, Claude and Google AI describe Loopwell, checked every week'),
         ]),
         track('Your website', [
-          trackItem('Day 1', "We work inside Squarespace. Your designers keep the site, and we don't redesign anything you don't ask for"),
-          trackItem('Week 1', 'Venue and event schema, an llms.txt, and one owner per search between Loopwell and Loop Studios, so the two sites stop competing for the same bookings'),
-          trackItem('Same day', 'A landing page when you need one, for a season, an event or a campaign'),
+          trackItem('Day 1', 'We work inside Squarespace. Your designers keep the site'),
+          trackItem('Week 1', 'Venue schema, an llms.txt, and one owner per search between Loopwell and Loop Studios'),
+          trackItem('Same day', 'A landing page when you need one'),
         ]),
       ],
     }),
@@ -244,7 +242,12 @@ const doc = {
       items: [
         bullet(
           "Isn't this what Adaptify does?",
-          "Adaptify writes articles. Loopwell has 85 of them, and they don't bring in offsite or event searches. Our system writes too, but from your team's own knowledge, and a person on our team edits every piece. Then we get other sites to back it up, which is what Google and ChatGPT check before they recommend anyone. On Loopwell you'll see both side by side."
+          "Adaptify writes articles. Loopwell has 85, and they don't bring in offsite or event searches. We write from your team's own knowledge, a person on our team edits every piece, and then we get other sites to back it up. That backing is what Google and ChatGPT check before they recommend anyone."
+        ),
+        /* Checked 28 Sep: studios that outrank Loop Studios include Media City and Film Factory (DR 0) and Butter Tree (DR 7), so the other agency was partly right. */
+        bullet(
+          'Another agency called Loop Studios a simple fix. Is it?',
+          'Partly. Some studios that outrank Loop Studios have a lower domain rating than its 7 out of 100, so authority isn\'t what holds it back. What\'s missing is pages for the searches people type, and listings Google trusts. That\'s quick work, and it\'s where we\'d start if you add Loop Studios. The one fix that really is simple sits with Looney: looney-advertising.com still ranks #5 for "advertising agency nj", so redirect every old page when the rebrand retires it.'
         ),
         bullet(
           'Why would I help a competitor?',
@@ -256,7 +259,7 @@ const doc = {
         ),
         bullet(
           'Why a company and not one person?',
-          'You get a system that has already produced results for our clients, a strategist who runs it day to day, and me if anything feels off. If one person is out, the work keeps going.'
+          'You get a system that has already produced results, a strategist who runs it day to day, and me if anything feels off. If one person is out, the work keeps going.'
         ),
         bullet(
           "You don't need a website. Does the price drop?",
@@ -270,7 +273,7 @@ const doc = {
       heading: 'The first 90 days',
       intro: 'Contractual minimums. We ship above them.',
       months: [
-        month('Month 1', 'Foundations', ['Offsite, retreat and event pages live', 'One owner per search: Loopwell or Loop Studios', 'Schema and llms.txt', '20 articles', 'Baseline in ChatGPT, Perplexity, Claude and Google AI'], 'Loopwell read as a venue, not only a club'),
+        month('Month 1', 'Foundations', ['Offsite, retreat and event pages live', 'One owner per search: Loopwell or Loop Studios', 'Schema and llms.txt', '20 articles', 'AI and Google baseline'], 'Loopwell read as a venue, not only a club'),
         month('Month 2', 'Backing it up', ['20+ articles', '8-12 placements', 'Directory listings current and consistent', 'Blog cleaned up'], 'Loopwell ranking for offsite and event searches'),
         month('Month 3', 'The decision', ['20+ articles', '8-12 placements', 'Enquiries and bookings reviewed', 'Go or no-go on Loop Studios'], 'AI answers name Loopwell for NJ offsites'),
       ],
@@ -324,7 +327,7 @@ const doc = {
         bullet('Three months, billed monthly in USD.', 'The minimum gives the work a fair shot at proving itself. After it, month to month.'),
         bullet('You own everything.', 'Every page, article and listing stays yours if we stop.'),
         bullet('Later, for your clients.', "Once you've seen it work on your own companies, we can talk about Looney Content offering it to your clients."),
-        bullet('Next step:', "reply to my email with the company you want to start with, and we'll send the agreement. With Squarespace access and a short form from your team, the first pieces go live that Friday."),
+        bullet('Next step', "Reply to my email with the company you want to start with, and we'll send the agreement. With Squarespace access and a short form from your team, the first pieces go live that Friday."),
       ],
     }),
   ],
