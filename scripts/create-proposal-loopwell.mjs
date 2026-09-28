@@ -242,12 +242,12 @@ const doc = {
       items: [
         bullet(
           "Isn't this what Adaptify does?",
-          "Adaptify writes articles. Loopwell has 85, and they don't bring in offsite or event searches. We write from your team's own knowledge, a person on our team edits every piece, and then we get other sites to back it up. That backing is what Google and ChatGPT check before they recommend anyone."
+          "Adaptify is a tool, and a tool doesn't own the result. Loopwell has 85 articles from it, and they don't bring in offsite or event searches. If something hasn't moved results in three months, it isn't worth keeping, and that goes for us too. We run the strategy every day and write with AI, but people decide what to write and edit every piece. For Delshad Legal that's 166 published pieces since June."
         ),
         /* Checked 28 Sep: studios that outrank Loop Studios include Media City and Film Factory (DR 0) and Butter Tree (DR 7), so the other agency was partly right. */
         bullet(
           'Another agency called Loop Studios a simple fix. Is it?',
-          'Partly. Some studios that outrank Loop Studios have a lower domain rating than its 7 out of 100, so authority isn\'t what holds it back. What\'s missing is pages for the searches people type, and listings Google trusts. That\'s quick work, and it\'s where we\'d start if you add Loop Studios. The one fix that really is simple sits with Looney: looney-advertising.com still ranks #5 for "advertising agency nj", so redirect every old page when the rebrand retires it.'
+          'Partly. Authority isn\'t Loop Studios\' problem, since some studios that outrank it score lower. It\'s missing pages for the searches people type. The truly simple fix is on the Looney side: when looney-advertising.com retires, redirect every page, or its #5 for "advertising agency nj" goes with it.'
         ),
         bullet(
           'Why would I help a competitor?',
@@ -259,7 +259,7 @@ const doc = {
         ),
         bullet(
           'Why a company and not one person?',
-          'You get a system that has already produced results, a strategist who runs it day to day, and me if anything feels off. If one person is out, the work keeps going.'
+          "Because the work doesn't rest on one person. Our system measures every piece against results across all our clients, so what wins for one is used for all of them, and it learns from new data every day. The team meets daily to share what's working. One hire, however good with AI tools, starts from zero and works alone."
         ),
         bullet(
           "You don't need a website. Does the price drop?",
