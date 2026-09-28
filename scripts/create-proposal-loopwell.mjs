@@ -294,10 +294,13 @@ const doc = {
 
     /* 6 · proof */
     section('caseProofSection', {
-      heading: 'The same work, at four other companies',
+      heading: 'The same work, for us and for four clients',
       intro: "Ask and we'll put you in touch with one of these clients directly.",
       chartsPerCase: 1,
+      /* Our own study first: it is the climb Arnel showed Sean on the call. The two anonymous
+       * studies stay out: their charts end on 30 Jun and 24 Aug 2026. */
       slugs: [
+        'loudface-aeo-case-study',
         'delshad-legal-content-engine',
         'genie-teacher-organic-growth',
         'toku-ai-cited-pipeline',
