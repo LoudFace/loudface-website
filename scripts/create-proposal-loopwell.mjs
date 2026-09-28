@@ -1,0 +1,359 @@
+#!/usr/bin/env node
+/**
+ * Seed the Loopwell proposal (Sean Looney: Loopwell, Loop Studios, Looney
+ * Content) into the PRIVATE `proposals` Sanity dataset.
+ *
+ * Written from the 28 Sep 2026 intro call with Sean Looney. Numbers are live
+ * readings from the same day: Ahrefs domain rating and organic keywords for
+ * loopwithus.com, loopstudiosinc.com, looneycontent.com and
+ * looney-advertising.com; the loopwithus.com sitemap (85 Insights articles,
+ * tag pages excluded); DataForSEO Google Ads CPC for "team building nj".
+ *
+ * Usage:
+ *   node scripts/create-proposal-loopwell.mjs --dry-run
+ *   node scripts/create-proposal-loopwell.mjs
+ *   node scripts/create-proposal-loopwell.mjs --status=sent --valid-until=2026-10-28
+ *
+ * Env:
+ *   SANITY_PROPOSALS_WRITE_TOKEN   write token for the proposals dataset
+ *                                  (falls back to SANITY_API_TOKEN)
+ *   SANITY_PROPOSALS_DATASET       defaults to `proposals`
+ *   NEXT_PUBLIC_SANITY_PROJECT_ID  defaults to the LoudFace project
+ *
+ * It prints the link and the access code at the end. Nothing else prints them
+ * again, so keep that output.
+ */
+
+import { randomBytes, randomUUID } from 'node:crypto';
+import { createClient } from '@sanity/client';
+
+/* ── args ─────────────────────────────────────────────────────────────── */
+
+const args = process.argv.slice(2);
+const flag = (name, fallback) => {
+  const hit = args.find((a) => a.startsWith(`--${name}=`));
+  return hit ? hit.slice(name.length + 3) : fallback;
+};
+const has = (name) => args.includes(`--${name}`);
+
+const DRY_RUN = has('dry-run');
+const PROJECT_ID = process.env.NEXT_PUBLIC_SANITY_PROJECT_ID || 'xjjjqhgt';
+const DATASET = flag('dataset', process.env.SANITY_PROPOSALS_DATASET || 'proposals');
+const TOKEN = process.env.SANITY_PROPOSALS_WRITE_TOKEN || process.env.SANITY_API_TOKEN;
+const STATUS = flag('status', 'draft');
+const VALID_UNTIL = flag('valid-until', '2026-10-28');
+
+/* ── token + code ─────────────────────────────────────────────────────── */
+/* Kept in step with src/lib/proposal-token.ts — same alphabets, same lengths. */
+
+const TOKEN_ALPHABET = 'abcdefghijkmnpqrstuvwxyz23456789';
+const CODE_ALPHABET = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+const pick = (alphabet, length) =>
+  Array.from(randomBytes(length), (byte) => alphabet[byte & 31]).join('');
+
+const accessToken = flag('token', pick(TOKEN_ALPHABET, 26));
+const accessCode = flag('code', `${pick(CODE_ALPHABET, 4)}-${pick(CODE_ALPHABET, 4)}`);
+
+/* ── helpers ──────────────────────────────────────────────────────────── */
+
+const key = () => randomUUID().slice(0, 12);
+
+const para = (content, style = 'normal') => ({
+  _type: 'block',
+  _key: key(),
+  style,
+  markDefs: [],
+  children: (typeof content === 'string' ? [{ text: content }] : content).map((run) => ({
+    _type: 'span',
+    _key: key(),
+    text: run.text,
+    marks: run.bold ? ['strong'] : [],
+  })),
+});
+
+const bullet = (lead, text) => ({ _type: 'bulletItem', _key: key(), ...(lead ? { lead } : {}), text });
+const tier = (name, price, cadence, description, recommended = false) => ({
+  _type: 'pricingTier',
+  _key: key(),
+  name,
+  price,
+  cadence,
+  description,
+  ...(recommended ? { recommended } : {}),
+});
+const section = (type, fields) => ({ _type: type, _key: key(), ...fields });
+const withKeys = (items) => items.map((item) => ({ _key: key(), ...item }));
+
+const vendor = (name, share) => ({ _type: 'askAiVendor', _key: key(), name, share });
+const question = (q, short, vendors) => ({
+  _type: 'askAiQuestion',
+  _key: key(),
+  question: q,
+  short,
+  vendors: vendors.map(([name, share]) => vendor(name, share)),
+});
+const stat = (value, label, lead = false) => ({ _type: 'standingStat', _key: key(), value, label, lead });
+const trackItem = (count, text) => ({ _type: 'trackItem', _key: key(), ...(count ? { count } : {}), text });
+const track = (label, items) => ({ _type: 'track', _key: key(), label, items });
+const month = (label, title, items, proves) => ({ _type: 'monthPlan', _key: key(), label, title, items, proves });
+
+/* ── proof (shared with every proposal; the clips and reviews are LoudFace's own) ── */
+
+const clipStrip = {
+  heading: 'In their own words',
+  clips: withKeys([
+    {
+      _type: 'railClip',
+      name: 'Maksim',
+      label: 'on the $1M landing page',
+      duration: '1:35',
+      orientation: 'landscape',
+      posterUrl: 'https://cdn.sanity.io/images/xjjjqhgt/proposals/0ee26615f36fdce6a882a7399531da39d112e082-1280x720.jpg',
+      videoUrl: 'https://cdn.sanity.io/files/xjjjqhgt/proposals/b06b514be51d437bb81031a9f96cc6e5796767e6.mp4',
+    },
+    {
+      _type: 'railClip',
+      name: 'Dimer Health',
+      label: 'on the 288% lift',
+      duration: '0:29',
+      orientation: 'landscape',
+      posterUrl: 'https://cdn.sanity.io/images/xjjjqhgt/proposals/37b5fefb3cc5f173eeda1ecf2c46f4c1ac897dec-1280x720.jpg',
+      videoUrl: 'https://cdn.sanity.io/files/xjjjqhgt/proposals/cbba2c1526479ce38d8dab811802738ae3a1659b.mp4',
+    },
+    {
+      _type: 'railClip',
+      name: 'Daan · Brandfirm',
+      label: 'on why they chose us',
+      duration: '1:02',
+      orientation: 'landscape',
+      posterUrl: 'https://cdn.sanity.io/images/xjjjqhgt/proposals/77afe46408ad550baae0f60eeba5a26f0bd7ea9b-1280x720.jpg',
+      videoUrl: 'https://cdn.sanity.io/files/xjjjqhgt/proposals/57697fa16e0d045b8ba0bc804bf9223cc6cb8788.mp4',
+    },
+    {
+      _type: 'railClip',
+      name: 'Kasimir · Onne',
+      label: 'on working together',
+      duration: '0:27',
+      orientation: 'portrait',
+      posterUrl: 'https://cdn.sanity.io/images/xjjjqhgt/proposals/0ec5d86bc48b2dbef3ecb64e634868c38ef0dc8e-720x1280.jpg',
+      videoUrl: 'https://cdn.sanity.io/files/xjjjqhgt/proposals/f32240d1f970aead07a1da44be99062efeebd83c.mp4',
+    },
+    {
+      _type: 'railClip',
+      name: 'Elizabete · Reiterate',
+      label: 'on the work',
+      duration: '1:53',
+      orientation: 'landscape',
+      posterUrl: 'https://cdn.sanity.io/images/xjjjqhgt/proposals/de273c76a554c38b859f28b548117f29b28d6022-1280x720.jpg',
+      videoUrl: 'https://cdn.sanity.io/files/xjjjqhgt/proposals/77f7444f1da7ed7a221c1637d897a0f4ec3e87aa.mp4',
+    },
+  ]),
+};
+
+const proofRail = {
+  heading: 'Reviewed on',
+  platforms: withKeys([
+    { _type: 'reviewPlatform', platform: 'clutch', rating: 4.8, reviewCount: 2, note: 'both verified', url: 'https://clutch.co/profile/loudface' },
+    { _type: 'reviewPlatform', platform: 'google', rating: 5, reviewCount: 4, url: 'https://share.google/YNQOFTomnSaSIlSgb' },
+    { _type: 'reviewPlatform', platform: 'trustpilot', rating: 4.3, reviewCount: 9, note: 'every one 5 stars', url: 'https://www.trustpilot.com/review/loudface.co' },
+  ]),
+  quotesHeading: 'What they said',
+  quotes: withKeys([
+    { _type: 'railQuote', author: 'Maksim Polupanov', platform: 'trustpilot', text: 'One of the landing pages they designed has generated over $1M in sales so far.' },
+    { _type: 'railQuote', author: 'Christian Mailind', platform: 'trustpilot', text: 'We really felt that they cared for our project as if it were their own.' },
+    { _type: 'railQuote', author: 'Daan Smit', platform: 'trustpilot', text: 'We began receiving leads immediately after the launch of our campaign.' },
+    { _type: 'railQuote', author: 'Kevin Wong', company: 'Genie', platform: 'clutch', text: 'Working with LoudFace has been refreshing; we were surprised by their passion.' },
+    { _type: 'railQuote', author: 'Sarig Reichert', company: 'Dimer Health', platform: 'trustpilot', text: 'From start to finish, the team exceeded expectations.' },
+    { _type: 'railQuote', author: 'Shin Kim', platform: 'trustpilot', text: 'I have not had a feature request that they were not able to deliver on.' },
+    { _type: 'railQuote', author: 'Kristian Krogh Bang', platform: 'trustpilot', text: 'LoudFace is nothing short of phenomenal.' },
+    { _type: 'railQuote', author: 'Paul Butler Simpson', company: 'Transalis', platform: 'clutch', text: 'LoudFace met every deadline or before every deadline and was super responsive.' },
+    { _type: 'railQuote', author: 'Christian', platform: 'trustpilot', text: 'Professional, very helpful, communicated well, and met deadlines on time.' },
+  ]),
+};
+
+/* ── the document ─────────────────────────────────────────────────────── */
+
+const doc = {
+  _type: 'proposal',
+  _id: `proposal.loopwell.${accessToken.slice(0, 10)}`,
+  title: 'Loopwell x LoudFace: booking 80 Maple Avenue from Google and AI search',
+  clientName: 'Loopwell',
+  preparedFor: ['Sean Looney'],
+  token: accessToken,
+  accessCode,
+  validUntil: VALID_UNTIL,
+  status: STATUS,
+  contactEmail: 'arnel@loudface.co',
+  priceLine: '$5,000/mo per company. 3-month minimum, then month to month.',
+  heroQuote: "When we're not shooting here, the studio is just empty ... that's just lost revenue every day.",
+  heroQuoteBy: 'Sean Looney, on our call, 28 September 2026',
+  heroSummary: [
+    para(
+      "We make 80 Maple Avenue the place Google and ChatGPT name when a company near New York looks for an offsite, a team day or an event space. We'd start with Loopwell. It has the strongest site of your three, and Adaptify already runs on it, so you'll see exactly what we add."
+    ),
+  ],
+  clipStrip,
+  proofRail,
+  sections: [
+    /* 1 · where you are: three numbers, nothing more */
+    section('standingSection', {
+      heading: 'Where you are',
+      band: 'tint',
+      stats: [
+        stat('85', 'articles in Loopwell’s Insights section. Ahrefs finds one venue or event search it ranks for: "meditation event", 10 searches a month', true),
+        stat('7 / 100', 'Loop Studios’ domain rating on Ahrefs. It ranks on Google for its own name and nothing else'),
+        stat('#5', 'for "advertising agency nj", held by looney-advertising.com. The new looneycontent.com ranks for nothing yet'),
+      ],
+      closing:
+        "Volume isn't the gap. The pages don't answer what a company planning an offsite asks, and very few other sites say Loopwell or Loop Studios is the place to go. So Peerspace, PartySlate and Eventective take those searches. One free note on the rebrand: when looney-advertising.com goes, redirect every old page to its new one, or that #5 goes with it.",
+    }),
+
+    /* 2 · what we do */
+    section('tracksSection', {
+      heading: 'What we do',
+      band: 'white',
+      intro: 'Three tracks for Loopwell, all starting in week one.',
+      tracks: [
+        track('On your site', [
+          trackItem('Week 1', 'One page each for corporate offsites, team retreats, private events and wellness days, with rooms, capacity, packages and who has booked the space'),
+          trackItem('5 a week', "Articles built from your team's own knowledge: Nicole's corporate programmes, the author series, the 750 experiences. Not keyword templates"),
+          trackItem('Month 2', "The 85 Insights articles reviewed. The ones that bring nothing get folded into pages that do"),
+        ]),
+        track('Off your site', [
+          trackItem('2-3 a week', 'Mentions on the sites Google and AI answers already trust for NJ and NYC venues: PartySlate, Eventective, Peerspace, Tagvenue, local event roundups'),
+          trackItem(null, 'A review ask after every corporate event, so Google and Yelp show the bookings you already have'),
+          trackItem(null, 'How ChatGPT, Perplexity, Claude and Google AI describe Loopwell, checked every week'),
+        ]),
+        track('Your website', [
+          trackItem('Day 1', "We work inside Squarespace. Your designers keep the site, and we don't redesign anything you don't ask for"),
+          trackItem('Week 1', 'Venue and event schema, an llms.txt, and one owner per search between Loopwell and Loop Studios, so the two sites stop competing for the same event bookings'),
+          trackItem('Same day', 'A landing page when you need one, for a season, an event or a campaign'),
+        ]),
+      ],
+    }),
+
+    /* 3 · what Sean raised on the call */
+    section('bulletListSection', {
+      heading: 'What you asked on the call',
+      band: 'white',
+      items: [
+        bullet(
+          "Isn't this what Adaptify does?",
+          "Adaptify writes articles. Loopwell has 85 of them, and they don't bring in offsite or event searches. Our system writes too, but from your team's own knowledge, and a person on our team edits every piece. Then we get other sites to back it up, which is what Google and ChatGPT check before they recommend anyone. On Loopwell you'll see both side by side."
+        ),
+        bullet(
+          'Why would I help a competitor?',
+          "You won't. We don't trade with the venue down the street. We go after sites that already rank above you: venue directories, NJ and NYC event roundups, caterers, planners and HR blogs. Every trade has to help Loopwell more than the other side, and you see the list before anything goes out."
+        ),
+        bullet(
+          'What if we only do the setup?',
+          "The gains fade. Competitors keep publishing and earning links, and Google moves them up. That's why it runs month to month after the first three."
+        ),
+        bullet(
+          'Why a company and not one person?',
+          "You get a system that has already produced results for our clients, a strategist who runs it day to day, and me if anything feels off. If one person is out, the work keeps going."
+        ),
+        bullet(
+          "You don't need a website. Does the price drop?",
+          'No. The $5,000 pays for the content, the outreach and the reporting. The site work is there when you need a page. When you don\'t, that time goes into content and outreach.'
+        ),
+      ],
+    }),
+
+    /* 4 · the first 90 days */
+    section('monthsSection', {
+      heading: 'The first 90 days',
+      intro: 'Contractual minimums. We ship above them.',
+      months: [
+        month('Month 1', 'Foundations', ['Offsite, retreat and event pages live', 'One owner per search: Loopwell or Loop Studios', 'Schema and llms.txt', '20 articles', 'Baseline in ChatGPT, Perplexity, Claude and Google AI'], 'Loopwell read as a venue, not only a club'),
+        month('Month 2', 'Backing it up', ['20+ articles', '8-12 placements', 'Directory listings current and consistent', 'Insights section cleaned up'], 'Loopwell ranking for offsite and event searches'),
+        month('Month 3', 'The decision', ['20+ articles', '8-12 placements', 'Enquiries and bookings reviewed', 'Go or no-go on Loop Studios'], 'AI answers name Loopwell for NJ offsites'),
+      ],
+      note: 'Most clients see the curve turn by the end of month two. If nothing moves in three months, something is wrong and we tell you.',
+    }),
+
+    /* 5 · how we measure */
+    section('bulletListSection', {
+      heading: 'How we measure',
+      intro: 'Enquiries first.',
+      items: [
+        bullet('Offsite and event enquiries', 'from the booking and contact forms, tracked from week one. Every report starts with this number.'),
+        bullet('AI recommendations', 'how often ChatGPT, Perplexity, Claude and Google AI name Loopwell when a company asks for an offsite or event space near New York.'),
+        bullet('Google', 'rankings, impressions and clicks on the searches that book the building.'),
+        bullet(null, 'A written report every Friday, a monthly review with the next 30-day plan, and a weekly call.'),
+      ],
+    }),
+
+    /* 6 · proof */
+    section('caseProofSection', {
+      heading: 'The same work, at four other companies',
+      intro: "Ask and we'll put you in touch with any of these clients directly.",
+      chartsPerCase: 1,
+      slugs: [
+        'delshad-legal-content-engine',
+        'genie-teacher-organic-growth',
+        'toku-ai-cited-pipeline',
+        'trademomentum-niche-aeo-organic-growth',
+      ],
+    }),
+
+    /* 7 · investment */
+    section('pricingTiersSection', {
+      heading: 'Investment',
+      band: 'dark',
+      anchor:
+        '"Team building nj" costs $20 a click on Google Ads. $5,000 buys 250 of those clicks for one month, and they stop the day the budget does. The pages and mentions we build stay.',
+      tiers: [
+        tier('All three', "Let's talk", undefined, 'Loopwell, Loop Studios and Looney Content on one plan. We price it together.'),
+        tier('Two companies', '$10,000', 'per month', 'Loopwell and Loop Studios. One building, two sites, one plan.'),
+        tier('One company', '$5,000', 'per month', 'Loopwell. 5 articles a week, 2-3 placements a week, site work in Squarespace, full reporting.', true),
+      ],
+      note: 'Start with one. Add Loop Studios when Loopwell has earned it. 3-month minimum per company, then month to month. No setup fee.',
+    }),
+
+    /* 8 · terms */
+    section('bulletListSection', {
+      heading: 'Terms and next step',
+      band: 'dark',
+      items: [
+        bullet('Three months, billed monthly in USD.', 'The minimum gives the work a fair shot at proving itself. After it, month to month.'),
+        bullet('You own everything.', 'Every page, article and listing stays yours if we stop.'),
+        bullet('Kickoff the week you sign.', 'With Squarespace access and a short thought-leadership form from your team, the first pieces go live that Friday.'),
+        bullet('Later, for your clients:', "once you've seen it work on your own companies, we can talk about Looney Content offering it to your clients."),
+        bullet('Next step:', 'reply to my email with the company you want to start with, and we send the agreement.'),
+      ],
+    }),
+  ],
+};
+
+/* ── write ────────────────────────────────────────────────────────────── */
+
+if (DRY_RUN) {
+  console.log(JSON.stringify(doc, null, 2));
+  console.log(`\n[dry run] would write to dataset "${DATASET}" on project ${PROJECT_ID}`);
+  process.exit(0);
+}
+
+if (!TOKEN) {
+  console.error('Missing SANITY_PROPOSALS_WRITE_TOKEN (or SANITY_API_TOKEN). See docs/PROPOSALS.md.');
+  process.exit(1);
+}
+
+const client = createClient({
+  projectId: PROJECT_ID,
+  dataset: DATASET,
+  apiVersion: '2025-03-29',
+  useCdn: false,
+  token: TOKEN,
+});
+
+const created = await client.createOrReplace(doc);
+
+const base = process.env.PROPOSAL_BASE_URL || 'https://www.loudface.co';
+console.log(`Wrote ${created._id} to dataset "${DATASET}".`);
+console.log('');
+console.log(`  Link:   ${base}/p/${accessToken}`);
+console.log(`  Code:   ${accessCode}`);
+console.log(`  Status: ${STATUS}${STATUS === 'draft' ? '  (the link 404s until you set it to Sent)' : ''}`);
+console.log('');
+console.log('Send the link and the code in separate messages.');
