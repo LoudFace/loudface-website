@@ -259,7 +259,7 @@ const doc = {
         ),
         bullet(
           'Why a company and not one person?',
-          "Because the work doesn't rest on one person. Our system measures every piece against results across all our clients, so what wins for one is used for all of them, and it learns from new data every day. The team meets daily to share what's working. One hire, however good with AI tools, starts from zero and works alone."
+          "You get a strategist who works on Loopwell every day and does the heavy lifting. They tune the keyword and prompt strategy, plan the content, run the outreach and build the relationships behind every exchange, and check that the site, the voice and the plan hold up. Behind them is a team that meets daily and a system that measures every move against results across all our clients, so what wins for one gets used for all of them. One hire starts from zero and works alone."
         ),
         bullet(
           "You don't need a website. Does the price drop?",
