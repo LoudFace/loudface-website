@@ -242,7 +242,7 @@ const doc = {
       items: [
         bullet(
           "Isn't this what Adaptify does?",
-          "Adaptify is a tool, and a tool doesn't own the result. Loopwell has 85 articles from it, and they don't bring in offsite or event searches. If something hasn't moved results in three months, it isn't worth keeping, and that goes for us too. We run the strategy every day and write with AI, but people decide what to write and edit every piece. For Delshad Legal that's 166 published pieces since June."
+          "Adaptify writes articles, and articles are a small part of this work. Most of it happens off your site: getting Loopwell named on the directories, event roundups and review sites that Google and ChatGPT trust, and keeping every source consistent about who you are. On your site, we make sure AI crawlers can read everything and build the pages that book the building. A strategist runs all of it every day. Loopwell has 85 Adaptify articles, and they don't bring in offsite or event searches. If a tool hasn't moved results in three months, it isn't worth keeping."
         ),
         /* Checked 28 Sep: studios that outrank Loop Studios include Media City and Film Factory (DR 0) and Butter Tree (DR 7), so the other agency was partly right. */
         bullet(
