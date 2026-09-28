@@ -5,7 +5,7 @@ import Link from 'next/link';
 import type { HomeV11Content } from '@/lib/content-utils';
 import { ChatWindow } from './Bento';
 import { CLIENT_LOGOS } from './LogoGrid';
-import { ArrowRight, img } from './ui';
+import { ArrowRight, img, personAvatar } from './ui';
 import './chrome.css';
 
 /**
@@ -74,7 +74,7 @@ function Foot({ cta, onPick }: { cta: NavCta; onPick?: () => void }) {
       <span className="v11-nav-faces" aria-hidden="true">
         {FACES.map((f) => (
           // eslint-disable-next-line @next/next/no-img-element
-          <img loading="lazy" key={f} src={img(`avatars/${f}.png`)} alt="" width={26} height={26} />
+          <img loading="lazy" key={f} src={personAvatar(f)} alt="" width={26} height={26} />
         ))}
       </span>
       <span className="v11-nav-prompt">{cta.prompt}</span>

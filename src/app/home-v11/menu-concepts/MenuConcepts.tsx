@@ -6,7 +6,7 @@ import type { NavDropdown, NavV11Data } from '../NavV11';
 import { ChatWindow } from '../Bento';
 import { CLIENT_LOGOS } from '../LogoGrid';
 import { LiveChart } from '../LiveChart';
-import { ArrowRight, img } from '../ui';
+import { ArrowRight, img, personAvatar } from '../ui';
 import { Browser } from '../../service-v11/kit';
 import { SHOTS } from '../../service-v3/data';
 import type { ServiceExtras } from '../../service-v11/types';
@@ -65,7 +65,7 @@ function Foot({ cta }: { cta: MenuConceptProps['cta'] }) {
       <span className="v11-nav-faces" aria-hidden="true">
         {FACES.map((f) => (
           // eslint-disable-next-line @next/next/no-img-element
-          <img key={f} src={img(`avatars/${f}.png`)} alt="" width={26} height={26} />
+          <img key={f} src={personAvatar(f)} alt="" width={26} height={26} />
         ))}
       </span>
       <span className="v11-nav-prompt">{cta.prompt}</span>

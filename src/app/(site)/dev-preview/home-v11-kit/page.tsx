@@ -28,7 +28,7 @@ import { StageChart } from '../../../home-v11/StageChart';
 import { ChatWindow } from '../../../home-v11/Bento';
 import { LogoGrid } from '../../../home-v11/LogoGrid';
 import { Testimonials } from '../../../home-v11/Testimonials';
-import { Chip, Eyebrow, LfMark, SectionHead, SectionHeadNode, ArrowLink, img } from '../../../home-v11/ui';
+import { Chip, Eyebrow, LfMark, SectionHead, SectionHeadNode, ArrowLink, img, personAvatar } from '../../../home-v11/ui';
 import { BarsCell, ChartCell, CheckPill, QuoteCell, Tag, Ui, UiHead, VideoCell } from '../../../service-v11/kit';
 import { Redline, StatusList, Wireframe } from '../../../service-v11/pages/shared';
 import { TileChart } from '../../../service-v11/pages/growth-autopilot';
@@ -308,7 +308,7 @@ export default async function KitPage() {
           <div className="cs-cta" style={{ width: 280 }}>
             <div className="v11-stack is-34">
               {/* eslint-disable-next-line @next/next/no-img-element */}
-              {['arnel-bukva', 'tamara-pavlovic', 'andrea-van-wyk', 'abhay-tyagi'].map((w) => <img key={w} src={img(`avatars/${w}.png`)} alt="" width={30} height={30} className="v11-av" />)}
+              {['arnel-bukva', 'tamara-pavlovic', 'andrea-van-wyk', 'abhay-tyagi'].map((w) => <img key={w} src={personAvatar(w)} alt="" width={30} height={30} className="v11-av" />)}
             </div>
             <div className="cs-cta-h">Want results like this?</div>
             <p>A 30-minute call on where your category’s growth is going.</p>

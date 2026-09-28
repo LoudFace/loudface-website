@@ -11,7 +11,7 @@ import { Marks } from '../home-v11/ResultCase';
 import { KeyResults } from '../home-v11/KeyResults';
 import { ChartPanel } from '../home-v11/ChartPanel';
 import { BeforeAfterChart } from '../home-v11/BeforeAfterChart';
-import { ArrowRight, ArrowUpRight, SectionHeadNode, img } from '../home-v11/ui';
+import { ArrowRight, ArrowUpRight, SectionHeadNode, img, personAvatar } from '../home-v11/ui';
 import { Browser, QuoteCell, VideoCell } from '../service-v11/kit';
 import { StageChart } from '../home-v11/StageChart';
 import { EngineIcon } from '../service-v11/pages/shared';
@@ -277,7 +277,7 @@ export function CaseStudyV11({ v, home, hero = 'report' }: { v: CaseView; home: 
             <div className="cs-cta">
               <div className="v11-stack is-34">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
-                {TEAM.map((w) => <img loading="lazy" key={w} src={img(`avatars/${w}.png`)} alt="" width={30} height={30} className="v11-av" />)}
+                {TEAM.map((w) => <img loading="lazy" key={w} src={personAvatar(w)} alt="" width={30} height={30} className="v11-av" />)}
               </div>
               <div className="cs-cta-h">Want results like this?</div>
               <p>A 30-minute call on where your category’s growth is going.</p>

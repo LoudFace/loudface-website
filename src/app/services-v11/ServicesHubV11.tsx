@@ -5,7 +5,7 @@ import { Closing } from '../home-v11/Closing';
 import { FooterV11 } from '../home-v11/FooterV11';
 import { LogoGrid } from '../home-v11/LogoGrid';
 import { Reveal } from '../home-v11/Reveal';
-import { ArrowRight, ArrowUpRight, Eyebrow, LfMark, SectionHeadNode, img } from '../home-v11/ui';
+import { ArrowRight, ArrowUpRight, Eyebrow, LfMark, SectionHeadNode, img, personAvatar } from '../home-v11/ui';
 import { artifactSrc, SHOTS } from '../service-v3/data';
 import { TRACK_BY_SLUG } from '../services-v3/data';
 import { Browser } from '../service-v11/kit';
@@ -171,7 +171,7 @@ export function ServicesHubV11({ c, home, images }: { c: ServicesContent; home: 
               <div className="v11-stack is-34">
                 {['arnel-bukva', 'tamara-pavlovic', 'andrea-van-wyk', 'abhay-tyagi'].map((w) => (
                   // eslint-disable-next-line @next/next/no-img-element
-                  <img loading="lazy" key={w} src={img(`avatars/${w}.png`)} alt="" width={34} height={34} className="v11-av" />
+                  <img loading="lazy" key={w} src={personAvatar(w)} alt="" width={34} height={34} className="v11-av" />
                 ))}
               </div>
               <span>{c.coverCta.responseTime}</span>

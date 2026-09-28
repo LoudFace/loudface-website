@@ -25,14 +25,9 @@
 .ab-member.is-peach .ab-member-card { background: radial-gradient(ellipse 80% 70% at 50% 100%, #f9c2ab 0%, rgba(249,194,171,0) 70%), #fde3d7; }
 .ab-member.is-sand .ab-member-card { background: radial-gradient(ellipse 80% 70% at 50% 100%, #f4d78f 0%, rgba(244,215,143,0) 70%), #fcedc8; }
 .ab-member.is-mint .ab-member-card { background: radial-gradient(ellipse 80% 70% at 50% 100%, #b5e6cd 0%, rgba(181,230,205,0) 70%), #dcf2e6; }
-/* the frame clips the photo to the card's sides and rounded bottom but leaves 40cqw open above, so the head can rise */
-.ab-member-frame { position: absolute; left: 0; right: 0; bottom: 0; top: -40cqw; overflow: hidden; border-radius: 0 0 22px 22px; }
-.ab-member-cut { position: absolute; display: block; height: auto; max-width: none; }
-/* one face size (50cqw wide) and one eye line (face top 2cqw below the card's top) for all four, measured with Vision */
-.ab-member.is-1 .ab-member-cut { width: 163.6cqw; left: -31.9cqw; top: 2.7cqw; }
-.ab-member.is-2 .ab-member-cut { width: 130cqw; left: -14.9cqw; top: 10.9cqw; }
-.ab-member.is-3 .ab-member-cut { width: 100cqw; left: 0; top: 18.1cqw; }
-.ab-member.is-4 .ab-member-cut { width: 158.6cqw; left: -29.7cqw; top: 4.7cqw; }
+/* the frame is the card: the studio photo fills it as shot */
+.ab-member-frame { position: absolute; inset: 0; overflow: hidden; border-radius: 22px; }
+.ab-member-cut { display: block; width: 100%; height: 100%; object-fit: cover; }
 .ab-member figcaption { padding: 16px 2px 0; }
 .ab-member .is-name { font-family: var(--font-heading); font-weight: 500; font-size: 19px; letter-spacing: -0.015em; color: var(--ink);  display: block; text-decoration: none; }
 .ab-member a.is-name:hover { text-decoration: underline; text-underline-offset: 3px; text-decoration-thickness: 1px; }

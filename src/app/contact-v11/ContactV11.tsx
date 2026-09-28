@@ -3,7 +3,7 @@ import { Closing } from '../home-v11/Closing';
 import { FooterV11 } from '../home-v11/FooterV11';
 import { LogoGrid } from '../home-v11/LogoGrid';
 import { Reveal } from '../home-v11/Reveal';
-import { Eyebrow, img } from '../home-v11/ui';
+import { Eyebrow, img, personPhoto } from '../home-v11/ui';
 import { OFFICES } from '../contact-v3/data';
 import { NextSteps } from './NextSteps';
 import { strip } from '@/lib/inline-edit/mark';
@@ -57,7 +57,7 @@ export function ContactV11({ c, home, steps }: { c: ContactContent; home: HomeV1
             </div>
             <div className="ct-call-who">
               {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src={img('team/arnel-bukva.jpg')} alt="" width={56} height={56} />
+              <img src={personPhoto('arnel-bukva')} alt="" width={56} height={56} />
               <div>
                 <b>{h.cardTitle}</b>
                 <span>{h.cardMetaVideo} · {h.cardMetaFounder}</span>
@@ -137,7 +137,7 @@ export function ContactV11({ c, home, steps }: { c: ContactContent; home: HomeV1
             {PEOPLE.map((p) => (
               <figure key={p.slug}>
                 {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={img(`team/${p.slug}.jpg`)} alt={p.name} width={300} height={360} loading="lazy" />
+                <img src={personPhoto(p.slug)} alt={p.name} width={300} height={360} loading="lazy" />
                 <figcaption><b>{p.name}</b><span>{p.title}</span></figcaption>
               </figure>
             ))}

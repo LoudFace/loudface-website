@@ -4,7 +4,7 @@ import type { OpenRole, OpenRolesResult } from '@/lib/careers-data';
 import { FooterV11 } from '../home-v11/FooterV11';
 import { LogoGrid } from '../home-v11/LogoGrid';
 import { Reveal } from '../home-v11/Reveal';
-import { ArrowRight, ArrowUpRight, Eyebrow, img } from '../home-v11/ui';
+import { ArrowRight, ArrowUpRight, Eyebrow, img, personAvatar, personPhoto } from '../home-v11/ui';
 import { strip } from '@/lib/inline-edit/mark';
 
 /**
@@ -55,7 +55,7 @@ export function CareersV11({ result, home, c }: { result: OpenRolesResult; home:
         <div className="cr2-faces" aria-hidden="true">
           {TEAM.map((slug) => (
             // eslint-disable-next-line @next/next/no-img-element
-            <img key={slug} src={img(`team/${slug}.jpg`)} alt="" width={580} height={704} />
+            <img key={slug} src={personPhoto(slug)} alt="" width={580} height={704} />
           ))}
         </div>
       </section>
@@ -108,7 +108,7 @@ export function CareersV11({ result, home, c }: { result: OpenRolesResult; home:
                   {i === 2 && (
                     <div className="cr2-arnel">
                       {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img loading="lazy" src={img('avatars/arnel-bukva.png')} alt="" width={36} height={36} />
+                      <img loading="lazy" src={personAvatar('arnel-bukva')} alt="" width={36} height={36} />
                       <span><b>{c.how.founder}</b> {c.how.founderNote}</span>
                     </div>
                   )}

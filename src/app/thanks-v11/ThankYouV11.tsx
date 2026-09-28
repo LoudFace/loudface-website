@@ -4,7 +4,7 @@ import { NextSteps } from '../contact-v11/NextSteps';
 import { FooterV11 } from '../home-v11/FooterV11';
 import { LogoGrid } from '../home-v11/LogoGrid';
 import { Reveal } from '../home-v11/Reveal';
-import { ArrowUpRight, Eyebrow, img } from '../home-v11/ui';
+import { ArrowUpRight, Eyebrow, img, personPhoto } from '../home-v11/ui';
 
 /**
  * /thank-you in v11 (2026-09-26), after someone books a call. The confirmation beside the booked call itself (06-A
@@ -39,7 +39,7 @@ export function ThankYouV11({ t, contact, steps, home, blogCover }: { t: ThankYo
             </div>
             <div className="ct-call-who">
               {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src={img('team/arnel-bukva.jpg')} alt="" width={56} height={56} />
+              <img src={personPhoto('arnel-bukva')} alt="" width={56} height={56} />
               <div>
                 <b>{h.cardTitle}</b>
                 <span>{h.cardMetaVideo} · {h.cardMetaFounder}</span>

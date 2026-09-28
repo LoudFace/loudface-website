@@ -16,8 +16,7 @@ const OUT = join(process.cwd(), 'public/images/home-v11');
 const jobs = [
   // faces shown at 32-40px
   ...['people/kenneth-o-friel.png', 'people/daan-smit.png'].map((f) => ({ src: f, out: f.replace(/\.png$/, '.webp'), width: 160, q: 82 })),
-  // the About cutouts, shown at up to 290px wide (580 is 2x), transparency kept
-  ...['abhay-tyagi', 'andrea-van-wyk', 'tamara-pavlovic', 'arnel-bukva'].map((n) => ({ src: `about/cut-${n}.png`, out: `about/cut-${n}.webp`, width: 580, q: 82 })),
+  // the leads' photos and avatars come from scripts/design/team-photos.py since 2026-09-28 (the About cutouts are gone)
   // the homepage bento photos, shown at up to ~636px wide
   ...['ai', 'design', 'search', 'build'].map((k) => ({ src: `bento-${k}.jpg`, out: `bento-${k}.webp`, width: 1272, q: 78 })),
   // full-bleed photos: three widths each for srcset
@@ -30,7 +29,7 @@ const jobs = [
 ];
 
 // In place, by width: team avatars shown at 20-44px, client icons at 16-30px, and the logos below.
-const AVATARS = ['abhay-tyagi', 'andrea-van-wyk', 'arnel-bukva', 'chandana-pitta', 'david-dobrijevic', 'rezwan-nahid', 'tamara-pavlovic'];
+const AVATARS = ['chandana-pitta', 'david-dobrijevic', 'rezwan-nahid'];
 const ICONS = ['fav-ceipal', 'fav-claude', 'fav-dimer', 'trademomentum-icon', 'genie-icon', 'fav-gemini'];
 const inPlace = [
   ...AVATARS.map((n) => ({ src: `avatars/${n}.png`, width: 96, photo: true })),

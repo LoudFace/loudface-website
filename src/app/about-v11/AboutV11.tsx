@@ -8,7 +8,7 @@ import { Closing } from '../home-v11/Closing';
 import { FooterV11 } from '../home-v11/FooterV11';
 import { Reveal } from '../home-v11/Reveal';
 import { QuoteCard } from '../home-v11/Testimonials';
-import { ArrowRight, ArrowUpRight, LfMark, SectionHeadNode, img } from '../home-v11/ui';
+import { ArrowRight, ArrowUpRight, LfMark, SectionHeadNode, img, personPhoto } from '../home-v11/ui';
 import { Browser, Tag, Ui, UiHead } from '../service-v11/kit';
 import { SHOTS } from '../service-v3/data';
 import { strip } from '@/lib/inline-edit/mark';
@@ -76,10 +76,10 @@ export function AboutV11({ c, home, data }: { c: AboutV11Content; home: HomeV11C
             {c.team.people.map((p, i) => (
               <figure key={p.person} className={`ab-member is-${i + 1} ${GROUND[i]}`}>
                 <div className="ab-member-card">
-                  {/* the photo is cropped so every face is the same size and on the same line; its head may rise above the card. No role chips: every lead runs the whole account (Arnel, 2026-09-25) */}
+                  {/* the studio photo fills the card as shot, background kept (Arnel, 2026-09-28). No role chips: every lead runs the whole account (Arnel, 2026-09-25) */}
                   <div className="ab-member-frame">
                     {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img className="ab-member-cut" src={img(`about/cut-${TEAM[i]}.webp`)} alt="" width={580} height={704} fetchPriority={i === 0 ? 'high' : undefined} />
+                    <img className="ab-member-cut" src={personPhoto(TEAM[i])} alt="" width={800} height={800} fetchPriority={i === 0 ? 'high' : undefined} />
                   </div>
                 </div>
                 <figcaption>
@@ -125,7 +125,7 @@ export function AboutV11({ c, home, data }: { c: AboutV11Content; home: HomeV11C
             </article>
             <figure className="ab-polaroid" aria-hidden="true">
               {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src={img('about/cut-arnel-bukva.webp')} alt="" width={150} height={182} loading="lazy" />
+              <img src={personPhoto('arnel-bukva')} alt="" width={150} height={150} loading="lazy" />
             </figure>
             <svg className="ab-clip" width="26" height="74" viewBox="0 0 26 74" fill="none" aria-hidden="true">
               <path d="M8 18v38a5 5 0 0 0 10 0V12a8 8 0 0 0-16 0v46a11 11 0 0 0 22 0V22" stroke="#9aa0ad" strokeWidth="2.6" strokeLinecap="round" />

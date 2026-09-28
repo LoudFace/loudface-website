@@ -6,7 +6,7 @@ import { BlogBodyV3 } from '../blog-v3/BlogBodyV3';
 import { Closing } from '../home-v11/Closing';
 import { FooterV11 } from '../home-v11/FooterV11';
 import { Reveal } from '../home-v11/Reveal';
-import { ArrowRight, LfMark, SectionHeadNode, img } from '../home-v11/ui';
+import { ArrowRight, LfMark, SectionHeadNode, personAvatar } from '../home-v11/ui';
 import { PostCard } from './PostCard';
 import { PostCover } from './PostCover';
 import type { BlogPostView } from './view';
@@ -92,7 +92,7 @@ export function BlogPostV11({ c, home, v, nextStep = false }: { c: BlogV11Conten
               <div className="cs-cta">
                 <div className="v11-stack is-34">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
-                  {TEAM.map((w) => <img loading="lazy" key={w} src={img(`avatars/${w}.png`)} alt="" width={30} height={30} className="v11-av" />)}
+                  {TEAM.map((w) => <img loading="lazy" key={w} src={personAvatar(w)} alt="" width={30} height={30} className="v11-av" />)}
                 </div>
                 <div className="cs-cta-h">{t.ctaHeading}</div>
                 <p>{t.ctaBody}</p>

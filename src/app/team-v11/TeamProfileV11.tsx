@@ -6,7 +6,7 @@ import { Closing } from '../home-v11/Closing';
 import { FooterV11 } from '../home-v11/FooterV11';
 import { Reveal } from '../home-v11/Reveal';
 import type { HomeV11Data } from '../home-v11/data';
-import { ArrowRight, ArrowUpRight, Eyebrow, img } from '../home-v11/ui';
+import { ArrowRight, ArrowUpRight, Eyebrow, personPhoto } from '../home-v11/ui';
 import { ServiceResults } from '../service-v11/proof';
 import { strip } from '@/lib/inline-edit/mark';
 
@@ -72,7 +72,7 @@ export function TeamProfileV11({ v, c, home, data }: { v: TeamProfileView; c: Te
         <div className="v11-wrap tp-hero-grid">
           <figure className="tp-portrait">
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src={img(`team/${v.slug}.jpg`)} alt={strip(`${v.name}, ${title ?? 'LoudFace'}`)} width={580} height={704} fetchPriority="high" />
+            <img src={personPhoto(v.slug)} alt={strip(`${v.name}, ${title ?? 'LoudFace'}`)} width={580} height={704} fetchPriority="high" />
           </figure>
           <div className="tp-hero-copy">
             <nav className="tp-crumb" aria-label="Breadcrumb">
@@ -144,7 +144,7 @@ export function TeamProfileV11({ v, c, home, data }: { v: TeamProfileView; c: Te
             {team.map((o) => (
               <Link key={o.slug} href={`/team/${o.slug}`} className="tp-face">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={img(`team/${o.slug}.jpg`)} alt="" width={580} height={704} loading="lazy" />
+                <img src={personPhoto(o.slug)} alt="" width={580} height={704} loading="lazy" />
                 <span className="is-name">{o.name}<ArrowRight /></span>
                 <span className="is-title">{titleOf(o.slug) ?? o.jobTitle}</span>
               </Link>

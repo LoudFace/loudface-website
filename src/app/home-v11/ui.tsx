@@ -6,6 +6,16 @@ import { asset } from '@/lib/assets';
 
 export const img = (p: string) => asset(`/images/home-v11/${p}`);
 
+/**
+ * A person's photo and round avatar, by slug. /images is cached for a year (next.config.ts), so a new photo gets a new
+ * file name, never new bytes at the old path: add the suffix here and name both files to match
+ * (scripts/design/team-photos.py writes them).
+ */
+const PHOTO_SUFFIX: Record<string, string> = { 'arnel-bukva': '-v2', 'tamara-pavlovic': '-v2', 'andrea-van-wyk': '-v2', 'abhay-tyagi': '-v2' };
+const photoName = (slug: string) => `${slug}${PHOTO_SUFFIX[slug] ?? ''}`;
+export const personPhoto = (slug: string) => img(`team/${photoName(slug)}.jpg`);
+export const personAvatar = (slug: string) => img(`avatars/${photoName(slug)}.png`);
+
 export function Eyebrow({ children, dot, color }: { children: ReactNode; dot?: string; color?: string }) {
   return (
     <div className="v11-eyebrow" style={{ '--dot': dot, color } as CSSProperties}>

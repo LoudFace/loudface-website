@@ -3,7 +3,7 @@ import type { CareersV11Content, HomeV11Content } from '@/lib/content-utils';
 import type { ApplicationOpeningResult } from '@/lib/careers-data';
 import { CareersApplicationForm } from '../(site)/careers/apply/_components/CareersApplicationForm';
 import { FooterV11 } from '../home-v11/FooterV11';
-import { Eyebrow, img } from '../home-v11/ui';
+import { Eyebrow, personPhoto } from '../home-v11/ui';
 
 /**
  * /careers/apply in v11 (2026-09-26): the role and how we hire beside the live form (CareersApplicationForm, restyled
@@ -39,7 +39,7 @@ export function ApplyV11({ c, home, openingResult }: { c: CareersV11Content; hom
                 {READERS.map((r) => (
                   <figure key={r.slug}>
                     {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img src={img(`team/${r.slug}.jpg`)} alt="" width={580} height={704} />
+                    <img src={personPhoto(r.slug)} alt="" width={580} height={704} />
                     <figcaption>{r.name}</figcaption>
                   </figure>
                 ))}

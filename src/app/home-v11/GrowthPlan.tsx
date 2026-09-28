@@ -1,7 +1,7 @@
 import { Caveat } from 'next/font/google';
 import type { HomeV11Content } from '@/lib/content-utils';
 import { PlanTabs } from './PlanTabs';
-import { LfMark, SectionHead, img } from './ui';
+import { LfMark, SectionHead, personAvatar } from './ui';
 
 /**
  * Plan and reporting, told through the documents a client actually receives: the plan in week one, the Friday
@@ -51,7 +51,7 @@ const Letterhead = ({ c, meta }: { c: C; meta: string }) => (
 const Signature = ({ c }: { c: C }) => (
   <div className="v11-sheet-sign">
     {/* eslint-disable-next-line @next/next/no-img-element */}
-    <img loading="lazy" src={img('avatars/arnel-bukva.png')} alt="" width={36} height={36} />
+    <img loading="lazy" src={personAvatar('arnel-bukva')} alt="" width={36} height={36} />
     <span>
       <span className="is-name">{c.sign}</span>
       <span className="is-role">{c.signRole}</span>
@@ -96,7 +96,7 @@ function NoteSheet({ c }: { c: C }) {
       <p className="v11-sheet-body">{n.ask}</p>
       <div className="v11-sheet-sign is-small">
         {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img loading="lazy" src={img('avatars/arnel-bukva.png')} alt="" width={30} height={30} />
+        <img loading="lazy" src={personAvatar('arnel-bukva')} alt="" width={30} height={30} />
         <span className="is-name">{n.signOff}</span>
       </div>
     </div>

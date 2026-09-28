@@ -1,5 +1,5 @@
 import type { ContactContent, PricingV11Content } from '@/lib/content-utils';
-import { LfMark, img } from '../home-v11/ui';
+import { LfMark, img, personPhoto } from '../home-v11/ui';
 
 /**
  * What happens after someone books: the four steps from contact.json, each with the thing that arrives (the booked
@@ -40,7 +40,7 @@ export function NextSteps({ n, steps, showSlot = true }: { n: ContactContent['ne
               <div className="ct-ui">
                 <div className="ct-msg">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img loading="lazy" src={img('team/tamara-pavlovic.jpg')} alt="" width={28} height={28} />
+                  <img loading="lazy" src={personPhoto('tamara-pavlovic')} alt="" width={28} height={28} />
                   <div><div className="ct-msg-head"><b>{steps.kickoff.from}</b><span>{steps.kickoff.time}</span></div><p>{steps.kickoff.message}</p></div>
                 </div>
               </div>

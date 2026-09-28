@@ -7,7 +7,7 @@ import { FooterV11 } from '../home-v11/FooterV11';
 import { LogoGrid } from '../home-v11/LogoGrid';
 import { Reveal } from '../home-v11/Reveal';
 import { QuoteCard } from '../home-v11/Testimonials';
-import { ArrowRight, Eyebrow, LfMark, SectionHeadNode, img } from '../home-v11/ui';
+import { ArrowRight, Eyebrow, LfMark, SectionHeadNode, personAvatar } from '../home-v11/ui';
 import { Browser, Tag, Ui, UiHead } from '../service-v11/kit';
 import { SHOTS } from '../service-v3/data';
 import { strip } from '@/lib/inline-edit/mark';
@@ -54,7 +54,7 @@ export function Board({ b }: { b: PricingV11Content['boards'][number] }) {
             <span className="is-task">{l.task}</span>
             <span className={`is-state ${strip(l.state) === 'Live' ? 'is-live' : ''}`}>{l.state}</span>
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src={img(`avatars/${LANE_WHO[i]}.png`)} alt="" width={22} height={22} />
+            <img src={personAvatar(LANE_WHO[i])} alt="" width={22} height={22} />
           </div>
         ))}
         {/* the rows this plan does not run yet: queued work, waiting for a free lane */}
@@ -161,7 +161,7 @@ export function PricingV11({ c, x, home, data }: { c: PricingContent; x: Pricing
                       <Ui className="pr-mini">
                         <div className="pr-msg">
                           {/* eslint-disable-next-line @next/next/no-img-element */}
-                          <img loading="lazy" src={img('avatars/tamara-pavlovic.png')} alt="" width={28} height={28} />
+                          <img loading="lazy" src={personAvatar('tamara-pavlovic')} alt="" width={28} height={28} />
                           <div><div className="pr-msg-head"><b>{st.kickoff.from}</b><span>{st.kickoff.time}</span></div><p>{st.kickoff.message}</p></div>
                         </div>
                       </Ui>
@@ -264,7 +264,7 @@ export function PricingV11({ c, x, home, data }: { c: PricingContent; x: Pricing
                       {x.boards[1].lanes.map((l, i) => (
                         <div key={l.task} className="pr-mini-check"><Check /><span>{l.task}</span>
                           {/* eslint-disable-next-line @next/next/no-img-element */}
-                          <img loading="lazy" src={img(`avatars/${LANE_WHO[i]}.png`)} alt="" width={20} height={20} />
+                          <img loading="lazy" src={personAvatar(LANE_WHO[i])} alt="" width={20} height={20} />
                         </div>
                       ))}
                     </Ui>
@@ -333,7 +333,7 @@ export function PricingV11({ c, x, home, data }: { c: PricingContent; x: Pricing
             <p className="pr-faq-sub">{c.faq.panelText}</p>
             <div className="pr-person">
               {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img loading="lazy" src={img('avatars/arnel-bukva.png')} alt="" width={44} height={44} />
+              <img loading="lazy" src={personAvatar('arnel-bukva')} alt="" width={44} height={44} />
               <div><b>{x.faq.personName}</b><span>{x.faq.personRole}</span><a href={`mailto:${strip(x.faq.email)}`}>{x.faq.email}</a></div>
             </div>
             <div className="pr-stats">

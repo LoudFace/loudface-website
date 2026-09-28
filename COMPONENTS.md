@@ -404,6 +404,7 @@ at `/dev-preview/home-v11-kit` and on the Paper page "Design system · v11". Not
 | `StageChart` | `home-v11/StageChart.tsx` | Result drawn white on the indigo stage; `size="slide"` (rail) or `"hero"` | No |
 | `QuoteCard` | `home-v11/Testimonials.tsx` | Client number and quote on the client's tint | No |
 | `SectionHeadNode` | `home-v11/ui.tsx` | `SectionHead` for headings passed as markup | No |
+| `personPhoto(slug)`, `personAvatar(slug)` | `home-v11/ui.tsx` | URL of a person's photo (square, slots crop it with `object-fit: cover`) and round avatar. Always use these, never `img('team/…')`: a new photo gets a new file name via `PHOTO_SUFFIX`, since `/images` is cached for a year. New photos: `scripts/design/team-photos.py` | — |
 | `ChatWindow` | `home-v11/Bento.tsx` | The ChatGPT answer window at true size. Props: `c` (the chat copy), `className?` (`is-hero` = service hero picture size), `sourceIcon?` (the first source's favicon, default Toku; `null` = plain placeholder for an example answer) | No |
 | `KeyResults` | `home-v11/KeyResults.tsx` | Big figures with a short label and a quiet note each. Props: `items: { value, label, note? }[]`. Figures stay on one line; the row shrinks every figure together until the longest string value fits its column (`--n`, container units) | No |
 | `ChartPanel` | `home-v11/ChartPanel.tsx` | One live chart with title and source only. Props: `title`, `source?`, `series`, `format`, `tip`, `lead?` (full width, labelled pin), `height?` | Yes (LiveChart) |

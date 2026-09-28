@@ -3,7 +3,7 @@ import type { HomeV11Content } from '@/lib/content-utils';
 import type { Series } from './data';
 import { Pin } from './Chart';
 import { LiveChart } from './LiveChart';
-import { Chip, SectionHead, img } from './ui';
+import { Chip, SectionHead, img, personAvatar } from './ui';
 
 type C = HomeV11Content['route'];
 
@@ -25,7 +25,7 @@ const TOOL_ICONS = ['logos/fav-google.png', 'logos/peec-icon.png', 'logos/postho
 
 const Avatar = ({ who, size = 22 }: { who: string; size?: number }) => (
   // eslint-disable-next-line @next/next/no-img-element
-  <img loading="lazy" src={img(`avatars/${who}.png`)} alt="" width={size} height={size} className="v11-av" />
+  <img loading="lazy" src={personAvatar(who)} alt="" width={size} height={size} className="v11-av" />
 );
 
 function CallFragment({ c }: { c: C['call'] }) {

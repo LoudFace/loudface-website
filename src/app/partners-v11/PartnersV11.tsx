@@ -4,7 +4,7 @@ import { PartnersCTALink } from '../(site)/partners/_components/PartnersCTALink'
 import { FooterV11 } from '../home-v11/FooterV11';
 import { LogoGrid } from '../home-v11/LogoGrid';
 import { Reveal } from '../home-v11/Reveal';
-import { ArrowRight, Eyebrow, LfMark, img } from '../home-v11/ui';
+import { ArrowRight, Eyebrow, LfMark, personPhoto } from '../home-v11/ui';
 import { IndustryVoices } from '../seo-for-v11/voices';
 
 /**
@@ -157,7 +157,7 @@ export function PartnersV11({ c, home }: { c: PartnersV11Content; home: HomeV11C
             {LEADS.map((p) => (
               <figure key={p.slug}>
                 {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={img(`team/${p.slug}.jpg`)} alt="" width={580} height={704} loading="lazy" />
+                <img src={personPhoto(p.slug)} alt="" width={580} height={704} loading="lazy" />
                 <figcaption>{p.name}</figcaption>
               </figure>
             ))}

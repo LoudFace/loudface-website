@@ -7,7 +7,7 @@ import { ChatWindow } from '../home-v11/Bento';
 import { Closing } from '../home-v11/Closing';
 import { FooterV11 } from '../home-v11/FooterV11';
 import { Reveal } from '../home-v11/Reveal';
-import { Eyebrow, img } from '../home-v11/ui';
+import { Eyebrow, img, personPhoto } from '../home-v11/ui';
 import { strip } from '@/lib/inline-edit/mark';
 
 /**
@@ -97,7 +97,7 @@ export function WebinarV11({ c, audit, home }: { c: WebinarAiSearchContent; audi
             {c.speakers.people.map((p) => (
               <figure key={p.photo} className="wb-speaker">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={strip(p.photo) === 'arnel-bukva' ? img('team/arnel-bukva.jpg') : asset(`/images/speakers/${strip(p.photo)}.jpg`)} alt={strip(p.person)} width={320} height={320} loading="lazy" />
+                <img src={strip(p.photo) === 'arnel-bukva' ? personPhoto('arnel-bukva') : asset(`/images/speakers/${strip(p.photo)}.jpg`)} alt={strip(p.person)} width={320} height={320} loading="lazy" />
                 <figcaption>
                   <b>{p.person}</b>
                   <span className="is-role">{p.role}</span>

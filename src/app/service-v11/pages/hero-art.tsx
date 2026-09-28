@@ -1,7 +1,7 @@
 import { Fragment, type ReactNode } from 'react';
 import type { Series } from '../../home-v11/data';
 import { ChartPanel } from '../../home-v11/ChartPanel';
-import { img } from '../../home-v11/ui';
+import { img, personAvatar } from '../../home-v11/ui';
 import { Tag } from '../kit';
 import { EngineIcon } from './shared';
 
@@ -94,7 +94,7 @@ export function GrowthBoard({ title, meta, cols }: { title: string; meta: string
                 <b>{t.t}</b>
                 <div className="sv-ha-task-foot">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img src={img(`avatars/${t.who}.png`)} alt="" width={22} height={22} />
+                  <img src={personAvatar(t.who)} alt="" width={22} height={22} />
                   <span>{t.when}</span>
                 </div>
               </div>
@@ -127,7 +127,7 @@ export function DraftPage({ brand, eyebrow, headline, sub, primary, secondary, n
       {notes.map((n, i) => (
         <div key={n.text} className={`sv-ha-note is-${i + 1}`}>
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src={img(`avatars/${n.who}.png`)} alt="" width={28} height={28} />
+          <img src={personAvatar(n.who)} alt="" width={28} height={28} />
           <div className="sv-ha-note-b"><b>{n.name}</b><span>{n.text}</span></div>
         </div>
       ))}
