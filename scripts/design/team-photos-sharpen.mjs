@@ -5,6 +5,9 @@
 // Reads design-lab/v11-image-originals/team/<slug>-slack.png, writes <slug>.jpg beside it (2048x2048). Compare the
 // two at 1:1 before using the result: the prompt forbids retouching, but check the face is still the same person.
 // Then run team-photos.py. About $0.11 an image (September 2026).
+// Not for andrea-van-wyk: her Slack photo faced the camera, so her andrea-van-wyk.jpg is a re-posed portrait (turned
+// and framed like the other three, 2026-09-28, Arnel's request) and andrea-van-wyk-frontal.jpg the sharpened original.
+// Running this for her would overwrite the re-posed one.
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { generateImage } from 'ai';
