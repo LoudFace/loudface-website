@@ -242,7 +242,7 @@ const doc = {
       items: [
         bullet(
           "Isn't this what Adaptify does?",
-          "Adaptify writes articles, and articles are a small part of this work. Most of it happens off your site: getting Loopwell named on the directories, event roundups and review sites that Google and ChatGPT trust, and keeping every source consistent about who you are. On your site, we make sure AI crawlers can read everything and build the pages that book the building. A strategist runs all of it every day. Loopwell has 85 Adaptify articles, and they don't bring in offsite or event searches. If a tool hasn't moved results in three months, it isn't worth keeping."
+          "Adaptify churns out articles. Ours have a strategist behind them who plans and tunes the content every week, and every day when rankings move fast. The other half of the work is off your site: getting Loopwell named on the sites Google and ChatGPT trust. Loopwell has 85 Adaptify articles, and they don't bring in offsite or event searches."
         ),
         /* Checked 28 Sep: studios that outrank Loop Studios include Media City and Film Factory (DR 0) and Butter Tree (DR 7), so the other agency was partly right. */
         bullet(
@@ -259,7 +259,7 @@ const doc = {
         ),
         bullet(
           'Why a company and not one person?',
-          "You get a strategist who works on Loopwell every day and does the heavy lifting. They tune the keyword and prompt strategy, plan the content, run the outreach and build the relationships behind every exchange, and check that the site, the voice and the plan hold up. Behind them is a team that meets daily and a system that measures every move against results across all our clients, so what wins for one gets used for all of them. One hire starts from zero and works alone."
+          "You get a strategist on Loopwell every day, tuning the keyword, prompt and content strategy and running the outreach. They work inside a system we've built and refined over years, one that learns from results across all our clients, so every win compounds. A single hire starts from zero, alone."
         ),
         bullet(
           "You don't need a website. Does the price drop?",
