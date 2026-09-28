@@ -817,7 +817,7 @@ export const SERVICE_CONFIGS: Record<string, ServiceConfig> = {
       blurb:
         'One senior team runs SEO, AEO and GEO, content, and CRO as a single organic growth program. We ran the same playbook on our own site: 0.13% to 15.3% of non-branded AI answers between April and September 2026.',
       secondary: AUDIT,
-      chip: { value: '150×', label: 'Google impressions a day, Genie Teacher' },
+      chip: { value: '164×', label: 'Google impressions a day, Genie Teacher' },
       main: { ...shot('hoxhunt', 'Hoxhunt website, a LoudFace client engagement'), rpillLabel: 'Organic growth', rpillClient: 'Hoxhunt' },
       frag: shot('dimer', ''),
     },

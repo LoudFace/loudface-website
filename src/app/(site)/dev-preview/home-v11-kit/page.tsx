@@ -158,7 +158,7 @@ export default async function KitPage() {
           <div className="kit-col">
             <ArrowLink href="/case-studies">See all case studies</ArrowLink>
             <Chip metric="97.8%" label="AI visibility on its top prompt" />
-            <Chip metric="150×" label="Google impressions a day" lead={false} />
+            <Chip metric="164×" label="Google impressions a day" lead={false} />
             <Eyebrow>The program</Eyebrow>
             <div className="kit-row is-tight"><Tag>Live</Tag><Tag tone="ind">In review</Tag><Tag tone="grey">Queued</Tag><Tag tone="warn">403</Tag></div>
           </div>
@@ -263,7 +263,7 @@ export default async function KitPage() {
 
       <Block name="Key results and bare charts" file="KeyResults · ChartPanel · BeforeAfterChart · src/app/home-v11/ · grid .cs-charts in src/app/case-v11/case.css" rule="A case study's numbers: three big figures with one short label each, then the charts alone, each with a title and its source and no caption. A chart whose shape contradicts its claim is not drawn; the published before → after figures stand in. Reference: Graphite's Fourthwall study.">
         <KeyResults items={[
-          { value: '150×', label: 'Google impressions per day', note: 'May 2026 average → 1–15 Sep 2026' },
+          { value: '164×', label: 'Google impressions per day', note: 'May 2026 average → 1–25 Sep 2026' },
           { value: '28×', label: 'Google clicks per week', note: 'May 2026 average → week ending 15 Sep 2026' },
           { value: '7.8×', label: 'Lead requests per week', note: 'seven tracked weeks to 5 Sep → first full week of Sep 2026 (PostHog)' },
         ]} />
@@ -342,7 +342,7 @@ export default async function KitPage() {
         <div className="kit-row is-top">
           <div className="kit-w560"><EngineSlope c={meth.hero} /></div>
           <div className="kit-w560"><Funnel c={meth.funnel} /></div>
-          <div className="kit-w300"><TileChart head="Google impressions a day" client="Genie Teacher" num="150×" series={data?.hero.genie} format="index" tip={s[1].tip} /></div>
+          <div className="kit-w300"><TileChart head="Google impressions a day" client="Genie Teacher" num="164×" series={data?.hero.genie} format="index" tip={s[1].tip} /></div>
         </div>
       </Block>
 

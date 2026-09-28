@@ -236,6 +236,52 @@ function RichText({ section, months, isFirst }: { section: Sec<'richTextSection'
 
 function Tracks({ section }: { section: Sec<'tracksSection'> }) {
   const tracks = (section.tracks ?? []).filter((t) => (t.items ?? []).length > 0);
+  // Three columns beside the proof rail leave each card about 230px. Items
+  // longer than a short phrase wrap to five or six lines there (Arnel,
+  // 2026-09-28: "quite cramped"), so long copy gets one wide card per track:
+  // the label on the left, the checklist on the right. Same rule as the
+  // classic layout's tracks.
+  const long = tracks.some((t) => (t.items ?? []).some((it) => (it.text ?? '').length > 60));
+  const items = (t: (typeof tracks)[number], className: string) => (
+    <ul className={className}>
+      {(t.items ?? []).map((it, j) => (
+        <li key={it._key} className="flex gap-2.5 text-[14px] leading-snug text-surface-800">
+          <Tick />
+          <span>
+            {it.text}
+            {j > 0 && it.count && <span className="proposal-num block text-[12px] text-surface-500">{it.count}</span>}
+          </span>
+        </li>
+      ))}
+    </ul>
+  );
+  const pill = (t: (typeof tracks)[number]) =>
+    t.items?.[0]?.count && (
+      <span className="proposal-num mt-1.5 inline-block rounded-full bg-primary-50 px-2.5 py-0.5 text-[12px] font-medium text-primary-700">
+        {t.items[0].count}
+      </span>
+    );
+
+  if (long) {
+    return (
+      <>
+        {section.intro && <p className="mt-2 text-[15px] text-surface-600">{section.intro}</p>}
+        <div className={`${panel} space-y-3`}>
+          {tracks.map((t, i) => (
+            <div key={t._key} className={`${card} p-5 sm:grid sm:grid-cols-[168px_minmax(0,1fr)] sm:gap-8 sm:p-6`}>
+              <div>
+                <Icon i={i} />
+                <p className="mt-4 text-[16px] font-semibold tracking-[-0.01em] text-surface-950">{t.label}</p>
+                {pill(t)}
+              </div>
+              {items(t, 'mt-4 space-y-3 sm:mt-1')}
+            </div>
+          ))}
+        </div>
+      </>
+    );
+  }
+
   return (
     <>
       {section.intro && <p className="mt-2 text-[15px] text-surface-600">{section.intro}</p>}
@@ -244,22 +290,8 @@ function Tracks({ section }: { section: Sec<'tracksSection'> }) {
           <div key={t._key} className={`${card} p-5`}>
             <Icon i={i} />
             <p className="mt-4 text-[16px] font-semibold tracking-[-0.01em] text-surface-950">{t.label}</p>
-            {t.items?.[0]?.count && (
-              <span className="proposal-num mt-1.5 inline-block rounded-full bg-primary-50 px-2.5 py-0.5 text-[12px] font-medium text-primary-700">
-                {t.items[0].count}
-              </span>
-            )}
-            <ul className="mt-4 space-y-2.5">
-              {(t.items ?? []).map((it, j) => (
-                <li key={it._key} className="flex gap-2.5 text-[14px] leading-snug text-surface-800">
-                  <Tick />
-                  <span>
-                    {it.text}
-                    {j > 0 && it.count && <span className="proposal-num block text-[12px] text-surface-500">{it.count}</span>}
-                  </span>
-                </li>
-              ))}
-            </ul>
+            {pill(t)}
+            {items(t, 'mt-4 space-y-2.5')}
           </div>
         ))}
       </div>

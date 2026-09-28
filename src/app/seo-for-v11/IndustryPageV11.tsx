@@ -80,7 +80,7 @@ export function IndustryPageV11({ v, c, home, data, related }: { v: IndustryView
   // 3 · the program, one tile per layer with the published series it moves (the service template's tiles)
   if (v.layers?.length) {
     const art = [
-      <TileChart key="seo" head="Google impressions a day" client="Genie Teacher" num="150×" series={data?.hero.genie} format="index" tip={s[1].tip} />,
+      <TileChart key="seo" head="Google impressions a day" client="Genie Teacher" num="164×" series={data?.hero.genie} format="index" tip={s[1].tip} />,
       <TileChart key="aeo" head="Share of AI answers" client="LoudFace" num={s[0].metric} series={data?.hero.lf} format="pct" tip={s[0].tip} />,
       <Wireframe key="cro" pills={L.croPills} />,
     ];
