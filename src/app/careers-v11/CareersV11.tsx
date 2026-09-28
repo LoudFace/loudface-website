@@ -15,7 +15,7 @@ import { strip } from '@/lib/inline-edit/mark';
 
 const APPLY_URL = '/careers/apply';
 /** The team as photographed, a sample of the people you would work with (never presented as a headcount). */
-const TEAM = ['arnel-bukva', 'tamara-pavlovic', 'andrea-van-wyk', 'abhay-tyagi', 'chandana-pitta'];
+const TEAM = ['arnel-bukva', 'tamara-pavlovic', 'andrea-van-wyk', 'abhay-tyagi'];
 
 function Role({ role, apply }: { role: OpenRole; apply: string }) {
   const meta = [role.commitment, role.location].filter(Boolean).join(' · ');

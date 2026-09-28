@@ -53,7 +53,7 @@ function PlanFragment({ c }: { c: C['plan'] }) {
       <div className="v11-frag-row">
         <div className="v11-frag-title"><span>{c.heading}</span> <span className="is-muted">{c.meta}</span></div>
         <div className="v11-stack">
-          {['chandana-pitta', 'abhay-tyagi', 'tamara-pavlovic'].map((w) => <Avatar key={w} who={w} size={16} />)}
+          {['andrea-van-wyk', 'abhay-tyagi', 'tamara-pavlovic'].map((w) => <Avatar key={w} who={w} size={16} />)}
         </div>
       </div>
       <div className="v11-frag-gantt">

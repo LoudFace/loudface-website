@@ -28,11 +28,9 @@ const jobs = [
   ]),
 ];
 
-// In place, by width: team avatars shown at 20-44px, client icons at 16-30px, and the logos below.
-const AVATARS = ['chandana-pitta', 'david-dobrijevic', 'rezwan-nahid'];
+// In place, by width: client icons shown at 16-30px, and the logos below. (Team avatars: scripts/design/team-photos.py.)
 const ICONS = ['fav-ceipal', 'fav-claude', 'fav-dimer', 'trademomentum-icon', 'genie-icon', 'fav-gemini'];
 const inPlace = [
-  ...AVATARS.map((n) => ({ src: `avatars/${n}.png`, width: 96, photo: true })),
   ...ICONS.map((n) => ({ src: `logos/${n}.png`, width: 64 })),
   { src: 'logos/dimer-health.png', width: 400 },
   { src: 'logos/outbound-specialist-ink.png', width: 400 },

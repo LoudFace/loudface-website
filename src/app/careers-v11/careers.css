@@ -7,7 +7,8 @@
 .cr2-hero-top { display: grid; grid-template-columns: minmax(0, 1fr); gap: 24px; }
 .cr2-hero h1 { margin-top: 22px; font-family: var(--font-heading); font-weight: 500; font-size: 44px; line-height: 1; letter-spacing: -0.047em; max-width: 820px; text-wrap: balance; }
 .cr2-hero-side p { font-size: 18px; line-height: 1.55; color: var(--body); max-width: 460px; text-wrap: pretty; margin-bottom: 24px; }
-.cr2-faces { display: grid; grid-template-columns: repeat(7, minmax(150px, 1fr)); gap: 12px; margin-top: 56px; padding: 0 16px 64px; overflow-x: auto; scrollbar-width: none; }
+/* one column per lead in TEAM (CareersV11.tsx) */
+.cr2-faces { display: grid; grid-template-columns: repeat(4, minmax(150px, 1fr)); gap: 12px; margin-top: 56px; padding: 0 16px 64px; overflow-x: auto; scrollbar-width: none; }
 .cr2-faces::-webkit-scrollbar { display: none; }
 .cr2-faces img { display: block; width: 100%; aspect-ratio: 580 / 704; height: auto; object-fit: cover; border-radius: 18px; }
 @media (min-width: 768px) { .cr2-hero h1 { font-size: 60px; } }
