@@ -1,9 +1,8 @@
 import { ProposalDocument } from '@/components/proposal/ProposalDocument';
-import type { Proposal } from '@/sanity/lib/proposalsClient';
-import faith from '../_fixture/faith.json';
+import { loadFixture } from '../_concepts/loadFixture';
 
 export const dynamic = 'force-dynamic';
 
-export default function Page() {
-  return <ProposalDocument proposal={faith as unknown as Proposal} />;
+export default async function Page() {
+  return <ProposalDocument proposal={await loadFixture()} />;
 }

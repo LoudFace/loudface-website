@@ -1,7 +1,6 @@
 import { notFound } from 'next/navigation';
-import type { Proposal } from '@/sanity/lib/proposalsClient';
-import faith from '../_fixture/faith.json';
 import '../_concepts/concepts.css';
+import { loadFixture } from '../_concepts/loadFixture';
 import { ConceptA } from '../_concepts/ConceptA';
 import { ConceptB } from '../_concepts/ConceptB';
 import { ConceptC } from '../_concepts/ConceptC';
@@ -14,7 +13,7 @@ export const dynamic = 'force-dynamic';
 
 export default async function Page({ params }: { params: Promise<{ variant: string }> }) {
   const { variant } = await params;
-  const proposal = faith as unknown as Proposal;
+  const proposal = await loadFixture();
   if (variant === 'a') return <ConceptA proposal={proposal} />;
   if (variant === 'b') return <ConceptB proposal={proposal} />;
   if (variant === 'c') return <ConceptC proposal={proposal} />;
