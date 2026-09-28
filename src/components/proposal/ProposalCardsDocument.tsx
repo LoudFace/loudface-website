@@ -357,7 +357,10 @@ function Months({ section }: { section: Sec<'monthsSection'> }) {
             <p className="mt-1 text-[18px] font-semibold tracking-[-0.02em] text-surface-950">{m.title}</p>
             <ul className="mt-3 space-y-1.5">
               {(m.items ?? []).map((it) => (
-                <li key={it} className="text-[13.5px] leading-snug text-surface-700">{it}</li>
+                <li key={it} className="flex gap-2 text-[13.5px] leading-snug text-surface-700">
+                  <span aria-hidden="true" className="mt-[7px] h-1 w-1 flex-none rounded-full bg-primary-500" />
+                  <span>{it}</span>
+                </li>
               ))}
             </ul>
             {m.proves && <p className="mt-4 rounded-xl bg-primary-50 px-3 py-2.5 text-[13px] leading-snug text-primary-900">{m.proves}</p>}
