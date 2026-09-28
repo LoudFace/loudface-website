@@ -1,9 +1,10 @@
 """Resize a team member's studio headshot for the site (2026-09-28, the leads' new Slack photos).
 
   python3 scripts/design/team-photos.py <suffix> <slug> [<slug> ...]
-  e.g. python3 scripts/design/team-photos.py -v2 arnel-bukva tamara-pavlovic andrea-van-wyk abhay-tyagi
+  e.g. python3 scripts/design/team-photos.py -v3 arnel-bukva tamara-pavlovic andrea-van-wyk abhay-tyagi
 
-Reads design-lab/v11-image-originals/team/<slug>.png (a square headshot) and writes, under public/images/home-v11:
+Reads design-lab/v11-image-originals/team/<slug>.jpg (a square headshot; <slug>-slack.png is the photo as it came from
+Slack, <slug>.jpg the same photo sharpened by team-photos-sharpen.mjs) and writes, under public/images/home-v11:
   team/<slug><suffix>.jpg     800x800  every photo slot; each slot crops it with object-fit: cover
   avatars/<slug><suffix>.png  96x96    the same photo in a circle, transparent corners
 Then set the same suffix for the slug in PHOTO_SUFFIX (src/app/home-v11/ui.tsx). /images is cached for a year, so a new
@@ -20,7 +21,7 @@ OUT = os.path.join(ROOT, 'public/images/home-v11')
 
 
 def build(slug, suffix):
-    im = Image.open(os.path.join(SRC, f'{slug}.png')).convert('RGB')
+    im = Image.open(os.path.join(SRC, f'{slug}.jpg')).convert('RGB')
     im.resize((800, 800), Image.LANCZOS).save(f'{OUT}/team/{slug}{suffix}.jpg', quality=85, optimize=True, progressive=True)
 
     # the circle is drawn at 4x and scaled down, so its edge is smooth
