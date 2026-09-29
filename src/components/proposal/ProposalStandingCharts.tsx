@@ -182,7 +182,7 @@ function PanelCard({ panel, mounted }: { panel: Panel; mounted: boolean }) {
           )}
         </div>
       </figcaption>
-      <div className="inb proposal-plot min-h-[160px] flex-1">
+      <div className="inb min-w-0">
         {mounted &&
           (panel.kind === 'trend' ? (
             <Trend panel={panel} />
