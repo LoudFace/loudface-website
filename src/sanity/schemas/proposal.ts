@@ -184,6 +184,7 @@ const pricingTiersSection = defineType({
               validation: (rule) => rule.required(),
             }),
             defineField({ name: 'cadence', title: 'Cadence', type: 'string', description: 'e.g. "per month".' }),
+            defineField({ name: 'wasPrice', title: 'Usual price (struck through)', type: 'string', description: 'e.g. "$10,000". Leave empty for no strikethrough.' }),
             defineField({ name: 'description', title: 'What changes', type: 'text', rows: 3 }),
             defineField({
               name: 'recommended',

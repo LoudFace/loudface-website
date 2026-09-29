@@ -62,6 +62,8 @@ export interface ProposalTier {
   _key: string;
   name: string;
   price: string;
+  /** The usual price, drawn struck through beside `price`. */
+  wasPrice?: string;
   cadence?: string;
   description?: string;
   recommended?: boolean;
@@ -367,7 +369,7 @@ const CONTENT_QUERY = `*[_type == "proposal" && token == $token][0]{
   sections[]{
     ...,
     rows[]{ _key, cells },
-    tiers[]{ _key, name, price, cadence, description, recommended },
+    tiers[]{ _key, name, price, wasPrice, cadence, description, recommended },
     items[]{ _key, label, body, lead, text, kind },
     illustrativeExample{
       label, goal, outcome, returnLabel,

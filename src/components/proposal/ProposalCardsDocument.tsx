@@ -395,7 +395,15 @@ function Pricing({ section, clientName }: { section: Sec<'pricingTiersSection'>;
               <span className="text-[15px] font-medium">{t.name}</span>
               {t.recommended && <span className="rounded-full bg-white px-2.5 py-0.5 text-[11px] font-semibold text-primary-700">Right for {short}</span>}
             </div>
-            <p className={`proposal-num mt-4 font-medium leading-none tracking-[-0.04em] ${t.recommended ? 'text-[48px]' : 'text-[30px] text-white/85'}`}>{t.price}</p>
+            <p className="mt-4 flex flex-wrap items-baseline gap-x-3">
+              <span className={`proposal-num font-medium leading-none tracking-[-0.04em] ${t.recommended ? 'text-[48px]' : 'text-[30px] text-white/85'}`}>{t.price}</span>
+              {t.wasPrice && (
+                <s className={`proposal-num font-medium leading-none tracking-[-0.02em] decoration-2 ${t.recommended ? 'text-[24px] text-white/60' : 'text-[18px] text-white/40'}`}>
+                  <span className="sr-only">Usually </span>
+                  {t.wasPrice}
+                </s>
+              )}
+            </p>
             {t.cadence && <p className={`mt-1 text-[13px] ${t.recommended ? 'text-white/75' : 'text-white/50'}`}>{t.cadence}</p>}
             {t.description && <p className={`mt-4 text-[14px] leading-relaxed ${t.recommended ? 'text-white/90' : 'text-white/55'}`}>{t.description}</p>}
           </div>

@@ -79,11 +79,12 @@ const para = (content, style = 'normal') => ({
 });
 
 const bullet = (lead, text) => ({ _type: 'bulletItem', _key: key(), ...(lead ? { lead } : {}), text });
-const tier = (name, price, cadence, description, recommended = false) => ({
+const tier = (name, price, cadence, description, recommended = false, wasPrice) => ({
   _type: 'pricingTier',
   _key: key(),
   name,
   price,
+  ...(wasPrice ? { wasPrice } : {}),
   cadence,
   description,
   ...(recommended ? { recommended } : {}),
@@ -301,9 +302,9 @@ const doc = {
       heading: 'Investment',
       band: 'dark',
       anchor:
-        "Scale is normally $10,000 a month. We're offering it to Bamboo at $7,500, for a long partnership. The rebuild sits inside the fee.",
+        "Scale at $7,500 a month for Bamboo, down from $10,000, because we're planning for a long partnership. The rebuild sits inside the fee.",
       tiers: [
-        tier('Scale', '$7,500', 'per month', 'Everything on this page: the site work now, content and mentions for three product lines, the rebuild, full reporting.', true),
+        tier('Scale', '$7,500', 'per month', 'Everything on this page: the site work now, content and mentions for three product lines, the rebuild, full reporting.', true, '$10,000'),
         tier('Growth', '$5,000', 'per month', 'The same work at a slower pace. Fewer pieces of content and mentions a month.'),
         tier('Accelerate', '$15,000', 'per month', 'Double the Scale pace, for when the rebuild and a content push run at the same time.'),
       ],
