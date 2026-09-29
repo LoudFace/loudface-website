@@ -476,7 +476,7 @@ Components specific to blog post pages. Imported from `@/components/blog`.
 |-----------|------|-------------|
 | `Header` | `Header.tsx` | Site navigation with dropdowns (client component). Props: `content` (server-provided nav copy/links), `heroTheme?` (`"dark"`). On v11 routes it takes `v11` (menus from `NavV11`) and `initialOpen` (a preview opens one menu). |
 | `Footer` | `Footer.tsx` | Site footer with nav, newsletter, socials |
-| `CalHandler` | `CalHandler.tsx` | Cal.com booking modal integration |
+| `CalHandler` | `CalHandler.tsx` | Cal.com booking modal integration. Also loads Cal.com (official `@calcom/embed-snippet`): on a booking click, or on the first scroll/touch/mouse move/key press after page load. There is no separate embed script in the layouts. |
 | `NewsletterForm` | `NewsletterForm.tsx` | Email signup form |
 | `ConsentManager` | `ConsentManager.tsx` | Cookie-consent banner + consent-gated loader for GTM/RB2B (client). Props: `requiresConsent: boolean` (server-derived from geo headers), `v11Content?` (`consent.json`; on v11 routes it renders `ConsentCardV11` instead of the bar, same behaviour and bottom-band contract). Mounted once in `(site)/layout.tsx`; PostHog gates itself via `@/lib/consent`. **Below 640px it renders as a compact ~65px single-line bar flush to the bottom edge** (detail copy behind a toggle; both consent choices stay visible and one-tap) — it must stay short because every v3 hero puts its primary CTA in the bottom band. Unchanged floating card at >=640px. **Owns the bottom band — see the contract below.** |
 | `CookiePreferences` | `CookiePreferences.tsx` | Analytics/tracking on-off control embedded on `/cookies` (client, no props). Standing opt-out for visitors who never see the banner. |

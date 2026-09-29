@@ -1,9 +1,28 @@
 "use client";
 
 import { useEffect } from "react";
+import EmbedSnippet from "@calcom/embed-snippet";
 import { ensurePostHog } from "@/lib/posthog-client";
 
 const CAL_METADATA_VALUE_LIMIT = 500;
+
+// Loads Cal.com once per page. EmbedSnippet is Cal's official snippet: it defines the
+// window.Cal stub, which queues every command, and injects embed.js on its first call.
+// It reuses a window.Cal that the inline booker (home-v11/CalEmbed.tsx) already made.
+let calStarted = false;
+function startCal() {
+  if (calStarted) return;
+  calStarted = true;
+  EmbedSnippet()("init", { origin: "https://app.cal.com" });
+}
+
+// The first interaction warms Cal up, so the modal opens fast. It waits for the page's
+// load event, so embed.js never competes with the page's own first load.
+function warmUpCal() {
+  if (document.readyState === "complete") startCal();
+  else window.addEventListener("load", startCal, { once: true });
+}
+const WARM_UP_EVENTS = ["scroll", "touchstart", "mousemove", "keydown"] as const;
 
 function readCookie(name: string): string | undefined {
   const prefix = `${name}=`;
@@ -19,9 +38,15 @@ function readCookie(name: string): string | undefined {
 /**
  * CalHandler Component
  *
- * Handles click events for Cal.com booking modal triggers and stitches
- * successful bookings to PostHog via posthog.identify(email). The source-of-truth
- * 'call_booked' event is captured server-side via the /api/webhooks/cal endpoint.
+ * Loads Cal.com, handles click events for Cal.com booking modal triggers and
+ * stitches successful bookings to PostHog via posthog.identify(email). The
+ * source-of-truth 'call_booked' event is captured server-side via the
+ * /api/webhooks/cal endpoint.
+ *
+ * A booking click always opens the modal: it starts Cal itself if the first
+ * interaction has not already done so, and the stub queues the modal call until
+ * embed.js arrives. (A click can come with no scroll, touch, mouse move or key
+ * press before it: assistive-tech activation, some bots.)
  *
  * Listens for clicks on:
  * - Elements with .btn-cta class
@@ -45,33 +70,35 @@ export function CalHandler() {
       if (isBtnCta || isCalTrigger || isBookLink) {
         e.preventDefault();
         e.stopPropagation();
+        startCal();
 
-        if (typeof window.Cal === "function") {
-          const fbp = readCookie("_fbp");
-          const fbclid = new URLSearchParams(window.location.search).get("fbclid");
-          const fbc =
-            readCookie("_fbc") ??
-            (fbclid
-              ? `fb.1.${Date.now()}.${fbclid}`.slice(0, CAL_METADATA_VALUE_LIMIT)
-              : undefined);
+        const fbp = readCookie("_fbp");
+        const fbclid = new URLSearchParams(window.location.search).get("fbclid");
+        const fbc =
+          readCookie("_fbc") ??
+          (fbclid
+            ? `fb.1.${Date.now()}.${fbclid}`.slice(0, CAL_METADATA_VALUE_LIMIT)
+            : undefined);
 
-          window.Cal("modal", {
-            calLink: "arnelbukva/loudface-intro-call",
-            config: {
-              layout: "month_view",
-              utm_source: "website",
-              utm_medium: "embed",
-              utm_campaign: "intro_call",
-              utm_content: window.location.pathname,
-              ...(fbp ? { "metadata[fbp]": fbp } : {}),
-              ...(fbc ? { "metadata[fbc]": fbc } : {}),
-            },
-          });
-        }
+        window.Cal("modal", {
+          calLink: "arnelbukva/loudface-intro-call",
+          config: {
+            layout: "month_view",
+            utm_source: "website",
+            utm_medium: "embed",
+            utm_campaign: "intro_call",
+            utm_content: window.location.pathname,
+            ...(fbp ? { "metadata[fbp]": fbp } : {}),
+            ...(fbc ? { "metadata[fbc]": fbc } : {}),
+          },
+        });
       }
     };
 
     document.addEventListener("click", handleClick);
+    WARM_UP_EVENTS.forEach((type) =>
+      window.addEventListener(type, warmUpCal, { once: true, passive: true })
+    );
 
     // Stitch the anonymous PostHog session to the attendee's email the moment
     // the booking succeeds. The server webhook is the source of truth for the
@@ -123,6 +150,8 @@ export function CalHandler() {
 
     return () => {
       document.removeEventListener("click", handleClick);
+      WARM_UP_EVENTS.forEach((type) => window.removeEventListener(type, warmUpCal));
+      window.removeEventListener("load", startCal);
       window.clearInterval(interval);
     };
   }, []);

@@ -190,6 +190,8 @@ The booking modal is opened by `CalHandler.tsx`, which intercepts clicks on:
 - Links with `href="#book-modal"`
 - Elements with `.btn-cta` class
 
+`CalHandler` also loads Cal.com itself, on a booking click or on the first interaction after page load, so a click always opens the modal. Do not add a second embed script to a layout.
+
 ### Color Contrast
 
 For dynamic backgrounds (CMS brand colors), use utilities from `src/lib/color-utils.ts`:
