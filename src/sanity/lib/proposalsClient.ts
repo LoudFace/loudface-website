@@ -229,6 +229,31 @@ export type ProposalSection =
     }
   | {
       _key: string;
+      _type: 'chartsSection';
+      heading?: string;
+      band?: ProposalBand;
+      intro?: string;
+      boards: Array<{
+        _key: string;
+        label: string;
+        source?: string;
+        panels: Array<{
+          _key: string;
+          kind: 'trend' | 'bars' | 'hbars' | 'ring';
+          title: string;
+          headline?: string;
+          caption?: string;
+          unit?: '%' | '';
+          seriesLabel?: string;
+          /** trend only: series names, the client first. */
+          series?: string[];
+          points?: Array<{ _key: string; label: string; value: number; compare?: number[] }>;
+        }>;
+      }>;
+      closing?: string;
+    }
+  | {
+      _key: string;
       _type: 'forecastSection';
       heading?: string;
       band?: ProposalBand;

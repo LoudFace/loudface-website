@@ -1,4 +1,5 @@
 import { PortableText, type PortableTextComponents } from '@portabletext/react';
+import { ProposalStandingCharts } from './ProposalStandingCharts';
 import type { PortableTextBlock } from '@portabletext/types';
 import type { Proposal, ProposalBand, ProposalSection } from '@/sanity/lib/proposalsClient';
 import { ProofRail, ProofSection, isProofSection } from './ProposalSocialProof';
@@ -285,6 +286,8 @@ export function SectionBody({
       return <AskAiBlock section={section} clientName={clientName} />;
     case 'standingSection':
       return <StandingBlock section={section} />;
+    case 'chartsSection':
+      return <ProposalStandingCharts section={section} />;
     case 'forecastSection':
       return <ForecastBlock section={section} />;
     case 'tracksSection':

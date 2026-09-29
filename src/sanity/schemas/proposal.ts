@@ -769,6 +769,81 @@ const standingSection = defineType({
   preview: { select: { title: 'heading' }, prepare: ({ title }) => ({ title: title || 'Where you stand' }) },
 });
 
+/** Where the prospect stands today, as Bklit charts: Google and AI boards. */
+const chartsSection = defineType({
+  name: 'chartsSection',
+  title: 'Where you stand (charts)',
+  type: 'object',
+  fields: [
+    sectionHeading,
+    sectionBand,
+    defineField({ name: 'intro', title: 'Intro line', type: 'text', rows: 2 }),
+    defineField({
+      name: 'boards',
+      title: 'Boards',
+      type: 'array',
+      of: [
+        defineArrayMember({
+          type: 'object',
+          name: 'chartBoard',
+          fields: [
+            defineField({ name: 'label', title: 'Label', type: 'string', validation: (rule) => rule.required() }),
+            defineField({ name: 'source', title: 'Source line', type: 'string' }),
+            defineField({
+              name: 'panels',
+              title: 'Charts',
+              type: 'array',
+              of: [
+                defineArrayMember({
+                  type: 'object',
+                  name: 'chartPanel',
+                  fields: [
+                    defineField({
+                      name: 'kind',
+                      title: 'Chart',
+                      type: 'string',
+                      options: { list: ['trend', 'bars', 'hbars', 'ring'] },
+                      validation: (rule) => rule.required(),
+                    }),
+                    defineField({ name: 'title', title: 'Title', type: 'string', validation: (rule) => rule.required() }),
+                    defineField({ name: 'headline', title: 'Headline number', type: 'string' }),
+                    defineField({ name: 'caption', title: 'Caption', type: 'text', rows: 2 }),
+                    defineField({ name: 'unit', title: 'Unit', type: 'string', options: { list: ['%', ''] } }),
+                    defineField({ name: 'seriesLabel', title: 'Series label', type: 'string' }),
+                    defineField({ name: 'series', title: 'Trend series (client first)', type: 'array', of: [defineArrayMember({ type: 'string' })] }),
+                    defineField({
+                      name: 'points',
+                      title: 'Points',
+                      type: 'array',
+                      of: [
+                        defineArrayMember({
+                          type: 'object',
+                          name: 'chartPoint',
+                          fields: [
+                            defineField({ name: 'label', title: 'Label (YYYY-MM for a trend)', type: 'string', validation: (rule) => rule.required() }),
+                            defineField({ name: 'value', title: 'Value', type: 'number', validation: (rule) => rule.required() }),
+                            defineField({ name: 'compare', title: 'Comparison values', type: 'array', of: [defineArrayMember({ type: 'number' })] }),
+                          ],
+                          preview: { select: { title: 'label', subtitle: 'value' } },
+                        }),
+                      ],
+                    }),
+                  ],
+                  preview: { select: { title: 'title', subtitle: 'kind' } },
+                }),
+              ],
+            }),
+          ],
+          preview: { select: { title: 'label' } },
+        }),
+      ],
+      validation: (rule) => rule.required().min(1),
+    }),
+    defineField({ name: 'closing', title: 'Closing line', type: 'text', rows: 2 }),
+  ],
+  preview: { select: { title: 'heading' }, prepare: ({ title }) => ({ title: title || 'Where you stand (charts)' }) },
+});
+
 const sliderField = (name: string, title: string) =>
   defineField({
     name,
@@ -1125,6 +1200,7 @@ const proposal = defineType({
         defineArrayMember({ type: 'standingSection' }),
         defineArrayMember({ type: 'forecastSection' }),
         defineArrayMember({ type: 'tracksSection' }),
+        defineArrayMember({ type: 'chartsSection' }),
         defineArrayMember({ type: 'gateSection' }),
         defineArrayMember({ type: 'monthsSection' }),
       ],
@@ -1156,6 +1232,7 @@ export const proposalSchemaTypes = [
   standingSection,
   forecastSection,
   tracksSection,
+  chartsSection,
   gateSection,
   monthsSection,
   proposal,

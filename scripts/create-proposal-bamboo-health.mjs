@@ -184,6 +184,9 @@ const proofRail = {
  * crawl of bamboohealth.com and one Lighthouse mobile lab run. */
 
 const row = (cells) => ({ _type: 'tableRow', _key: key(), cells });
+const pt = (label, value, compare) => ({ _type: 'chartPoint', _key: key(), label, value, ...(compare ? { compare } : {}) });
+const panel = (kind, fields) => ({ _type: 'chartPanel', _key: key(), kind, ...fields });
+const board = (label, source, panels) => ({ _type: 'chartBoard', _key: key(), label, source, panels });
 
 const doc = {
   _type: 'proposal',
@@ -213,28 +216,91 @@ const doc = {
       ],
     }),
 
-    section('standingSection', {
-      heading: 'Your standing today',
-      stats: [
-        stat('~1,000', 'US organic visits a month to bamboohealth.com (Ahrefs estimate). Kyruus gets ~4,000.', true),
-        stat('5 of 7', 'ChatGPT answers to buyer questions that name Bamboo Health'),
-        stat('61', 'Mobile performance score. The homepage loads 2.2 MB and 98 images'),
+    section('chartsSection', {
+      heading: 'Where you stand today',
+      intro: 'Two places buyers look: Google, and the AI assistants that now answer first. Both measured today.',
+      boards: [
+        board('Google search', 'Ahrefs · United States · 28 Sep 2026', [
+          panel('trend', {
+            title: 'Organic visits a month',
+            headline: '−43%',
+            series: ['Bamboo Health', 'Kyruus Health', 'Unite Us'],
+            points: [
+            pt('2024-10', 2319, [2352, 3874]),
+            pt('2024-11', 2838, [2061, 3250]),
+            pt('2024-12', 2037, [2018, 3036]),
+            pt('2025-01', 2050, [2377, 3687]),
+            pt('2025-02', 2753, [3155, 4590]),
+            pt('2025-03', 2847, [3920, 5106]),
+            pt('2025-04', 3243, [4079, 4465]),
+            pt('2025-05', 2755, [5097, 4868]),
+            pt('2025-06', 2685, [4928, 4555]),
+            pt('2025-07', 2737, [4284, 3946]),
+            pt('2025-08', 2365, [4039, 4272]),
+            pt('2025-09', 2515, [4195, 4218]),
+            pt('2025-10', 2458, [3972, 5096]),
+            pt('2025-11', 2622, [3455, 4704]),
+            pt('2025-12', 1776, [3222, 3750]),
+            pt('2026-01', 2466, [3498, 3501]),
+            pt('2026-02', 1866, [4117, 4022]),
+            pt('2026-03', 2192, [4198, 4102]),
+            pt('2026-04', 1990, [4471, 4026]),
+            pt('2026-05', 2006, [4881, 3589]),
+            pt('2026-06', 2026, [4134, 3450]),
+            pt('2026-07', 1973, [4133, 3676]),
+            pt('2026-08', 1857, [3615, 3141]),
+            ],
+            caption: 'Down 43% from the April 2025 peak. Kyruus fell 11% over the same months and Unite Us 30%. Ahrefs estimates, same method for all three.',
+          }),
+          panel('ring', {
+            title: 'Who arrives from search',
+            headline: '79%',
+            seriesLabel: 'Visits / mo',
+            points: [pt('Typed "Bamboo" or a product name', 806), pt('Searched for a problem or category', 212)],
+            caption: 'Four in five visitors already knew the name. Search is not bringing Bamboo new buyers.',
+          }),
+          panel('bars', {
+            title: 'Category searches with no Bamboo page ranking',
+            headline: '0 of 6',
+            seriesLabel: 'US searches a month',
+            points: [pt('PDMP', 9700), pt('Behavioral health software', 500), pt('Prescription drug monitoring program', 250), pt('Care coordination software', 250), pt('Care gaps', 200), pt('ADT notifications', 150)],
+            caption: 'Bamboo runs the PDMP in more than 40 states, yet ranks for none of these in the top 100. "PDMP" alone is 9,700 searches a month.',
+          }),
+        ]),
+        board('AI search', 'ChatGPT with web search · 20 everyday, non-branded buyer questions · 29 Sep 2026', [
+          panel('hbars', {
+            title: 'Share of answers that name each company',
+            headline: '30%',
+            unit: '%',
+            seriesLabel: 'Answers naming them',
+            points: [pt('Bamboo Health', 30), pt('Epic', 15), pt('Innovaccer', 15), pt('Lightbeam', 15), pt('Oracle Health', 10), pt('Arcadia', 10)],
+            caption: 'Bamboo is named in 6 of 20 everyday buyer questions, and cited as a source in 4. Care coordination answers go to Innovaccer, Lightbeam and Epic.',
+          }),
+          panel('bars', {
+            title: 'Answers that name Bamboo, by product line',
+            headline: '14%',
+            unit: '%',
+            seriesLabel: 'Answers naming Bamboo',
+            points: [pt('PDMP', 75), pt('Opioid risk', 25), pt('Behavioral health', 20), pt('Care coordination', 14)],
+            caption: 'Strong where Bamboo is the category (PDMP). Weak everywhere else: care coordination, where Pings competes, names Bamboo in 1 of 7 answers.',
+          }),
+        ]),
       ],
-      closing: 'The authority is already there. What is missing is pages that say plainly what each product does, for each buyer, in words AI can quote.',
+      closing: 'The authority is already there. What is missing is pages that say plainly what each product does, for each buyer, in words Google and AI can use.',
     }),
 
     section('tableSection', {
-      heading: 'What ChatGPT says when your buyers ask',
-      note: 'Asked live on 29 September, web search on. One run per question. From today we track 20 of these daily across ChatGPT, Gemini and Google AI Overviews.',
+      heading: 'What ChatGPT says, question by question',
+      note: 'Seven of the 20 questions, asked live on 29 September with web search on. From today we track all 20 daily across ChatGPT, Gemini and Google AI Overviews.',
       columns: ['Buyer question', 'Bamboo named?', 'Who else, or what it cites'],
       rows: [
-        row(['Best PDMP software vendors for state governments', 'Yes', '—']),
-        row(['Best real-time ADT notification platforms for ACOs and health plans', 'Yes', 'PointClickCare, CRISP']),
-        row(['Platforms to find open behavioral health beds in real time', 'Yes', 'Behavioral Health Link']),
-        row(['Best behavioral health referral software for hospitals and crisis centers', 'Yes', 'Epic, Unite Us, Findhelp']),
-        row(['Health IT companies helping states fight the opioid epidemic', 'Yes', '—']),
-        row(["Tools to assess a patient's opioid overdose risk before prescribing", 'No', 'CDC only. Says "PDMP" generically. NarxCare is not named']),
-        row(['How nursing facilities get notified when a patient is hospitalized', 'No', 'HealthIT.gov and CMS only. No vendor named. Pings is not named']),
+        row(['Best PDMP software for state health departments', 'Yes', '—']),
+        row(['Who are the main prescription drug monitoring program vendors?', 'Yes', 'DrFirst']),
+        row(['Best behavioral health referral software', 'Yes', 'Unite Us, Findhelp']),
+        row(['Best care coordination software for health plans', 'No', 'Innovaccer, Arcadia, Lightbeam']),
+        row(['What are ADT notifications and which companies provide them?', 'No', 'No vendor named. This is what Pings does']),
+        row(['How do nursing homes find out when a resident is admitted to the hospital?', 'No', 'No vendor named. This is what Pings does']),
+        row(['Best clinical decision support tools for opioid prescribing', 'No', 'NarxCare is not named']),
       ],
     }),
 
@@ -285,6 +351,14 @@ const doc = {
         month('Month 3', 'Proof', ['Full-site rebuild under way', 'AI answers re-checked on all 20 questions', 'Demo requests reviewed against the baseline'], 'AI names NarxCare and Pings for their own questions'),
       ],
       note: 'Every report starts with demo requests and AI mentions, then rankings.',
+    }),
+
+    section('richTextSection', {
+      heading: 'Design work for our clients',
+      body: [
+        para('A few of the sites and product pages we have designed. First screens only; the full file has every page.'),
+        { ...para('Open the design samples in Figma'), markDefs: [{ _key: 'fig', _type: 'link', href: 'https://www.figma.com/design/F9eiT6aTU3ntbWc51Jkhu5/LoudFace--Design-Samples?node-id=0-1&t=cFnr6sMy2HCOiYGT-1' }] },
+      ],
     }),
 
     section('caseProofSection', {

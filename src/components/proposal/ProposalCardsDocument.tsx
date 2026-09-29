@@ -1,4 +1,5 @@
 import type { ReactNode } from 'react';
+import { ProposalStandingCharts } from './ProposalStandingCharts';
 import { PortableText, type PortableTextComponents } from '@portabletext/react';
 import type { PortableTextBlock } from '@portabletext/types';
 import type { Proposal, ProposalSection } from '@/sanity/lib/proposalsClient';
@@ -461,6 +462,9 @@ export function ProposalCardsDocument({ proposal }: { proposal: Proposal }) {
         break;
       case 'monthsSection':
         body = <Months section={section} />;
+        break;
+      case 'chartsSection':
+        body = <ProposalStandingCharts section={section} />;
         break;
       default:
         body = (
