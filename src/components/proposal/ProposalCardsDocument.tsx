@@ -466,7 +466,7 @@ export function ProposalCardsDocument({ proposal }: { proposal: Proposal }) {
       );
     }
     if (section._type === 'designSliderSection') {
-      return <ProposalDesignSlider key={section._key} heading={section.heading} intro={section.intro} slugs={section.slugs} index={index} />;
+      return <ProposalDesignSlider key={section._key} heading={section.heading} intro={section.intro} slugs={section.slugs} figmaUrl={section.figmaUrl} index={index} />;
     }
     if (isProofSection(section)) return <ProofSection key={section._key} section={section} index={index} boxed />;
     let body: ReactNode;

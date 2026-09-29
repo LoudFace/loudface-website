@@ -269,6 +269,8 @@ export type ProposalSection =
       intro?: string;
       /** Public case-study slugs, in slide order. */
       slugs: string[];
+      /** The design-samples Figma file, shown as a button under the slider. */
+      figmaUrl?: string;
     }
   | {
       _key: string;

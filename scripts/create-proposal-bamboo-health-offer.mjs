@@ -299,6 +299,7 @@ const doc = {
         'viaduct',
         'montblanc',
       ],
+      figmaUrl: FIGMA_URL,
     }),
 
     section('caseProofSection', {

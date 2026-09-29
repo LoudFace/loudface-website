@@ -6,7 +6,7 @@ import type { DesignWork } from '@/sanity/lib/designWork';
 
 const card = 'rounded-2xl bg-white shadow-[0_1px_2px_rgba(10,10,10,0.05),0_8px_24px_-16px_rgba(30,27,75,0.18)]';
 
-export function DesignSliderTrack({ heading, intro, items }: { heading?: string; intro?: string; items: DesignWork[] }) {
+export function DesignSliderTrack({ heading, intro, items, figmaUrl }: { heading?: string; intro?: string; items: DesignWork[]; figmaUrl?: string }) {
   const track = useRef<HTMLUListElement>(null);
 
   const step = useCallback((dir: 1 | -1) => {
@@ -66,6 +66,13 @@ export function DesignSliderTrack({ heading, intro, items }: { heading?: string;
             </li>
           ))}
         </ul>
+        {figmaUrl && (
+          <div className="flex justify-end px-2 pb-1 pt-4">
+            <a href={figmaUrl} target="_blank" rel="noopener noreferrer" className="rounded-full bg-surface-950 px-4 py-2 text-[13.5px] font-medium text-white">
+              Open the Figma file
+            </a>
+          </div>
+        )}
       </div>
     </>
   );

@@ -868,6 +868,7 @@ const designSliderSection = defineType({
       of: [defineArrayMember({ type: 'string' })],
       validation: (rule) => rule.required().min(1),
     }),
+    defineField({ name: 'figmaUrl', title: 'Figma file (button under the slider)', type: 'url' }),
   ],
   preview: { select: { title: 'heading' }, prepare: ({ title }) => ({ title: title || 'Design case studies' }) },
 });

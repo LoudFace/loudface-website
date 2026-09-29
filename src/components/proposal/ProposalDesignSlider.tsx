@@ -10,11 +10,13 @@ export async function ProposalDesignSlider({
   heading,
   intro,
   slugs,
+  figmaUrl,
   index,
 }: {
   heading?: string;
   intro?: string;
   slugs: string[];
+  figmaUrl?: string;
   index: number;
 }) {
   const items = await fetchDesignWork(slugs);
@@ -27,7 +29,7 @@ export async function ProposalDesignSlider({
       data-proposal-type="designSliderSection"
       className="py-12 sm:py-14"
     >
-      <DesignSliderTrack heading={heading} intro={intro} items={items} />
+      <DesignSliderTrack heading={heading} intro={intro} items={items} figmaUrl={figmaUrl} />
     </section>
   );
 }
