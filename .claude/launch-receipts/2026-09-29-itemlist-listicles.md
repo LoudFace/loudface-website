@@ -22,6 +22,13 @@ Sweep of all 130 published posts: 30 emit, all rankings. Posts that stopped emit
 4. check.mjs --build: 3 FAIL, 10 WARN, 21 PASS on the first run. `build` FAIL was a missing `.env.local` in the second checkout; with it linked, `npm run build` exits 0. `no-default-palette` (4) and `sitemap-static-pages` (6) are on main already and untouched by this change. The 10 WARNs are the site's standing warnings; none concerns `schema-utils.ts`.
 5. Fresh review (Codex): no P0/P1. P2s fixed: curly-quote and entity parity with the renderer, tags inside headings no longer insert spaces, trailing period kept, body h1 read as h2 like the renderer. P2s accepted: a `>` inside a heading or cell attribute, and nested tables, can suppress or mis-read a table list. Sanity body HTML carries neither today.
 
+## Review rounds 2 and 3 (on 163e3d7 and its fixes)
+
+- Round 2: one P1. An entity-encoded `</script>` in a ranked name decoded to literal markup, and the route wrote JSON-LD with raw `JSON.stringify`, so it could close the script tag. Fixed: `serializeJsonLd()` escapes `<` as `\u003c`, used for all six JSON-LD blocks on the blog post route. Four P2s fixed: invalid numeric references (now U+FFFD, no crash), single-pass entity decoding, `&rsquo;` kept curly as the renderer shows it, `<br>` read as a space.
+- Round 3: no P0/P1. Two P2s fixed: named-entity lookup ignores inherited keys (`&constructor;` stays literal), `<br>` with attributes reads as a space.
+- 17 tests pass; typecheck clean; `npm run build` exit 0; the 130-post sweep output is identical before and after these fixes.
+- Out of scope, filed as its own task: about 40 other files still emit JSON-LD with raw `JSON.stringify`.
+
 ## Live validation (2 polls each, both identical)
 
 | URL | ItemList | Matches visible order | Other JSON-LD |

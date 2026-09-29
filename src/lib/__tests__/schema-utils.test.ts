@@ -6,7 +6,7 @@
 
 import { describe, it } from 'node:test';
 import assert from 'node:assert/strict';
-import { buildItemListSchema, extractRankedListFromHTML, isRankedListTitle } from '../schema-utils';
+import { buildItemListSchema, extractRankedListFromHTML, isRankedListTitle, serializeJsonLd } from '../schema-utils';
 
 type ItemList = {
   '@type': string;
@@ -39,6 +39,17 @@ describe('extractRankedListFromHTML', () => {
     ].join('');
 
     assert.deepEqual(extractRankedListFromHTML(html), ['LoudFace', "O'Neil & Co", 'Acme Inc.']);
+  });
+
+  it('decodes entities once, like the browser', () => {
+    const rank = (first: string) => extractRankedListFromHTML(`<h3>1. ${first}</h3><h3>2. B</h3><h3>3. C</h3>`)[0];
+
+    assert.equal(rank('A &#38;quot;B&#38;quot;'), 'A &quot;B&quot;');
+    assert.equal(rank('O&rsquo;Neil'), 'O\u2019Neil');
+    assert.equal(rank('Acme &#1114112;'), 'Acme \uFFFD');
+    assert.equal(rank('Alpha<br>Beta'), 'Alpha Beta');
+    assert.equal(rank('Alpha<br class="x">Beta'), 'Alpha Beta');
+    assert.equal(rank('&constructor; AT&T'), '&constructor; AT&T');
   });
 
   it('reads body h1 headings as h2, as the renderer shows them', () => {
@@ -131,5 +142,17 @@ describe('buildItemListSchema', () => {
 
   it('emits nothing on a numbered post whose title is not a ranking', () => {
     assert.equal(buildItemListSchema(ranked, 'Five moves when traffic drops', 'https://example.com/moves'), null);
+  });
+});
+
+describe('serializeJsonLd', () => {
+  it('cannot close its script tag and still parses to the same value', () => {
+    const name = extractRankedListFromHTML(
+      '<h3>1. &#60;/script&#62;&#60;script&#62;alert(1)&#60;/script&#62;</h3><h3>2. B</h3><h3>3. C</h3>',
+    )[0];
+    const json = serializeJsonLd({ name });
+
+    assert.equal(json.includes('</script'), false);
+    assert.equal(JSON.parse(json).name, '</script><script>alert(1)</script>');
   });
 });
