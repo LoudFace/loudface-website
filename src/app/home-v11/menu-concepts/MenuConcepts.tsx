@@ -2,6 +2,7 @@ import Link from 'next/link';
 import { cloneElement, isValidElement, type ReactNode } from 'react';
 import type { HomeV11Content } from '@/lib/content-utils';
 import type { HomeV11Data } from '../data';
+import { heroSlide } from '../hero-slides';
 import type { NavDropdown, NavV11Data } from '../NavV11';
 import { ChatWindow } from '../Bento';
 import { CLIENT_LOGOS } from '../LogoGrid';
@@ -196,7 +197,7 @@ function Pic({ children, cap, className = '' }: { children: ReactNode; cap: stri
 
 export function ServicesB({ services, v11, cta, home, data, siteLabel, icons }: MenuConceptProps & { icons?: MenuIconSet }) {
   const f = v11.feature;
-  const genie = home.hero.slides[1];
+  const genie = heroSlide(home, 'genie');
   const pics: Record<string, ReactNode> = {
     0: (
       <Pic cap={`${f.metric} ${f.caption}`} className="is-chat"><ChatWindow c={f.chat} /></Pic>
@@ -239,7 +240,7 @@ export function ServicesB({ services, v11, cta, home, data, siteLabel, icons }: 
 export function IndustriesB({ industries, v11, cta, home, data, questions, icons }: MenuConceptProps & { icons?: MenuIconSet }) {
   const [sector, stage] = v11.industryGroups;
   const logos = CLIENT_LOGOS.filter((l) => l.logo && PROOF_LOGOS.includes(l.alt));
-  const genie = home.hero.slides[5];
+  const genie = heroSlide(home, 'genieLeads');
   return (
     <Drop className={`mc-b ${icons ? 'has-icons' : ''}`}>
       <div className="v11-nav-main">

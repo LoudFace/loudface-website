@@ -4,6 +4,7 @@ import '../../../service-v11/service-v11.css';
 import '../../../service-v11/cro-sections.css';
 import { getHomeV11Content } from '@/lib/content-utils';
 import { getHomeV11Data } from '../../../home-v11/data';
+import { heroSlide } from '../../../home-v11/hero-slides';
 import { LiveChart } from '../../../home-v11/LiveChart';
 import { VideoStill } from '../../../home-v11/VideoStill';
 import { Eyebrow, img } from '../../../home-v11/ui';
@@ -25,8 +26,7 @@ const Play = () => (
  * charts carry real data, then imported into the Paper board. Copy is the page's existing copy where it exists. */
 export default async function CroSections() {
   const [c, data] = await Promise.all([getHomeV11Content(), getHomeV11Data()]);
-  const slides = c.hero.slides;
-  const del = slides[2], gl = slides[5];
+  const del = heroSlide(c, 'delshad'), gl = heroSlide(c, 'genieLeads');
   const maksim = c.testimonials.videos[0];
   const brand = c.testimonials.cards[2];
   const chart = (series: NonNullable<typeof data>['hero']['delshad'] | undefined, tip: string) =>

@@ -4,6 +4,7 @@ import type { HomeV11Data, Series } from '../home-v11/data';
 import { ResultCase } from '../home-v11/ResultCase';
 import { VideoCard } from '../home-v11/Testimonials';
 import type { ValueFormat } from '../home-v11/LiveChart';
+import { heroSlide, type HeroSlideKey } from '../home-v11/hero-slides';
 
 /**
  * A service page's proof, in the homepage's own parts (DESIGN.md §2, §7): one feature result and three smaller
@@ -20,20 +21,20 @@ interface Pick {
   square?: boolean;
   pin: boolean;
   format: ValueFormat;
-  /** Where the words come from: a homepage results case (its claim) and a hero slide. */
-  from: { cases?: number; slide: number };
+  /** Where the words come from: a homepage results case (its claim) and the hero slide that charts this series. */
+  from: { cases?: number; slide: HeroSlideKey };
   /** The chart is the slide's series, not the case's: the number, label and source come from the slide. */
   own?: boolean;
 }
 
 const POOL: Record<Key, Pick> = {
-  delshadSearch: { series: (d) => d.results.delshad, href: '/case-studies/delshad-legal-content-engine', icon: 'logos/delshad-icon.jpeg', pin: true, format: 'index', from: { cases: 0, slide: 2 } },
-  genieSearch: { series: (d) => d.results.genie, href: '/case-studies/genie-teacher-organic-growth', icon: 'logos/genie-icon.png', pin: true, format: 'index', from: { cases: 1, slide: 1 } },
-  tmClicks: { series: (d) => d.hero.tm, href: '/case-studies/trademomentum-niche-aeo-organic-growth', icon: 'logos/trademomentum-icon.png', square: true, pin: true, format: 'indexWeek', from: { cases: 2, slide: 3 } },
-  lfAi: { series: (d) => d.results.lf, href: '/case-studies/loudface-aeo-case-study', pin: false, format: 'pct', from: { cases: 3, slide: 0 } },
-  stealthAi: { series: (d) => d.hero.stealth, href: '/case-studies/stealth-fintech-ai-visibility', icon: 'logos/anonymous-icon.svg', pin: false, format: 'pct', from: { slide: 4 } },
-  genieLeads: { series: (d) => d.hero.genieLeads, href: '/case-studies/genie-teacher-organic-growth', icon: 'logos/genie-icon.png', pin: true, format: 'index', from: { slide: 5 } },
-  delshadLeads: { series: (d) => d.hero.delshad, href: '/case-studies/delshad-legal-content-engine', icon: 'logos/delshad-icon.jpeg', pin: true, format: 'index', from: { cases: 0, slide: 2 }, own: true },
+  delshadSearch: { series: (d) => d.results.delshad, href: '/case-studies/delshad-legal-content-engine', icon: 'logos/delshad-icon.jpeg', pin: true, format: 'index', from: { cases: 0, slide: 'delshad' } },
+  genieSearch: { series: (d) => d.results.genie, href: '/case-studies/genie-teacher-organic-growth', icon: 'logos/genie-icon.png', pin: true, format: 'index', from: { cases: 1, slide: 'genie' } },
+  tmClicks: { series: (d) => d.hero.tm, href: '/case-studies/trademomentum-niche-aeo-organic-growth', icon: 'logos/trademomentum-icon.png', square: true, pin: true, format: 'indexWeek', from: { cases: 2, slide: 'tm' } },
+  lfAi: { series: (d) => d.results.lf, href: '/case-studies/loudface-aeo-case-study', pin: false, format: 'pct', from: { cases: 3, slide: 'lf' } },
+  stealthAi: { series: (d) => d.hero.stealth, href: '/case-studies/stealth-fintech-ai-visibility', icon: 'logos/anonymous-icon.svg', pin: false, format: 'pct', from: { slide: 'stealth' } },
+  genieLeads: { series: (d) => d.hero.genieLeads, href: '/case-studies/genie-teacher-organic-growth', icon: 'logos/genie-icon.png', pin: true, format: 'index', from: { slide: 'genieLeads' } },
+  delshadLeads: { series: (d) => d.hero.delshad, href: '/case-studies/delshad-legal-content-engine', icon: 'logos/delshad-icon.jpeg', pin: true, format: 'index', from: { cases: 0, slide: 'delshad' }, own: true },
 };
 
 /** Which results each service shows, one client per cell; the first is the feature. Build services lead with
@@ -101,7 +102,7 @@ export function ServiceResults({ slug, home, data, avoid }: { slug: string; home
     <div className="v11-rgrid">
       {keys.map((k, i) => {
         const p = POOL[k];
-        const slide = home.hero.slides[p.from.slide];
+        const slide = heroSlide(home, p.from.slide);
         const kase = p.from.cases !== undefined ? home.results.cases[p.from.cases] : undefined;
         const caseWords = p.own ? undefined : kase;
         return (

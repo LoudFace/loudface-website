@@ -3,6 +3,7 @@ import { Mrs_Saint_Delafield, Nothing_You_Could_Do } from 'next/font/google';
 import { rawContent, type AboutV11Content, type HomeV11Content } from '@/lib/content-utils';
 import { asset } from '@/lib/assets';
 import type { HomeV11Data } from '../home-v11/data';
+import { heroSlide } from '../home-v11/hero-slides';
 import { ChartPanel } from '../home-v11/ChartPanel';
 import { Closing } from '../home-v11/Closing';
 import { FooterV11 } from '../home-v11/FooterV11';
@@ -224,7 +225,7 @@ export function AboutV11({ c, home, data }: { c: AboutV11Content; home: HomeV11C
               <div className="sv-tile-art">
                 <Ui className="ab-grow-ui">
                   {/* a year of one client's search growth; the Genie curve leads its own case study and the organic growth page */}
-                  {data && <ChartPanel title={c.values.grow.chartTitle} source={c.values.grow.chartSource} series={data.results.tm} format="indexWeek" tip={home.hero.slides[3].tip} height={200} />}
+                  {data && <ChartPanel title={c.values.grow.chartTitle} source={c.values.grow.chartSource} series={data.results.tm} format="indexWeek" tip={heroSlide(home, 'tm').tip} height={200} />}
                 </Ui>
               </div>
             </div>

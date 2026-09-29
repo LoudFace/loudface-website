@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import type { HomeV11Content, PricingContent, PricingV11Content } from '@/lib/content-utils';
 import type { HomeV11Data } from '../home-v11/data';
+import { heroSlide } from '../home-v11/hero-slides';
 import { ChartPanel } from '../home-v11/ChartPanel';
 import { Closing } from '../home-v11/Closing';
 import { FooterV11 } from '../home-v11/FooterV11';
@@ -212,7 +213,7 @@ export function PricingV11({ c, x, home, data }: { c: PricingContent; x: Pricing
               </div>
               <div className="pr-track-pic">
                 <Ui className="pr-chart">
-                  {data && <ChartPanel title={x.tracks.growthChartTitle} source={x.tracks.growthChartSource} series={data.hero.delshad} format="index" tip={home.hero.slides[2].tip} height={190} />}
+                  {data && <ChartPanel title={x.tracks.growthChartTitle} source={x.tracks.growthChartSource} series={data.hero.delshad} format="index" tip={heroSlide(home, 'delshad').tip} height={190} />}
                 </Ui>
               </div>
             </div>

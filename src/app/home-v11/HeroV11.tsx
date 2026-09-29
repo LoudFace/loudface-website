@@ -5,17 +5,7 @@ import type { ValueFormat } from './LiveChart';
 import { StageChart } from './StageChart';
 import { HeroSlider } from './HeroSlider';
 import { Eyebrow, LfMark, img } from './ui';
-
-/** Which series and case study each slide shows, in the content file's slide order. */
-const SLIDES: { series: keyof HomeV11Data['hero']; href: string; format: ValueFormat; compact?: boolean }[] = [
-  { series: 'lf', format: 'pct', href: '/case-studies/loudface-aeo-case-study' },
-  { series: 'genie', format: 'index', href: '/case-studies/genie-teacher-organic-growth' },
-  { series: 'health', format: 'index', href: '/case-studies/anonymous-health-tech-organic-growth' },
-  { series: 'delshad', format: 'index', href: '/case-studies/delshad-legal-content-engine' },
-  { series: 'tm', format: 'indexWeek', href: '/case-studies/trademomentum-niche-aeo-organic-growth' },
-  { series: 'stealth', format: 'pct', href: '/case-studies/stealth-fintech-ai-visibility', compact: true },
-  { series: 'genieLeads', format: 'index', href: '/case-studies/genie-teacher-organic-growth' },
-];
+import { HERO_SLIDES } from './hero-slides';
 
 export function HeroV11({ c, data }: { c: HomeV11Content['hero']; data: HomeV11Data | null }) {
   return (
@@ -50,7 +40,7 @@ export function HeroRail({ c, data }: { c: HomeV11Content['hero']; data: HomeV11
       }
     >
       {c.slides.map((s, i) => {
-        const cfg = SLIDES[i];
+        const cfg = HERO_SLIDES[i];
         return (
           <StageChart
             key={i}
