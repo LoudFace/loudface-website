@@ -288,8 +288,9 @@ const doc = {
 
     section('richTextSection', {
       heading: "Sites we've designed",
+      work: ['Dimer Health', 'Reiterate', 'Brandfirm', 'Ground Up', 'Urban Umbrella'],
       body: [
-        para("Some of the websites we've designed and built. Dimer Health, a telehealth company, saw a 288% increase in conversions after its new site went live."),
+        para("Dimer Health is a telehealth company. After its new site went live, conversions rose 288%. The others are more of the sites we've designed and built."),
         { ...para('Open the design samples in Figma'), markDefs: [{ _key: 'fig', _type: 'link', href: FIGMA_URL }] },
       ],
     }),

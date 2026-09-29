@@ -95,6 +95,13 @@ const richTextSection = defineType({
       type: 'proposalRichText',
       validation: (rule) => rule.required(),
     }),
+    defineField({
+      name: 'work',
+      title: 'Design samples (Figma link sections)',
+      type: 'array',
+      of: [defineArrayMember({ type: 'string' })],
+      description: 'Sample names in order, first one large: Eve & Roque, Brandfirm, Ground Up, Urban Umbrella, Reiterate, Dimer Health. Empty keeps the house five.',
+    }),
   ],
   preview: {
     select: { title: 'heading' },

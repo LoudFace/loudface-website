@@ -48,7 +48,15 @@ const WORK = [
   { src: '/images/proposal-work/ground-up.jpg', name: 'Ground Up', kind: 'Coffee & tea' },
   { src: '/images/proposal-work/urban-umbrella.jpg', name: 'Urban Umbrella', kind: 'Construction' },
   { src: '/images/proposal-work/reiterate.jpg', name: 'Reiterate', kind: 'Finance software' },
+  /* Our design as shipped, cropped from the case-study image; the live site has since changed. */
+  { src: '/images/proposal-work/dimer-health.jpg', name: 'Dimer Health', kind: 'Telehealth' },
 ];
+
+/* The five tiles a mosaic shows: the section's own `work` order when it names one, else the house five. */
+const workFor = (names?: string[]) =>
+  names?.length
+    ? names.map((n) => WORK.find((w) => w.name === n)).filter((w): w is (typeof WORK)[number] => Boolean(w)).slice(0, 5)
+    : WORK.slice(0, 5);
 
 type Sec<T extends ProposalSection['_type']> = Extract<ProposalSection, { _type: T }>;
 type Block = PortableTextBlock & { children?: { text?: string; marks?: string[] }[]; markDefs?: { _key: string; href?: string }[] };
@@ -169,7 +177,7 @@ function RichText({ section, months, isFirst }: { section: Sec<'richTextSection'
     return (
       <div className={panel}>
         <div className="pc-focus grid grid-cols-2 gap-3 sm:grid-cols-4 sm:grid-rows-2">
-          {WORK.map((w, i) => (
+          {workFor(section.work).map((w, i) => (
             <figure key={w.name} className={`pc-focus-item m-0 overflow-hidden ${card} ${i === 0 ? 'col-span-2 sm:row-span-2' : ''}`}>
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img

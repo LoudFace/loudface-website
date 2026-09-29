@@ -155,7 +155,14 @@ export interface ProposalForecastAssumptions {
 export type ProposalBand = 'plain' | 'white' | 'tint' | 'dark';
 
 export type ProposalSection =
-  | { _key: string; _type: 'richTextSection'; heading?: string; body: PortableTextBlock[] }
+  | {
+      _key: string;
+      _type: 'richTextSection';
+      heading?: string;
+      body: PortableTextBlock[];
+      /** Design-work mosaic only: sample names in the order to show them, first one large. */
+      work?: string[];
+    }
   | {
       _key: string;
       _type: 'tableSection';
