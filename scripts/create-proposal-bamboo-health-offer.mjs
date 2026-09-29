@@ -200,7 +200,6 @@ const doc = {
   status: STATUS,
   contactEmail: 'arnel@loudface.co',
   design: 'cards',
-  priceLine: '$7,500/mo, 3-month minimum',
   promises: ['Works inside your WordPress site', 'Measured in demo requests, not traffic'],
   clipStrip,
   proofRail,
