@@ -852,6 +852,26 @@ const chartsSection = defineType({
   preview: { select: { title: 'heading' }, prepare: ({ title }) => ({ title: title || 'Where you stand (charts)' }) },
 });
 
+/** Our design case studies as a slider, read live from the public case studies. */
+const designSliderSection = defineType({
+  name: 'designSliderSection',
+  title: 'Design case studies (slider)',
+  type: 'object',
+  fields: [
+    sectionHeading,
+    sectionBand,
+    defineField({ name: 'intro', title: 'Intro line', type: 'text', rows: 2 }),
+    defineField({
+      name: 'slugs',
+      title: 'Case study slugs, in slide order',
+      type: 'array',
+      of: [defineArrayMember({ type: 'string' })],
+      validation: (rule) => rule.required().min(1),
+    }),
+  ],
+  preview: { select: { title: 'heading' }, prepare: ({ title }) => ({ title: title || 'Design case studies' }) },
+});
+
 const sliderField = (name: string, title: string) =>
   defineField({
     name,
@@ -1209,6 +1229,7 @@ const proposal = defineType({
         defineArrayMember({ type: 'forecastSection' }),
         defineArrayMember({ type: 'tracksSection' }),
         defineArrayMember({ type: 'chartsSection' }),
+        defineArrayMember({ type: 'designSliderSection' }),
         defineArrayMember({ type: 'gateSection' }),
         defineArrayMember({ type: 'monthsSection' }),
       ],
@@ -1241,6 +1262,7 @@ export const proposalSchemaTypes = [
   forecastSection,
   tracksSection,
   chartsSection,
+  designSliderSection,
   gateSection,
   monthsSection,
   proposal,

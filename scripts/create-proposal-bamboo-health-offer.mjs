@@ -286,12 +286,18 @@ const doc = {
       ],
     }),
 
-    section('richTextSection', {
+    section('designSliderSection', {
       heading: "Sites we've designed",
-      work: ['Dimer Health', 'Reiterate', 'Brandfirm', 'Ground Up', 'Urban Umbrella'],
-      body: [
-        para("Dimer Health is a telehealth company. After its new site went live, conversions rose 288%. The others are more of the sites we've designed and built."),
-        { ...para('Open the design samples in Figma'), markDefs: [{ _key: 'fig', _type: 'link', href: FIGMA_URL }] },
+      intro: 'Dimer Health is a telehealth company. After its new site went live, conversions rose 288%.',
+      slugs: [
+        'dimer-health',
+        'institute-of-medical-physics',
+        'toku-design-messaging-upgrade',
+        'hoxhunt',
+        'ceipal-wp-to-wf-migration',
+        'radisson-hotels-group',
+        'viaduct',
+        'montblanc',
       ],
     }),
 
@@ -299,7 +305,7 @@ const doc = {
       heading: 'Results for our clients',
       intro: "Ask and we'll put you in touch with any of these clients.",
       chartsPerCase: 1,
-      slugs: ['dimer-health', 'genie-teacher-organic-growth', 'toku-ai-cited-pipeline', 'delshad-legal-content-engine', 'loudface-aeo-case-study'],
+      slugs: ['genie-teacher-organic-growth', 'toku-ai-cited-pipeline', 'delshad-legal-content-engine', 'loudface-aeo-case-study'],
     }),
 
     section('pricingTiersSection', {

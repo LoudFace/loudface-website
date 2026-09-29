@@ -263,6 +263,15 @@ export type ProposalSection =
     }
   | {
       _key: string;
+      _type: 'designSliderSection';
+      heading?: string;
+      band?: ProposalBand;
+      intro?: string;
+      /** Public case-study slugs, in slide order. */
+      slugs: string[];
+    }
+  | {
+      _key: string;
       _type: 'forecastSection';
       heading?: string;
       band?: ProposalBand;

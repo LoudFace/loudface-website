@@ -1,4 +1,5 @@
 import type { ReactNode } from 'react';
+import { ProposalDesignSlider } from './ProposalDesignSlider';
 import { ProposalStandingCharts } from './ProposalStandingCharts';
 import { PortableText, type PortableTextComponents } from '@portabletext/react';
 import type { PortableTextBlock } from '@portabletext/types';
@@ -463,6 +464,9 @@ export function ProposalCardsDocument({ proposal }: { proposal: Proposal }) {
           index={index}
         />
       );
+    }
+    if (section._type === 'designSliderSection') {
+      return <ProposalDesignSlider key={section._key} heading={section.heading} intro={section.intro} slugs={section.slugs} index={index} />;
     }
     if (isProofSection(section)) return <ProofSection key={section._key} section={section} index={index} boxed />;
     let body: ReactNode;
