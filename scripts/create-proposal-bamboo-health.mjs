@@ -211,7 +211,7 @@ const doc = {
         para([
           { text: 'Your domain has the same authority as Kyruus and Unite Us (Ahrefs DR 70). ' },
           { text: 'It brings in about a quarter of their search traffic.', bold: true },
-          { text: ' ChatGPT names you for PDMP vendors and bed registries, but not for opioid risk or nursing-facility alerts: the jobs NarxCare and Pings exist to do.' },
+          { text: ' ChatGPT names you when buyers ask about PDMP vendors, but rarely for care coordination or behavioral health, where Pings and Bamboo Bridge compete.' },
         ]),
       ],
     }),
@@ -259,11 +259,11 @@ const doc = {
             points: [pt('Typed "Bamboo" or a product name', 806), pt('Searched for a problem or category', 212)],
             caption: 'Four in five visitors already knew the name. Search is not bringing Bamboo new buyers.',
           }),
-          panel('bars', {
+          panel('hbars', {
             title: 'Category searches with no Bamboo page ranking',
             headline: '0 of 6',
             seriesLabel: 'US searches a month',
-            points: [pt('PDMP', 9700), pt('Behavioral health software', 500), pt('Prescription drug monitoring program', 250), pt('Care coordination software', 250), pt('Care gaps', 200), pt('ADT notifications', 150)],
+            points: [pt('PDMP', 9700), pt('Behavioral health software', 500), pt('Prescription drug monitoring', 250), pt('Care coordination software', 250), pt('Care gaps', 200), pt('ADT notifications', 150)],
             caption: 'Bamboo runs the PDMP in more than 40 states, yet ranks for none of these in the top 100. "PDMP" alone is 9,700 searches a month.',
           }),
         ]),
@@ -292,15 +292,15 @@ const doc = {
     section('tableSection', {
       heading: 'What ChatGPT says, question by question',
       note: 'Seven of the 20 questions, asked live on 29 September with web search on. From today we track all 20 daily across ChatGPT, Gemini and Google AI Overviews.',
-      columns: ['Buyer question', 'Bamboo named?', 'Who else, or what it cites'],
+      columns: ['Buyer question', 'What ChatGPT answered'],
       rows: [
-        row(['Best PDMP software for state health departments', 'Yes', '—']),
-        row(['Who are the main prescription drug monitoring program vendors?', 'Yes', 'DrFirst']),
-        row(['Best behavioral health referral software', 'Yes', 'Unite Us, Findhelp']),
-        row(['Best care coordination software for health plans', 'No', 'Innovaccer, Arcadia, Lightbeam']),
-        row(['What are ADT notifications and which companies provide them?', 'No', 'No vendor named. This is what Pings does']),
-        row(['How do nursing homes find out when a resident is admitted to the hospital?', 'No', 'No vendor named. This is what Pings does']),
-        row(['Best clinical decision support tools for opioid prescribing', 'No', 'NarxCare is not named']),
+        row(['Best PDMP software for state health departments', 'Names Bamboo']),
+        row(['Who are the main prescription drug monitoring program vendors?', 'Names Bamboo, and DrFirst']),
+        row(['Best behavioral health referral software', 'Names Bamboo, Unite Us and Findhelp']),
+        row(['Best care coordination software for health plans', 'No Bamboo. Names Innovaccer, Arcadia and Lightbeam']),
+        row(['What are ADT notifications and which companies provide them?', 'No vendor named. This is what Pings does']),
+        row(['How do nursing homes find out when a resident is admitted to the hospital?', 'No vendor named. This is what Pings does']),
+        row(['Best clinical decision support tools for opioid prescribing', 'No Bamboo. NarxCare is not named']),
       ],
     }),
 

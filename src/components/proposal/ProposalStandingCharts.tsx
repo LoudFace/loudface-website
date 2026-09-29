@@ -112,13 +112,13 @@ function Bars({ panel, horizontal }: { panel: Panel; horizontal?: boolean }) {
       data={points}
       xDataKey="label"
       orientation={horizontal ? 'horizontal' : 'vertical'}
-      aspectRatio={horizontal ? `1.5 / 1` : '1.6 / 1'}
+      aspectRatio={horizontal ? '2.8 / 1' : '3.2 / 1'}
       barGap={0.34}
-      margin={horizontal ? { top: 4, right: 12, bottom: 4, left: 118 } : { top: 8, right: 8, bottom: 30, left: 8 }}
+      margin={horizontal ? { top: 4, right: 12, bottom: 4, left: 200 } : { top: 8, right: 8, bottom: 30, left: 8 }}
     >
       <Background pattern="dots" opacity={0.6} />
       <Bar dataKey="value" lineCap="butt" fill="var(--chart-1)" />
-      {horizontal ? <BarYAxis /> : <BarXAxis />}
+      {horizontal ? <BarYAxis labelWidth={188} /> : <BarXAxis />}
       <ChartTooltip
         showCrosshair={false}
         content={({ point }) => (
@@ -136,7 +136,7 @@ function RingPanel({ panel }: { panel: Panel }) {
   const points = panel.points ?? [];
   const total = points.reduce((sum, p) => sum + p.value, 0);
   return (
-    <div className="flex flex-col items-center gap-4 sm:flex-row sm:items-center sm:gap-6">
+    <div className="flex flex-col items-center gap-6 sm:flex-row sm:items-center sm:gap-10">
       <div className="shrink-0">
         <RingChart
           data={points.map((p, i) => ({ label: p.label, value: p.value, maxValue: total, color: INK[i] }))}
@@ -169,9 +169,8 @@ function RingPanel({ panel }: { panel: Panel }) {
 }
 
 function PanelCard({ panel, mounted }: { panel: Panel; mounted: boolean }) {
-  const wide = panel.kind === 'trend';
   return (
-    <figure className={`${card} flex min-w-0 flex-col p-5 sm:p-6 ${wide ? 'lg:col-span-2' : ''}`} data-print-keep>
+    <figure className={`${card} flex min-w-0 flex-col p-5 sm:p-6`} data-print-keep>
       <figcaption className="mb-4">
         <div className="flex items-baseline justify-between gap-4">
           <p className="text-[15px] font-medium text-surface-950">{panel.title}</p>
@@ -210,7 +209,7 @@ export function ProposalStandingCharts({ section }: { section: ChartsSection }) 
             <p className="text-[13px] font-semibold text-primary-800">{board.label}</p>
             {board.source && <p className="text-[12.5px] text-surface-500">{board.source}</p>}
           </div>
-          <div className="grid gap-3 lg:grid-cols-2">
+          <div className="grid gap-3">
             {board.panels.map((panel) => (
               <PanelCard key={panel._key} panel={panel} mounted={mounted} />
             ))}

@@ -11,6 +11,8 @@ export interface BarYAxisProps {
   showAllLabels?: boolean;
   /** Maximum number of labels to show. Default: 20 */
   maxLabels?: number;
+  /** Widest a label may get before it truncates, in px. Default: 70 */
+  labelWidth?: number;
 }
 
 interface BarYAxisLabelProps {
@@ -18,6 +20,7 @@ interface BarYAxisLabelProps {
   y: number;
   bandHeight: number;
   isHovered: boolean;
+  labelWidth?: number;
 }
 
 function BarYAxisLabel({
@@ -25,6 +28,7 @@ function BarYAxisLabel({
   y,
   bandHeight,
   isHovered,
+  labelWidth = 70,
 }: BarYAxisLabelProps) {
   return (
     <div
@@ -46,7 +50,7 @@ function BarYAxisLabel({
           opacity: 0.7,
           color: "var(--chart-label, var(--color-zinc-500))",
         }}
-        style={{ maxWidth: 70 }}
+        style={{ maxWidth: labelWidth }}
         transition={{ duration: 0.15 }}
       >
         {label}
@@ -78,6 +82,7 @@ export function BarYAxis(props: BarYAxisProps) {
 const BarYAxisInner = memo(function BarYAxisInner({
   showAllLabels = true,
   maxLabels = 20,
+  labelWidth,
   container,
 }: BarYAxisProps & { container: HTMLDivElement }) {
   const { margin, barScale, bandWidth, barXAccessor, data, hoveredBarIndex } =
@@ -129,6 +134,7 @@ const BarYAxisInner = memo(function BarYAxisInner({
           isHovered={hoveredBarIndex === item.index}
           key={`${item.label}-${item.y}`}
           label={item.label}
+          labelWidth={labelWidth}
           y={item.y}
         />
       ))}
