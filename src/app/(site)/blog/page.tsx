@@ -21,6 +21,7 @@ import '../../service-v11/service-v11.css';
 import '../../service-v11/svc.css';
 import '../../blog-v11/blog.css';
 import { BlogIndexV11 } from '../../blog-v11/BlogIndexV11';
+import { serializeJsonLd } from '@/lib/schema-utils';
 
 const POSTS_PER_PAGE = 12;
 
@@ -116,8 +117,8 @@ export default async function BlogPage({
 
   return (
     <>
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(blogSchema) }} />
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: serializeJsonLd(blogSchema) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: serializeJsonLd(breadcrumbSchema) }} />
       <BlogIndexV11 c={c} home={home} posts={posts} total={blogPosts.length} page={safePage} pages={totalPages} />
     </>
   );

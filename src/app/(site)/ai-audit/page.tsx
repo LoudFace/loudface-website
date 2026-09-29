@@ -15,6 +15,7 @@ import '../../service-v11/svc.css';
 import '../../audit-v11/audit.css';
 import { getAiAuditContent, getHomeV11Content, rawContent, type AiAuditContent } from '@/lib/content-utils';
 import { AuditPageV11 } from '../../audit-v11/AuditPageV11';
+import { serializeJsonLd } from '@/lib/schema-utils';
 
 export const metadata: Metadata = {
   title: 'Free AI Visibility Audit for B2B SaaS',
@@ -82,7 +83,7 @@ export default async function AiAuditPage() {
   return (
     <>
       {[breadcrumbSchema, faqSchema].map((schema, i) => (
-        <script key={i} type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }} />
+        <script key={i} type="application/ld+json" dangerouslySetInnerHTML={{ __html: serializeJsonLd(schema) }} />
       ))}
       <AuditPageV11 c={c} home={home} />
     </>

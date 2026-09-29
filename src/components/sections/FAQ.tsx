@@ -1,5 +1,6 @@
 import { getFAQContent } from '@/lib/content-utils';
 import { Button, SectionContainer, SectionHeader } from '@/components/ui';
+import { serializeJsonLd } from '@/lib/schema-utils';
 
 interface FAQItem {
   question: string;
@@ -71,7 +72,7 @@ export async function FAQ({
       {!skipSchema && (
         <script
           type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
+          dangerouslySetInnerHTML={{ __html: serializeJsonLd(faqSchema) }}
         />
       )}
 

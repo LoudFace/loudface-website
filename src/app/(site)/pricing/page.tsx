@@ -17,6 +17,7 @@ import '../../pricing-v11/pricing.css';
 import { PRICING_FAQ } from '../../pricing-v3/data';
 import { getHomeV11Data } from '../../home-v11/data';
 import { PricingV11 } from '../../pricing-v11/PricingV11';
+import { serializeJsonLd } from '@/lib/schema-utils';
 
 export const metadata: Metadata = {
   title: 'Pricing: Solo, Dual & Scale Autopilot Plans',
@@ -88,7 +89,7 @@ export default async function PricingPage() {
   return (
     <>
       {[breadcrumbSchema, speakableSchema, faqSchema].map((schema, i) => (
-        <script key={i} type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }} />
+        <script key={i} type="application/ld+json" dangerouslySetInnerHTML={{ __html: serializeJsonLd(schema) }} />
       ))}
       <PricingV11 c={c} x={x} home={home} data={data} />
     </>

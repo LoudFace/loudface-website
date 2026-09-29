@@ -29,7 +29,7 @@ import '../../../case-detail-v3/instruments-board.css';
 import { fetchCaseStudyDetailData, fetchItemBySlug } from '@/lib/cms-data';
 import { avatarImage, optimizeImage } from '@/lib/image-utils';
 import { rewriteLegacyUrls, resolveServiceSlug } from '@/lib/seo-utils';
-import { extractFAQFromHTML, buildFAQSchema, buildSpeakableSchema, buildReviewSchema, buildImageObject, buildOrganizationPublisher } from '@/lib/schema-utils';
+import { extractFAQFromHTML, buildFAQSchema, buildSpeakableSchema, buildReviewSchema, buildImageObject, buildOrganizationPublisher, serializeJsonLd } from '@/lib/schema-utils';
 import { autoLinkServiceMentions, buildHeadingWithId } from '@/lib/html-utils';
 import type { CaseStudy, Client, Testimonial, Industry, Technology, ServiceCategory } from '@/lib/types';
 import { FooterV3 } from '../../../home-v3/FooterV3';
@@ -291,14 +291,14 @@ export default async function TradeMomentumPreviewPage() {
   return (
     <>
       {/* Structured Data — kept for parity with production; page is noindex regardless. */}
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }} />
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(articleSchema) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: serializeJsonLd(breadcrumbSchema) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: serializeJsonLd(articleSchema) }} />
       {faqSchema && (
-        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }} />
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: serializeJsonLd(faqSchema) }} />
       )}
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(speakableSchema) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: serializeJsonLd(speakableSchema) }} />
       {reviewSchema && (
-        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(reviewSchema) }} />
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: serializeJsonLd(reviewSchema) }} />
       )}
 
       {/* .csv3 scopes the bespoke resets so they can't touch the shared Header/Footer/Cal chrome. */}

@@ -17,6 +17,7 @@ import '../../ai-instructions-v11/ai.css';
 import { getAiInstructionsV11Content, getHomeV11Content, rawContent, type AiInstructionsV11Content } from '@/lib/content-utils';
 import { SOCIAL_LINKS } from '@/lib/icons';
 import { AiInstructionsV11 } from '../../ai-instructions-v11/AiInstructionsV11';
+import { serializeJsonLd } from '@/lib/schema-utils';
 
 const SITE_URL = 'https://www.loudface.co';
 const PAGE_URL = `${SITE_URL}/ai-instructions`;
@@ -122,7 +123,7 @@ export default async function AiInstructionsPage() {
         <script
           key={i}
           type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }}
+          dangerouslySetInnerHTML={{ __html: serializeJsonLd(schema) }}
         />
       ))}
       <AiInstructionsV11 c={c} home={home} />

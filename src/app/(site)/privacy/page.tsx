@@ -24,6 +24,7 @@ import '../../legal-v11/legal.css';
 import { getHomeV11Content, getLegalV11Content } from '@/lib/content-utils';
 import { LegalPageV11 } from '../../legal-v11/LegalPageV11';
 import { PRIVACY_VIEW } from '../../legal-v11/privacy';
+import { serializeJsonLd } from '@/lib/schema-utils';
 
 export const metadata: Metadata = {
   // 54 chars with the layout's " | LoudFace" suffix — the bare "Privacy Policy"
@@ -67,7 +68,7 @@ export default async function PrivacyPolicyPage() {
     <>
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
+        dangerouslySetInnerHTML={{ __html: serializeJsonLd(breadcrumbSchema) }}
       />
       <LegalPageV11 view={PRIVACY_VIEW} home={home} labels={c.labels} />
     </>

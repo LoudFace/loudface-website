@@ -20,6 +20,7 @@ import '../../services-v11/hub.css';
 import { SERVICES_FAQ, SERVICES } from '../../services-v3/data';
 import { getServiceImages } from '../../service-v3/data';
 import { ServicesHubV11 } from '../../services-v11/ServicesHubV11';
+import { serializeJsonLd } from '@/lib/schema-utils';
 
 const SITE = 'https://www.loudface.co';
 
@@ -101,7 +102,7 @@ export default async function ServicesPage() {
   return (
     <>
       {[breadcrumbSchema, servicesListSchema, faqSchema, speakableSchema].map((schema, i) => (
-        <script key={i} type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }} />
+        <script key={i} type="application/ld+json" dangerouslySetInnerHTML={{ __html: serializeJsonLd(schema) }} />
       ))}
       <ServicesHubV11 c={c} home={home} images={images} />
     </>

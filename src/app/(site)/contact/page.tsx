@@ -20,6 +20,7 @@ import '../../service-v11/svc.css';
 import '../../contact-v11/contact.css';
 import { CONTACT_FAQ, OFFICES, CONTACT_EMAIL } from '../../contact-v3/data';
 import { ContactV11 } from '../../contact-v11/ContactV11';
+import { serializeJsonLd } from '@/lib/schema-utils';
 
 const SITE = 'https://www.loudface.co';
 
@@ -112,7 +113,7 @@ export default async function ContactPage() {
   return (
     <>
       {[breadcrumbSchema, contactPageSchema, faqSchema, speakableSchema].map((schema, i) => (
-        <script key={i} type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }} />
+        <script key={i} type="application/ld+json" dangerouslySetInnerHTML={{ __html: serializeJsonLd(schema) }} />
       ))}
       <ContactV11 c={c} home={home} steps={x.steps} />
     </>

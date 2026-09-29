@@ -14,6 +14,7 @@ import '../../careers-v11/careers.css';
 import { fetchOpenRoles } from '@/lib/careers-data';
 import { getCareersV11Content, getHomeV11Content } from '@/lib/content-utils';
 import { CareersV11 } from '../../careers-v11/CareersV11';
+import { serializeJsonLd } from '@/lib/schema-utils';
 
 const SITE_URL = 'https://www.loudface.co';
 const PAGE_URL = `${SITE_URL}/careers`;
@@ -60,7 +61,7 @@ export default async function CareersPage() {
     <>
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
+        dangerouslySetInnerHTML={{ __html: serializeJsonLd(breadcrumbJsonLd) }}
       />
       <CareersV11 result={result} home={home} c={c} />
     </>

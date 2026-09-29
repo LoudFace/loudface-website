@@ -25,6 +25,7 @@ import '../../legal-v11/legal.css';
 import { getHomeV11Content, getLegalV11Content } from '@/lib/content-utils';
 import { LegalPageV11 } from '../../legal-v11/LegalPageV11';
 import { TERMS_VIEW } from '../../legal-v11/terms';
+import { serializeJsonLd } from '@/lib/schema-utils';
 
 export const metadata: Metadata = {
   // 52 chars with the layout's " | LoudFace" suffix — the bare "Terms of Service"
@@ -68,7 +69,7 @@ export default async function TermsOfServicePage() {
     <>
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
+        dangerouslySetInnerHTML={{ __html: serializeJsonLd(breadcrumbSchema) }}
       />
       <LegalPageV11 view={TERMS_VIEW} home={home} labels={c.labels} />
     </>

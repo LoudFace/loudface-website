@@ -17,6 +17,7 @@ import { getSeoForHubContent, rawContent, type SeoForHubContent } from '@/lib/co
 import type { SeoPage } from '@/lib/types';
 import { IndustryHubV11 } from '../../seo-for-v11/IndustryHubV11';
 import { getIndustryShell } from '../../seo-for-v11/shell';
+import { serializeJsonLd } from '@/lib/schema-utils';
 
 export const metadata: Metadata = {
   title: 'SEO Services by Industry',
@@ -147,19 +148,19 @@ export default async function SeoForHubPage() {
       {/* Structured Data — native script for SSR visibility to crawlers */}
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
+        dangerouslySetInnerHTML={{ __html: serializeJsonLd(breadcrumbSchema) }}
       />
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(serviceSchema) }}
+        dangerouslySetInnerHTML={{ __html: serializeJsonLd(serviceSchema) }}
       />
       {seoPages.length > 0 && (
         <script
           type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(itemListSchema) }}
+          dangerouslySetInnerHTML={{ __html: serializeJsonLd(itemListSchema) }}
         />
       )}
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: serializeJsonLd(faqSchema) }} />
       <IndustryHubV11 h={h} cards={cards} c={c} home={home} data={data} />
     </>
   );

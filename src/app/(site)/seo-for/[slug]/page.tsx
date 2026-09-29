@@ -29,6 +29,7 @@ import { relatedCards } from '../../../seo-for-v11/related';
 import { getIndustryShell } from '../../../seo-for-v11/shell';
 import { cmsIndustryView } from '../../../seo-for-v11/views';
 import type { SeoPage } from '@/lib/types';
+import { serializeJsonLd } from '@/lib/schema-utils';
 
 interface PageProps {
   params: Promise<{ slug: string }>;
@@ -123,7 +124,7 @@ export default async function SeoForIndustryPage({ params }: PageProps) {
   return (
     <>
       {schemas.map((schema, i) => (
-        <script key={i} type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }} />
+        <script key={i} type="application/ld+json" dangerouslySetInnerHTML={{ __html: serializeJsonLd(schema) }} />
       ))}
       <IndustryPageV11 v={view} c={c} home={home} data={data} related={relatedCards(cards, slug, view.work.map((w) => w.slug))} />
     </>

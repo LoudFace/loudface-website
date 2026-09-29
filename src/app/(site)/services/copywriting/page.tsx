@@ -15,6 +15,7 @@ import { getServiceConfigV11 } from '../../../service-v11/configs';
 import { getHomeV11Data } from '../../../home-v11/data';
 import { ServicePageV11 } from '../../../service-v11/ServicePageV11';
 import { buildServiceJsonLd } from '../../../service-v3/jsonld';
+import { serializeJsonLd } from '@/lib/schema-utils';
 
 export const metadata: Metadata = {
   title: 'Messaging & Copywriting Services',
@@ -57,7 +58,7 @@ export default async function CopywritingServicePage() {
   return (
     <>
       {jsonLd.map((s, i) => (
-        <script key={i} type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(s) }} />
+        <script key={i} type="application/ld+json" dangerouslySetInnerHTML={{ __html: serializeJsonLd(s) }} />
       ))}
       <ServicePageV11 config={config} images={images} home={home} data={data} />
     </>

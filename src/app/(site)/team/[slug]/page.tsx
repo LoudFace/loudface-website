@@ -20,7 +20,7 @@ import '../../../team-v11/team.css';
 import { fetchCollection, fetchHomepageData } from '@/lib/cms-data';
 import { formatReadTime } from '@/lib/blog-utils';
 import { buildPageMetadata, truncateSeoDescription, truncateSeoTitle } from '@/lib/seo-utils';
-import { buildSpeakableSchema } from '@/lib/schema-utils';
+import { buildSpeakableSchema, serializeJsonLd } from '@/lib/schema-utils';
 import { getHomeV11Content, getTeamV11Content } from '@/lib/content-utils';
 import { teamTitle } from '@/lib/team-titles';
 import { getHomeV11Data } from '../../../home-v11/data';
@@ -155,7 +155,7 @@ export default async function TeamMemberPage({ params }: PageProps) {
         <script
           key={i}
           type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }}
+          dangerouslySetInnerHTML={{ __html: serializeJsonLd(schema) }}
         />
       ))}
       <TeamProfileV11 v={view} c={c} home={home} data={data} />

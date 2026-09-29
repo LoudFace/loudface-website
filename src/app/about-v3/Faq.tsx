@@ -4,6 +4,7 @@
  * server component. The "Team members" stat is derived from the live CMS count.
  */
 import { rawContent, type AboutContent, type AboutFaqContent } from '@/lib/content-utils';
+import { serializeJsonLd } from '@/lib/schema-utils';
 
 // Strip any markup before it lands in JSON-LD (answers are plain text today, but this
 // keeps the schema safe if a future edit slips in a <br> or similar).
@@ -35,7 +36,7 @@ export function Faq({ teamCount, content }: { teamCount: number; content: AboutF
       {/* FAQPage Structured Data — native script for SSR visibility to crawlers */}
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
+        dangerouslySetInnerHTML={{ __html: serializeJsonLd(faqSchema) }}
       />
       <div className="container faq-grid">
         <aside className="faq-panel rv" aria-label="Frequently asked questions summary">

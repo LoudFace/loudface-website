@@ -19,6 +19,7 @@ import { getAboutTeam } from '../../about-v3/data';
 import { getHomeV11Data } from '../../home-v11/data';
 import { AboutV11 } from '../../about-v11/AboutV11';
 import { teamTitle } from '@/lib/team-titles';
+import { serializeJsonLd } from '@/lib/schema-utils';
 
 // Plain text for JSON-LD: the answers are plain today; this keeps the schema clean if one gains markup.
 const stripHtml = (html: string) => html.replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim();
@@ -117,7 +118,7 @@ export default async function AboutPage() {
   return (
     <>
       {[breadcrumbSchema, aboutSchema, speakableSchema, faqSchema].map((schema, i) => (
-        <script key={i} type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }} />
+        <script key={i} type="application/ld+json" dangerouslySetInnerHTML={{ __html: serializeJsonLd(schema) }} />
       ))}
       <AboutV11 c={c} home={home} data={data} />
     </>

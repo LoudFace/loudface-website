@@ -16,6 +16,7 @@ import { IndustryArticleV11 } from '../../../seo-for-v11/IndustryArticleV11';
 import { relatedCards } from '../../../seo-for-v11/related';
 import { getIndustryShell } from '../../../seo-for-v11/shell';
 import type { SeoForArticle } from '../../../seo-for-v11/types';
+import { serializeJsonLd } from '@/lib/schema-utils';
 
 // The FAQ this page shows, unmarked (JSON-LD never carries editing marks).
 const FAQ_ITEMS = rawContent<SeoForArticle>('seo-for-edtech').faq.items;
@@ -38,7 +39,7 @@ export default async function EdtechRoutePage() {
   const [{ home, c, data, cards }, a] = await Promise.all([getIndustryShell(), getSeoForArticleContent<SeoForArticle>('edtech')]);
   return (
     <>
-      {schemas.map((schema, index) => <script key={index} type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }} />)}
+      {schemas.map((schema, index) => <script key={index} type="application/ld+json" dangerouslySetInnerHTML={{ __html: serializeJsonLd(schema) }} />)}
       <IndustryArticleV11 slug="edtech" a={a} c={c} home={home} data={data} related={relatedCards(cards, 'edtech', [])} />
     </>
   );

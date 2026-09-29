@@ -18,6 +18,7 @@ import type { CaseStudy } from '@/lib/types';
 import { getHomeV11Content, getWorkV11Content } from '@/lib/content-utils';
 import { getHomeV11Data } from '../../home-v11/data';
 import { WorkIndexV11 } from '../../work-v11/WorkIndexV11';
+import { serializeJsonLd } from '@/lib/schema-utils';
 
 const SITE = 'https://www.loudface.co';
 
@@ -102,8 +103,8 @@ export default async function WorkPage() {
 
   return (
     <>
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(collectionSchema) }} />
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: serializeJsonLd(collectionSchema) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: serializeJsonLd(breadcrumbSchema) }} />
       <WorkIndexV11 c={c} home={home} data={data} studies={studies} clients={cms.clients} stage />
     </>
   );

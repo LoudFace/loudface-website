@@ -19,6 +19,7 @@ import { IndustryPageV11 } from '../../../seo-for-v11/IndustryPageV11';
 import { relatedCards } from '../../../seo-for-v11/related';
 import { getIndustryShell } from '../../../seo-for-v11/shell';
 import { saasView } from '../../../seo-for-v11/views';
+import { serializeJsonLd } from '@/lib/schema-utils';
 
 // Module scope: metadata only, never marked for editing.
 const content = rawContent<SeoForSaasContent>('seo-for-saas');
@@ -114,7 +115,7 @@ export default async function SaaSPage() {
         <script
           key={i}
           type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }}
+          dangerouslySetInnerHTML={{ __html: serializeJsonLd(schema) }}
         />
       ))}
       <IndustryPageV11 v={view} c={c} home={home} data={data} related={relatedCards(cards, 'saas', view.work.map((w) => w.slug))} />

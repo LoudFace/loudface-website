@@ -28,6 +28,7 @@ import {
   buildReviewSchema,
   buildImageObject,
   buildOrganizationPublisher,
+  serializeJsonLd,
 } from '@/lib/schema-utils';
 import type { CaseStudy } from '@/lib/types';
 import { getHomeV11Content } from '@/lib/content-utils';
@@ -127,14 +128,14 @@ export default async function CaseStudyPage({ params }: PageProps) {
   return (
     <>
       {/* Structured Data — native script tags for SSR visibility to crawlers */}
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }} />
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(articleSchema) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: serializeJsonLd(breadcrumbSchema) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: serializeJsonLd(articleSchema) }} />
       {faqSchema && (
-        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }} />
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: serializeJsonLd(faqSchema) }} />
       )}
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(speakableSchema) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: serializeJsonLd(speakableSchema) }} />
       {reviewSchema && (
-        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(reviewSchema) }} />
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: serializeJsonLd(reviewSchema) }} />
       )}
       <CaseStudyV11 v={v} home={home} />
     </>

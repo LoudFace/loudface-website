@@ -15,6 +15,7 @@ import '../../service-v11/svc.css';
 import '../../partners-v11/partners.css';
 import { getHomeV11Content, getPartnersV11Content, rawContent, type PartnersV11Content } from '@/lib/content-utils';
 import { PartnersV11 } from '../../partners-v11/PartnersV11';
+import { serializeJsonLd } from '@/lib/schema-utils';
 
 export const metadata: Metadata = {
   title: 'fCMO Partner Program — 10% Lifetime Commission',
@@ -77,7 +78,7 @@ export default async function PartnersPage() {
   return (
     <>
       {[breadcrumbSchema, faqSchema].map((schema, i) => (
-        <script key={i} type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }} />
+        <script key={i} type="application/ld+json" dangerouslySetInnerHTML={{ __html: serializeJsonLd(schema) }} />
       ))}
       <PartnersV11 c={c} home={home} />
     </>

@@ -21,6 +21,7 @@ import { Team } from '../home-v11/Team';
 import { Closing } from '../home-v11/Closing';
 import { FooterV11 } from '../home-v11/FooterV11';
 import { Reveal } from '../home-v11/Reveal';
+import { serializeJsonLd } from '@/lib/schema-utils';
 
 export const metadata: Metadata = {
   title: 'AI-Native B2B SaaS Organic Growth Agency',
@@ -67,7 +68,7 @@ export default async function HomePage() {
     <>
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(speakableSchema) }}
+        dangerouslySetInnerHTML={{ __html: serializeJsonLd(speakableSchema) }}
       />
 
       <div className="v11">

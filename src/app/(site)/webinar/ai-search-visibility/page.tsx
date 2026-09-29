@@ -15,6 +15,7 @@ import '../../../webinar-v11/webinar.css';
 import { getAiAuditContent, getHomeV11Content, getWebinarAiSearchContent } from '@/lib/content-utils';
 import { WebinarV11 } from '../../../webinar-v11/WebinarV11';
 import { RIVERSIDE_REGISTRATION_URL } from './_components/config';
+import { serializeJsonLd } from '@/lib/schema-utils';
 
 export const metadata: Metadata = {
   title: 'Why Your Website Is Invisible in AI Search — Live Masterclass | LoudFace',
@@ -84,7 +85,7 @@ export default async function WebinarPage() {
     <>
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(EVENT_JSON_LD) }}
+        dangerouslySetInnerHTML={{ __html: serializeJsonLd(EVENT_JSON_LD) }}
       />
       <WebinarV11 c={c} audit={audit} home={home} />
     </>
