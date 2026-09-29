@@ -234,51 +234,117 @@ export function buildFAQSchema(items: FAQItem[]): object | null {
 /* ─── Ranked-List Extraction (listicles) ───────────────────────── */
 
 /**
- * Extract ranked entries from listicle HTML: <h3> headings that start
- * with "N. " (e.g. "3. Omniscient Digital"), or <h2> headings when the
- * page has a longer ranked roster. The stricter H2 threshold avoids turning
- * short numbered how-to sections into ItemList schema.
+ * Titles that promise a ranking: "Best …", "… (Ranked)", "Alternatives to …".
+ * Guides, how-tos and "why" posts also number their sections, and a numbered
+ * section is not a ranked item, so the title decides whether a post is a
+ * ranking at all. Measured 2026-09-29 against all 130 published posts: every
+ * ranked listicle matches, no guide or how-to does.
+ */
+const RANKED_TITLE = /\b(best|ranked|alternatives to)\b/i;
+
+export function isRankedListTitle(title: string | undefined): boolean {
+  return !!title && RANKED_TITLE.test(title);
+}
+
+const NUMBERED = /^(\d{1,2})[.)]\s+(.+)/;
+
+/**
+ * Visible text of an HTML fragment, as the blog renderer shows it: inline tags
+ * removed without adding spaces, entities decoded once, curly quotes
+ * straightened (blog-v11/view.ts does the same to the body).
+ */
+function visibleText(html: string): string {
+  return html
+    .replace(/<[^>]*>/g, '')
+    .replace(/[\u201C\u201D]/g, '"')
+    .replace(/[\u2018\u2019]/g, "'")
+    .replace(/&#(\d+);/g, (_, code) => String.fromCodePoint(Number(code)))
+    .replace(/&#x([0-9a-f]+);/gi, (_, code) => String.fromCodePoint(parseInt(code, 16)))
+    .replace(/&(nbsp|quot|apos|rsquo|lsquo|amp);/g, (_, name: string) =>
+      ({ nbsp: ' ', quot: '"', apos: "'", rsquo: "'", lsquo: "'", amp: '&' })[name] ?? '')
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
+/**
+ * The entity a ranked entry names: "LoudFace: best for seed to Series B" is
+ * LoudFace. Text before the first colon, or the whole entry when it has none.
+ */
+function entryName(text: string): string {
+  const clean = text.replace(/\s+:/g, ':');
+  const colon = clean.indexOf(': ');
+  return (colon > 0 ? clean.slice(0, colon) : clean).trim();
+}
+
+/**
+ * Numbered entries in document order. Returns them only when the numbers read
+ * exactly 1, 2, 3 … N as the visitor sees them: a restart (two separate
+ * numbered lists), a gap or a reordering means the list is not one ranking,
+ * and no schema beats schema that disagrees with the page.
+ */
+function rankedRun(texts: string[], min: number): string[] {
+  const entries: { pos: number; name: string }[] = [];
+  for (const text of texts) {
+    const numbered = text.match(NUMBERED);
+    if (numbered) entries.push({ pos: parseInt(numbered[1], 10), name: entryName(numbered[2]) });
+  }
+  if (entries.length < min) return [];
+  if (!entries.every((entry, i) => entry.pos === i + 1 && entry.name)) return [];
+  return entries.map((entry) => entry.name);
+}
+
+/** Heading texts at one level. The renderer shows body <h1>s as <h2>s, so level 2 reads both. */
+function headingTexts(html: string, level: 2 | 3): string[] {
+  const headings = level === 2 ? /<h([12])\b[^>]*>([\s\S]*?)<\/h\1>/gi : /<h(3)\b[^>]*>([\s\S]*?)<\/h3>/gi;
+  return Array.from(html.matchAll(headings), (match) => visibleText(match[2]));
+}
+
+/** First-column cells of each <table>, one array per table. */
+function tableFirstColumns(html: string): string[][] {
+  return Array.from(html.matchAll(/<table[^>]*>([\s\S]*?)<\/table>/gi), (table) =>
+    Array.from(table[1].matchAll(/<tr[^>]*>\s*<t[dh][^>]*>([\s\S]*?)<\/t[dh]>/gi), (cell) => visibleText(cell[1])),
+  );
+}
+
+/**
+ * Extract ranked entries from listicle HTML, in the order the page shows them.
+ * Sources, first match wins:
+ *   1. <h3> headings "N. Name: best for …" (three or more)
+ *   2. <h2> (or body <h1>, which renders as <h2>) headings "N. Name" (five or
+ *      more; the higher bar keeps short numbered how-to sections out)
+ *   3. the first <table> whose first column reads "1. Name", "2. Name" …
+ *      (three or more), for listicles that rank in a table and describe each
+ *      entry in paragraphs, as the proptech post does.
+ * Does not judge whether the post is a ranking; buildItemListSchema does that.
  */
 export function extractRankedListFromHTML(html: string | undefined): string[] {
   if (!html) return [];
-  const source = html;
 
-  function extract(tag: 'h2' | 'h3'): { pos: number; name: string }[] {
-    const entries: { pos: number; name: string }[] = [];
-    const headings = new RegExp(`<${tag}[^>]*>([\\s\\S]*?)<\\/${tag}>`, 'gi');
-    let match: RegExpExecArray | null;
+  const h3 = rankedRun(headingTexts(html, 3), 3);
+  if (h3.length) return h3;
 
-    while ((match = headings.exec(source))) {
-      const text = stripHtml(match[1]).trim();
-      const numbered = text.match(/^(\d{1,2})[.)]\s+(.+)/);
-      if (numbered) {
-        entries.push({ pos: parseInt(numbered[1], 10), name: numbered[2].trim() });
-      }
-    }
+  const h2 = rankedRun(headingTexts(html, 2), 5);
+  if (h2.length) return h2;
 
-    entries.sort((a, b) => a.pos - b.pos);
-    return entries;
+  for (const column of tableFirstColumns(html)) {
+    const rows = rankedRun(column, 3);
+    if (rows.length) return rows;
   }
-
-  const h3Entries = extract('h3');
-  if (h3Entries.length >= 3) return h3Entries.map((entry) => entry.name);
-
-  const h2Entries = extract('h2');
-  if (h2Entries.length >= 5) return h2Entries.map((entry) => entry.name);
 
   return [];
 }
 
 /**
- * Build ItemList JSON-LD for ranked listicles. Returns null when the
- * page isn't list-shaped (fewer than 3 numbered <h3> or 5 numbered <h2>
- * entries).
+ * Build ItemList JSON-LD for ranked listicles. Returns null unless the title
+ * promises a ranking and the body carries one clean 1…N ranked list. Items have
+ * no url: no ranked entry has its own page on this site.
  */
 export function buildItemListSchema(
   html: string | undefined,
   name: string,
   url: string,
 ): object | null {
+  if (!isRankedListTitle(name)) return null;
   const entries = extractRankedListFromHTML(html);
   if (!entries.length) return null;
 
