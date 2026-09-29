@@ -22,6 +22,7 @@ import {
   buildArticleAuthorSchema,
   buildOrganizationPublisher,
   buildImageObject,
+  serializeJsonLd,
 } from '@/lib/schema-utils';
 import type { BlogPost } from '@/lib/types';
 import { getBlogV11Content, getHomeV11Content } from '@/lib/content-utils';
@@ -127,18 +128,18 @@ export default async function BlogPostPage({ params }: PageProps) {
   return (
     <>
       {/* Structured Data — native script tags for SSR visibility to crawlers */}
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(articleSchema) }} />
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: serializeJsonLd(articleSchema) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: serializeJsonLd(breadcrumbSchema) }} />
       {faqSchema && (
-        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }} />
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: serializeJsonLd(faqSchema) }} />
       )}
       {itemListSchema && (
-        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(itemListSchema) }} />
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: serializeJsonLd(itemListSchema) }} />
       )}
       {datasetSchema && (
-        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(datasetSchema) }} />
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: serializeJsonLd(datasetSchema) }} />
       )}
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(speakableSchema) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: serializeJsonLd(speakableSchema) }} />
       <BlogPostV11 c={c} home={home} v={v} nextStep={BUYER_INTENT_SLUGS.has(slug)} />
     </>
   );

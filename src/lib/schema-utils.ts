@@ -248,22 +248,47 @@ export function isRankedListTitle(title: string | undefined): boolean {
 
 const NUMBERED = /^(\d{1,2})[.)]\s+(.+)/;
 
+const NAMED_ENTITIES: Record<string, string> = {
+  nbsp: ' ', quot: '"', apos: "'", amp: '&', lt: '<', gt: '>',
+  rsquo: '\u2019', lsquo: '\u2018', rdquo: '\u201D', ldquo: '\u201C',
+  ndash: '\u2013', mdash: '\u2014', hellip: '\u2026', eacute: '\u00E9', trade: '\u2122', reg: '\u00AE',
+};
+
+function decodeEntity(entity: string, body: string): string {
+  if (body[0] === '#') {
+    const code = body[1] === 'x' || body[1] === 'X' ? parseInt(body.slice(2), 16) : parseInt(body.slice(1), 10);
+    // Browsers render an out-of-range or surrogate reference as U+FFFD.
+    return Number.isInteger(code) && code > 0 && code <= 0x10ffff && (code < 0xd800 || code > 0xdfff)
+      ? String.fromCodePoint(code)
+      : '\uFFFD';
+  }
+  return Object.hasOwn(NAMED_ENTITIES, body) ? NAMED_ENTITIES[body] : entity;
+}
+
 /**
- * Visible text of an HTML fragment, as the blog renderer shows it: inline tags
- * removed without adding spaces, entities decoded once, curly quotes
- * straightened (blog-v11/view.ts does the same to the body).
+ * Visible text of an HTML fragment, as the blog renderer shows it: blog-v11/view.ts
+ * straightens literal curly quotes in the source first, then the browser decodes
+ * entities once (so &rsquo; still shows as a curly quote). <br> reads as a space;
+ * inline tags are removed without adding one.
  */
 function visibleText(html: string): string {
   return html
-    .replace(/<[^>]*>/g, '')
     .replace(/[\u201C\u201D]/g, '"')
     .replace(/[\u2018\u2019]/g, "'")
-    .replace(/&#(\d+);/g, (_, code) => String.fromCodePoint(Number(code)))
-    .replace(/&#x([0-9a-f]+);/gi, (_, code) => String.fromCodePoint(parseInt(code, 16)))
-    .replace(/&(nbsp|quot|apos|rsquo|lsquo|amp);/g, (_, name: string) =>
-      ({ nbsp: ' ', quot: '"', apos: "'", rsquo: "'", lsquo: "'", amp: '&' })[name] ?? '')
+    .replace(/<br\b[^>]*>/gi, ' ')
+    .replace(/<[^>]*>/g, '')
+    .replace(/&(#\d+|#x[0-9a-f]+|[a-z]+);/gi, decodeEntity)
     .replace(/\s+/g, ' ')
     .trim();
+}
+
+/**
+ * JSON for a <script type="application/ld+json"> body. JSON.stringify leaves "<"
+ * alone, so a string holding "</script>" would close the tag; \u003c is the same
+ * character to a JSON parser and inert to the HTML parser.
+ */
+export function serializeJsonLd(data: object): string {
+  return JSON.stringify(data).replace(/</g, '\\u003c');
 }
 
 /**
