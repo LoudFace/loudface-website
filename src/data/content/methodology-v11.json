@@ -48,8 +48,8 @@
     "readingHead": "Our reading",
     "rows": [
       {
-        "reading": "12.95%",
-        "detail": "ChatGPT 18.1%, Perplexity 12.6%, Google AI Overviews 8.0%, 30 days to 2 September 2026"
+        "reading": "21.5%",
+        "detail": "ChatGPT 38.8%, Google AI Overviews 14.3%, Perplexity 11.2%, non-branded prompts, 18–28 September 2026"
       },
       {
         "reading": "",
@@ -90,32 +90,32 @@
   "proofCharts": {
     "ownDomain": {
       "beforeLabel": "April 2026",
-      "afterLabel": "30 days to 2 Sep 2026",
+      "afterLabel": "18–28 Sep 2026",
       "pairs": [
         {
-          "label": "Share of AI answers",
-          "before": 0.18,
-          "after": 12.95,
-          "beforeText": "0.18%",
-          "afterText": "12.95%"
+          "label": "Share of non-branded AI answers",
+          "before": 0.13,
+          "after": 21.5,
+          "beforeText": "0.13%",
+          "afterText": "21.5%"
         }
       ],
-      "perEngineTitle": "Per engine, 30 days to 2 Sep 2026",
+      "perEngineTitle": "Per engine, non-branded prompts, 18–28 Sep 2026",
       "perEngine": [
         {
           "label": "ChatGPT",
-          "value": 18.1,
-          "text": "18.1%"
-        },
-        {
-          "label": "Perplexity",
-          "value": 12.6,
-          "text": "12.6%"
+          "value": 38.8,
+          "text": "38.8%"
         },
         {
           "label": "Google AI Overviews",
-          "value": 8.0,
-          "text": "8.0%"
+          "value": 14.3,
+          "text": "14.3%"
+        },
+        {
+          "label": "Perplexity",
+          "value": 11.2,
+          "text": "11.2%"
         }
       ]
     },

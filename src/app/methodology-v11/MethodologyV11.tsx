@@ -74,7 +74,7 @@ export function EngineSlope({ c }: { c: MethodologyV11Content['hero'] }) {
   const x0 = 76;
   const x1 = 384;
   const lo = 4;
-  const hi = 17;
+  const hi = 18;
   const y = (v: number) => bottom - ((v - lo) / (hi - lo)) * (bottom - top);
   const num = (s: string) => Number.parseFloat(s);
   const tone = { up: '#4f46e5', down: '#d4502f', hidden: '#a3a0bd' } as const;
@@ -381,7 +381,7 @@ export function MethodologyV11({ c, home, audit }: { c: MethodologyV11Content; h
                       <div key={e.label} className="mt-engine-bar">
                         {/* eslint-disable-next-line @next/next/no-img-element */}
                         <span className="is-n"><img loading="lazy" src={img(ENGINE_ICON[strip(e.label)])} alt="" width={16} height={16} />{e.label}</span>
-                        <span className="is-track"><i style={{ width: `${(e.value / 20) * 100}%` }} /></span>
+                        <span className="is-track"><i style={{ width: `${(e.value / Math.max(...charts.ownDomain.perEngine.map((x) => x.value))) * 100}%` }} /></span>
                         <b>{e.text}</b>
                       </div>
                     ))}

@@ -301,7 +301,7 @@ export const STAGES: Stage[] = [
       {
         kind: 'lead',
         lead: 'Engine signals, per engine.',
-        text: 'Share of answers, citations of your URLs, position when cited and sentiment, on ChatGPT, Perplexity and Google AI Overviews separately. Never one blended figure. Between June and August 2026 our own ChatGPT share rose from 6.2% to 15.9% while our Google AI Overviews share fell from 12.3% to 8.0%. The blend moved from 9.4% to 12.4% and showed neither.',
+        text: 'Share of answers, citations of your URLs, position when cited and sentiment, on ChatGPT, Perplexity and Google AI Overviews separately. Never one blended figure. Between June and August 2026, on our own non-branded prompts, our ChatGPT share rose from 5.9% to 17.1% while our Google AI Overviews share fell from 10.1% to 7.1%. The blend moved from 8.3% to 12.3% and showed neither.',
       },
       {
         kind: 'lead',
@@ -333,13 +333,13 @@ export const STAGES: Stage[] = [
 
 /** The per-engine divergence figure from stage 8, used as that stage's bespoke visual. */
 export const ENGINE_DIVERGENCE = {
-  caption: 'June to August 2026, our own domain',
+  caption: 'June to August 2026, our own domain, non-branded prompts',
   rows: [
-    { engine: 'ChatGPT', from: '6.2%', to: '15.9%', dir: 'up' as const },
-    { engine: 'Google AI Overviews', from: '12.3%', to: '8.0%', dir: 'down' as const },
-    { engine: 'Blended', from: '9.4%', to: '12.4%', dir: 'hidden' as const },
+    { engine: 'ChatGPT', from: '5.9%', to: '17.1%', dir: 'up' as const },
+    { engine: 'Google AI Overviews', from: '10.1%', to: '7.1%', dir: 'down' as const },
+    { engine: 'Blended', from: '8.3%', to: '12.3%', dir: 'hidden' as const },
   ],
-  note: 'The blend moved from 9.4% to 12.4% and showed neither.',
+  note: 'The blend moved from 8.3% to 12.3% and showed neither.',
 };
 
 /* ─── Slot 5: what we measure ────────────────────────────────────── */
@@ -465,37 +465,36 @@ export const PROOF: { heading: string; cards: ProofCard[] } = {
       id: 'own-domain',
       label: 'Our own domain',
       headline: 'We ran this method on loudface.co and published the full record.',
-      figure: '12.95%',
-      figureLabel: 'of AI answers name us across the three engines, 30 days to 2 September 2026. Per engine: ChatGPT 18.1%, Perplexity 12.6%, Google AI Overviews 8.0%.',
+      figure: '21.5%',
+      figureLabel: 'of non-branded AI answers name us across the three engines, 18 to 28 September 2026, on the 141 non-branded prompts we track. Per engine: ChatGPT 38.8%, Google AI Overviews 14.3%, Perplexity 11.2%.',
       body: (
         <>
           We ran this method on loudface.co and published the{' '}
-          <Link href="/case-studies/loudface-aeo-case-study">full record</Link>. Our share of the AI
-          answers in our category went from 0.18% in April 2026 to 10.35% over the quarter to June 2026,
-          with a June 30-day blend across the three engines of 9.4%. April was 8 brand
-          mentions across 2,747 monitored answers. June was 1,434 mentions, on a much larger pool of
-          answers. In the 30 days to 2 September 2026, we are named in 12.95% of AI answers on our
-          tracked prompt set across the three engines together. Per engine, that is 18.1% on ChatGPT,
-          12.6% on Perplexity and 8.0% on Google AI Overviews. Our average position when cited is 2.8,
-          across a tracked panel of 50 brands.
+          <Link href="/case-studies/loudface-aeo-case-study">full record</Link>. On non-branded buyer
+          prompts, our share of the AI answers in our category went from 0.13% in April 2026, 3 of
+          2,306 monitored answers, to 21.5% over 18 to 28 September 2026 across the three engines
+          together. Per engine, that is 38.8% on ChatGPT, 14.3% on Google AI Overviews and 11.2% on
+          Perplexity. The September reading uses the 141 non-branded prompts left after we cut our
+          prompt panel on 17 September, which lifts it; on the 55 prompts we have tracked since June,
+          the share went from 11.4% to 24.9%. Our average position when named is 3.4, and we rank 3rd
+          of the 53 brands we track.
         </>
       ),
       href: '/case-studies/loudface-aeo-case-study',
       linkText: 'Read the full record',
       receipts: [
         { term: 'Client', detail: 'LoudFace (our own domain)' },
-        { term: 'Prompt', detail: 'Our tracked prompt set for the B2B SaaS growth-agency category' },
-        { term: 'Before to after', detail: '0.18% of AI answers in April 2026 to 12.95% across the three engines (ChatGPT 18.1%, Perplexity 12.6%, Google AI Overviews 8.0%), at an average position of 2.8, against a tracked panel of 50 brands' },
+        { term: 'Prompt', detail: 'Non-branded prompts for the B2B SaaS growth-agency category, by Peec AI’s own tag: the panel as it stood in April, then the 141 we track after the 17 September cut' },
+        { term: 'Before to after', detail: '0.13% of non-branded AI answers in April 2026 to 21.5% across the three engines (ChatGPT 38.8%, Google AI Overviews 14.3%, Perplexity 11.2%), at an average position of 3.4, 3rd of 53 tracked brands' },
         { term: 'Engines', detail: 'ChatGPT, Perplexity and Google AI Overviews' },
-        { term: 'Window', detail: 'April 2026 to the 30 days ending 2 September 2026' },
+        { term: 'Window', detail: 'April 2026 (from 8 April) to 18–28 September 2026, after our 17 September prompt cut' },
         {
           term: 'Source',
           detail: (
             <>
               <Link href="/case-studies/loudface-aeo-case-study">
-                April 2026 baseline, case study
+                April 2026 baseline and the 18–28 September 2026 reading, case study
               </Link>
-              ; current reading: this page, 30 days to 2 September 2026
             </>
           ),
         },
@@ -766,7 +765,7 @@ export const METHODOLOGY_FAQ: FaqItem[] = [
   },
   {
     q: 'Why report per engine instead of one AI visibility score?',
-    a: 'Because the engines move in opposite directions and a blend hides it. Between June and August 2026 our ChatGPT share rose from 6.2% to 15.9% while our Google AI Overviews share fell from 12.3% to 8.0%. The blended number moved from 9.4% to 12.4% and told you nothing about either.',
+    a: 'Because the engines move in opposite directions and a blend hides it. Between June and August 2026, on our non-branded prompts, our ChatGPT share rose from 5.9% to 17.1% while our Google AI Overviews share fell from 10.1% to 7.1%. The blended number moved from 8.3% to 12.3% and told you nothing about either.',
   },
   {
     q: 'Do you report revenue or just visibility?',

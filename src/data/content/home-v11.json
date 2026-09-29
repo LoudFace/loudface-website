@@ -13,8 +13,8 @@
       {
         "tag": "AI answers",
         "client": "LoudFace",
-        "metric": "15.3%",
-        "caption": "of non-branded AI answers name us, up from 0.13%",
+        "metric": "21.5%",
+        "caption": "of non-branded AI answers name us (18–28 Sep), up from 0.13%",
         "periodStart": "Apr 2026",
         "periodEnd": "Sep 2026",
         "tip": "of AI answers"
@@ -157,7 +157,7 @@
       },
       {
         "client": "LoudFace",
-        "claim": "went from 0.13% to 15.3% of non-branded AI answers",
+        "claim": "went from 0.13% in April to 21.5% of non-branded AI answers (18–28 Sep 2026)",
         "chartLabel": "Share of AI answers",
         "source": "Peec AI",
         "tip": "of AI answers"

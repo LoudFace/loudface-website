@@ -1,6 +1,6 @@
 {
   "slug": "loudface-aeo-case-study",
-  "note": "LoudFace's own AEO case study. Front-left: the loudface.co homepage. Back-right: the fintech AEO listicle, the most-cited LoudFace page in Peec AI over 1–22 Sep 2026 (729 citations). Card: result1 from the 23 Sep 2026 refresh, word for word. The homepage's case-study grid still carries this study's previous thumbnail and its '10.4% of AI answers' pill (hard-coded in src/app/home-v3/HeroV3.tsx), so that one card is hidden in the shot rather than showing a stale number.",
+  "note": "LoudFace's own AEO case study. Front-left: the loudface.co homepage. Back-right: the fintech AEO listicle, one of the two most-cited LoudFace pages in Peec AI over 18–28 Sep 2026 (350 citations; /blog/best-aeo-agencies had 369). Card: result1 from the 29 Sep 2026 refresh (non-branded prompts, 18–28 Sep, after the 17 Sep prompt cut), word for word. The homepage's case-study grid still carries this study's previous thumbnail and its '10.4% of AI answers' pill (hard-coded in src/app/home-v3/HeroV3.tsx), so that one card is hidden in the shot rather than showing a stale number.",
   "theme": {
     "background": "linear-gradient(140deg, #0c0a2e 0%, #1a1466 48%, #3b24c9 100%)",
     "bloom": "radial-gradient(1100px 780px at 14% 26%, rgba(82,34,255,.34), transparent 68%), radial-gradient(900px 700px at 92% 88%, rgba(99,72,255,.30), transparent 70%)",
@@ -38,9 +38,9 @@
   ],
   "card": {
     "label": "AI visibility on non-branded prompts",
-    "value": "0.13% → 15.3%",
+    "value": "0.13% → 21.5%",
     "valueSize": 56,
-    "caption": "Apr 2026 → 1–22 Sep 2026,\nPeec AI",
+    "caption": "Apr 2026 → 18–28 Sep 2026,\nPeec AI",
     "right": 62,
     "bottom": 92,
     "width": 470

@@ -57,7 +57,7 @@ export const organicGrowth: ExtrasFn = ({ home, data }) => {
         { k: 'Clicks a week', v: '28×', s: 'On the May average' },
       ]} />
     ),
-    heroCard: <ClimbCard label="Share of AI answers" client="LoudFace" from="0.13%" to="15.3%" foot="Our own site, Apr to Sep 2026" footRight="Peec AI" />,
+    heroCard: <ClimbCard label="Share of non-branded AI answers" client="LoudFace" from="0.13%" to="21.5%" foot="Our site, Apr → 18–28 Sep 2026" footRight="Peec AI" />,
     band: [
       { k: 'Tracks', v: 'Four', s: 'Search, content, conversion, authority' },
       { k: 'Roadmap', v: '90 days', s: 'Three to five goals, one scoreboard' },
