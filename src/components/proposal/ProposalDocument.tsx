@@ -537,8 +537,7 @@ export function ProposalDocument({
       <footer className="border-t border-white/10 bg-night px-5 py-10 text-white/60 sm:px-8">
         <div className={`flex flex-wrap items-baseline justify-between gap-3 text-[13px] ${hasRail ? 'mx-auto max-w-[1180px]' : 'mx-auto max-w-4xl'}`}>
           <p>
-            Prepared by LoudFace for {proposal.clientName}. Confidential — please do not
-            circulate outside your team.
+            Prepared by LoudFace for {proposal.clientName}. Confidential. Please don't share it outside your team.
           </p>
           {proposal.contactEmail && (
             <a href={`mailto:${proposal.contactEmail}`} className="font-medium text-white">

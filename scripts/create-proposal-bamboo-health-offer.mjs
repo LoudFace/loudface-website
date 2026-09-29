@@ -191,7 +191,7 @@ const FIGMA_URL =
 const doc = {
   _type: 'proposal',
   _id: `proposal.bamboo-health-offer.${accessToken.slice(0, 10)}`,
-  title: 'A clearer Bamboo Health site now, and a pipeline behind it',
+  title: 'A clearer Bamboo Health site that brings in demo requests',
   clientName: 'Bamboo Health',
   preparedFor: ['Lisa Blubaugh', 'Grace Beard'],
   token: accessToken,
@@ -200,41 +200,45 @@ const doc = {
   status: STATUS,
   contactEmail: 'arnel@loudface.co',
   design: 'cards',
-  priceLine: '$7,500/mo, 3-month minimum, then monthly',
-  promises: ['Works inside your WordPress site', 'Measured in pipeline, not traffic'],
+  priceLine: '$7,500/mo, 3-month minimum',
+  promises: ['Works inside your WordPress site', 'Measured in demo requests, not traffic'],
   clipStrip,
   proofRail,
   sections: [
+    /* Copy pass 29 Sep 2026: plain words, one idea a sentence, facts re-checked
+     * against the 29 Sep ChatGPT run (3 of the 6 Bamboo answers are PDMP;
+     * behavioral health answers mostly name no company). */
     section('richTextSection', {
       heading: 'Where you are',
       body: [
-        para("The site is a menu of solutions. It jumps into products without telling a buyer which part is for them, and it isn't set up to drive pipeline yet."),
+        para("The site lists your solutions, but it doesn't tell one Bamboo story yet. A buyer sees products before they know which part is for them. There isn't a clear path to a demo either."),
         para([
-          { text: 'Four in five people who reach you from Google already knew the name. ' },
-          { text: 'ChatGPT names Bamboo in 6 of 20 everyday buyer questions,', bold: true },
-          { text: ' almost all of them about PDMP. Care coordination and behavioral health go to Innovaccer, Lightbeam and Epic.' },
+          { text: 'Four in five visits from Google come from people who searched for Bamboo or one of its products. In ChatGPT, Bamboo comes up in ' },
+          { text: '6 of 20 everyday buyer questions.', bold: true },
+          { text: ' Care coordination questions mostly name Innovaccer, Lightbeam and Epic.' },
         ]),
       ],
     }),
 
     section('tracksSection', {
       heading: 'What we do',
-      intro: 'Three tracks, one team. The first two start in week one. The rebuild starts when One Bamboo is signed off.',
+      intro: 'The first two tracks start in week one. The rebuild starts when your leadership signs off on One Bamboo.',
       tracks: [
         track('Your site, now', [
-          trackItem('Week 1', 'Forms and tracking fixed, so every demo request is counted and routed'),
-          trackItem(null, 'Navigation that starts with who the visitor is: states, health systems, health plans'),
-          trackItem(null, 'New WordPress blocks without the old limits: any number of cards, full text formatting, landing pages that match the site'),
+          trackItem('Week 1', 'Your forms and tracking fixed'),
+          trackItem(null, 'Navigation that starts with who the visitor is'),
+          trackItem(null, 'New WordPress blocks with no limit on cards and full text formatting'),
+          trackItem(null, 'Landing pages that look like the rest of the site'),
         ]),
-        track('Found by buyers and AI', [
-          trackItem('Every week', "Content planned with Lisa's team, written for each audience"),
-          trackItem(null, 'Mentions on the sites Google and AI trust: health IT press, state and HIE resources, review platforms'),
-          trackItem(null, '20 buyer questions tracked daily across ChatGPT, Gemini and Google AI'),
+        track('Found on Google and AI', [
+          trackItem('Every week', 'Content planned with your team and written for each audience'),
+          trackItem(null, 'Mentions of Bamboo on sites Google and AI trust, like health IT press and review platforms'),
+          trackItem(null, '20 buyer questions tracked every day in ChatGPT, Gemini and Google AI Overviews'),
         ]),
-        track('The rebuild, when you are ready', [
-          trackItem('After sign-off', 'Andrea, our copywriter, helps shape One Bamboo into pages a buyer understands in one read'),
+        track("The rebuild, when you're ready", [
+          trackItem('After sign-off', 'Andrea, our copywriter, writes the new pages from your One Bamboo messaging'),
           trackItem(null, 'A full redesign on WordPress, with one design system for every page'),
-          trackItem(null, 'Included in the retainer. No separate build fee'),
+          trackItem(null, 'Included in the retainer'),
         ]),
       ],
     }),
@@ -244,56 +248,56 @@ const doc = {
       items: [
         bullet(
           'What can we do before a full redesign?',
-          "A lot. Forms and tracking, the navigation, the homepage story and new flexible blocks all work inside your current WordPress. The SEO and AI work doesn't wait for a redesign either."
+          'A lot. We can fix the forms and tracking, the navigation, the homepage and the page blocks in your current WordPress. SEO and AI search work starts in week one too.'
         ),
         bullet(
           'Can you slow down for our approvals?',
-          "Yes. We move fast on our side so you get more time for review. First designs land within three days, and our project manager batches changes into review rounds sized for your VP, leadership and Jeff. You set the pace for sign-off."
+          'Yes. We work fast on our side, so you get more time to review. First designs are ready within three days. Our project manager plans review rounds around your leadership team, Jeff included, and you set the pace.'
         ),
         bullet(
           'How do we get the website to drive pipeline?',
-          'We start with the forms and tracking you raised, so every lead is counted. Then each audience gets a clear path to a demo, and every report leads with demo requests, not traffic.'
+          'First we fix the forms and tracking you mentioned, so we know where each demo request comes from. Then each audience gets its own clear path to a demo.'
         ),
         bullet(
-          'Can you help with One Bamboo messaging?',
-          "Andrea has done this for clients with the same problem: several products and several audiences under one name. She works alongside your team and leadership. The messaging stays yours."
+          'Can you help with the One Bamboo messaging?',
+          'Yes. Andrea, our copywriter, has done this for clients with many products and audiences under one brand. She works with your team and leadership, and the messaging stays yours.'
         ),
       ],
     }),
 
     section('monthsSection', {
       heading: 'The first 90 days',
-      intro: 'Contractual minimums. We ship above them.',
+      intro: 'These are the minimums in the contract. We usually do more.',
       months: [
-        month('Month 1', 'Foundations', ['Forms and tracking audited and fixed', 'New navigation and homepage designed', 'Titles, headings and schema fixed', 'AI and Google baseline', '8 pieces of content'], 'Every lead counted'),
-        month('Month 2', 'Live', ['Navigation and homepage live', 'New WordPress block library', '8+ pieces of content', '6-8 mentions on trusted sites'], 'A buyer finds their page in one click'),
-        month('Month 3', 'Proof', ['Product pages reworked for each audience', '8+ pieces of content', '6-8 mentions', 'Rebuild plan ready for One Bamboo'], 'More demo requests than the baseline'),
+        month('Month 1', 'Foundations', ['Forms and tracking fixed', 'New navigation and homepage designed', 'Titles, headings and schema fixed', 'Starting numbers for Google and AI', '8 pieces of content'], 'Every demo request counted'),
+        month('Month 2', 'Live', ['Navigation and homepage live', 'New WordPress blocks live', '8 pieces of content', '6 mentions on trusted sites'], 'A buyer finds their page in one click'),
+        month('Month 3', 'Proof', ['Product pages reworked for each audience', '8 pieces of content', '6 mentions on trusted sites', 'Rebuild plan ready'], 'More demo requests than before we started'),
       ],
-      note: 'If One Bamboo is signed off early, the rebuild starts early.',
+      note: 'If your leadership signs off on One Bamboo sooner, the rebuild starts sooner.',
     }),
 
     section('bulletListSection', {
       heading: 'How we measure',
-      intro: 'Pipeline first.',
+      intro: 'Demo requests first.',
       items: [
-        bullet('Demo requests and form fills', 'by audience and product, tracked from week one. Every report starts here.'),
-        bullet('AI recommendations', 'how often ChatGPT, Gemini and Google AI name Bamboo for the questions your buyers ask.'),
-        bullet('Google', 'rankings, impressions and clicks on searches from people who don\'t know the name yet.'),
-        bullet(null, 'Daily updates in a shared channel, a written report every Friday, a monthly review with the next month\'s plan, and a weekly call.'),
+        bullet('Demo requests', 'by audience and product, tracked from week one. Every report starts with this number.'),
+        bullet('AI answers', 'how often ChatGPT, Gemini and Google AI Overviews name Bamboo when your buyers ask.'),
+        bullet('Google', "rankings, impressions and clicks from people who don't know the Bamboo name yet."),
+        bullet(null, "You get daily updates in a shared channel and a written report every Friday. There's also a weekly call and a monthly review with next month's plan."),
       ],
     }),
 
     section('richTextSection', {
-      heading: 'Design work for our clients',
+      heading: "Sites we've designed",
       body: [
-        para('A few of the sites we have designed and built. Dimer Health, a telehealth company, saw a 288% lift in on-site conversions after its new site launched.'),
+        para("Some of the websites we've designed and built. Dimer Health, a telehealth company, saw a 288% increase in conversions after its new site went live."),
         { ...para('Open the design samples in Figma'), markDefs: [{ _key: 'fig', _type: 'link', href: FIGMA_URL }] },
       ],
     }),
 
     section('caseProofSection', {
-      heading: 'The same work, for our clients',
-      intro: "Ask and we'll put you in touch with one of these clients directly.",
+      heading: 'Results for our clients',
+      intro: "Ask and we'll put you in touch with any of these clients.",
       chartsPerCase: 1,
       slugs: ['dimer-health', 'genie-teacher-organic-growth', 'toku-ai-cited-pipeline', 'delshad-legal-content-engine', 'loudface-aeo-case-study'],
     }),
@@ -301,24 +305,23 @@ const doc = {
     section('pricingTiersSection', {
       heading: 'Investment',
       band: 'dark',
-      anchor:
-        "Scale at $7,500 a month for Bamboo, down from $10,000, because we're planning for a long partnership. The rebuild sits inside the fee.",
+      anchor: "We've priced Scale at $7,500 a month for Bamboo because we're planning for a long partnership.",
       tiers: [
-        tier('Scale', '$7,500', 'per month', 'Everything on this page: the site work now, content and mentions for three product lines, the rebuild, full reporting.', true, '$10,000'),
-        tier('Growth', '$5,000', 'per month', 'The same work at a slower pace. Fewer pieces of content and mentions a month.'),
-        tier('Accelerate', '$15,000', 'per month', 'Double the Scale pace, for when the rebuild and a content push run at the same time.'),
+        tier('Scale', '$7,500', 'per month', 'Everything on this page, including the rebuild and content for all three product lines.', true, '$10,000'),
+        tier('Growth', '$5,000', 'per month', 'The same work at a slower pace, with fewer pieces of content and mentions each month.'),
+        tier('Accelerate', '$15,000', 'per month', 'Twice the Scale pace, for when the rebuild and a large content plan run at the same time.'),
       ],
-      note: '3-month minimum, then month to month. No setup fee, no separate build fee.',
+      note: 'There are no setup or build fees.',
     }),
 
     section('bulletListSection', {
       heading: 'Terms and next step',
       band: 'dark',
       items: [
-        bullet('Three months, billed monthly in USD.', 'The minimum gives the work a fair shot at proving itself. After it, month to month.'),
-        bullet('You own everything.', 'Every page, block, article and listing stays yours if we stop.'),
-        bullet('One named team.', 'A strategist on Bamboo every day, Andrea on copy and messaging, and a project manager who runs your review rounds.'),
-        bullet('Next step', "Reply with any questions, or book a follow-up call with Lisa and Grace. Once you're happy, we send the agreement, and the forms and tracking work starts that week."),
+        bullet('A 3-month minimum, billed monthly in USD.', "The minimum gives the work a fair shot at proving itself. After that, it's month to month."),
+        bullet('You own everything.', 'Every page, block, article and listing stays yours if we stop working together.'),
+        bullet('Who works with you', 'A strategist works on your account every day. Andrea writes the copy, and a project manager runs your review rounds.'),
+        bullet('Next step', "Reply to my email with any questions, or pick a time for a follow-up call. When you're ready, we'll send the agreement. The forms and tracking work starts the same week."),
       ],
     }),
   ],
