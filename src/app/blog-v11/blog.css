@@ -105,7 +105,11 @@
 .bp-body { min-width: 0; }
 .bp-body .prose > * + *, .bp-body .pblock > * + * { margin-top: 18px; }
 .bp-body img { max-width: 100%; height: auto; border-radius: 14px; }
-.bp-body .blog-table-wrap { overflow-x: auto; }
+/* one frame per table: the wrapper is the card (it also clips the corners and scrolls on a phone). The legacy
+   .blog-table-wrap rule in globals.css adds its own border, and .sv-article-body table (svc.css) makes the table a
+   second card with a 24px margin, which drew a card inside a card with a gap between them (Arnel, 2026-09-30). */
+.bp-body .blog-table-wrap { overflow-x: auto; margin: 24px 0; border: 1px solid var(--line); border-radius: 14px; background-color: #ffffff; box-shadow: none; }
+.bp-body .blog-table-wrap table { margin: 0; border-radius: 0; box-shadow: none; background: transparent; }
 .bp-body table { width: 100%; border-collapse: collapse; font-size: 15px; }
 .bp-body th, .bp-body td { padding: 12px 14px; text-align: left; border-bottom: 1px solid var(--line); vertical-align: top; }
 .bp-body th { font-weight: 500; color: var(--ink); background: #f6f5fb; }
