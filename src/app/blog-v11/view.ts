@@ -3,7 +3,7 @@ import { fetchBlogPostData, fetchItemBySlug } from '@/lib/cms-data';
 import { formatReadTime } from '@/lib/blog-utils';
 import { rewriteLegacyUrls } from '@/lib/seo-utils';
 import { extractFAQFromHTML } from '@/lib/schema-utils';
-import { autoLinkServiceMentions, buildHeadingWithId } from '@/lib/html-utils';
+import { autoLinkServiceMentions, buildHeadingWithId, prepareBodyTables } from '@/lib/html-utils';
 import type { BlogPost, BlogVisual } from '@/lib/types';
 
 /**
@@ -50,7 +50,7 @@ function extractTocAndAddIds(html: string | undefined): { toc: { id: string; tex
   normalized = normalized.replace(/src="<(https?:\/\/[^">]+)>"/g, 'src="$1"').replace(/href="<(https?:\/\/[^">]+)>"/g, 'href="$1"');
   normalized = normalized.replace(/<img([^>]*?)alt="(__wf_reserved_inherit)?"([^>]*?)>/gi, '<img$1alt="Blog post image"$3>');
   normalized = normalized.replace(/<img(?![^>]*alt=)([^>]*?)>/gi, '<img alt="Blog post image"$1>');
-  normalized = normalized.replace(/<table\b[\s\S]*?<\/table>/gi, (m) => `<div class="blog-table-wrap">${m}</div>`);
+  normalized = prepareBodyTables(normalized);
   const toc: { id: string; text: string }[] = [];
   let index = 0;
   const out = normalized.replace(/<h2([^>]*)>(.*?)<\/h2>/gi, (_m, attrs, content) => {

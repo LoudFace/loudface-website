@@ -303,3 +303,110 @@ export function parseDeliverableItems(html: string | undefined): DeliverableItem
 
   return items;
 }
+
+/** Plain text of a cell: tags dropped, whitespace collapsed; entities stay encoded, which is valid inside an attribute. */
+function cellText(html: string): string {
+  return html.replace(/<[^>]*>/g, ' ').replace(/&nbsp;/gi, ' ').replace(/\s+/g, ' ').trim();
+}
+
+/** Visible length of a cell's text, counting each entity as one character. */
+function visibleLength(text: string): number {
+  return text.replace(/&[a-z0-9#]+;/gi, 'x').length;
+}
+
+/** Adds an attribute to an open tag unless the tag already carries one of that name. */
+function withAttr(openTag: string, name: string, value: string): string {
+  if (new RegExp(`\\s${name}\\s*=`, 'i').test(openTag)) return openTag;
+  return openTag.replace(/^<([a-z0-9]+)/i, `<$1 ${name}="${value}"`);
+}
+
+/**
+ * Key column sizes, in characters of its longest cell. Up to SHORT it stays on one line ("Google AI Overviews");
+ * up to MID it wraps inside a column no narrower than a rank and its first word ("10. Directive / Consulting"; the
+ * longest "N. word" in the corpus on 2026-09-30 was 16 characters, "8. OutreachBloom"); a longer key takes a share.
+ */
+const SHORT_KEY_CHARS = 20;
+const MID_KEY_CHARS = 28;
+
+/**
+ * Prepares one CMS table for a phone layout that stacks each row into a card.
+ *
+ * Every body cell gets `data-label` from its column's header, which the phone CSS prints above the value,
+ * `data-num` when it is one figure or range, and `data-short` when a phone card may pair it with another short
+ * value (tables of five columns or more). The row whose name is LoudFace gets `data-us`. The table
+ * gets `data-cols` (its column count), `data-rank` when its first column holds only rank numbers, and
+ * `data-key` ("short" or "mid", see SHORT_KEY_CHARS) for the length of its key column (the first, or the second
+ * beside a rank). Only a
+ * table with exactly one header row of `<th>` cells, no row headers in the body and no spanning cells is prepared; anything else is returned
+ * as it came and keeps the sideways-scrolling frame. Explicit ARIA roles keep the table's semantics once CSS turns
+ * its rows into blocks (Chrome and Safari drop the implicit table roles when `display` changes). Only attributes
+ * are added, never text, so the inline editor's sentence matching on the body is untouched.
+ */
+function prepareStackedTable(table: string): { html: string; stacked: boolean } {
+  const head = table.match(/<thead\b[^>]*>([\s\S]*?)<\/thead>/i);
+  if (!head || (head[1].match(/<tr\b/gi) ?? []).length !== 1 || /\b(?:colspan|rowspan)\s*=/i.test(table)) {
+    return { html: table, stacked: false };
+  }
+  const labels = [...head[1].matchAll(/<th\b[^>]*>([\s\S]*?)<\/th>/gi)].map((m) => cellText(m[1]).replace(/"/g, '&quot;'));
+  if (labels.length < 2) return { html: table, stacked: false };
+
+  const headEnd = (head.index ?? 0) + head[0].length;
+  // a body row led by a <th> row header would shift every label by one column; keep such a table scrolling
+  if (/<th\b/i.test(table.slice(headEnd))) return { html: table, stacked: false };
+  const rows = [...table.slice(headEnd).matchAll(/<tr\b[^>]*>([\s\S]*?)<\/tr>/gi)].map((row) =>
+    [...row[1].matchAll(/<td\b[^>]*>([\s\S]*?)<\/td>/gi)].map((cell) => cellText(cell[1])),
+  );
+  const column = (i: number) => rows.map((cells) => cells[i] ?? '');
+  // every first cell a bare rank ("1", "2.", "#3"): the key column is then the name beside it
+  const ranked = rows.length > 0 && column(0).every((text) => /^#?\d{1,3}\.?$/.test(text));
+  const keyLength = Math.max(0, ...column(ranked ? 1 : 0).map(visibleLength));
+  const keyIndex = ranked ? 1 : 0;
+  let rowIndex = 0;
+  const body = table.slice(headEnd).replace(/<tr\b[^>]*>[\s\S]*?<\/tr>/gi, (row) => {
+    const texts = rows[rowIndex++] ?? [];
+    let index = 0;
+    // our own row is marked, as on the services comparison table (.sv-table tr.is-us)
+    const marked = /\bLoudFace\b/.test(texts[keyIndex] ?? '') ? row.replace(/^<tr\b[^>]*>/i, (open) => withAttr(open, 'data-us', '')) : row;
+    return marked.replace(/<td\b[^>]*>/gi, (open) => {
+      const i = index++;
+      const text = texts[i] ?? '';
+      let tag = labels[i] ? withAttr(open, 'data-label', labels[i]) : open;
+      // a cell that is one figure or range gets tabular figures; prose keeps the font's own (a tabular "1" gapes in "3-12")
+      if (i > 0 && visibleLength(text) <= 20 && /^[~≈<>+\-]?[$€£]?\d/.test(text)) tag = withAttr(tag, 'data-num', '');
+      // a short value under a short label may share a line with another in a phone card (wide tables only)
+      if (i > keyIndex && labels.length >= 5 && visibleLength(text) <= 18 && visibleLength(labels[i] ?? '') <= 18) tag = withAttr(tag, 'data-short', '');
+      return tag;
+    });
+  });
+
+  const withRoles = (part: string, th: 'columnheader' | 'rowheader') =>
+    part
+      .replace(/<(?:thead|tbody|tfoot)\b[^>]*>/gi, (open) => withAttr(open, 'role', 'rowgroup'))
+      .replace(/<tr\b[^>]*>/gi, (open) => withAttr(open, 'role', 'row'))
+      .replace(/<th\b[^>]*>/gi, (open) => withAttr(open, 'role', th))
+      .replace(/<td\b[^>]*>/gi, (open) => withAttr(open, 'role', 'cell'));
+  let html = withRoles(table.slice(0, headEnd), 'columnheader') + withRoles(body, 'rowheader');
+  html = html.replace(/^<table\b[^>]*>/i, (open) => {
+    let marked = withAttr(withAttr(withAttr(open, 'role', 'table'), 'data-stack', ''), 'data-cols', String(labels.length));
+    if (ranked) marked = withAttr(marked, 'data-rank', '');
+    if (keyLength <= SHORT_KEY_CHARS) return withAttr(marked, 'data-key', 'short');
+    return keyLength <= MID_KEY_CHARS ? withAttr(marked, 'data-key', 'mid') : marked;
+  });
+  return { html, stacked: true };
+}
+
+/**
+ * Wraps every table in an article body in `.blog-table-wrap` (the card frame, and the sideways scroll for a table
+ * wider than the column) and prepares it for the phone card layout (`prepareStackedTable`). Inline `style`
+ * attributes on table parts come from pasted HTML in three posts and would override the house table style, so they
+ * are dropped; an empty `<caption>` (an editor artefact) is removed.
+ */
+export function prepareBodyTables(html: string): string {
+  return html.replace(/<table\b[\s\S]*?<\/table>/gi, (raw) => {
+    const clean = raw
+      .replace(/(<(?:table|caption|thead|tbody|tfoot|tr|th|td)\b[^>]*?)\s+style\s*=\s*(?:"[^"]*"|'[^']*')/gi, '$1')
+      .replace(/<caption\b[^>]*>(?:\s|&nbsp;|<\/?p>|<br\s*\/?>)*<\/caption>/gi, '');
+    const { html: table, stacked } = prepareStackedTable(clean);
+    return `<div class="blog-table-wrap${stacked ? ' is-stack' : ''}">${table}</div>`;
+  });
+}
