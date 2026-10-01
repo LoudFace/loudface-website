@@ -27,6 +27,18 @@ interface Session {
   client: string;
   name: string;
   role: 'team' | 'client';
+  contacts: string[];
+}
+
+const OWNER_KEY = 'lf_fb_owner';
+
+function rememberedOwner(contacts: string[]): string | null {
+  try {
+    const saved = window.localStorage.getItem(OWNER_KEY);
+    return saved && contacts.includes(saved) ? saved : null;
+  } catch {
+    return null;
+  }
 }
 
 type Row = ClientView & Partial<Pick<FeedbackRequest, 'priority'>>;
@@ -187,6 +199,7 @@ export default function FeedbackWidget() {
 
   const [type, setType] = useState<RequestType | null>(null);
   const [urgency, setUrgency] = useState<Urgency | null>(null);
+  const [owner, setOwner] = useState<string | null>(null);
   const [note, setNote] = useState('');
   const [sending, setSending] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -202,7 +215,11 @@ export default function FeedbackWidget() {
   /* Who is signed in. A 404 means the cookie is not valid: stay invisible. */
   useEffect(() => {
     api<Session>('/api/feedback/session')
-      .then(setSession)
+      .then((value) => {
+        setSession(value);
+        // Most clients talk to the same person every time: start from their last pick.
+        setOwner(rememberedOwner(value.contacts));
+      })
       .catch(() => setSession(null));
   }, []);
 
@@ -341,6 +358,7 @@ export default function FeedbackWidget() {
   async function send() {
     if (!type) return setError('Pick a request type.');
     if (!urgency) return setError('Pick how urgent it is.');
+    if (!owner) return setError('Pick who should handle it.');
     if (!note.trim()) return setError('Write a short note.');
     setSending(true);
     setError(null);
@@ -350,6 +368,7 @@ export default function FeedbackWidget() {
         body: JSON.stringify({
           type,
           urgency,
+          owner,
           note,
           page: { url: window.location.href, path: window.location.pathname, title: document.title },
           element: picked?.context ?? null,
@@ -362,6 +381,11 @@ export default function FeedbackWidget() {
         }),
       });
       setSentRef(request.ref);
+      try {
+        window.localStorage.setItem(OWNER_KEY, owner);
+      } catch {
+        // Remembering the pick is a convenience only.
+      }
       resetForm();
       setRows(null);
     } catch (err) {
@@ -377,6 +401,23 @@ export default function FeedbackWidget() {
       const { request } = await api<{ request: Row }>(`/api/feedback/requests/${id}/comments`, {
         method: 'POST',
         body: JSON.stringify({ body: reply }),
+      });
+      setRows((current) => current?.map((row) => (row.id === id ? request : row)) ?? current);
+      setReply('');
+    } catch (err) {
+      setError((err as Error).message);
+    }
+  }
+
+  async function review(id: string, decision: 'approve' | 'reopen') {
+    if (decision === 'reopen' && !reply.trim()) {
+      return setError('Write what is still not right, then press "Still not right".');
+    }
+    setError(null);
+    try {
+      const { request } = await api<{ request: Row }>(`/api/feedback/requests/${id}/review`, {
+        method: 'POST',
+        body: JSON.stringify({ decision, body: reply }),
       });
       setRows((current) => current?.map((row) => (row.id === id ? request : row)) ?? current);
       setReply('');
@@ -557,6 +598,23 @@ export default function FeedbackWidget() {
                   </div>
                 </div>
 
+                <div className={styles.field}>
+                  <span className={styles.label}>Who should handle it?</span>
+                  <div className={styles.chips}>
+                    {session.contacts.map((name) => (
+                      <button
+                        key={name}
+                        type="button"
+                        aria-pressed={owner === name}
+                        className={owner === name ? styles.chipOn : styles.chip}
+                        onClick={() => setOwner(name)}
+                      >
+                        {name}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
                 <label className={styles.field}>
                   <span className={styles.label}>What should change?</span>
                   <textarea
@@ -616,14 +674,14 @@ export default function FeedbackWidget() {
                   <dd>{URGENCY_LABELS[detail.urgency]}</dd>
                   <dt>Page</dt>
                   <dd>{pageLabel(detail.page?.path)}</dd>
+                  <dt>Handled by</dt>
+                  <dd>{detail.owner ?? 'Not assigned yet'}</dd>
                   <dt>Expected</dt>
                   <dd>{detail.due_date ? formatDate(detail.due_date) : 'Not set yet'}</dd>
                   {session.role === 'team' && (
                     <>
                       <dt>Priority</dt>
                       <dd>{detail.priority ? PRIORITY_LABELS[detail.priority] : 'Not set'}</dd>
-                      <dt>Owner</dt>
-                      <dd>{detail.owner ?? 'Nobody yet'}</dd>
                     </>
                   )}
                 </dl>
@@ -646,6 +704,22 @@ export default function FeedbackWidget() {
                     </div>
                   ))}
                 </div>
+                {detail.status === 'ready_for_review' && (
+                  <div className={styles.review}>
+                    <p className={styles.reviewText}>
+                      {detail.owner ?? 'The team'} marked this as ready. Check it on the page, then tell us.
+                    </p>
+                    <div className={styles.row}>
+                      <button type="button" className={styles.primary} onClick={() => review(detail.id, 'approve')}>
+                        Looks good
+                      </button>
+                      <button type="button" className={styles.secondary} onClick={() => review(detail.id, 'reopen')}>
+                        Still not right
+                      </button>
+                    </div>
+                    <p className={styles.hint}>For &ldquo;Still not right&rdquo;, write what is wrong in the box below first.</p>
+                  </div>
+                )}
                 <textarea
                   className={styles.textarea}
                   rows={2}
@@ -653,6 +727,7 @@ export default function FeedbackWidget() {
                   onChange={(event) => setReply(event.target.value)}
                   placeholder="Write a reply"
                 />
+                {error && <p className={styles.error}>{error}</p>}
                 <button type="button" className={styles.secondary} onClick={() => sendReply(detail.id)}>
                   Send reply
                 </button>

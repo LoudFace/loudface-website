@@ -1,5 +1,6 @@
 import type { NextRequest } from 'next/server';
 import { getFeedbackSession } from '@/lib/feedback/access';
+import { contactsFor } from '@/lib/feedback/contacts';
 import { getFeedbackStore } from '@/lib/feedback/store';
 import { toClientView } from '@/lib/feedback/types';
 import { parseNewRequest } from '@/lib/feedback/validate';
@@ -38,7 +39,7 @@ export async function POST(request: NextRequest) {
   } catch {
     return badRequest('The request was not readable.');
   }
-  const parsed = parseNewRequest(body);
+  const parsed = parseNewRequest(body, contactsFor(session.client));
   if (typeof parsed === 'string') return badRequest(parsed);
 
   const created = await getFeedbackStore().create({

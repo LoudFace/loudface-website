@@ -1,4 +1,5 @@
 import { getFeedbackSession } from '@/lib/feedback/access';
+import { contactsFor } from '@/lib/feedback/contacts';
 import { json, notFound } from '../respond';
 
 export const dynamic = 'force-dynamic';
@@ -7,5 +8,10 @@ export const dynamic = 'force-dynamic';
 export async function GET() {
   const session = await getFeedbackSession();
   if (!session) return notFound();
-  return json({ client: session.client, name: session.person.name, role: session.person.role });
+  return json({
+    client: session.client,
+    name: session.person.name,
+    role: session.person.role,
+    contacts: contactsFor(session.client),
+  });
 }

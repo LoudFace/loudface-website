@@ -120,7 +120,8 @@ export interface FeedbackRequest {
   created_at: string;
   created_by: Person;
 
-  // Team-only fields. Clients can read status and due_date, never write any.
+  // The client picks the owner when sending; after that only the team edits
+  // these. Clients read status, owner and due_date, never priority.
   status: RequestStatus;
   priority: Priority | null;
   owner: string | null;
@@ -143,6 +144,7 @@ export function toClientView(request: FeedbackRequest): ClientView {
 
 export interface TeamUpdate {
   status?: RequestStatus;
+  urgency?: Urgency;
   priority?: Priority | null;
   owner?: string | null;
   due_date?: string | null;

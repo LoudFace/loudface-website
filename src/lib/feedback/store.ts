@@ -34,7 +34,7 @@ import type {
 export interface NewRequestInput
   extends Pick<
     FeedbackRequest,
-    'client_slug' | 'type' | 'urgency' | 'note' | 'page' | 'element' | 'device' | 'created_by'
+    'client_slug' | 'type' | 'urgency' | 'owner' | 'note' | 'page' | 'element' | 'device' | 'created_by'
   > {
   screenshot: string | null;
 }
@@ -129,7 +129,7 @@ function newRequest(input: NewRequestInput, seq: number): FeedbackRequest {
     created_by: input.created_by,
     status: 'new',
     priority: null,
-    owner: null,
+    owner: input.owner,
     due_date: null,
     updated_at: now,
     comments: [],
@@ -140,7 +140,7 @@ function newRequest(input: NewRequestInput, seq: number): FeedbackRequest {
 function applyUpdate(request: FeedbackRequest, changes: TeamUpdate, by: Person): boolean {
   const now = new Date().toISOString();
   const events: RequestEvent[] = [];
-  for (const field of ['status', 'priority', 'owner', 'due_date', 'type'] as const) {
+  for (const field of ['status', 'urgency', 'priority', 'owner', 'due_date', 'type'] as const) {
     if (!(field in changes)) continue;
     const next = changes[field] ?? null;
     const previous = request[field] ?? null;

@@ -12,16 +12,22 @@ member (Tamara) only.
   downloads none of its code.
 - **New request:** point at any section of the page (or leave it empty for a
   general request), pick a type (Bug, Change, New page or feature, Question),
-  pick an urgency (Urgent, This week, No rush), write a note, send. The page,
+  pick an urgency (Urgent, This week, No rush), pick who should handle it
+  (the client's LoudFace contacts; the last pick is remembered), write a
+  note, send. The page,
   a screenshot of the section with the part outlined in red, the date, and
   the screen size and browser are added automatically.
-- **My requests:** every request from this client with its status, expected
-  delivery date and a reply thread.
+- **My requests:** every request from this client with its status, owner,
+  expected delivery date and a reply thread. When the team sets a request to
+  "Ready for your check", the client gets **Looks good** (→ Done) and **Still
+  not right** (→ In progress, with the reason posted in the thread).
 - **Team board** at `/feedback/board` (team links only): every client's
   requests, three views over the same records (By status, By page, List),
   filters for client, type, urgency and owner. The team sets status,
-  priority, owner, expected delivery and can correct the type. Every change
-  is kept in a history. "Open at the section" opens the page scrolled to the
+  priority, owner, expected delivery, and can correct the client's type and
+  urgency (a "Bug" that is really a change) or reassign the owner (cover,
+  hand-offs). Requests past their delivery date and still open are flagged
+  Overdue. Every change is kept in a history. "Open at the section" opens the page scrolled to the
   exact section with it highlighted.
 
 Statuses: New, Accepted, In progress, Ready for your check, Done, Won't do.
@@ -77,6 +83,7 @@ Built for it, not connected yet:
 | What | Where |
 |---|---|
 | Record shape and labels | `src/lib/feedback/types.ts` |
+| Who a client can hand a request to | `src/lib/feedback/contacts.ts` (Andrea, Abhay, Tamara by default; per client) |
 | Private links and the signed cookie | `src/lib/feedback/access.ts` |
 | Storage | `src/lib/feedback/store.ts` |
 | Input checks | `src/lib/feedback/validate.ts` |

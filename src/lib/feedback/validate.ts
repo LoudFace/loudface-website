@@ -33,6 +33,7 @@ function oneOf<T extends string>(list: readonly T[], value: unknown): T | null {
 export interface ParsedNewRequest {
   type: RequestType;
   urgency: Urgency;
+  owner: string;
   note: string;
   page: PageContext | null;
   element: ElementContext | null;
@@ -40,7 +41,7 @@ export interface ParsedNewRequest {
   screenshot: string | null;
 }
 
-export function parseNewRequest(body: unknown): ParsedNewRequest | string {
+export function parseNewRequest(body: unknown, contacts: string[]): ParsedNewRequest | string {
   if (!body || typeof body !== 'object') return 'The request was empty.';
   const input = body as Record<string, unknown>;
 
@@ -48,6 +49,8 @@ export function parseNewRequest(body: unknown): ParsedNewRequest | string {
   if (!type) return 'Pick a request type.';
   const urgency = oneOf(URGENCIES, input.urgency);
   if (!urgency) return 'Pick how urgent it is.';
+  const owner = typeof input.owner === 'string' && contacts.includes(input.owner) ? input.owner : null;
+  if (!owner) return 'Pick who should handle it.';
   const note = str(input.note, MAX_NOTE).trim();
   if (!note) return 'Write a short note.';
 
@@ -83,7 +86,7 @@ export function parseNewRequest(body: unknown): ParsedNewRequest | string {
     screenshot = input.screenshot;
   }
 
-  return { type, urgency, note, page, element, device, screenshot };
+  return { type, urgency, owner, note, page, element, device, screenshot };
 }
 
 export function parseTeamUpdate(body: unknown): TeamUpdate | string {
@@ -95,6 +98,11 @@ export function parseTeamUpdate(body: unknown): TeamUpdate | string {
     const status = oneOf<RequestStatus>(STATUSES, input.status);
     if (!status) return 'Unknown status.';
     update.status = status;
+  }
+  if ('urgency' in input) {
+    const urgency = oneOf<Urgency>(URGENCIES, input.urgency);
+    if (!urgency) return 'Unknown urgency.';
+    update.urgency = urgency;
   }
   if ('type' in input) {
     const type = oneOf<RequestType>(REQUEST_TYPES, input.type);

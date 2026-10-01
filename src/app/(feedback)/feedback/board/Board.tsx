@@ -43,7 +43,21 @@ function triageOrder(a: FeedbackRequest, b: FeedbackRequest): number {
   return a.created_at.localeCompare(b.created_at);
 }
 
-export function Board({ initial, me }: { initial: FeedbackRequest[]; me: string }) {
+/** Past its delivery date and still open. Dates compare as YYYY-MM-DD strings. */
+function isOverdue(r: FeedbackRequest, today: string): boolean {
+  return Boolean(r.due_date) && r.due_date! < today && !CLOSED.includes(r.status);
+}
+
+export function Board({
+  initial,
+  me,
+  contacts,
+}: {
+  initial: FeedbackRequest[];
+  me: string;
+  contacts: Record<string, string[]>;
+}) {
+  const [today] = useState(() => new Date().toISOString().slice(0, 10));
   const [requests, setRequests] = useState(initial);
   const [view, setView] = useState<View>('status');
   const [client, setClient] = useState('all');
@@ -76,6 +90,7 @@ export function Board({ initial, me }: { initial: FeedbackRequest[]; me: string 
   const selected = requests.find((r) => r.id === selectedId) ?? null;
   const newCount = requests.filter((r) => r.status === 'new').length;
   const urgentOpen = requests.filter((r) => r.urgency === 'urgent' && !CLOSED.includes(r.status)).length;
+  const overdue = requests.filter((r) => isOverdue(r, today)).length;
 
   function replace(next: FeedbackRequest) {
     setRequests((current) => current.map((r) => (r.id === next.id ? next : r)));
@@ -121,7 +136,10 @@ export function Board({ initial, me }: { initial: FeedbackRequest[]; me: string 
     >
       <span className={styles.cardTop}>
         <span className={styles.ref}>{r.ref}</span>
-        <span className={`${styles.urgency} ${styles[`u_${r.urgency}`]}`}>{URGENCY_LABELS[r.urgency]}</span>
+        <span className={styles.badges}>
+          {isOverdue(r, today) && <span className={styles.overdue}>Overdue</span>}
+          <span className={`${styles.urgency} ${styles[`u_${r.urgency}`]}`}>{URGENCY_LABELS[r.urgency]}</span>
+        </span>
       </span>
       <span className={styles.cardNote}>{r.note}</span>
       <span className={styles.meta}>
@@ -150,7 +168,7 @@ export function Board({ initial, me }: { initial: FeedbackRequest[]; me: string 
         <div>
           <h1 className={styles.title}>Client requests</h1>
           <p className={styles.sub}>
-            {requests.length} total · {newCount} new · {urgentOpen} urgent and open · signed in as {me}
+            {requests.length} total · {newCount} new · {urgentOpen} urgent and open · {overdue} overdue · signed in as {me}
           </p>
         </div>
         <div className={styles.topActions}>
@@ -282,7 +300,7 @@ export function Board({ initial, me }: { initial: FeedbackRequest[]; me: string 
                     <td>{STATUS_LABELS[r.status]}</td>
                     <td>{r.priority ? PRIORITY_LABELS[r.priority] : '—'}</td>
                     <td>{r.owner ?? '—'}</td>
-                    <td>{r.due_date ? formatDate(r.due_date) : '—'}</td>
+                    <td className={isOverdue(r, today) ? styles.overdueText : ''}>{r.due_date ? formatDate(r.due_date) : '—'}</td>
                     <td>{formatDate(r.created_at)}</td>
                   </tr>
                 ))}
@@ -331,20 +349,19 @@ export function Board({ initial, me }: { initial: FeedbackRequest[]; me: string 
               </label>
               <label>
                 Owner
-                <input
-                  key={`owner-${selected.id}-${selected.owner ?? ''}`}
-                  defaultValue={selected.owner ?? ''}
-                  list="fb-owners"
-                  placeholder="Who does it"
-                  onBlur={(e) => {
-                    if ((e.target.value.trim() || null) !== selected.owner) save(selected.id, { owner: e.target.value });
-                  }}
-                />
-                <datalist id="fb-owners">
-                  {owners.map((o) => (
-                    <option key={o} value={o} />
+                <select
+                  value={selected.owner ?? ''}
+                  onChange={(e) => save(selected.id, { owner: e.target.value || null })}
+                >
+                  <option value="">Nobody yet</option>
+                  {Array.from(
+                    new Set([...(contacts[selected.client_slug] ?? []), ...(selected.owner ? [selected.owner] : [])])
+                  ).map((name) => (
+                    <option key={name} value={name}>
+                      {name}
+                    </option>
                   ))}
-                </datalist>
+                </select>
               </label>
               <label>
                 Expected delivery
@@ -367,10 +384,19 @@ export function Board({ initial, me }: { initial: FeedbackRequest[]; me: string 
                   ))}
                 </select>
               </label>
-              <div className={styles.fact}>
-                <span>Client urgency</span>
-                {URGENCY_LABELS[selected.urgency]}
-              </div>
+              <label>
+                Urgency
+                <select
+                  value={selected.urgency}
+                  onChange={(e) => save(selected.id, { urgency: e.target.value as FeedbackRequest['urgency'] })}
+                >
+                  {URGENCIES.map((u) => (
+                    <option key={u} value={u}>
+                      {URGENCY_LABELS[u]}
+                    </option>
+                  ))}
+                </select>
+              </label>
             </div>
 
             {selected.has_screenshot && (
