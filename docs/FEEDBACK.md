@@ -30,13 +30,21 @@ member (Tamara) only.
   Overdue. Every change is kept in a history. "Open at the section" opens the page scrolled to the
   exact section with it highlighted.
 
+- **People tab** on the board (team only): add or remove team members (the
+  names in "Who should handle it?" and the owner dropdown), add clients and
+  tick which team members each client can pick (no ticks = the whole team),
+  and make a private link for any person, client or team, with a copy
+  button. **Remove** on a link switches it off on that person's next click.
+
 Statuses: New, Accepted, In progress, Ready for your check, Done, Won't do.
 Clients never see the team's priority or the history.
 
 ## Turning it on
 
 It is off until two environment variables exist. With them missing, every
-link and page of the tool answers 404.
+link and page of the tool answers 404, including links made on the People
+tab. The env links are the bootstrap: they let the first team members in,
+and everyone else gets a link from the People tab.
 
 | Name | Value |
 |---|---|
@@ -83,7 +91,7 @@ Built for it, not connected yet:
 | What | Where |
 |---|---|
 | Record shape and labels | `src/lib/feedback/types.ts` |
-| Who a client can hand a request to | `src/lib/feedback/contacts.ts` (Andrea, Abhay, Tamara by default; per client) |
+| Team, clients and People-tab links | `src/lib/feedback/directory.ts` (one document in the store; starts as Andrea, Abhay, Tamara + LoudFace) |
 | Private links and the signed cookie | `src/lib/feedback/access.ts` |
 | Storage | `src/lib/feedback/store.ts` |
 | Input checks | `src/lib/feedback/validate.ts` |

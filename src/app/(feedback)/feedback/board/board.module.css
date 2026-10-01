@@ -92,3 +92,24 @@
 .badges { display: inline-flex; gap: 4px; }
 .overdue { padding: 2px 7px; border-radius: 999px; font-size: 11px; font-weight: 600; background: #b42318; color: #fff; }
 .overdueText { color: #b42318; font-weight: 600; }
+
+/* People tab */
+.people { display: flex; flex-direction: column; gap: 16px; max-width: 980px; }
+.panel { display: flex; flex-direction: column; gap: 10px; padding: 18px; border: 1px solid var(--line); border-radius: 14px; background: #fff; }
+.panelHead { margin: 0; font-size: 16px; font-weight: 500; }
+.tags { display: flex; flex-wrap: wrap; gap: 6px; }
+.tag { display: inline-flex; align-items: center; gap: 6px; padding: 5px 6px 5px 12px; border-radius: 999px; background: var(--warm); border: 1px solid var(--line); }
+.tag button { width: 22px; height: 22px; border: 0; border-radius: 50%; background: none; cursor: pointer; color: var(--muted); font-size: 15px; line-height: 1; }
+.tag button:hover { background: #fff; color: #b42318; }
+.inline { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.inline input, .inline select { height: 36px; padding: 0 10px; border: 1px solid var(--line); border-radius: 9px; background: #fff; min-width: 0; }
+.inline .button { align-self: auto; }
+.tableWrap { overflow-x: auto; }
+.links { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px; }
+.links li { display: flex; flex-direction: column; gap: 6px; padding: 12px; border: 1px solid var(--line); border-radius: 10px; }
+.linkFresh { border-color: var(--ind) !important; box-shadow: 0 0 0 1px var(--ind); }
+.linkTop { display: flex; flex-wrap: wrap; gap: 8px; align-items: baseline; }
+.url { font-family: var(--font-geist-mono), ui-monospace, monospace; font-size: 12px; padding: 6px 8px; border-radius: 6px; background: var(--warm); overflow-wrap: anywhere; user-select: all; }
+.link { border: 0; background: none; padding: 0; color: var(--ind); cursor: pointer; font-size: 13px; }
+.danger { border: 0; background: #b42318; color: #fff; padding: 4px 10px; border-radius: 7px; cursor: pointer; font-size: 13px; }
+.main[hidden] { display: none; }

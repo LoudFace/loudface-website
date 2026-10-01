@@ -3,6 +3,7 @@ import crypto from 'node:crypto';
 import { promises as fs } from 'node:fs';
 import path from 'node:path';
 import { createClient, WatchError, type RedisClientType } from 'redis';
+import type { Directory } from './directory';
 import type {
   FeedbackRequest,
   Person,
@@ -47,6 +48,9 @@ export interface FeedbackStore {
   addComment(id: string, body: string, by: Person): Promise<FeedbackRequest | null>;
   getScreenshot(id: string): Promise<string | null>;
   exportAll(): Promise<FeedbackRequest[]>;
+  /** The People tab's document: team, clients, private links. Null until first saved. */
+  getDirectory(): Promise<Directory | null>;
+  saveDirectory(directory: Directory): Promise<void>;
 }
 
 let client: RedisClientType | null = null;
@@ -64,6 +68,7 @@ const reqKey = (id: string) => `fb:req:${id}`;
 const shotKey = (id: string) => `fb:shot:${id}`;
 const clientIndex = (slug: string) => `fb:idx:client:${slug}`;
 const ALL_INDEX = 'fb:idx:all';
+const DIRECTORY_KEY = 'fb:directory';
 
 async function readMany(ids: string[]): Promise<FeedbackRequest[]> {
   if (ids.length === 0) return [];
@@ -208,6 +213,15 @@ const redisStore: FeedbackStore = {
   async exportAll() {
     return this.list({});
   },
+
+  async getDirectory() {
+    const row = await (await redis()).get(DIRECTORY_KEY);
+    return row ? (JSON.parse(row) as Directory) : null;
+  },
+
+  async saveDirectory(directory) {
+    await (await redis()).set(DIRECTORY_KEY, JSON.stringify(directory));
+  },
 };
 
 /* ── Local fallback: JSON files, development only ─────────────────────── */
@@ -278,6 +292,12 @@ const fileStore: FeedbackStore = {
   async exportAll() {
     return this.list({});
   },
+
+  async getDirectory() {
+    return readJson<Directory | null>('directory.json', null);
+  },
+
+  saveDirectory: (directory) => serial(() => writeJson('directory.json', directory)),
 };
 
 export function getFeedbackStore(): FeedbackStore {

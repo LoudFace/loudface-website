@@ -1,5 +1,5 @@
 import { getFeedbackSession } from '@/lib/feedback/access';
-import { contactsFor } from '@/lib/feedback/contacts';
+import { contactsFor } from '@/lib/feedback/directory';
 import { json, notFound } from '../respond';
 
 export const dynamic = 'force-dynamic';
@@ -12,6 +12,6 @@ export async function GET() {
     client: session.client,
     name: session.person.name,
     role: session.person.role,
-    contacts: contactsFor(session.client),
+    contacts: await contactsFor(session.client),
   });
 }

@@ -1,6 +1,7 @@
 import 'server-only';
 import crypto from 'node:crypto';
 import { cookies } from 'next/headers';
+import { getDirectory } from './directory';
 import type { Person, Role } from './types';
 
 /**
@@ -41,7 +42,22 @@ export interface FeedbackSession {
   person: Person;
 }
 
-function readEntries(): AccessEntry[] {
+/** Links from the env var (bootstrap) plus the ones made on the People tab. */
+async function readEntries(): Promise<AccessEntry[]> {
+  const fromEnv = readEnvEntries();
+  // Without an env link nobody can reach the People tab, so the tool stays off.
+  if (fromEnv.length === 0) return [];
+  const directory = await getDirectory().catch(() => null);
+  const fromDirectory: AccessEntry[] = (directory?.links ?? []).map(({ token, client, name, role }) => ({
+    token,
+    client,
+    name,
+    role,
+  }));
+  return [...fromEnv, ...fromDirectory];
+}
+
+function readEnvEntries(): AccessEntry[] {
   const raw = process.env.FEEDBACK_ACCESS;
   if (!raw) return [];
   try {
@@ -91,8 +107,8 @@ function sameString(a: string, b: string): boolean {
 }
 
 /** The entry behind a link token, or null. */
-export function findEntryByToken(token: string): AccessEntry | null {
-  return readEntries().find((entry) => sameString(entry.token, token)) ?? null;
+export async function findEntryByToken(token: string): Promise<AccessEntry | null> {
+  return (await readEntries()).find((entry) => sameString(entry.token, token)) ?? null;
 }
 
 export function signSessionCookie(entry: AccessEntry): string {
@@ -100,19 +116,19 @@ export function signSessionCookie(entry: AccessEntry): string {
   return `${COOKIE_VERSION}.${id}.${mac(id)}`;
 }
 
-function entryFromCookie(value: string | undefined): AccessEntry | null {
+async function entryFromCookie(value: string | undefined): Promise<AccessEntry | null> {
   if (!value) return null;
   const [version, id, signature] = value.split('.');
   if (version !== COOKIE_VERSION || !id || !signature) return null;
   if (!sameString(signature, mac(id))) return null;
   // Re-resolve every time, so a removed link stops working at once.
-  return readEntries().find((entry) => tokenId(entry.token) === id) ?? null;
+  return (await readEntries()).find((entry) => tokenId(entry.token) === id) ?? null;
 }
 
 /** The signed-in feedback user for this request, or null. */
 export async function getFeedbackSession(): Promise<FeedbackSession | null> {
   const store = await cookies();
-  const entry = entryFromCookie(store.get(FEEDBACK_COOKIE)?.value);
+  const entry = await entryFromCookie(store.get(FEEDBACK_COOKIE)?.value);
   if (!entry) return null;
   return { client: entry.client, person: { name: entry.name, role: entry.role } };
 }

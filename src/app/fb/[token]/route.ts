@@ -16,7 +16,7 @@ export const dynamic = 'force-dynamic';
  */
 export async function GET(request: NextRequest, { params }: { params: Promise<{ token: string }> }) {
   const { token } = await params;
-  const entry = findEntryByToken(token);
+  const entry = await findEntryByToken(token);
   if (!entry) {
     return new NextResponse('Not found', { status: 404, headers: { 'x-robots-tag': 'noindex' } });
   }
