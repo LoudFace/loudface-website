@@ -41,6 +41,11 @@ jobs:
       - name: Inline editor tests
         run: npm run test:editor
 
+      # The Sanity retry in src/lib/cms-retry.ts: every retry asks with its own
+      # request tag, because Next replays a failed fetch inside one render.
+      - name: CMS retry tests
+        run: npm run test:cms
+
       # The five house rules of the editor that can be checked by reading the
       # repository: the bar behind a Draft Mode gate, getters through markTree,
       # metadata off the marked getters, no component transforming a content

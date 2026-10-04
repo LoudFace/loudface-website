@@ -8,6 +8,7 @@
 import { cache } from 'react';
 import { draftMode } from 'next/headers';
 import { cachedReadClient, client, getServerClient } from './sanity.client';
+import { withRetry } from './cms-retry';
 import type {
   CaseStudy,
   Client,
@@ -45,38 +46,6 @@ const HIDDEN_CASE_STUDY_SLUGS: ReadonlySet<string> = new Set([
 
 function isHiddenCaseStudySlug(slug: string | undefined | null): boolean {
   return !!slug && HIDDEN_CASE_STUDY_SLUGS.has(slug);
-}
-
-/**
- * Retry a Sanity read on transient failures (connection resets, timeouts, 5xx).
- *
- * Sanity's edge occasionally drops a connection mid-request — observed in the
- * browser as `QUIC_PROTOCOL_ERROR` / `ERR_CONNECTION_RESET`, and on the server
- * as a thrown fetch error. Because the entire (site) route group renders
- * dynamically (SanityLive is mounted in the layout), every request re-queries
- * Sanity live with no cached/static fallback. So a single dropped connection on
- * an *unguarded* fetch (e.g. fetchItemBySlug) surfaces to the visitor as a 500.
- *
- * One short-backoff retry absorbs that class of blip. A genuinely persistent
- * failure still throws after the final attempt — deliberately, so a real outage
- * surfaces (or 404s via notFound) rather than being silently masked.
- */
-async function withRetry<T>(
-  fn: () => Promise<T>,
-  { attempts = 2, baseDelayMs = 300 }: { attempts?: number; baseDelayMs?: number } = {},
-): Promise<T> {
-  let lastError: unknown;
-  for (let attempt = 1; attempt <= attempts; attempt++) {
-    try {
-      return await fn();
-    } catch (error) {
-      lastError = error;
-      if (attempt < attempts) {
-        await new Promise((resolve) => setTimeout(resolve, baseDelayMs * attempt));
-      }
-    }
-  }
-  throw lastError;
 }
 
 // ── GROQ projection fragments ─────────────────────────────────────
@@ -441,8 +410,13 @@ export function getEmptyHomepageData(): HomepageData {
 // retry survives the cache — a cached rejected promise would otherwise make
 // an outer withRetry a no-op. Net contract vs. the old single
 // withRetry(Promise.all): a transient blip now retries per-collection
-// instead of re-running the whole batch; persistent failure still rejects,
-// which the resilient composers below turn into empty data.
+// instead of re-running the whole batch; persistent failure still rejects.
+// The list composers (homepage, blog index, case-study index) let that
+// rejection through: a page that publishes a list must never render it empty
+// because a read failed, and their Markdown copies (/blog.md, Accept:
+// text/markdown) are cached for an hour (src/app/api/llms-md). The detail and
+// footer composers further down still degrade to empty lists; those pages
+// render per request and their lists never reach the Markdown copies.
 //
 // React `cache()` only deduplicates within one server render. The (site) route
 // group is dynamic because its layout calls `headers()`, so route-level
@@ -489,29 +463,29 @@ const cacheFor = (...tags: string[]) => cacheForSeconds(CMS_REVALIDATE_SECONDS, 
 const SITEMAP_NO_STORE = { cache: 'no-store', cacheMode: 'noStale' } as const;
 
 const fetchCaseStudies = cache((): Promise<CaseStudy[]> =>
-  withRetry(() =>
+  withRetry((retry) =>
     cachedReadClient.fetch<CaseStudy[]>(
       `*[_type == "caseStudy"] ${CASE_STUDY_PROJECTION}`,
       {},
-      cacheFor(cmsTypeTag('caseStudy')),
+      { ...cacheFor(cmsTypeTag('caseStudy')), ...retry },
     ),
   ),
 );
 const fetchClients = cache((): Promise<Client[]> =>
-  withRetry(() =>
+  withRetry((retry) =>
     cachedReadClient.fetch<Client[]>(
       `*[_type == "client"] ${CLIENT_PROJECTION}`,
       {},
-      cacheFor(cmsTypeTag('client')),
+      { ...cacheFor(cmsTypeTag('client')), ...retry },
     ),
   ),
 );
 const fetchTestimonials = cache((): Promise<Testimonial[]> =>
-  withRetry(() =>
+  withRetry((retry) =>
     cachedReadClient.fetch<Testimonial[]>(
       `*[_type == "testimonial"] ${TESTIMONIAL_PROJECTION}`,
       {},
-      cacheFor(cmsTypeTag('testimonial')),
+      { ...cacheFor(cmsTypeTag('testimonial')), ...retry },
     ),
   ),
 );
@@ -520,65 +494,65 @@ const fetchTestimonials = cache((): Promise<Testimonial[]> =>
 // bodies it used to carry were pure waste on every request. A page that needs
 // one full post calls fetchItemBySlug, which still uses BLOG_POST_PROJECTION.
 const fetchBlogPosts = cache((): Promise<BlogPost[]> =>
-  withRetry(() =>
+  withRetry((retry) =>
     cachedReadClient.fetch<BlogPost[]>(
       `*[_type == "blogPost"] | order(publishedDate desc) ${BLOG_POST_CARD_PROJECTION}`,
       {},
-      cacheFor(cmsTypeTag('blogPost')),
+      { ...cacheFor(cmsTypeTag('blogPost')), ...retry },
     ),
   ),
 );
 const fetchResearchStudies = cache((): Promise<ResearchStudy[]> =>
-  withRetry(() =>
+  withRetry((retry) =>
     cachedReadClient.fetch<ResearchStudy[]>(
       `*[_type == "research"] | order(publishedDate desc) ${RESEARCH_CARD_PROJECTION}`,
       {},
-      cacheFor(cmsTypeTag('research')),
+      { ...cacheFor(cmsTypeTag('research')), ...retry },
     ),
   ),
 );
 const fetchCategories = cache((): Promise<Category[]> =>
-  withRetry(() =>
+  withRetry((retry) =>
     cachedReadClient.fetch<Category[]>(
       `*[_type == "category"] ${CATEGORY_PROJECTION}`,
       {},
-      cacheFor(cmsTypeTag('category')),
+      { ...cacheFor(cmsTypeTag('category')), ...retry },
     ),
   ),
 );
 const fetchTeamMembers = cache((): Promise<TeamMember[]> =>
-  withRetry(() =>
+  withRetry((retry) =>
     cachedReadClient.fetch<TeamMember[]>(
       `*[_type == "teamMember"] ${TEAM_MEMBER_PROJECTION}`,
       {},
-      cacheFor(cmsTypeTag('teamMember')),
+      { ...cacheFor(cmsTypeTag('teamMember')), ...retry },
     ),
   ),
 );
 const fetchIndustries = cache((): Promise<Industry[]> =>
-  withRetry(() =>
+  withRetry((retry) =>
     cachedReadClient.fetch<Industry[]>(
       `*[_type == "industry"] ${INDUSTRY_PROJECTION}`,
       {},
-      cacheFor(cmsTypeTag('industry')),
+      { ...cacheFor(cmsTypeTag('industry')), ...retry },
     ),
   ),
 );
 const fetchTechnologies = cache((): Promise<Technology[]> =>
-  withRetry(() =>
+  withRetry((retry) =>
     cachedReadClient.fetch<Technology[]>(
       `*[_type == "technology"] ${TECHNOLOGY_PROJECTION}`,
       {},
-      cacheFor(cmsTypeTag('technology')),
+      { ...cacheFor(cmsTypeTag('technology')), ...retry },
     ),
   ),
 );
 const fetchServiceCategories = cache((): Promise<ServiceCategory[]> =>
-  withRetry(() =>
+  withRetry((retry) =>
     cachedReadClient.fetch<ServiceCategory[]>(
       `*[_type == "serviceCategory"] ${SERVICE_CATEGORY_PROJECTION}`,
       {},
-      cacheFor(cmsTypeTag('serviceCategory')),
+      { ...cacheFor(cmsTypeTag('serviceCategory')), ...retry },
     ),
   ),
 );
@@ -606,83 +580,73 @@ const byPublishedDateDesc = (a: BlogPost, b: BlogPost): number =>
 export async function fetchHomepageData(): Promise<HomepageData> {
   const data = getEmptyHomepageData();
 
-  try {
-    const [
-      caseStudies,
-      clients,
-      testimonials,
-      blogPosts,
-      categories,
-      teamMembers,
-      industries,
-      technologies,
-      serviceCategories,
-    ] = await Promise.all([
-      fetchCaseStudies(),
-      fetchClients(),
-      fetchTestimonials(),
-      fetchBlogPosts(),
-      fetchCategories(),
-      fetchTeamMembers(),
-      fetchIndustries(),
-      fetchTechnologies(),
-      fetchServiceCategories(),
-    ]);
-
-    data.caseStudies = filterHiddenCaseStudies(caseStudies);
-
-    if (clients) {
-      for (const c of clients) {
-        data.clients.set(c.id, c);
-        data.allClients.push(c);
-      }
+  // No catch. A failed read used to return the empty homepage data, so the
+  // homepage, the team pages and the /seo-for pages rendered without their
+  // case studies and posts, and the Markdown copy cached that for an hour.
+  const [
+    caseStudies,
+    clients,
+    testimonials,
+    blogPosts,
+    categories,
+    teamMembers,
+    industries,
+    technologies,
+    serviceCategories,
+  ] = await Promise.all([
+    fetchCaseStudies(),
+    fetchClients(),
+    fetchTestimonials(),
+    fetchBlogPosts(),
+    fetchCategories(),
+    fetchTeamMembers(),
+    fetchIndustries(),
+    fetchTechnologies(),
+    fetchServiceCategories(),
+  ]);
+  data.caseStudies = filterHiddenCaseStudies(caseStudies);
+  if (clients) {
+    for (const c of clients) {
+      data.clients.set(c.id, c);
+      data.allClients.push(c);
     }
-
-    if (testimonials) {
-      for (const t of testimonials) {
-        data.allTestimonials.push(t);
-        if (t['case-study']) {
-          data.testimonials.set(t['case-study'], t);
-        }
-      }
-    }
-
-    if (categories) {
-      for (const c of categories) {
-        data.categories.set(c.id, c);
-      }
-    }
-
-    if (teamMembers) {
-      for (const m of teamMembers) {
-        data.teamMembers.set(m.id, m);
-      }
-    }
-
-    if (industries) {
-      for (const i of industries) {
-        data.industries.set(i.id, i);
-      }
-    }
-
-    if (technologies) {
-      for (const t of technologies) {
-        data.technologies.set(t.id, t);
-      }
-    }
-
-    if (serviceCategories) {
-      for (const s of serviceCategories) {
-        data.serviceCategories.set(s.id, s);
-      }
-    }
-
-    // Sort blog posts by published date, newest first (fetcher already orders
-    // by publishedDate desc; this JS pass keeps the ordering explicit + stable).
-    data.blogPosts = (blogPosts || []).slice().sort(byPublishedDateDesc);
-  } catch (error) {
-    console.error('[CMS] Homepage data fetch failed:', error);
   }
+  if (testimonials) {
+    for (const t of testimonials) {
+      data.allTestimonials.push(t);
+      if (t['case-study']) {
+        data.testimonials.set(t['case-study'], t);
+      }
+    }
+  }
+  if (categories) {
+    for (const c of categories) {
+      data.categories.set(c.id, c);
+    }
+  }
+  if (teamMembers) {
+    for (const m of teamMembers) {
+      data.teamMembers.set(m.id, m);
+    }
+  }
+  if (industries) {
+    for (const i of industries) {
+      data.industries.set(i.id, i);
+    }
+  }
+  if (technologies) {
+    for (const t of technologies) {
+      data.technologies.set(t.id, t);
+    }
+  }
+  if (serviceCategories) {
+    for (const s of serviceCategories) {
+      data.serviceCategories.set(s.id, s);
+    }
+  }
+  // Sort blog posts by published date, newest first (fetcher already orders
+  // by publishedDate desc; this JS pass keeps the ordering explicit + stable).
+  data.blogPosts = (blogPosts || []).slice().sort(byPublishedDateDesc);
 
   return data;
 }
@@ -754,16 +718,16 @@ export const fetchItemBySlug = cache(
     const isDraft = (await draftMode()).isEnabled;
     const query = `*[_type == $type && slug.current == $slug][0] ${projection}`;
     const params = { type: sanityType, slug };
-    const result = await withRetry(async () => {
+    const result = await withRetry(async (retry) => {
       if (isDraft) {
         const draftClient = await getServerClient();
-        return draftClient.fetch<T | null>(query, params);
+        return draftClient.fetch<T | null>(query, params, retry);
       }
 
       return cachedReadClient.fetch<T | null>(
         query,
         params,
-        cacheFor(cmsTypeTag(sanityType), cmsDocTag(sanityType, slug)),
+        { ...cacheFor(cmsTypeTag(sanityType), cmsDocTag(sanityType, slug)), ...retry },
       );
     });
 
@@ -778,11 +742,11 @@ export async function fetchCollection<T>(collectionKey: string): Promise<T[]> {
   const sanityType = COLLECTION_TO_TYPE[collectionKey] || collectionKey;
   const projection = TYPE_PROJECTIONS[sanityType] || `{ "id": _id, ... }`;
 
-  const items = await withRetry(() =>
+  const items = await withRetry((retry) =>
     cachedReadClient.fetch<T[]>(
       `*[_type == $type] ${projection}`,
       { type: sanityType },
-      cacheFor(cmsTypeTag(sanityType)),
+      { ...cacheFor(cmsTypeTag(sanityType)), ...retry },
     )
   );
 
@@ -813,7 +777,7 @@ export async function fetchSitemapData(): Promise<SitemapData> {
   // the CDN in production). CDN reads count against the larger 1M/month allowance, not the
   // 250k/month uncached one that returns 402 site-wide when exhausted. The CDN's short lag
   // is covered by cacheMode 'noStale' (see SITEMAP_NO_STORE).
-  const data = await withRetry(() =>
+  const data = await withRetry((retry) =>
     client.fetch<SitemapData>(
       `{
         "caseStudies": *[_type == "caseStudy" && defined(slug.current)] { "slug": slug.current, "_updatedAt": _updatedAt },
@@ -822,7 +786,7 @@ export async function fetchSitemapData(): Promise<SitemapData> {
         "teamMembers": *[_type == "teamMember" && defined(slug.current)] { "slug": slug.current, "_updatedAt": _updatedAt }
       }`,
       {},
-      SITEMAP_NO_STORE,
+      { ...SITEMAP_NO_STORE, ...retry },
     ),
   );
 
@@ -844,11 +808,11 @@ export async function fetchSitemapData(): Promise<SitemapData> {
 export async function fetchSlugs(collectionKey: string): Promise<string[]> {
   const sanityType = COLLECTION_TO_TYPE[collectionKey] || collectionKey;
 
-  const rows = await withRetry(() =>
+  const rows = await withRetry((retry) =>
     cachedReadClient.fetch<Array<{ slug?: string }>>(
       `*[_type == $type && defined(slug.current)] { "slug": slug.current }`,
       { type: sanityType },
-      cacheFor(cmsTypeTag(sanityType)),
+      { ...cacheFor(cmsTypeTag(sanityType)), ...retry },
     ),
   );
 
@@ -916,15 +880,12 @@ export interface BlogIndexData {
  * Blog index (/blog) — reads blog posts + categories only.
  */
 export async function fetchBlogIndexData(): Promise<BlogIndexData> {
-  const result: BlogIndexData = { blogPosts: [], categories: new Map() };
-  try {
-    const [blogPosts, categories] = await Promise.all([fetchBlogPosts(), fetchCategories()]);
-    result.blogPosts = (blogPosts || []).slice().sort(byPublishedDateDesc);
-    result.categories = toMapById(categories);
-  } catch (error) {
-    console.error('[CMS] Blog index data fetch failed:', error);
-  }
-  return result;
+  // No catch: a failed read must not render /blog (and cache /blog.md) with no posts.
+  const [blogPosts, categories] = await Promise.all([fetchBlogPosts(), fetchCategories()]);
+  return {
+    blogPosts: (blogPosts || []).slice().sort(byPublishedDateDesc),
+    categories: toMapById(categories),
+  };
 }
 
 
@@ -1011,27 +972,19 @@ export interface CaseStudyIndexData {
  * industries + technologies (the archive grid + discipline filters).
  */
 export async function fetchCaseStudyIndexData(): Promise<CaseStudyIndexData> {
-  const result: CaseStudyIndexData = {
-    caseStudies: [],
-    clients: new Map(),
-    industries: new Map(),
-    technologies: new Map(),
+  // No catch: a failed read must not render the archive (and cache its Markdown copy) empty.
+  const [caseStudies, clients, industries, technologies] = await Promise.all([
+    fetchCaseStudies(),
+    fetchClients(),
+    fetchIndustries(),
+    fetchTechnologies(),
+  ]);
+  return {
+    caseStudies: filterHiddenCaseStudies(caseStudies),
+    clients: toMapById(clients),
+    industries: toMapById(industries),
+    technologies: toMapById(technologies),
   };
-  try {
-    const [caseStudies, clients, industries, technologies] = await Promise.all([
-      fetchCaseStudies(),
-      fetchClients(),
-      fetchIndustries(),
-      fetchTechnologies(),
-    ]);
-    result.caseStudies = filterHiddenCaseStudies(caseStudies);
-    result.clients = toMapById(clients);
-    result.industries = toMapById(industries);
-    result.technologies = toMapById(technologies);
-  } catch (error) {
-    console.error('[CMS] Case study index data fetch failed:', error);
-  }
-  return result;
 }
 
 export interface CaseStudyDetailData {

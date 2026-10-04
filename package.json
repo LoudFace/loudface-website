@@ -9,6 +9,7 @@
     "lint": "eslint",
     "typecheck": "tsc --noEmit",
     "test:editor": "tsx --test src/lib/__tests__/inline-edit-*.test.ts",
+    "test:cms": "tsx --test src/lib/__tests__/cms-retry.test.ts",
     "crawl-audit": "node scripts/crawl-audit.mjs",
     "crawl-audit:dev": "node scripts/crawl-audit.mjs http://localhost:3005",
     "pagespeed-audit": "node scripts/pagespeed-audit.mjs",

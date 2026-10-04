@@ -79,12 +79,12 @@ When a refresh completes, log it to Activity Log AND if it was a Pending Commitm
 
 ### CMS Data Fetching — Never Silently Swallow Errors
 
-CMS data fetch failures must **fail the build**, not render empty pages. A failed Vercel build keeps the previous working deployment live. A silent failure deploys a broken site.
+CMS data fetch failures must **throw**, never render empty pages. A failed Vercel build keeps the previous working deployment live, and a cached page whose refresh throws keeps its last good copy. A silent failure deploys, or caches, a broken site.
 
-- **`fetchHomepageData()` is resilient** — fetches all collections via GROQ in parallel, returns partial data on failure. It never throws.
-- **`assertCmsData(data)` is the guardrail** — call it in the homepage `page.tsx` (and any other page where empty CMS data is unacceptable). It throws `CmsDataError` if case studies AND blog posts are both empty, failing the build.
-- **If adding a new page that fetches CMS data:** call `assertCmsData()` only if the page is broken without CMS data (e.g., homepage). Other pages (blog, services, case studies) should degrade gracefully with partial data.
-- The architecture: **data layer is resilient, page layer decides strictness.**
+- **Every read retries once, with its own request tag** (`withRetry` in `src/lib/cms-retry.ts`, tested by `npm run test:cms` in CI). Inside a page render Next replays a failed fetch, Sanity's own retries included, so a retry that repeated the first request never reached Sanity; until 2026-10-04 that was the case here.
+- **The list composers throw on a failed read (since 2026-10-04): `fetchHomepageData`, `fetchBlogIndexData`, `fetchCaseStudyIndexData`.** They used to return empty data. The HTML pages render per request (the `(site)` layout reads `headers()` and `cookies()`), so that showed one visitor an empty page, but the Markdown copies (`/blog.md`, or any page asked for with `Accept: text/markdown`, through `src/app/api/llms-md`) are cached for an hour, empty list included. This was found in the sweep after Genie's blog cached an empty article list on 2026-10-04. Now `/blog` answers 500 when Sanity is down, and the Markdown route then answers `no-store`.
+- **The detail and footer composers still degrade to empty lists** (`fetchBlogPostData`, `fetchCaseStudyDetailData`, `fetchFooterData`): those lists only render per request, and the Markdown copies skip them. The Launch Gate check `cms-empty-fallback-per-request` lists them as a WARN, because every `(site)` page also declares `revalidate = 60`: the day the layout stops reading request data, those pages become ISR and these fallbacks get cached. Make them throw before that change.
+- **Do not add a catch that turns a CMS read into `[]`** on any page that publishes a list; let it throw.
 
 ### Static Image Paths
 
