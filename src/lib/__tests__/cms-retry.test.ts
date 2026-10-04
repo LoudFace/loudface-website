@@ -56,3 +56,22 @@ test('attempts: 3 tags the second and third requests', async () => {
   );
   assert.deepEqual(tags, [undefined, 'retry-2', 'retry-3']);
 });
+
+test('a read that never answers is cut off after 10 seconds per attempt, then thrown', async (t) => {
+  t.mock.timers.enable({ apis: ['setTimeout'] });
+  let calls = 0;
+  const result = assert.rejects(
+    withRetry(() => {
+      calls += 1;
+      return new Promise<never>(() => {});
+    }, noWait),
+    /did not answer within 10000ms/,
+  );
+  // Two 10 s deadlines, with the (zero) pause between attempts in between.
+  for (let tick = 0; tick < 4; tick++) {
+    await new Promise((resolve) => setImmediate(resolve));
+    t.mock.timers.tick(10_000);
+  }
+  await result;
+  assert.equal(calls, 2);
+});

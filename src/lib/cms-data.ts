@@ -888,6 +888,22 @@ export async function fetchBlogIndexData(): Promise<BlogIndexData> {
   };
 }
 
+/**
+ * The newest post's cover, for the booking confirmation (/thank-you). Decoration
+ * only: that page renders per request and must confirm a booking even while
+ * Sanity is down, so a failed read answers undefined and ThankYouV11 shows its
+ * static cover. Not a list, so nothing here can publish a short one.
+ */
+export async function fetchLatestBlogCover(): Promise<string | undefined> {
+  try {
+    const posts = (await fetchBlogPosts()) || [];
+    return posts.slice().sort(byPublishedDateDesc).find((p) => p.thumbnail?.url)?.thumbnail?.url;
+  } catch (error) {
+    console.error('[CMS] Blog cover read failed:', error);
+    return undefined;
+  }
+}
+
 
 export interface ResearchIndexData {
   studies: ResearchStudy[];

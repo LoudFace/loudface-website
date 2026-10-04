@@ -2,7 +2,8 @@
  * about-v3 data layer.
  *
  * Team members come live from Sanity (type `teamMember`) via the shared
- * fetchHomepageData() resilient fetch (withRetry, returns partial on failure).
+ * fetchHomepageData() (it retries, then throws, so a failed read never renders
+ * the page with an empty team).
  * We keep the composite's exact person->slot arrangement through an ordered
  * slug list, then distribute the CMS array across three columns keeping the
  * flank/middle (2/3/2) pattern. Layout stays balanced at 6, 7, or 8 people.

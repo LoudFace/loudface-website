@@ -2,8 +2,8 @@
  * contact-v3 data layer.
  *
  * The founder headshot comes live from Sanity (teamMember `arnel-bukva`) via
- * the same resilient fetchHomepageData() the About page uses — a fetch failure
- * or missing doc degrades to the initials avatar, never a broken image.
+ * fetchHomepageData(), which throws on a failed read; the catch below turns a
+ * fetch failure or a missing doc into the initials avatar, never a broken image.
  *
  * CONTACT_FAQ is single-sourced here so the page can emit FAQPage JSON-LD from
  * the exact items the accordion renders.

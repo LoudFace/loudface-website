@@ -18,15 +18,19 @@
  * back without asking Sanity again, and so did every one of @sanity/client's
  * built-in retries (measured on Genie Teacher, 2026-10-04). The tag gives the
  * retry its own URL; spread it into the fetch options.
+ *
+ * Each attempt is also cut off after `timeoutMs` by a promise race. A hung read
+ * would otherwise wait for the Sanity client's own five-minute timeout, and an
+ * abort signal does not help: Next drops it on a fetch it is revalidating.
  */
 export async function withRetry<T>(
   fn: (retry: { tag?: string }) => Promise<T>,
-  { attempts = 2, baseDelayMs = 300 }: { attempts?: number; baseDelayMs?: number } = {},
+  { attempts = 2, baseDelayMs = 300, timeoutMs = 10_000 }: { attempts?: number; baseDelayMs?: number; timeoutMs?: number } = {},
 ): Promise<T> {
   let lastError: unknown;
   for (let attempt = 1; attempt <= attempts; attempt++) {
     try {
-      return await fn(attempt === 1 ? {} : { tag: `retry-${attempt}` });
+      return await withDeadline(fn(attempt === 1 ? {} : { tag: `retry-${attempt}` }), timeoutMs);
     } catch (error) {
       lastError = error;
       if (attempt < attempts) {
@@ -35,4 +39,12 @@ export async function withRetry<T>(
     }
   }
   throw lastError;
+}
+
+function withDeadline<T>(work: Promise<T>, ms: number): Promise<T> {
+  let timer: ReturnType<typeof setTimeout> | undefined;
+  const deadline = new Promise<never>((_, reject) => {
+    timer = setTimeout(() => reject(new Error(`Sanity did not answer within ${ms}ms`)), ms);
+  });
+  return Promise.race([work, deadline]).finally(() => clearTimeout(timer));
 }
