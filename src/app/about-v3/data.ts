@@ -2,8 +2,9 @@
  * about-v3 data layer.
  *
  * Team members come live from Sanity (type `teamMember`) via the shared
- * fetchHomepageData() (it retries, then throws, so a failed read never renders
- * the page with an empty team).
+ * fetchTeamMemberList() (it retries, then throws, so a failed read never renders
+ * the page with an empty team; it reads only the team, so no other collection
+ * can fail the page).
  * We keep the composite's exact person->slot arrangement through an ordered
  * slug list, then distribute the CMS array across three columns keeping the
  * flank/middle (2/3/2) pattern. Layout stays balanced at 6, 7, or 8 people.
@@ -13,9 +14,8 @@
  * member with no entry falls back to the CMS bioSummary first sentence for the
  * fact and omits the quote line.
  */
-import { fetchHomepageData } from '@/lib/cms-data';
+import { fetchTeamMemberList } from '@/lib/cms-data';
 import { asset } from '@/lib/assets';
-import type { TeamMember } from '@/lib/types';
 
 /** Curated display order — matches the composite's mosaic + ladder placement. */
 export const TEAM_ORDER: string[] = [
@@ -98,8 +98,7 @@ function firstSentence(text?: string): string {
  * (removed member handled gracefully). Anyone in TEAM_HIDDEN is omitted.
  */
 export async function getAboutTeam(): Promise<TeamPerson[]> {
-  const data = await fetchHomepageData();
-  const members = Array.from(data.teamMembers.values()) as TeamMember[];
+  const members = await fetchTeamMemberList();
 
   const bySlug = new Map(members.map((m) => [m.slug, m]));
   const orderedSlugs = [

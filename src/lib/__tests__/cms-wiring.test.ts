@@ -31,3 +31,13 @@ test('every withRetry call passes its retry tag on to the fetch', () => {
   for (const call of calls) assert.equal(call[2], 'retry', `a withRetry callback ignores its retry tag: ${call[0]}`);
   assert.equal((source.match(/\.\.\.retry\b|, retry\)/g) ?? []).length, calls.length + 1);
 });
+
+test('the booking confirmation reads only the cover helper, which answers undefined on failure', () => {
+  const cover = fn('fetchLatestBlogCover');
+  assert.match(cover, /\}\s*catch\b[\s\S]*return undefined;/);
+  for (const page of ['../../app/(site)/thank-you/page.tsx', '../../app/(site)/dev-preview/home-v11-thanks/page.tsx']) {
+    const text = readFileSync(new URL(page, import.meta.url), 'utf8');
+    assert.match(text, /fetchLatestBlogCover\(\)/, page);
+    assert.doesNotMatch(text, /fetchBlogIndexData|fetchHomepageData/, page);
+  }
+});

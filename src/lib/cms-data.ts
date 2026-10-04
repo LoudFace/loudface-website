@@ -889,6 +889,15 @@ export async function fetchBlogIndexData(): Promise<BlogIndexData> {
 }
 
 /**
+ * Every team member, for the /about JSON-LD and the /contact founder card. One
+ * collection, so a failure elsewhere in the dataset cannot take those pages
+ * down; a failed read of the team itself still throws.
+ */
+export async function fetchTeamMemberList(): Promise<TeamMember[]> {
+  return (await fetchTeamMembers()) || [];
+}
+
+/**
  * The newest post's cover, for the booking confirmation (/thank-you). Decoration
  * only: that page renders per request and must confirm a booking even while
  * Sanity is down, so a failed read answers undefined and ThankYouV11 shows its

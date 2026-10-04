@@ -2,7 +2,7 @@
  * contact-v3 data layer.
  *
  * The founder headshot comes live from Sanity (teamMember `arnel-bukva`) via
- * fetchHomepageData(), which throws on a failed read; the catch below turns a
+ * fetchTeamMemberList(), which throws on a failed read; the catch below turns a
  * fetch failure or a missing doc into the initials avatar, never a broken image.
  *
  * CONTACT_FAQ is single-sourced here so the page can emit FAQPage JSON-LD from
@@ -12,9 +12,8 @@
  * 200+ sites, 4+ years Webflow Enterprise Partner, 2h response during working
  * hours, 30-minute call. No slot counts, no scarcity claims.
  */
-import { fetchHomepageData } from '@/lib/cms-data';
+import { fetchTeamMemberList } from '@/lib/cms-data';
 import { rawContent, type ContactContent } from '@/lib/content-utils';
-import type { TeamMember } from '@/lib/types';
 
 export interface ContactFounder {
   name: string;
@@ -26,8 +25,7 @@ export interface ContactFounder {
 export async function getContactFounder(): Promise<ContactFounder> {
   const fallback: ContactFounder = { name: 'Arnel Bukva', role: 'Founder, LoudFace', photoUrl: null };
   try {
-    const data = await fetchHomepageData();
-    const members = Array.from(data.teamMembers.values()) as TeamMember[];
+    const members = await fetchTeamMemberList();
     const arnel = members.find((m) => m.slug === 'arnel-bukva');
     if (!arnel) return fallback;
     const base = arnel['profile-picture']?.url;
