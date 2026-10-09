@@ -139,7 +139,7 @@ export const uxUiDesign: ExtrasFn = ({ home, data }) => {
       },
     ],
     results: {
-      title: <>Design that earned <span className="ghost">a 288% lift.</span></>,
+      title: <>Design that earned <span className="ghost">a {proofValue(data, 'dimer')} lift.</span></>,
       lede: 'A positioning-led redesign for a regulated health brand: trust architecture, message hierarchy, and a component system rebuilt so every layout points at one action. Same team designed it and optimized it against real conversion data.',
       cells: (
         <>

@@ -5,7 +5,7 @@ import { LiveChart } from '../../home-v11/LiveChart';
 import { BarsCell, QuoteCell, Tag, Ui, UiHead } from '../kit';
 import { BrandfirmQuote, VideoProof } from './shared';
 import { GrowthBoard } from './hero-art';
-import { heroSlide, proofValue } from '../../home-v11/hero-slides';
+import { heroSlide, proofEnd, proofValue } from '../../home-v11/hero-slides';
 import type { ProofKey } from '../../home-v11/data';
 
 /** A tile's live chart: a published case-study series at tile size. */
@@ -79,7 +79,7 @@ export const growthAutopilot: ExtrasFn = ({ home, data }) => {
       { tag: 'Conversion', art: <TileChart head="Lead requests a week" client="Genie Teacher" num={proofValue(data, 'genieLeads')} series={data?.hero.genieLeads} format="index" tip={heroSlide(home, 'genieLeads').tip} /> },
     ],
     results: {
-      title: <>One system took Toku to <span className="ghost">97.8% AI visibility.</span></>,
+      title: <>One system took Toku to <span className="ghost">{proofEnd(data, 'toku')} AI visibility.</span></>,
       lede: 'SEO, AEO, and CRO run as one program by one team — the authority that ranks the pages is the authority that gets them cited by AI, and the same pages are built to convert the traffic they earn.',
       cells: (
         <>

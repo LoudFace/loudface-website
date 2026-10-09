@@ -89,14 +89,15 @@ function TrackFragment({ c }: { c: C['track'] }) {
   );
 }
 
-/** The report's first chip is Delshad Legal's published enquiries figure (`metric`, from its case study); the spark is the same weekly series. */
-function ReportFragment({ c, spark, metric }: { c: C['report']; spark: Series | null; metric?: string }) {
+/** The report's chips are Delshad Legal's published figures from its case study (`metric` enquiries, `rank` among the
+ *  tracked firms); the spark is the enquiries series. */
+function ReportFragment({ c, spark, metric, rank }: { c: C['report']; spark: Series | null; metric?: string; rank?: string }) {
   return (
     <div className="v11-frag">
       <div className="v11-frag-row"><div className="v11-frag-title">{c.heading}</div><div className="v11-frag-meta">{c.meta}</div></div>
       <div className="v11-frag-chips">
         <Chip metric={metric} label={c.chipOneLabel} />
-        <Chip metric={c.chipTwoMetric} label={c.chipTwoLabel} />
+        <Chip metric={rank} label={c.chipTwoLabel} />
       </div>
       {spark && (
         <div className="v11-frag-spark">
@@ -107,8 +108,8 @@ function ReportFragment({ c, spark, metric }: { c: C['report']; spark: Series | 
   );
 }
 
-export function Route({ c, spark, metric }: { c: C; spark: Series | null; metric?: string }) {
-  const frags = [<CallFragment key="c" c={c.call} />, <PlanFragment key="p" c={c.plan} />, <TrackFragment key="t" c={c.track} />, <ReportFragment key="r" c={c.report} spark={spark} metric={metric} />];
+export function Route({ c, spark, metric, rank }: { c: C; spark: Series | null; metric?: string; rank?: string }) {
+  const frags = [<CallFragment key="c" c={c.call} />, <PlanFragment key="p" c={c.plan} />, <TrackFragment key="t" c={c.track} />, <ReportFragment key="r" c={c.report} spark={spark} metric={metric} rank={rank} />];
   return (
     <section className="v11-route">
       <div className="v11-route-canvas">

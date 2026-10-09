@@ -5,6 +5,7 @@ import { ArrowRight } from '../../home-v11/ui';
 import { AIO_FANOUT_LEDE, AIO_NOT_FOR } from '../configs';
 import { EngineIcon, GenieQuote, StatusList, VideoProof, logo } from './shared';
 import { Lines } from './seo-aeo';
+import { proof, proofNumber, proofValue } from '../../home-v11/hero-slides';
 
 const FANOUT: { q: string; page: string; act: string; tone: 'good' | 'ind' | 'grey' | 'warn' }[] = [
   { q: 'how to pay international contractors', page: '/guides/contractor-payments', act: 'Answered well', tone: 'good' },
@@ -139,16 +140,16 @@ export const aiOverviews: ExtrasFn = ({ home, data }) => {
       lede: 'Google AI Overviews refreshes on the live Search index. It is the surface where a change you ship this week can show up this week.',
       cells: (
         <>
-          <QuoteCell wide logo="logos/toku-ink.png" logoAlt="Toku" logoW={84} logoH={24} big="39.3%" cap="Toku’s visibility in Google AI Overviews, 30 days to 19 August 2026: the second most-visible brand" quote={t.cards[0].quote} person={t.cards[0].person} role={t.cards[0].jobTitle} face="people/kenneth-o-friel.webp" tone="ind">
+          <QuoteCell wide logo="logos/toku-ink.png" logoAlt="Toku" logoW={84} logoH={24} big={proofValue(data, 'tokuAio')} cap={proof(data, 'tokuAio')?.title ?? ''} quote={t.cards[0].quote} person={t.cards[0].person} role={t.cards[0].jobTitle} face="people/kenneth-o-friel.webp" tone="ind">
             <div className="sv-rivals">
-              {[['Deel', 43.1], ['Toku', 39.3], ['Remote', 35.9]].map(([n, v]) => (
+              {([['Deel', proofNumber(data, 'tokuAioDeel')], ['Toku', proofNumber(data, 'tokuAio')], ['Remote', proofNumber(data, 'tokuAioRemote')]] as const).map(([n, v]) => (
                 <div key={n as string} className={n === 'Toku' ? 'is-us' : ''}><span>{n}</span><i style={{ width: `${(v as number) / 45 * 100}%` }} /><b>{v}%</b></div>
               ))}
             </div>
           </QuoteCell>
-          <StatCell tag="Per-engine split" client="Toku" big="57%" cap="of Toku’s total AI mentions came from Google AI Overviews, spring 2026, at average cited position 2.3">
+          <StatCell tag="Per-engine split" client="Toku" big={proofValue(data, 'tokuAioShare')} cap={proof(data, 'tokuAioShare')?.title ?? ''}>
             <div className="sv-rivals">
-              {[[2, 35], [0, 11], [1, 10]].map(([i, v]) => (
+              {[[2, proofNumber(data, 'tokuEngineAio')], [0, proofNumber(data, 'tokuEngineChatgpt')], [1, proofNumber(data, 'tokuEnginePerplexity')]].map(([i, v]) => (
                 <div key={i} className={i === 2 ? 'is-us' : ''}><span style={{ display: 'flex', alignItems: 'center', gap: 6 }}><EngineIcon i={i} size={14} />{['ChatGPT', 'Perplexity', 'AI Overviews'][i]}</span><i style={{ width: `${v / 40 * 100}%` }} /><b>{v}%</b></div>
               ))}
             </div>

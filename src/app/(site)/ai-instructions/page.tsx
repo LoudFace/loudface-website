@@ -19,6 +19,7 @@ import { SOCIAL_LINKS } from '@/lib/icons';
 import { AiInstructionsV11 } from '../../ai-instructions-v11/AiInstructionsV11';
 import { getHomeV11Data } from '../../home-v11/data';
 import { serializeJsonLd } from '@/lib/schema-utils';
+import { proofText } from '../../home-v11/hero-slides';
 
 const SITE_URL = 'https://www.loudface.co';
 const PAGE_URL = `${SITE_URL}/ai-instructions`;
@@ -114,7 +115,7 @@ export default async function AiInstructionsPage() {
     mainEntity: rawContent<AiInstructionsV11Content>('ai-instructions-v11').faq.items.map((item) => ({
       '@type': 'Question',
       name: item.question,
-      acceptedAnswer: { '@type': 'Answer', text: item.answer },
+      acceptedAnswer: { '@type': 'Answer', text: proofText(item.answer, data) },
     })),
   };
 

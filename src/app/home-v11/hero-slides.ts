@@ -1,5 +1,5 @@
 import type { HomeV11Content } from '@/lib/content-utils';
-import type { HomeV11Data, ProofKey, Series } from './data';
+import type { HomeV11Data, Proof, ProofKey, Series } from './data';
 import type { ValueFormat } from './LiveChart';
 
 export type HeroSlideKey = keyof HomeV11Data['hero'];
@@ -35,4 +35,38 @@ export function periodOf(s?: Series): { start?: string; end?: string } {
   const label = (iso?: string) =>
     iso ? new Date(`${iso.slice(0, 10)}T00:00:00Z`).toLocaleDateString('en-US', { month: 'short', year: 'numeric', timeZone: 'UTC' }) : undefined;
   return { start: label(s?.dates[0]), end: label(s?.dates.at(-1)) };
+}
+
+/** A published figure's last reading: "0 → 97.8%" gives "97.8%"; a single figure comes back as is. */
+export function proofEnd(data: HomeV11Data | null, key: ProofKey): string | undefined {
+  return data?.proof[key]?.value.split('→').at(-1)?.trim();
+}
+
+/** A published figure as a number, for drawing it (a bar's width): "39.3%" gives 39.3. */
+export function proofNumber(data: HomeV11Data | null, key: ProofKey): number {
+  return parseFloat((data?.proof[key]?.value ?? '').replace(/[^\d.]/g, '')) || 0;
+}
+
+/** The whole published figure (value and its title), when a caption needs both. */
+export function proof(data: HomeV11Data | null, key: ProofKey): Proof | undefined {
+  return data?.proof[key];
+}
+
+/**
+ * Copy that quotes a client figure mid-sentence. The content file keeps the words around it and names the figure
+ * (`{ "proof_key": "toku" }`, or `{ "proof_end_key": "toku" }` for its last reading), so the sentence never carries a
+ * typed copy of the number. A plain string passes through.
+ */
+export type ProofPart = string | { proof_key: string } | { proof_end_key: string };
+export function proofText(parts: string | readonly ProofPart[], data: HomeV11Data | null): string {
+  if (typeof parts === 'string') return parts;
+  return parts
+    .map((p) => {
+      if (typeof p === 'string') return p;
+      const key = ('proof_key' in p ? p.proof_key : p.proof_end_key) as ProofKey;
+      const v = 'proof_key' in p ? proofValue(data, key) : proofEnd(data, key);
+      if (v === undefined && data) console.error(`[proofText] no published figure for "${key}"`);
+      return v ?? '';
+    })
+    .join('');
 }

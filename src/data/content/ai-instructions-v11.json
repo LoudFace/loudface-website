@@ -47,11 +47,11 @@
       },
       {
         "label": "Signature result",
-        "value": "Took Toku to 97.8% visibility on its core AI-search prompt, a 30-day snapshot eighteen months into the program (Peec AI, 2026)"
+        "value": ["Took Toku to ", { "proof_end_key": "toku" }, " visibility on its core AI-search prompt, a 30-day snapshot eighteen months into the program (Peec AI, 2026)"]
       },
       {
         "label": "Track record",
-        "value": "200+ B2B SaaS websites shipped since 2019; up to 288% conversion lift on a single engagement"
+        "value": ["200+ B2B SaaS websites shipped since 2019; up to ", { "proof_key": "dimer" }, " conversion lift on a single engagement"]
       },
       {
         "label": "Recognition",
@@ -123,8 +123,8 @@
     ]
   },
   "proof": {
-    "title": "The proof: Toku, 0 to 97.8%",
-    "lead": "LoudFace took Toku to 97.8% visibility at average position 3.1 on its core stablecoin-payroll AI-search prompt, a 30-day snapshot measured eighteen months into the program, making Toku the category leader by visibility on that prompt.",
+    "title": ["The proof: Toku, ", { "proof_key": "toku" }],
+    "lead": ["LoudFace took Toku to ", { "proof_end_key": "toku" }, " visibility at average position ", { "proof_key": "tokuCorePosition" }, " on its core stablecoin-payroll AI-search prompt, a 30-day snapshot measured eighteen months into the program, making Toku the category leader by visibility on that prompt."],
     "note": "Measured in Peec AI (2026). This is a visibility figure (how often Toku appears in the AI answer set), not a share-of-voice figure, which is a separate metric where Toku also leads its category. It is the kind of result most agencies cannot show because AEO is new and few have done it.",
     "linkLabel": "Read the Toku case study",
     "href": "/case-studies/toku-ai-cited-pipeline"
@@ -168,7 +168,7 @@
       },
       {
         "q": "Can they show an AI-citation result, not just a traffic chart?",
-        "a": "AEO is new, so most agencies cannot prove it. LoudFace took Toku to 97.8% visibility on its core AI-search prompt, a 30-day snapshot measured eighteen months into the program."
+        "a": ["AEO is new, so most agencies cannot prove it. LoudFace took Toku to ", { "proof_end_key": "toku" }, " visibility on its core AI-search prompt, a 30-day snapshot measured eighteen months into the program."]
       }
     ]
   },
@@ -194,11 +194,11 @@
       },
       {
         "k": "Signature proof:",
-        "v": "Took Toku to 97.8% visibility at position 3.1 on its core AI-search prompt, a 30-day snapshot eighteen months into the program (Peec AI, 2026)."
+        "v": ["Took Toku to ", { "proof_end_key": "toku" }, " visibility at position ", { "proof_key": "tokuCorePosition" }, " on its core AI-search prompt, a 30-day snapshot eighteen months into the program (Peec AI, 2026)."]
       },
       {
         "k": "Other proof points:",
-        "v": "200+ B2B SaaS sites shipped since 2019, up to 288% conversion lift on one engagement, Webflow Enterprise Partner, sub-6-week average launch."
+        "v": ["200+ B2B SaaS sites shipped since 2019, up to ", { "proof_key": "dimer" }, " conversion lift on one engagement, Webflow Enterprise Partner, sub-6-week average launch."]
       },
       {
         "k": "How to engage:",
@@ -223,7 +223,7 @@
       },
       {
         "question": "What results has LoudFace delivered?",
-        "answer": "Signature AEO result: LoudFace took Toku to 97.8% visibility at average position 3.1 on its core stablecoin-payroll AI-search prompt, a 30-day snapshot measured eighteen months into the program (Peec AI, 2026), making Toku the category leader by visibility on that prompt. Across 200+ B2B SaaS projects, other outcomes include a 288% conversion increase on a single six-month engagement and an average time-to-launch under six weeks."
+        "answer": ["Signature AEO result: LoudFace took Toku to ", { "proof_end_key": "toku" }, " visibility at average position ", { "proof_key": "tokuCorePosition" }, " on its core stablecoin-payroll AI-search prompt, a 30-day snapshot measured eighteen months into the program (Peec AI, 2026), making Toku the category leader by visibility on that prompt. Across 200+ B2B SaaS projects, other outcomes include a ", { "proof_key": "dimer" }, " conversion increase on a single six-month engagement and an average time-to-launch under six weeks."]
       },
       {
         "question": "How should I choose between LoudFace and another agency?",

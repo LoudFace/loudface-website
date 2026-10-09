@@ -30,6 +30,7 @@ interface Instruments {
   indexedTrend?: { points: { date?: string; impressions: number; clicks: number }[] };
   leadGrowth?: { points: { week: string; value: number }[] };
   clickGrowth?: { points: { week: string; value: number }[] };
+  publishedResult?: { rows: { _key: string; value: string; unit: string }[] };
 }
 
 const SLUGS = {
@@ -49,7 +50,8 @@ const SLUGS = {
 
 type Key = keyof typeof SLUGS;
 
-/** Each published figure a tile can print: the case study and the result slot (1–3) that holds it. */
+/** Each published figure a tile can print: the case study and the result slot (1–3) that holds it, or `['row', key]`
+ *  for one of the study's further published figures (`instruments.publishedResult.rows`, value + unit). */
 const PROOF = {
   lf: ['lf', 1],
   genie: ['genie', 1],
@@ -65,8 +67,19 @@ const PROOF = {
   ceipal: ['ceipal', 2],
   brandfirm: ['brandfirm', 1],
   codeop: ['codeop', 1],
+  codeopImpressions: ['codeop', 2],
   outbound: ['outbound', 1],
-} as const satisfies Record<string, readonly [Key, 1 | 2 | 3]>;
+  tokuPosition: ['toku', 2],
+  tokuAio: ['toku', 'row', 'aio'],
+  tokuAioShare: ['toku', 'row', 'aio-share'],
+  tokuAioDeel: ['toku', 'row', 'aio-deel'],
+  tokuAioRemote: ['toku', 'row', 'aio-remote'],
+  tokuEngineAio: ['toku', 'row', 'engine-aio'],
+  tokuEngineChatgpt: ['toku', 'row', 'engine-chatgpt'],
+  tokuEnginePerplexity: ['toku', 'row', 'engine-perplexity'],
+  tokuCorePosition: ['toku', 'row', 'core-position'],
+  delshadRank: ['delshad', 'row', 'r-1'],
+} as const satisfies Record<string, readonly [Key, 1 | 2 | 3] | readonly [Key, 'row', string]>;
 
 export type ProofKey = keyof typeof PROOF;
 /** A case study's published figure: the number as the study prints it, and the result's title (what and when). */
@@ -83,7 +96,8 @@ const QUERY = `*[_type == "caseStudy" && slug.current in $slugs]{
     topicClimb{ points[]{ week, value } },
     indexedTrend{ points[]{ date, impressions, clicks } },
     leadGrowth{ points[]{ week, value } },
-    clickGrowth{ points[]{ week, value } }
+    clickGrowth{ points[]{ week, value } },
+    publishedResult{ rows[]{ _key, value, unit } }
   }
 }`;
 
@@ -144,12 +158,13 @@ export const getHomeV11Data = cache(async (): Promise<HomeV11Data | null> => {
 
   // An emptied result field blanks only the tiles that quote it, and says which one in the logs.
   const proof: Partial<Record<ProofKey, Proof>> = {};
-  for (const [k, [study, slot]] of Object.entries(PROOF) as [ProofKey, readonly [Key, 1 | 2 | 3]][]) {
-    const r = row(study);
-    const value = r?.[`result${slot}Number`];
-    const title = r?.[`result${slot}Title`];
+  for (const [k, src] of Object.entries(PROOF) as [ProofKey, (typeof PROOF)[ProofKey]][]) {
+    const r = row(src[0]);
+    const published = src[1] === 'row' ? r?.instruments?.publishedResult?.rows.find((x) => x._key === src[2]) : undefined;
+    const value = src[1] === 'row' ? published?.value : r?.[`result${src[1]}Number`];
+    const title = src[1] === 'row' ? published?.unit : r?.[`result${src[1]}Title`];
     if (!value || !title) {
-      console.error(`[home-v11] ${SLUGS[study]} has no result${slot}Number/Title for the "${k}" tile`);
+      console.error(`[home-v11] ${SLUGS[src[0]]} has no ${src[1] === 'row' ? `published row "${src[2]}"` : `result${src[1]}Number/Title`} for the "${k}" tile`);
       continue;
     }
     proof[k] = { value, title };

@@ -166,7 +166,7 @@ export const seoAeo: ExtrasFn = ({ home, data }) => {
       lede: 'An answer-engine program aimed at the buying question: when someone asks an AI which vendor to use, Toku had to be in the answer. We built the pages and signals that get a brand cited by name.',
       cells: (
         <>
-          <QuoteCell wide logo="logos/toku-ink.png" logoAlt="Toku" logoW={84} logoH={24} big={proofValue(data, 'toku')} cap="Toku AI visibility on its core stablecoin-payroll prompt (30-day Peec reading ending 19 August 2026; average cited position 3.1 on that prompt)" quote={t.cards[0].quote} person={t.cards[0].person} role={t.cards[0].jobTitle} face="people/kenneth-o-friel.webp" tone="ind" />
+          <QuoteCell wide logo="logos/toku-ink.png" logoAlt="Toku" logoW={84} logoH={24} big={proofValue(data, 'toku')} cap={`Toku AI visibility on its core stablecoin-payroll prompt (30-day Peec reading ending 19 August 2026; average cited position ${proofValue(data, 'tokuCorePosition') ?? ''} on that prompt)`} quote={t.cards[0].quote} person={t.cards[0].person} role={t.cards[0].jobTitle} face="people/kenneth-o-friel.webp" tone="ind" />
           <GenieQuote t={t} data={data} />
           <VideoProof t={t} n={0} big="$1M+" cap="in sales from one landing page we designed" />
           <BrandfirmQuote t={t} data={data} />

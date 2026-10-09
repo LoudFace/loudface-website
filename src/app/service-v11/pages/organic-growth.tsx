@@ -119,7 +119,7 @@ export const organicGrowth: ExtrasFn = ({ home, data }) => {
       cells: (
         <>
           <TokuQuote t={t} data={data} wide />
-          <StatCell tag="Organic clicks" client="CodeOp" big={proofValue(data, 'codeop')} cap="CodeOp organic clicks up 49% and impressions up 43% in four months">
+          <StatCell tag="Organic clicks" client="CodeOp" big={proofValue(data, 'codeop')} cap={`CodeOp organic clicks ${proofValue(data, 'codeop') ?? ''} and impressions ${proofValue(data, 'codeopImpressions') ?? ''} in four months`}>
             <svg viewBox="0 0 300 150" width="100%" aria-hidden="true" className="cro-bars" style={{ paddingTop: 0 }}>
               <line x1="0" x2="300" y1="130" y2="130" stroke="#dcdbe6" />
               <rect x="30" y="64" width="50" height="66" rx="3" fill="#ecebf3" /><rect x="90" y="32" width="50" height="98" rx="3" fill="#c9c3f7" />

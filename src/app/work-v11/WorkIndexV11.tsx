@@ -43,6 +43,8 @@ const THUMB = '?w=1000&h=625&fit=crop&crop=top&fm=webp&q=80';
  * or the study's own "a → b" figures as two columns. Null when the study publishes neither; the card keeps its shot.
  */
 type Steps = { title: string; source?: string; points: { label: string; value: string }[] };
+/** Studies whose step chart reads its readings from a published figure ("0 → 97.8%" gives one column per reading). */
+const STEP_PROOF: Record<string, ProofKey> = { 'toku-ai-cited-pipeline': 'toku' };
 type CardChart = { kind: 'steps'; steps: Steps; title: string; source?: string } | { kind: 'series'; series: Series; format: ValueFormat; tip: string; title: string; source?: string } | { kind: 'pair'; before: number; after: number; beforeText: string; afterText: string; title: string; source?: string };
 const TIP = { ai: 'of AI answers', google: 'of the baseline day', leads: 'of the baseline weeks' } as const;
 function cardChart(s: Study, indexed = false, steps?: Record<string, Steps>): CardChart | null {
@@ -282,7 +284,12 @@ export function WorkIndexV11({ c, home, data, studies, clients, charts, rows, st
           // Headline results (a chart of their own) on the stage, then the smaller results as one row of equal cards,
           // then the design studies on white (Arnel, 2026-09-27: "a headline section and then smaller cards").
           const results = groups.filter((g) => g.d !== 'Web Design & Branding').flatMap((g) => g.items);
-          const steps: Record<string, Steps> = Object.fromEntries(c.steps.map((x) => [x.slug, x]));
+          // each column's reading is the case study's published figure, never a typed copy; a study whose figure has a
+          // different number of readings than the content file has labels draws no step chart
+          const steps: Record<string, Steps> = Object.fromEntries(c.steps.flatMap((x) => {
+            const readings = data?.proof[STEP_PROOF[x.slug]]?.value.split('→').map((v) => v.trim()) ?? [];
+            return readings.length === x.points.length ? [[x.slug, { ...x, points: x.points.map((p, i) => ({ label: p.label, value: readings[i] })) }]] : [];
+          }));
           const headline = results.map((s) => ({ s, chart: cardChart(s, false, steps) })).filter((x): x is { s: Study; chart: CardChart } => !!x.chart);
           const more = results.filter((s) => !headline.some((x) => x.s === s));
           const rest = groups.filter((g) => g.d === 'Web Design & Branding');

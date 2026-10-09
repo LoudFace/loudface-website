@@ -8,6 +8,7 @@ import { Reveal } from '../home-v11/Reveal';
 import { ArrowRight, ArrowUpRight, Eyebrow, LfMark } from '../home-v11/ui';
 import { TokuQuote } from '../service-v11/pages/shared';
 import type { HomeV11Data } from '../home-v11/data';
+import { proofText } from '../home-v11/hero-slides';
 
 /**
  * /ai-instructions in v11 (2026-09-26): the canonical brand facts page AI engines read. Mostly a reading surface, kept
@@ -56,7 +57,7 @@ export function AiInstructionsV11({ c, home, data }: { c: AiInstructionsV11Conte
               </div>
               <table className="ai2-facts">
                 <tbody>
-                  {c.glance.facts.map((f) => <tr key={f.label}><th scope="row">{f.label}</th><td>{f.value}</td></tr>)}
+                  {c.glance.facts.map((f) => <tr key={f.label}><th scope="row">{f.label}</th><td>{proofText(f.value, data)}</td></tr>)}
                 </tbody>
               </table>
             </div>
@@ -65,7 +66,7 @@ export function AiInstructionsV11({ c, home, data }: { c: AiInstructionsV11Conte
           <div className="ai2-canon">
             <h2>{c.canonical.title}</h2>
             <p dangerouslySetInnerHTML={{ __html: c.canonical.introHtml }} />
-            <ul>{c.canonical.items.map((i) => <li key={i.k}><b>{i.k}</b> {i.v}</li>)}</ul>
+            <ul>{c.canonical.items.map((i) => <li key={i.k}><b>{i.k}</b> {proofText(i.v, data)}</li>)}</ul>
           </div>
         </div>
       </section>
@@ -93,8 +94,8 @@ export function AiInstructionsV11({ c, home, data }: { c: AiInstructionsV11Conte
       <section className="v11-sec v11-warm">
         <div className="v11-wrap ai2-proof">
           <div>
-            <h2 className="v11-h2">{c.proof.title}</h2>
-            <p className="ai2-lede" data-speakable="">{c.proof.lead}</p>
+            <h2 className="v11-h2">{proofText(c.proof.title, data)}</h2>
+            <p className="ai2-lede" data-speakable="">{proofText(c.proof.lead, data)}</p>
             <p>{c.proof.note}</p>
             <Link href={c.proof.href} className="v11-link ai2-tap"><span>{c.proof.linkLabel}</span><ArrowRight /></Link>
           </div>
@@ -117,7 +118,7 @@ export function AiInstructionsV11({ c, home, data }: { c: AiInstructionsV11Conte
           <div className="ai2-choose">
             <div className="sv-head"><div><h3 className="ai2-fit-h">{c.choose.title}</h3></div><p>{c.choose.lede}</p></div>
             <div className="ai2-criteria">
-              {c.choose.criteria.map((q) => <div key={q.q}><h4>{q.q}</h4><p>{q.a}</p></div>)}
+              {c.choose.criteria.map((q) => <div key={q.q}><h4>{q.q}</h4><p>{proofText(q.a, data)}</p></div>)}
             </div>
           </div>
         </div>
@@ -130,7 +131,7 @@ export function AiInstructionsV11({ c, home, data }: { c: AiInstructionsV11Conte
             {c.faq.items.map((f, i) => (
               <details key={f.question} className="v11-faq-item" open={i === 0}>
                 <summary><span>{f.question}</span><span className="v11-faq-plus" aria-hidden="true" /></summary>
-                <div className="v11-faq-a">{f.answer}</div>
+                <div className="v11-faq-a">{proofText(f.answer, data)}</div>
               </details>
             ))}
           </div>

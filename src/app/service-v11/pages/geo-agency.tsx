@@ -4,7 +4,7 @@ import { QuoteCell, StatCell, Tag, Ui, UiHead } from '../kit';
 import { BrandfirmQuote, ENGINES, EngineIcon, GenieQuote, StatusList } from './shared';
 import { Lines, Named } from './seo-aeo';
 import { ChatWindow } from '../../home-v11/Bento';
-import { proofValue } from '../../home-v11/hero-slides';
+import { proof, proofEnd, proofNumber, proofValue } from '../../home-v11/hero-slides';
 
 /** An example per-engine panel: visibility, position and the leader, never blended. */
 export function EnginePanel({ rows, head = 'Share of answer · example prompt set' }: { rows: [number, string, string][]; head?: string }) {
@@ -39,9 +39,9 @@ export const geoAgency: ExtrasFn = ({ home, data }) => {
     heroCard: (
       <div className="sk-card">
         <div className="sk-card-head"><b>AI visibility</b><span>Toku · core prompt</span></div>
-        <div className="sk-card-num">97.8%</div>
+        <div className="sk-card-num">{proofEnd(data, 'toku')}</div>
         <div style={{ fontSize: 12.5, color: 'var(--body)' }}>of AI answers to “best stablecoin payroll providers”, the highest of any brand on that prompt</div>
-        <div className="sk-card-foot"><span>30-day read to 19 Aug 2026</span><span>Avg position 3.1</span></div>
+        <div className="sk-card-foot"><span>30-day read to 19 Aug 2026</span><span>Avg position {proofValue(data, 'tokuCorePosition')}</span></div>
       </div>
     ),
     band: [
@@ -121,15 +121,15 @@ export const geoAgency: ExtrasFn = ({ home, data }) => {
       },
     ],
     results: {
-      title: <>Cited in 97.8% of AI answers <span className="ghost">on the core prompt.</span></>,
-      lede: 'On Toku’s core crypto-payroll prompt, the brand appears in 97.8% of AI answers, the highest of any brand on that prompt, in the 30-day read ending 19 August 2026. Across all 95 tracked prompts the average cited position is 2.1.',
+      title: <>Cited in {proofEnd(data, 'toku')} of AI answers <span className="ghost">on the core prompt.</span></>,
+      lede: `On Toku’s core crypto-payroll prompt, the brand appears in ${proofEnd(data, 'toku') ?? ''} of AI answers, the highest of any brand on that prompt, in the 30-day read ending 19 August 2026. Across all 95 tracked prompts the average cited position is ${proofValue(data, 'tokuPosition') ?? ''}.`,
       cells: (
         <>
           <QuoteCell wide logo="logos/toku-ink.png" logoAlt="Toku" logoW={84} logoH={24} big={proofValue(data, 'toku')} cap="Of AI answers on Toku’s core prompt · 30-day read ending 19 August 2026" quote={t.cards[0].quote} person={t.cards[0].person} role={t.cards[0].jobTitle} face="people/kenneth-o-friel.webp" tone="ind" />
-          <StatCell tag="Average cited position" client="Toku" big="2.1" cap="Average cited position across all 95 tracked prompts">
+          <StatCell tag="Average cited position" client="Toku" big={proofValue(data, 'tokuPosition')} cap={proof(data, 'tokuPosition')?.title ?? ''}>
             <div style={{ position: 'relative', paddingTop: 34 }}>
-              <div style={{ position: 'absolute', left: `${((2.1 - 1) / 4) * 100}%`, top: 0, transform: 'translateX(-50%)', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4 }}>
-                <span style={{ fontSize: 11.5, fontWeight: 600, color: '#ffffff', background: 'var(--ind)', borderRadius: 6, padding: '2px 7px' }}>2.1</span>
+              <div style={{ position: 'absolute', left: `${((proofNumber(data, 'tokuPosition') - 1) / 4) * 100}%`, top: 0, transform: 'translateX(-50%)', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4 }}>
+                <span style={{ fontSize: 11.5, fontWeight: 600, color: '#ffffff', background: 'var(--ind)', borderRadius: 6, padding: '2px 7px' }}>{proofValue(data, 'tokuPosition')}</span>
                 <i style={{ width: 1.5, height: 12, background: 'var(--ind)' }} />
               </div>
               <div style={{ height: 8, borderRadius: 99, background: 'linear-gradient(90deg, #4f46e5, #c9c3f7 45%, #ecebf3)' }} />

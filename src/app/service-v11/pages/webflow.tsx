@@ -162,7 +162,7 @@ export const webflow: ExtrasFn = ({ home, data, images }) => {
       },
     ],
     results: {
-      title: <>The build behind a <span className="ghost">288% conversion lift.</span></>,
+      title: <>The build behind a <span className="ghost">{proofValue(data, 'dimer')} conversion lift.</span></>,
       lede: 'A component-first Webflow rebuild for a regulated health brand, then a six-month conversion program on top of it. Same team built the site and optimized it, so nothing got re-briefed between the people who ship and the people who grow.',
       cells: (
         <>

@@ -11,9 +11,9 @@
     "secondaryCta": "See the buyer questions"
   },
   "proof": {
-    "domain": "bluefyn.ai",
+    "domain": "under NDA",
     "panel": {
-      "title": "Bluefyn, first 30 days against the latest 30 days",
+      "title": "Stealth fintech client, first 30 days against the latest 30 days",
       "stats": [
         {
           "value": "More than 5x",
@@ -30,7 +30,7 @@
       ]
     },
     "note": [
-      "AI verification product. Figures from the Bluefyn programme."
+      "A fintech that sells an AI product, under NDA. Figures from its programme."
     ]
   },
   "answer": {
@@ -101,7 +101,7 @@
     },
     {
       "title": "Results from three AI-native clients",
-      "html": "<p>Bluefyn (bluefyn.ai) builds \"The Proof Layer\", an AI verification product. On a fixed set of tracked buyer prompts, comparing the first 30 days of the programme against the latest 30 days, AI visibility rose more than 5x and share of voice rose more than 5x against an unfiltered competitor set. ChatGPT visibility rose 13x. Average position when named improved to under 2. The two 30-day windows are 83 days apart, end to end.</p><p>Pond (joinpond.ai) runs an AI workforce marketplace. AI visibility tripled from a near-zero base in the first four weeks, and average position when named improved from about 3 to about 2. The base is small and the programme is four weeks old, so read it as a standing start.</p><p>Eraser (eraser.io) describes itself as \"AI for diagrams that matter\", and its own site states, \"Create technical diagrams using AI\". The <a href=\"/case-studies/eraser\">Eraser case study</a> covers a website redesign and the maintenance work that followed it, and it publishes no percentage, no multiplier and no window.</p><p>All three sell an AI product rather than software that uses AI internally. Outside the AI-native vertical, the <a href=\"/case-studies/stealth-fintech-ai-visibility\">Stealth Fintech</a> and <a href=\"/case-studies/genie-teacher-organic-growth\">Genie Teacher</a> case studies document the same method in other categories. The Bluefyn and Pond figures are AI visibility, share of voice and average position readings. None of them is a revenue figure.</p>",
+      "html": "<p>A stealth fintech client sells an AI product; it is under NDA, so we do not name it. On a fixed set of tracked buyer prompts, comparing the first 30 days of the programme against the latest 30 days, AI visibility rose more than 5x and share of voice rose more than 5x against an unfiltered competitor set. ChatGPT visibility rose 13x. Average position when named improved to under 2. The two 30-day windows are 83 days apart, end to end.</p><p>Pond (joinpond.ai) runs an AI workforce marketplace. AI visibility tripled from a near-zero base in the first four weeks, and average position when named improved from about 3 to about 2. The base is small and the programme is four weeks old, so read it as a standing start.</p><p>Eraser (eraser.io) describes itself as \"AI for diagrams that matter\", and its own site states, \"Create technical diagrams using AI\". The <a href=\"/case-studies/eraser\">Eraser case study</a> covers a website redesign and the maintenance work that followed it, and it publishes no percentage, no multiplier and no window.</p><p>All three sell an AI product rather than software that uses AI internally. The <a href=\"/case-studies/stealth-fintech-ai-visibility\">Stealth Fintech case study</a> follows the same client over a different window, and the <a href=\"/case-studies/genie-teacher-organic-growth\">Genie Teacher</a> case study documents the same method in another category. The stealth fintech and Pond figures are AI visibility, share of voice and average position readings. None of them is a revenue figure.</p>",
       "panel": {
         "title": "Pond, first 14 days against the latest 14 days",
         "stats": [
@@ -146,7 +146,7 @@
       },
       {
         "question": "Does LoudFace have AI-native clients?",
-        "answer": "Yes, three. Bluefyn is an AI verification product, and on a fixed prompt set its AI visibility rose more than 5x across two 30-day windows 83 days apart, with ChatGPT up 13x and average position when named improving to under 2. Pond is an AI workforce marketplace, and its AI visibility tripled from a near-zero base in the first four weeks. Eraser describes itself as \"AI for diagrams that matter\", and its case study publishes no AI-search figure. None of these is a revenue figure."
+        "answer": "Yes, three. A stealth fintech client (under NDA) sells an AI product, and on a fixed prompt set its AI visibility rose more than 5x across two 30-day windows 83 days apart, with ChatGPT up 13x and average position when named improving to under 2. Pond is an AI workforce marketplace, and its AI visibility tripled from a near-zero base in the first four weeks. Eraser describes itself as \"AI for diagrams that matter\", and its case study publishes no AI-search figure. None of these is a revenue figure."
       },
       {
         "question": "Do comparison and review pages still matter for an AI startup?",
