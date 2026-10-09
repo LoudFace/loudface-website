@@ -53,7 +53,7 @@ export const organicGrowth: ExtrasFn = ({ home, data }) => {
     // Genie Teacher's own Search Console, its two published figures above its impressions curve
     heroArt: (
       <ConsoleChart client="Genie Teacher" icon="logos/genie-icon.png" plotTitle="Impressions per day" series={data?.results.genie} tip={s[1].tip} figures={[
-        { k: 'Impressions a day', v: '164×', s: '1 to 25 September, on the May average' },
+        { k: 'Impressions a day', v: '226×', s: '28 September to 4 October, on the May average' },
         { k: 'Clicks a week', v: '28×', s: 'On the May average' },
       ]} />
     ),

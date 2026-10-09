@@ -18,7 +18,7 @@ export function TileChart({ head, client, num, series, format, tip }: { head: st
 }
 
 const LOOP: { k: string; s: string; m: string; mk: string }[] = [
-  { k: 'SEO', s: 'The foundation', m: '164×', mk: 'Genie Teacher, Google impressions a day' },
+  { k: 'SEO', s: 'The foundation', m: '226×', mk: 'Genie Teacher, Google impressions a day' },
   { k: 'AEO', s: 'The visibility layer', m: '97.8%', mk: 'Toku, AI visibility on its core prompt' },
   { k: 'CRO', s: 'Where it converts', m: '288%', mk: 'Dimer Health, best conversion increase' },
 ];
@@ -73,7 +73,7 @@ export const growthAutopilot: ExtrasFn = ({ home, data }) => {
       { k: 'Scoreboard', v: 'One', s: 'Tied to pipeline, not vanity metrics' },
     ],
     tiles: [
-      { tag: 'Foundation', art: <TileChart head="Google impressions a day" client="Genie Teacher" num="164×" series={data?.hero.genie} format="index" tip={s[1].tip} /> },
+      { tag: 'Foundation', art: <TileChart head="Google impressions a day" client="Genie Teacher" num="226×" series={data?.hero.genie} format="index" tip={s[1].tip} /> },
       { tag: 'Visibility', art: <TileChart head="Share of AI answers" client="LoudFace" num={s[0].metric} series={data?.hero.lf} format="pct" tip={s[0].tip} /> },
       { tag: 'Conversion', art: <TileChart head="Lead requests a week" client="Genie Teacher" num={s[5].metric} series={data?.hero.genieLeads} format="index" tip={s[5].tip} /> },
     ],

@@ -1,6 +1,6 @@
 {
   "slug": "genie-teacher-organic-growth",
-  "note": "Genie Teacher, public client. Front-left: the homepage. Back-right: the OSSLT guide, the hub page with the second-most Google impressions (90 days to 25 Sep 2026; the report-card levels explainer now leads). Card: the headline Google figure from the 28 Sep 2026 refresh.",
+  "note": "Genie Teacher, public client. Front-left: the homepage. Back-right: the OSSLT guide, the hub page with the second-most Google impressions (90 days to 25 Sep 2026; the report-card levels explainer now leads). Card: the headline Google figure from the 9 Oct 2026 refresh.",
   "theme": {
     "background": "linear-gradient(140deg, #2f4fd0 0%, #3d63e0 50%, #5b7df0 100%)",
     "bloom": "radial-gradient(1100px 780px at 14% 26%, rgba(255,255,255,.16), transparent 68%), radial-gradient(900px 700px at 92% 88%, rgba(30,50,160,.35), transparent 70%)",
@@ -26,9 +26,9 @@
   ],
   "card": {
     "label": "Google impressions per day",
-    "value": "164×",
+    "value": "226×",
     "valueSize": 96,
-    "caption": "May 2026 average → 1–25 Sep 2026,\nGoogle Search Console",
+    "caption": "May 2026 average → 28 Sep–4 Oct 2026,\nGoogle Search Console",
     "right": 62,
     "bottom": 92,
     "width": 430

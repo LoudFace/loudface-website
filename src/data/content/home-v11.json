@@ -16,16 +16,16 @@
         "metric": "21.5%",
         "caption": "of non-branded AI answers name us (18–28 Sep), up from 0.13%",
         "periodStart": "Apr 2026",
-        "periodEnd": "Sep 2026",
+        "periodEnd": "Oct 2026",
         "tip": "of AI answers"
       },
       {
         "tag": "Search",
         "client": "Genie Teacher",
-        "metric": "164×",
+        "metric": "226×",
         "caption": "Google impressions a day",
         "periodStart": "Apr 2026",
-        "periodEnd": "Sep 2026",
+        "periodEnd": "Oct 2026",
         "tip": "the May average"
       },
       {
@@ -96,7 +96,7 @@
       {
         "label": "Search",
         "heading": "Grow the pages Google already wants to rank",
-        "metric": "164×",
+        "metric": "226×",
         "caption": "Google impressions a day",
         "client": "Genie Teacher"
       },
@@ -143,7 +143,7 @@
       },
       {
         "client": "Genie Teacher",
-        "claim": "grew Google impressions 164× from May to September",
+        "claim": "grew Google impressions 226× from May to early October",
         "chartLabel": "Google impressions a day",
         "source": "Search Console",
         "tip": "the May average"
@@ -415,8 +415,8 @@
         "source": ""
       },
       {
-        "metric": "164×",
-        "caption": "Google impressions a day, May to September",
+        "metric": "226×",
+        "caption": "Google impressions a day, May to early October",
         "quote": "“Working with LoudFace has been refreshing; we were surprised by their passion.”",
         "person": "Kevin Wong",
         "jobTitle": "Genie Teacher",
