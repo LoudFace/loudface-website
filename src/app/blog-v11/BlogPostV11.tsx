@@ -9,6 +9,7 @@ import { Reveal } from '../home-v11/Reveal';
 import { ArrowRight, LfMark, SectionHeadNode, personAvatar } from '../home-v11/ui';
 import { PostCard } from './PostCard';
 import { PostCover } from './PostCover';
+import { TocSpy } from './TocSpy';
 import type { BlogPostView } from './view';
 import { strip } from '@/lib/inline-edit/mark';
 import { cachedCmsImage, cachedCmsSrcSet } from '@/lib/image-utils';
@@ -76,6 +77,7 @@ export function BlogPostV11({ c, home, v, nextStep = false }: { c: BlogV11Conten
                 <nav className="sv-toc" aria-label={strip(t.tocLabel)}>
                   <div className="sv-toc-k">{t.tocLabel}</div>
                   {v.toc.map((h) => <a key={h.id} href={`#${h.id}`}>{h.text}</a>)}
+                  <TocSpy />
                 </nav>
               )}
               <div className="bp-ai">
