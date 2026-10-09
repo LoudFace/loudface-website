@@ -320,7 +320,7 @@ export function PricingV11({ c, x, home, data }: { c: PricingContent; x: Pricing
         <div className="v11-wrap">
           <SectionHeadNode title={<>{c.exhibits.headline} <span className="ghost">{c.exhibits.headlineHighlight}</span></>} right={<Link href="/case-studies" className="v11-link pr-tap"><span>{x.proof.linkText}</span><ArrowRight /></Link>} />
           <div className="pr-quotes">
-            {home.testimonials.cards.map((k, i) => <QuoteCard key={k.person} k={k} i={i} />)}
+            {home.testimonials.cards.map((k, i) => <QuoteCard key={k.person} k={k} i={i} data={data} />)}
           </div>
         </div>
       </section>

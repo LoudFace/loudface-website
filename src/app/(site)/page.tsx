@@ -74,11 +74,11 @@ export default async function HomePage() {
       <div className="v11">
         <HeroV11 c={c.hero} data={data} />
         <LogoGrid c={c.logos} />
-        <Bento c={c.bento} />
+        <Bento c={c.bento} data={data} />
         <Results c={c.results} data={data} />
-        <Route c={c.route} spark={data?.results.delshad ?? null} />
+        <Route c={c.route} spark={data?.hero.delshad ?? null} metric={data?.proof.delshad?.value} />
         <GrowthPlan c={c.plan} />
-        <Testimonials c={c.testimonials} />
+        <Testimonials c={c.testimonials} data={data} />
         <Team c={c.team} />
         <Closing c={c.closing} />
         <FooterV11 c={c.footer} ratings={c.testimonials.ratings} />

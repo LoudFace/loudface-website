@@ -6,6 +6,7 @@ import { Reveal } from '../home-v11/Reveal';
 import { Eyebrow, LfMark, img } from '../home-v11/ui';
 import { IndustryVoices } from '../seo-for-v11/voices';
 import { strip } from '@/lib/inline-edit/mark';
+import type { HomeV11Data } from '../home-v11/data';
 
 /**
  * /ai-audit in v11 (2026-09-26). The page's picture is the report the visitor receives: its scorecard and its
@@ -117,7 +118,7 @@ export function Queries({ x }: { x: QueryView }) {
   );
 }
 
-export function AuditPageV11({ c, home }: { c: AiAuditContent; home: HomeV11Content }) {
+export function AuditPageV11({ c, home, data }: { c: AiAuditContent; home: HomeV11Content; data: HomeV11Data | null }) {
   // the example is the same sample company, with the same numbers, as the example report (/audit/demo)
   const x = c.example;
   return (
@@ -169,7 +170,7 @@ export function AuditPageV11({ c, home }: { c: AiAuditContent; home: HomeV11Cont
               <h2 className="v11-h2" dangerouslySetInnerHTML={{ __html: home.testimonials.heading }} />
             </div>
           </div>
-          <IndustryVoices t={home.testimonials} avoid={[]} />
+          <IndustryVoices t={home.testimonials} data={data} avoid={[]} />
         </div>
       </section>
 

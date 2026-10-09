@@ -2,6 +2,8 @@ import type { CSSProperties, ReactNode } from 'react';
 import type { HomeV11Content } from '@/lib/content-utils';
 import { Eyebrow, H2, RATING_STYLE, Stars, img, tint } from './ui';
 import { VideoStill } from './VideoStill';
+import type { HomeV11Data, ProofKey } from './data';
+import { proofValue } from './hero-slides';
 
 type C = HomeV11Content['testimonials'];
 
@@ -10,10 +12,11 @@ const VIDEOS = [
   { tint: '#fde6dd', video: 'https://cdn.sanity.io/files/xjjjqhgt/proposals/cbba2c1526479ce38d8dab811802738ae3a1659b.mp4', still: 'video-dimer.jpg', logo: 'logos/color-dimer.png', w: 76, h: 26, alt: 'Dimer Health' },
   { tint: '#fcf0d4', video: 'https://cdn.sanity.io/files/xjjjqhgt/proposals/77f7444f1da7ed7a221c1637d897a0f4ec3e87aa.mp4', still: 'video-elizabete.jpg', logo: 'logos/reiterate-ink.png', w: 139, h: 16, alt: 'Reiterate' },
 ];
-const CARDS = [
-  { brand: '#1646ce', logo: 'logos/toku.png', w: 78, h: 22, alt: 'Toku', face: 'people/kenneth-o-friel.webp' },
-  { brand: '#3d63e0', logo: null, w: 0, h: 0, alt: '', face: null },
-  { brand: '#f8612d', logo: 'logos/brandfirm.png', w: 108, h: 22, alt: 'Brandfirm', face: 'people/daan-smit.webp' },
+/** Per card, in the content file's order; `proof` is the case-study figure the card prints. */
+const CARDS: { brand: string; logo: string | null; w: number; h: number; alt: string; face: string | null; proof: ProofKey }[] = [
+  { brand: '#1646ce', logo: 'logos/toku.png', w: 78, h: 22, alt: 'Toku', face: 'people/kenneth-o-friel.webp', proof: 'toku' },
+  { brand: '#3d63e0', logo: null, w: 0, h: 0, alt: '', face: null, proof: 'genie' },
+  { brand: '#f8612d', logo: 'logos/brandfirm.png', w: 108, h: 22, alt: 'Brandfirm', face: 'people/daan-smit.webp', proof: 'brandfirm' },
 ];
 
 const Play = () => (
@@ -44,7 +47,7 @@ export function Rating({ r, i, size = 'lg' }: { r: { platform: string; score: st
 }
 
 /** A client's number and their words on the client's own tint: the quote card, shared with inner pages (DESIGN.md, v11 component library). */
-export function QuoteCard({ k, i }: { k: C['cards'][number]; i: number }) {
+export function QuoteCard({ k, i, data }: { k: C['cards'][number]; i: number; data: HomeV11Data | null }) {
   const cfg = CARDS[i];
   const vars = { '--t1': tint(cfg.brand, 0.88), '--t2': tint(cfg.brand, 0.72), '--brand': cfg.brand, '--av': tint(cfg.brand, 0.7) } as CSSProperties;
   return (
@@ -61,7 +64,7 @@ export function QuoteCard({ k, i }: { k: C['cards'][number]; i: number }) {
           <span>{k.brand}</span>
         </div>
       )}
-      <div className="v11-quote-big">{k.metric}</div>
+      <div className="v11-quote-big">{proofValue(data, cfg.proof)}</div>
       <div className="v11-quote-cap">{k.caption}</div>
       <p className="v11-quote-text">{k.quote}</p>
       <div className="v11-quote-who">
@@ -102,7 +105,7 @@ export function VideoCard({ v, i }: { v: C['videos'][number]; i: number }) {
   );
 }
 
-export function Testimonials({ c }: { c: C }) {
+export function Testimonials({ c, data }: { c: C; data: HomeV11Data | null }) {
   return (
     <section className="v11-sec v11-warm">
       <div className="v11-wrap">
@@ -117,7 +120,7 @@ export function Testimonials({ c }: { c: C }) {
           {c.videos.map((v, i) => <VideoCard key={i} v={v} i={i} />)}
         </div>
         <div className="v11-cards3 is-second">
-          {c.cards.map((k, i) => <QuoteCard key={i} k={k} i={i} />)}
+          {c.cards.map((k, i) => <QuoteCard key={i} k={k} i={i} data={data} />)}
         </div>
       </div>
     </section>

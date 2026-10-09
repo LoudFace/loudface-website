@@ -144,7 +144,7 @@ export function IndustryArticleV11({ slug, a, c, home, data, related }: { slug: 
     node: (
       <div className="v11-wrap">
         <div className="sv-head"><div><h2 className="v11-h2" dangerouslySetInnerHTML={{ __html: t.heading }} /></div></div>
-        <IndustryVoices t={t} avoid={voicesAvoid} />
+        <IndustryVoices t={t} data={data} avoid={voicesAvoid} />
       </div>
     ),
   });

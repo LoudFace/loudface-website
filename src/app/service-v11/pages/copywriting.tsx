@@ -4,6 +4,7 @@ import { BarsCell, QuoteCell, StatCell, Tag, Ui, UiHead, VideoCell } from '../ki
 import { LfMark } from '../../home-v11/ui';
 import { Redline } from './shared';
 import { DraftPage } from './hero-art';
+import { proofValue } from '../../home-v11/hero-slides';
 
 const BRIEF = [
   { n: 1, k: 'Who it is for', v: 'Finance leads at 20 to 200-person SaaS companies who close the books by hand.', note: 'their words, from 6 calls' },
@@ -14,7 +15,7 @@ const BRIEF = [
 ];
 
 /** Copywriting: the brief comes before the page. Signature: one messaging brief and the page it produced. */
-export const copywriting: ExtrasFn = ({ home }) => {
+export const copywriting: ExtrasFn = ({ home, data }) => {
   const t = home.testimonials;
   return {
     // the page the brief produced, on the example the whole page follows (the month-end close tool)
@@ -113,9 +114,9 @@ export const copywriting: ExtrasFn = ({ home }) => {
       cells: (
         <>
           <VideoCell who="maksim" big="$1M+" cap="in sales from one landing page we designed" quote={t.videos[0].quote} person={t.videos[0].person} role={t.videos[0].jobTitle} duration={t.videos[0].duration} />
-          <BarsCell tag="Conversion rate" client="Dimer Health" big="288%" cap="Best conversion increase from a LoudFace build" before="Before" after="After six months" />
-          <QuoteCell logo="logos/brandfirm.png" logoAlt="Brandfirm" logoW={108} logoH={22} big={t.cards[2].metric} cap={t.cards[2].caption} quote={t.cards[2].quote} person={t.cards[2].person} role={t.cards[2].jobTitle} face="people/daan-smit.webp" tone="orange" />
-          <QuoteCell logo="logos/toku-ink.png" logoAlt="Toku" logoW={70} logoH={20} big={t.cards[0].metric} cap={t.cards[0].caption} quote={t.cards[0].quote} person={t.cards[0].person} role={t.cards[0].jobTitle} face="people/kenneth-o-friel.webp" tone="ind" />
+          <BarsCell tag="Conversion rate" client="Dimer Health" big={proofValue(data, 'dimer')} cap="Best conversion increase from a LoudFace build" before="Before" after="After six months" />
+          <QuoteCell logo="logos/brandfirm.png" logoAlt="Brandfirm" logoW={108} logoH={22} big={proofValue(data, 'brandfirm')} cap={t.cards[2].caption} quote={t.cards[2].quote} person={t.cards[2].person} role={t.cards[2].jobTitle} face="people/daan-smit.webp" tone="orange" />
+          <QuoteCell logo="logos/toku-ink.png" logoAlt="Toku" logoW={70} logoH={20} big={proofValue(data, 'toku')} cap={t.cards[0].caption} quote={t.cards[0].quote} person={t.cards[0].person} role={t.cards[0].jobTitle} face="people/kenneth-o-friel.webp" tone="ind" />
           <StatCell tag="Human-written" big="100%" cap="Human-written content: AI accelerates, humans write">
             <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
               {[['Research and outlines', 'AI-assisted'], ['Every sentence', 'A writer'], ['Final read', 'Your strategist']].map(([k, v]) => (

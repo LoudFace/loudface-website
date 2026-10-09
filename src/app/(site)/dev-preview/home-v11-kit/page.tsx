@@ -46,6 +46,7 @@ import { Board } from '../../../pricing-v11/PricingV11';
 import { Statement } from '../../../partners-v11/PartnersV11';
 import { EngineSlope, Funnel, MeasureSheet } from '../../../methodology-v11/MethodologyV11';
 import { getNavV11Data } from '../../../home-v11/nav-data';
+import { heroSlide, periodOf, proofValue } from '../../../home-v11/hero-slides';
 
 export const metadata: Metadata = { title: 'v11 component library', robots: { index: false, follow: false } };
 export const revalidate = 3600;
@@ -167,16 +168,16 @@ export default async function KitPage() {
 
       <Block name="Stage chart" file="StageChart · src/app/home-v11/StageChart.tsx" rule="A result drawn white on the stage. Size 'slide' in the homepage rail; size 'hero' as the picture of an inner-page hero." ground="stage">
         <div className="kit-stage-grid">
-          <StageChart tag={s[1].tag} client={s[1].client} metric={s[1].metric} series={data?.hero.genie} format="index" tip={s[1].tip} periodStart={s[1].periodStart} periodEnd={s[1].periodEnd} caption={s[1].caption} href="/case-studies/genie-teacher-organic-growth" />
-          <StageChart size="hero" tag={s[2].tag} client={s[2].client} metric={s[2].metric} series={data?.hero.delshad} format="index" tip={s[2].tip} periodStart={s[2].periodStart} periodEnd={s[2].periodEnd} caption={s[2].caption} />
+          <StageChart tag={s[1].tag} client={s[1].client} metric={proofValue(data, 'genie')} series={data?.hero.genie} format="index" tip={s[1].tip} periodStart={periodOf(data?.hero.genie).start} periodEnd={periodOf(data?.hero.genie).end} caption={s[1].caption} href="/case-studies/genie-teacher-organic-growth" />
+          <StageChart size="hero" tag={heroSlide(c, 'delshad').tag} client={heroSlide(c, 'delshad').client} metric={proofValue(data, 'delshad')} series={data?.hero.delshad} format="index" tip={heroSlide(c, 'delshad').tip} periodStart={periodOf(data?.hero.delshad).start} periodEnd={periodOf(data?.hero.delshad).end} caption={heroSlide(c, 'delshad').caption} />
         </div>
       </Block>
 
       <Block name="Result card" file="ResultCase · src/app/home-v11/ResultCase.tsx" rule="Result charts on a light ground use this card, or ChartCell inside a proof grid. Feature: claim, number and extra figures left, chart with axis right. Small: claim over a quiet chart.">
         <div className="v11-rgrid">
-          <ResultCase feature icon="logos/delshad-icon.jpeg" href="/case-studies/delshad-legal-content-engine" linkLabel={c.results.caseLink} client={r[0].client} claim={r[0].claim} metric={r[0].metric} metricLabel={r[0].metricLabel} chartLabel={r[0].chartLabel} source={r[0].source} series={data?.results.delshad} format="index" tip={r[0].tip} />
+          <ResultCase feature icon="logos/delshad-icon.jpeg" href="/case-studies/delshad-legal-content-engine" linkLabel={c.results.caseLink} client={r[0].client} claim={r[0].claim} metric={data?.proof.delshadClicks?.value} metricLabel={data?.proof.delshadClicks?.title} chartLabel={r[0].chartLabel} source={r[0].source} series={data?.results.delshad} format="index" tip={r[0].tip} />
           <ResultCase icon="logos/genie-icon.png" href="/case-studies/genie-teacher-organic-growth" linkLabel={c.results.caseLink} client={r[1].client} claim={r[1].claim} chartLabel={r[1].chartLabel} source={r[1].source} series={data?.results.genie} format="index" tip={r[1].tip} />
-          <ResultCase icon="logos/trademomentum-icon.png" square href="/case-studies/trademomentum-niche-aeo-organic-growth" linkLabel={c.results.caseLink} client={r[2].client} claim={r[2].claim} chartLabel={r[2].chartLabel} source={r[2].source} series={data?.hero.tm} format="indexWeek" tip={r[2].tip} />
+          <ResultCase icon="logos/trademomentum-icon.png" square href="/case-studies/trademomentum-niche-aeo-organic-growth" linkLabel={c.results.caseLink} client={r[2].client} claim={r[2].claim} chartLabel={r[2].chartLabel} source={r[2].source} series={data?.hero.tm} format="index" tip={r[2].tip} />
           <ResultCase href="/case-studies/loudface-aeo-case-study" linkLabel={c.results.caseLink} client={r[3].client} claim={r[3].claim} chartLabel={r[3].chartLabel} source={r[3].source} series={data?.results.lf} format="pct" tip={r[3].tip} pin={false} />
         </div>
       </Block>
@@ -185,9 +186,9 @@ export default async function KitPage() {
         <div className="cro-grid">
           <VideoCell who="maksim" big="$1M+" cap="in sales from one landing page we designed" quote={t.videos[0].quote} person={t.videos[0].person} role={t.videos[0].jobTitle} duration={t.videos[0].duration} />
           <BarsCell tag="Conversion rate" client="Dimer Health" big="288%" cap="Best conversion increase from a LoudFace program" before="Before" after="After six months" />
-          <ChartCell slide={s[2]} series={data?.hero.delshad} />
-          <ChartCell slide={s[5]} series={data?.hero.genieLeads} />
-          <QuoteCell logo="logos/brandfirm.png" logoAlt="Brandfirm" logoW={108} logoH={22} big={t.cards[2].metric} cap={t.cards[2].caption} quote={t.cards[2].quote} person={t.cards[2].person} role={t.cards[2].jobTitle} face="people/daan-smit.webp" tone="orange" />
+          <ChartCell slide={heroSlide(c, 'delshad')} series={data?.hero.delshad} big={proofValue(data, 'delshad')} />
+          <ChartCell slide={heroSlide(c, 'genieLeads')} series={data?.hero.genieLeads} big={proofValue(data, 'genieLeads')} />
+          <QuoteCell logo="logos/brandfirm.png" logoAlt="Brandfirm" logoW={108} logoH={22} big={proofValue(data, 'brandfirm')} cap={t.cards[2].caption} quote={t.cards[2].quote} person={t.cards[2].person} role={t.cards[2].jobTitle} face="people/daan-smit.webp" tone="orange" />
         </div>
       </Block>
 
@@ -231,7 +232,7 @@ export default async function KitPage() {
       </Block>
 
       <Block name="Client voice" file="Testimonials · src/app/home-v11/Testimonials.tsx" rule="Video cards on their client tint, quote cards with the client's number. Reuse these cards; never a bare text quote." ground="warm">
-        <div className="kit-embed"><Testimonials c={c.testimonials} /></div>
+        <div className="kit-embed"><Testimonials c={c.testimonials} data={data} /></div>
       </Block>
 
       <Block name="Document on the plate" file=".v11-svc-plate + .v11-sheet · src/app/home-v11/home-v11.css (section 6)" rule="How LoudFace shows its own process: a written document on the brand plate, never a feature list.">
@@ -363,7 +364,7 @@ export default async function KitPage() {
       </Block>
 
       <Block name="Client voices set" file="IndustryVoices · src/app/seo-for-v11/voices.tsx" rule="Two wide and two narrow cells of client video and quotes, skipping any client the page already shows.">
-        <IndustryVoices t={c.testimonials} avoid={[]} />
+        <IndustryVoices t={c.testimonials} data={data} avoid={[]} />
       </Block>
 
       <Block name="Cards that lead elsewhere" file="RelatedIndustries · src/app/seo-for-v11/related.tsx · PostCard · src/app/blog-v11/PostCard.tsx" rule="A link to another page carries that page's picture: the industry's lead client site, or the post's cover (PostCover when it has none)." ground="warm">

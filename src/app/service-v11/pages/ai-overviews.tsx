@@ -23,7 +23,7 @@ const REPORT = [
 ];
 
 /** Google AI Overviews as a service page, built from the verified article's sentences. Signature: the fan-out map. */
-export const aiOverviews: ExtrasFn = ({ home }) => {
+export const aiOverviews: ExtrasFn = ({ home, data }) => {
   const t = home.testimonials;
   return {
     heroArt: (
@@ -154,7 +154,7 @@ export const aiOverviews: ExtrasFn = ({ home }) => {
             </div>
           </StatCell>
           <VideoProof t={t} n={0} big="$1M+" cap="in sales from one landing page we designed" />
-          <GenieQuote t={t} />
+          <GenieQuote t={t} data={data} />
         </>
       ),
     },

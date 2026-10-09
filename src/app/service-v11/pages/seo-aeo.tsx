@@ -3,6 +3,7 @@ import type { ExtrasFn } from '../types';
 import { QuoteCell, Tag, Ui, UiHead } from '../kit';
 import { BrandfirmQuote, ClimbCard, ENGINES, EngineIcon, GenieQuote, StatusList, VideoProof, logo } from './shared';
 import { RankTracker } from './hero-art';
+import { proofValue } from '../../home-v11/hero-slides';
 
 /** Grey text lines standing in for answer prose we do not quote. */
 export const Lines = ({ w = ['92%', '84%', '70%'] }: { w?: string[] }) => (
@@ -84,7 +85,7 @@ export function PromptTable({ head, rows }: { head: string; rows: { p: string; v
 }
 
 /** SEO + AEO: one program, three surfaces. Signature: the same buyer question on Google, ChatGPT and Perplexity. */
-export const seoAeo: ExtrasFn = ({ home }) => {
+export const seoAeo: ExtrasFn = ({ home, data }) => {
   const t = home.testimonials;
   return {
     heroArt: (
@@ -96,7 +97,7 @@ export const seoAeo: ExtrasFn = ({ home }) => {
         { q: 'stablecoin payroll providers', pos: '6', move: '↑3', seen: [false, true, false] },
       ]} />
     ),
-    heroCard: <ClimbCard label="Share of non-branded AI answers" client="LoudFace" from="0.13%" to="21.5%" foot="Our site, Apr → 18–28 Sep 2026" footRight="Peec AI" />,
+    heroCard: <ClimbCard label="Share of non-branded AI answers" client="LoudFace" from={data?.proof.lf?.value.split('→')[0].trim() ?? ''} to={data?.proof.lf?.value.split('→').at(-1)?.trim() ?? ''} foot={data?.proof.lf?.title ?? ''} footRight="Peec AI" />,
     band: [
       { k: 'Week one', v: 'The audit', s: 'Technical, content, entities and AI answers' },
       { k: 'Roadmap', v: '90 days', s: 'Three to five goals tied to pipeline' },
@@ -165,10 +166,10 @@ export const seoAeo: ExtrasFn = ({ home }) => {
       lede: 'An answer-engine program aimed at the buying question: when someone asks an AI which vendor to use, Toku had to be in the answer. We built the pages and signals that get a brand cited by name.',
       cells: (
         <>
-          <QuoteCell wide logo="logos/toku-ink.png" logoAlt="Toku" logoW={84} logoH={24} big={t.cards[0].metric} cap="Toku AI visibility on its core stablecoin-payroll prompt (30-day Peec reading ending 19 August 2026; average cited position 3.1 on that prompt)" quote={t.cards[0].quote} person={t.cards[0].person} role={t.cards[0].jobTitle} face="people/kenneth-o-friel.webp" tone="ind" />
-          <GenieQuote t={t} />
+          <QuoteCell wide logo="logos/toku-ink.png" logoAlt="Toku" logoW={84} logoH={24} big={proofValue(data, 'toku')} cap="Toku AI visibility on its core stablecoin-payroll prompt (30-day Peec reading ending 19 August 2026; average cited position 3.1 on that prompt)" quote={t.cards[0].quote} person={t.cards[0].person} role={t.cards[0].jobTitle} face="people/kenneth-o-friel.webp" tone="ind" />
+          <GenieQuote t={t} data={data} />
           <VideoProof t={t} n={0} big="$1M+" cap="in sales from one landing page we designed" />
-          <BrandfirmQuote t={t} />
+          <BrandfirmQuote t={t} data={data} />
         </>
       ),
     },

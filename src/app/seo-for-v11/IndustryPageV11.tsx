@@ -17,6 +17,7 @@ import type { IndustryView } from './types';
 import type { HubCard } from './views';
 import { IndustryVoices } from './voices';
 import { cachedCmsImage } from '@/lib/image-utils';
+import { heroSlide, proofValue } from '../home-v11/hero-slides';
 
 /**
  * IndustryPageV11: the /seo-for/<industry> template in v11 (2026-09-26). A service for one market, so it shares the
@@ -48,7 +49,6 @@ export function IndustryPageV11({ v, c, home, data, related }: { v: IndustryView
   const resultsKey = `seo-for-${v.key}`;
   const voicesAvoid = [...shown, ...resultSlugs(resultsKey, shown)];
   const t = home.testimonials;
-  const s = home.hero.slides;
   const chat = (c.chat as Record<string, HomeV11Content['bento']['chat']>)[v.key] ?? c.chat.saas;
   const sections: { key: string; node: ReactNode }[] = [];
 
@@ -80,8 +80,8 @@ export function IndustryPageV11({ v, c, home, data, related }: { v: IndustryView
   // 3 · the program, one tile per layer with the published series it moves (the service template's tiles)
   if (v.layers?.length) {
     const art = [
-      <TileChart key="seo" head="Google impressions a day" client="Genie Teacher" num="226×" series={data?.hero.genie} format="index" tip={s[1].tip} />,
-      <TileChart key="aeo" head="Share of AI answers" client="LoudFace" num={s[0].metric} series={data?.hero.lf} format="pct" tip={s[0].tip} />,
+      <TileChart key="seo" head="Google impressions a day" client="Genie Teacher" num={proofValue(data, 'genie')} series={data?.hero.genie} format="index" tip={heroSlide(home, 'genie').tip} />,
+      <TileChart key="aeo" head="Share of AI answers" client="LoudFace" num={proofValue(data, 'lf')} series={data?.hero.lf} format="pct" tip={heroSlide(home, 'lf').tip} />,
       <Wireframe key="cro" pills={L.croPills} />,
     ];
     sections.push({
@@ -204,7 +204,7 @@ export function IndustryPageV11({ v, c, home, data, related }: { v: IndustryView
     node: (
       <div className="v11-wrap">
         <Head eyebrow={t.eyebrow} title={<span dangerouslySetInnerHTML={{ __html: t.heading }} />} />
-        <IndustryVoices t={t} avoid={voicesAvoid} />
+        <IndustryVoices t={t} data={data} avoid={voicesAvoid} />
       </div>
     ),
   });

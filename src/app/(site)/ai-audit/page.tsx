@@ -16,6 +16,7 @@ import '../../audit-v11/audit.css';
 import { getAiAuditContent, getHomeV11Content, rawContent, type AiAuditContent } from '@/lib/content-utils';
 import { AuditPageV11 } from '../../audit-v11/AuditPageV11';
 import { serializeJsonLd } from '@/lib/schema-utils';
+import { getHomeV11Data } from '../../home-v11/data';
 
 export const metadata: Metadata = {
   title: 'Free AI Visibility Audit for B2B SaaS',
@@ -54,7 +55,7 @@ export const metadata: Metadata = {
 const stripHtml = (html: string) => html.replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim();
 
 export default async function AiAuditPage() {
-  const [c, home] = await Promise.all([getAiAuditContent(), getHomeV11Content()]);
+  const [c, home, data] = await Promise.all([getAiAuditContent(), getHomeV11Content(), getHomeV11Data()]);
 
   const breadcrumbSchema = {
     '@context': 'https://schema.org',
@@ -85,7 +86,7 @@ export default async function AiAuditPage() {
       {[breadcrumbSchema, faqSchema].map((schema, i) => (
         <script key={i} type="application/ld+json" dangerouslySetInnerHTML={{ __html: serializeJsonLd(schema) }} />
       ))}
-      <AuditPageV11 c={c} home={home} />
+      <AuditPageV11 c={c} home={home} data={data} />
     </>
   );
 }

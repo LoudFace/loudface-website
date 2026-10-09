@@ -1,6 +1,8 @@
 import type { ReactNode } from 'react';
 import type { HomeV11Content } from '@/lib/content-utils';
 import { Eyebrow, SectionHead, img } from './ui';
+import type { HomeV11Data } from './data';
+import { proofValue } from './hero-slides';
 
 type C = HomeV11Content['bento'];
 
@@ -82,7 +84,7 @@ function Tile({ t, k, children }: { t: C['tiles'][number]; k: 'ai' | 'search' | 
   );
 }
 
-export function Bento({ c }: { c: C }) {
+export function Bento({ c, data }: { c: C; data: HomeV11Data | null }) {
   const [ai, search, design, build] = c.tiles;
   return (
     <section className="v11-sec v11-warm">
@@ -94,7 +96,7 @@ export function Bento({ c }: { c: C }) {
             <div className="v11-tile-stat is-ai">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img loading="lazy" src={img('logos/toku-white.png')} alt="Toku" width={46} height={13} />
-              <div className="v11-tile-big">{ai.metric}</div>
+              <div className="v11-tile-big">{proofValue(data, 'toku')}</div>
               <div className="v11-tile-cap">{ai.caption}</div>
             </div>
           </Tile>
@@ -105,7 +107,7 @@ export function Bento({ c }: { c: C }) {
                 <img loading="lazy" src={img('logos/genie-icon.png')} alt="" width={20} height={20} className="v11-case-icon" />
                 <span>{search.client}</span>
               </div>
-              <div className="v11-tile-big">{search.metric}</div>
+              <div className="v11-tile-big">{proofValue(data, 'genie')}</div>
               <div className="v11-tile-cap">{search.caption}</div>
             </div>
           </Tile>
@@ -113,7 +115,7 @@ export function Bento({ c }: { c: C }) {
             <div className="v11-tile-stat">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img loading="lazy" src={img('logos/dimer-health-ink.png')} alt="Dimer Health" width={65} height={22} />
-              <div className="v11-tile-big">{design.metric}</div>
+              <div className="v11-tile-big">{proofValue(data, 'dimer')}</div>
               <div className="v11-tile-cap">{design.caption}</div>
             </div>
           </Tile>
@@ -121,7 +123,7 @@ export function Bento({ c }: { c: C }) {
             <div className="v11-tile-stat">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img loading="lazy" src={img('logos/ceipal-ink.png')} alt="Ceipal" width={67} height={22} />
-              <div className="v11-tile-big">{build.metric}</div>
+              <div className="v11-tile-big">{proofValue(data, 'ceipal')}</div>
               <div className="v11-tile-cap">{build.caption}</div>
             </div>
           </Tile>

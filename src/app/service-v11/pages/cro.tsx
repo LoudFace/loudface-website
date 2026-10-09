@@ -2,14 +2,15 @@ import type { ExtrasFn } from '../types';
 import { BarsCell, Browser, QuoteCell, Ui, VideoCell } from '../kit';
 import { SHOTS } from '../../service-v3/data';
 import { BeforeAfterCard, Redline, StatusList, Wireframe } from './shared';
+import { proofValue } from '../../home-v11/hero-slides';
 
 /** CRO: the approved board (Paper "Services · CRO", 2026-09-24). Signature: how one test runs. */
-export const cro: ExtrasFn = ({ home }) => {
+export const cro: ExtrasFn = ({ home, data }) => {
   const t = home.testimonials;
   return {
     // the clean capture of the live site: the Sanity thumbnail for this slug is a collage of framed screens
     heroArt: <Browser src={`https://cdn.sanity.io/images/xjjjqhgt/production/${SHOTS.dimer.asset}?w=1440&h=900&fit=crop&crop=top&fm=webp&q=82`} domain={SHOTS.dimer.domain} alt="Dimer Health website, built and optimized by LoudFace" priority />,
-    heroCard: <BeforeAfterCard label="Conversion rate" client="Dimer Health" num="+288%" before="Before the program" after="After six months" />,
+    heroCard: <BeforeAfterCard label="Conversion rate" client="Dimer Health" num={proofValue(data, 'dimer') ?? ''} before="Before the program" after="After six months" />,
     band: [
       { k: 'Where it starts', v: 'The audit', s: 'Every drop-off scored by revenue impact' },
       { k: 'Optimization cycle', v: '90 days', s: 'Three to five goals tied to pipeline' },
@@ -40,9 +41,9 @@ export const cro: ExtrasFn = ({ home }) => {
       cells: (
         <>
           <VideoCell who="maksim" big="$1M+" cap="in sales from one landing page we designed" quote={t.videos[0].quote} person={t.videos[0].person} role={t.videos[0].jobTitle} duration={t.videos[0].duration} />
-          <BarsCell tag="Conversion rate" client="Dimer Health" big="288%" cap="Best conversion increase from a LoudFace program" before="Before" after="After six months" />
+          <BarsCell tag="Conversion rate" client="Dimer Health" big={proofValue(data, 'dimer')} cap="Best conversion increase from a LoudFace program" before="Before" after="After six months" />
           <VideoCell who="elizabete" quote={t.videos[2].quote} person={t.videos[2].person} role={t.videos[2].jobTitle} duration={t.videos[2].duration} />
-          <QuoteCell logo="logos/brandfirm.png" logoAlt="Brandfirm" logoW={108} logoH={22} big={t.cards[2].metric} cap={t.cards[2].caption} quote={t.cards[2].quote} person={t.cards[2].person} role={t.cards[2].jobTitle} face="people/daan-smit.webp" tone="orange" />
+          <QuoteCell logo="logos/brandfirm.png" logoAlt="Brandfirm" logoW={108} logoH={22} big={proofValue(data, 'brandfirm')} cap={t.cards[2].caption} quote={t.cards[2].quote} person={t.cards[2].person} role={t.cards[2].jobTitle} face="people/daan-smit.webp" tone="orange" />
         </>
       ),
     },

@@ -13,64 +13,43 @@
       {
         "tag": "AI answers",
         "client": "LoudFace",
-        "metric": "21.5%",
-        "caption": "of non-branded AI answers name us (18–28 Sep), up from 0.13%",
-        "periodStart": "Apr 2026",
-        "periodEnd": "Oct 2026",
+        "caption": "of non-branded AI answers name us",
         "tip": "of AI answers"
       },
       {
         "tag": "Search",
         "client": "Genie Teacher",
-        "metric": "226×",
         "caption": "Google impressions a day",
-        "periodStart": "Apr 2026",
-        "periodEnd": "Oct 2026",
         "tip": "the May average"
       },
       {
         "tag": "Search",
         "client": "Anonymous health tech",
-        "metric": "3.9×",
         "caption": "Google impressions a day, in six months",
-        "periodStart": "Oct 2025",
-        "periodEnd": "Jun 2026",
         "tip": "the December average"
       },
       {
         "tag": "Leads",
         "client": "Delshad Legal",
-        "metric": "2.5×",
         "caption": "case enquiries a week since August",
-        "periodStart": "Jun 2026",
-        "periodEnd": "Sep 2026",
         "tip": "the weeks before August"
       },
       {
         "tag": "Clicks",
         "client": "TradeMomentum",
-        "metric": "7.2×",
         "caption": "Google clicks a week, over a year",
-        "periodStart": "Aug 2025",
-        "periodEnd": "Aug 2026",
-        "tip": "a December week"
+        "tip": "the week the work began"
       },
       {
         "tag": "AI answers",
         "client": "Stealth fintech",
-        "metric": "0.5% → 10.5%",
         "caption": "AI visibility in ten weeks",
-        "periodStart": "Jun 2026",
-        "periodEnd": "Aug 2026",
         "tip": "AI visibility"
       },
       {
         "tag": "Leads",
         "client": "Genie Teacher",
-        "metric": "7.8×",
-        "caption": "lead requests in the first week of September",
-        "periodStart": "Jul 2026",
-        "periodEnd": "Sep 2026",
+        "caption": "lead requests a week in September",
         "tip": "the weeks before September"
       }
     ]
@@ -90,26 +69,22 @@
       {
         "label": "AI answers",
         "heading": "Get named when buyers ask AI who to shortlist",
-        "metric": "97.8%",
-        "caption": "of answers name Toku"
+        "caption": "AI visibility on its top prompt"
       },
       {
         "label": "Search",
         "heading": "Grow the pages Google already wants to rank",
-        "metric": "226×",
         "caption": "Google impressions a day",
         "client": "Genie Teacher"
       },
       {
         "label": "Design",
         "heading": "Positioning, copy and design that earn trust",
-        "metric": "+288%",
-        "caption": "conversions after the redesign"
+        "caption": "more conversions after the redesign"
       },
       {
         "label": "Build on Webflow",
         "heading": "A site your team can edit on day one",
-        "metric": "1,082+",
         "caption": "CMS pages moved to Webflow"
       }
     ],
@@ -129,35 +104,32 @@
     "eyebrow": "Results",
     "heading": "Measured in leads, <br>not traffic",
     "body": "The pin marks the day LoudFace started. Every number is the client’s own, from Search Console, Peec AI and their analytics.",
-    "against": "against",
     "caseLink": "Case study",
     "cases": [
       {
         "client": "Delshad Legal",
-        "claim": "grew case enquiries 2.5× a week and search visibility 6.3×",
-        "metric": "6.3×",
-        "metricLabel": "Google impressions a day, against the March average",
-        "chartLabel": "Google impressions a day",
+        "claim": "grew Google clicks a week outside its celebrity-case pages",
+        "chartLabel": "Google clicks a week",
         "source": "Search Console",
-        "tip": "the March average"
+        "tip": "the week of 7 June"
       },
       {
         "client": "Genie Teacher",
-        "claim": "grew Google impressions 226× from May to early October",
+        "claim": "grew Google impressions a day",
         "chartLabel": "Google impressions a day",
         "source": "Search Console",
         "tip": "the May average"
       },
       {
         "client": "TradeMomentum",
-        "claim": "grew Google clicks 7.2× in a year",
+        "claim": "grew Google clicks a week",
         "chartLabel": "Google clicks a week",
         "source": "Search Console",
-        "tip": "a December week"
+        "tip": "the week the work began"
       },
       {
         "client": "LoudFace",
-        "claim": "went from 0.13% in April to 21.5% of non-branded AI answers (18–28 Sep 2026)",
+        "claim": "grew its share of non-branded AI answers",
         "chartLabel": "Share of AI answers",
         "source": "Peec AI",
         "tip": "of AI answers"
@@ -257,11 +229,10 @@
     "report": {
       "heading": "Monthly report",
       "meta": "Delshad Legal · Sep",
-      "chipOneMetric": "2.5×",
       "chipOneLabel": "case enquiries a week",
       "chipTwoMetric": "1st of 12",
       "chipTwoLabel": "law firms in AI answers",
-      "tip": "the March average"
+      "tip": "the weeks before August"
     },
     "youGet": "You get:"
   },
@@ -407,16 +378,14 @@
     ],
     "cards": [
       {
-        "metric": "97.8%",
-        "caption": "AI visibility on its top prompt, up from 0",
+        "caption": "AI visibility on its top prompt",
         "quote": "“You guys are the experts. I can rely on you to drive the plan, and I’m probably going to say yes to almost everything.”",
         "person": "Kenneth O’Friel",
         "jobTitle": "CEO, Toku",
         "source": ""
       },
       {
-        "metric": "226×",
-        "caption": "Google impressions a day, May to early October",
+        "caption": "Google impressions a day",
         "quote": "“Working with LoudFace has been refreshing; we were surprised by their passion.”",
         "person": "Kevin Wong",
         "jobTitle": "Genie Teacher",
@@ -425,7 +394,6 @@
         "brand": "Genie Teacher"
       },
       {
-        "metric": "4 leads",
         "caption": "in the first 24 hours, from paid-ad traffic",
         "quote": "“We began receiving leads immediately after the launch of our campaign.”",
         "person": "Daan Smit",

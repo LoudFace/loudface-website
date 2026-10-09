@@ -4,6 +4,7 @@ import { QuoteCell, StatCell, Tag, Ui, UiHead } from '../kit';
 import { BrandfirmQuote, ENGINES, EngineIcon, GenieQuote, StatusList } from './shared';
 import { Lines, Named } from './seo-aeo';
 import { ChatWindow } from '../../home-v11/Bento';
+import { proofValue } from '../../home-v11/hero-slides';
 
 /** An example per-engine panel: visibility, position and the leader, never blended. */
 export function EnginePanel({ rows, head = 'Share of answer · example prompt set' }: { rows: [number, string, string][]; head?: string }) {
@@ -31,7 +32,7 @@ const CHAIN = [
 ];
 
 /** GEO: the citation is a chain. Signature: the four links, then the answer they earn. */
-export const geoAgency: ExtrasFn = ({ home }) => {
+export const geoAgency: ExtrasFn = ({ home, data }) => {
   const t = home.testimonials;
   return {
     heroArt: <ChatWindow c={home.bento.chat} className="is-hero" />,
@@ -124,7 +125,7 @@ export const geoAgency: ExtrasFn = ({ home }) => {
       lede: 'On Toku’s core crypto-payroll prompt, the brand appears in 97.8% of AI answers, the highest of any brand on that prompt, in the 30-day read ending 19 August 2026. Across all 95 tracked prompts the average cited position is 2.1.',
       cells: (
         <>
-          <QuoteCell wide logo="logos/toku-ink.png" logoAlt="Toku" logoW={84} logoH={24} big="97.8%" cap="Of AI answers on Toku’s core prompt · 30-day read ending 19 August 2026" quote={t.cards[0].quote} person={t.cards[0].person} role={t.cards[0].jobTitle} face="people/kenneth-o-friel.webp" tone="ind" />
+          <QuoteCell wide logo="logos/toku-ink.png" logoAlt="Toku" logoW={84} logoH={24} big={proofValue(data, 'toku')} cap="Of AI answers on Toku’s core prompt · 30-day read ending 19 August 2026" quote={t.cards[0].quote} person={t.cards[0].person} role={t.cards[0].jobTitle} face="people/kenneth-o-friel.webp" tone="ind" />
           <StatCell tag="Average cited position" client="Toku" big="2.1" cap="Average cited position across all 95 tracked prompts">
             <div style={{ position: 'relative', paddingTop: 34 }}>
               <div style={{ position: 'absolute', left: `${((2.1 - 1) / 4) * 100}%`, top: 0, transform: 'translateX(-50%)', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4 }}>
@@ -136,8 +137,8 @@ export const geoAgency: ExtrasFn = ({ home }) => {
               <div style={{ fontSize: 11.5, color: '#a3a0b8', marginTop: 4 }}>Cited position, 1 is named first</div>
             </div>
           </StatCell>
-          <GenieQuote t={t} />
-          <BrandfirmQuote t={t} />
+          <GenieQuote t={t} data={data} />
+          <BrandfirmQuote t={t} data={data} />
           <StatCell tag="Engines monitored" big="7+" cap="AI engines monitored: ChatGPT, Perplexity, Gemini, and more">
             <div style={{ display: 'flex', gap: 10 }}>{[0, 1, 2, 3].map((i) => <EngineIcon key={i} i={i} size={34} />)}</div>
           </StatCell>

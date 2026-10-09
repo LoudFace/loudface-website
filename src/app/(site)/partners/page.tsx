@@ -16,6 +16,7 @@ import '../../partners-v11/partners.css';
 import { getHomeV11Content, getPartnersV11Content, rawContent, type PartnersV11Content } from '@/lib/content-utils';
 import { PartnersV11 } from '../../partners-v11/PartnersV11';
 import { serializeJsonLd } from '@/lib/schema-utils';
+import { getHomeV11Data } from '../../home-v11/data';
 
 export const metadata: Metadata = {
   title: 'fCMO Partner Program — 10% Lifetime Commission',
@@ -54,7 +55,7 @@ export const metadata: Metadata = {
 const stripHtml = (html: string) => html.replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim();
 
 export default async function PartnersPage() {
-  const [c, home] = await Promise.all([getPartnersV11Content(), getHomeV11Content()]);
+  const [c, home, data] = await Promise.all([getPartnersV11Content(), getHomeV11Content(), getHomeV11Data()]);
 
   const breadcrumbSchema = {
     '@context': 'https://schema.org',
@@ -80,7 +81,7 @@ export default async function PartnersPage() {
       {[breadcrumbSchema, faqSchema].map((schema, i) => (
         <script key={i} type="application/ld+json" dangerouslySetInnerHTML={{ __html: serializeJsonLd(schema) }} />
       ))}
-      <PartnersV11 c={c} home={home} />
+      <PartnersV11 c={c} home={home} data={data} />
     </>
   );
 }

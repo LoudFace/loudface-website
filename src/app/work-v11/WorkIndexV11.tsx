@@ -17,6 +17,8 @@ import { BeforeAfterChart } from '../home-v11/BeforeAfterChart';
 import type { Series } from '../home-v11/data';
 import { strip } from '@/lib/inline-edit/mark';
 import { cachedCmsImage, cachedCmsSrcSet } from '@/lib/image-utils';
+import type { ProofKey } from '../home-v11/data';
+import { proofValue } from '../home-v11/hero-slides';
 
 /**
  * The /case-studies index in v11 (DESIGN.md §6, §7). Copy in src/data/content/work-v11.json; every card is a live
@@ -215,6 +217,9 @@ function Card({ s, clients, lead, cta, charts }: { s: Study; clients: Map<string
   );
 }
 
+/** The client figures in `proof.items` after the three agency facts, in order. */
+const CLIENT_PROOF: ProofKey[] = ['toku', 'dimer'];
+
 export function WorkIndexV11({ c, home, data, studies, clients, charts, rows, stage }: { c: WorkV11Content; home: HomeV11Content; data: HomeV11Data | null; studies: Study[]; clients: Map<string, Client>; charts?: boolean; rows?: boolean; stage?: boolean }) {
   const list = studies.filter((s) => s.slug);
   const groups = DISCIPLINES.map((d) => ({
@@ -325,7 +330,8 @@ export function WorkIndexV11({ c, home, data, studies, clients, charts, rows, st
         <div className="v11-wrap">
           <SectionHeadNode eyebrow={c.proof.eyebrow} title={<>{c.proof.headline} <span className="ghost">{c.proof.headlineHighlight}</span></>} body={c.proof.body} bodyWidth={440} />
           <KeyResults items={c.proof.items.slice(0, 3).map((k) => ({ value: k.value, label: k.label }))} />
-          <KeyResults items={c.proof.items.slice(3).map((k) => ({ value: k.value, label: k.label, note: k.note }))} />
+          {/* the client figures (Toku, Dimer Health) are their case studies' published results, never typed copies */}
+          <KeyResults items={c.proof.items.slice(3).map((k, i) => ({ value: proofValue(data, CLIENT_PROOF[i]) ?? '', label: k.label, note: k.note }))} />
           <div className="wk-read">
             <div className="wk-read-main">
               <h3>{c.receipts.headline} <span className="ghost">{c.receipts.headlineHighlight}</span></h3>

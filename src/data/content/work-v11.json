@@ -38,8 +38,8 @@
       { "value": "200+", "label": "B2B SaaS websites shipped" },
       { "value": "4+ yrs", "label": "Webflow Enterprise Partner" },
       { "value": "~2h", "label": "Response during working hours" },
-      { "value": "0 → 97.8%", "label": "Toku AI visibility on its core prompt", "note": "Toku · GEO" },
-      { "value": "288%", "label": "Conversion increase", "note": "Dimer Health · CRO · six months" }
+      { "label": "Toku AI visibility on its core prompt", "note": "Toku · GEO" },
+      { "label": "Conversion increase", "note": "Dimer Health · CRO · six months" }
     ]
   },
   "receipts": {

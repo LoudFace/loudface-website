@@ -7,6 +7,7 @@ import { LogoGrid } from '../home-v11/LogoGrid';
 import { Reveal } from '../home-v11/Reveal';
 import { ArrowRight, ArrowUpRight, Eyebrow, LfMark } from '../home-v11/ui';
 import { TokuQuote } from '../service-v11/pages/shared';
+import type { HomeV11Data } from '../home-v11/data';
 
 /**
  * /ai-instructions in v11 (2026-09-26): the canonical brand facts page AI engines read. Mostly a reading surface, kept
@@ -22,7 +23,7 @@ const Mark = ({ ok }: { ok: boolean }) => (
     : <svg width="18" height="18" viewBox="0 0 18 18" aria-hidden="true"><circle cx="9" cy="9" r="9" fill="#fdece4" /><path d="M6.2 6.2l5.6 5.6M11.8 6.2l-5.6 5.6" fill="none" stroke="#c2410c" strokeWidth="1.8" strokeLinecap="round" /></svg>
 );
 
-export function AiInstructionsV11({ c, home }: { c: AiInstructionsV11Content; home: HomeV11Content }) {
+export function AiInstructionsV11({ c, home, data }: { c: AiInstructionsV11Content; home: HomeV11Content; data: HomeV11Data | null }) {
   return (
     <div className="v11 ai">
       {/* 1 · the one-line answer beside the kind of answer this page exists for */}
@@ -97,7 +98,7 @@ export function AiInstructionsV11({ c, home }: { c: AiInstructionsV11Content; ho
             <p>{c.proof.note}</p>
             <Link href={c.proof.href} className="v11-link ai2-tap"><span>{c.proof.linkLabel}</span><ArrowRight /></Link>
           </div>
-          <div className="cro-grid ai2-quote"><TokuQuote t={home.testimonials} wide /></div>
+          <div className="cro-grid ai2-quote"><TokuQuote t={home.testimonials} data={data} wide /></div>
         </div>
       </section>
 

@@ -6,6 +6,7 @@ import { LogoGrid } from '../home-v11/LogoGrid';
 import { Reveal } from '../home-v11/Reveal';
 import { ArrowRight, Eyebrow, LfMark, personPhoto } from '../home-v11/ui';
 import { IndustryVoices } from '../seo-for-v11/voices';
+import type { HomeV11Data } from '../home-v11/data';
 
 /**
  * /partners in v11 (2026-09-26). The live page's copy (partners.json) with each section built against a tile from
@@ -64,7 +65,7 @@ export function Statement({ s }: { s: PartnersV11Content['statement'] }) {
   );
 }
 
-export function PartnersV11({ c, home }: { c: PartnersV11Content; home: HomeV11Content }) {
+export function PartnersV11({ c, home, data }: { c: PartnersV11Content; home: HomeV11Content; data: HomeV11Data | null }) {
   const cta = 'v11-btn is-ink';
   return (
     <div className="v11 pt">
@@ -168,7 +169,7 @@ export function PartnersV11({ c, home }: { c: PartnersV11Content; home: HomeV11C
       <section className="v11-sec v11-warm">
         <div className="v11-wrap">
           <div className="sv-head"><div><h2 className="v11-h2">{c.voices.title}</h2></div><p>{c.voices.lede}</p></div>
-          <IndustryVoices t={home.testimonials} avoid={[]} />
+          <IndustryVoices t={home.testimonials} data={data} avoid={[]} />
         </div>
       </section>
 

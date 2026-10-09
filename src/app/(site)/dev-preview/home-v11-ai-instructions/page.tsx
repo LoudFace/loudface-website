@@ -6,6 +6,7 @@ import '../../../service-v11/svc.css';
 import '../../../ai-instructions-v11/ai.css';
 import { getAiInstructionsV11Content, getHomeV11Content } from '@/lib/content-utils';
 import { AiInstructionsV11 } from '../../../ai-instructions-v11/AiInstructionsV11';
+import { getHomeV11Data } from '../../../home-v11/data';
 
 export const metadata: Metadata = { title: 'AI instructions v11 preview', robots: { index: false, follow: false } };
 export const revalidate = 3600;
@@ -13,5 +14,5 @@ export const revalidate = 3600;
 /** Preview of the v11 /ai-instructions page before the live route switches over. */
 export default async function AiInstructionsV11Preview() {
   const [c, home] = await Promise.all([getAiInstructionsV11Content(), getHomeV11Content()]);
-  return <AiInstructionsV11 c={c} home={home} />;
+  return <AiInstructionsV11 c={c} home={home} data={await getHomeV11Data()} />;
 }

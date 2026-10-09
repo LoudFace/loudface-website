@@ -2,7 +2,7 @@ import Link from 'next/link';
 import { cloneElement, isValidElement, type ReactNode } from 'react';
 import type { HomeV11Content } from '@/lib/content-utils';
 import type { HomeV11Data } from '../data';
-import { heroSlide } from '../hero-slides';
+import { proofValue, heroSlide } from '../hero-slides';
 import type { NavDropdown, NavV11Data } from '../NavV11';
 import { ChatWindow } from '../Bento';
 import { CLIENT_LOGOS } from '../LogoGrid';
@@ -203,8 +203,8 @@ export function ServicesB({ services, v11, cta, home, data, siteLabel, icons }: 
       <Pic cap={`${f.metric} ${f.caption}`} className="is-chat"><ChatWindow c={f.chat} /></Pic>
     ),
     1: (
-      <Pic cap={`${genie.client}: ${genie.metric} ${genie.caption}`} className="is-chart">
-        <div className="mc-chart-fig"><b>{genie.metric}</b><span>{genie.client}</span></div>
+      <Pic cap={`${genie.client}: ${proofValue(data, 'genie') ?? ''} ${genie.caption}`} className="is-chart">
+        <div className="mc-chart-fig"><b>{proofValue(data, 'genie')}</b><span>{genie.client}</span></div>
         {data && (
           <div className="mc-chart">
             <LiveChart series={data.hero.genie} height={112} margin={{ top: 10, right: 12, bottom: 6, left: 6 }} dots={false} hatch lineWidth={1.75} pin={18} end="halo" tip={genie.tip} format="index" />
@@ -261,8 +261,8 @@ export function IndustriesB({ industries, v11, cta, home, data, questions, icons
             </div>
           </div>
           <div className="mc-col">
-            <Pic cap={`${genie.client}: ${genie.metric} ${genie.caption}`} className="is-chart">
-              <div className="mc-chart-fig"><b>{genie.metric}</b><span>{genie.client}</span></div>
+            <Pic cap={`${genie.client}: ${proofValue(data, 'genieLeads') ?? ''} ${genie.caption}`} className="is-chart">
+              <div className="mc-chart-fig"><b>{proofValue(data, 'genieLeads')}</b><span>{genie.client}</span></div>
               {data && (
                 <div className="mc-chart">
                   <LiveChart series={data.hero.genieLeads} height={112} margin={{ top: 10, right: 12, bottom: 6, left: 6 }} dots={false} hatch lineWidth={1.75} pin={18} end="halo" tip={genie.tip} format="index" />

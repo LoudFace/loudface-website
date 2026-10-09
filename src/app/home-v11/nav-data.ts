@@ -3,6 +3,7 @@ import {
   getHomeV11Content, getIndustryV11Content, getNavContent, getSeoForArticleContent, SEO_FOR_ARTICLE_SLUGS,
 } from '@/lib/content-utils';
 import type { NavV11Data } from './NavV11';
+import { getHomeV11Data } from './data';
 
 /**
  * Everything the v11 menus read, built once per request for every layout and preview that draws the header: nav.json's
@@ -11,14 +12,20 @@ import type { NavV11Data } from './NavV11';
  * questions are read from those pages' own content, so the menu never keeps a second copy (2026-09-27, menu A).
  */
 export const getNavV11Data = cache(async (): Promise<NavV11Data> => {
-  const [nav, home, industry, articles] = await Promise.all([
+  const [nav, home, industry, articles, data] = await Promise.all([
     getNavContent(),
     getHomeV11Content(),
     getIndustryV11Content(),
     Promise.all(SEO_FOR_ARTICLE_SLUGS.map((slug) => getSeoForArticleContent<{ questions: { rows: string[][] } }>(slug))),
+    // Every page draws the menu, so a failed case-study read must not fail /privacy or /blog: the menu card just
+    // drops its figure (logged). Pages that chart these studies call getHomeV11Data themselves and throw.
+    getHomeV11Data().catch((error) => {
+      console.error('[nav] case-study figures unavailable:', error);
+      return null;
+    }),
   ]);
   const questions: Record<string, string> = {};
   for (const [slug, chat] of Object.entries(industry.chat)) questions[`/seo-for/${slug}`] = chat.question;
   SEO_FOR_ARTICLE_SLUGS.forEach((slug, i) => { questions[`/seo-for/${slug}`] = articles[i].questions.rows[0][0]; });
-  return { ...nav.v11, feature: { ...home.bento.tiles[0], chat: home.bento.chat }, questions };
+  return { ...nav.v11, feature: { ...home.bento.tiles[0], chat: home.bento.chat, metric: data?.proof.toku?.value }, questions };
 });

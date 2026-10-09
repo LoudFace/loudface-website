@@ -1,6 +1,7 @@
 import type { ExtrasFn } from '../types';
 import { QuoteCell, StatCell, Tag, Ui, UiHead, VideoCell } from '../kit';
 import { EngineIcon, logo } from './shared';
+import { proofValue } from '../../home-v11/hero-slides';
 
 const SWATCHES = [
   { name: 'Ink', hex: '#1A1040' },
@@ -37,7 +38,7 @@ function FlowWire() {
 }
 
 /** UX/UI design: the system behind the pages. Signature: one page as its three audiences read it. */
-export const uxUiDesign: ExtrasFn = ({ home }) => {
+export const uxUiDesign: ExtrasFn = ({ home, data }) => {
   const t = home.testimonials;
   return {
     heroCard: (
@@ -142,7 +143,7 @@ export const uxUiDesign: ExtrasFn = ({ home }) => {
       lede: 'A positioning-led redesign for a regulated health brand: trust architecture, message hierarchy, and a component system rebuilt so every layout points at one action. Same team designed it and optimized it against real conversion data.',
       cells: (
         <>
-          <VideoCell who="sarig" big="288%" cap="Best conversion increase from a LoudFace design" quote={t.videos[1].quote} person={t.videos[1].person} role={t.videos[1].jobTitle} duration={t.videos[1].duration} />
+          <VideoCell who="sarig" big={proofValue(data, 'dimer')} cap="Best conversion increase from a LoudFace design" quote={t.videos[1].quote} person={t.videos[1].person} role={t.videos[1].jobTitle} duration={t.videos[1].duration} />
           <QuoteCell logo="logos/color-outbound.png" logoAlt="Outbound Specialist" logoW={75} logoH={26} big="$1M+" cap="in sales from one landing page we designed" quote={t.videos[0].quote} person={t.videos[0].person} role={t.videos[0].jobTitle} tone="ind" />
           <VideoCell who="elizabete" quote={t.videos[2].quote} person={t.videos[2].person} role={t.videos[2].jobTitle} duration={t.videos[2].duration} />
           <StatCell tag="Performance" big="90+" cap="Target PageSpeed score on every build">

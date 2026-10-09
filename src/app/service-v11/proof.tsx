@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react';
 import type { HomeV11Content } from '@/lib/content-utils';
-import type { HomeV11Data, Series } from '../home-v11/data';
+import type { HomeV11Data, ProofKey, Series } from '../home-v11/data';
 import { ResultCase } from '../home-v11/ResultCase';
 import { VideoCard } from '../home-v11/Testimonials';
 import type { ValueFormat } from '../home-v11/LiveChart';
@@ -21,20 +21,22 @@ interface Pick {
   square?: boolean;
   pin: boolean;
   format: ValueFormat;
+  /** The case study's published figure the card prints (home-v11/data.ts PROOF). */
+  proof: ProofKey;
   /** Where the words come from: a homepage results case (its claim) and the hero slide that charts this series. */
   from: { cases?: number; slide: HeroSlideKey };
-  /** The chart is the slide's series, not the case's: the number, label and source come from the slide. */
+  /** The chart is the slide's series, not the case's: the words come from the slide. */
   own?: boolean;
 }
 
 const POOL: Record<Key, Pick> = {
-  delshadSearch: { series: (d) => d.results.delshad, href: '/case-studies/delshad-legal-content-engine', icon: 'logos/delshad-icon.jpeg', pin: true, format: 'index', from: { cases: 0, slide: 'delshad' } },
-  genieSearch: { series: (d) => d.results.genie, href: '/case-studies/genie-teacher-organic-growth', icon: 'logos/genie-icon.png', pin: true, format: 'index', from: { cases: 1, slide: 'genie' } },
-  tmClicks: { series: (d) => d.hero.tm, href: '/case-studies/trademomentum-niche-aeo-organic-growth', icon: 'logos/trademomentum-icon.png', square: true, pin: true, format: 'indexWeek', from: { cases: 2, slide: 'tm' } },
-  lfAi: { series: (d) => d.results.lf, href: '/case-studies/loudface-aeo-case-study', pin: false, format: 'pct', from: { cases: 3, slide: 'lf' } },
-  stealthAi: { series: (d) => d.hero.stealth, href: '/case-studies/stealth-fintech-ai-visibility', icon: 'logos/anonymous-icon.svg', pin: false, format: 'pct', from: { slide: 'stealth' } },
-  genieLeads: { series: (d) => d.hero.genieLeads, href: '/case-studies/genie-teacher-organic-growth', icon: 'logos/genie-icon.png', pin: true, format: 'index', from: { slide: 'genieLeads' } },
-  delshadLeads: { series: (d) => d.hero.delshad, href: '/case-studies/delshad-legal-content-engine', icon: 'logos/delshad-icon.jpeg', pin: true, format: 'index', from: { cases: 0, slide: 'delshad' }, own: true },
+  delshadSearch: { series: (d) => d.results.delshad, href: '/case-studies/delshad-legal-content-engine', icon: 'logos/delshad-icon.jpeg', pin: true, format: 'index', proof: 'delshadClicks', from: { cases: 0, slide: 'delshad' } },
+  genieSearch: { series: (d) => d.results.genie, href: '/case-studies/genie-teacher-organic-growth', icon: 'logos/genie-icon.png', pin: true, format: 'index', proof: 'genie', from: { cases: 1, slide: 'genie' } },
+  tmClicks: { series: (d) => d.hero.tm, href: '/case-studies/trademomentum-niche-aeo-organic-growth', icon: 'logos/trademomentum-icon.png', square: true, pin: true, format: 'index', proof: 'tm', from: { cases: 2, slide: 'tm' } },
+  lfAi: { series: (d) => d.results.lf, href: '/case-studies/loudface-aeo-case-study', pin: false, format: 'pct', proof: 'lf', from: { cases: 3, slide: 'lf' } },
+  stealthAi: { series: (d) => d.hero.stealth, href: '/case-studies/stealth-fintech-ai-visibility', icon: 'logos/anonymous-icon.svg', pin: false, format: 'pct', proof: 'stealth', from: { slide: 'stealth' } },
+  genieLeads: { series: (d) => d.hero.genieLeads, href: '/case-studies/genie-teacher-organic-growth', icon: 'logos/genie-icon.png', pin: true, format: 'index', proof: 'genieLeads', from: { slide: 'genieLeads' } },
+  delshadLeads: { series: (d) => d.hero.delshad, href: '/case-studies/delshad-legal-content-engine', icon: 'logos/delshad-icon.jpeg', pin: true, format: 'index', proof: 'delshad', from: { slide: 'delshad' }, own: true },
 };
 
 /** Which results each service shows, one client per cell; the first is the feature. Build services lead with
@@ -103,8 +105,9 @@ export function ServiceResults({ slug, home, data, avoid }: { slug: string; home
       {keys.map((k, i) => {
         const p = POOL[k];
         const slide = heroSlide(home, p.from.slide);
-        const kase = p.from.cases !== undefined ? home.results.cases[p.from.cases] : undefined;
-        const caseWords = p.own ? undefined : kase;
+        const words = p.own || p.from.cases === undefined ? undefined : home.results.cases[p.from.cases];
+        const proof = data?.proof[p.proof];
+        const said = words?.claim ?? slide.caption;
         return (
           <ResultCase
             key={k}
@@ -114,14 +117,15 @@ export function ServiceResults({ slug, home, data, avoid }: { slug: string; home
             href={p.href}
             linkLabel={home.results.caseLink}
             client={slide.client}
-            claim={kase?.claim ?? (i === 0 ? slide.caption : <>{slide.metric} {slide.caption}</>)}
-            metric={i === 0 ? (caseWords?.metric ?? slide.metric) : undefined}
-            metricLabel={i === 0 ? (caseWords?.metricLabel ?? (kase ? slide.caption : <>{home.results.against} {slide.tip}</>)) : undefined}
-            chartLabel={caseWords?.chartLabel ?? slide.tag}
-            source={caseWords?.source}
+            claim={i === 0 || !proof ? said : words ? <>{said} <b>{proof.value}</b></> : <><b>{proof.value}</b> {said}</>}
+            metric={i === 0 ? proof?.value : undefined}
+            metricLabel={i === 0 ? proof?.title : undefined}
+            caption={i === 0 ? undefined : proof?.title}
+            chartLabel={words?.chartLabel ?? slide.tag}
+            source={words?.source}
             series={data ? p.series(data) : null}
             format={p.format}
-            tip={slide.tip}
+            tip={words?.tip ?? slide.tip}
             pin={p.pin}
           />
         );

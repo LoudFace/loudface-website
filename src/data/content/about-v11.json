@@ -48,7 +48,6 @@
       {
         "title": "Increase in conversions",
         "description": "Measured across the Dimer Health engagement over a six-month optimization period.",
-        "fig": "288%",
         "chipClient": "Dimer Health",
         "chipTag": "CRO",
         "period": "Six months"
@@ -56,7 +55,6 @@
       {
         "title": "AI visibility on the core prompt",
         "description": "From absent to cited on the answer that matters in Toku’s category.",
-        "fig": "0 → 97.8%",
         "chipClient": "Toku",
         "chipTag": "AEO",
         "period": "August 2026"
@@ -64,7 +62,6 @@
       {
         "title": "Sales in the first 30 days",
         "description": "Attributed in the month after the rebuilt site went live.",
-        "fig": "$200K",
         "chipClient": "Outbound Specialist",
         "chipTag": "Launch",
         "period": "First 30 days"

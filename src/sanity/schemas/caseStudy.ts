@@ -528,6 +528,37 @@ export const caseStudy = defineType({
           ],
         }),
         defineField({
+          name: 'clickGrowth',
+          title: 'Click growth (weekly Google clicks, indexed)',
+          type: 'object',
+          description:
+            'Weekly Google clicks behind a clicks-per-week headline, so a homepage card can chart the same number the study publishes. INDEXED to the baseline week = 100, never raw clicks.',
+          fields: [
+            defineField({
+              name: 'baselineLabel',
+              title: 'Baseline label',
+              type: 'string',
+              description: 'The week every point is a multiple of, e.g. "the week of 7 June"',
+            }),
+            defineField({ name: 'source', title: 'Source line', type: 'string' }),
+            defineField({
+              name: 'points',
+              title: 'Weekly points (indexed, baseline week = 100)',
+              type: 'array',
+              of: [
+                {
+                  type: 'object',
+                  fields: [
+                    defineField({ name: 'week', title: 'Week start (ISO date)', type: 'string' }),
+                    defineField({ name: 'value', title: 'Indexed value', type: 'number' }),
+                  ],
+                  preview: { select: { title: 'week', subtitle: 'value' } },
+                },
+              ],
+            }),
+          ],
+        }),
+        defineField({
           name: 'publishedResult',
           title: 'Published Google result (headline figures)',
           type: 'object',

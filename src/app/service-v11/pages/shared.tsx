@@ -1,6 +1,8 @@
 import { useId, type ReactNode } from 'react';
 import { img } from '../../home-v11/ui';
 import type { HomeV11Content } from '@/lib/content-utils';
+import type { HomeV11Data } from '../../home-v11/data';
+import { proofValue } from '../../home-v11/hero-slides';
 import { CheckPill, QuoteCell, Tag, Ui, UiHead, VideoCell } from '../kit';
 
 /** Pieces more than one service page draws on. */
@@ -134,14 +136,14 @@ type Voices = HomeV11Content['testimonials'];
 /** Genie Teacher's Clutch review, its published link (the case study uses the same one). */
 const GENIE_REVIEW = { href: 'https://clutch.co/go-to-review/0b257a96-f556-4380-9e58-ba62f822638b/484569', label: 'Read the review on Clutch' };
 /** `plain` drops the figure, for a page that already shows Genie Teacher's number elsewhere. */
-export const GenieQuote = ({ t, plain }: { t: Voices; plain?: boolean }) => (
-  <QuoteCell brandIcon="logos/genie-icon.png" logoAlt="Genie Teacher" logoW={120} logoH={24} big={plain ? undefined : t.cards[1].metric} cap={plain ? undefined : t.cards[1].caption} quote={t.cards[1].quote} person={t.cards[1].person} role={t.cards[1].jobTitle} initial={t.cards[1].initial} review={GENIE_REVIEW} tone="ind" className={plain ? 'is-plain' : ''} />
+export const GenieQuote = ({ t, data, plain }: { t: Voices; data: HomeV11Data | null; plain?: boolean }) => (
+  <QuoteCell brandIcon="logos/genie-icon.png" logoAlt="Genie Teacher" logoW={120} logoH={24} big={plain ? undefined : proofValue(data, 'genie')} cap={plain ? undefined : t.cards[1].caption} quote={t.cards[1].quote} person={t.cards[1].person} role={t.cards[1].jobTitle} initial={t.cards[1].initial} review={GENIE_REVIEW} tone="ind" className={plain ? 'is-plain' : ''} />
 );
-export const BrandfirmQuote = ({ t }: { t: Voices }) => (
-  <QuoteCell logo="logos/brandfirm.png" logoAlt="Brandfirm" logoW={108} logoH={22} big={t.cards[2].metric} cap={t.cards[2].caption} quote={t.cards[2].quote} person={t.cards[2].person} role={t.cards[2].jobTitle} face="people/daan-smit.webp" tone="orange" />
+export const BrandfirmQuote = ({ t, data }: { t: Voices; data: HomeV11Data | null }) => (
+  <QuoteCell logo="logos/brandfirm.png" logoAlt="Brandfirm" logoW={108} logoH={22} big={proofValue(data, 'brandfirm')} cap={t.cards[2].caption} quote={t.cards[2].quote} person={t.cards[2].person} role={t.cards[2].jobTitle} face="people/daan-smit.webp" tone="orange" />
 );
-export const TokuQuote = ({ t, wide }: { t: Voices; wide?: boolean }) => (
-  <QuoteCell wide={wide} logo="logos/toku-ink.png" logoAlt="Toku" logoW={70} logoH={20} big={t.cards[0].metric} cap={t.cards[0].caption} quote={t.cards[0].quote} person={t.cards[0].person} role={t.cards[0].jobTitle} face="people/kenneth-o-friel.webp" tone="ind" />
+export const TokuQuote = ({ t, data, wide }: { t: Voices; data: HomeV11Data | null; wide?: boolean }) => (
+  <QuoteCell wide={wide} logo="logos/toku-ink.png" logoAlt="Toku" logoW={70} logoH={20} big={proofValue(data, 'toku')} cap={t.cards[0].caption} quote={t.cards[0].quote} person={t.cards[0].person} role={t.cards[0].jobTitle} face="people/kenneth-o-friel.webp" tone="ind" />
 );
 /** A client video, wide; `n` indexes home-v11.json testimonials.videos (0 Outbound, 1 Dimer, 2 Reiterate). */
 const WHO = ['maksim', 'sarig', 'elizabete'] as const;

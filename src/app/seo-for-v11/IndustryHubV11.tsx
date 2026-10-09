@@ -110,7 +110,7 @@ export function IndustryHubV11({ h, cards, c, home, data }: { h: SeoForHubConten
     node: (
       <div className="v11-wrap">
         <Head eyebrow={t.eyebrow} title={<span dangerouslySetInnerHTML={{ __html: t.heading }} />} />
-        <IndustryVoices t={t} avoid={voicesAvoid} />
+        <IndustryVoices t={t} data={data} avoid={voicesAvoid} />
       </div>
     ),
   });

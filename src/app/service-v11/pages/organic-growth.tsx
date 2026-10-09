@@ -3,6 +3,7 @@ import { StatCell, Ui, UiHead } from '../kit';
 import { ClimbCard, EngineIcon, GenieQuote, StatusList, TokuQuote, VideoProof } from './shared';
 import { Lines, Named, PromptTable } from './seo-aeo';
 import { ConsoleChart } from './hero-art';
+import { heroSlide, proofValue } from '../../home-v11/hero-slides';
 
 /** The 90-day roadmap as four lanes: each bar a piece of work, placed in the weeks it ships. */
 const LANES = [
@@ -47,17 +48,17 @@ function Roadmap() {
 
 /** Organic growth: four tracks on one roadmap. Signature: the 90-day roadmap as lanes. */
 export const organicGrowth: ExtrasFn = ({ home, data }) => {
-  const s = home.hero.slides;
+  const genie = data?.proof.genie, clicks = data?.proof.genieClicks, lf = data?.proof.lf;
   const t = home.testimonials;
   return {
     // Genie Teacher's own Search Console, its two published figures above its impressions curve
     heroArt: (
-      <ConsoleChart client="Genie Teacher" icon="logos/genie-icon.png" plotTitle="Impressions per day" series={data?.results.genie} tip={s[1].tip} figures={[
-        { k: 'Impressions a day', v: '226×', s: '28 September to 4 October, on the May average' },
-        { k: 'Clicks a week', v: '28×', s: 'On the May average' },
+      <ConsoleChart client="Genie Teacher" icon="logos/genie-icon.png" plotTitle="Impressions per day" series={data?.results.genie} tip={heroSlide(home, 'genie').tip} figures={[
+        { k: 'Impressions a day', v: genie?.value ?? '', s: genie?.title ?? '' },
+        { k: 'Clicks a week', v: clicks?.value ?? '', s: clicks?.title ?? '' },
       ]} />
     ),
-    heroCard: <ClimbCard label="Share of non-branded AI answers" client="LoudFace" from="0.13%" to="21.5%" foot="Our site, Apr → 18–28 Sep 2026" footRight="Peec AI" />,
+    heroCard: <ClimbCard label="Share of non-branded AI answers" client="LoudFace" from={lf?.value.split('→')[0].trim() ?? ''} to={lf?.value.split('→').at(-1)?.trim() ?? ''} foot={lf?.title ?? ''} footRight="Peec AI" />,
     band: [
       { k: 'Tracks', v: 'Four', s: 'Search, content, conversion, authority' },
       { k: 'Roadmap', v: '90 days', s: 'Three to five goals, one scoreboard' },
@@ -117,8 +118,8 @@ export const organicGrowth: ExtrasFn = ({ home, data }) => {
     results: {
       cells: (
         <>
-          <TokuQuote t={t} wide />
-          <StatCell tag="Organic clicks" client="CodeOp" big="+49%" cap="CodeOp organic clicks up 49% and impressions up 43% in four months">
+          <TokuQuote t={t} data={data} wide />
+          <StatCell tag="Organic clicks" client="CodeOp" big={proofValue(data, 'codeop')} cap="CodeOp organic clicks up 49% and impressions up 43% in four months">
             <svg viewBox="0 0 300 150" width="100%" aria-hidden="true" className="cro-bars" style={{ paddingTop: 0 }}>
               <line x1="0" x2="300" y1="130" y2="130" stroke="#dcdbe6" />
               <rect x="30" y="64" width="50" height="66" rx="3" fill="#ecebf3" /><rect x="90" y="32" width="50" height="98" rx="3" fill="#c9c3f7" />
@@ -127,7 +128,7 @@ export const organicGrowth: ExtrasFn = ({ home, data }) => {
             </svg>
           </StatCell>
           <VideoProof t={t} n={2} />
-          <GenieQuote t={t} />
+          <GenieQuote t={t} data={data} />
         </>
       ),
     },

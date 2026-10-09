@@ -5,9 +5,11 @@ import { LiveChart } from '../../home-v11/LiveChart';
 import { BarsCell, QuoteCell, Tag, Ui, UiHead } from '../kit';
 import { BrandfirmQuote, VideoProof } from './shared';
 import { GrowthBoard } from './hero-art';
+import { heroSlide, proofValue } from '../../home-v11/hero-slides';
+import type { ProofKey } from '../../home-v11/data';
 
 /** A tile's live chart: a published case-study series at tile size. */
-export function TileChart({ head, client, num, series, format, tip }: { head: string; client: string; num: string; series?: Series; format: 'index' | 'pct'; tip: string }) {
+export function TileChart({ head, client, num, series, format, tip }: { head: string; client: string; num?: string; series?: Series; format: 'index' | 'pct'; tip: string }) {
   return (
     <Ui style={{ gap: 6 }}>
       <UiHead left={head} right={client} />
@@ -17,10 +19,10 @@ export function TileChart({ head, client, num, series, format, tip }: { head: st
   );
 }
 
-const LOOP: { k: string; s: string; m: string; mk: string }[] = [
-  { k: 'SEO', s: 'The foundation', m: '226×', mk: 'Genie Teacher, Google impressions a day' },
-  { k: 'AEO', s: 'The visibility layer', m: '97.8%', mk: 'Toku, AI visibility on its core prompt' },
-  { k: 'CRO', s: 'Where it converts', m: '288%', mk: 'Dimer Health, best conversion increase' },
+const LOOP: { k: string; s: string; proof: ProofKey; mk: string }[] = [
+  { k: 'SEO', s: 'The foundation', proof: 'genie', mk: 'Genie Teacher, Google impressions a day' },
+  { k: 'AEO', s: 'The visibility layer', proof: 'toku', mk: 'Toku, AI visibility on its core prompt' },
+  { k: 'CRO', s: 'Where it converts', proof: 'dimer', mk: 'Dimer Health, best conversion increase' },
 ];
 const LINKS = ['Authority earns the citation', 'Cited pages convert the traffic'];
 
@@ -35,7 +37,6 @@ function Arrow({ label }: { label: ReactNode }) {
 
 /** Growth Autopilot: three disciplines as one system. Signature: the loop, each layer feeding the next, with its real number. */
 export const growthAutopilot: ExtrasFn = ({ home, data }) => {
-  const s = home.hero.slides;
   const t = home.testimonials;
   return {
     chartsUseHomeHead: true,
@@ -62,7 +63,7 @@ export const growthAutopilot: ExtrasFn = ({ home, data }) => {
           <div key={l.k} style={{ display: 'flex', alignItems: 'center', gap: 12, paddingTop: i ? 10 : 0, borderTop: i ? '1px solid var(--line)' : 0 }}>
             <Tag tone="ind">{l.k}</Tag>
             <span style={{ flex: 1, fontSize: 12, color: 'var(--quiet)' }}>{l.mk.split(',')[0]}</span>
-            <b style={{ fontFamily: 'var(--font-heading)', fontWeight: 500, fontSize: 20, letterSpacing: '-0.03em' }}>{l.m}</b>
+            <b style={{ fontFamily: 'var(--font-heading)', fontWeight: 500, fontSize: 20, letterSpacing: '-0.03em' }}>{proofValue(data, l.proof)}</b>
           </div>
         ))}
       </div>
@@ -73,19 +74,19 @@ export const growthAutopilot: ExtrasFn = ({ home, data }) => {
       { k: 'Scoreboard', v: 'One', s: 'Tied to pipeline, not vanity metrics' },
     ],
     tiles: [
-      { tag: 'Foundation', art: <TileChart head="Google impressions a day" client="Genie Teacher" num="226×" series={data?.hero.genie} format="index" tip={s[1].tip} /> },
-      { tag: 'Visibility', art: <TileChart head="Share of AI answers" client="LoudFace" num={s[0].metric} series={data?.hero.lf} format="pct" tip={s[0].tip} /> },
-      { tag: 'Conversion', art: <TileChart head="Lead requests a week" client="Genie Teacher" num={s[5].metric} series={data?.hero.genieLeads} format="index" tip={s[5].tip} /> },
+      { tag: 'Foundation', art: <TileChart head="Google impressions a day" client="Genie Teacher" num={proofValue(data, 'genie')} series={data?.hero.genie} format="index" tip={heroSlide(home, 'genie').tip} /> },
+      { tag: 'Visibility', art: <TileChart head="Share of AI answers" client="LoudFace" num={proofValue(data, 'lf')} series={data?.hero.lf} format="pct" tip={heroSlide(home, 'lf').tip} /> },
+      { tag: 'Conversion', art: <TileChart head="Lead requests a week" client="Genie Teacher" num={proofValue(data, 'genieLeads')} series={data?.hero.genieLeads} format="index" tip={heroSlide(home, 'genieLeads').tip} /> },
     ],
     results: {
       title: <>One system took Toku to <span className="ghost">97.8% AI visibility.</span></>,
       lede: 'SEO, AEO, and CRO run as one program by one team — the authority that ranks the pages is the authority that gets them cited by AI, and the same pages are built to convert the traffic they earn.',
       cells: (
         <>
-          <QuoteCell wide logo="logos/toku-ink.png" logoAlt="Toku" logoW={84} logoH={24} big="0 → 97.8%" cap="Toku’s AI visibility on its core prompt, from a standing start" quote={t.cards[0].quote} person={t.cards[0].person} role={t.cards[0].jobTitle} face="people/kenneth-o-friel.webp" tone="ind" />
-          <BarsCell tag="Conversion rate" client="Dimer Health" big="288%" cap="Best conversion increase from a LoudFace program" before="Before" after="After six months" />
+          <QuoteCell wide logo="logos/toku-ink.png" logoAlt="Toku" logoW={84} logoH={24} big={proofValue(data, 'toku')} cap="Toku’s AI visibility on its core prompt, from a standing start" quote={t.cards[0].quote} person={t.cards[0].person} role={t.cards[0].jobTitle} face="people/kenneth-o-friel.webp" tone="ind" />
+          <BarsCell tag="Conversion rate" client="Dimer Health" big={proofValue(data, 'dimer')} cap="Best conversion increase from a LoudFace program" before="Before" after="After six months" />
           <VideoProof t={t} n={0} big="$1M+" cap="in sales from one landing page we designed" />
-          <BrandfirmQuote t={t} />
+          <BrandfirmQuote t={t} data={data} />
         </>
       ),
     },
@@ -101,7 +102,7 @@ export const growthAutopilot: ExtrasFn = ({ home, data }) => {
                 <div className={`sv-loop-node ${i === 0 ? 'is-ind' : i === 1 ? 'is-lav' : 'is-peach'}`}>
                   <span className="sv-loop-k">{l.k}</span>
                   <span className="sv-loop-s">{l.s}</span>
-                  <span className="sv-loop-m">{l.m}</span>
+                  <span className="sv-loop-m">{proofValue(data, l.proof)}</span>
                   <span className="sv-loop-mk">{l.mk}</span>
                 </div>
                 {i < 2 && <Arrow label={LINKS[i]} />}

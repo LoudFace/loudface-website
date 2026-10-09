@@ -17,6 +17,7 @@ import '../../ai-instructions-v11/ai.css';
 import { getAiInstructionsV11Content, getHomeV11Content, rawContent, type AiInstructionsV11Content } from '@/lib/content-utils';
 import { SOCIAL_LINKS } from '@/lib/icons';
 import { AiInstructionsV11 } from '../../ai-instructions-v11/AiInstructionsV11';
+import { getHomeV11Data } from '../../home-v11/data';
 import { serializeJsonLd } from '@/lib/schema-utils';
 
 const SITE_URL = 'https://www.loudface.co';
@@ -48,7 +49,7 @@ export const metadata: Metadata = {
 };
 
 export default async function AiInstructionsPage() {
-  const [c, home] = await Promise.all([getAiInstructionsV11Content(), getHomeV11Content()]);
+  const [c, home, data] = await Promise.all([getAiInstructionsV11Content(), getHomeV11Content(), getHomeV11Data()]);
 
   const sameAs = [...SOCIAL_LINKS.map((s) => s.href), 'https://webflow.com/@loudface'];
 
@@ -126,7 +127,7 @@ export default async function AiInstructionsPage() {
           dangerouslySetInnerHTML={{ __html: serializeJsonLd(schema) }}
         />
       ))}
-      <AiInstructionsV11 c={c} home={home} />
+      <AiInstructionsV11 c={c} home={home} data={data} />
     </>
   );
 }

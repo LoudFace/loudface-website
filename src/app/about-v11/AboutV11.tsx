@@ -13,6 +13,8 @@ import { ArrowRight, ArrowUpRight, LfMark, SectionHeadNode, img, personPhoto } f
 import { Browser, Tag, Ui, UiHead } from '../service-v11/kit';
 import { SHOTS } from '../service-v3/data';
 import { strip } from '@/lib/inline-edit/mark';
+import type { ProofKey } from '../home-v11/data';
+import { proofValue } from '../home-v11/hero-slides';
 
 /**
  * About v11: the people and the record, in the v11 language with its own pictures (DESIGN.md §6, §7).
@@ -32,10 +34,11 @@ const TEAM = ['arnel-bukva', 'tamara-pavlovic', 'andrea-van-wyk', 'abhay-tyagi']
 /** Each lead's ground: the v11 tile tints. */
 const GROUND = ['is-lav', 'is-peach', 'is-sand', 'is-mint'];
 const LEDGER_TONE = ['is-lav', 'is-peach', 'is-sand'];
-const LEDGER: Record<string, { logo: string; w: number; h: number; href: string }> = {
-  'Dimer Health': { logo: 'logos/color-dimer.png', w: 82, h: 28, href: '/case-studies/dimer-health' },
-  Toku: { logo: 'logos/color-toku.png', w: 62, h: 20, href: '/case-studies/toku-ai-cited-pipeline' },
-  'Outbound Specialist': { logo: 'logos/color-outbound.png', w: 75, h: 30, href: '/case-studies/outbound-specialist' },
+/** Per client: logo, case study, and the case study's published figure the tile prints (`proof`). */
+const LEDGER: Record<string, { logo: string; w: number; h: number; href: string; proof: ProofKey }> = {
+  'Dimer Health': { logo: 'logos/color-dimer.png', w: 82, h: 28, href: '/case-studies/dimer-health', proof: 'dimer' },
+  Toku: { logo: 'logos/color-toku.png', w: 62, h: 20, href: '/case-studies/toku-ai-cited-pipeline', proof: 'toku' },
+  'Outbound Specialist': { logo: 'logos/color-outbound.png', w: 75, h: 30, href: '/case-studies/outbound-specialist', proof: 'outbound' },
 };
 /** Client pins on the map, in percent of the map box (from the projection that drew client-map.svg), each with the
  * side its label sits on. `w` is the logo's width in the pin, set by eye so the six marks weigh the same. */
@@ -165,7 +168,7 @@ export function AboutV11({ c, home, data }: { c: AboutV11Content; home: HomeV11C
                     {l && <img loading="lazy" src={img(l.logo)} alt={client} width={l.w} height={l.h} style={{ height: l.h, width: 'auto' }} />}
                     {r.chipTag && <Tag tone="ind">{r.chipTag}</Tag>}
                   </div>
-                  <div className="ab-fig-value">{r.fig}</div>
+                  <div className="ab-fig-value">{l ? proofValue(data, l.proof) : null}</div>
                   <div className="ab-fig-title">{r.title}</div>
                   <p className="ab-fig-desc">{r.description}</p>
                   <div className="ab-fig-foot">
@@ -175,7 +178,7 @@ export function AboutV11({ c, home, data }: { c: AboutV11Content; home: HomeV11C
                 </Link>
               );
             })}
-            <div className="ab-ledger-quote"><QuoteCard k={home.testimonials.cards[2]} i={2} /></div>
+            <div className="ab-ledger-quote"><QuoteCard k={home.testimonials.cards[2]} i={2} data={data} /></div>
             <div className="ab-facts">
               <div className="ab-facts-row">
                 {c.ledger.rows.slice(3, 5).map((r) => (
@@ -225,7 +228,7 @@ export function AboutV11({ c, home, data }: { c: AboutV11Content; home: HomeV11C
               <div className="sv-tile-art">
                 <Ui className="ab-grow-ui">
                   {/* a year of one client's search growth; the Genie curve leads its own case study and the organic growth page */}
-                  {data && <ChartPanel title={c.values.grow.chartTitle} source={c.values.grow.chartSource} series={data.results.tm} format="indexWeek" tip={heroSlide(home, 'tm').tip} height={200} />}
+                  {data && <ChartPanel title={c.values.grow.chartTitle} source={c.values.grow.chartSource} series={data.hero.tm} format="index" tip={heroSlide(home, 'tm').tip} height={200} />}
                 </Ui>
               </div>
             </div>

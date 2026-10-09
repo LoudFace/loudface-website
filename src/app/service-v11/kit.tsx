@@ -4,6 +4,7 @@ import { LiveChart } from '../home-v11/LiveChart';
 import { VideoStill } from '../home-v11/VideoStill';
 import { img } from '../home-v11/ui';
 import { cachedCmsImage, cachedCmsSrcSet } from '@/lib/image-utils';
+import { periodOf } from '../home-v11/hero-slides';
 
 /**
  * The service pages' shared parts (DESIGN.md v11): small product-UI cards, status tags and the proof cells.
@@ -117,7 +118,7 @@ export function VideoCell({ who, big, cap, quote, person, role, duration }: { wh
 }
 
 /** A number with a before/after pair of bars. */
-export function BarsCell({ tag, client, big, cap, before, after, tone = 'ind' }: { tag: string; client: string; big: string; cap: string; before: string; after: string; tone?: 'ind' | 'ink' }) {
+export function BarsCell({ tag, client, big, cap, before, after, tone = 'ind' }: { tag: string; client: string; big?: string; cap: string; before: string; after: string; tone?: 'ind' | 'ink' }) {
   return (
     <div className="cro-cell">
       <Marks />
@@ -136,7 +137,7 @@ export function BarsCell({ tag, client, big, cap, before, after, tone = 'ind' }:
   );
 }
 
-type Slide = { tag: string; client: string; metric: string; caption: string; periodStart: string; periodEnd: string; tip: string };
+type Slide = { tag: string; client: string; caption: string; tip: string };
 
 /** A live chart on a published case-study series. */
 export function ChartCell({ slide, series, format = 'index', big, wide }: { slide: Slide; series?: Series; format?: 'index' | 'indexWeek' | 'pct'; big?: string; wide?: boolean }) {
@@ -144,12 +145,12 @@ export function ChartCell({ slide, series, format = 'index', big, wide }: { slid
     <div className={`cro-cell ${wide ? 'is-wide' : ''}`}>
       <Marks />
       <div className="cro-tag"><span className="is-tag">{slide.tag}</span><span>· {slide.client}</span></div>
-      <div className="cro-big">{big ?? slide.metric}</div>
+      <div className="cro-big">{big}</div>
       <div className="cro-cap">{slide.caption}</div>
       <div className="cro-chart">
         {series && <LiveChart series={series} height={wide ? 210 : 170} margin={{ top: 22, right: 10, bottom: 6, left: 10 }} dots={false} hatch lineWidth={1.75} barGap={0.5} pin={20} end="plain" tip={slide.tip} format={format} />}
       </div>
-      <div className="cro-dates"><span>{slide.periodStart}</span><span>{slide.periodEnd}</span></div>
+      <div className="cro-dates"><span>{periodOf(series).start}</span><span>{periodOf(series).end}</span></div>
     </div>
   );
 }
@@ -195,7 +196,7 @@ export function QuoteCell({ logo, logoUrl, logoAlt, logoW, logoH, brandIcon, big
 }
 
 /** A plain number: for facts with no series behind them. */
-export function StatCell({ tag, client, big, cap, children, tone = 'ink' }: { tag: string; client?: string; big: string; cap: string; children?: ReactNode; tone?: 'ink' | 'ind' }) {
+export function StatCell({ tag, client, big, cap, children, tone = 'ink' }: { tag: string; client?: string; big?: string; cap: string; children?: ReactNode; tone?: 'ink' | 'ind' }) {
   return (
     <div className="cro-cell">
       <Marks />

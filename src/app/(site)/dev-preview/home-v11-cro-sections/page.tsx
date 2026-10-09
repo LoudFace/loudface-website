@@ -8,6 +8,7 @@ import { heroSlide } from '../../../home-v11/hero-slides';
 import { LiveChart } from '../../../home-v11/LiveChart';
 import { VideoStill } from '../../../home-v11/VideoStill';
 import { Eyebrow, img } from '../../../home-v11/ui';
+import { periodOf, proofValue } from '../../../home-v11/hero-slides';
 
 export const metadata: Metadata = { title: 'CRO sections preview', robots: { index: false, follow: false } };
 export const revalidate = 3600;
@@ -75,24 +76,24 @@ export default async function CroSections() {
             <div className="cro-cell">
               <Marks />
               <div className="cro-tag"><span className="is-tag">{del.tag}</span><span>· {del.client}</span></div>
-              <div className="cro-big">{del.metric}</div>
+              <div className="cro-big">{proofValue(data, 'delshad')}</div>
               <div className="cro-cap">{del.caption}</div>
               <div className="cro-chart">{chart(data?.hero.delshad, del.tip)}</div>
-              <div className="cro-dates"><span>{del.periodStart}</span><span>{del.periodEnd}</span></div>
+              <div className="cro-dates"><span>{periodOf(data?.hero.delshad).start}</span><span>{periodOf(data?.hero.delshad).end}</span></div>
             </div>
             <div className="cro-cell">
               <Marks />
               <div className="cro-tag"><span className="is-tag">{gl.tag}</span><span>· {gl.client}</span></div>
-              <div className="cro-big">{gl.metric}</div>
+              <div className="cro-big">{proofValue(data, 'genieLeads')}</div>
               <div className="cro-cap">{gl.caption}</div>
               <div className="cro-chart">{chart(data?.hero.genieLeads, gl.tip)}</div>
-              <div className="cro-dates"><span>{gl.periodStart}</span><span>{gl.periodEnd}</span></div>
+              <div className="cro-dates"><span>{periodOf(data?.hero.genieLeads).start}</span><span>{periodOf(data?.hero.genieLeads).end}</span></div>
             </div>
             <div className="cro-cell is-brand">
               <Marks />
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img src={img('logos/brandfirm.png')} alt="Brandfirm" width={108} height={22} className="cro-logo" />
-              <div className="cro-big is-orange">{brand.metric}</div>
+              <div className="cro-big is-orange">{proofValue(data, 'brandfirm')}</div>
               <div className="cro-cap">{brand.caption}</div>
               <p className="cro-quote">{brand.quote}</p>
               <div className="cro-who">

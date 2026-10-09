@@ -42,7 +42,8 @@ export interface NavV11Data {
   clientsLink: string;
   clientsHref: string;
   /** The homepage's AI-answers tile (home-v11.json bento.tiles[0]) and its answer window (bento.chat). */
-  feature: HomeV11Content['bento']['tiles'][number] & { chat: HomeV11Content['bento']['chat'] };
+  /** `metric` is Toku's published figure from its case study (home-v11/data.ts PROOF), absent if Sanity is down. */
+  feature: HomeV11Content['bento']['tiles'][number] & { chat: HomeV11Content['bento']['chat']; metric?: string };
   /** The buyer question each industry page answers, by page (nav-data.ts reads them from the pages' own content). */
   questions?: Record<string, string>;
 }

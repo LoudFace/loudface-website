@@ -5,7 +5,7 @@ import type { ValueFormat } from './LiveChart';
 import { StageChart } from './StageChart';
 import { HeroSlider } from './HeroSlider';
 import { Eyebrow, LfMark, img } from './ui';
-import { HERO_SLIDES } from './hero-slides';
+import { HERO_SLIDES, periodOf, proofValue } from './hero-slides';
 
 export function HeroV11({ c, data }: { c: HomeV11Content['hero']; data: HomeV11Data | null }) {
   return (
@@ -41,19 +41,21 @@ export function HeroRail({ c, data }: { c: HomeV11Content['hero']; data: HomeV11
     >
       {c.slides.map((s, i) => {
         const cfg = HERO_SLIDES[i];
+        const series = data?.hero[cfg.series];
+        const period = periodOf(series);
         return (
           <StageChart
             key={i}
             href={cfg.href}
             tag={s.tag}
             client={s.client}
-            metric={s.metric}
+            metric={proofValue(data, cfg.series)}
             compact={cfg.compact}
-            series={data?.hero[cfg.series]}
+            series={series}
             format={cfg.format}
             tip={s.tip}
-            periodStart={s.periodStart}
-            periodEnd={s.periodEnd}
+            periodStart={period.start}
+            periodEnd={period.end}
             caption={s.caption}
           />
         );

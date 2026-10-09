@@ -398,11 +398,21 @@ Since 2026-09-26 every live route renders its v11 component (route map: `docs/v1
 The v11 redesign's component library. The full table (part, file, when to use it) is DESIGN.md §7; every part is shown
 at `/dev-preview/home-v11-kit` and on the Paper page "Design system · v11". Not yet on live routes.
 
+**Client figures come from the case studies, never from a content file (2026-10-09).** Every number a v11 tile prints
+for a client (hero rail, bento, results, quote cards, service and industry proof cells, About ledger, case-studies index,
+the menu's AI-answers card) is that case study's own `resultNNumber` in Sanity, with `resultNTitle` as its window.
+`home-v11/data.ts` maps each figure to its study and slot (`PROOF`) and returns them as `getHomeV11Data().proof`;
+components print `proofValue(data, key)` (`home-v11/hero-slides.ts`), and chart date rows use `periodOf(series)`. So
+`Bento`, `Testimonials`, `QuoteCard`, `IndustryVoices`, `GenieQuote`/`TokuQuote`/`BrandfirmQuote`, `AuditPageV11`,
+`PartnersV11` and `AiInstructionsV11` take `data: HomeV11Data | null`, and `Route` takes `metric`. To add a figure:
+put it in the study's result fields, add a `PROOF` key, print `proofValue(data, key)`. A case-study refresh then updates
+every tile that quotes it. If a mapped field is empty, `getHomeV11Data()` returns null and logs which one.
+
 | Component | File | Description | Client? |
 |-----------|------|-------------|---------|
 | `ResultCase` | `home-v11/ResultCase.tsx` | Result card with a live chart; `feature` adds number, extra figures, axis and caption | No |
 | `StageChart` | `home-v11/StageChart.tsx` | Result drawn white on the indigo stage; `size="slide"` (rail) or `"hero"` | No |
-| `QuoteCard` | `home-v11/Testimonials.tsx` | Client number and quote on the client's tint | No |
+| `QuoteCard` | `home-v11/Testimonials.tsx` | Client number and quote on the client's tint. Props: `k`, `i`, `data` (the number is the card's case-study figure) | No |
 | `SectionHeadNode` | `home-v11/ui.tsx` | `SectionHead` for headings passed as markup | No |
 | `personPhoto(slug)`, `personAvatar(slug)` | `home-v11/ui.tsx` | URL of a person's photo (square, slots crop it with `object-fit: cover`) and round avatar. Always use these, never `img('team/…')`: a new photo gets a new file name via `PHOTO_SUFFIX`, since `/images` is cached for a year. New photos: `scripts/design/team-photos.py` | — |
 | `ChatWindow` | `home-v11/Bento.tsx` | The ChatGPT answer window at true size. Props: `c` (the chat copy), `className?` (`is-hero` = service hero picture size), `sourceIcon?` (the first source's favicon, default Toku; `null` = plain placeholder for an example answer) | No |
