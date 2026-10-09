@@ -28,8 +28,10 @@ export function weekly(points: { date?: string; clicks: number }[], from: string
 }
 
 /**
- * Google clicks a week, indexed to the week the engagement began (its Monday-start ISO week = 100), with the index of
- * the highest week: the series behind a "clicks per week, week the work began → its best week" headline.
+ * Google clicks a week, indexed to the week the engagement began (its Monday-start ISO week = 100), through its highest
+ * week: the window of a "clicks per week, week the work began → its best week" headline. The chart ends where the
+ * published figure ends, so its end dot is that week (2026-10-09: a dot on the peak with the line running past it read
+ * as misplaced); any later week is stated in the study's text.
  */
 export function clicksPerWeek(points: { date?: string; clicks: number }[], engagementStart: string) {
   const days = points.filter((p) => p.date);
@@ -37,5 +39,6 @@ export function clicksPerWeek(points: { date?: string; clicks: number }[], engag
   const base = raw.values[raw.dates.findIndex((d) => isoWeekKey(d) === isoWeekKey(engagementStart))];
   if (!base) return null;
   const values = raw.values.map((v) => (v / base) * 100);
-  return { dates: raw.dates, values, peak: values.indexOf(Math.max(...values)) };
+  const end = values.indexOf(Math.max(...values)) + 1;
+  return { dates: raw.dates.slice(0, end), values: values.slice(0, end) };
 }

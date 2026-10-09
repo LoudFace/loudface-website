@@ -155,12 +155,9 @@ export const getHomeV11Data = cache(async (): Promise<HomeV11Data | null> => {
   const lfVals = lf.topicClimb.points.map((p) => p.value * 100);
   const gTrend = genie.indexedTrend.points.filter((p) => p.date);
   const tTrend = tm.indexedTrend.points.filter((p) => p.date);
-  // Weekly clicks indexed to the week the engagement began, the same baseline as the study's clicks-per-week headline;
-  // that headline is the highest week, so the end annotation sits on it.
-  const tmClicks = clicksPerWeek(tTrend, tm.engagementStart ?? '2025-09-07');
-  if (!tmClicks) return null;
-  const tmWeekly = { dates: tmClicks.dates, values: tmClicks.values };
-  const tmPeak = tmClicks.peak;
+  // Weekly clicks indexed to the week the engagement began, through the highest week: the study's clicks-per-week headline
+  const tmWeekly = clicksPerWeek(tTrend, tm.engagementStart ?? '2025-09-07');
+  if (!tmWeekly) return null;
   const dClicks = delshad.clickGrowth.points;
   const stealthPts = stealth.topicClimb?.points ?? [];
   const stealthRolled = rolling(stealthPts.map((p) => p.value * 100), 5);
@@ -178,9 +175,8 @@ export const getHomeV11Data = cache(async (): Promise<HomeV11Data | null> => {
       genie: genieImpressions,
       // Google clicks a week outside the celebrity-case pages, indexed to the week of 7 June: the study's 14.8×
       delshad: { dates: dClicks.map((p) => p.week), values: dClicks.map((p) => p.value), start: delshad.engagementStart ?? '2026-06-04' },
-      tm: { dates: tmWeekly.dates, values: tmWeekly.values, start: tm.engagementStart ?? '2025-09-07', peak: tmPeak },
-      // its published figure is the 3 Aug peak, so the end mark sits on the peak, not on the settled last reading
-      stealth: { dates: stealthPts.map((p) => p.week), values: stealthRolled, start: '2026-06-15', peak: stealthRolled.indexOf(Math.max(...stealthRolled)) },
+      tm: { dates: tmWeekly.dates, values: tmWeekly.values, start: tm.engagementStart ?? '2025-09-07' },
+      stealth: { dates: stealthPts.map((p) => p.week), values: stealthRolled, start: '2026-06-15' },
       // the anonymous health-tech study (2026-09-27): Google impressions a day, indexed to its December = 100
       health: hTrend.length ? {
         dates: hTrend.map((p) => p.date as string),

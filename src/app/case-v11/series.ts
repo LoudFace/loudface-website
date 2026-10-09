@@ -70,10 +70,10 @@ export function caseSeries(ins: CaseStudyInstruments | undefined): CaseSeries {
   if (cg?.points.length) {
     const dates = cg.points.map((x) => x.week);
     const values = cg.points.map((x) => x.value);
-    out.clicks = { series: { dates, values, start: startOf(start, dates), peak: values.indexOf(Math.max(...values)) }, title: cg.title ?? 'Google clicks per week', tip: cg.baselineLabel ?? 'the first week', source: cg.source };
+    out.clicks = { series: { dates, values, start: startOf(start, dates) }, title: cg.title ?? 'Google clicks per week', tip: cg.baselineLabel ?? 'the first week', source: cg.source };
   } else if (start && daily.length > 8 * 7) {
     const w = clicksPerWeek(daily, start);
-    if (w) out.clicks = { series: { dates: w.dates, values: w.values, start, peak: w.peak }, title: 'Google clicks per week', tip: 'the week the work began', source: ins.gscSource };
+    if (w) out.clicks = { series: { dates: w.dates, values: w.values, start }, title: 'Google clicks per week', tip: 'the week the work began', source: ins.gscSource };
   }
   const lg = ins.leadGrowth;
   if (lg?.points.length) {
@@ -96,11 +96,7 @@ export function caseSeries(ins: CaseStudyInstruments | undefined): CaseSeries {
  */
 export function trendHolds(series: Series): boolean {
   const v = series.values;
-  if (v.length < 2) return false;
-  // a series whose published figure is its peak, with the peak in its last tenth, reads the same way: the end mark
-  // sits on that peak (TradeMomentum's best week was the week before its latest)
-  const latePeak = series.peak !== undefined && series.peak >= Math.floor(v.length * 0.9);
-  return v[v.length - 1] >= 0.8 * Math.max(...v) || latePeak;
+  return v.length > 1 && v[v.length - 1] >= 0.8 * Math.max(...v);
 }
 
 /** Only the charts that can stand alone without a caption. */
