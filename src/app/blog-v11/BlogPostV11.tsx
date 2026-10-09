@@ -16,9 +16,14 @@ import { cachedCmsImage, cachedCmsSrcSet } from '@/lib/image-utils';
 
 /**
  * A blog post in v11 (DESIGN.md §6, §7). The article is the product: an editorial title column on white, the
- * post's own picture on a wide plate, the short answer card straddling its lower edge (the live template's
- * signature, kept), then the reading column with its contents and tools in a sticky rail. Labels are
- * src/data/content/blog-v11.json; the data is prepared as the live page prepares it (./view.ts).
+ * post's own picture on a wide plate, then the reading column, which opens with the short answer card, with
+ * its contents and tools in a sticky rail. Labels are src/data/content/blog-v11.json; the data is prepared as
+ * the live page prepares it (./view.ts).
+ *
+ * The short answer opens the reading column, as a paragraph just before the body (2026-10-09). On the hero's
+ * edge, as an <aside>, Readability and Trafilatura (the article extractors many AI fetchers use) dropped it on
+ * every post tested; here both keep it and read it first. It stays outside [data-lf-body], which the inline
+ * editor treats as the stored article HTML, so editing the body never touches it.
  */
 
 const TEAM = ['arnel-bukva', 'tamara-pavlovic', 'andrea-van-wyk', 'abhay-tyagi'];
@@ -31,7 +36,7 @@ export function BlogPostV11({ c, home, v, nextStep = false }: { c: BlogV11Conten
   return (
     <div className="v11 bp">
       <article>
-        {/* 1 · the title column, then the picture with the short answer on its edge */}
+        {/* 1 · the title column, then the picture */}
         <header className="bp-hero" data-hero="light">
           <div className="v11-wrap">
             <nav className="bp-crumbs" aria-label="Breadcrumb"><Link href="/">{t.home}</Link><span aria-hidden="true">/</span><Link href="/blog">{t.blog}</Link>{v.categoryName && <><span aria-hidden="true">/</span><span>{v.categoryName}</span></>}</nav>
@@ -51,25 +56,25 @@ export function BlogPostV11({ c, home, v, nextStep = false }: { c: BlogV11Conten
                 </div>
               </div>
             </div>
-            <div className={`bp-plate ${v.directAnswer ? 'has-answer' : ''}`}>
+            <div className="bp-plate">
               {v.thumbnailUrl ? (
                 // eslint-disable-next-line @next/next/no-img-element
                 <img src={cachedCmsImage(`${v.thumbnailUrl}?w=1800&h=900&fit=crop&fm=webp&q=82`, 1920)} srcSet={cachedCmsSrcSet(`${v.thumbnailUrl}?w=1800&h=900&fit=crop&fm=webp&q=82`, [828, 1920])} sizes="(max-width: 767px) 92vw, 1296px" alt="" width={1800} height={900} />
               ) : <PostCover title={v.title} categoryName={v.categoryName} />}
             </div>
-            {v.directAnswer && (
-              <aside className="bp-answer" aria-label={strip(t.answerLabel)}>
-                <div className="bp-answer-tag"><LfMark size={18} /><span>{t.answerLabel}</span></div>
-                <p data-speakable="">{v.directAnswer}</p>
-              </aside>
-            )}
           </div>
         </header>
 
-        {/* 2 · the reading column, with contents, AI tools and the call beside it */}
+        {/* 2 · the reading column, opening with the short answer, with contents, AI tools and the call beside it */}
         <section className="bp-read">
           <div className="v11-wrap bp-read-grid">
             <div className="v11-prose sv-article-body cs-body bp-body">
+              {v.directAnswer && (
+                <p className="bp-answer">
+                  <span className="bp-answer-tag"><LfMark size={18} /><span>{t.answerLabel}</span></span>
+                  <span className="bp-answer-text" data-speakable="">{v.directAnswer}</span>
+                </p>
+              )}
               <BlogBodyV3 html={v.html} visuals={v.visuals} />
             </div>
             <aside className="bp-rail">

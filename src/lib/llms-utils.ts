@@ -217,12 +217,13 @@ export async function fetchLlmsData(includeContent = false): Promise<LlmsData> {
       name: string;
       excerpt: string;
       content: string;
+      directAnswer?: string;
       publishedDate: string;
     }>>(`*[_type == "blogPost" && defined(slug.current)] | order(publishedDate desc) {
       "slug": slug.current,
       name,
       excerpt,
-      ${includeContent ? 'content,' : ''}
+      ${includeContent ? 'content, directAnswer,' : ''}
       publishedDate
     }`),
     client.fetch<Array<{
@@ -263,7 +264,7 @@ export async function fetchLlmsData(includeContent = false): Promise<LlmsData> {
       title: bp.name,
       url: `${SITE_URL}/blog/${bp.slug}`,
       description: truncateAtSentence(bp.excerpt) || `${bp.name}.`,
-      ...(includeContent && bp.content ? { content: htmlToMarkdown(bp.content) } : {}),
+      ...(includeContent && bp.content ? { content: blogPostMarkdown(bp.directAnswer, bp.content) } : {}),
     })), redirects),
     seoPages: withoutRedirects((seoPages || []).map(sp => ({
       title: sp.name,
@@ -406,8 +407,9 @@ export async function generatePageMarkdown(path: string): Promise<string | null>
       name: string;
       excerpt: string;
       content: string;
+      directAnswer?: string;
     }>>(`*[_type == "blogPost" && slug.current == $slug] {
-      name, excerpt, content
+      name, excerpt, content, directAnswer
     }`, { slug });
 
     if (!post) return null;
@@ -416,9 +418,19 @@ export async function generatePageMarkdown(path: string): Promise<string | null>
       '',
       post.excerpt || '',
       '',
-      htmlToMarkdown(post.content || ''),
+      blogPostMarkdown(post.directAnswer, post.content || ''),
     ].join('\n');
   }
 
   return null;
+}
+
+/**
+ * A blog post's Markdown body, opening with its short answer as the HTML page does (2026-10-09). The answer is a
+ * separate Sanity field, so until then both Markdown copies (/blog/<slug>.md and llms-full.txt) left it out.
+ */
+function blogPostMarkdown(directAnswer: string | undefined, contentHtml: string): string {
+  const answer = directAnswer?.trim();
+  const body = htmlToMarkdown(contentHtml);
+  return answer ? `**The short answer:** ${answer}\n\n${body}` : body;
 }

@@ -169,6 +169,9 @@ homepage quality and joins the library **before** a page uses it. Two copies of 
   product UI or a document in most sections.
 - The live page is the floor: set each new section beside the live section it replaces; sparser fails.
 - Page type before design: a service URL whose body is an article is flagged, not designed as a service.
+- A post's short answer opens the reading column, as plain text just before the body; never in the hero, never in
+  an `<aside>`. Article extractors (Readability, Trafilatura) keep only the body column and delete asides: on
+  2026-10-09 they dropped the hero card on 4 of 4 posts and kept it in 8 of 8 tests once it moved here.
 
 ## 9. Check before presenting any page (the gate)
 1. Harvest Mobbin for the page, then **filter every tile through §2**: a tile whose pictures decorate rather than
