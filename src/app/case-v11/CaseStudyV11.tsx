@@ -1,3 +1,4 @@
+import { TocSpy } from '../blog-v11/TocSpy';
 import type { CSSProperties, ReactNode } from 'react';
 import Link from 'next/link';
 import type { HomeV11Content } from '@/lib/content-utils';
@@ -273,6 +274,7 @@ export function CaseStudyV11({ v, home, hero = 'report' }: { v: CaseView; home: 
             <nav className="sv-toc" aria-label="On this page">
               <div className="sv-toc-k">On this page</div>
               {v.toc.map((h) => <a key={h.id} href={`#${h.id}`}>{h.text}</a>)}
+              <TocSpy />
             </nav>
             <div className="cs-cta">
               <div className="v11-stack is-34">

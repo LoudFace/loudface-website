@@ -1,3 +1,4 @@
+import { TocSpy } from '../blog-v11/TocSpy';
 import type { ReactNode } from 'react';
 import type { HomeV11Content, IndustryV11Content } from '@/lib/content-utils';
 import { Closing } from '../home-v11/Closing';
@@ -83,6 +84,7 @@ export function IndustryArticleV11({ slug, a, c, home, data, related }: { slug: 
             <nav className="sv-toc" aria-label={strip(L.onThisPage)}>
               <div className="sv-toc-k">{L.onThisPage}</div>
               {a.parts.map((p, i) => <a key={p.title} href={`#part-${i + 1}`}>{p.title}</a>)}
+              <TocSpy />
             </nav>
           </aside>
           <div className="ia-body">

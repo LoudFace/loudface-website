@@ -1,3 +1,4 @@
+import { TocSpy } from '../blog-v11/TocSpy';
 import type { HomeV11Content } from '@/lib/content-utils';
 import type { LegalView } from '../legal-v3/LegalPageV3';
 import { FooterV11 } from '../home-v11/FooterV11';
@@ -26,6 +27,7 @@ export function LegalPageV11({ view: v, home, labels }: { view: LegalView; home:
           <nav className="sv-toc lg-toc" aria-label={strip(labels.contents)}>
             <div className="sv-toc-k">{labels.contents}</div>
             {v.sections.map((s) => <a key={s.id} href={`#${s.id}`}>{s.heading}</a>)}
+            <TocSpy />
           </nav>
           <div className="lg-body">
             {v.sections.map((s) => (
