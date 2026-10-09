@@ -27,7 +27,7 @@ const Play = () => (
  * charts carry real data, then imported into the Paper board. Copy is the page's existing copy where it exists. */
 export default async function CroSections() {
   const [c, data] = await Promise.all([getHomeV11Content(), getHomeV11Data()]);
-  const del = heroSlide(c, 'delshad'), gl = heroSlide(c, 'genieLeads');
+  const del = heroSlide(c, 'delshad'), gl = heroSlide(c, 'genieClicks');
   const maksim = c.testimonials.videos[0];
   const brand = c.testimonials.cards[2];
   const chart = (series: NonNullable<typeof data>['hero']['delshad'] | undefined, tip: string) =>
@@ -84,10 +84,10 @@ export default async function CroSections() {
             <div className="cro-cell">
               <Marks />
               <div className="cro-tag"><span className="is-tag">{gl.tag}</span><span>· {gl.client}</span></div>
-              <div className="cro-big">{proofValue(data, 'genieLeads')}</div>
+              <div className="cro-big">{proofValue(data, 'genieClicks')}</div>
               <div className="cro-cap">{gl.caption}</div>
-              <div className="cro-chart">{chart(data?.hero.genieLeads, gl.tip)}</div>
-              <div className="cro-dates"><span>{periodOf(data?.hero.genieLeads).start}</span><span>{periodOf(data?.hero.genieLeads).end}</span></div>
+              <div className="cro-chart">{chart(data?.hero.genieClicks, gl.tip)}</div>
+              <div className="cro-dates"><span>{periodOf(data?.hero.genieClicks).start}</span><span>{periodOf(data?.hero.genieClicks).end}</span></div>
             </div>
             <div className="cro-cell is-brand">
               <Marks />

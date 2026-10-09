@@ -534,6 +534,7 @@ export const caseStudy = defineType({
           description:
             'Weekly Google clicks behind a clicks-per-week headline, so a homepage card can chart the same number the study publishes. INDEXED to the baseline week = 100, never raw clicks.',
           fields: [
+            defineField({ name: 'title', title: 'Chart title', type: 'string', description: 'e.g. "Google clicks per week, outside the celebrity-case pages"' }),
             defineField({
               name: 'baselineLabel',
               title: 'Baseline label',

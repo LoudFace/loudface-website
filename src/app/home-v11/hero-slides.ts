@@ -10,14 +10,15 @@ export type HeroSlideKey = keyof HomeV11Data['hero'];
  * `heroSlide(home, key)`, never by position: on 2026-09-29 a slide inserted at position 3 had shifted every
  * numbered lookup by one and put the wrong client's name on results cards across the site.
  */
-export const HERO_SLIDES: { series: HeroSlideKey; href: string; format: ValueFormat; compact?: boolean }[] = [
+/** `proof` names the printed figure when it is not the slide's own key (Delshad's slide charts its clicks, not its leads). */
+export const HERO_SLIDES: { series: HeroSlideKey; proof?: ProofKey; href: string; format: ValueFormat; compact?: boolean }[] = [
   { series: 'lf', format: 'pct', href: '/case-studies/loudface-aeo-case-study', compact: true },
   { series: 'genie', format: 'index', href: '/case-studies/genie-teacher-organic-growth' },
   { series: 'health', format: 'index', href: '/case-studies/anonymous-health-tech-organic-growth' },
-  { series: 'delshad', format: 'index', href: '/case-studies/delshad-legal-content-engine' },
+  { series: 'delshad', proof: 'delshadClicks', format: 'index', href: '/case-studies/delshad-legal-content-engine' },
   { series: 'tm', format: 'index', href: '/case-studies/trademomentum-niche-aeo-organic-growth' },
   { series: 'stealth', format: 'pct', href: '/case-studies/stealth-fintech-ai-visibility', compact: true },
-  { series: 'genieLeads', format: 'index', href: '/case-studies/genie-teacher-organic-growth' },
+  { series: 'genieClicks', format: 'index', href: '/case-studies/genie-teacher-organic-growth' },
 ];
 
 /** The words of the hero slide that charts `key`. */

@@ -12,7 +12,7 @@ import { heroSlide, type HeroSlideKey } from '../home-v11/hero-slides';
  * picked per service from the same verified pool the homepage draws on. Copy comes from home-v11.json.
  */
 
-type Key = 'delshadSearch' | 'genieSearch' | 'tmClicks' | 'lfAi' | 'stealthAi' | 'genieLeads' | 'delshadLeads';
+type Key = 'delshadSearch' | 'genieSearch' | 'tmClicks' | 'lfAi' | 'stealthAi' | 'delshadLeads';
 
 interface Pick {
   series: (d: HomeV11Data) => Series;
@@ -30,29 +30,28 @@ interface Pick {
 }
 
 const POOL: Record<Key, Pick> = {
-  delshadSearch: { series: (d) => d.results.delshad, href: '/case-studies/delshad-legal-content-engine', icon: 'logos/delshad-icon.jpeg', pin: true, format: 'index', proof: 'delshadClicks', from: { cases: 0, slide: 'delshad' } },
+  delshadSearch: { series: (d) => d.hero.delshad, href: '/case-studies/delshad-legal-content-engine', icon: 'logos/delshad-icon.jpeg', pin: true, format: 'index', proof: 'delshadClicks', from: { slide: 'delshad' }, own: true },
   genieSearch: { series: (d) => d.results.genie, href: '/case-studies/genie-teacher-organic-growth', icon: 'logos/genie-icon.png', pin: true, format: 'index', proof: 'genie', from: { cases: 1, slide: 'genie' } },
   tmClicks: { series: (d) => d.hero.tm, href: '/case-studies/trademomentum-niche-aeo-organic-growth', icon: 'logos/trademomentum-icon.png', square: true, pin: true, format: 'index', proof: 'tm', from: { cases: 2, slide: 'tm' } },
   lfAi: { series: (d) => d.results.lf, href: '/case-studies/loudface-aeo-case-study', pin: false, format: 'pct', proof: 'lf', from: { cases: 3, slide: 'lf' } },
   stealthAi: { series: (d) => d.hero.stealth, href: '/case-studies/stealth-fintech-ai-visibility', icon: 'logos/anonymous-icon.svg', pin: false, format: 'pct', proof: 'stealth', from: { slide: 'stealth' } },
-  genieLeads: { series: (d) => d.hero.genieLeads, href: '/case-studies/genie-teacher-organic-growth', icon: 'logos/genie-icon.png', pin: true, format: 'index', proof: 'genieLeads', from: { slide: 'genieLeads' } },
-  delshadLeads: { series: (d) => d.hero.delshad, href: '/case-studies/delshad-legal-content-engine', icon: 'logos/delshad-icon.jpeg', pin: true, format: 'index', proof: 'delshad', from: { slide: 'delshad' }, own: true },
+  delshadLeads: { series: (d) => d.leads.delshad, href: '/case-studies/delshad-legal-content-engine', icon: 'logos/delshad-icon.jpeg', pin: true, format: 'index', proof: 'delshad', from: { cases: 0, slide: 'delshad' } },
 };
 
 /** Which results each service shows, one client per cell; the first is the feature. Build services lead with
- *  leads, search services with visibility. A one-week spike (genieLeads) never leads. */
+ *  leads, search services with visibility. Genie Teacher's leads spiked and halved, so no page shows them (2026-10-09). */
 const RESULTS: Record<string, Key[]> = {
-  cro: ['delshadLeads', 'genieLeads', 'tmClicks', 'lfAi'],
+  cro: ['delshadLeads', 'genieSearch', 'tmClicks', 'lfAi'],
   webflow: ['genieSearch', 'delshadLeads', 'tmClicks', 'stealthAi'],
   'ux-ui-design': ['delshadLeads', 'genieSearch', 'tmClicks', 'lfAi'],
-  copywriting: ['delshadLeads', 'genieLeads', 'tmClicks', 'lfAi'],
+  copywriting: ['delshadLeads', 'genieSearch', 'tmClicks', 'lfAi'],
   'seo-aeo': ['lfAi', 'genieSearch', 'tmClicks', 'stealthAi'],
   'organic-growth': ['delshadSearch', 'genieSearch', 'tmClicks', 'lfAi'],
   'geo-agency': ['lfAi', 'stealthAi', 'delshadSearch', 'genieSearch'],
   'ai-overviews': ['lfAi', 'genieSearch', 'delshadSearch', 'tmClicks'],
   'growth-autopilot': ['genieSearch', 'delshadLeads', 'lfAi', 'tmClicks'],
-  /** The case studies index hero: the flagship studies' own published charts. */
-  'case-studies': ['lfAi', 'genieSearch', 'delshadLeads', 'tmClicks'],
+  /** The case studies index hero: each flagship study's hockey stick, the chart it leads with (2026-10-09). */
+  'case-studies': ['lfAi', 'genieSearch', 'delshadSearch', 'tmClicks'],
   /** The industry pages (/seo-for/*): the vertical's own client leads where one has a published series. */
   /** The industry hub: the flagship studies, each from a different market. */
   'seo-for-hub': ['delshadLeads', 'lfAi', 'tmClicks', 'stealthAi'],
@@ -60,7 +59,7 @@ const RESULTS: Record<string, Key[]> = {
   'seo-for-hr-tech': ['delshadLeads', 'genieSearch', 'tmClicks', 'lfAi'],
   'seo-for-ai-startups': ['delshadLeads', 'lfAi', 'stealthAi', 'tmClicks'],
   'seo-for-edtech': ['delshadLeads', 'genieSearch', 'tmClicks', 'lfAi'],
-  'seo-for-saas': ['tmClicks', 'delshadLeads', 'stealthAi', 'genieLeads'],
+  'seo-for-saas': ['tmClicks', 'delshadLeads', 'stealthAi', 'genieSearch'],
   'seo-for-b2b': ['delshadLeads', 'lfAi', 'genieSearch', 'tmClicks'],
   'seo-for-fintech': ['stealthAi', 'lfAi', 'tmClicks', 'genieSearch'],
   'seo-for-startups': ['genieSearch', 'tmClicks', 'delshadLeads', 'lfAi'],
@@ -72,9 +71,9 @@ const RESULTS: Record<string, Key[]> = {
 
 const slugOf = (k: Key) => POOL[k].href.split('/').pop() as string;
 /** Filled in this order when a page's own set loses cells to `avoid`. */
-const FALLBACK: Key[] = ['lfAi', 'tmClicks', 'delshadLeads', 'genieSearch', 'stealthAi', 'delshadSearch', 'genieLeads'];
+const FALLBACK: Key[] = ['lfAi', 'tmClicks', 'delshadLeads', 'genieSearch', 'stealthAi', 'delshadSearch'];
 /** A peaked series and a one-week spike never lead (their feature captions do not read as a trend). */
-const NO_LEAD: Key[] = ['stealthAi', 'genieLeads'];
+const NO_LEAD: Key[] = ['stealthAi'];
 
 /**
  * The four results a page shows, one client per cell. `avoid` takes case-study slugs and result keys already shown

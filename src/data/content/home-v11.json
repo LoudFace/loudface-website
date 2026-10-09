@@ -29,10 +29,10 @@
         "tip": "the December average"
       },
       {
-        "tag": "Leads",
+        "tag": "Clicks",
         "client": "Delshad Legal",
-        "caption": "case enquiries a week since August",
-        "tip": "the weeks before August"
+        "caption": "Google clicks a week outside the celebrity-case pages",
+        "tip": "the week of 7 June"
       },
       {
         "tag": "Clicks",
@@ -47,10 +47,10 @@
         "tip": "AI visibility"
       },
       {
-        "tag": "Leads",
+        "tag": "Clicks",
         "client": "Genie Teacher",
-        "caption": "lead requests a week in September",
-        "tip": "the weeks before September"
+        "caption": "Google clicks a week",
+        "tip": "the May average"
       }
     ]
   },
@@ -108,10 +108,10 @@
     "cases": [
       {
         "client": "Delshad Legal",
-        "claim": "grew Google clicks a week outside its celebrity-case pages",
-        "chartLabel": "Google clicks a week",
-        "source": "Search Console",
-        "tip": "the week of 7 June"
+        "claim": "grew case enquiries a week",
+        "chartLabel": "Case enquiries a week",
+        "source": "PostHog",
+        "tip": "the weeks before August"
       },
       {
         "client": "Genie Teacher",

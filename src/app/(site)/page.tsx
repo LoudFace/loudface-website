@@ -76,7 +76,7 @@ export default async function HomePage() {
         <LogoGrid c={c.logos} />
         <Bento c={c.bento} data={data} />
         <Results c={c.results} data={data} />
-        <Route c={c.route} spark={data?.hero.delshad ?? null} metric={data?.proof.delshad?.value} rank={data?.proof.delshadRank?.value} />
+        <Route c={c.route} spark={data?.leads.delshad ?? null} metric={data?.proof.delshad?.value} rank={data?.proof.delshadRank?.value} />
         <GrowthPlan c={c.plan} />
         <Testimonials c={c.testimonials} data={data} />
         <Team c={c.team} />

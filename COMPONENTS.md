@@ -408,6 +408,8 @@ components print `proofValue(data, key)` (`home-v11/hero-slides.ts`), and chart 
 put it in the study's result fields, add a `PROOF` key, print `proofValue(data, key)`. A case-study refresh then updates
 every tile that quotes it. If a mapped field is empty, `getHomeV11Data()` returns null and logs which one.
 
+**Each study leads with its hockey stick (2026-10-09).** The chart a study shows everywhere (hero rail, case page, case-studies index) is its published series with the steepest late climb that still ends at its high, and the study's result 1 is that series' figure; the case page and index pick the chart from result 1 (`leadKind`, which knows `clicks`: weekly Google clicks from `instruments.clickGrowth` or summed from `indexedTrend`). `getHomeV11Data()` returns `hero` (each client's hockey stick), `leads` (weekly enquiries, for the homepage "Measured in leads" section and leads tiles) and `results`.
+
 | Component | File | Description | Client? |
 |-----------|------|-------------|---------|
 | `ResultCase` | `home-v11/ResultCase.tsx` | Result card with a live chart; `feature` adds number, extra figures, axis and caption | No |

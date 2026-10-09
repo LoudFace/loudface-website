@@ -32,7 +32,7 @@ const points = weeks.map((week) => ({ _key: `cg-${week}`, week, value: Math.roun
 
 const doc = await client.getDocument(DOC_ID);
 const last = `${Math.round(points.at(-1).value / 10) / 10}×`;
-if (last !== doc.result2Number) throw new Error(`last point reads ${last}, result2Number is ${doc.result2Number}`);
+if (last !== doc.result1Number) throw new Error(`last point reads ${last}, result1Number is ${doc.result1Number}`);
 
 const clickGrowth = {
   _type: 'object',

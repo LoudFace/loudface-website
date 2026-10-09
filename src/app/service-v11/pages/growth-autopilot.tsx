@@ -76,7 +76,7 @@ export const growthAutopilot: ExtrasFn = ({ home, data }) => {
     tiles: [
       { tag: 'Foundation', art: <TileChart head="Google impressions a day" client="Genie Teacher" num={proofValue(data, 'genie')} series={data?.hero.genie} format="index" tip={heroSlide(home, 'genie').tip} /> },
       { tag: 'Visibility', art: <TileChart head="Share of AI answers" client="LoudFace" num={proofValue(data, 'lf')} series={data?.hero.lf} format="pct" tip={heroSlide(home, 'lf').tip} /> },
-      { tag: 'Conversion', art: <TileChart head="Lead requests a week" client="Genie Teacher" num={proofValue(data, 'genieLeads')} series={data?.hero.genieLeads} format="index" tip={heroSlide(home, 'genieLeads').tip} /> },
+      { tag: 'Conversion', art: <TileChart head="Case enquiries a week" client="Delshad Legal" num={proofValue(data, 'delshad')} series={data?.leads.delshad} format="index" tip={home.results.cases[0].tip} /> },
     ],
     results: {
       title: <>One system took Toku to <span className="ghost">{proofEnd(data, 'toku')} AI visibility.</span></>,

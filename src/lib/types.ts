@@ -162,6 +162,9 @@ export interface CaseStudyInstruments {
   };
   /** Weekly leads/enquiries, indexed so the shape is public and the client's
    *  own volume is not. See the confidentiality note on `points`. */
+  /** Weekly Google clicks behind a clicks-per-week headline, indexed to the baseline week = 100 (Delshad Legal:
+   *  clicks outside the celebrity-case pages). */
+  clickGrowth?: { title?: string; baselineLabel?: string; source?: string; points: { week: string; value: number }[] };
   leadGrowth?: {
     title: string;
     /** The published multiplier, pre-formatted, e.g. "2.7x". */

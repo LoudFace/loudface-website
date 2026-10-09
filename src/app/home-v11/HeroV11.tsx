@@ -49,7 +49,7 @@ export function HeroRail({ c, data }: { c: HomeV11Content['hero']; data: HomeV11
             href={cfg.href}
             tag={s.tag}
             client={s.client}
-            metric={proofValue(data, cfg.series)}
+            metric={proofValue(data, cfg.proof ?? cfg.series)}
             compact={cfg.compact}
             series={series}
             format={cfg.format}

@@ -93,6 +93,7 @@ const CASE_STUDY_PROJECTION = `{
     engineBeforeAfter{ beforeLabel, afterLabel, caption, rows[]{ engine, before, after } },
     indexedTrend{ title, baselineLabel, caption, startMonthIso, points[]{ month, date, impressions, clicks, partial } },
     leadGrowth{ title, multiple, multipleLabel, baselineLabel, caption, source, points[]{ week, value } },
+    clickGrowth{ title, baselineLabel, source, points[]{ week, value } },
     publishedResult{ rows[]{ value, unit }, positionFrom, positionTo, caption }
   },
   "faq": faq[]{ question, answer },

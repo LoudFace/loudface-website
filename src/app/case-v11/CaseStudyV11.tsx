@@ -54,7 +54,7 @@ const PHONE_BY_CLIENT: Record<string, { src: string; alt: string }> = {
 };
 /** App icons for clients with no wordmark in the CMS. */
 const BRAND_ICON: Record<string, string> = { 'Genie Teacher': 'logos/genie-icon.png' };
-const TIP: Record<ChartKind, string> = { ai: 'of AI answers', google: 'of the baseline day', leads: 'of the baseline weeks' };
+const TIP: Record<ChartKind, string> = { ai: 'of AI answers', google: 'of the baseline day', clicks: 'of the baseline week', leads: 'of the baseline weeks' };
 
 const strip = (html: string) => html.replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim();
 
@@ -62,7 +62,7 @@ const strip = (html: string) => html.replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' 
 const chartTitle = (t: string) => t.replace(/,\s*(weekly|daily|indexed)$/i, '').split('·')[0].trim();
 
 function Charts({ s, lead, pairs, pairsSource, skipLead = false }: { s: CaseSeries; lead: ChartKind; pairs: PublishedPairs | null; pairsSource?: string; skipLead?: boolean }) {
-  const rest = (['google', 'ai', 'leads'] as ChartKind[]).filter((k) => k !== lead && s[k]);
+  const rest = (['clicks', 'google', 'ai', 'leads'] as ChartKind[]).filter((k) => k !== lead && s[k]);
   const engines = s.engines;
   const cells = rest.length + (engines ? 1 : 0) + (pairs ? 1 : 0);
   // One supporting chart sits beside the lead at the lead's height (2:1); two or three sit in a row under it.
@@ -71,6 +71,7 @@ function Charts({ s, lead, pairs, pairsSource, skipLead = false }: { s: CaseSeri
   const even = skipLead ? 300 : undefined;
   const panel = (k: ChartKind, isLead: boolean) => {
     const height = !isLead && pair ? 380 : even;
+    if (k === 'clicks' && s.clicks) return <ChartPanel key={k} lead={isLead} height={height} title={s.clicks.title} source={sourceName(s.clicks.source)} series={s.clicks.series} format="index" tip={s.clicks.tip} />;
     if (k === 'google' && s.google) return <ChartPanel key={k} lead={isLead} height={height} title="Google impressions per day" source={sourceName(s.google.source)} series={s.google.series} format="index" tip={TIP.google} />;
     if (k === 'ai' && s.ai) return <ChartPanel key={k} lead={isLead} height={height} title={chartTitle(s.ai.title)} source={sourceName(s.ai.source)} series={s.ai.series} format="pct" tip={TIP.ai} />;
     if (k === 'leads' && s.leads) return <ChartPanel key={k} lead={isLead} height={height} title={chartTitle(s.leads.title)} source={sourceName(s.leads.source)} series={s.leads.series} format="index" tip={TIP.leads} />;
@@ -142,10 +143,11 @@ export function CaseStudyV11({ v, home, hero = 'report' }: { v: CaseView; home: 
   const { study, client } = v;
   const name = (client?.name ?? study.name).split(':')[0].trim();
   const s = standaloneCharts(caseSeries(v.instruments));
-  const isData = Boolean(s.ai || s.google || s.leads);
+  const isData = Boolean(s.ai || s.google || s.clicks || s.leads);
   const lead = isData ? leadKind(s, v.result1.title) : null;
   const heroKind: CaseHero = hero;
-  const leadChart = lead === 'google' ? s.google : lead === 'ai' ? s.ai : lead === 'leads' ? s.leads : undefined;
+  const leadChart = lead === 'clicks' ? s.clicks : lead === 'google' ? s.google : lead === 'ai' ? s.ai : lead === 'leads' ? s.leads : undefined;
+  const leadTip = lead === 'clicks' && s.clicks ? s.clicks.tip : lead ? TIP[lead] : '';
   // Published before → after figures stand in for an AI series that cannot be shown bare.
   const pairs = s.ai ? null : publishedPairs(s);
   const pairsSource = sourceName(v.instruments?.aiSource) ?? pairs?.caption.match(/Source:\s*([^,.]+)/)?.[1];
@@ -394,7 +396,7 @@ export function CaseStudyV11({ v, home, hero = 'report' }: { v: CaseView; home: 
             <div className="cs-hero3-stage">
               {/* the chart alone: its figure leads the key results right below, so it is not printed twice */}
               <div className="cs-report">
-                <ChartPanel lead title={head.label} source={sourceName(leadChart.source)} series={leadChart.series} format={lead === 'ai' ? 'pct' : 'index'} tip={TIP[lead]} height={340} />
+                <ChartPanel lead title={head.label} source={sourceName(leadChart.source)} series={leadChart.series} format={lead === 'ai' ? 'pct' : 'index'} tip={leadTip} height={340} />
               </div>
             </div>
           ) : (
@@ -418,7 +420,7 @@ export function CaseStudyV11({ v, home, hero = 'report' }: { v: CaseView; home: 
     );
   } else if (heroKind === 'result') {
     const pic = leadChart && lead ? (
-      <StageChart size="hero" tag={head.label} client={name} metric={v.result1.number} series={leadChart.series} format={lead === 'ai' ? 'pct' : 'index'} tip={TIP[lead]} caption={head.note ?? ''} />
+      <StageChart size="hero" tag={head.label} client={name} metric={v.result1.number} series={leadChart.series} format={lead === 'ai' ? 'pct' : 'index'} tip={leadTip} caption={head.note ?? ''} />
     ) : siteSrc ? <Browser src={siteSrc} domain={siteDomain} alt={`${name} website`} priority /> : null;
     heroNode = (
       <section className="v11-hero cs-hero is-result">

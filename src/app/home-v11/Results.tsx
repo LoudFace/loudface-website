@@ -6,7 +6,7 @@ import { SectionHead } from './ui';
 /** Series, figure, link and icon per case, in the content file's order. The first case is the feature. The figure
  *  (`proof`) is the case study's own published result; the chart is the series behind that same result. */
 const CASES: { series: (d: HomeV11Data) => Series; proof: ProofKey; href: string; icon: string; square?: boolean; pin: boolean; format: 'index' | 'indexWeek' | 'pct' }[] = [
-  { series: (d) => d.results.delshad, proof: 'delshadClicks', href: '/case-studies/delshad-legal-content-engine', icon: 'logos/delshad-icon.jpeg', pin: true, format: 'index' },
+  { series: (d) => d.leads.delshad, proof: 'delshad', href: '/case-studies/delshad-legal-content-engine', icon: 'logos/delshad-icon.jpeg', pin: true, format: 'index' },
   { series: (d) => d.results.genie, proof: 'genie', href: '/case-studies/genie-teacher-organic-growth', icon: 'logos/genie-icon.png', pin: true, format: 'index' },
   { series: (d) => d.hero.tm, proof: 'tm', href: '/case-studies/trademomentum-niche-aeo-organic-growth', icon: 'logos/trademomentum-icon.png', square: true, pin: true, format: 'index' },
   { series: (d) => d.results.lf, proof: 'lf', href: '/case-studies/loudface-aeo-case-study', icon: '', pin: false, format: 'pct' },

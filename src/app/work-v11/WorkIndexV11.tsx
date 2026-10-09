@@ -52,8 +52,9 @@ function cardChart(s: Study, indexed = false, steps?: Record<string, Steps>): Ca
   const st = s.slug ? steps?.[s.slug] : undefined;
   if (st) return { kind: 'steps', steps: st, title: st.title, source: st.source };
   const c = standaloneCharts(caseSeries(s.instruments));
-  if (c.ai || c.google || c.leads) {
+  if (c.ai || c.google || c.clicks || c.leads) {
     const k = leadKind(c, s['result-1---title'] ?? '');
+    if (k === 'clicks' && c.clicks) return { kind: 'series', series: c.clicks.series, format: 'index', tip: c.clicks.tip, title: c.clicks.title, source: sourceName(c.clicks.source) };
     if (k === 'google' && c.google) return { kind: 'series', series: c.google.series, format: 'index', tip: TIP.google, title: 'Google impressions per day', source: sourceName(c.google.source) };
     if (k === 'ai' && c.ai) return { kind: 'series', series: c.ai.series, format: 'pct', tip: TIP.ai, title: chartTitle(c.ai.title), source: sourceName(c.ai.source) };
     if (k === 'leads' && c.leads) return { kind: 'series', series: c.leads.series, format: 'index', tip: TIP.leads, title: chartTitle(c.leads.title), source: sourceName(c.leads.source) };

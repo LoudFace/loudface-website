@@ -240,7 +240,7 @@ export function ServicesB({ services, v11, cta, home, data, siteLabel, icons }: 
 export function IndustriesB({ industries, v11, cta, home, data, questions, icons }: MenuConceptProps & { icons?: MenuIconSet }) {
   const [sector, stage] = v11.industryGroups;
   const logos = CLIENT_LOGOS.filter((l) => l.logo && PROOF_LOGOS.includes(l.alt));
-  const genie = heroSlide(home, 'genieLeads');
+  const genie = heroSlide(home, 'genieClicks');
   return (
     <Drop className={`mc-b ${icons ? 'has-icons' : ''}`}>
       <div className="v11-nav-main">
@@ -261,11 +261,11 @@ export function IndustriesB({ industries, v11, cta, home, data, questions, icons
             </div>
           </div>
           <div className="mc-col">
-            <Pic cap={`${genie.client}: ${proofValue(data, 'genieLeads') ?? ''} ${genie.caption}`} className="is-chart">
-              <div className="mc-chart-fig"><b>{proofValue(data, 'genieLeads')}</b><span>{genie.client}</span></div>
+            <Pic cap={`${genie.client}: ${proofValue(data, 'genieClicks') ?? ''} ${genie.caption}`} className="is-chart">
+              <div className="mc-chart-fig"><b>{proofValue(data, 'genieClicks')}</b><span>{genie.client}</span></div>
               {data && (
                 <div className="mc-chart">
-                  <LiveChart series={data.hero.genieLeads} height={112} margin={{ top: 10, right: 12, bottom: 6, left: 6 }} dots={false} hatch lineWidth={1.75} pin={18} end="halo" tip={genie.tip} format="index" />
+                  <LiveChart series={data.hero.genieClicks} height={112} margin={{ top: 10, right: 12, bottom: 6, left: 6 }} dots={false} hatch lineWidth={1.75} pin={18} end="halo" tip={genie.tip} format="index" />
                 </div>
               )}
             </Pic>

@@ -2,6 +2,7 @@ import 'server-only';
 import { cache } from 'react';
 import { cmsTypeTag } from '@/lib/cms-data';
 import { withRetry } from '@/lib/cms-retry';
+import { clicksPerWeek } from './weeks';
 import { cachedReadClient } from '@/lib/sanity.client';
 
 /**
@@ -58,7 +59,7 @@ const PROOF = {
   genieClicks: ['genie', 2],
   health: ['health', 1],
   delshad: ['delshad', 3],
-  delshadClicks: ['delshad', 2],
+  delshadClicks: ['delshad', 1],
   tm: ['tm', 1],
   stealth: ['stealth', 1],
   genieLeads: ['genie', 3],
@@ -108,33 +109,13 @@ function rolling(values: number[], n: number): number[] {
   });
 }
 
-function isoWeekKey(iso: string): string {
-  const d = new Date(`${iso}T00:00:00Z`);
-  const day = (d.getUTCDay() + 6) % 7;
-  d.setUTCDate(d.getUTCDate() - day + 3);
-  const first = new Date(Date.UTC(d.getUTCFullYear(), 0, 4));
-  const week = 1 + Math.round(((d.getTime() - first.getTime()) / 86400000 - 3 + ((first.getUTCDay() + 6) % 7)) / 7);
-  return `${d.getUTCFullYear()}-${String(week).padStart(2, '0')}`;
-}
-
-/** Weekly sums of a daily series (ISO weeks, Monday start); a week with fewer than seven days is dropped. */
-function weekly(points: { date?: string; clicks: number }[], from: string, to: string) {
-  const byWeek = new Map<string, { date: string; total: number; days: number }>();
-  for (const p of points) {
-    if (!p.date || p.date < from || p.date > to) continue;
-    const k = isoWeekKey(p.date);
-    const row = byWeek.get(k) ?? { date: p.date, total: 0, days: 0 };
-    row.total += p.clicks;
-    row.days += 1;
-    byWeek.set(k, row);
-  }
-  const rows = [...byWeek.entries()].sort(([a], [b]) => (a < b ? -1 : 1)).map(([, r]) => r).filter((r) => r.days === 7);
-  return { dates: rows.map((r) => r.date), values: rows.map((r) => r.total) };
-}
-
 export interface HomeV11Data {
-  hero: Record<'lf' | 'genie' | 'delshad' | 'tm' | 'stealth' | 'genieLeads', Series> & { health?: Series };
-  results: Record<'delshad' | 'genie' | 'lf', Series>;
+  /** Each client's hockey stick: the published series with the steepest late climb that still ends at its high
+   *  (scored 2026-10-09; Delshad's clean clicks, TradeMomentum's weekly clicks, Genie's impressions and clicks). */
+  hero: Record<'lf' | 'genie' | 'delshad' | 'tm' | 'stealth' | 'genieClicks', Series> & { health?: Series };
+  /** Weekly enquiries indexed to their baseline weeks: the homepage "Measured in leads" section and leads tiles. */
+  leads: Record<'delshad' | 'genie', Series>;
+  results: Record<'genie' | 'lf', Series>;
   bentoGenie: Series;
   /** Every figure a tile prints, from the case studies' result fields. A key is absent when its study's field is empty. */
   proof: Partial<Record<ProofKey, Proof>>;
@@ -174,17 +155,15 @@ export const getHomeV11Data = cache(async (): Promise<HomeV11Data | null> => {
   const lfVals = lf.topicClimb.points.map((p) => p.value * 100);
   const gTrend = genie.indexedTrend.points.filter((p) => p.date);
   const tTrend = tm.indexedTrend.points.filter((p) => p.date);
-  // Weekly clicks over the whole published series, indexed to the week the engagement began (its Monday-start
-  // ISO week = 100): the same baseline as the study's clicks-per-week headline, so the chart's last point and the
-  // printed number agree.
-  const tmRaw = weekly(tTrend, tTrend[0]?.date ?? '', tTrend.at(-1)?.date ?? '');
-  const tmBase = tmRaw.values[tmRaw.dates.findIndex((d) => isoWeekKey(d) === isoWeekKey(tm.engagementStart ?? '2025-09-07'))];
-  if (!tmBase) return null;
-  const tmWeekly = { dates: tmRaw.dates, values: tmRaw.values.map((v) => (v / tmBase) * 100) };
-  // TradeMomentum's published figure is its highest week, so the end annotation sits on that week, not the latest.
-  const tmPeak = tmWeekly.values.indexOf(Math.max(...tmWeekly.values));
+  // Weekly clicks indexed to the week the engagement began, the same baseline as the study's clicks-per-week headline;
+  // that headline is the highest week, so the end annotation sits on it.
+  const tmClicks = clicksPerWeek(tTrend, tm.engagementStart ?? '2025-09-07');
+  if (!tmClicks) return null;
+  const tmWeekly = { dates: tmClicks.dates, values: tmClicks.values };
+  const tmPeak = tmClicks.peak;
   const dClicks = delshad.clickGrowth.points;
   const stealthPts = stealth.topicClimb?.points ?? [];
+  const stealthRolled = rolling(stealthPts.map((p) => p.value * 100), 5);
   const hTrend = health.indexedTrend?.points.filter((p) => p.date) ?? [];
 
   const genieImpressions: Series = {
@@ -197,33 +176,25 @@ export const getHomeV11Data = cache(async (): Promise<HomeV11Data | null> => {
     hero: {
       lf: { dates: lfDates, values: rolling(lfVals, 7), start: lfDates[0] },
       genie: genieImpressions,
-      delshad: {
-        dates: (delshad.leadGrowth?.points ?? []).map((p) => p.week),
-        values: (delshad.leadGrowth?.points ?? []).map((p) => p.value),
-        start: delshad.engagementStart ?? '2026-06-04',
-        bars: true,
-      },
+      // Google clicks a week outside the celebrity-case pages, indexed to the week of 7 June: the study's 14.8×
+      delshad: { dates: dClicks.map((p) => p.week), values: dClicks.map((p) => p.value), start: delshad.engagementStart ?? '2026-06-04' },
       tm: { dates: tmWeekly.dates, values: tmWeekly.values, start: tm.engagementStart ?? '2025-09-07', peak: tmPeak },
-      stealth: {
-        dates: stealthPts.map((p) => p.week),
-        values: rolling(stealthPts.map((p) => p.value * 100), 5),
-        start: '2026-06-15',
-      },
+      // its published figure is the 3 Aug peak, so the end mark sits on the peak, not on the settled last reading
+      stealth: { dates: stealthPts.map((p) => p.week), values: stealthRolled, start: '2026-06-15', peak: stealthRolled.indexOf(Math.max(...stealthRolled)) },
       // the anonymous health-tech study (2026-09-27): Google impressions a day, indexed to its December = 100
       health: hTrend.length ? {
         dates: hTrend.map((p) => p.date as string),
         values: rolling(hTrend.map((p) => p.impressions), 7),
         start: health.engagementStart ?? '2026-01-06',
       } : undefined,
-      genieLeads: {
-        dates: (genie.leadGrowth?.points ?? []).map((p) => p.week),
-        values: (genie.leadGrowth?.points ?? []).map((p) => p.value),
-        start: genie.engagementStart ?? '2026-07-05',
-        bars: true,
-      },
+      // Google clicks a day, seven-day mean, indexed to the average May day: the last point is the study's 35×
+      genieClicks: { dates: gTrend.map((p) => p.date as string), values: rolling(gTrend.map((p) => p.clicks), 7), start: genie.engagementStart ?? '2026-07-05' },
+    },
+    leads: {
+      delshad: { dates: (delshad.leadGrowth?.points ?? []).map((p) => p.week), values: (delshad.leadGrowth?.points ?? []).map((p) => p.value), start: delshad.engagementStart ?? '2026-06-04', bars: true },
+      genie: { dates: (genie.leadGrowth?.points ?? []).map((p) => p.week), values: (genie.leadGrowth?.points ?? []).map((p) => p.value), start: genie.engagementStart ?? '2026-07-05', bars: true },
     },
     results: {
-      delshad: { dates: dClicks.map((p) => p.week), values: dClicks.map((p) => p.value), start: delshad.engagementStart ?? '2026-06-04' },
       genie: { dates: gTrend.map((p) => p.date as string), values: rolling(gTrend.map((p) => p.impressions), 5), start: genie.engagementStart ?? '2026-07-05' },
       lf: { dates: lfDates, values: rolling(lfVals, 5), start: lfDates[0] },
     },

@@ -175,7 +175,7 @@ export default async function KitPage() {
 
       <Block name="Result card" file="ResultCase · src/app/home-v11/ResultCase.tsx" rule="Result charts on a light ground use this card, or ChartCell inside a proof grid. Feature: claim, number and extra figures left, chart with axis right. Small: claim over a quiet chart.">
         <div className="v11-rgrid">
-          <ResultCase feature icon="logos/delshad-icon.jpeg" href="/case-studies/delshad-legal-content-engine" linkLabel={c.results.caseLink} client={r[0].client} claim={r[0].claim} metric={data?.proof.delshadClicks?.value} metricLabel={data?.proof.delshadClicks?.title} chartLabel={r[0].chartLabel} source={r[0].source} series={data?.results.delshad} format="index" tip={r[0].tip} />
+          <ResultCase feature icon="logos/delshad-icon.jpeg" href="/case-studies/delshad-legal-content-engine" linkLabel={c.results.caseLink} client={r[0].client} claim={r[0].claim} metric={data?.proof.delshadClicks?.value} metricLabel={data?.proof.delshadClicks?.title} chartLabel={r[0].chartLabel} source={r[0].source} series={data?.leads.delshad} format="index" tip={r[0].tip} />
           <ResultCase icon="logos/genie-icon.png" href="/case-studies/genie-teacher-organic-growth" linkLabel={c.results.caseLink} client={r[1].client} claim={r[1].claim} chartLabel={r[1].chartLabel} source={r[1].source} series={data?.results.genie} format="index" tip={r[1].tip} />
           <ResultCase icon="logos/trademomentum-icon.png" square href="/case-studies/trademomentum-niche-aeo-organic-growth" linkLabel={c.results.caseLink} client={r[2].client} claim={r[2].claim} chartLabel={r[2].chartLabel} source={r[2].source} series={data?.hero.tm} format="index" tip={r[2].tip} />
           <ResultCase href="/case-studies/loudface-aeo-case-study" linkLabel={c.results.caseLink} client={r[3].client} claim={r[3].claim} chartLabel={r[3].chartLabel} source={r[3].source} series={data?.results.lf} format="pct" tip={r[3].tip} pin={false} />
@@ -187,7 +187,7 @@ export default async function KitPage() {
           <VideoCell who="maksim" big="$1M+" cap="in sales from one landing page we designed" quote={t.videos[0].quote} person={t.videos[0].person} role={t.videos[0].jobTitle} duration={t.videos[0].duration} />
           <BarsCell tag="Conversion rate" client="Dimer Health" big="288%" cap="Best conversion increase from a LoudFace program" before="Before" after="After six months" />
           <ChartCell slide={heroSlide(c, 'delshad')} series={data?.hero.delshad} big={proofValue(data, 'delshad')} />
-          <ChartCell slide={heroSlide(c, 'genieLeads')} series={data?.hero.genieLeads} big={proofValue(data, 'genieLeads')} />
+          <ChartCell slide={heroSlide(c, 'genieClicks')} series={data?.hero.genieClicks} big={proofValue(data, 'genieClicks')} />
           <QuoteCell logo="logos/brandfirm.png" logoAlt="Brandfirm" logoW={108} logoH={22} big={proofValue(data, 'brandfirm')} cap={t.cards[2].caption} quote={t.cards[2].quote} person={t.cards[2].person} role={t.cards[2].jobTitle} face="people/daan-smit.webp" tone="orange" />
         </div>
       </Block>
@@ -271,7 +271,7 @@ export default async function KitPage() {
         {data && (
           <div className="cs-charts is-rest-2">
             <div className="cs-chart is-lead"><Marks /><ChartPanel lead title="Google impressions per day" source="Google Search Console" series={data.results.genie} format="index" tip="of the baseline day" /></div>
-            <div className="cs-chart"><Marks /><ChartPanel title="Lead requests per week" source="PostHog" series={data.hero.genieLeads} format="index" tip="of the baseline weeks" /></div>
+            <div className="cs-chart"><Marks /><ChartPanel title="Lead requests per week" source="PostHog" series={data.leads.genie} format="index" tip="of the baseline weeks" /></div>
             <div className="cs-chart">
               <Marks />
               <figure className="v11-cpanel">
