@@ -213,6 +213,8 @@ npm run build        # Always build before pushing
 git push origin main # Triggers Vercel deployment (auto-deploys)
 ```
 
+**Hosts (checked 2026-10-09).** `www.loudface.co` is the only host that serves pages. Cloudflare proxies it to Vercel and forwards the real Host header, so a host condition in `next.config.ts` sees `www.loudface.co`. The apex `loudface.co` answers with a Cloudflare 301 to www; the 308 set on the Vercel domain sits behind it. `loudface-website.vercel.app` 308s to www through the first rule in `redirects()`, pinned by `npm run test:redirects`. Preview and deployment URLs sit behind Vercel login, and the weekly cron calls the hashed deployment URL, so neither matches that rule.
+
 ## Frontend Aesthetics
 
 **Before presenting ANY design change to a page — including a reorder or a copy pass —

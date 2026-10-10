@@ -169,6 +169,21 @@ const nextConfig: NextConfig = {
   },
   async redirects() {
     return [
+      // The production alias loudface-website.vercel.app served the whole site
+      // as a second indexable copy: in the 28 days to 2026-10-08 AI engines
+      // retrieved 79 of its URLs 925 times and cited them 190 times (Peec), and
+      // none of it counted for loudface.co. Send that one host to www, same
+      // path and query. Next anchors the value and the dots are escaped, so
+      // preview hosts (loudface-website-git-*, hashed deployment URLs) never
+      // match, and neither does the weekly cron, which Vercel calls on the
+      // hashed deployment URL. First in the list, so a vercel.app URL reaches
+      // its www twin in one hop. Pinned by src/lib/__tests__/host-redirect.test.ts.
+      {
+        source: '/:path*',
+        has: [{ type: 'host', value: 'loudface-website\\.vercel\\.app' }],
+        destination: 'https://www.loudface.co/:path*',
+        permanent: true,
+      },
       // Team page hidden via TEAM_HIDDEN (src/app/about-v3/data.ts). 301 rather
       // than 404 so any inbound link or existing index entry lands somewhere real.
       { source: '/team/chandana-pitta', destination: '/about', permanent: true },
