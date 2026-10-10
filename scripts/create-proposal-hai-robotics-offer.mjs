@@ -231,7 +231,7 @@ const doc = {
       intro: 'One plan for Google and AI, because AI answers lean on the pages that rank on Google. Your team keeps the code and design. We write, you review, you publish.',
       tracks: [
         track('Content on your site', [
-          trackItem('8 a month', 'Pages and articles for the warehouse automation and AS/RS questions above, written to rank on Google and to be quoted by AI'),
+          trackItem('Every weekday', 'One new page or article each working day for the warehouse automation and AS/RS questions above, written to rank on Google and to be quoted by AI'),
           trackItem(null, 'A results page with deployments, named customers, throughput and uptime, so AI has numbers to quote'),
           trackItem(null, 'Updates to the pages you have, starting with the homepage and HaiPick Climb copy'),
         ]),
@@ -255,20 +255,20 @@ const doc = {
     section('bulletListSection', {
       heading: 'What you asked on the call',
       items: [
-        bullet('How much content is in the package?', '8 pieces a month, so 24 over the pilot. These are minimums. Each one goes to your team for review before it is published.'),
-        bullet('How much digital PR?', '6 placements on other sites a month, so 18 over the pilot. Also minimums.'),
-        bullet('Is the price based on the number of countries?', 'No. One price covers every market. We start with the US and add the UK, Canada and Australia in English, as you asked.'),
+        bullet('How much content is in the package?', 'One piece every working day, Monday to Friday. That is about 20 a month and 60 over the pilot. Every piece goes to your team for review first, so the pace depends on how quickly reviews come back. We agree a review turnaround with you in week one.'),
+        bullet('How much digital PR?', '6 placements on other sites a month, so 18 over the pilot. These are minimums.'),
+        bullet('Is the price based on the number of countries?', 'Not directly. The pilot price covers the US first, then the UK, Canada and Australia in English, as you asked, all from one strategy. If a market later needs its own strategy and content, that is more work for the team, and we would price it in when we agree the 1-year terms.'),
         bullet('Can you work without access to our code?', 'Yes. We work in your Drupal editor for content only. Anything that needs code goes to your team as a clear request, and we check it once it is live.'),
       ],
     }),
 
     section('monthsSection', {
       heading: 'The 3-month pilot',
-      intro: 'These are the minimums in the contract. We usually do more.',
+      intro: 'What each month includes. The content pace depends on your review turnaround.',
       months: [
-        month('Month 1', 'Set up', ['About 100 questions tracked, starting numbers agreed with you', 'Technical requests sent to your team', '8 pieces of content', '6 placements on other sites'], 'Targets set together'),
-        month('Month 2', 'Build', ['8 pieces of content', '6 placements on other sites', 'Results page live', 'First check of AI answers against the start'], 'Hai named in more warehouse automation answers'),
-        month('Month 3', 'Review', ['8 pieces of content', '6 placements on other sites', 'Full pilot report: AI visibility, share of voice and Google impressions'], 'A clear answer on the 1-year partnership'),
+        month('Month 1', 'Set up', ['About 100 questions tracked, starting numbers agreed with you', 'Technical requests sent to your team', 'About 20 pieces of content', '6 placements on other sites'], 'Targets set together'),
+        month('Month 2', 'Build', ['About 20 pieces of content', '6 placements on other sites', 'Results page live', 'First check of AI answers against the start'], 'Hai named in more warehouse automation answers'),
+        month('Month 3', 'Review', ['About 20 pieces of content', '6 placements on other sites', 'Full pilot report: AI visibility, share of voice and Google impressions'], 'A clear answer on the 1-year partnership'),
       ],
       note: 'Every report starts with brand impressions: how often AI names Hai, and how often Hai shows up on Google.',
     }),
@@ -296,7 +296,7 @@ const doc = {
       band: 'dark',
       anchor: 'Our $7,500 package at $5,000 a month for the pilot, because we want this to become a long partnership.',
       tiers: [
-        tier('3-month pilot', '$5,000', 'per month for 3 months', 'Everything on this page: 24 pieces of content, 18 placements on other sites, technical requests and daily tracking.', true, '$7,500'),
+        tier('3-month pilot', '$5,000', 'per month for 3 months', 'Everything on this page: content every working day, 18 placements on other sites, technical requests and daily tracking.', true, '$7,500'),
         tier('After the pilot', '$7,500', 'per month', 'The same work at the regular price, if we both decide to continue. The 1-year terms are agreed together after the pilot.'),
       ],
       note: 'Pilot total: $15,000. There are no setup fees.',
