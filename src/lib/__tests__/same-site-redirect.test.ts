@@ -52,6 +52,18 @@ test('sends every other host to the home page', () => {
   }
 });
 
+test('sends a value with user details to the home page', () => {
+  // The origin is this site's, but the address the visitor sees reads as
+  // example.com, and Firefox asks whether to log in to the site as it.
+  for (const value of [
+    'https://example.com@www.loudface.co/x',
+    '//example.com@www.loudface.co/x',
+    'https://user:pass@www.loudface.co/x',
+  ]) {
+    assert.equal(target(value), HOME, value);
+  }
+});
+
 test('stays on the site when the path normalises to //host', () => {
   // "/.//example.com" becomes the path "//example.com". Resolving that path
   // again would leave the site, which is why the helper returns a full URL.
