@@ -72,8 +72,17 @@ function pickPlot(item: CaseProof): CasePlot | null {
     };
   }
 
-  // No published series (Toku): no plot. The legacy `charts` field is not drawn on the case pages either, and its
-  // numbers are older than the results above.
+  // No published series (Toku): the study's first structured chart, a Bklit bar chart like the others. A plain
+  // number card here read as broken next to the charted cases (Arnel, 2026-10-11).
+  const chart = item.charts?.[0];
+  if (chart?.data?.length) {
+    return {
+      kind: 'bars',
+      title: chart.title,
+      unit: '',
+      points: chart.data.map((d) => ({ label: d.label, value: d.value, display: d.displayValue })),
+    };
+  }
   return null;
 }
 
@@ -120,7 +129,7 @@ export async function ProposalCaseProof({
               <div className="min-w-0">
                 <h3 className="text-[15px] font-medium leading-snug text-surface-950">{shortName(item.name)}</h3>
                 <div className="mt-3 space-y-3">
-                  {plot && item.resultNumber && <Stat number={item.resultNumber} line={resultLabel(item.resultTitle)} lead />}
+                  {item.resultNumber && <Stat number={item.resultNumber} line={resultLabel(item.resultTitle)} lead />}
                   {item.result2Number && <Stat number={item.result2Number} line={resultLabel(item.result2Title)} />}
                 </div>
                 {plot?.kind === 'area' && plot.startDate && (
@@ -141,19 +150,11 @@ export async function ProposalCaseProof({
                 </Link>
               </div>
 
-              {plot ? (
+              {plot && (
                 <div className="min-w-0 self-stretch">
                   <ProposalCaseChart plot={plot} />
                 </div>
-              ) : item.resultNumber ? (
-                /* No series to draw (Toku): the result card the case page's own hero shows, so the column is never empty. */
-                <div className="flex min-h-[220px] min-w-0 flex-col justify-center self-stretch rounded-2xl border border-surface-200 bg-white px-8 py-8">
-                  <p className="text-[44px] font-medium leading-none tracking-[-0.03em] text-primary-600 sm:text-[56px]">
-                    {item.resultNumber}
-                  </p>
-                  <p className="mt-4 max-w-[40ch] text-[15.5px] leading-relaxed text-surface-700">{item.resultTitle}</p>
-                </div>
-              ) : null}
+              )}
             </article>
           );
         })}
