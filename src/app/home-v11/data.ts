@@ -23,6 +23,8 @@ export interface Series {
   bars?: boolean;
   /** Index of the point the end annotation sits on (defaults to the last point). */
   peak?: number;
+  /** `false` draws no "LoudFace starts" pin: the work began before the first reading and its day is not recorded (Toku). */
+  pin?: false;
 }
 
 interface Instruments {
@@ -73,6 +75,7 @@ const PROOF = {
   tokuPosition: ['toku', 2],
   tokuAio: ['toku', 'row', 'aio'],
   tokuAioShare: ['toku', 'row', 'aio-share'],
+  tokuImpressions: ['toku', 'row', 'impressions'],
   tokuAioDeel: ['toku', 'row', 'aio-deel'],
   tokuAioRemote: ['toku', 'row', 'aio-remote'],
   tokuEngineAio: ['toku', 'row', 'engine-aio'],
@@ -112,7 +115,7 @@ function rolling(values: number[], n: number): number[] {
 export interface HomeV11Data {
   /** Each client's hockey stick: the published series with the steepest late climb that still ends at its high
    *  (scored 2026-10-09; Delshad's clean clicks, TradeMomentum's weekly clicks, Genie's impressions and clicks). */
-  hero: Record<'lf' | 'genie' | 'delshad' | 'tm' | 'stealth' | 'genieClicks', Series> & { health?: Series };
+  hero: Record<'lf' | 'genie' | 'delshad' | 'tm' | 'stealth' | 'genieClicks', Series> & { health?: Series; toku?: Series };
   /** Weekly enquiries indexed to their baseline weeks: the homepage "Measured in leads" section and leads tiles. */
   leads: Record<'delshad' | 'genie', Series>;
   results: Record<'genie' | 'lf', Series>;
@@ -162,6 +165,7 @@ export const getHomeV11Data = cache(async (): Promise<HomeV11Data | null> => {
   const stealthPts = stealth.topicClimb?.points ?? [];
   const stealthRolled = rolling(stealthPts.map((p) => p.value * 100), 5);
   const hTrend = health.indexedTrend?.points.filter((p) => p.date) ?? [];
+  const tokuTrend = ins('toku').indexedTrend?.points.filter((p) => p.date) ?? [];
 
   const genieImpressions: Series = {
     dates: gTrend.map((p) => p.date as string),
@@ -184,6 +188,9 @@ export const getHomeV11Data = cache(async (): Promise<HomeV11Data | null> => {
         start: health.engagementStart ?? '2026-01-06',
       } : undefined,
       // Google clicks a day, seven-day mean, indexed to the average May day: the last point is the study's 35×
+      // Toku: monthly Google impressions over the core engagement window, indexed to September 2025 (its study's chart);
+      // the program began well before it, on a day not recorded, so no start pin
+      toku: tokuTrend.length ? { dates: tokuTrend.map((p) => p.date as string), values: tokuTrend.map((p) => p.impressions), start: tokuTrend[0].date as string, pin: false } : undefined,
       genieClicks: { dates: gTrend.map((p) => p.date as string), values: rolling(gTrend.map((p) => p.clicks), 7), start: genie.engagementStart ?? '2026-07-05' },
     },
     leads: {

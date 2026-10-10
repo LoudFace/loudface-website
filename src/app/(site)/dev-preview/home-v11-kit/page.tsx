@@ -168,7 +168,7 @@ export default async function KitPage() {
 
       <Block name="Stage chart" file="StageChart · src/app/home-v11/StageChart.tsx" rule="A result drawn white on the stage. Size 'slide' in the homepage rail; size 'hero' as the picture of an inner-page hero." ground="stage">
         <div className="kit-stage-grid">
-          <StageChart tag={s[1].tag} client={s[1].client} metric={proofValue(data, 'genie')} series={data?.hero.genie} format="index" tip={s[1].tip} periodStart={periodOf(data?.hero.genie).start} periodEnd={periodOf(data?.hero.genie).end} caption={s[1].caption} href="/case-studies/genie-teacher-organic-growth" />
+          <StageChart tag={heroSlide(c, 'genie').tag} client={heroSlide(c, 'genie').client} metric={proofValue(data, 'genie')} series={data?.hero.genie} format="index" tip={heroSlide(c, 'genie').tip} periodStart={periodOf(data?.hero.genie).start} periodEnd={periodOf(data?.hero.genie).end} caption={s[1].caption} href="/case-studies/genie-teacher-organic-growth" />
           <StageChart size="hero" tag={heroSlide(c, 'delshad').tag} client={heroSlide(c, 'delshad').client} metric={proofValue(data, 'delshad')} series={data?.hero.delshad} format="index" tip={heroSlide(c, 'delshad').tip} periodStart={periodOf(data?.hero.delshad).start} periodEnd={periodOf(data?.hero.delshad).end} caption={heroSlide(c, 'delshad').caption} />
         </div>
       </Block>
@@ -343,7 +343,7 @@ export default async function KitPage() {
         <div className="kit-row is-top">
           <div className="kit-w560"><EngineSlope c={meth.hero} /></div>
           <div className="kit-w560"><Funnel c={meth.funnel} /></div>
-          <div className="kit-w300"><TileChart head="Google impressions a day" client="Genie Teacher" num="164×" series={data?.hero.genie} format="index" tip={s[1].tip} /></div>
+          <div className="kit-w300"><TileChart head="Google impressions a day" client="Genie Teacher" num={proofValue(data, 'genie')} series={data?.hero.genie} format="index" tip={heroSlide(c, 'genie').tip} /></div>
         </div>
       </Block>
 

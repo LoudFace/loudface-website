@@ -45,7 +45,7 @@ export function StageChart(p: StageChartProps) {
             hatch
             lineWidth={1.75}
             barGap={0.5}
-            pin={hero ? 22 : 18}
+            pin={p.series.pin === false ? false : hero ? 22 : 18}
             end="plain"
             tip={p.tip}
             format={p.format}

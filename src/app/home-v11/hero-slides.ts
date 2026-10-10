@@ -12,6 +12,7 @@ export type HeroSlideKey = keyof HomeV11Data['hero'];
  */
 /** `proof` names the printed figure when it is not the slide's own key (Delshad's slide charts its clicks, not its leads). */
 export const HERO_SLIDES: { series: HeroSlideKey; proof?: ProofKey; href: string; format: ValueFormat; compact?: boolean }[] = [
+  { series: 'toku', proof: 'tokuImpressions', format: 'index', href: '/case-studies/toku-ai-cited-pipeline' },
   { series: 'lf', format: 'pct', href: '/case-studies/loudface-aeo-case-study', compact: true },
   { series: 'genie', format: 'index', href: '/case-studies/genie-teacher-organic-growth' },
   { series: 'health', format: 'index', href: '/case-studies/anonymous-health-tech-organic-growth' },

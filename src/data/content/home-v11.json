@@ -11,6 +11,12 @@
     "nextAriaLabel": "Next results",
     "slides": [
       {
+        "tag": "Search",
+        "client": "Toku",
+        "caption": "Google impressions a month, September to January",
+        "tip": "September 2025"
+      },
+      {
         "tag": "AI answers",
         "client": "LoudFace",
         "caption": "of non-branded AI answers name us",
