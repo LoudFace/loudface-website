@@ -54,8 +54,9 @@ jobs:
 
       # Where /api/draft-mode/disable and the /fb/<token> link may send the
       # browser: only somewhere on this site, compared by origin
-      # (src/lib/same-site-redirect.ts). Until 2026-10-10 the draft-mode exit
-      # followed any ?redirect= value off the site.
+      # (src/lib/same-site-redirect.ts), and every route that redirects to a
+      # value from its URL calls its check. Until 2026-10-10 the draft-mode
+      # exit followed any ?redirect= value off the site.
       - name: Same-site redirect tests
         run: npm run test:same-site
 

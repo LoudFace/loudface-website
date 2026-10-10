@@ -2,7 +2,8 @@
  * Where /api/draft-mode/disable and the /fb/<token> link may send the browser:
  * only somewhere on this site. Run with `npm run test:same-site`. Nothing here
  * reaches the network. The editor's /api/lf-edit routes follow the same rule
- * through `safeNext`, tested in inline-edit-guard.test.ts.
+ * through `safeNext`, tested in inline-edit-guard.test.ts; the last test here
+ * checks that all five routes call their check.
  *
  * Until 2026-10-10 the route followed any ?redirect= value, so
  * ?redirect=https://example.com/x sent a visitor from www.loudface.co to
@@ -65,7 +66,7 @@ test('sends a missing, empty or malformed value to the home page', () => {
   }
 });
 
-test('the routes that follow a value from their own URL send it through the helper', () => {
+test('the routes that follow a value from their own URL check it first', () => {
   for (const [file, call] of [
     [
       '../../app/api/draft-mode/disable/route.ts',
@@ -75,6 +76,10 @@ test('the routes that follow a value from their own URL send it through the help
       '../../app/fb/[token]/route.ts',
       "sameSiteRedirect(request.nextUrl.searchParams.get('to'), request.nextUrl.origin)",
     ],
+    // The editor's routes redirect relative to the page, so they use safeNext.
+    ['../../app/api/lf-edit/pause/route.ts', "safeNext(new URL(request.url).searchParams.get('next'))"],
+    ['../../app/api/lf-edit/resume/route.ts', "safeNext(new URL(request.url).searchParams.get('next'))"],
+    ['../../app/api/lf-edit/verify/route.ts', "safeNext(url.searchParams.get('next'))"],
   ]) {
     const route = readFileSync(new URL(file, import.meta.url), 'utf8');
     assert.ok(route.includes(call), `${file} must redirect through ${call}`);
