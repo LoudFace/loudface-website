@@ -11,6 +11,7 @@
     "test:editor": "tsx --test src/lib/__tests__/inline-edit-*.test.ts",
     "test:cms": "tsx --test src/lib/__tests__/cms-retry.test.ts src/lib/__tests__/cms-wiring.test.ts",
     "test:redirects": "tsx --test src/lib/__tests__/host-redirect.test.ts",
+    "test:same-site": "tsx --test src/lib/__tests__/same-site-redirect.test.ts",
     "crawl-audit": "node scripts/crawl-audit.mjs",
     "crawl-audit:dev": "node scripts/crawl-audit.mjs http://localhost:3005",
     "pagespeed-audit": "node scripts/pagespeed-audit.mjs",

@@ -52,6 +52,12 @@ jobs:
       - name: Host redirect tests
         run: npm run test:redirects
 
+      # Where /api/draft-mode/disable may send the browser: only somewhere on
+      # this site, compared by origin (src/lib/same-site-redirect.ts). Until
+      # 2026-10-10 it followed any ?redirect= value off the site.
+      - name: Same-site redirect tests
+        run: npm run test:same-site
+
       # The five house rules of the editor that can be checked by reading the
       # repository: the bar behind a Draft Mode gate, getters through markTree,
       # metadata off the marked getters, no component transforming a content
