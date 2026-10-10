@@ -45,8 +45,6 @@ function Stat({ number, line, lead = false }: { number: string; line?: string; l
   );
 }
 
-const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-
 const areaPoints = (series: Series) => series.dates.map((date, i) => ({ date, value: series.values[i] }));
 
 function pickPlot(item: CaseProof): CasePlot | null {
@@ -77,22 +75,6 @@ function pickPlot(item: CaseProof): CasePlot | null {
   // No published series (Toku): the study's first structured chart, a Bklit bar chart like the others. A plain
   // number card here read as broken next to the charted cases (Arnel, 2026-10-11).
   const chart = item.charts?.[0];
-  // A monthly growth curve whose title names its window ("(Sep 2025 to Jan 2026)") draws as a line, like the other
-  // cases; each point keeps the study's own label (+335%), never a figure computed here.
-  const win = chart?.chartType === 'growthCurve' ? /\(([A-Z][a-z]{2}) (\d{4}) to /.exec(chart.title) : null;
-  const m0 = win ? MONTHS.indexOf(win[1]) : -1;
-  if (chart?.data?.length && win && m0 >= 0) {
-    return {
-      kind: 'area',
-      title: chart.title.replace(/\s*\(.*\)$/, ''),
-      unitLabel: '',
-      points: chart.data.map((d, i) => ({
-        date: new Date(Date.UTC(Number(win[2]), m0 + i, 1)).toISOString().slice(0, 10),
-        value: d.value,
-        display: d.displayValue,
-      })),
-    };
-  }
   if (chart?.data?.length) {
     return {
       kind: 'bars',

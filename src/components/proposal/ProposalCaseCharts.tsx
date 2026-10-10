@@ -36,7 +36,7 @@ export type CasePlot =
       /** Tooltip value = value / divisor. 100 for series indexed to 100 (the default), 1 for percentages. */
       divisor?: number;
       /** `value` is the lead series (clicks); `second` the quieter one (impressions). */
-      points: { date: string; value: number; second?: number; display?: string }[];
+      points: { date: string; value: number; second?: number }[];
       secondLabel?: string;
       /** The day LoudFace started, ISO. Drawn as one marker when it falls inside the series. */
       startDate?: string;
@@ -93,7 +93,7 @@ export function ProposalCaseChart({ plot }: { plot: CasePlot }) {
           </BarChart>
         ) : (
           <AreaChart
-            data={plot.points.map((p) => ({ date: new Date(`${p.date}T00:00:00Z`), value: p.value, second: p.second ?? 0, display: p.display }))}
+            data={plot.points.map((p) => ({ date: new Date(`${p.date}T00:00:00Z`), value: p.value, second: p.second ?? 0 }))}
             aspectRatio=""
             style={{ height: '100%' }}
             margin={{ top: plot.startDate ? 40 : 14, right: 22, bottom: 34, left: 22 }}
@@ -124,7 +124,7 @@ export function ProposalCaseChart({ plot }: { plot: CasePlot }) {
                     <li>
                       <span className="inb-tip-rule" style={{ background: 'var(--chart-1)' }} />
                       <span className="inb-tip-label">{plot.title}</span>
-                      <span className="inb-tip-value">{(point.display as string | undefined) ?? `${(Number(point.value) / (plot.divisor ?? 100)).toFixed(1)}${plot.unitLabel}`}</span>
+                      <span className="inb-tip-value">{`${(Number(point.value) / (plot.divisor ?? 100)).toFixed(1)}${plot.unitLabel}`}</span>
                     </li>
                     {plot.secondLabel && (
                       <li>
