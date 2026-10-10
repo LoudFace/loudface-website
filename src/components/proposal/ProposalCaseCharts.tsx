@@ -31,8 +31,10 @@ export type CasePlot =
       kind: 'area';
       title: string;
       caption?: string;
-      /** Tooltip suffix, e.g. "× Dec" for an indexed series. */
+      /** Tooltip suffix, e.g. "×" for an indexed series. */
       unitLabel: string;
+      /** Tooltip value = value / divisor. 100 for series indexed to 100 (the default), 1 for percentages. */
+      divisor?: number;
       /** `value` is the lead series (clicks); `second` the quieter one (impressions). */
       points: { date: string; value: number; second?: number }[];
       secondLabel?: string;
@@ -122,13 +124,13 @@ export function ProposalCaseChart({ plot }: { plot: CasePlot }) {
                     <li>
                       <span className="inb-tip-rule" style={{ background: 'var(--chart-1)' }} />
                       <span className="inb-tip-label">{plot.title}</span>
-                      <span className="inb-tip-value">{`${(Number(point.value) / 100).toFixed(1)}${plot.unitLabel}`}</span>
+                      <span className="inb-tip-value">{`${(Number(point.value) / (plot.divisor ?? 100)).toFixed(1)}${plot.unitLabel}`}</span>
                     </li>
                     {plot.secondLabel && (
                       <li>
                         <span className="inb-tip-rule" style={{ background: 'var(--chart-3)' }} />
                         <span className="inb-tip-label">{plot.secondLabel}</span>
-                        <span className="inb-tip-value">{`${(Number(point.second) / 100).toFixed(1)}${plot.unitLabel}`}</span>
+                        <span className="inb-tip-value">{`${(Number(point.second) / (plot.divisor ?? 100)).toFixed(1)}${plot.unitLabel}`}</span>
                       </li>
                     )}
                   </ul>

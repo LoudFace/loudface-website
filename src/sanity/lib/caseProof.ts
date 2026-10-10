@@ -1,6 +1,6 @@
 import 'server-only';
 import { cachedReadClient } from '@/lib/sanity.client';
-import type { CaseStudyChart } from '@/lib/types';
+import type { CaseStudyChart, CaseStudyInstruments } from '@/lib/types';
 
 /**
  * Case-study proof for the proposal surface.
@@ -18,28 +18,17 @@ import type { CaseStudyChart } from '@/lib/types';
  * about a proposal is ever written to it.
  */
 
-export interface CaseProofInstruments {
-  engagementStart?: string;
-  /** Indexed weekly leads; only the published multiple is shown. */
-  leadGrowth?: { multiple: string; multipleLabel: string };
-  topicClimb?: { title: string; caption: string; points: { week: string; value: number }[] };
-  indexedTrend?: {
-    title: string;
-    baselineLabel: string;
-    caption: string;
-    startMonthIso: string;
-    points: { month: string; date?: string; impressions: number; clicks: number }[];
-  };
-}
-
 export interface CaseProof {
   slug: string;
   name: string;
   resultNumber?: string;
   resultTitle?: string;
+  result2Number?: string;
+  result2Title?: string;
   clientColor?: string;
   charts?: CaseStudyChart[];
-  instruments?: CaseProofInstruments;
+  /** The same instruments the case page reads, so the proposal picks the same lead chart. */
+  instruments?: CaseStudyInstruments;
 }
 
 const QUERY = `*[_type == "caseStudy" && slug.current in $slugs]{
@@ -47,16 +36,24 @@ const QUERY = `*[_type == "caseStudy" && slug.current in $slugs]{
   name,
   "resultNumber": result1Number,
   "resultTitle": result1Title,
+  "result2Number": result2Number,
+  "result2Title": result2Title,
   clientColor,
   "charts": charts[]{
     title, chartType, legendPrimary, legendSecondary,
     data[]{ label, value, secondaryValue, displayValue, secondaryDisplayValue }
   },
   "instruments": instruments{
+    aiSource,
+    gscSource,
     engagementStart,
-    leadGrowth{ multiple, multipleLabel },
     topicClimb{ title, caption, points[]{ week, value } },
-    indexedTrend{ title, baselineLabel, caption, startMonthIso, points[]{ month, date, impressions, clicks } }
+    rankOverTime{ label, from, to, caption, points[]{ week, position } },
+    engineBeforeAfter{ beforeLabel, afterLabel, caption, rows[]{ engine, before, after } },
+    indexedTrend{ title, baselineLabel, caption, startMonthIso, points[]{ month, date, impressions, clicks, partial } },
+    leadGrowth{ title, multiple, multipleLabel, baselineLabel, caption, source, points[]{ week, value } },
+    clickGrowth{ title, baselineLabel, source, points[]{ week, value } },
+    publishedResult{ rows[]{ value, unit }, positionFrom, positionTo, caption }
   }
 }`;
 

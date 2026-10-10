@@ -2,15 +2,20 @@ import Link from 'next/link';
 import { fetchCaseProof, type CaseProof } from '@/sanity/lib/caseProof';
 import { ProposalCaseChart, type CasePlot } from './ProposalCaseCharts';
 import { StatChip } from './StatChip';
+import { caseSeries, leadKind, splitTitle, standaloneCharts } from '@/app/case-v11/series';
+import type { Series } from '@/app/home-v11/data';
 
 /**
  * Real case studies inside a proposal, drawn with the same Bklit charts as
  * the public pages. Read live by slug, so a number here cannot drift.
  *
- * One plot per case, chosen in the order the case page itself leads with:
- * the AI share-of-answers climb, else the indexed Google trend, else the
- * study's first structured chart. Name and headline number on the left,
- * the plot on the right, hairlines between cases — no cards.
+ * Each case shows what its own page leads with: result 1 and result 2 as
+ * published, and the lead chart chosen by the case page's own rule
+ * (`standaloneCharts` + `leadKind` in case-v11/series). Nothing here is
+ * computed from a series or chosen differently from the site (2026-10-10:
+ * the deck showed Delshad's 2.7x leads while its page led with 14.8x clicks).
+ * Name and headline numbers on the left, the plot on the right, hairlines
+ * between cases — no cards.
  */
 
 const fmtWeek = (iso: string) => {
@@ -18,39 +23,19 @@ const fmtWeek = (iso: string) => {
   return Number.isNaN(d.getTime()) ? iso : d.toLocaleDateString('en-GB', { day: 'numeric', month: 'short' });
 };
 
-function monthAt(startMonthIso: string, index: number): string | null {
-  const m = /^(\d{4})-(\d{2})$/.exec(startMonthIso);
-  if (!m) return null;
-  const d = new Date(Date.UTC(Number(m[1]), Number(m[2]) - 1 + index, 1));
-  return d.toISOString().slice(0, 10);
-}
-
 /** "Genie Teacher: 5x Organic Visibility" → "Genie Teacher". The chart carries the rest. */
 const shortName = (name: string) => name.split(':')[0].trim();
 
-/** First clause only — a headline, not the footnote the case page needs. */
-const shortTitle = (title?: string) => (title ?? '').split(/[,(—]/)[0].trim();
+/** "Google clicks per week, week of 7 Jun → …" → "Google clicks per week": the label the case page prints. */
+const resultLabel = (title?: string) => (title ? splitTitle(title).label : undefined);
 
-/**
- * One number a reader can hold: average impressions a day over the last four
- * weeks against the four weeks before LoudFace started. The series is indexed,
- * which cancels out of a ratio.
- */
-function liftSinceStart(points: { date: string; value: number }[], startDate?: string): number | null {
-  if (!startDate || points.length < 40) return null;
-  const idx = points.findIndex((p) => p.date >= startDate);
-  const before = idx >= 28 ? points.slice(idx - 28, idx) : points.slice(0, 28);
-  const after = points.slice(-28);
-  const mean = (xs: { value: number }[]) => xs.reduce((a, x) => a + x.value, 0) / xs.length;
-  const b = mean(before);
-  return b > 0 ? mean(after) / b : null;
-}
+/** Drop a trailing "weekly"/"daily" and any "· source" tail, as the case page does. */
+const chartTitle = (t: string) => t.replace(/,\s*(weekly|daily|indexed)$/i, '').split('·')[0].trim();
 
 /**
  * A result as a badge, not a sentence: the number is a solid tag, the label
  * sits beside it, the whole thing is one pill. The lead stat gets the indigo;
- * the Google lift the quiet grey. Two lines of prose melted together; two
- * pills do not.
+ * the second result the quiet grey.
  */
 function Stat({ number, line, lead = false }: { number: string; line?: string; lead?: boolean }) {
   return (
@@ -60,56 +45,35 @@ function Stat({ number, line, lead = false }: { number: string; line?: string; l
   );
 }
 
+const areaPoints = (series: Series) => series.dates.map((date, i) => ({ date, value: series.values[i] }));
+
 function pickPlot(item: CaseProof): CasePlot | null {
-  const topic = item.instruments?.topicClimb;
-  const trend = item.instruments?.indexedTrend;
-  const trendIsDaily = Boolean(trend?.points?.[0]?.date);
+  const s = standaloneCharts(caseSeries(item.instruments));
+  const kind = leadKind(s, item.resultTitle ?? '');
 
-  const areaFromTrend = (): CasePlot | null => {
-    if (!trend?.points?.length) return null;
-    // Impressions lead: on one shared scale the click line reads flat beside a
-    // 17× impressions climb, and the climb is the story. Clicks ride along in
-    // the tooltip.
-    const points = trend.points
-      .map((p, i) => ({ date: p.date ?? monthAt(trend.startMonthIso, i), value: p.impressions, second: p.clicks }))
-      .filter((p): p is { date: string; value: number; second: number } => Boolean(p.date));
-    if (points.length === 0) return null;
-    const peak = points.reduce((best, p) => (p.value > best.value ? p : best), points[0]);
-    return {
-      kind: 'area',
-      title: `Google impressions · ${trend.baselineLabel} = 1×`,
-      secondLabel: 'Clicks',
-      caption: trend.caption,
-      unitLabel: `× ${trend.baselineLabel}`,
-      startDate: item.instruments?.engagementStart,
-      points,
-    };
-  };
-  const barsFromTopic = (): CasePlot | null =>
-    topic?.points?.length
-      ? {
-          kind: 'bars',
-          title: topic.title,
-          caption: topic.caption,
-          unit: '%',
-          points: topic.points.map((p) => ({ label: fmtWeek(p.week), value: Number((p.value * 100).toFixed(1)) })),
-        }
-      : null;
-
-  // A daily Google series is the richest picture a case has; a weekly AI
-  // climb is next; a monthly series only when nothing finer exists.
-  const chosen = (trendIsDaily ? areaFromTrend() : null) ?? barsFromTopic() ?? areaFromTrend();
-  if (chosen) return chosen;
-
-  const chart = item.charts?.[0];
-  if (chart?.data?.length) {
+  if (kind === 'clicks' && s.clicks) {
+    return { kind: 'area', title: s.clicks.title, unitLabel: '×', startDate: s.clicks.series.start, points: areaPoints(s.clicks.series) };
+  }
+  if (kind === 'google' && s.google) {
+    return { kind: 'area', title: 'Google impressions per day', unitLabel: '×', startDate: s.google.series.start, points: areaPoints(s.google.series) };
+  }
+  if (kind === 'ai' && s.ai) {
+    const title = chartTitle(s.ai.title);
+    return s.ai.series.bars
+      ? { kind: 'bars', title, unit: '%', points: s.ai.series.dates.map((d, i) => ({ label: fmtWeek(d), value: Number(s.ai!.series.values[i].toFixed(1)) })) }
+      : { kind: 'area', title, unitLabel: '%', divisor: 1, startDate: s.ai.series.start, points: areaPoints(s.ai.series) };
+  }
+  if (kind === 'leads' && s.leads) {
     return {
       kind: 'bars',
-      title: chart.title,
+      title: chartTitle(s.leads.title),
       unit: '',
-      points: chart.data.map((d) => ({ label: d.label, value: d.value, display: d.displayValue })),
+      points: s.leads.series.dates.map((d, i) => ({ label: fmtWeek(d), value: s.leads!.series.values[i], display: `${(s.leads!.series.values[i] / 100).toFixed(1)}×` })),
     };
   }
+
+  // No published series (Toku): no plot. The legacy `charts` field is not drawn on the case pages either, and its
+  // numbers are older than the results above.
   return null;
 }
 
@@ -155,23 +119,10 @@ export async function ProposalCaseProof({
                   line gets the whole right column and its full height. */}
               <div className="min-w-0">
                 <h3 className="text-[15px] font-medium leading-snug text-surface-950">{shortName(item.name)}</h3>
-                {(() => {
-                  const lift = plot?.kind === 'area' ? liftSinceStart(plot.points, plot.startDate) : null;
-                  const lead = item.instruments?.leadGrowth;
-                  // Pipeline first when the case has it; the Google line is the secondary stat.
-                  const primary = lead
-                    ? { number: lead.multiple, line: shortTitle(lead.multipleLabel) }
-                    : lift
-                      ? { number: `${lift.toFixed(lift >= 10 ? 0 : 1)}×`, line: 'more Google impressions a day since LoudFace started' }
-                      : { number: item.resultNumber, line: shortTitle(item.resultTitle) };
-                  const secondary = lead && lift ? { number: `${lift.toFixed(lift >= 10 ? 0 : 1)}×`, line: 'more Google impressions a day' } : null;
-                  return (
-                    <div className="mt-3 space-y-3">
-                      {primary.number && <Stat number={primary.number} line={primary.line} lead />}
-                      {secondary && <Stat number={secondary.number} line={secondary.line} />}
-                    </div>
-                  );
-                })()}
+                <div className="mt-3 space-y-3">
+                  {item.resultNumber && <Stat number={item.resultNumber} line={resultLabel(item.resultTitle)} lead />}
+                  {item.result2Number && <Stat number={item.result2Number} line={resultLabel(item.result2Title)} />}
+                </div>
                 {plot?.kind === 'area' && plot.startDate && (
                   <p className="mt-4 flex items-center gap-1.5 text-[12px] text-surface-500">
                     {/* eslint-disable-next-line @next/next/no-img-element */}
