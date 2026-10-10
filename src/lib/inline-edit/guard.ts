@@ -24,11 +24,29 @@ export function editorOffResponse(): Response | null {
  * Only a path on this site: one leading slash, no `//host` (which is a full
  * address to somewhere else) and no backslash (which some browsers read as a
  * slash). Anything else falls back to the home page.
+ *
+ * Those prefix tests alone let "/<tab>/host" through: a browser drops tabs and
+ * newlines before it reads an address, so it became "//host", and
+ * /api/lf-edit/pause sent the browser to that host (measured 2026-10-10). So
+ * the value is also read the way a browser reads it and compared by origin, as
+ * `sameSiteRedirect` does, and the answer is the path the browser will see.
+ * The editor routes redirect relative to the page, so that is a path, not a
+ * full URL, and it never starts with "//": "/.//host" stays on this site once
+ * but reads as "//host" when it is resolved again.
  */
 export function safeNext(value: string | null | undefined, fallback = '/'): string {
   if (!value) return fallback;
   if (!value.startsWith('/') || value.startsWith('//') || value.includes('\\')) return fallback;
-  return value;
+  try {
+    // Any origin works as the base: a path keeps it, and an address a browser
+    // reads as "//host" takes its origin from the value instead.
+    const base = new URL('https://same-site.invalid/');
+    const target = new URL(value, base);
+    const path = `${target.pathname}${target.search}${target.hash}`;
+    return target.origin === base.origin && !path.startsWith('//') ? path : fallback;
+  } catch {
+    return fallback;
+  }
 }
 
 /**

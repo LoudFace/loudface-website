@@ -1,6 +1,8 @@
 /**
- * Where /api/draft-mode/disable may send the browser: only somewhere on this
- * site. Run with `npm run test:same-site`. Nothing here reaches the network.
+ * Where /api/draft-mode/disable and the /fb/<token> link may send the browser:
+ * only somewhere on this site. Run with `npm run test:same-site`. Nothing here
+ * reaches the network. The editor's /api/lf-edit routes follow the same rule
+ * through `safeNext`, tested in inline-edit-guard.test.ts.
  *
  * Until 2026-10-10 the route followed any ?redirect= value, so
  * ?redirect=https://example.com/x sent a visitor from www.loudface.co to
@@ -63,10 +65,18 @@ test('sends a missing, empty or malformed value to the home page', () => {
   }
 });
 
-test('the draft-mode exit route sends ?redirect= through the helper', () => {
-  const route = readFileSync(
-    new URL('../../app/api/draft-mode/disable/route.ts', import.meta.url),
-    'utf8',
-  );
-  assert.match(route, /NextResponse\.redirect\(sameSiteRedirect\(url\.searchParams\.get\('redirect'\), url\.origin\)\)/);
+test('the routes that follow a value from their own URL send it through the helper', () => {
+  for (const [file, call] of [
+    [
+      '../../app/api/draft-mode/disable/route.ts',
+      "sameSiteRedirect(url.searchParams.get('redirect'), url.origin)",
+    ],
+    [
+      '../../app/fb/[token]/route.ts',
+      "sameSiteRedirect(request.nextUrl.searchParams.get('to'), request.nextUrl.origin)",
+    ],
+  ]) {
+    const route = readFileSync(new URL(file, import.meta.url), 'utf8');
+    assert.ok(route.includes(call), `${file} must redirect through ${call}`);
+  }
 });

@@ -53,6 +53,27 @@ describe('safeNext', () => {
     assert.equal(safeNext(null), '/');
     assert.equal(safeNext('', '/x'), '/x');
   });
+
+  it('falls back when a browser would read the path as another host', () => {
+    // A browser drops tabs and newlines before it reads an address, so each of
+    // these becomes "//evil.example" (2026-10-10: /api/lf-edit/pause followed
+    // the tab to example.com).
+    assert.equal(safeNext('/\t/evil.example'), '/');
+    assert.equal(safeNext('/\n/evil.example'), '/');
+    assert.equal(safeNext('/\r\n/evil.example'), '/');
+  });
+
+  it('never answers a path that starts with //', () => {
+    // These stay on the site once, but normalise to "//evil.example", which a
+    // second resolve would send to that host.
+    assert.equal(safeNext('/.//evil.example'), '/');
+    assert.equal(safeNext('/a/..//evil.example'), '/');
+  });
+
+  it('answers the path the browser will see, query and hash kept', () => {
+    assert.equal(safeNext('/blog/post?x=1#top'), '/blog/post?x=1#top');
+    assert.equal(safeNext('/a/./b/../c'), '/a/c');
+  });
 });
 
 describe('paused mark', () => {
