@@ -120,7 +120,7 @@ export async function ProposalCaseProof({
               <div className="min-w-0">
                 <h3 className="text-[15px] font-medium leading-snug text-surface-950">{shortName(item.name)}</h3>
                 <div className="mt-3 space-y-3">
-                  {item.resultNumber && <Stat number={item.resultNumber} line={resultLabel(item.resultTitle)} lead />}
+                  {plot && item.resultNumber && <Stat number={item.resultNumber} line={resultLabel(item.resultTitle)} lead />}
                   {item.result2Number && <Stat number={item.result2Number} line={resultLabel(item.result2Title)} />}
                 </div>
                 {plot?.kind === 'area' && plot.startDate && (
@@ -141,11 +141,19 @@ export async function ProposalCaseProof({
                 </Link>
               </div>
 
-              {plot && (
+              {plot ? (
                 <div className="min-w-0 self-stretch">
                   <ProposalCaseChart plot={plot} />
                 </div>
-              )}
+              ) : item.resultNumber ? (
+                /* No series to draw (Toku): the result card the case page's own hero shows, so the column is never empty. */
+                <div className="flex min-h-[220px] min-w-0 flex-col justify-center self-stretch rounded-2xl border border-surface-200 bg-white px-8 py-8">
+                  <p className="text-[44px] font-medium leading-none tracking-[-0.03em] text-primary-600 sm:text-[56px]">
+                    {item.resultNumber}
+                  </p>
+                  <p className="mt-4 max-w-[40ch] text-[15.5px] leading-relaxed text-surface-700">{item.resultTitle}</p>
+                </div>
+              ) : null}
             </article>
           );
         })}
