@@ -10,3 +10,10 @@
 - Fresh-agent review (Opus, clean context): no P0/P1. Fixed: indexifembedded (P2), tablet centring (P3), reduced-motion on step colours (P3).
 - Open P2/P3, accepted: the four steps also appear in the Route section lower on the page (Arnel's call); the figure is ~930 KB raw / ~130 KB brotli, lazy-loaded; figure copy lives in the generated HTML, edited through design-lab/anatomy/launch-stack-src, not the inline editor; LaunchSteps accepts a step message from any same-origin frame (harmless); bento.tiles 1-3 stay in home-v11.json unused on `/`.
 - Ran by: Claude (session b0293157), 2026-10-12.
+
+## Addendum 2026-10-13 · capability-tile slider and stacked steps
+
+- Change: the four capability tiles (Toku / Genie / Dimer / Ceipal) return as a slider along the section's bottom edge (`TileSlider`, `BentoTiles`), each linking to its service page (/services/geo-agency, seo-aeo, ux-ui-design, webflow); the four steps become one wrapping row below 1380px.
+- Arnel approved the layout in chat ("Looks very good. This is what I had imagined", "Looks good. Push live.").
+- Checked 2026-10-13: tsc passes; `test:editor` 594 pass; `npm run build` compiles; check.mjs 1 FAIL (the same 4 default-palette classes in older files), 12 WARN, 25 PASS; every home-v11 text value reachable by the inline editor. Measured at 1440, 1200, 1100, 820 and 375px: no sideways scroll; steps 107px (1100), 155px (820), 230px (375) tall; slider fades and arrows dim at both ends; the Design card's heading clears the monitor (19px desktop, 8px phone).
+- Open: "Build on Webflow" label unchanged (Arnel to decide); tile photos are lazy and the slider's links are plain `<a>` via next/link.

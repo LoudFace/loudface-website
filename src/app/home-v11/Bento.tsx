@@ -1,3 +1,4 @@
+import Link from 'next/link';
 import type { ReactNode } from 'react';
 import type { HomeV11Content } from '@/lib/content-utils';
 import { Eyebrow, SectionHead, img } from './ui';
@@ -67,10 +68,11 @@ export function ChatWindow({ c, className = '', sourceIcon = 'logos/toku-app-ico
   );
 }
 
-function Tile({ t, k, children }: { t: C['tiles'][number]; k: 'ai' | 'search' | 'design' | 'build'; children: ReactNode }) {
+/** One capability tile. With `href` the whole tile links to that service's page (the launch-stack slider). */
+function Tile({ t, k, href, children }: { t: C['tiles'][number]; k: 'ai' | 'search' | 'design' | 'build'; href?: string; children: ReactNode }) {
   const dark = k === 'ai';
-  return (
-    <div className={`v11-tile is-${k}`}>
+  const inner = (
+    <>
       {!dark && (
         // eslint-disable-next-line @next/next/no-img-element
         <img src={img(`bento-${k}.webp`)} alt="" className="v11-tile-photo" loading="lazy" />
@@ -80,53 +82,65 @@ function Tile({ t, k, children }: { t: C['tiles'][number]; k: 'ai' | 'search' | 
         <p>{t.heading}</p>
       </div>
       {children}
-    </div>
+    </>
+  );
+  return href ? <Link href={href} className={`v11-tile is-${k} is-link`}>{inner}</Link> : <div className={`v11-tile is-${k}`}>{inner}</div>;
+}
+
+/** The four capability tiles (AI answers, Search, Design, Build), each with its client's figure. `linked` makes each
+ * tile a link to its service page (home-v11.json bento.tiles[].href). */
+export function BentoTiles({ c, data, linked = false }: { c: C; data: HomeV11Data | null; linked?: boolean }) {
+  const [ai, search, design, build] = c.tiles;
+  const to = (t: C['tiles'][number]) => (linked ? t.href : undefined);
+  return (
+    <>
+      <Tile t={ai} k="ai" href={to(ai)}>
+        <div className="v11-tile-ui"><ChatWindow c={c.chat} /></div>
+        <div className="v11-tile-stat is-ai">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img loading="lazy" src={img('logos/toku-white.png')} alt="Toku" width={46} height={13} />
+          <div className="v11-tile-big">{proofValue(data, 'toku')}</div>
+          <div className="v11-tile-cap">{ai.caption}</div>
+        </div>
+      </Tile>
+      <Tile t={search} k="search" href={to(search)}>
+        <div className="v11-tile-stat is-search">
+          <div className="v11-tile-client">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img loading="lazy" src={img('logos/genie-icon.png')} alt="" width={20} height={20} className="v11-case-icon" />
+            <span>{search.client}</span>
+          </div>
+          <div className="v11-tile-big">{proofValue(data, 'genie')}</div>
+          <div className="v11-tile-cap">{search.caption}</div>
+        </div>
+      </Tile>
+      <Tile t={design} k="design" href={to(design)}>
+        <div className="v11-tile-stat">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img loading="lazy" src={img('logos/dimer-health-ink.png')} alt="Dimer Health" width={65} height={22} />
+          <div className="v11-tile-big">{proofValue(data, 'dimer')}</div>
+          <div className="v11-tile-cap">{design.caption}</div>
+        </div>
+      </Tile>
+      <Tile t={build} k="build" href={to(build)}>
+        <div className="v11-tile-stat">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img loading="lazy" src={img('logos/ceipal-ink.png')} alt="Ceipal" width={67} height={22} />
+          <div className="v11-tile-big">{proofValue(data, 'ceipal')}</div>
+          <div className="v11-tile-cap">{build.caption}</div>
+        </div>
+      </Tile>
+    </>
   );
 }
 
 export function Bento({ c, data }: { c: C; data: HomeV11Data | null }) {
-  const [ai, search, design, build] = c.tiles;
   return (
     <section className="v11-sec v11-warm">
       <div className="v11-wrap">
         <SectionHead eyebrow={c.eyebrow} heading={c.heading} body={c.body} />
         <div className="v11-bento">
-          <Tile t={ai} k="ai">
-            <div className="v11-tile-ui"><ChatWindow c={c.chat} /></div>
-            <div className="v11-tile-stat is-ai">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img loading="lazy" src={img('logos/toku-white.png')} alt="Toku" width={46} height={13} />
-              <div className="v11-tile-big">{proofValue(data, 'toku')}</div>
-              <div className="v11-tile-cap">{ai.caption}</div>
-            </div>
-          </Tile>
-          <Tile t={search} k="search">
-            <div className="v11-tile-stat is-search">
-              <div className="v11-tile-client">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img loading="lazy" src={img('logos/genie-icon.png')} alt="" width={20} height={20} className="v11-case-icon" />
-                <span>{search.client}</span>
-              </div>
-              <div className="v11-tile-big">{proofValue(data, 'genie')}</div>
-              <div className="v11-tile-cap">{search.caption}</div>
-            </div>
-          </Tile>
-          <Tile t={design} k="design">
-            <div className="v11-tile-stat">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img loading="lazy" src={img('logos/dimer-health-ink.png')} alt="Dimer Health" width={65} height={22} />
-              <div className="v11-tile-big">{proofValue(data, 'dimer')}</div>
-              <div className="v11-tile-cap">{design.caption}</div>
-            </div>
-          </Tile>
-          <Tile t={build} k="build">
-            <div className="v11-tile-stat">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img loading="lazy" src={img('logos/ceipal-ink.png')} alt="Ceipal" width={67} height={22} />
-              <div className="v11-tile-big">{proofValue(data, 'ceipal')}</div>
-              <div className="v11-tile-cap">{build.caption}</div>
-            </div>
-          </Tile>
+          <BentoTiles c={c} data={data} />
         </div>
       </div>
     </section>

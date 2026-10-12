@@ -72,25 +72,31 @@
     "heading": "The site, Google and AI answers, <br>run by one team",
     "body": "One retainer covers design, build, SEO, AEO and GEO, content and conversion. One team, one report, one set of numbers.",
     "figureLabel": "How the LoudFace team runs an engagement, drawn as a two-stage rocket with side boosters",
+    "prevTileAriaLabel": "Previous service",
+    "nextTileAriaLabel": "Next service",
     "tiles": [
       {
         "label": "AI answers",
+        "href": "/services/geo-agency",
         "heading": "Get named when buyers ask AI who to shortlist",
         "caption": "AI visibility on its top prompt"
       },
       {
         "label": "Search",
+        "href": "/services/seo-aeo",
         "heading": "Grow the pages Google already wants to rank",
         "caption": "Google impressions a day",
         "client": "Genie Teacher"
       },
       {
         "label": "Design",
+        "href": "/services/ux-ui-design",
         "heading": "Positioning, copy and design that earn trust",
         "caption": "more conversions after the redesign"
       },
       {
         "label": "Build on Webflow",
+        "href": "/services/webflow",
         "heading": "A site your team can edit on day one",
         "caption": "CMS pages moved to Webflow"
       }

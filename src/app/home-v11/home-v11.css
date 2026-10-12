@@ -702,11 +702,24 @@ body:has([data-hero="light"]) header[data-hero-theme="dark"]:not([data-hero-scro
 
 /* Launch stack (homepage What we do, 2026-10-12): heading across, then lede + steps left, the figure right */
 .v11-launch-h2 { max-width: none; }
-.v11-launch { display: flex; flex-wrap: wrap; gap: 56px; align-items: flex-start; justify-content: space-between; margin-top: 32px; }
-.v11-launch-copy { flex: 1 1 380px; max-width: 440px; }
-@media (min-width: 1280px) { .v11-launch-copy { position: sticky; top: 140px; } }
+.v11-launch-box { container-type: inline-size; margin-top: 32px; }
+.v11-launch { display: flex; flex-wrap: wrap; gap: 56px; align-items: flex-start; justify-content: space-between; }
+.v11-launch-below { flex: 1 1 100%; min-width: 0; }
+/* Two columns from 1380px (copy 440 + gap 56 + figure up to 800). The figure is 5:6, so its height is 1.2x its width;
+   the slider starts at 86.5% of that height, under the Measurement callout, and ends at 36% of the figure's width,
+   left of the launch pad. The section grows by however far the slider runs past the figure. */
+@media (min-width: 1380px) {
+  .v11-launch { --fig: min(800px, 100cqw - 496px); display: grid; grid-template-columns: 440px var(--fig); column-gap: 56px; justify-content: space-between; position: relative;
+    padding-bottom: max(0px, calc(var(--fig) * 1.038 + 300px - var(--fig) * 1.2)); }
+  .v11-launch-below { position: absolute; left: 0; top: calc(var(--fig) * 1.038); width: calc(496px + var(--fig) * 0.36); }
+  .v11-launch-fig { margin-inline: 0; width: 100%; }
+  .v11-launch-below .v11-tslide { margin-top: 0; }
+}
+.v11-launch-copy { flex: 1 1 380px; max-width: 440px; min-width: 0; }
+@media (max-width: 1379px) { .v11-launch-copy { max-width: none; flex-basis: 100%; } .v11-launch-steps { max-width: none; } }
 .v11-launch-lede { margin: 0; font-size: 17px; line-height: 1.5; color: var(--body); text-wrap: pretty; }
 .v11-launch-fig { flex: 0 1 800px; min-width: 0; margin-inline: auto; }
+@media (max-width: 1379px) { .v11-launch-lede { max-width: 560px; } }
 .v11-launch-frame { display: block; width: 100%; aspect-ratio: 800 / 960; border: 0; }
 @media (max-width: 600px) { .v11-launch-frame { aspect-ratio: 5 / 9; } }
 .v11-launch-steps { list-style: none; margin: 40px 0 0; padding: 0; border-top: 1px solid var(--line); }
@@ -719,3 +732,61 @@ body:has([data-hero="light"]) header[data-hero-theme="dark"]:not([data-hero-scro
 .v11-launch-step[data-on] .v11-launch-head { color: var(--ink); }
 .v11-launch-step[data-on] .v11-launch-out { color: var(--body); }
 @media (prefers-reduced-motion: reduce) { .v11-launch-dot, .v11-launch-head, .v11-launch-out { transition: none; } }
+
+/* The capability tiles in the launch-stack section (TileSlider): the homepage tiles' own design, one photo with the copy
+   and figure laid over it, at 336x228; the edges fade where there is more to scroll (data-start / data-end). */
+.v11-tslide { margin-top: 40px; }
+.v11-tslide-track { display: flex; gap: 12px; overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none; overscroll-behavior-x: contain;
+  --fade-l: 0px; --fade-r: 72px;
+  -webkit-mask-image: linear-gradient(to right, transparent 0, #000 var(--fade-l), #000 calc(100% - var(--fade-r)), transparent 100%);
+  mask-image: linear-gradient(to right, transparent 0, #000 var(--fade-l), #000 calc(100% - var(--fade-r)), transparent 100%); }
+.v11-tslide-track:not([data-start]) { --fade-l: 56px; }
+.v11-tslide-track[data-end] { --fade-r: 0px; }
+.v11-tslide-track::-webkit-scrollbar { display: none; }
+.v11-tslide .v11-tile { position: relative; display: block; flex: 0 0 336px; height: 228px; border-radius: 18px; overflow: hidden; scroll-snap-align: start; }
+.v11-tslide .v11-tile-photo { position: absolute; inset: 0; width: 100%; height: 100%; margin: 0; object-fit: cover; object-position: 100% 50%; }
+.v11-tslide .v11-tile.is-search::after, .v11-tslide .v11-tile.is-design::after { content: ""; position: absolute; inset: 0; pointer-events: none; }
+.v11-tslide .v11-tile.is-search::after { background: radial-gradient(70% 60% at 0% 0%, rgba(241,238,254,0.9) 0%, rgba(241,238,254,0.6) 45%, rgba(241,238,254,0) 100%), radial-gradient(60% 55% at 0% 100%, rgba(241,238,254,0.85) 0%, rgba(241,238,254,0) 100%); }
+.v11-tslide .v11-tile.is-design::after { background: radial-gradient(70% 60% at 0% 0%, rgba(255,236,226,0.9) 0%, rgba(255,236,226,0.6) 45%, rgba(255,236,226,0) 100%), radial-gradient(60% 55% at 0% 100%, rgba(255,236,226,0.85) 0%, rgba(255,236,226,0) 100%); }
+/* The design photo's monitor starts left of centre, under the heading: draw the photo smaller, anchored bottom right,
+   its left and top edges fading into the wall's own orange so the heading sits on clear wall */
+.v11-tslide .v11-tile.is-design { background: linear-gradient(165deg, #e35a39 0%, #ee6d4c 55%, #f47d5e 100%); }
+.v11-tslide .v11-tile.is-design .v11-tile-photo { inset: auto 0 0 auto; width: auto; height: 86%; aspect-ratio: 1272 / 880;
+  -webkit-mask-image: linear-gradient(to right, transparent 0, #000 18%), linear-gradient(to bottom, transparent 0, #000 14%); -webkit-mask-composite: source-in;
+  mask-image: linear-gradient(to right, transparent 0, #000 18%), linear-gradient(to bottom, transparent 0, #000 14%); mask-composite: intersect; }
+.v11-tslide .v11-tile-copy { position: absolute; left: 20px; top: 18px; width: 170px; padding: 0; }
+.v11-tslide .v11-tile-copy .v11-eyebrow { font-size: 12px; }
+.v11-tslide .v11-tile-copy p { font-size: 17px; line-height: 1.15; margin-top: 8px; }
+.v11-tslide .v11-tile-stat, .v11-tslide .v11-tile:not(.is-ai) .v11-tile-stat { position: absolute; left: 20px; bottom: 16px; padding: 0; background: none; }
+.v11-tslide .v11-tile-stat > img { height: 16px; }
+.v11-tslide .v11-tile-stat.is-ai > img { height: 10px; }
+.v11-tslide .v11-tile-client { font-size: 12px; gap: 6px; }
+.v11-tslide .v11-tile-client img { width: 16px; height: 16px; }
+.v11-tslide .v11-tile-big { font-size: 32px; margin-top: 6px; }
+.v11-tslide .v11-tile-cap { font-size: 11.5px; margin-top: 3px; }
+.v11-tslide .v11-tile-ui { position: absolute; right: 12px; top: 48px; padding: 0; zoom: 0.46; }
+.v11-tslide .v11-tile-ui .v11-chat { width: 352px; }
+.v11-tslide .v11-tile.is-ai .v11-tile-copy { width: 150px; }
+@media (max-width: 767px) { .v11-tslide .v11-tile { flex-basis: 300px; height: 210px; } .v11-tslide .v11-tile-copy p { font-size: 15.5px; } .v11-tslide .v11-tile-big { font-size: 28px; } .v11-tslide .v11-tile-ui { zoom: 0.42; } }
+.v11-tslide-controls { display: flex; gap: 8px; margin-top: 16px; }
+.v11-arrow.is-line { background: transparent; color: var(--ink); box-shadow: inset 0 0 0 1.2px var(--line); }
+.v11-arrow.is-line:hover { background: #ffffff; }
+.v11-arrow.is-line:disabled { opacity: 0.35; cursor: default; background: transparent; }
+.v11-tile.is-link { color: inherit; text-decoration: none; }
+.v11-tile.is-link .v11-tile-photo { transition: transform var(--slow) var(--ease); }
+.v11-tile.is-link:hover .v11-tile-photo { transform: scale(1.03); }
+.v11-tile.is-link:focus-visible { outline: 2px solid var(--ind); outline-offset: -2px; }
+@media (prefers-reduced-motion: reduce) { .v11-tile.is-link .v11-tile-photo { transition: none; } }
+/* Wherever the section stacks (under 1380px) the four steps run in one row and wrap as the screen narrows (four, two on phones) */
+@media (max-width: 1379px) {
+  .v11-launch-steps { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); column-gap: 28px; margin-top: 28px; max-width: none; }
+  .v11-launch-step { padding: 16px 0; }
+}
+@media (max-width: 767px) {
+  .v11-launch-steps { column-gap: 20px; }
+  .v11-launch-step { grid-template-columns: 12px 1fr; column-gap: 8px; padding: 14px 0; }
+  .v11-launch-dot { margin-top: 5px; width: 7px; height: 7px; }
+  .v11-launch-when { font-size: 12.5px; }
+  .v11-launch-head { font-size: 15.5px; line-height: 1.2; }
+  .v11-launch-out { font-size: 13px; line-height: 1.35; }
+}
