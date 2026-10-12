@@ -706,7 +706,7 @@ body:has([data-hero="light"]) header[data-hero-theme="dark"]:not([data-hero-scro
 .v11-launch-copy { flex: 1 1 380px; max-width: 440px; }
 @media (min-width: 1280px) { .v11-launch-copy { position: sticky; top: 140px; } }
 .v11-launch-lede { margin: 0; font-size: 17px; line-height: 1.5; color: var(--body); text-wrap: pretty; }
-.v11-launch-fig { flex: 0 1 800px; min-width: 0; }
+.v11-launch-fig { flex: 0 1 800px; min-width: 0; margin-inline: auto; }
 .v11-launch-frame { display: block; width: 100%; aspect-ratio: 800 / 960; border: 0; }
 @media (max-width: 600px) { .v11-launch-frame { aspect-ratio: 5 / 9; } }
 .v11-launch-steps { list-style: none; margin: 40px 0 0; padding: 0; border-top: 1px solid var(--line); }
@@ -718,3 +718,4 @@ body:has([data-hero="light"]) header[data-hero-theme="dark"]:not([data-hero-scro
 .v11-launch-step[data-on] .v11-launch-dot { background: var(--ind); }
 .v11-launch-step[data-on] .v11-launch-head { color: var(--ink); }
 .v11-launch-step[data-on] .v11-launch-out { color: var(--body); }
+@media (prefers-reduced-motion: reduce) { .v11-launch-dot, .v11-launch-head, .v11-launch-out { transition: none; } }
