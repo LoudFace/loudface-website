@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import localFont from "next/font/local";
-import Script from "next/script";
 import { FeedbackLoader } from "@/components/feedback/FeedbackLoader";
 import { serializeJsonLd } from '@/lib/schema-utils';
 
@@ -219,15 +218,6 @@ export default function RootLayout({
         <link rel="preconnect" href="https://cdn.sanity.io" />
         <link rel="dns-prefetch" href="https://app.cal.com" />
         <link rel="dns-prefetch" href="https://www.googletagmanager.com" />
-
-        {/* React Grab - dev-only context selector for coding agents */}
-        {process.env.NODE_ENV === "development" && (
-          <Script
-            src="//unpkg.com/react-grab/dist/index.global.js"
-            crossOrigin="anonymous"
-            strategy="beforeInteractive"
-          />
-        )}
 
         {/* Structured Data */}
         <script

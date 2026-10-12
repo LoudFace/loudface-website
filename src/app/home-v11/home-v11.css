@@ -699,3 +699,22 @@ body:has([data-hero="light"]) header[data-hero-theme="dark"]:not([data-hero-scro
 body:has([data-hero="light"]) header[data-hero-theme="dark"]:not([data-hero-scrolled]) .nav-link:hover { background: rgba(26,16,64,0.06); }
 body:has([data-hero="light"]) header[data-hero-theme="dark"]:not([data-hero-scrolled]) [data-nav-cta] { background: #1a1040; color: #ffffff; }
 body:has([data-hero="light"]) header[data-hero-theme="dark"]:not([data-hero-scrolled]) .nav-burger span { background: #1a1040; }
+
+/* Launch stack (homepage What we do, 2026-10-12): heading across, then lede + steps left, the figure right */
+.v11-launch-h2 { max-width: none; }
+.v11-launch { display: flex; flex-wrap: wrap; gap: 56px; align-items: flex-start; justify-content: space-between; margin-top: 32px; }
+.v11-launch-copy { flex: 1 1 380px; max-width: 440px; }
+@media (min-width: 1280px) { .v11-launch-copy { position: sticky; top: 140px; } }
+.v11-launch-lede { margin: 0; font-size: 17px; line-height: 1.5; color: var(--body); text-wrap: pretty; }
+.v11-launch-fig { flex: 0 1 800px; min-width: 0; }
+.v11-launch-frame { display: block; width: 100%; aspect-ratio: 800 / 960; border: 0; }
+@media (max-width: 600px) { .v11-launch-frame { aspect-ratio: 5 / 9; } }
+.v11-launch-steps { list-style: none; margin: 40px 0 0; padding: 0; border-top: 1px solid var(--line); }
+.v11-launch-step { display: grid; grid-template-columns: 16px 1fr; column-gap: 12px; padding: 18px 0; border-bottom: 1px solid var(--line); }
+.v11-launch-dot { width: 8px; height: 8px; margin-top: 7px; border-radius: 99px; background: var(--line); transition: background-color var(--dur) var(--ease); }
+.v11-launch-when { display: block; font-size: 14px; color: var(--quiet); }
+.v11-launch-head { display: block; margin-top: 2px; font-size: 17px; font-weight: 500; color: var(--muted); transition: color var(--dur) var(--ease); }
+.v11-launch-out { display: block; margin-top: 2px; font-size: 15px; color: var(--quiet); transition: color var(--dur) var(--ease); }
+.v11-launch-step[data-on] .v11-launch-dot { background: var(--ind); }
+.v11-launch-step[data-on] .v11-launch-head { color: var(--ink); }
+.v11-launch-step[data-on] .v11-launch-out { color: var(--body); }

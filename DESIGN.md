@@ -45,8 +45,9 @@ page is decoration and fails, however polished. Reach for these, in this order:
   (`hero-phone*.jpg`, `bento-*.jpg`; made with `design-directions/scripts/gen_image.py` and `screen.py`). Use it
   where the screen on the device is the point: proof of shipped work, a hero's atmosphere. Never as filler; a page of
   devices on desks reads as stock photography.
-- **Drawn things, only these:** the route map (one line drawing, full bleed) and documents on the brand plate
-  (plans, reports, letters).
+- **Drawn things, only these:** the route map (one line drawing, full bleed), documents on the brand plate
+  (plans, reports, letters), and the launch stack on the homepage (the team as an isometric rocket, approved by Arnel
+  2026-10-12; one per site, not a style for other sections).
 
 **2.2 One idea per section, few and large elements.** A homepage section is a heading, one lede, and one
 composition: four photo tiles; one chart set; one map; one document; three client videos; four portraits. Elements
@@ -141,6 +142,7 @@ homepage quality and joins the library **before** a page uses it. Two copies of 
 | `ResultCase`, `StageChart`, `ChartPanel`, `KeyResults`, `BeforeAfterChart`, `LiveChart` | every chart and result figure; `LiveChart` only through the others. A bare chart must read the way its claim does (`trendHolds` in `case-v11/series.ts`); a peaked series shows its published figures in `BeforeAfterChart`. |
 | `QuoteCard`, video card (`Testimonials.tsx`) | client voice |
 | `ChatWindow` (`Bento.tsx`) | any AI answer shown on a page; no drawn look-alikes |
+| `LaunchStackSection` (`LaunchStack.tsx`) | the homepage's How the team works figure only |
 | `LogoGrid` | client logos with the count |
 | Photo tile (`Bento`) | a service or capability with its photograph |
 | Brand plate + sheet (`.v11-svc-plate`, `.v11-sheet`) | a written document |

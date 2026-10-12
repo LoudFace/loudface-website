@@ -2,7 +2,8 @@
  * Homepage — v11 (approved 2026-09-24 as /dev-preview/home-v11; switched 2026-09-26).
  *
  * Composed from src/app/home-v11/* inside the (site) group, so it keeps the shared header, consent and Cal chrome.
- * The copy is home-v11.json (getHomeV11Content), the charts come from getHomeV11Data. SEO metadata and the speakable
+ * What we do is the launch-stack figure (2026-10-12, in place of the four-tile bento; Bento.tsx stays for ChatWindow,
+ * which other v11 pages use). The copy is home-v11.json (getHomeV11Content), the charts come from getHomeV11Data. SEO metadata and the speakable
  * JSON-LD are unchanged from the v3 homepage. The v3 homepage ran the PostHog hero experiment
  * (homepage-hero-argument); the v11 homepage has one hero, so it no longer evaluates that flag.
  */
@@ -12,7 +13,7 @@ import { getHomeV11Content } from '@/lib/content-utils';
 import { getHomeV11Data } from '../home-v11/data';
 import { HeroV11 } from '../home-v11/HeroV11';
 import { LogoGrid } from '../home-v11/LogoGrid';
-import { Bento } from '../home-v11/Bento';
+import { LaunchStackSection } from '../home-v11/LaunchStack';
 import { Results } from '../home-v11/Results';
 import { Route } from '../home-v11/Route';
 import { GrowthPlan } from '../home-v11/GrowthPlan';
@@ -74,7 +75,13 @@ export default async function HomePage() {
       <div className="v11">
         <HeroV11 c={c.hero} data={data} />
         <LogoGrid c={c.logos} />
-        <Bento c={c.bento} data={data} />
+        <LaunchStackSection
+          eyebrow={c.bento.eyebrow}
+          title={<span dangerouslySetInnerHTML={{ __html: c.bento.heading }} />}
+          lede={c.bento.body}
+          steps={c.route.steps}
+          figureTitle={c.bento.figureLabel}
+        />
         <Results c={c.results} data={data} />
         <Route c={c.route} spark={data?.leads.delshad ?? null} metric={data?.proof.delshad?.value} rank={data?.proof.delshadRank?.value} />
         <GrowthPlan c={c.plan} />

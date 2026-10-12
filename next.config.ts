@@ -65,6 +65,17 @@ const nextConfig: NextConfig = {
           { key: 'Vary', value: 'Accept' },
         ],
       },
+      // Self-running figures in public/figures/ are embedded by our own pages in an iframe (the homepage's
+      // launch stack, 2026-10-12). SAMEORIGIN lets the site frame them (every other path keeps DENY);
+      // noindex keeps the bare figure page out of search, the page that frames it is what ranks.
+      // The later rule wins for the same key.
+      {
+        source: '/figures/:path*',
+        headers: [
+          { key: 'X-Frame-Options', value: 'SAMEORIGIN' },
+          { key: 'X-Robots-Tag', value: 'noindex' },
+        ],
+      },
       // ─── X-Robots-Tag: noindex on non-page assets ────────────────────
       // Googlebot MUST be able to fetch /_next/static/* to render our
       // pages (JS chunks, CSS, etc.). But every Vercel deploy generates
