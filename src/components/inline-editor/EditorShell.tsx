@@ -5,8 +5,13 @@
  *
  * It owns no editing logic. The brain stays in InlineEditor.tsx: discovery,
  * staging, publishing, the status light. This file is the surface that brain is
- * shown on — a top bar, a rail of four panels, and a framed canvas the site
+ * shown on — a top bar, a rail of panels, and a framed canvas the site
  * itself scrolls inside.
+ *
+ * Comments (2026-10-16) live in Comments.tsx: the Comment button here turns
+ * comment mode on, the layer over the canvas draws the pins, and the Comments
+ * panel lists them. The shell only holds which mode is on and which thread is
+ * open, so the panel and the pins agree.
  *
  * Four panels: Pages, History, Editors, Settings. Pages is the sitemap as a
  * list, and it is the one way to get from one page of the site to another
@@ -31,6 +36,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
 import { pauseHref } from '../../lib/inline-edit/guard';
 import { undoneSummary } from '../../lib/inline-edit/publish-history';
+import { CommentLayer, CommentsPanel, openCountOn, useSiteComments } from './Comments';
 
 export type ShellTone = 'ok' | 'busy' | 'bad' | 'idle';
 /** What the status light says, in the short form the bar has room for. */
@@ -79,10 +85,13 @@ const PANEL_WIDTH = 320;
 const Z = 2147483000;
 const AVATAR_COLOURS = ['#4f46e5', '#0ea5e9', '#f97316', '#16a34a', '#db2777'];
 
-type Tab = 'pages' | 'history' | 'editors' | 'settings';
+type Tab = 'pages' | 'comments' | 'history' | 'editors' | 'settings';
+
+const COMMENT_ICON = 'M4 20V9a6 6 0 0 1 6-6h4a6 6 0 0 1 0 12H9z';
 
 const TABS: { id: Tab; label: string; icon: React.ReactNode }[] = [
   { id: 'pages', label: 'Pages', icon: <Icon d="M4 5h16v14H4zM4 10h16" /> },
+  { id: 'comments', label: 'Comments', icon: <Icon d={COMMENT_ICON} /> },
   { id: 'history', label: 'History', icon: <Icon d="M3 12a9 9 0 1 0 3-6.7M3 3v5h5M12 7v5l3 2" /> },
   {
     id: 'editors',
@@ -116,7 +125,8 @@ function Icon({ d, children, size = 18 }: { d?: string; children?: React.ReactNo
       viewBox="0 0 24 24"
       width={size}
       height={size}
-      style={{ stroke: 'currentColor', fill: 'none', strokeWidth: 1.8, strokeLinecap: 'round', strokeLinejoin: 'round' }}
+      // flexShrink 0: in a crowded bar a button's flex row squeezed its icon to 2px wide (measured at 1024px, 2026-10-16).
+      style={{ stroke: 'currentColor', fill: 'none', strokeWidth: 1.8, strokeLinecap: 'round', strokeLinejoin: 'round', flexShrink: 0 }}
       aria-hidden="true"
     >
       {d ? <path d={d} /> : children}
@@ -193,6 +203,10 @@ export function EditorShell(props: EditorShellProps) {
   const canvas = useRef<HTMLDivElement | null>(null);
   const router = useRouter();
   const here = usePathname();
+  /** Comment mode: a click on the site drops a pin instead of editing or following a link. */
+  const [commenting, setCommenting] = useState(false);
+  const [openThread, setOpenThread] = useState<string | null>(null);
+  const [showResolved, setShowResolved] = useState(false);
 
   /**
    * Leave the editor and look at the published page.
@@ -370,6 +384,9 @@ export function EditorShell(props: EditorShellProps) {
     return [...access.owners.map((owner) => owner.email), ...access.editors.map((person) => person.email)];
   }, [access]);
   const you = access?.you ?? '';
+  const comments = useSiteComments(access?.owner ?? false);
+  const openComments = openCountOn(comments, here);
+  const tabs = comments.off ? TABS.filter((item) => item.id !== 'comments') : TABS;
 
   const dot = (tone: ShellTone, size = 8) => (
     <span
@@ -425,6 +442,36 @@ export function EditorShell(props: EditorShellProps) {
                 {dot(status.tone)}
                 {status.text}
               </span>
+            )}
+            {!comments.off && (
+              <button
+                style={{
+                  ...btn,
+                  padding: mobile ? '0 8px' : '0 10px',
+                  color: commenting ? BRAND : INK,
+                  background: commenting ? '#eef2ff' : '#fff',
+                  borderColor: commenting ? '#c7d2fe' : LINE,
+                }}
+                title="Comment mode: click anywhere on the page to leave a comment (C)"
+                aria-pressed={commenting}
+                onClick={() => {
+                  setCommenting(!commenting);
+                  if (commenting) setOpenThread(null);
+                }}
+              >
+                <Icon d={COMMENT_ICON} size={16} />
+                {!mobile && 'Comment'}
+                {openComments > 0 && (
+                  <span
+                    style={{
+                      minWidth: 18, height: 18, padding: '0 5px', borderRadius: 9, background: BRAND, color: '#fff',
+                      fontSize: 11, fontWeight: 600, display: 'grid', placeItems: 'center', boxSizing: 'border-box',
+                    }}
+                  >
+                    {openComments}
+                  </span>
+                )}
+              </button>
             )}
             {/* One click, next to the light, instead of three clicks into a
                 panel: a client who cannot find anything to type in needs this
@@ -589,7 +636,7 @@ export function EditorShell(props: EditorShellProps) {
               : railBase
           }
         >
-          {TABS.map((item) => (
+          {tabs.map((item) => (
             <div key={item.id} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
               <button
                 aria-pressed={tab === item.id}
@@ -626,6 +673,20 @@ export function EditorShell(props: EditorShellProps) {
             </div>
             <div style={panelBody}>
               {tab === 'pages' && <Pages routes={routes} here={here} onGo={goToPage} />}
+              {tab === 'comments' && (
+                <CommentsPanel
+                  store={comments}
+                  page={here}
+                  showResolved={showResolved}
+                  setShowResolved={setShowResolved}
+                  onOpen={(id) => {
+                    // On a phone the panel covers the page; the thread needs the page.
+                    if (mobile) setTab(null);
+                    setOpenThread(id);
+                  }}
+                  onGoTo={goToPage}
+                />
+              )}
               {tab === 'history' && (
                 <History
                   publishes={props.publishes}
@@ -666,6 +727,7 @@ export function EditorShell(props: EditorShellProps) {
         {/* The canvas: the site, framed, and the only thing that scrolls */}
         <div
           ref={canvas}
+          data-lf-canvas=""
           style={
             mobile
               ? { ...canvasBase, left: 0, right: 0, top: TOP, bottom: RAIL, borderRadius: 0, boxShadow: 'none' }
@@ -674,6 +736,23 @@ export function EditorShell(props: EditorShellProps) {
         >
           {children}
         </div>
+
+        {!comments.off && (
+          <CommentLayer
+            canvas={canvas}
+            store={comments}
+            page={here}
+            commenting={commenting}
+            setCommenting={(on) => {
+              setCommenting(on);
+              if (!on) setOpenThread(null);
+            }}
+            openThread={openThread}
+            setOpenThread={setOpenThread}
+            showResolved={showResolved}
+            mobile={mobile}
+          />
+        )}
 
         {props.overlays}
       </div>

@@ -655,6 +655,8 @@ export function InlineEditor({ children }: { children?: React.ReactNode }) {
     const onEnter = (event: Event) => {
       const el = event.currentTarget as HTMLElement;
       if (!el.dataset.lfId) return;
+      // Comment mode draws its own outline; two would argue about what a click does.
+      if (document.documentElement.dataset.lfCommenting) return;
       if (el.isContentEditable) return;
       el.style.outline = OUTLINE_HOVER;
       el.style.outlineOffset = '3px';
