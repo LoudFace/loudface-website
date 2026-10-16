@@ -169,6 +169,8 @@ const organizationSchema = {
     "https://dribbble.com/loudface",
     "https://webflow.com/@loudface",
     "https://clutch.co/profile/loudface",
+    "https://www.trustpilot.com/review/loudface.co",
+    "https://www.google.com/maps?cid=12126676114547048167",
     "https://www.designrush.com/agency/profile/loudface",
   ],
   knowsAbout: [

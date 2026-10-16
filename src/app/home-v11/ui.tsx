@@ -102,7 +102,7 @@ export function Stars({ fill, size = 13 }: { fill: string; size?: number }) {
 /** Ratings shared by the testimonials and the footer; the icon and star colour are machinery, the copy comes from content. */
 export const RATING_STYLE = [
   { icon: 'logos/fav-clutch.png', star: '#e5553a', href: 'https://clutch.co/profile/loudface' },
-  { icon: 'logos/fav-google.png', star: '#4f7df0', href: null },
+  { icon: 'logos/fav-google.png', star: '#4f7df0', href: 'https://www.google.com/maps?cid=12126676114547048167' },
   { icon: 'logos/fav-trustpilot.png', star: '#1aa96b', href: 'https://www.trustpilot.com/review/loudface.co' },
 ];
 
