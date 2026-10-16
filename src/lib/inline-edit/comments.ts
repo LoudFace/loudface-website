@@ -41,6 +41,8 @@ export type SiteComment = {
   deletedAt: string | null;
   createdAt: string;
   updatedAt: string;
+  /** A picture of the live page at the pin, taken just after the thread was made. */
+  snapshot: { ready: boolean; takenAt: string | null; error: string | null };
 };
 
 /** The row as the worker returns it. */
@@ -59,6 +61,9 @@ type Row = {
   deleted_at: string | null;
   created_at: string;
   updated_at: string;
+  snapshot_key?: string | null;
+  snapshot_taken_at?: string | null;
+  snapshot_error?: string | null;
 };
 
 export type CommentOp =
@@ -103,6 +108,8 @@ export function fromRow(row: Row): SiteComment {
     deletedAt: row.deleted_at,
     createdAt: row.created_at,
     updatedAt: row.updated_at,
+    // Where the picture is stays on the server; the browser asks for it by the comment's id.
+    snapshot: { ready: Boolean(row.snapshot_key), takenAt: row.snapshot_taken_at ?? null, error: row.snapshot_error ?? null },
   };
 }
 
@@ -124,8 +131,9 @@ export async function askComments(
 ): Promise<SpineAnswer> {
   const where = commentsEndpoint();
   if (!where) return { ok: false, status: 503, error: COMMENTS_OFF_MESSAGE };
-  const { repo } = siteIdentity();
-  const body = JSON.stringify({ ...request, repo, actor, at: now().toISOString() });
+  const { repo, site } = siteIdentity();
+  // `site` is the live address the worker photographs a new thread's spot on.
+  const body = JSON.stringify({ ...request, repo, site, actor, at: now().toISOString() });
   let response: Response;
   try {
     response = await fetch(where.url, {
@@ -186,5 +194,35 @@ export function readOp(input: unknown): Exclude<CommentOp, { op: 'list' }> | nul
       return { op: 'delete', id };
     default:
       return null;
+  }
+}
+
+/**
+ * The picture of a thread's spot, for the editor. The bytes come back as they
+ * are; anything else is a status and a sentence.
+ */
+export async function fetchSnapshot(
+  id: string,
+  actor: { email: string; name: string; owner: boolean },
+): Promise<{ ok: true; image: ArrayBuffer } | { ok: false; status: number; error: string }> {
+  const where = commentsEndpoint();
+  if (!where) return { ok: false, status: 503, error: COMMENTS_OFF_MESSAGE };
+  if (!UUID.test(id)) return { ok: false, status: 400, error: 'That comment could not be read' };
+  const { repo } = siteIdentity();
+  const body = JSON.stringify({ op: 'snapshot', id, repo, actor, at: new Date().toISOString() });
+  try {
+    const response = await fetch(where.url, {
+      method: 'POST',
+      headers: { 'content-type': 'application/json', 'x-lf-signature-256': signBody(where.secret, body) },
+      body,
+      signal: AbortSignal.timeout(TIMEOUT_MS),
+      cache: 'no-store',
+    });
+    if (response.ok && (response.headers.get('content-type') ?? '').startsWith('image/')) {
+      return { ok: true, image: await response.arrayBuffer() };
+    }
+    return { ok: false, status: response.status === 404 ? 404 : 502, error: 'No snapshot for this comment' };
+  } catch {
+    return { ok: false, status: 502, error: UNREACHABLE };
   }
 }

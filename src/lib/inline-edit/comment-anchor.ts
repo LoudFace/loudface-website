@@ -46,6 +46,8 @@ export type CommentAnchor = {
   py: number;
   /** Width of the page the comment was left on, for the thread's "left at 1440px". */
   vw: number;
+  /** Height of the window it was left in, so its snapshot is taken in the same shape. */
+  vh?: number;
 };
 
 /** The parts of an element this file reads. A real `Element` has all of them. */
@@ -172,6 +174,7 @@ export function readAnchor(value: unknown): CommentAnchor | null {
     px,
     py,
     vw: num('vw') ?? 0,
+    ...(num('vh') !== null ? { vh: num('vh')! } : {}),
   };
 }
 

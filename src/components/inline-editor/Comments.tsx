@@ -106,6 +106,12 @@ export type CommentStore = {
 type Pending = SiteComment & { pending?: boolean };
 
 const stamp = () => new Date().toISOString();
+const NO_SNAPSHOT: SiteComment['snapshot'] = { ready: false, takenAt: null, error: null };
+/** A picture is taken in about ten seconds; after this long without one, it is not coming. */
+const SNAPSHOT_WAIT_MS = 2 * 60_000;
+
+/** Where the editor reads a thread's picture. */
+export const snapshotSrc = (id: string) => `/api/lf-edit/comments/snapshot?id=${encodeURIComponent(id)}`;
 
 export function useSiteComments(owner: boolean): CommentStore {
   const [byId, setById] = useState<Map<string, Pending>>(() => new Map());
@@ -230,6 +236,7 @@ export function useSiteComments(owner: boolean): CommentStore {
       const row: Pending = {
         id, threadId: null, page, anchor: anchor as unknown as Record<string, unknown>, body, author: author(),
         resolvedAt: null, resolvedBy: null, editedAt: null, deletedAt: null, createdAt: now, updatedAt: now, pending: true,
+        snapshot: NO_SNAPSHOT,
       };
       const result = await optimistic(id, () => row, { op: 'create', id, page, anchor, body });
       return result.error ? { error: result.error } : { id };
@@ -245,6 +252,7 @@ export function useSiteComments(owner: boolean): CommentStore {
       const row: Pending = {
         id, threadId: thread, page: parent?.page ?? '/', anchor: null, body, author: author(),
         resolvedAt: null, resolvedBy: null, editedAt: null, deletedAt: null, createdAt: now, updatedAt: now, pending: true,
+        snapshot: NO_SNAPSHOT,
       };
       const result = await optimistic(id, () => row, { op: 'reply', id, thread, body });
       // A reply reopens a resolved thread on the spine; show that without waiting for the poll.
@@ -452,6 +460,7 @@ export function CommentLayer({
         px: Math.round(((event.clientX - frame.left) / Math.max(1, box.clientWidth)) * 10_000) / 10_000,
         py: Math.round(event.clientY - frame.top + box.scrollTop),
         vw: box.clientWidth,
+        vh: box.clientHeight,
       };
       setOpenThread(null);
       setDraft({ anchor, x: event.clientX, y: event.clientY });
@@ -937,7 +946,10 @@ function ThreadView({
 
       <div ref={list} style={{ overflow: 'auto', flex: 1, minHeight: 0 }}>
         {[thread, ...thread.replies].map((comment, index) => (
-          <Message key={comment.id} comment={comment} store={store} first={index === 0} width={anchor?.vw ?? 0} />
+          <div key={comment.id}>
+            <Message comment={comment} store={store} first={index === 0} width={anchor?.vw ?? 0} />
+            {index === 0 && <Snapshot thread={thread} />}
+          </div>
         ))}
       </div>
 
@@ -951,6 +963,64 @@ function ThreadView({
         />
       </div>
     </>
+  );
+}
+
+/**
+ * The picture of the live page at the pin, taken by the server just after the
+ * thread was made. Until it lands (about ten seconds) the box says so; the
+ * ten-second poll brings it in.
+ */
+function Snapshot({ thread }: { thread: Thread & { pending?: boolean } }) {
+  const [broken, setBroken] = useState(false);
+  const [givenUp, setGivenUp] = useState(false);
+  const shot = thread.snapshot;
+  useEffect(() => {
+    if (shot.ready || shot.error) return;
+    const left = SNAPSHOT_WAIT_MS - (Date.now() - Date.parse(thread.createdAt));
+    const timer = window.setTimeout(() => setGivenUp(true), Math.max(0, left));
+    return () => window.clearTimeout(timer);
+  }, [shot.ready, shot.error, thread.createdAt]);
+  const waiting = !shot.ready && !shot.error && !givenUp;
+  if (shot.ready && !broken) {
+    return (
+      <a
+        href={snapshotSrc(thread.id)}
+        target="_blank"
+        rel="noreferrer"
+        title="Open the snapshot full size"
+        style={{ display: 'block', margin: '0 12px 10px 44px', textDecoration: 'none' }}
+      >
+        {/* eslint-disable-next-line @next/next/no-img-element -- a private, signed-in image, never optimised */}
+        <img
+          src={snapshotSrc(thread.id)}
+          alt={`The live page where comment ${thread.number} was left, with its pin`}
+          onError={() => setBroken(true)}
+          style={{ display: 'block', width: '100%', borderRadius: 8, border: `1px solid ${LINE}`, background: '#f3f5f8' }}
+        />
+        <span style={{ display: 'block', marginTop: 4, color: MUTE, fontSize: 11 }}>
+          Live page when this was left{shot.takenAt ? ` · ${ago(shot.takenAt)}` : ''} · open full size
+        </span>
+      </a>
+    );
+  }
+  if (waiting || thread.pending) {
+    return (
+      <div
+        style={{
+          margin: '0 12px 10px 44px', aspectRatio: '16 / 10', borderRadius: 8, border: `1px dashed ${LINE}`,
+          display: 'grid', placeItems: 'center', color: MUTE, fontSize: 12, background: '#f8fafc',
+          animation: 'lf-pin-in .2s ease-out',
+        }}
+      >
+        Taking a picture of the live page…
+      </div>
+    );
+  }
+  return (
+    <p style={{ margin: '0 12px 10px 44px', color: MUTE, fontSize: 11 }}>
+      No snapshot{shot.error ? `: ${shot.error}` : broken ? ': it could not be loaded' : ''}.
+    </p>
   );
 }
 
@@ -1126,6 +1196,18 @@ function Row({ thread, onOpen }: { thread: Thread; onOpen: (id: string) => void 
       >
         {thread.body}
       </span>
+      {thread.snapshot.ready && (
+        // eslint-disable-next-line @next/next/no-img-element -- a private, signed-in image, never optimised
+        <img
+          src={snapshotSrc(thread.id)}
+          alt=""
+          loading="lazy"
+          style={{
+            display: 'block', width: '100%', height: 72, objectFit: 'cover', objectPosition: 'center 45%',
+            marginTop: 8, borderRadius: 6, border: `1px solid ${LINE}`, opacity: resolved ? 0.6 : 1,
+          }}
+        />
+      )}
     </button>
   );
 }

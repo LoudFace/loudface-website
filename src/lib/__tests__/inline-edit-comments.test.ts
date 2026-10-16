@@ -47,7 +47,12 @@ function withEnv<T>(values: Record<string, string | undefined>, run: () => T): T
   }
 }
 
-const SITE = { LF_SPINE_HOOK_URL: HOOK, LF_SPINE_HOOK_SECRET: SECRET, LF_GITHUB_REPO: 'LoudFace/delshad-legal' };
+const SITE = {
+  LF_SPINE_HOOK_URL: HOOK,
+  LF_SPINE_HOOK_SECRET: SECRET,
+  LF_GITHUB_REPO: 'LoudFace/delshad-legal',
+  LF_SITE_URL: 'https://delshadlegal.com',
+};
 
 test('comments go to the receipt worker, beside the receipts', () => {
   withEnv(SITE, () => {
@@ -102,6 +107,8 @@ test('a request is signed over its exact bytes and names the repo, the person an
     assert.deepEqual(body, {
       op: 'list',
       repo: 'LoudFace/delshad-legal',
+      // The live address the worker photographs a new thread's spot on.
+      site: 'https://delshadlegal.com',
       actor: { email: 'jdelshad@delshadlegal.com', name: 'jdelshad', owner: false },
       at: '2026-10-16T10:00:00.000Z',
     });
@@ -110,6 +117,7 @@ test('a request is signed over its exact bytes and names the repo, the person an
       assert.equal(result.comments[0].author.name, 'jdelshad');
       assert.equal(result.comments[0].page, '/about');
       assert.equal(result.now, '2026-10-16T10:00:05Z');
+      assert.deepEqual(result.comments[0].snapshot, { ready: false, takenAt: null, error: null });
     }
   } finally {
     globalThis.fetch = real;
