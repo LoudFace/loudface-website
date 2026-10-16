@@ -182,6 +182,7 @@ This site runs the client inline editor, live since 2026-09-17: a signed-in edit
 - Before pushing a page change: `npm run test:editor` and `node scripts/inline-edit-coverage.mjs <the routes you touched>`.
 - Editors are the addresses in `LF_EDITOR_EMAILS` on Vercel. When someone says it is broken, open `/api/lf-edit/health` while signed in before reading env vars.
 - Comments (2026-10-16): the Comment button or the C key pins a comment thread to whatever is clicked, and everyone signed in to the editor sees it. Comments live in the spine (`site_comments`, through the hooks worker's `/editor/comments`), never in this repo, so a comment never rebuilds the site. Pins find their element by `data-lf-id` first, so keep content ids stable. Runbook section "Comments pinned to the page".
+- One click from the Team App (2026-10-16): Open site editor in the Team App posts a one-minute token sealed with `LF_TEAM_HANDOFF_SECRET` to `/api/lf-edit/handoff`; the route checks it, still checks `isAllowed`, and opens the editor session. Runbook section "One click from the Team App".
 
 ### Cal.com Booking
 
