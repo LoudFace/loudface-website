@@ -13,9 +13,19 @@ export const metadata: Metadata = { title: 'Edit the site', robots: { index: fal
 export default async function EditSignInPage({
   searchParams,
 }: {
-  searchParams: Promise<{ sent?: string; expired?: string; link?: string }>;
+  searchParams: Promise<{ sent?: string; expired?: string; link?: string; handoff?: string }>;
 }) {
-  const { sent, expired, link } = await searchParams;
+  const { sent, expired, link, handoff } = await searchParams;
+  // What the Team App's Open editor button left behind when it could not sign
+  // the person in (api/lf-edit/handoff). The email form below still works.
+  const handoffNote =
+    handoff === 'denied'
+      ? 'You came from the Team App, but this site has not given you access. Ask Arnel to add you under this client’s Client settings in the Team App.'
+      : handoff === 'expired'
+        ? 'The sign-in from the Team App ran out before it arrived. Press Open editor there again, or use your email below.'
+        : handoff === 'failed'
+          ? 'The sign-in from the Team App did not work. Press Open editor there again, or use your email below.'
+          : null;
   const editor = await currentEditor();
 
   return (
@@ -62,6 +72,11 @@ export default async function EditSignInPage({
           </>
         ) : (
           <>
+            {handoffNote && (
+              <p style={{ margin: '0 0 14px', padding: '10px 12px', borderRadius: 10, background: '#fff7ed', color: '#9a3412', fontSize: 14 }}>
+                {handoffNote}
+              </p>
+            )}
             <p style={{ margin: '0 0 18px', color: '#52616d' }}>
               {expired
                 ? 'That link has expired. Here is a fresh one.'
