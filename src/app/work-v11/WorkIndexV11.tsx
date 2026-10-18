@@ -128,6 +128,7 @@ const ROW_LOGOS: Record<string, { file: string; w: number; h: number; size?: num
   'trademomentum-niche-aeo-organic-growth': { file: 'logos/trademomentum-white.png', w: 380, h: 76, size: 30 },
   'delshad-legal-content-engine': { file: 'logos/delshad-white.png', w: 355, h: 100, size: 44 },
   'genie-teacher-organic-growth': { file: 'logos/genie-white.png', w: 201, h: 64, size: 28 },
+  'pond-ai': { file: 'logos/pond-white.png', w: 640, h: 184, size: 28 },
 };
 
 function StudyRow({ s, clients, chart, onStage }: { s: Study; clients: Map<string, Client>; chart: CardChart; onStage?: boolean }) {
