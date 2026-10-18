@@ -236,6 +236,13 @@ const nextConfig: NextConfig = {
         destination: '/case-studies',
         permanent: true,
       },
+      // The Pond case study shipped as pond-ai-search-speed on 2026-10-18 and moved the
+      // same day to pond-ai, so the URL outlives the early "speed" angle (Arnel).
+      {
+        source: '/case-studies/pond-ai-search-speed',
+        destination: '/case-studies/pond-ai',
+        permanent: true,
+      },
       // Singular → plural case-study URLs.
       // Discovered 2026-05-27 in Cloudflare AI Crawl Control logs: TikTokSpider
       // and other AI bots were fetching /case-study/<slug> (singular) and
