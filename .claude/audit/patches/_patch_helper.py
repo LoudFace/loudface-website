@@ -1,12 +1,13 @@
 #!/usr/bin/env python3
 """Helper for fetching, patching, and mutating Sanity blog posts."""
 import json
+import os
 import sys
 import urllib.parse
 import urllib.request
 import datetime
 
-TOKEN = "skgvB8Mahk2kTqhqBCzCwTYjB6K80MQgPzlXPNZSifrRdbZhboAxAnXogFHFtfZnyNnGdA4Npzr9NDP28wtnxmnTcYYPS4j0mMtmbHLxjSTFfHAdVKMzmSRS2IzpaozlPAKXX1ZxN1zPs0RaaAQpqsVJeaUfSPX0zSFWtHDzOh9Lw5KCM4tO"
+TOKEN = os.environ["LF_SANITY_WRITE_TOKEN"]  # never hardcode a token; the old one was public and is revoked
 PROJECT_ID = "xjjjqhgt"
 DATASET = "production"
 
