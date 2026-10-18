@@ -6,6 +6,7 @@ import { extractFAQFromHTML } from '@/lib/schema-utils';
 import { autoLinkServiceMentions, buildHeadingWithId } from '@/lib/html-utils';
 import type { CaseStudy, Client, Testimonial, Industry, Technology, ServiceCategory } from '@/lib/types';
 import { parseResultTransition, collectResults, type ResultStat } from '../case-detail-v3/helpers';
+import { stripStega } from '@/lib/inline-edit/stega';
 import type { RelatedCard } from '../case-detail-v3/RelatedWork';
 
 /**
@@ -70,8 +71,27 @@ function extractTocAndAddIds(html: string | undefined): { toc: { id: string; tex
   return { toc, html: processedHtml };
 }
 
+const RESULT_FIELDS = ['result-1---number', 'result-1---title', 'result-2---number', 'result-2---title', 'result-3---number', 'result-3---title'] as const;
+
+/**
+ * Draft mode hides Sanity's stega marks inside every string. The page measures and matches some of them: a figure's
+ * length sets its font size, a title splits at its last ")", an engine id picks its name and icon. With the marks in,
+ * preview drew the figures at near-zero size and every engine as "chatgpt" with the ChatGPT icon (Arnel, 2026-10-18).
+ * Those fields lose click-to-edit in preview; the published page carries no marks, so it is unchanged.
+ */
+function withPlainLogicFields(study: CaseStudy): CaseStudy {
+  const out: CaseStudy = { ...study };
+  for (const k of RESULT_FIELDS) if (typeof out[k] === 'string') out[k] = stripStega(out[k] as string);
+  const eng = out.instruments?.engineBeforeAfter;
+  if (eng) {
+    out.instruments = { ...out.instruments, engineBeforeAfter: { ...eng, rows: eng.rows.map((r) => ({ ...r, engine: stripStega(r.engine) as typeof r.engine })) } };
+  }
+  return out;
+}
+
 export async function getCaseView(slug: string) {
-  const [cmsData, study] = await Promise.all([fetchCaseStudyDetailData(), fetchItemBySlug<CaseStudy>('case-studies', slug)]);
+  const [cmsData, fetched] = await Promise.all([fetchCaseStudyDetailData(), fetchItemBySlug<CaseStudy>('case-studies', slug)]);
+  const study = fetched ? withPlainLogicFields(fetched) : fetched;
   const {
     caseStudies,
     clients: clientsMap,
