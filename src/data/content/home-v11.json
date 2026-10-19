@@ -30,6 +30,12 @@
       },
       {
         "tag": "Search",
+        "client": "Pond",
+        "caption": "Google impressions a day outside Pond's name, in five weeks",
+        "tip": "the week the first page went live"
+      },
+      {
+        "tag": "Search",
         "client": "Anonymous health tech",
         "caption": "Google impressions a day, in six months",
         "tip": "the December average"

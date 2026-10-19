@@ -15,6 +15,7 @@ export const HERO_SLIDES: { series: HeroSlideKey; proof?: ProofKey; href: string
   { series: 'toku', proof: 'tokuImpressions', format: 'index', href: '/case-studies/toku-ai-cited-pipeline' },
   { series: 'lf', format: 'pct', href: '/case-studies/loudface-aeo-case-study', compact: true },
   { series: 'genie', format: 'index', href: '/case-studies/genie-teacher-organic-growth' },
+  { series: 'pond', format: 'index', href: '/case-studies/pond-ai' },
   { series: 'health', format: 'index', href: '/case-studies/anonymous-health-tech-organic-growth' },
   { series: 'delshad', proof: 'delshadClicks', format: 'index', href: '/case-studies/delshad-legal-content-engine' },
   { series: 'tm', format: 'index', href: '/case-studies/trademomentum-niche-aeo-organic-growth' },

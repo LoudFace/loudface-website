@@ -44,6 +44,7 @@ const SLUGS = {
   stealth: 'stealth-fintech-ai-visibility',
   health: 'anonymous-health-tech-organic-growth',
   toku: 'toku-ai-cited-pipeline',
+  pond: 'pond-ai',
   dimer: 'dimer-health',
   ceipal: 'ceipal-wp-to-wf-migration',
   brandfirm: 'brandfirm',
@@ -66,6 +67,7 @@ const PROOF = {
   stealth: ['stealth', 1],
   genieLeads: ['genie', 3],
   toku: ['toku', 1],
+  pond: ['pond', 1],
   dimer: ['dimer', 1],
   ceipal: ['ceipal', 2],
   brandfirm: ['brandfirm', 1],
@@ -115,7 +117,7 @@ function rolling(values: number[], n: number): number[] {
 export interface HomeV11Data {
   /** Each client's hockey stick: the published series with the steepest late climb that still ends at its high
    *  (scored 2026-10-09; Delshad's clean clicks, TradeMomentum's weekly clicks, Genie's impressions and clicks). */
-  hero: Record<'lf' | 'genie' | 'delshad' | 'tm' | 'stealth' | 'genieClicks', Series> & { health?: Series; toku?: Series };
+  hero: Record<'lf' | 'genie' | 'delshad' | 'tm' | 'stealth' | 'genieClicks', Series> & { health?: Series; toku?: Series; pond?: Series };
   /** Weekly enquiries indexed to their baseline weeks: the homepage "Measured in leads" section and leads tiles. */
   leads: Record<'delshad' | 'genie', Series>;
   results: Record<'genie' | 'lf', Series>;
@@ -166,6 +168,8 @@ export const getHomeV11Data = cache(async (): Promise<HomeV11Data | null> => {
   const stealthRolled = rolling(stealthPts.map((p) => p.value * 100), 5);
   const hTrend = health.indexedTrend?.points.filter((p) => p.date) ?? [];
   const tokuTrend = ins('toku').indexedTrend?.points.filter((p) => p.date) ?? [];
+  const pond = ins('pond');
+  const pondTrend = pond.indexedTrend?.points.filter((p) => p.date) ?? [];
 
   const genieImpressions: Series = {
     dates: gTrend.map((p) => p.date as string),
@@ -192,6 +196,9 @@ export const getHomeV11Data = cache(async (): Promise<HomeV11Data | null> => {
       // the program began well before it, on a day not recorded, so no start pin
       toku: tokuTrend.length ? { dates: tokuTrend.map((p) => p.date as string), values: tokuTrend.map((p) => p.impressions), start: tokuTrend[0].date as string, pin: false } : undefined,
       genieClicks: { dates: gTrend.map((p) => p.date as string), values: rolling(gTrend.map((p) => p.clicks), 7), start: genie.engagementStart ?? '2026-07-05' },
+      // Pond (2026-10-18): Google impressions a day from searches without its name, seven-day mean, indexed to the week
+      // the first new page went live (7 to 13 Sep = 100); the last point is the study's 12×
+      pond: pondTrend.length ? { dates: pondTrend.map((p) => p.date as string), values: rolling(pondTrend.map((p) => p.impressions), 7), start: pond.engagementStart ?? '2026-08-21' } : undefined,
     },
     leads: {
       delshad: { dates: (delshad.leadGrowth?.points ?? []).map((p) => p.week), values: (delshad.leadGrowth?.points ?? []).map((p) => p.value), start: delshad.engagementStart ?? '2026-06-04', bars: true },
