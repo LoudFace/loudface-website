@@ -286,6 +286,8 @@ A proposal body opens with the client's own data and closes with the price. Ever
 
 **One idea, one control, one picture.** An interactive block gets at most two inputs and ONE chart that adapts. Anything else is a printed assumption, not a control. Supporting facts get one line, never a list of six rows or a second grid of tiles. If a block needs a paragraph to explain how to read it, the block is wrong.
 
+**Links stay open at least 3 months.** Set `validUntil` on every proposal and audit to at least 3 months after the day it is sent (Arnel, 20 Oct 2026). Prospects come back to a proposal weeks later, and an expired link shows "not found". The Studio fills in 3 months by default and warns below it; a `create-*.mjs` script must pass `--valid-until` at least 3 months out, never copy an older script's date. When a chase is due after a link's date, extend the date first.
+
 **Check before shipping a proposal body:** count the sections. If more than one third are about LoudFace (how we work, what we produced elsewhere), the body fails. Each remaining section must name a number from the client's report.
 
 **Ledger of misses**

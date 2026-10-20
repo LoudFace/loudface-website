@@ -486,8 +486,15 @@ const audit = defineType({
       title: 'Valid until',
       type: 'date',
       group: 'access',
-      description: 'After this date the link returns "not found". Nothing is rendered.',
-      validation: (rule) => rule.required(),
+      description:
+        'After this date the link returns "not found". Nothing is rendered. Keep it at least 3 months after sending (Arnel, 20 Oct 2026): prospects reopen proposals weeks later.',
+      initialValue: () => new Date(Date.now() + 92 * 864e5).toISOString().slice(0, 10),
+      validation: (rule) =>
+        rule.required().custom((value) =>
+          typeof value === 'string' && Date.parse(`${value}T23:59:59Z`) < Date.now() + 90 * 864e5
+            ? { message: 'Under 3 months from today. Links must stay open at least 3 months.', level: 'warning' }
+            : true,
+        ),
     }),
     defineField({
       name: 'status',
