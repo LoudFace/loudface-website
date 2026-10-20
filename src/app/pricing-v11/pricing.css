@@ -151,6 +151,8 @@
 .pr-row { display: grid; grid-template-columns: minmax(0, 1.4fr) repeat(3, minmax(0, 1fr)); align-items: stretch; font-size: 14.5px; color: var(--body); }
 .pr-row > span { display: flex; align-items: center; min-height: 60px; padding: 12px 18px; box-shadow: inset 0 -1px 0 var(--line); line-height: 1.45; }
 .pr-row .is-label { padding-left: 0; font-weight: 500; color: var(--ink); }
+/* the "Feature" heading starts where the row labels under it start (it is not an .is-label, so it kept the 18px cell padding) */
+.pr-row.is-head > span:first-child { padding-left: 0; }
 .pr-row.is-emph > span:not(.is-label) { font-family: var(--font-heading); font-weight: 500; font-size: 22px; letter-spacing: -0.02em; color: var(--ink); }
 .pr-row.is-head > span { align-items: flex-end; min-height: 0; padding-top: 0; padding-bottom: 18px; font-size: 13px; color: var(--quiet); }
 .pr-col-head { display: flex; flex-direction: column; align-items: flex-start !important; justify-content: flex-end; gap: 4px; }
