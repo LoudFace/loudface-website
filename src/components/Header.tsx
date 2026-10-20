@@ -276,7 +276,7 @@ export function Header({ heroTheme, content, v11, initialOpen }: HeaderProps) {
           e.stopPropagation();
           toggleDropdown(name);
         }}
-        className={`nav-link flex items-center gap-1.5 px-3 py-2 text-nav font-sans font-medium text-surface-600 hover:text-surface-900 hover:bg-surface-50 ${openDropdown === name ? "bg-surface-50 text-surface-900" : ""} rounded-lg transition-colors cursor-pointer bg-transparent border-none`}
+        className={`nav-link flex items-center gap-1.5 px-2.5 xl:px-3 py-2 whitespace-nowrap text-nav font-sans font-medium text-surface-600 hover:text-surface-900 hover:bg-surface-50 ${openDropdown === name ? "bg-surface-50 text-surface-900" : ""} rounded-lg transition-colors cursor-pointer bg-transparent border-none`}
         aria-expanded={openDropdown === name}
         aria-haspopup="true"
       >
@@ -314,7 +314,7 @@ export function Header({ heroTheme, content, v11, initialOpen }: HeaderProps) {
           e.stopPropagation();
           toggleDropdown(name);
         }}
-        className={`nav-link flex items-center gap-1.5 px-3 py-2 text-nav font-sans font-medium text-surface-600 hover:text-surface-900 hover:bg-surface-50 ${openDropdown === name ? "bg-surface-50 text-surface-900" : ""} rounded-lg transition-colors cursor-pointer bg-transparent border-none`}
+        className={`nav-link flex items-center gap-1.5 px-2.5 xl:px-3 py-2 whitespace-nowrap text-nav font-sans font-medium text-surface-600 hover:text-surface-900 hover:bg-surface-50 ${openDropdown === name ? "bg-surface-50 text-surface-900" : ""} rounded-lg transition-colors cursor-pointer bg-transparent border-none`}
         aria-expanded={openDropdown === name}
         aria-haspopup="true"
       >
@@ -411,11 +411,11 @@ export function Header({ heroTheme, content, v11, initialOpen }: HeaderProps) {
       data-hero-scrolled={heroTheme === "dark" && scrolled ? "" : undefined}
       className="sticky top-0 z-50 bg-white/95 backdrop-blur-md border-b border-surface-100/80"
     >
-      <div className="py-3.5 px-4 md:px-8 lg:px-12">
+      <div className="py-3.5 px-4 md:px-8 lg:px-8 xl:px-12">
         <div className="max-w-7xl mx-auto">
-          <div className="flex items-center justify-between gap-8">
+          <div className="flex items-center justify-between gap-4 xl:gap-8">
             {/* Left: Logo & Navigation */}
-            <div className="flex items-center gap-10">
+            <div className="flex items-center gap-6 xl:gap-10">
               <Link
                 href="/"
                 className="flex items-center flex-shrink-0 cursor-pointer"
@@ -440,7 +440,7 @@ export function Header({ heroTheme, content, v11, initialOpen }: HeaderProps) {
                   <Link
                     key={link.label}
                     href={link.href}
-                    className="nav-link flex items-center px-3 py-2 text-nav font-sans font-medium text-surface-600 hover:text-surface-900 hover:bg-surface-50 rounded-lg transition-colors"
+                    className="nav-link flex items-center px-2.5 xl:px-3 py-2 whitespace-nowrap text-nav font-sans font-medium text-surface-600 hover:text-surface-900 hover:bg-surface-50 rounded-lg transition-colors"
                   >
                     {link.label}
                   </Link>
@@ -457,7 +457,7 @@ export function Header({ heroTheme, content, v11, initialOpen }: HeaderProps) {
                 type="button"
                 data-cal-trigger
                 data-nav-cta=""
-                className="hidden lg:inline-flex items-center justify-center px-5 py-2 bg-surface-900 text-white text-sm font-sans font-medium rounded-full hover:bg-surface-800 active:scale-[0.98] transition-all duration-150 border-none cursor-pointer focus-visible:outline-2 focus-visible:outline-primary-500 focus-visible:outline-offset-2"
+                className="hidden lg:inline-flex items-center justify-center px-4 xl:px-5 py-2 whitespace-nowrap bg-surface-900 text-white text-sm font-sans font-medium rounded-full hover:bg-surface-800 active:scale-[0.98] transition-all duration-150 border-none cursor-pointer focus-visible:outline-2 focus-visible:outline-primary-500 focus-visible:outline-offset-2"
               >
                 {content.ctaText}
               </button>
