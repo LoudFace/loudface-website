@@ -644,7 +644,12 @@ a.v11-rating:hover { opacity: 0.75; }
 /* Below a 768px-wide booker, Cal stacks the month above every slot of the day and grows its iframe to fit
    (24 full-width rows, about 1,600px). Capping the iframe makes Cal scroll its own page inside the card,
    as Calendly's inline widget does. Cal sets the iframe's height inline; max-height still clamps it. */
-.v11-cal iframe { max-height: min(640px, calc(100svh - 120px)); }
+.v11-cal iframe { max-height: min(720px, calc(100svh - 120px)); }
+/* Stacked, the month is as tall as the booker is wide (about 0.96x), so on a short laptop screen (1280x800) it filled
+   the whole 640px iframe and the day's time slots sat below the fold with no sign they existed (reported by Tamara,
+   20 Oct). Narrowing the card on short screens shrinks the month and lets the day heading and the first slots show.
+   Tall screens (an iPad Pro at 1032x1376) and wide ones (Cal's side-by-side layout, from about 1,350px) are unchanged. */
+.v11-cal { max-width: min(100%, calc((100svh - 120px) * 0.72)); }
 .v11-reply { display: inline-flex; align-items: center; gap: 10px; height: 40px; padding: 0 16px; margin-top: 20px; border-radius: 999px; background: rgba(255,255,255,0.14); box-shadow: inset 0 0 0 1px rgba(255,255,255,0.22); font-size: 13.5px; }
 @media (min-width: 1024px) { .v11-reply { margin-left: 32px; } }
 .v11-reply-dot { width: 8px; height: 8px; border-radius: 99px; background: #5fe0a1; }
