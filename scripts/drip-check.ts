@@ -15,7 +15,10 @@ const checks: [string, boolean][] = [
   ['no leftover placeholders', !html.includes('{{')],
   ['AI chart row present', html.includes('AND IN AI ANSWERS')],
   ['3 AI chart images', (html.match(/email-aeo-/g) || []).length === 3],
-  ['3 Google chart images', (html.match(/email-chart-/g) || []).length === 3],
+  // Google charts redrawn from the website's case studies (arnels-content scripts/drip_charts.py, 2026-10-21)
+  ['3 Google chart images', ['email-trademomentum-', 'email-genie-', 'email-delshad-'].every((n) => html.includes(n))],
+  ['no August chart left', !html.includes('2026-08-30-email-chart') && !html.includes('2026-09-01-email-aeo')],
+  ['indigo hero', html.includes('email-header-band-indigo') && (html.match(/background:#3D38CF/g) || []).length === 3],
   ['agenda present', html.includes("WHAT WE'LL COVER")],
   ['prep list present', html.includes('WORTH HAVING READY')],
   ['name filled', html.includes('Hi Jamie, you made a very good')],
