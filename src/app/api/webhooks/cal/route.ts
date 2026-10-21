@@ -207,12 +207,14 @@ export async function POST(request: Request) {
     // Only a brand-new booking gets the email. A reschedule or cancellation
     // must not send "thanks for booking" again.
     if (event === 'call_booked' && email) {
+      const companyAnswer = body.payload?.responses?.['company-name']?.value;
       await sendBookedCallEmail({
         name: attendee?.name,
         email,
         startTime: body.payload?.startTime,
         timeZone: attendee?.timeZone,
         bookingUid: body.payload?.uid,
+        company: typeof companyAnswer === 'string' ? companyAnswer : undefined,
       });
     }
 

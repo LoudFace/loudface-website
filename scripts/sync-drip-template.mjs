@@ -6,8 +6,7 @@ import { join } from 'node:path';
 
 const SRC = join(
   homedir(),
-  'Library/Mobile Documents/com~apple~CloudDocs/Companies/Arnel’s Projects'.replace('’', "'"),
-  'arnel-content/email-sequences/drip/templates/email-1.html'
+  'Code Projects/Private/arnels-content/email-sequences/drip/templates/email-1.html'
 );
 
 const html = readFileSync(SRC, 'utf8');

@@ -19,6 +19,8 @@ export type BookedCallEmail = {
   timeZone?: string;
   /** Used as the idempotency key, so a Cal.com retry cannot send twice. */
   bookingUid?: string;
+  /** The booking form's "company-name" answer, as the lead typed it. */
+  company?: string;
 };
 
 const FROM = 'Arnel Bukva <arnel@mail.loudface.co>';
@@ -44,7 +46,23 @@ const COMPANY_SPELLINGS: Record<string, string> = {
   webflow: 'Webflow', posthog: 'PostHog', dataforseo: 'DataForSEO',
 };
 
-function companyFromEmail(email: string): string {
+// Answers that say "no company" rather than name one.
+const NO_COMPANY = /^(n\/?a|none|no|nil|null|-+|\.+|\?+)$/i;
+
+/**
+ * The company as the lead wrote it on the booking form, so Hai Robotics reads
+ * "Hai Robotics", never "Hairobotics" (a 2026-10-21 check found five of seven emails
+ * since 22 Sep carried the domain-built name). The email domain is only the
+ * fallback: an empty answer, a "n/a", or a typed web address.
+ */
+export function companyName(answer: string | undefined, email: string): string {
+  const typed = (answer ?? '').replace(/\s+/g, ' ').trim();
+  const looksLikeAddress = /^(https?:\/\/|www\.)/i.test(typed) || /^[\w-]+(\.[\w-]+)+\/?$/.test(typed);
+  if (!typed || typed.length > 60 || NO_COMPANY.test(typed) || looksLikeAddress) return companyFromEmail(email);
+  return typed;
+}
+
+export function companyFromEmail(email: string): string {
   const domain = (email.split('@').pop() ?? '').split('.')[0]?.toLowerCase() ?? '';
   if (!domain || GENERIC_DOMAINS.has(domain)) return 'your business';
   return COMPANY_SPELLINGS[domain] ?? domain.charAt(0).toUpperCase() + domain.slice(1);
@@ -61,7 +79,7 @@ function escapeHtml(value: string): string {
 
 type Parts = Record<string, string>;
 
-function buildParts(email: string, name?: string, startTime?: string, timeZone?: string): Parts | null {
+function buildParts(email: string, name?: string, startTime?: string, timeZone?: string, company?: string): Parts | null {
   const start = startTime ? new Date(startTime) : null;
   if (!start || Number.isNaN(start.getTime())) return null;
 
@@ -83,7 +101,7 @@ function buildParts(email: string, name?: string, startTime?: string, timeZone?:
 
   return {
     first_name: (name || 'there').trim().split(/\s+/)[0] || 'there',
-    company: companyFromEmail(email),
+    company: companyName(company, email),
     call_date: `${weekday}, ${daynum} ${month}`,
     call_time: at({ hour: '2-digit', minute: '2-digit', hour12: false }),
     call_day: weekday,
@@ -130,7 +148,7 @@ export async function sendBookedCallEmail(input: BookedCallEmail): Promise<void>
       return;
     }
 
-    const parts = buildParts(input.email, input.name, input.startTime, input.timeZone);
+    const parts = buildParts(input.email, input.name, input.startTime, input.timeZone, input.company);
     if (!parts) {
       console.warn('[booked-call-email] no usable start time, skipping send');
       return;
