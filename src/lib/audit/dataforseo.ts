@@ -11,7 +11,7 @@ import { isDirectLLMPlatform, queryDirectLLM } from './direct-llm';
 const DFS_BASE = 'https://api.dataforseo.com/v3';
 
 const PLATFORM_MODELS: Record<AIPlatform, string> = {
-  // chatgpt + gemini are handled by direct-llm.ts via OpenRouter; these DFS
+  // chatgpt + gemini are handled by direct-llm.ts via the AI Gateway; these DFS
   // entries are just fallbacks used if someone calls DFS for those platforms
   // directly (they're skipped in queryLLM via isDirectLLMPlatform).
   chatgpt: 'gpt-4o',

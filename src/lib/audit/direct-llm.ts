@@ -1,5 +1,6 @@
 /**
- * Direct LLM calls for ChatGPT and Gemini via OpenRouter.
+ * Direct LLM calls for ChatGPT and Gemini through the Vercel AI Gateway,
+ * each with its provider's own web search.
  *
  * Why not DataForSEO for these two platforms:
  *   - DFS ChatGPT scraper rarely emits source URLs (~0% citation rate)
@@ -7,14 +8,18 @@
  * Both produce misleading "your brand is invisible" signal when the real
  * culprit is the scraper.
  *
- * Why OpenRouter over Vercel AI Gateway (which we tried first):
- *   - Pay-as-you-go, transparent per-call pricing (no Vercel team-wallet
- *     depletion mid-audit — we hit that exact issue on Canva/Glossier/
- *     Shopify/Calendly runs and half their Phase 2/3 calls failed).
- *   - Universal `:online` suffix enables web search on any model —
- *     `openai/gpt-4o-mini:online` and `google/gemini-2.5-flash:online`.
- *     No provider SDK needed, no Gemini-specific tool helpers.
- *   - Richer citation payloads (full content snippets + URL + title).
+ * Why the AI Gateway (since 2026-10-24; OpenRouter before that):
+ *   - OpenRouter's account ran out of credits and its keys were caught up in
+ *     the Railway breach, so audits were failing (402) from 23 Oct.
+ *   - Native search: ChatGPT uses OpenAI's own web search tool and Gemini
+ *     uses Google Search grounding, which is closer to what each assistant
+ *     cites for a real user than OpenRouter's `:online` add-on.
+ *   - The gateway bills the LoudFace Vercel team's AI credits. Keep them
+ *     topped up: an empty wallet mid-audit is what failed Phase 2/3 calls on
+ *     the Canva/Glossier/Shopify/Calendly runs in July.
+ *
+ * Auth: the AI SDK's default gateway provider uses AI_GATEWAY_API_KEY when it
+ * is set, otherwise the deployment's Vercel OIDC token.
  *
  * Claude and Perplexity stay on DataForSEO — those scrapers work reliably.
  *
@@ -22,6 +27,9 @@
  * and trace collection work unchanged.
  */
 
+import { generateText, type ToolSet } from 'ai';
+import { openai } from '@ai-sdk/openai';
+import { google } from '@ai-sdk/google';
 import type {
   AIPlatform,
   ApiCallTrace,
@@ -31,7 +39,7 @@ import type {
 } from './types';
 import type { TraceCollector } from './dataforseo';
 
-/** Platforms we query via OpenRouter instead of DataForSEO. */
+/** Platforms we query through the AI Gateway instead of DataForSEO. */
 export const DIRECT_LLM_PLATFORMS: readonly AIPlatform[] = ['chatgpt', 'gemini'] as const;
 
 export function isDirectLLMPlatform(platform: AIPlatform): boolean {
@@ -39,69 +47,69 @@ export function isDirectLLMPlatform(platform: AIPlatform): boolean {
 }
 
 const MODEL_IDS: Record<'chatgpt' | 'gemini', string> = {
-  // `:online` is OpenRouter's universal web-search suffix — returns
-  // url_citation annotations alongside the text. Simpler than the old
-  // gpt-4o-mini-search-preview / google.tools.googleSearch() split.
-  chatgpt: 'openai/gpt-4o-mini:online',
-  gemini: 'google/gemini-2.5-flash:online',
+  chatgpt: 'openai/gpt-4o-mini',
+  gemini: 'google/gemini-2.5-flash',
 };
 
-const OPENROUTER_BASE = 'https://openrouter.ai/api/v1';
+/** Each platform searches the web with its provider's own tool. */
+function searchTools(platform: 'chatgpt' | 'gemini'): ToolSet {
+  return platform === 'chatgpt'
+    ? { web_search: openai.tools.webSearch({}) }
+    : { google_search: google.tools.googleSearch({}) };
+}
 
 /**
- * Hard cap on a single OpenRouter chat/completions call. Without this, a
- * hung upstream call (observed on `:online` web-search models occasionally
- * stalling) blocks on `fetch` indefinitely and can consume the entire
- * Vercel function budget (~300s) by itself, starving every other phase.
- * 60s matches the DataForSEO Live-endpoint budget in dataforseo.ts, since
- * these calls carry similar web-search latency.
+ * Hard cap on a single call. Without this, a hung upstream search call
+ * blocks indefinitely and can consume the entire Vercel function budget
+ * (~300s) by itself, starving every other phase. 60s matches the
+ * DataForSEO Live-endpoint budget in dataforseo.ts, since these calls carry
+ * similar web-search latency.
  */
 const DIRECT_LLM_TIMEOUT_MS = 60_000;
 
-// ─── OpenRouter response types ─────────────────────────────────────
+/** Gemini's grounding sources are Google redirect links; this caps each lookup. */
+const REDIRECT_TIMEOUT_MS = 5_000;
 
-interface OpenRouterUrlCitation {
-  url: string;
-  title?: string;
-  start_index?: number;
-  end_index?: number;
-  /** Some models return the scraped page body here — we don't surface it. */
-  content?: string;
+const GROUNDING_REDIRECT = 'vertexaisearch.cloud.google.com/grounding-api-redirect';
+
+/**
+ * Gemini cites `vertexaisearch.cloud.google.com/grounding-api-redirect/...`
+ * links whose title is the cited domain. Downstream matching needs the real
+ * URL, so follow the redirect once; if that fails, fall back to the domain
+ * in the title.
+ */
+async function resolveCitationUrl(url: string, title?: string): Promise<string> {
+  if (!url.includes(GROUNDING_REDIRECT)) return url;
+  try {
+    const res = await fetch(url, {
+      method: 'HEAD',
+      redirect: 'manual',
+      signal: AbortSignal.timeout(REDIRECT_TIMEOUT_MS),
+    });
+    const location = res.headers.get('location');
+    if (location) return location;
+  } catch {
+    // fall through to the title
+  }
+  return title && /^[a-z0-9.-]+\.[a-z]{2,}$/i.test(title) ? `https://${title}` : url;
 }
 
-interface OpenRouterAnnotation {
-  type: string;
-  url_citation?: OpenRouterUrlCitation;
-}
-
-interface OpenRouterMessage {
-  role: string;
-  content?: string | null;
-  annotations?: OpenRouterAnnotation[];
-}
-
-interface OpenRouterChoice {
-  message?: OpenRouterMessage;
-  finish_reason?: string;
-}
-
-interface OpenRouterUsage {
-  prompt_tokens?: number;
-  completion_tokens?: number;
-  total_tokens?: number;
-  cost?: number;
-}
-
-interface OpenRouterResponse {
-  choices?: OpenRouterChoice[];
-  usage?: OpenRouterUsage;
-  error?: { message?: string; code?: string };
+/** OpenAI tags every cited link with utm_source=openai; drop it so URLs match the page. */
+function stripOpenAiTag(url: string): string {
+  try {
+    const u = new URL(url);
+    if (u.searchParams.get('utm_source') !== 'openai') return url;
+    u.searchParams.delete('utm_source');
+    return u.toString();
+  } catch {
+    return url;
+  }
 }
 
 // ─── Main entry ────────────────────────────────────────────────────
 
 /**
- * Query ChatGPT or Gemini via OpenRouter and adapt the response to the
+ * Query ChatGPT or Gemini through the AI Gateway and adapt the response to the
  * DataForSEO result shape. Returns `null` on any failure (same contract
  * as the DataForSEO path).
  */
@@ -116,64 +124,33 @@ export async function queryDirectLLM(
   const start = Date.now();
   const modelId = MODEL_IDS[platform];
 
-  const apiKey = process.env.OPENROUTER_API_KEY;
-  if (!apiKey) {
-    console.error('[DirectLLM] OPENROUTER_API_KEY not set — cannot query', platform);
-    tracer?.add({
-      platform,
-      prompt: prompt.slice(0, 100),
-      phase,
-      status: 'error',
-      errorMessage: 'OPENROUTER_API_KEY not set',
-      durationMs: 0,
-    });
-    return null;
-  }
-
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(), DIRECT_LLM_TIMEOUT_MS);
 
   try {
-    const res = await fetch(`${OPENROUTER_BASE}/chat/completions`, {
-      method: 'POST',
-      headers: {
-        Authorization: `Bearer ${apiKey}`,
-        'Content-Type': 'application/json',
-        // Attribution headers — show up on OpenRouter's dashboard.
-        'HTTP-Referer': 'https://loudface.co',
-        'X-Title': 'LoudFace AI Visibility Audit',
-      },
-      body: JSON.stringify({
-        model: modelId,
-        messages: [{ role: 'user', content: prompt }],
-        max_tokens: 1024,
-      }),
-      signal: controller.signal,
+    const result = await generateText({
+      model: modelId,
+      prompt,
+      tools: searchTools(platform),
+      maxOutputTokens: 1024,
+      abortSignal: controller.signal,
     });
+    const text = result.text ?? '';
 
-    if (!res.ok) {
-      const errText = await res.text().catch(() => '');
-      throw new Error(`OpenRouter ${res.status}: ${errText.slice(0, 240)}`);
-    }
-
-    const data = (await res.json()) as OpenRouterResponse;
-    if (data.error) {
-      throw new Error(`OpenRouter error: ${data.error.message || JSON.stringify(data.error)}`);
-    }
-
-    const msg = data.choices?.[0]?.message;
-    const text = typeof msg?.content === 'string' ? msg.content : '';
-
-    // Convert OpenRouter annotations (url_citation objects) to DFS-shaped
-    // annotations so downstream parseResponse doesn't need to know about
-    // the provider. Dedupe by URL — some models emit the same citation
-    // multiple times.
+    // Convert the SDK's url sources to DFS-shaped annotations so downstream
+    // parseResponse doesn't need to know about the provider. Dedupe by URL —
+    // providers sometimes cite the same page more than once.
+    const urlSources = result.sources.filter((src) => src.sourceType === 'url');
+    const resolved = await Promise.all(
+      urlSources.map(async (src) => ({
+        url: stripOpenAiTag(await resolveCitationUrl(src.url, src.title)),
+        title: src.title,
+      })),
+    );
     const seenUrls = new Set<string>();
     const annotations: DFSAnnotation[] = [];
-    for (const ann of msg?.annotations ?? []) {
-      const c = ann.url_citation;
-      if (!c?.url) continue;
-      if (seenUrls.has(c.url)) continue;
+    for (const c of resolved) {
+      if (!c.url || seenUrls.has(c.url)) continue;
       seenUrls.add(c.url);
       annotations.push({
         type: 'url_citation',
@@ -182,11 +159,12 @@ export async function queryDirectLLM(
       });
     }
 
-    const inputTokens = data.usage?.prompt_tokens ?? 0;
-    const outputTokens = data.usage?.completion_tokens ?? 0;
-    // OpenRouter reports actual per-call cost — use it directly rather than
-    // estimating from our own rate table.
-    const costUsd = typeof data.usage?.cost === 'number' ? data.usage.cost : 0;
+    const inputTokens = result.usage?.inputTokens ?? 0;
+    const outputTokens = result.usage?.outputTokens ?? 0;
+    // The gateway reports the actual per-call cost (search fees included) —
+    // use it directly rather than estimating from our own rate table.
+    const gatewayCost = Number(result.providerMetadata?.gateway?.cost);
+    const costUsd = Number.isFinite(gatewayCost) ? gatewayCost : 0;
 
     const item: DFSResponseItem = { type: 'message', text, annotations };
     const adapted: DFSLLMResponseResult = {

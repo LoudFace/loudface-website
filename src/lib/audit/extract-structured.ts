@@ -1,17 +1,19 @@
 /**
  * Structured LLM extraction primitive.
  *
- * Wraps AI SDK's `generateObject` routed through OpenRouter, so callers
- * get typed JSON back instead of regex-parsed free text. Used by the audit
- * pipeline to replace the regex-based analysis that was producing gibberish
- * categories, wrong-entity claims, and fragmented strings.
+ * Wraps AI SDK's `generateObject` routed through the Vercel AI Gateway, so
+ * callers get typed JSON back instead of regex-parsed free text. Used by the
+ * audit pipeline to replace the regex-based analysis that was producing
+ * gibberish categories, wrong-entity claims, and fragmented strings.
  *
- * Why OpenRouter over Vercel AI Gateway: Vercel's team-wallet credit system
- * depleted mid-audit and silently failed Phase 1 extraction, which cascaded
- * into fallback "business"/"other" categorization + skipped benchmarks.
- * OpenRouter is pay-as-you-go with transparent per-call pricing.
+ * The gateway bills the LoudFace Vercel team's AI credits. Keep them topped
+ * up: in July an empty wallet silently failed Phase 1 extraction, which
+ * cascaded into fallback "business"/"other" categorization + skipped
+ * benchmarks. (OpenRouter carried these calls from July to 2026-10-24, until
+ * its account ran dry and its keys were caught up in the Railway breach.)
  *
- * Requires `OPENROUTER_API_KEY` in the environment.
+ * Auth: the AI SDK's default gateway provider uses AI_GATEWAY_API_KEY when it
+ * is set, otherwise the deployment's Vercel OIDC token.
  *
  * This is intentionally separate from the DataForSEO wrapper: DataForSEO
  * caps `user_prompt` at 500 chars, which is far too small for extraction
@@ -21,7 +23,6 @@
  */
 
 import { generateObject } from 'ai';
-import { createOpenRouter } from '@openrouter/ai-sdk-provider';
 import type { ZodType } from 'zod';
 import type { ApiCallTrace } from './types';
 import type { TraceCollector } from './dataforseo';
@@ -31,31 +32,12 @@ const DEFAULT_MODEL = 'anthropic/claude-haiku-4.5';
 
 /**
  * Hard cap on a single structured-extraction call. These calls previously had
- * no timeout at all — a hung OpenRouter/Anthropic call could sit on
+ * no timeout at all — a hung gateway/Anthropic call could sit on
  * `generateObject` indefinitely and burn the whole Vercel function budget.
  * 45s (vs 60s for direct-llm chat calls) because extraction prompts are
  * shorter and don't carry web-search latency.
  */
 const EXTRACT_TIMEOUT_MS = 45_000;
-
-/**
- * Singleton OpenRouter provider. Constructed lazily so the module loads
- * even when OPENROUTER_API_KEY isn't set (build time, tests).
- */
-let _openrouter: ReturnType<typeof createOpenRouter> | null = null;
-function getOpenRouter(): ReturnType<typeof createOpenRouter> {
-  if (!_openrouter) {
-    _openrouter = createOpenRouter({
-      apiKey: process.env.OPENROUTER_API_KEY,
-      // Attribution headers — show up on OpenRouter's dashboard.
-      headers: {
-        'HTTP-Referer': 'https://loudface.co',
-        'X-Title': 'LoudFace AI Visibility Audit',
-      },
-    });
-  }
-  return _openrouter;
-}
 
 export interface StructuredExtractionOptions<T> {
   /** Zod schema the output must satisfy. */
@@ -104,7 +86,7 @@ export async function extractStructured<T>(
 
   try {
     const { object, usage } = await generateObject({
-      model: getOpenRouter().chat(modelId),
+      model: modelId,
       schema: opts.schema,
       prompt: opts.prompt,
       instructions: opts.instructions,

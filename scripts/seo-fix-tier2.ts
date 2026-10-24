@@ -166,7 +166,7 @@ async function main() {
       console.error(`    ${err instanceof Error ? err.message : err}`);
     }
 
-    // Light rate-limit: 600ms between calls keeps us well under OpenRouter's
+    // Light rate-limit: 600ms between calls keeps us well under the AI Gateway's
     // per-second limits without stretching the total run.
     await new Promise((r) => setTimeout(r, 600));
   }

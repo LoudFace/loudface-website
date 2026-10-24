@@ -51,7 +51,7 @@ const Phase1Schema = z.object({
       .describe('The SINGLE strongest category that fits the brand — ONE clean 2-4 word noun phrase, NOT a compound joined by "and" (e.g. "Webflow agency", NOT "web design and growth agency"). Must read as a complete noun phrase, never ending in a preposition, article, or conjunction (that, for, of, with, and, the). Examples: "Webflow agency", "crypto payroll platform", "mental-health app". Derived from the ground truth, not from AI responses.'),
     category_aliases: z
       // No `.max()` here — it emits JSON-schema `maxItems`, which Azure (where
-      // OpenRouter routes some Anthropic models) rejects outright, silently
+      // a router can send Anthropic models) rejects outright, silently
       // failing the whole Phase 1 extraction. Same constraint as `mention_count`
       // below. The item cap is enforced in the description text instead, and the
       // pipeline slices defensively.
@@ -102,7 +102,7 @@ const Phase1Schema = z.object({
     .array(
       z.object({
         name: z.string().describe('Competitor name as it appeared in responses.'),
-        // Plain `z.number()` rather than `.int()` — OpenRouter routes some
+        // Plain `z.number()` rather than `.int()` — a router can send some
         // Anthropic models via Azure, whose JSON-schema implementation
         // rejects `type: integer` outright. Our code treats this as an int
         // anyway; keeping the type permissive avoids a cross-provider
