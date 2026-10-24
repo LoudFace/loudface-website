@@ -105,20 +105,20 @@ function Trend({ panel }: { panel: Panel }) {
   );
 }
 
-function Bars({ panel, horizontal }: { panel: Panel; horizontal?: boolean }) {
+function Bars({ panel, horizontal, compact }: { panel: Panel; horizontal?: boolean; compact?: boolean }) {
   const points = (panel.points ?? []).map((p) => ({ label: p.label, value: p.value }));
   return (
     <BarChart
       data={points}
       xDataKey="label"
       orientation={horizontal ? 'horizontal' : 'vertical'}
-      aspectRatio={horizontal ? '2.8 / 1' : '3.2 / 1'}
+      aspectRatio={horizontal ? (compact ? '1.25 / 1' : '2.8 / 1') : compact ? '1.6 / 1' : '3.2 / 1'}
       barGap={0.34}
-      margin={horizontal ? { top: 4, right: 12, bottom: 4, left: 200 } : { top: 8, right: 8, bottom: 30, left: 8 }}
+      margin={horizontal ? { top: 4, right: 12, bottom: 4, left: compact ? 124 : 200 } : { top: 8, right: 8, bottom: 30, left: 8 }}
     >
       <Background pattern="dots" opacity={0.6} />
       <Bar dataKey="value" lineCap="butt" fill="var(--chart-1)" />
-      {horizontal ? <BarYAxis labelWidth={188} /> : <BarXAxis />}
+      {horizontal ? <BarYAxis labelWidth={compact ? 114 : 188} /> : <BarXAxis />}
       <ChartTooltip
         showCrosshair={false}
         content={({ point }) => (
@@ -168,7 +168,7 @@ function RingPanel({ panel }: { panel: Panel }) {
   );
 }
 
-function PanelCard({ panel, mounted }: { panel: Panel; mounted: boolean }) {
+function PanelCard({ panel, mounted, compact }: { panel: Panel; mounted: boolean; compact?: boolean }) {
   return (
     <figure className={`${card} flex min-w-0 flex-col p-5 sm:p-6`} data-print-keep>
       <figcaption className="mb-4">
@@ -188,7 +188,7 @@ function PanelCard({ panel, mounted }: { panel: Panel; mounted: boolean }) {
           ) : panel.kind === 'ring' ? (
             <RingPanel panel={panel} />
           ) : (
-            <Bars panel={panel} horizontal={panel.kind === 'hbars'} />
+            <Bars panel={panel} horizontal={panel.kind === 'hbars'} compact={compact} />
           ))}
       </div>
       {panel.caption && <p className="mt-4 text-[13.5px] leading-snug text-surface-600">{panel.caption}</p>}
@@ -209,9 +209,15 @@ export function ProposalStandingCharts({ section }: { section: ChartsSection }) 
             <p className="text-[13px] font-semibold text-primary-800">{board.label}</p>
             {board.source && <p className="text-[12.5px] text-surface-500">{board.source}</p>}
           </div>
-          <div className="grid gap-3">
-            {board.panels.map((panel) => (
-              <PanelCard key={panel._key} panel={panel} mounted={mounted} />
+          {/* Two columns from sm up; an odd last panel spans the full row. */}
+          <div className="grid gap-3 sm:grid-cols-2 sm:[&>*:last-child:nth-child(odd)]:col-span-2">
+            {board.panels.map((panel, i) => (
+              <PanelCard
+                key={panel._key}
+                panel={panel}
+                mounted={mounted}
+                compact={!(i === board.panels.length - 1 && i % 2 === 0)}
+              />
             ))}
           </div>
         </div>
