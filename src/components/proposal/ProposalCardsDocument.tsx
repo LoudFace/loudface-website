@@ -11,6 +11,8 @@ import { ProposalLogoStrip } from './ProposalLogoStrip';
 import { ProposalOfferStreams } from './ProposalOfferStreams';
 import { ProposalWhoDoesIt } from './ProposalWhoDoesIt';
 import { ProposalTeamSlider } from './ProposalTeamSlider';
+import { ProposalMethod } from './ProposalMethod';
+import { STAGES } from '@/app/methodology-v3/data';
 import { rawContent, type AboutV11Content } from '@/lib/content-utils';
 import { personPhoto } from '@/app/home-v11/ui';
 import { SectionBody } from './ProposalDocument';
@@ -58,6 +60,14 @@ function teamFromAbout() {
     leads: people.map((p) => ({ slug: slug(p.person), name: p.person, role: p.jobTitle, fact: p.fact, photo: personPhoto(slug(p.person)) })),
     bench: { heading: t.benchHeading, body: t.benchBody, roles: t.benchRoles },
   };
+}
+
+/* The Answer Chain's eight stages as /methodology prints them: the short name and the stage's first paragraph. */
+function methodStages() {
+  return STAGES.map((st) => {
+    const p = st.blocks.find((bl) => bl.kind === 'p' && typeof (bl as { text?: unknown }).text === 'string') as { text: string } | undefined;
+    return { n: st.n, short: st.short, text: p?.text ?? st.first };
+  });
 }
 
 /* The house pair. A proposal can replace it with its own `promises` when a line does not fit the lead. */
@@ -566,6 +576,7 @@ export function ProposalCardsDocument({ proposal }: { proposal: Proposal }) {
           <div className="min-w-0">
             {sections.slice(0, whoAt).map((s, i) => light(s, i))}
             <ProposalWhoDoesIt index={whoAt} />
+            <ProposalMethod index={whoAt} stages={methodStages()} />
             <ProposalTeamSlider index={whoAt} {...teamFromAbout()} />
             {sections.slice(whoAt, railEnd).map((s, i) => light(s, whoAt + i))}
           </div>
