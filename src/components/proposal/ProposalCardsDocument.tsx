@@ -10,6 +10,9 @@ import { PlateDefs } from './ProposalFigures';
 import { ProposalLogoStrip } from './ProposalLogoStrip';
 import { ProposalOfferStreams } from './ProposalOfferStreams';
 import { ProposalWhoDoesIt } from './ProposalWhoDoesIt';
+import { ProposalTeamSlider } from './ProposalTeamSlider';
+import { rawContent, type AboutV11Content } from '@/lib/content-utils';
+import { personPhoto } from '@/app/home-v11/ui';
 import { SectionBody } from './ProposalDocument';
 
 /**
@@ -39,6 +42,16 @@ import { SectionBody } from './ProposalDocument';
 const page = 'mx-auto max-w-[1180px] px-5 sm:px-8';
 const panel = 'mt-6 rounded-[22px] bg-primary-50/70 p-3 sm:p-4';
 const card = 'rounded-2xl bg-white shadow-[0_1px_2px_rgba(10,10,10,0.05),0_8px_24px_-16px_rgba(30,27,75,0.18)]';
+
+/* The About page's leads and bench, so the deck's team slider never drifts from /about. */
+function teamFromAbout() {
+  const t = rawContent<AboutV11Content>('about-v11').team;
+  const slug = (name: string) => name.toLowerCase().replace(/[^a-z]+/g, '-');
+  return {
+    leads: t.people.map((p) => ({ slug: slug(p.person), name: p.person, role: p.jobTitle, fact: p.fact, photo: personPhoto(slug(p.person)) })),
+    bench: { heading: t.benchHeading, body: t.benchBody, roles: t.benchRoles },
+  };
+}
 
 /* The house pair. A proposal can replace it with its own `promises` when a line does not fit the lead. */
 const PROMISES = ['No designer or developer to hire', 'Measured in leads, not traffic'];
@@ -546,6 +559,7 @@ export function ProposalCardsDocument({ proposal }: { proposal: Proposal }) {
           <div className="min-w-0">
             {sections.slice(0, whoAt).map((s, i) => light(s, i))}
             <ProposalWhoDoesIt index={whoAt} />
+            <ProposalTeamSlider index={whoAt} {...teamFromAbout()} />
             {sections.slice(whoAt, railEnd).map((s, i) => light(s, whoAt + i))}
           </div>
           {hasRail && (
