@@ -417,11 +417,7 @@ function Strip({ step }: { step: Step }) {
   return (
     <div key={step.id} className="pw-strip grid gap-6 border-t border-surface-200 pt-6 md:min-h-[392px] md:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] md:gap-8">
       <div>
-        <p className="flex items-center gap-2 text-[12px] font-semibold uppercase tracking-[0.04em] text-primary-600">
-          <span aria-hidden="true" className="h-2 w-2 rounded-full bg-primary-600" />
-          {step.name}
-        </p>
-        <h3 className="mt-3 text-[22px] font-medium leading-[1.15] tracking-[-0.025em] text-surface-950 sm:text-[24px]">{step.headline}</h3>
+        <h3 className="text-[22px] font-medium leading-[1.15] tracking-[-0.025em] text-surface-950 sm:text-[24px]">{step.headline}</h3>
         <p className="mt-3 text-[15px] leading-relaxed text-surface-700">{step.body}</p>
         <div className={`mt-5 grid border-t border-surface-200 ${step.proof.length > 1 ? 'sm:grid-cols-2' : ''}`}>
           {step.proof.map((p, i) => (
