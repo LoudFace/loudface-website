@@ -47,8 +47,15 @@ const card = 'rounded-2xl bg-white shadow-[0_1px_2px_rgba(10,10,10,0.05),0_8px_2
 function teamFromAbout() {
   const t = rawContent<AboutV11Content>('about-v11').team;
   const slug = (name: string) => name.toLowerCase().replace(/[^a-z]+/g, '-');
+  // The deck's order, set by Arnel on 2026-10-26; anyone new on /about follows these four.
+  const FIRST = ['andrea-van-wyk', 'arnel-bukva', 'abhay-tyagi', 'tamara-pavlovic'];
+  const rank = (name: string) => {
+    const i = FIRST.indexOf(slug(name));
+    return i === -1 ? FIRST.length : i;
+  };
+  const people = [...t.people].sort((a, b) => rank(a.person) - rank(b.person));
   return {
-    leads: t.people.map((p) => ({ slug: slug(p.person), name: p.person, role: p.jobTitle, fact: p.fact, photo: personPhoto(slug(p.person)) })),
+    leads: people.map((p) => ({ slug: slug(p.person), name: p.person, role: p.jobTitle, fact: p.fact, photo: personPhoto(slug(p.person)) })),
     bench: { heading: t.benchHeading, body: t.benchBody, roles: t.benchRoles },
   };
 }
