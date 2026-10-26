@@ -61,19 +61,26 @@ function Photo({ src, caption, position = '50% 50%' }: { src: string; caption: s
   );
 }
 
-function Plate({ children, caption }: { children: ReactNode; caption: string }) {
+/* The house grounds the photographs use (DESIGN.md tokens): lavender, sand, peach. */
+const GROUNDS = {
+  lavender: 'linear-gradient(150deg, #ebe6fd 0%, #b7aaf2 100%)',
+  sand: 'linear-gradient(150deg, #fcefcf 0%, #f2c768 100%)',
+  peach: 'linear-gradient(150deg, #fde6dc 0%, #f59a7b 100%)',
+};
+
+function Plate({ children, caption, ground }: { children: ReactNode; caption: string; ground: keyof typeof GROUNDS }) {
   return (
-    <figure className="m-0 flex h-full min-h-[240px] flex-col justify-between gap-4 rounded-2xl bg-primary-50/80 p-5">
-      <div className="flex flex-1 items-center justify-center">{children}</div>
-      <figcaption className="text-[13px] font-medium text-surface-700">{caption}</figcaption>
+    <figure className="relative m-0 flex h-full min-h-[240px] items-center justify-center overflow-hidden rounded-2xl px-6 pb-16 pt-8" style={{ background: GROUNDS[ground] }}>
+      {children}
+      <figcaption className="absolute bottom-3 left-3 rounded-lg bg-white/95 px-2.5 py-1.5 text-[13px] font-medium text-surface-950">{caption}</figcaption>
     </figure>
   );
 }
 
 const TOOLS = [
-  { src: '/images/home-v11/logos/posthog-icon.png', name: 'PostHog' },
-  { src: '/images/home-v11/logos/gtm-icon.svg', name: 'Tag Manager' },
-  { src: '/images/home-v11/logos/fav-hubspot.png', name: 'Your CRM' },
+  { src: '/images/home-v11/logos/posthog-icon.png', name: 'PostHog', what: 'Every visit, by source' },
+  { src: '/images/home-v11/logos/gtm-icon.svg', name: 'Tag Manager', what: 'Forms and demo buttons' },
+  { src: '/images/home-v11/logos/fav-hubspot.png', name: 'Your CRM', what: 'Each lead with its source' },
 ];
 
 const REVIEWS = [
@@ -91,13 +98,13 @@ const STEPS: Step[] = [
     y: 80,
     side: 'top',
     icon: svg(<><rect x="3" y="4" width="14" height="12" rx="2" /><path d="M3 8h14" /></>),
-    headline: 'Senior designers who design to sell, not to decorate',
-    body: 'Positioning, copy and design ship as one piece of work. The same team designed and built sites for Montblanc, Hoxhunt and Dimer Health.',
+    headline: 'A highly aesthetic design team, working with our own custom harnesses',
+    body: 'Positioning, copy and design ship as one piece of work, built to sell, not to decorate. The same team designed and built sites for Montblanc, Hoxhunt and Dimer Health.',
     proof: [
       { big: '288%', text: "more conversions after we redesigned Dimer Health's site" },
-      { badge: 'webflow', text: 'Webflow Enterprise Partner, one of a small number worldwide' },
+      { badge: 'webflow', text: 'One of a small number of agencies worldwide' },
     ],
-    picture: <Photo src="/images/home-v11/bento-design.webp" caption="Dimer Health, a site we designed and built" position="88% 50%" />,
+    picture: <Photo src="/images/home-v11/bento-design.webp" caption="Dimer Health, a site we designed and built" position="100% 50%" />,
   },
   {
     id: 'development',
@@ -107,13 +114,13 @@ const STEPS: Step[] = [
     y: 82,
     side: 'top',
     icon: svg(<path d="M7 6l-4 4 4 4M13 6l4 4-4 4" />),
-    headline: 'Senior developers, with AI doing the checks',
+    headline: 'A trained development team, with AI doing the checks',
     body: 'AI agents handle research and QA on every build. Our developers run them and sign off every release, and speed and tracking are checked before anything goes live.',
     proof: [
       { big: '$200K', text: 'in sales within 30 days from a landing page we built for Outbound Specialist' },
-      { badge: 'webflow', text: 'Webflow Enterprise Partner, one of a small number worldwide' },
+      { badge: 'webflow', text: 'One of a small number of agencies worldwide' },
     ],
-    picture: <Photo src="/images/home-v11/bento-build.webp" caption="Ceipal, a site we built" position="65% 50%" />,
+    picture: <Photo src="/images/home-v11/bento-build.webp" caption="Ceipal, a site we built" position="92% 50%" />,
   },
   {
     id: 'tracking',
@@ -130,18 +137,21 @@ const STEPS: Step[] = [
       { text: 'Visits from ChatGPT and other assistants are counted on their own, not lost in "direct"' },
     ],
     picture: (
-      <Plate caption="Analytics, tags and your CRM, wired as one">
-        <div className="flex items-center gap-3">
-          {TOOLS.map((t, i) => (
-            <div key={t.name} className="flex items-center gap-3">
-              {i > 0 && <span aria-hidden="true" className="h-px w-6 bg-primary-300" />}
-              <div className="flex w-[92px] flex-col items-center gap-2 rounded-xl bg-white px-2 py-3 shadow-[0_6px_18px_-8px_rgba(30,27,75,0.25)]">
+      <Plate caption="Analytics, tags and your CRM, wired as one" ground="sand">
+        <div className="relative w-full max-w-[280px]">
+          <span aria-hidden="true" className="absolute bottom-7 left-[27px] top-7 w-px bg-white/80" />
+          <div className="relative space-y-2.5">
+            {TOOLS.map((t) => (
+              <div key={t.name} className="flex items-center gap-3 rounded-xl bg-white px-3 py-2.5 shadow-[0_8px_20px_-12px_rgba(30,27,75,0.35)]">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={t.src} alt="" className="h-7 w-7 object-contain" />
-                <span className="text-[12px] font-medium text-surface-800">{t.name}</span>
+                <img src={t.src} alt="" width={30} height={30} className="h-[30px] w-[30px] flex-none rounded-md object-contain" />
+                <div className="min-w-0 leading-tight">
+                  <p className="text-[14px] font-semibold text-surface-950">{t.name}</p>
+                  <p className="text-[12px] text-surface-500">{t.what}</p>
+                </div>
               </div>
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
       </Plate>
     ),
@@ -157,10 +167,10 @@ const STEPS: Step[] = [
     headline: 'Strategists who write for buyers and for AI',
     body: 'A strategist plans every piece from the questions your buyers ask ChatGPT and Google. Writers draft, AI agents check facts and structure, and the strategist signs off before it goes live on your site.',
     proof: [
-      { big: '0.13% → 21.5%', text: "LoudFace's own share of non-branded AI answers" },
+      { big: '21.5%', text: "LoudFace's own share of non-branded AI answers, up from 0.13%" },
       { big: '9.1×', text: 'Google clicks a week for TradeMomentum' },
     ],
-    picture: <Photo src="/images/home-v11/bento-search.webp" caption="Genie Teacher, 370× Google impressions a day" position="62% 50%" />,
+    picture: <Photo src="/images/home-v11/bento-search.webp" caption="Genie Teacher, 370× Google impressions a day" position="90% 50%" />,
   },
   {
     id: 'mentions',
@@ -172,7 +182,10 @@ const STEPS: Step[] = [
     icon: svg(<path d="M8.5 11.5l3-3M7 9l-2 2a2.8 2.8 0 004 4l2-2M13 11l2-2a2.8 2.8 0 00-4-4L9 7" />),
     headline: 'Placed on the lists ChatGPT reads',
     body: 'We find the roundups and comparisons AI cites for your category and get you onto them, often by featuring the other company in return.',
-    proof: [{ big: '0 → 97.8%', text: "Toku's AI visibility on its category's top prompt" }],
+    proof: [
+      { big: '0 → 97.8%', text: "Toku's AI visibility on its category's top prompt" },
+      { big: '3rd of 53', text: 'where LoudFace now ranks among the brands tracked in AI answers' },
+    ],
     picture: <Photo src="/images/home-v11/bento-ai.webp" caption="Toku, named in an AI answer" position="60% 50%" />,
   },
   {
@@ -185,16 +198,19 @@ const STEPS: Step[] = [
     icon: svg(<path d="M10 3.5l1.9 4 4.3.5-3.2 3 .9 4.3L10 13.1l-3.9 2.2.9-4.3-3.2-3 4.3-.5z" />),
     headline: 'Review programmes on the sites AI checks',
     body: 'AI weighs independent proof before it recommends a vendor. We set up G2, Capterra and Trustpilot and run the ask to your happy customers.',
-    proof: [{ big: '4.8', text: 'our own Clutch rating, from verified clients' }],
+    proof: [
+      { big: '4.8', text: 'our own Clutch rating, from verified clients' },
+      { big: '5.0', text: 'our Google rating, from four reviews' },
+    ],
     picture: (
-      <Plate caption="Our own ratings, run the same way">
-        <div className="grid w-full max-w-[280px] gap-2">
+      <Plate caption="Our own ratings, run the same way" ground="peach">
+        <div className="grid w-full max-w-[280px] gap-2.5">
           {REVIEWS.map((r) => (
-            <div key={r.name} className="flex items-center gap-3 rounded-xl bg-white px-3 py-2.5 shadow-[0_6px_18px_-10px_rgba(30,27,75,0.25)]">
+            <div key={r.name} className="flex items-center gap-3 rounded-xl bg-white px-3 py-3 shadow-[0_8px_20px_-12px_rgba(30,27,75,0.35)]">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img src={r.src} alt="" className="h-6 w-6 object-contain" />
               <span className="flex-1 text-[14px] font-medium text-surface-900">{r.name}</span>
-              <span className="proposal-num text-[15px] font-semibold text-primary-700">{r.rating}</span>
+              <span className="text-[15px] font-semibold text-surface-950">{r.rating}</span>
             </div>
           ))}
         </div>
@@ -211,10 +227,13 @@ const STEPS: Step[] = [
     icon: null,
     headline: 'One number on top: leads from search and AI',
     body: 'Every Friday your strategist writes what moved, why, and what we do next. Once a month you get a full report with one recommendation you decide on together.',
-    proof: [{ big: 'Fridays', text: 'a written note from the strategist who runs your account' }],
+    proof: [
+      { big: 'Fridays', text: 'a written note from the strategist who runs your account' },
+      { big: 'Week 1', text: 'a written growth plan, before any content ships' },
+    ],
     picture: (
-      <Plate caption="The Friday note, from your strategist">
-        <div className="w-full max-w-[300px] rounded-xl bg-white p-4 shadow-[0_8px_24px_-12px_rgba(30,27,75,0.3)]">
+      <Plate caption="The Friday note, from your strategist" ground="lavender">
+        <div className="w-full max-w-[290px] rounded-xl bg-white p-4 shadow-[0_10px_28px_-14px_rgba(30,27,75,0.45)]">
           <div className="flex items-center gap-2.5">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img src="/images/home-v11/team/arnel-bukva-v3.jpg" alt="" className="h-8 w-8 rounded-full object-cover" />
@@ -223,10 +242,13 @@ const STEPS: Step[] = [
               <p className="text-[12px] text-surface-500">What moved, why, what’s next</p>
             </div>
           </div>
-          <div aria-hidden="true" className="mt-4 space-y-2">
-            <span className="block h-2 w-full rounded bg-surface-100" />
-            <span className="block h-2 w-11/12 rounded bg-surface-100" />
-            <span className="block h-2 w-3/4 rounded bg-surface-100" />
+          <div className="mt-4 space-y-3 border-t border-surface-100 pt-3">
+            {['Leads this week', 'What moved and why', 'Next week'].map((h, i) => (
+              <div key={h}>
+                <p className="text-[12px] font-semibold text-surface-800">{h}</p>
+                <span aria-hidden="true" className={`mt-1.5 block h-1.5 rounded bg-surface-100 ${i === 1 ? 'w-full' : 'w-2/3'}`} />
+              </div>
+            ))}
           </div>
         </div>
       </Plate>
@@ -393,7 +415,7 @@ function Chips({ active, onPick }: { active: string; onPick: (id: string) => voi
 
 function Strip({ step }: { step: Step }) {
   return (
-    <div key={step.id} className="pw-strip grid gap-6 border-t border-surface-200 pt-6 md:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] md:gap-8">
+    <div key={step.id} className="pw-strip grid gap-6 border-t border-surface-200 pt-6 md:min-h-[392px] md:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] md:gap-8">
       <div>
         <p className="flex items-center gap-2 text-[12px] font-semibold uppercase tracking-[0.04em] text-primary-600">
           <span aria-hidden="true" className="h-2 w-2 rounded-full bg-primary-600" />
@@ -401,16 +423,22 @@ function Strip({ step }: { step: Step }) {
         </p>
         <h3 className="mt-3 text-[22px] font-medium leading-[1.15] tracking-[-0.025em] text-surface-950 sm:text-[24px]">{step.headline}</h3>
         <p className="mt-3 text-[15px] leading-relaxed text-surface-700">{step.body}</p>
-        <div className="mt-5 grid border-t border-surface-200 sm:grid-cols-2">
+        <div className={`mt-5 grid border-t border-surface-200 ${step.proof.length > 1 ? 'sm:grid-cols-2' : ''}`}>
           {step.proof.map((p, i) => (
             <div key={p.text} className={`pt-4 ${i > 0 ? 'sm:border-l sm:border-surface-200 sm:pl-4' : 'sm:pr-4'}`}>
               {p.badge === 'webflow' ? (
-                // eslint-disable-next-line @next/next/no-img-element
-                <img src="/images/Enterprise-Blue-Badge.webp" alt="Webflow Enterprise Partner" className="h-7 w-auto" />
+                <div className="flex items-center gap-2.5">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img src="/images/home-v11/logos/webflow-icon.png" alt="" width={30} height={30} className="h-[30px] w-[30px] flex-none rounded-lg" />
+                  <div className="leading-tight">
+                    <p className="text-[14px] font-semibold text-surface-950">Webflow</p>
+                    <p className="whitespace-nowrap text-[12px] font-medium text-surface-600">Enterprise Partner</p>
+                  </div>
+                </div>
               ) : (
-                p.big && <p className="proposal-num text-[26px] font-medium leading-none tracking-[-0.04em] text-primary-600">{p.big}</p>
+                p.big && <p className="text-[28px] font-medium leading-none tracking-[-0.04em] text-primary-600">{p.big}</p>
               )}
-              <p className="mt-2 text-[13px] leading-snug text-surface-700">{p.text}</p>
+              <p className="mt-2 max-w-[260px] text-[13px] leading-snug text-surface-700">{p.text}</p>
             </div>
           ))}
         </div>
@@ -420,8 +448,8 @@ function Strip({ step }: { step: Step }) {
   );
 }
 
-export function ProposalWhoDoesIt({ index }: { index: number }) {
-  const [active, setActive] = useState('design');
+export function ProposalWhoDoesIt({ index, initialStep = 'design' }: { index: number; initialStep?: string }) {
+  const [active, setActive] = useState(initialStep);
   const step = STEPS.find((s) => s.id === active) ?? STEPS[0];
   return (
     <section
