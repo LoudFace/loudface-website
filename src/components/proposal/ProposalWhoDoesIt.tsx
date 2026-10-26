@@ -464,6 +464,10 @@ export function ProposalWhoDoesIt({ index, initialStep = 'design' }: { index: nu
           <p className="mt-2 text-[15px] text-surface-600">
             Getting found brings buyers in. Getting chosen turns them into leads. We do both, so nobody on your team has to manage the website.
           </p>
+          {/* Arnel, 2026-10-26: we are not a full-service shop; each job is here because we do it as well as the best specialists. */}
+          <p className="mt-3 text-[15px] font-medium leading-snug text-surface-950">
+            We’re not a full-service agency. We only take on a job when our team does it as well as the best specialists in that field.
+          </p>
         </div>
         <div className="flex items-center gap-3">
           <div className="flex">
