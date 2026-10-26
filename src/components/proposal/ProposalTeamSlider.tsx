@@ -25,7 +25,7 @@ const GROUNDS = [
 ];
 
 const card = 'rounded-2xl bg-white shadow-[0_1px_2px_rgba(10,10,10,0.05),0_8px_24px_-16px_rgba(30,27,75,0.18)]';
-const slide = 'w-[78%] shrink-0 snap-start sm:w-[calc((100%-24px)/3-20px)]';
+const slide = 'w-[78%] shrink-0 snap-start sm:w-[calc((100%-24px)/2.5)]';
 
 export function ProposalTeamSlider({ leads, bench, index }: { leads: TeamLead[]; bench: TeamBench; index: number }) {
   const track = useRef<HTMLUListElement>(null);
