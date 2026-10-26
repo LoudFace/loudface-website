@@ -1038,3 +1038,8 @@
   .proposal-surface .pc-electric { background: none !important; color: inherit !important; }
   .proposal-surface .pc-traveller { display: none; }
 }
+
+/* Who does the work: the strip fades in when a step is picked. */
+.proposal-surface .pw-strip { animation: pw-in 0.35s cubic-bezier(.2,.7,.2,1); }
+@keyframes pw-in { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+@media (prefers-reduced-motion: reduce) { .proposal-surface .pw-strip { animation: none; } }

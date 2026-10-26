@@ -9,6 +9,7 @@ import { ProposalCaseProof } from './ProposalCaseProof';
 import { PlateDefs } from './ProposalFigures';
 import { ProposalLogoStrip } from './ProposalLogoStrip';
 import { ProposalOfferStreams } from './ProposalOfferStreams';
+import { ProposalWhoDoesIt } from './ProposalWhoDoesIt';
 import { SectionBody } from './ProposalDocument';
 
 /**
@@ -451,6 +452,12 @@ export function ProposalCardsDocument({ proposal }: { proposal: Proposal }) {
   const clips = (proposal.clipStrip?.clips ?? []).filter((c) => c.videoUrl || c.posterUrl || c.name);
   const rail = proposal.proofRail;
   const hasRail = Boolean((rail?.platforms?.length ?? 0) > 0 || (rail?.quotes?.length ?? 0) > 0 || clips.length > 0);
+  // Who does the work sits right after "What we would do"; a proposal without
+  // one gets it before the case studies, else after the last light section.
+  const lightTypes = sections.slice(0, railEnd).map((s) => s._type);
+  const afterTracks = lightTypes.indexOf('tracksSection');
+  const beforeCases = lightTypes.indexOf('caseProofSection');
+  const whoAt = afterTracks !== -1 ? afterTracks + 1 : beforeCases !== -1 ? beforeCases : lightTypes.length;
 
   const light = (section: ProposalSection, index: number) => {
     if (section._type === 'caseProofSection') {
@@ -536,7 +543,11 @@ export function ProposalCardsDocument({ proposal }: { proposal: Proposal }) {
 
       <div className={page}>
         <div className={hasRail ? 'lg:grid lg:grid-cols-[minmax(0,1fr)_328px] lg:gap-14' : ''}>
-          <div className="min-w-0">{sections.slice(0, railEnd).map((s, i) => light(s, i))}</div>
+          <div className="min-w-0">
+            {sections.slice(0, whoAt).map((s, i) => light(s, i))}
+            <ProposalWhoDoesIt index={whoAt} />
+            {sections.slice(whoAt, railEnd).map((s, i) => light(s, whoAt + i))}
+          </div>
           {hasRail && (
             <aside data-proposal-rail="aside" className="hidden lg:block">
               <div className="sticky top-8 mt-10">
