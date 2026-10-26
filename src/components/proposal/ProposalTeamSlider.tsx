@@ -25,7 +25,7 @@ const GROUNDS = [
 ];
 
 const card = 'rounded-2xl bg-white shadow-[0_1px_2px_rgba(10,10,10,0.05),0_8px_24px_-16px_rgba(30,27,75,0.18)]';
-const slide = 'w-[78%] shrink-0 snap-start sm:w-[calc((100%-24px)/2.5)]';
+const slide = 'w-[78%] shrink-0 snap-start sm:w-[calc((100%-12px)*0.75)]';
 
 export function ProposalTeamSlider({ leads, bench, index }: { leads: TeamLead[]; bench: TeamBench; index: number }) {
   const track = useRef<HTMLUListElement>(null);
@@ -73,17 +73,17 @@ export function ProposalTeamSlider({ leads, bench, index }: { leads: TeamLead[];
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img src={p.photo} alt={p.name} width={800} height={800} loading="lazy" className="absolute inset-0 h-full w-full object-cover" />
                 </div>
-                <figcaption className="flex flex-1 flex-col p-4">
+                <figcaption className="flex flex-1 flex-col p-4 sm:p-5">
                   <a
                     href={`https://www.loudface.co/team/${p.slug}`}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-[17px] font-medium tracking-[-0.015em] text-surface-950 hover:underline hover:underline-offset-4"
+                    className="text-[17px] font-medium tracking-[-0.015em] text-surface-950 hover:underline hover:underline-offset-4 sm:text-[21px]"
                   >
                     {p.name}
                   </a>
-                  <p className="mt-0.5 text-[13px] font-medium text-primary-700">{p.role}</p>
-                  <p className="mt-2.5 text-[13.5px] leading-snug text-surface-700">{p.fact}</p>
+                  <p className="mt-0.5 text-[13px] font-medium text-primary-700 sm:text-[14.5px]">{p.role}</p>
+                  <p className="mt-2.5 text-[13.5px] leading-snug text-surface-700 sm:text-[15.5px]">{p.fact}</p>
                 </figcaption>
               </figure>
             </li>
@@ -95,8 +95,8 @@ export function ProposalTeamSlider({ leads, bench, index }: { leads: TeamLead[];
                   <path d="M8 2.5v11M2.5 8h11" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
                 </svg>
               </span>
-              <p className="mt-4 text-[17px] font-medium tracking-[-0.015em] text-surface-950">{bench.heading}</p>
-              <p className="mt-2 text-[13.5px] leading-snug text-surface-700">{bench.body}</p>
+              <p className="mt-4 text-[17px] font-medium tracking-[-0.015em] text-surface-950 sm:text-[21px]">{bench.heading}</p>
+              <p className="mt-2 text-[13.5px] leading-snug text-surface-700 sm:text-[15.5px]">{bench.body}</p>
               <ul className="mt-auto flex flex-wrap gap-1.5 pt-5">
                 {bench.roles.map((r) => (
                   <li key={r} className="rounded-full bg-primary-50 px-2.5 py-1 text-[12px] font-medium text-primary-800">
