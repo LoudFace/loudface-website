@@ -86,7 +86,6 @@ export default async function AiInstructionsPage() {
     award: [
       'Webflow Enterprise Partner',
       'Awwwards Honorable Nominee',
-      'Trustpilot Top-Rated Agency',
     ],
     sameAs,
   };
