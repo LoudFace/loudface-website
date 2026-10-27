@@ -65,6 +65,32 @@ const nextConfig: NextConfig = {
           { key: 'Vary', value: 'Accept' },
         ],
       },
+      // ─── Agent-useful Link headers (Peec Agent readiness, 2026-10-27) ─────────
+      // Every public page points at its Markdown twin (src/proxy.ts serves <path>.md and /index.md for
+      // the homepage) and at llms.txt. Set here rather than in src/proxy.ts: Next replaces a Link header
+      // the proxy sets with its own font preloads, and a header from this file is sent as a separate
+      // Link line next to them. One Link per rule: Next keeps only the last of two headers with the same key. The excluded prefixes have no Markdown twin worth a pointer.
+      {
+        source: '/',
+        headers: [
+          {
+            key: 'Link',
+            value:
+              '<https://www.loudface.co/index.md>; rel="alternate"; type="text/markdown", <https://www.loudface.co/llms.txt>; rel="describedby"; type="text/plain"',
+          },
+        ],
+      },
+      {
+        source:
+          '/:path((?!(?:api|_next|studio|p|fb|feedback|dev-preview|edit|thank-you|preview|figures)(?:/|$))[^.]+)',
+        headers: [
+          {
+            key: 'Link',
+            value:
+              '<https://www.loudface.co/:path.md>; rel="alternate"; type="text/markdown", <https://www.loudface.co/llms.txt>; rel="describedby"; type="text/plain"',
+          },
+        ],
+      },
       // Self-running figures in public/figures/ are embedded by our own pages in an iframe (the homepage's
       // launch stack, 2026-10-12). SAMEORIGIN lets the site frame them (every other path keeps DENY);
       // noindex keeps the bare figure page out of search; indexifembedded lets Google credit its words to the page

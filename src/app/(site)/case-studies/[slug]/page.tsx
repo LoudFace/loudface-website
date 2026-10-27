@@ -77,6 +77,9 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     canonicalPath: `/case-studies/${slug}`,
     type: 'article',
     imageUrl,
+    // Same two fields the Article JSON-LD below carries, so the meta tags and the schema agree.
+    publishedTime: study._createdAt,
+    modifiedTime: study._updatedAt,
   });
 }
 

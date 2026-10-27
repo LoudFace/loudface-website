@@ -107,6 +107,7 @@ export function buildArticleAuthorSchema(member: TeamMember | null | undefined):
 export function buildOrganizationPublisher(): object {
   return {
     '@type': 'Organization',
+    '@id': `${SITE_URL}/#organization`,
     name: 'LoudFace',
     url: SITE_URL,
     logo: {

@@ -1,6 +1,7 @@
 import { NextResponse, type NextRequest } from 'next/server';
 import { POSTHOG_DISTINCT_ID_COOKIE } from './lib/consent';
 import { MARKDOWN_RENDER_HEADER } from './lib/markdown-page';
+import { CONTENT_USAGE } from './lib/agent-policy';
 
 const DISTINCT_ID_MAX_AGE = 60 * 60 * 24 * 365; // 12 months
 
@@ -64,7 +65,9 @@ export default function proxy(request: NextRequest) {
     !pathname.startsWith('/studio/') &&
     !pathname.startsWith('/p/')
   ) {
-    const pagePath = pathname.slice(0, -3); // strip .md
+    // The homepage has no name to put before ".md", so its twin is /index.md.
+    const stripped = pathname.slice(0, -3); // strip .md
+    const pagePath = stripped === '/index' ? '/__root__' : stripped;
     return NextResponse.rewrite(
       new URL(`/api/llms-md${pagePath}`, request.url)
     );
@@ -117,6 +120,10 @@ export default function proxy(request: NextRequest) {
   // a CDN can hand whichever variant it cached first to everyone who asks.
   response.headers.append('Vary', 'Accept');
 
+  // The IETF AIPREF twin of the Content-Usage line in robots.txt. The Link headers that point at the
+  // Markdown twin live in next.config.ts, because Next replaces a Link header set here.
+  response.headers.set('Content-Usage', CONTENT_USAGE);
+
   if (!existingDistinctId) {
     response.cookies.set(POSTHOG_DISTINCT_ID_COOKIE, distinctId, {
       maxAge: DISTINCT_ID_MAX_AGE,
@@ -133,7 +140,7 @@ export const config = {
   matcher: [
     // All site routes except api/_next/static assets/studio/audit/files with extensions.
     '/((?!api|_next/static|_next/image|studio|audit|.*\\..*).*)',
-    '/case-studies/:slug*.md',
-    '/blog/:slug*.md',
+    // Any page's .md twin, not only blog and case studies: the pattern above skips every path with a dot.
+    '/:path*.md',
   ],
 };

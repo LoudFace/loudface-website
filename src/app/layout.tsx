@@ -69,6 +69,10 @@ export const metadata: Metadata = {
   robots: {
     index: true,
     follow: true,
+    // Said out loud instead of left to the default: pages may be quoted in full and shown with large images.
+    "max-snippet": -1,
+    "max-image-preview": "large",
+    "max-video-preview": -1,
   },
   openGraph: {
     type: "website",
@@ -117,6 +121,7 @@ const websiteSchema = {
   "@type": "WebSite",
   name: "LoudFace",
   url: "https://www.loudface.co",
+  publisher: { "@id": "https://www.loudface.co/#organization" },
   potentialAction: {
     "@type": "SearchAction",
     target: {
@@ -131,6 +136,7 @@ const websiteSchema = {
 const organizationSchema = {
   "@context": "https://schema.org",
   "@type": "Organization",
+  "@id": "https://www.loudface.co/#organization",
   name: "LoudFace",
   url: "https://www.loudface.co",
   logo: "https://www.loudface.co/images/loudface.svg",
