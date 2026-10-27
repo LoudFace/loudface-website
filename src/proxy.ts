@@ -58,6 +58,12 @@ export default function proxy(request: NextRequest) {
     return new NextResponse('Gone', { status: 410, headers: { 'content-type': 'text/plain' } });
   }
 
+  // The agent endpoints and discovery files answer for themselves: no Markdown rewrite, no visitor cookie.
+  // /auth.md and the agent skill's SKILL.md end in .md but are files, not page twins.
+  if (pathname === '/mcp' || pathname === '/a2a' || pathname === '/auth.md' || pathname.startsWith('/.well-known/')) {
+    return NextResponse.next();
+  }
+
   // Serve .md variants of pages by rewriting to the llms-md catch-all route
   if (
     pathname.endsWith('.md') &&
