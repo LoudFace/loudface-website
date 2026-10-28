@@ -3,6 +3,7 @@
 import { useEffect } from "react";
 import EmbedSnippet from "@calcom/embed-snippet";
 import { ensurePostHog } from "@/lib/posthog-client";
+import { readReferralTag } from "@/lib/referral-tag";
 
 const CAL_METADATA_VALUE_LIMIT = 500;
 
@@ -79,6 +80,7 @@ export function CalHandler() {
           (fbclid
             ? `fb.1.${Date.now()}.${fbclid}`.slice(0, CAL_METADATA_VALUE_LIMIT)
             : undefined);
+        const tag = readReferralTag();
 
         window.Cal("modal", {
           calLink: "arnelbukva/loudface-intro-call",
@@ -90,6 +92,7 @@ export function CalHandler() {
             utm_content: window.location.pathname,
             ...(fbp ? { "metadata[fbp]": fbp } : {}),
             ...(fbc ? { "metadata[fbc]": fbc } : {}),
+            ...(tag ? { "metadata[lf_tag]": tag } : {}),
           },
         });
       }

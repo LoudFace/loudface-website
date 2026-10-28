@@ -2,6 +2,7 @@ import { NextResponse, type NextRequest } from 'next/server';
 import { POSTHOG_DISTINCT_ID_COOKIE } from './lib/consent';
 import { MARKDOWN_RENDER_HEADER } from './lib/markdown-page';
 import { CONTENT_USAGE } from './lib/agent-policy';
+import { REFERRAL_TAG_COOKIE, REFERRAL_TAG_MAX_AGE, cleanReferralTag } from './lib/referral-tag';
 
 const DISTINCT_ID_MAX_AGE = 60 * 60 * 24 * 365; // 12 months
 
@@ -133,6 +134,20 @@ export default function proxy(request: NextRequest) {
   if (!existingDistinctId) {
     response.cookies.set(POSTHOG_DISTINCT_ID_COOKIE, distinctId, {
       maxAge: DISTINCT_ID_MAX_AGE,
+      path: '/',
+      sameSite: 'lax',
+      secure: request.nextUrl.protocol === 'https:',
+    });
+  }
+
+  // First touch: the tag of the link that first brought this visitor, kept for 30 days and never replaced by a
+  // later link. Every Cal.com booking carries it (lib/referral-tag.ts).
+  const referralTag = request.cookies.has(REFERRAL_TAG_COOKIE)
+    ? undefined
+    : cleanReferralTag(request.nextUrl.searchParams.get('utm_content'));
+  if (referralTag) {
+    response.cookies.set(REFERRAL_TAG_COOKIE, referralTag, {
+      maxAge: REFERRAL_TAG_MAX_AGE,
       path: '/',
       sameSite: 'lax',
       secure: request.nextUrl.protocol === 'https:',

@@ -200,6 +200,12 @@ export async function POST(request: Request) {
   const attendee = body.payload?.attendees?.[0];
   const email = attendee?.email?.toLowerCase().trim();
 
+  // An intro call booked by someone at LoudFace is a team test of the booker (the referral-tag check of
+  // 2026-10-28 made one), never a lead: no email, no Slack card, no PostHog event and no Meta conversion.
+  if (isLeadBooking(body.payload) && email?.endsWith('@loudface.co')) {
+    return NextResponse.json({ received: true, ignored: 'team test' });
+  }
+
   // Runs before the no-email guard: a booking with no attendee email is still a
   // lead a human should see. Never throws — see notifySlackOfLead. PostHog and
   // Meta below still receive every event type; only Slack is filtered.
@@ -290,6 +296,8 @@ export async function POST(request: Request) {
     attendee_timezone: attendee?.timeZone,
     organizer_email: body.payload?.organizer?.email,
     lead_source: leadSource,
+    // The tag of the link that first brought the booker (lib/referral-tag.ts).
+    lf_tag: nonEmptyString(body.payload?.metadata?.lf_tag),
     ...utm,
   };
 

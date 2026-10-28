@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from 'react';
 import dynamic from 'next/dynamic';
 import { usePathname } from 'next/navigation';
+import { readReferralTag } from '@/lib/referral-tag';
 
 /**
  * The real Cal.com booker for the strategy call, inline in the closing section. Same event as the site-wide
@@ -10,7 +11,8 @@ import { usePathname } from 'next/navigation';
  *
  * It mounts only when the closing section comes within 800px of the viewport: the booker pulls about 700 KB of
  * Cal.com documents, fonts and scripts, and every page with a closing stage would otherwise pay that on first load
- * (2026-09-26, found by Lighthouse before the v11 launch). utm_content carries the page the booking came from.
+ * (2026-09-26, found by Lighthouse before the v11 launch). utm_content carries the page the booking came from, and
+ * metadata[lf_tag] the tag of the link that first brought the visitor (lib/referral-tag.ts).
  */
 const Cal = dynamic(() => import('@calcom/embed-react').then((m) => m.default || m), { ssr: false });
 
@@ -20,18 +22,21 @@ const CAL_LINK = 'arnelbukva/loudface-intro-call';
 export function CalEmbed() {
   const ref = useRef<HTMLDivElement>(null);
   const [near, setNear] = useState(false);
+  const [tag, setTag] = useState<string>();
   const pathname = usePathname();
 
   useEffect(() => {
     const el = ref.current;
     if (!el) return;
     if (typeof IntersectionObserver === 'undefined') {
+      setTag(readReferralTag());
       setNear(true);
       return;
     }
     const io = new IntersectionObserver(
       (entries) => {
         if (entries.some((e) => e.isIntersecting)) {
+          setTag(readReferralTag());
           setNear(true);
           io.disconnect();
         }
@@ -73,6 +78,7 @@ export function CalEmbed() {
             utm_medium: 'embed',
             utm_campaign: 'intro_call',
             utm_content: pathname || '/',
+            ...(tag ? { 'metadata[lf_tag]': tag } : {}),
           }}
         />
       )}
