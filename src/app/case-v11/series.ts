@@ -110,14 +110,23 @@ export function standaloneCharts(s: CaseSeries): CaseSeries {
   };
 }
 
-/** Which chart carries the study's lead result, judged from that result's own title. */
-export function leadKind(s: CaseSeries, resultTitle: string): ChartKind | null {
+/** The chart that draws the study's lead result, judged from that result's own title, or null when none does. */
+export function resultKind(s: CaseSeries, resultTitle: string): ChartKind | null {
   const t = resultTitle.toLowerCase();
   if (s.clicks && /clicks? (per|a) week/.test(t)) return 'clicks';
   if (s.google && /google|impression|click|search console|organic/.test(t)) return 'google';
   if (s.leads && /lead|enquir|call|booking|demo|signup/.test(t)) return 'leads';
   if (s.ai && /\bai\b|answer|visibility|share of voice|cited|engine/.test(t)) return 'ai';
-  return s.google ? 'google' : s.ai ? 'ai' : s.leads ? 'leads' : null;
+  return null;
+}
+
+/**
+ * Which chart leads the page: the one that draws the lead result, else the first chart the study has. A fallback
+ * chart does not draw the lead result, so it keeps its own title (2026-10-28: Hayes Media's "$6,000 closed" sat
+ * over its Google impressions line).
+ */
+export function leadKind(s: CaseSeries, resultTitle: string): ChartKind | null {
+  return resultKind(s, resultTitle) ?? (s.google ? 'google' : s.ai ? 'ai' : s.leads ? 'leads' : null);
 }
 
 export interface PublishedPairs {

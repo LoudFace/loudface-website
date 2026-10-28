@@ -17,7 +17,7 @@ import { Browser, QuoteCell, VideoCell } from '../service-v11/kit';
 import { StageChart } from '../home-v11/StageChart';
 import { EngineIcon } from '../service-v11/pages/shared';
 import { SHOTS } from '../service-v3/data';
-import { caseSeries, leadKind, publishedPairs, sourceName, splitTitle, standaloneCharts, type CaseSeries, type ChartKind, type PublishedPairs } from './series';
+import { caseSeries, leadKind, resultKind, publishedPairs, sourceName, splitTitle, standaloneCharts, type CaseSeries, type ChartKind, type PublishedPairs } from './series';
 import { dropShortAnswer, markWideFigures } from './story';
 import type { CaseView } from './view';
 import { strip as stripMarks } from '@/lib/inline-edit/mark';
@@ -348,7 +348,9 @@ export function CaseStudyV11({ v, home, hero = 'report' }: { v: CaseView; home: 
   const crop = `?w=1720&h=${PHONE_BY_CLIENT[name] ? 968 : 776}&fit=crop&crop=top&fm=webp&q=82`;
   const siteSrc = captured?.src ?? (shot ? `https://cdn.sanity.io/images/xjjjqhgt/production/${shot.asset}${crop}` : v.heroImage ? `${v.heroImage}${crop}` : undefined);
   const siteDomain = captured?.domain ?? shot?.domain ?? name;
-  const head = splitTitle(v.result1.title);
+  // the hero chart prints the lead result only when it draws it; a fallback chart keeps its own title and no figure
+  const drawsResult = lead !== null && resultKind(s, v.result1.title) === lead;
+  const head = splitTitle(drawsResult || !leadChart ? v.result1.title : lead === 'google' ? 'Google impressions per day' : leadChart.title);
   const copy = (
     <div className="cs-hero-copy">
       <div className="cs-crumbs"><Link href="/case-studies">Case studies</Link><span aria-hidden="true">/</span><span>{name}</span></div>
@@ -420,7 +422,7 @@ export function CaseStudyV11({ v, home, hero = 'report' }: { v: CaseView; home: 
     );
   } else if (heroKind === 'result') {
     const pic = leadChart && lead ? (
-      <StageChart size="hero" tag={head.label} client={name} metric={v.result1.number} series={leadChart.series} format={lead === 'ai' ? 'pct' : 'index'} tip={leadTip} caption={head.note ?? ''} />
+      <StageChart size="hero" tag={head.label} client={name} metric={drawsResult ? v.result1.number : ''} series={leadChart.series} format={lead === 'ai' ? 'pct' : 'index'} tip={leadTip} caption={head.note ?? ''} />
     ) : siteSrc ? <Browser src={siteSrc} domain={siteDomain} alt={`${name} website`} priority /> : null;
     heroNode = (
       <section className="v11-hero cs-hero is-result">
