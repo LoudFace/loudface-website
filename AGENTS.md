@@ -280,6 +280,15 @@ These defaults are optimized for AI coding agents (and humans) working on apps t
 - For durable agent loops or untrusted code: use Workflow (pause/resume/state) + Sandbox; use Vercel MCP for secure infra access
 <!-- VERCEL BEST PRACTICES END -->
 
+## Case studies — written in the framing Arnel names
+
+A case study says LoudFace did the work for the client, as with any client, unless Arnel names another framing. Tooling, scripts and the content engine are how we deliver, never the story: no "system we set up", "engine", "autopilot" or "runs itself" in the body or in a testimonial. The numbers stay real; framing is Arnel's call, results are not.
+
+**Check before showing a case study or testimonial:** map each framing instruction in Arnel's request to the sentence that delivers it, and search the body and quote for system words. Where your version differs from what he asked, say so in the first line of the reply.
+
+**Ledger of misses**
+- 2026-10-28 · Hayes Media · Arnel asked for the study to read "like any other client: we did a full service for them"; my testimonial said "LoudFace set up the whole engine, and it keeps publishing" and the body twice credited "the engine". He pointed out he had asked for a direct-service framing. Root cause: I let the delivery mechanism (Jordan running our content engine) set the narrative and never checked the copy against his framing instruction.
+
 ## Proposals (`/p/<token>`) — the body is about the client, not about us
 
 A proposal body opens with the client's own data and closes with the price. Every section starts from their situation (the standing report, the call notes) and then says what we do about it. Our process, our week, our proof are supporting material: proof lives in the sticky rail, process gets one plate. Price tiers run high to low, the recommended tier last; never discount unprompted.
