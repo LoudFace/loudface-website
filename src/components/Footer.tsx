@@ -28,7 +28,6 @@ export async function Footer({ caseStudies = [], blogPosts = [] }: FooterProps) 
   ];
 
   const serviceLinks = [
-    { label: 'Webflow Development', href: '/services/webflow' },
     { label: 'UX/UI Design', href: '/services/ux-ui-design' },
     { label: 'Copywriting', href: '/services/copywriting' },
     { label: 'SEO/AEO', href: '/services/seo-aeo' },

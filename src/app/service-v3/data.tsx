@@ -365,7 +365,7 @@ export const SERVICE_CONFIGS: Record<string, ServiceConfig> = {
         { kind: 'row', fig: 0, title: 'Discovery & messaging alignment', desc: 'We don’t open Figma until the copy is done. Discovery surfaces your goals, audience, and competitive landscape. Messaging gives us the hierarchy every layout needs. No wireframes from vibes.' },
         { kind: 'card', title: 'Design system setup', desc: 'Colors, typography, spacing, grid systems, and a reusable component library in Figma. Everything built after this point inherits from the system, so consistency is automatic, not something you maintain.' },
         { kind: 'row', fig: 1, title: 'Conversion-focused UI', desc: 'Every page layout mapped to a user action. Message hierarchy that communicates value in seconds. CTA placement, scroll flow, form design, social proof — tested against conversion data, not committee opinion.' },
-        { kind: 'card', title: 'Build, train, iterate', desc: 'Pixel-perfect translation to Webflow, QA across every breakpoint, and hands-on training for your team. Under the Growth track, design keeps shipping on a weekly cadence.' },
+        { kind: 'card', title: 'Build, train, iterate', desc: 'Pixel-perfect translation to your stack (Webflow or Next.js), QA across every breakpoint, and hands-on training for your team. Under the Growth track, design keeps shipping on a weekly cadence.' },
       ],
     },
     exhibit: {
