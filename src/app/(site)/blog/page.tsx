@@ -38,13 +38,13 @@ export async function generateMetadata({
   const path = page > 1 ? `/blog?page=${page}` : '/blog';
   return {
   title: page > 1 ? `B2B SaaS Organic Growth Insights – Page ${page}` : 'B2B SaaS Organic Growth Insights',
-  description: 'Actionable GEO, SEO, AEO, content, and conversion insights from LoudFace. Browse B2B SaaS guides, tutorials, and Webflow delivery articles.',
+  description: 'Actionable GEO, SEO, AEO, content, and conversion insights from LoudFace. Browse B2B SaaS guides and tutorials.',
   alternates: {
     canonical: path,
   },
   openGraph: {
     title: 'LoudFace Blog | B2B SaaS Organic Growth Insights',
-    description: 'Actionable GEO, SEO, AEO, content, and conversion insights from LoudFace. Browse B2B SaaS guides, tutorials, and Webflow delivery articles.',
+    description: 'Actionable GEO, SEO, AEO, content, and conversion insights from LoudFace. Browse B2B SaaS guides and tutorials.',
     type: 'website',
     url: path,
     siteName: 'LoudFace',
@@ -55,7 +55,7 @@ export async function generateMetadata({
     card: 'summary_large_image',
     site: '@loudface',
     title: 'LoudFace Blog | B2B SaaS Organic Growth Insights',
-    description: 'Actionable GEO, SEO, AEO, content, and conversion insights from LoudFace. Browse B2B SaaS guides, tutorials, and Webflow delivery articles.',
+    description: 'Actionable GEO, SEO, AEO, content, and conversion insights from LoudFace. Browse B2B SaaS guides and tutorials.',
     images: ['/opengraph-image'],
   },
   };

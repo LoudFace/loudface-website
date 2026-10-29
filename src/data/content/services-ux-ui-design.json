@@ -56,7 +56,7 @@
       {
         "number": "4",
         "title": "Build, train, iterate",
-        "description": "Pixel-perfect translation to Webflow, QA across every breakpoint, and hands-on training for your team. Under the Growth track, design keeps shipping: new templates, A/B variations, and conversion improvements on a weekly cadence."
+        "description": "Pixel-perfect translation to your stack (Webflow or Next.js), QA across every breakpoint, and hands-on training for your team. Under the Growth track, design keeps shipping: new templates, A/B variations, and conversion improvements on a weekly cadence."
       }
     ]
   },
@@ -102,7 +102,7 @@
       },
       {
         "title": "Component-first design systems",
-        "description": "Reusable components in Figma that translate directly to Webflow. Your team can assemble landing pages from pre-built blocks without a developer. Design tokens manage colors, typography, and spacing site-wide. One update propagates everywhere."
+        "description": "Reusable components in Figma that translate directly to your stack. Your team can assemble landing pages from pre-built blocks without a developer. Design tokens manage colors, typography, and spacing site-wide. One update propagates everywhere."
       },
       {
         "title": "Performance as a design constraint",

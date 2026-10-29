@@ -109,9 +109,9 @@
       }
     ],
     "benchHeading": "And the rest of the team",
-    "benchBody": "Behind them, senior Webflow developers, designers, writers and link builders join your account as your plan calls for them. One lead stays accountable for all of it.",
+    "benchBody": "Behind them, senior developers, designers, writers and link builders join your account as your plan calls for them. One lead stays accountable for all of it.",
     "benchRoles": [
-      "Webflow developers",
+      "Developers",
       "Designers",
       "Writers",
       "Link builders",
@@ -124,7 +124,7 @@
     "headlineHighlight": "Then we grow it.",
     "build": {
       "label": "Build",
-      "description": "Positioning, copy, design, and code: shipped as one piece of work, on Webflow.",
+      "description": "Positioning, copy, design, and code: shipped as one piece of work, on your stack.",
       "siteLabel": "Montblanc, a site we built"
     },
     "grow": {

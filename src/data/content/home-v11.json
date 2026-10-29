@@ -107,7 +107,7 @@
         "caption": "more conversions after the redesign"
       },
       {
-        "label": "Build on Webflow or Next.js",
+        "label": "Build on your stack",
         "href": "/services/webflow",
         "heading": "A site your team can edit on day one",
         "caption": "CMS pages moved to Webflow"
@@ -450,9 +450,9 @@
     "noteHeading": "No account managers in between.",
     "noteBody": "AI agents handle the research, QA and weekly tracking. Our people run them and sign off every piece of work.",
     "benchHeading": "And the rest of the team",
-    "benchBody": "Behind them, senior Webflow developers, designers, writers and link builders join your account as your plan calls for them. One lead stays accountable for all of it.",
+    "benchBody": "Behind them, senior developers, designers, writers and link builders join your account as your plan calls for them. One lead stays accountable for all of it.",
     "benchRoles": [
-      "Webflow developers",
+      "Developers",
       "Designers",
       "Writers",
       "Link builders",
@@ -500,7 +500,6 @@
         "links": [
           "AI answers (AEO and GEO)",
           "SEO",
-          "Webflow development",
           "Design",
           "Conversion"
         ]

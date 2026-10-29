@@ -1,3 +1,4 @@
+import { execFileSync } from 'node:child_process';
 import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 
@@ -89,20 +90,10 @@ for (const topic of [
 ]) {
   requireOrderInBlock('src/app/layout.tsx', 'knowsAbout: [', 'founder:', topic, '"Webflow Development"');
 }
-for (const service of [
-  'name: "Generative Engine Optimization"',
-  'name: "SEO & AEO"',
-  'name: "Organic Growth Program"',
-  'name: "Conversion Rate Optimization"',
-  'name: "Copywriting"',
-]) {
-  requireOrderInBlock('src/app/layout.tsx', 'itemListElement: [', '],\n  },\n};', service, 'name: "Webflow Development"');
-}
 requireOrderInBlock('src/app/(site)/ai-instructions/page.tsx', 'knowsAbout: [', 'areaServed:', "'Generative Engine Optimization'", "'Webflow Development'");
 for (const slug of ["slug: 'geo-agency'", "slug: 'seo-aeo'", "slug: 'organic-growth'", "slug: 'cro'", "slug: 'copywriting'"]) {
   requireOrder('src/app/services-v3/data.ts', slug, "slug: 'webflow'");
 }
-requireOrder('src/data/content/nav.json', '"title": "SEO/AEO"', '"title": "Webflow Development"');
 
 const serviceData = source('src/app/services-v3/data.ts');
 const serviceRoutes = [...serviceData.matchAll(/slug: '([^']+)'/g)].map((match) => match[1]);
@@ -127,14 +118,35 @@ for (const title of [
   'Copywriting',
   'Growth Autopilot',
   'UX/UI Design',
-  'Webflow Development',
 ]) {
   if (!navTitles.includes(title)) errors.push(`src/data/content/nav.json: missing ${title} service`);
 }
 
-for (const title of ['Generative Engine Optimization', 'SEO/AEO', 'Organic Growth Program', 'CRO', 'Copywriting', 'Growth Autopilot']) {
-  if (navTitles.indexOf(title) > navTitles.indexOf('Webflow Development')) {
-    errors.push(`src/data/content/nav.json: ${title} must appear before Webflow Development`);
+// Webflow is expertise, not a service we lead with (Arnel, 2026-10-29): the
+// /services/webflow page stays, but it leaves the Services menu and the offered
+// services in the site schema, and the old "SEO, AEO, content and Webflow as one
+// program" wording may not come back anywhere in the site source.
+if (navTitles.includes('Webflow Development')) {
+  errors.push('src/data/content/nav.json: Webflow Development is back in the Services menu');
+}
+if (offerNames.includes('Webflow Development')) {
+  errors.push('src/app/layout.tsx: Webflow Development is back in the OfferCatalog');
+}
+const sourceFiles = execFileSync('git', ['ls-files', 'src/data/content', 'src/app', 'src/components', 'src/lib'], { cwd: root, encoding: 'utf8' })
+  .split('\n')
+  .filter((path) => /\.(json|tsx?|mdx?)$/.test(path) && !path.includes('dev-preview') && !path.includes('__tests__'));
+for (const path of sourceFiles) {
+  const text = source(path);
+  for (const forbidden of [
+    'content and Webflow as one program',
+    'content, and Webflow as one program',
+    'Webflow-native AEO agency',
+    'Webflow Premium Partner agency',
+    'either Webflow Build or',
+    'senior Webflow developers',
+    'Webflow delivery articles',
+  ]) {
+    if (text.includes(forbidden)) errors.push(`${path}: Webflow-first phrase ${JSON.stringify(forbidden)}`);
   }
 }
 

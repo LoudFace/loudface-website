@@ -2,7 +2,7 @@
   "hero": {
     "eyebrow": "Webflow Development",
     "headline": "Webflow sites built to scale —<br>not just to launch",
-    "description": "We build component-first Webflow websites that your team can actually build on. Spin up landing pages in hours, split test everything, and watch your conversion rates climb.",
+    "description": "Our focus is SEO and AEO for B2B SaaS and fintech. We have built on Webflow since 2019, and as a Webflow Enterprise Partner we still build, migrate and fix Webflow sites when your growth program needs it.",
     "primaryCta": "Book an intro call",
     "secondaryCta": "View our work"
   },
@@ -184,8 +184,8 @@
     ]
   },
   "cta": {
-    "title": "Ready to build a Webflow site that scales with you?",
-    "subtitle": "Let's talk about your goals and show you how a component-first approach changes the game.",
+    "title": "Need your Webflow site found in Google and AI answers?",
+    "subtitle": "Let's talk about what your site needs to show up in Google and AI answers.",
     "ctaText": "Book an intro call"
   }
 }

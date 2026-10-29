@@ -60,7 +60,7 @@ export const uxUiDesign: ExtrasFn = ({ home, data }) => {
             <div key={k} style={{ display: 'flex', justifyContent: 'space-between' }}><span style={{ color: 'var(--quiet)' }}>{k}</span><span className="sk-mono" style={{ fontSize: 11.5 }}>{v}</span></div>
           ))}
         </div>
-        <div className="sk-card-foot"><span>One token, every page</span><span>Figma → Webflow</span></div>
+        <div className="sk-card-foot"><span>One token, every page</span><span>Figma → code</span></div>
       </div>
     ),
     band: [

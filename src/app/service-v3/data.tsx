@@ -163,7 +163,7 @@ export const SERVICE_CONFIGS: Record<string, ServiceConfig> = {
         </>
       ),
       blurb:
-        'We build component-first Webflow websites your team can actually build on. Spin up landing pages in hours, split test everything, and watch your conversion rates climb.',
+        'Our focus is SEO and AEO for B2B SaaS and fintech. We have built on Webflow since 2019, and as a Webflow Enterprise Partner we still build, migrate and fix Webflow sites when your growth program needs it.',
       secondary: SEE_WORK,
       chip: { value: '50+', label: 'B2B teams we have built sites for' },
       main: { ...shot('liqid', 'LIQID website built by LoudFace on Webflow'), rpillLabel: 'Webflow build', rpillClient: 'LIQID' },
@@ -307,11 +307,11 @@ export const SERVICE_CONFIGS: Record<string, ServiceConfig> = {
           Webflow rarely ships <span className="ghost">alone.</span>
         </>
       ),
-      note: 'Run the build on its own, or pair it with growth. Either way it’s the same team — nothing gets re-briefed between the people who ship your site and the people who grow it.',
+      note: 'The build works best paired with an SEO and AEO program. Either way it’s the same team — nothing gets re-briefed between the people who ship your site and the people who grow it.',
     },
     cover: {
-      h2: 'Ready to build a Webflow site that scales with you?',
-      p: 'Let’s talk about your goals and show you how a component-first approach changes the game — 30 minutes, no pitch deck.',
+      h2: 'Need your Webflow site found in Google and AI answers?',
+      p: 'Let’s talk about what your site needs to show up in Google and AI answers. 30 minutes, no pitch deck.',
       metaRight: 'B2B SaaS only',
       creditLeft: 'Cover — LIQID, built by LoudFace',
       obj: { ...shot('liqid', ''), rpillLabel: 'Webflow build', rpillClient: 'LIQID' },
@@ -347,7 +347,7 @@ export const SERVICE_CONFIGS: Record<string, ServiceConfig> = {
         'Not mockups you hand to a developer and hope for the best — a working system: components, tokens, documentation, and layouts engineered to convert.',
       tiles: [
         { title: 'Conversion-focused UX', desc: 'Every layout maps to a user action. Message hierarchy designed so visitors understand the value and know what to do next within seconds. CTA placement, scroll flow, and confidence-building elements are deliberate decisions tested against real behavior.' },
-        { title: 'Component-first design systems', desc: 'Reusable components in Figma that translate directly to Webflow. Your team assembles landing pages from pre-built blocks without a developer. Design tokens manage colors, type, and spacing site-wide — one update propagates everywhere.' },
+        { title: 'Component-first design systems', desc: 'Reusable components in Figma that translate directly to your stack. Your team assembles landing pages from pre-built blocks without a developer. Design tokens manage colors, type, and spacing site-wide — one update propagates everywhere.' },
         { title: 'Performance as a design constraint', desc: 'Sub-2-second load times and 90+ PageSpeed scores are design requirements, not dev tasks. Compressed assets, purposeful motion, lean layouts. We design with that math visible.' },
         { title: 'Search and AI-ready structure', desc: 'Semantic heading hierarchies, schema-ready layouts, and information architecture built for hub-and-spoke content. Pages discoverable by Google and parseable by AI engines from the first wireframe.' },
         { title: 'Brand execution with substance', desc: 'We translate complex products into interfaces an unfamiliar buyer understands in seconds. Design that communicates credibility for B2B and enterprise, where trust is the primary conversion barrier.' },
@@ -1206,7 +1206,7 @@ export const SERVICE_CONFIGS: Record<string, ServiceConfig> = {
         { q: 'What does the free AI Visibility Audit include?', aHtml: 'We manually check whether your brand is being cited in ChatGPT, Perplexity, and Google AI Overviews when buyers search your category. You get a detailed Loom walkthrough covering your current AI visibility, competitive gaps, schema issues, and 3 actionable fixes — done personally by our founder.' },
         { q: 'How long before I see results?', aHtml: 'Quick wins — headline, CTA, and above-the-fold improvements — can move numbers within the first 30 days. SEO and AEO gains compound over 90-day cycles. We set clear goals at the start and report against them weekly.' },
         { q: 'Do I need to manage anything?', aHtml: 'No. We own the roadmap, prioritization, execution, and reporting. You get a single point of contact, regular syncs, and a shared Scoreboard. Zero task management on your end.' },
-        { q: 'Can I start with one track and expand later?', aHtml: 'Yes. The Solo Autopilot tier gives you one focused track — either Webflow Build or SEO/AEO Growth. You can upgrade to Dual Autopilot or Scale Autopilot at any time as your needs grow. <a href="/pricing">See packages and pricing.</a>' },
+        { q: 'Can I start with one track and expand later?', aHtml: 'Yes. The Solo Autopilot tier gives you one focused track — either SEO/AEO Growth or Build (conversion and site work). You can upgrade to Dual Autopilot or Scale Autopilot at any time as your needs grow. <a href="/pricing">See packages and pricing.</a>' },
       ],
     },
     rel: {

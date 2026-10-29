@@ -27,7 +27,7 @@
         "what": "A component-first Webflow rebuild for a regulated fintech — every page assembles from reusable blocks, so their in-house team launches and edits without a developer in the loop.",
         "credits": [
           {
-            "label": "Webflow design & dev"
+            "label": "Site design & build"
           },
           {
             "label": "UX/UI design"
@@ -69,7 +69,7 @@
         "what": "Marketing pages for a design-and-diagram tool whose audience notices craft. Copy, layout, and build had to hold the product’s own visual standard — so we ran all three together.",
         "credits": [
           {
-            "label": "Webflow design & dev"
+            "label": "Site design & build"
           },
           {
             "label": "Copywriting"
@@ -159,7 +159,7 @@
       {
         "slug": "webflow",
         "blurb": "Scalable builds optimized for performance",
-        "serviceName": "Webflow design & development"
+        "serviceName": "Site design & build"
       }
     ]
   },

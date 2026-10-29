@@ -207,7 +207,6 @@ const organizationSchema = {
       { "@type": "Offer", itemOffered: { "@type": "Service", name: "Conversion Rate Optimization" } },
       { "@type": "Offer", itemOffered: { "@type": "Service", name: "Copywriting" } },
       { "@type": "Offer", itemOffered: { "@type": "Service", name: "UX/UI Design" } },
-      { "@type": "Offer", itemOffered: { "@type": "Service", name: "Webflow Development" } },
     ],
   },
 };

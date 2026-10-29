@@ -183,7 +183,7 @@ export const STAGES: Stage[] = [
       },
       {
         kind: 'p',
-        text: 'Ours reads like this: LoudFace is a full-stack organic growth agency for B2B SaaS, running SEO, AEO and GEO, content and Webflow as one program on a single retainer, measured as share of answer rather than traffic alone. Getting those exact words onto every surface, our own site included, is the stage 3 work.',
+        text: 'Ours reads like this: LoudFace is a full-stack organic growth agency for B2B SaaS, running SEO, AEO and GEO, and content as one program on a single retainer, measured as share of answer rather than traffic alone. Getting those exact words onto every surface, our own site included, is the stage 3 work.',
       },
     ],
   },
