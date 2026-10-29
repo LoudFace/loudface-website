@@ -72,7 +72,10 @@ export async function sendJoinLink(email: string, origin: string, linkToken: str
 
 /** Send one sign-in mail through Resend, or log it in development. */
 async function deliver(email: string, subject: string, text: string, link: string): Promise<SignInMail> {
-  const key = process.env.RESEND_API_KEY;
+  // The editor's own key first (2026-10-29): a client site may already hold a
+  // RESEND_API_KEY for its contact form, on another Resend account that cannot
+  // send from our sender. Eight Strands did.
+  const key = process.env.LF_EDIT_RESEND_KEY || process.env.RESEND_API_KEY;
   const from = process.env.LF_EDIT_FROM;
   if (!key || !from) {
     if (process.env.NODE_ENV !== 'production') {
