@@ -560,6 +560,19 @@ export const caseStudy = defineType({
           ],
         }),
         defineField({
+          name: 'returnStage',
+          title: 'Return stage (revenue-led hero)',
+          type: 'object',
+          description:
+            'Turns the hero into two panels: "Found in search" with Result 2 and the Google line, then "The return" with Result 1. Both figures come from the result fields; this holds only the words around them.',
+          fields: [
+            defineField({ name: 'body', title: 'Body under the return', type: 'text', rows: 2, validation: (rule) => rule.required() }),
+            defineField({ name: 'quote', title: 'Client quote (exact words from the approved testimonial)', type: 'text', rows: 2 }),
+            defineField({ name: 'quoteBy', title: 'Quote by', type: 'string', description: 'e.g. "Jordan Hayes, Founder, Hayes Media"' }),
+            defineField({ name: 'searchCaption', title: 'Caption under the Google line', type: 'string', description: 'e.g. "Line: all Google impressions per day"' }),
+          ],
+        }),
+        defineField({
           name: 'publishedResult',
           title: 'Published Google result (headline figures)',
           type: 'object',

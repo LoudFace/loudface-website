@@ -57,6 +57,32 @@
 .cs-report-top { display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 8px 32px; margin-bottom: 14px; }
 .cs-report-fig { font-family: var(--font-heading); font-weight: 500; font-size: 64px; line-height: 0.9; letter-spacing: -0.05em; color: var(--ink); }
 .cs-report-note { font-size: 13.5px; line-height: 1.45; color: var(--quiet); max-width: 360px; text-wrap: pretty; }
+/* the revenue-led stage (ReturnStage): found in search, then the return on the dark brand panel */
+.cs-return { display: grid; grid-template-columns: 1fr; border-radius: 18px; overflow: hidden; background: #ffffff; box-shadow: 0 1px 2px rgba(20,16,60,0.06), 0 30px 60px rgba(40,30,90,0.16); }
+.cs-return-search, .cs-return-money { display: flex; flex-direction: column; justify-content: space-between; gap: 24px; padding: 28px 24px 24px; }
+.cs-return-search { border-bottom: 1px solid var(--line); }
+.cs-return-copy { display: flex; flex-direction: column; gap: 12px; }
+.cs-return-step { font-size: 14px; font-weight: 500; color: var(--muted); }
+.cs-return-num { font-family: var(--font-heading); font-weight: 500; font-size: 56px; line-height: 1; letter-spacing: -0.05em; color: var(--ink); }
+.cs-return-label { font-size: 16px; line-height: 1.5; color: var(--body); text-wrap: pretty; }
+.cs-return-spark { display: block; width: 100%; height: 110px; }
+.cs-return-spark .is-area { fill: var(--chart); fill-opacity: 0.09; }
+.cs-return-spark .is-line { fill: none; stroke: var(--chart); stroke-width: 2.5; stroke-linejoin: round; }
+.cs-return-spark .is-end { fill: var(--chart); stroke: #ffffff; stroke-width: 2; }
+.cs-return-cap { font-size: 13px; color: var(--muted); }
+.cs-return-money { background: linear-gradient(150deg, #04188f 0%, var(--stage) 100%); }
+.cs-return-money .cs-return-step, .cs-return-body, .cs-return-quote figcaption { color: #dcd9fe; }
+.cs-return-num.is-big { font-size: 80px; color: #ffffff; }
+.cs-return-body { font-size: 17px; line-height: 1.5; max-width: 560px; text-wrap: pretty; }
+.cs-return-quote blockquote { font-family: var(--font-heading); font-size: 19px; line-height: 1.4; letter-spacing: -0.01em; color: #ffffff; text-wrap: pretty; }
+.cs-return-quote figcaption { margin-top: 8px; font-size: 14px; }
+@media (min-width: 768px) {
+  .cs-return { grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); }
+  .cs-return-search { border-bottom: 0; border-right: 1px solid var(--line); padding: 36px 32px 28px; }
+  .cs-return-money { padding: 36px 40px 32px; }
+  .cs-return-num { font-size: 64px; }
+  .cs-return-num.is-big { font-size: 120px; }
+}
 .cs-hero3-stage.is-site { padding-bottom: 0; overflow: hidden; }
 .cs-hero3-stage.is-site .sk-browser { border-radius: 14px 14px 0 0; box-shadow: 0 1px 2px rgba(20,16,60,0.08), 0 30px 60px rgba(40,30,90,0.18); }
 .cs-hero3-stage.is-site .sk-browser > img { height: 300px; }

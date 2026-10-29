@@ -94,7 +94,8 @@ const CASE_STUDY_PROJECTION = `{
     indexedTrend{ title, baselineLabel, caption, startMonthIso, points[]{ month, date, impressions, clicks, partial } },
     leadGrowth{ title, multiple, multipleLabel, baselineLabel, caption, source, points[]{ week, value } },
     clickGrowth{ title, baselineLabel, source, points[]{ week, value } },
-    publishedResult{ rows[]{ value, unit }, positionFrom, positionTo, caption }
+    publishedResult{ rows[]{ value, unit }, positionFrom, positionTo, caption },
+    returnStage{ body, quote, quoteBy, searchCaption }
   },
   "faq": faq[]{ question, answer },
   "_createdAt": _createdAt,

@@ -187,6 +187,9 @@ export interface CaseStudyInstruments {
     positionTo?: number;
     caption: string;
   };
+  /** Revenue-led hero (Hayes Media): Result 2 and the Google line, then Result 1 as the return. Words only; the
+   *  figures are the study's own result fields. */
+  returnStage?: { body: string; quote?: string; quoteBy?: string; searchCaption?: string };
 }
 
 /**

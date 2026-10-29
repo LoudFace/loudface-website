@@ -19,6 +19,7 @@ import { EngineIcon } from '../service-v11/pages/shared';
 import { SHOTS } from '../service-v3/data';
 import { caseSeries, leadKind, resultKind, publishedPairs, sourceName, splitTitle, standaloneCharts, type CaseSeries, type ChartKind, type PublishedPairs } from './series';
 import { dropShortAnswer, markWideFigures } from './story';
+import { ReturnStage } from './ReturnStage';
 import type { CaseView } from './view';
 import { strip as stripMarks } from '@/lib/inline-edit/mark';
 
@@ -178,7 +179,7 @@ export function CaseStudyV11({ v, home, hero = 'report' }: { v: CaseView; home: 
         <div className="v11-wrap">
           <SectionHeadNode eyebrow="Key results" title={<>What changed for <span className="ghost">{`${name}.`}</span></>} />
           <KeyResults items={v.results.slice(0, 3).map((r) => ({ value: r.number, ...splitTitle(r.title) }))} />
-          <Charts s={s} lead={lead} pairs={pairs} pairsSource={pairsSource} skipLead={heroKind === 'report' && Boolean(leadChart)} />
+          <Charts s={s} lead={lead} pairs={pairs} pairsSource={pairsSource} skipLead={heroKind === 'report' && Boolean(leadChart) && !v.instruments?.returnStage} />
         </div>
       ),
     });
@@ -394,7 +395,11 @@ export function CaseStudyV11({ v, home, hero = 'report' }: { v: CaseView; home: 
             </div>
             {summary && <div className="cs-hero3-side"><p data-speakable="">{summary}</p></div>}
           </div>
-          {leadChart && lead ? (
+          {v.instruments?.returnStage ? (
+            <div className="cs-hero3-stage">
+              <ReturnStage stage={v.instruments.returnStage} search={v.result2} ret={v.result1} line={s.google?.series} />
+            </div>
+          ) : leadChart && lead ? (
             <div className="cs-hero3-stage">
               {/* the chart alone: its figure leads the key results right below, so it is not printed twice */}
               <div className="cs-report">
