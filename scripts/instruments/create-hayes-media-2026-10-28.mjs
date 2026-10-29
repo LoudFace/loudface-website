@@ -77,10 +77,10 @@ const mainBody = `<p><strong>Short answer:</strong> Hayes Media closed a $6,000 
 <p>Brands choosing an agency compare them on Google, and more of them now ask ChatGPT or Gemini for a shortlist. Hayes Media had no pages answering those buyer questions and nothing an AI assistant could cite. In the first week Search Console recorded, almost every search that showed the site contained the word "Hayes", and the searches that did not almost never put it on page one.</p>
 
 <h2>The strategy</h2>
-<p>Three moves.</p>
+<p>Three moves, the same <a href="/services/seo-aeo">SEO and AEO program</a> we run for our other clients.</p>
 <p><strong>Map the questions buyers ask before they hire.</strong> We built the question map around Hayes Media’s three services: the agency-selection searches ("best email marketing agencies for eCommerce", "Meta ads agency", "agency vs in-house"), and the operator questions a retention or paid-social lead searches every week, such as Klaviyo flows, abandoned-cart emails, click-to-open rate and a falling Meta ROAS.</p>
 <p><strong>Publish on a schedule, with sources.</strong> Fifty articles went live between 4 September and 27 October 2026. The ranked comparison pages name every competing agency with facts from that agency’s own site or Clutch profile, give each entry one honest limit, Hayes Media’s included, and list their sources.</p>
-<p><strong>Make the site readable for AI assistants.</strong> A canonical facts page tells assistants what Hayes Media is, who runs it and what it sells, an llms.txt file points them to it, and every article opens with a direct answer an engine can quote.</p>
+<p><strong>Make the site readable for AI assistants.</strong> A canonical facts page tells assistants what Hayes Media is, who runs it and what it sells, an llms.txt file points them to it, and every article opens with a direct answer an engine can quote. It is the same <a href="/services/geo-agency">generative engine optimization</a> work that put <a href="/case-studies/delshad-legal-content-engine">Delshad Legal first of 12 tracked firms in AI answers</a>.</p>
 
 <h2>The results</h2>
 
@@ -104,10 +104,10 @@ const mainBody = `<p><strong>Short answer:</strong> Hayes Media closed a $6,000 
 
 <h2>What made this different</h2>
 <p>The articles are written for the buyer who is about to hire, not for traffic. A ranked list where the author is number one only works if it is fair, so every entry carries a limit and every fact has a source. That is what lets a buyer, or an assistant reading for one, trust the page. The second difference is pace: we shipped fifty sourced articles in under eight weeks, and Hayes Media’s team never had to leave its client work to make it happen.</p>
-<p>Search Console recorded this site from 2 September 2026, the program’s first week, so that week is the baseline. Non-branded counts use the searches Search Console names; it withholds rare ones in both weeks. Lead and revenue figures are Hayes Media’s own. Published 28 October 2026, with Search Console data to 26 October.</p>
+<p>Search Console recorded this site from 2 September 2026, the program’s first week, so that week is the baseline. Non-branded counts use the searches Search Console names; it withholds rare ones in both weeks. Lead and revenue figures are Hayes Media’s own. Published 29 October 2026, with Search Console data to 26 October.</p>
 <p>Engagement: SEO and AI-search content program, from September 2026.</p>`;
 
-const paragraphSummary = 'Hayes Media, an eCommerce growth agency, closed a $6,000 consulting engagement from an inbound search lead in the first month of its SEO and AI-search content program, and a brand doing $50M a year booked a sales call through the same channel. In Google Search Console, the non-branded searches that show Hayes Media grew 5.4× from the program’s first week (2–8 September 2026) to the week of 20 October, and the non-branded searches where it ranks on page one grew 7.5×. Fifty articles went live in under eight weeks.';
+const paragraphSummary = 'Hayes Media, an eCommerce growth agency, closed $6,000 from one inbound search lead in the first month of the SEO and AI-search program we run for it. A brand doing $50M a year then booked a sales call through the same channel. In Google Search Console, the non-branded searches that show Hayes Media grew 5.4× from the program’s first week (2–8 September 2026) to the week of 20 October, and the non-branded searches where it ranks on page one grew 7.5×. Fifty articles went live in under eight weeks.';
 
 const faq = [
   ['What does Hayes Media do?', 'Hayes Media is an eCommerce growth agency founded by Jordan Hayes. It runs direct-response ad creative, Meta media buying, and email and SMS for brands scaling to $10M a year and beyond.'],
@@ -134,7 +134,7 @@ const caseDoc = (logo) => ({
   _type: 'caseStudy',
   name: 'Hayes Media: $6,000 Closed From Search in Month One',
   slug: { _type: 'slug', current: 'hayes-media-organic-leads' },
-  projectTitle: 'How an eCommerce growth agency turned its blog into a sales channel',
+  projectTitle: 'How Hayes Media made search a sales channel',
   paragraphSummary,
   mainBody,
   clientLogo: logo && { _type: 'image', alt: 'Hayes Media logo', asset: { _type: 'reference', _ref: logo } },

@@ -1,0 +1,36 @@
+{
+  "slug": "hayes-media-organic-leads",
+  "note": "Hayes Media, public client. Front-left: the homepage. Back-right: the ranked list of eCommerce email agencies, the article furthest ahead on Google (page one for buyer questions, 20–26 Oct 2026). Card: the study's lead result.",
+  "theme": {
+    "background": "linear-gradient(140deg, #001f3f 0%, #0b3566 52%, #1d5a9e 100%)",
+    "bloom": "radial-gradient(1100px 780px at 14% 26%, rgba(255,255,255,.14), transparent 68%), radial-gradient(900px 700px at 92% 88%, rgba(0,12,30,.45), transparent 70%)",
+    "cardBg": "#f7f9fc",
+    "cardValue": "#001f3f",
+    "cardMuted": "rgba(15,23,42,.52)",
+    "cardRule": "rgba(0,31,63,.2)"
+  },
+  "panels": [
+    {
+      "url": "https://hayesmedia.co/blog/best-email-marketing-agencies-ecommerce",
+      "chrome": "hayesmedia.co/blog/best-email-marketing-agencies-ecommerce",
+      "scrollTo": 0,
+      "clipHeight": 760,
+      "style": { "left": 640, "top": 50, "width": 900, "z": 1 }
+    },
+    {
+      "url": "https://hayesmedia.co/",
+      "chrome": "hayesmedia.co",
+      "clipHeight": 720,
+      "style": { "left": -40, "top": 330, "width": 1000, "z": 2 }
+    }
+  ],
+  "card": {
+    "label": "Closed from one search lead",
+    "value": "$6,000",
+    "valueSize": 96,
+    "caption": "In the program's first month,\nHayes Media's sales records",
+    "right": 62,
+    "bottom": 92,
+    "width": 430
+  }
+}
