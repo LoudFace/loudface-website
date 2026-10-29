@@ -16,6 +16,7 @@ export const HERO_SLIDES: { series: HeroSlideKey; proof?: ProofKey; href: string
   { series: 'lf', format: 'pct', href: '/case-studies/loudface-aeo-case-study', compact: true },
   { series: 'genie', format: 'index', href: '/case-studies/genie-teacher-organic-growth' },
   { series: 'pond', format: 'index', href: '/case-studies/pond-ai' },
+  { series: 'hayes', format: 'index', href: '/case-studies/hayes-media-organic-leads' },
   { series: 'health', format: 'index', href: '/case-studies/anonymous-health-tech-organic-growth' },
   { series: 'delshad', proof: 'delshadClicks', format: 'index', href: '/case-studies/delshad-legal-content-engine' },
   { series: 'tm', format: 'index', href: '/case-studies/trademomentum-niche-aeo-organic-growth' },

@@ -35,6 +35,12 @@
         "tip": "the week the first page went live"
       },
       {
+        "tag": "Revenue",
+        "client": "Hayes Media",
+        "caption": "First-month revenue from one search lead. Line: Google impressions a day",
+        "tip": "the program's first week"
+      },
+      {
         "tag": "Search",
         "client": "Anonymous health tech",
         "caption": "Google impressions a day, in six months",
