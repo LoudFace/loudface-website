@@ -21,14 +21,14 @@ import { getHomeV11Data } from '../../home-v11/data';
 export const metadata: Metadata = {
   title: 'Free AI Visibility Audit for B2B SaaS',
   description:
-    'Check where your brand stands across ChatGPT, Claude, Gemini, and Perplexity versus competitors. Get a free AI search presence score and a personal Loom walkthrough.',
+    'See where your brand stands against competitors in ChatGPT, Claude, Gemini and Perplexity. Get a free AI search presence score and a personal Loom walkthrough.',
   alternates: {
     canonical: '/ai-audit',
   },
   openGraph: {
     title: 'Free AI Visibility Audit for B2B SaaS | LoudFace',
     description:
-      'Check where your brand stands across ChatGPT, Claude, Gemini, and Perplexity versus competitors. Get a free AI search presence score and a personal Loom walkthrough.',
+      'See where your brand stands against competitors in ChatGPT, Claude, Gemini and Perplexity. Get a free AI search presence score and a personal Loom walkthrough.',
     type: 'website',
     url: '/ai-audit',
     siteName: 'LoudFace',
@@ -47,7 +47,7 @@ export const metadata: Metadata = {
     site: '@loudface',
     title: 'Free AI Visibility Audit for B2B SaaS | LoudFace',
     description:
-      'Check where your brand stands across ChatGPT, Claude, Gemini, and Perplexity versus competitors. Get a free AI search presence score and a personal Loom walkthrough.',
+      'See where your brand stands against competitors in ChatGPT, Claude, Gemini and Perplexity. Get a free AI search presence score and a personal Loom walkthrough.',
     images: ['/opengraph-image'],
   },
 };

@@ -56,10 +56,29 @@ export function truncateSeoTitle(
   // Without this, SERP titles end with orphaned conjunctions/prepositions
   // (real incident 2026-05-26: a title ended with "&" \u2192 0.01% CTR at pos 9).
   truncated = truncated
-    .replace(/\s+(?:and|or|the|a|an|of|to|in|on|at|for|with|&)$/i, '')
+    .replace(/\s+(?:and|or|the|a|an|of|to|in|on|at|for|with|into|from|by|within|&)$/i, '')
     .trim();
 
   return truncated;
+}
+
+/**
+ * Fit a page title into the 60-character SERP limit without cutting it mid-phrase.
+ *
+ * - Up to 48 characters: the layout template appends " | LoudFace".
+ * - 49 to 60 characters: the title goes out whole, without the brand suffix.
+ * - Over 60: cut at a word boundary to 60, without the brand suffix.
+ *
+ * Until 2026-10-29 every title over 48 was cut to 48 to make room for the suffix, so
+ * 22 blog titles and a dozen case study titles ended mid-phrase ("…search visibility went").
+ */
+export function fitSeoTitle(title: string): { title: Metadata['title']; socialTitle: string } {
+  const cleaned = truncateSeoTitle(title, Infinity);
+  if (cleaned.length <= DEFAULT_MAX_PAGE_TITLE) {
+    return { title: cleaned, socialTitle: `${cleaned}${BRAND_SUFFIX}` };
+  }
+  const fitted = truncateSeoTitle(cleaned, MAX_SERP_TITLE);
+  return { title: { absolute: fitted }, socialTitle: fitted };
 }
 
 /**
@@ -214,11 +233,11 @@ export function buildPageMetadata({
   publishedTime,
   modifiedTime,
 }: BuildPageMetadataOptions): Metadata {
-  const socialTitle = `${title}${BRAND_SUFFIX}`;
+  const { title: pageTitle, socialTitle } = fitSeoTitle(title);
   const image = { url: imageUrl, width: 1200, height: 630, alt: socialTitle };
 
   return {
-    title,
+    title: pageTitle,
     description,
     alternates: {
       canonical: canonicalPath,

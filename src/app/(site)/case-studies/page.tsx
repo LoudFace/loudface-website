@@ -33,7 +33,7 @@ const FALLBACK_DISCIPLINE = 'Web Design & Branding';
 export const metadata: Metadata = {
   title: 'Our Work | Case Studies & Portfolio',
   description:
-    "LoudFace case studies across AI search & organic growth, conversion optimization, and web design & branding — real results: AI citations, conversion lifts, and launches.",
+    "LoudFace case studies in AI search and organic growth, conversion optimization, and web design: real results in AI citations, conversion lifts and launches.",
   alternates: { canonical: '/case-studies' },
   openGraph: {
     title: 'Case Studies & Portfolio | LoudFace',

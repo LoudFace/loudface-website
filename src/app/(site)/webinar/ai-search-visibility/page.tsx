@@ -18,20 +18,29 @@ import { RIVERSIDE_REGISTRATION_URL } from './_components/config';
 import { serializeJsonLd } from '@/lib/schema-utils';
 
 export const metadata: Metadata = {
-  title: 'Why Your Website Is Invisible in AI Search — Live Masterclass | LoudFace',
+  // Absolute: the title already fills the 60-character limit, so the layout template must not add " | LoudFace".
+  title: { absolute: 'Why Your Website Is Invisible in AI Search (Recording)' },
   description:
-    'A 50-minute live breakdown of the exact content architecture, on-page changes, and platform decisions that took Toku from 0 to 86% AI visibility. Thursday, July 9 · 11:00 AM ET.',
+    'Watch the 50-minute masterclass recording: the content architecture, on-page changes and platform decisions that took Toku from 0 to 86% AI visibility.',
   alternates: {
     canonical: '/webinar/ai-search-visibility',
   },
   openGraph: {
-    title: 'Why Your Website Is Invisible in AI Search — Live Masterclass',
+    title: 'Why Your Website Is Invisible in AI Search — Masterclass Recording',
     description:
-      'See the exact strategy that took Toku from 0 to 86% AI visibility on its core buyer search prompt. Live + Q&A · July 9, 11:00 AM ET.',
+      'Watch the recording: the exact strategy that took Toku from 0 to 86% AI visibility on its core buyer search prompt, with the live Q&A.',
     type: 'website',
     url: '/webinar/ai-search-visibility',
     siteName: 'LoudFace',
     locale: 'en_US',
+    images: ['https://www.loudface.co/opengraph-image'],
+  },
+  // Without its own block the page inherits the root layout's Twitter card, the homepage's title included.
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Why Your Website Is Invisible in AI Search — Masterclass Recording',
+    description:
+      'Watch the recording: the exact strategy that took Toku from 0 to 86% AI visibility on its core buyer search prompt, with the live Q&A.',
     images: ['https://www.loudface.co/opengraph-image'],
   },
 };

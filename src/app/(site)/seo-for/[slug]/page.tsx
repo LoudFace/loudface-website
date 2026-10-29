@@ -20,7 +20,6 @@ import { fetchItemBySlug, fetchSeoPages } from '@/lib/cms-data';
 import {
   buildNoIndexMetadata,
   buildPageMetadata,
-  truncateSeoTitle,
   truncateSeoDescription,
 } from '@/lib/seo-utils';
 import { extractFaqItems, toPlainText } from '../../../seo-for-v3/data';
@@ -53,7 +52,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const page = await fetchItemBySlug<SeoPage>('seo-pages', slug);
   if (!page) return buildNoIndexMetadata('SEO Services');
 
-  const title = truncateSeoTitle(page['meta-title'] || page['hero-headline'] || page.name);
+  const title = page['meta-title'] || page['hero-headline'] || page.name;
   const rawDescription =
     page['meta-description'] ||
     page['hero-description'] ||

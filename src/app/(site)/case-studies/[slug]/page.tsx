@@ -19,7 +19,6 @@ import { fetchCollection, fetchItemBySlug } from '@/lib/cms-data';
 import {
   buildNoIndexMetadata,
   buildPageMetadata,
-  truncateSeoTitle,
   truncateSeoDescription,
 } from '@/lib/seo-utils';
 import {
@@ -57,8 +56,8 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     return buildNoIndexMetadata('Case Study Not Found');
   }
 
-  const rawTitle = study['project-title'] || study.name;
-  const title = truncateSeoTitle(rawTitle);
+  // buildPageMetadata fits the title to 60 characters.
+  const title = study['project-title'] || study.name;
   const summary = study['paragraph-summary']?.replace(/\s+/g, ' ').trim();
   // Truncate CMS summary to SERP limits; if too short, extend with contextual suffix
   let description = truncateSeoDescription(summary);

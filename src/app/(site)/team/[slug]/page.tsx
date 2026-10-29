@@ -19,7 +19,7 @@ import '../../../blog-v11/blog.css';
 import '../../../team-v11/team.css';
 import { fetchCollection, fetchHomepageData } from '@/lib/cms-data';
 import { formatReadTime } from '@/lib/blog-utils';
-import { buildPageMetadata, truncateSeoDescription, truncateSeoTitle } from '@/lib/seo-utils';
+import { buildPageMetadata, truncateSeoDescription } from '@/lib/seo-utils';
 import { buildSpeakableSchema, serializeJsonLd } from '@/lib/schema-utils';
 import { getHomeV11Content, getTeamV11Content } from '@/lib/content-utils';
 import { teamTitle } from '@/lib/team-titles';
@@ -48,8 +48,8 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   }
 
   const jobTitle = teamTitle(member.slug, member['job-title']);
-  const rawTitle = `${member.name}${jobTitle ? ` — ${jobTitle}` : ''}`;
-  const title = truncateSeoTitle(rawTitle);
+  // buildPageMetadata fits the title to 60 characters.
+  const title = `${member.name}${jobTitle ? ` — ${jobTitle}` : ''}`;
   // The bio can run to several hundred characters; the description is cut to the SERP length (120-160).
   const fallback = `${member.name} is a member of the LoudFace agency team. Explore their published articles, areas of expertise, and contributions to client work.`;
   const description = truncateSeoDescription(member['bio-summary']) || fallback;

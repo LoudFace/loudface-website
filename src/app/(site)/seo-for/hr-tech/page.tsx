@@ -25,7 +25,7 @@ export const revalidate = 60;
 
 export const metadata: Metadata = buildPageMetadata({
   title: 'SEO, AEO and GEO for HR Tech SaaS',
-  description: 'SEO, AEO and GEO for HR tech SaaS. Build a buyer-led discovery system for HRIS, ATS and payroll categories.',
+  description: 'SEO, AEO and GEO for HR tech SaaS. Build a buyer-led discovery system for HRIS, ATS and payroll categories, so buyers find you in Google and AI answers.',
   canonicalPath: '/seo-for/hr-tech',
 });
 

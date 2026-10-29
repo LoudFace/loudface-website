@@ -21,7 +21,7 @@ import { MethodologyV11 } from '../../methodology-v11/MethodologyV11';
 import { serializeJsonLd } from '@/lib/schema-utils';
 
 const DESCRIPTION =
-  'The Answer Chain is LoudFace’s eight-stage GEO method for getting a B2B SaaS named in AI answers, measured against revenue outcomes rather than vanity metrics. Engagements start from $5,000 a month.';
+  'The Answer Chain is LoudFace’s eight-stage GEO method for getting a B2B SaaS named in AI answers, measured against revenue outcomes rather than vanity metrics.';
 
 export const metadata: Metadata = {
   // The root layout applies `template: "%s | LoudFace"`, so no suffix here.

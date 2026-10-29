@@ -12,7 +12,7 @@ export const revalidate = 60;
 import { notFound } from 'next/navigation';
 import type { Metadata } from 'next';
 import { fetchSlugs, fetchBlogPostData, fetchItemBySlug } from '@/lib/cms-data';
-import { buildNoIndexMetadata, buildPageMetadata, truncateSeoTitle, truncateSeoDescription } from '@/lib/seo-utils';
+import { buildNoIndexMetadata, buildPageMetadata, truncateSeoDescription } from '@/lib/seo-utils';
 import {
   extractFAQFromHTML,
   buildFAQSchema,
@@ -54,10 +54,13 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     return buildNoIndexMetadata('Blog Post');
   }
 
-  const rawTitle = post['meta-title'] || post.name;
-  const title = truncateSeoTitle(rawTitle);
+  // buildPageMetadata fits the title to 60 characters.
+  const title = post['meta-title'] || post.name;
   const description = truncateSeoDescription(post['meta-description'])
     || truncateSeoDescription(post.excerpt)
+    // Both under 120 characters: a short description still beats none.
+    || post['meta-description']?.trim()
+    || post.excerpt?.trim()
     || '';
   const imageUrl = post.thumbnail?.url || '/opengraph-image';
 

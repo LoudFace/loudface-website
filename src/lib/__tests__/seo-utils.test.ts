@@ -6,7 +6,7 @@
 
 import { describe, it } from 'node:test';
 import assert from 'node:assert/strict';
-import { truncateSeoTitle, truncateSeoDescription } from '../seo-utils';
+import { fitSeoTitle, truncateSeoTitle, truncateSeoDescription } from '../seo-utils';
 
 describe('truncateSeoTitle', () => {
   it('strips trailing & when truncation lands on an ampersand', () => {
@@ -117,5 +117,31 @@ describe('truncateSeoDescription', () => {
     const input = long('and that is the end of the line right here').slice(0, 155).trim();
     const result = truncateSeoDescription(input, 160);
     assert.equal(result, input);
+  });
+});
+
+describe('fitSeoTitle', () => {
+  it('lets the layout template add the brand to a title of 48 characters or fewer', () => {
+    assert.deepEqual(fitSeoTitle('Webflow Development Services'), {
+      title: 'Webflow Development Services',
+      socialTitle: 'Webflow Development Services | LoudFace',
+    });
+  });
+
+  it('keeps a 49-60 character title whole and drops the brand', () => {
+    // Real failure observed 2026-10-29: cut to 48, this rendered as "…Benchmark | LoudFace" without "2026".
+    const input = 'What AI Actually Cites: B2B SaaS AI-Citation Benchmark 2026';
+    assert.deepEqual(fitSeoTitle(input), { title: { absolute: input }, socialTitle: input });
+  });
+
+  it('cuts a title over 60 characters at a word, without a dangling connective', () => {
+    const { title } = fitSeoTitle("How a stealth payments company entered Stripe's category in AI search");
+    const absolute = (title as { absolute: string }).absolute;
+    assert.ok(absolute.length <= 60, absolute);
+    assert.equal(absolute, "How a stealth payments company entered Stripe's category");
+  });
+
+  it('strips an editor-added brand suffix before fitting', () => {
+    assert.equal(fitSeoTitle('Pricing | LoudFace').title, 'Pricing');
   });
 });
