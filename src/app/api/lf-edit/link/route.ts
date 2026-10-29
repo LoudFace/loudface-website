@@ -16,7 +16,7 @@
  * A read, and only of content this site already ships, so the answer is either
  * a field id or a plain sentence about why there is none.
  */
-import { currentEditor } from '@/lib/inline-edit/session';
+import { currentWriter } from '@/lib/inline-edit/session';
 import { editorOffResponse } from '@/lib/inline-edit/guard';
 import { parseId } from '@/lib/inline-edit/content-text';
 import { findSiblingAddressId } from '@/lib/inline-edit/link-edit';
@@ -26,7 +26,7 @@ export async function GET(request: Request) {
   const off = editorOffResponse();
   if (off) return off;
 
-  if (!(await currentEditor())) return Response.json({ error: 'Sign in first' }, { status: 401 });
+  if (!(await currentWriter())) return Response.json({ error: 'Sign in first' }, { status: 401 });
 
   const url = new URL(request.url);
   const id = url.searchParams.get('id') ?? '';

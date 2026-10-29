@@ -11,7 +11,7 @@
  * signed itself — a raw value from a request body is always cleaned, whatever
  * the body claims about it.
  */
-import { currentEditor, openValue, sealValue } from '@/lib/inline-edit/session';
+import { currentWriter, openValue, sealValue } from '@/lib/inline-edit/session';
 import { editorOffResponse } from '@/lib/inline-edit/guard';
 import { publish, type Change } from '@/lib/inline-edit/content-store';
 import { publishSanity } from '@/lib/inline-edit/sanity-store';
@@ -27,7 +27,7 @@ export async function POST(request: Request) {
   const off = editorOffResponse();
   if (off) return off;
 
-  const editor = await currentEditor();
+  const editor = await currentWriter();
   if (!editor) return Response.json({ error: 'Sign in to publish' }, { status: 401 });
 
   let body: { changes?: unknown };

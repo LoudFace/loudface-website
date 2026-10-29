@@ -10,7 +10,7 @@
  */
 import { cookies, draftMode } from 'next/headers';
 import { editorOffResponse, PAUSED_COOKIE, safeNext } from '@/lib/inline-edit/guard';
-import { isAllowed, SESSION_COOKIE, createSessionToken, sessionCookieOptions } from '@/lib/inline-edit/session';
+import { mayComment, SESSION_COOKIE, createSessionToken, sessionCookieOptions } from '@/lib/inline-edit/session';
 import { openHandoff, originOf } from '@/lib/inline-edit/handoff';
 
 export const dynamic = 'force-dynamic';
@@ -40,7 +40,7 @@ export async function POST(request: Request) {
   const result = openHandoff(process.env.LF_TEAM_HANDOFF_SECRET, token, origin);
   if (!result.ok) return to(`/edit?handoff=${result.reason === 'expired' ? 'expired' : 'failed'}`);
   // The seal says who; this site still decides whether they may edit it.
-  if (!(await isAllowed(result.email))) return to('/edit?handoff=denied');
+  if (!(await mayComment(result.email))) return to('/edit?handoff=denied');
 
   const jar = await cookies();
   jar.set(SESSION_COOKIE, createSessionToken(result.email), sessionCookieOptions);

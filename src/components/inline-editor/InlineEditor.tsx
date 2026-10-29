@@ -488,7 +488,14 @@ function takeStaged(): KeptEdit[] {
   }
 }
 
-export function InlineEditor({ children }: { children?: React.ReactNode }) {
+export function InlineEditor({
+  children,
+  role = 'editor',
+}: {
+  children?: React.ReactNode;
+  /** A commenter gets the shell and comments, and nothing on the page is wired for editing. */
+  role?: 'editor' | 'commenter';
+}) {
   const [changes, setChanges] = useState<Record<string, Change>>({});
   const [status, setStatus] = useState<Status>({ kind: 'idle' });
   const [assetTarget, setAssetTarget] = useState<AssetTarget | null>(null);
@@ -648,6 +655,7 @@ export function InlineEditor({ children }: { children?: React.ReactNode }) {
   );
 
   useEffect(() => {
+    if (role === 'commenter') return;
     const wired = new WeakSet<HTMLElement>();
     /** The last figure sent to the bar; wire() runs on every DOM change. */
     let counted = -1;
@@ -904,7 +912,7 @@ export function InlineEditor({ children }: { children?: React.ReactNode }) {
       observer.disconnect();
       if (rescan) clearTimeout(rescan);
     };
-  }, [record, unstage, openPicker, stageBody]);
+  }, [record, unstage, openPicker, stageBody, role]);
 
   /**
    * Put back edits from a session that ended before they were published.
@@ -1527,6 +1535,7 @@ export function InlineEditor({ children }: { children?: React.ReactNode }) {
 
   return (
     <EditorShell
+      role={role}
       status={shellStatus(status, pending.length)}
       pendingCount={pending.length}
       editableCount={count}

@@ -7,7 +7,7 @@
  * at before, signed by this server, so nothing a browser sends decides which
  * reference goes back into which field.
  */
-import { currentEditor, openImageUndo } from '@/lib/inline-edit/session';
+import { currentWriter, openImageUndo } from '@/lib/inline-edit/session';
 import { mode, undo } from '@/lib/inline-edit/content-store';
 import { restoreImageAssets } from '@/lib/inline-edit/sanity-store';
 import { editorOffResponse } from '@/lib/inline-edit/guard';
@@ -20,7 +20,7 @@ export async function POST(request: Request) {
   const off = editorOffResponse();
   if (off) return off;
 
-  const editor = await currentEditor();
+  const editor = await currentWriter();
   if (!editor) return Response.json({ error: 'Sign in first' }, { status: 401 });
 
   const body = await request.json().catch(() => ({}));

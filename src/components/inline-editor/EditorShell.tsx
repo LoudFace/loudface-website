@@ -71,6 +71,12 @@ export type EditorShellProps = {
   onUndoPublish: (hash: string, doneWord?: string) => void;
   /** Popovers that must sit above the canvas: the link panel, the image panel, the file picker. */
   overlays?: React.ReactNode;
+  /**
+   * A commenter (2026-10-29) may comment and invite others to, and nothing
+   * else: no Publish, no outlines, no History. The routes refuse them anyway;
+   * this is so they never see a button that would.
+   */
+  role?: 'editor' | 'commenter';
 };
 
 const INK = '#14212b';
@@ -95,7 +101,7 @@ const TABS: { id: Tab; label: string; icon: React.ReactNode }[] = [
   { id: 'history', label: 'History', icon: <Icon d="M3 12a9 9 0 1 0 3-6.7M3 3v5h5M12 7v5l3 2" /> },
   {
     id: 'editors',
-    label: 'Editors',
+    label: 'People',
     icon: (
       <Icon>
         <circle cx="9" cy="8" r="3.5" />
@@ -185,6 +191,7 @@ function parseSitemap(xml: string): Route[] {
 
 export function EditorShell(props: EditorShellProps) {
   const { children, status, pendingCount, editableCount, showAll, onShowAll } = props;
+  const commenter = props.role === 'commenter';
   const [tab, setTab] = useState<Tab | null>(null);
   const [mobile, setMobile] = useState(false);
   /** Discard asks first: the bar turns into the question, never a browser dialog. */
@@ -386,7 +393,9 @@ export function EditorShell(props: EditorShellProps) {
   const you = access?.you ?? '';
   const comments = useSiteComments(access?.owner ?? false);
   const openComments = openCountOn(comments, here);
-  const tabs = comments.off ? TABS.filter((item) => item.id !== 'comments') : TABS;
+  const tabs = TABS.filter(
+    (item) => !(comments.off && item.id === 'comments') && !(commenter && item.id === 'history'),
+  );
 
   const dot = (tone: ShellTone, size = 8) => (
     <span
@@ -426,7 +435,7 @@ export function EditorShell(props: EditorShellProps) {
           <span style={{ fontWeight: 600, whiteSpace: 'nowrap' }}>Site editor</span>
           <span style={pill}>
             {dot('ok')}
-            Editing
+            {commenter ? 'Commenting' : 'Editing'}
           </span>
           {!mobile && (
             <span style={crumb}>
@@ -437,7 +446,7 @@ export function EditorShell(props: EditorShellProps) {
           )}
 
           <div style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: mobile ? 10 : 8 }}>
-            {!mobile && (
+            {!mobile && !commenter && (
               <span style={{ display: 'inline-flex', alignItems: 'center', gap: 7, color: MUTE }} title={status.title}>
                 {dot(status.tone)}
                 {status.text}
@@ -476,6 +485,7 @@ export function EditorShell(props: EditorShellProps) {
             {/* One click, next to the light, instead of three clicks into a
                 panel: a client who cannot find anything to type in needs this
                 first, not last. The switch in Settings is the same state. */}
+            {!commenter && (
             <button
               style={{ ...iconBtn, color: showAll ? BRAND : MUTE, background: showAll ? '#eef2ff' : 'transparent' }}
               title="Show what can be edited"
@@ -488,6 +498,7 @@ export function EditorShell(props: EditorShellProps) {
                 {showAll && <circle cx="12" cy="12" r="2.6" />}
               </Icon>
             </button>
+            )}
             {!mobile && <span style={separator} />}
             <span style={{ display: 'flex' }}>
               {people.slice(0, 2).map((email, index) => (
@@ -503,15 +514,15 @@ export function EditorShell(props: EditorShellProps) {
                 <span style={{ ...avatar, background: '#94a3b8', marginLeft: -8 }}>+{people.length - 2}</span>
               )}
             </span>
-            {!mobile && people.length > 0 && (
+            {!mobile && !commenter && people.length > 0 && (
               <span style={{ color: MUTE, whiteSpace: 'nowrap' }}>
                 {people.length} editor{people.length === 1 ? '' : 's'}
                 {you ? ` · you are ${firstName(you)}` : ''}
               </span>
             )}
-            <span style={separator} />
+            {!commenter && <span style={separator} />}
 
-            {confirmView ? (
+            {commenter ? null : confirmView ? (
               <>
                 <span style={{ color: MUTE, whiteSpace: 'nowrap' }}>
                   Leaving loses {pendingCount} unsaved change{pendingCount === 1 ? '' : 's'}.
@@ -700,18 +711,24 @@ export function EditorShell(props: EditorShellProps) {
                 />
               )}
               {tab === 'editors' && (
-                <Editors
-                  access={access}
-                  note={accessNote}
-                  inviteEmail={inviteEmail}
-                  setInviteEmail={setInviteEmail}
-                  inviting={inviting}
-                  onInvite={invite}
-                  onRemove={removeEditor}
-                />
+                <>
+                  {!commenter && (
+                    <Editors
+                      access={access}
+                      note={accessNote}
+                      inviteEmail={inviteEmail}
+                      setInviteEmail={setInviteEmail}
+                      inviting={inviting}
+                      onInvite={invite}
+                      onRemove={removeEditor}
+                    />
+                  )}
+                  {!comments.off && <CommentAccess host={host} first={commenter} />}
+                </>
               )}
               {tab === 'settings' && (
                 <Settings
+                  commenter={commenter}
                   you={you}
                   showAll={showAll}
                   onShowAll={onShowAll}
@@ -947,6 +964,7 @@ function Editors({
  * sit here answer a LoudFace question and stayed at /api/lf-edit/health.
  */
 function Settings({
+  commenter,
   you,
   showAll,
   onShowAll,
@@ -954,6 +972,7 @@ function Settings({
   pendingCount,
   onViewSite,
 }: {
+  commenter: boolean;
   you: string;
   showAll: boolean;
   onShowAll: (on: boolean) => void;
@@ -968,6 +987,13 @@ function Settings({
       <a href="/api/lf-edit/signout" style={{ ...btn, display: 'inline-flex', textDecoration: 'none', marginTop: 6 }}>
         Sign out
       </a>
+      {commenter && (
+        <p style={{ ...quiet, marginTop: 10 }}>
+          You can comment on this site. To change words or pictures, ask LoudFace for editor access.
+        </p>
+      )}
+      {!commenter && (
+        <>
 
       {/* The bar has room for this on a desktop; a phone reads it here. */}
       <p style={{ ...groupLabel, marginTop: 18 }}>The editor</p>
@@ -1018,6 +1044,162 @@ function Settings({
       <p style={{ ...quiet, marginTop: 8 }}>
         {editableCount} editable {editableCount === 1 ? 'thing' : 'things'} on this page.
       </p>
+        </>
+      )}
+    </>
+  );
+}
+
+type CommentAccessData = {
+  commenters: { email: string; name: string | null; addedBy: string; addedVia: string; addedAt: string }[];
+  link: { url: string; createdAt: string; createdBy: string } | null;
+  you: string;
+  /** May the reader remove people and change the link (owners). */
+  manage: boolean;
+};
+
+/**
+ * Who can comment, an invitation, and the share link (2026-10-29). Everyone
+ * signed in sees this and may invite or copy the link; only owners remove
+ * people or change the link. Commenters live in the Spine, so none of it
+ * touches the site's repository.
+ */
+function CommentAccess({ host, first }: { host: string; first: boolean }) {
+  const [data, setData] = useState<CommentAccessData | null>(null);
+  const [note, setNote] = useState('');
+  const [email, setEmail] = useState('');
+  const [busy, setBusy] = useState(false);
+  const [copied, setCopied] = useState(false);
+
+  const call = useCallback(async (body?: Record<string, unknown>) => {
+    setBusy(true);
+    setNote('');
+    try {
+      const response = await fetch(
+        '/api/lf-edit/commenters',
+        body ? { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(body) } : undefined,
+      );
+      const result = await response.json().catch(() => ({}));
+      if (!response.ok || result?.error) {
+        setNote(result?.error ?? 'That did not work, try again');
+        return null;
+      }
+      setData(result as CommentAccessData);
+      return result as CommentAccessData & { mailed?: boolean };
+    } catch {
+      setNote('Could not reach the site, try again');
+      return null;
+    } finally {
+      setBusy(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    void call();
+  }, [call]);
+
+  async function invite() {
+    const target = email.trim();
+    if (!target || busy) return;
+    const result = await call({ op: 'invite', email: target });
+    if (!result) return;
+    setEmail('');
+    setNote(
+      result.mailed
+        ? `Invitation sent to ${target}. They sign in from the email and can comment straight away.`
+        : `${target} can comment now, but the email could not be sent. Ask them to open /edit and request a link.`,
+    );
+  }
+
+  async function copy() {
+    let url = data?.link?.url;
+    if (!url) url = (await call({ op: 'link' }))?.link?.url;
+    if (!url) return;
+    try {
+      await navigator.clipboard.writeText(url);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch {
+      setNote(url);
+    }
+  }
+
+  return (
+    <>
+      <p style={{ ...groupLabel, marginTop: first ? 0 : 22 }}>Can comment</p>
+      <p style={{ ...quiet, marginBottom: 8 }}>
+        They see and leave comments on {host || 'this site'} and cannot change anything on it.
+      </p>
+      {data === null && !note && <p style={quiet}>Loading…</p>}
+      {data?.commenters.map((person) => (
+        <div key={person.email} style={listItem}>
+          <div style={{ minWidth: 0 }}>
+            <p style={{ margin: 0, fontWeight: 600, ...ellipsis }}>
+              {person.email}
+              {person.email === data.you ? ' (you)' : ''}
+            </p>
+            <p style={{ margin: '2px 0 0', fontSize: 12, color: MUTE }}>
+              {person.addedVia === 'link' ? 'joined with the share link' : `invited by ${person.addedBy.split('@')[0] || 'someone'}`}
+              {addedOn(person.addedAt)}
+            </p>
+          </div>
+          {data.manage && (
+            <button
+              style={{ ...btn, color: '#b42318', borderColor: '#f3c9c4' }}
+              disabled={busy}
+              onClick={() => call({ op: 'remove', email: person.email })}
+            >
+              Remove
+            </button>
+          )}
+        </div>
+      ))}
+      {data && !data.commenters.length && <p style={{ ...quiet, marginTop: 4 }}>Nobody has been invited to comment yet.</p>}
+
+      <div style={{ display: 'flex', gap: 8, marginTop: 12 }}>
+        <input
+          type="email"
+          placeholder="name@company.com"
+          value={email}
+          disabled={busy}
+          style={{ ...field, flex: 1, minWidth: 0 }}
+          onChange={(event) => setEmail(event.target.value)}
+          onKeyDown={(event) => {
+            if (event.key === 'Enter') invite();
+          }}
+        />
+        <button
+          style={{ ...btn, ...primaryBtn, opacity: busy || !email.trim() ? 0.5 : 1 }}
+          onClick={invite}
+          disabled={busy || !email.trim()}
+        >
+          Invite
+        </button>
+      </div>
+
+      <p style={{ ...groupLabel, marginTop: 20 }}>Share link</p>
+      <p style={{ ...quiet, marginBottom: 8 }}>
+        Anyone with the link types their email, confirms it from their inbox, and can then comment.
+      </p>
+      {data?.link && (
+        <p style={{ margin: '0 0 8px', fontSize: 12, color: INK, ...ellipsis }}>{data.link.url.replace(/^https?:\/\//, '')}</p>
+      )}
+      <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+        <button style={{ ...btn, ...primaryBtn }} disabled={busy} onClick={copy}>
+          {copied ? 'Copied' : data?.link ? 'Copy link' : 'Make a link and copy it'}
+        </button>
+        {data?.manage && data.link && (
+          <button style={btn} disabled={busy} onClick={() => call({ op: 'link_reset' })}>
+            New link
+          </button>
+        )}
+        {data?.manage && data.link && (
+          <button style={btn} disabled={busy} onClick={() => call({ op: 'link_off' })}>
+            Turn off
+          </button>
+        )}
+      </div>
+      <p style={{ ...quiet, marginTop: 10, minHeight: 16 }}>{note}</p>
     </>
   );
 }

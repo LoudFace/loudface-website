@@ -9,7 +9,7 @@
  * from the Editors panel stops their comments at once, not in eight hours.
  * Everything else is the spine's to keep (`src/lib/inline-edit/comments.ts`).
  */
-import { currentEditor, isAllowed, owners } from '@/lib/inline-edit/session';
+import { currentEditor, mayComment, owners } from '@/lib/inline-edit/session';
 import { editorOffResponse } from '@/lib/inline-edit/guard';
 import { actorFor, askComments, readOp } from '@/lib/inline-edit/comments';
 
@@ -36,7 +36,7 @@ function tooManyWrites(editor: string): boolean {
 async function signedInEditor(): Promise<string | null> {
   const editor = await currentEditor();
   if (!editor) return null;
-  return (await isAllowed(editor)) ? editor : null;
+  return (await mayComment(editor)) ? editor : null;
 }
 
 function answer(result: Awaited<ReturnType<typeof askComments>>, you: string) {

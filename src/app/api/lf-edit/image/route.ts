@@ -17,7 +17,7 @@
  * is reduced to letters, digits and dashes before it can become a path.
  */
 import { createHash } from 'node:crypto';
-import { currentEditor, sealImageUndo } from '@/lib/inline-edit/session';
+import { currentWriter, sealImageUndo } from '@/lib/inline-edit/session';
 import { editorOffResponse } from '@/lib/inline-edit/guard';
 import { publish, uploadedFiles } from '@/lib/inline-edit/content-store';
 import { replaceImageAsset } from '@/lib/inline-edit/sanity-store';
@@ -47,7 +47,7 @@ export async function POST(request: Request) {
   const off = editorOffResponse();
   if (off) return off;
 
-  const editor = await currentEditor();
+  const editor = await currentWriter();
   if (!editor) return bad('Sign in to publish', 401);
 
   const form = await request.formData().catch(() => null);

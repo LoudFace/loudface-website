@@ -18,7 +18,7 @@
  * revocation list would mean a store to keep, which is the vendor dependency
  * this whole editor exists to avoid.
  */
-import { currentEditor, owners } from '@/lib/inline-edit/session';
+import { currentEditor, mayComment, owners } from '@/lib/inline-edit/session';
 import { editorOffResponse } from '@/lib/inline-edit/guard';
 import { commitFile } from '@/lib/inline-edit/content-store';
 import { EDITORS_FILE, forgetEditors, loadEditors } from '@/lib/inline-edit/editors';
@@ -92,7 +92,9 @@ export async function GET() {
   if (off) return off;
 
   const editor = await currentEditor();
-  if (!editor) return Response.json({ error: 'Sign in first' }, { status: 401 });
+  // A commenter reads the list too (the bar shows who works on the site); a
+  // session whose person was removed reads nothing.
+  if (!editor || !(await mayComment(editor))) return Response.json({ error: 'Sign in first' }, { status: 401 });
 
   try {
     return Response.json(await panel(editor));

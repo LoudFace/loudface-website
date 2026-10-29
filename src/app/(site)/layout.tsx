@@ -4,7 +4,7 @@ import "../globals.css";
 import { cookies, draftMode, headers } from "next/headers";
 import { VisualEditing } from "next-sanity/visual-editing";
 import { primeInlineEditing } from "@/lib/inline-edit/server";
-import { currentEditor } from "@/lib/inline-edit/session";
+import { currentEditor, roleOf } from "@/lib/inline-edit/session";
 import { PAUSED_COOKIE, editorIsUp, resumeHref, showResumeChip } from "@/lib/inline-edit/guard";
 import { InlineEditor } from "@/components/inline-editor/InlineEditor";
 import { EditChip } from "@/components/inline-editor/EditChip";
@@ -77,7 +77,9 @@ export default async function SiteLayout({
   // every button answered "sign in" (2026-09-21: "View site" landed on /edit).
   // Draft Mode alone is also what Sanity's Presentation tool turns on, and that
   // preview must not grow an editing bar it cannot use.
-  const editing = editorIsUp(editor, isDraftMode);
+  // A removed person's session opens nothing; a commenter gets the comment-only bar.
+  const role = isDraftMode && editor ? await roleOf(editor) : null;
+  const editing = editorIsUp(editor, isDraftMode) && role !== null;
 
   // Route-dependent chrome (Header hero-theme, hreflang, shared-Footer
   // suppression) is resolved client-side in SiteChrome via usePathname(). The
@@ -112,7 +114,7 @@ export default async function SiteLayout({
             which frames it in a canvas of its own; that canvas is the element
             that scrolls, so the sticky header sticks under the editor bar
             instead of over it. Outside Draft Mode nothing here changes. */}
-        {editing ? <InlineEditor>{site}</InlineEditor> : site}
+        {editing ? <InlineEditor role={role ?? 'editor'}>{site}</InlineEditor> : site}
 
         {/* The way back after "View site". It renders null on the server and on
             the first client render, then reads the lf-paused cookie in the

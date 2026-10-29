@@ -13,9 +13,12 @@ export const metadata: Metadata = { title: 'Edit the site', robots: { index: fal
 export default async function EditSignInPage({
   searchParams,
 }: {
-  searchParams: Promise<{ sent?: string; expired?: string; link?: string; handoff?: string }>;
+  searchParams: Promise<{ sent?: string; expired?: string; link?: string; handoff?: string; join?: string; bad?: string }>;
 }) {
-  const { sent, expired, link, handoff } = await searchParams;
+  const { sent, expired, link, handoff, join, bad } = await searchParams;
+  // A share link (2026-10-29): `join` is its token, or "ended" when the link
+  // was turned off or replaced, or "1" after the confirmation email was sent.
+  const joining = Boolean(join && join !== 'ended' && join !== '1');
   // What the Team App's Open editor button left behind when it could not sign
   // the person in (api/lf-edit/handoff). The email form below still works.
   const handoffNote =
@@ -41,12 +44,14 @@ export default async function EditSignInPage({
       }}
     >
       <div style={{ width: '100%', maxWidth: 420, background: '#fff', borderRadius: 16, padding: 28, boxShadow: '0 18px 50px rgba(13,27,42,.10)' }}>
-        <h1 style={{ margin: '0 0 6px', fontSize: 22, letterSpacing: '-0.02em' }}>Edit the site</h1>
+        <h1 style={{ margin: '0 0 6px', fontSize: 22, letterSpacing: '-0.02em' }}>
+          {joining || join ? 'Comment on the site' : 'Edit the site'}
+        </h1>
 
         {editor ? (
           <>
             <p style={{ margin: '0 0 18px', color: '#52616d' }}>
-              Signed in as {editor}. Open any page and click the text you want to change.
+              Signed in as {editor}. Open any page to edit or comment on it.
             </p>
             {/* Through resume, not straight to "/": Draft Mode's own cookie ends
                 with the browser window, so a client coming back later has a good
@@ -61,8 +66,9 @@ export default async function EditSignInPage({
         ) : sent ? (
           <>
             <p style={{ margin: 0, color: '#52616d' }}>
-              If that address can edit this site, a sign-in link is on its way. It expires in
-              12 hours.
+              {join
+                ? 'Check your email: the link in it confirms your address and opens the site with comments on. It expires in 12 hours.'
+                : 'If that address can edit this site, a sign-in link is on its way. It expires in 12 hours.'}
             </p>
             {link && process.env.NODE_ENV !== 'production' && (
               <a href={link} style={{ ...primary, marginTop: 16 }}>
@@ -70,8 +76,33 @@ export default async function EditSignInPage({
               </a>
             )}
           </>
+        ) : joining ? (
+          <>
+            <p style={{ margin: '0 0 18px', color: '#52616d' }}>
+              You have been given a link to leave comments on this site. Enter your email and we will send
+              you a link that confirms it is yours.
+            </p>
+            {bad && (
+              <p style={{ margin: '0 0 14px', padding: '10px 12px', borderRadius: 10, background: '#fff7ed', color: '#9a3412', fontSize: 14 }}>
+                That does not look like an email address.
+              </p>
+            )}
+            <form action="/api/lf-edit/join" method="post">
+              <input type="hidden" name="token" value={join} />
+              <input type="email" name="email" required autoFocus placeholder="you@company.com" style={field} />
+              <button type="submit" style={{ ...primary, width: '100%', border: 0, cursor: 'pointer' }}>
+                Send me the link
+              </button>
+            </form>
+          </>
         ) : (
           <>
+            {join === 'ended' && (
+              <p style={{ margin: '0 0 14px', padding: '10px 12px', borderRadius: 10, background: '#fff7ed', color: '#9a3412', fontSize: 14 }}>
+                That share link no longer works. Ask the person who sent it for a new one, or sign in below if
+                you already have access.
+              </p>
+            )}
             {handoffNote && (
               <p style={{ margin: '0 0 14px', padding: '10px 12px', borderRadius: 10, background: '#fff7ed', color: '#9a3412', fontSize: 14 }}>
                 {handoffNote}
@@ -83,21 +114,7 @@ export default async function EditSignInPage({
                 : 'Enter your email and we will send you a sign-in link.'}
             </p>
             <form action="/api/lf-edit/signin" method="post">
-              <input
-                type="email"
-                name="email"
-                required
-                autoFocus
-                placeholder="you@company.com"
-                style={{
-                  width: '100%',
-                  padding: '11px 12px',
-                  borderRadius: 10,
-                  border: '1px solid #cfd9e2',
-                  font: 'inherit',
-                  marginBottom: 12,
-                }}
-              />
+              <input type="email" name="email" required autoFocus placeholder="you@company.com" style={field} />
               <button type="submit" style={{ ...primary, width: '100%', border: 0, cursor: 'pointer' }}>
                 Send me the link
               </button>
@@ -108,6 +125,15 @@ export default async function EditSignInPage({
     </main>
   );
 }
+
+const field: React.CSSProperties = {
+  width: '100%',
+  padding: '11px 12px',
+  borderRadius: 10,
+  border: '1px solid #cfd9e2',
+  font: 'inherit',
+  marginBottom: 12,
+};
 
 const primary: React.CSSProperties = {
   display: 'block',

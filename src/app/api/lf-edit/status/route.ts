@@ -29,7 +29,7 @@
  * says what the sums should be; a request with no counts on it means one and
  * none, which is what an older editor asked for.
  */
-import { currentEditor } from '@/lib/inline-edit/session';
+import { currentWriter } from '@/lib/inline-edit/session';
 import { assetFileName, markupVariants } from '@/lib/inline-edit/image-edit';
 import {
   anchorsIn,
@@ -48,7 +48,7 @@ export async function POST(request: Request) {
   const off = editorOffResponse();
   if (off) return off;
 
-  if (!(await currentEditor())) return Response.json({ error: 'Sign in first' }, { status: 401 });
+  if (!(await currentWriter())) return Response.json({ error: 'Sign in first' }, { status: 401 });
 
   const body = (await request.json().catch(() => null)) as
     | {

@@ -18,6 +18,7 @@ import { cookies } from 'next/headers';
 import { hasGitHubCredentials } from './github';
 import { loadEditors } from './editors';
 import { mergeAccess } from './editors-list';
+import { isCommenter } from './commenters';
 
 export const SESSION_COOKIE = 'lf_edit_session';
 import { SIGN_IN_MINUTES } from './editors-list';
@@ -73,6 +74,22 @@ export async function isAllowed(email: string): Promise<boolean> {
   if (owners().includes(wanted)) return true;
   const { list } = await loadEditors();
   return mergeAccess([], list.editors).includes(wanted);
+}
+
+/**
+ * May this address sign in at all? Editors, and the commenters the Spine
+ * holds (`commenters.ts`). A commenter's session reaches comments and nothing
+ * else: every route that changes the site asks `currentWriter` instead.
+ */
+export async function mayComment(email: string): Promise<boolean> {
+  return (await isAllowed(email)) || (await isCommenter(email));
+}
+
+/** What the signed-in person may do here, or null when they may do nothing. */
+export async function roleOf(email: string | null): Promise<'editor' | 'commenter' | null> {
+  if (!email) return null;
+  if (await isAllowed(email)) return 'editor';
+  return (await isCommenter(email)) ? 'commenter' : null;
 }
 
 function sign(payload: string): string {
@@ -187,10 +204,37 @@ export const createSignInToken = (email: string, minutes = SIGN_IN_MINUTES) => s
 export const readSignInToken = (token: string) => open('signin', token);
 export const createSessionToken = (email: string) => seal('session', email, SESSION_HOURS * 60);
 
-/** The signed-in editor for this request, or null. */
+/**
+ * The sign-in link a share link sends: the address, and which share link it
+ * came through. The person is added as a commenter only when this comes back,
+ * so the list holds addresses somebody has proven, never ones somebody typed.
+ */
+export function createJoinToken(email: string, linkToken: string, minutes = SIGN_IN_MINUTES): string {
+  return pack(`join|${email.toLowerCase()}|${Date.now() + minutes * 60_000}|${linkToken}`);
+}
+
+export function readJoinToken(token: string): { email: string; link: string } | null {
+  const payload = unpack(token);
+  if (!payload) return null;
+  const [kind, email, expiry, link] = payload.split('|');
+  if (kind !== 'join' || !email || !link || !expiry || Number(expiry) < Date.now()) return null;
+  return { email, link };
+}
+
+/** The signed-in person for this request, editor or commenter, or null. */
 export async function currentEditor(): Promise<string | null> {
   const token = (await cookies()).get(SESSION_COOKIE)?.value;
   return token ? open('session', token) : null;
+}
+
+/**
+ * The signed-in person, only if they may change the site. Since 2026-10-29 a
+ * session can belong to a commenter, so a session alone no longer means an
+ * editor: every route that writes asks this, and a commenter gets null.
+ */
+export async function currentWriter(): Promise<string | null> {
+  const email = await currentEditor();
+  return email && (await isAllowed(email)) ? email : null;
 }
 
 export const sessionCookieOptions = {

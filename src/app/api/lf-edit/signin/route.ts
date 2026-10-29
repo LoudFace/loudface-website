@@ -8,7 +8,8 @@
  */
 import { headers } from 'next/headers';
 import { isAllowed } from '@/lib/inline-edit/session';
-import { sendSignInLink } from '@/lib/inline-edit/signin-mail';
+import { isCommenter } from '@/lib/inline-edit/commenters';
+import { sendCommentSignInLink, sendSignInLink, type SignInMail } from '@/lib/inline-edit/signin-mail';
 import { editorOffResponse } from '@/lib/inline-edit/guard';
 
 /** The address the visitor actually used, not the port we listen on. */
@@ -54,11 +55,18 @@ export async function POST(request: Request) {
   // whether the address was allow-listed.
   const flooding = [tooMany(`ip:${caller}`), tooMany(`email:${email.toLowerCase()}`)].some(Boolean);
 
-  if (email && !flooding && (await isAllowed(email))) {
+  // Editors first; a commenter (a Spine row, 2026-10-29) gets the link worded
+  // for comments. Anyone else gets nothing, and the same answer.
+  let sent: SignInMail | null = null;
+  if (email && !flooding && /^[^|]+$/.test(email)) {
+    if (await isAllowed(email)) sent = await sendSignInLink(email, origin);
+    else if (await isCommenter(email)) sent = await sendCommentSignInLink(email, origin);
+  }
+  if (sent) {
     // The mail itself, its logging and its neutral failure live in
     // signin-mail.ts: the Editors panel sends the same message to an invited
     // colleague, and one message is one place to keep right.
-    const { link, configured } = await sendSignInLink(email, origin);
+    const { link, configured } = sent;
     if (!configured && process.env.NODE_ENV !== 'production') {
       // No mail service configured: in development the link is shown on the
       // page, so testing needs no inbox.

@@ -1,4 +1,4 @@
-import { currentEditor } from '@/lib/inline-edit/session';
+import { currentWriter } from '@/lib/inline-edit/session';
 import { history } from '@/lib/inline-edit/content-store';
 import { editorOffResponse } from '@/lib/inline-edit/guard';
 
@@ -6,7 +6,7 @@ export async function GET() {
   const off = editorOffResponse();
   if (off) return off;
 
-  const editor = await currentEditor();
+  const editor = await currentWriter();
   if (!editor) return Response.json({ error: 'Sign in first' }, { status: 401 });
 
   // A site with no way to publish has no history to read either; say which of
