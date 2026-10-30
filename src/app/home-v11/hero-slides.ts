@@ -14,6 +14,7 @@ export type HeroSlideKey = keyof HomeV11Data['hero'];
 export const HERO_SLIDES: { series: HeroSlideKey; proof?: ProofKey; href: string; format: ValueFormat; compact?: boolean }[] = [
   { series: 'toku', proof: 'tokuImpressions', format: 'index', href: '/case-studies/toku-ai-cited-pipeline' },
   { series: 'lf', format: 'pct', href: '/case-studies/loudface-aeo-case-study', compact: true },
+  { series: 'transalis', format: 'pct', href: '/case-studies/transalis-ai-visibility', compact: true },
   { series: 'genie', format: 'index', href: '/case-studies/genie-teacher-organic-growth' },
   { series: 'pond', format: 'index', href: '/case-studies/pond-ai' },
   { series: 'hayes', format: 'index', href: '/case-studies/hayes-media-organic-leads' },

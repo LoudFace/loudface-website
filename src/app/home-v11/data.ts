@@ -46,6 +46,7 @@ const SLUGS = {
   toku: 'toku-ai-cited-pipeline',
   pond: 'pond-ai',
   hayes: 'hayes-media-organic-leads',
+  transalis: 'transalis-ai-visibility',
   dimer: 'dimer-health',
   ceipal: 'ceipal-wp-to-wf-migration',
   brandfirm: 'brandfirm',
@@ -70,6 +71,7 @@ const PROOF = {
   toku: ['toku', 1],
   pond: ['pond', 1],
   hayes: ['hayes', 1],
+  transalis: ['transalis', 1],
   dimer: ['dimer', 1],
   ceipal: ['ceipal', 2],
   brandfirm: ['brandfirm', 1],
@@ -119,7 +121,7 @@ function rolling(values: number[], n: number): number[] {
 export interface HomeV11Data {
   /** Each client's hockey stick: the published series with the steepest late climb that still ends at its high
    *  (scored 2026-10-09; Delshad's clean clicks, TradeMomentum's weekly clicks, Genie's impressions and clicks). */
-  hero: Record<'lf' | 'genie' | 'delshad' | 'tm' | 'stealth' | 'genieClicks', Series> & { health?: Series; toku?: Series; pond?: Series; hayes?: Series };
+  hero: Record<'lf' | 'genie' | 'delshad' | 'tm' | 'stealth' | 'genieClicks', Series> & { health?: Series; toku?: Series; pond?: Series; hayes?: Series; transalis?: Series };
   /** Weekly enquiries indexed to their baseline weeks: the homepage "Measured in leads" section and leads tiles. */
   leads: Record<'delshad' | 'genie', Series>;
   results: Record<'genie' | 'lf', Series>;
@@ -174,6 +176,8 @@ export const getHomeV11Data = cache(async (): Promise<HomeV11Data | null> => {
   const pondTrend = pond.indexedTrend?.points.filter((p) => p.date) ?? [];
   const hayes = ins('hayes');
   const hayesTrend = hayes.indexedTrend?.points.filter((p) => p.date) ?? [];
+  const transalis = ins('transalis');
+  const transalisPts = transalis.topicClimb?.points ?? [];
 
   const genieImpressions: Series = {
     dates: gTrend.map((p) => p.date as string),
@@ -205,6 +209,13 @@ export const getHomeV11Data = cache(async (): Promise<HomeV11Data | null> => {
       pond: pondTrend.length ? { dates: pondTrend.map((p) => p.date as string), values: rolling(pondTrend.map((p) => p.impressions), 7), start: pond.engagementStart ?? '2026-08-21' } : undefined,
       // Hayes Media (2026-10-29): the tile prints the study's first-month revenue (result 1) over its Google
       // impressions a day, seven-day mean, indexed to the program's first week; the caption names both
+      // Transalis (2026-10-30): daily AI visibility on the same 73 Peec prompts, seven-day mean; the last point is the
+      // study's 16.5% (24–30 Oct). Tracking began 28 Jul, so the 9 Jun start pin sits on the left edge.
+      transalis: transalisPts.length ? {
+        dates: transalisPts.map((p) => p.week),
+        values: rolling(transalisPts.map((p) => p.value * 100), 7),
+        start: transalis.engagementStart ?? '2026-06-09',
+      } : undefined,
       hayes: hayesTrend.length ? { dates: hayesTrend.map((p) => p.date as string), values: rolling(hayesTrend.map((p) => p.impressions), 7), start: hayes.engagementStart ?? '2026-09-04' } : undefined,
     },
     leads: {
