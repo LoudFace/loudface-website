@@ -87,9 +87,11 @@ const mainBody = swap(doc.mainBody, [
   ['<td>21 to 27 Sep 2026</td><td><strong>9.1x</strong></td>', '<td>12 to 18 Oct 2026</td><td><strong>9.3x</strong></td>'],
 ], 'mainBody');
 
+// The first run on 30 Oct swapped only the end of this sentence and left "9.1x" in front of it; the summary was
+// corrected in place the same day. This pair is the full sentence, as it should have been.
 const paragraphSummary = swap(doc.paragraphSummary, [[
-  'to the week of 21 September 2026, its highest week.',
-  'to the week of 12 October 2026, its highest week.',
+  'grew 9.1x from the week the engagement began, 1 to 7 September 2025, to the week of 21 September 2026, its highest week.',
+  'grew 9.3x from the week the engagement began, 1 to 7 September 2025, to the week of 12 October 2026, its highest week.',
 ]], 'paragraphSummary');
 
 const pr = doc.instruments.publishedResult;
