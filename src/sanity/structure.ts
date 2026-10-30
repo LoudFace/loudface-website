@@ -12,7 +12,9 @@ import type { StructureResolver } from 'sanity/structure';
 
 const CONTENT_TYPES = ['blogPost', 'research', 'blogFaq', 'blogVisual', 'category', 'seoPage'];
 
-const PROOF_TYPES = ['caseStudy', 'client', 'testimonial'];
+// recognition: outside lists that name LoudFace, written weekly by the
+// content engine's recognition sync; people only set `hidden`.
+const PROOF_TYPES = ['caseStudy', 'client', 'testimonial', 'recognition'];
 
 const SITE_DATA_TYPES = ['teamMember', 'industry', 'serviceCategory', 'technology'];
 

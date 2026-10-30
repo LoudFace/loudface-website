@@ -11,6 +11,7 @@ import { blogVisual } from './blogVisual';
 import { testimonial } from './testimonial';
 import { blogFaq } from './blogFaq';
 import { seoPage } from './seoPage';
+import { recognition } from './recognition';
 
 export const schemaTypes = [
   category,
@@ -26,4 +27,5 @@ export const schemaTypes = [
   testimonial,
   blogFaq,
   seoPage,
+  recognition,
 ];
