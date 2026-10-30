@@ -7,7 +7,9 @@ import { MARKS, NAMES, SHOTS, type Box } from './logos';
 /**
  * Recognition data (2026-10-30, honours rebuild). Two Sanity reads, both kept current by the content engine
  * (scripts/recognition-sync.mjs):
- *   - every outside list that names LoudFace as an entry: `recognition`, `status == "listed"` and not hidden. The sync
+ *   - every outside page that recognises LoudFace: `recognition` with `onPage == true` and not hidden. The sync sets
+ *     onPage from Claude Sonnet's reading of what the page says about us (2026-10-31): a list entry unless the
+ *     judge calls it negative, a running-text mention or a page about us only when it is positive. The sync
  *     merges URLs that redirect to one page (those documents become `merged`), so each document is one honour.
  *   - `recognition-ai-standing`: how often each AI engine names LoudFace on non-branded agency questions, ranked
  *     against the agencies we track in Peec.
@@ -16,8 +18,8 @@ import { MARKS, NAMES, SHOTS, type Box } from './logos';
  * CMS Data Fetching).
  */
 
-const LISTS = `*[_type == "recognition" && status == "listed" && hidden != true]{
-  _id, publisher, title, url, domain, rank, listSize, linkFollowed, aiCitations, aiCitationsWindow, lastChecked, verdict, verdictSource, hidden
+const LISTS = `*[_type == "recognition" && onPage == true && hidden != true]{
+  _id, status, publisher, title, url, domain, rank, listSize, linkFollowed, aiCitations, aiCitationsWindow, lastChecked, verdict, verdictSource, judgeQuote, hidden
 }`;
 const AI = `*[_id == "recognition-ai-standing"][0]{ window, prompts, checkedAt, engines[]{ engine, name, visibility, rank, of } }`;
 
@@ -35,6 +37,9 @@ interface Doc {
   lastChecked: string | null;
   verdict: string | null;
   verdictSource: string | null;
+  /** The judge's most favourable phrase, checked word for word against the page by the sync. */
+  judgeQuote: string | null;
+  status: 'listed' | 'mentioned' | 'about';
 }
 
 interface AiDoc {
@@ -60,6 +65,8 @@ export interface Honour {
   rank: number | null;
   listSize: number | null;
   followed: boolean;
+  /** An entry on the list (true), or a page that recommends us in its text (false). */
+  listed: boolean;
   citations: number;
   /** The publisher's verdict on us, in its own words; null when the sync found none, it arrived cut off, or it is
    *  about Webflow. */
@@ -197,8 +204,9 @@ export async function getRecognitionData(): Promise<RecognitionData> {
       rank: d.rank ?? null,
       listSize: d.rank ? d.listSize ?? null : null,
       followed: !!d.linkFollowed,
+      listed: d.status === 'listed',
       citations: d.aiCitations ?? 0,
-      verdict: cleanVerdict(d.verdict, d.verdictSource),
+      verdict: cleanVerdict(d.verdict, d.verdictSource) ?? cleanVerdict(d.judgeQuote, 'judge'),
       topics,
       industry,
       ...(SHOTS[d.url.replace(/^https?:\/\/(www\.)?/, '').replace(/\/$/, '')] ?? {}),

@@ -75,7 +75,7 @@ export function RecognitionIndex({ honours, c, initial }: { honours: Honour[]; c
             <a href={h.url} target="_blank" rel="noopener" className="rc-row-main">
               <span className="rc-row-title">{h.honour}</span>
               <span className="rc-row-meta">
-                <span className={h.rank ? 'rc-pos-c' : ''}>{h.rank ? `#${h.rank} ${c.of} ${h.listSize ?? '?'}` : c.listed}</span>
+                <span className={h.rank ? 'rc-pos-c' : ''}>{h.rank ? `#${h.rank} ${c.of} ${h.listSize ?? '?'}` : h.listed ? c.listed : c.recommended}</span>
                 <span>{h.publisher}</span>
                 {h.year && <span>{h.year}</span>}
                 {h.citations > 0 && <span>{h.citations.toLocaleString('en-US')} {h.citations === 1 ? c.colCitation : c.colCitations}</span>}
