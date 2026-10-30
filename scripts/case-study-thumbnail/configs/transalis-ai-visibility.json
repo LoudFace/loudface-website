@@ -1,0 +1,36 @@
+{
+  "slug": "transalis-ai-visibility",
+  "note": "Transalis, public client. Front-left: the homepage. Back-right: the EDI requirements guide for retail suppliers, one of the pages AI answers cite most (Peec AI, 16–29 Oct 2026). Card: the study's lead result.",
+  "theme": {
+    "background": "linear-gradient(140deg, #0d2236 0%, #0b3f6b 52%, #007ac4 100%)",
+    "bloom": "radial-gradient(1100px 780px at 14% 26%, rgba(255,255,255,.14), transparent 68%), radial-gradient(900px 700px at 92% 88%, rgba(6,18,30,.45), transparent 70%)",
+    "cardBg": "#f6f9fc",
+    "cardValue": "#0d2236",
+    "cardMuted": "rgba(15,23,42,.52)",
+    "cardRule": "rgba(0,122,196,.22)"
+  },
+  "panels": [
+    {
+      "url": "https://www.transalis.com/blogs/edi-requirements-for-retail-suppliers",
+      "chrome": "transalis.com/blogs/edi-requirements-for-retail-suppliers",
+      "scrollTo": 0,
+      "clipHeight": 760,
+      "style": { "left": 640, "top": 50, "width": 900, "z": 1 }
+    },
+    {
+      "url": "https://www.transalis.com/",
+      "chrome": "transalis.com",
+      "clipHeight": 720,
+      "style": { "left": -40, "top": 330, "width": 1000, "z": 2 }
+    }
+  ],
+  "card": {
+    "label": "AI visibility, same 73 prompts",
+    "value": "5.2% → 16.5%",
+    "valueSize": 64,
+    "caption": "Aug → 24–30 Oct 2026,\nPeec AI",
+    "right": 62,
+    "bottom": 92,
+    "width": 470
+  }
+}
