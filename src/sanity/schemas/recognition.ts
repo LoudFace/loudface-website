@@ -31,7 +31,7 @@ export const recognition = defineType({
       title: 'Status',
       type: 'string',
       description: 'listed: LoudFace is an entry. Only listed pages are shown.',
-      options: { list: ['listed', 'mentioned', 'about', 'not_found', 'unreadable'] },
+      options: { list: ['listed', 'mentioned', 'about', 'not_found', 'unreadable', 'merged'] },
       ...synced,
     }),
     defineField({ name: 'statusReason', title: 'Why', type: 'string', ...synced }),
