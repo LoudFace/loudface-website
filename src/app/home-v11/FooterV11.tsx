@@ -23,7 +23,7 @@ const FLAGS = [FLAG_UAE, FLAG_US];
 /** Link targets per footer column, in the content file's order. A null opens the booking modal. */
 const HREFS: (string | null)[][] = [
   ['/services/geo-agency', '/services/seo-aeo', '/services/ux-ui-design', '/services/cro'],
-  ['/case-studies', '/methodology', '/about', '/pricing', '/blog', '/careers'],
+  ['/case-studies', '/methodology', '/recognition', '/about', '/pricing', '/blog', '/careers'],
   [null, 'mailto:arnel@loudface.co', 'https://www.linkedin.com/company/loudface/', 'https://x.com/meetloudface'],
 ];
 

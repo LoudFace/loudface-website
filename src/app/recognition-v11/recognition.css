@@ -1,0 +1,193 @@
+/* Recognition v11 (/recognition, honours direction, 2026-10-30). Loads after home-v11.css; scoped under .rc.
+   Desktop (1280 and up) is the designed layout; below it the grids stack (phone pass at the end of this file). */
+.rc .ghost { color: #8a86a6; }
+.rc-mark { border-radius: 8px; flex-shrink: 0; box-shadow: 0 0 0 1px rgba(20,16,60,0.08); background: #ffffff; object-fit: contain; }
+.rc-mark-slot { display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.rc-mark-slot.is-28 { width: 28px; height: 28px; }
+.rc-src { font-size: 13px; line-height: 1.5; color: var(--quiet); }
+.rc-engine { display: inline-flex; align-items: center; gap: 8px; font-size: 14.5px; font-weight: 500; color: var(--ink); white-space: nowrap; }
+.rc-engine svg { flex-shrink: 0; color: var(--ink); }
+.rc-engine.is-lg { font-size: 18px; gap: 10px; }
+
+/* =========================================================== R1 hero (ranking-table-A Büro) */
+.rc-hero { margin-top: -64px; padding: 112px 0 72px; background: #ffffff; color: var(--ink); }
+.rc-hero-grid { display: grid; grid-template-columns: minmax(0, 1fr); gap: 48px; }
+.rc-hero h1 { margin-top: 20px; font-family: var(--font-heading); font-weight: 500; font-size: 44px; line-height: 1.02; letter-spacing: -0.045em; text-wrap: balance; }
+.rc-line { margin-top: 26px; font-size: 19px; line-height: 1.55; color: var(--body); max-width: 500px; text-wrap: pretty; }
+.rc-line b { font-family: var(--font-heading); font-weight: 500; font-size: 1.12em; letter-spacing: -0.02em; color: var(--ink); }
+.rc-ctas { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 26px; margin-top: 32px; }
+.rc-ctas .v11-link { font-size: 15.5px; }
+@media (min-width: 768px) { .rc-hero h1 { font-size: 56px; } }
+@media (min-width: 1280px) {
+  .rc-hero { padding: 148px 0 104px; }
+  .rc-hero-grid { grid-template-columns: minmax(0, 1fr) 720px; gap: 56px; align-items: center; }
+  .rc-hero h1 { font-size: 64px; }
+}
+
+.rc-hero-pic { margin: 0; min-width: 0; }
+.rc-ground { padding: 20px 14px; border-radius: 24px; background: radial-gradient(80% 90% at 100% 100%, #b7aaf2 0%, rgba(183,170,242,0) 70%), #ebe6fd; }
+@media (min-width: 1280px) { .rc-ground { padding: 20px; } }
+.rc-window { border-radius: 14px; overflow: hidden; background: #ffffff; box-shadow: 0 2px 4px rgba(10,6,50,0.06), 0 24px 48px rgba(10,6,50,0.12); }
+.rc-window-bar { display: flex; align-items: center; gap: 14px; height: 42px; padding: 0 14px; border-bottom: 1px solid var(--line); }
+.rc-dots { display: flex; gap: 6px; }
+.rc-dots i { width: 10px; height: 10px; border-radius: 99px; background: #e4e4ea; }
+.rc-url { flex: 1; min-width: 0; height: 26px; display: flex; align-items: center; padding: 0 12px; border-radius: 8px; background: #f4f4f7; font-size: 12.5px; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.rc-shot { position: relative; overflow: hidden; max-width: 100%; }
+.rc-shot picture { display: block; }
+.rc-shot img { display: block; max-width: 100%; height: auto; }
+.rc-shot-box { position: absolute; border: 2px solid var(--ind); border-radius: 6px; pointer-events: none; }
+.rc-hero-cap { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 20px; align-items: center; margin-top: 22px; padding: 0 4px; }
+.rc-hero-cap-rank { display: flex; align-items: baseline; gap: 6px; padding-right: 20px; box-shadow: inset -1px 0 0 var(--line); }
+.rc-hero-cap-rank b { font-family: var(--font-heading); font-weight: 500; font-size: 56px; line-height: 0.9; letter-spacing: -0.05em; color: var(--ind); }
+.rc-hero-cap-rank span { font-size: 15px; color: var(--quiet); white-space: nowrap; }
+.rc-hero-cap-t { min-width: 0; display: flex; flex-direction: column; gap: 3px; }
+.rc-hero-cap-t .is-k { font-size: 12.5px; color: var(--quiet); }
+.rc-hero-cap-t .is-t { font-family: var(--font-heading); font-weight: 500; font-size: 20px; line-height: 1.2; letter-spacing: -0.015em; color: var(--ink); transition: color var(--dur) var(--ease); }
+.rc-hero-cap-t .is-t:hover { color: var(--ind); }
+.rc-hero-cap-t .is-p { display: flex; align-items: center; gap: 7px; margin-top: 3px; font-size: 13.5px; color: var(--muted); }
+.rc-hero-cap-t .is-p .rc-mark { border-radius: 5px; }
+
+/* =========================================================== R2 honours: awards table (Büro + Locomotive) */
+.rc-awards { border-top: 1px solid var(--ink); }
+.rc-awards-group { display: grid; grid-template-columns: minmax(0, 1fr); border-bottom: 1px solid var(--ink); }
+@media (min-width: 1024px) { .rc-awards-group { grid-template-columns: 220px minmax(0, 1fr); } }
+.rc-awards-place { display: flex; flex-direction: column; gap: 6px; padding: 22px 0 18px; }
+.rc-awards-place b { font-family: var(--font-heading); font-weight: 500; font-size: 64px; line-height: 0.9; letter-spacing: -0.05em; color: var(--ink); }
+.rc-awards-place span { font-size: 14px; color: var(--muted); }
+.rc-awards-group > ol > li + li { border-top: 1px solid var(--line); }
+.rc-award { display: grid; grid-template-columns: minmax(0, 1fr) 28px; gap: 8px 28px; align-items: start; padding: 22px 0; }
+@media (min-width: 1024px) { .rc-award { grid-template-columns: 220px minmax(0, 1.05fr) minmax(0, 1fr) 28px; } }
+.rc-award-pub { display: flex; align-items: center; gap: 10px; min-height: 28px; font-size: 15px; font-weight: 500; color: var(--ink); }
+.rc-award-pub .rc-mark { border-radius: 7px; }
+.rc-award-pub.is-word { min-height: 28px; }
+.rc-award-honour { display: flex; flex-direction: column; gap: 5px; }
+.rc-award-honour .is-t { font-family: var(--font-heading); font-weight: 500; font-size: 21px; line-height: 1.22; letter-spacing: -0.016em; color: var(--ink); text-wrap: pretty; transition: color var(--dur) var(--ease); }
+.rc-award-honour .is-m { font-size: 14px; color: var(--quiet); }
+.rc-award-verdict { font-family: var(--font-heading); font-weight: 500; font-size: 18px; line-height: 1.35; letter-spacing: -0.012em; color: var(--body); text-wrap: pretty; }
+.rc-award-go { display: flex; align-items: center; justify-content: center; width: 28px; height: 28px; border-radius: 99px; color: var(--quiet); transition: background-color var(--dur) var(--ease), color var(--dur) var(--ease); }
+.rc-award-go svg { width: 11px; height: 11px; }
+@media (hover: hover) { .rc-award:hover .is-t { color: var(--ind); } .rc-award:hover .rc-award-go { background: #eeecfe; color: var(--ind); } }
+.rc-awards-group.is-ten { border-bottom: 0; }
+.rc-awards-ten { padding: 24px 0 0; font-size: 17px; line-height: 1.5; color: var(--body); }
+.rc-awards-ten b { font-family: var(--font-heading); font-weight: 500; font-size: 1.15em; color: var(--ink); }
+.rc-awards-ten .v11-link { margin-left: 10px; font-size: 15.5px; }
+@media (max-width: 1023px) { .rc-awards-group.is-ten .rc-awards-place { display: none; } }
+
+/* =========================================================== R3 recognised for (each topic: the entry as published + one verdict) */
+.rc-for { border-top: 1px solid var(--ink); }
+.rc-for-row { display: grid; grid-template-columns: minmax(0, 1fr); gap: 24px; padding: 36px 0; border-bottom: 1px solid var(--line); }
+@media (min-width: 1280px) { .rc-for-row { grid-template-columns: 252px 600px minmax(0, 1fr); gap: 0 48px; align-items: start; } }
+.rc-for-side h3 { font-family: var(--font-heading); font-weight: 500; font-size: 30px; line-height: 1.08; letter-spacing: -0.03em; color: var(--ink); text-wrap: balance; }
+.rc-for-n { margin-top: 12px; font-size: 15px; color: var(--body); }
+.rc-for-n b { font-weight: 600; color: var(--ink); }
+.rc-for-ind { margin-top: 8px; font-size: 14.5px; line-height: 1.5; color: var(--muted); text-wrap: pretty; }
+.rc-entry { display: flex; flex-direction: column; gap: 14px; min-width: 0; }
+.rc-entry-win { display: block; border-radius: 12px; overflow: hidden; background: #ffffff; box-shadow: 0 0 0 1px var(--line), 0 12px 28px rgba(10,6,50,0.07); transition: box-shadow var(--dur) var(--ease); }
+.rc-window-bar.is-sm { height: 34px; gap: 10px; padding: 0 12px; }
+.rc-window-bar.is-sm .rc-dots i { width: 8px; height: 8px; }
+.rc-window-bar.is-sm .rc-url { height: 22px; font-size: 12px; }
+.rc-entry-cap { display: flex; align-items: center; gap: 14px; }
+.rc-entry-cap > b { flex-shrink: 0; font-family: var(--font-heading); font-weight: 500; font-size: 28px; line-height: 1; letter-spacing: -0.04em; color: var(--ind); white-space: nowrap; }
+.rc-entry-cap > b span { font-size: 14px; letter-spacing: 0; color: var(--quiet); }
+.rc-entry-t { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+.rc-entry-t .is-t { font-family: var(--font-heading); font-weight: 500; font-size: 17px; line-height: 1.25; letter-spacing: -0.012em; color: var(--ink); transition: color var(--dur) var(--ease); }
+.rc-entry-t .is-p { display: flex; align-items: center; gap: 8px; min-height: 28px; font-size: 15px; font-weight: 500; color: var(--ink); }
+.rc-entry-t .is-p .rc-mark { border-radius: 4px; }
+@media (hover: hover) { .rc-entry:hover .rc-entry-win { box-shadow: 0 0 0 1px #cfcbe6, 0 16px 34px rgba(10,6,50,0.1); } .rc-entry:hover .is-t { color: var(--ind); } }
+.rc-for-quotes { min-width: 0; }
+.rc-quote { display: flex; flex-direction: column; gap: 12px; }
+.rc-quote-pub { display: flex; align-items: center; gap: 8px; font-size: 14px; color: var(--ink); }
+.rc-quote-pub b { font-weight: 500; }
+.rc-quote-pub .rc-mark { border-radius: 6px; }
+.rc-quote-t { font-family: var(--font-heading); font-weight: 500; font-size: 20px; line-height: 1.3; letter-spacing: -0.016em; color: var(--ink); text-wrap: pretty; transition: color var(--dur) var(--ease); }
+.rc-quote-a { font-size: 14px; line-height: 1.45; color: var(--quiet); text-wrap: pretty; }
+@media (hover: hover) { .rc-quote:hover .rc-quote-t { color: var(--ind); } }
+
+/* =========================================================== R4 recognised by AI (one real answer beside one row per engine) */
+.rc-ai { display: grid; grid-template-columns: minmax(0, 1fr); gap: 40px; }
+@media (min-width: 1280px) { .rc-ai { grid-template-columns: 440px minmax(0, 1fr); gap: 64px; align-items: start; } }
+.rc-ai-chat { margin: 0; }
+.rc .rc-chat.v11-chat { width: 100%; height: auto; padding-bottom: 66px; box-shadow: 0 2px 4px rgba(10,6,50,0.06), 0 24px 48px rgba(10,6,50,0.12); }
+.rc .rc-chat .v11-chat-ask span { font-size: 14px; }
+.rc .rc-chat .v11-chat-answer { display: block; white-space: pre-line; font-size: 14px; line-height: 1.5; }
+.rc .rc-chat .v11-chat-answer .is-brand { display: inline; }
+.rc-ai-chat figcaption { margin-top: 14px; font-size: 13px; line-height: 1.5; color: var(--quiet); }
+.rc-ai-rows { border-top: 1px solid var(--ink); }
+.rc-ai-row { margin: 0; display: grid; grid-template-columns: minmax(0, 1fr); gap: 16px; padding: 26px 0 28px; border-bottom: 1px solid var(--line); }
+@media (min-width: 1024px) { .rc-ai-row { grid-template-columns: 196px 220px minmax(0, 1fr); gap: 28px; align-items: start; } }
+.rc-ai-share { display: flex; flex-direction: column; gap: 6px; }
+.rc-ai-share b { font-family: var(--font-heading); font-weight: 500; font-size: 56px; line-height: 0.9; letter-spacing: -0.05em; color: var(--ink); }
+.rc-ai-share span { font-size: 14px; line-height: 1.45; color: var(--muted); text-wrap: pretty; }
+.rc-ai-place { min-width: 0; }
+.rc-ai-rank { display: flex; align-items: baseline; gap: 8px; }
+.rc-ai-rank b { font-family: var(--font-heading); font-weight: 500; font-size: 28px; letter-spacing: -0.035em; color: var(--chart); }
+.rc-ai-rank span { font-size: 14px; color: var(--muted); }
+.rc-places { display: flex; gap: 2px; margin-top: 12px; }
+.rc-places i { flex: 1; min-width: 3px; height: 24px; border-radius: 1.5px; background: #e4e3ee; }
+.rc-places i.is-us { background: var(--chart); }
+.rc-ai-ends { display: flex; justify-content: space-between; margin-top: 6px; font-size: 12px; color: var(--quiet); }
+.rc-ai-src { margin-top: 18px; max-width: 860px; }
+
+/* =========================================================== R5 the full record (index-list-A Claude) */
+.rc-split { display: grid; gap: 40px; }
+@media (min-width: 1280px) { .rc-split { grid-template-columns: 420px minmax(0, 1fr); gap: 96px; align-items: start; } }
+.rc-split-body { margin-top: 20px; font-size: 17px; line-height: 1.55; color: var(--body); max-width: 400px; text-wrap: pretty; }
+.rc-tools { display: flex; flex-direction: column; gap: 14px; margin-bottom: 24px; }
+.rc-search { position: relative; color: var(--quiet); }
+.rc-search input { width: 100%; height: 52px; padding: 0 48px 0 18px; border: 0; border-radius: 14px; background: #ffffff; box-shadow: inset 0 0 0 1px #dcdae6; font: inherit; font-size: 15.5px; color: var(--ink); outline: none; transition: box-shadow var(--dur) var(--ease); }
+.rc-search input::placeholder { color: var(--quiet); }
+.rc-search input:focus { box-shadow: inset 0 0 0 1.5px var(--ind); }
+.rc-search svg { position: absolute; right: 17px; top: 17px; }
+.rc-filters { display: flex; flex-wrap: wrap; gap: 8px; }
+.rc-chip { display: inline-flex; align-items: center; gap: 7px; height: 40px; padding: 0 15px; border: 0; border-radius: 999px; background: #ffffff; box-shadow: inset 0 0 0 1px #d6d3e6; font: inherit; font-size: 14px; font-weight: 500; color: var(--ink); cursor: pointer; transition: background-color var(--dur) var(--ease), color var(--dur) var(--ease), box-shadow var(--dur) var(--ease); }
+.rc-chip:hover { box-shadow: inset 0 0 0 1px var(--ink); }
+.rc-chip-n { font-size: 12.5px; font-weight: 400; color: var(--quiet); font-variant-numeric: tabular-nums; }
+.rc-chip.is-on { background: var(--ink); color: #ffffff; box-shadow: none; }
+.rc-chip.is-on .rc-chip-n { color: #c9c5fb; }
+.rc-rows { border-top: 1px solid var(--ink); }
+.rc-row { display: grid; grid-template-columns: 28px minmax(0, 1fr) 32px; gap: 16px; align-items: center; padding: 16px 0; border-bottom: 1px solid var(--line); }
+.rc-row[hidden] { display: none; }
+.rc-row-main { min-width: 0; display: flex; flex-direction: column; gap: 4px; }
+.rc-row-title { font-size: 15.5px; font-weight: 500; line-height: 1.4; color: var(--ink); text-wrap: pretty; transition: color var(--dur) var(--ease); }
+.rc-row-main:hover .rc-row-title { color: var(--ind); }
+.rc-row-meta { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 12px; font-size: 13.5px; color: var(--quiet); }
+.rc-row-meta > span + span::before { content: "·"; margin-right: 12px; color: #c4c1d4; }
+.rc-row-meta .rc-pos-c { font-weight: 500; color: var(--ink); }
+.rc-open { display: flex; align-items: center; justify-content: center; width: 32px; height: 32px; border-radius: 99px; color: var(--quiet); transition: background-color var(--dur) var(--ease), color var(--dur) var(--ease); }
+.rc-open:hover { background: #eeecfe; color: var(--ind); }
+.rc-empty { padding: 28px 0; font-size: 15px; color: var(--muted); }
+.rc-index-foot { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 16px 32px; margin-top: 28px; }
+.rc-index-foot .v11-btn { cursor: pointer; border: 0; background: transparent; font: inherit; font-size: 15.5px; font-weight: 500; }
+.rc-index-foot .rc-src { margin-left: auto; max-width: 420px; text-align: right; }
+
+/* =========================================================== tablet and phone (< 1280): pictures fit their column */
+@media (max-width: 1279px) {
+  .rc-shot, .rc-shot img { width: 100% !important; height: auto !important; }
+  .rc-entry { max-width: 600px; }
+  .rc-hero .rc-shot-box { display: none; }
+}
+@media (max-width: 1023px) {
+  .rc-award-pub { grid-column: 1; grid-row: 1; }
+  .rc-award-honour, .rc-award-verdict { grid-column: 1 / -1; }
+  .rc-award-go { grid-column: 2; grid-row: 1; }
+}
+
+/* =========================================================== phone (< 768) */
+@media (max-width: 767px) {
+  .rc-hero { padding: 96px 0 56px; }
+  .rc-hero h1 { font-size: 40px; }
+  .rc-line { font-size: 17px; }
+  .rc-hero .rc-ground { padding: 10px; border-radius: 20px; }
+  .rc-shot-box { display: none; }
+  .rc-hero-cap { grid-template-columns: minmax(0, 1fr); gap: 10px; }
+  .rc-hero-cap-rank { box-shadow: none; padding: 0; }
+  .rc-hero-cap-rank b { font-size: 44px; }
+  .rc-awards-place { flex-direction: row; align-items: baseline; gap: 12px; padding: 20px 0 4px; }
+  .rc-awards-place b { font-size: 44px; }
+  .rc-award { padding: 18px 0; }
+  .rc-award-honour .is-t { font-size: 19px; }
+  .rc-for-side h3 { font-size: 26px; }
+  .rc-quote-t { font-size: 19px; }
+  .rc-ai-share b { font-size: 48px; }
+  .rc-index-foot .rc-src { text-align: left; margin-left: 0; }
+}

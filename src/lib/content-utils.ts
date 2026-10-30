@@ -55,6 +55,7 @@ import teamV11Content from "@/data/content/team-v11.json";
 import aiAuditContent from "@/data/content/ai-audit.json";
 import webinarAiSearchContent from "@/data/content/webinar-ai-search.json";
 import partnersV11Content from "@/data/content/partners-v11.json";
+import recognitionV11Content from "@/data/content/recognition-v11.json";
 import thankYouContent from "@/data/content/thank-you.json";
 import careersV11Content from "@/data/content/careers-v11.json";
 import legalV11Content from "@/data/content/legal-v11.json";
@@ -1705,6 +1706,7 @@ const contentRegistry: Record<string, unknown> = {
   "ai-audit": aiAuditContent,
   "webinar-ai-search": webinarAiSearchContent,
   "partners-v11": partnersV11Content,
+  "recognition-v11": recognitionV11Content,
   "thank-you": thankYouContent,
   "careers-v11": careersV11Content,
   "legal-v11": legalV11Content,
@@ -1989,6 +1991,11 @@ export type PartnersV11Content = typeof partnersV11Content;
 /** The v11 /partners page copy, moved out of its page component on 2026-09-26 (partners.json keeps the legacy strip labels). */
 export async function getPartnersV11Content(): Promise<PartnersV11Content> {
   return markTree('partners-v11', partnersV11Content);
+}
+export type RecognitionV11Content = typeof recognitionV11Content;
+/** The v11 /recognition page copy (design directions, 2026-10-30); the lists themselves come from Sanity `recognition`. */
+export async function getRecognitionV11Content(): Promise<RecognitionV11Content> {
+  return markTree('recognition-v11', recognitionV11Content);
 }
 export type ThankYouContent = typeof thankYouContent;
 /** The /thank-you page copy, moved out of its page component on 2026-09-26. */

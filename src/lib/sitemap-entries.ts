@@ -179,6 +179,11 @@ export async function buildSitemapEntries(): Promise<MetadataRoute.Sitemap> {
       priority: 0.7,
     },
     {
+      url: `${baseUrl}/recognition`,
+      changeFrequency: 'weekly',
+      priority: 0.7,
+    },
+    {
       url: `${baseUrl}/privacy`,
       changeFrequency: 'yearly',
       priority: 0.3,
