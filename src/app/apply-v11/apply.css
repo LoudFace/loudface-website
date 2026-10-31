@@ -24,19 +24,11 @@
 .ap-lede { font-size: 18px; line-height: 1.5; color: #e4e2fe; margin-top: 22px; max-width: 540px; }
 
 .ap-chart { margin: 34px 0 0; max-width: 600px; }
-.ap-ch-head { display: flex; align-items: flex-end; justify-content: space-between; margin-bottom: 14px; gap: 16px; }
-.ap-ch-k { font-size: 14px; font-weight: 500; color: #ffffff; }
-.ap-ch-m { color: #b9b4f5; font-weight: 400; }
-.ap-ch-big { font-family: var(--font-heading); font-weight: 500; font-size: 40px; letter-spacing: -0.045em; line-height: 1; white-space: nowrap; }
-.ap-plot { position: relative; width: 100%; aspect-ratio: 600 / 188; }
-.ap-svg { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
-.ap-pin, .ap-dot { position: absolute; transform: translate(-50%, -50%); border-radius: 99px; background: #ffffff; pointer-events: none; }
-.ap-pin { width: 14px; height: 14px; }
-.ap-pin { background: radial-gradient(circle, #1d1452 0 3px, #ffffff 3.5px); }
-.ap-dot { width: 10px; height: 10px; }
-.ap-bar-tag { position: absolute; font-size: 13px; font-weight: 500; color: #dcd9fe; white-space: nowrap; }
-.ap-ch-cap { position: relative; height: 18px; margin-top: 10px; font-size: 12.5px; color: #b9b4f5; display: flex; justify-content: space-between; }
-.ap-ch-m3 { position: absolute; transform: translateX(-50%); }
+.ap-ch-head { padding: 0; }
+.ap-ch-plot { position: relative; margin-top: 12px; }
+.ap-ch-plot .v11-slide-metric { left: 0; }
+.ap-ch-dates { padding: 0; }
+.ap-ch-cap { padding: 0; }
 
 .ap-cells { display: grid; grid-template-columns: repeat(3, 1fr); border-top: 1px solid rgba(255,255,255,0.18); margin-top: 28px; max-width: 600px; }
 .ap-cell { padding: 18px 18px 0 0; }
@@ -78,7 +70,7 @@
 .ap-btn { display: inline-flex; align-items: center; gap: 8px; height: 50px; padding: 0 24px; border-radius: 999px; background: #1a1040 !important;
   color: #ffffff !important; font-size: 15.5px; font-weight: 500; white-space: nowrap; transition: background var(--fast) var(--ease); }
 .ap-btn:hover { background: #2c2163 !important; }
-.ap-btn:disabled { background: #d6d3e6 !important; cursor: not-allowed; }
+.ap-btn:disabled { background: #e9e7f3 !important; color: #9d99b8 !important; cursor: not-allowed; }
 .ap-back { font-size: 15px; font-weight: 500; color: #6b6788 !important; white-space: nowrap; }
 .ap-field { display: block; width: 100%; margin-top: 18px; height: 60px; border-radius: 14px; border: 1.5px solid #d6d3e6; padding: 0 18px;
   font: 500 18px/1 var(--font-sans); color: #1a1040; background: #ffffff; outline: none; }
@@ -87,7 +79,8 @@
 .ap-error { font-size: 14px; color: #b23a26; margin-top: 8px; }
 .ap-done { margin-top: 24px; border-top: 1px solid #e4e4ea; }
 .ap-done:empty { display: none; }
-.ap-row { display: flex; align-items: center; height: 46px; border-bottom: 1px solid #e4e4ea; font-size: 15px; gap: 8px; }
+.ap-row { display: flex; align-items: center; width: 100%; height: 46px; border-bottom: 1px solid #e4e4ea !important; font-size: 15px; gap: 8px; text-align: left; }
+.ap-row:hover .ap-row-e { text-decoration: underline; }
 .ap-row-k { width: 150px; flex-shrink: 0; color: #6b6788; }
 .ap-row-v { flex: 1; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .ap-row-e { color: #4f46e5 !important; font-weight: 500; font-size: 14px; }
@@ -157,61 +150,70 @@
   .ap-gplate { width: min(640px, 100%); }
 }
 
-/* ============================================================ phone: the whole card in the first screen */
+/* ============================================================ phone: the whole card in the first screen
+   Sized by the screen's height, not squeezed evenly: --air runs from 8px on a 600px-high screen to 16px on a
+   740px one, and every gap above the card's last line is a multiple of it. What earns least on the first screen
+   goes (the "Under a minute" row, the long card title); the card keeps its padding and the tiles their size. */
 @media (max-width: 767px) {
+  .ap { --air: clamp(10px, calc(6dvh - 26px), 22px); }
   .ap-wide { display: none; }
   .ap-narrow { display: inline; }
   .ap-hero { padding-bottom: 36px; }
-  .ap-head { flex-direction: row; align-items: center; justify-content: space-between; gap: 12px; height: 52px; padding: 0 16px; }
+  .ap-head { flex-direction: row; align-items: center; justify-content: space-between; gap: 12px; height: calc(38px + var(--air)); padding: 0 20px; }
   .ap-logo { width: 104px; height: 22px; }
   .ap-chip { height: auto; padding: 0; border: 0; font-size: 12.5px; color: #c9c5f2; gap: 6px; }
   .ap-chip i { width: 6px; height: 6px; }
-  .ap-h1 { font-size: 29px; line-height: 1.04; letter-spacing: -0.04em; margin-top: 2px; padding: 0 16px; max-width: 360px; text-wrap: balance; }
+  .ap-h1 { font-size: clamp(26px, calc(3.4dvh + 7px), 32px); line-height: 1.06; letter-spacing: -0.038em; margin-top: calc(var(--air) * 0.3); padding: 0 20px; max-width: 390px; text-wrap: balance; }
   .ap-hero[data-step='cal'] .ap-h1-promise { display: none; }
   .ap-hero[data-step='cal'] .ap-h1-cal { display: inline; }
-  .ap-right { padding: 14px 10px 0; }
-  .ap-plate { padding: 8px; border-radius: 24px; }
-  .ap-card { border-radius: 18px; box-shadow: 0 18px 40px rgba(3,8,60,0.30); }
-  .ap-in { padding: 16px 16px 0; }
-  .ap-title { font-size: 19px; letter-spacing: -0.02em; }
+  .ap-right { padding: calc(var(--air) * 1.4) 12px 0; }
+  .ap-plate { padding: 6px; border-radius: 26px; }
+  .ap-card { border-radius: 20px; box-shadow: 0 18px 40px rgba(3,8,60,0.30); }
+  .ap-in { padding: calc(10px + var(--air) * 0.7) 18px 0; }
+  .ap-title { font-size: 18px; letter-spacing: -0.02em; }
   .ap-count { font-size: 13px; }
-  .ap-prog { margin-top: 12px; }
-  .ap-q { font-size: 16.5px; margin-top: 16px; }
-  .ap-hint { font-size: 13.5px; margin-top: 4px; }
-  .ap-tiles { gap: 8px; margin-top: 12px; }
-  .ap-tile { height: 48px; padding: 0 12px; gap: 10px; border-radius: 12px; font-size: 15px; }
-  .ap-r { width: 18px; height: 18px; }
+  .ap-prog { margin-top: calc(6px + var(--air) * 0.5); gap: 5px; }
+  .ap-prog i { height: 3px; }
+  .ap-q { font-size: 16.5px; margin-top: calc(6px + var(--air)); }
+  .ap-hint { font-size: 13.5px; margin-top: 3px; }
+  .ap-tiles { gap: 8px; margin-top: calc(4px + var(--air) * 0.6); }
+  .ap-tile { height: calc(36px + var(--air)); padding: 0 12px; gap: 9px; border-radius: 12px; border: 1px solid #e7e5ef; font-size: 15px; }
+  .ap-r { width: 16px; height: 16px; border-width: 1.5px; border-color: #c3c0d4; }
+  .ap-tile.is-sel { box-shadow: none; }
   .ap-tile.is-sel .ap-r { border-width: 5px; }
-  .ap-foot { margin-top: 14px; padding: 12px 16px 14px; gap: 12px; }
-  .ap-who { font-size: 13px; }
-  .ap-who img { width: 28px; height: 28px; }
-  .ap-btn { height: 44px; padding: 0 20px; font-size: 15px; }
-  .ap-back { font-size: 14.5px; }
-  .ap-field { margin-top: 12px; height: 50px; border-radius: 12px; padding: 0 14px; font-size: 16px; }
-  .ap-done { margin-top: 14px; }
-  .ap-row { height: 36px; font-size: 14px; }
-  .ap-row-k { width: 104px; }
-  .ap-body { font-size: 15px; line-height: 1.5; margin-top: 8px; }
-  .ap-offer { margin-top: 14px; padding-top: 14px; }
+  .ap-foot { margin-top: calc(4px + var(--air)); padding: 0 18px calc(8px + var(--air) * 0.7); border-top: 0; gap: 12px; }
+  .ap-who { display: none; }
+  .ap-card[data-step='q1'] .ap-btn { flex: 1; justify-content: center; }
+  .ap-btn { height: calc(38px + var(--air) * 0.6); padding: 0 22px; font-size: 15px; }
+  .ap-back { font-size: 14.5px; padding: 0 4px; }
+  .ap-field { margin-top: calc(6px + var(--air) * 0.5); height: 50px; border-radius: 12px; padding: 0 14px; font-size: 16px; }
+  .ap-error { font-size: 13px; margin-top: 6px; }
+  /* Earlier answers as chips: one or two lines instead of four rows. */
+  .ap-done { display: flex; flex-wrap: wrap; gap: 6px; margin-top: calc(6px + var(--air) * 0.5); border-top: 0; }
+  .ap-row { width: auto; max-width: 100%; height: 30px; padding: 0 10px; border: 1px solid #e7e5ef !important; border-radius: 8px; font-size: 13px; gap: 6px; }
+  .ap-row-k, .ap-row-e { display: none; }
+  .ap-row-v { font-weight: 500; }
+  .ap-body { font-size: 15px; line-height: 1.5; margin-top: calc(4px + var(--air) * 0.5); }
+  .ap-offer { margin-top: calc(6px + var(--air)); padding-top: calc(6px + var(--air)); }
   .ap-k { font-size: 12.5px; }
   .ap-ot { font-size: 18px; margin-top: 4px; }
   .ap-op { font-size: 14px; line-height: 1.45; margin-top: 4px; }
-  .ap-act { margin-top: 12px; gap: 12px; }
+  .ap-act { margin-top: calc(6px + var(--air) * 0.5); gap: 12px; }
   .ap-eng { gap: 6px; }
   .ap-eng img { width: 20px; height: 20px; }
-  .ap-link { height: 42px; margin-top: 8px; font-size: 14.5px; }
+  .ap-link { height: calc(36px + var(--air) * 0.5); margin-top: calc(var(--air) * 0.5); font-size: 14.5px; }
   .ap-link-cta { font-size: 14.5px; }
-  .ap-card[data-step='notfit'] .ap-foot { margin-top: 0; }
+  .ap-card[data-step='notfit'] .ap-foot { margin-top: 0; padding-top: calc(var(--air) * 0.5); }
   .ap-host { gap: 10px; padding-bottom: 10px; }
   .ap-host img { width: 36px; height: 36px; }
   .ap-host-t { font-size: 15px; font-family: var(--font-sans); letter-spacing: 0; }
   .ap-host-m { font-size: 12.5px; }
-  /* The booker scrolls inside the card; the card ends above the bottom of the screen at 375×600 and 390×660. */
-  .ap-cal { height: max(300px, calc(100svh - 268px)); margin: 0 -8px; }
-  .ap-pre { padding: 10px 16px 12px; font-size: 12.5px; }
-  .ap-lede { font-size: 16.5px; margin-top: 34px; padding: 0 20px; }
-  .ap-chart { margin: 26px 20px 0; }
-  .ap-ch-big { font-size: 34px; }
+  /* The booker scrolls inside the card; the card ends above the bottom of the screen at every phone height. */
+  .ap-cal { height: max(300px, calc(100dvh - 248px - var(--air) * 3)); margin: 0 -8px; }
+  .ap-pre { padding: 10px 18px 12px; font-size: 12.5px; }
+  .ap-lede { font-size: 16.5px; margin-top: 40px; padding: 0 20px; }
+  .ap-chart { margin: 30px 20px 0; }
+  .ap-ch-plot .v11-slide-metric { font-size: 48px; }
   .ap-cells { margin: 26px 20px 0; }
   .ap-cell { padding: 14px 10px 0 0; }
   .ap-cell + .ap-cell { padding-left: 10px; }

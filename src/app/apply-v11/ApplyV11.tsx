@@ -3,9 +3,9 @@ import Link from 'next/link';
 import { asset } from '@/lib/assets';
 import type { ApplyContent } from '@/lib/content-utils';
 import type { HomeV11Data } from '../home-v11/data';
-import { proofValue } from '../home-v11/hero-slides';
+import { periodOf, proofValue } from '../home-v11/hero-slides';
+import { LiveChart } from '../home-v11/LiveChart';
 import { img, personPhoto } from '../home-v11/ui';
-import { ApplyChart, barGeometry, chartDates } from './ApplyChart';
 import { ApplyHero } from './ApplyHero';
 
 /**
@@ -22,9 +22,10 @@ const ENGINES = ['fav-chatgpt.webp', 'fav-claude.png', 'fav-gemini.png', 'fav-pe
 
 export function ApplyV11({ c, data }: { c: ApplyContent; data: HomeV11Data | null }) {
   const series = data?.hero.delshad;
-  const dates = series ? chartDates(series) : null;
-  const m3 = series ? barGeometry(series) : null;
-  const m3Pct = series && m3 ? (m3.x(m3.monthThree) / 600) * 100 : 0;
+  const period = periodOf(series);
+  // The guarantee's bar: +25% over the first week (index 125), held until month 3 (the first week 91+ days after the start).
+  const startMs = series ? Date.parse(`${series.start.slice(0, 10)}T00:00:00Z`) : 0;
+  const monthThree = series?.dates.find((d) => Date.parse(`${d.slice(0, 10)}T00:00:00Z`) - startMs >= 91 * 86400000);
   const cells = [
     { n: proofValue(data, 'pond'), l: c.proof.pondLabel },
     { n: proofValue(data, 'hayesSearches'), l: c.proof.hayesLabel },
@@ -52,18 +53,31 @@ export function ApplyV11({ c, data }: { c: ApplyContent; data: HomeV11Data | nul
   const rest = (
     <>
       <p className="ap-lede"><span>{c.head.body}</span></p>
-      {series && dates && (
+      {series && (
         <figure className="ap-chart">
-          <div className="ap-ch-head">
-            <div className="ap-ch-k"><span>{c.chart.client}</span> · <span className="ap-ch-m">{c.chart.metric}</span><span className="ap-wide ap-ch-m"> · <span>{c.chart.source}</span></span></div>
-            <div className="ap-ch-big">{proofValue(data, 'delshadClicks')}</div>
+          <div className="v11-slide-head ap-ch-head">
+            <div className="v11-slide-tag"><span className="is-tag">{c.chart.tag}</span><span className="is-client">· {c.chart.client}</span></div>
           </div>
-          <ApplyChart series={series} barLabel={c.chart.bar} barShort={c.chart.barShort} />
-          <figcaption className="ap-ch-cap">
-            <span>{dates.first} · <span>{c.chart.start}</span></span>
-            <span className="ap-ch-m3" style={{ left: `${m3Pct}%` }}><span>{c.chart.monthThree}</span></span>
-            <span>{dates.last}</span>
-          </figcaption>
+          <div className="ap-ch-plot">
+            <LiveChart
+              series={series}
+              height={236}
+              margin={{ top: 84, right: 14, bottom: 4, left: 10 }}
+              tone="stage"
+              dots={false}
+              hatch
+              lineWidth={1.75}
+              pin={20}
+              end="plain"
+              tip={c.chart.tip}
+              format="index"
+              goal={monthThree ? { from: series.dates[0], to: monthThree, low: 0, high: 125, label: c.chart.bar } : undefined}
+            >
+              <span className="v11-slide-metric">{proofValue(data, 'delshadClicks')}</span>
+            </LiveChart>
+          </div>
+          <div className="v11-slide-dates ap-ch-dates"><span>{period.start}</span><span>{period.end}</span></div>
+          <figcaption className="v11-slide-cap ap-ch-cap"><span>{c.chart.caption}</span> · <span>{c.chart.source}</span></figcaption>
         </figure>
       )}
       <div className="ap-cells">

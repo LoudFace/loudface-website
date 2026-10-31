@@ -205,7 +205,7 @@ export function ApplyCard({ c, avatar, engines, onStep }: {
 
   const top = (n: number) => (
     <div className="ap-top">
-      <h2 className="ap-title"><span>{card.title}</span></h2>
+      <h2 className="ap-title"><span className="ap-wide"><span>{card.title}</span></span><span className="ap-narrow"><span>{card.titleShort}</span></span></h2>
       <div className="ap-count">
         <span className="ap-wide"><span>{card.questionWord}</span> {n} <span>{card.questionOf}</span> {total}</span>
         <span className="ap-narrow">{n} <span>{card.questionOf}</span> {total}</span>
@@ -328,12 +328,13 @@ export function ApplyCard({ c, avatar, engines, onStep }: {
         />
         {error && <div className="ap-error" id="apply-error" role="alert">{error}</div>}
         <div className="ap-done">
+          {/* Each earlier answer is one button: a row on desktop, a chip on a phone, either way it reopens that step. */}
           {done.map((row) => (
-            <div className="ap-row" key={row.label}>
+            <button type="button" className="ap-row" key={row.label} onClick={() => go(row.to)}>
               <span className="ap-row-k">{row.label}</span>
-              <span className="ap-row-v">{row.value}</span>
-              <button type="button" className="ap-row-e" onClick={() => go(row.to)}><span>{card.edit}</span></button>
-            </div>
+              <span className="ap-row-v">{row.to === 1 ? row.value.replace(/^https:\/\//, '') : row.value}</span>
+              <span className="ap-row-e"><span>{card.edit}</span></span>
+            </button>
           ))}
         </div>
       </div>

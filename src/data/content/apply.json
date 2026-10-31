@@ -9,13 +9,12 @@
     "body": "Senior strategists, writers and developers design, write and ship the pages Google ranks and AI answers cite. Measured in your own Search Console."
   },
   "chart": {
+    "tag": "Clicks",
     "client": "Delshad Legal",
-    "metric": "Google clicks a week",
+    "tip": "Google clicks a week",
+    "caption": "Google clicks a week outside the celebrity-case pages",
     "source": "Search Console",
-    "bar": "Our bar: +25% by month 3",
-    "barShort": "Our bar: +25%",
-    "start": "we start",
-    "monthThree": "Month 3"
+    "bar": "Our bar: +25% by month 3"
   },
   "proof": {
     "pondLabel": "Pond, Google impressions beyond its name, in 5 weeks",
@@ -38,12 +37,24 @@
       "question": "What’s your monthly revenue?",
       "summary": "Monthly revenue",
       "options": [
-        { "label": "Under $50K" },
-        { "label": "$50K-$100K" },
-        { "label": "$100K-$250K" },
-        { "label": "$250K-$500K" },
-        { "label": "$500K-$1M" },
-        { "label": "$1M+" }
+        {
+          "label": "Under $50K"
+        },
+        {
+          "label": "$50K-$100K"
+        },
+        {
+          "label": "$100K-$250K"
+        },
+        {
+          "label": "$250K-$500K"
+        },
+        {
+          "label": "$500K-$1M"
+        },
+        {
+          "label": "$1M+"
+        }
       ]
     },
     "website": {
@@ -73,7 +84,8 @@
       "summary": "Phone",
       "placeholder": "+1 415 555 0134",
       "invalid": "Enter the number with your country code, starting with +."
-    }
+    },
+    "titleShort": "Your application"
   },
   "notFit": {
     "title": "Not the right fit yet",
@@ -100,10 +112,22 @@
     "example": "Example · Your company",
     "title": "Our guarantee to Your company",
     "rows": [
-      { "label": "What we commit to", "value": "25% more organic traffic than your starting point" },
-      { "label": "By when", "value": "Within 3 months of kickoff" },
-      { "label": "How it is measured", "value": "In your own Search Console and analytics" },
-      { "label": "If we miss it", "value": "We keep working, at no fee, until you have it" }
+      {
+        "label": "What we commit to",
+        "value": "25% more organic traffic than your starting point"
+      },
+      {
+        "label": "By when",
+        "value": "Within 3 months of kickoff"
+      },
+      {
+        "label": "How it is measured",
+        "value": "In your own Search Console and analytics"
+      },
+      {
+        "label": "If we miss it",
+        "value": "We keep working, at no fee, until you have it"
+      }
     ],
     "signature": "Arnel Bukva",
     "signer": "Arnel Bukva, founder",

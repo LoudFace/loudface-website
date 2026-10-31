@@ -2,7 +2,7 @@
 
 import { curveCatmullRom } from '@visx/curve';
 import { useEffect, useId, useRef, useState, type CSSProperties, type ReactNode } from 'react';
-import { Area, AreaChart, Background, Bar, BarChart, ChartTooltip, PatternLines } from '@/components/charts';
+import { Area, AreaChart, Background, Bar, BarChart, ChartTooltip, PatternLines, ReferenceArea } from '@/components/charts';
 import { PatternArea } from '@/components/charts/pattern-area';
 import { useChartStable } from '@/components/charts/chart-context';
 import type { Series } from './data';
@@ -175,6 +175,27 @@ function StaticAxis({ series, tone = 'light' }: { series: Series; tone?: Tone })
 }
 (StaticAxis as unknown as { __isPostOverlay: boolean }).__isPostOverlay = true;
 
+/**
+ * A target drawn on an area chart (2026-10-31, /apply): the library's ReferenceArea from `from` to `to`, between
+ * `low` and `high` (data values), its top edge the bar the series has to clear, and a quiet label at its right end.
+ */
+export interface ChartGoal {
+  from: string;
+  to: string;
+  low: number;
+  high: number;
+  label?: ReactNode;
+}
+
+function GoalLabel({ goal, tone }: { goal: ChartGoal; tone: Tone }) {
+  const c = useChartStable();
+  const x = c.xScale(utc(goal.to));
+  const y = c.yScale(goal.high);
+  // The same pill as the start label, so it reads over the hatch.
+  return <g pointerEvents="none"><StartLabel x={x + 6} y={y} left stage={tone === 'stage'}>{goal.label}</StartLabel></g>;
+}
+(GoalLabel as unknown as { __isPostOverlay: boolean }).__isPostOverlay = true;
+
 export interface LiveChartProps {
   series: Series;
   height: number;
@@ -198,11 +219,13 @@ export interface LiveChartProps {
   format: ValueFormat;
   /** Drawn over the plot, top left (the slider's big number). */
   children?: ReactNode;
+  /** A target band with its label (area charts only). */
+  goal?: ChartGoal;
 }
 
 export function LiveChart({
   series, height, width, margin, tone = 'light', dots = true, lineWidth = 2, barGap = 0.3, pin = 26, startPrefix,
-  endLabel, endLabelAbove, end = 'halo', axis = false, hatch = false, tip, format, children,
+  endLabel, endLabelAbove, end = 'halo', axis = false, hatch = false, tip, format, children, goal,
 }: LiveChartProps) {
   const [mounted, setMounted] = useState(false);
   const [still, setStill] = useState(false);
@@ -233,6 +256,7 @@ export function LiveChart({
     axis ? <StaticAxis key="axis" series={series} tone={tone} /> : null,
     pin !== false ? <StartPin key="pin" series={series} size={pin} tone={tone} prefix={startPrefix} pinTop={0} /> : null,
     end !== 'none' ? <EndMark key="end" series={series} tone={tone} label={endLabel} above={endLabelAbove} halo={end === 'halo'} /> : null,
+    goal?.label && !series.bars ? <GoalLabel key="goal" goal={goal} tone={tone} /> : null,
   ];
 
   return (
@@ -266,6 +290,19 @@ export function LiveChart({
             margin={margin}
           >
             {dots && <Background pattern="dots" color={DOT[tone]} opacity={1} />}
+            {goal && (
+              <ReferenceArea
+                x1={utc(goal.from)}
+                x2={utc(goal.to)}
+                y1={goal.low}
+                y2={goal.high}
+                fill={tone === 'stage' ? 'rgba(183,170,242,0.26)' : 'rgba(79,57,246,0.10)'}
+                stroke={tone === 'stage' ? '#b7aaf2' : '#4f46e5'}
+                strokeStyle="solid"
+                strokeWidth={2}
+                fadeEdges={false}
+              />
+            )}
             {hatch && <PatternLines id={hatchId} height={5} width={5} stroke={tone === 'stage' ? 'rgba(255,255,255,0.22)' : 'rgba(79,57,246,0.16)'} strokeWidth={1} orientation={['vertical']} />}
             {hatch && <PatternArea dataKey="value" fill={`url(#${hatchId})`} curve={curveCatmullRom} />}
             <Area dataKey="value" curve={curveCatmullRom} fillOpacity={hatch ? 0 : tone === 'stage' ? 0.3 : tone === 'ink' ? 0.18 : 0.24} strokeWidth={lineWidth} stroke={ink} fill={ink} />
