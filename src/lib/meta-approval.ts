@@ -172,7 +172,8 @@ export function approvalBlocks(card: ApprovalCard, prepared: PreparedSchedule): 
   ];
   const answers = Object.entries(card.answers ?? {})
     // Name, email and phone already sit at the top; Cal.com also sends them as "Your Name" and "email_address".
-    .filter(([label]) => !/^(your)?(name|email|emailaddress|attendeephonenumber|phone|guests|location|notes|rescheduledreason)$/i.test(label.replace(/[^a-z]/gi, '')))
+    // /apply's event type labels them "Your name", "Work email" and "Phone" (2026-10-31).
+    .filter(([label]) => !/^(your|work)?(name|email|emailaddress|attendeephonenumber|phone|guests|location|notes|rescheduledreason)$/i.test(label.replace(/[^a-z]/gi, '')))
     .slice(0, 10)
     .map(([label, value]) => ({ type: 'mrkdwn', text: `*${label}*\n${value.slice(0, 300)}` }));
   const value = JSON.stringify(prepared);
