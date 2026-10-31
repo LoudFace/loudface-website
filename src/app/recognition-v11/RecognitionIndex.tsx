@@ -72,7 +72,7 @@ export function RecognitionIndex({ honours, c, initial }: { honours: Honour[]; c
         {honours.map((h, i) => (
           <li key={h.key} className="rc-row" hidden={!(shown[i] && (!capped || order[i] <= initial))}>
             <span className="rc-mark-slot is-28"><Mark mark={h.mark} size={28} /></span>
-            <a href={h.url} target="_blank" rel="noopener" className="rc-row-main">
+            <a href={h.url} target="_blank" rel="noopener nofollow" className="rc-row-main">
               <span className="rc-row-title">{h.honour}</span>
               <span className="rc-row-meta">
                 <span className={h.rank ? 'rc-pos-c' : ''}>{h.rank ? `#${h.rank} ${c.of} ${h.listSize ?? '?'}` : h.listed ? c.listed : c.recommended}</span>
@@ -81,7 +81,7 @@ export function RecognitionIndex({ honours, c, initial }: { honours: Honour[]; c
                 {h.citations > 0 && <span>{h.citations.toLocaleString('en-US')} {h.citations === 1 ? c.colCitation : c.colCitations}</span>}
               </span>
             </a>
-            <a href={h.url} target="_blank" rel="noopener" className="rc-open" aria-label={`${c.openAriaLabel}: ${h.title}`}><Arrow /></a>
+            <a href={h.url} target="_blank" rel="noopener nofollow" className="rc-open" aria-label={`${c.openAriaLabel}: ${h.title}`}><Arrow /></a>
           </li>
         ))}
       </ol>

@@ -21,11 +21,12 @@ import { Mark, RecognitionIndex } from './RecognitionIndex';
  *   R3 Recognised for    press-quotes-A Apollo + press-wall-A Harvey: verdicts in the publishers' words, by topic
  *   R4 Recognised by AI  ranking-table-D Aside: per engine, our place among the agencies tracked, never blended
  *   R5 The full record   index-list-A Claude: every honour, searchable, each linking out
- * Every list links out, followed (rel="noopener" only).
+ * Every list links out with rel="noopener nofollow": the honours are proof for readers, and most publishers are
+ * agencies, so no ranking value passes to them (Arnel, 2026-10-31).
  */
 
 type C = RecognitionV11Content;
-const ext = { target: '_blank', rel: 'noopener' } as const;
+const ext = { target: '_blank', rel: 'noopener nofollow' } as const;
 const pct = (v: number) => `${Math.round(v * 100)}%`;
 const ENGINE_NAME: Record<Engine['mark'], 'chatgpt' | 'perplexity' | 'googleAio'> = { chatgpt: 'chatgpt', perplexity: 'perplexity', googleAio: 'googleAio' };
 
