@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import crypto from 'node:crypto';
 import { sendMetaScheduleEvent } from '@/lib/meta-capi';
+import { postApprovalCard, prepareSchedule } from '@/lib/meta-approval';
 import { getPostHogServer } from '@/lib/posthog-server';
 import { notifySlackOfLead } from '@/lib/slack-notify';
 import { sendBookedCallEmail } from '@/lib/booked-call-email';
@@ -259,6 +260,27 @@ export async function POST(request: Request) {
         `[meta-capi] skipped: ${skipReasons.join('; ')}; mapped_event=${JSON.stringify(event)} ` +
           `payload_uid_present=${Boolean(bookingUid)} raw_trigger_event=${JSON.stringify(body.triggerEvent)} ` +
           `fbp_present=${Boolean(fbp)} fbc_present=${Boolean(fbc)}`
+      );
+      return;
+    }
+
+    // Approval mode (lib/meta-approval.ts): an intro call reaches Meta only after someone clicks ✅ on its Slack card.
+    // Other event types never reach Meta in this mode; only the public intro call is a lead.
+    if (process.env.META_SCHEDULE_MODE === 'approval') {
+      if (!isLeadBooking(body.payload)) return;
+      const phone = body.payload?.responses?.attendeePhoneNumber?.value;
+      const card = {
+        name: attendee?.name,
+        email,
+        phone: typeof phone === 'string' ? phone : undefined,
+        startTime: body.payload?.startTime,
+        timeZone: attendee?.timeZone,
+        bookingUid,
+        answers: collectAnswers(body.payload),
+      };
+      await postApprovalCard(
+        card,
+        prepareSchedule({ bookingUid, bookedAt: toEventTime(body.createdAt), email, phone: card.phone, name: attendee?.name, fbp, fbc })
       );
       return;
     }

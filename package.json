@@ -25,7 +25,8 @@
     "visuals:setup": "playwright install chromium",
     "visuals:publish": "tsx scripts/publish-draft.ts",
     "sync-drip-template": "node scripts/sync-drip-template.mjs",
-    "check:editor": "node scripts/inline-edit-check.mjs"
+    "check:editor": "node scripts/inline-edit-check.mjs",
+    "test:meta-approval": "tsx --test src/lib/__tests__/meta-approval.test.ts"
   },
   "dependencies": {
     "@ai-sdk/google": "4.0.34",
