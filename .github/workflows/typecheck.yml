@@ -60,6 +60,11 @@ jobs:
       - name: Same-site redirect tests
         run: npm run test:same-site
 
+      # The /apply page (src/lib/apply-qualify.ts, src/lib/meta-capi.ts): under $100K a month never qualifies,
+      # every band has its label, and the Meta Lead carries hashes and the shared event id only.
+      - name: Apply page tests
+        run: npm run test:apply
+
       # The five house rules of the editor that can be checked by reading the
       # repository: the bar behind a Draft Mode gate, getters through markTree,
       # metadata off the marked getters, no component transforming a content

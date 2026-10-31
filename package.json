@@ -26,7 +26,8 @@
     "visuals:publish": "tsx scripts/publish-draft.ts",
     "sync-drip-template": "node scripts/sync-drip-template.mjs",
     "check:editor": "node scripts/inline-edit-check.mjs",
-    "test:meta-approval": "tsx --test src/lib/__tests__/meta-approval.test.ts"
+    "test:meta-approval": "tsx --test src/lib/__tests__/meta-approval.test.ts",
+    "test:apply": "tsx --test src/lib/__tests__/apply.test.ts"
   },
   "dependencies": {
     "@ai-sdk/google": "4.0.34",

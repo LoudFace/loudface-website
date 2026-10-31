@@ -64,7 +64,7 @@ export async function searchSite(query: string, limit = 8): Promise<Entry[]> {
 }
 
 // Gated, private or tooling paths: not public pages, so never read for an agent.
-const PRIVATE_PREFIXES = ['/api', '/studio', '/p', '/fb', '/feedback', '/edit', '/dev-preview', '/preview', '/audit', '/thank-you', '/mcp', '/a2a', '/.well-known'];
+const PRIVATE_PREFIXES = ['/api', '/studio', '/p', '/fb', '/feedback', '/edit', '/dev-preview', '/preview', '/audit', '/thank-you', '/apply', '/mcp', '/a2a', '/.well-known'];
 
 /**
  * A page path on this site from what an agent typed: "/about", "about", "https://www.loudface.co/about".

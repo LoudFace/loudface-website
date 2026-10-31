@@ -16,3 +16,12 @@ export function isV11Route(pathname: string | null | undefined): boolean {
 export function isV3PreviewRoute(pathname: string | null | undefined): boolean {
   return !!pathname && pathname.startsWith('/dev-preview/home-') && !pathname.startsWith('/dev-preview/home-v11');
 }
+
+/**
+ * Routes that draw no site header: ad landing pages, where the only way on is the page's own form (/apply, the
+ * Meta-ads application page, 2026-10-31). They still get the consent card, CalHandler and PostHog from the layout.
+ */
+const BARE_ROUTES = ['/apply'];
+export function isBareRoute(pathname: string | null | undefined): boolean {
+  return !!pathname && BARE_ROUTES.some((r) => pathname === r || pathname.startsWith(`${r}/`));
+}

@@ -140,12 +140,16 @@ function collectAnswers(payload: CalWebhookPayload['payload']): Record<string, s
 // old check returned early on the id alone, every real intro call was classed as
 // "not a lead" — no Slack card and no email. Hence the OR below: either signal
 // qualifying is what makes this safe. A wrong id can no longer silence a lead.
-const LEAD_EVENT_TYPE_ID = 529903;
-const LEAD_EVENT_TYPE_SLUG = 'loudface-intro-call';
+//
+// The /apply page books its own copy of the intro call (2026-10-31): same host, length, Google Meet and availability,
+// with name, email and phone as its questions and the visitor's website and monthly revenue as hidden prefilled
+// ones. Id 7718812, created through the Cal.com API that day. Its bookings are leads like any intro call.
+const LEAD_EVENT_TYPE_IDS = new Set([529903, 7718812]);
+const LEAD_EVENT_TYPE_SLUGS = new Set(['loudface-intro-call', 'loudface-intro-call-apply']);
 
 function isLeadBooking(payload: CalWebhookPayload['payload']): boolean {
-  if (payload?.type === LEAD_EVENT_TYPE_SLUG) return true;
-  return payload?.eventTypeId === LEAD_EVENT_TYPE_ID;
+  if (payload?.type && LEAD_EVENT_TYPE_SLUGS.has(payload.type)) return true;
+  return typeof payload?.eventTypeId === 'number' && LEAD_EVENT_TYPE_IDS.has(payload.eventTypeId);
 }
 
 const EVENT_MAP: Record<string, string> = {
@@ -214,7 +218,8 @@ export async function POST(request: Request) {
     // Only a brand-new booking gets the email. A reschedule or cancellation
     // must not send "thanks for booking" again.
     if (event === 'call_booked' && email) {
-      const companyAnswer = body.payload?.responses?.['company-name']?.value;
+      // /apply bookings carry the website instead of a company name.
+      const companyAnswer = body.payload?.responses?.['company-name']?.value ?? body.payload?.responses?.website?.value;
       await sendBookedCallEmail({
         name: attendee?.name,
         email,

@@ -157,6 +157,7 @@ homepage quality and joins the library **before** a page uses it. Two copies of 
 | Readings as charts (`EngineSlope`, `Funnel` in `methodology-v11/MethodologyV11.tsx`; `TileChart`) | two readings per series as a slope; one sample through steps as a funnel with the lost part hatched |
 | Working documents (`MeasureSheet`, partner `Statement`, plan `Board`) | a spreadsheet, a statement or a board drawn as the thing itself, on the plate when it is the section's one document |
 | Honours parts (`recognition-v11/RecognitionV11.tsx`): awards table (`HonourRow`), entry captures with quote rows (`Entry`, `Quote`), AI place strip (`Places`) | outside recognition shown as honours: placements grouped like prizes with the publisher's verdict verbatim; a publisher's entry as it shows it; our place among tracked agencies per AI engine, never blended |
+| Application card (`apply-v11/ApplyCard.tsx`, `ApplyChart.tsx`) | an ad landing page's qualifying form: one question per step on the brand plate, the not-fit state, the inline Cal.com booker; on a phone the whole card fits the first screen in every step. /apply only (design D, 2026-10-31) |
 | `NextSteps` (`contact-v11/NextSteps.tsx`), `IndustryVoices`, `RelatedIndustries`, `ServiceResults`, `PostCard` | what happens after booking; a page's client voices; cards to other pages carrying that page's picture; a page's results set; an article card |
 
 ## 8. Hard rules

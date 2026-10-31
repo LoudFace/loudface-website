@@ -3,7 +3,7 @@
 import { usePathname } from "next/navigation";
 import { Header, type HeaderProps } from "@/components/Header";
 import type { NavV11Data } from "@/app/home-v11/NavV11";
-import { isV11Route, isV3PreviewRoute } from "@/lib/v11-routes";
+import { isBareRoute, isV11Route, isV3PreviewRoute } from "@/lib/v11-routes";
 
 const SITE_ORIGIN = "https://www.loudface.co";
 
@@ -42,6 +42,8 @@ function deriveRouteChrome(pathname: string): RouteChrome {
  */
 export function SiteHeader({ navContent, navV11 }: { navContent: HeaderProps["content"]; navV11?: NavV11Data }) {
   const pathname = usePathname();
+  // An ad landing page (/apply) has no header and no alternates: it is noindex and its only exit is its own form.
+  if (isBareRoute(pathname)) return null;
   const { heroTheme } = deriveRouteChrome(pathname);
   const v11 = isV11Route(pathname) && navV11 ? navV11 : undefined;
   const hreflangHref = pathname === "/" ? SITE_ORIGIN : `${SITE_ORIGIN}${pathname}`;

@@ -82,7 +82,7 @@ const nextConfig: NextConfig = {
       },
       {
         source:
-          '/:path((?!(?:api|_next|studio|p|fb|feedback|dev-preview|edit|thank-you|preview|figures|mcp|a2a)(?:/|$))[^.]+)',
+          '/:path((?!(?:api|_next|studio|p|fb|feedback|dev-preview|edit|thank-you|apply|preview|figures|mcp|a2a)(?:/|$))[^.]+)',
         headers: [
           {
             key: 'Link',

@@ -57,6 +57,7 @@ import webinarAiSearchContent from "@/data/content/webinar-ai-search.json";
 import partnersV11Content from "@/data/content/partners-v11.json";
 import recognitionV11Content from "@/data/content/recognition-v11.json";
 import thankYouContent from "@/data/content/thank-you.json";
+import applyContent from "@/data/content/apply.json";
 import careersV11Content from "@/data/content/careers-v11.json";
 import legalV11Content from "@/data/content/legal-v11.json";
 import consentContent from "@/data/content/consent.json";
@@ -1708,6 +1709,7 @@ const contentRegistry: Record<string, unknown> = {
   "partners-v11": partnersV11Content,
   "recognition-v11": recognitionV11Content,
   "thank-you": thankYouContent,
+  apply: applyContent,
   "careers-v11": careersV11Content,
   "legal-v11": legalV11Content,
   consent: consentContent,
@@ -2001,6 +2003,11 @@ export type ThankYouContent = typeof thankYouContent;
 /** The /thank-you page copy, moved out of its page component on 2026-09-26. */
 export async function getThankYouContent(): Promise<ThankYouContent> {
   return markTree('thank-you', thankYouContent);
+}
+export type ApplyContent = typeof applyContent;
+/** The /apply page copy (the Meta-ads application page, design D picked by Arnel on 2026-10-31). */
+export async function getApplyContent(): Promise<ApplyContent> {
+  return markTree('apply', applyContent);
 }
 export type CareersV11Content = typeof careersV11Content;
 /** The v11 /careers copy (the live page kept it in its component; moved here unchanged on 2026-09-26). */

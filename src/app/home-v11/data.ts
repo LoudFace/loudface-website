@@ -71,6 +71,8 @@ const PROOF = {
   toku: ['toku', 1],
   pond: ['pond', 1],
   hayes: ['hayes', 1],
+  // /apply's proof row (2026-10-31): non-branded Google searches that show Hayes Media, 5.4× in seven weeks
+  hayesSearches: ['hayes', 2],
   transalis: ['transalis', 1],
   dimer: ['dimer', 1],
   ceipal: ['ceipal', 2],

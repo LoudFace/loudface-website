@@ -1,0 +1,120 @@
+{
+  "head": {
+    "audience": "For B2B companies doing $100K+ a month",
+    "audienceShort": "For B2B, $100K+ a month",
+    "headline": "25% more organic traffic in 3 months.",
+    "headlineGhost": "Or we work for free until you have it.",
+    "calHeadline": "You’re a fit.",
+    "calHeadlineGhost": "Pick a time with Arnel.",
+    "body": "Senior strategists, writers and developers design, write and ship the pages Google ranks and AI answers cite. Measured in your own Search Console."
+  },
+  "chart": {
+    "client": "Delshad Legal",
+    "metric": "Google clicks a week",
+    "source": "Search Console",
+    "bar": "Our bar: +25% by month 3",
+    "barShort": "Our bar: +25%",
+    "start": "we start",
+    "monthThree": "Month 3"
+  },
+  "proof": {
+    "pondLabel": "Pond, Google impressions beyond its name, in 5 weeks",
+    "hayesLabel": "Hayes Media, non-branded searches, in 7 weeks",
+    "teams": "50+",
+    "teamsLabel": "B2B teams we’ve designed, built and grown for"
+  },
+  "card": {
+    "title": "Complete the application",
+    "questionOf": "of",
+    "questionWord": "Question",
+    "next": "Next",
+    "back": "Back",
+    "edit": "Edit",
+    "time": "Under a minute.",
+    "timeTail": "Then pick a time with Arnel.",
+    "sending": "One moment",
+    "error": "Something went wrong. Please try again.",
+    "revenue": {
+      "question": "What’s your monthly revenue?",
+      "summary": "Monthly revenue",
+      "options": [
+        { "label": "Under $50K" },
+        { "label": "$50K-$100K" },
+        { "label": "$100K-$250K" },
+        { "label": "$250K-$500K" },
+        { "label": "$500K-$1M" },
+        { "label": "$1M+" }
+      ]
+    },
+    "website": {
+      "question": "What’s your website?",
+      "hint": "So Arnel can look at it before the call.",
+      "summary": "Website",
+      "placeholder": "yourcompany.com",
+      "invalid": "Enter a website address, like yourcompany.com."
+    },
+    "name": {
+      "question": "What’s your name?",
+      "hint": "First and last name.",
+      "summary": "Name",
+      "placeholder": "Sam Lee",
+      "invalid": "Enter your first and last name."
+    },
+    "email": {
+      "question": "What’s your work email?",
+      "hint": "The calendar invite goes here.",
+      "summary": "Email",
+      "placeholder": "sam@yourcompany.com",
+      "invalid": "Enter a work email address."
+    },
+    "phone": {
+      "question": "What’s your phone number?",
+      "hint": "With your country code, in case the call link fails.",
+      "summary": "Phone",
+      "placeholder": "+1 415 555 0134",
+      "invalid": "Enter the number with your country code, starting with +."
+    }
+  },
+  "notFit": {
+    "title": "Not the right fit yet",
+    "body": "Thanks for being straight with us. We take on companies doing $100K or more a month, so a call isn’t the best use of your time yet.",
+    "offerKicker": "Free, no call needed",
+    "offerTitle": "See where AI answers put you",
+    "offerBody": "Your AI visibility score against competitors, plus a Loom from Arnel with one fix.",
+    "offerCta": "Run my free audit",
+    "caseLink": "How Delshad Legal grew its Google clicks 16×",
+    "caseLinkShort": "Delshad Legal, 16× clicks",
+    "caseCta": "Case study",
+    "change": "Change my answer"
+  },
+  "cal": {
+    "title": "LoudFace Intro Call with Arnel",
+    "meta": "30m · Google Meet",
+    "prefilled": "Your answers are filled in."
+  },
+  "guarantee": {
+    "eyebrow": "The guarantee",
+    "heading": "In writing,",
+    "headingGhost": "signed by the founder.",
+    "body": "The promise above goes into your agreement. We measure it in your own Search Console and analytics, and you get a report every month.",
+    "example": "Example · Your company",
+    "title": "Our guarantee to Your company",
+    "rows": [
+      { "label": "What we commit to", "value": "25% more organic traffic than your starting point" },
+      { "label": "By when", "value": "Within 3 months of kickoff" },
+      { "label": "How it is measured", "value": "In your own Search Console and analytics" },
+      { "label": "If we miss it", "value": "We keep working, at no fee, until you have it" }
+    ],
+    "signature": "Arnel Bukva",
+    "signer": "Arnel Bukva, founder",
+    "binding": "Written into your agreement",
+    "hostTitle": "Your call is with Arnel Bukva, founder",
+    "hostBody": "He runs the strategy call and your growth plan."
+  },
+  "footer": {
+    "legal": "© 2026 LoudFace · Dubai Silicon Oasis · Working with teams across the US",
+    "privacy": "Privacy",
+    "terms": "Terms",
+    "note": "Every result on this page is a real client’s, measured in their own Search Console or analytics. The guarantee’s terms are written into your agreement."
+  }
+}
