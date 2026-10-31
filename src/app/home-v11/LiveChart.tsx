@@ -185,14 +185,19 @@ export interface ChartGoal {
   low: number;
   high: number;
   label?: ReactNode;
+  /** Used when the full label would run past the plot's right edge (a phone). */
+  shortLabel?: ReactNode;
 }
 
 function GoalLabel({ goal, tone }: { goal: ChartGoal; tone: Tone }) {
   const c = useChartStable();
   const x = c.xScale(utc(goal.to));
   const y = c.yScale(goal.high);
-  // The same pill as the start label, so it reads over the hatch.
-  return <g pointerEvents="none"><StartLabel x={x + 6} y={y} left stage={tone === 'stage'}>{goal.label}</StartLabel></g>;
+  // The same pill as the start label, so it reads over the hatch. Under ~190px to the right edge the full label
+  // would be cut off (phone, 2026-10-31), so the short one is used there.
+  const room = c.innerWidth - x;
+  const label = room < 190 && goal.shortLabel ? goal.shortLabel : goal.label;
+  return <g pointerEvents="none"><StartLabel x={x + 6} y={y} left stage={tone === 'stage'}>{label}</StartLabel></g>;
 }
 (GoalLabel as unknown as { __isPostOverlay: boolean }).__isPostOverlay = true;
 

@@ -14,7 +14,8 @@
     "tip": "Google clicks a week",
     "caption": "Google clicks a week outside the celebrity-case pages",
     "source": "Search Console",
-    "bar": "Our bar: +25% by month 3"
+    "bar": "Our bar: +25% by month 3",
+    "barShort": "Our bar: +25%"
   },
   "proof": {
     "pondLabel": "Pond, Google impressions beyond its name, in 5 weeks",

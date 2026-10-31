@@ -79,7 +79,8 @@
 .ap-error { font-size: 14px; color: #b23a26; margin-top: 8px; }
 .ap-done { margin-top: 24px; border-top: 1px solid #e4e4ea; }
 .ap-done:empty { display: none; }
-.ap-row { display: flex; align-items: center; width: 100%; height: 46px; border-bottom: 1px solid #e4e4ea !important; font-size: 15px; gap: 8px; text-align: left; }
+/* The answer rows are buttons: `.ap .ap-done .ap-row` outranks the `.ap button` resets above (padding, font). */
+.ap .ap-done .ap-row { display: flex; align-items: center; width: 100%; height: 46px; padding: 0; border: 0; border-bottom: 1px solid #e4e4ea; font-size: 15px; gap: 8px; text-align: left; }
 .ap-row:hover .ap-row-e { text-decoration: underline; }
 .ap-row-k { width: 150px; flex-shrink: 0; color: #6b6788; }
 .ap-row-v { flex: 1; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
@@ -190,7 +191,7 @@
   .ap-error { font-size: 13px; margin-top: 6px; }
   /* Earlier answers as chips: one or two lines instead of four rows. */
   .ap-done { display: flex; flex-wrap: wrap; gap: 6px; margin-top: calc(6px + var(--air) * 0.5); border-top: 0; }
-  .ap-row { width: auto; max-width: 100%; height: 30px; padding: 0 10px; border: 1px solid #e7e5ef !important; border-radius: 8px; font-size: 13px; gap: 6px; }
+  .ap .ap-done .ap-row { width: auto; max-width: 100%; height: 30px; padding: 0 10px; border: 1px solid #e7e5ef; border-radius: 8px; font-size: 13px; gap: 6px; }
   .ap-row-k, .ap-row-e { display: none; }
   .ap-row-v { font-weight: 500; }
   .ap-body { font-size: 15px; line-height: 1.5; margin-top: calc(4px + var(--air) * 0.5); }

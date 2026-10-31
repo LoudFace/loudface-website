@@ -71,7 +71,7 @@ export function ApplyV11({ c, data }: { c: ApplyContent; data: HomeV11Data | nul
               end="plain"
               tip={c.chart.tip}
               format="index"
-              goal={monthThree ? { from: series.dates[0], to: monthThree, low: 0, high: 125, label: c.chart.bar } : undefined}
+              goal={monthThree ? { from: series.dates[0], to: monthThree, low: 0, high: 125, label: c.chart.bar, shortLabel: c.chart.barShort } : undefined}
             >
               <span className="v11-slide-metric">{proofValue(data, 'delshadClicks')}</span>
             </LiveChart>
