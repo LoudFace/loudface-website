@@ -1,8 +1,8 @@
 {
   "head": {
-    "audience": "For coaches and course creators doing $100K+ a month",
-    "audienceShort": "For coaches, $100K+ a month",
-    "headline": "25% more organic traffic in 3 months.",
+    "audience": "For coaches and course creators doing $50K+ a month",
+    "audienceShort": "For coaches, $50K+ a month",
+    "headline": "3× your organic traffic.",
     "headlineGhost": "Or we work for free until you have it.",
     "calHeadline": "You’re a fit.",
     "calHeadlineGhost": "Pick a time with Arnel.",
@@ -14,8 +14,8 @@
     "tip": "Google clicks a week",
     "caption": "Google clicks a week outside the celebrity-case pages",
     "source": "Search Console",
-    "bar": "Our bar: +25% by month 3",
-    "barShort": "Our bar: +25%"
+    "bar": "Our bar: 3×",
+    "barShort": "Our bar: 3×"
   },
   "proof": {
     "pondLabel": "Pond, Google impressions beyond its name, in 5 weeks",
@@ -83,7 +83,7 @@
   },
   "notFit": {
     "title": "Not the right fit yet",
-    "body": "Thanks for being straight with us. We take on companies doing $100K or more a month, so a call isn’t the best use of your time yet.",
+    "body": "Thanks for being straight with us. We take on companies doing $50K or more a month, so a call isn’t the best use of your time yet.",
     "offerKicker": "Free, no call needed",
     "offerTitle": "See where AI answers put you",
     "offerBody": "Your AI visibility score against competitors, plus a Loom from Arnel with one fix.",
@@ -108,11 +108,11 @@
     "rows": [
       {
         "label": "What we commit to",
-        "value": "25% more organic traffic than your starting point"
+        "value": "3× your organic traffic from your starting point"
       },
       {
         "label": "By when",
-        "value": "Within 3 months of kickoff"
+        "value": "Agreed with you before we start"
       },
       {
         "label": "How it is measured",

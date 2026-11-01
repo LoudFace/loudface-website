@@ -1,7 +1,7 @@
 /**
  * /apply — the Meta-ads application page (design D, picked by Arnel on 2026-10-31).
  *
- * Visitors arrive from an ad: no site header, one application card that qualifies on revenue (under $100K a month is
+ * Visitors arrive from an ad: no site header, one application card that qualifies on revenue (under $50K a month is
  * turned away), sends Meta a Lead (POST /api/apply) and opens the Cal.com booker for the funnel's own event type
  * (arnelbukva/loudface-intro-call-apply, id 7718812). An ad landing page, so it is noindex, outside the sitemap,
  * llms.txt and the agent surface (src/lib/agent-surface.ts), and has no Markdown twin (next.config.ts).
@@ -17,8 +17,8 @@ import { getHomeV11Data } from '../../home-v11/data';
 import { ApplyV11 } from '../../apply-v11/ApplyV11';
 
 export const metadata: Metadata = {
-  title: 'Apply: 25% more organic traffic in 3 months',
-  description: 'Senior strategists, writers and developers ship the pages Google ranks and AI answers cite. 25% more organic traffic in 3 months, or we work for free until you have it.',
+  title: 'Apply: 3× your organic traffic',
+  description: 'Senior strategists, writers and developers ship the pages Google ranks and AI answers cite. 3× your organic traffic, or we work for free until you have it.',
   robots: { index: false, follow: false },
   alternates: { canonical: '/apply' },
 };

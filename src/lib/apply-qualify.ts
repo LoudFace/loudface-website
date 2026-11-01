@@ -1,6 +1,6 @@
 /**
  * The /apply application (2026-10-31): the revenue bands and the answer checks, shared by the card in the browser and
- * POST /api/apply on the server. Arnel's rule: under $100K a month is turned away, politely, with no call and no
+ * POST /api/apply on the server. Arnel's rule: under $50K a month is turned away (was $100K until 2026-11-01), politely, with no call and no
  * Lead event. The band labels people read live in apply.json (`card.revenue.options`, same order); the ids and the
  * rule stay here, because a value used in a comparison must never come from a content file (inline editor rule 6).
  * Tested by `npm run test:apply`.
@@ -8,7 +8,7 @@
 
 export const REVENUE_BANDS = [
   { id: 'under_50k', qualifies: false },
-  { id: '50k_100k', qualifies: false },
+  { id: '50k_100k', qualifies: true },
   { id: '100k_250k', qualifies: true },
   { id: '250k_500k', qualifies: true },
   { id: '500k_1m', qualifies: true },
@@ -21,7 +21,7 @@ export function isRevenueBand(value: unknown): value is RevenueBandId {
   return typeof value === 'string' && REVENUE_BANDS.some((b) => b.id === value);
 }
 
-/** True for $100K a month and up. An unknown band never qualifies. */
+/** True for $50K a month and up. An unknown band never qualifies. */
 export function qualifies(band: unknown): boolean {
   return REVENUE_BANDS.some((b) => b.id === band && b.qualifies);
 }

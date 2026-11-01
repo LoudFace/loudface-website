@@ -20,7 +20,7 @@ import {
 /**
  * The /apply application card (design D, Arnel 2026-10-31). Four steps in the browser (revenue, website, name, work
  * email; the phone step was dropped on 2026-11-01), answers kept in sessionStorage so a reload or Back keeps them, every earlier answer editable under
- * the current question. Under $100K a month shows the not-fit state: no call, no Lead. After the last step the answers go
+ * the current question. Under $50K a month shows the not-fit state: no call, no Lead. After the last step the answers go
  * to POST /api/apply (Meta Lead through the Conversions API), the Pixel fires the same Lead with the same event id
  * when consent allows it, and the real Cal.com booker opens inside the card with every answer filled in.
  * On a phone the whole card fits the first screen in every step (390×660 and 375×600, DESIGN.md §7 "Application card").

@@ -25,9 +25,9 @@ const ENGINES = ['fav-chatgpt.webp', 'fav-claude.png', 'fav-gemini.png', 'fav-pe
 export function ApplyV11({ c, data }: { c: ApplyContent; data: HomeV11Data | null }) {
   const series = data?.hero.delshad;
   const period = periodOf(series);
-  // The guarantee's bar: +25% over the first week (index 125), held until month 3 (the first week 91+ days after the start).
-  const startMs = series ? Date.parse(`${series.start.slice(0, 10)}T00:00:00Z`) : 0;
-  const monthThree = series?.dates.find((d) => Date.parse(`${d.slice(0, 10)}T00:00:00Z`) - startMs >= 91 * 86400000);
+  // The guarantee's bar: 3× the first week (index 300), across the whole chart (Arnel, 2026-11-01: the promise is 3×,
+  // with no fixed month in the ad).
+  const lastDate = series?.dates[series.dates.length - 1];
   const cells = [
     { n: proofValue(data, 'pond'), l: c.proof.pondLabel },
     { n: proofValue(data, 'hayesSearches'), l: c.proof.hayesLabel },
@@ -73,7 +73,7 @@ export function ApplyV11({ c, data }: { c: ApplyContent; data: HomeV11Data | nul
               end="plain"
               tip={c.chart.tip}
               format="index"
-              goal={monthThree ? { from: series.dates[0], to: monthThree, low: 0, high: 125, label: c.chart.bar, shortLabel: c.chart.barShort } : undefined}
+              goal={lastDate ? { from: series.dates[0], to: lastDate, low: 0, high: 300, label: c.chart.bar, shortLabel: c.chart.barShort } : undefined}
             >
               <span className="v11-slide-metric">{proofValue(data, 'delshadClicks')}</span>
             </LiveChart>

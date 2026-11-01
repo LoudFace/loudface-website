@@ -15,9 +15,9 @@ import applyContent from '../../data/content/apply.json';
 const sha = (v: string) => createHash('sha256').update(v).digest('hex');
 const good = { revenue: '250k_500k', website: 'yourcompany.com', name: 'Sam Lee', email: 'Sam@YourCompany.com' };
 
-test('under $100K a month is turned away; $100K and up qualifies', () => {
+test('under $50K a month is turned away; $50K and up qualifies', () => {
   assert.equal(qualifies('under_50k'), false);
-  assert.equal(qualifies('50k_100k'), false);
+  assert.equal(qualifies('50k_100k'), true);
   for (const id of ['100k_250k', '250k_500k', '500k_1m', '1m_plus']) assert.equal(qualifies(id), true, id);
   assert.equal(qualifies('anything else'), false);
   assert.equal(qualifies(undefined), false);
@@ -29,7 +29,7 @@ test('every band has its label in apply.json, in the same order', () => {
 });
 
 test('the server refuses an unqualified band before reading anything else', () => {
-  assert.deepEqual(checkApplication({ ...good, revenue: '50k_100k' }), { ok: false, reason: 'not_qualified' });
+  assert.deepEqual(checkApplication({ ...good, revenue: 'under_50k' }), { ok: false, reason: 'not_qualified' });
   assert.deepEqual(checkApplication({ ...good, revenue: 'nope' }), { ok: false, reason: 'revenue' });
 });
 
