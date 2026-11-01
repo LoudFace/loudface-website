@@ -178,7 +178,7 @@ function HorizontalBars({ data }: { data: BlogVisualChart['data'] }) {
           <div key={i} className="min-w-0">
             <div className="flex items-baseline justify-between gap-3 mb-1.5">
               <span className="text-sm text-surface-700 leading-snug">{item.label}</span>
-              <span className="text-sm font-medium text-surface-900 tabular-nums shrink-0">
+              <span className="min-w-0 text-right text-sm font-medium text-surface-900 tabular-nums">
                 {formatValue(item.value, item.unit)}
               </span>
             </div>
