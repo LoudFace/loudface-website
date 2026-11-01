@@ -1,0 +1,50 @@
+{
+  "head": {
+    "tag": "Call booked",
+    "headline": "Your call with Arnel is booked.",
+    "headlineGhost": "Here is how to make it count.",
+    "body": "The invite is on its way to your inbox from Cal.com. Three small things below make sure the call happens and is worth your time.",
+    "quote": "“I look at your site before we talk, so the 30 minutes go to your numbers, not to introductions.”",
+    "quoteBy": "Arnel Bukva, founder"
+  },
+  "card": {
+    "title": "Before the call",
+    "sub": "Three things that make the 30 minutes count.",
+    "invite": {
+      "title": "Accept the invite",
+      "body": "Find the invite in your inbox and click Yes, so the call and its Google Meet link land in your calendar.",
+      "going": "Going?",
+      "yes": "Yes",
+      "maybe": "Maybe",
+      "no": "No"
+    },
+    "join": {
+      "title": "Join on time, somewhere quiet",
+      "body": "30 minutes on Google Meet. Have your website and Google Search Console open.",
+      "length": "30 min",
+      "console": "Search Console",
+      "site": "Your website"
+    },
+    "cover": {
+      "title": "What Arnel will cover",
+      "body": "Where your site stands in Google and AI answers today, what we would do first, and whether we are a fit. The report is yours either way."
+    }
+  },
+  "proof": {
+    "eyebrow": "While you wait",
+    "heading": "Two clients’ first months,",
+    "headingGhost": "in their own Search Console.",
+    "source": "Google Search Console",
+    "genie": {
+      "client": "Genie Teacher",
+      "lead": "More Google clicks a week:",
+      "tip": "of the week the work began"
+    },
+    "pond": {
+      "client": "Pond",
+      "lead": "More Google impressions a day outside Pond’s name:",
+      "tip": "of the baseline day"
+    }
+  },
+  "guaranteeBody": "25% more organic traffic in 3 months, or we keep working for free. It goes into your agreement, measured in your own Search Console and analytics, with a report every month."
+}

@@ -128,6 +128,9 @@ export interface HomeV11Data {
   leads: Record<'delshad' | 'genie', Series>;
   results: Record<'genie' | 'lf', Series>;
   bentoGenie: Series;
+  /** Genie Teacher's Google clicks a week, indexed to the week the work began, through the best week: the series its
+   *  case page draws as "Google clicks per week" (case-v11/series.ts). /apply/booked shows it (2026-11-01). */
+  genieWeekly?: Series;
   /** Every figure a tile prints, from the case studies' result fields. A key is absent when its study's field is empty. */
   proof: Partial<Record<ProofKey, Proof>>;
 }
@@ -181,6 +184,7 @@ export const getHomeV11Data = cache(async (): Promise<HomeV11Data | null> => {
   const transalis = ins('transalis');
   const transalisPts = transalis.topicClimb?.points ?? [];
 
+  const genieWeekly = clicksPerWeek(gTrend, genie.engagementStart ?? '2026-07-05');
   const genieImpressions: Series = {
     dates: gTrend.map((p) => p.date as string),
     values: rolling(gTrend.map((p) => p.impressions), 5),
@@ -229,6 +233,7 @@ export const getHomeV11Data = cache(async (): Promise<HomeV11Data | null> => {
       lf: { dates: lfDates, values: rolling(lfVals, 5), start: lfDates[0] },
     },
     bentoGenie: genieImpressions,
+    genieWeekly: genieWeekly ? { dates: genieWeekly.dates, values: genieWeekly.values, start: genie.engagementStart ?? '2026-07-05' } : undefined,
     proof,
   };
 });

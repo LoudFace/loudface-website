@@ -261,7 +261,7 @@ export function ApplyCard({ c, avatar, engines, onStep }: {
           <div className="ap-cal">
             <CalBooker answers={answers} band={strip(bandLabel)} utm={utm} onBooked={() => {
               try { window.sessionStorage.removeItem(STORE); } catch { /* storage refused */ }
-              router.push('/thank-you');
+              router.push('/apply/booked');
             }} />
           </div>
         </div>
@@ -394,7 +394,7 @@ function CalBooker({ answers, band, utm, onBooked }: { answers: Answers; band: s
           dark: { 'cal-brand': '#4f46e5', 'cal-border-booker': 'transparent', 'cal-border-booker-width': '0px' },
         },
       });
-      // A booking goes to /thank-you with nothing about the visitor in the address.
+      // A booking goes to /apply/booked with nothing about the visitor in the address.
       cal('on', { action: 'bookingSuccessfulV2', callback: () => booked.current() });
     })();
     return () => { off = true; };

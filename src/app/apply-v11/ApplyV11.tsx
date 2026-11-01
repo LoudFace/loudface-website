@@ -1,5 +1,6 @@
 import { Caveat } from 'next/font/google';
 import Link from 'next/link';
+import type { ReactNode } from 'react';
 import { asset } from '@/lib/assets';
 import type { ApplyContent } from '@/lib/content-utils';
 import type { HomeV11Data } from '../home-v11/data';
@@ -16,7 +17,8 @@ import { ApplyHero } from './ApplyHero';
  * then a thin footer. No site header: visitors arrive from an ad, and the only way on is the application.
  * Every figure is a case study's published number (home-v11/data.ts PROOF); copy in apply.json.
  */
-const hand = Caveat({ subsets: ['latin'], weight: ['600'], variable: '--font-hand', preload: false });
+/** The signature's handwriting, shared with /apply/booked's copy of the letter. */
+export const hand = Caveat({ subsets: ['latin'], weight: ['600'], variable: '--font-hand', preload: false });
 
 const ENGINES = ['fav-chatgpt.webp', 'fav-claude.png', 'fav-gemini.png', 'fav-perplexity.png'].map((f) => img(`logos/${f}`));
 
@@ -88,47 +90,62 @@ export function ApplyV11({ c, data }: { c: ApplyContent; data: HomeV11Data | nul
     </>
   );
 
-  const g = c.guarantee;
   return (
     <div className={`v11 ap ${hand.variable}`}>
       <ApplyHero c={c} head={head} headline={headline} rest={rest} avatar={personPhoto('arnel-bukva')} engines={ENGINES} />
 
-      <section className="ap-band">
-        <div className="ap-band-in">
-          <div className="ap-gplate">
-            <div className="ap-sheet">
-              <div className="ap-sheet-h"><img src={asset('/images/loudface.svg')} alt="LoudFace" width={92} height={19} /><span>{g.example}</span></div>
-              <div className="ap-sheet-t"><span>{g.title}</span></div>
-              <div className="ap-sheet-rows">
-                {g.rows.map((r, i) => (
-                  <div className="ap-sheet-row" key={i}><span className="ap-sheet-k">{r.label}</span><span className="ap-sheet-v">{r.value}</span></div>
-                ))}
-              </div>
-              <div className="ap-sign">
-                <div><div className="ap-hand">{g.signature}</div><div className="ap-who2"><span>{g.signer}</span></div></div>
-                <div className="ap-who2"><span>{g.binding}</span></div>
-              </div>
-            </div>
-          </div>
-          <div className="ap-band-copy">
-            <div className="ap-eyebrow"><i aria-hidden="true" /><span>{g.eyebrow}</span></div>
-            <h2 className="ap-h2"><span>{g.heading}</span> <span className="ap-ghost2">{g.headingGhost}</span></h2>
-            <p className="ap-p"><span>{g.body}</span></p>
-            <div className="ap-hostline">
-              <img src={personPhoto('arnel-bukva')} alt="Arnel Bukva" width={56} height={56} />
-              <div><div className="ap-hostline-t"><span>{g.hostTitle}</span></div><div className="ap-hostline-s"><span>{g.hostBody}</span></div></div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <footer className="ap-footer">
-        <div className="ap-footer-row">
-          <span>{c.footer.legal}</span>
-          <span className="ap-footer-links"><Link href="/privacy">{c.footer.privacy}</Link><Link href="/terms">{c.footer.terms}</Link></span>
-        </div>
-        <p className="ap-footer-note"><span>{c.footer.note}</span></p>
-      </footer>
+      <ApplyGuarantee g={c.guarantee} />
+      <ApplyFooter f={c.footer} />
     </div>
+  );
+}
+
+/**
+ * The signed guarantee letter beside its heading and Arnel's host line, shared by /apply and /apply/booked.
+ * `body` replaces the paragraph under the heading (on /apply/booked there is no promise above it to point back to).
+ */
+export function ApplyGuarantee({ g, body }: { g: ApplyContent['guarantee']; body?: ReactNode }) {
+  return (
+    <section className="ap-band">
+      <div className="ap-band-in">
+        <div className="ap-gplate">
+          <div className="ap-sheet">
+            <div className="ap-sheet-h"><img src={asset('/images/loudface.svg')} alt="LoudFace" width={92} height={19} /><span>{g.example}</span></div>
+            <div className="ap-sheet-t"><span>{g.title}</span></div>
+            <div className="ap-sheet-rows">
+              {g.rows.map((r, i) => (
+                <div className="ap-sheet-row" key={i}><span className="ap-sheet-k">{r.label}</span><span className="ap-sheet-v">{r.value}</span></div>
+              ))}
+            </div>
+            <div className="ap-sign">
+              <div><div className="ap-hand">{g.signature}</div><div className="ap-who2"><span>{g.signer}</span></div></div>
+              <div className="ap-who2"><span>{g.binding}</span></div>
+            </div>
+          </div>
+        </div>
+        <div className="ap-band-copy">
+          <div className="ap-eyebrow"><i aria-hidden="true" /><span>{g.eyebrow}</span></div>
+          <h2 className="ap-h2"><span>{g.heading}</span> <span className="ap-ghost2">{g.headingGhost}</span></h2>
+          <p className="ap-p">{body ?? <span>{g.body}</span>}</p>
+          <div className="ap-hostline">
+            <img src={personPhoto('arnel-bukva')} alt="Arnel Bukva" width={56} height={56} />
+            <div><div className="ap-hostline-t"><span>{g.hostTitle}</span></div><div className="ap-hostline-s"><span>{g.hostBody}</span></div></div>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/** The thin legal footer of the /apply pages: no site footer, because an ad visitor's only way on is the page itself. */
+export function ApplyFooter({ f }: { f: ApplyContent['footer'] }) {
+  return (
+    <footer className="ap-footer">
+      <div className="ap-footer-row">
+        <span>{f.legal}</span>
+        <span className="ap-footer-links"><Link href="/privacy">{f.privacy}</Link><Link href="/terms">{f.terms}</Link></span>
+      </div>
+      <p className="ap-footer-note"><span>{f.note}</span></p>
+    </footer>
   );
 }

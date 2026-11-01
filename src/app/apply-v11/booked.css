@@ -1,0 +1,100 @@
+/* /apply/booked (2026-11-01). Values are the Paper boards' ("Proposed · Apply booked · show-up page", desktop and
+   phone). The guarantee letter and footer are /apply's (apply.css). On a phone the confirmation and the three steps
+   fit the first screen, down to 375×600. */
+
+/* ============================================================ hero */
+.bk-hero { position: relative; color: #ffffff; background: linear-gradient(180deg, #1a1040 0px, #1d1452 520px, #231a63 100%);
+  display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); min-height: 860px; }
+.bk-left { padding: 30px 40px 64px 72px; display: flex; flex-direction: column; max-width: 712px; }
+.bk-top { display: flex; flex-direction: column; align-items: flex-start; gap: 46px; }
+.bk-tag { display: inline-flex; align-items: center; gap: 10px; height: 36px; padding: 0 14px 0 8px; border-radius: 8px;
+  background: rgba(126,226,168,0.14); color: #c8f1d9; font-size: 14px; font-weight: 500; white-space: nowrap; }
+.bk-tag b { width: 22px; height: 22px; border-radius: 99px; background: #7ee2a8; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.bk-h1 { font-family: var(--font-heading); font-weight: 500; font-size: 58px; line-height: 1; letter-spacing: -0.045em;
+  margin-top: 26px; max-width: 590px; color: #ffffff; }
+.bk-lede { font-size: 18px; line-height: 1.5; color: #e4e2fe; margin-top: 22px; max-width: 540px; }
+.bk-note { display: flex; gap: 18px; align-items: flex-start; margin-top: 40px; padding-top: 28px; border-top: 1px solid rgba(255,255,255,0.16); max-width: 590px; }
+.bk-note img { width: 64px; height: 64px; border-radius: 99px; object-fit: cover; flex-shrink: 0; }
+.bk-quote { font-family: var(--font-heading); font-size: 21px; line-height: 1.35; letter-spacing: -0.012em; color: #ffffff; }
+.bk-by { font-size: 14px; color: #b9b4f5; margin-top: 10px; }
+
+.bk-right { padding: 24px 24px 24px 0; }
+.bk-plate { height: 100%; border-radius: 28px; display: flex; align-items: center; justify-content: center; padding: 40px 50px;
+  background: linear-gradient(140deg, #fcd68a 0%, #f59a7b 26%, #c9bdf5 58%, #4f46e5 100%); }
+
+/* ============================================================ the three steps */
+.bk-card { width: 100%; max-width: 600px; background: #ffffff; color: #1a1040; border-radius: 24px; padding: 34px 38px 14px;
+  box-shadow: 0 40px 90px rgba(3,8,60,0.42), 0 2px 6px rgba(3,8,60,0.18); }
+.bk-card-t { font-family: var(--font-heading); font-weight: 500; font-size: 26px; letter-spacing: -0.025em; line-height: 1.1; }
+.bk-card-s { font-size: 15px; color: #6b6788; margin-top: 6px; }
+.bk-steps { list-style: none; margin: 22px 0 0; padding: 0; }
+.bk-step { display: flex; gap: 18px; padding: 22px 0; border-top: 1px solid #e4e4ea; }
+.bk-step:first-child { border-top: 0; padding-top: 4px; }
+.bk-ico { width: 44px; height: 44px; border-radius: 12px; background: #f1f0f8; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.bk-st { font-family: var(--font-sans); font-size: 18px; font-weight: 500; letter-spacing: -0.01em; line-height: 1.3; }
+.bk-sp { font-size: 15.5px; line-height: 1.5; color: #4a4466; margin-top: 4px; }
+.bk-ui { display: flex; align-items: center; gap: 8px; margin-top: 12px; font-size: 13.5px; }
+.bk-q { color: #6b6788; }
+.bk-pill { height: 30px; padding: 0 12px; border-radius: 8px; border: 1px solid #dddbe8; display: flex; align-items: center; font-weight: 500; color: #1a1040; }
+.bk-pill.is-yes { background: #1b7f4b; border-color: #1b7f4b; color: #ffffff; }
+.bk-tags { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 12px; }
+.bk-chip { height: 30px; padding: 0 10px; border-radius: 8px; background: #f6f6f6; display: flex; align-items: center; gap: 7px; font-size: 13.5px; font-weight: 500; white-space: nowrap; }
+.bk-chip img { width: 16px; height: 16px; border-radius: 4px; }
+
+/* ============================================================ proof */
+.bk-proof { background: #f6f6f6; padding: 104px 0 112px; }
+.bk-proof-in { width: min(1296px, calc(100% - 2 * var(--gut))); margin-inline: auto; }
+.bk-pgrid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-top: 40px; }
+.bk-pcard { background: #ffffff; border-radius: 22px; padding: 24px 24px 18px; min-width: 0; color: #1a1040; }
+.bk-pk { display: flex; align-items: center; gap: 10px; font-family: var(--font-heading); font-weight: 500; font-size: 17px; }
+.bk-pk img { width: 22px; height: 22px; border-radius: 6px; }
+.bk-pbig { font-family: var(--font-heading); font-weight: 500; font-size: 52px; letter-spacing: -0.05em; line-height: 1; margin-top: 14px; }
+.bk-pcap { font-size: 15px; line-height: 1.45; color: #4a4466; margin-top: 8px; }
+.bk-pchart { margin-top: 18px; }
+
+/* ============================================================ tablet: stacked */
+@media (max-width: 1099px) {
+  .bk-hero { display: flex; flex-direction: column; min-height: 0; padding-bottom: 40px; }
+  .bk-left { display: contents; }
+  .bk-top { order: 1; padding: 24px var(--gut) 0; }
+  .bk-h1 { order: 2; padding: 0 var(--gut); }
+  .bk-right { order: 3; padding: 28px var(--gut) 0; }
+  .bk-plate { padding: 32px; }
+  .bk-lede { order: 4; padding: 0 var(--gut); margin-top: 36px; }
+  .bk-note-wrap { order: 5; padding: 0 var(--gut); }
+}
+
+/* ============================================================ phone: the confirmation and the steps in the first screen */
+@media (max-width: 767px) {
+  .bk-top { flex-direction: row; align-items: center; justify-content: space-between; gap: 12px; height: 60px; padding: 0 20px; }
+  .bk-tag { height: 30px; font-size: 13px; padding: 0 10px 0 6px; gap: 8px; }
+  .bk-tag b { width: 18px; height: 18px; }
+  .bk-h1 { font-size: 28px; line-height: 1.06; letter-spacing: -0.038em; margin-top: 10px; padding: 0 20px; max-width: 390px; }
+  .bk-right { padding: 16px 12px 0; }
+  .bk-plate { padding: 6px; border-radius: 26px; }
+  .bk-card { padding: 18px 18px 4px; border-radius: 20px; box-shadow: 0 18px 40px rgba(3,8,60,0.30); }
+  .bk-card-t { font-size: 19px; }
+  .bk-card-s { display: none; }
+  .bk-steps { margin-top: 12px; }
+  .bk-step { gap: 12px; padding: 12px 0; }
+  .bk-step:first-child { padding-top: 2px; }
+  .bk-ico { width: 36px; height: 36px; border-radius: 10px; }
+  .bk-st { font-size: 15.5px; }
+  .bk-sp { font-size: 13.5px; line-height: 1.45; margin-top: 2px; }
+  .bk-ui { margin-top: 8px; font-size: 12.5px; }
+  .bk-pill { height: 26px; padding: 0 9px; }
+  .bk-tags { display: none; }
+  .bk-lede { display: none; }
+  .bk-note-wrap { padding: 36px 20px 8px; }
+  .bk-note { margin-top: 0; padding-top: 0; border-top: 0; gap: 14px; }
+  .bk-note img { width: 52px; height: 52px; }
+  .bk-quote { font-size: 18px; }
+  .bk-hero { padding-bottom: 28px; }
+  .bk-proof { padding: 56px 0 60px; }
+  .bk-pgrid { grid-template-columns: 1fr; gap: 16px; margin-top: 26px; }
+  .bk-pcard { padding: 20px 20px 14px; }
+  .bk-pbig { font-size: 40px; }
+  .bk-pcap { font-size: 13.5px; }
+  .bk-proof .ap-h2 { font-size: 30px; }
+  .bk-proof .ap-ghost2 { display: inline; }
+}

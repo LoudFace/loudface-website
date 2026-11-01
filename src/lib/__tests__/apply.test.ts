@@ -90,3 +90,12 @@ test('no test code, no test_event_code; no cookies, no fbp/fbc keys', () => {
   assert.equal('test_event_code' in body, false);
   assert.deepEqual(Object.keys(body.data[0].user_data).sort(), ['em', 'fn', 'ph']);
 });
+
+test('a booking lands on /apply/booked with nothing about the visitor in the address', async () => {
+  const { readFile } = await import('node:fs/promises');
+  const card = await readFile(new URL('../../app/apply-v11/ApplyCard.tsx', import.meta.url), 'utf8');
+  const pushes = [...card.matchAll(/router\.push\(([^)]*)\)/g)].map((m) => m[1]);
+  assert.deepEqual(pushes, ["'/apply/booked'"]);
+  const page = await readFile(new URL('../../app/(site)/apply/booked/page.tsx', import.meta.url), 'utf8');
+  assert.match(page, /robots: \{ index: false, follow: false \}/);
+});

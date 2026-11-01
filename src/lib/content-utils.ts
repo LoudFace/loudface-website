@@ -58,6 +58,7 @@ import partnersV11Content from "@/data/content/partners-v11.json";
 import recognitionV11Content from "@/data/content/recognition-v11.json";
 import thankYouContent from "@/data/content/thank-you.json";
 import applyContent from "@/data/content/apply.json";
+import applyBookedContent from "@/data/content/apply-booked.json";
 import careersV11Content from "@/data/content/careers-v11.json";
 import legalV11Content from "@/data/content/legal-v11.json";
 import consentContent from "@/data/content/consent.json";
@@ -1710,6 +1711,7 @@ const contentRegistry: Record<string, unknown> = {
   "recognition-v11": recognitionV11Content,
   "thank-you": thankYouContent,
   apply: applyContent,
+  "apply-booked": applyBookedContent,
   "careers-v11": careersV11Content,
   "legal-v11": legalV11Content,
   consent: consentContent,
@@ -2008,6 +2010,11 @@ export type ApplyContent = typeof applyContent;
 /** The /apply page copy (the Meta-ads application page, design D picked by Arnel on 2026-10-31). */
 export async function getApplyContent(): Promise<ApplyContent> {
   return markTree('apply', applyContent);
+}
+export type ApplyBookedContent = typeof applyBookedContent;
+/** The /apply/booked page copy: where an /apply booking lands, built to raise the show-up rate (Arnel, 2026-11-01). */
+export async function getApplyBookedContent(): Promise<ApplyBookedContent> {
+  return markTree('apply-booked', applyBookedContent);
 }
 export type CareersV11Content = typeof careersV11Content;
 /** The v11 /careers copy (the live page kept it in its component; moved here unchanged on 2026-09-26). */
