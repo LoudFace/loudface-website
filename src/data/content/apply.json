@@ -79,13 +79,6 @@
       "placeholder": "sam@yourcompany.com",
       "invalid": "Enter a work email address."
     },
-    "phone": {
-      "question": "What’s your phone number?",
-      "hint": "With your country code, in case the call link fails.",
-      "summary": "Phone",
-      "placeholder": "+1 415 555 0134",
-      "invalid": "Enter the number with your country code, starting with +."
-    },
     "titleShort": "Your application"
   },
   "notFit": {

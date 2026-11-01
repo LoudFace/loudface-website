@@ -12,16 +12,15 @@ import {
   REVENUE_BANDS,
   isValidEmail,
   isValidName,
-  normalizePhone,
   normalizeWebsite,
   qualifies,
   type RevenueBandId,
 } from '@/lib/apply-qualify';
 
 /**
- * The /apply application card (design D, Arnel 2026-10-31). Five steps in the browser (revenue, website, name, work
- * email, phone), answers kept in sessionStorage so a reload or Back keeps them, every earlier answer editable under
- * the current question. Under $100K a month shows the not-fit state: no call, no Lead. After step 5 the answers go
+ * The /apply application card (design D, Arnel 2026-10-31). Four steps in the browser (revenue, website, name, work
+ * email; the phone step was dropped on 2026-11-01), answers kept in sessionStorage so a reload or Back keeps them, every earlier answer editable under
+ * the current question. Under $100K a month shows the not-fit state: no call, no Lead. After the last step the answers go
  * to POST /api/apply (Meta Lead through the Conversions API), the Pixel fires the same Lead with the same event id
  * when consent allows it, and the real Cal.com booker opens inside the card with every answer filled in.
  * On a phone the whole card fits the first screen in every step (390×660 and 375×600, DESIGN.md §7 "Application card").
@@ -31,9 +30,9 @@ const Cal = dynamic(() => import('@calcom/embed-react').then((m) => m.default ||
 const CAL_LINK = 'arnelbukva/loudface-intro-call-apply';
 const CAL_NAMESPACE = 'apply';
 const STORE = 'lf_apply';
-const FIELD_STEPS = ['website', 'name', 'email', 'phone'] as const;
+const FIELD_STEPS = ['website', 'name', 'email'] as const;
 type FieldKey = (typeof FIELD_STEPS)[number];
-type Step = 0 | 1 | 2 | 3 | 4 | 'notfit' | 'cal';
+type Step = 0 | 1 | 2 | 3 | 'notfit' | 'cal';
 type Answers = { revenue?: RevenueBandId } & Partial<Record<FieldKey, string>>;
 type Saved = { step: Step; answers: Answers; eventId?: string; utm?: Record<string, string> };
 
@@ -41,7 +40,6 @@ const AUTOCOMPLETE: Record<FieldKey, { type: string; autoComplete: string; input
   website: { type: 'text', autoComplete: 'url', inputMode: 'url' },
   name: { type: 'text', autoComplete: 'name', inputMode: 'text' },
   email: { type: 'email', autoComplete: 'email', inputMode: 'email' },
-  phone: { type: 'tel', autoComplete: 'tel', inputMode: 'tel' },
 };
 const UTM_KEYS = ['utm_source', 'utm_medium', 'utm_campaign', 'utm_content', 'utm_term'] as const;
 
@@ -100,7 +98,9 @@ export function ApplyCard({ c, avatar, engines, onStep }: {
     const fresh = Object.fromEntries(UTM_KEYS.map((k) => [k, params.get(k)?.slice(0, 100) ?? '']).filter(([, v]) => v));
     if (saved) {
       setAnswers(saved.answers ?? {});
-      setStep(saved.step ?? 0);
+      // A visit saved before the phone step was dropped can sit on a step that no longer exists.
+      const s = saved.step ?? 0;
+      setStep(typeof s === 'number' && s > FIELD_STEPS.length ? FIELD_STEPS.length : s);
       setEventId(saved.eventId);
       setUtm(Object.keys(fresh).length ? fresh : saved.utm ?? {});
     } else {
@@ -149,8 +149,7 @@ export function ApplyCard({ c, avatar, engines, onStep }: {
   function check(key: FieldKey, value: string): string | null {
     if (key === 'website') return normalizeWebsite(value);
     if (key === 'name') return isValidName(value) ? value.trim() : null;
-    if (key === 'email') return isValidEmail(value) ? value.trim() : null;
-    return normalizePhone(value);
+    return isValidEmail(value) ? value.trim() : null;
   }
 
   async function submit(all: Answers) {
@@ -191,11 +190,11 @@ export function ApplyCard({ c, avatar, engines, onStep }: {
     }
     const all = { ...answers, [key]: value };
     setAnswers(all);
-    if (step < 4) setStep((step + 1) as Step);
+    if (step < FIELD_STEPS.length) setStep((step + 1) as Step);
     else void submit(all);
   }
 
-  const total = 5;
+  const total = FIELD_STEPS.length + 1;
   const count = typeof step === 'number' ? step + 1 : total;
   const progress = (n: number) => (
     <div className="ap-prog" aria-hidden="true">
@@ -318,7 +317,7 @@ export function ApplyCard({ c, avatar, engines, onStep }: {
           type={ac.type}
           inputMode={ac.inputMode}
           autoComplete={ac.autoComplete}
-          enterKeyHint={step < 4 ? 'next' : 'go'}
+          enterKeyHint={step < FIELD_STEPS.length ? 'next' : 'go'}
           placeholder={strip(field.placeholder)}
           value={draft}
           onChange={(e) => { setDraft(e.target.value); if (error) setError(null); }}
@@ -367,7 +366,6 @@ function CalBooker({ answers, band, utm, onBooked }: { answers: Answers; band: s
       theme: 'light',
       name: answers.name ?? '',
       email: answers.email ?? '',
-      attendeePhoneNumber: answers.phone ?? '',
       website: answers.website ?? '',
       monthly_revenue: band,
       utm_source: utm.utm_source || 'website',

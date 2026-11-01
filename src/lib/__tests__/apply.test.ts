@@ -13,7 +13,7 @@ import { buildLeadEvent } from '../meta-capi';
 import applyContent from '../../data/content/apply.json';
 
 const sha = (v: string) => createHash('sha256').update(v).digest('hex');
-const good = { revenue: '250k_500k', website: 'yourcompany.com', name: 'Sam Lee', email: 'Sam@YourCompany.com', phone: '+1 (415) 555-0134' };
+const good = { revenue: '250k_500k', website: 'yourcompany.com', name: 'Sam Lee', email: 'Sam@YourCompany.com' };
 
 test('under $100K a month is turned away; $100K and up qualifies', () => {
   assert.equal(qualifies('under_50k'), false);
@@ -36,7 +36,7 @@ test('the server refuses an unqualified band before reading anything else', () =
 test('a full application comes back normalised', () => {
   const r = checkApplication(good);
   assert.ok(r.ok);
-  assert.deepEqual(r.answers, { revenue: '250k_500k', website: 'https://yourcompany.com', name: 'Sam Lee', email: 'sam@yourcompany.com', phone: '+14155550134' });
+  assert.deepEqual(r.answers, { revenue: '250k_500k', website: 'https://yourcompany.com', name: 'Sam Lee', email: 'sam@yourcompany.com' });
 });
 
 test('websites: bare domains, www and paths are fine; junk is not', () => {

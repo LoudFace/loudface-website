@@ -74,12 +74,11 @@ export type ApplyAnswers = {
   website: string;
   name: string;
   email: string;
-  phone: string;
 };
 
 export type CheckedApplication =
   | { ok: true; answers: ApplyAnswers }
-  | { ok: false; reason: 'revenue' | 'not_qualified' | 'website' | 'name' | 'email' | 'phone' };
+  | { ok: false; reason: 'revenue' | 'not_qualified' | 'website' | 'name' | 'email' };
 
 /** The server's check of a submitted application. Order matters: an unqualified band stops before anything else. */
 export function checkApplication(input: Partial<Record<keyof ApplyAnswers, unknown>>): CheckedApplication {
@@ -91,7 +90,5 @@ export function checkApplication(input: Partial<Record<keyof ApplyAnswers, unkno
   if (!name) return { ok: false, reason: 'name' };
   const email = typeof input.email === 'string' && isValidEmail(input.email) ? input.email.trim().toLowerCase() : null;
   if (!email) return { ok: false, reason: 'email' };
-  const phone = typeof input.phone === 'string' ? normalizePhone(input.phone) : null;
-  if (!phone) return { ok: false, reason: 'phone' };
-  return { ok: true, answers: { revenue: input.revenue, website, name, email, phone } };
+  return { ok: true, answers: { revenue: input.revenue, website, name, email } };
 }

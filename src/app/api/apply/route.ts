@@ -7,7 +7,7 @@ import { CONSENT_COOKIE, isTrackingAllowedServer, POSTHOG_DISTINCT_ID_COOKIE } f
 import { cleanReferralTag, REFERRAL_TAG_COOKIE } from '@/lib/referral-tag';
 
 /**
- * POST /api/apply: the /apply card's last step (2026-10-31). Checks the five answers again on the server (an
+ * POST /api/apply: the /apply card's last step (2026-10-31). Checks the four answers again on the server (an
  * unqualified or malformed application gets no Lead), sends Meta the Lead through the Conversions API, and records
  * one PostHog event that carries the revenue band and attribution only, never a name, email, phone or website
  * (the same line api/webhooks/cal/route.ts holds for booking answers). The answers themselves are not stored here:
@@ -51,7 +51,6 @@ export async function POST(request: Request) {
     eventId,
     eventTime: Date.now() / 1000,
     email: answers.email,
-    phone: answers.phone,
     name: answers.name,
     fbp,
     fbc,
@@ -77,5 +76,5 @@ export async function POST(request: Request) {
     await posthog.shutdown();
   }
 
-  return NextResponse.json({ ok: true, eventId, website: answers.website, phone: answers.phone });
+  return NextResponse.json({ ok: true, eventId, website: answers.website });
 }

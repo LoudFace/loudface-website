@@ -124,7 +124,7 @@ export type MetaLeadInput = {
   eventId: string;
   eventTime: number;
   email: string;
-  phone: string;
+  phone?: string;
   name: string;
   fbp?: string;
   fbc?: string;
