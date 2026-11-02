@@ -113,3 +113,10 @@ test('a booking lands on /apply/booked with nothing about the visitor in the add
   const page = await readFile(new URL('../../app/(site)/apply/booked/page.tsx', import.meta.url), 'utf8');
   assert.match(page, /robots: \{ index: false, follow: false \}/);
 });
+
+test('the Lead names the apply page it came from, and /apply when none is given', () => {
+  const legal = buildLeadEvent({ eventId: 'apply_abc12345', eventTime: 1, email: 'a@b.co', name: 'A', sourceUrl: 'https://www.loudface.co/apply/legal' });
+  assert.equal(legal.data[0].event_source_url, 'https://www.loudface.co/apply/legal');
+  const plain = buildLeadEvent({ eventId: 'apply_abc12345', eventTime: 1, email: 'a@b.co', name: 'A' });
+  assert.equal(plain.data[0].event_source_url, 'https://www.loudface.co/apply');
+});

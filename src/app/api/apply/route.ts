@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { cookies, headers } from 'next/headers';
-import { checkApplication, isApplyVertical, isValidEventId } from '@/lib/apply-qualify';
+import { applyPath, checkApplication, isApplyVertical, isValidEventId } from '@/lib/apply-qualify';
 import { sendMetaLeadEvent } from '@/lib/meta-capi';
 import { getPostHogServer } from '@/lib/posthog-server';
 import { CONSENT_COOKIE, isTrackingAllowedServer, POSTHOG_DISTINCT_ID_COOKIE } from '@/lib/consent';
@@ -58,6 +58,7 @@ export async function POST(request: Request) {
     fbc,
     clientIp,
     userAgent,
+    sourceUrl: `https://www.loudface.co${applyPath(vertical)}`,
   });
 
   const country = hdrs.get('cf-ipcountry') ?? hdrs.get('x-vercel-ip-country');

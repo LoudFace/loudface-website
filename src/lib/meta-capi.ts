@@ -130,6 +130,8 @@ export type MetaLeadInput = {
   fbc?: string;
   clientIp?: string;
   userAgent?: string;
+  /** The apply page the visitor finished on (/apply, /apply/legal, /apply/saas); /apply when absent. */
+  sourceUrl?: string;
 };
 
 /** Meta wants phone numbers as digits only, country code included. */
@@ -159,7 +161,7 @@ export function buildLeadEvent(input: MetaLeadInput, testEventCode?: string) {
         event_time: Math.floor(input.eventTime),
         event_id: input.eventId,
         action_source: 'website',
-        event_source_url: APPLY_SOURCE_URL,
+        event_source_url: input.sourceUrl ?? APPLY_SOURCE_URL,
         user_data,
       },
     ],
