@@ -81,6 +81,9 @@ const PROOF = {
   codeopImpressions: ['codeop', 2],
   outbound: ['outbound', 1],
   tokuPosition: ['toku', 2],
+  // /apply/saas's proof row (2026-11-02): Genie Teacher's AI visibility and share of voice, as its case study publishes them
+  genieAiVisibility: ['genie', 'row', 'r-0'],
+  genieShare: ['genie', 'row', 'r-1'],
   tokuAio: ['toku', 'row', 'aio'],
   tokuAioShare: ['toku', 'row', 'aio-share'],
   tokuImpressions: ['toku', 'row', 'impressions'],

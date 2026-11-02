@@ -15,7 +15,7 @@ import { ApplyV11 } from '../../../apply-v11/ApplyV11';
 
 export const metadata: Metadata = {
   title: 'Apply: 3× your firm’s organic traffic',
-  description: 'Senior strategists, writers and developers ship the practice-area pages Google ranks and AI answers cite. 3× your organic traffic, or we work for free until you have it.',
+  description: 'Senior strategists, writers and developers run law firms’ websites end to end so Google ranks them and AI answers name them. 3× your organic traffic, or we work for free until you have it.',
   robots: { index: false, follow: false },
   alternates: { canonical: '/apply/legal' },
 };

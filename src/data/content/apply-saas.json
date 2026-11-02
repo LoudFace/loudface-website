@@ -1,18 +1,18 @@
 {
   "head": {
-    "audience": "For B2B SaaS companies doing $50K+ a month",
-    "audienceShort": "For B2B SaaS, $50K+ a month",
+    "audience": "For B2B and B2C software companies doing $50K+ a month",
+    "audienceShort": "For software companies, $50K+ a month",
     "headline": "3× your organic traffic.",
     "headlineGhost": "Or we work for free until you have it.",
     "calHeadline": "You’re a fit.",
     "calHeadlineGhost": "Pick a time with Arnel.",
-    "body": "Senior strategists, writers and developers ship the comparison, use-case and product pages Google ranks and AI answers cite. Measured in your own Search Console."
+    "body": "SEO and GEO for software companies: senior strategists, writers and developers ship the pages Google ranks and AI answers cite. Measured in your own Search Console."
   },
   "chart": {
-    "tag": "Impressions",
-    "client": "Pond",
-    "tip": "Google impressions a day",
-    "caption": "Google impressions a day outside Pond’s name",
+    "tag": "Clicks",
+    "client": "Genie Teacher",
+    "tip": "Google clicks a week",
+    "caption": "Google clicks a week, against the May 2026 average",
     "source": "Search Console",
     "bar": "Our bar: 3×",
     "barShort": "Our bar: 3×"
@@ -20,10 +20,10 @@
   "proof": {
     "cells": [
       {
-        "label": "Toku, AI visibility on its category’s top buyer prompt"
+        "label": "Genie Teacher, lead requests a week since September"
       },
       {
-        "label": "Toku, Google impressions a month, Sep 2025 to Jan 2026"
+        "label": "Genie Teacher, share of voice in AI answers since May"
       }
     ],
     "teams": "50+",
@@ -89,13 +89,13 @@
   },
   "notFit": {
     "title": "Not the right fit yet",
-    "body": "Thanks for being straight with us. We take on SaaS companies doing $50K or more a month, so a call isn’t the best use of your time yet.",
+    "body": "Thanks for being straight with us. We take on software companies doing $50K or more a month, so a call isn’t the best use of your time yet.",
     "offerKicker": "Free, no call needed",
     "offerTitle": "See where AI answers put you",
     "offerBody": "Your AI visibility score against competitors, plus a Loom from Arnel with one fix.",
     "offerCta": "Run my free audit",
-    "caseLink": "How Toku became the name AI gives for stablecoin payroll",
-    "caseLinkShort": "Toku, 0 → 97.8% in AI answers",
+    "caseLink": "How Genie Teacher grew its Google clicks 72×",
+    "caseLinkShort": "Genie Teacher, 72× clicks",
     "caseCta": "Case study",
     "change": "Change my answer"
   },
