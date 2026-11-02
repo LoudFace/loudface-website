@@ -30,7 +30,15 @@ export type PreparedSchedule = {
   ln?: string;
   fbp?: string;
   fbc?: string;
+  /** The booker's browser and IP, which Meta requires on website events, and the page they booked from (2026-11-02). */
+  ua?: string;
+  ip?: string;
+  src?: string;
 };
+
+/** Only an address that looks like an IP, and only a page on our own site, ride to Meta. */
+const IP_PATTERN = /^[0-9a-fA-F:.]{3,45}$/;
+const SOURCE_PATTERN = /^https:\/\/(www\.)?loudface\.co\//;
 
 function sha256(value: string | undefined): string | undefined {
   const normalized = value?.trim().toLowerCase();
@@ -52,6 +60,9 @@ export function prepareSchedule(input: {
   name?: string;
   fbp?: string;
   fbc?: string;
+  userAgent?: string;
+  clientIp?: string;
+  sourceUrl?: string;
 }): PreparedSchedule {
   const [first, ...rest] = (input.name ?? '').trim().toLowerCase().split(/\s+/);
   const prepared: PreparedSchedule = { id: `cal_booking_${input.bookingUid}`, t: Math.floor(input.bookedAt) };
@@ -65,6 +76,9 @@ export function prepareSchedule(input: {
   if (ln) prepared.ln = ln;
   if (input.fbp) prepared.fbp = input.fbp;
   if (input.fbc) prepared.fbc = input.fbc;
+  if (input.userAgent?.trim()) prepared.ua = input.userAgent.trim().slice(0, 300);
+  if (input.clientIp && IP_PATTERN.test(input.clientIp)) prepared.ip = input.clientIp;
+  if (input.sourceUrl && SOURCE_PATTERN.test(input.sourceUrl)) prepared.src = input.sourceUrl.slice(0, 200);
   return prepared;
 }
 
@@ -83,6 +97,30 @@ export function isTooOld(prepared: PreparedSchedule, nowSeconds = Math.floor(Dat
   return nowSeconds - prepared.t > MAX_EVENT_AGE_SECONDS;
 }
 
+/** The request body for one approved Schedule. Pure, so the shape is tested without the network. */
+export function buildScheduleEvent(prepared: PreparedSchedule, testEventCode?: string) {
+  const { id, t, fbp, fbc, ua, ip, src, ...hashed } = prepared;
+  return {
+    data: [
+      {
+        event_name: 'Schedule',
+        event_time: t,
+        event_id: id,
+        action_source: 'website',
+        event_source_url: src ?? EVENT_SOURCE_URL,
+        user_data: {
+          ...hashed,
+          ...(fbp ? { fbp } : {}),
+          ...(fbc ? { fbc } : {}),
+          ...(ua ? { client_user_agent: ua } : {}),
+          ...(ip ? { client_ip_address: ip } : {}),
+        },
+      },
+    ],
+    ...(testEventCode ? { test_event_code: testEventCode } : {}),
+  };
+}
+
 export type MetaSendResult = { ok: true; received: number } | { ok: false; reason: string };
 
 /** Sends one approved Schedule event. event_time is when the call was booked, not when it was approved. */
@@ -92,25 +130,12 @@ export async function sendApprovedSchedule(prepared: PreparedSchedule): Promise<
   if (!pixelId || !accessToken) return { ok: false, reason: 'META_PIXEL_ID or META_CAPI_ACCESS_TOKEN is not set' };
   if (isTooOld(prepared)) return { ok: false, reason: 'booked more than 7 days ago; Meta refuses events that old' };
 
-  const { id, t, fbp, fbc, ...hashed } = prepared;
   const testCode = process.env.META_CAPI_TEST_EVENT_CODE;
   try {
     const response = await fetch(`https://graph.facebook.com/${META_GRAPH_API_VERSION}/${encodeURIComponent(pixelId)}/events`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${accessToken}` },
-      body: JSON.stringify({
-        data: [
-          {
-            event_name: 'Schedule',
-            event_time: t,
-            event_id: id,
-            action_source: 'website',
-            event_source_url: EVENT_SOURCE_URL,
-            user_data: { ...hashed, ...(fbp ? { fbp } : {}), ...(fbc ? { fbc } : {}) },
-          },
-        ],
-        ...(testCode ? { test_event_code: testCode } : {}),
-      }),
+      body: JSON.stringify(buildScheduleEvent(prepared, testCode)),
       signal: AbortSignal.timeout(10000),
     });
     const text = await response.text();
@@ -119,7 +144,7 @@ export async function sendApprovedSchedule(prepared: PreparedSchedule): Promise<
       return { ok: false, reason: `Meta answered ${response.status}` };
     }
     const received = Number((JSON.parse(text) as { events_received?: number }).events_received ?? 0);
-    console.log(`[meta-approval] sent ${id}: events_received=${received}${testCode ? ' (test event code)' : ''}`);
+    console.log(`[meta-approval] sent ${prepared.id}: events_received=${received}${testCode ? ' (test event code)' : ''}`);
     return received > 0 ? { ok: true, received } : { ok: false, reason: 'Meta received 0 events' };
   } catch (error) {
     console.error('[meta-approval] request failed', error);

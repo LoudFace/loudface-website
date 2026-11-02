@@ -251,6 +251,10 @@ export async function POST(request: Request) {
   // Direct cal.com bookings do not carry embed metadata, so browser match IDs are optional.
   const fbp = nonEmptyString(body.payload?.metadata?.fbp);
   const fbc = nonEmptyString(body.payload?.metadata?.fbc);
+  // /apply bookings also carry the booker's browser, IP and page (ApplyCard's CalBooker), which Meta wants on Schedule.
+  const userAgent = nonEmptyString(body.payload?.metadata?.ua);
+  const clientIp = nonEmptyString(body.payload?.metadata?.ip);
+  const sourceUrl = nonEmptyString(body.payload?.metadata?.src);
 
   const sendMetaSchedule = async () => {
     const bookingUid = body.payload?.uid;
@@ -285,7 +289,7 @@ export async function POST(request: Request) {
       };
       await postApprovalCard(
         card,
-        prepareSchedule({ bookingUid, bookedAt: toEventTime(body.createdAt), email, phone: card.phone, name: attendee?.name, fbp, fbc })
+        prepareSchedule({ bookingUid, bookedAt: toEventTime(body.createdAt), email, phone: card.phone, name: attendee?.name, fbp, fbc, userAgent, clientIp, sourceUrl })
       );
       return;
     }

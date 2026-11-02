@@ -94,6 +94,7 @@ export function ApplyCard({ c, avatar, engines, onStep, vertical = 'info', caseH
   const [sending, setSending] = useState(false);
   const [eventId, setEventId] = useState<string>();
   const [utm, setUtm] = useState<Record<string, string>>({});
+  const [clientIp, setClientIp] = useState<string>();
   const inputRef = useRef<HTMLInputElement>(null);
   const cardRef = useRef<HTMLElement>(null);
   const restored = useRef(false);
@@ -172,8 +173,9 @@ export function ApplyCard({ c, avatar, engines, onStep, vertical = 'info', caseH
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ ...all, eventId: id, fbc, utm, vertical }),
       });
-      const body = (await res.json()) as { ok?: boolean };
+      const body = (await res.json()) as { ok?: boolean; ip?: string };
       if (!res.ok || !body.ok) throw new Error('apply failed');
+      if (typeof body.ip === 'string') setClientIp(body.ip);
       // The Pixel's Lead carries the server's event id, so Meta keeps one of the two. Only with consent.
       const w = window as typeof window & { fbq?: (...args: unknown[]) => void };
       if (isTrackingAllowed() && typeof w.fbq === 'function') w.fbq('track', 'Lead', {}, { eventID: id });
@@ -265,7 +267,7 @@ export function ApplyCard({ c, avatar, engines, onStep, vertical = 'info', caseH
             <div><div className="ap-host-t"><span>{c.cal.title}</span></div><div className="ap-host-m"><span>{c.cal.meta}</span></div></div>
           </div>
           <div className="ap-cal">
-            <CalBooker answers={answers} band={strip(bandLabel)} utm={utm} vertical={vertical} onBooked={() => {
+            <CalBooker answers={answers} band={strip(bandLabel)} utm={utm} vertical={vertical} clientIp={clientIp} onBooked={() => {
               try { window.sessionStorage.removeItem(storeKey(vertical)); } catch { /* storage refused */ }
               router.push('/apply/booked');
             }} />
@@ -360,7 +362,7 @@ export function ApplyCard({ c, avatar, engines, onStep, vertical = 'info', caseH
  * website and revenue are hidden questions on the event type, so nobody types anything twice. fbp, fbc and lf_tag ride
  * as booking metadata the way CalHandler sends them, for the Schedule event the Slack approval later sends.
  */
-function CalBooker({ answers, band, utm, vertical, onBooked }: { answers: Answers; band: string; utm: Record<string, string>; vertical: ApplyVertical; onBooked: () => void }) {
+function CalBooker({ answers, band, utm, vertical, clientIp, onBooked }: { answers: Answers; band: string; utm: Record<string, string>; vertical: ApplyVertical; clientIp?: string; onBooked: () => void }) {
   const booked = useRef(onBooked);
   booked.current = onBooked;
   const [config] = useState<Record<string, string>>(() => {
@@ -382,6 +384,10 @@ function CalBooker({ answers, band, utm, vertical, onBooked }: { answers: Answer
       ...(fbp ? { 'metadata[fbp]': fbp } : {}),
       ...(fbc ? { 'metadata[fbc]': fbc } : {}),
       ...(tag ? { 'metadata[lf_tag]': tag } : {}),
+      // Meta requires the browser on website events and matches better with the IP; src names the page booked from.
+      'metadata[ua]': window.navigator.userAgent.slice(0, 300),
+      'metadata[src]': `${window.location.origin}${window.location.pathname}`.slice(0, 200),
+      ...(clientIp ? { 'metadata[ip]': clientIp } : {}),
     };
   });
   useEffect(() => {

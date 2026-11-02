@@ -6,7 +6,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { createHash, createHmac } from 'node:crypto';
-import { approvalBlocks, isTooOld, MAX_EVENT_AGE_SECONDS, parsePrepared, prepareSchedule, verifySlackSignature } from '../meta-approval';
+import { approvalBlocks, buildScheduleEvent, isTooOld, MAX_EVENT_AGE_SECONDS, parsePrepared, prepareSchedule, verifySlackSignature } from '../meta-approval';
 
 const sha = (v: string) => createHash('sha256').update(v).digest('hex');
 
@@ -55,4 +55,31 @@ test('accepts only a fresh request signed with the secret', () => {
   assert.equal(verifySlackSignature(body, String(now - 301), sign(now - 301), secret, now), false);
   assert.equal(verifySlackSignature(body, null, sign(now), secret, now), false);
   assert.equal(verifySlackSignature(body, String(now), null, secret, now), false);
+});
+
+test('the Schedule event carries the booker\'s browser, IP and page, which Meta requires on website events', () => {
+  const ua = 'Mozilla/5.0 (iPhone; CPU iPhone OS 18_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.0 Mobile/15E148 Safari/604.1';
+  const p = prepareSchedule({ bookingUid: 'b1', bookedAt: 1_800_000_000, email: 'a@b.co', fbc: 'fb.1.1.abc', userAgent: ua, clientIp: '203.0.113.7', sourceUrl: 'https://www.loudface.co/apply/legal' });
+  const body = buildScheduleEvent(parsePrepared(JSON.stringify(p))!);
+  const event = body.data[0];
+  assert.equal(event.event_source_url, 'https://www.loudface.co/apply/legal');
+  assert.equal(event.user_data.client_user_agent, ua);
+  assert.equal(event.user_data.client_ip_address, '203.0.113.7');
+  assert.equal(event.user_data.em, sha('a@b.co'));
+  assert.equal(event.user_data.fbc, 'fb.1.1.abc');
+  // The short keys never reach Meta under their own names.
+  for (const key of ['ua', 'ip', 'src', 'id', 't']) assert.equal(key in event.user_data, false, key);
+  assert.equal('test_event_code' in body, false);
+});
+
+test('a foreign page or a value that is not an IP stays out of the Schedule event', () => {
+  const p = prepareSchedule({ bookingUid: 'b2', bookedAt: 1, email: 'a@b.co', clientIp: '<script>', sourceUrl: 'https://evil.example/apply' });
+  assert.equal(p.ip, undefined);
+  assert.equal(p.src, undefined);
+  assert.equal(buildScheduleEvent(p).data[0].event_source_url, 'https://www.loudface.co/contact');
+});
+
+test('a full /apply booking still fits in the Slack button', () => {
+  const p = prepareSchedule({ bookingUid: 'u'.repeat(30), bookedAt: 1, email: 'a@b.co', phone: '123', name: 'A B', fbp: 'fb.1.1700000000000.1234567890', fbc: 'fb.1.1700000000000.' + 'x'.repeat(200), userAgent: 'x'.repeat(500), clientIp: '2001:0db8:85a3:0000:0000:8a2e:0370:7334', sourceUrl: 'https://www.loudface.co/apply/saas' });
+  assert.ok(JSON.stringify(p).length < 2000, String(JSON.stringify(p).length));
 });

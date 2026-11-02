@@ -79,5 +79,6 @@ export async function POST(request: Request) {
     await posthog.shutdown();
   }
 
-  return NextResponse.json({ ok: true, eventId, website: answers.website });
+  // The visitor's own IP goes back to their browser only so the Cal booking can carry it to the Schedule event.
+  return NextResponse.json({ ok: true, eventId, website: answers.website, ip: clientIp });
 }

@@ -159,7 +159,10 @@ export function ConsentManager({ requiresConsent, v11Content }: ConsentManagerPr
     setMounted(true);
 
     if (isTrackingAllowed()) {
-      loadTrackersOnInteraction();
+      // The /apply pages are where Meta ads land: their PageView must fire on arrival, or a visitor who reads the
+      // hero and leaves never counts as a landing page view (2026-11-02). Every other page keeps the perf deferral.
+      if (window.location.pathname.startsWith('/apply')) loadTrackers();
+      else loadTrackersOnInteraction();
     }
 
     const onConsentChange = (event: Event) => {
