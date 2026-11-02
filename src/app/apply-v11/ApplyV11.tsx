@@ -28,8 +28,9 @@ const ENGINES = ['fav-chatgpt.webp', 'fav-claude.png', 'fav-gemini.png', 'fav-pe
  * published series and its headline figure; the cells pair `proof.cells` in the vertical's copy file, in order, with
  * these proof keys (numbers never live in a content file). The not-fit card links the matching case study.
  */
-const VERTICALS: Record<ApplyVertical, { chart: 'delshad' | 'genie'; metric: ProofKey; cells: ProofKey[]; caseHref: string }> = {
-  info: { chart: 'delshad', metric: 'delshadClicks', cells: ['pond', 'hayesSearches'], caseHref: '/case-studies/delshad-legal-content-engine' },
+const VERTICALS: Record<ApplyVertical, { chart: 'delshad' | 'genie' | 'tm'; metric: ProofKey; cells: ProofKey[]; caseHref: string }> = {
+  // Info and coaching leads with TradeMomentum, a trading-education brand a coach recognises (Arnel, 2026-11-02).
+  info: { chart: 'tm', metric: 'tm', cells: ['tmAi', 'genieClicks'], caseHref: '/case-studies/trademomentum-niche-aeo-organic-growth' },
   // Software (B2B and B2C), matched to its video: Genie Teacher, the Canadian software company the ad is about.
   saas: { chart: 'genie', metric: 'genieClicks', cells: ['genieLeads', 'genieShare'], caseHref: '/case-studies/genie-teacher-organic-growth' },
   legal: { chart: 'delshad', metric: 'delshadClicks', cells: ['delshad', 'delshadRank'], caseHref: '/case-studies/delshad-legal-content-engine' },
@@ -43,7 +44,7 @@ function indexed(s?: Series): Series | undefined {
 
 export function ApplyV11({ c, data, vertical = 'info' }: { c: ApplyContent; data: HomeV11Data | null; vertical?: ApplyVertical }) {
   const v = VERTICALS[vertical];
-  const series = v.chart === 'delshad' ? data?.hero.delshad : indexed(data?.genieWeekly);
+  const series = v.chart === 'delshad' ? data?.hero.delshad : v.chart === 'tm' ? data?.hero.tm : indexed(data?.genieWeekly);
   const period = periodOf(series);
   // The guarantee's bar: 3× the first week (index 300), across the whole chart (Arnel, 2026-11-01: the promise is 3×,
   // with no fixed month in the ad).

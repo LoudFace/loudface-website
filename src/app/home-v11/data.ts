@@ -82,6 +82,8 @@ const PROOF = {
   outbound: ['outbound', 1],
   tokuPosition: ['toku', 2],
   // /apply/saas's proof row (2026-11-02): Genie Teacher's AI visibility and share of voice, as its case study publishes them
+  // /apply's proof row (2026-11-02): TradeMomentum's AI visibility on its "trading communities" prompts
+  tmAi: ['tm', 2],
   genieAiVisibility: ['genie', 'row', 'r-0'],
   genieShare: ['genie', 'row', 'r-1'],
   tokuAio: ['toku', 'row', 'aio'],
