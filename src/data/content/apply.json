@@ -10,9 +10,9 @@
   },
   "chart": {
     "tag": "Clicks",
-    "client": "TradeMomentum",
+    "client": "Delshad Legal",
     "tip": "Google clicks a week",
-    "caption": "Google clicks a week, from the week the work began to its highest week",
+    "caption": "Google clicks a week outside the celebrity-case pages",
     "source": "Search Console",
     "bar": "Our bar: 3×",
     "barShort": "Our bar: 3×"
@@ -20,10 +20,10 @@
   "proof": {
     "cells": [
       {
-        "label": "TradeMomentum, AI visibility in its niche, in 7 weeks"
+        "label": "Pond, Google impressions beyond its name, in 5 weeks"
       },
       {
-        "label": "Genie Teacher, an education app, Google clicks a week since May"
+        "label": "Hayes Media, non-branded searches, in 7 weeks"
       }
     ],
     "teams": "50+",
@@ -94,8 +94,8 @@
     "offerTitle": "See where AI answers put you",
     "offerBody": "Your AI visibility score against competitors, plus a Loom from Arnel with one fix.",
     "offerCta": "Run my free audit",
-    "caseLink": "How TradeMomentum won AI answers in its niche",
-    "caseLinkShort": "TradeMomentum, 9.3× clicks",
+    "caseLink": "How Delshad Legal grew its Google clicks 16×",
+    "caseLinkShort": "Delshad Legal, 16× clicks",
     "caseCta": "Case study",
     "change": "Change my answer"
   },
