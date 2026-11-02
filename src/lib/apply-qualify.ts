@@ -17,6 +17,18 @@ export const REVENUE_BANDS = [
 
 export type RevenueBandId = (typeof REVENUE_BANDS)[number]['id'];
 
+/** The three /apply campaigns (Arnel, 2026-11-02): info and coaching at /apply, B2B SaaS at /apply/saas, law firms at
+ *  /apply/legal. Same card, same $50K-a-month bar; the page and the PostHog event say which one a visitor came through. */
+export const APPLY_VERTICALS = ['info', 'saas', 'legal'] as const;
+export type ApplyVertical = (typeof APPLY_VERTICALS)[number];
+export function isApplyVertical(value: unknown): value is ApplyVertical {
+  return typeof value === 'string' && (APPLY_VERTICALS as readonly string[]).includes(value);
+}
+/** The page each campaign lives on. */
+export function applyPath(vertical: ApplyVertical): string {
+  return vertical === 'info' ? '/apply' : `/apply/${vertical}`;
+}
+
 export function isRevenueBand(value: unknown): value is RevenueBandId {
   return typeof value === 'string' && REVENUE_BANDS.some((b) => b.id === value);
 }

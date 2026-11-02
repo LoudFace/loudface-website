@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { cookies, headers } from 'next/headers';
-import { checkApplication, isValidEventId } from '@/lib/apply-qualify';
+import { checkApplication, isApplyVertical, isValidEventId } from '@/lib/apply-qualify';
 import { sendMetaLeadEvent } from '@/lib/meta-capi';
 import { getPostHogServer } from '@/lib/posthog-server';
 import { CONSENT_COOKIE, isTrackingAllowedServer, POSTHOG_DISTINCT_ID_COOKIE } from '@/lib/consent';
@@ -39,6 +39,8 @@ export async function POST(request: Request) {
   }
   const eventId = body.eventId;
   const { answers } = checked;
+  // Which campaign's page the application came through (/apply, /apply/saas, /apply/legal); anything else counts as /apply.
+  const vertical = isApplyVertical(body.vertical) ? body.vertical : 'info';
 
   const [jar, hdrs] = await Promise.all([cookies(), headers()]);
   const fbp = clean(jar.get('_fbp')?.value, COOKIE_LIMIT);
@@ -67,6 +69,7 @@ export async function POST(request: Request) {
       event: 'apply_submitted',
       properties: {
         revenue_band: answers.revenue,
+        vertical,
         event_id: eventId,
         meta_lead_received: meta.ok,
         lf_tag: cleanReferralTag(jar.get(REFERRAL_TAG_COOKIE)?.value),

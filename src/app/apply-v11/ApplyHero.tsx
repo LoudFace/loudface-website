@@ -1,6 +1,7 @@
 'use client';
 
 import { useCallback, useState, type ReactNode } from 'react';
+import type { ApplyVertical } from '@/lib/apply-qualify';
 import type { ApplyContent } from '@/lib/content-utils';
 import { ApplyCard } from './ApplyCard';
 
@@ -9,8 +10,10 @@ import { ApplyCard } from './ApplyCard';
  * brand plate. It only holds which step the card is on, so a phone can trade the promise for "You're a fit. Pick a
  * time with Arnel." on the calendar step and keep the whole card in the first screen.
  */
-export function ApplyHero({ c, head, headline, rest, avatar, engines }: {
+export function ApplyHero({ c, head, headline, rest, avatar, engines, vertical, caseHref }: {
   c: ApplyContent;
+  vertical: ApplyVertical;
+  caseHref: string;
   head: ReactNode;
   headline: ReactNode;
   rest: ReactNode;
@@ -28,7 +31,7 @@ export function ApplyHero({ c, head, headline, rest, avatar, engines }: {
       </div>
       <div className="ap-right">
         <div className="ap-plate">
-          <ApplyCard c={c} avatar={avatar} engines={engines} onStep={onStep} />
+          <ApplyCard c={c} avatar={avatar} engines={engines} onStep={onStep} vertical={vertical} caseHref={caseHref} />
         </div>
       </div>
     </section>

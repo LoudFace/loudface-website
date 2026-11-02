@@ -3,7 +3,8 @@ import Link from 'next/link';
 import type { ReactNode } from 'react';
 import { asset } from '@/lib/assets';
 import type { ApplyContent } from '@/lib/content-utils';
-import type { HomeV11Data } from '../home-v11/data';
+import type { ApplyVertical } from '@/lib/apply-qualify';
+import type { HomeV11Data, ProofKey, Series } from '../home-v11/data';
 import { periodOf, proofValue } from '../home-v11/hero-slides';
 import { LiveChart } from '../home-v11/LiveChart';
 import { img, personPhoto } from '../home-v11/ui';
@@ -22,17 +23,34 @@ export const hand = Caveat({ subsets: ['latin'], weight: ['600'], variable: '--f
 
 const ENGINES = ['fav-chatgpt.webp', 'fav-claude.png', 'fav-gemini.png', 'fav-perplexity.png'].map((f) => img(`logos/${f}`));
 
-export function ApplyV11({ c, data }: { c: ApplyContent; data: HomeV11Data | null }) {
-  const series = data?.hero.delshad;
+/**
+ * What each campaign's page proves (Arnel, 2026-11-02: info and coaching, B2B SaaS, law firms). The chart is a client's
+ * published series and its headline figure; the cells pair `proof.cells` in the vertical's copy file, in order, with
+ * these proof keys (numbers never live in a content file). The not-fit card links the matching case study.
+ */
+const VERTICALS: Record<ApplyVertical, { chart: 'delshad' | 'pond'; metric: ProofKey; cells: ProofKey[]; caseHref: string }> = {
+  info: { chart: 'delshad', metric: 'delshadClicks', cells: ['pond', 'hayesSearches'], caseHref: '/case-studies/delshad-legal-content-engine' },
+  saas: { chart: 'pond', metric: 'pond', cells: ['toku', 'tokuImpressions'], caseHref: '/case-studies/toku-ai-cited-pipeline' },
+  legal: { chart: 'delshad', metric: 'delshadClicks', cells: ['delshad', 'delshadRank'], caseHref: '/case-studies/delshad-legal-content-engine' },
+};
+
+/** A series as an index of its first reading (100 = the start), so the guarantee's 3× bar sits at 300 on any chart. */
+function indexed(s?: Series): Series | undefined {
+  const base = s?.values.find((v) => v > 0);
+  return s && base ? { ...s, values: s.values.map((v) => (v / base) * 100) } : s;
+}
+
+export function ApplyV11({ c, data, vertical = 'info' }: { c: ApplyContent; data: HomeV11Data | null; vertical?: ApplyVertical }) {
+  const v = VERTICALS[vertical];
+  const series = v.chart === 'delshad' ? data?.hero.delshad : indexed(data?.hero.pond);
   const period = periodOf(series);
   // The guarantee's bar: 3× the first week (index 300), across the whole chart (Arnel, 2026-11-01: the promise is 3×,
   // with no fixed month in the ad).
   const lastDate = series?.dates[series.dates.length - 1];
   const cells = [
-    { n: proofValue(data, 'pond'), l: c.proof.pondLabel },
-    { n: proofValue(data, 'hayesSearches'), l: c.proof.hayesLabel },
+    ...v.cells.map((key, i) => ({ n: proofValue(data, key), l: c.proof.cells[i]?.label })),
     { n: c.proof.teams, l: c.proof.teamsLabel },
-  ].filter((x) => x.n);
+  ].filter((x) => x.n && x.l);
 
   const head = (
     <div className="ap-head">
@@ -75,7 +93,7 @@ export function ApplyV11({ c, data }: { c: ApplyContent; data: HomeV11Data | nul
               format="index"
               goal={lastDate ? { from: series.dates[0], to: lastDate, low: 0, high: 300, label: c.chart.bar, shortLabel: c.chart.barShort } : undefined}
             >
-              <span className="v11-slide-metric">{proofValue(data, 'delshadClicks')}</span>
+              <span className="v11-slide-metric">{proofValue(data, v.metric)}</span>
             </LiveChart>
           </div>
           <div className="v11-slide-dates ap-ch-dates"><span>{period.start}</span><span>{period.end}</span></div>
@@ -92,7 +110,7 @@ export function ApplyV11({ c, data }: { c: ApplyContent; data: HomeV11Data | nul
 
   return (
     <div className={`v11 ap ${hand.variable}`}>
-      <ApplyHero c={c} head={head} headline={headline} rest={rest} avatar={personPhoto('arnel-bukva')} engines={ENGINES} />
+      <ApplyHero c={c} head={head} headline={headline} rest={rest} avatar={personPhoto('arnel-bukva')} engines={ENGINES} vertical={vertical} caseHref={v.caseHref} />
 
       <ApplyGuarantee g={c.guarantee} />
       <ApplyFooter f={c.footer} />

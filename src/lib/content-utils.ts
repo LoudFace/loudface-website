@@ -58,6 +58,8 @@ import partnersV11Content from "@/data/content/partners-v11.json";
 import recognitionV11Content from "@/data/content/recognition-v11.json";
 import thankYouContent from "@/data/content/thank-you.json";
 import applyContent from "@/data/content/apply.json";
+import applySaasContent from "@/data/content/apply-saas.json";
+import applyLegalContent from "@/data/content/apply-legal.json";
 import applyBookedContent from "@/data/content/apply-booked.json";
 import careersV11Content from "@/data/content/careers-v11.json";
 import legalV11Content from "@/data/content/legal-v11.json";
@@ -1711,6 +1713,8 @@ const contentRegistry: Record<string, unknown> = {
   "recognition-v11": recognitionV11Content,
   "thank-you": thankYouContent,
   apply: applyContent,
+  "apply-saas": applySaasContent,
+  "apply-legal": applyLegalContent,
   "apply-booked": applyBookedContent,
   "careers-v11": careersV11Content,
   "legal-v11": legalV11Content,
@@ -2007,8 +2011,11 @@ export async function getThankYouContent(): Promise<ThankYouContent> {
   return markTree('thank-you', thankYouContent);
 }
 export type ApplyContent = typeof applyContent;
-/** The /apply page copy (the Meta-ads application page, design D picked by Arnel on 2026-10-31). */
-export async function getApplyContent(): Promise<ApplyContent> {
+/** The /apply page copy (the Meta-ads application page, design D picked by Arnel on 2026-10-31), one file per campaign:
+ *  info and coaching (/apply), B2B SaaS (/apply/saas) and law firms (/apply/legal), Arnel 2026-11-02. */
+export async function getApplyContent(vertical: 'info' | 'saas' | 'legal' = 'info'): Promise<ApplyContent> {
+  if (vertical === 'saas') return markTree('apply-saas', applySaasContent);
+  if (vertical === 'legal') return markTree('apply-legal', applyLegalContent);
   return markTree('apply', applyContent);
 }
 export type ApplyBookedContent = typeof applyBookedContent;

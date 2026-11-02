@@ -7,10 +7,12 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { createHash } from 'node:crypto';
 import {
-  REVENUE_BANDS, checkApplication, isValidEmail, isValidEventId, isValidName, normalizePhone, normalizeWebsite, qualifies,
+  REVENUE_BANDS, applyPath, checkApplication, isApplyVertical, isValidEmail, isValidEventId, isValidName, normalizePhone, normalizeWebsite, qualifies,
 } from '../apply-qualify';
 import { buildLeadEvent } from '../meta-capi';
 import applyContent from '../../data/content/apply.json';
+import applySaasContent from '../../data/content/apply-saas.json';
+import applyLegalContent from '../../data/content/apply-legal.json';
 
 const sha = (v: string) => createHash('sha256').update(v).digest('hex');
 const good = { revenue: '250k_500k', website: 'yourcompany.com', name: 'Sam Lee', email: 'Sam@YourCompany.com' };
@@ -26,6 +28,18 @@ test('under $50K a month is turned away; $50K and up qualifies', () => {
 test('every band has its label in apply.json, in the same order', () => {
   assert.equal(applyContent.card.revenue.options.length, REVENUE_BANDS.length);
   assert.deepEqual(applyContent.card.revenue.options.map((o) => o.label), ['Under $50K', '$50K-$100K', '$100K-$250K', '$250K-$500K', '$500K-$1M', '$1M+']);
+});
+
+test('the SaaS and law-firm pages show the same bands as /apply, so the shared rule reads them right', () => {
+  for (const c of [applySaasContent, applyLegalContent]) {
+    assert.deepEqual(c.card.revenue.options.map((o) => o.label), applyContent.card.revenue.options.map((o) => o.label));
+  }
+});
+
+test('three campaigns, each on its own page; anything else is not a vertical', () => {
+  assert.deepEqual(['info', 'saas', 'legal'].map(applyPath as (v: string) => string), ['/apply', '/apply/saas', '/apply/legal']);
+  for (const v of ['info', 'saas', 'legal']) assert.equal(isApplyVertical(v), true, v);
+  for (const v of ['coaching', '', undefined, 3]) assert.equal(isApplyVertical(v), false, String(v));
 });
 
 test('the server refuses an unqualified band before reading anything else', () => {

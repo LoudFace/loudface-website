@@ -10,10 +10,12 @@ import { ensurePostHog } from '@/lib/posthog-client';
 import { readReferralTag } from '@/lib/referral-tag';
 import {
   REVENUE_BANDS,
+  applyPath,
   isValidEmail,
   isValidName,
   normalizeWebsite,
   qualifies,
+  type ApplyVertical,
   type RevenueBandId,
 } from '@/lib/apply-qualify';
 
@@ -49,17 +51,20 @@ function readCookie(name: string): string | undefined {
   return value ? value.slice(0, 500) : undefined;
 }
 
-function load(): Saved | null {
+/** Each campaign's page keeps its own visit, so a visitor who opens two of them never sees the other's answers. */
+const storeKey = (vertical: ApplyVertical) => (vertical === 'info' ? STORE : `${STORE}_${vertical}`);
+
+function load(key: string): Saved | null {
   try {
-    const raw = window.sessionStorage.getItem(STORE);
+    const raw = window.sessionStorage.getItem(key);
     return raw ? (JSON.parse(raw) as Saved) : null;
   } catch {
     return null;
   }
 }
-function save(state: Saved) {
+function save(key: string, state: Saved) {
   try {
-    window.sessionStorage.setItem(STORE, JSON.stringify(state));
+    window.sessionStorage.setItem(key, JSON.stringify(state));
   } catch {
     // Private mode can refuse storage; the card still works for this page view.
   }
@@ -72,8 +77,10 @@ const Check = () => (
   <svg width="11" height="11" viewBox="0 0 12 12" aria-hidden="true"><path d="M2.5 6.3l2.3 2.3 4.7-5" stroke="#1b7f4b" strokeWidth="1.8" fill="none" strokeLinecap="round" strokeLinejoin="round" /></svg>
 );
 
-export function ApplyCard({ c, avatar, engines, onStep }: {
+export function ApplyCard({ c, avatar, engines, onStep, vertical = 'info', caseHref = '/case-studies/delshad-legal-content-engine' }: {
   c: ApplyContent;
+  vertical?: ApplyVertical;
+  caseHref?: string;
   avatar: string;
   engines: string[];
   onStep?: (step: Step) => void;
@@ -93,7 +100,7 @@ export function ApplyCard({ c, avatar, engines, onStep }: {
 
   // Restore a visit in progress; keep the first page view's UTM tags for the booking.
   useEffect(() => {
-    const saved = load();
+    const saved = load(storeKey(vertical));
     const params = new URLSearchParams(window.location.search);
     const fresh = Object.fromEntries(UTM_KEYS.map((k) => [k, params.get(k)?.slice(0, 100) ?? '']).filter(([, v]) => v));
     if (saved) {
@@ -111,9 +118,9 @@ export function ApplyCard({ c, avatar, engines, onStep }: {
 
   useEffect(() => {
     if (!restored.current) return;
-    save({ step, answers, eventId, utm });
+    save(storeKey(vertical), { step, answers, eventId, utm });
     onStep?.(step);
-  }, [step, answers, eventId, utm, onStep]);
+  }, [step, answers, eventId, utm, onStep, vertical]);
 
   // The field shows its saved answer when the visitor lands on it (Back, Edit, reload).
   useEffect(() => {
@@ -163,7 +170,7 @@ export function ApplyCard({ c, avatar, engines, onStep }: {
       const res = await fetch('/api/apply', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ ...all, eventId: id, fbc, utm }),
+        body: JSON.stringify({ ...all, eventId: id, fbc, utm, vertical }),
       });
       const body = (await res.json()) as { ok?: boolean };
       if (!res.ok || !body.ok) throw new Error('apply failed');
@@ -236,7 +243,7 @@ export function ApplyCard({ c, avatar, engines, onStep }: {
               <span className="ap-eng" aria-hidden="true">{engines.map((src) => <img key={src} src={src} alt="" width={20} height={20} />)}</span>
             </div>
           </div>
-          <a className="ap-link" href="/case-studies/delshad-legal-content-engine">
+          <a className="ap-link" href={caseHref}>
             <span className="ap-wide"><span>{n.caseLink}</span></span>
             <span className="ap-narrow"><span>{n.caseLinkShort}</span></span>
             <span className="ap-link-cta"><span>{n.caseCta}</span> →</span>
@@ -258,8 +265,8 @@ export function ApplyCard({ c, avatar, engines, onStep }: {
             <div><div className="ap-host-t"><span>{c.cal.title}</span></div><div className="ap-host-m"><span>{c.cal.meta}</span></div></div>
           </div>
           <div className="ap-cal">
-            <CalBooker answers={answers} band={strip(bandLabel)} utm={utm} onBooked={() => {
-              try { window.sessionStorage.removeItem(STORE); } catch { /* storage refused */ }
+            <CalBooker answers={answers} band={strip(bandLabel)} utm={utm} vertical={vertical} onBooked={() => {
+              try { window.sessionStorage.removeItem(storeKey(vertical)); } catch { /* storage refused */ }
               router.push('/apply/booked');
             }} />
           </div>
@@ -353,7 +360,7 @@ export function ApplyCard({ c, avatar, engines, onStep }: {
  * website and revenue are hidden questions on the event type, so nobody types anything twice. fbp, fbc and lf_tag ride
  * as booking metadata the way CalHandler sends them, for the Schedule event the Slack approval later sends.
  */
-function CalBooker({ answers, band, utm, onBooked }: { answers: Answers; band: string; utm: Record<string, string>; onBooked: () => void }) {
+function CalBooker({ answers, band, utm, vertical, onBooked }: { answers: Answers; band: string; utm: Record<string, string>; vertical: ApplyVertical; onBooked: () => void }) {
   const booked = useRef(onBooked);
   booked.current = onBooked;
   const [config] = useState<Record<string, string>>(() => {
@@ -370,8 +377,8 @@ function CalBooker({ answers, band, utm, onBooked }: { answers: Answers; band: s
       monthly_revenue: band,
       utm_source: utm.utm_source || 'website',
       utm_medium: utm.utm_medium || 'apply',
-      utm_campaign: utm.utm_campaign || 'apply',
-      utm_content: utm.utm_content || '/apply',
+      utm_campaign: utm.utm_campaign || (vertical === 'info' ? 'apply' : `apply-${vertical}`),
+      utm_content: utm.utm_content || applyPath(vertical),
       ...(fbp ? { 'metadata[fbp]': fbp } : {}),
       ...(fbc ? { 'metadata[fbc]': fbc } : {}),
       ...(tag ? { 'metadata[lf_tag]': tag } : {}),
