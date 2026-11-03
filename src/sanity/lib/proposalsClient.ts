@@ -309,19 +309,40 @@ export type ProposalSection =
       intro?: string;
       months?: Array<{ _key: string; label: string; title: string; items?: string[]; proves?: string }>;
       note?: string;
-    }
-  | {
-      _key: string;
-      _type: 'strategySection';
-      heading?: string;
-      band?: ProposalBand;
-      intro?: string;
-      moves?: Array<{ _key: string; topic: StrategyTopic; how?: string; first?: string; proof?: string }>;
-      quickWins?: string[];
-      longBets?: string[];
     };
 
 export type StrategyTopic = 'keywords' | 'questions' | 'competitors' | 'content' | 'offsite';
+
+/**
+ * The Strategy tab (3 Nov 2026): a full strategy for this lead, beside the
+ * standard proposal rather than inside it. Blocks render in order; a block
+ * with a `topic` from the house five also prints how we decide that topic.
+ */
+export interface ProposalStrategyBlock {
+  _key: string;
+  /** table: columns and rows. list: lead and text pairs. steps: a roadmap. */
+  kind: 'table' | 'list' | 'steps';
+  topic?: StrategyTopic;
+  heading: string;
+  intro?: string;
+  columns?: string[];
+  /** A row's tone: 'skip' draws it muted, for the things we chose not to do. */
+  rows?: Array<{ _key: string; cells: string[]; tone?: 'skip' }>;
+  items?: Array<{ _key: string; lead: string; text: string }>;
+  steps?: Array<{ _key: string; label: string; title: string; items?: string[] }>;
+  note?: string;
+}
+
+export interface ProposalStrategy {
+  heading?: string;
+  summary?: string;
+  /** Where the numbers came from and when, one line. */
+  source?: string;
+  bets?: Array<{ _key: string; title: string; text: string }>;
+  blocks?: ProposalStrategyBlock[];
+  quickWins?: string[];
+  longBets?: string[];
+}
 
 export interface ProposalRailClip {
   _key: string;
@@ -371,6 +392,8 @@ export interface Proposal {
   clipStrip?: ProposalClipStrip;
   proofRail?: ProposalProofRail;
   sections?: ProposalSection[];
+  /** Cards only: when present, the deck gets a Proposal tab and a Strategy tab. */
+  strategy?: ProposalStrategy;
   contactEmail?: string;
   /** The reader's own email. Used only to identify them in analytics. */
   readerEmail?: string;
@@ -416,10 +439,17 @@ const CONTENT_QUERY = `*[_type == "proposal" && token == $token][0]{
     gate,
     showWeek,
     band,
-    months[]{ _key, label, title, items, proves },
-    moves[]{ _key, topic, how, first, proof },
-    quickWins,
-    longBets
+    months[]{ _key, label, title, items, proves }
+  },
+  strategy{
+    heading, summary, source, quickWins, longBets,
+    bets[]{ _key, title, text },
+    blocks[]{
+      _key, kind, topic, heading, intro, columns, note,
+      rows[]{ _key, cells, tone },
+      items[]{ _key, lead, text },
+      steps[]{ _key, label, title, items }
+    }
   }
 }`;
 

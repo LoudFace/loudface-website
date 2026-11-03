@@ -1,9 +1,9 @@
-import type { ReactNode } from 'react';
+import { Fragment, type ReactNode } from 'react';
 import { ProposalDesignSlider } from './ProposalDesignSlider';
 import { ProposalStandingCharts } from './ProposalStandingCharts';
 import { PortableText, type PortableTextComponents } from '@portabletext/react';
 import type { PortableTextBlock } from '@portabletext/types';
-import type { Proposal, ProposalSection } from '@/sanity/lib/proposalsClient';
+import type { Proposal, ProposalSection, ProposalStrategy, ProposalStrategyBlock } from '@/sanity/lib/proposalsClient';
 import { ProofRail, ProofSection, isProofSection } from './ProposalSocialProof';
 import { ProposalCaseProof } from './ProposalCaseProof';
 import { PlateDefs } from './ProposalFigures';
@@ -17,6 +17,7 @@ import { rawContent, type AboutV11Content } from '@/lib/content-utils';
 import { personPhoto } from '@/app/home-v11/ui';
 import { SectionBody } from './ProposalDocument';
 import { STRATEGY_HOUSE } from './strategy-house';
+import { ProposalTabs } from './ProposalTabs';
 
 /**
  * The card layout (Arnel's pick, 2026-09-23), opted into per proposal with
@@ -341,64 +342,193 @@ function Tracks({ section }: { section: Sec<'tracksSection'> }) {
   );
 }
 
-/* How we would run their strategy: one card, a ruled row per topic (label
-   left, text right): how we decide, what we would do first for them, and a
-   proof line from a live case page. Then quick wins beside longer bets, the
-   split the SAVVI lead asked for on 3 Nov 2026. One card with rules, not a
-   card per topic: five cards beside the proof rail ran 2,250px tall. */
-function Strategy({ section }: { section: Sec<'strategySection'> }) {
-  const moves = (section.moves ?? []).filter((m) => STRATEGY_HOUSE[m.topic]);
-  const wins = section.quickWins ?? [];
-  const bets = section.longBets ?? [];
-  const list = (title: string, items: string[]) =>
-    items.length > 0 && (
-      <div>
-        <p className="text-[15px] font-semibold text-surface-950">{title}</p>
-        <ul className="mt-3 space-y-2.5">
-          {items.map((it) => (
-            <li key={it} className="flex gap-2.5 text-[14px] leading-snug text-surface-800">
-              <Tick />
-              <span>{it}</span>
-            </li>
-          ))}
-        </ul>
+/* ── the Full strategy tab ────────────────────────────────────────────── */
+/* The full strategy for this lead (Arnel, 3 Nov 2026: "a very detailed
+   breakdown of a full strategy"), in its own tab so the deck stays short.
+   Full width, no proof rail, so the tables have room. A left outline on
+   wide screens, then: the summary, the bets, one block per part of the
+   plan (tables, lists, a roadmap), quick wins beside longer bets. Every
+   block is a heading, an optional "How we decide" line from the house
+   method, the lead's own intro, and one card. */
+const strategyId = (heading: string) =>
+  `strategy-${heading.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '')}`;
+
+function TickList({ items, className = 'space-y-2.5' }: { items: string[]; className?: string }) {
+  return (
+    <ul className={className}>
+      {items.map((it) => (
+        <li key={it} className="flex gap-2.5 text-[14px] leading-snug text-surface-800">
+          <Tick />
+          <span>{it}</span>
+        </li>
+      ))}
+    </ul>
+  );
+}
+
+function StrategyBlockBody({ block }: { block: ProposalStrategyBlock }) {
+  if (block.kind === 'table') {
+    const cols = block.columns ?? [];
+    return (
+      <div className={`${card} overflow-x-auto`}>
+        <table className="w-full min-w-[640px] border-collapse text-left text-[14px] leading-snug">
+          <thead>
+            <tr className="border-b border-surface-200">
+              {cols.map((c) => (
+                <th key={c} scope="col" className="px-4 py-3 text-[12px] font-medium text-surface-500 first:pl-5 last:whitespace-nowrap last:pr-5">
+                  {c}
+                </th>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
+            {(block.rows ?? []).map((r) => (
+              <tr key={r._key} className={`border-t border-surface-100 align-top first:border-t-0 ${r.tone === 'skip' ? 'text-surface-400' : 'text-surface-700'}`}>
+                {r.cells.map((cell, i) => (
+                  <td
+                    key={i}
+                    className={`px-4 py-3 first:pl-5 last:whitespace-nowrap last:pr-5 ${i === 0 ? `font-medium ${r.tone === 'skip' ? '' : 'text-surface-950'}` : ''} proposal-num`}
+                  >
+                    {cell}
+                  </td>
+                ))}
+              </tr>
+            ))}
+          </tbody>
+        </table>
       </div>
     );
+  }
+  if (block.kind === 'steps') {
+    return (
+      <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+        {(block.steps ?? []).map((s) => (
+          <div key={s._key} className={`${card} p-5`}>
+            <span className="proposal-num inline-block rounded-full bg-primary-50 px-2.5 py-0.5 text-[12px] font-medium text-primary-700">{s.label}</span>
+            <p className="mt-3 text-[16px] font-semibold tracking-[-0.01em] text-surface-950">{s.title}</p>
+            {s.items && s.items.length > 0 && <TickList items={s.items} className="mt-3 space-y-2" />}
+          </div>
+        ))}
+      </div>
+    );
+  }
   return (
-    <>
-      {section.intro && <p className="mt-2 max-w-[68ch] text-[15px] text-surface-600">{section.intro}</p>}
-      <div className={`${panel} space-y-3`}>
-        <div className={`${card} px-5 sm:px-6`}>
-          {moves.map((m, i) => {
-            const house = STRATEGY_HOUSE[m.topic];
-            return (
-              <div
-                key={m._key}
-                className={`py-5 sm:grid sm:grid-cols-[120px_minmax(0,1fr)] sm:gap-6 ${i > 0 ? 'border-t border-surface-200' : ''}`}
-              >
-                <p className="text-[15px] font-semibold tracking-[-0.01em] text-surface-950">{house.label}</p>
-                <div className="mt-2 space-y-2.5 sm:mt-0">
-                  <p className="text-[14px] leading-relaxed text-surface-600">{m.how || house.how}</p>
-                  {m.first && (
-                    <p className="text-[15px] leading-relaxed text-surface-900">
-                      <span className="font-semibold text-primary-700">What we would do first: </span>
-                      {m.first}
-                    </p>
-                  )}
-                  <p className="text-[13px] leading-snug text-surface-500">{m.proof || house.proof}</p>
-                </div>
+    <div className={`${card} px-5 sm:px-6`}>
+      {(block.items ?? []).map((it, i) => (
+        <div key={it._key} className={`py-4 sm:grid sm:grid-cols-[220px_minmax(0,1fr)] sm:gap-6 ${i > 0 ? 'border-t border-surface-200' : ''}`}>
+          <p className="text-[15px] font-semibold text-surface-950">{it.lead}</p>
+          <p className="mt-1 text-[14px] leading-relaxed text-surface-700 sm:mt-0">{it.text}</p>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+function StrategyTab({ strategy, clientName }: { strategy: ProposalStrategy; clientName: string }) {
+  const blocks = strategy.blocks ?? [];
+  const wins = strategy.quickWins ?? [];
+  const later = strategy.longBets ?? [];
+  const bets = strategy.bets ?? [];
+  const outline = [
+    ...(bets.length ? [{ id: 'strategy-bets', label: 'The bets' }] : []),
+    ...blocks.map((b) => ({ id: strategyId(b.heading), label: b.heading })),
+    ...(wins.length || later.length ? [{ id: 'strategy-wins', label: 'Quick wins and longer bets' }] : []),
+  ];
+  return (
+    <div className={`${page} py-10 sm:py-12`}>
+      <div className="lg:grid lg:grid-cols-[210px_minmax(0,1fr)] lg:gap-14">
+        <nav aria-label="Strategy contents" className="hidden lg:block">
+          <div className="sticky top-20 flex flex-col gap-0.5 border-l border-surface-200">
+            {outline.map((o) => (
+              <a key={o.id} href={`#${o.id}`} className="-ml-px border-l-2 border-transparent py-1.5 pl-3 text-[13px] leading-snug text-surface-500 hover:border-primary-300 hover:text-surface-900">
+                {o.label}
+              </a>
+            ))}
+          </div>
+        </nav>
+        <div className="min-w-0 space-y-14">
+          <header data-proposal-section="Strategy · Summary" className="space-y-3">
+            <h2 className="text-[26px] font-medium leading-tight tracking-[-0.03em] text-surface-950 sm:text-[32px]">
+              {strategy.heading || `The full strategy for ${clientName}`}
+            </h2>
+            {strategy.summary && <p className="max-w-[68ch] text-[17px] leading-relaxed text-surface-700">{strategy.summary}</p>}
+            {strategy.source && <p className="max-w-[68ch] text-[13px] text-surface-500">{strategy.source}</p>}
+          </header>
+
+          {bets.length > 0 && (
+            <section id="strategy-bets" data-proposal-section="Strategy · The bets" className="scroll-mt-20">
+              <H>The bets</H>
+              <div className={`${panel} grid gap-3 sm:grid-cols-3`}>
+                {bets.map((b, i) => (
+                  <div key={b._key} className={`${card} p-5`}>
+                    <Icon i={i} />
+                    <p className="mt-4 text-[16px] font-semibold tracking-[-0.01em] text-surface-950">{b.title}</p>
+                    <p className="mt-2 text-[14px] leading-relaxed text-surface-700">{b.text}</p>
+                  </div>
+                ))}
               </div>
+            </section>
+          )}
+
+          {blocks.map((b) => {
+            const house = b.topic ? STRATEGY_HOUSE[b.topic] : undefined;
+            return (
+              <section key={b._key} id={strategyId(b.heading)} data-proposal-section={`Strategy · ${b.heading}`} className="scroll-mt-20">
+                <H>{b.heading}</H>
+                {house && (
+                  <p className="mt-2 max-w-[72ch] text-[14px] leading-relaxed text-surface-500">
+                    <span className="font-medium text-surface-700">How we decide: </span>
+                    {house.how}
+                  </p>
+                )}
+                {b.intro && <p className="mt-2 max-w-[72ch] text-[15px] leading-relaxed text-surface-700">{b.intro}</p>}
+                <div className={panel}>
+                  <StrategyBlockBody block={b} />
+                </div>
+                {b.note && <p className="mt-3 max-w-[72ch] text-[13px] leading-snug text-surface-500">{b.note}</p>}
+              </section>
             );
           })}
+
+          {(wins.length > 0 || later.length > 0) && (
+            <section id="strategy-wins" data-proposal-section="Strategy · Quick wins and longer bets" className="scroll-mt-20">
+              <H>Quick wins and longer bets</H>
+              <div className={panel}>
+                <div className={`${card} grid gap-6 p-5 sm:grid-cols-2 sm:gap-8 sm:p-6`}>
+                  {wins.length > 0 && (
+                    <div>
+                      <p className="text-[15px] font-semibold text-surface-950">Quick wins, first 90 days</p>
+                      <TickList items={wins} className="mt-3 space-y-2.5" />
+                    </div>
+                  )}
+                  {later.length > 0 && (
+                    <div>
+                      <p className="text-[15px] font-semibold text-surface-950">Longer bets, months 4 to 12</p>
+                      <TickList items={later} className="mt-3 space-y-2.5" />
+                    </div>
+                  )}
+                </div>
+              </div>
+            </section>
+          )}
         </div>
-        {(wins.length > 0 || bets.length > 0) && (
-          <div className={`${card} grid gap-6 p-5 sm:grid-cols-2 sm:gap-8 sm:p-6`}>
-            {list('Quick wins, first 90 days', wins)}
-            {list('Longer bets, months 4 to 12', bets)}
-          </div>
-        )}
       </div>
-    </>
+    </div>
+  );
+}
+
+/* The one line in the Proposal tab that points at the full strategy. */
+function StrategyPointer({ clientName }: { clientName: string }) {
+  return (
+    <section className="py-6">
+      <a href="#strategy" className={`${card} flex items-center justify-between gap-4 p-5 transition-shadow hover:shadow-md sm:p-6`}>
+        <span>
+          <span className="block text-[16px] font-semibold text-surface-950">The full strategy for {clientName}</span>
+          <span className="mt-1 block text-[14px] text-surface-600">Keywords, AI questions, competitors, content, links and the first 12 weeks, in the Full strategy tab.</span>
+        </span>
+        <span aria-hidden="true" className="flex h-9 w-9 flex-none items-center justify-center rounded-full bg-primary-600 text-white">→</span>
+      </a>
+    </section>
   );
 }
 
@@ -550,6 +680,10 @@ export function ProposalCardsDocument({ proposal }: { proposal: Proposal }) {
   const afterTracks = lightTypes.indexOf('tracksSection');
   const beforeCases = lightTypes.indexOf('caseProofSection');
   const whoAt = afterTracks !== -1 ? afterTracks + 1 : beforeCases !== -1 ? beforeCases : lightTypes.length;
+  // The Full strategy tab, when the proposal carries one, and where the
+  // Proposal tab points at it: just before "What we would do".
+  const strategy = (proposal.strategy?.blocks?.length ?? 0) > 0 ? proposal.strategy : undefined;
+  const pointerAt = afterTracks !== -1 ? afterTracks : whoAt;
 
   const light = (section: ProposalSection, index: number) => {
     if (section._type === 'caseProofSection') {
@@ -581,9 +715,6 @@ export function ProposalCardsDocument({ proposal }: { proposal: Proposal }) {
         break;
       case 'monthsSection':
         body = <Months section={section} />;
-        break;
-      case 'strategySection':
-        body = <Strategy section={section} />;
         break;
       case 'chartsSection':
         body = <ProposalStandingCharts section={section} />;
@@ -636,35 +767,91 @@ export function ProposalCardsDocument({ proposal }: { proposal: Proposal }) {
       <PlateDefs />
       <Hero proposal={proposal} />
 
-      <div className={page}>
-        <div className={hasRail ? 'lg:grid lg:grid-cols-[minmax(0,1fr)_328px] lg:gap-14' : ''}>
-          <div className="min-w-0">
-            {sections.slice(0, whoAt).map((s, i) => light(s, i))}
-            <ProposalWhoDoesIt index={whoAt} />
-            <ProposalMethod index={whoAt} stages={methodStages()} />
-            <ProposalTeamSlider index={whoAt} {...teamFromAbout()} />
-            {sections.slice(whoAt, railEnd).map((s, i) => light(s, whoAt + i))}
-          </div>
-          {hasRail && (
-            <aside data-proposal-rail="aside" className="hidden lg:block">
-              <div className="sticky top-8 mt-10">
+      {strategy ? (
+        <ProposalTabs
+          proposal={
+            <>
+            <div className={page}>
+              <div className={hasRail ? 'lg:grid lg:grid-cols-[minmax(0,1fr)_328px] lg:gap-14' : ''}>
+                <div className="min-w-0">
+                  {sections.slice(0, whoAt).map((s, i) => (
+                    <Fragment key={s._key}>
+                      {strategy && i === pointerAt && <StrategyPointer clientName={proposal.clientName} />}
+                      {light(s, i)}
+                    </Fragment>
+                  ))}
+                  {strategy && pointerAt === whoAt && <StrategyPointer clientName={proposal.clientName} />}
+                  <ProposalWhoDoesIt index={whoAt} />
+                  <ProposalMethod index={whoAt} stages={methodStages()} />
+                  <ProposalTeamSlider index={whoAt} {...teamFromAbout()} />
+                  {sections.slice(whoAt, railEnd).map((s, i) => light(s, whoAt + i))}
+                </div>
+                {hasRail && (
+                  <aside data-proposal-rail="aside" className="hidden lg:block">
+                    <div className="sticky top-20 mt-10">
+                      <ProofRail rail={rail} clips={clips} />
+                    </div>
+                  </aside>
+                )}
+              </div>
+            </div>
+
+            {railEnd < sections.length && (
+              <div data-proposal-band="dark" className="bg-night text-white">
+                <div className={page}>{sections.slice(railEnd).map((s, i) => dark(s, railEnd + i, i === 0))}</div>
+              </div>
+            )}
+
+            {hasRail && (
+              <div data-proposal-rail="inline" className={`${page} border-t border-surface-200 py-9 lg:hidden`}>
                 <ProofRail rail={rail} clips={clips} />
               </div>
-            </aside>
+            )}
+
+            </>
+          }
+          strategy={<StrategyTab strategy={strategy} clientName={proposal.clientName} />}
+        />
+      ) : (
+        <>
+          <div className={page}>
+            <div className={hasRail ? 'lg:grid lg:grid-cols-[minmax(0,1fr)_328px] lg:gap-14' : ''}>
+              <div className="min-w-0">
+                {sections.slice(0, whoAt).map((s, i) => (
+                  <Fragment key={s._key}>
+                    {strategy && i === pointerAt && <StrategyPointer clientName={proposal.clientName} />}
+                    {light(s, i)}
+                  </Fragment>
+                ))}
+                {strategy && pointerAt === whoAt && <StrategyPointer clientName={proposal.clientName} />}
+                <ProposalWhoDoesIt index={whoAt} />
+                <ProposalMethod index={whoAt} stages={methodStages()} />
+                <ProposalTeamSlider index={whoAt} {...teamFromAbout()} />
+                {sections.slice(whoAt, railEnd).map((s, i) => light(s, whoAt + i))}
+              </div>
+              {hasRail && (
+                <aside data-proposal-rail="aside" className="hidden lg:block">
+                  <div className="sticky top-8 mt-10">
+                    <ProofRail rail={rail} clips={clips} />
+                  </div>
+                </aside>
+              )}
+            </div>
+          </div>
+
+          {railEnd < sections.length && (
+            <div data-proposal-band="dark" className="bg-night text-white">
+              <div className={page}>{sections.slice(railEnd).map((s, i) => dark(s, railEnd + i, i === 0))}</div>
+            </div>
           )}
-        </div>
-      </div>
 
-      {railEnd < sections.length && (
-        <div data-proposal-band="dark" className="bg-night text-white">
-          <div className={page}>{sections.slice(railEnd).map((s, i) => dark(s, railEnd + i, i === 0))}</div>
-        </div>
-      )}
+          {hasRail && (
+            <div data-proposal-rail="inline" className={`${page} border-t border-surface-200 py-9 lg:hidden`}>
+              <ProofRail rail={rail} clips={clips} />
+            </div>
+          )}
 
-      {hasRail && (
-        <div data-proposal-rail="inline" className={`${page} border-t border-surface-200 py-9 lg:hidden`}>
-          <ProofRail rail={rail} clips={clips} />
-        </div>
+        </>
       )}
 
       <footer className="border-t border-white/10 bg-night px-5 py-10 text-white/60 sm:px-8">
