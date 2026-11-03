@@ -2,7 +2,7 @@ import { Fragment } from 'react';
 import type { ExtrasFn } from '../types';
 import { BarsCell, QuoteCell, StatCell, Tag, Ui, UiHead, VideoCell } from '../kit';
 import { LfMark } from '../../home-v11/ui';
-import { Redline } from './shared';
+import { HayesQuote, Redline } from './shared';
 import { DraftPage } from './hero-art';
 import { proofValue } from '../../home-v11/hero-slides';
 
@@ -115,7 +115,7 @@ export const copywriting: ExtrasFn = ({ home, data }) => {
         <>
           <VideoCell who="maksim" big="$1M+" cap="in sales from one landing page we designed" quote={t.videos[0].quote} person={t.videos[0].person} role={t.videos[0].jobTitle} duration={t.videos[0].duration} />
           <BarsCell tag="Conversion rate" client="Dimer Health" big={proofValue(data, 'dimer')} cap="Best conversion increase from a LoudFace build" before="Before" after="After six months" />
-          <QuoteCell logo="logos/brandfirm.png" logoAlt="Brandfirm" logoW={108} logoH={22} big={proofValue(data, 'brandfirm')} cap={t.cards[2].caption} quote={t.cards[2].quote} person={t.cards[2].person} role={t.cards[2].jobTitle} face="people/daan-smit.webp" tone="orange" />
+          <HayesQuote t={t} data={data} />
           <QuoteCell logo="logos/toku-ink.png" logoAlt="Toku" logoW={70} logoH={20} big={proofValue(data, 'toku')} cap={t.cards[0].caption} quote={t.cards[0].quote} person={t.cards[0].person} role={t.cards[0].jobTitle} face="people/kenneth-o-friel.webp" tone="ind" />
           <StatCell tag="Human-written" big="100%" cap="Human-written content: AI accelerates, humans write">
             <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>

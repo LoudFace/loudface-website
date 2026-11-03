@@ -312,9 +312,9 @@ function AnthonyQuote() {
 function DaanQuote() {
   return (
     <div className="v5-quotecard">
-      <blockquote>&ldquo;We are extremely happy with the landing page LoudFace built for us on Webflow.&rdquo;</blockquote>
+      <blockquote>&ldquo;People who find us through search come to the call warmer than anyone we get from paid ads.&rdquo;</blockquote>
       <footer>
-        Daan Smit <span>· CEO &amp; Founder, Brandfirm</span>
+        Jordan Hayes <span>· Founder, Hayes Media</span>
       </footer>
     </div>
   );
@@ -446,11 +446,11 @@ const QUOTE_CELLS: QuoteCell[] = [
     org: 'Radisson Hotels Group',
   },
   {
-    id: 'brandfirm',
-    cellLabel: 'Brandfirm',
-    quote: <>&ldquo;We are extremely happy with the landing page LoudFace built for us on Webflow.&rdquo;</>,
-    author: 'Daan Smit',
-    org: 'CEO & Founder, Brandfirm',
+    id: 'hayes',
+    cellLabel: 'Hayes Media',
+    quote: <>&ldquo;People who find us through search come to the call warmer than anyone we get from paid ads.&rdquo;</>,
+    author: 'Jordan Hayes',
+    org: 'Founder, Hayes Media',
   },
   {
     id: 'toku',

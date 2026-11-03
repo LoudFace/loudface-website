@@ -16,7 +16,7 @@ const VIDEOS = [
 const CARDS: { brand: string; logo: string | null; w: number; h: number; alt: string; face: string | null; proof: ProofKey }[] = [
   { brand: '#1646ce', logo: 'logos/toku.png', w: 78, h: 22, alt: 'Toku', face: 'people/kenneth-o-friel.webp', proof: 'toku' },
   { brand: '#3d63e0', logo: null, w: 0, h: 0, alt: '', face: null, proof: 'genie' },
-  { brand: '#f8612d', logo: 'logos/brandfirm.png', w: 108, h: 22, alt: 'Brandfirm', face: 'people/daan-smit.webp', proof: 'brandfirm' },
+  { brand: '#c96a00', logo: 'logos/hayes-media.png', w: 69, h: 30, alt: 'Hayes Media', face: 'people/jordan-hayes.webp', proof: 'hayes' },
 ];
 
 const Play = () => (

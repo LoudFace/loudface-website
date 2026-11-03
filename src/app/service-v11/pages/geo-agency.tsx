@@ -1,7 +1,7 @@
 import { Fragment } from 'react';
 import type { ExtrasFn } from '../types';
 import { QuoteCell, StatCell, Tag, Ui, UiHead } from '../kit';
-import { BrandfirmQuote, ENGINES, EngineIcon, GenieQuote, StatusList } from './shared';
+import { HayesQuote, ENGINES, EngineIcon, GenieQuote, StatusList } from './shared';
 import { Lines, Named } from './seo-aeo';
 import { ChatWindow } from '../../home-v11/Bento';
 import { proof, proofEnd, proofNumber, proofValue } from '../../home-v11/hero-slides';
@@ -138,7 +138,7 @@ export const geoAgency: ExtrasFn = ({ home, data }) => {
             </div>
           </StatCell>
           <GenieQuote t={t} data={data} />
-          <BrandfirmQuote t={t} data={data} />
+          <HayesQuote t={t} data={data} />
           <StatCell tag="Engines monitored" big="7+" cap="AI engines monitored: ChatGPT, Perplexity, Gemini, and more">
             <div style={{ display: 'flex', gap: 10 }}>{[0, 1, 2, 3].map((i) => <EngineIcon key={i} i={i} size={34} />)}</div>
           </StatCell>

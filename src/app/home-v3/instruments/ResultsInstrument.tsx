@@ -37,9 +37,9 @@ const QUOTES = [
     org: 'Radisson Hotels Group',
   },
   {
-    quote: 'We are extremely happy with the landing page LoudFace built for us on Webflow.',
-    who: 'Daan Smit',
-    org: 'CEO & Founder, Brandfirm',
+    quote: 'People who find us through search come to the call warmer than anyone we get from paid ads.',
+    who: 'Jordan Hayes',
+    org: 'Founder, Hayes Media',
   },
 ];
 

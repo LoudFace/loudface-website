@@ -357,9 +357,9 @@ const TIMELINE_DATA = [
       <>
         <ReportMessageMock />
         <div className="tl-quote">
-          <blockquote>&ldquo;We are extremely happy with the landing page LoudFace built for us on Webflow.&rdquo;</blockquote>
+          <blockquote>&ldquo;People who find us through search come to the call warmer than anyone we get from paid ads.&rdquo;</blockquote>
           <footer>
-            Daan Smit <span>· CEO &amp; Founder, Brandfirm</span>
+            Jordan Hayes <span>· Founder, Hayes Media</span>
           </footer>
         </div>
       </>

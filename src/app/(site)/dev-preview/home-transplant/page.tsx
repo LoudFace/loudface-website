@@ -190,10 +190,10 @@ const TESTIMONIALS = [
     src: 'https://cdn.sanity.io/images/xjjjqhgt/production/90fcd30f2058c1975d25c315ccef475997d07461-836x203.png?w=400&fm=png&q=80',
   },
   {
-    quote: 'We are extremely happy with the landing page LoudFace built for us on Webflow.',
-    name: 'Daan Smit',
-    designation: 'CEO & Founder, Brandfirm',
-    src: '/images/brandfirm.svg',
+    quote: 'People who find us through search come to the call warmer than anyone we get from paid ads.',
+    name: 'Jordan Hayes',
+    designation: 'Founder, Hayes Media',
+    src: '/images/home-v11/people/jordan-hayes.webp',
   },
 ];
 

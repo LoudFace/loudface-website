@@ -3,7 +3,7 @@ import type { ExtrasFn } from '../types';
 import type { Series } from '../../home-v11/data';
 import { LiveChart } from '../../home-v11/LiveChart';
 import { BarsCell, QuoteCell, Tag, Ui, UiHead } from '../kit';
-import { BrandfirmQuote, VideoProof } from './shared';
+import { HayesQuote, VideoProof } from './shared';
 import { GrowthBoard } from './hero-art';
 import { heroSlide, proofEnd, proofValue } from '../../home-v11/hero-slides';
 import type { ProofKey } from '../../home-v11/data';
@@ -86,7 +86,7 @@ export const growthAutopilot: ExtrasFn = ({ home, data }) => {
           <QuoteCell wide logo="logos/toku-ink.png" logoAlt="Toku" logoW={84} logoH={24} big={proofValue(data, 'toku')} cap="Toku’s AI visibility on its core prompt, from a standing start" quote={t.cards[0].quote} person={t.cards[0].person} role={t.cards[0].jobTitle} face="people/kenneth-o-friel.webp" tone="ind" />
           <BarsCell tag="Conversion rate" client="Dimer Health" big={proofValue(data, 'dimer')} cap="Best conversion increase from a LoudFace program" before="Before" after="After six months" />
           <VideoProof t={t} n={0} big="$1M+" cap="in sales from one landing page we designed" />
-          <BrandfirmQuote t={t} data={data} />
+          <HayesQuote t={t} data={data} />
         </>
       ),
     },

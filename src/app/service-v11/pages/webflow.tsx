@@ -2,7 +2,7 @@ import Link from 'next/link';
 import { artifactSrc, SHOTS } from '../../service-v3/data';
 import type { ExtrasFn } from '../types';
 import { Check, QuoteCell, StatCell, Tag, Ui, UiHead, VideoCell } from '../kit';
-import { logo } from './shared';
+import { HayesQuote, logo } from './shared';
 import { proofValue } from '../../home-v11/hero-slides';
 
 const CLIENTS = [
@@ -168,7 +168,7 @@ export const webflow: ExtrasFn = ({ home, data, images }) => {
         <>
           <VideoCell who="sarig" big={proofValue(data, 'dimer')} cap="Best conversion increase from a LoudFace build" quote={t.videos[1].quote} person={t.videos[1].person} role={t.videos[1].jobTitle} duration={t.videos[1].duration} />
           <QuoteCell logo="logos/color-outbound.png" logoAlt="Outbound Specialist" logoW={75} logoH={26} big="$1M+" cap="in sales from one landing page we designed" quote={t.videos[0].quote} person={t.videos[0].person} role={t.videos[0].jobTitle} tone="ind" />
-          <QuoteCell logo="logos/brandfirm.png" logoAlt="Brandfirm" logoW={108} logoH={22} big={proofValue(data, 'brandfirm')} cap={t.cards[2].caption} quote={t.cards[2].quote} person={t.cards[2].person} role={t.cards[2].jobTitle} face="people/daan-smit.webp" tone="orange" />
+          <HayesQuote t={t} data={data} />
           <StatCell tag="Teams" big="50+" cap="B2B teams we have built sites for">
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '18px 14px', alignItems: 'center' }}>
               {/* eslint-disable-next-line @next/next/no-img-element */}

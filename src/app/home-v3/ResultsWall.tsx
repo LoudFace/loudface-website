@@ -54,9 +54,9 @@ const QUOTES = [
     span: 'rw-4',
   },
   {
-    text: 'We are extremely happy with the landing page LoudFace built for us on Webflow.',
-    who: 'Daan Smit',
-    role: 'CEO & Founder, Brandfirm',
+    text: 'People who find us through search come to the call warmer than anyone we get from paid ads.',
+    who: 'Jordan Hayes',
+    role: 'Founder, Hayes Media',
     span: 'rw-8',
   },
 ];

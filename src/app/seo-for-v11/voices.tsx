@@ -3,7 +3,7 @@ import type { HomeV11Content } from '@/lib/content-utils';
 import type { HomeV11Data } from '../home-v11/data';
 import { proofValue } from '../home-v11/hero-slides';
 import { BarsCell } from '../service-v11/kit';
-import { BrandfirmQuote, GenieQuote, TokuQuote, VideoProof } from '../service-v11/pages/shared';
+import { HayesQuote, GenieQuote, TokuQuote, VideoProof } from '../service-v11/pages/shared';
 
 /**
  * The industry pages' proof grid (the service template's cells), picked so no client figure already on the page
@@ -21,7 +21,7 @@ export function IndustryVoices({ t, data, avoid }: { t: Voices; data: HomeV11Dat
   ];
   const narrows: [boolean, ReactNode][] = [
     [!has('dimer-health'), <BarsCell key="dimer" tag="Conversion rate" client="Dimer Health" big={proofValue(data, 'dimer')} cap="Best conversion increase from a LoudFace program" before="Before" after="After six months" />],
-    [!has('brandfirm'), <BrandfirmQuote key="brandfirm" t={t} data={data} />],
+    [!has('hayes-media-organic-leads'), <HayesQuote key="hayes" t={t} data={data} />],
     [true, <GenieQuote key="genie" t={t} data={data} plain={has('genie-teacher-organic-growth')} />],
   ];
   const w = wides.filter(([ok]) => ok).map(([, n]) => n);

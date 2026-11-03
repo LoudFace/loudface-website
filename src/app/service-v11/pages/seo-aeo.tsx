@@ -1,7 +1,7 @@
 import type { ReactNode } from 'react';
 import type { ExtrasFn } from '../types';
 import { QuoteCell, Tag, Ui, UiHead } from '../kit';
-import { BrandfirmQuote, ClimbCard, ENGINES, EngineIcon, GenieQuote, StatusList, VideoProof, logo } from './shared';
+import { HayesQuote, ClimbCard, ENGINES, EngineIcon, GenieQuote, StatusList, VideoProof, logo } from './shared';
 import { RankTracker } from './hero-art';
 import { proofValue } from '../../home-v11/hero-slides';
 
@@ -169,7 +169,7 @@ export const seoAeo: ExtrasFn = ({ home, data }) => {
           <QuoteCell wide logo="logos/toku-ink.png" logoAlt="Toku" logoW={84} logoH={24} big={proofValue(data, 'toku')} cap={`Toku AI visibility on its core stablecoin-payroll prompt (30-day Peec reading ending 19 August 2026; average cited position ${proofValue(data, 'tokuCorePosition') ?? ''} on that prompt)`} quote={t.cards[0].quote} person={t.cards[0].person} role={t.cards[0].jobTitle} face="people/kenneth-o-friel.webp" tone="ind" />
           <GenieQuote t={t} data={data} />
           <VideoProof t={t} n={0} big="$1M+" cap="in sales from one landing page we designed" />
-          <BrandfirmQuote t={t} data={data} />
+          <HayesQuote t={t} data={data} />
         </>
       ),
     },

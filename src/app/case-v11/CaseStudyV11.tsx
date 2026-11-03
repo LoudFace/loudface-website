@@ -44,10 +44,10 @@ const VIDEO_BY_CLIENT: Record<string, { key: 'maksim' | 'sarig' | 'elizabete'; n
 const SITE_BY_SLUG: Record<string, { src: string; domain: string }> = {
   'genie-teacher-organic-growth': { src: '/images/home-v11/cases/genie-site.webp', domain: 'genieteacher.com' },
 };
-/** The published review each client's words come from (Clutch's own share link, Trustpilot's review page). */
+/** The published review each client's words come from (Clutch's own share link). Never Trustpilot review text: their
+ *  terms forbid showing it outside their own widgets (warnings of 27 Oct and 3 Nov 2026). */
 const REVIEW_BY_CLIENT: Record<string, { href: string; label: string }> = {
   'Genie Teacher': { href: 'https://clutch.co/go-to-review/0b257a96-f556-4380-9e58-ba62f822638b/484569', label: 'Read the review on Clutch' },
-  'Dimer Health': { href: 'https://www.trustpilot.com/reviews/6759ad2adfddca7fc7a30297', label: 'Read the review on Trustpilot' },
 };
 /** The mobile site we built, cropped from the study's own mockups, for the build hero's phone (2026-09-25). */
 const PHONE_BY_CLIENT: Record<string, { src: string; alt: string }> = {

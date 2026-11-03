@@ -381,17 +381,17 @@
     "videos": [
       {
         "duration": "1:35",
-        "quote": "“One of the landing pages they designed has generated over $1M in sales so far.”",
+        "quote": "“The first landing page we developed generated over a million dollars in revenue.”",
         "person": "Maksim Polupanov",
         "jobTitle": "CEO, Outbound Specialist",
-        "source": "Trustpilot"
+        "source": ""
       },
       {
         "duration": "0:29",
-        "quote": "“From start to finish, the team exceeded expectations.”",
+        "quote": "“We’ve increased conversion by 288%.”",
         "person": "Sarig Reichert",
         "jobTitle": "CPO, Dimer Health",
-        "source": "Trustpilot"
+        "source": ""
       },
       {
         "duration": "1:53",
@@ -419,11 +419,11 @@
         "brand": "Genie Teacher"
       },
       {
-        "caption": "in the first 24 hours, from paid-ad traffic",
-        "quote": "“We began receiving leads immediately after the launch of our campaign.”",
-        "person": "Daan Smit",
-        "jobTitle": "CEO and Founder, Brandfirm",
-        "source": "Trustpilot"
+        "caption": "closed from one search lead, in the first month",
+        "quote": "“People who find us through search come to the call warmer than anyone we get from paid ads.”",
+        "person": "Jordan Hayes",
+        "jobTitle": "Founder, Hayes Media",
+        "source": ""
       }
     ]
   },

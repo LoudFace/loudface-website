@@ -139,8 +139,8 @@ const GENIE_REVIEW = { href: 'https://clutch.co/go-to-review/0b257a96-f556-4380-
 export const GenieQuote = ({ t, data, plain }: { t: Voices; data: HomeV11Data | null; plain?: boolean }) => (
   <QuoteCell brandIcon="logos/genie-icon.png" logoAlt="Genie Teacher" logoW={120} logoH={24} big={plain ? undefined : proofValue(data, 'genie')} cap={plain ? undefined : t.cards[1].caption} quote={t.cards[1].quote} person={t.cards[1].person} role={t.cards[1].jobTitle} initial={t.cards[1].initial} review={GENIE_REVIEW} tone="ind" className={plain ? 'is-plain' : ''} />
 );
-export const BrandfirmQuote = ({ t, data }: { t: Voices; data: HomeV11Data | null }) => (
-  <QuoteCell logo="logos/brandfirm.png" logoAlt="Brandfirm" logoW={108} logoH={22} big={proofValue(data, 'brandfirm')} cap={t.cards[2].caption} quote={t.cards[2].quote} person={t.cards[2].person} role={t.cards[2].jobTitle} face="people/daan-smit.webp" tone="orange" />
+export const HayesQuote = ({ t, data }: { t: Voices; data: HomeV11Data | null }) => (
+  <QuoteCell logo="logos/hayes-media.png" logoAlt="Hayes Media" logoW={69} logoH={30} big={proofValue(data, 'hayes')} cap={t.cards[2].caption} quote={t.cards[2].quote} person={t.cards[2].person} role={t.cards[2].jobTitle} face="people/jordan-hayes.webp" tone="orange" />
 );
 export const TokuQuote = ({ t, data, wide }: { t: Voices; data: HomeV11Data | null; wide?: boolean }) => (
   <QuoteCell wide={wide} logo="logos/toku-ink.png" logoAlt="Toku" logoW={70} logoH={20} big={proofValue(data, 'toku')} cap={t.cards[0].caption} quote={t.cards[0].quote} person={t.cards[0].person} role={t.cards[0].jobTitle} face="people/kenneth-o-friel.webp" tone="ind" />

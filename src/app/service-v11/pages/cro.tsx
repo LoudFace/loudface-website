@@ -1,7 +1,7 @@
 import type { ExtrasFn } from '../types';
-import { BarsCell, Browser, QuoteCell, Ui, VideoCell } from '../kit';
+import { BarsCell, Browser, Ui, VideoCell } from '../kit';
 import { SHOTS } from '../../service-v3/data';
-import { BeforeAfterCard, Redline, StatusList, Wireframe } from './shared';
+import { BeforeAfterCard, HayesQuote, Redline, StatusList, Wireframe } from './shared';
 import { proofValue } from '../../home-v11/hero-slides';
 
 /** CRO: the approved board (Paper "Services · CRO", 2026-09-24). Signature: how one test runs. */
@@ -43,7 +43,7 @@ export const cro: ExtrasFn = ({ home, data }) => {
           <VideoCell who="maksim" big="$1M+" cap="in sales from one landing page we designed" quote={t.videos[0].quote} person={t.videos[0].person} role={t.videos[0].jobTitle} duration={t.videos[0].duration} />
           <BarsCell tag="Conversion rate" client="Dimer Health" big={proofValue(data, 'dimer')} cap="Best conversion increase from a LoudFace program" before="Before" after="After six months" />
           <VideoCell who="elizabete" quote={t.videos[2].quote} person={t.videos[2].person} role={t.videos[2].jobTitle} duration={t.videos[2].duration} />
-          <QuoteCell logo="logos/brandfirm.png" logoAlt="Brandfirm" logoW={108} logoH={22} big={proofValue(data, 'brandfirm')} cap={t.cards[2].caption} quote={t.cards[2].quote} person={t.cards[2].person} role={t.cards[2].jobTitle} face="people/daan-smit.webp" tone="orange" />
+          <HayesQuote t={t} data={data} />
         </>
       ),
     },
