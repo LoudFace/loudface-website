@@ -27,8 +27,17 @@ export const DEFAULT_WIDTH: Record<ChartSize, number> = {
 export interface ResearchChartComponentProps extends ResearchChartProps {
   /** The series colour lit, replacing the highlight on night and navy (G paper: #86dcb4 for the green series). */
   accent?: string;
-  /** Show the spec's axis line above the chart. Default: at sm only, as the board's cards do. */
+  /** Show the spec's axis line above the chart. Default: at sm only, as the board's cards do (never in thin). */
   showAxis?: boolean;
+  /** `thin`: the homepage strip's card chart (DrawOptions.variant). Default: the /research rendering. */
+  variant?: "default" | "thin";
+  /** Thin only: the SVG height in px (default THIN_HEIGHT, 118). */
+  height?: number;
+  /** The colour of every non-highlighted mark (DrawOptions.rest). */
+  rest?: string;
+  /** Width drawn on the server before the box is measured. Default: DEFAULT_WIDTH for the size. Set it to the
+   *  card's real width so the first paint matches the redraw. */
+  initialWidth?: number;
 }
 
 const useIsoLayoutEffect =
@@ -43,6 +52,10 @@ export function ResearchChart({
   className,
   accent,
   showAxis,
+  variant,
+  height,
+  rest,
+  initialWidth,
 }: ResearchChartComponentProps) {
   const rawId = useId();
   const idPrefix = `rc${rawId.replace(/[^A-Za-z0-9_-]/g, "")}`;
@@ -65,15 +78,18 @@ export function ResearchChart({
   const drawn = useMemo(
     () =>
       drawChart(spec, {
-        width: width ?? DEFAULT_WIDTH[size],
+        width: width ?? initialWidth ?? DEFAULT_WIDTH[size],
         ground,
         tone,
         size,
         idPrefix,
         accent,
         showAxis,
+        variant,
+        height,
+        rest,
       }),
-    [spec, width, ground, tone, size, idPrefix, accent, showAxis],
+    [spec, width, initialWidth, ground, tone, size, idPrefix, accent, showAxis, variant, height, rest],
   );
   const table = useMemo(() => chartTable(spec), [spec]);
 

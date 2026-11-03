@@ -17,6 +17,7 @@ import {
   T,
   textWidth,
   wrap,
+  wrapBalanced,
 } from "./text";
 import { themeFor, type Theme } from "./theme";
 
@@ -53,7 +54,28 @@ export interface DrawOptions {
   showAxis?: boolean;
   /** The LoudFace mark used in matrix cells. */
   logoHref?: string;
+  /**
+   * `thin`: the homepage research strip's card chart (design T2, approved 3 Nov 2026; board kit
+   * design-lab/research-home-2026-11-03/kit/charts-v2-thin.js). A fixed short height, no y-axis ticks or gridlines
+   * (the baseline only), no legend, no callouts, figures printed on the marks, two-line labels balanced. Bars of up
+   * to four rows, a 100% bar, a split and a funnel are drawn as plain columns of the same numbers; the other types keep
+   * their form without ticks or legend. Default: the /research rendering, unchanged.
+   */
+  variant?: "default" | "thin";
+  /**
+   * Thin only: the SVG's height in px (default THIN_HEIGHT). Column forms hold it exactly unless their labels need a
+   * third line at a narrow width; row forms (lists, tables, matrices, dots, multiples, slopes) fill it when their rows
+   * fit at the minimum row height and grow past it when they do not, so no label is ever dropped.
+   */
+  height?: number;
+  /** Replaces the colour of every non-highlighted mark (the strip draws them grey-lavender, #625f8f, on night). */
+  rest?: string;
 }
+
+/** Thin charts: the board's card height (data-h="118"), the smallest plot a column form keeps, and the smallest row. */
+export const THIN_HEIGHT = 118;
+const THIN_MIN_PLOT = 28;
+const THIN_MIN_ROW = 18;
 
 export interface DrawResult {
   svg: string;
@@ -121,6 +143,9 @@ interface Ctx {
   w: number;
   /** Right margin kept for the vertical LOUDFACE watermark (lg only). */
   wm: number;
+  /** The thin card variant (DrawOptions.variant) and its fixed height; 0 when not thin. */
+  thin: boolean;
+  fixH: number;
   defs: string[];
   fill: (col: string, kind: "hi" | "rest", dir: "h" | "v") => string;
   hatch: () => string;
@@ -156,6 +181,8 @@ function makeCtx(
     size,
     w,
     wm: 0,
+    thin: false,
+    fixH: 0,
     defs,
     fill(col, kind, dir) {
       const f = th.fade?.[kind];
@@ -283,23 +310,30 @@ function hbars(
     wrap(r.label, labW - 10, s.fs, r.hi ? 500 : 400),
   );
   const lh = s.fs * 1.15;
-  const row = Math.max(s.row, ...lines.map((l) => l.length * lh + 8));
   const top = 6;
+  // thin: the rows share the fixed height, down to the minimum row; a wrapped label still gets its lines
+  const want = c.thin
+    ? Math.min(s.row, Math.max(THIN_MIN_ROW, (c.fixH - top - 4) / n))
+    : s.row;
+  const row = Math.max(want, ...lines.map((l) => l.length * lh + 8));
+  const barH = c.thin ? Math.min(s.bar, row - 6) : s.bar;
   const bottom = top + n * row;
   let g = "";
   for (const t of o.ticks) {
+    if (c.thin && t !== 0) continue;
     const x = x0 + (t / o.max) * bw;
     g += `<line x1="${r1(x)}" x2="${r1(x)}" y1="${top}" y2="${bottom}" stroke="${t === 0 ? th.base : th.grid}"/>`;
-    g += T(x, bottom + 19, tickText(t, o.unit), {
-      fs: s.ax,
-      c: th.axis,
-      a: t === 0 ? "start" : "middle",
-    });
+    if (!c.thin)
+      g += T(x, bottom + 19, tickText(t, o.unit), {
+        fs: s.ax,
+        c: th.axis,
+        a: t === 0 ? "start" : "middle",
+      });
   }
   o.rows.forEach((r, i) => {
     const yc = top + i * row + row / 2;
     const bl = Math.max(2, (Math.min(r.v, o.max) / o.max) * bw);
-    g += `<rect x="${r1(x0)}" y="${r1(yc - s.bar / 2)}" width="${r1(bl)}" height="${s.bar}" fill="${c.fill(r.hi ? th.hi : th.rest, r.hi ? "hi" : "rest", "h")}"/>`;
+    g += `<rect x="${r1(x0)}" y="${r1(yc - barH / 2)}" width="${r1(bl)}" height="${r1(barH)}" fill="${c.fill(r.hi ? th.hi : th.rest, r.hi ? "hi" : "rest", "h")}"/>`;
     const ls = lines[i];
     ls.forEach((l, k) => {
       g += T(0, yc + s.fs * 0.35 + (k - (ls.length - 1) / 2) * lh, l, {
@@ -311,17 +345,17 @@ function hbars(
     g += T(x0 + bl + 8, yc + s.val * 0.34, r.text, {
       fs: s.val,
       w: 500,
-      c: r.hi ? th.hi : th.ink,
+      c: r.hi ? th.hi : c.thin ? th.body : th.ink,
       fig: true,
     });
-    if (r.hi && o.call && c.size !== "sm") {
+    if (r.hi && o.call && c.size !== "sm" && !c.thin) {
       const vx = x0 + bl + 8 + figWidth(r.text, s.val) + 12;
       const fw = textWidth(o.call, s.call, 500) + 18;
       if (vx + fw <= w - c.wm)
         g += c.callout(vx, yc - s.callH / 2, o.call, { anchor: "start" });
     }
   });
-  return { h: bottom + 26, svg: g };
+  return { h: bottom + (c.thin ? 4 : 26), svg: g };
 }
 
 /** Columns on a y axis: the figure on each column, the chosen column called out. */
@@ -337,28 +371,41 @@ function columns(
 ): Form {
   const { th, s, w } = c;
   const n = o.rows.length;
-  const axW =
-    Math.max(...o.ticks.map((t) => textWidth(tickText(t, o.unit), s.ax))) + 12;
+  // thin: no y axis (each column prints its own figure), so the plot starts at the left edge
+  const axW = c.thin
+    ? 0
+    : Math.max(...o.ticks.map((t) => textWidth(tickText(t, o.unit), s.ax))) +
+      12;
   const x0 = axW;
   const x1 = w - c.wm;
   const band = (x1 - x0) / n;
   const cw = Math.max(4, Math.min(band * 0.7, c.size === "lg" ? 124 : 96));
   const lines = o.rows.map((r) =>
-    wrap(r.label, Math.max(20, band - 6), s.ax, r.hi ? 500 : 400),
+    (c.thin ? wrapBalanced : wrap)(
+      r.label,
+      Math.max(20, band - 6),
+      s.ax,
+      r.hi ? 500 : 400,
+    ),
   );
   const nl = Math.max(...lines.map((l) => l.length));
   const lh = s.ax + 4;
-  const plotH = { sm: 150, md: 230, lg: 300 }[c.size];
-  const top = (o.call ? s.callH + 16 : 0) + s.val + 10;
+  const call = c.thin ? undefined : o.call;
+  const top = (call ? s.callH + 16 : 0) + s.val + 10;
+  const plotH = c.thin
+    ? Math.max(THIN_MIN_PLOT, c.fixH - top - 14 - nl * lh)
+    : { sm: 150, md: 230, lg: 300 }[c.size];
   const bottom = top + plotH;
   const y = (v: number) => bottom - (Math.min(v, o.max) / o.max) * plotH;
   let g = "";
   for (const t of o.ticks) {
+    if (c.thin && t !== 0) continue;
     g += `<line x1="${r1(x0)}" x2="${r1(x1)}" y1="${r1(y(t))}" y2="${r1(y(t))}" stroke="${t === 0 ? th.base : th.grid}"/>`;
-    g += T(0, y(t) + s.ax * 0.35, tickText(t, o.unit), {
-      fs: s.ax,
-      c: th.axis,
-    });
+    if (!c.thin)
+      g += T(0, y(t) + s.ax * 0.35, tickText(t, o.unit), {
+        fs: s.ax,
+        c: th.axis,
+      });
   }
   o.rows.forEach((r, i) => {
     const cx = x0 + band * i + band / 2;
@@ -367,7 +414,7 @@ function columns(
     g += T(cx, yt - 8, r.text, {
       fs: s.val,
       w: 500,
-      c: r.hi ? th.hi : th.ink,
+      c: r.hi ? th.hi : c.thin ? th.body : th.ink,
       fig: true,
       a: "middle",
     });
@@ -379,8 +426,8 @@ function columns(
         a: "middle",
       });
     });
-    if (r.hi && o.call)
-      g += c.callout(cx, 2, o.call, {
+    if (r.hi && call)
+      g += c.callout(cx, 2, call, {
         lx: cx,
         to: yt - s.val - 12,
         min: x0,
@@ -572,7 +619,9 @@ function slope(
   },
 ): Form {
   const { th, s, w } = c;
-  const H = { sm: 320, md: 380, lg: 460 }[c.size];
+  const H = c.thin
+    ? Math.max(c.fixH, s.ax + 22 + o.rows.length * (s.fs + 5) + 24)
+    : { sm: 320, md: 380, lg: 460 }[c.size];
   const top = s.ax + 22;
   const bot = H - 14;
   const y = (v: number) => bot - (Math.min(v, o.max) / o.max) * (bot - top);
@@ -689,18 +738,24 @@ function dots(
   const bw = Math.max(1, x1 - x0);
   const x = (v: number) => x0 + (Math.min(v, o.max) / o.max) * bw;
   const top = s.ax + 16;
-  const rh = s.row + (c.size === "sm" ? 2 : 6);
+  const rh = c.thin
+    ? Math.min(s.row + 2, Math.max(THIN_MIN_ROW + 4, (c.fixH - top - 8) / n))
+    : s.row + (c.size === "sm" ? 2 : 6);
   const bottom = top + n * rh;
-  const ticks =
-    c.size === "sm" || bw < 260 ? [0, o.max / 2, o.max] : ticksFor(o.max);
+  const ticks = c.thin
+    ? [0]
+    : c.size === "sm" || bw < 260
+      ? [0, o.max / 2, o.max]
+      : ticksFor(o.max);
   let g = "";
   for (const t of ticks) {
     g += `<line x1="${r1(x(t))}" x2="${r1(x(t))}" y1="${top - 4}" y2="${bottom}" stroke="${t === 0 ? th.base : th.grid}"/>`;
-    g += T(x(t), bottom + 19, tickText(t, o.unit), {
-      fs: s.ax,
-      c: th.axis,
-      a: t === 0 ? "start" : "middle",
-    });
+    if (!c.thin)
+      g += T(x(t), bottom + 19, tickText(t, o.unit), {
+        fs: s.ax,
+        c: th.axis,
+        a: t === 0 ? "start" : "middle",
+      });
   }
   g += T(w - c.wm, s.ax, "Swing", { fs: s.ax, w: 500, c: th.muted, a: "end" });
   const dr = { sm: 5, md: 6, lg: 7 }[c.size];
@@ -729,7 +784,7 @@ function dots(
     });
   });
   return {
-    h: bottom + 30,
+    h: bottom + (c.thin ? 8 : 30),
     svg: g,
     legend: o.cols.map((label, k) => ({
       label,
@@ -1106,8 +1161,10 @@ function list(
 ): Form {
   const { th, s, w } = c;
   const x1 = w - c.wm;
-  const rh = s.row;
   const top = o.heads ? s.ax + 14 : 4;
+  const rh = c.thin
+    ? Math.min(s.row, Math.max(THIN_MIN_ROW + 4, (c.fixH - top) / o.rows.length))
+    : s.row;
   let g = "";
   if (o.heads)
     g +=
@@ -1150,8 +1207,60 @@ export function isStack(spec: ChartSpec): boolean {
   );
 }
 
+/**
+ * Thin cards draw small part-of-a-whole charts as plain columns of the same numbers (the board's THIN and CARD
+ * forms): a funnel, a split, a 100% bar and a bar list of up to four rows. At about 120px a funnel's figures and
+ * two-line labels leave a plot of about 25px; columns keep 50-60px. Null: the type keeps its own form.
+ */
+function thinColumns(spec: ChartSpec): {
+  rows: BarRow[];
+  max: number;
+} | null {
+  switch (spec.type) {
+    case "funnel": {
+      const first = spec.rows[0][1] || 1;
+      return {
+        rows: spec.rows.map((r, i) => ({
+          label: r[0],
+          v: r[1],
+          text: nf(r[1]),
+          hi: i === spec.rows.length - 1,
+        })),
+        max: first,
+      };
+    }
+    case "split":
+      return {
+        rows: [
+          { label: spec.a[0], v: spec.a[1], text: pct(spec.a[1]), hi: true },
+          { label: spec.b[0], v: spec.b[1], text: pct(spec.b[1]), hi: false },
+        ],
+        max: 100,
+      };
+    case "bars": {
+      if (!isStack(spec) && spec.rows.length > 4) return null;
+      const f = isStack(spec) ? pct : fmtOf(spec.unit);
+      return {
+        rows: spec.rows.map((r, i) => ({
+          label: r[0],
+          v: r[1],
+          text: f(r[1]),
+          hi: i === 0,
+        })),
+        max: isStack(spec) ? 100 : spec.max,
+      };
+    }
+    default:
+      return null;
+  }
+}
+
 function drawForm(c: Ctx, spec: ChartSpec, logo: boolean): Form {
   const a = notes(spec);
+  if (c.thin) {
+    const cols = thinColumns(spec);
+    if (cols) return columns(c, { ...cols, ticks: [0, cols.max] });
+  }
   switch (spec.type) {
     case "bars": {
       if (isStack(spec)) {
@@ -1361,22 +1470,30 @@ export function drawChart(spec: ChartSpec, opts: DrawOptions): DrawResult {
     120,
     Math.floor(Number.isFinite(opts.width) ? opts.width : 0),
   );
-  const asked = opts.size ?? "md";
+  const thin = opts.variant === "thin";
+  const asked = opts.size ?? (thin ? "sm" : "md");
   const size: ChartSize = asked === "lg" && width < LG_MIN ? "md" : asked;
-  const th = themeFor(opts.ground, opts.tone, opts.accent);
+  let th = themeFor(opts.ground, opts.tone, opts.accent);
+  if (opts.rest) th = { ...th, rest: opts.rest, cellA: `${opts.rest}80` };
   const id = (
     opts.idPrefix ?? hashId(JSON.stringify(spec) + opts.tone + width + size)
   ).replace(/[^A-Za-z0-9_-]/g, "");
   const c = makeCtx(th, size, width, id, opts.logoHref ?? "/lf-logo.svg");
-  c.wm = size === "lg" ? 30 : 0;
+  c.wm = size === "lg" && !thin ? 30 : 0;
+  c.thin = thin;
+  c.fixH = thin
+    ? Math.max(60, Number.isFinite(opts.height) ? Number(opts.height) : THIN_HEIGHT)
+    : 0;
   const out = drawForm(c, spec, true);
-  const showAxis = opts.showAxis ?? size === "sm";
+  // thin: the page prints the axis line itself, and a thin chart carries no legend, except dots, whose three
+  // engine colours nothing else on the card names
+  const showAxis = opts.showAxis ?? (!thin && size === "sm");
   const head = topLine(
     th,
     size,
     width,
     showAxis ? notes(spec).axis : undefined,
-    out.legend,
+    thin && spec.type !== "dots" ? undefined : out.legend,
   );
   const water = c.wm
     ? `<text transform="translate(${r1(width - 4)} ${r1(out.h - 2)}) rotate(-90)" font-size="14" font-weight="700" letter-spacing="0.24em" fill="${th.water}">LOUDFACE</text>`

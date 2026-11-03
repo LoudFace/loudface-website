@@ -248,7 +248,7 @@ export function benchFigureSpecs(b: BenchTables): {
       type: "slope",
       from: "Citation rate",
       to: "Retrieval rate",
-      rows: b.rates.map(([label, a, r]) => [label, a, r]),
+      rows: b.rates.map(([label, a, r]): [string, number, number] => [label, a, r]),
     },
   };
 }

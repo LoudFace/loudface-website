@@ -167,6 +167,15 @@
       }
     ]
   },
+  "research": {
+    "eyebrow": "Research",
+    "heading": "We measure it,",
+    "headingSoft": "then we publish it",
+    "lede": "papers, each with its sample and method.",
+    "linkLabel": "See all research",
+    "swipe": "Swipe for the three newest papers",
+    "researchersAriaLabel": "The researchers"
+  },
   "route": {
     "eyebrow": "How an engagement runs",
     "heading": "A call, a plan, <br>then work every month",

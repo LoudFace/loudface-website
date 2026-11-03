@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Home · research · A2 Night grid, series accent</title>
+<link rel="stylesheet" href="../research-2026-11-03/shared/base.css">
+<link rel="stylesheet" href="../research-2026-11-03/shared/series.css">
+<link rel="stylesheet" href="kit/home.css">
+<link rel="stylesheet" href="kit/grid.css">
+<style>
+/* A2 · Night grid, series accent. Graphite's grid on the /research night ground: every chart is drawn on night, the
+   paper's series colour lit as its one accent (the square in the meta line is the same colour), everything else
+   grey-lavender. Six cards, one construction, one chart height. */
+body { background: var(--night); }
+</style>
+</head>
+<body>
+
+<section data-paper-name="Home · research · A2 Night grid, series accent" class="rs is-night">
+  <div class="wrap">
+    <div class="rh-head">
+      <div>
+        <p class="eyebrow">Research</p>
+        <h2 class="h2">We measure it, <span class="soft">then we publish it</span></h2>
+      </div>
+      <div class="rh-side">
+        <p>13 papers on what ChatGPT, Perplexity and Google cite and rank, each with its sample and method.</p>
+        <a class="rh-link" href="https://www.loudface.co/research">See all research <svg class="arr" width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true"><path d="M2 7h10M8 3l4 4-4 4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+      </div>
+    </div>
+    <div class="rs-team">
+      <p>Researchers</p>
+      <div class="rs-who"><img src="../research-2026-11-03/shared/img/arnel-bukva-v3.jpg" alt=""><div><b>Arnel Bukva</b><span>Founder and Head of Growth</span></div></div>
+      <div class="rs-who"><img src="../research-2026-11-03/shared/img/tamara-pavlovic-v3.jpg" alt=""><div><b>Tamara Pavlovic</b><span>Lead SEO, AEO &amp; GEO Specialist</span></div></div>
+      <div class="rs-who"><img src="../research-2026-11-03/shared/img/andrea-van-wyk-v5.jpg" alt=""><div><b>Andrea Van Wyk</b><span>Lead SEO, AEO &amp; GEO Specialist</span></div></div>
+      <div class="rs-who"><img src="../research-2026-11-03/shared/img/abhay-tyagi-v3.jpg" alt=""><div><b>Abhay Tyagi</b><span>Lead SEO, AEO &amp; GEO Specialist</span></div></div>
+    </div>
+    <div class="rs-grid" id="rs-grid"></div>
+    <div class="rs-foot"><span>Swipe for the six newest papers</span><span class="rs-dots" id="rs-dots"></span></div>
+  </div>
+</section>
+
+<script src="kit/research.js"></script>
+<script src="kit/home.js"></script>
+<script src="kit/grid.js"></script>
+<script>RG.cards('accent');</script>
+<script src="kit/charts-v2-cards.js"></script>
+<script src="../research-2026-11-03/shared/freeze-late.js"></script>
+</body>
+</html>

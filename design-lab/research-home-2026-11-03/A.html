@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Home · research · A Series plates</title>
+<link rel="stylesheet" href="../research-2026-11-03/shared/base.css">
+<link rel="stylesheet" href="../research-2026-11-03/shared/series.css">
+<link rel="stylesheet" href="kit/home.css">
+<style>
+/* A · Series plates. Copy left on the night band, one plate per series on its own colour (E-C Slack: cards on a
+   colour band that hang over its edge; F-N Hers: a big number with its chart drawn on a saturated colour). The band
+   stops part-way down the second row so the plates straddle into the warm ground of the next section (Route). */
+.ra { --seam: 300px; background: linear-gradient(180deg, var(--night) 0, var(--night) calc(100% - var(--seam)), var(--warm) calc(100% - var(--seam))); padding: 72px 0 48px; }
+@media (min-width: 768px) { .ra { padding: 104px 0 64px; } }
+@media (min-width: 1280px) { .ra { --seam: 330px; padding: 120px 0 64px; } }
+.ra-in { display: flex; flex-direction: column; gap: 40px; }
+@media (min-width: 1100px) { .ra-in { flex-direction: row; align-items: flex-start; gap: 56px; } }
+.ra-copy { display: flex; flex-direction: column; align-items: flex-start; }
+@media (min-width: 1100px) { .ra-copy { width: 360px; flex-shrink: 0; padding-top: 8px; } }
+.ra-copy .h2 { margin-top: 16px; }
+.ra-copy .h2 .soft { color: var(--n-soft); }
+.ra-lede { font-size: 17px; line-height: 1.5; color: var(--n-body); margin-top: 24px; max-width: 360px; text-wrap: pretty; }
+.ra-copy .btn { margin-top: 32px; }
+.ra-count { display: flex; gap: 0; margin-top: 48px; padding-top: 22px; border-top: 1px solid var(--n-line); width: 100%; }
+.ra-count > div { flex: 1 1 0; padding-right: 16px; }
+.ra-count b { display: block; font-family: var(--heading); font-weight: 500; font-size: 36px; line-height: 1; letter-spacing: -.04em; color: #fff; }
+.ra-count span { display: block; font-size: 13.5px; line-height: 1.4; color: var(--n-muted); margin-top: 8px; }
+@media (max-width: 1099px) { .ra-count { margin-top: 36px; max-width: 420px; } }
+
+.ra-tiles { flex: 1 1 0; min-width: 0; display: grid; grid-template-columns: 1fr; gap: 16px; }
+@media (min-width: 700px) { .ra-tiles { grid-template-columns: 1fr 1fr; } }
+.ra-tile { display: flex; flex-direction: column; min-width: 0; padding: 26px 22px 20px; color: var(--fg); box-shadow: 0 1px 0 rgba(0,0,0,.04); }
+@media (min-width: 768px) { .ra-tile { padding: 30px 30px 24px; } }
+.ra-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; }
+.ra-name { font-family: var(--heading); font-weight: 500; font-size: 22px; line-height: 1.1; letter-spacing: -.025em; }
+.ra-meta { font-size: 13.5px; color: var(--fg2); margin-top: 6px; }
+.ra-big { font-family: var(--heading); font-weight: 500; font-size: 72px; line-height: .88; letter-spacing: -.06em; margin: 36px 0 0 -3px; white-space: nowrap; }
+@media (min-width: 1280px) { .ra-big { font-size: 84px; } }
+.ra-big small { color: var(--fg2); }
+.ra-say { font-size: 15px; line-height: 1.42; color: var(--fg); margin-top: 14px; max-width: 330px; text-wrap: pretty; }
+@media (min-width: 700px) { .ra-say { min-height: 42px; } }
+.ra-chart { margin-top: auto; padding-top: 28px; }
+.ra-chart .c2-cap { margin-top: 12px; }
+</style>
+</head>
+<body>
+
+<section data-paper-name="Home · research · A Series plates" class="ra is-night">
+  <div class="wrap ra-in">
+    <div class="ra-copy">
+      <p class="eyebrow">Research</p>
+      <h2 class="h2">We measure it, <span class="soft">then we publish it</span></h2>
+      <p class="ra-lede">13 papers on what ChatGPT, Perplexity and Google cite and rank, each with its sample and method.</p>
+      <a class="btn is-white" href="https://www.loudface.co/research" style="color:var(--ink)">See all research <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true"><path d="M2 7h10M8 3l4 4-4 4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+      <div class="ra-count" id="count"></div>
+    </div>
+    <div class="ra-tiles" id="tiles"></div>
+  </div>
+</section>
+
+<script src="kit/research.js"></script>
+<script src="kit/home.js"></script>
+<script>
+(function () {
+  const { HEAD, SER, S, papersIn, short, newest, big, url, ARROW } = RH;
+  /* each series' lead paper: the newest for AI search behaviour (the 3 Nov paper), the hub's lead for the rest */
+  const LEAD = { index: 'fintech', saas: 'state-content', ai: 'cite-wait', meas: 'seo-time' };
+  const all = STUDIES.length;
+  document.getElementById('count').innerHTML =
+    `<div><b>${all}</b><span>papers since June 2026</span></div><div><b>${SER.length}</b><span>series, each in its own colour</span></div>`;
+  document.getElementById('tiles').innerHTML = SER.map((se) => {
+    const s = S(LEAD[se.key]), list = papersIn(se);
+    return `<a class="ra-tile on-${se.key}" href="${url(s)}">
+      <div class="ra-top"><div><p class="ra-name">${se.name}</p><p class="ra-meta">${list.length} papers · newest ${short(newest(list).date)}</p></div><span class="go">${ARROW}</span></div>
+      <p class="ra-big fig-big">${big(HEAD[s.id][0])}</p>
+      <p class="ra-say">${HEAD[s.id][1]}</p>
+      <div class="ra-chart" data-chart2="${s.id}" data-ground="${se.ground[0]}" data-tone="${se.ground[1]}" data-size="sm" data-paint="off"></div>
+    </a>`;
+  }).join('');
+})();
+</script>
+<script src="kit/charts-v2.js"></script>
+<script>/* Paper drops calc() inside gradient stops and softens hard stops: before the board is frozen, draw the night band as its own block, cut at the seam. */
+addEventListener('load',()=>document.fonts.ready.then(()=>setTimeout(()=>{document.querySelectorAll('.ra').forEach(el=>{const h=el.getBoundingClientRect().height,seam=parseFloat(getComputedStyle(el).getPropertyValue('--seam'))||300,cut=Math.round(h-seam);el.style.background='#f6f6f6';el.style.position='relative';const b=document.createElement('div');b.style.cssText=`position:absolute;left:0;top:0;width:100%;height:${cut}px;background:#0b0a2e`;el.insertBefore(b,el.firstChild);[...el.children].slice(1).forEach(c=>{if(getComputedStyle(c).position==='static')c.style.position='relative';});});},300)));</script>
+<script src="../research-2026-11-03/shared/freeze-late.js"></script>
+</body>
+</html>

@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Home · research · T2 Strip</title>
+<link rel="stylesheet" href="../research-2026-11-03/shared/base.css">
+<link rel="stylesheet" href="../research-2026-11-03/shared/series.css">
+<link rel="stylesheet" href="kit/home.css">
+<link rel="stylesheet" href="kit/grid.css">
+<style>
+/* T2 · Strip. A2 as a short supporting band: a 320px intro column (eyebrow, 34px heading on two lines, one-line lede,
+   avatar stack, "See all research") beside the three newest papers as compact hairline cards (no legend; the
+   seo-time funnel drawn as columns of the same counts, see kit/charts-v2-thin.js). Three cards, not a row
+   of six with arrows: all three read at once with no controls, and each chart keeps about 250px of width. The intro
+   column runs the full height of the cards and shares their top and bottom insets, so the eyebrow sits on the meta
+   lines and the link on the legends: one 8px grid, one top line, one bottom line. */
+body { background: var(--night); }
+.rs { padding: 64px 0; }
+@media (max-width: 899px) { .rs { padding: 56px 0 52px; } }
+
+.ts { display: grid; grid-template-columns: 300px minmax(0, 1fr); gap: 44px; }
+.ts > * { min-width: 0; }
+.ts-intro { display: flex; flex-direction: column; padding: 25px 0 22px; }
+.ts-intro .eyebrow { line-height: 1; }
+.ts-intro .h2 { font-size: 34px; line-height: 1.06; letter-spacing: -.032em; margin-top: 16px; }
+.ts-intro .h2 .soft { display: block; }
+.ts-lede { font-size: 15px; line-height: 1.5; color: var(--n-body); margin-top: 16px; }
+.ts-foot { display: flex; align-items: center; gap: 16px; margin-top: auto; padding-top: 24px; }
+.stack { display: flex; }
+.stack img { width: 32px; height: 32px; border-radius: 99px; object-fit: cover; box-shadow: 0 0 0 2px var(--night); }
+.stack img + img { margin-left: -8px; }
+
+.rs-grid { margin-top: 0; gap: 16px; }
+@media (min-width: 900px) and (max-width: 1099px) { .rs-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+.rc { padding: 24px 22px 22px; }
+.rc-meta { font-size: 13px; }
+.rc-meta .s-mark { width: 7px; height: 7px; }
+.rc-title { font-size: 18px; line-height: 1.28; margin-top: 16px; min-height: 69px; }
+.rc-fig { margin-top: 18px; }
+.rc .c2.is-sm .c2-top { margin-bottom: 12px; font-size: 11.5px; }
+/* no legend in the strip: the meta square already names the accent colour, and the 26px goes to the plot */
+.rc .c2-under { display: none; }
+
+@media (max-width: 1279px) { .ts { grid-template-columns: 1fr; gap: 28px; } .ts-intro { padding: 0; } .ts-intro .h2 .soft { display: inline; } .ts-foot { margin-top: 20px; padding-top: 0; } }
+@media (max-width: 899px) {
+  .ts-intro .h2 { font-size: 30px; }
+  .ts-intro .h2 .soft { display: block; }
+  .rc { flex: 0 0 min(80%, 300px); padding: 20px 18px 18px; }
+  .rc-title { font-size: 17.5px; min-height: 67px; margin-top: 14px; }
+  .rc-fig { margin-top: 16px; }
+  .rs-grid { margin-top: 0; }
+  .rs-foot { margin-top: 16px; }
+}
+</style>
+</head>
+<body>
+
+<section data-paper-name="Home · research · T2 Strip" class="rs is-night">
+  <div class="wrap">
+    <div class="ts">
+      <div class="ts-intro">
+        <p class="eyebrow">Research</p>
+        <h2 class="h2">We measure it, <span class="soft">then we publish it</span></h2>
+        <p class="ts-lede">13 papers, each with its sample and method.</p>
+        <div class="ts-foot">
+          <div class="stack" aria-label="Researchers: Arnel Bukva, Tamara Pavlovic, Andrea Van Wyk, Abhay Tyagi">
+            <img src="../research-2026-11-03/shared/img/arnel-bukva-v3.jpg" alt="" title="Arnel Bukva">
+            <img src="../research-2026-11-03/shared/img/tamara-pavlovic-v3.jpg" alt="" title="Tamara Pavlovic">
+            <img src="../research-2026-11-03/shared/img/andrea-van-wyk-v5.jpg" alt="" title="Andrea Van Wyk">
+            <img src="../research-2026-11-03/shared/img/abhay-tyagi-v3.jpg" alt="" title="Abhay Tyagi">
+          </div>
+          <a class="rh-link" href="https://www.loudface.co/research">See all research <svg class="arr" width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true"><path d="M2 7h10M8 3l4 4-4 4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+        </div>
+      </div>
+      <div>
+        <div class="rs-grid" id="rs-grid"></div>
+        <div class="rs-foot"><span>Swipe for the three newest papers</span><span class="rs-dots" id="rs-dots"></span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script src="kit/research.js"></script>
+<script src="kit/home.js"></script>
+<script>
+(function () {
+  const { S, serOf, short, url } = RH;
+  const IDS = ['cite-wait', 'seo-time', 'state-seo']; // the three newest papers (3 Nov, 25 Oct, 24 Oct 2026)
+  const LIT = { index: '#a5a1ff', saas: '#f8936f', ai: '#86dcb4', meas: '#f3c565' };
+  const h = 118;
+  document.getElementById('rs-grid').innerHTML = IDS.map((id) => {
+    const s = S(id), se = serOf(s);
+    return `<a class="rc" href="${url(s)}">
+      <div class="rc-meta"><span><i class="s-mark" style="background:${LIT[se.key]}"></i>${se.name}</span><span>${short(s.date)}</span></div>
+      <h3 class="rc-title">${s.finding.replace(/\.$/, '')}</h3>
+      <div class="rc-fig"><div class="rc-chart" data-chart2="${id}"${id === 'seo-time' ? ' data-form="columns"' : ''} data-size="sm" data-paint="off" data-caption="off" data-card="on" data-h="${h}" data-axis="off" data-ground="stage" data-tone="night" data-accent="${LIT[se.key]}" data-rest="#625f8f"></div></div>
+    </a>`;
+  }).join('');
+  document.getElementById('rs-dots').innerHTML = IDS.map(() => '<i></i>').join('');
+})();
+</script>
+<script src="kit/charts-v2-thin.js"></script>
+<script src="../research-2026-11-03/shared/freeze-late.js"></script>
+</body>
+</html>

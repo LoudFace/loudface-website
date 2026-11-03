@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Home · research · B Newest paper first</title>
+<link rel="stylesheet" href="../research-2026-11-03/shared/base.css">
+<link rel="stylesheet" href="../research-2026-11-03/shared/series.css">
+<link rel="stylesheet" href="kit/home.css">
+<style>
+/* B · Newest paper first. White ground (keeps the page rhythm), the homepage's section head, then one large night
+   tile for the newest paper beside three smaller tiles on their series colours (E-H Assembly: one large dark tile
+   beside smaller ones; A-B Maze: report pieces assembled beside the headline). */
+.rb { background: #fff; padding: 72px 0 80px; }
+@media (min-width: 768px) { .rb { padding: 104px 0 112px; } }
+@media (min-width: 1280px) { .rb { padding: 120px 0 124px; } }
+
+.rb-grid { display: grid; grid-template-columns: 1fr; gap: 16px; }
+@media (min-width: 768px) { .rb-grid { grid-template-columns: 1fr 1fr; } .rb-feat { grid-column: 1 / 3; } .rb-t3 { grid-column: 1 / 3; } }
+@media (min-width: 1100px) {
+  .rb-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  .rb-feat { grid-column: 1 / 3; grid-row: 1 / 3; }
+  .rb-t1 { grid-column: 3; grid-row: 1; } .rb-t2 { grid-column: 4; grid-row: 1; } .rb-t3 { grid-column: 3 / 5; grid-row: 2; }
+}
+
+/* the large tile: night, the newest paper */
+.rb-feat { display: flex; flex-direction: column; min-width: 0; background: var(--night); color: #fff; border-radius: 20px; padding: 28px 22px 24px; }
+@media (min-width: 768px) { .rb-feat { padding: 40px 40px 36px; } }
+.rb-meta { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 4px 16px; font-size: 14px; color: var(--n-muted); }
+.rb-meta > span { display: inline-flex; align-items: center; gap: 9px; }
+.rb-meta b { font-weight: 500; color: #fff; }
+.rb-giant { font-family: var(--heading); font-weight: 500; font-size: 96px; line-height: .82; letter-spacing: -.065em; margin: 40px 0 0 -4px; white-space: nowrap; }
+@media (min-width: 768px) { .rb-giant { font-size: 132px; margin-left: -6px; } }
+.rb-giant small { color: var(--n-soft); }
+.rb-title { font-family: var(--heading); font-weight: 500; font-size: 24px; line-height: 1.12; letter-spacing: -.025em; margin-top: 26px; max-width: 520px; text-wrap: balance; }
+@media (min-width: 768px) { .rb-title { font-size: 28px; } }
+.rb-fig { margin-top: 32px; padding-top: 22px; border-top: 1px solid var(--n-line); }
+.rb-foot { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 16px 20px; margin-top: auto; padding-top: 28px; }
+.rb-by { display: flex; align-items: center; gap: 12px; }
+.rb-by img { width: 44px; height: 44px; border-radius: 99px; object-fit: cover; }
+.rb-by b { display: block; font-size: 15px; font-weight: 500; color: #fff; }
+.rb-by span { display: block; font-size: 13.5px; color: var(--n-muted); }
+.rb-read { display: inline-flex; align-items: center; gap: 8px; height: 50px; padding: 0 22px; border-radius: 999px; background: #fff; color: var(--ink); font-size: 15.5px; font-weight: 500; white-space: nowrap; }
+
+/* the smaller tiles, each on its series colour */
+.rb-tile { display: flex; flex-direction: column; min-width: 0; border-radius: 20px; padding: 24px 20px 20px; color: var(--fg); }
+@media (min-width: 768px) { .rb-tile { padding: 26px 26px 22px; } }
+.rb-tile-top { display: flex; justify-content: space-between; align-items: center; gap: 12px; font-size: 14px; color: var(--fg2); }
+.rb-tile-top b { font-weight: 500; color: var(--fg); }
+.rb-big { font-family: var(--heading); font-weight: 500; font-size: 60px; line-height: .9; letter-spacing: -.055em; margin: 28px 0 0 -2px; white-space: nowrap; }
+.rb-big small { color: var(--fg2); }
+.rb-say { font-size: 15px; line-height: 1.42; margin-top: 12px; text-wrap: pretty; }
+.rb-chart { margin-top: auto; padding-top: 24px; }
+.rb-in { display: flex; flex-direction: column; flex: 1; }
+@media (min-width: 1100px) {
+  .rb-t3 .rb-in { flex-direction: row; gap: 36px; }
+  .rb-t3 .rb-txt { width: 220px; flex-shrink: 0; display: flex; flex-direction: column; }
+  .rb-t3 .rb-chart { flex: 1; min-width: 0; margin-top: 0; padding-top: 4px; }
+}
+</style>
+</head>
+<body>
+
+<section data-paper-name="Home · research · B Newest paper first" class="rb">
+  <div class="wrap">
+    <div class="rh-head">
+      <div>
+        <p class="eyebrow">Research</p>
+        <h2 class="h2">We measure it, <br><span class="soft">then we publish it</span></h2>
+      </div>
+      <div class="rh-side">
+        <p>13 papers on what ChatGPT, Perplexity and Google cite and rank, each with its sample and method.</p>
+        <a class="rh-link" href="https://www.loudface.co/research">See all research <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true"><path d="M2 7h10M8 3l4 4-4 4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+      </div>
+    </div>
+    <div class="rb-grid" id="grid"></div>
+  </div>
+</section>
+
+<script src="kit/research.js"></script>
+<script src="kit/home.js"></script>
+<script>
+(function () {
+  const { HEAD, S, serOf, short, big, url, ARROW, RIGHT, mark, sentence, kindOf } = RH;
+  const f = S('cite-wait');
+  const phone = innerWidth < 700;
+  const tile = (id, cls) => {
+    const s = S(id), se = serOf(s);
+    const txt = `<div class="rb-tile-top"><span>${kindOf(s) ? `<b>${s.kind}</b> · ` : ''}${se.name}</span><span class="go">${ARROW}</span></div>
+        <p class="rb-big fig-big">${big(HEAD[id][0])}</p>
+        <p class="rb-say">${HEAD[id][1]}</p>`;
+    const chart = `<div class="rb-chart" data-chart2="${id}" data-ground="${se.ground[0]}" data-tone="${se.ground[1]}" data-size="sm" data-paint="off"></div>`;
+    return `<a class="rb-tile ${cls} on-${se.key}" href="${url(s)}"><div class="rb-in"><div class="rb-txt">${txt}</div>${chart}</div></a>`;
+  };
+  document.getElementById('grid').innerHTML = `
+    <article class="rb-feat">
+      <div class="rb-meta"><span>${mark(f)}<b>Newest paper</b> · ${serOf(f).name}</span><span>${short(f.date)}</span></div>
+      <p class="rb-giant fig-big">${big(HEAD['cite-wait'][0])}</p>
+      <h3 class="rb-title">${sentence(f)}</h3>
+      <div class="rb-fig on-ai-night" data-chart2="cite-wait" data-ground="stage" data-tone="night" data-size="${phone ? 'sm' : 'md'}" data-paint="off"></div>
+      <div class="rb-foot">
+        <div class="rb-by"><img src="../research-2026-11-03/shared/img/arnel-bukva-v3.png" alt=""><div><b>Arnel Bukva</b><span>Founder and Head of Growth</span></div></div>
+        <a class="rb-read" href="${url(f)}">Read the paper ${RIGHT}</a>
+      </div>
+    </article>
+    ${tile('seo-time', 'rb-t1')}
+    ${tile('state-content', 'rb-t2')}
+    ${tile('fintech', 'rb-t3')}`;
+})();
+</script>
+<script src="kit/charts-v2.js"></script>
+<script src="../research-2026-11-03/shared/freeze-late.js"></script>
+</body>
+</html>

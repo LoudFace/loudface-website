@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Home · research · A3 Night grid, colour panels</title>
+<link rel="stylesheet" href="../research-2026-11-03/shared/base.css">
+<link rel="stylesheet" href="../research-2026-11-03/shared/series.css">
+<link rel="stylesheet" href="kit/home.css">
+<link rel="stylesheet" href="kit/grid.css">
+<style>
+/* A3 · Night grid, colour panels. A2's skeleton and copy; each chart sits on an inset panel in the paper's full series
+   colour, at one size and position in every card, drawn as /research draws it (series.css retints the kit). The
+   colour stays inside the panel: the card, its meta line, title and source stay night and quiet. */
+body { background: var(--night); }
+.rc-panel { padding: 20px 20px 18px; background: var(--sc); }
+@media (max-width: 899px) { .rc-panel { padding: 16px 16px 14px; } }
+.rc .rc-panel .c2-axis, .rc .rc-panel .c2-under { color: var(--fg2); }
+.rc .rc-panel .c2 { --c2-grid: var(--rule) !important; }
+.rc-fig { margin-top: 36px; }
+/* the legend swatches are inline styles the retint rules in series.css do not reach: green's lavender becomes mint */
+.on-ai .c2-legend i[style*="#b7aaf2"] { background: #a6e3c8 !important; }
+.on-ai .c2-legend i[style*="#c9bdf5"] { background: #a6e3c8 !important; }
+</style>
+</head>
+<body>
+
+<section data-paper-name="Home · research · A3 Night grid, colour panels" class="rs is-night">
+  <div class="wrap">
+    <div class="rh-head">
+      <div>
+        <p class="eyebrow">Research</p>
+        <h2 class="h2">We measure it, <span class="soft">then we publish it</span></h2>
+      </div>
+      <div class="rh-side">
+        <p>13 papers on what ChatGPT, Perplexity and Google cite and rank, each with its sample and method.</p>
+        <a class="rh-link" href="https://www.loudface.co/research">See all research <svg class="arr" width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true"><path d="M2 7h10M8 3l4 4-4 4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+      </div>
+    </div>
+    <div class="rs-team">
+      <p>Researchers</p>
+      <div class="rs-who"><img src="../research-2026-11-03/shared/img/arnel-bukva-v3.jpg" alt=""><div><b>Arnel Bukva</b><span>Founder and Head of Growth</span></div></div>
+      <div class="rs-who"><img src="../research-2026-11-03/shared/img/tamara-pavlovic-v3.jpg" alt=""><div><b>Tamara Pavlovic</b><span>Lead SEO, AEO &amp; GEO Specialist</span></div></div>
+      <div class="rs-who"><img src="../research-2026-11-03/shared/img/andrea-van-wyk-v5.jpg" alt=""><div><b>Andrea Van Wyk</b><span>Lead SEO, AEO &amp; GEO Specialist</span></div></div>
+      <div class="rs-who"><img src="../research-2026-11-03/shared/img/abhay-tyagi-v3.jpg" alt=""><div><b>Abhay Tyagi</b><span>Lead SEO, AEO &amp; GEO Specialist</span></div></div>
+    </div>
+    <div class="rs-grid" id="rs-grid"></div>
+    <div class="rs-foot"><span>Swipe for the six newest papers</span><span class="rs-dots" id="rs-dots"></span></div>
+  </div>
+</section>
+
+<script src="kit/research.js"></script>
+<script src="kit/home.js"></script>
+<script src="kit/grid.js"></script>
+<script>RG.cards('panels');</script>
+<script src="kit/charts-v2-cards.js"></script>
+<script src="../research-2026-11-03/shared/freeze-late.js"></script>
+</body>
+</html>

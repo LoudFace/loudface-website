@@ -4,12 +4,15 @@
  * Composed from src/app/home-v11/* inside the (site) group, so it keeps the shared header, consent and Cal chrome.
  * What we do is the launch-stack figure (2026-10-12, with the four capability tiles as a slider under its steps, each linking to
  * its service page). The copy is home-v11.json (getHomeV11Content), the charts come from getHomeV11Data. SEO metadata and the speakable
- * JSON-LD are unchanged from the v3 homepage. The v3 homepage ran the PostHog hero experiment
+ * JSON-LD are unchanged from the v3 homepage. The research strip (2026-11-03, design T2) sits between Results and Route and
+ * reads the three newest papers from Sanity through fetchResearchIndexData, which throws on a failed read: the
+ * homepage then fails like /research does, rather than rendering or caching a strip without papers. The v3 homepage ran the PostHog hero experiment
  * (homepage-hero-argument); the v11 homepage has one hero, so it no longer evaluates that flag.
  */
 import type { Metadata } from 'next';
 import '../home-v11/home-v11.css';
 import { getHomeV11Content } from '@/lib/content-utils';
+import { fetchResearchIndexData } from '@/lib/cms-data';
 import { getHomeV11Data } from '../home-v11/data';
 import { HeroV11 } from '../home-v11/HeroV11';
 import { LogoGrid } from '../home-v11/LogoGrid';
@@ -17,6 +20,7 @@ import { LaunchStackSection } from '../home-v11/LaunchStack';
 import { BentoTiles } from '../home-v11/Bento';
 import { TileSlider } from '../home-v11/TileSlider';
 import { Results } from '../home-v11/Results';
+import { ResearchStrip } from '../home-v11/ResearchStrip';
 import { Route } from '../home-v11/Route';
 import { GrowthPlan } from '../home-v11/GrowthPlan';
 import { Testimonials } from '../home-v11/Testimonials';
@@ -65,7 +69,7 @@ const speakableSchema = {
 };
 
 export default async function HomePage() {
-  const [c, data] = await Promise.all([getHomeV11Content(), getHomeV11Data()]);
+  const [c, data, research] = await Promise.all([getHomeV11Content(), getHomeV11Data(), fetchResearchIndexData()]);
 
   return (
     <>
@@ -90,6 +94,7 @@ export default async function HomePage() {
           }
         />
         <Results c={c.results} data={data} />
+        <ResearchStrip c={c.research} team={c.team} studies={research.studies} members={research.teamMembers} />
         <Route c={c.route} spark={data?.leads.delshad ?? null} metric={data?.proof.delshad?.value} rank={data?.proof.delshadRank?.value} />
         <GrowthPlan c={c.plan} />
         <Testimonials c={c.testimonials} data={data} />

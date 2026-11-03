@@ -365,6 +365,64 @@
 .v11-ba-legend i.is-after { background: var(--chart); }
 
 
+/* =========================================================== 4b · research strip (ResearchStrip.tsx)
+   Design T2, picked 3 Nov 2026 (Paper "Proposed · Homepage research section · T2 Strip"; board
+   design-lab/research-home-2026-11-03/T2.html). A thin band on night, about 440px at 1440: the intro column runs the
+   cards' full height and shares their top and bottom insets. Three cards in a row from 900px; under 900 they swipe
+   (scroll-snap, the next card peeking). Colours are the board's night tokens. */
+.v11-rstrip { --rs-night: #0b0a2e; --rs-body: #d3d0ee; --rs-muted: #aaa5d6; --rs-soft: #8f89c4; --rs-line: rgba(201,189,245,0.15);
+  background: var(--rs-night); color: var(--rs-body); padding: 56px 0 52px; }
+@media (min-width: 900px) { .v11-rstrip { padding: 64px 0; } }
+.v11-rstrip-grid { display: grid; grid-template-columns: minmax(0, 1fr); gap: 28px; }
+@media (min-width: 1280px) { .v11-rstrip-grid { grid-template-columns: 300px minmax(0, 1fr); gap: 44px; } }
+.v11-rstrip-grid > * { min-width: 0; }
+.v11-rstrip-intro { display: flex; flex-direction: column; }
+@media (min-width: 1280px) { .v11-rstrip-intro { padding: 25px 0 22px; } }
+.v11-rstrip-intro .v11-eyebrow { line-height: 1; color: var(--rs-muted); }
+.v11-rstrip-h2 { font-family: var(--font-heading); font-weight: 500; font-size: 30px; line-height: 1.06; letter-spacing: -0.032em; color: #ffffff; margin-top: 16px; text-wrap: balance; }
+.v11-rstrip-h2 .is-soft { display: block; color: var(--rs-soft); }
+@media (min-width: 900px) and (max-width: 1279px) { .v11-rstrip-h2 .is-soft { display: inline; } }
+@media (min-width: 900px) { .v11-rstrip-h2 { font-size: 34px; } }
+.v11-rstrip-lede { font-size: 15px; line-height: 1.5; color: var(--rs-body); margin-top: 16px; }
+.v11-rstrip-foot { display: flex; align-items: center; gap: 16px; margin-top: 20px; }
+@media (min-width: 1280px) { .v11-rstrip-foot { margin-top: auto; padding-top: 24px; } }
+.v11-rstrip-stack { display: flex; }
+.v11-rstrip-stack img { width: 32px; height: 32px; border-radius: 99px; object-fit: cover; box-shadow: 0 0 0 2px var(--rs-night); background: #1d1b45; }
+.v11-rstrip-stack img + img { margin-left: -8px; }
+.v11-rstrip-link { display: inline-flex; align-items: center; gap: 8px; font-size: 15.5px; font-weight: 500; color: #ffffff; white-space: nowrap; }
+.v11-rstrip-link svg { transition: transform var(--dur) var(--ease); }
+.v11-rstrip-link:hover svg { transform: translateX(3px); }
+.v11 .v11-rstrip :focus-visible { outline-color: #c9bdf5; }
+
+.v11-rstrip-row { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
+.v11-rstrip-card { position: relative; display: flex; flex-direction: column; min-width: 0; padding: 24px 22px 22px; border: 1px solid var(--rs-line);
+  transition: background-color var(--dur) var(--ease), border-color var(--dur) var(--ease); }
+.v11-rstrip-card:hover { background: rgba(201,189,245,0.035); border-color: rgba(201,189,245,0.26); }
+.v11-rstrip-meta { display: flex; justify-content: space-between; align-items: center; gap: 12px; font-size: 13px; line-height: 1; color: var(--rs-muted); }
+.v11-rstrip-meta > span { display: inline-flex; align-items: center; gap: 9px; min-width: 0; white-space: nowrap; }
+.v11-rstrip-meta time { white-space: nowrap; }
+.v11-rstrip-mark { display: inline-block; width: 7px; height: 7px; flex-shrink: 0; }
+.v11-rstrip-title { font-family: var(--font-heading); font-weight: 400; font-size: 18px; line-height: 1.28; letter-spacing: -0.012em; color: #ffffff; margin-top: 16px; min-height: 69px; text-wrap: balance; }
+/* the whole card is the link: the title's link covers it */
+.v11-rstrip-title a::after { content: ""; position: absolute; inset: 0; }
+.v11 .v11-rstrip-title a:focus-visible { outline: none; }
+.v11 .v11-rstrip-card:has(.v11-rstrip-title a:focus-visible) { outline: 2px solid #c9bdf5; outline-offset: 3px; }
+.v11-rstrip-fig { margin-top: auto; padding-top: 18px; }
+.v11-rstrip-axis { font-size: 11.5px; line-height: 1.4; color: var(--rs-muted); margin-bottom: 12px; }
+/* the chart's box keeps its drawn height before the browser redraws it at the card's width: no shift */
+.v11-rstrip-chart { min-height: 118px; }
+.v11-rstrip-swipe { display: none; }
+
+@media (max-width: 899px) {
+  .v11-rstrip-row { display: flex; gap: 12px; overflow-x: auto; scroll-snap-type: x mandatory; overscroll-behavior-x: contain;
+    margin-inline: calc(-1 * var(--gut)); padding: 0 var(--gut) 4px; scroll-padding-inline: var(--gut); scrollbar-width: none; }
+  .v11-rstrip-row::-webkit-scrollbar { display: none; }
+  .v11-rstrip-card { flex: 0 0 min(80%, 300px); scroll-snap-align: start; padding: 20px 18px 18px; }
+  .v11-rstrip-title { font-size: 17.5px; min-height: 67px; margin-top: 14px; }
+  .v11-rstrip-fig { padding-top: 16px; }
+  .v11-rstrip-swipe { display: block; margin-top: 16px; font-size: 13.5px; color: var(--rs-muted); }
+}
+
 /* =========================================================== 5 · how an engagement runs */
 .v11-route { background: var(--warm); overflow: hidden; }
 .v11-route-canvas { position: relative; padding: 72px var(--gut) 80px; }

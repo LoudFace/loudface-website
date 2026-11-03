@@ -8,7 +8,7 @@ import { useEffect } from 'react';
  * Off for reduced motion and inside the inline editor; without JavaScript everything is simply visible.
  */
 const SELECTOR = [
-  '.v11-head', '.v11-logos-inner', '.v11-tile', '.v11-rcase', '.v11-step', '.v11-plate',
+  '.v11-head', '.v11-logos-inner', '.v11-tile', '.v11-rcase', '.v11-rstrip-intro', '.v11-rstrip-card', '.v11-step', '.v11-plate',
   '.v11-video', '.v11-quote', '.v11-member', '.v11-bench', '.v11-team-note', '.v11-closing-copy', '.v11-closing-card', '.v11-footer-top',
 ].join(',');
 

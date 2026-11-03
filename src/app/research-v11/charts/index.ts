@@ -10,6 +10,7 @@ export {
   ticksFor,
   isStack,
   MULTIPLES_STACK_BELOW,
+  THIN_HEIGHT,
   type DrawOptions,
   type DrawResult,
   type ChartTable,

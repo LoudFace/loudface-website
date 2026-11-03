@@ -74,6 +74,33 @@ export function wrap(
   return out.length ? out : [""];
 }
 
+/**
+ * Word wrap whose two-line results are balanced: "Clicked by / day 28", never "Clicked by day / 28". Used by the thin
+ * card charts (design-lab/research-home-2026-11-03/kit/charts-v2-thin.js); the default charts keep the greedy wrap.
+ */
+export function wrapBalanced(
+  s: string,
+  maxW: number,
+  fs: number,
+  weight = 400,
+): string[] {
+  const out = wrap(s, maxW, fs, weight);
+  if (out.length !== 2) return out;
+  const words = String(s).split(" ");
+  let best = out;
+  let bw = Infinity;
+  for (let k = 1; k < words.length; k++) {
+    const a = words.slice(0, k).join(" ");
+    const b = words.slice(k).join(" ");
+    const m = Math.max(textWidth(a, fs, weight), textWidth(b, fs, weight));
+    if (m <= maxW && m < bw) {
+      bw = m;
+      best = [a, b];
+    }
+  }
+  return best;
+}
+
 /** One decimal place for coordinates. */
 export const r1 = (n: number): number => Math.round(n * 10) / 10;
 export const nf = (v: number | string): string =>

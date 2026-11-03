@@ -7,7 +7,14 @@ import type {
   ChartSpec,
   ChartTone,
 } from "../../contract";
-import { chartLabels, chartTable, drawChart, isStack, ticksFor } from "../draw";
+import {
+  chartLabels,
+  chartTable,
+  drawChart,
+  isStack,
+  THIN_HEIGHT,
+  ticksFor,
+} from "../draw";
 import { BENCH, BENCH_FIGURE_SPECS } from "../fixtures";
 import { STUDY_CHART_SPECS } from "../fixtures";
 import { ChartSpecError, parseChartSpec, validateChartSpec } from "../parse";
@@ -227,6 +234,118 @@ describe("drawChart", () => {
     assert.deepEqual(t.head, ["", "ChatGPT", "AI Overviews", "Perplexity"]);
     assert.deepEqual(t.rows[0], ["Corporate", "48.0%", "53.4%", "53.4%"]);
     for (const [, spec] of SPECS) assert.ok(chartTable(spec).rows.length > 0);
+  });
+});
+
+/** The homepage research strip's three papers (3 Nov 2026), as stored in Sanity. cite-wait has no fixture. */
+const CITE_WAIT: ChartSpec = {
+  type: "columns",
+  unit: "%",
+  max: 100,
+  rows: [
+    ["7 days", 25.5],
+    ["14 days", 32.2],
+    ["30 days", 46.3],
+    ["60 days", 56.7],
+  ],
+};
+const STRIP: [string, ChartSpec][] = [
+  ["cite-wait", CITE_WAIT],
+  ["seo-time", STUDY_CHART_SPECS["seo-time"]],
+  ["state-seo", STUDY_CHART_SPECS["state-seo"]],
+];
+const THIN_WIDTHS = [240, 280, 320, 360, 420];
+/** What the strip passes: night stage, the series colour lit as the accent, the rest grey-lavender. */
+const STRIP_OPTS = {
+  ground: "stage",
+  tone: "night",
+  size: "sm",
+  variant: "thin",
+  accent: "#86dcb4",
+  rest: "#625f8f",
+  idPrefix: "t",
+} as const;
+const shownText = (svg: string) =>
+  ` ${[...svg.matchAll(/>([^<]+)</g)].map((m) => m[1].trim()).join(" ")} `;
+
+describe("drawChart, thin variant (homepage research strip)", () => {
+  for (const [id, spec] of [...SPECS, ["cite-wait", CITE_WAIT] as [string, ChartSpec]]) {
+    it(`${id} (${spec.type}) draws thin at 240-420px with every label and no NaN`, () => {
+      for (const [ground, tone] of [
+        ["stage", "night"],
+        ["stage", "indigo"],
+        ["colour", "coral"],
+      ] as [ChartGround, ChartTone][])
+        for (const width of THIN_WIDTHS) {
+          const where = `${id} thin ${ground}/${tone} @${width}`;
+          const { svg, height } = drawChart(spec, {
+            ...STRIP_OPTS,
+            ground,
+            tone,
+            width,
+          });
+          assert.ok(Number.isFinite(height) && height > 0, `${where}: height ${height}`);
+          assert.ok(!/NaN|Infinity|undefined/.test(svg), `${where}: NaN, Infinity or undefined`);
+          for (const g of geometry(svg)) {
+            const n = Number(g.value);
+            assert.ok(Number.isFinite(n), `${where}: ${g.name}="${g.value}"`);
+            if (["width", "height", "r", "rx"].includes(g.name))
+              assert.ok(n >= 0, `${where}: negative ${g.name}="${g.value}"`);
+          }
+          const shown = shownText(svg);
+          for (const label of chartLabels(spec))
+            assert.ok(shown.includes(` ${esc(label)} `), `${where}: label "${label}" missing`);
+          // no callout, no axis line above the chart
+          const a = spec as { call?: string; axis?: string };
+          if (a.call) assert.ok(!shown.includes(` ${esc(a.call)} `), `${where}: callout drawn`);
+          if (a.axis) assert.ok(!shown.includes(` ${esc(a.axis)} `), `${where}: axis line drawn`);
+        }
+    });
+  }
+
+  it("holds the fixed height for the strip's three papers at every card width", () => {
+    for (const [id, spec] of STRIP)
+      for (const width of THIN_WIDTHS) {
+        assert.equal(drawChart(spec, { ...STRIP_OPTS, width }).height, THIN_HEIGHT, `${id} @${width}`);
+        assert.equal(drawChart(spec, { ...STRIP_OPTS, width, height: 96 }).height, 96, `${id} @${width} h96`);
+      }
+  });
+
+  it("draws no y-axis ticks and no legend, and prints the figures on the marks", () => {
+    const cw = drawChart(CITE_WAIT, { ...STRIP_OPTS, width: 262 }).svg;
+    for (const tick of ["0%", "25%", "50%", "75%", "100%"])
+      assert.ok(!shownText(cw).includes(` ${tick} `), `tick ${tick}`);
+    for (const fig of ["25.5%", "32.2%", "46.3%", "56.7%"]) assert.ok(cw.includes(`>${fig}<`), fig);
+    // the highlighted (last) column is the accent; the others take the rest colour
+    assert.ok(cw.includes('stop-color="#86dcb4"') && cw.includes('stop-color="#625f8f"'));
+    // the matrix's "leads" key is dropped (the cells name the leader); dots keep the engine key, which nothing else names
+    const sov = drawChart(STUDY_CHART_SPECS.sov, { ...STRIP_OPTS, width: 320 }).svg;
+    assert.ok(!sov.includes(" leads<"), "matrix legend");
+    const fintech = drawChart(STUDY_CHART_SPECS.fintech, { ...STRIP_OPTS, width: 320 }).svg;
+    assert.ok(fintech.includes(">ChatGPT<"), "dots key");
+  });
+
+  it("draws the funnel, the split and short bar lists as columns of the same numbers", () => {
+    const funnel = drawChart(STUDY_CHART_SPECS["seo-time"], { ...STRIP_OPTS, width: 262 }).svg;
+    assert.ok(!funnel.includes("<pattern"), "no hatched losses");
+    assert.ok(!funnel.includes(" of 336"), "counts only");
+    for (const n of ["336", "318", "101"]) assert.ok(funnel.includes(`>${n}<`), n);
+    // the two-line label is balanced, as the board draws it ("Clicked / by day 28")
+    assert.ok(funnel.includes(">Clicked<") && funnel.includes(">by day 28<"));
+    const seo = drawChart(STUDY_CHART_SPECS["state-seo"], { ...STRIP_OPTS, width: 262 }).svg;
+    for (const n of ["180", "133", "40"]) assert.ok(seo.includes(`>${n}<`), n);
+    const split = drawChart(STUDY_CHART_SPECS["state-ai"], { ...STRIP_OPTS, width: 262 }).svg;
+    assert.ok(!split.includes("<pattern") && split.includes(">13.8%<"));
+  });
+
+  it("leaves the default rendering alone", () => {
+    for (const [id, spec] of SPECS)
+      for (const width of [320, 700])
+        assert.equal(
+          drawChart(spec, { width, ground: "stage", tone: "night", size: "sm", idPrefix: "d" }).svg,
+          drawChart(spec, { width, ground: "stage", tone: "night", size: "sm", idPrefix: "d", variant: "default", height: 90 }).svg,
+          id,
+        );
   });
 });
 

@@ -1,0 +1,47 @@
+/* Homepage research section boards (3 Nov 2026): the parts all three options share.
+   Loaded after ../research-2026-11-03/shared/base.css and series.css (their @font-face urls resolve from that
+   stylesheet's own folder, so the fonts load from /public/fonts at this depth too).
+   Head pattern = home-v11.css .v11-head / .v11-h2 / .v11-eyebrow; the second half of the H2 is DESIGN.md's .ghost. */
+
+:root {
+  --night: #0b0a2e; --n-body: #d3d0ee; --n-muted: #aaa5d6; --n-soft: #8f89c4;
+  --n-line: rgba(201,189,245,0.16); --n-mark: rgba(255,255,255,0.5);
+  --ease: cubic-bezier(.2,.7,.2,1);
+}
+
+/* section head: eyebrow + H2 left, lede (+ link) right at 1280 and up */
+.rh-head { display: flex; flex-direction: column; gap: 20px; margin-bottom: 40px; }
+.rh-head .h2 { margin-top: 16px; }
+.rh-head .h2 .soft { color: var(--ghost); }
+.rh-side { display: flex; flex-direction: column; gap: 18px; align-items: flex-start; max-width: 440px; }
+.rh-side p { font-size: 17px; line-height: 1.5; color: var(--body); text-wrap: pretty; }
+@media (min-width: 1280px) { .rh-head { flex-direction: row; justify-content: space-between; align-items: flex-end; gap: 32px; margin-bottom: 48px; } }
+.rh-head .h2 br { display: none; }
+@media (min-width: 1280px) { .rh-head .h2 br { display: inline; } }
+
+/* on night */
+.is-night { background: var(--night); color: var(--n-body); }
+.is-night .eyebrow { color: var(--n-muted); --dot: #c9bdf5; }
+.is-night .h2 { color: #fff; }
+.is-night .h2 .soft { color: var(--n-soft); }
+.is-night .rh-side p { color: var(--n-body); }
+
+/* the arrow link (home-v11 .v11-link) */
+.rh-link { display: inline-flex; align-items: center; gap: 8px; font-size: 15.5px; font-weight: 500; color: var(--ind); white-space: nowrap; }
+.rh-link svg { transition: transform .2s var(--ease); }
+.rh-link:hover svg { transform: translateX(3px); }
+.is-night .rh-link { color: #fff; }
+
+/* the small arrow square of the hero results row and the G hub cells */
+.go { display: inline-flex; align-items: center; justify-content: center; width: 24px; height: 24px; border-radius: 6px; background: rgba(255,255,255,.16); flex-shrink: 0; }
+.go svg { width: 12px; height: 12px; }
+.on-saas .go, .on-meas .go { background: rgba(26,16,64,.12); }
+
+/* crosshair mark at a hairline intersection (DESIGN.md §2.5), white version for night */
+.x { position: absolute; width: 11px; height: 11px; pointer-events: none; }
+.x i { position: absolute; background: var(--n-mark); }
+.x i:first-child { left: 5px; top: 0; width: 1px; height: 11px; }
+.x i:last-child { top: 5px; left: 0; width: 11px; height: 1px; }
+
+/* a big figure: "101 of 336" sets the second part small */
+.fig-big small { font-size: .3em; letter-spacing: -.02em; margin-left: .16em; }

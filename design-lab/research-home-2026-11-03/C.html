@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Home · research · C Findings row</title>
+<link rel="stylesheet" href="../research-2026-11-03/shared/base.css">
+<link rel="stylesheet" href="../research-2026-11-03/shared/series.css">
+<link rel="stylesheet" href="kit/home.css">
+<style>
+/* C · Findings row. Night band, the homepage's section head, then one wide band of four crosshair cells built like
+   the homepage hero's results row (series and source on top, a very large figure, a chart, a caption), with the
+   giant-number-over-chart reading of F-C Manus. One cell per series: its newest paper, its colour as the mark. */
+.rc { padding: 72px 0 80px; }
+@media (min-width: 768px) { .rc { padding: 104px 0 112px; } }
+@media (min-width: 1280px) { .rc { padding: 120px 0 124px; } }
+
+.rc-band-head { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 8px 24px; padding-bottom: 16px; border-bottom: 1px solid rgba(255,255,255,.22); }
+.rc-band-head .eyebrow { color: #fff; --dot: #fff; font-size: 15px; }
+.rc-key { display: flex; flex-wrap: wrap; gap: 6px 20px; font-size: 13.5px; color: var(--n-muted); }
+.rc-key span { display: inline-flex; align-items: center; gap: 8px; white-space: nowrap; }
+
+.rc-cells { position: relative; display: flex; flex-direction: column; }
+@media (min-width: 900px) { .rc-cells { flex-direction: row; } }
+.rc-cell { position: relative; flex: 1 1 0; min-width: 0; display: flex; flex-direction: column; padding: 28px 0 26px; border-bottom: 1px solid var(--n-line); color: #fff; }
+@media (min-width: 900px) {
+  .rc-cell { padding: 30px 26px 28px; border-bottom: 0; border-right: 1px solid var(--n-line); }
+  .rc-cell:first-child { padding-left: 0; } .rc-cell:last-child { border-right: 0; padding-right: 0; }
+  .rc-cells { border-bottom: 1px solid var(--n-line); }
+}
+.rc-cell-head { display: flex; justify-content: space-between; align-items: center; gap: 12px; font-size: 13.5px; }
+.rc-cell-head > span { display: inline-flex; align-items: center; gap: 8px; min-width: 0; }
+.rc-cell-head b { font-weight: 500; color: #fff; }
+.rc-cell-head .is-ser { color: var(--n-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.rc-fig { font-family: var(--heading); font-weight: 500; font-size: 64px; line-height: .9; letter-spacing: -.055em; margin: 30px 0 0 -2px; white-space: nowrap; }
+@media (min-width: 1280px) { .rc-fig { font-size: 76px; } }
+.rc-fig small { color: var(--n-soft); }
+.rc-say { font-size: 15px; line-height: 1.45; color: #e4e1ff; margin-top: 14px; text-wrap: pretty; }
+@media (min-width: 900px) { .rc-say { min-height: 66px; } }
+.rc-chart { margin-top: 26px; }
+.rc-date { font-size: 13px; color: var(--n-muted); margin-top: auto; padding-top: 18px; }
+</style>
+</head>
+<body>
+
+<section data-paper-name="Home · research · C Findings row" class="rc is-night">
+  <div class="wrap">
+    <div class="rh-head">
+      <div>
+        <p class="eyebrow">Research</p>
+        <h2 class="h2">We measure it, <br><span class="soft">then we publish it</span></h2>
+      </div>
+      <div class="rh-side">
+        <p>13 papers on what ChatGPT, Perplexity and Google cite and rank, each with its sample and method.</p>
+        <a class="rh-link" href="https://www.loudface.co/research">See all research <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true"><path d="M2 7h10M8 3l4 4-4 4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+      </div>
+    </div>
+    <div class="rc-band-head"><p class="eyebrow">The newest paper in each series</p><div class="rc-key" id="key"></div></div>
+    <div class="rc-cells" id="cells"></div>
+  </div>
+</section>
+
+<script src="kit/research.js"></script>
+<script src="kit/home.js"></script>
+<script>
+(function () {
+  const { HEAD, SER, serOf, papersIn, newest, big, url, ARROW, cross, mark, kindOf } = RH;
+  const picks = SER.map((se) => newest(papersIn(se))).sort((a, b) => Date.parse(b.date) - Date.parse(a.date));
+  document.getElementById('key').innerHTML = SER.map((se) => `<span><i class="s-mark s-${se.key}"></i>${se.name}</span>`).join('');
+  const wide = innerWidth >= 900;
+  document.getElementById('cells').innerHTML = picks.map((s, i) => {
+    const last = i === picks.length - 1;
+    const x = wide ? cross('left:-6px;top:-6px') + cross('left:-6px;bottom:-6px') + (last ? cross('right:-6px;top:-6px') + cross('right:-6px;bottom:-6px') : '') : '';
+    return `<a class="rc-cell" href="${url(s)}">${x}
+      <div class="rc-cell-head"><span>${mark(s)}${kindOf(s) ? `<b>${s.kind}</b>` : ''}<span class="is-ser">${serOf(s).name}</span></span><span class="go">${ARROW}</span></div>
+      <p class="rc-fig fig-big">${big(HEAD[s.id][0])}</p>
+      <p class="rc-say">${HEAD[s.id][1]}</p>
+      <div class="rc-chart" data-chart2="${s.id}" data-ground="stage" data-tone="night" data-size="sm" data-paint="off"></div>
+    </a>`;
+  }).join('');
+})();
+</script>
+<script src="kit/charts-v2.js"></script>
+<script src="../research-2026-11-03/shared/freeze-late.js"></script>
+</body>
+</html>
