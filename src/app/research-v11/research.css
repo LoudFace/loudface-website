@@ -72,14 +72,16 @@
 .rs-stage { position: relative; margin-top: -64px; padding: 64px 0 80px; color: #ffffff;
   background: linear-gradient(180deg, #030c5a 0px, #020e6e 324px, #04188f 584px, #3d38cf 884px, #3d38cf 100%); }
 .rs-stage-top { display: flex; flex-direction: column; gap: 40px; padding-top: 48px; }
-@media (min-width: 1100px) { .rs-stage-top { flex-direction: row; justify-content: space-between; align-items: flex-end; gap: 64px; padding-top: 112px; } }
+/* The counts sit beside the title when they fit (1440 and up) and wrap under it below that; a fixed row ran 44 px
+   past the page edge at 1440 and 204 px at 1280 (measured live, 3 Nov 2026). */
+@media (min-width: 1100px) { .rs-stage-top { flex-direction: row; flex-wrap: wrap; justify-content: space-between; align-items: flex-end; gap: 40px; padding-top: 112px; } }
 .rs-title { font-family: var(--font-heading); font-weight: 500; font-size: 84px; line-height: .86; letter-spacing: -.058em; color: #ffffff; margin-left: -4px; }
 @media (min-width: 768px) { .rs-title { font-size: 148px; } }
 @media (min-width: 1280px) { .rs-title { font-size: 196px; margin-left: -8px; } }
 .rs-intro { font-size: 18px; line-height: 1.5; color: #e4e2fe; max-width: 500px; margin-top: 28px; text-wrap: pretty; }
 @media (min-width: 1280px) { .rs-intro { font-size: 19px; margin-top: 40px; } }
 .rs-stats { display: flex; flex-shrink: 0; }
-.rs-stats > div { padding: 0 28px; border-left: 1px solid var(--stage-line); }
+.rs-stats > div { padding: 0 22px; border-left: 1px solid var(--stage-line); }
 .rs-stats > div:first-child { padding-left: 0; border-left: 0; }
 .rs-stats b { display: block; font-family: var(--font-heading); font-weight: 500; font-size: 44px; line-height: 1; letter-spacing: -.045em; }
 .rs-stats > div > span { display: block; font-size: 14px; line-height: 1.4; color: #c9c5fb; margin-top: 10px; max-width: 150px; }
