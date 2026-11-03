@@ -1,0 +1,466 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>LoudFace Research · B Journal archive</title>
+<link rel="stylesheet" href="shared/base.css">
+<style>
+/* B · Journal archive. Lanes: a date lane, a title lane and a figure lane run through the page. */
+:root { --l1: 200px; --l3: 400px; --lg: 48px; }
+@media (min-width: 1024px) and (max-width: 1279px) { :root { --l1: 150px; --l3: 300px; --lg: 32px; } }
+.ln2, .ln3 { display: grid; grid-template-columns: minmax(0, 1fr); align-items: start; }
+@media (min-width: 1024px) {
+  .ln2 { grid-template-columns: var(--l1) minmax(0, 1fr); column-gap: var(--lg); }
+  .ln3 { grid-template-columns: var(--l1) minmax(0, 1fr) var(--l3); column-gap: var(--lg); }
+  .span23 { grid-column: 2 / 4; }
+  .span12 { grid-column: 1 / 3; }
+}
+.meta { font-size: 14px; line-height: 1.45; color: var(--quiet); }
+.meta b { display: block; font-weight: 500; color: var(--ink); font-size: 15px; }
+
+/* section head in lanes: eyebrow in the date lane, heading and paragraph across the rest */
+.lhead { margin-bottom: 48px; row-gap: 18px; }
+.lhead .eyebrow { padding-top: 14px; }
+.lhead-in { display: flex; flex-direction: column; gap: 20px; }
+.lhead-in > p { font-size: 17px; line-height: 1.5; color: var(--body); max-width: 420px; text-wrap: pretty; }
+@media (min-width: 1280px) { .lhead-in { flex-direction: row; justify-content: space-between; align-items: flex-end; gap: 48px; } .lhead-in > p { width: var(--l3); flex-shrink: 0; } }
+
+/* masthead */
+.mast-sec { padding: 56px 0 72px; }
+@media (min-width: 1280px) { .mast-sec { padding: 88px 0 112px; } }
+.mast { row-gap: 16px; }
+.mast .eyebrow { padding-top: 22px; }
+.mast-title { font-size: 52px; }
+@media (min-width: 768px) { .mast-title { font-size: 84px; } }
+@media (min-width: 1280px) { .mast-title { font-size: 112px; letter-spacing: -0.05em; } }
+.mast-deck { display: grid; gap: 28px; margin-top: 28px; }
+@media (min-width: 1024px) { .mast-deck { grid-template-columns: minmax(0, 1fr) var(--l3); column-gap: var(--lg); align-items: end; } }
+.mast-deck .lede { max-width: 560px; }
+.sub label { display: block; font-size: 14px; font-weight: 500; color: var(--ink); margin-bottom: 10px; }
+.sub-row { display: flex; gap: 8px; }
+.sub-row input { flex: 1; min-width: 0; height: 50px; border: 0; border-radius: 999px; padding: 0 20px; font: inherit; font-size: 15px; color: var(--ink); background: #fff; box-shadow: inset 0 0 0 1.5px #d6d3e6; }
+.sub-row input::placeholder { color: var(--quiet); }
+.sub-row .btn { border: 0; font-family: inherit; cursor: pointer; }
+
+.record { margin-top: 64px; padding-top: 28px; border-top: 1px solid var(--line); row-gap: 28px; }
+.counts { display: grid; grid-template-columns: 1fr; }
+.counts > div { display: grid; grid-template-columns: 116px 1fr; align-items: baseline; gap: 12px; padding: 12px 0; border-top: 1px solid var(--line); }
+.counts > div:first-child { border-top: 0; padding-top: 0; }
+.counts dt { font-family: var(--heading); font-weight: 500; font-size: 30px; line-height: 1; letter-spacing: -0.035em; color: var(--ink); }
+.counts dd { margin: 0; font-size: 14px; line-height: 1.4; color: var(--muted); }
+@media (min-width: 1024px) {
+  .counts { grid-template-columns: 1fr; }
+  .counts > div { display: block; border-top: 0; padding: 0 0 18px; margin-bottom: 18px; border-bottom: 1px solid var(--line); }
+  .counts > div:last-child { border-bottom: 0; margin-bottom: 0; padding-bottom: 0; }
+  .counts dt { font-size: 40px; }
+  .counts dd { margin-top: 8px; }
+}
+.rec-fig .fig-title { margin-bottom: 6px; }
+.rec-fig .fig-sub { font-size: 14px; color: var(--muted); margin-bottom: 18px; }
+
+/* featured paper */
+.feat-meta { padding-top: 10px; }
+.feat-meta .meta { margin-top: 14px; }
+.feat-title { max-width: 900px; }
+.feat-body { margin-top: 48px; row-gap: 32px; align-items: start; }
+.fcard { background: #fff; border-radius: 24px; padding: 24px 20px 20px; }
+@media (min-width: 768px) { .fcard { padding: 36px 40px 30px; } }
+.fcard .fig-title { margin-bottom: 22px; }
+.fcard .fig-cap { margin-top: 18px; padding-top: 14px; border-top: 1px solid var(--line); flex-wrap: wrap; }
+.fabs { font-size: 17px; line-height: 1.55; color: var(--body); text-wrap: pretty; }
+.fby { margin-top: 24px; }
+.facts { margin-top: 24px; border-top: 1px solid var(--line); }
+.facts > div { display: grid; grid-template-columns: 120px 1fr; gap: 12px; padding: 11px 0; border-bottom: 1px solid var(--line); font-size: 15px; }
+.facts dt { color: var(--quiet); font-size: 14px; padding-top: 1px; }
+.facts dd { margin: 0; color: var(--ink); }
+.fbtn { margin-top: 28px; display: flex; gap: 20px; align-items: center; flex-wrap: wrap; }
+
+/* archive */
+.cols { display: none !important; padding-bottom: 12px; border-bottom: 1px solid var(--ink); font-size: 14px; color: var(--quiet); }
+@media (min-width: 1024px) { .cols { display: grid !important; } }
+.month { padding-top: 56px; }
+.month:first-of-type { padding-top: 36px; }
+.m-head { align-items: baseline; padding-bottom: 18px; }
+.m-name { font-family: var(--heading); font-weight: 500; font-size: 26px; letter-spacing: -0.025em; line-height: 1.1; color: var(--ink); }
+.m-count { font-size: 14px; color: var(--quiet); margin-top: 4px; }
+@media (min-width: 1024px) { .m-count { margin-top: 0; } }
+.entry { padding: 32px 0 36px; border-top: 1px solid var(--line); row-gap: 14px; }
+.e-when { font-size: 14px; color: var(--quiet); display: flex; gap: 10px; flex-wrap: wrap; align-items: baseline; }
+.e-when b { font-weight: 500; color: var(--ink); font-size: 15px; }
+@media (min-width: 1024px) { .e-when { display: block; padding-top: 5px; } .e-when b { display: block; margin-bottom: 4px; } .e-when span { display: block; } }
+.e-title { font-family: var(--heading); font-weight: 500; font-size: 24px; line-height: 1.13; letter-spacing: -0.022em; color: var(--ink); text-wrap: balance; }
+@media (min-width: 1280px) { .e-title { font-size: 26px; } }
+.e-title a:hover { color: var(--ind); }
+.e-by { display: flex; align-items: center; gap: 9px; margin-top: 12px; font-size: 14px; color: var(--muted); }
+.e-by img { width: 24px; height: 24px; border-radius: 99px; object-fit: cover; }
+.e-abs { margin-top: 14px; font-size: 16px; line-height: 1.55; color: var(--body); max-width: 600px; text-wrap: pretty; }
+.e-n { margin-top: 12px; font-size: 14px; color: var(--quiet); }
+.e-fig { padding-top: 8px; }
+.e-fig figcaption { text-wrap: pretty; margin-top: 12px; font-size: 12.5px; line-height: 1.45; color: var(--quiet); max-width: 380px; }
+.e-key { display: flex; gap: 14px; margin-top: 8px; font-size: 12.5px; color: var(--quiet); }
+.e-key i { display: inline-block; width: 8px; height: 8px; border-radius: 99px; margin-right: 6px; vertical-align: 1px; }
+.entry.is-brief { padding: 22px 0 24px; }
+.entry.is-brief .e-title { font-size: 20px; }
+.entry.is-brief .e-n { margin-top: 6px; }
+.entry.is-brief .e-n a { color: var(--ind); font-weight: 500; }
+
+/* series index: a count in the date lane, the series' papers as units of one bar across the rest */
+.ser-list { border-bottom: 1px solid var(--line); }
+.ser { padding: 32px 0 34px; border-top: 1px solid var(--line); row-gap: 14px; }
+.ser-n { display: flex; align-items: baseline; gap: 8px; }
+.ser-n b { font-family: var(--heading); font-weight: 500; font-size: 40px; line-height: 1; letter-spacing: -0.035em; color: var(--ink); }
+.ser-n span { font-size: 14px; color: var(--quiet); }
+@media (min-width: 1024px) { .ser-n { display: block; } .ser-n span { display: block; margin-top: 8px; } }
+.ser-top { display: grid; gap: 8px; margin-bottom: 20px; }
+@media (min-width: 1024px) { .ser-top { grid-template-columns: minmax(0, 1fr) var(--l3); column-gap: var(--lg); align-items: baseline; } }
+.ser-name { font-family: var(--heading); font-weight: 500; font-size: 26px; letter-spacing: -0.025em; line-height: 1.1; color: var(--ink); }
+.ser-desc { font-size: 15.5px; line-height: 1.5; color: var(--body); text-wrap: pretty; }
+
+/* closing and footer details */
+.closing .eyebrow { color: #d9d6ff; --dot: #fff; margin-bottom: 22px; }
+.cal .cal-head span:last-child { color: var(--muted); font-weight: 400; }
+.cal-wd { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; font-size: 12.5px; color: var(--quiet); text-align: center; margin-bottom: 8px; }
+.cal-grid span.is-past { color: #b6b3c9; }
+.cal-times { display: flex; gap: 8px; margin-top: 18px; padding-top: 16px; border-top: 1px solid var(--line); align-items: center; flex-wrap: wrap; font-size: 14px; }
+.cal-times b { font-weight: 500; margin-right: auto; }
+.cal-times span { height: 36px; padding: 0 14px; border-radius: 999px; display: inline-flex; align-items: center; box-shadow: inset 0 0 0 1.5px #d6d3e6; font-weight: 500; }
+@media (max-width: 479px) { .cal-times b { flex-basis: 100%; } }
+@media (max-width: 899px) { .foot-blurb { grid-column: 1 / -1; } }
+.foot-blurb img { width: 112px; height: auto; margin-bottom: 18px; }
+.foot-blurb p { max-width: 340px; line-height: 1.55; }
+.foot-cols b { font-size: 14px; }
+.byline span { font-size: 14px; }
+</style>
+</head>
+<body data-hero="light">
+
+<section data-paper-name="B hub · header"><header class="nav"><div class="wrap nav-in"><a class="nav-logo"><img src="shared/img/wordmark-indigo.svg" alt="LoudFace"></a><nav class="nav-links"><a>Services</a><a>Industries</a><a>Case studies</a><a class="is-on">Research</a><a>Blog</a><a>Pricing</a><a>About</a></nav><a class="btn is-ink nav-cta">Book a strategy call</a></div></header></section>
+
+<section data-paper-name="B hub · masthead" class="is-white mast-sec">
+  <div class="wrap">
+    <div class="mast ln2">
+      <p class="eyebrow" id="since">Published since June 2026</p>
+      <div>
+        <h1 class="h1 mast-title">LoudFace Research</h1>
+        <div class="mast-deck">
+          <p class="lede">Original studies of how ChatGPT, Perplexity, Google AI Overviews and Google search decide what B2B software buyers see. Every paper names its sample, its window and its limits.</p>
+          <form class="sub" onsubmit="return false">
+            <label for="sub-email">Get each paper when it is published</label>
+            <div class="sub-row"><input id="sub-email" type="email" placeholder="Work email"><button class="btn is-ink" type="submit">Subscribe</button></div>
+          </form>
+        </div>
+      </div>
+    </div>
+    <div class="record ln2">
+      <dl class="counts" id="counts"></dl>
+      <figure class="fig rec-fig">
+        <p class="fig-title">The record</p>
+        <p class="fig-sub" id="rec-sub">Every paper we have published, placed on the day it came out.</p>
+        <div id="record"></div>
+        <figcaption class="fig-cap"><span id="rec-cap">Indigo: the benchmark, featured below. Labels give the paper and its publication day.</span><span>loudface.co/research</span></figcaption>
+      </figure>
+    </div>
+  </div>
+</section>
+
+<section data-paper-name="B hub · featured" class="sec is-warm">
+  <div class="wrap">
+    <div class="ln3">
+      <div class="feat-meta"><p class="eyebrow">Featured paper</p><p class="meta"><b>1 June 2026</b>Benchmark<br>AI search behaviour</p></div>
+      <h2 class="h2 feat-title span23">What AI actually cites: <span class="ghost">the B2B SaaS AI-Citation Benchmark (2026)</span></h2>
+    </div>
+    <div class="feat-body ln3">
+      <figure class="fcard span12">
+        <p class="fig-title">Figure 1. Share of 160,240 AI citations, by source type</p>
+        <div data-fit="bench"></div>
+        <figcaption class="fig-cap"><span>Corporate: company websites. You (owned): the brand's own domain.</span><span>Source: Peec AI, five B2B SaaS projects, 30 days to 1 June 2026</span></figcaption>
+      </figure>
+      <div>
+        <p class="fabs">Across 160,240 citations from five B2B SaaS brands, company websites took 50.7%. Reddit was the single most-cited domain, almost entirely through ChatGPT. Owned pages were cited 2.04 times per retrieval, more than any other source type.</p>
+        <div class="byline fby"><img src="shared/img/arnel-bukva-v3.png" alt=""><div><b>Arnel Bukva</b><span>Founder and Head of Growth</span></div></div>
+        <dl class="facts">
+          <div><dt>Citations</dt><dd>160,240</dd></div>
+          <div><dt>Conversations</dt><dd>23,545</dd></div>
+          <div><dt>Engines</dt><dd>ChatGPT, Perplexity, Google AI Overviews</dd></div>
+          <div><dt>Window</dt><dd>30 days to 1 June 2026</dd></div>
+        </dl>
+        <div class="fbtn"><a class="btn is-ink" href="B-paper.html">Read the paper</a><a class="link" href="B-paper.html#cite">Cite this paper</a></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section data-paper-name="B hub · archive" class="sec is-white">
+  <div class="wrap">
+    <div class="lhead ln2">
+      <p class="eyebrow">Archive</p>
+      <div class="lhead-in"><h2 class="h2">Every paper, <span class="ghost">newest first.</span></h2><p>Each entry carries the paper's own lead figure, its sample and the day it was published.</p></div>
+    </div>
+    <div class="cols ln3"><span>Published</span><span>Paper</span><span>Lead figure</span></div>
+    <div id="archive"></div>
+  </div>
+</section>
+
+<section data-paper-name="B hub · series" class="sec is-warm">
+  <div class="wrap">
+    <div class="lhead ln2">
+      <p class="eyebrow">Series</p>
+      <div class="lhead-in"><h2 class="h2" id="ser-h2">Five series, <span class="ghost">twelve papers.</span></h2><p>A series asks one kind of question again, across software categories or topics, so its papers read side by side.</p></div>
+    </div>
+    <div class="ser-list" id="series"></div>
+  </div>
+</section>
+
+<section data-paper-name="B hub · closing" class="closing">
+  <div class="wrap closing-in">
+    <div>
+      <p class="eyebrow">A 30-minute strategy call</p>
+      <h2 class="h2">Find out where AI answers <span style="color:#b9b4ff">put you today.</span></h2>
+      <p>A call shows where ChatGPT, Perplexity and Google AI Overviews place your brand now, and which sources they read in your category.</p>
+    </div>
+    <div class="cal" id="cal"></div>
+  </div>
+</section>
+
+<section data-paper-name="B hub · footer"><footer class="foot"><div class="wrap">
+  <div class="foot-cols">
+    <div class="foot-blurb"><p>Websites, search and AI answers for B2B SaaS and fintech teams. One team, one report, one set of numbers.</p></div>
+    <div><b>Services</b><ul><li>AI answers (AEO and GEO)</li><li>SEO</li><li>Content</li><li>Design and build</li><li>Conversion</li></ul></div>
+    <div><b>Company</b><ul><li>Case studies</li><li>About</li><li>Pricing</li><li>Blog</li><li>Careers</li></ul></div>
+    <div><b>Research</b><ul><li>All papers</li><li>AI Visibility Index</li><li>State of B2B SaaS</li><li>AI search behaviour</li><li>Measurement</li></ul></div>
+    <div><b>Legal</b><ul><li>Privacy</li><li>Terms</li><li>© 2026 LoudFace</li></ul></div>
+  </div>
+  <div class="foot-word"><img src="shared/img/wordmark-indigo.svg" alt="LoudFace"></div>
+</div></footer></section>
+
+<script src="shared/research.js"></script>
+<script>
+/* B · Journal archive: everything below is built from STUDIES and BENCH (shared/research.js). */
+const FEATURED = 'bench';
+const SHORT = { agree: 'Do AI engines agree?', 'seo-time': 'How long SEO takes', 'state-seo': 'State of B2B SaaS SEO', 'state-content': 'State of B2B SaaS Content',
+  'state-ai': 'State of B2B SaaS AI Search', sov: 'AI share of voice', hr: 'HR Tech Index', devtools: 'DevTools Index', cyber: 'Cybersecurity SaaS Index',
+  fintech: 'Fintech Index', gap: 'The AI Answer Gap', bench: 'AI-Citation Benchmark' };
+const UNIT = { hr: 'HR Tech', devtools: 'DevTools', cyber: 'Cybersecurity SaaS', fintech: 'Fintech', 'state-seo': 'SEO', 'state-content': 'Content marketing',
+  'state-ai': 'Marketing and AI search', bench: 'AI-Citation Benchmark', gap: 'The AI Answer Gap', agree: 'Do AI engines agree?', sov: 'AI share of voice', 'seo-time': 'How long SEO takes' };
+const SERIES_DESC = {
+  'AI Visibility Index': 'Which vendors AI engines name when buyers ask about one software category.',
+  'State of B2B SaaS': 'The 2026 state of SEO, content marketing and AI search in B2B software.',
+  'AI search behaviour': 'How ChatGPT, Perplexity and Google AI Overviews choose what to cite and recommend.',
+  'Measurement': 'How AI visibility is measured, and what each formula rewards.',
+  'Search': 'How Google treats new pages, from first appearance to first click.',
+};
+const T = (d) => Date.parse(d + 'T00:00:00Z');
+const dayMonth = (d) => new Date(T(d)).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', timeZone: 'UTC' });
+const longDate = (d) => new Date(T(d)).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric', timeZone: 'UTC' });
+const monthLabel = (k) => new Date(T(k + '-15')).toLocaleDateString('en-GB', { month: 'long', year: 'numeric', timeZone: 'UTC' });
+const WORDS = ['zero', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', 'ten', 'eleven', 'twelve'];
+const cap = (s) => s[0].toUpperCase() + s.slice(1);
+const asc = [...STUDIES].sort((a, b) => a.date.localeCompare(b.date));
+const desc = [...asc].reverse();
+const seriesNames = [...new Set(STUDIES.map((s) => s.series))];
+
+/* masthead counts, measured from the data */
+const first = asc[0];
+document.getElementById('since').textContent = `Published since ${new Date(T(first.date)).toLocaleDateString('en-GB', { month: 'long', year: 'numeric', timeZone: 'UTC' })}`;
+document.getElementById('counts').innerHTML = [
+  [String(STUDIES.length), `papers, ${dayMonth(first.date)} to ${dayMonth(desc[0].date)} 2026`],
+  [BENCH.total.toLocaleString('en-US'), 'AI citations in the largest sample'],
+  [String(seriesNames.length), 'series'],
+].map(([n, l]) => `<div><dt>${n}</dt><dd>${l}</dd></div>`).join('');
+document.getElementById('ser-h2').innerHTML = `${cap(WORDS[seriesNames.length])} series, <span class="ghost">${WORDS[STUDIES.length]} papers.</span>`;
+
+/* archive, grouped by month */
+const byMonth = new Map();
+for (const s of desc) { const k = s.date.slice(0, 7); if (!byMonth.has(k)) byMonth.set(k, []); byMonth.get(k).push(s); }
+const AV = 'shared/img/arnel-bukva-v3.png';
+const KEY = { fintech: ['ChatGPT', 'AI Overviews', 'Perplexity'] };
+const KEYCOL = ['#4f39f6', '#f59a7b', '#9a8ee8'];
+let html = '';
+for (const [k, list] of byMonth) {
+  html += `<div class="month"><div class="m-head ln3"><p class="m-name">${monthLabel(k)}</p><p class="m-count">${list.length} ${list.length === 1 ? 'paper' : 'papers'}</p></div>`;
+  for (const s of list) {
+    const when = `<div class="e-when"><b>${longDate(s.date)}</b><span>${s.kind}</span><span>${s.series}</span></div>`;
+    if (s.id === FEATURED) {
+      html += `<article class="entry is-brief ln3">${when}<div class="span23"><h3 class="e-title"><a href="B-paper.html">${esc(s.title)}</a></h3><p class="e-n">${s.n}. <a href="B-paper.html">Featured above</a></p></div></article>`;
+      continue;
+    }
+    const chart = ['sov', 'fintech'].includes(s.id) ? `<div data-bthumb="${s.id}"></div>` : `<div data-chart="${s.id}" data-size="md"></div>`;
+    const key = KEY[s.id] ? `<div class="e-key">${KEY[s.id].map((n, i) => `<span><i style="background:${KEYCOL[i]}"></i>${n}</span>`).join('')}</div>` : '';
+    html += `<article class="entry ln3">${when}
+      <div class="e-main"><h3 class="e-title"><a href="#">${esc(s.title)}</a></h3>
+        <div class="e-by"><img src="${AV}" alt=""><span>Arnel Bukva</span></div>
+        <p class="e-abs">${esc(s.abstract)}</p><p class="e-n">Sample: ${s.n}</p></div>
+      <figure class="e-fig">${chart}${key}<figcaption>${esc(s.finding)}</figcaption></figure></article>`;
+  }
+  html += `</div>`;
+}
+document.getElementById('archive').innerHTML = html;
+
+/* series index: one row per series, its papers drawn as units of one bar */
+const series = seriesNames.map((name) => { const ps = asc.filter((s) => s.series === name); return { name, ps, latest: ps[ps.length - 1].date }; })
+  .sort((a, b) => b.ps.length - a.ps.length || b.latest.localeCompare(a.latest));
+document.getElementById('series').innerHTML = series.map((s, i) => `<div class="ser ln3">
+  <p class="ser-n"><b>${s.ps.length}</b><span>${s.ps.length === 1 ? 'paper' : 'papers'}, latest ${dayMonth(s.latest)}</span></p>
+  <div class="span23"><div class="ser-top"><p class="ser-name">${s.name}</p><p class="ser-desc">${SERIES_DESC[s.name] || ''}</p></div>
+  <div data-units="${s.name}" data-hi="${i === 0 ? 1 : 0}"></div></div></div>`).join('');
+
+/* booking card: November 2026, today is 3 November */
+(() => {
+  const open = [4, 5, 6, 9, 10, 11, 12, 13, 16, 17, 18, 19, 20], on = 5, lead = 6; // 1 Nov 2026 is a Sunday
+  let g = '';
+  for (let i = 0; i < lead; i++) g += '<span></span>';
+  for (let d = 1; d <= 30; d++) g += `<span class="${d === on ? 'is-on' : open.includes(d) ? 'is-open' : d <= 3 ? 'is-past' : ''}">${d}</span>`;
+  document.getElementById('cal').innerHTML = `<div class="cal-head"><span>November 2026</span><span>30 min · video call</span></div>
+    <div class="cal-wd">${['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'].map((d) => `<span>${d}</span>`).join('')}</div>
+    <div class="cal-grid">${g}</div>
+    <div class="cal-times"><b>Thursday 5 November</b><span>10:00</span><span>13:30</span><span>16:00</span></div>`;
+})();
+
+/* ------------------------------------------------------------------ B's own drawing (same marks as research.js) */
+const BC = { ink: '#1a1040', body: '#4a4466', muted: '#6b6788', quiet: '#6f6c88', line: '#e4e4ea', ind: '#4f39f6', lav: '#c9bdf5', lav2: '#eeecfe' };
+const FONT = 'Satoshi, Helvetica, Arial, sans-serif';
+const ctx = document.createElement('canvas').getContext('2d');
+const tw = (t, size, weight = 400) => { ctx.font = `${weight} ${size}px Satoshi`; return ctx.measureText(t).width; };
+const svg = (w, h, body, label) => `<svg width="${w}" height="${Math.ceil(h)}" viewBox="0 0 ${w} ${Math.ceil(h)}" font-family="${FONT}" role="img" aria-label="${esc(label)}">${body}</svg>`;
+
+/* The record: every paper as a pin on a date axis; pins climb in tiers so no label crosses another pin. */
+function drawRecord(el) {
+  const w = Math.round(el.getBoundingClientRect().width);
+  document.getElementById('rec-cap').textContent = w < 640 ? 'Indigo: the benchmark, featured below. One dot per paper.' : 'Indigo: the benchmark, featured below. Labels give the paper and its publication day.';
+  if (w < 640) return drawRecordCompact(el, w);
+  const d0 = T('2026-05-27'), d1 = T('2026-11-03');
+  const X = (d) => 6 + ((T(d) - d0) / (d1 - d0)) * (w - 12);
+  const fs = 13.5, step = 30, gapDot = 10;
+  const placed = [];
+  for (const s of asc) {
+    const x = X(s.date), main = SHORT[s.id], sub = ` · ${dayMonth(s.date)}`;
+    const wid = tw(main, fs, s.id === FEATURED ? 500 : 400) + tw(sub, fs);
+    const start = x - wid - gapDot < 0;
+    const box = start ? [x + gapDot, x + gapDot + wid] : [x - gapDot - wid, x - gapDot];
+    let t = 0;
+    for (;; t++) {
+      const clash = placed.some((p) => p.t === t && !(box[1] + 14 < p.box[0] || box[0] - 14 > p.box[1]));
+      const crosses = placed.some((p) => p.t > t && p.x >= box[0] - 6 && p.x <= box[1] + 6);
+      if (!clash && !crosses) break;
+    }
+    placed.push({ s, x, t, box, start, main, sub });
+  }
+  const maxT = Math.max(...placed.map((p) => p.t));
+  const top = 14, base = top + 30 + maxT * step + 26, h = base + 30;
+  const yOf = (t) => base - 30 - t * step;
+  let body = `<line x1="0" x2="${w}" y1="${base}" y2="${base}" stroke="${BC.ink}" stroke-opacity=".28"/>`;
+  ['Jun 2026', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov'].forEach((name, i) => {
+    const x = X(`2026-${String(i + 6).padStart(2, '0')}-01`);
+    body += `<line x1="${x}" x2="${x}" y1="${base}" y2="${base + 6}" stroke="${BC.ink}" stroke-opacity=".32"/>`;
+    if (i < 5) body += `<text x="${x + 6}" y="${base + 20}" font-size="12.5" fill="${BC.muted}">${name}</text>`;
+  });
+  for (const p of placed) {
+    const y = yOf(p.t), hi = p.s.id === FEATURED;
+    body += `<line x1="${p.x}" x2="${p.x}" y1="${base}" y2="${y}" stroke="${hi ? BC.ind : BC.lav}" stroke-width="${hi ? 1.5 : 1}"/>
+      <circle cx="${p.x}" cy="${y}" r="${hi ? 5.5 : 4.5}" fill="${hi ? BC.ind : '#fff'}" stroke="${hi ? BC.ind : '#9a8ee8'}" stroke-width="1.5"/>
+      <text x="${p.start ? p.box[0] : p.box[1]}" y="${y + 4.5}" font-size="${fs}" text-anchor="${p.start ? 'start' : 'end'}" fill="${hi ? BC.ind : BC.ink}" font-weight="${hi ? 500 : 400}">${esc(p.main)}<tspan fill="${BC.quiet}" font-weight="400">${esc(p.sub)}</tspan></text>`;
+  }
+  el.innerHTML = svg(w, h, body, `${STUDIES.length} papers published between ${longDate(asc[0].date)} and ${longDate(desc[0].date)}`);
+}
+/* On a phone: one row per month, one dot per paper. */
+function drawRecordCompact(el, w) {
+  const months = ['2026-06', '2026-07', '2026-08', '2026-09', '2026-10'], rh = 34, lab = 74;
+  let body = '';
+  months.forEach((k, i) => {
+    const ps = asc.filter((s) => s.date.startsWith(k)), y = i * rh + rh / 2;
+    body += `<text x="0" y="${y + 4.5}" font-size="13" fill="${BC.body}">${new Date(T(k + '-15')).toLocaleDateString('en-GB', { month: 'long', timeZone: 'UTC' })}</text>
+      <line x1="${lab}" x2="${w}" y1="${i * rh + rh}" y2="${i * rh + rh}" stroke="${BC.line}"/>`;
+    ps.forEach((s, j) => { const hi = s.id === FEATURED; body += `<circle cx="${lab + 8 + j * 22}" cy="${y}" r="7" fill="${hi ? BC.ind : BC.lav}"/>`; });
+    body += `<text x="${w}" y="${y + 4.5}" font-size="13" font-weight="500" text-anchor="end" fill="${ps.length ? BC.ink : BC.quiet}">${ps.length ? ps.length + (ps.length === 1 ? ' paper' : ' papers') : 'none'}</text>`;
+  });
+  el.innerHTML = svg(w, months.length * rh + 4, body, 'Papers published per month');
+}
+
+/* Series units: a bar on a track scaled to the largest series; each paper is one unit, named and dated. */
+function drawUnits(el) {
+  const w = Math.round(el.getBoundingClientRect().width), name = el.dataset.units, hi = el.dataset.hi === '1';
+  const ps = asc.filter((s) => s.series === name), most = Math.max(...seriesNames.map((n) => STUDIES.filter((s) => s.series === n).length));
+  const fill = hi ? BC.ind : BC.lav, tx = hi ? '#fff' : BC.ink, sx = hi ? '#dcd8ff' : BC.body, id = `u${uid++}`;
+  let body = '', h;
+  if (w >= 560) {
+    const uw = w / most, uh = 58;
+    body += `<defs><clipPath id="${id}"><rect x="0" y="0" width="${w}" height="${uh}" rx="12"/></clipPath></defs><g clip-path="url(#${id})">
+      <rect x="0" y="0" width="${w}" height="${uh}" fill="${BC.lav2}"/>`;
+    ps.forEach((s, i) => { const x = i * uw;
+      body += `<rect x="${x}" y="0" width="${uw - (i < ps.length - 1 ? 2 : 0)}" height="${uh}" fill="${fill}"/>
+        <text x="${x + 18}" y="25" font-size="14.5" font-weight="500" fill="${tx}">${esc(UNIT[s.id])}</text>
+        <text x="${x + 18}" y="44" font-size="12.5" fill="${sx}">${s.kind} · ${dayMonth(s.date)}</text>`; });
+    for (let k = ps.length + 1; k < most; k++) body += `<line x1="${k * uw}" x2="${k * uw}" y1="0" y2="${uh}" stroke="#fff" stroke-width="2"/>`;
+    body += `</g>`;
+    h = uh;
+  } else {
+    const uh = 46, gap = 2;
+    h = ps.length * (uh + gap) - gap;
+    body += `<defs><clipPath id="${id}"><rect x="0" y="0" width="${w}" height="${h}" rx="12"/></clipPath></defs><g clip-path="url(#${id})">`;
+    ps.forEach((s, i) => { const y = i * (uh + gap);
+      body += `<rect x="0" y="${y}" width="${w}" height="${uh}" fill="${fill}"/>
+        <text x="16" y="${y + uh / 2 + 5}" font-size="14" font-weight="500" fill="${tx}">${esc(UNIT[s.id])}</text>
+        <text x="${w - 16}" y="${y + uh / 2 + 5}" font-size="12.5" text-anchor="end" fill="${sx}">${dayMonth(s.date)}</text>`; });
+    body += `</g>`;
+  }
+  el.innerHTML = svg(w, h, body, `${name}: ${ps.length} papers`);
+}
+
+/* The share-of-voice thumbnail: who leads each formula on each engine, with the formula named on every row. */
+function drawSovThumb(el) {
+  const c = STUDIES.find((s) => s.id === 'sov').chart, w = Math.round(el.getBoundingClientRect().width);
+  const lab = 104, rh = 28, top = 20, cw = (w - lab) / c.cols.length, fs = 11.5;
+  const names = { 'Visibility': 'Visibility', 'Mention share': 'Mention share', 'Citation share': 'Citation share', 'Average position': 'Avg. position' };
+  const col = (n) => (n.startsWith('LoudFace') ? BC.ind : n.startsWith('Omniscient') ? BC.lav : '#f3d6c9');
+  let body = c.cols.map((h, i) => `<text x="${lab + i * cw + cw / 2}" y="${top - 8}" font-size="${fs}" text-anchor="middle" fill="${BC.muted}">${esc(h)}</text>`).join('');
+  c.rows.forEach((r, j) => { const y = top + j * rh;
+    body += `<text x="0" y="${y + rh / 2 + 4}" font-size="${fs}" fill="${BC.body}">${names[r[0]]}</text>`;
+    r[1].forEach((v, i) => { const n = v.replace(/\s[\d.%]+$/, '');
+      body += `<rect x="${lab + i * cw + 2}" y="${y + 2}" width="${cw - 4}" height="${rh - 4}" rx="5" fill="${col(v)}"/>
+        <text x="${lab + i * cw + cw / 2}" y="${y + rh / 2 + 4}" font-size="${fs}" font-weight="500" text-anchor="middle" fill="${n === 'LoudFace' ? '#fff' : BC.ink}">${esc(n)}</text>`; }); });
+  el.innerHTML = svg(w, top + c.rows.length * rh, body, STUDIES.find((s) => s.id === 'sov').finding);
+}
+
+/* The fintech thumbnail at a readable size: three engines per vendor on one track. */
+function drawDotsThumb(el) {
+  const c = STUDIES.find((s) => s.id === 'fintech').chart, w = Math.round(el.getBoundingClientRect().width);
+  const lab = 112, rh = 32, fs = 13, bw = w - lab - 10;
+  let body = '';
+  c.rows.forEach((r, i) => { const y = i * rh + rh / 2, xs = r[1].map((v) => lab + (v / c.max) * bw), lo = Math.min(...xs), hi = Math.max(...xs);
+    body += `<text x="0" y="${y + 4.5}" font-size="${fs}" fill="${BC.body}">${esc(r[0])}</text><line x1="${lab}" x2="${lab + bw}" y1="${y}" y2="${y}" stroke="${BC.line}"/>
+      <line x1="${lo}" x2="${hi}" y1="${y}" y2="${y}" stroke="${BC.lav}" stroke-width="5" stroke-linecap="round"/>`;
+    xs.forEach((x, k) => { body += `<circle cx="${x}" cy="${y}" r="5.5" fill="${KEYCOL[k]}" stroke="#fff" stroke-width="1.5"/>`; }); });
+  el.innerHTML = svg(w, c.rows.length * rh, body, STUDIES.find((s) => s.id === 'fintech').finding);
+}
+
+/* The lead figure on a phone: the shared bars, with the label column fitted to its longest label so text stays 13.5px. */
+const fctx = document.createElement('canvas').getContext('2d');
+function drawFit(el) {
+  const st = STUDIES.find((s) => s.id === el.dataset.fit), c = st.chart;
+  if (innerWidth >= 480) { el.dataset.chart = st.id; el.dataset.size = 'md'; drawChart(el); delete el.dataset.chart; return; }
+  const w = Math.round(el.getBoundingClientRect().width), fs = 13.5, rh = 34, bh = 12;
+  fctx.font = `${fs}px Satoshi`;
+  const lab = Math.ceil(Math.max(...c.rows.map((r) => fctx.measureText(r[0]).width))) + 14, val = 56, bw = w - lab - val;
+  const body = c.rows.map((r, i) => { const y = i * rh, x = (r[1] / c.max) * bw;
+    return `<text x="0" y="${y + rh / 2 + 4.5}" font-size="${fs}" fill="${BC.body}">${esc(r[0])}</text>
+      <rect x="${lab}" y="${y + (rh - bh) / 2}" width="${bw}" height="${bh}" rx="${bh / 2}" fill="${BC.lav2}"/>
+      <rect x="${lab}" y="${y + (rh - bh) / 2}" width="${Math.max(bh, x)}" height="${bh}" rx="${bh / 2}" fill="${i === 0 ? BC.ind : BC.lav}"/>
+      <text x="${w}" y="${y + rh / 2 + 4.5}" font-size="${fs}" font-weight="500" text-anchor="end" fill="${BC.ink}">${c.unit === '%' ? r[1].toFixed(1) + '%' : r[1]}</text>`; }).join('');
+  el.innerHTML = svg(w, c.rows.length * rh, body, st.finding);
+}
+
+function drawB() {
+  document.querySelectorAll('[data-fit]').forEach(drawFit);
+  document.querySelectorAll('[data-bthumb="fintech"]').forEach(drawDotsThumb);
+  drawRecord(document.getElementById('record'));
+  document.querySelectorAll('[data-units]').forEach(drawUnits);
+  document.querySelectorAll('[data-bthumb="sov"]').forEach(drawSovThumb);
+}
+window.addEventListener('load', () => document.fonts.ready.then(drawB));
+let rz; let lastW = innerWidth;
+window.addEventListener('resize', () => { if (innerWidth === lastW) return; lastW = innerWidth; clearTimeout(rz); rz = setTimeout(() => { drawAll(); drawB(); }, 120); });
+</script>
+<script src="shared/freeze-late.js"></script>
+</body>
+</html>

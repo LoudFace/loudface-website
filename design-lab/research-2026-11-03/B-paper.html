@@ -1,0 +1,481 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AI-Citation Benchmark · B Journal archive</title>
+<link rel="stylesheet" href="shared/base.css">
+<style>
+/* B · Journal archive, the paper. Same three lanes as the hub: a label lane, a reading column, a margin. */
+:root { --l1: 200px; --l3: 400px; --lg: 48px; }
+@media (min-width: 1024px) and (max-width: 1279px) { :root { --l1: 150px; --l3: 300px; --lg: 32px; } }
+.ln2, .ln3 { display: grid; grid-template-columns: minmax(0, 1fr); align-items: start; }
+@media (min-width: 1024px) {
+  .ln2 { grid-template-columns: var(--l1) minmax(0, 1fr); column-gap: var(--lg); }
+  .ln3 { grid-template-columns: var(--l1) minmax(0, 1fr) var(--l3); column-gap: var(--lg); }
+  .span23 { grid-column: 2 / 4; }
+}
+.lab { font-size: 14px; color: var(--quiet); }
+
+/* title block (Distill header) */
+.p-title { padding: 48px 0 64px; }
+@media (min-width: 1280px) { .p-title { padding: 80px 0 88px; } }
+.pt-top { row-gap: 18px; }
+.pt-top .eyebrow { padding-top: 16px; }
+.pt-series { font-size: 14px; color: var(--quiet); margin-top: 6px; padding-left: 18px; }
+.pt-h1 { font-size: 40px; line-height: 1.02; }
+@media (min-width: 768px) { .pt-h1 { font-size: 64px; } }
+@media (min-width: 1280px) { .pt-h1 { font-size: 84px; } }
+.pt-abs { margin-top: 40px; row-gap: 8px; }
+.pt-abs .lab { padding-top: 6px; }
+.pt-abs p.txt { font-size: 19px; line-height: 1.55; color: var(--body); max-width: 780px; text-wrap: pretty; }
+@media (min-width: 1280px) { .pt-abs p.txt { font-size: 20px; } }
+.pt-byl { margin-top: 48px; }
+.byl { display: grid; grid-template-columns: 1fr 1fr; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+.byl > div { padding: 16px 16px 18px 0; min-width: 0; }
+.byl > div:first-child { grid-column: 1 / -1; border-bottom: 1px solid var(--line); }
+@media (min-width: 768px) {
+  .byl { grid-template-columns: 1.45fr 1fr 1fr 1.25fr 1fr; }
+  .byl > div:first-child { grid-column: auto; border-bottom: 0; }
+  .byl > div + div { padding-left: 20px; border-left: 1px solid var(--line); }
+}
+.byl dt { font-size: 14px; color: var(--quiet); margin-bottom: 8px; }
+.byl dd { margin: 0; font-size: 15px; line-height: 1.45; color: var(--ink); }
+.byl dd a { color: var(--ind); font-weight: 500; }
+.byl .byline img { width: 36px; height: 36px; }
+.byl .byline b { font-size: 15px; }
+
+/* figure band */
+.band { padding: 64px 0 72px; }
+@media (min-width: 1280px) { .band { padding: 88px 0 96px; } }
+.cap { row-gap: 0; }
+.cap-n { font-size: 15px; font-weight: 500; color: var(--ink); }
+.cap-t { font-size: 14px; line-height: 1.55; color: var(--muted); margin-top: 8px; max-width: 520px; }
+.cap-s { font-size: 12.5px; line-height: 1.5; color: var(--quiet); margin-top: 10px; }
+.band .fig-title { font-family: var(--heading); font-size: 26px; letter-spacing: -0.022em; line-height: 1.15; margin-bottom: 28px; }
+.band-fig { order: -1; margin-bottom: 24px; }
+@media (min-width: 1024px) { .band-fig { order: 0; margin-bottom: 0; } }
+
+/* the article */
+.art { display: grid; grid-template-columns: minmax(0, 1fr); }
+.art > * { grid-column: 1 / -1; }
+@media (min-width: 1024px) {
+  .art { grid-template-columns: var(--l1) minmax(0, 1fr) var(--l3); column-gap: var(--lg); }
+  .art > * { grid-column: 2; }
+  .art > .pn, .art > .wide { grid-column: 2 / 4; }
+  .art > .full { grid-column: 1 / 4; }
+  .art > .toc { grid-column: 1; grid-row: 1 / span 6; }
+}
+.toc { display: none; }
+@media (min-width: 1024px) { .toc { display: block; } }
+.toc p { font-size: 14px; color: var(--quiet); margin-bottom: 12px; }
+.toc li { font-size: 14px; line-height: 1.4; padding: 7px 0; border-top: 1px solid var(--line); }
+.toc li a { color: var(--body); }
+.toc li.is-on a { color: var(--ind); font-weight: 500; }
+.short-lab { font-size: 14px; font-weight: 500; color: var(--ind); margin-bottom: 10px; }
+.short { font-size: 20px; line-height: 1.55; color: var(--ink); text-wrap: pretty; }
+.art h2 { font-family: var(--heading); font-weight: 500; font-size: 30px; line-height: 1.08; letter-spacing: -0.03em; color: var(--ink); margin: 64px 0 18px; text-wrap: balance; }
+@media (min-width: 1280px) { .art h2 { font-size: 38px; margin-top: 80px; } }
+.art p.b, .pn p.b { font-size: 17px; line-height: 1.7; color: var(--body); text-wrap: pretty; }
+.art p.b + p.b, .pn + .pn { margin-top: 20px; }
+.pn { display: grid; grid-template-columns: minmax(0, 1fr); row-gap: 12px; }
+@media (min-width: 1024px) { .pn { grid-template-columns: minmax(0, 1fr) var(--l3); column-gap: var(--lg); } }
+.pn + .pn { margin-top: 20px; }
+.note { font-size: 14px; line-height: 1.55; color: var(--muted); border-top: 1px solid var(--line); padding-top: 10px; }
+@media (min-width: 1024px) { .note { border-top: 0; padding-top: 5px; max-width: 290px; } }
+.note b { color: var(--ink); font-weight: 500; }
+.wide, .full { margin: 44px 0 40px; }
+.wide { display: grid; grid-template-columns: minmax(0, 1fr); row-gap: 20px; }
+@media (min-width: 1024px) { .wide { grid-column: 1 / 4 !important; grid-template-columns: var(--l1) minmax(0, 1fr); column-gap: var(--lg); } }
+.wide .cap-t { max-width: 200px; }
+@media (max-width: 1023px) { .wide .cap-t { max-width: none; } }
+.full .fig-head { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 12px 24px; align-items: baseline; padding-bottom: 14px; margin-bottom: 26px; border-bottom: 1px solid var(--line); }
+.full .fig-head p.cap-n span { color: var(--muted); font-weight: 400; }
+.legend { display: flex; gap: 18px; font-size: 13px; color: var(--muted); align-items: center; flex-wrap: wrap; }
+.legend i { display: inline-block; vertical-align: -1px; margin-right: 7px; }
+.legend .sw { width: 18px; height: 10px; border-radius: 5px; }
+.legend .tk { width: 2px; height: 14px; background: var(--ink); vertical-align: -3px; }
+.full .cap-t { max-width: 760px; margin-top: 18px; }
+.slope-fig .cap-t { max-width: none; }
+.moves { margin-top: 8px; }
+.moves li { padding: 16px 0 18px; border-top: 1px solid var(--line); font-size: 17px; line-height: 1.65; color: var(--body); }
+.moves li:last-child { border-bottom: 1px solid var(--line); }
+.moves li b { color: var(--ink); font-weight: 500; }
+
+/* appendix */
+.lhead { margin-bottom: 40px; row-gap: 18px; }
+.lhead .eyebrow { padding-top: 14px; }
+.lhead-in { display: flex; flex-direction: column; gap: 20px; }
+.lhead-in > p { font-size: 17px; line-height: 1.5; color: var(--body); max-width: 420px; text-wrap: pretty; }
+@media (min-width: 1280px) { .lhead-in { flex-direction: row; justify-content: space-between; align-items: flex-end; gap: 48px; } .lhead-in > p { width: var(--l3); flex-shrink: 0; } }
+.apx { padding: 28px 0 32px; border-top: 1px solid var(--line); row-gap: 14px; }
+.apx:last-child { border-bottom: 1px solid var(--line); }
+.apx-h { font-family: var(--heading); font-weight: 500; font-size: 22px; letter-spacing: -0.02em; line-height: 1.15; color: var(--ink); }
+.apx p.t { font-size: 15.5px; line-height: 1.65; color: var(--body); text-wrap: pretty; }
+.apx p.t + p.t { margin-top: 12px; }
+.kv { max-width: 820px; }
+@media (max-width: 599px) { .kv > div { grid-template-columns: 1fr !important; gap: 2px !important; } }
+.kv > div { display: grid; grid-template-columns: 130px 1fr; gap: 12px; padding: 9px 0; font-size: 15.5px; line-height: 1.55; border-top: 1px solid var(--line); }
+.kv > div:first-child { border-top: 0; padding-top: 0; }
+.kv dt { color: var(--quiet); font-size: 14px; padding-top: 1px; }
+.kv dd { margin: 0; color: var(--ink); }
+.author { max-width: 820px; display: flex; gap: 16px; align-items: flex-start; }
+.author img { width: 56px; height: 56px; border-radius: 99px; object-fit: cover; flex-shrink: 0; }
+.author b { display: block; font-weight: 500; font-size: 16px; color: var(--ink); }
+.author span { display: block; font-size: 14px; color: var(--muted); margin-bottom: 8px; }
+.cite { background: #fff; border-radius: 22px; padding: 24px; }
+@media (min-width: 768px) { .cite { padding: 32px 36px; } }
+.cite-top { display: flex; justify-content: space-between; align-items: center; gap: 16px; margin-bottom: 18px; }
+.cite-top .lab { font-weight: 500; color: var(--muted); }
+.cite-top .btn { height: 42px; padding: 0 18px; font-size: 14.5px; border: 0; font-family: inherit; cursor: pointer; }
+.cite-txt { font-size: 18px; line-height: 1.6; color: var(--ink); overflow-wrap: anywhere; }
+@media (min-width: 1280px) { .cite-txt { font-size: 20px; } }
+.cite-txt a { color: var(--ind); }
+.cite-foot { display: grid; grid-template-columns: 1fr; gap: 10px; margin-top: 22px; padding-top: 16px; border-top: 1px solid var(--line); font-size: 14px; color: var(--muted); }
+@media (min-width: 768px) { .cite-foot { grid-template-columns: repeat(3, 1fr); gap: 20px; } }
+.cite-foot b { display: block; font-weight: 500; color: var(--ink); font-size: 14px; margin-bottom: 2px; }
+
+/* closing and footer details (same as the hub) */
+.closing .eyebrow { color: #d9d6ff; --dot: #fff; margin-bottom: 22px; }
+.cal .cal-head span:last-child { color: var(--muted); font-weight: 400; }
+.cal-wd { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; font-size: 12.5px; color: var(--quiet); text-align: center; margin-bottom: 8px; }
+.cal-grid span.is-past { color: #b6b3c9; }
+.cal-times { display: flex; gap: 8px; margin-top: 18px; padding-top: 16px; border-top: 1px solid var(--line); align-items: center; flex-wrap: wrap; font-size: 14px; }
+.cal-times b { font-weight: 500; margin-right: auto; }
+.cal-times span { height: 36px; padding: 0 14px; border-radius: 999px; display: inline-flex; align-items: center; box-shadow: inset 0 0 0 1.5px #d6d3e6; font-weight: 500; }
+@media (max-width: 479px) { .cal-times b { flex-basis: 100%; } }
+@media (max-width: 899px) { .foot-blurb { grid-column: 1 / -1; } }
+.foot-blurb p { max-width: 340px; line-height: 1.55; }
+.foot-cols b { font-size: 14px; }
+.byline span { font-size: 14px; }
+</style>
+</head>
+<body data-hero="light">
+
+<section data-paper-name="B paper · header"><header class="nav"><div class="wrap nav-in"><a class="nav-logo"><img src="shared/img/wordmark-indigo.svg" alt="LoudFace"></a><nav class="nav-links"><a>Services</a><a>Industries</a><a>Case studies</a><a class="is-on">Research</a><a>Blog</a><a>Pricing</a><a>About</a></nav><a class="btn is-ink nav-cta">Book a strategy call</a></div></header></section>
+
+<section data-paper-name="B paper · title" class="is-white p-title">
+  <div class="wrap">
+    <div class="pt-top ln2">
+      <div><p class="eyebrow">Benchmark</p><p class="pt-series">AI search behaviour series</p></div>
+      <h1 class="h1 pt-h1">What AI actually cites: <span class="ghost">the B2B SaaS AI-Citation Benchmark (2026)</span></h1>
+    </div>
+    <div class="pt-abs ln2">
+      <p class="lab">Abstract</p>
+      <p class="txt">We pooled 30 days of AI-citation data from five live B2B SaaS projects: 23,545 sampled conversations in ChatGPT, Perplexity and Google AI Overviews, and the 160,240 citations inside them. Company websites took 50.7% of all citations and were the top source type in every project. Reddit was the single most-cited domain, at 7.0%, almost entirely through ChatGPT. Owned pages were cited 2.04 times per retrieval, more than any other type.</p>
+    </div>
+    <div class="pt-byl ln2">
+      <span></span>
+      <dl class="byl">
+        <div><dt>Author</dt><dd><div class="byline"><img src="shared/img/arnel-bukva-v3.png" alt=""><div><b>Arnel Bukva</b><span>Founder and Head of Growth</span></div></div></dd></div>
+        <div><dt>Published</dt><dd>1 June 2026</dd></div>
+        <div><dt>Updated</dt><dd>No revision recorded</dd></div>
+        <div><dt>Data</dt><dd>160,240 citations from 23,545 conversations</dd></div>
+        <div><dt>Cite</dt><dd>Bukva (2026)<br><a href="#cite">Copy citation</a></dd></div>
+      </dl>
+    </div>
+  </div>
+</section>
+
+<section data-paper-name="B paper · figure 1" class="is-warm band">
+  <div class="wrap ln2">
+    <div class="cap">
+      <p class="cap-n">Figure 1</p>
+      <p class="cap-t">Share of all 160,240 citations by source type, the three engines pooled. Corporate means company websites; You (owned) means the project's own domain.</p>
+      <p class="cap-s">Source: Peec AI, five B2B SaaS projects, 30 days to 1 June 2026</p>
+    </div>
+    <figure class="band-fig">
+      <p class="fig-title">Company websites win half of all AI citations</p>
+      <div data-fit="bench"></div>
+    </figure>
+  </div>
+</section>
+
+<section data-paper-name="B paper · body" class="sec is-white">
+  <div class="wrap">
+    <article class="art" data-paper-abs>
+      <nav class="toc"><p>Contents</p><ul>
+        <li class="is-on"><a href="#short">Short answer</a></li><li><a href="#measured">How we measured this</a></li><li><a href="#half">Company websites win half</a></li>
+        <li><a href="#reddit">Reddit, through ChatGPT</a></li><li><a href="#engines">Each engine's source mix</a></li><li><a href="#owned">Owned pages cite hardest</a></li>
+        <li><a href="#retrieved">Cited is not retrieved</a></li><li><a href="#means">What this means</a></li><li><a href="#appendix">Appendix</a></li></ul></nav>
+
+      <p class="short-lab" id="short">Short answer</p>
+      <p class="short">Across 160,240 AI citations from five B2B SaaS brands, company websites won half of everything AI cited (50.7%), but Reddit was the single most-cited source, more than twice the next domain. Corporate content wins the category; a community forum wins the leaderboard, almost entirely through ChatGPT.</p>
+
+      <h2 id="measured">How we measured this</h2>
+      <div class="pn"><p class="b">We pooled AI-citation data from five live B2B SaaS projects we run inside Peec AI: LoudFace, Toku, and three anonymized clients. The window was 30 days ending 1 June 2026. The instrument logged 23,545 sampled conversations and 160,240 individual citations, which is every link an AI engine surfaced inside an answer.</p>
+        <p class="note">Three engines returned data this window: ChatGPT, Perplexity and Google AI Overviews. <b>Claude, Copilot and Grok were not measured</b>, and nothing here describes them.</p></div>
+      <div class="pn"><p class="b">Source types come from Peec's own domain classification, which buckets every cited domain into one of eight categories. Larger projects pull more weight in the pooled totals, so we checked each finding per project to confirm it is not one big client talking.</p>
+        <p class="note">“You” is a project's own domain. “Competitor” is a domain Peec tagged as a rival for that project. Null classifications were folded into “Other”, 2.0% of citations.</p></div>
+
+      <h2 id="half">Company websites win half of everything</h2>
+      <div class="pn"><p class="b">Corporate content is the most-cited source type by a wide margin. Across all three engines, company sites took 50.7% of citations (Figure 1). The next type, user-generated content, sat at 13.2%. Nothing else cleared 12%. If an AI answer cites a single source about your category, the odds favour a company website saying it.</p>
+        <p class="note">This held in every project: Corporate ranged from <b>41.6% to 66.9%</b> across the five brands and was the top type in all of them.</p></div>
+
+      <h2 id="reddit">Reddit is the most-cited domain, and it is a ChatGPT habit</h2>
+      <p class="b">Corporate wins as a category because thousands of company sites add up. No single corporate domain dominates. Reddit does: it took 7.0% of all citations on its own, more than twice the second domain, toku.com, at 3.6%.</p>
+
+      <figure class="wide">
+        <div class="cap"><p class="cap-n">Figure 2</p><p class="cap-t">The nine most-cited domains. Top engine: the engine behind most of that domain's citations, and its share of them.</p></div>
+        <div id="fig-domains"></div>
+      </figure>
+
+      <div class="pn"><p class="b">Look at the top-engine column. Of Reddit's 11,237 citations, 9,050 came from ChatGPT, which cited the forum at 2.64 citations per retrieval. Perplexity barely touched it: 335 citations against 1,252 retrievals. Same forum, a different treatment depending on which engine answers.</p>
+        <p class="note">toku.com and loudface.co are projects' own domains. Toku ranks <b>first of 1,425</b> cited domains in its category; LoudFace ranks second of 2,160.</p></div>
+
+      <h2 id="engines">The three engines have different personalities</h2>
+      <p class="b">If you optimize for “AI search” as one thing, you are averaging across machines that disagree. Each engine leans on a different source mix, and the edges reward different moves.</p>
+
+      <figure class="full">
+        <div class="fig-head"><p class="cap-n">Figure 3 <span>· Source mix per engine, share of each engine's citations</span></p>
+          <div class="legend"><span><i class="sw" style="background:#4f39f6"></i>What sets the engine apart</span><span><i class="sw" style="background:#c9bdf5"></i>Other types</span><span><i class="tk"></i>All three engines pooled</span></div></div>
+        <div id="fig-engines"></div>
+        <p class="cap-t">The Corporate-first rule held for every engine in every project, and ChatGPT's UGC tilt was consistent across clients. The floor is the same everywhere: own your category page.</p>
+      </figure>
+
+      <h2 id="owned">Owned pages get cited hardest when they get pulled</h2>
+      <div class="pn"><p class="b">Citation share tells you how often a source shows up. It does not tell you how efficiently a page turns attention into a citation. For that we use citation rate: when an engine pulls a page into its working set, how reliably does it cite it? Owned pages lead at 2.04, far ahead of competitor pages (0.95) and UGC (0.90). Corporate at large sits at 0.72, because the corporate bucket includes many pages that get crawled and ignored.</p>
+        <p class="note">Three of the five brands are a top-two cited source in their own category.</p></div>
+
+      <div class="pn slope-fig">
+        <figure><div id="fig-slope"></div><p class="cap-s" style="margin-top:14px"><b style="color:var(--ink);font-weight:500">Figure 4.</b> Retrieval rate and citation rate per source type, on one scale.</p></figure>
+        <p class="note">Every line rises: <b>every source type was cited more often than it was retrieved</b>, so citation and retrieval are not the same signal.</p>
+      </div>
+
+      <h2 id="retrieved">Being cited is not the same as being retrieved</h2>
+      <p class="b">UGC is retrieved more than any other third-party type (0.413), but its citation rate (0.90) sits well below owned pages, so a lot of what gets retrieved never makes the answer. Owned pages flip that: retrieved at 0.775 and cited at 2.04. Engines reach for them less often, but when they do, the page earns the link. Chasing retrieval and chasing citation are different jobs, and the two levers are not the same page edits.</p>
+
+      <h2 id="means">What this means for your AEO</h2>
+      <p class="b">Three moves come straight out of the data.</p>
+      <ul class="moves">
+        <li><b>Get into the Reddit conversation if you care about ChatGPT.</b> ChatGPT drives 80.5% of Reddit's citations. Make sure your category's real threads are accurate, current, and mention you where it is honest to.</li>
+        <li><b>Structure owned pages to be quoted, not just crawled.</b> Owned pages cite at 2.04 per retrieval, but only if the engine can lift a clean, self-contained answer: short definitional blocks, direct claims, clear headers.</li>
+        <li><b>Optimize per engine instead of for “AI” as one blob.</b> Perplexity wants editorial sourcing (13.6%), ChatGPT community and reference signals, Google AI Overviews authoritative corporate pages (53.4%).</li>
+      </ul>
+    </article>
+  </div>
+</section>
+
+<section data-paper-name="B paper · appendix" class="sec is-warm" id="appendix">
+  <div class="wrap">
+    <div class="lhead ln2">
+      <p class="eyebrow">Appendix</p>
+      <div class="lhead-in"><h2 class="h2">How it was measured, <span class="ghost">and how to cite it.</span></h2><p>Read these before you quote the numbers. A number true in May is a hypothesis in August until you measure again.</p></div>
+    </div>
+    <div class="apx ln3">
+      <h3 class="apx-h">Method</h3>
+      <dl class="kv span23" id="method"></dl>
+    </div>
+    <div class="apx ln3">
+      <h3 class="apx-h">Limitations</h3>
+      <div><p class="t">This is a three-engine benchmark. ChatGPT, Perplexity and Google AI Overviews are all that returned data this window; it makes no claim about Claude, Copilot or Grok.</p>
+        <p class="t">The pooled totals are weighted by project size. Toku and one other anonymized client each contributed close to 6,800 conversations, while the smallest project contributed 1,665. Every finding was checked per project, and the directional patterns held in each.</p>
+        <p class="t">This is a single 30-day snapshot. Engine behaviour shifts.</p></div>
+      <p class="note">Patterns that held in every project: Corporate first, owned pages cite hardest, ChatGPT's Reddit habit.</p>
+    </div>
+    <div class="apx ln3">
+      <h3 class="apx-h">Versions</h3>
+      <dl class="kv span23"><div><dt>Version 1</dt><dd>1 June 2026. First publication, data window 30 days to 1 June 2026.</dd></div></dl>
+    </div>
+    <div class="apx ln3">
+      <h3 class="apx-h">Author</h3>
+      <div class="author span23"><img src="shared/img/arnel-bukva-v3.png" alt=""><div><b>Arnel Bukva</b><span>Founder and Head of Growth, LoudFace</span><p class="t">Arnel Bukva is the founder of LoudFace, a B2B SaaS organic growth agency that ships SEO and AEO programmes for B2B SaaS and fintech companies, Series A to C.</p></div></div>
+    </div>
+    <div class="apx ln3" id="cite">
+      <h3 class="apx-h">Cite this paper</h3>
+      <div class="cite span23">
+        <div class="cite-top"><span class="lab">Citation</span><button class="btn is-ink" type="button">Copy citation</button></div>
+        <p class="cite-txt">Bukva, A. (2026). What AI actually cites: the B2B SaaS AI-Citation Benchmark. LoudFace Research. <a>https://www.loudface.co/research/ai-citation-benchmark-b2b-saas-2026</a></p>
+        <div class="cite-foot"><div><b>Published</b>1 June 2026</div><div><b>Data window</b>30 days to 1 June 2026</div><div><b>Sample</b>160,240 citations, 23,545 conversations</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section data-paper-name="B paper · closing" class="closing">
+  <div class="wrap closing-in">
+    <div>
+      <p class="eyebrow">A 30-minute strategy call</p>
+      <h2 class="h2">Find out where AI answers <span style="color:#b9b4ff">put you today.</span></h2>
+      <p>We measure exactly this for the brands we run AEO for: per engine, per source type, per competitor, every month. A call shows where your domain ranks in your own category and which engines are ignoring you.</p>
+    </div>
+    <div class="cal" id="cal"></div>
+  </div>
+</section>
+
+<section data-paper-name="B paper · footer"><footer class="foot"><div class="wrap">
+  <div class="foot-cols">
+    <div class="foot-blurb"><p>Websites, search and AI answers for B2B SaaS and fintech teams. One team, one report, one set of numbers.</p></div>
+    <div><b>Services</b><ul><li>AI answers (AEO and GEO)</li><li>SEO</li><li>Content</li><li>Design and build</li><li>Conversion</li></ul></div>
+    <div><b>Company</b><ul><li>Case studies</li><li>About</li><li>Pricing</li><li>Blog</li><li>Careers</li></ul></div>
+    <div><b>Research</b><ul><li>All papers</li><li>AI Visibility Index</li><li>State of B2B SaaS</li><li>AI search behaviour</li><li>Measurement</li></ul></div>
+    <div><b>Legal</b><ul><li>Privacy</li><li>Terms</li><li>© 2026 LoudFace</li></ul></div>
+  </div>
+  <div class="foot-word"><img src="shared/img/wordmark-indigo.svg" alt="LoudFace"></div>
+</div></footer></section>
+
+<script src="shared/research.js"></script>
+<script>
+/* B · Journal archive, the paper: Figures 2-4 drawn from BENCH in the shared chart style. */
+const BC = { ink: '#1a1040', body: '#4a4466', muted: '#6b6788', quiet: '#6f6c88', line: '#e4e4ea', ind: '#4f39f6', lav: '#c9bdf5', lav2: '#eeecfe' };
+const FONT = 'Satoshi, Helvetica, Arial, sans-serif';
+const svg = (w, h, body, label) => `<svg width="${w}" height="${Math.ceil(h)}" viewBox="0 0 ${w} ${Math.ceil(h)}" font-family="${FONT}" role="img" aria-label="${esc(label)}">${body}</svg>`;
+const n0 = (v) => Number(v).toLocaleString('en-US');
+const bench = STUDIES.find((s) => s.id === 'bench');
+const POOLED = Object.fromEntries(bench.chart.rows.map((r) => [r[0].replace(' (owned)', ''), r[1]]));
+const ENGINE_NAME = { 'ChatGPT': 'ChatGPT', 'AI Overviews': 'Google AI Overviews', 'Perplexity': 'Perplexity' };
+
+/* method rows, from BENCH */
+document.getElementById('method').innerHTML = [
+  ['Data', `AI-citation records from ${['zero', 'one', 'two', 'three', 'four', 'five', 'six'][BENCH.projects]} live B2B SaaS projects tracked in Peec AI: LoudFace, Toku and three anonymized clients.`],
+  ['Window', BENCH.window],
+  ['Sample', `${n0(BENCH.conversations)} conversations and ${n0(BENCH.total)} citations: ${BENCH.engines_mix.map((e) => `${ENGINE_NAME[e[0]]} ${n0(e[2])}`).join(', ')}.`],
+  ['Classification', `Peec AI's eight source types: ${bench.chart.rows.map((r) => r[0].replace(' (owned)', '')).join(', ')}. Null classifications folded into Other.`],
+  ['Measures', 'Citation share: a source type\'s share of all citations. Citation rate: citations per retrieval. Retrieval rate: as Peec AI reports it per source type.'],
+].map(([k, v]) => `<div><dt>${k}</dt><dd>${v}</dd></div>`).join('');
+
+/* booking card */
+(() => {
+  const open = [4, 5, 6, 9, 10, 11, 12, 13, 16, 17, 18, 19, 20], on = 5, lead = 6;
+  let g = '';
+  for (let i = 0; i < lead; i++) g += '<span></span>';
+  for (let d = 1; d <= 30; d++) g += `<span class="${d === on ? 'is-on' : open.includes(d) ? 'is-open' : d <= 3 ? 'is-past' : ''}">${d}</span>`;
+  document.getElementById('cal').innerHTML = `<div class="cal-head"><span>November 2026</span><span>30 min · video call</span></div>
+    <div class="cal-wd">${['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'].map((d) => `<span>${d}</span>`).join('')}</div>
+    <div class="cal-grid">${g}</div>
+    <div class="cal-times"><b>Thursday 5 November</b><span>10:00</span><span>13:30</span><span>16:00</span></div>`;
+})();
+
+/* Figure 2: the most-cited domains as a table with a share bar. */
+function drawDomains(el) {
+  const w = Math.round(el.getBoundingClientRect().width), rows = BENCH.domains, max = 8;
+  let body = '', h;
+  const typeName = (t) => (t === 'You' ? 'You (owned)' : t);
+  if (w >= 720) {
+    const rh = 46, top = 34;
+    const X = { type: Math.round(w * 0.23), cites: Math.round(w * 0.45), bar: Math.round(w * 0.49), share: Math.round(w * 0.81), eng: Math.round(w * 0.85) };
+    const barW = X.share - 62 - X.bar;
+    body += [['Domain', 0, 'start'], ['Type', X.type, 'start'], ['Citations', X.cites, 'end'], ['Share of all citations', X.bar, 'start'], ['Top engine', X.eng, 'start']]
+      .map(([t, x, a]) => `<text x="${x}" y="14" font-size="13" text-anchor="${a}" fill="${BC.quiet}">${t}</text>`).join('');
+    body += `<line x1="0" x2="${w}" y1="${top - 8}" y2="${top - 8}" stroke="${BC.ink}" stroke-opacity=".5"/>`;
+    rows.forEach((r, i) => {
+      const y = top + i * rh, cy = y + rh / 2, hi = i === 0;
+      body += `<text x="0" y="${cy + 5}" font-size="15" font-weight="500" fill="${BC.ink}">${esc(r[0])}</text>
+        <text x="${X.type}" y="${cy + 5}" font-size="14" fill="${BC.body}">${typeName(r[1])}</text>
+        <text x="${X.cites}" y="${cy + 5}" font-size="14" text-anchor="end" fill="${BC.body}">${n0(r[2])}</text>
+        <rect x="${X.bar}" y="${cy - 6}" width="${barW}" height="12" rx="6" fill="${BC.lav2}"/>
+        <rect x="${X.bar}" y="${cy - 6}" width="${Math.max(12, (r[3] / max) * barW)}" height="12" rx="6" fill="${hi ? BC.ind : BC.lav}"/>
+        <text x="${X.share}" y="${cy + 5}" font-size="14" font-weight="500" text-anchor="end" fill="${BC.ink}">${r[3].toFixed(1)}%</text>
+        <text x="${X.eng}" y="${cy + 5}" font-size="14" fill="${hi ? BC.ind : BC.body}" font-weight="${hi ? 500 : 400}">${esc(r[4])}</text>
+        <line x1="0" x2="${w}" y1="${y + rh}" y2="${y + rh}" stroke="${BC.line}"/>`;
+    });
+    h = top + rows.length * rh + 2;
+  } else {
+    const rh = 78;
+    rows.forEach((r, i) => {
+      const y = i * rh, hi = i === 0, bw = w - 60;
+      body += `<text x="0" y="${y + 22}" font-size="15" font-weight="500" fill="${BC.ink}">${esc(r[0])}</text>
+        <text x="${w}" y="${y + 22}" font-size="13" text-anchor="end" fill="${BC.quiet}">${typeName(r[1])} · ${n0(r[2])}</text>
+        <rect x="0" y="${y + 33}" width="${bw}" height="10" rx="5" fill="${BC.lav2}"/>
+        <rect x="0" y="${y + 33}" width="${Math.max(10, (r[3] / max) * bw)}" height="10" rx="5" fill="${hi ? BC.ind : BC.lav}"/>
+        <text x="${w}" y="${y + 43}" font-size="13.5" font-weight="500" text-anchor="end" fill="${BC.ink}">${r[3].toFixed(1)}%</text>
+        <text x="0" y="${y + 64}" font-size="13" fill="${hi ? BC.ind : BC.muted}">Top engine: ${esc(r[4])}</text>
+        <line x1="0" x2="${w}" y1="${y + rh - 1}" y2="${y + rh - 1}" stroke="${BC.line}"/>`;
+    });
+    h = rows.length * rh;
+  }
+  el.innerHTML = svg(w, h, body, 'Reddit is the most-cited domain at 7.0%, 80.5% of it through ChatGPT');
+}
+
+/* Figure 3: one small multiple per engine; indigo marks what sets the engine apart, the tick marks the pooled share. */
+function drawEngines(el) {
+  const w = Math.round(el.getBoundingClientRect().width), keys = BENCH.mix_keys, max = 60;
+  const lean = { 'ChatGPT': 'UGC', 'AI Overviews': 'Corporate', 'Perplexity': 'Editorial' };
+  const note = { 'ChatGPT': ['Leans on UGC: 15.0%, most of it Reddit.', 'Pulls the most reference content, 10.3%.'],
+    'AI Overviews': ['Corporate-heavy at 53.4%.', 'Pulls the least reference content, 3.5%.'],
+    'Perplexity': ['The most editorial engine at 13.6%.', 'The lightest on UGC at 8.4%.'] };
+  const cols = w >= 900 ? 3 : 1, gap = cols === 3 ? 56 : 0, pw = (w - gap * (cols - 1)) / cols;
+  const rh = 32, lab = 98, val = 54, head = 46, ph = head + keys.length * rh + 58, vgap = 36;
+  let body = '';
+  BENCH.engines_mix.forEach((e, i) => {
+    const x0 = (i % cols) * (pw + gap), y0 = Math.floor(i / cols) * (ph + vgap), bw = pw - lab - val;
+    body += `<text x="${x0}" y="${y0 + 18}" font-size="17" font-weight="500" fill="${BC.ink}">${ENGINE_NAME[e[0]]}</text>
+      <text x="${x0 + pw}" y="${y0 + 18}" font-size="13" text-anchor="end" fill="${BC.muted}">${n0(e[2])} citations</text>
+      <line x1="${x0}" x2="${x0 + pw}" y1="${y0 + 32}" y2="${y0 + 32}" stroke="${BC.line}"/>`;
+    keys.forEach((k, j) => {
+      const y = y0 + head + j * rh, cy = y + rh / 2, v = e[1][j], hi = k === lean[e[0]], px = x0 + lab + (POOLED[k] / max) * bw;
+      body += `<text x="${x0}" y="${cy + 4.5}" font-size="13.5" fill="${hi ? BC.ink : BC.body}" font-weight="${hi ? 500 : 400}">${k}</text>
+        <rect x="${x0 + lab}" y="${cy - 6}" width="${bw}" height="12" rx="6" fill="${BC.lav2}"/>
+        <rect x="${x0 + lab}" y="${cy - 6}" width="${Math.max(12, (v / max) * bw)}" height="12" rx="6" fill="${hi ? BC.ind : BC.lav}"/>
+        <line x1="${px}" x2="${px}" y1="${cy - 10}" y2="${cy + 10}" stroke="${BC.ink}" stroke-width="2"/>
+        <text x="${x0 + pw}" y="${cy + 4.5}" font-size="13.5" font-weight="500" text-anchor="end" fill="${BC.ink}">${v.toFixed(1)}%</text>`;
+    });
+    const ny = y0 + head + keys.length * rh + 22;
+    body += note[e[0]].map((t, k) => `<text x="${x0}" y="${ny + k * 20}" font-size="13.5" fill="${k === 0 ? BC.ink : BC.body}" font-weight="${k === 0 ? 500 : 400}">${esc(t)}</text>`).join('');
+  });
+  const rowsN = Math.ceil(BENCH.engines_mix.length / cols);
+  el.innerHTML = svg(w, rowsN * ph + (rowsN - 1) * vgap, body, 'Each engine leans on a different source mix');
+}
+
+/* Figure 4: retrieval rate to citation rate per source type, one shared scale (the house EngineSlope idiom). */
+function drawSlope(el) {
+  const w = Math.round(el.getBoundingClientRect().width), narrow = w < 520;
+  const H = narrow ? 400 : 440, top = 50, bot = 34, labW = narrow ? 128 : 176, xL = narrow ? 86 : 112, xR = w - labW - 16, vmax = 2.2;
+  const Y = (v) => top + (1 - v / vmax) * (H - top - bot);
+  let body = '';
+  [0, 0.5, 1, 1.5, 2].forEach((v) => { body += `<line x1="${xL}" x2="${xR}" y1="${Y(v)}" y2="${Y(v)}" stroke="${BC.line}" stroke-dasharray="${v ? '2 4' : ''}"/>
+    ${v % 1 ? '' : `<text x="${xL - 10}" y="${Y(v) + 4}" font-size="12" text-anchor="end" fill="${BC.quiet}">${v.toFixed(1)}</text>`}`; });
+  body += `<line x1="${xL}" x2="${xL}" y1="${top - 8}" y2="${H - bot}" stroke="${BC.ink}" stroke-opacity=".3"/><line x1="${xR}" x2="${xR}" y1="${top - 8}" y2="${H - bot}" stroke="${BC.ink}" stroke-opacity=".3"/>
+    <text x="${xL}" y="22" font-size="13.5" font-weight="500" text-anchor="middle" fill="${BC.ink}">Retrieval rate</text>
+    <text x="${xR}" y="22" font-size="13.5" font-weight="500" text-anchor="middle" fill="${BC.ink}">Citation rate</text>`;
+  const rows = BENCH.rates.map((r) => ({ t: r[0], c: r[1], r: r[2], hi: r[0].startsWith('You') }));
+  for (const d of [...rows.filter((d) => !d.hi), ...rows.filter((d) => d.hi)]) {
+    const col = d.hi ? BC.ind : BC.lav;
+    body += `<line x1="${xL}" x2="${xR}" y1="${Y(d.r)}" y2="${Y(d.c)}" stroke="${col}" stroke-width="${d.hi ? 2.5 : 1.5}"/>
+      <circle cx="${xL}" cy="${Y(d.r)}" r="${d.hi ? 5 : 3.5}" fill="${col}"/><circle cx="${xR}" cy="${Y(d.c)}" r="${d.hi ? 5 : 3.5}" fill="${col}"/>`;
+  }
+  // right labels, pushed apart where values sit close
+  const L = rows.map((d) => ({ ...d, y: Y(d.c) })).sort((a, b) => a.y - b.y);
+  for (let i = 1; i < L.length; i++) if (L[i].y - L[i - 1].y < 19) L[i].y = L[i - 1].y + 19;
+  for (const d of L) {
+    const y0 = Y(d.c), moved = Math.abs(d.y - y0) > 1.5;
+    if (moved) body += `<path d="M${xR + 6} ${y0} L${xR + 12} ${d.y - 4}" stroke="${BC.line}" fill="none"/>`;
+    body += `<text x="${xR + 14}" y="${d.y + 0.5}" font-size="13.5" fill="${d.hi ? BC.ind : BC.body}" font-weight="${d.hi ? 500 : 400}" dominant-baseline="middle">${esc(d.t)} <tspan font-weight="500" fill="${d.hi ? BC.ind : BC.ink}">${d.c.toFixed(2)}</tspan></text>`;
+  }
+  // the two retrieval readings the text quotes
+  const you = rows.find((d) => d.hi), ugc = rows.find((d) => d.t === 'UGC');
+  body += `<text x="${xL - 12}" y="${Y(you.r) + 4.5}" font-size="13" font-weight="500" text-anchor="end" fill="${BC.ind}">You ${you.r.toFixed(3)}</text>
+    <text x="${xL - 12}" y="${Y(ugc.r) + 4.5}" font-size="13" text-anchor="end" fill="${BC.body}">UGC ${ugc.r.toFixed(3)}</text>`;
+  el.innerHTML = svg(w, H, body, 'Owned pages: retrieved at 0.775, cited at 2.04 per retrieval');
+}
+
+/* The lead figure on a phone: the shared bars, with the label column fitted to its longest label so text stays 13.5px. */
+const fctx = document.createElement('canvas').getContext('2d');
+function drawFit(el) {
+  const st = STUDIES.find((s) => s.id === el.dataset.fit), c = st.chart;
+  if (innerWidth >= 480) { el.dataset.chart = st.id; el.dataset.size = 'md'; drawChart(el); delete el.dataset.chart; return; }
+  const w = Math.round(el.getBoundingClientRect().width), fs = 13.5, rh = 34, bh = 12;
+  fctx.font = `${fs}px Satoshi`;
+  const lab = Math.ceil(Math.max(...c.rows.map((r) => fctx.measureText(r[0]).width))) + 14, val = 56, bw = w - lab - val;
+  const body = c.rows.map((r, i) => { const y = i * rh, x = (r[1] / c.max) * bw;
+    return `<text x="0" y="${y + rh / 2 + 4.5}" font-size="${fs}" fill="${BC.body}">${esc(r[0])}</text>
+      <rect x="${lab}" y="${y + (rh - bh) / 2}" width="${bw}" height="${bh}" rx="${bh / 2}" fill="${BC.lav2}"/>
+      <rect x="${lab}" y="${y + (rh - bh) / 2}" width="${Math.max(bh, x)}" height="${bh}" rx="${bh / 2}" fill="${i === 0 ? BC.ind : BC.lav}"/>
+      <text x="${w}" y="${y + rh / 2 + 4.5}" font-size="${fs}" font-weight="500" text-anchor="end" fill="${BC.ink}">${c.unit === '%' ? r[1].toFixed(1) + '%' : r[1]}</text>`; }).join('');
+  el.innerHTML = svg(w, c.rows.length * rh, body, st.finding);
+}
+
+function drawB() {
+  document.querySelectorAll('[data-fit]').forEach(drawFit);
+  drawDomains(document.getElementById('fig-domains'));
+  drawEngines(document.getElementById('fig-engines'));
+  drawSlope(document.getElementById('fig-slope'));
+}
+window.addEventListener('load', () => document.fonts.ready.then(drawB));
+let rz; let lastW = innerWidth;
+window.addEventListener('resize', () => { if (innerWidth === lastW) return; lastW = innerWidth; clearTimeout(rz); rz = setTimeout(() => { drawAll(); drawB(); }, 120); });
+</script>
+<script src="shared/abs-grid.js"></script>
+<script src="shared/freeze-late.js"></script>
+</body>
+</html>

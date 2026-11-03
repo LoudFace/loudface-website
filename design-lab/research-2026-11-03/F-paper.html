@@ -1,0 +1,432 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Company websites win half of all AI citations · LoudFace Research (F · Indigo stage editorial)</title>
+<link rel="stylesheet" href="shared/base.css">
+<style>
+/* F · Indigo stage editorial, the paper (the benchmark). The homepage stage carries the finding, the byline and the
+   lead chart in white; the reading column sits on white and is broken by full-width ink figure bands; the paper ends
+   on an ink method sheet. Layout is flex and block only (Paper drops grid-column placement on text). */
+
+:root { --ink-band: #1a1040; --on-ink: #d9d6f5; --on-ink-2: #a9a3d6; --ink-line: rgba(255,255,255,0.14); --stage-line: rgba(255,255,255,0.22); --rail: 264px; --rail-gap: 120px; --col: 680px; }
+
+/* ---------------------------------------------------------------- header on the stage */
+.f-nav { background: #030c5a; color: #fff; }
+.f-nav .nav-links { color: #fff; gap: 34px; }
+.f-nav .nav-links .is-on { color: #fff; box-shadow: inset 0 -1.5px 0 #fff; padding-bottom: 3px; }
+.f-nav .btn.is-white { color: var(--ink); }
+
+/* ---------------------------------------------------------------- hero: the stage, finding, byline, lead chart */
+.p-hero { color: #fff; background: linear-gradient(180deg, #030c5a 0px, #020e6e 260px, #04188f 540px, #3d38cf 860px, #3d38cf 100%); padding: 40px 0 88px; }
+@media (min-width: 1280px) { .p-hero { padding: 72px 0 112px; } }
+.p-crumb { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; font-size: 14.5px; color: #c9c5fb; }
+.p-crumb a { color: #fff; font-weight: 500; }
+.p-crumb i { width: 4px; height: 4px; border-radius: 99px; background: rgba(255,255,255,.5); }
+.p-h1 { font-family: var(--heading); font-weight: 500; font-size: 48px; line-height: .98; letter-spacing: -.048em; color: #fff; margin-top: 28px; max-width: 1080px; text-wrap: balance; }
+@media (min-width: 768px) { .p-h1 { font-size: 72px; } }
+@media (min-width: 1280px) { .p-h1 { font-size: 96px; margin-top: 36px; } }
+.p-sub { display: flex; flex-direction: column; gap: 28px; margin-top: 32px; }
+@media (min-width: 1100px) { .p-sub { flex-direction: row; justify-content: space-between; align-items: flex-end; gap: 64px; margin-top: 44px; } }
+.p-lede { font-size: 18px; line-height: 1.5; color: #e4e2fe; max-width: 600px; text-wrap: pretty; }
+@media (min-width: 1280px) { .p-lede { font-size: 19px; } }
+.p-by { display: flex; flex-wrap: wrap; align-items: center; gap: 16px 32px; flex-shrink: 0; }
+.p-by .byline img { width: 48px; height: 48px; background: #c9bdf5; }
+.p-by .byline b { color: #fff; font-size: 16px; }
+.p-by .byline span { color: #c9c5fb; font-size: 14px; }
+.p-by .dl { font-size: 14px; line-height: 1.45; color: #c9c5fb; padding-left: 32px; border-left: 1px solid var(--stage-line); }
+.p-by .dl b { display: block; font-weight: 500; color: #fff; font-size: 15px; }
+@media (max-width: 767px) { .p-by .dl { padding-left: 0; border-left: 0; } }
+
+.p-lead { display: flex; flex-direction: column; gap: 32px; margin-top: 64px; padding-top: 28px; border-top: 1px solid var(--stage-line); position: relative; }
+@media (min-width: 1100px) { .p-lead { flex-direction: row; gap: 0; margin-top: 88px; padding-top: 0; } }
+.p-lead .x { position: absolute; width: 11px; height: 11px; }
+.p-lead .x i { position: absolute; background: rgba(255,255,255,.55); }
+.x i:first-child { left: 5px; top: 0; width: 1px; height: 11px; }
+.x i:last-child { top: 5px; left: 0; width: 11px; height: 1px; }
+.p-stats { flex: 0 0 auto; display: flex; flex-wrap: wrap; }
+@media (min-width: 1100px) { .p-stats { width: 336px; flex-direction: column; flex-wrap: nowrap; border-right: 1px solid var(--stage-line); } }
+.p-stat { width: 50%; padding: 0 0 24px; }
+@media (min-width: 1100px) { .p-stat { width: 100%; padding: 26px 32px 26px 0; border-bottom: 1px solid var(--stage-line); } .p-stat:last-child { border-bottom: 0; } }
+.p-stat b { display: block; font-family: var(--heading); font-weight: 500; font-size: 40px; line-height: 1; letter-spacing: -.045em; color: #fff; }
+@media (min-width: 1280px) { .p-stat b { font-size: 56px; } }
+.p-stat span { display: block; font-size: 14.5px; line-height: 1.45; color: #d4d1fd; margin-top: 10px; max-width: 240px; }
+.p-fig { flex: 1 1 0; min-width: 0; }
+@media (min-width: 1100px) { .p-fig { padding: 32px 0 0 56px; } }
+.fig-label { display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px 14px; margin-bottom: 28px; }
+.fig-label .is-n { font-size: 14.5px; font-weight: 500; }
+.fig-label .is-t { font-family: var(--heading); font-weight: 500; font-size: 24px; line-height: 1.15; letter-spacing: -.022em; }
+.p-fig .fig-label .is-n { color: #c9c5fb; }
+
+/* ---------------------------------------------------------------- the reading column on white */
+.read { background: #fff; padding: 64px 0 72px; }
+@media (min-width: 1280px) { .read { padding: 104px 0 112px; } }
+.read.is-first { padding-top: 72px; }
+@media (min-width: 1280px) { .read.is-first { padding-top: 112px; } }
+.read-in { display: flex; flex-direction: column; gap: 40px; }
+@media (min-width: 1100px) { .read-in { flex-direction: row; gap: var(--rail-gap); align-items: flex-start; } }
+.rail { flex: 0 0 auto; width: 100%; }
+@media (min-width: 1100px) { .rail { width: var(--rail); } }
+.col { flex: 0 1 auto; width: 100%; max-width: var(--col); min-width: 0; }
+@media (max-width: 1099px) { .rail.is-empty { display: none; } }
+
+.rail-h { font-size: 13.5px; font-weight: 500; color: var(--muted); padding-bottom: 12px; border-bottom: 1px solid var(--ink); }
+.toc li { border-bottom: 1px solid var(--line); }
+.toc a { display: flex; justify-content: space-between; gap: 12px; padding: 12px 0; font-size: 15px; color: var(--body); }
+.toc a span { color: var(--quiet); font-size: 13.5px; }
+.toc a.is-on { color: var(--ink); font-weight: 500; }
+.rail-tools { display: flex; flex-direction: column; gap: 10px; margin-top: 28px; }
+.rail-tools .btn { justify-content: center; height: 46px; font-size: 14.5px; }
+.rail-meta { margin-top: 28px; font-size: 13.5px; line-height: 1.5; color: var(--muted); }
+.rail-meta b { display: block; color: var(--ink); font-weight: 500; }
+.rail-meta p + p { margin-top: 14px; }
+@media (max-width: 1099px) { .rail-tools { flex-direction: row; flex-wrap: wrap; } .rail-meta { display: none; } }
+
+.takeaways { border-top: 1.5px solid var(--ink); margin-bottom: 72px; }
+.takeaways h2 { font-family: var(--heading); font-weight: 500; font-size: 28px; letter-spacing: -.03em; line-height: 1.1; padding: 22px 0 8px; }
+.takeaways li { display: flex; gap: 24px; align-items: baseline; padding: 18px 0; border-bottom: 1px solid var(--line); }
+.takeaways li b { flex: 0 0 auto; width: 112px; font-family: var(--heading); font-weight: 500; font-size: 32px; line-height: 1; letter-spacing: -.04em; color: var(--ind); white-space: nowrap; }
+.takeaways li span { flex: 1 1 0; min-width: 0; font-size: 16.5px; line-height: 1.5; color: var(--body); }
+.takeaways li strong { font-weight: 500; color: var(--ink); }
+@media (max-width: 767px) { .takeaways li { flex-direction: column; gap: 8px; } .takeaways li b { width: auto; } }
+
+.prose h2 { font-family: var(--heading); font-weight: 500; font-size: 36px; line-height: 1.06; letter-spacing: -.035em; color: var(--ink); margin-top: 72px; text-wrap: balance; }
+.prose h2:first-child { margin-top: 0; }
+@media (min-width: 1280px) { .prose h2 { font-size: 42px; } }
+.prose h3 { font-family: var(--heading); font-weight: 500; font-size: 24px; line-height: 1.15; letter-spacing: -.022em; color: var(--ink); margin-top: 44px; }
+.prose p { font-size: 18px; line-height: 1.65; color: #3b3854; margin-top: 20px; text-wrap: pretty; }
+.prose p strong { font-weight: 500; color: var(--ink); }
+.prose .kick { font-size: 14px; font-weight: 500; color: var(--ind); margin-top: 72px; }
+.prose .kick + h2 { margin-top: 12px; }
+.prose .kick:first-child { margin-top: 0; }
+.prose .see { display: flex; align-items: center; gap: 12px; margin-top: 32px; padding-top: 16px; border-top: 1px solid var(--line); font-size: 14.5px; color: var(--muted); }
+.prose .see b { font-weight: 500; color: var(--ink); }
+.prose .see svg { flex-shrink: 0; color: var(--ind); }
+.pull + .see { border-top: 0; margin-top: 8px; }
+.pull { margin-top: 44px; padding: 28px 0; border-top: 1.5px solid var(--ink); border-bottom: 1px solid var(--line); }
+.pull b { display: block; font-family: var(--heading); font-weight: 500; font-size: 88px; line-height: .9; letter-spacing: -.06em; color: var(--ink); }
+.pull span { display: block; font-family: var(--heading); font-weight: 500; font-size: 24px; line-height: 1.2; letter-spacing: -.02em; color: var(--ink); margin-top: 16px; max-width: 560px; text-wrap: balance; }
+
+/* ---------------------------------------------------------------- full-width ink figure bands */
+.band { background: var(--ink-band); color: #fff; padding: 64px 0 72px; }
+@media (min-width: 1280px) { .band { padding: 104px 0 112px; } }
+.band-in { display: flex; flex-direction: column; gap: 36px; }
+@media (min-width: 1100px) { .band-in { flex-direction: row; gap: 72px; align-items: flex-start; } }
+.band-cap { flex: 0 0 auto; width: 100%; }
+@media (min-width: 1100px) { .band-cap { width: 312px; } }
+.band-cap .is-n { font-size: 14.5px; font-weight: 500; color: #c9bdf5; }
+.band-cap h3 { font-family: var(--heading); font-weight: 500; font-size: 32px; line-height: 1.06; letter-spacing: -.032em; color: #fff; margin-top: 14px; text-wrap: balance; }
+.band-big { font-family: var(--heading); font-weight: 500; font-size: 88px; line-height: .9; letter-spacing: -.06em; color: #fff; margin-top: 40px; white-space: nowrap; }
+@media (max-width: 767px) { .band-big { font-size: 72px; margin-top: 28px; } }
+.band-big-say { font-size: 15.5px; line-height: 1.45; color: var(--on-ink); margin-top: 14px; max-width: 280px; }
+.band-note { font-size: 14.5px; line-height: 1.55; color: var(--on-ink-2); margin-top: 28px; padding-top: 16px; border-top: 1px solid var(--ink-line); }
+.band-fig { flex: 1 1 0; min-width: 0; }
+
+/* ---------------------------------------------------------------- the ink method sheet */
+.sheet { background: var(--ink-band); color: #fff; }
+.sheet .eyebrow { color: var(--on-ink-2); --dot: #c9bdf5; }
+.sheet .h2 { color: #fff; }
+.sheet .ghost { color: #8f88c9; }
+.sheet .head > p { color: var(--on-ink); }
+.ms { border-top: 1px solid rgba(255,255,255,.4); }
+.ms-row { display: flex; flex-direction: column; gap: 6px; padding: 20px 0; border-bottom: 1px solid var(--ink-line); }
+@media (min-width: 900px) { .ms-row { flex-direction: row; gap: 32px; align-items: baseline; } }
+.ms-k { flex: 0 0 auto; width: 220px; font-size: 14.5px; color: var(--on-ink-2); }
+.ms-v { flex: 1 1 0; min-width: 0; font-size: 17px; line-height: 1.45; color: #fff; }
+.ms-v b { font-family: var(--heading); font-weight: 500; font-size: 22px; letter-spacing: -.02em; }
+.ms-n { flex: 0 0 auto; width: 100%; font-size: 14.5px; line-height: 1.45; color: var(--on-ink-2); }
+@media (min-width: 900px) { .ms-n { width: 380px; } }
+.ms-split { display: flex; flex-direction: column; gap: 56px; margin-top: 88px; }
+@media (min-width: 1100px) { .ms-split { flex-direction: row; gap: 72px; } }
+.ms-block { flex: 1 1 0; min-width: 0; }
+.ms-block h3 { font-family: var(--heading); font-weight: 500; font-size: 30px; line-height: 1.05; letter-spacing: -.03em; color: #fff; padding-bottom: 18px; border-bottom: 1px solid rgba(255,255,255,.4); }
+.ms-block li { padding: 16px 0; border-bottom: 1px solid var(--ink-line); font-size: 15.5px; line-height: 1.5; color: var(--on-ink); }
+.ms-block li b { display: block; font-weight: 500; color: #fff; margin-bottom: 4px; }
+.ver { display: flex; gap: 16px; align-items: baseline; }
+.ver .is-v { flex: 0 0 auto; width: 52px; font-family: var(--heading); font-weight: 500; font-size: 22px; color: #fff; letter-spacing: -.02em; }
+.cite { margin-top: 16px; padding: 18px 20px; border-radius: 14px; background: rgba(255,255,255,.06); box-shadow: inset 0 0 0 1px var(--ink-line); font-size: 14.5px; line-height: 1.6; color: #fff; }
+.ms-btns { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 18px; }
+.btn.is-ghost { color: #fff; box-shadow: inset 0 0 0 1.5px rgba(255,255,255,.4); }
+.btn.is-white { color: var(--ink); }
+
+/* ---------------------------------------------------------------- closing */
+.closing-bg { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: 50% 0; }
+.closing .wrap { position: relative; }
+.closing .h2 .is-soft { color: #b9b4ff; }
+.closing .eyebrow { color: #d9d6ff; --dot: #fff; margin-bottom: 20px; }
+.cal-top { display: flex; align-items: center; gap: 12px; padding-bottom: 16px; margin-bottom: 16px; border-bottom: 1px solid var(--line); }
+.cal-top img { width: 40px; height: 40px; border-radius: 99px; object-fit: cover; }
+.cal-top b { display: block; font-size: 15px; font-weight: 500; }
+.cal-top span { display: block; font-size: 13px; color: var(--muted); }
+.cal-grid span.is-dow { height: 24px; font-size: 12px; color: var(--quiet); }
+.cal-grid span.is-past { color: #c4c2d4; }
+.cal-slots { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--line); }
+.cal-slots span { height: 38px; padding: 0 14px; display: inline-flex; align-items: center; border-radius: 10px; box-shadow: inset 0 0 0 1px #d9d6ea; font-size: 13.5px; font-weight: 500; color: var(--ind); }
+.foot-cols p { max-width: 300px; line-height: 1.55; }
+</style>
+</head>
+<body>
+
+<section data-paper-name="F paper · header" class="f-nav"><header class="nav"><div class="wrap nav-in"><a class="nav-logo"><img src="shared/img/wordmark-white.svg" alt="LoudFace"></a><nav class="nav-links"><a>Case studies</a><a class="is-on">Research</a><a>Blog</a><a>About us</a><a>Plans and pricing</a><a>Services</a><a>Industries</a></nav><a class="btn is-white nav-cta">Book an intro call</a></div></header></section>
+
+<!-- the stage: kind and date, the finding as the title, byline, the lead chart in white -->
+<section data-paper-name="F paper · stage" class="p-hero">
+  <div class="wrap">
+    <p class="p-crumb"><a>Research</a><i></i><span>Benchmark</span><i></i><span>Published 1 June 2026</span></p>
+    <h1 class="p-h1">Company websites win half of all AI citations</h1>
+    <div class="p-sub">
+      <p class="p-lede">The B2B SaaS AI-Citation Benchmark (2026). Across 160,240 citations from five B2B SaaS brands, company websites took 50.7%. Reddit was the single most-cited domain, almost entirely through ChatGPT.</p>
+      <div class="p-by">
+        <div class="byline"><img src="shared/img/arnel-bukva-v3.png" alt=""><div><b>Arnel Bukva</b><span>Founder and Head of Growth</span></div></div>
+        <p class="dl"><b>Data window</b>30 days to 1 June 2026</p>
+      </div>
+    </div>
+    <div class="p-lead" id="lead">
+      <div class="p-stats">
+        <div class="p-stat"><b>50.7%</b><span>of citations went to company websites</span></div>
+        <div class="p-stat"><b>160,240</b><span>citations, every link an engine put in an answer</span></div>
+        <div class="p-stat"><b>23,545</b><span>buyer conversations across five brands</span></div>
+        <div class="p-stat"><b>3</b><span>engines: ChatGPT, Perplexity, Google AI Overviews</span></div>
+      </div>
+      <figure class="p-fig">
+        <div class="fig-label"><span class="is-n">Figure 1</span><span class="is-t">Where 160,240 AI citations went</span></div>
+        <div data-chart2="bench" data-ground="stage" data-tone="indigo" data-size="lg" data-paint="off" data-head="off"></div>
+      </figure>
+    </div>
+  </div>
+</section>
+
+<!-- reading column on white: contents, key takeaways, the first finding -->
+<section data-paper-name="F paper · takeaways and finding 1" class="read is-first">
+  <div class="wrap read-in">
+    <aside class="rail">
+      <p class="rail-h">Contents</p>
+      <ul class="toc">
+        <li><a class="is-on">Key takeaways</a></li>
+        <li><a>Source types <span>Fig. 1</span></a></li>
+        <li><a>Domains <span>Fig. 2</span></a></li>
+        <li><a>Engines <span>Fig. 3</span></a></li>
+        <li><a>Citation rate <span>Fig. 4</span></a></li>
+        <li><a>Method</a></li>
+        <li><a>Limitations</a></li>
+        <li><a>Versions</a></li>
+        <li><a>Data and citation</a></li>
+      </ul>
+      <div class="rail-tools"><a class="btn is-ink">Download the data (CSV)</a><a class="btn is-line">Cite this paper</a></div>
+      <div class="rail-meta">
+        <p><b>Sample</b>160,240 citations, 23,545 conversations</p>
+        <p><b>Engines</b>ChatGPT, Perplexity, Google AI Overviews</p>
+        <p><b>Version</b>1.0, 1 June 2026</p>
+      </div>
+    </aside>
+    <div class="col">
+      <div class="takeaways">
+        <h2>Key takeaways</h2>
+        <ul>
+          <li><b>50.7%</b><span><strong>Company websites took half of all citations.</strong> No other source type cleared 14%; user content was next at 13.2%.</span></li>
+          <li><b>11,237</b><span><strong>reddit.com is the most-cited domain</strong>, at 7.0% of all citations, and 80.5% of its citations came through ChatGPT.</span></li>
+          <li><b>15.0%</b><span><strong>ChatGPT leans furthest into user content.</strong> Perplexity gives editorial its largest share, 13.6%; AI Overviews gives reference sites 3.5%.</span></li>
+          <li><b>2.04</b><span><strong>Owned pages are cited 2.04 times per retrieval</strong>, the highest of any source type. Competitor pages are next at 0.95.</span></li>
+        </ul>
+      </div>
+      <div class="prose">
+        <p class="kick">Why we measured this</p>
+        <h2>Which sources do AI engines actually put in their answers?</h2>
+        <p>Buyers of B2B software now ask ChatGPT, Perplexity and Google’s AI Overviews which tool to choose, and each answer carries links. Those links decide which pages get read. We pulled every link the three engines surfaced for five B2B SaaS brands over 30 days to 1 June 2026: <strong>160,240 citations across 23,545 conversations</strong>.</p>
+        <p>Each cited domain was classified into one of eight source types: corporate sites, user content such as forums and video, editorial, reference, competitors, the brand’s own site, institutional sources and other.</p>
+        <p class="kick">Finding 1 · Source types</p>
+        <h2>Company websites take half of everything AI cites</h2>
+        <p>Corporate sites earned <strong>50.7% of all citations</strong>, and came first in each of the five projects. The next type, user content, took 13.2%; editorial 11.1%; reference 8.0%; competitors 7.9%. The brand’s own site took 5.0%.</p>
+        <p>The pattern held on every engine, so it is not one engine’s habit. It is what all three reach for when a buyer asks about software: the pages companies publish about their own products and categories.</p>
+        <p class="see"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M8 3v10M4 9l4 4 4-4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg><span><b>Figure 2</b> ranks the individual domains behind those shares.</span></p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Figure 2, full width on ink -->
+<section data-paper-name="F paper · figure 2 domains" class="band">
+  <div class="wrap band-in">
+    <div class="band-cap">
+      <p class="is-n">Figure 2</p>
+      <h3>Reddit is cited more than any company website</h3>
+      <p class="band-big">11,237</p>
+      <p class="band-big-say">citations of reddit.com, more than any company website and almost twice toku.com, the next domain.</p>
+      <p class="band-note">Two of the nine belong to brands in the sample: toku.com and loudface.co, marked Owned. Most from: the engine behind the largest part of each domain’s citations.</p>
+    </div>
+    <div class="band-fig"><div data-chart2="bench-domains" data-ground="stage" data-tone="night" data-size="lg" data-phone="sm" data-paint="off" data-head="off"></div></div>
+  </div>
+</section>
+
+<section data-paper-name="F paper · finding 2" class="read">
+  <div class="wrap read-in">
+    <aside class="rail is-empty"></aside>
+    <div class="col prose">
+      <p class="kick">Finding 2 · Domains</p>
+      <h2>One forum is the most-cited domain, through one engine</h2>
+      <p>Company websites win as a type, but no single company site comes close to Reddit. <strong>reddit.com was cited 11,237 times</strong>, 7.0% of every citation in the benchmark, and <strong>80.5% of those came through ChatGPT</strong>.</p>
+      <p>The rest of the top nine is a mix of competitors in the sampled categories (riseworks.io, remote.com, deel.com), video (youtube.com, 72.4% of it through AI Overviews) and editorial (investopedia.com and businessinsider.com). Two brands in the sample, toku.com and loudface.co, reach the top nine on their own domains.</p>
+      <div class="pull"><b>80.5%</b><span>of Reddit’s citations came through ChatGPT. The same forum is treated very differently by each engine.</span></div>
+      <p class="see"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M8 3v10M4 9l4 4 4-4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg><span><b>Figure 3</b> splits the source mix by engine.</span></p>
+    </div>
+  </div>
+</section>
+
+<!-- Figure 3, full width on ink -->
+<section data-paper-name="F paper · figure 3 engines" class="band">
+  <div class="wrap band-in">
+    <div class="band-cap">
+      <p class="is-n">Figure 3</p>
+      <h3>Corporate leads on every engine; the edges differ</h3>
+      <p class="band-big">53.4%</p>
+      <p class="band-big-say">Corporate’s share on AI Overviews and on Perplexity. On ChatGPT it is 48.0%.</p>
+      <p class="band-note">ChatGPT 80,608 citations, AI Overviews 42,147, Perplexity 37,485. Each panel is that engine’s own citations, so the shares compare across engines.</p>
+    </div>
+    <div class="band-fig"><div data-chart2="bench-engines" data-ground="stage" data-tone="night" data-size="lg" data-phone="sm" data-paint="off" data-head="off"></div></div>
+  </div>
+</section>
+
+<section data-paper-name="F paper · finding 3" class="read">
+  <div class="wrap read-in">
+    <aside class="rail is-empty"></aside>
+    <div class="col prose">
+      <p class="kick">Finding 3 · Engines</p>
+      <h2>The engines agree on the leader and differ at the edges</h2>
+      <p>Corporate sites lead on every engine. Below them, each engine has its own lean. <strong>ChatGPT gives user content 15.0%</strong> of its citations, the most of the three, which is where Reddit’s lead comes from. <strong>Perplexity gives editorial 13.6%</strong>, its largest share after corporate. <strong>AI Overviews gives reference sites only 3.5%</strong>, a third of what the other two give them.</p>
+      <p>A brand’s own site holds a similar share on all three, between 4.6% and 5.4%. Its own-domain share barely moves between engines; the forum, press and reference shares do.</p>
+      <p class="see"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M8 3v10M4 9l4 4 4-4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg><span><b>Figure 4</b> sets each type’s citation rate beside its retrieval rate.</span></p>
+    </div>
+  </div>
+</section>
+
+<!-- Figure 4, full width on ink -->
+<section data-paper-name="F paper · figure 4 rates" class="band">
+  <div class="wrap band-in">
+    <div class="band-cap">
+      <p class="is-n">Figure 4</p>
+      <h3>Owned pages are quoted most once they are retrieved</h3>
+      <p class="band-big">2.04</p>
+      <p class="band-big-say">citations per retrieval for owned pages, the highest of any source type.</p>
+      <p class="band-note">Competitor pages are next at 0.95, user content 0.90. Every type is cited at a higher rate than it is retrieved.</p>
+    </div>
+    <div class="band-fig"><div data-chart2="bench-rates" data-ground="stage" data-tone="night" data-size="lg" data-phone="sm" data-paint="off" data-head="off"></div></div>
+  </div>
+</section>
+
+<section data-paper-name="F paper · finding 4" class="read">
+  <div class="wrap read-in">
+    <aside class="rail is-empty"></aside>
+    <div class="col prose">
+      <p class="kick">Finding 4 · Citation rate</p>
+      <h2>An owned page that gets pulled tends to get quoted</h2>
+      <p>Owned pages are a small share of all citations, 5.0%, but when an engine retrieves one it cites it <strong>2.04 times per retrieval</strong>, more than twice the rate of any other type. Competitor pages (0.95) and user content (0.90) come next; reference sites are lowest of the named types at 0.68.</p>
+      <p>Getting retrieved and getting cited are two separate results. A page can be pulled often and quoted rarely. For a brand’s own site the second step is already strong; the work is in being retrieved for more of the questions buyers ask.</p>
+      <h3>What this means for a B2B SaaS brand</h3>
+      <p>Half of what the engines cite is company websites, and a brand’s own pages are quoted more often than anything else once retrieved. The exception is ChatGPT, where a forum outranks every company website, so a brand that tracks only its own domain sees only part of what ChatGPT cites in its category.</p>
+    </div>
+  </div>
+</section>
+
+<!-- the ink method sheet: method, limitations, versions, data and citation -->
+<section data-paper-name="F paper · method sheet" class="sec sheet">
+  <div class="wrap">
+    <div class="head">
+      <div>
+        <p class="eyebrow">Method</p>
+        <h2 class="h2" style="margin-top:20px">How we measured it, <span class="ghost">and where it stops.</span></h2>
+      </div>
+      <p>Read these before quoting the numbers. Every row is what this benchmark used; the limits are printed with the result.</p>
+    </div>
+    <div class="ms">
+      <div class="ms-row"><span class="ms-k">Source</span><span class="ms-v">Peec AI, five live B2B SaaS projects</span><span class="ms-n">LoudFace, Toku and three anonymised clients</span></div>
+      <div class="ms-row"><span class="ms-k">Window</span><span class="ms-v"><b>30 days</b> to 1 June 2026</span><span class="ms-n">One snapshot</span></div>
+      <div class="ms-row"><span class="ms-k">Engines</span><span class="ms-v">ChatGPT, Perplexity, Google AI Overviews</span><span class="ms-n">Claude, Copilot and Grok not measured</span></div>
+      <div class="ms-row"><span class="ms-k">Conversations</span><span class="ms-v"><b>23,545</b></span><span class="ms-n">Two projects near 6,800 each; the smallest 1,665</span></div>
+      <div class="ms-row"><span class="ms-k">Citations</span><span class="ms-v"><b>160,240</b></span><span class="ms-n">Every link an engine surfaced inside an answer</span></div>
+      <div class="ms-row"><span class="ms-k">Source types</span><span class="ms-v"><b>8</b>, from Peec’s domain classification</span><span class="ms-n">Unclassified domains folded into Other (2.0%)</span></div>
+      <div class="ms-row"><span class="ms-k">Weighting</span><span class="ms-v">Pooled; larger projects weigh more</span><span class="ms-n">Every finding re-checked per project</span></div>
+    </div>
+    <div class="ms-split">
+      <div class="ms-block">
+        <h3>Limitations</h3>
+        <ul>
+          <li><b>Three engines only.</b>We have no measurement of Claude, Copilot or Grok, so we make no claim about them.</li>
+          <li><b>Weighted by project size.</b>Bigger projects move the totals more, so each finding was checked per project.</li>
+          <li><b>One 30-day snapshot.</b>A number true in May is a hypothesis in August until it is measured again.</li>
+        </ul>
+      </div>
+      <div class="ms-block">
+        <h3>Versions</h3>
+        <ul>
+          <li class="ver"><span class="is-v">1.0</span><span><b>1 June 2026</b>First publication: 160,240 citations over 30 days, three engines, five projects.</span></li>
+        </ul>
+      </div>
+      <div class="ms-block">
+        <h3>Data and citation</h3>
+        <ul><li>The four tables behind every figure: source types, domains, engine mix and rates.</li></ul>
+        <div class="ms-btns"><a class="btn is-white">Download the data (CSV)</a></div>
+        <p class="cite">Bukva, A. (2026, June 1). What AI actually cites: the B2B SaaS AI-Citation Benchmark (2026). LoudFace Research. loudface.co/research/ai-citation-benchmark-b2b-saas-2026</p>
+        <div class="ms-btns"><a class="btn is-ghost">Copy the citation</a></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section data-paper-name="F paper · closing" class="closing">
+  <img class="closing-bg" src="shared/img/closing-terrain-1280.webp" alt="">
+  <div class="wrap closing-in">
+    <div>
+      <p class="eyebrow">A 30-minute strategy call</p>
+      <h2 class="h2">Find out where AI answers <span class="is-soft">put you today.</span></h2>
+      <p>We measure exactly this for every client we run AEO for: per engine, per source type, per competitor, every month. On the call we show you where your domain ranks in your own category.</p>
+    </div>
+    <div class="cal">
+      <div class="cal-top"><img src="shared/img/arnel-bukva-v3.png" alt=""><div><b>Strategy call with Arnel Bukva</b><span>30 minutes · Google Meet</span></div></div>
+      <div class="cal-head"><span>November 2026</span><span style="color:var(--muted)">‹ ›</span></div>
+      <div class="cal-grid">
+        <span class="is-dow">Mon</span><span class="is-dow">Tue</span><span class="is-dow">Wed</span><span class="is-dow">Thu</span><span class="is-dow">Fri</span><span class="is-dow">Sat</span><span class="is-dow">Sun</span>
+        <span></span><span></span><span></span><span></span><span></span><span></span><span class="is-past">1</span>
+        <span class="is-past">2</span><span class="is-past">3</span><span class="is-open">4</span><span class="is-on">5</span><span class="is-open">6</span><span>7</span><span>8</span>
+        <span class="is-open">9</span><span class="is-open">10</span><span class="is-open">11</span><span class="is-open">12</span><span class="is-open">13</span><span>14</span><span>15</span>
+        <span class="is-open">16</span><span class="is-open">17</span><span class="is-open">18</span><span class="is-open">19</span><span class="is-open">20</span><span>21</span><span>22</span>
+        <span class="is-open">23</span><span class="is-open">24</span><span class="is-open">25</span><span class="is-open">26</span><span class="is-open">27</span><span>28</span><span>29</span>
+        <span class="is-open">30</span>
+      </div>
+      <div class="cal-slots"><span>10:00</span><span>11:30</span><span>14:00</span><span>16:30</span></div>
+    </div>
+  </div>
+</section>
+
+<section data-paper-name="F paper · footer" class="foot">
+  <div class="wrap">
+    <div class="foot-cols">
+      <div><b>LoudFace</b><p>A B2B SEO and AEO agency. We get software companies found in Google and named in AI answers.</p></div>
+      <div><b>Services</b><ul><li>SEO</li><li>AEO</li><li>Content</li><li>CRO</li><li>Websites</li></ul></div>
+      <div><b>Company</b><ul><li>About</li><li>Case studies</li><li>Pricing</li><li>Contact</li></ul></div>
+      <div><b>Research</b><ul><li>AI Visibility Index</li><li>State of B2B SaaS</li><li>Citation benchmark</li><li>Method</li></ul></div>
+      <div><b>Legal</b><ul><li>Privacy policy</li><li>Terms</li><li>Cookies</li></ul></div>
+    </div>
+    <div class="foot-word"><img src="shared/img/wordmark-indigo.svg" alt="LoudFace"></div>
+  </div>
+</section>
+
+<script src="shared/research.js"></script>
+<script>
+/* the crosshair marks at the lead figure's hairline intersections */
+(function () {
+  const lead = document.getElementById('lead');
+  const x = (pos) => `<span class="x" style="${pos}"><i></i><i></i></span>`;
+  lead.insertAdjacentHTML('beforeend', x('left:-6px;top:-6px') + x('right:-6px;top:-6px') + `<span class="x is-mid" style="top:-6px"><i></i><i></i></span>`);
+  const place = () => { const st = lead.querySelector('.p-stats'), m = lead.querySelector('.is-mid'); m.style.display = innerWidth >= 1100 ? '' : 'none'; m.style.left = (st.offsetWidth - 6) + 'px'; };
+  place(); addEventListener('resize', place);
+})();
+</script>
+<script>
+/* a band chart drawn at lg on desktop and sm on a phone, where the lg table and multiples run out of room */
+if (innerWidth < 768) document.querySelectorAll('[data-phone]').forEach((el) => { el.dataset.size = el.dataset.phone; });
+</script>
+<script src="shared/charts-v2.js"></script>
+<script src="shared/freeze-late.js"></script>
+</body>
+</html>

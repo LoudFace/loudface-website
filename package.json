@@ -10,7 +10,7 @@
     "typecheck": "tsc --noEmit",
     "test:editor": "tsx --test src/lib/__tests__/inline-edit-*.test.ts",
     "test:cms": "tsx --test src/lib/__tests__/cms-retry.test.ts src/lib/__tests__/cms-wiring.test.ts",
-    "test:redirects": "tsx --test src/lib/__tests__/host-redirect.test.ts",
+    "test:redirects": "tsx --test src/lib/__tests__/host-redirect.test.ts src/lib/__tests__/research-redirects.test.ts",
     "test:same-site": "tsx --test src/lib/__tests__/same-site-redirect.test.ts",
     "test:referral": "tsx --test src/lib/__tests__/referral-tag.test.ts",
     "crawl-audit": "node scripts/crawl-audit.mjs",
@@ -27,7 +27,8 @@
     "sync-drip-template": "node scripts/sync-drip-template.mjs",
     "check:editor": "node scripts/inline-edit-check.mjs",
     "test:meta-approval": "tsx --test src/lib/__tests__/meta-approval.test.ts",
-    "test:apply": "tsx --test src/lib/__tests__/apply.test.ts"
+    "test:apply": "tsx --test src/lib/__tests__/apply.test.ts",
+    "test:research": "tsx --test src/app/research-v11/charts/__tests__/draw.test.ts"
   },
   "dependencies": {
     "@ai-sdk/google": "4.0.34",

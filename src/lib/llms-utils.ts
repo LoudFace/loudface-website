@@ -7,6 +7,9 @@
 
 import nextConfig from '../../next.config';
 import { client } from './sanity.client';
+import { BLOG_NOT_MOVED_TO_RESEARCH } from './blog-exclusion';
+import { parseChartSpecText } from './research-spec';
+import type { ChartSpec } from '../app/research-v11/contract';
 
 const SITE_URL = 'https://www.loudface.co';
 
@@ -100,7 +103,7 @@ export function htmlToMarkdown(html: string): string {
 
   // Lists
   md = md.replace(/<ul[^>]*>([\s\S]*?)<\/ul>/gi, (_, content) => {
-    return '\n' + content.replace(/<li[^>]*>([\s\S]*?)<\/li>/gi, '- $1') + '\n';
+    return '\n' + content.replace(/<li[^>]*>([\s\S]*?)<\/li>/gi, '- $1\n') + '\n';
   });
   md = md.replace(/<ol[^>]*>([\s\S]*?)<\/ol>/gi, (_, content) => {
     let i = 0;
@@ -190,15 +193,36 @@ interface LlmsData {
   services: LlmsPage[];
   caseStudies: LlmsPage[];
   blogPosts: LlmsPage[];
+  research: LlmsPage[];
   seoPages: LlmsPage[];
 }
+
+/** A research paper as the llms readers fetch it. */
+interface ResearchMarkdownSource {
+  slug: string;
+  name: string;
+  paperTitle?: string;
+  headlineFinding?: string;
+  sampleSummary?: string;
+  dataWindow?: string;
+  engines?: string[];
+  keyTakeaways?: string[];
+  content?: string;
+  methodology?: string;
+  limitations?: string;
+  appendix?: string;
+  figures?: Array<{ title?: string; source?: string; note?: string; spec?: string }>;
+}
+
+const RESEARCH_MARKDOWN_FIELDS = `"slug": slug.current, name, paperTitle, headlineFinding, sampleSummary, dataWindow, engines,
+      keyTakeaways, content, methodology, limitations, appendix, figures[]{ title, source, note, spec }`;
 
 /**
  * Fetch all CMS content needed for llms.txt generation.
  * Returns structured page data with titles, URLs, descriptions, and optional full content.
  */
 export async function fetchLlmsData(includeContent = false): Promise<LlmsData> {
-  const [caseStudies, blogPosts, seoPages] = await Promise.all([
+  const [caseStudies, blogPosts, research, seoPages] = await Promise.all([
     client.fetch<Array<{
       slug: string;
       name: string;
@@ -219,12 +243,17 @@ export async function fetchLlmsData(includeContent = false): Promise<LlmsData> {
       content: string;
       directAnswer?: string;
       publishedDate: string;
-    }>>(`*[_type == "blogPost" && defined(slug.current)] | order(publishedDate desc) {
+    }>>(`*[_type == "blogPost" && defined(slug.current) && ${BLOG_NOT_MOVED_TO_RESEARCH}] | order(publishedDate desc) {
       "slug": slug.current,
       name,
       excerpt,
       ${includeContent ? 'content, directAnswer,' : ''}
       publishedDate
+    }`),
+    client.fetch<Array<ResearchMarkdownSource & { excerpt?: string }>>(
+      `*[_type == "research" && defined(slug.current)] | order(publishedDate desc) {
+      ${includeContent ? RESEARCH_MARKDOWN_FIELDS : '"slug": slug.current, name, headlineFinding'},
+      excerpt
     }`),
     client.fetch<Array<{
       slug: string;
@@ -266,6 +295,12 @@ export async function fetchLlmsData(includeContent = false): Promise<LlmsData> {
       description: truncateAtSentence(bp.excerpt) || `${bp.name}.`,
       ...(includeContent && bp.content ? { content: blogPostMarkdown(bp.directAnswer, bp.content) } : {}),
     })), redirects),
+    research: withoutRedirects((research || []).map(paper => ({
+      title: paper.name,
+      url: `${SITE_URL}/research/${paper.slug}`,
+      description: truncateAtSentence(paper.headlineFinding || paper.excerpt || '') || `${paper.name}.`,
+      ...(includeContent ? { content: researchMarkdownBody(paper) } : {}),
+    })), redirects),
     seoPages: withoutRedirects((seoPages || []).map(sp => ({
       title: sp.name,
       url: `${SITE_URL}/seo-for/${sp.slug}`,
@@ -300,6 +335,7 @@ export async function generateLlmsTxt(): Promise<string> {
     `- [Recognition](${SITE_URL}/recognition): Outside agency lists and rankings that name LoudFace, where each places us, the publishers' verdicts, and how often AI engines name us.`,
     `- [Case Studies](${SITE_URL}/case-studies): Full portfolio of client work with measurable results.`,
     `- [Blog](${SITE_URL}/blog): SEO, AEO, GEO, and organic growth strategy articles.`,
+    `- [Research](${SITE_URL}/research): LoudFace's original research papers on AI search and B2B SaaS marketing, each with its sample, method, limitations and figures.`,
     `- [AI Instructions](${SITE_URL}/ai-instructions): Canonical, machine-readable fact sheet — what LoudFace does, who it fits, proof numbers, and FAQs. Start here.`,
     '',
     `## Services`,
@@ -314,6 +350,10 @@ export async function generateLlmsTxt(): Promise<string> {
 
   if (data.caseStudies.length > 0) {
     sections.push(`## Case Studies`, '', renderPageList(data.caseStudies), '');
+  }
+
+  if (data.research.length > 0) {
+    sections.push(`## Research`, '', renderPageList(data.research), '');
   }
 
   if (data.blogPosts.length > 0) {
@@ -341,6 +381,7 @@ export async function generateLlmsFullTxt(): Promise<string> {
     `- [Pricing](${SITE_URL}/pricing): Retainer plans, service tracks, and engagement models.`,
     `- [Methodology](${SITE_URL}/methodology): The Answer Chain, the eight-stage GEO method LoudFace runs, measured against revenue.`,
     `- [Recognition](${SITE_URL}/recognition): Outside agency lists and rankings that name LoudFace, where each places us, the publishers' verdicts, and how often AI engines name us.`,
+    `- [Research](${SITE_URL}/research): LoudFace's original research papers on AI search and B2B SaaS marketing, each with its sample, method, limitations and figures.`,
     '',
     `## Services`,
     '',
@@ -349,6 +390,10 @@ export async function generateLlmsFullTxt(): Promise<string> {
     `## Case Studies`,
     '',
     renderPageList(data.caseStudies),
+    '',
+    `## Research`,
+    '',
+    renderPageList(data.research),
     '',
     `## Blog Posts`,
     '',
@@ -359,6 +404,13 @@ export async function generateLlmsFullTxt(): Promise<string> {
   for (const cs of data.caseStudies) {
     if (cs.content) {
       sections.push('', '---', '', `# ${cs.title}`, '', `URL: ${cs.url}`, '', cs.content);
+    }
+  }
+
+  // Append full content for research papers
+  for (const paper of data.research) {
+    if (paper.content) {
+      sections.push('', '---', '', `# ${paper.title}`, '', `URL: ${paper.url}`, '', paper.content);
     }
   }
 
@@ -410,7 +462,7 @@ export async function generatePageMarkdown(path: string): Promise<string | null>
       excerpt: string;
       content: string;
       directAnswer?: string;
-    }>>(`*[_type == "blogPost" && slug.current == $slug] {
+    }>>(`*[_type == "blogPost" && slug.current == $slug && ${BLOG_NOT_MOVED_TO_RESEARCH}] {
       name, excerpt, content, directAnswer
     }`, { slug });
 
@@ -424,7 +476,91 @@ export async function generatePageMarkdown(path: string): Promise<string | null>
     ].join('\n');
   }
 
+  // Research paper
+  const researchMatch = path.match(/^\/research\/([^/]+)$/);
+  if (researchMatch) {
+    const slug = researchMatch[1];
+    const [paper] = await client.fetch<ResearchMarkdownSource[]>(
+      `*[_type == "research" && slug.current == $slug] { ${RESEARCH_MARKDOWN_FIELDS} }`,
+      { slug },
+    );
+    if (!paper) return null;
+    return [`# ${paper.name}`, '', researchMarkdownBody(paper)].join('\n');
+  }
+
   return null;
+}
+
+/**
+ * A research paper as Markdown: the finding, the sample, the takeaways, the body, every figure as a table of its
+ * numbers, then the method and the limitations. Used by /research/<slug>.md and llms-full.txt. A figure whose spec
+ * does not parse throws (naming the paper and figure), the same as the HTML page, so the Markdown route answers 503
+ * instead of caching a paper without its numbers.
+ */
+function researchMarkdownBody(paper: ResearchMarkdownSource): string {
+  const out: string[] = [];
+  if (paper.paperTitle && paper.paperTitle !== paper.name) out.push(`*${paper.paperTitle}*`, '');
+  if (paper.headlineFinding) out.push(`**The finding:** ${paper.headlineFinding.trim()}`, '');
+  const facts = [
+    paper.sampleSummary ? `- Sample: ${paper.sampleSummary}` : null,
+    paper.dataWindow ? `- Data window: ${paper.dataWindow}` : null,
+    paper.engines?.length ? `- Engines: ${paper.engines.join(', ')}` : null,
+  ].filter((line): line is string => line !== null);
+  if (facts.length) out.push(...facts, '');
+  if (paper.keyTakeaways?.length) out.push('## Key takeaways', '', ...paper.keyTakeaways.map((t) => `- ${t}`), '');
+  if (paper.content) out.push(htmlToMarkdown(paper.content), '');
+  const figures = (paper.figures || []).filter((figure) => figure.spec);
+  if (figures.length) {
+    out.push('## Figures', '');
+    figures.forEach((figure, i) => {
+      const spec = parseChartSpecText(figure.spec, `Research paper "${paper.slug}", figure "${figure.title || i + 1}"`);
+      out.push(`### Figure ${i + 1}: ${figure.title || ''}`.trim(), '', chartSpecMarkdown(spec), '');
+      if (figure.source) out.push(figure.source, '');
+      if (figure.note) out.push(figure.note, '');
+    });
+  }
+  if (paper.methodology) out.push('## Method', '', htmlToMarkdown(paper.methodology), '');
+  if (paper.limitations) out.push('## Limitations', '', htmlToMarkdown(paper.limitations), '');
+  if (paper.appendix) out.push('## Appendix', '', htmlToMarkdown(paper.appendix), '');
+  return out.join('\n').trim();
+}
+
+/** A chart's numbers as a Markdown table, the text twin of the accessible table the page draws under each figure. */
+function chartSpecMarkdown(spec: ChartSpec): string {
+  const pct = (unit: string | undefined) => (v: string | number) => (typeof v === 'number' && unit === '%' ? `${v}%` : String(v));
+  const table = (head: string[], rows: (string | number)[][]) =>
+    [head, head.map(() => '---'), ...rows.map((r) => r.map(String))].map((r) => `| ${r.join(' | ')} |`).join('\n');
+  switch (spec.type) {
+    case 'bars': {
+      const f = pct(spec.unit);
+      const notes = spec.rows.some((r) => r[2]);
+      return table(notes ? ['', 'Value', 'Count'] : ['', 'Value'], spec.rows.map((r) => (notes ? [r[0], f(r[1]), r[2] ?? ''] : [r[0], f(r[1])])));
+    }
+    case 'columns': {
+      const f = pct(spec.unit);
+      return table(['', 'Value'], spec.rows.map((r) => [r[0], f(r[1])]));
+    }
+    case 'funnel':
+      return table(['Step', 'Count'], spec.rows.map((r) => [r[0], r[1]]));
+    case 'split':
+      return table(['', 'Share'], [[spec.a[0], `${spec.a[1]}%`], [spec.b[0], `${spec.b[1]}%`]]);
+    case 'matrix':
+      return table(['', ...spec.cols], spec.rows.map((r) => [r[0], ...r[1]]));
+    case 'list':
+      return table(['', ''], spec.rows.map((r) => [r[0], r[1]]));
+    case 'dots':
+      return table(['', ...spec.cols], spec.rows.map((r) => [r[0], ...r[1]]));
+    case 'table': {
+      const f = pct(spec.unit);
+      return table(spec.cols, spec.rows.map((r) => r.map((cell, i) => (i === spec.bar ? f(cell) : cell))));
+    }
+    case 'multiples': {
+      const f = pct(spec.unit);
+      return table(['', ...spec.keys], spec.groups.map((g) => [g[0], ...g[1].map(f)]));
+    }
+    case 'slope':
+      return table(['', spec.from, spec.to], spec.rows.map((r) => [r[0], r[1], r[2]]));
+  }
 }
 
 /**

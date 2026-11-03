@@ -22,14 +22,16 @@ import { pathsFor } from '@/lib/revalidate-paths';
  *   - URL: https://www.loudface.co/api/revalidate
  *   - Dataset: production
  *   - Trigger: Create, Update, Delete
- *   - Filter: _type in ["blogPost","caseStudy","teamMember","testimonial","client","blogFaq","seoPage","industry","serviceCategory","category","technology"]
- *   - Projection: { _type, "slug": slug.current }
+ *   - Filter: _type in ["blogPost","research","caseStudy","teamMember","testimonial","client","blogFaq","seoPage","industry","serviceCategory","category","technology"]
+ *   - Projection: { _type, "slug": slug.current, movedFromBlog }
  *   - Secret: same value as SANITY_WEBHOOK_SECRET env var on Vercel
  */
 
 type SanityPayload = {
   _type?: string;
   slug?: string | { current?: string };
+  /** A research paper's old blog slug (projection field `movedFromBlog`). */
+  movedFromBlog?: string | null;
 };
 
 function verifySanitySignature(rawBody: string, header: string | null, secret: string): boolean {
@@ -74,7 +76,8 @@ export async function POST(request: Request) {
   }
 
   const slug = typeof body.slug === 'string' ? body.slug : body.slug?.current;
-  const paths = pathsFor(body._type, slug);
+  const movedFromBlog = typeof body.movedFromBlog === 'string' && body.movedFromBlog ? body.movedFromBlog : undefined;
+  const paths = pathsFor(body._type, slug, movedFromBlog);
 
   for (const p of paths) revalidatePath(p);
 
@@ -88,6 +91,14 @@ export async function POST(request: Request) {
       const docTag = cmsDocTag(body._type, slug);
       revalidateTag(docTag, { expire: 0 });
       purgedTags.push(docTag);
+    }
+
+    // The blog reads carry the research tag too (they leave out moved posts), so the type tag above already purges
+    // them; the old post's own entry is purged by name when the payload carries it.
+    if (body._type === 'research' && movedFromBlog) {
+      const oldPostTag = cmsDocTag('blogPost', movedFromBlog);
+      revalidateTag(oldPostTag, { expire: 0 });
+      purgedTags.push(oldPostTag);
     }
   }
 

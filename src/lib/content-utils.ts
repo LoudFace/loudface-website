@@ -56,6 +56,7 @@ import aiAuditContent from "@/data/content/ai-audit.json";
 import webinarAiSearchContent from "@/data/content/webinar-ai-search.json";
 import partnersV11Content from "@/data/content/partners-v11.json";
 import recognitionV11Content from "@/data/content/recognition-v11.json";
+import researchV11Content from "@/data/content/research-v11.json";
 import thankYouContent from "@/data/content/thank-you.json";
 import applyContent from "@/data/content/apply.json";
 import applySaasContent from "@/data/content/apply-saas.json";
@@ -1711,6 +1712,7 @@ const contentRegistry: Record<string, unknown> = {
   "webinar-ai-search": webinarAiSearchContent,
   "partners-v11": partnersV11Content,
   "recognition-v11": recognitionV11Content,
+  "research-v11": researchV11Content,
   "thank-you": thankYouContent,
   apply: applyContent,
   "apply-saas": applySaasContent,
@@ -2004,6 +2006,11 @@ export type RecognitionV11Content = typeof recognitionV11Content;
 /** The v11 /recognition page copy (design directions, 2026-10-30); the lists themselves come from Sanity `recognition`. */
 export async function getRecognitionV11Content(): Promise<RecognitionV11Content> {
   return markTree('recognition-v11', recognitionV11Content);
+}
+export type ResearchV11Content = typeof researchV11Content;
+/** The /research hub and paper copy (direction G, approved 2026-11-03); the papers themselves come from Sanity `research`. */
+export async function getResearchV11Content(): Promise<ResearchV11Content> {
+  return markTree('research-v11', researchV11Content);
 }
 export type ThankYouContent = typeof thankYouContent;
 /** The /thank-you page copy, moved out of its page component on 2026-09-26. */

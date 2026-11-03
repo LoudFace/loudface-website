@@ -1,5 +1,21 @@
 import type { NextConfig } from "next";
 
+/** The 12 studies that moved from /blog/<slug> to /research/<slug> on 3 Nov 2026 (see redirects() below). */
+const STUDIES_MOVED_TO_RESEARCH = [
+  'do-ai-engines-recommend-the-same-agencies',
+  'how-long-does-seo-take',
+  'state-of-b2b-saas-seo',
+  'state-of-b2b-saas-content-marketing',
+  'state-of-b2b-saas-marketing-ai-search',
+  'ai-share-of-voice-formula',
+  'hr-tech-ai-visibility-index-2026',
+  'devtools-ai-visibility-index-2026',
+  'cybersecurity-saas-ai-visibility-index-2026',
+  'which-ai-engine-cites-fintech-brands',
+  'ai-answer-gap-b2b-saas-2026',
+  'ai-citation-benchmark-b2b-saas-2026',
+];
+
 const nextConfig: NextConfig = {
   experimental: {
     optimizePackageImports: [
@@ -222,6 +238,16 @@ const nextConfig: NextConfig = {
         destination: 'https://www.loudface.co/:path*',
         permanent: true,
       },
+      // ─── Studies moved from /blog to /research (3 Nov 2026) ─────────────────
+      // The 12 original-research posts became papers on /research/<same slug> (docs/research-section.md). Their
+      // blogPost documents stay in Sanity; each research document names its old slug in `movedFromBlog`, which drops
+      // the post from every blog list (src/lib/blog-exclusion.ts). The .md twin moves with the page: redirects run
+      // before src/proxy.ts, so /blog/<slug>.md would otherwise still be answered from the old post.
+      // Pinned by src/lib/__tests__/research-redirects.test.ts.
+      ...STUDIES_MOVED_TO_RESEARCH.flatMap((slug) => [
+        { source: `/blog/${slug}`, destination: `/research/${slug}`, permanent: true },
+        { source: `/blog/${slug}.md`, destination: `/research/${slug}.md`, permanent: true },
+      ]),
       // Team page hidden via TEAM_HIDDEN (src/app/about-v3/data.ts). 301 rather
       // than 404 so any inbound link or existing index entry lands somewhere real.
       { source: '/team/chandana-pitta', destination: '/about', permanent: true },

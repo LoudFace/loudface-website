@@ -6,9 +6,13 @@
  */
 
 import { cache } from 'react';
+import { stegaClean } from '@sanity/client/stega';
 import { draftMode } from 'next/headers';
 import { cachedReadClient, client, getServerClient } from './sanity.client';
 import { withRetry } from './cms-retry';
+import { parseChartSpecText } from './research-spec';
+import { BLOG_NOT_MOVED_TO_RESEARCH } from './blog-exclusion';
+import type { ResearchFigure } from '@/app/research-v11/contract';
 import type {
   CaseStudy,
   Client,
@@ -47,6 +51,13 @@ const HIDDEN_CASE_STUDY_SLUGS: ReadonlySet<string> = new Set([
 function isHiddenCaseStudySlug(slug: string | undefined | null): boolean {
   return !!slug && HIDDEN_CASE_STUDY_SLUGS.has(slug);
 }
+
+// Shared with src/lib/llms-utils.ts; see the note in ./blog-exclusion.
+export { BLOG_NOT_MOVED_TO_RESEARCH };
+
+/** The extra list filter a Sanity type needs (only blogPost has one). */
+const listFilterFor = (sanityType: string): string =>
+  sanityType === 'blogPost' ? ` && ${BLOG_NOT_MOVED_TO_RESEARCH}` : '';
 
 // ── GROQ projection fragments ─────────────────────────────────────
 
@@ -195,10 +206,23 @@ const BLOG_POST_CARD_PROJECTION = `{
   "categories": categories[]._ref
 }`;
 
+// Figures leave Sanity with `spec` as JSON text; mapResearchStudy parses it into a ChartSpec, or throws.
+const RESEARCH_FIGURE_FIELDS = `{ "key": _key, title, source, note, spec, placement, h2Index }`;
+
 const RESEARCH_PROJECTION = `{
   "id": _id,
   name,
   "slug": slug.current,
+  "paper-title": paperTitle,
+  series,
+  kind,
+  "lead-number": leadNumber{ value, label },
+  "key-numbers": keyNumbers[]{ value, label, note },
+  "figures": figures[] ${RESEARCH_FIGURE_FIELDS},
+  "data-window": dataWindow,
+  engines,
+  "versions": versions[]{ version, date, note },
+  "moved-from-blog": movedFromBlog,
   "meta-title": metaTitle,
   "meta-description": metaDescription,
   "thumbnail": thumbnail { "url": asset->url, "alt": alt },
@@ -251,6 +275,11 @@ const RESEARCH_CARD_PROJECTION = `{
   "id": _id,
   name,
   "slug": slug.current,
+  "paper-title": paperTitle,
+  series,
+  kind,
+  "lead-number": leadNumber{ value, label },
+  "lead-figure": figures[placement == "lead"][0] ${RESEARCH_FIGURE_FIELDS},
   "thumbnail": thumbnail { "url": asset->url, "alt": alt },
   excerpt,
   "headline-finding": headlineFinding,
@@ -498,21 +527,26 @@ const fetchTestimonials = cache((): Promise<Testimonial[]> =>
 const fetchBlogPosts = cache((): Promise<BlogPost[]> =>
   withRetry((retry) =>
     cachedReadClient.fetch<BlogPost[]>(
-      `*[_type == "blogPost"] | order(publishedDate desc) ${BLOG_POST_CARD_PROJECTION}`,
+      `*[_type == "blogPost" && ${BLOG_NOT_MOVED_TO_RESEARCH}] | order(publishedDate desc) ${BLOG_POST_CARD_PROJECTION}`,
       {},
-      { ...cacheFor(cmsTypeTag('blogPost')), ...retry },
+      { ...cacheFor(cmsTypeTag('blogPost'), cmsTypeTag('research')), ...retry },
     ),
   ),
 );
-const fetchResearchStudies = cache((): Promise<ResearchStudy[]> =>
-  withRetry((retry) =>
-    cachedReadClient.fetch<ResearchStudy[]>(
+const fetchResearchStudies = cache(async (): Promise<ResearchStudy[]> => {
+  const rows = await withRetry((retry) =>
+    cachedReadClient.fetch<RawResearchStudy[]>(
       `*[_type == "research"] | order(publishedDate desc) ${RESEARCH_CARD_PROJECTION}`,
       {},
       { ...cacheFor(cmsTypeTag('research')), ...retry },
     ),
-  ),
-);
+  );
+  // The 12 migrated papers mean this list is never empty: an empty answer is a failed read, and a cached empty
+  // hub would say "0 papers" until the next refresh (house lesson on cached CMS lists, 2026-11-03).
+  if (!rows?.length) throw new Error('[CMS] Research list came back empty; refusing to cache an empty /research');
+  // Parsed outside the retry: a bad spec is not a network blip, and it throws.
+  return rows.map(mapResearchStudy);
+});
 const fetchCategories = cache((): Promise<Category[]> =>
   withRetry((retry) =>
     cachedReadClient.fetch<Category[]>(
@@ -560,6 +594,55 @@ const fetchServiceCategories = cache((): Promise<ServiceCategory[]> =>
 );
 
 // ── Shared shaping helpers ───────────────────────────────────────────
+
+/** A figure as GROQ returns it: the chart is still JSON text, and absent fields are null. */
+type RawResearchFigure = Omit<ResearchFigure, 'spec' | 'source' | 'note' | 'h2Index'> & {
+  spec: string;
+  source?: string | null;
+  note?: string | null;
+  h2Index?: number | null;
+};
+type RawResearchStudy = Omit<ResearchStudy, 'figures' | 'lead-figure'> & {
+  figures?: RawResearchFigure[] | null;
+  'lead-figure'?: RawResearchFigure | null;
+};
+
+function mapResearchFigure(input: RawResearchFigure, paper: string): ResearchFigure {
+  // In Draft Mode Sanity hides edit markers inside every string (stega). Clean the fields that are parsed or
+  // compared, not shown: the placement and the spec JSON. Title, source and note keep theirs so they stay editable.
+  const raw = { ...input, placement: stegaClean(input.placement), spec: stegaClean(input.spec) };
+  const where = `Research paper "${paper}", figure "${raw.title || raw.key}"`;
+  if (raw.placement !== 'lead' && raw.placement !== 'band' && raw.placement !== 'afterH2') {
+    throw new Error(`${where}: placement must be lead, band or afterH2 (got ${JSON.stringify(raw.placement)})`);
+  }
+  if (raw.placement === 'afterH2' && typeof raw.h2Index !== 'number') {
+    throw new Error(`${where}: an afterH2 figure needs h2Index`);
+  }
+  return {
+    key: raw.key,
+    title: raw.title,
+    ...(raw.source ? { source: raw.source } : {}),
+    ...(raw.note ? { note: raw.note } : {}),
+    spec: parseChartSpecText(raw.spec, where),
+    placement: raw.placement,
+    ...(typeof raw.h2Index === 'number' ? { h2Index: raw.h2Index } : {}),
+  };
+}
+
+/**
+ * A research document as the pages read it: every figure's spec parsed into a ChartSpec. Throws on a bad spec,
+ * naming the paper and the figure, so a broken chart fails the render (and keeps the last good copy) instead of
+ * drawing nothing.
+ */
+export function mapResearchStudy(raw: RawResearchStudy): ResearchStudy {
+  const paper = raw.slug || raw.id;
+  const { figures, 'lead-figure': leadFigure, ...rest } = raw;
+  return {
+    ...rest,
+    ...(figures ? { figures: figures.map((figure) => mapResearchFigure(figure, paper)) } : {}),
+    ...(leadFigure ? { 'lead-figure': mapResearchFigure(leadFigure, paper) } : {}),
+  };
+}
 
 function toMapById<T extends { id: string }>(items: T[] | null | undefined): Map<string, T> {
   const map = new Map<string, T>();
@@ -718,8 +801,11 @@ export const fetchItemBySlug = cache(
     // in Studio, and no cache options are attached. When off, the published
     // document comes from the source-of-truth client and is cached by Next.
     const isDraft = (await draftMode()).isEnabled;
-    const query = `*[_type == $type && slug.current == $slug][0] ${projection}`;
+    // A blog post moved to /research answers null here, so /blog/<slug> 404s even if the redirect is bypassed.
+    const query = `*[_type == $type && slug.current == $slug${listFilterFor(sanityType)}][0] ${projection}`;
     const params = { type: sanityType, slug };
+    const tags = [cmsTypeTag(sanityType), cmsDocTag(sanityType, slug)];
+    if (sanityType === 'blogPost') tags.push(cmsTypeTag('research'));
     const result = await withRetry(async (retry) => {
       if (isDraft) {
         const draftClient = await getServerClient();
@@ -729,13 +815,18 @@ export const fetchItemBySlug = cache(
       return cachedReadClient.fetch<T | null>(
         query,
         params,
-        { ...cacheFor(cmsTypeTag(sanityType), cmsDocTag(sanityType, slug)), ...retry },
+        { ...cacheFor(...tags), ...retry },
       );
     });
 
+    if (sanityType === 'research' && result) return mapResearchStudy(result as unknown as RawResearchStudy) as T;
     return result;
   }
 );
+
+/** A list read's cache tags: blog lists also depend on the research papers (BLOG_NOT_MOVED_TO_RESEARCH). */
+const collectionTags = (sanityType: string): string[] =>
+  sanityType === 'blogPost' ? [cmsTypeTag(sanityType), cmsTypeTag('research')] : [cmsTypeTag(sanityType)];
 
 /**
  * Fetch all items from a collection (used by API routes)
@@ -746,11 +837,15 @@ export async function fetchCollection<T>(collectionKey: string): Promise<T[]> {
 
   const items = await withRetry((retry) =>
     cachedReadClient.fetch<T[]>(
-      `*[_type == $type] ${projection}`,
+      `*[_type == $type${listFilterFor(sanityType)}] ${projection}`,
       { type: sanityType },
-      { ...cacheFor(cmsTypeTag(sanityType)), ...retry },
+      { ...cacheFor(...collectionTags(sanityType)), ...retry },
     )
   );
+
+  if (sanityType === 'research' && Array.isArray(items)) {
+    return items.map((item) => mapResearchStudy(item as unknown as RawResearchStudy) as T);
+  }
 
   if (sanityType === 'caseStudy' && Array.isArray(items)) {
     return items.filter(
@@ -764,6 +859,7 @@ export async function fetchCollection<T>(collectionKey: string): Promise<T[]> {
 export interface SitemapData {
   caseStudies: Array<{ slug?: string; _updatedAt?: string }>;
   blogPosts: Array<{ slug?: string; 'published-date'?: string; 'last-updated'?: string }>;
+  research: Array<{ slug?: string; 'published-date'?: string; 'last-updated'?: string }>;
   seoPages: Array<{ slug?: string; _updatedAt?: string }>;
   teamMembers: Array<{ slug?: string; _updatedAt?: string }>;
 }
@@ -783,7 +879,8 @@ export async function fetchSitemapData(): Promise<SitemapData> {
     client.fetch<SitemapData>(
       `{
         "caseStudies": *[_type == "caseStudy" && defined(slug.current)] { "slug": slug.current, "_updatedAt": _updatedAt },
-        "blogPosts": *[_type == "blogPost" && defined(slug.current)] | order(publishedDate desc) { "slug": slug.current, "published-date": publishedDate, "last-updated": lastUpdated },
+        "blogPosts": *[_type == "blogPost" && defined(slug.current) && ${BLOG_NOT_MOVED_TO_RESEARCH}] | order(publishedDate desc) { "slug": slug.current, "published-date": publishedDate, "last-updated": lastUpdated },
+        "research": *[_type == "research" && defined(slug.current)] | order(publishedDate desc) { "slug": slug.current, "published-date": publishedDate, "last-updated": lastUpdated },
         "seoPages": *[_type == "seoPage" && defined(slug.current)] { "slug": slug.current, "_updatedAt": _updatedAt },
         "teamMembers": *[_type == "teamMember" && defined(slug.current)] { "slug": slug.current, "_updatedAt": _updatedAt }
       }`,
@@ -795,6 +892,7 @@ export async function fetchSitemapData(): Promise<SitemapData> {
   return {
     caseStudies: data.caseStudies.filter((study) => !isHiddenCaseStudySlug(study.slug)),
     blogPosts: data.blogPosts,
+    research: data.research,
     seoPages: data.seoPages,
     teamMembers: data.teamMembers,
   };
@@ -812,9 +910,9 @@ export async function fetchSlugs(collectionKey: string): Promise<string[]> {
 
   const rows = await withRetry((retry) =>
     cachedReadClient.fetch<Array<{ slug?: string }>>(
-      `*[_type == $type && defined(slug.current)] { "slug": slug.current }`,
+      `*[_type == $type && defined(slug.current)${listFilterFor(sanityType)}] { "slug": slug.current }`,
       { type: sanityType },
-      { ...cacheFor(cmsTypeTag(sanityType)), ...retry },
+      { ...cacheFor(...collectionTags(sanityType)), ...retry },
     ),
   );
 
@@ -926,15 +1024,13 @@ export interface ResearchIndexData {
  * the index can name the researchers without a second round trip.
  */
 export async function fetchResearchIndexData(): Promise<ResearchIndexData> {
-  const result: ResearchIndexData = { studies: [], teamMembers: new Map() };
-  try {
-    const [studies, teamMembers] = await Promise.all([fetchResearchStudies(), fetchTeamMembers()]);
-    result.studies = (studies || []).slice().sort(byPublishedDateDesc);
-    result.teamMembers = toMapById(teamMembers);
-  } catch (error) {
-    console.error('[CMS] Research index data fetch failed:', error);
-  }
-  return result;
+  // No catch: the hub publishes a list, and its Markdown copy is cached for an hour, so a failed read (or a figure
+  // spec that does not parse) throws instead of rendering /research empty.
+  const [studies, teamMembers] = await Promise.all([fetchResearchStudies(), fetchTeamMembers()]);
+  return {
+    studies: (studies || []).slice().sort(byPublishedDateDesc),
+    teamMembers: toMapById(teamMembers),
+  };
 }
 
 export interface ResearchDetailData {
@@ -948,15 +1044,12 @@ export interface ResearchDetailData {
  * study itself comes from fetchItemBySlug with the full projection.
  */
 export async function fetchResearchDetailData(): Promise<ResearchDetailData> {
-  const result: ResearchDetailData = { studies: [], teamMembers: new Map() };
-  try {
-    const [studies, teamMembers] = await Promise.all([fetchResearchStudies(), fetchTeamMembers()]);
-    result.studies = (studies || []).slice().sort(byPublishedDateDesc);
-    result.teamMembers = toMapById(teamMembers);
-  } catch (error) {
-    console.error('[CMS] Research detail data fetch failed:', error);
-  }
-  return result;
+  // No catch: the "more research" strip and the bylines must not render empty because a read failed.
+  const [studies, teamMembers] = await Promise.all([fetchResearchStudies(), fetchTeamMembers()]);
+  return {
+    studies: (studies || []).slice().sort(byPublishedDateDesc),
+    teamMembers: toMapById(teamMembers),
+  };
 }
 
 export interface BlogPostData {

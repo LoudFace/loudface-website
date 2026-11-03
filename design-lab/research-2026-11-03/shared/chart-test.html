@@ -1,0 +1,5 @@
+<!doctype html><html><head><meta charset="utf-8"><link rel="stylesheet" href="base.css">
+<style>body{padding:32px;background:#fff}.g{display:grid;grid-template-columns:repeat(4,300px);gap:28px}.g>div{border:1px solid var(--line);padding:16px;border-radius:12px}.big{display:grid;grid-template-columns:repeat(2,560px);gap:28px;margin-top:40px}.big>div{border:1px solid var(--line);padding:20px;border-radius:12px}</style></head>
+<body><section data-paper-name="test"><div class="g" id="g"></div><div class="big" id="b"></div></section>
+<script src="research.js"></script>
+<script>for(const s of STUDIES){g.insertAdjacentHTML('beforeend',`<div><div class="small">${s.id}</div><div data-chart="${s.id}" data-size="sm" style="margin-top:10px"></div></div>`);b.insertAdjacentHTML('beforeend',`<div><div class="small">${s.id}</div><div data-chart="${s.id}" style="margin-top:10px"></div></div>`)}</script></body></html>

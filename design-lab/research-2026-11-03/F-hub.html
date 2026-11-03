@@ -1,0 +1,346 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>LoudFace Research (F · Indigo stage editorial)</title>
+<link rel="stylesheet" href="shared/base.css">
+<style>
+/* F · Indigo stage editorial, the hub. The homepage's electric stage opens it (same deep gradient, white charts in a
+   crosshair strip like the hero results row); an ink band carries the latest findings at full size; the archive reads
+   on white; the series close on ink. Colour carries the page: white is a reading surface, not the default. */
+
+:root { --ink-band: #1a1040; --on-ink: #d9d6f5; --on-ink-2: #a9a3d6; --ink-line: rgba(255,255,255,0.14); --stage-line: rgba(255,255,255,0.22); }
+
+/* ---------------------------------------------------------------- header on the stage (homepage header) */
+.f-nav { background: #030c5a; color: #fff; }
+.f-nav .nav-links { color: #fff; gap: 34px; }
+.f-nav .nav-links a { opacity: .92; }
+.f-nav .nav-links .is-on { color: #fff; opacity: 1; box-shadow: inset 0 -1.5px 0 #fff; padding-bottom: 3px; }
+.f-nav .btn.is-white { color: var(--ink); }
+
+/* ---------------------------------------------------------------- hero: the homepage stage */
+.f-hero { position: relative; color: #fff; background: linear-gradient(180deg, #030c5a 0px, #020e6e 260px, #04188f 520px, #3d38cf 820px, #3d38cf 100%); padding: 0 0 72px; }
+.f-hero-top { display: flex; flex-direction: column; gap: 40px; padding-top: 56px; }
+@media (min-width: 1100px) { .f-hero-top { flex-direction: row; justify-content: space-between; align-items: flex-end; gap: 64px; padding-top: 112px; } }
+.f-title { font-family: var(--heading); font-weight: 500; font-size: 92px; line-height: .86; letter-spacing: -.058em; color: #fff; }
+@media (min-width: 768px) { .f-title { font-size: 148px; } }
+@media (min-width: 1280px) { .f-title { font-size: 196px; } }
+.f-intro { font-size: 18px; line-height: 1.5; color: #e4e2fe; max-width: 500px; margin-top: 32px; text-wrap: pretty; }
+@media (min-width: 1280px) { .f-intro { font-size: 19px; margin-top: 40px; } }
+.f-stats { display: flex; gap: 0; flex-shrink: 0; }
+.f-stats > div { padding: 0 28px; border-left: 1px solid var(--stage-line); }
+.f-stats > div:first-child { padding-left: 0; border-left: 0; }
+.f-stats b { display: block; font-family: var(--heading); font-weight: 500; font-size: 44px; line-height: 1; letter-spacing: -.045em; }
+.f-stats span { display: block; font-size: 14px; line-height: 1.4; color: #c9c5fb; margin-top: 10px; max-width: 150px; }
+@media (max-width: 767px) { .f-stats > div { padding: 0 16px; } .f-stats b { font-size: 34px; } .f-stats span { font-size: 13px; } }
+
+/* the results strip: band head, then crosshair cells of white charts (homepage hero rail) */
+.f-band { margin-top: 72px; }
+@media (min-width: 1280px) { .f-band { margin-top: 112px; } }
+.f-band-head { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 12px 24px; padding-bottom: 16px; border-bottom: 1px solid var(--stage-line); }
+.f-band-head .eyebrow { color: #fff; --dot: #fff; font-size: 15px; }
+.f-band-head .is-note { font-size: 14px; color: #d4d1fd; }
+.f-cells { position: relative; display: flex; flex-direction: column; border-bottom: 1px solid var(--stage-line); }
+@media (min-width: 900px) { .f-cells { flex-direction: row; } }
+.f-cell { position: relative; flex: 1 1 0; min-width: 0; padding: 28px 24px 26px; border-bottom: 1px solid var(--stage-line); }
+@media (min-width: 900px) { .f-cell { border-bottom: 0; border-right: 1px solid var(--stage-line); } .f-cell:first-child { padding-left: 0; } .f-cell:last-child { border-right: 0; padding-right: 0; } }
+@media (max-width: 899px) { .f-cell { padding: 28px 0 26px; } .f-cell:last-child { border-bottom: 0; } }
+.x { position: absolute; width: 11px; height: 11px; pointer-events: none; }
+.x i { position: absolute; background: rgba(255,255,255,0.55); }
+.x i:first-child { left: 5px; top: 0; width: 1px; height: 11px; }
+.x i:last-child { top: 5px; left: 0; width: 11px; height: 1px; }
+.f-cell-head { display: flex; justify-content: space-between; align-items: center; gap: 12px; font-size: 13.5px; }
+.f-cell-head .is-kind { font-weight: 500; }
+.f-cell-head .is-ser { color: #c9c5fb; }
+.go { display: inline-flex; align-items: center; justify-content: center; width: 24px; height: 24px; border-radius: 6px; background: rgba(255,255,255,.14); flex-shrink: 0; }
+.go svg { width: 12px; height: 12px; }
+.f-cell-fig { font-family: var(--heading); font-weight: 500; font-size: 60px; line-height: .95; letter-spacing: -.05em; margin-top: 26px; white-space: nowrap; }
+.f-cell-say { font-size: 15px; line-height: 1.45; color: #e4e1ff; margin-top: 12px; min-height: 44px; text-wrap: pretty; }
+.f-cell-chart { margin-top: 26px; }
+
+/* ---------------------------------------------------------------- ink band: latest findings */
+.ink { background: var(--ink-band); color: #fff; }
+.ink .eyebrow { color: var(--on-ink-2); --dot: #c9bdf5; }
+.ink .h2 { color: #fff; }
+.ink .ghost { color: #8f88c9; }
+.ink .head > p { color: var(--on-ink); }
+.lf-feat { display: flex; flex-direction: column; gap: 40px; padding: 48px 0 56px; border-top: 1px solid var(--ink-line); }
+@media (min-width: 1100px) { .lf-feat { flex-direction: row; gap: 88px; align-items: center; padding: 64px 0 72px; } }
+.lf-feat-text { flex: 0 0 auto; width: 100%; }
+@media (min-width: 1100px) { .lf-feat-text { width: 440px; } }
+.lf-meta { display: flex; flex-wrap: wrap; gap: 4px 14px; font-size: 14px; color: var(--on-ink-2); }
+.lf-meta b { font-weight: 500; color: #fff; }
+.giant { font-family: var(--heading); font-weight: 500; font-size: 120px; line-height: .84; letter-spacing: -.062em; color: #fff; margin-top: 28px; white-space: nowrap; }
+@media (min-width: 1280px) { .giant { font-size: 200px; } }
+.lf-say { font-family: var(--heading); font-weight: 500; font-size: 28px; line-height: 1.12; letter-spacing: -.028em; color: #fff; margin-top: 32px; text-wrap: balance; }
+@media (min-width: 1280px) { .lf-say { font-size: 34px; } }
+.lf-abs { font-size: 16px; line-height: 1.55; color: var(--on-ink); margin-top: 20px; text-wrap: pretty; }
+.lf-read { display: inline-flex; align-items: center; gap: 8px; margin-top: 28px; height: 50px; padding: 0 22px; border-radius: 999px; background: #fff; color: var(--ink); font-size: 15.5px; font-weight: 500; }
+.lf-feat-fig { flex: 1 1 0; min-width: 0; }
+.lf-rows { border-top: 1px solid var(--ink-line); }
+.lf-row { display: flex; flex-direction: column; gap: 14px; padding: 36px 0; border-bottom: 1px solid var(--ink-line); }
+@media (min-width: 1100px) { .lf-row { flex-direction: row; align-items: center; gap: 48px; padding: 40px 0; } }
+.lf-num { flex: 0 0 auto; font-family: var(--heading); font-weight: 500; font-size: 72px; line-height: .9; letter-spacing: -.055em; color: #fff; white-space: nowrap; }
+@media (min-width: 1100px) { .lf-num { width: 440px; font-size: 112px; } }
+.lf-row-text { flex: 1 1 0; min-width: 0; }
+.lf-row-say { font-family: var(--heading); font-weight: 500; font-size: 24px; line-height: 1.15; letter-spacing: -.024em; color: #fff; text-wrap: balance; }
+@media (min-width: 1280px) { .lf-row-say { font-size: 30px; } }
+.lf-row-sub { font-size: 15px; line-height: 1.5; color: var(--on-ink-2); margin-top: 12px; }
+.lf-row-go { flex: 0 0 auto; display: inline-flex; align-items: center; gap: 8px; font-size: 15px; font-weight: 500; color: #fff; }
+.lf-row-go .go { width: 36px; height: 36px; border-radius: 99px; background: rgba(255,255,255,.12); }
+
+/* ---------------------------------------------------------------- the archive, on white: crosshair cells, three across */
+.ar-grid { position: relative; display: flex; flex-wrap: wrap; border-top: 1px solid var(--ink); }
+.ar-cell { position: relative; display: flex; flex-direction: column; width: 100%; min-width: 0; padding: 28px 0 30px; border-bottom: 1px solid var(--line); }
+@media (min-width: 768px) { .ar-cell { width: 50%; padding: 30px 28px 30px; border-right: 1px solid var(--line); } .ar-cell:nth-child(2n) { border-right: 0; } }
+@media (min-width: 1100px) { .ar-cell { width: 33.333%; padding: 32px 32px 32px; } .ar-cell:nth-child(2n) { border-right: 1px solid var(--line); } .ar-cell:nth-child(3n) { border-right: 0; padding-right: 0; } .ar-cell:nth-child(3n+1) { padding-left: 0; } }
+.ar-grid .x i { background: var(--mark); }
+.ar-when { display: flex; justify-content: space-between; gap: 12px; font-size: 13.5px; color: var(--muted); }
+.ar-when b { font-weight: 500; color: var(--ink); }
+.ar-find { font-family: var(--heading); font-weight: 500; font-size: 24px; line-height: 1.12; letter-spacing: -.026em; color: var(--ink); margin-top: 18px; text-wrap: balance; min-height: 54px; }
+.ar-title { font-size: 14.5px; line-height: 1.45; color: var(--muted); margin-top: 8px; min-height: 42px; }
+.ar-chart { margin-top: 24px; flex: 1 1 auto; }
+.ar-foot { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-top: 22px; padding-top: 14px; border-top: 1px solid var(--line); font-size: 13.5px; color: var(--muted); }
+.ar-foot b { font-weight: 500; color: var(--ink); }
+.ar-link { display: inline-flex; align-items: center; gap: 7px; font-size: 14.5px; font-weight: 500; color: var(--ind); white-space: nowrap; }
+@media (max-width: 767px) { .ar-title, .ar-find { min-height: 0; } }
+
+/* ---------------------------------------------------------------- series, on ink: name, then its papers as an index */
+.se-list { border-top: 1px solid rgba(255,255,255,.4); }
+.se { display: flex; flex-direction: column; gap: 22px; padding: 36px 0 40px; border-bottom: 1px solid var(--ink-line); }
+@media (min-width: 1100px) { .se { flex-direction: row; gap: 72px; padding: 40px 0 44px; } }
+.se-name { flex: 0 0 auto; width: 100%; }
+@media (min-width: 1100px) { .se-name { width: 420px; } }
+.se-count { font-size: 14px; color: var(--on-ink-2); margin-top: 16px; }
+.se-name h3 { font-family: var(--heading); font-weight: 500; font-size: 34px; line-height: 1.02; letter-spacing: -.035em; color: #fff; }
+.se-name p { font-size: 15.5px; line-height: 1.5; color: var(--on-ink); margin-top: 12px; max-width: 380px; text-wrap: pretty; }
+.se-papers { flex: 1 1 0; min-width: 0; }
+.se-p { display: flex; align-items: baseline; gap: 20px; padding: 16px 0; border-bottom: 1px solid var(--ink-line); }
+.se-p:first-child { padding-top: 6px; }
+.se-p:last-child { border-bottom: 0; }
+.se-p .is-d { flex: 0 0 auto; width: 96px; font-size: 14px; color: var(--on-ink-2); }
+.se-p .is-t { flex: 1 1 0; min-width: 0; font-size: 17px; line-height: 1.4; color: #fff; font-weight: 500; }
+.se-p .is-t small { display: block; font-size: 14.5px; font-weight: 400; color: var(--on-ink); margin-top: 4px; }
+.se-p .is-f { flex: 0 0 auto; font-family: var(--heading); font-weight: 500; font-size: 26px; letter-spacing: -.03em; color: #fff; white-space: nowrap; }
+@media (max-width: 767px) { .se-p { flex-wrap: wrap; gap: 6px 14px; } .se-p .is-d { width: auto; order: 0; } .se-p .is-f { order: 1; font-size: 22px; } .se-p .is-t { order: 2; flex-basis: 100%; } }
+
+/* ---------------------------------------------------------------- closing (homepage closing on the stage) */
+.closing-bg { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: 50% 0; }
+.closing .wrap { position: relative; }
+.closing .h2 .is-soft { color: #b9b4ff; }
+.closing .eyebrow { color: #d9d6ff; --dot: #fff; margin-bottom: 20px; }
+.cal-top { display: flex; align-items: center; gap: 12px; padding-bottom: 16px; margin-bottom: 16px; border-bottom: 1px solid var(--line); }
+.cal-top img { width: 40px; height: 40px; border-radius: 99px; object-fit: cover; }
+.cal-top b { display: block; font-size: 15px; font-weight: 500; }
+.cal-top span { display: block; font-size: 13px; color: var(--muted); }
+.cal-grid span.is-dow { height: 24px; font-size: 12px; color: var(--quiet); }
+.cal-grid span.is-past { color: #c4c2d4; }
+.cal-slots { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--line); }
+.cal-slots span { height: 38px; padding: 0 14px; display: inline-flex; align-items: center; border-radius: 10px; box-shadow: inset 0 0 0 1px #d9d6ea; font-size: 13.5px; font-weight: 500; color: var(--ind); }
+.foot-cols p { max-width: 300px; line-height: 1.55; }
+</style>
+</head>
+<body>
+
+<section data-paper-name="F hub · header" class="f-nav"><header class="nav"><div class="wrap nav-in"><a class="nav-logo"><img src="shared/img/wordmark-white.svg" alt="LoudFace"></a><nav class="nav-links"><a>Case studies</a><a class="is-on">Research</a><a>Blog</a><a>About us</a><a>Plans and pricing</a><a>Services</a><a>Industries</a></nav><a class="btn is-white nav-cta">Book an intro call</a></div></header></section>
+
+<!-- the homepage stage: big title, one line, the newest findings as white charts in crosshair cells -->
+<section data-paper-name="F hub · stage" class="f-hero">
+  <div class="wrap">
+    <div class="f-hero-top">
+      <div>
+        <h1 class="f-title">Research</h1>
+        <p class="f-intro">Original studies of what ChatGPT, Perplexity and Google AI Overviews cite and recommend, and how Google treats B2B pages. Every number is our own measurement, with the sample printed under it.</p>
+      </div>
+      <div class="f-stats" id="stats"></div>
+    </div>
+    <div class="f-band">
+      <div class="f-band-head"><p class="eyebrow">Newest findings, measured by LoudFace</p><span class="is-note" id="band-note"></span></div>
+      <div class="f-cells" id="strip"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ink band: the latest findings, one large number each; the newest with its chart at size -->
+<section data-paper-name="F hub · latest findings" class="sec ink">
+  <div class="wrap">
+    <div class="head">
+      <div>
+        <p class="eyebrow">Latest findings</p>
+        <h2 class="h2" style="margin-top:20px">One number from each paper, <span class="ghost">and the sample behind it.</span></h2>
+      </div>
+      <p>Each paper is written around the one result a buyer, a marketer or an engine would quote. Read the number first, then the method that earned it.</p>
+    </div>
+    <div class="lf-feat" id="feat"></div>
+    <div class="lf-rows" id="rows"></div>
+  </div>
+</section>
+
+<!-- the archive on white: date, kind, finding, sample, its chart -->
+<section data-paper-name="F hub · archive" class="sec is-white">
+  <div class="wrap">
+    <div class="head">
+      <div>
+        <p class="eyebrow">Archive</p>
+        <h2 class="h2" style="margin-top:20px" id="ar-h2">Every paper, newest first.</h2>
+      </div>
+      <p>The finding is the title. The chart is the paper’s lead figure, drawn from its published tables, with the sample it rests on.</p>
+    </div>
+    <div class="ar-grid" id="archive"></div>
+  </div>
+</section>
+
+<!-- series on ink -->
+<section data-paper-name="F hub · series" class="sec ink">
+  <div class="wrap">
+    <div class="head">
+      <div>
+        <p class="eyebrow">Series</p>
+        <h2 class="h2" style="margin-top:20px" id="se-h2">Five series.</h2>
+      </div>
+      <p>A series asks one kind of question again, across software categories or over time, so its papers read side by side.</p>
+    </div>
+    <div class="se-list" id="series"></div>
+  </div>
+</section>
+
+<section data-paper-name="F hub · closing" class="closing">
+  <img class="closing-bg" src="shared/img/closing-terrain-1280.webp" alt="">
+  <div class="wrap closing-in">
+    <div>
+      <p class="eyebrow">A 30-minute strategy call</p>
+      <h2 class="h2">Find out where AI answers <span class="is-soft">put you today.</span></h2>
+      <p>We run these measurements for every client we do AEO for: per engine, per source type, per competitor. On the call we show you where your domain stands in your own category.</p>
+    </div>
+    <div class="cal">
+      <div class="cal-top"><img src="shared/img/arnel-bukva-v3.png" alt=""><div><b>Strategy call with Arnel Bukva</b><span>30 minutes · Google Meet</span></div></div>
+      <div class="cal-head"><span>November 2026</span><span style="color:var(--muted)">‹ ›</span></div>
+      <div class="cal-grid">
+        <span class="is-dow">Mon</span><span class="is-dow">Tue</span><span class="is-dow">Wed</span><span class="is-dow">Thu</span><span class="is-dow">Fri</span><span class="is-dow">Sat</span><span class="is-dow">Sun</span>
+        <span></span><span></span><span></span><span></span><span></span><span></span><span class="is-past">1</span>
+        <span class="is-past">2</span><span class="is-past">3</span><span class="is-open">4</span><span class="is-on">5</span><span class="is-open">6</span><span>7</span><span>8</span>
+        <span class="is-open">9</span><span class="is-open">10</span><span class="is-open">11</span><span class="is-open">12</span><span class="is-open">13</span><span>14</span><span>15</span>
+        <span class="is-open">16</span><span class="is-open">17</span><span class="is-open">18</span><span class="is-open">19</span><span class="is-open">20</span><span>21</span><span>22</span>
+        <span class="is-open">23</span><span class="is-open">24</span><span class="is-open">25</span><span class="is-open">26</span><span class="is-open">27</span><span>28</span><span>29</span>
+        <span class="is-open">30</span>
+      </div>
+      <div class="cal-slots"><span>10:00</span><span>11:30</span><span>14:00</span><span>16:30</span></div>
+    </div>
+  </div>
+</section>
+
+<section data-paper-name="F hub · footer" class="foot">
+  <div class="wrap">
+    <div class="foot-cols">
+      <div><b>LoudFace</b><p>A B2B SEO and AEO agency. We get software companies found in Google and named in AI answers.</p></div>
+      <div><b>Services</b><ul><li>SEO</li><li>AEO</li><li>Content</li><li>CRO</li><li>Websites</li></ul></div>
+      <div><b>Company</b><ul><li>About</li><li>Case studies</li><li>Pricing</li><li>Contact</li></ul></div>
+      <div><b>Research</b><ul><li>AI Visibility Index</li><li>State of B2B SaaS</li><li>Citation benchmark</li><li>Method</li></ul></div>
+      <div><b>Legal</b><ul><li>Privacy policy</li><li>Terms</li><li>Cookies</li></ul></div>
+    </div>
+    <div class="foot-word"><img src="shared/img/wordmark-indigo.svg" alt="LoudFace"></div>
+  </div>
+</section>
+
+<script src="shared/research.js"></script>
+<script>
+(function () {
+  /* Every figure below is the chart kit's own head for that study (charts-v2.js SPEC), so the number above a chart is
+     the number the chart draws. */
+  const HEAD = {
+    agree: ['71.3%', 'of the agencies AI names come from one engine only'],
+    'seo-time': ['101 of 336', 'new pages had a Google click by day 28'],
+    'state-seo': ['180 of 180', 'B2B software searches showed an AI Overview'],
+    'state-content': ['66.7%', 'of clicks went to ranked lists, 18.5% of the posts'],
+    'state-ai': ['13.8%', 'of weeks the three engines shared a top agency'],
+    sov: ['4 formulas', 'three different leaders on the same category'],
+    hr: ['25 of 36', 'AI answers about HR software name Rippling'],
+    devtools: ['12', 'categories, one leader named first in each'],
+    cyber: ['14 of 24', 'SentinelOne’s score across ChatGPT and Google'],
+    fintech: ['4.6×', 'Toku’s visibility swing between engines; the median brand’s is 2.4×'],
+    gap: ['11 of 90', 'buyer questions no agency wins at a 10% threshold'],
+    bench: ['50.7%', 'of 160,240 AI citations went to company websites'],
+  };
+  const SERIES_DESC = {
+    'AI Visibility Index': 'Which vendors AI engines name when buyers ask about one software category.',
+    'State of B2B SaaS': 'The 2026 state of SEO, content marketing and AI search in B2B software.',
+    'AI search behaviour': 'How ChatGPT, Perplexity and Google AI Overviews choose what to cite and recommend.',
+    Measurement: 'How AI visibility is measured, and what each formula rewards.',
+    Search: 'How Google treats new pages, from first appearance to first click.',
+  };
+  const T = (d) => Date.parse(d + 'T00:00:00Z');
+  const long = (d) => new Date(T(d)).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric', timeZone: 'UTC' });
+  const short = (d) => new Date(T(d)).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric', timeZone: 'UTC' });
+  const month = (d) => new Date(T(d)).toLocaleDateString('en-GB', { month: 'long', year: 'numeric', timeZone: 'UTC' });
+  const WORDS = ['zero', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', 'ten', 'eleven', 'twelve'];
+  const ARROW = '<svg viewBox="0 0 12 12" fill="none"><path d="M3 9L9 3M4 3h5v5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+  const RIGHT = '<svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2 7h10M8 3l4 4-4 4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+  const cross = (pos) => `<span class="x" style="${pos}"><i></i><i></i></span>`;
+  const desc = [...STUDIES].sort((a, b) => T(b.date) - T(a.date));
+  const seriesNames = [...new Set(desc.map((s) => s.series))];
+
+  /* hero stats */
+  document.getElementById('stats').innerHTML =
+    `<div><b>${STUDIES.length}</b><span>papers since ${long(desc[desc.length - 1].date).replace(/ 2026$/, '')}</span></div>` +
+    `<div><b>${seriesNames.length}</b><span>series that repeat</span></div>` +
+    `<div><b>${BENCH.total.toLocaleString('en-US')}</b><span>citations in the largest sample</span></div>`;
+
+  /* the strip: the four newest papers, figure + white chart, in crosshair cells */
+  const strip = desc.slice(0, 4);
+  document.getElementById('band-note').textContent = `${short(strip[strip.length - 1].date)} to ${short(strip[0].date)}`;
+  document.getElementById('strip').innerHTML = strip.map((s, i) =>
+    `<a class="f-cell">${cross('left:-6px;top:-6px')}${cross('left:-6px;bottom:-6px')}${i === strip.length - 1 ? cross('right:-6px;top:-6px') + cross('right:-6px;bottom:-6px') : ''}
+      <div class="f-cell-head"><span><span class="is-kind">${s.kind}</span> <span class="is-ser">· ${s.series}</span></span><span class="go">${ARROW}</span></div>
+      <p class="f-cell-fig">${HEAD[s.id][0]}</p>
+      <p class="f-cell-say">${HEAD[s.id][1]}</p>
+      <div class="f-cell-chart" data-chart2="${s.id}" data-ground="stage" data-tone="indigo" data-size="sm" data-paint="off"></div>
+    </a>`).join('');
+
+  /* ink band: the next paper as the feature, then one large number per paper */
+  const feat = STUDIES.find((s) => s.id === 'agree');
+  document.getElementById('feat').innerHTML =
+    `<div class="lf-feat-text">
+      <p class="lf-meta"><b>${feat.kind}</b><span>${long(feat.date)}</span><span>${feat.series}</span></p>
+      <p class="giant">${HEAD.agree[0]}</p>
+      <p class="lf-say">${feat.finding}.</p>
+      <p class="lf-abs">${feat.abstract}</p>
+      <a class="lf-read">Read the study ${RIGHT}</a>
+    </div>
+    <div class="lf-feat-fig"><div data-chart2="agree" data-ground="stage" data-tone="night" data-size="lg" data-paint="off" data-head="off"></div></div>`;
+  document.getElementById('rows').innerHTML = ['sov', 'hr', 'fintech', 'bench'].map((id) => {
+    const s = STUDIES.find((x) => x.id === id);
+    return `<a class="lf-row"><p class="lf-num">${HEAD[id][0]}</p>
+      <div class="lf-row-text"><p class="lf-row-say">${s.finding.replace(/\.$/, '')}.</p><p class="lf-row-sub">${s.kind} · ${long(s.date)} · ${s.n}</p></div>
+      <span class="lf-row-go">Read <span class="go">${RIGHT}</span></span></a>`;
+  }).join('');
+
+  /* the archive: every paper in a crosshair cell, newest first */
+  document.getElementById('ar-h2').innerHTML = `Every paper, <span class="ghost">newest first.</span>`;
+  const n = desc.length;
+  document.getElementById('archive').innerHTML = desc.map((s, i) => {
+    const col = i % 3, lastRow = i >= n - 3;
+    const x = (col ? cross('left:-6px;top:-6px') : '') + (lastRow && col ? cross('left:-6px;bottom:-6px') : '');
+    return `<article class="ar-cell">${x}
+      <p class="ar-when"><span><b>${s.kind}</b> · ${s.series}</span><span>${short(s.date)}</span></p>
+      <h4 class="ar-find">${s.finding.replace(/\.$/, '')}</h4>
+      <p class="ar-title">${s.title}</p>
+      <div class="ar-chart" data-chart2="${s.id}" data-ground="light" data-size="sm" data-caption="off"></div>
+      <p class="ar-foot"><span>Sample <b>${s.n}</b></span><a class="ar-link">Read ${RIGHT}</a></p>
+    </article>`;
+  }).join('');
+
+  /* series on ink: each series' papers as their figures */
+  document.getElementById('se-h2').innerHTML = `${WORDS[seriesNames.length][0].toUpperCase() + WORDS[seriesNames.length].slice(1)} series, <span class="ghost">${WORDS[STUDIES.length]} papers.</span>`;
+  const bySize = [...seriesNames].sort((a, b) => desc.filter((s) => s.series === b).length - desc.filter((s) => s.series === a).length);
+  document.getElementById('series').innerHTML = bySize.map((name) => {
+    const ps = desc.filter((s) => s.series === name);
+    return `<div class="se"><div class="se-name"><h3>${name}</h3><p>${SERIES_DESC[name]}</p><p class="se-count">${ps.length} ${ps.length === 1 ? 'paper' : 'papers'}, latest ${short(ps[0].date)}</p></div>
+      <div class="se-papers">${ps.map((s) => `<a class="se-p"><span class="is-d">${short(s.date)}</span><span class="is-t">${s.title}<small>${s.finding.replace(/\.$/, '')}</small></span><span class="is-f">${HEAD[s.id][0]}</span></a>`).join('')}</div></div>`;
+  }).join('');
+})();
+</script>
+<script src="shared/charts-v2.js"></script>
+<script src="shared/freeze-late.js"></script>
+</body>
+</html>

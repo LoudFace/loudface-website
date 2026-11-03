@@ -1,0 +1,493 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Research · LoudFace (C · Flagship report)</title>
+<link rel="stylesheet" href="shared/base.css">
+<style>
+/* C · Flagship report. Research as reports people keep: documents on the brand plate (DESIGN.md §4, §5 "Documents,
+   not dashboards"), the index series as white covers on warm ground, studies as big figures in crosshair cells. */
+
+/* the plate exactly as the homepage draws it (.v11-svc-plate in service-v11.css) */
+.c-plate { background: radial-gradient(ellipse 60% 70% at 12% 18%, #fcd68a 0%, rgba(252,214,138,0) 70%), radial-gradient(ellipse 55% 70% at 92% 88%, #4f46e5 0%, rgba(79,70,229,0) 72%), linear-gradient(120deg, #f59a7b 0%, #c9bdf5 52%, #8c82f0 100%); }
+
+/* a document (the homepage .v11-sheet) */
+.sheet { position: relative; display: flex; flex-direction: column; background: #fff; border-radius: 6px; color: var(--ink); box-shadow: 0 30px 80px rgba(20,16,60,.28); }
+.sheet-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding-bottom: 14px; border-bottom: 1px solid #e9e8ef; }
+.sheet-head img { width: 88px; height: auto; }
+.sheet-head span { font-size: 12.5px; color: var(--quiet); text-align: right; }
+.sheet-label { font-size: 12px; font-weight: 500; letter-spacing: .02em; color: var(--ind); }
+.sheet-sign { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-top: auto; padding-top: 16px; border-top: 1px solid #efeef5; }
+.sheet-sign > div { display: flex; align-items: center; gap: 10px; }
+.sheet-sign img { width: 34px; height: 34px; border-radius: 99px; object-fit: cover; }
+.sheet-sign b { display: block; font-size: 13.5px; font-weight: 500; }
+.sheet-sign span { display: block; font-size: 12px; color: var(--quiet); }
+.sheet-sign .is-date { font-size: 12px; color: var(--quiet); text-align: right; }
+
+/* ---------------------------------------------------------------- hero: the benchmark as a report cover */
+.hero { display: grid; gap: 40px; padding: 24px 0 72px; }
+@media (min-width: 1100px) { .hero { grid-template-columns: minmax(0, 1fr) 712px; gap: 64px; align-items: center; padding: 32px 0 124px; } }
+.hero-copy .h1 { margin-top: 26px; }
+.hero-find { font-family: var(--heading); font-weight: 400; font-size: 22px; line-height: 1.3; letter-spacing: -.015em; color: var(--ink); margin-top: 28px; max-width: 470px; text-wrap: pretty; }
+@media (min-width: 768px) { .hero-find { font-size: 26px; } }
+.hero-copy .byline { margin-top: 28px; }
+.hero-cta { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 32px; }
+.btn svg { width: 16px; height: 16px; }
+.hero-more { display: flex; flex-wrap: wrap; gap: 6px 20px; margin-top: 40px; padding-top: 18px; border-top: 1px solid var(--line); font-size: 14px; color: var(--muted); max-width: 470px; }
+.hero-more a { color: var(--ind); font-weight: 500; }
+.hero-plate { display: flex; justify-content: center; padding: 20px 14px; overflow: hidden; }
+@media (min-width: 768px) { .hero-plate { padding: 56px 40px; } }
+
+.cover { width: 100%; max-width: 500px; padding: 26px 22px 20px; }
+@media (min-width: 768px) { .cover { padding: 34px 40px 26px; } }
+.cover .sheet-label { margin-top: 34px; }
+.cover-title { font-family: var(--heading); font-weight: 500; font-size: 36px; line-height: .98; letter-spacing: -.045em; margin-top: 12px; text-wrap: balance; }
+@media (min-width: 768px) { .cover-title { font-size: 46px; } }
+.cover-sub { font-size: 13.5px; line-height: 1.5; color: #3b3854; margin-top: 14px; max-width: 360px; }
+.cover-fig { margin-top: 28px; }
+.cover-fighead { display: flex; justify-content: space-between; gap: 12px; font-size: 12.5px; font-weight: 500; margin-bottom: 12px; }
+.cover-fighead span:last-child { font-weight: 400; color: var(--quiet); }
+.cover-stats { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px 0; margin: 22px 0 22px; padding-top: 14px; border-top: 1px solid #eceaf2; }
+@media (min-width: 768px) { .cover-stats { grid-template-columns: repeat(4, 1fr); } }
+.cover-stats b { display: block; font-family: var(--heading); font-weight: 500; font-size: 20px; letter-spacing: -.02em; line-height: 1.1; }
+.cover-stats span { font-size: 11.5px; color: var(--quiet); }
+
+/* ---------------------------------------------------------------- the AI Visibility Index series: four covers */
+.idx-row { display: grid; grid-template-columns: minmax(0, 1fr); gap: 20px; }
+@media (min-width: 768px) { .idx-row { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 24px; } }
+@media (min-width: 1280px) { .idx-row { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
+.idx { padding: 24px 24px 20px; box-shadow: 0 1px 2px rgba(20,16,60,.06), 0 18px 44px rgba(40,30,90,.11); transition: transform var(--dur, .2s) cubic-bezier(.2,.7,.2,1); }
+.idx:hover { transform: translateY(-2px); }
+.idx .sheet-head img { width: 70px; }
+.idx .sheet-head span { font-size: 11.5px; }
+.idx .sheet-label { margin-top: 26px; }
+.idx-title { font-family: var(--heading); font-weight: 500; font-size: 36px; line-height: 1; letter-spacing: -.04em; margin-top: 8px; }
+.idx-n { font-size: 12px; color: var(--quiet); margin-top: 10px; }
+.idx-top { margin-top: 20px; padding: 14px 0; border-top: 1px solid #eceaf2; border-bottom: 1px solid #eceaf2; }
+.idx-top span { display: block; font-size: 11.5px; color: var(--quiet); }
+.idx-top b { display: block; font-family: var(--heading); font-weight: 500; font-size: 24px; letter-spacing: -.025em; line-height: 1.1; margin-top: 4px; }
+.idx-top em { display: block; font-style: normal; font-size: 12.5px; color: var(--ind); font-weight: 500; margin-top: 3px; }
+.idx-chart { margin-top: 18px; min-height: 132px; }
+.idx-key { display: flex; flex-wrap: wrap; gap: 4px 12px; margin-top: 8px; font-size: 11px; color: var(--muted); }
+.idx-key i { display: inline-block; width: 8px; height: 8px; border-radius: 99px; margin-right: 5px; vertical-align: 0; }
+.idx-foot { display: flex; justify-content: space-between; align-items: center; margin-top: auto; padding-top: 18px; font-size: 13px; font-weight: 500; color: var(--ind); }
+.idx-foot span:first-child { color: var(--quiet); font-weight: 400; font-size: 12px; }
+
+/* ---------------------------------------------------------------- studies: big figures in crosshair cells */
+.figs { grid-template-columns: minmax(0, 1fr); }
+@media (min-width: 900px) { .figs { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (min-width: 1280px) { .figs { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+.fc { display: flex; flex-direction: column; padding: 26px 22px 24px; }
+@media (min-width: 768px) { .fc { padding: 30px 32px 28px; } }
+@media (min-width: 1280px) { .fc.is-wide { grid-column: span 2; display: grid; grid-template-columns: minmax(0, 300px) minmax(0, 1fr); gap: 0 44px; } }
+.fc-meta { display: flex; gap: 8px; font-size: 13px; color: var(--muted); }
+.fc-meta b { font-weight: 500; color: var(--ink); }
+.fc-big { display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; font-family: var(--heading); font-weight: 500; letter-spacing: -.05em; line-height: .9; color: var(--ink); margin-top: 26px; }
+.fc-big b { font-weight: 500; font-size: 72px; }
+@media (min-width: 1280px) { .fc-big b { font-size: 80px; } .fc.is-wide .fc-big b { font-size: 104px; } }
+.fc-big small { font-size: 26px; letter-spacing: -.03em; color: var(--ghost); }
+.fc-find { font-size: 17px; line-height: 1.45; color: var(--ink); margin-top: 16px; text-wrap: pretty; max-width: 380px; }
+.fc-chart { margin-top: 26px; }
+.fc-key { font-size: 12.5px; color: var(--quiet); margin-top: 10px; }
+@media (min-width: 1280px) { .fc-key { display: none; } }
+@media (min-width: 1280px) { .fc.is-wide:not(.is-stack) .fc-chart { margin-top: 0; align-self: center; } }
+@media (max-width: 1279px) { .fc.is-wide .fc-text { display: contents; } .fc.is-wide .fc-foot { order: 9; margin-top: auto; padding-top: 24px; } }
+.fc-foot { display: flex; justify-content: space-between; align-items: flex-end; gap: 16px; margin-top: auto; padding-top: 24px; font-size: 13px; color: var(--quiet); }
+.fc-foot a { font-size: 14px; }
+.fc-text { display: flex; flex-direction: column; }
+@media (min-width: 1280px) { .fc.is-wide .fc-text .fc-foot { margin-top: 28px; padding-top: 0; } }
+.fc-abs { font-size: 14px; line-height: 1.55; color: var(--body); margin-top: 22px; padding-top: 16px; border-top: 1px solid var(--line); max-width: 520px; text-wrap: pretty; }
+@media (min-width: 1280px) { .fc.is-wide.is-stack { display: flex; } .fc-row { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 0 40px; align-items: end; } .fc-row .fc-find { margin: 0 0 6px; } .fc.is-stack .fc-chart { margin-top: 28px; } }
+
+/* ---------------------------------------------------------------- the method, drawn as a flow */
+.flow { position: relative; display: grid; grid-template-columns: minmax(0, 1fr); gap: 36px; }
+@media (min-width: 1100px) { .flow { grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 28px; padding-top: 64px; } }
+.flow-loop { display: none; }
+@media (min-width: 1100px) { .flow-loop { display: block; position: absolute; left: 0; top: 0; width: 100%; height: 64px; overflow: visible; } }
+.flow-loop-tag { position: absolute; top: 0; left: 50%; transform: translate(-50%, -50%); display: flex; align-items: center; gap: 8px; padding: 6px 14px; border-radius: 999px; background: var(--warm); font-size: 13.5px; font-weight: 500; color: var(--ind); white-space: nowrap; }
+.step { position: relative; min-width: 0; }
+.step-pic { position: relative; display: flex; flex-direction: column; justify-content: center; height: 190px; padding: 18px 18px 16px; border-radius: 16px; background: #fff; box-shadow: 0 1px 2px rgba(20,16,60,.05), 0 10px 30px rgba(40,30,90,.07); }
+.step:not(:last-child)::after, .step:not(:last-child) .step-pic::after { content: ""; position: absolute; left: 50%; bottom: -27px; width: 16px; height: 16px; transform: translateX(-50%) rotate(90deg);
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M2 8h11M9 4l4 4-4 4' fill='none' stroke='%234f46e5' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center/16px no-repeat; }
+.step:not(:last-child) .step-pic::after { display: none; }
+@media (min-width: 1100px) { .step:not(:last-child)::after { display: none; } .step:not(:last-child) .step-pic::after { display: block; left: auto; right: -23px; bottom: auto; top: 50%; transform: translateY(-50%); } }
+.step h3 { font-family: var(--heading); font-weight: 500; font-size: 21px; letter-spacing: -.025em; line-height: 1.15; margin-top: 20px; }
+.step p { font-size: 14.5px; line-height: 1.5; color: var(--body); margin-top: 8px; text-wrap: pretty; }
+.step-pic p { margin: 0; }
+.step-pic .mini-k { font-size: 11.5px; line-height: 1.4; color: var(--quiet); }
+.step-pic .mini-big { font-size: 22px; }
+.mini-big { font-family: var(--heading); font-weight: 500; font-size: 22px; letter-spacing: -.02em; line-height: 1.1; }
+.lane { display: grid; grid-template-columns: 78px minmax(0, 1fr) 44px; align-items: center; gap: 8px; font-size: 11.5px; color: var(--body); margin-top: 7px; }
+.lane i { display: block; height: 9px; border-radius: 5px; background: var(--lav); }
+.lane i.is-lead { background: var(--chart); }
+.lane b { font-weight: 500; color: var(--ink); text-align: right; }
+.track { display: block; height: 9px; border-radius: 5px; background: var(--lav-2); }
+.stack { display: flex; height: 26px; border-radius: 6px; overflow: hidden; gap: 2px; margin-top: 12px; }
+.stack i { display: block; height: 100%; background: var(--lav); }
+.stack i:first-child { background: var(--chart); }
+.stack-key { display: flex; justify-content: space-between; margin-top: 8px; font-size: 11.5px; color: var(--body); }
+.stack-key b { font-weight: 500; color: var(--ink); }
+.range { position: relative; height: 42px; margin-top: 14px; }
+.range .track { position: absolute; left: 0; right: 0; top: 16px; }
+.range .band { position: absolute; top: 12px; height: 17px; border-radius: 4px; background: var(--lav); }
+.range .dot { position: absolute; top: 14px; width: 13px; height: 13px; margin-left: -6.5px; border-radius: 99px; background: var(--chart); box-shadow: 0 0 0 2px #fff; }
+.range .lo, .range .hi { position: absolute; top: 33px; font-size: 11.5px; color: var(--body); transform: translateX(-50%); white-space: nowrap; }
+.range .tag { position: absolute; top: -6px; font-size: 11.5px; font-weight: 500; color: var(--ind); transform: translateX(-50%); white-space: nowrap; }
+.lim { margin-top: 8px; }
+.lim div { display: flex; align-items: center; gap: 8px; padding: 6px 0; border-top: 1px solid #eceaf2; font-size: 12px; color: var(--ink); }
+.lim div:last-child { border-bottom: 1px solid #eceaf2; }
+.lim svg { flex-shrink: 0; }
+.loop { display: flex; align-items: center; gap: 14px; }
+.loop svg { flex-shrink: 0; }
+
+/* ---------------------------------------------------------------- closing and footer */
+.closing { isolation: isolate; }
+.closing-bg { position: absolute; left: 50%; top: 0; width: min(1440px, 100%); height: 100%; transform: translateX(-50%); object-fit: cover; object-position: 50% 0; z-index: -1; }
+.closing .h2 span { color: #b9b4ff; }
+.cal-top { display: flex; align-items: center; gap: 12px; padding-bottom: 16px; margin-bottom: 16px; border-bottom: 1px solid var(--line); }
+.cal-top img { width: 40px; height: 40px; border-radius: 99px; object-fit: cover; }
+.cal-top b { display: block; font-size: 15px; font-weight: 500; }
+.cal-top span { display: block; font-size: 13px; color: var(--muted); }
+.cal-grid span.is-dow { height: 24px; font-size: 12px; color: var(--quiet); }
+.cal-grid span.is-past { color: #c4c2d4; }
+.cal-slots { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--line); }
+.cal-slots span { height: 38px; padding: 0 14px; display: inline-flex; align-items: center; border-radius: 10px; box-shadow: inset 0 0 0 1px #d9d6ea; font-size: 13.5px; font-weight: 500; color: var(--ind); }
+</style>
+</head>
+<body>
+
+<section data-paper-name="C hub · header"><header class="nav"><div class="wrap nav-in"><a class="nav-logo"><img src="shared/img/wordmark-indigo.svg" alt="LoudFace"></a><nav class="nav-links"><a>Services</a><a>Industries</a><a>Case studies</a><a class="is-on">Research</a><a>Blog</a><a>Pricing</a><a>About</a></nav><a class="btn is-ink nav-cta">Book a strategy call</a></div></header></section>
+
+<!-- hero: the flagship benchmark as a report cover on the plate (tile 04-A, State of AI) -->
+<section data-paper-name="C hub · hero" class="is-white">
+  <div class="wrap hero">
+    <div class="hero-copy">
+      <p class="eyebrow">LoudFace Research · Benchmark, 1 June 2026</p>
+      <h1 class="h1">What AI actually cites</h1>
+      <p class="hero-find">Company websites win half of all AI citations. Reddit is the single most-cited domain, almost entirely through ChatGPT.</p>
+      <div class="hero-cta">
+        <a class="btn is-ink">Read the report <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M2 8h11M9 4l4 4-4 4"/></svg></a>
+        <a class="btn is-line">Download the data</a>
+      </div>
+      <p class="hero-more">Also in LoudFace Research <a href="#index">4 AI Visibility Indexes</a><a href="#studies">7 studies and reports</a></p>
+    </div>
+
+    <div class="plate c-plate hero-plate">
+      <article class="sheet cover" aria-label="Report cover">
+        <div class="sheet-head"><img src="shared/img/wordmark-indigo.svg" alt="LoudFace"><span>Research · Benchmark</span></div>
+        <p class="sheet-label">The B2B SaaS AI-Citation Benchmark (2026)</p>
+        <h2 class="cover-title">What AI actually cites</h2>
+        <p class="cover-sub">Every link ChatGPT, Perplexity and Google AI Overviews put in an answer, for five B2B SaaS brands over 30 days.</p>
+        <div class="cover-fig">
+          <div class="cover-fighead"><span>Share of citations, by source type</span><span>n = 160,240</span></div>
+          <div data-chart="bench" data-size="md" data-auto></div>
+        </div>
+        <div class="cover-stats">
+          <div><b>160,240</b><span>citations</span></div>
+          <div><b>23,545</b><span>conversations</span></div>
+          <div><b>5</b><span>projects</span></div>
+          <div><b>3</b><span>engines</span></div>
+        </div>
+        <div class="sheet-sign">
+          <div><img src="shared/img/arnel-bukva-v3.png" alt=""><div><b>Arnel Bukva</b><span>Founder and Head of Growth</span></div></div>
+          <span class="is-date">1 June 2026</span>
+        </div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- the AI Visibility Index series: four covers as white documents on warm ground (tiles 04-B, 07-A) -->
+<section data-paper-name="C hub · index series" class="sec is-warm" id="index">
+  <div class="wrap">
+    <div class="head">
+      <div>
+        <p class="eyebrow">The AI Visibility Index</p>
+        <h2 class="h2" style="margin-top:20px">Who AI names first, <span class="ghost">one category at a time.</span></h2>
+      </div>
+      <p>Four indexes so far. Each asks AI engines what buyers in one category ask, then ranks the brands the answers name.</p>
+    </div>
+
+    <div class="idx-row">
+      <article class="sheet idx">
+        <div class="sheet-head"><img src="shared/img/wordmark-indigo.svg" alt="LoudFace"><span>Index · Aug 2026</span></div>
+        <p class="sheet-label">AI Visibility Index</p>
+        <h3 class="idx-title">HR Tech</h3>
+        <p class="idx-n">12 Aug 2026 · 36 answers, 3 engines</p>
+        <div class="idx-top"><span>Named most</span><b>Rippling</b><em>In 25 of 36 answers</em></div>
+        <div class="idx-chart" data-chart="hr" data-size="sm"></div>
+        <a class="idx-foot"><span>Answers naming each brand</span><span>Read →</span></a>
+      </article>
+
+      <article class="sheet idx">
+        <div class="sheet-head"><img src="shared/img/wordmark-indigo.svg" alt="LoudFace"><span>Index · Aug 2026</span></div>
+        <p class="sheet-label">AI Visibility Index</p>
+        <h3 class="idx-title">DevTools</h3>
+        <p class="idx-n">7 Aug 2026 · 12 categories, ChatGPT</p>
+        <div class="idx-top"><span>First for API development</span><b>Postman</b><em>ChatGPT's first name in its category</em></div>
+        <div class="idx-chart" data-chart="devtools" data-size="sm"></div>
+        <a class="idx-foot"><span>6 of 12 categories shown</span><span>Read →</span></a>
+      </article>
+
+      <article class="sheet idx">
+        <div class="sheet-head"><img src="shared/img/wordmark-indigo.svg" alt="LoudFace"><span>Index · Aug 2026</span></div>
+        <p class="sheet-label">AI Visibility Index</p>
+        <h3 class="idx-title">Cybersecurity</h3>
+        <p class="idx-n">6 Aug 2026 · 24 answers, ChatGPT and Google</p>
+        <div class="idx-top"><span>Named most</span><b>SentinelOne</b><em>Scores 14 of 24</em></div>
+        <div class="idx-chart" data-chart="cyber" data-size="sm"></div>
+        <a class="idx-foot"><span>Score out of 24</span><span>Read →</span></a>
+      </article>
+
+      <article class="sheet idx">
+        <div class="sheet-head"><img src="shared/img/wordmark-indigo.svg" alt="LoudFace"><span>Index · Jul 2026</span></div>
+        <p class="sheet-label">AI Visibility Index</p>
+        <h3 class="idx-title">Fintech</h3>
+        <p class="idx-n">30 Jul 2026 · 23,294 conversations</p>
+        <div class="idx-top"><span>Most visible on ChatGPT</span><b>Remote</b><em>62.6% visibility</em></div>
+        <div class="idx-chart">
+          <div data-chart="fintech" data-size="sm"></div>
+          <p class="idx-key"><span><i style="background:#4f39f6"></i>ChatGPT</span><span><i style="background:#f59a7b"></i>AI Overviews</span><span><i style="background:#9a8ee8"></i>Perplexity</span></p>
+        </div>
+        <a class="idx-foot"><span>Visibility per engine, %</span><span>Read →</span></a>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- studies: one giant figure per study, the finding, a small chart, in crosshair cells (homepage KeyResults) -->
+<section data-paper-name="C hub · studies" class="sec is-white" id="studies">
+  <div class="wrap">
+    <div class="head">
+      <div>
+        <p class="eyebrow">Studies and reports</p>
+        <h2 class="h2" style="margin-top:20px">One question per study, <span class="ghost">answered with one number.</span></h2>
+      </div>
+      <p>Seven studies since July, each on data we collected ourselves. The number is the answer; the chart is how we got there.</p>
+    </div>
+
+    <div class="cells figs" data-crosses>
+      <article class="fc is-wide">
+        <div class="fc-text">
+          <p class="fc-meta"><b>Study</b><span>15 Oct 2026</span></p>
+          <p class="fc-big"><b>71%</b></p>
+          <p class="fc-find">of the agencies AI recommends are named by one engine only.</p>
+          <div class="fc-foot"><span>987 same-day answer sets</span><a class="link">Read →</a></div>
+        </div>
+        <div class="fc-chart"><div data-chart="agree" data-size="md" data-auto></div><p class="fc-abs">Where all three engines named an agency on the same day, 3,019 of 4,235 names appeared on one engine only, and 332 on all three.</p></div>
+      </article>
+      <article class="fc">
+        <p class="fc-meta"><b>Study</b><span>25 Oct 2026</span></p>
+        <p class="fc-big"><small>Day</small><b>4</b></p>
+        <p class="fc-find">New pages show up in Google by day 4. Clicks take weeks.</p>
+        <div class="fc-chart" data-chart="seo-time" data-size="sm"></div>
+        <div class="fc-foot"><span>336 new pages</span><a class="link">Read →</a></div>
+      </article>
+
+      <article class="fc">
+        <p class="fc-meta"><b>Report</b><span>24 Oct 2026</span></p>
+        <p class="fc-big"><b>180</b><small>of 180</small></p>
+        <p class="fc-find">B2B software searches showed a Google AI Overview.</p>
+        <div class="fc-chart" data-chart="state-seo" data-size="sm"></div>
+        <div class="fc-foot"><span>180 searches, 24 Oct 2026</span><a class="link">Read →</a></div>
+      </article>
+      <article class="fc">
+        <p class="fc-meta"><b>Report</b><span>24 Oct 2026</span></p>
+        <p class="fc-big"><b>66.7%</b></p>
+        <p class="fc-find">of clicks went to ranked lists, which were 18.5% of posts.</p>
+        <div class="fc-chart" data-chart="state-content" data-size="sm"></div>
+        <div class="fc-foot"><span>108 posts</span><a class="link">Read →</a></div>
+      </article>
+      <article class="fc">
+        <p class="fc-meta"><b>Report</b><span>23 Oct 2026</span></p>
+        <p class="fc-big"><b>13.8%</b></p>
+        <p class="fc-find">of weeks, the three AI engines agreed on the top agency.</p>
+        <div class="fc-chart" data-chart="state-ai" data-size="sm"></div>
+        <div class="fc-foot"><span>Generic agency questions, weekly</span><a class="link">Read →</a></div>
+      </article>
+
+      <article class="fc">
+        <p class="fc-meta"><b>Study</b><span>28 Jul 2026</span></p>
+        <p class="fc-big"><b>11</b><small>of 90</small></p>
+        <p class="fc-find">B2B SaaS buyer questions get almost no agency citations.</p>
+        <div class="fc-chart" data-chart="gap" data-size="sm"></div>
+        <div class="fc-foot"><span>Questions under each visibility line</span><a class="link">Read →</a></div>
+      </article>
+      <article class="fc is-wide is-stack">
+        <p class="fc-meta"><b>Study</b><span>19 Oct 2026</span></p>
+        <div class="fc-row">
+          <p class="fc-big"><b>3</b><small>leaders, 4 formulas</small></p>
+          <p class="fc-find">Mentions crowned one agency. Citations crowned another. Who leads AI share of voice depends on the formula.</p>
+        </div>
+        <div class="fc-chart" data-chart="sov" data-size="md" data-auto></div>
+        <p class="fc-key">Rows, top to bottom: visibility, mention share, citation share, average position.</p>
+        <div class="fc-foot"><span>141 agency questions, 3 engines</span><a class="link">Read →</a></div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- the standard every paper meets, drawn as a flow with the benchmark's own numbers (tile 08-B) -->
+<section data-paper-name="C hub · method" class="sec is-warm">
+  <div class="wrap">
+    <div class="head">
+      <div>
+        <p class="eyebrow">Method</p>
+        <h2 class="h2" style="margin-top:20px">The standard every paper meets, <span class="ghost">shown on the benchmark.</span></h2>
+      </div>
+      <p>Five steps, in the same order, for every study on this page. Each one is drawn with the numbers it produced for the citation benchmark.</p>
+    </div>
+
+    <div class="flow">
+      <svg class="flow-loop" aria-hidden="true"></svg>
+      <span class="flow-loop-tag" style="display:none">Every quarter, the same questions again</span>
+
+      <div class="step">
+        <div class="step-pic">
+          <p class="mini-k">Citations sampled, per engine</p>
+          <div class="lane"><span>ChatGPT</span><span class="track"><i class="is-lead" style="width:100%"></i></span><b>80,608</b></div>
+          <div class="lane"><span>AI Overviews</span><span class="track"><i style="width:52.3%"></i></span><b>42,147</b></div>
+          <div class="lane"><span>Perplexity</span><span class="track"><i style="width:46.5%"></i></span><b>37,485</b></div>
+          <p class="mini-k" style="margin-top:12px">23,545 conversations, 5 projects</p>
+        </div>
+        <h3>Sample</h3>
+        <p>Real buyer questions, asked of each engine, every answer and every link kept.</p>
+      </div>
+
+      <div class="step">
+        <div class="step-pic">
+          <p class="mini-k">Every cited domain, sorted into 8 types</p>
+          <div class="stack"><i style="flex:50.7"></i><i style="flex:13.2"></i><i style="flex:11.1"></i><i style="flex:8"></i><i style="flex:7.9"></i><i style="flex:5"></i><i style="flex:2"></i><i style="flex:2"></i></div>
+          <div class="stack-key"><span><b>Corporate</b> 50.7%</span><span>UGC 13.2%</span><span>+6 more</span></div>
+        </div>
+        <h3>Classify</h3>
+        <p>Each source gets one type before anything is counted, so totals add to 100%.</p>
+      </div>
+
+      <div class="step">
+        <div class="step-pic">
+          <p class="mini-k">Corporate share, project by project</p>
+          <div class="range">
+            <span class="track"></span>
+            <span class="band" style="left:41.6%;width:25.3%"></span>
+            <span class="dot" style="left:50.7%"></span>
+            <span class="tag" style="left:50.7%">pooled 50.7%</span>
+            <span class="lo" style="left:41.6%">41.6%</span><span class="hi" style="left:66.9%">66.9%</span>
+          </div>
+          <p class="mini-big" style="margin-top:10px">5 of 5</p>
+          <p class="mini-k">projects put Corporate first</p>
+        </div>
+        <h3>Check per project</h3>
+        <p>A pooled number only stands if it holds inside every project, not one big client.</p>
+      </div>
+
+      <div class="step">
+        <div class="step-pic">
+          <p class="mini-k">Limitations, printed with the result</p>
+          <div class="lim">
+            <div><svg width="12" height="12" viewBox="0 0 12 12"><circle cx="6" cy="6" r="5" fill="none" stroke="#4f46e5" stroke-width="1.4"/></svg>Three engines only</div>
+            <div><svg width="12" height="12" viewBox="0 0 12 12"><circle cx="6" cy="6" r="5" fill="none" stroke="#4f46e5" stroke-width="1.4"/></svg>Weighted by project size</div>
+            <div><svg width="12" height="12" viewBox="0 0 12 12"><circle cx="6" cy="6" r="5" fill="none" stroke="#4f46e5" stroke-width="1.4"/></svg>One 30-day window</div>
+          </div>
+        </div>
+        <h3>Publish with limits</h3>
+        <p>What the data cannot say goes in the paper, beside what it can.</p>
+      </div>
+
+      <div class="step">
+        <div class="step-pic">
+          <div class="loop">
+            <svg width="64" height="64" viewBox="0 0 64 64" aria-hidden="true"><circle cx="32" cy="32" r="24" fill="none" stroke="#eeecfe" stroke-width="8"/><path d="M32 8 A24 24 0 1 1 9.2 24.6" fill="none" stroke="#4f39f6" stroke-width="8" stroke-linecap="round"/><path d="M4 21 L10 28 L16 20" fill="none" stroke="#4f39f6" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            <div><p class="mini-big">Each quarter</p><p class="mini-k">same questions, same engines</p></div>
+          </div>
+          <p class="mini-k" style="margin-top:16px;color:var(--ink);font-size:12.5px">“A number true in May is a hypothesis in August until you measure again.”</p>
+        </div>
+        <h3>Re-run each quarter</h3>
+        <p>Engines change their habits, so every paper carries the date of its data.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section data-paper-name="C hub · closing" class="closing">
+  <img class="closing-bg" src="shared/img/closing-terrain-1280.webp" alt="">
+  <div class="wrap closing-in">
+    <div>
+      <h2 class="h2">Find out where AI answers <span>put you today.</span></h2>
+      <p>We measure this for every client we run AEO for: per engine, per source type, per competitor, every month. On the call we show you where your brand stands.</p>
+    </div>
+    <div class="cal">
+      <div class="cal-top"><img src="shared/img/arnel-bukva-v3.png" alt=""><div><b>Strategy call with Arnel Bukva</b><span>30 minutes · Google Meet</span></div></div>
+      <div class="cal-head"><span>November 2026</span><span style="color:var(--muted)">‹ ›</span></div>
+      <div class="cal-grid">
+        <span class="is-dow">Mon</span><span class="is-dow">Tue</span><span class="is-dow">Wed</span><span class="is-dow">Thu</span><span class="is-dow">Fri</span><span class="is-dow">Sat</span><span class="is-dow">Sun</span>
+        <span></span><span></span><span></span><span></span><span></span><span></span><span class="is-past">1</span>
+        <span class="is-past">2</span><span class="is-past">3</span><span class="is-open">4</span><span class="is-on">5</span><span class="is-open">6</span><span>7</span><span>8</span>
+        <span class="is-open">9</span><span class="is-open">10</span><span class="is-open">11</span><span class="is-open">12</span><span class="is-open">13</span><span>14</span><span>15</span>
+        <span class="is-open">16</span><span class="is-open">17</span><span class="is-open">18</span><span class="is-open">19</span><span class="is-open">20</span><span>21</span><span>22</span>
+        <span class="is-open">23</span><span class="is-open">24</span><span class="is-open">25</span><span class="is-open">26</span><span class="is-open">27</span><span>28</span><span>29</span>
+        <span class="is-open">30</span>
+      </div>
+      <div class="cal-slots"><span>10:00</span><span>11:30</span><span>14:00</span><span>16:30</span></div>
+    </div>
+  </div>
+</section>
+
+<section data-paper-name="C hub · footer" class="foot">
+  <div class="wrap">
+    <div class="foot-cols">
+      <div><b>LoudFace</b><p style="max-width:300px">A B2B SEO and AEO agency. We get software companies found in Google and named in AI answers.</p></div>
+      <div><b>Services</b><ul><li>SEO</li><li>AEO</li><li>Content</li><li>CRO</li><li>Websites</li></ul></div>
+      <div><b>Company</b><ul><li>About</li><li>Case studies</li><li>Pricing</li><li>Contact</li></ul></div>
+      <div><b>Research</b><ul><li>AI Visibility Index</li><li>Studies and reports</li><li>Citation benchmark</li><li>Method</li></ul></div>
+      <div><b>Legal</b><ul><li>Privacy policy</li><li>Terms</li><li>Cookies</li></ul></div>
+    </div>
+    <div class="foot-word"><img src="shared/img/wordmark-indigo.svg" alt="LoudFace"></div>
+  </div>
+</section>
+
+<script src="shared/research.js"></script>
+<script>
+/* C · direction drawing: chart sizes by width, crosshair marks, the method's return loop. Redraws on resize. */
+function sizeCharts() {
+  document.querySelectorAll('[data-auto]').forEach((el) => {
+    el.dataset.size = el.getBoundingClientRect().width < 420 ? 'sm' : 'md';
+  });
+}
+function placeCrosses() {
+  document.querySelectorAll('[data-crosses]').forEach((g) => {
+    g.querySelectorAll(':scope > .cross').forEach((c) => c.remove());
+    const r0 = g.getBoundingClientRect(), seen = new Set();
+    for (const c of g.children) {
+      if (c.classList.contains('cross')) continue;
+      const r = c.getBoundingClientRect();
+      for (const [x, y] of [[r.left, r.top], [r.right, r.top], [r.left, r.bottom], [r.right, r.bottom]]) {
+        const k = `${Math.round(x - r0.left)},${Math.round(y - r0.top)}`;
+        if (seen.has(k)) continue; seen.add(k);
+        const m = document.createElement('span'); m.className = 'cross';
+        m.style.left = `${Math.round(x - r0.left) - 5.5}px`; m.style.top = `${Math.round(y - r0.top) - 5.5}px`;
+        g.appendChild(m);
+      }
+    }
+  });
+}
+function drawLoop() {
+  const flow = document.querySelector('.flow'), svg = flow.querySelector('.flow-loop'), tag = flow.querySelector('.flow-loop-tag');
+  if (getComputedStyle(svg).display === 'none') { tag.style.display = 'none'; return; }
+  const steps = [...flow.querySelectorAll('.step-pic')], f = flow.getBoundingClientRect();
+  const a = steps[steps.length - 1].getBoundingClientRect(), b = steps[0].getBoundingClientRect();
+  const x1 = a.left + a.width / 2 - f.left, x2 = b.left + b.width / 2 - f.left, top = 22, bot = 62;
+  svg.setAttribute('viewBox', `0 0 ${f.width} 64`);
+  svg.innerHTML = `<path d="M${x1} ${bot} V${top + 14} Q${x1} ${top} ${x1 - 14} ${top} H${x2 + 14} Q${x2} ${top} ${x2} ${top + 14} V${bot - 2}" fill="none" stroke="#4f46e5" stroke-width="1.5" stroke-dasharray="4 5"/>
+    <path d="M${x2 - 5} ${bot - 9} L${x2} ${bot - 2} L${x2 + 5} ${bot - 9}" fill="none" stroke="#4f46e5" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>`;
+  tag.style.display = 'flex'; tag.style.top = `${top}px`; tag.style.left = `${(x1 + x2) / 2}px`;
+}
+function drawMine() { placeCrosses(); drawLoop(); }
+sizeCharts();
+window.addEventListener('load', () => document.fonts.ready.then(() => requestAnimationFrame(drawMine)));
+let rt; window.addEventListener('resize', () => { clearTimeout(rt); rt = setTimeout(() => { sizeCharts(); drawAll(); drawMine(); }, 120); });
+</script>
+<script src="shared/freeze-late.js"></script>
+</body>
+</html>

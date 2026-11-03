@@ -139,6 +139,20 @@ const LEGACY_URL_MAP: Record<string, string> = {
   '/services/cms-migration-x841v': '/services/webflow',
   '/services/branding-jvbsh': '/services/ux-ui-design',
   '/services/seo-62e9c': '/services/seo-aeo',
+  // The 12 studies moved from /blog to /research on 2026-11-03 (next.config.ts redirects them too; the CMS links were
+  // rewritten the same day, this catches any pasted later)
+  '/blog/do-ai-engines-recommend-the-same-agencies': '/research/do-ai-engines-recommend-the-same-agencies',
+  '/blog/how-long-does-seo-take': '/research/how-long-does-seo-take',
+  '/blog/state-of-b2b-saas-seo': '/research/state-of-b2b-saas-seo',
+  '/blog/state-of-b2b-saas-content-marketing': '/research/state-of-b2b-saas-content-marketing',
+  '/blog/state-of-b2b-saas-marketing-ai-search': '/research/state-of-b2b-saas-marketing-ai-search',
+  '/blog/ai-share-of-voice-formula': '/research/ai-share-of-voice-formula',
+  '/blog/hr-tech-ai-visibility-index-2026': '/research/hr-tech-ai-visibility-index-2026',
+  '/blog/devtools-ai-visibility-index-2026': '/research/devtools-ai-visibility-index-2026',
+  '/blog/cybersecurity-saas-ai-visibility-index-2026': '/research/cybersecurity-saas-ai-visibility-index-2026',
+  '/blog/which-ai-engine-cites-fintech-brands': '/research/which-ai-engine-cites-fintech-brands',
+  '/blog/ai-answer-gap-b2b-saas-2026': '/research/ai-answer-gap-b2b-saas-2026',
+  '/blog/ai-citation-benchmark-b2b-saas-2026': '/research/ai-citation-benchmark-b2b-saas-2026',
   // Renamed pages
   '/about-us': '/about',
   // '/contact' was removed from this map 2026-07-15 — it is a real page now

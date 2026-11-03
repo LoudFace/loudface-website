@@ -65,6 +65,11 @@ jobs:
       - name: Apply page tests
         run: npm run test:apply
 
+      # The /research chart drawer: every chart type draws on every ground at phone to desktop widths, and a broken
+      # spec from the CMS is refused with the field named.
+      - name: Research chart tests
+        run: npm run test:research
+
       # The five house rules of the editor that can be checked by reading the
       # repository: the bar behind a Draft Mode gate, getters through markTree,
       # metadata off the marked getters, no component transforming a content

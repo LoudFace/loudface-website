@@ -1,0 +1,276 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Research · E · Colour plates</title>
+<link rel="stylesheet" href="shared/base.css">
+<style>
+/* E · Colour plates. Each series owns one saturated colour, used full bleed. White is only the masthead's reading ground. */
+:root { --e-ind: #3d38cf; --e-coral: #ec6c48; --e-green: #0f5a46; --e-butter: #e2ad3c; }
+.is-green  { background: var(--e-green);  --fg: #fff;    --fg2: rgba(255,255,255,.80); --rule: rgba(255,255,255,.24); }
+.is-indigo { background: var(--e-ind);    --fg: #fff;    --fg2: rgba(255,255,255,.82); --rule: rgba(255,255,255,.26); }
+.is-coral  { background: var(--e-coral);  --fg: #1a1040; --fg2: rgba(26,16,64,.84);    --rule: rgba(26,16,64,.24); }
+.is-butter { background: var(--e-butter); --fg: #1a1040; --fg2: rgba(26,16,64,.82);    --rule: rgba(26,16,64,.22); }
+
+/* masthead */
+.mast { background: #fff; }
+.mast-in { padding: 72px 0 88px; }
+@media (min-width: 1280px) { .mast-in { padding: 96px 0 104px; } }
+.mast-top { display: flex; justify-content: space-between; gap: 24px; font-size: 15px; color: var(--muted); padding-bottom: 20px; border-bottom: 1px solid var(--ink); }
+.mast-top b { font-weight: 500; color: var(--ink); }
+.mast-h { font-family: var(--heading); font-weight: 500; font-size: 96px; line-height: .86; letter-spacing: -.06em; color: var(--ink); margin: 36px 0 0 -6px; }
+@media (min-width: 768px) { .mast-h { font-size: 180px; } }
+@media (min-width: 1280px) { .mast-h { font-size: 248px; margin: 44px 0 0 -12px; } }
+.mast-row { display: flex; flex-direction: column; gap: 40px; margin-top: 48px; }
+@media (min-width: 1100px) { .mast-row { flex-direction: row; justify-content: space-between; align-items: flex-end; margin-top: 56px; } }
+.mast-lede { font-size: 20px; line-height: 1.45; color: var(--body); max-width: 560px; text-wrap: pretty; }
+@media (min-width: 1280px) { .mast-lede { font-size: 22px; } }
+.mast-facts { display: flex; gap: 0; margin: 0; }
+.mast-facts > div { padding: 0 32px; border-left: 1px solid var(--line); }
+.mast-facts > div:first-child { padding-left: 0; border-left: 0; }
+.mast-facts dt { font-family: var(--heading); font-weight: 500; font-size: 40px; line-height: 1; letter-spacing: -.04em; color: var(--ink); }
+.mast-facts dd { margin: 10px 0 0; font-size: 14px; color: var(--muted); max-width: 150px; line-height: 1.35; }
+@media (max-width: 767px) { .mast-facts > div { padding: 0 16px; } .mast-facts dt { font-size: 30px; } .mast-facts dd { font-size: 13px; } }
+
+/* the four plates: the contents, in the series' colours */
+.plates { display: flex; flex-wrap: wrap; }
+.plate-x { flex: 1 1 25%; min-width: 0; min-height: 300px; padding: 32px 32px 30px; display: flex; flex-direction: column; justify-content: space-between; color: var(--fg); }
+.plate-x h2 { font-family: var(--heading); font-weight: 500; font-size: 30px; line-height: 1.04; letter-spacing: -.035em; max-width: 260px; }
+.plate-x p { font-size: 15px; line-height: 1.45; color: var(--fg2); max-width: 280px; margin-top: 14px; }
+.plate-x .px-foot { display: flex; justify-content: space-between; align-items: flex-end; padding-top: 18px; border-top: 1px solid var(--rule); font-size: 14px; color: var(--fg2); }
+.plate-x .px-foot b { font-family: var(--heading); font-weight: 500; font-size: 44px; line-height: .9; letter-spacing: -.04em; color: var(--fg); }
+@media (max-width: 1099px) { .plate-x { flex-basis: 50%; min-height: 240px; } }
+@media (max-width: 599px) { .plate-x { flex-basis: 100%; min-height: 0; padding: 26px 20px 22px; } .plate-x p { margin-bottom: 28px; } }
+
+/* a series band */
+.band { padding: 80px 0 88px; color: var(--fg); }
+@media (min-width: 1280px) { .band { padding: 112px 0 120px; } }
+.b-top { display: flex; flex-direction: column; gap: 14px; padding-bottom: 24px; border-bottom: 1px solid var(--rule); }
+@media (min-width: 1100px) { .b-top { flex-direction: row; align-items: baseline; justify-content: space-between; } }
+.b-name { font-family: var(--heading); font-weight: 500; font-size: 30px; letter-spacing: -.035em; line-height: 1.05; }
+.b-top p { font-size: 16px; color: var(--fg2); max-width: 520px; }
+.b-top .b-count { font-size: 15px; color: var(--fg2); white-space: nowrap; }
+.b-main { display: flex; flex-direction: column; gap: 48px; margin-top: 56px; }
+@media (min-width: 1100px) { .b-main { flex-direction: row; gap: 72px; margin-top: 72px; align-items: flex-start; } }
+.b-lead { min-width: 0; }
+@media (min-width: 1100px) { .b-lead { width: 480px; flex-shrink: 0; } }
+.b-kind { font-size: 15px; color: var(--fg2); }
+.b-kind b { font-weight: 500; color: var(--fg); }
+.giant { font-family: var(--heading); font-weight: 500; font-size: 128px; line-height: .8; letter-spacing: -.065em; margin: 28px 0 0 -6px; white-space: nowrap; }
+@media (min-width: 1280px) { .giant { font-size: 200px; margin-left: -10px; } }
+.giant small { font-size: .2em; letter-spacing: -.03em; margin-left: .2em; color: var(--fg2); }
+.b-finding { font-family: var(--heading); font-weight: 500; font-size: 30px; line-height: 1.08; letter-spacing: -.03em; margin-top: 36px; text-wrap: balance; }
+@media (min-width: 1280px) { .b-finding { font-size: 38px; margin-top: 44px; } }
+.b-paper { font-size: 16px; line-height: 1.5; color: var(--fg2); margin-top: 18px; max-width: 440px; text-wrap: pretty; }
+.b-meta { display: flex; flex-direction: column; gap: 0; margin-top: 32px; border-top: 1px solid var(--rule); }
+.b-meta > div { display: flex; justify-content: space-between; gap: 16px; padding: 12px 0; border-bottom: 1px solid var(--rule); font-size: 14.5px; }
+.b-meta dt { color: var(--fg2); }
+.b-meta dd { margin: 0; font-weight: 500; text-align: right; }
+.b-read { display: inline-flex; align-items: center; gap: 10px; height: 50px; padding: 0 22px; border-radius: 999px; margin-top: 32px; font-size: 15.5px; font-weight: 500; background: var(--fg); color: var(--btn-ink, var(--e-green)); }
+.is-coral .b-read, .is-butter .b-read { color: #fff; }
+.is-indigo { --btn-ink: var(--e-ind); }
+.b-chart { flex: 1; min-width: 0; padding-top: 4px; }
+.b-figtitle { display: flex; justify-content: space-between; gap: 16px; font-size: 15px; color: var(--fg2); padding-bottom: 18px; }
+.b-figtitle b { font-weight: 500; color: var(--fg); }
+
+/* the wide variant: number and reading side by side, the figure full width beneath */
+@media (min-width: 1100px) { .b-main.is-wide { align-items: flex-end; } }
+.b-side { flex: 1; min-width: 0; max-width: 560px; }
+.b-side .b-finding { margin-top: 0; }
+.b-chart.is-wide { margin-top: 72px; padding-top: 28px; border-top: 1px solid var(--rule); }
+@media (min-width: 1100px) { .b-main.is-wide { justify-content: space-between; } .b-main.is-wide .b-lead { width: auto; } }
+.band .c2-axis { display: none; }
+.band .c2-top { justify-content: flex-end; }
+
+/* the other papers in the series */
+.b-list { margin-top: 88px; }
+.b-list h3 { font-size: 15px; font-weight: 500; color: var(--fg2); padding-bottom: 14px; border-bottom: 1px solid var(--fg); }
+.b-row { display: flex; flex-wrap: wrap; gap: 6px 32px; align-items: baseline; padding: 24px 0; border-bottom: 1px solid var(--rule); }
+.b-row .r-date { width: 120px; flex-shrink: 0; font-size: 14.5px; color: var(--fg2); font-variant-numeric: tabular-nums; }
+.b-row .r-kind { width: 90px; flex-shrink: 0; font-size: 14.5px; color: var(--fg2); }
+.b-row .r-find { flex: 1; min-width: 260px; font-family: var(--heading); font-weight: 500; font-size: 24px; line-height: 1.15; letter-spacing: -.025em; }
+.b-row .r-n { width: 280px; flex-shrink: 0; font-size: 14.5px; color: var(--fg2); text-align: right; }
+.b-row .r-go { width: 20px; flex-shrink: 0; text-align: right; font-size: 18px; }
+@media (max-width: 899px) {
+  .b-row { gap: 6px 14px; padding: 20px 0; }
+  .b-row .r-date, .b-row .r-kind { width: auto; }
+  .b-row .r-find { flex-basis: 100%; min-width: 0; font-size: 21px; }
+  .b-row .r-n { width: auto; text-align: left; }
+  .b-row .r-go { display: none; }
+}
+
+/* charts drawn on the series colour: the kit's grounds, retinted to the plate where its own tone differs */
+.band .c2, .plate-fig .c2 { --c2-grid: var(--rule); }
+.is-green .c2 { --c2-muted: rgba(255,255,255,.80) !important; }
+.is-green .c2 [fill="#3d38cf"] { fill: var(--e-green); }
+.is-green .c2 [stroke="#3d38cf"] { stroke: var(--e-green); }
+.is-green .c2 stop[stop-color="#b7aaf2"] { stop-color: #a6e3c8; }
+.is-green .c2 [fill="#b7aaf2"] { fill: #a6e3c8; }
+.is-green .c2 [stroke="#b7aaf2"] { stroke: #a6e3c8; }
+.is-green .c2 [fill="#e4e1ff"] { fill: #e3f3eb; }
+.is-green .c2 [fill="#c9c5fb"] { fill: #c4e4d5; }
+.is-coral .c2 [fill="#f59a7b"] { fill: var(--e-coral); }
+.is-coral .c2 [stroke="#f59a7b"] { stroke: var(--e-coral); }
+.is-butter .c2 [fill="#fcd68a"] { fill: var(--e-butter); }
+.is-butter .c2 [stroke="#fcd68a"] { stroke: var(--e-butter); }
+
+/* closing */
+.closing-bg { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: 50% 0; }
+.closing .wrap { position: relative; }
+.closing .h2 .is-soft { color: #b9b4ff; }
+.closing .eyebrow { color: #d9d6ff; --dot: #fff; margin-bottom: 20px; }
+.cal-month { display: flex; justify-content: space-between; align-items: center; font-size: 15px; font-weight: 500; padding: 4px 2px 14px; }
+.cal-month span { color: var(--quiet); font-size: 18px; letter-spacing: 8px; }
+.cal-dow { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; font-size: 12px; color: var(--quiet); text-align: center; margin-bottom: 6px; }
+.cal-foot { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-top: 18px; padding-top: 16px; border-top: 1px solid var(--line); font-size: 13.5px; color: var(--muted); }
+.cal-who { display: flex; align-items: center; gap: 10px; }
+.cal-who img { width: 34px; height: 34px; border-radius: 99px; }
+.cal-who b { display: block; font-size: 14px; font-weight: 500; color: var(--ink); }
+.foot-cols p { max-width: 300px; line-height: 1.55; }
+
+/* contrast: the kit's 62% and 70% labels fall under 4.5:1 on these plates, so they are raised here */
+.is-green .c2 [fill="rgba(255,255,255,0.62)"], .is-indigo .c2 [fill="rgba(255,255,255,0.62)"] { fill: rgba(255,255,255,.82); }
+.is-coral .c2, .is-butter .c2 { --c2-muted: rgba(26,16,64,.86) !important; }
+.is-coral .c2 [fill="rgba(26,16,64,0.62)"], .is-coral .c2 [fill="rgba(26,16,64,0.70)"],
+.is-butter .c2 [fill="rgba(26,16,64,0.62)"], .is-butter .c2 [fill="rgba(26,16,64,0.70)"] { fill: rgba(26,16,64,.86); }
+.is-indigo .c2 { --c2-muted: rgba(255,255,255,.84) !important; }
+</style>
+</head>
+<body>
+
+<section data-paper-name="E hub · masthead" class="mast">
+  <header class="nav"><div class="wrap nav-in"><a class="nav-logo"><img src="shared/img/wordmark-indigo.svg" alt="LoudFace"></a><nav class="nav-links"><a>Services</a><a>Industries</a><a>Case studies</a><a class="is-on">Research</a><a>Blog</a><a>Pricing</a><a>About</a></nav><a class="btn is-ink nav-cta">Book a strategy call</a></div></header>
+  <div class="wrap mast-in">
+    <div class="mast-top"><b>LoudFace Research</b><span id="updated"></span></div>
+    <h1 class="mast-h">Research</h1>
+    <div class="mast-row">
+      <p class="mast-lede">Original studies of what ChatGPT, Perplexity and Google AI Overviews cite and recommend for B2B software, measured on live data by the team that runs the accounts. Every paper states its sample, its method and its limits.</p>
+      <dl class="mast-facts" id="facts"></dl>
+    </div>
+  </div>
+  <nav class="plates" id="plates" aria-label="Series"></nav>
+</section>
+
+<div id="bands"></div>
+
+<section data-paper-name="E hub · closing" class="closing">
+  <img class="closing-bg" src="shared/img/closing-terrain-1280.webp" alt="">
+  <div class="wrap closing-in">
+    <div>
+      <p class="eyebrow">A 30-minute strategy call</p>
+      <h2 class="h2">Find out where AI answers <span class="is-soft">put you today.</span></h2>
+      <p>Your visibility in ChatGPT, Perplexity and Google AI Overviews now, the sources the answers in your category lean on, and what we would do first, with a written scope within 48 hours.</p>
+    </div>
+    <div class="cal">
+      <div class="cal-head"><span>Book a strategy call</span><span style="color:var(--quiet);font-weight:400">30 min · video</span></div>
+      <div class="cal-month">November 2026 <span>‹ ›</span></div>
+      <div class="cal-dow"><span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span><span>Sun</span></div>
+      <div class="cal-grid" id="cal"></div>
+      <div class="cal-foot"><div class="cal-who"><img src="shared/img/arnel-bukva-v3.png" alt=""><div><b>Arnel Bukva</b>Founder and Head of Growth</div></div><span>Thu 5 Nov</span></div>
+    </div>
+  </div>
+</section>
+
+<section data-paper-name="E hub · footer" class="foot">
+  <div class="wrap">
+    <div class="foot-cols">
+      <div><b>LoudFace</b><p>Websites, search and AI answers for B2B SaaS and fintech teams. One team, one report, one set of numbers.</p></div>
+      <div><b>Services</b><ul><li>AI answers (AEO and GEO)</li><li>SEO</li><li>Design</li><li>Conversion</li></ul></div>
+      <div><b>Company</b><ul><li>Case studies</li><li>Methodology</li><li>About</li><li>Pricing</li><li>Blog</li><li>Careers</li></ul></div>
+      <div><b>Research</b><ul><li>All papers</li><li>AI search behaviour</li><li>State of B2B SaaS</li><li>AI Visibility Index</li><li>Measurement and Search</li></ul></div>
+      <div><b>Legal</b><ul><li>Privacy</li><li>Terms</li><li>Cookies</li><li>© 2026 LoudFace</li></ul></div>
+    </div>
+    <div class="foot-word"><img src="shared/img/wordmark-indigo.svg" alt="LoudFace"></div>
+  </div>
+</section>
+
+<script src="shared/research.js"></script>
+<script>
+/* E hub. Every number comes from STUDIES and BENCH in research.js. */
+const SERIES = [
+  { name: 'AI search behaviour', of: ['AI search behaviour'], tone: 'green', lead: 'bench', big: '50.7%',
+    desc: 'Which sources and which agencies ChatGPT, Perplexity and AI Overviews cite when B2B buyers ask.',
+    chart: ['stage', 'indigo'], fig: 'Share of 160,240 AI citations, by source type' },
+  { name: 'State of B2B SaaS', of: ['State of B2B SaaS'], tone: 'coral', lead: 'state-seo', big: '180', bigOf: 'of 180',
+    desc: 'Yearly reports on B2B software marketing: search, content and AI answers.',
+    wide: true, chart: ['colour', 'coral'], fig: '180 B2B software searches on Google, 24 Oct 2026' },
+  { name: 'AI Visibility Index', of: ['AI Visibility Index'], tone: 'indigo', lead: 'fintech', big: '4.6×',
+    desc: 'Which vendors AI engines name, one software category at a time.',
+    chart: ['stage', 'indigo'], fig: 'Visibility per engine, five of ten fintech vendors' },
+  { name: 'Measurement and Search', of: ['Measurement', 'Search'], tone: 'butter', lead: 'seo-time', big: '101', bigOf: 'of 336',
+    desc: 'How AI visibility is measured, and how long Google takes to reward a new page.',
+    chart: ['colour', 'butter'], fig: '336 new pages, how far each got in 28 days' },
+];
+const S = (id) => STUDIES.find((x) => x.id === id);
+const nf = (v) => Number(v).toLocaleString('en-US');
+const inSeries = (se) => STUDIES.filter((s) => se.of.includes(s.series)).sort((a, b) => b.date.localeCompare(a.date));
+const dates = STUDIES.map((s) => s.date).sort();
+
+document.getElementById('updated').textContent = `${STUDIES.length} papers · updated ${fmtDate(dates[dates.length - 1])}`;
+document.getElementById('facts').innerHTML =
+  `<div><dt>${STUDIES.length}</dt><dd>papers since ${new Date(dates[0] + 'T12:00:00Z').toLocaleDateString('en-GB', { month: 'long', year: 'numeric' })}</dd></div>
+   <div><dt>${SERIES.length}</dt><dd>series, each in its own colour</dd></div>
+   <div><dt>${nf(BENCH.total)}</dt><dd>citations in the largest sample</dd></div>`;
+
+document.getElementById('plates').innerHTML = SERIES.map((se) => {
+  const list = inSeries(se);
+  return `<a class="plate-x is-${se.tone}" href="#${se.tone}">
+    <div><h2>${se.name}</h2><p>${se.desc}</p></div>
+    <div class="px-foot"><span>Latest ${fmtDate(list[0].date)}</span><span style="text-align:right"><b>${list.length}</b><br>papers</span></div>
+  </a>`;
+}).join('');
+
+document.getElementById('bands').outerHTML = SERIES.map((se) => {
+  const list = inSeries(se), st = S(se.lead), rest = list.filter((s) => s.id !== se.lead);
+  return `<section data-paper-name="E hub · ${se.name}" class="band is-${se.tone}" id="${se.tone}">
+    <div class="wrap">
+      <div class="b-top"><h2 class="b-name">${se.name}</h2><p>${se.desc}</p><span class="b-count">${list.length} papers</span></div>
+      ${se.wide ? `<div class="b-main is-wide">
+        <div class="b-lead"><p class="giant">${se.big}${se.bigOf ? `<small>${se.bigOf}</small>` : ''}</p></div>
+        <div class="b-side">
+          <p class="b-kind" style="margin-bottom:20px"><b>${st.kind}</b> · ${fmtDate(st.date)}</p>
+          <h3 class="b-finding">${st.finding}</h3>
+          <p class="b-paper">${st.title}</p>
+          <dl class="b-meta"><div><dt>Sample</dt><dd>${st.n}</dd></div><div><dt>Researcher</dt><dd>Arnel Bukva</dd></div></dl>
+          <a class="b-read">Read the ${st.kind.toLowerCase()} <span aria-hidden="true">→</span></a>
+        </div>
+      </div>
+      <figure class="b-chart is-wide">
+        <figcaption class="b-figtitle"><b>${se.fig}</b></figcaption>
+        <div data-chart2="${se.lead}" data-ground="${se.chart[0]}" data-tone="${se.chart[1]}" data-size="lg" data-head="off" data-paint="off"></div>
+      </figure>` : `<div class="b-main">
+        <div class="b-lead">
+          <p class="b-kind"><b>${st.kind}</b> · ${fmtDate(st.date)}</p>
+          <p class="giant">${se.big}${se.bigOf ? `<small>${se.bigOf}</small>` : ''}</p>
+          <h3 class="b-finding">${st.finding}</h3>
+          <p class="b-paper">${st.title}</p>
+          <dl class="b-meta"><div><dt>Sample</dt><dd>${st.n}</dd></div><div><dt>Researcher</dt><dd>Arnel Bukva</dd></div></dl>
+          <a class="b-read">Read the ${st.kind.toLowerCase()} <span aria-hidden="true">→</span></a>
+        </div>
+        <figure class="b-chart">
+          <figcaption class="b-figtitle"><b>${se.fig}</b></figcaption>
+          <div data-chart2="${se.lead}" data-ground="${se.chart[0]}" data-tone="${se.chart[1]}" data-size="lg" data-head="off" data-paint="off"></div>
+        </figure>
+      </div>`}
+      <div class="b-list">
+        <h3>Also in ${se.name}</h3>
+        ${rest.map((s) => `<a class="b-row"><span class="r-date">${fmtDate(s.date)}</span><span class="r-kind">${s.kind}</span><span class="r-find">${s.finding}</span><span class="r-n">${s.n}</span><span class="r-go" aria-hidden="true">→</span></a>`).join('')}
+      </div>
+    </div>
+  </section>`;
+}).join('');
+
+// closing calendar: November 2026 starts on a Sunday
+document.getElementById('cal').innerHTML = Array.from({ length: 6 }, () => '<span></span>').join('') +
+  Array.from({ length: 30 }, (_, i) => { const d = i + 1, dow = (6 + i) % 7; const cls = d === 5 ? 'is-on' : (d > 3 && dow < 5 ? 'is-open' : ''); return `<span class="${cls}">${d}</span>`; }).join('');
+</script>
+<script>
+/* phones: the kit's lg forms crowd under 700px, so dense charts drop to sm and the rest to md */
+if (innerWidth < 700) document.querySelectorAll('[data-chart2][data-size="lg"]').forEach((el) => {
+  el.dataset.size = ['bench-domains', 'bench-engines', 'fintech', 'seo-time'].includes(el.dataset.chart2) ? 'sm' : 'md'; });
+</script>
+<script src="shared/charts-v2.js"></script>
+<script src="shared/freeze-late.js"></script>
+</body>
+</html>

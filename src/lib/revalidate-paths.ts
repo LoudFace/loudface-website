@@ -30,7 +30,12 @@ export const EDITABLE_TYPES = new Set([
   'technology',
 ]);
 
-export function pathsFor(type: string | undefined, slug: string | undefined): string[] {
+/**
+ * `movedFromBlog` is a research paper's old blog slug, when the caller has it (the webhook projection can send it).
+ * A paper changes what the blog lists (BLOG_NOT_MOVED_TO_RESEARCH in src/lib/blog-exclusion.ts), so a research change
+ * also refreshes /blog and the old post's path.
+ */
+export function pathsFor(type: string | undefined, slug: string | undefined, movedFromBlog?: string): string[] {
   // Always invalidate the LLM indexes — they aggregate all content.
   // /sitemap.xml is a no-store route handler; purging it is a no-op kept so the path list stays complete.
   const always = ['/llms.txt', '/llms-full.txt', '/sitemap.xml'];
@@ -39,7 +44,14 @@ export function pathsFor(type: string | undefined, slug: string | undefined): st
     case 'blogPost':
       return [...always, '/', '/blog', slug ? `/blog/${slug}` : null].filter(Boolean) as string[];
     case 'research':
-      return [...always, '/', '/research', slug ? `/research/${slug}` : null].filter(Boolean) as string[];
+      return [
+        ...always,
+        '/',
+        '/research',
+        slug ? `/research/${slug}` : null,
+        '/blog',
+        movedFromBlog ? `/blog/${movedFromBlog}` : null,
+      ].filter(Boolean) as string[];
     case 'caseStudy':
       return [...always, '/', '/case-studies', slug ? `/case-studies/${slug}` : null].filter(Boolean) as string[];
     case 'teamMember':

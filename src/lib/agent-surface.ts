@@ -32,6 +32,8 @@ async function catalog(): Promise<Entry[]> {
   return [
     ...data.services.map(tag('service')),
     ...data.caseStudies.map(tag('case-study')),
+    // Research papers are articles to an agent; a separate kind would change the published tool cards.
+    ...data.research.map(tag('article')),
     ...data.blogPosts.map(tag('article')),
     ...data.seoPages.map(tag('industry-page')),
   ];

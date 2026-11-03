@@ -1,4 +1,24 @@
-import { defineType, defineField } from 'sanity';
+import { defineType, defineField, defineArrayMember } from 'sanity';
+import { PAPER_KINDS, SERIES } from '../../app/research-v11/contract';
+import { chartSpecValidation, FIGURE_PLACEMENTS } from '../../lib/research-spec';
+
+const numberFields = (withNote: boolean) => [
+  defineField({
+    name: 'value',
+    title: 'Number',
+    type: 'string',
+    description: 'As the page prints it: "50.7%", "101 of 336", "4.6×". It must appear in the study.',
+    validation: (rule) => rule.required(),
+  }),
+  defineField({
+    name: 'label',
+    title: 'What it counts',
+    type: 'string',
+    description: 'Reads on from the number: "of 160,240 AI citations went to company websites".',
+    validation: (rule) => rule.required(),
+  }),
+  ...(withNote ? [defineField({ name: 'note', title: 'Note', type: 'string', description: 'One line of context under the label.' })] : []),
+];
 
 /**
  * Research study — the /research hub's document type.
@@ -29,12 +49,72 @@ export const research = defineType({
   fields: [
     defineField({
       name: 'name',
-      title: 'Title',
+      title: 'Finding (H1 and card title)',
       type: 'string',
       group: 'core',
       description:
-        'Lead with the finding, not the topic. "AI now writes as many articles as humans" travels; "A study of AI authorship" does not.',
+        'The finding, short: it is the page H1 and the title on every card. "Company websites win half of all AI citations", not the paper\'s formal title (that goes in Paper title). "AI now writes as many articles as humans" travels; "A study of AI authorship" does not.',
       validation: (rule) => rule.required(),
+    }),
+    defineField({
+      name: 'paperTitle',
+      title: 'Paper title',
+      type: 'string',
+      group: 'core',
+      description:
+        'The formal title, e.g. "What AI actually cites: the B2B SaaS AI-Citation Benchmark (2026)". Shown under the finding and in the citation. The SEO title stays in Meta title.',
+    }),
+    defineField({
+      name: 'series',
+      title: 'Series',
+      type: 'string',
+      group: 'core',
+      description: 'Every paper belongs to one series; the series sets the paper\'s colour.',
+      options: {
+        list: (Object.keys(SERIES) as (keyof typeof SERIES)[]).map((key) => ({ title: SERIES[key].name, value: key })),
+        layout: 'radio',
+      },
+      validation: (rule) => rule.required(),
+    }),
+    defineField({
+      name: 'kind',
+      title: 'Kind',
+      type: 'string',
+      group: 'core',
+      options: { list: PAPER_KINDS.map((kind) => ({ title: kind, value: kind })), layout: 'radio', direction: 'horizontal' },
+      validation: (rule) => rule.required(),
+    }),
+    defineField({
+      name: 'leadNumber',
+      title: 'Lead number',
+      type: 'object',
+      group: 'core',
+      description: 'The one big number the hub and the paper hero show, with what it counts.',
+      fields: numberFields(false),
+    }),
+    defineField({
+      name: 'keyNumbers',
+      title: 'Key numbers',
+      type: 'array',
+      group: 'core',
+      description: 'The key-number band under the hero. Leave empty to hide the band.',
+      of: [
+        defineArrayMember({
+          type: 'object',
+          name: 'researchNumber',
+          fields: numberFields(true),
+          preview: { select: { title: 'value', subtitle: 'label' } },
+        }),
+      ],
+      validation: (rule) => rule.max(4),
+    }),
+    defineField({
+      name: 'movedFromBlog',
+      title: 'Moved from blog slug',
+      type: 'string',
+      group: 'lifecycle',
+      description:
+        'The slug of the blog post this paper replaced. While set on a published paper, the blog stops listing that post and /blog/<slug> does not render; next.config.ts holds the permanent redirect to /research/<slug>.',
     }),
     defineField({
       name: 'slug',
@@ -167,6 +247,96 @@ export const research = defineType({
       description: 'Same visual system as blog posts — bar, horizontal bar, stat and table charts, plus images.',
     }),
     defineField({
+      name: 'figures',
+      title: 'Figures',
+      type: 'array',
+      group: 'evidence',
+      description:
+        'The /research charts, drawn as SVG on the server with their numbers as a table. One lead figure (the hero), at most one band figure, the rest after a body H2.',
+      of: [
+        defineArrayMember({
+          type: 'object',
+          name: 'researchFigure',
+          fields: [
+            defineField({ name: 'title', title: 'Title', type: 'string', validation: (rule) => rule.required() }),
+            defineField({
+              name: 'source',
+              title: 'Source line',
+              type: 'string',
+              description: '"Source: Peec AI, 160,240 citations, 23,545 conversations".',
+            }),
+            defineField({ name: 'note', title: 'Note', type: 'text', rows: 2, description: 'What the figure leaves out, in a sentence.' }),
+            defineField({
+              name: 'spec',
+              title: 'Chart spec (JSON)',
+              type: 'text',
+              rows: 8,
+              description:
+                'A ChartSpec as JSON (src/app/research-v11/contract.ts), e.g. {"type":"bars","unit":"%","max":100,"rows":[["One engine only",71.3]]}.',
+              validation: (rule) => rule.required().custom(chartSpecValidation),
+            }),
+            defineField({
+              name: 'placement',
+              title: 'Placement',
+              type: 'string',
+              options: {
+                list: [
+                  { title: 'Lead (hero)', value: 'lead' },
+                  { title: 'Band (full width, series colour)', value: 'band' },
+                  { title: 'After a body H2', value: 'afterH2' },
+                ],
+                layout: 'radio',
+              },
+              initialValue: 'afterH2',
+              validation: (rule) =>
+                rule.required().custom((value) =>
+                  !value || (FIGURE_PLACEMENTS as readonly string[]).includes(value as string) ? true : 'Pick a placement',
+                ),
+            }),
+            defineField({
+              name: 'h2Index',
+              title: 'After H2 number',
+              type: 'number',
+              description: 'Counts the body\'s H2s from 0: 0 draws the figure after the first H2\'s section.',
+              hidden: ({ parent }) => (parent as { placement?: string } | undefined)?.placement !== 'afterH2',
+              validation: (rule) =>
+                rule.custom((value, context) => {
+                  const placement = (context.parent as { placement?: string } | undefined)?.placement;
+                  if (placement !== 'afterH2') return true;
+                  return typeof value === 'number' && Number.isInteger(value) && value >= 0
+                    ? true
+                    : 'An after-H2 figure needs the H2 number (0 or more)';
+                }),
+            }),
+          ],
+          preview: { select: { title: 'title', subtitle: 'placement' } },
+        }),
+      ],
+      validation: (rule) =>
+        rule.custom((figures) => {
+          const list = (figures ?? []) as { placement?: string }[];
+          if (list.filter((f) => f.placement === 'lead').length > 1) return 'Only one lead figure';
+          if (list.filter((f) => f.placement === 'band').length > 1) return 'Only one band figure';
+          return true;
+        }),
+    }),
+    defineField({
+      name: 'dataWindow',
+      title: 'Data window',
+      type: 'string',
+      group: 'evidence',
+      description: 'When the data was measured, as the study states it: "30 days to 1 June 2026".',
+    }),
+    defineField({
+      name: 'engines',
+      title: 'Engines measured',
+      type: 'array',
+      group: 'evidence',
+      of: [{ type: 'string' }],
+      options: { layout: 'tags' },
+      description: 'Only the engines the study measured, e.g. ChatGPT, Perplexity, Google AI Overviews.',
+    }),
+    defineField({
       name: 'faq',
       title: 'FAQ',
       type: 'array',
@@ -215,6 +385,25 @@ export const research = defineType({
       group: 'lifecycle',
       description:
         'Set on the OLD study when a newer one replaces it. The page then shows a notice pointing forward, so an old number stops circulating as current.',
+    }),
+    defineField({
+      name: 'versions',
+      title: 'Versions',
+      type: 'array',
+      group: 'lifecycle',
+      description: 'Every published version of this paper, oldest first, with what changed.',
+      of: [
+        defineArrayMember({
+          type: 'object',
+          name: 'researchVersion',
+          fields: [
+            defineField({ name: 'version', title: 'Version', type: 'string', validation: (rule) => rule.required() }),
+            defineField({ name: 'date', title: 'Date', type: 'date', validation: (rule) => rule.required() }),
+            defineField({ name: 'note', title: 'What changed', type: 'string', validation: (rule) => rule.required() }),
+          ],
+          preview: { select: { title: 'version', subtitle: 'date' } },
+        }),
+      ],
     }),
     defineField({
       name: 'featured',
@@ -271,6 +460,6 @@ export const research = defineType({
     }),
   ],
   preview: {
-    select: { title: 'name', subtitle: 'sampleSummary', media: 'thumbnail' },
+    select: { title: 'name', subtitle: 'paperTitle', media: 'thumbnail' },
   },
 });

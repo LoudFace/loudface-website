@@ -1,0 +1,51 @@
+/* LoudFace research, direction G (3 Nov 2026): the four series colours, from E, used by G-hub and G-paper.
+   Full-strength colour only, never a wash. Contrast measured (WCAG 2, normal text):
+     indigo #3d38cf  white 7.88, white 80% 5.61        ink 2.24 (not used)
+     coral  #ec6c48  ink 5.71,   ink 86% 4.81           white 3.09 (fails, so coral carries ink)
+     green  #0f5a46  white 8.17, white 80% 5.88         ink 2.16 (not used)
+     butter #e2ad3c  ink 8.62,   ink 82% 6.2            white 2.04 (fails)
+   Secondary text never goes below white 80% or ink 86% (coral) / 82% (butter). */
+
+:root {
+  --s-index: #3d38cf; --s-index-ink: #ffffff; --s-index-ink-2: rgba(255,255,255,.82); --s-index-rule: rgba(255,255,255,.26); --s-index-2: #c9bdf5;
+  --s-saas: #ec6c48;  --s-saas-ink: #1a1040;  --s-saas-ink-2: rgba(26,16,64,.86);    --s-saas-rule: rgba(26,16,64,.24);    --s-saas-2: #ffffff;
+  --s-ai: #0f5a46;    --s-ai-ink: #ffffff;    --s-ai-ink-2: rgba(255,255,255,.82);    --s-ai-rule: rgba(255,255,255,.24);    --s-ai-2: #a6e3c8;
+  --s-meas: #e2ad3c;  --s-meas-ink: #1a1040;  --s-meas-ink-2: rgba(26,16,64,.84);     --s-meas-rule: rgba(26,16,64,.22);     --s-meas-2: #ffffff;
+}
+
+/* a block on its series colour: --fg (text), --fg2 (secondary), --rule (hairlines), --acc (the series' second mark) */
+.on-index { background: var(--s-index); color: var(--s-index-ink); --fg: var(--s-index-ink); --fg2: var(--s-index-ink-2); --rule: var(--s-index-rule); --acc: var(--s-index-2); --sc: var(--s-index); }
+.on-saas  { background: var(--s-saas);  color: var(--s-saas-ink);  --fg: var(--s-saas-ink);  --fg2: var(--s-saas-ink-2);  --rule: var(--s-saas-rule);  --acc: var(--s-saas-2);  --sc: var(--s-saas); }
+.on-ai    { background: var(--s-ai);    color: var(--s-ai-ink);    --fg: var(--s-ai-ink);    --fg2: var(--s-ai-ink-2);    --rule: var(--s-ai-rule);    --acc: var(--s-ai-2);    --sc: var(--s-ai); }
+.on-meas  { background: var(--s-meas);  color: var(--s-meas-ink);  --fg: var(--s-meas-ink);  --fg2: var(--s-meas-ink-2);  --rule: var(--s-meas-rule);  --acc: var(--s-meas-2);  --sc: var(--s-meas); }
+
+/* the series mark: a small square in the series colour, for labels on night and ink */
+.s-mark { display: inline-block; width: 10px; height: 10px; flex-shrink: 0; background: var(--sc, #fff); box-shadow: inset 0 0 0 1px rgba(255,255,255,.28); }
+.s-index { --sc: var(--s-index); } .s-saas { --sc: var(--s-saas); } .s-ai { --sc: var(--s-ai); } .s-meas { --sc: var(--s-meas); }
+
+/* charts-v2 on a series colour. Draw indigo and green with data-ground="stage" data-tone="indigo", coral with
+   data-ground="colour" data-tone="coral", butter with data-tone="butter". The kit's grounds are lighter than the series
+   colours (coral #f59a7b, butter #fcd68a), so the ground and every mark drawn in the ground colour are retinted here. */
+.on-index .c2, .on-saas .c2, .on-ai .c2, .on-meas .c2 { --c2-grid: var(--rule) !important; --c2-muted: var(--fg2) !important; --c2-bg: var(--sc) !important; }
+
+/* green: the indigo stage, retinted (lavender becomes mint) */
+.on-ai .c2 [fill="#3d38cf"] { fill: var(--s-ai); }
+.on-ai .c2 [stroke="#3d38cf"] { stroke: var(--s-ai); }
+.on-ai .c2 stop[stop-color="#b7aaf2"] { stop-color: #a6e3c8; }
+.on-ai .c2 [fill="#b7aaf2"] { fill: #a6e3c8; }
+.on-ai .c2 [stroke="#b7aaf2"] { stroke: #a6e3c8; }
+.on-ai .c2 stop[stop-color="#8b80ec"] { stop-color: #6fbf9c; }
+.on-ai .c2 [fill="#8b80ec"] { fill: #6fbf9c; }
+.on-ai .c2 [fill="#e4e1ff"] { fill: #e3f3eb; }
+.on-ai .c2 [fill="#c9c5fb"] { fill: #cfe9dd; }
+/* white 62% axis labels fall to 4.2:1 on green and 4.0:1 on indigo: raised to 82% */
+.on-ai .c2 [fill="rgba(255,255,255,0.62)"], .on-index .c2 [fill="rgba(255,255,255,0.62)"] { fill: rgba(255,255,255,.82); }
+
+/* coral and butter: the kit's light grounds, deepened to the series colour */
+.on-saas .c2 [fill="#f59a7b"] { fill: var(--s-saas); }
+.on-saas .c2 [stroke="#f59a7b"] { stroke: var(--s-saas); }
+.on-meas .c2 [fill="#fcd68a"] { fill: var(--s-meas); }
+.on-meas .c2 [stroke="#fcd68a"] { stroke: var(--s-meas); }
+/* ink 62% and 70% labels: 3.1 and 3.7:1 on coral, 3.9:1 on butter; raised to 86% */
+.on-saas .c2 [fill="rgba(26,16,64,0.62)"], .on-saas .c2 [fill="rgba(26,16,64,0.70)"],
+.on-meas .c2 [fill="rgba(26,16,64,0.62)"], .on-meas .c2 [fill="rgba(26,16,64,0.70)"] { fill: rgba(26,16,64,.86); }

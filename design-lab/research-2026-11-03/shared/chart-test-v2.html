@@ -1,0 +1,30 @@
+<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Chart kit v2</title><link rel="stylesheet" href="base.css">
+<style>
+body{background:#fff;padding:0}
+section{padding:40px 44px 48px}
+section h2{font-family:var(--heading);font-weight:500;font-size:28px;letter-spacing:-.03em;margin-bottom:24px}
+.sm{display:grid;grid-template-columns:repeat(4,320px);gap:28px 24px;align-items:start}
+.lg{display:grid;grid-template-columns:repeat(2,660px);gap:32px;align-items:start}
+.tag{font-size:12px;color:#8a87a3;margin-bottom:8px}
+.on-stage{background:#3d38cf}.on-stage h2,.on-stage .tag{color:#fff}
+.light-cell{border:1px solid var(--line);padding:20px}
+</style></head><body>
+<div id="root"></div>
+<script src="research.js"></script>
+<script>
+const IDS=['agree','seo-time','state-seo','state-content','state-ai','sov','hr','devtools','cyber','fintech','gap','bench','bench-domains','bench-engines','bench-rates'];
+const GROUNDS=[['light','white'],['stage','indigo'],['colour','coral']];
+const EXTRA=[['light','warm'],['stage','night'],['colour','butter'],['colour','green'],['colour','indigo'],['stage','navy']];
+const only=new URLSearchParams(location.search).get('ids');const ids=only?only.split(','):IDS;
+let h='';
+for(const [g,t] of GROUNDS){
+  h+=`<section data-paper-name="${g} ${t} sm"><h2>${g} · ${t} · sm</h2><div class="sm">${ids.map(id=>`<div><div class="tag">${id}</div><div data-chart2="${id}" data-ground="${g}" data-tone="${t}" data-size="sm" ${g==='light'?'class="light-cell"':''}></div></div>`).join('')}</div></section>`;
+  for(let k=0;k<ids.length;k+=4){const part=ids.slice(k,k+4);
+  h+=`<section data-paper-name="${g} ${t} lg ${k/4+1}"><h2>${g} · ${t} · lg (${k/4+1})</h2><div class="lg">${part.map(id=>`<div><div class="tag">${id}</div><div data-chart2="${id}" data-ground="${g}" data-tone="${t}" data-size="lg" ${g==='light'?'class="light-cell"':''}></div></div>`).join('')}</div></section>`;}
+}
+h+=`<section data-paper-name="night lg"><h2>stage · night · lg</h2><div class="lg">${['bench','gap','hr','fintech'].map(id=>`<div><div class="tag">${id}</div><div data-chart2="${id}" data-ground="stage" data-tone="night" data-size="lg"></div></div>`).join('')}</div></section>`;
+h+=`<section data-paper-name="tones md"><h2>Other tones · md</h2><div class="lg">${EXTRA.map(([g,t],i)=>`<div><div class="tag">${g} ${t}</div><div data-chart2="${['bench','gap','fintech','state-content','hr','seo-time'][i]}" data-ground="${g}" data-tone="${t}" data-size="md"></div></div>`).join('')}</div></section>`;
+root.innerHTML=h;
+</script>
+<script src="charts-v2.js"></script>
+</body></html>

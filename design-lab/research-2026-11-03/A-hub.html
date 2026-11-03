@@ -1,0 +1,474 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Research · LoudFace (A · Findings wall)</title>
+<link rel="stylesheet" href="shared/base.css">
+<style>
+/* A · Findings wall — hub. Every paper's cover is its own lead chart; the title states the finding. */
+.a-hero { padding: 40px 0 80px; }
+@media (min-width: 1280px) { .a-hero { padding: 56px 0 120px; } }
+.a-hero-grid { display: grid; gap: 48px; }
+@media (min-width: 1100px) { .a-hero-grid { grid-template-columns: 404px minmax(0, 1fr); gap: 72px; } }
+.a-hero-copy { display: flex; flex-direction: column; }
+.a-hero-copy .h1 { margin-top: 26px; }
+.a-hero-copy .lede { margin-top: 24px; max-width: 404px; }
+.a-facts { display: grid; grid-template-columns: 1fr 1fr; margin-top: 36px; border-top: 1px solid var(--line); }
+.a-latest { margin-top: 40px; }
+@media (min-width: 1100px) { .a-latest { margin-top: auto; padding-top: 40px; } }
+.a-latest > p { font-size: 14px; font-weight: 500; color: var(--muted); margin-bottom: 4px; }
+.a-latest a { display: grid; grid-template-columns: 1fr auto; gap: 16px; align-items: baseline; padding: 14px 0; border-bottom: 1px solid var(--line); }
+.a-latest a b { font-size: 15.5px; font-weight: 500; line-height: 1.35; text-wrap: pretty; }
+.a-latest a span { font-size: 13.5px; color: var(--quiet); white-space: nowrap; }
+.a-latest a:hover b { color: var(--ind); }
+.a-fact { padding: 22px 0 0; }
+.a-fact + .a-fact { padding-left: 24px; border-left: 1px solid var(--line); }
+.a-fact b { display: block; font-family: var(--heading); font-weight: 500; font-size: 44px; line-height: 1; letter-spacing: -0.045em; }
+.a-fact span { display: block; font-size: 14px; color: var(--muted); margin-top: 10px; max-width: 170px; }
+
+/* the featured paper: a pale single-hue tint lifts its chart sheet off the page (DESIGN.md §2.3) */
+.a-feat { background: #f1effd; border-radius: 24px; padding: 24px; display: flex; flex-direction: column; min-width: 0; }
+@media (min-width: 768px) { .a-feat { padding: 36px 40px 32px; } }
+.a-meta { display: flex; justify-content: space-between; gap: 16px; font-size: 14px; color: var(--muted); }
+.a-meta b { font-weight: 500; color: var(--ink); }
+.a-feat-title { font-family: var(--heading); font-weight: 500; font-size: 32px; line-height: 1.04; letter-spacing: -0.035em; margin-top: 22px; text-wrap: balance; max-width: 640px; }
+@media (min-width: 768px) { .a-feat-title { font-size: 44px; } }
+.a-feat-paper { font-size: 15px; color: var(--muted); margin-top: 14px; }
+.a-sheet { background: #fff; border-radius: 16px; padding: 22px 20px 18px; margin-top: 28px; box-shadow: 0 1px 2px rgba(26,16,64,.05), 0 18px 40px rgba(61,56,207,.08); }
+@media (min-width: 768px) { .a-sheet { padding: 28px 30px 22px; } }
+.a-sheet-head { display: flex; justify-content: space-between; align-items: baseline; gap: 16px; margin-bottom: 18px; }
+.a-sheet-head b { font-size: 15px; font-weight: 500; }
+.a-sheet-head span { font-size: 12.5px; color: var(--quiet); white-space: nowrap; }
+.a-src { font-size: 12.5px; color: var(--quiet); margin-top: 16px; padding-top: 14px; border-top: 1px solid var(--line); }
+.a-feat-foot { display: flex; justify-content: space-between; align-items: center; gap: 16px; margin-top: 24px; flex-wrap: wrap; }
+.a-arrow { display: inline-block; transition: transform .2s cubic-bezier(.2,.7,.2,1); }
+a:hover .a-arrow { transform: translateX(3px); }
+
+/* the wall */
+.a-filter { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 32px; }
+.a-chip { display: inline-flex; align-items: center; gap: 8px; height: 40px; padding: 0 16px; border: 0; border-radius: 999px; background: #fff; box-shadow: inset 0 0 0 1px var(--line); font: 500 14.5px/1 var(--sans); color: var(--ink); cursor: pointer; transition: background-color .15s, color .15s; }
+.a-chip span { font-weight: 400; color: var(--quiet); }
+.a-chip:hover { box-shadow: inset 0 0 0 1px #cfcbe3; }
+.a-chip.is-on { background: var(--ink); color: #fff; box-shadow: none; }
+.a-chip.is-on span { color: #bdb9d9; }
+.a-wall { display: grid; gap: 20px; grid-template-columns: minmax(0, 1fr); }
+@media (min-width: 768px) { .a-wall { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (min-width: 1100px) { .a-wall { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 24px; } }
+.a-card { position: relative; display: flex; flex-direction: column; min-width: 0; background: #fff; border-radius: 22px; padding: 24px 22px 20px; transition: transform .2s cubic-bezier(.2,.7,.2,1), box-shadow .2s; }
+@media (min-width: 768px) { .a-card { padding: 28px 30px 22px; } }
+.a-card:hover { transform: translateY(-2px); box-shadow: 0 18px 40px rgba(26,16,64,.08); }
+.a-card[hidden] { display: none; }
+.a-card-title { font-family: var(--heading); font-weight: 500; font-size: 24px; line-height: 1.1; letter-spacing: -0.025em; margin-top: 18px; text-wrap: balance; }
+.a-card-paper { font-size: 14px; line-height: 1.45; color: var(--muted); margin-top: 10px; text-wrap: pretty; }
+.a-cover { margin-top: auto; padding-top: 28px; }
+.a-cap { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; padding-top: 14px; border-top: 1px solid var(--line); font-size: 12.5px; color: var(--quiet); }
+.a-chart { height: 184px; display: flex; flex-direction: column; justify-content: center; margin-top: 8px; }
+.a-chart > div { width: 100%; }
+.a-key { display: flex; gap: 14px; flex-wrap: wrap; font-size: 12.5px; color: var(--muted); }
+.a-key i { display: inline-block; width: 8px; height: 8px; border-radius: 99px; margin-right: 5px; vertical-align: 0; }
+.a-card-foot { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-top: 16px; font-size: 13.5px; color: var(--quiet); }
+.a-card-foot .link { font-size: 14px; }
+
+/* how a paper is made */
+.a-steps { display: grid; gap: 40px; grid-template-columns: minmax(0, 1fr); }
+@media (min-width: 1100px) { .a-steps { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 24px; } }
+.a-step { display: flex; flex-direction: column; min-width: 0; }
+.a-step-top { display: flex; align-items: center; gap: 12px; height: 14px; }
+.a-node { width: 14px; height: 14px; border-radius: 99px; background: #fff; box-shadow: inset 0 0 0 3px var(--ind); flex-shrink: 0; }
+.a-step:last-child .a-node { background: var(--ind); }
+.a-step-top i { flex: 1; height: 1px; background: #cfcbe3; position: relative; }
+.a-step-top i::after { content: ""; position: absolute; right: 0; top: -4px; border: 4.5px solid transparent; border-left: 7px solid #cfcbe3; border-right: 0; }
+.a-step:last-child .a-step-top i { background: none; border-top: 1px dashed #cfcbe3; height: 0; }
+.a-step:last-child .a-step-top i::after { display: none; }
+.a-step h3 { font-family: var(--heading); font-weight: 500; font-size: 26px; letter-spacing: -0.025em; margin-top: 22px; }
+.a-step > p { font-size: 15.5px; line-height: 1.5; color: var(--body); margin-top: 10px; text-wrap: pretty; min-height: 0; }
+@media (min-width: 1100px) { .a-step > p { min-height: 4.5em; } }
+.a-art { margin-top: 22px; flex: 1; background: var(--warm); border-radius: 18px; padding: 20px; display: flex; flex-direction: column; min-height: 236px; }
+.a-art-h { display: flex; justify-content: space-between; gap: 8px; font-size: 12.5px; color: var(--quiet); }
+.a-art-h b { font-weight: 500; color: var(--ink); }
+.a-eng { margin-top: 16px; display: flex; flex-direction: column; gap: 13px; }
+.a-eng div { display: grid; grid-template-columns: 1fr auto; row-gap: 6px; font-size: 13.5px; }
+.a-eng div span:nth-child(2) { font-weight: 500; }
+.a-eng div i { grid-column: 1 / -1; height: 10px; border-radius: 99px; background: #e3e0f6; position: relative; overflow: hidden; }
+.a-eng div i b { position: absolute; inset: 0 auto 0 0; border-radius: 99px; background: var(--lav); }
+.a-eng div:first-child i b { background: var(--chart); }
+.a-art-total { margin-top: auto; padding-top: 14px; border-top: 1px solid #e4e2ee; display: flex; justify-content: space-between; font-size: 13px; color: var(--muted); }
+.a-art-total b { font-family: var(--heading); font-weight: 500; font-size: 20px; color: var(--ink); letter-spacing: -0.03em; }
+.a-mini { background: #fff; border-radius: 12px; padding: 14px 14px 12px; margin-top: 14px; box-shadow: 0 1px 2px rgba(26,16,64,.05), 0 10px 24px rgba(26,16,64,.06); }
+.a-mini .t { font-family: var(--heading); font-weight: 500; font-size: 17px; line-height: 1.1; letter-spacing: -0.02em; margin-top: 8px; }
+.a-mini .by { display: flex; align-items: center; gap: 7px; font-size: 12px; color: var(--muted); margin-top: 10px; }
+.a-mini .by img { width: 20px; height: 20px; border-radius: 99px; }
+.a-mini-parts { display: flex; flex-wrap: wrap; gap: 4px 10px; font-size: 12.5px; color: var(--ind); font-weight: 500; margin-top: 12px; }
+.a-ver { margin-top: 14px; display: flex; flex-direction: column; gap: 8px; }
+.a-ver div { border-radius: 12px; padding: 12px 14px; font-size: 13px; color: var(--muted); }
+.a-ver div b { display: block; font-size: 13.5px; font-weight: 500; color: var(--ink); margin-bottom: 2px; }
+.a-ver .is-now { background: #fff; box-shadow: 0 1px 2px rgba(26,16,64,.05), 0 10px 24px rgba(26,16,64,.06); }
+.a-ver .is-next { box-shadow: inset 0 0 0 1px #d8d5e6; border: 0; background-image: none; outline: 1px dashed #bdb8d6; outline-offset: -1px; box-shadow: none; }
+.a-quote { margin-top: auto; padding-top: 14px; font-size: 13px; color: var(--muted); border-top: 1px solid #e4e2ee; }
+.a-loop { margin-top: 18px; display: none; }
+@media (min-width: 1100px) { .a-loop { display: block; } }
+
+/* who writes them */
+.a-people { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 32px 16px; }
+@media (min-width: 900px) { .a-people { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 24px; } }
+.a-person img { width: 100%; height: auto; aspect-ratio: 306 / 372; object-fit: cover; object-position: 50% 20%; border-radius: 18px; }
+.a-person h3 { font-family: var(--heading); font-weight: 500; font-size: 21px; letter-spacing: -0.02em; margin-top: 16px; }
+.a-person .role { font-size: 14px; color: var(--muted); margin-top: 3px; }
+.a-person .does { display: flex; gap: 8px; align-items: flex-start; margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--line); font-size: 14px; line-height: 1.45; color: var(--body); }
+.a-person .does::before { content: ""; width: 7px; height: 7px; border-radius: 99px; background: var(--lav); flex-shrink: 0; margin-top: 6px; }
+.a-person.is-author .does { color: var(--ink); font-weight: 500; }
+.a-person.is-author .does::before { background: var(--ind); }
+.a-person .papers { margin-top: 12px; display: flex; flex-direction: column; }
+.a-person .papers a { display: flex; justify-content: space-between; gap: 10px; padding: 8px 0; border-top: 1px solid var(--line); font-size: 13.5px; color: var(--body); }
+.a-person .papers a span:last-child { color: var(--quiet); white-space: nowrap; }
+
+/* tablet and phone */
+@media (max-width: 1099px) {
+  .a-hero-grid { display: flex; flex-direction: column; gap: 0; }
+  .a-hero-copy { display: contents; }
+  .a-feat { order: 5; margin-top: 40px; }
+  .a-latest { order: 6; }
+  .a-step-top i { display: none; }
+  .a-art { min-height: 0; }
+}
+@media (max-width: 767px) {
+  .a-filter { flex-wrap: nowrap; overflow-x: auto; margin-inline: calc(-1 * var(--gut)); padding-inline: var(--gut); scrollbar-width: none; }
+  .a-chip { flex-shrink: 0; }
+  .a-chart { height: auto; padding: 16px 0 4px; }
+}
+
+/* closing */
+.closing-bg { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: 50% 0; }
+.closing .wrap { position: relative; }
+.closing .h2 .is-soft { color: #b9b4ff; }
+.closing .eyebrow { color: #d9d6ff; --dot: #fff; margin-bottom: 20px; }
+.cal-month { display: flex; justify-content: space-between; align-items: center; font-size: 15px; font-weight: 500; padding: 4px 2px 14px; }
+.cal-month span { color: var(--quiet); font-size: 18px; letter-spacing: 8px; }
+.cal-dow { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; font-size: 12px; color: var(--quiet); text-align: center; margin-bottom: 6px; }
+.cal-foot { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-top: 18px; padding-top: 16px; border-top: 1px solid var(--line); font-size: 13.5px; color: var(--muted); }
+.cal-who { display: flex; align-items: center; gap: 10px; }
+.cal-who img { width: 34px; height: 34px; border-radius: 99px; }
+.cal-who b { display: block; font-size: 14px; font-weight: 500; color: var(--ink); }
+.foot-cols p { max-width: 300px; line-height: 1.55; }
+</style>
+</head>
+<body>
+
+<section data-paper-name="A hub · header"><header class="nav"><div class="wrap nav-in"><a class="nav-logo"><img src="shared/img/wordmark-indigo.svg" alt="LoudFace"></a><nav class="nav-links"><a>Services</a><a>Industries</a><a>Case studies</a><a class="is-on">Research</a><a>Blog</a><a>Pricing</a><a>About</a></nav><a class="btn is-ink nav-cta">Book a strategy call</a></div></header></section>
+
+<section data-paper-name="A hub · hero" class="is-white a-hero">
+  <div class="wrap a-hero-grid">
+    <div class="a-hero-copy">
+      <p class="eyebrow">LoudFace Research</p>
+      <h1 class="h1">Research.</h1>
+      <p class="lede">What ChatGPT, Perplexity and Google actually cite and recommend for B2B software, measured on live data. Every paper states its finding, shows the chart and publishes its method.</p>
+      <div class="a-facts" id="facts"></div>
+      <div class="a-latest"><p>Latest</p><div id="latest"></div></div>
+    </div>
+    <article class="a-feat" id="feat"></article>
+  </div>
+</section>
+
+<section data-paper-name="A hub · the wall" class="sec is-warm">
+  <div class="wrap">
+    <div class="head">
+      <div>
+        <p class="eyebrow">All papers</p>
+        <h2 class="h2" style="margin-top:20px">The finding is the title. <span class="ghost">The chart is the cover.</span></h2>
+      </div>
+      <p>Studies, indexes and reports on how AI engines and Google treat B2B software, newest first. Each card is the paper's lead chart, drawn from its published numbers.</p>
+    </div>
+    <div class="a-filter" id="filter" role="group" aria-label="Filter by series"></div>
+    <div class="a-wall" id="wall"></div>
+  </div>
+</section>
+
+<section data-paper-name="A hub · how a paper is made" class="sec is-white">
+  <div class="wrap">
+    <div class="head">
+      <div>
+        <p class="eyebrow">How a paper is made</p>
+        <h2 class="h2" style="margin-top:20px">From a logged answer to a paper. <span class="ghost">Then run again.</span></h2>
+      </div>
+      <p>Shown on the citation benchmark, our largest dataset: 23,545 conversations and 160,240 citations from five live B2B SaaS projects, across three engines.</p>
+    </div>
+    <ol class="a-steps">
+      <li class="a-step">
+        <div class="a-step-top"><span class="a-node"></span><i></i></div>
+        <h3>Collect</h3>
+        <p>Every link an AI engine surfaced inside an answer, logged in Peec AI for 30 days.</p>
+        <div class="a-art">
+          <div class="a-art-h"><b>Citations by engine</b><span>30 days to 1 Jun 2026</span></div>
+          <div class="a-eng" id="eng"></div>
+          <div class="a-art-total"><span>From 23,545 conversations</span><b>160,240</b></div>
+        </div>
+      </li>
+      <li class="a-step">
+        <div class="a-step-top"><span class="a-node"></span><i></i></div>
+        <h3>Check</h3>
+        <p>Pooled totals favour big projects, so each finding is checked again project by project.</p>
+        <div class="a-art">
+          <div class="a-art-h"><b>Corporate share, per project</b><span>5 projects</span></div>
+          <div data-a-chart="range" style="margin-top:18px"></div>
+          <div class="a-art-total"><span>Top source type in every project</span><b>5 of 5</b></div>
+        </div>
+      </li>
+      <li class="a-step">
+        <div class="a-step-top"><span class="a-node"></span><i></i></div>
+        <h3>Publish</h3>
+        <p>The finding is the title. The chart, method, limitations and raw data ship with it.</p>
+        <div class="a-art">
+          <div class="a-art-h"><b>The paper</b><span>Benchmark · 1 Jun 2026</span></div>
+          <div class="a-mini">
+            <div class="t">Company websites win half of all AI citations</div>
+            <div data-a-chart="mini" style="margin-top:12px"></div>
+            <div class="by"><img src="shared/img/arnel-bukva-v3.png" alt="">Arnel Bukva</div>
+          </div>
+          <div class="a-mini-parts"><span>Method</span><span>Limitations</span><span>Data (CSV)</span></div>
+        </div>
+      </li>
+      <li class="a-step">
+        <div class="a-step-top"><span class="a-node"></span><i></i></div>
+        <h3>Re-run</h3>
+        <p>Engines change what they cite. A re-run is published as a new version, and the old one points to it.</p>
+        <div class="a-art">
+          <div class="a-art-h"><b>Versions</b><span>Citation benchmark</span></div>
+          <div class="a-ver">
+            <div class="is-now"><b>Version 1 · 1 Jun 2026</b>30-day window, 5 projects, 3 engines</div>
+            <div class="is-next"><b>Version 2</b>Same projects and method, new window</div>
+          </div>
+          <p class="a-quote">“A number true in May is a hypothesis in August until you measure again.”</p>
+        </div>
+      </li>
+    </ol>
+    <div class="a-loop" data-a-chart="loop"></div>
+  </div>
+</section>
+
+<section data-paper-name="A hub · who writes them" class="sec is-warm">
+  <div class="wrap">
+    <div class="head">
+      <div>
+        <p class="eyebrow">Who writes them</p>
+        <h2 class="h2" style="margin-top:20px">One byline on every paper. <span class="ghost">The leads who run the accounts.</span></h2>
+      </div>
+      <p>Arnel Bukva writes and signs each paper. The citation benchmark pools five live projects LoudFace runs, the same accounts our leads work on every week.</p>
+    </div>
+    <div class="a-people">
+      <div class="a-person is-author">
+        <img src="shared/img/arnel-bukva-v3.jpg" alt="Arnel Bukva">
+        <h3>Arnel Bukva</h3>
+        <p class="role">Founder and Head of Growth</p>
+        <p class="does" id="author-count">Author of all 12 papers</p>
+        <div class="papers" id="author-papers"></div>
+      </div>
+      <div class="a-person">
+        <img src="shared/img/tamara-pavlovic-v3.jpg" alt="Tamara Pavlovic">
+        <h3>Tamara Pavlovic</h3>
+        <p class="role">Lead SEO, AEO &amp; GEO Specialist</p>
+        <p class="does">Runs client accounts end to end, from Montblanc to seed-stage SaaS</p>
+      </div>
+      <div class="a-person">
+        <img src="shared/img/andrea-van-wyk-v5.jpg" alt="Andrea Van Wyk">
+        <h3>Andrea Van Wyk</h3>
+        <p class="role">Lead SEO, AEO &amp; GEO Specialist</p>
+        <p class="does">Runs client accounts end to end, with a sharp eye for positioning and page copy</p>
+      </div>
+      <div class="a-person">
+        <img src="shared/img/abhay-tyagi-v3.jpg" alt="Abhay Tyagi">
+        <h3>Abhay Tyagi</h3>
+        <p class="role">Lead SEO, AEO &amp; GEO Specialist</p>
+        <p class="does">Six-plus years in organic search, now running accounts across SEO, AEO and GEO</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section data-paper-name="A hub · closing" class="closing">
+  <img class="closing-bg" src="shared/img/closing-terrain-1280.webp" alt="">
+  <div class="wrap closing-in">
+    <div>
+      <p class="eyebrow">A 30-minute strategy call</p>
+      <h2 class="h2">Find out where AI answers <span class="is-soft">put you today.</span></h2>
+      <p>Your visibility in ChatGPT, Perplexity and Google AI Overviews now, the sources the answers in your category lean on, and what we would do first, with a written scope within 48 hours.</p>
+    </div>
+    <div class="cal">
+      <div class="cal-head"><span>Book a strategy call</span><span style="color:var(--quiet);font-weight:400">30 min · video</span></div>
+      <div class="cal-month">November 2026 <span>‹ ›</span></div>
+      <div class="cal-dow"><span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span><span>Sun</span></div>
+      <div class="cal-grid" id="cal"></div>
+      <div class="cal-foot"><div class="cal-who"><img src="shared/img/arnel-bukva-v3.png" alt=""><div><b>Arnel Bukva</b>Founder and Head of Growth</div></div><span>Thu 5 Nov</span></div>
+    </div>
+  </div>
+</section>
+
+<section data-paper-name="A hub · footer" class="foot">
+  <div class="wrap">
+    <div class="foot-cols">
+      <div><b>LoudFace</b><p>Websites, search and AI answers for B2B SaaS and fintech teams. One team, one report, one set of numbers.</p></div>
+      <div><b>Services</b><ul><li>AI answers (AEO and GEO)</li><li>SEO</li><li>Design</li><li>Conversion</li></ul></div>
+      <div><b>Company</b><ul><li>Case studies</li><li>Methodology</li><li>About</li><li>Pricing</li><li>Blog</li><li>Careers</li></ul></div>
+      <div><b>Research</b><ul><li>All papers</li><li>AI Visibility Index</li><li>State of B2B SaaS</li><li>AI search behaviour</li><li>Measurement</li></ul></div>
+      <div><b>Legal</b><ul><li>Privacy</li><li>Terms</li><li>Cookies</li><li>© 2026 LoudFace</li></ul></div>
+    </div>
+    <div class="foot-word"><img src="shared/img/wordmark-indigo.svg" alt="LoudFace"></div>
+  </div>
+</section>
+
+<script src="shared/research.js"></script>
+<script>
+/* A · Findings wall: the hub's own parts. Numbers come from STUDIES and BENCH only. */
+const A_CAP = {
+  'seo-time': '336 new pages, how far each got by day 28',
+  'state-seo': '180 B2B software searches, 24 Oct 2026',
+  'state-content': 'Ranked lists’ share on one B2B blog',
+  'state-ai': 'Weekly top agency, where all three engines named one',
+  'sov': 'Leader under each formula, per engine',
+  'agree': 'Share of 4,235 agency names',
+  'hr': 'Times named, of 36 answers',
+  'devtools': 'ChatGPT’s first pick, 6 of 12 categories',
+  'cyber': 'Score of 24, ChatGPT and Google top 10',
+  'fintech': 'Visibility by engine (%), 5 of 10 vendors',
+  'gap': 'Of 90 questions, where the top agency scores',
+  'bench': 'Share of 160,240 citations, by source type',
+};
+const A_KEY3 = `<span class="a-key" style="margin-top:14px"><span><i style="background:#4f39f6"></i>ChatGPT</span><span><i style="background:#f59a7b"></i>AI Overviews</span><span><i style="background:#9a8ee8"></i>Perplexity</span></span>`;
+const A_SOV_KEY = `<span class="a-key" style="margin-top:12px"><span><i style="background:#c9bdf5"></i>Omniscient</span><span><i style="background:#4f39f6"></i>LoudFace</span><span><i style="background:#f3d6c9"></i>Discovered Labs</span></span>`;
+const byDate = [...STUDIES].sort((a, b) => b.date.localeCompare(a.date));
+const SERIES = ['AI Visibility Index', 'State of B2B SaaS', 'AI search behaviour', 'Measurement', 'Search'];
+
+function aCard(s) {
+  const chart = s.id === 'sov' ? `<div data-a-chart="matrix"></div>` : `<div data-chart="${s.id}" data-size="${s.chart.type === 'funnel' ? 'md' : 'sm'}"></div>`;
+  const key = s.id === 'fintech' ? A_KEY3 : s.id === 'sov' ? A_SOV_KEY : '';
+  return `<article class="a-card" data-series="${s.series}">
+    <div class="a-meta"><b>${s.kind}</b><span>${fmtDate(s.date)}</span></div>
+    <h3 class="a-card-title">${s.finding}</h3>
+    <p class="a-card-paper">${s.title}</p>
+    <div class="a-cover"><div class="a-cap"><span>${A_CAP[s.id]}</span></div><div class="a-chart">${chart}${key}</div></div>
+    <div class="a-card-foot"><span>${s.n}</span><a class="link">Read <span class="a-arrow">→</span></a></div>
+  </article>`;
+}
+
+// hero facts, measured from the data
+const dates = STUDIES.map((s) => s.date).sort();
+document.getElementById('facts').innerHTML =
+  `<div class="a-fact"><b>${STUDIES.length}</b><span>papers since ${new Date(dates[0] + 'T12:00:00Z').toLocaleDateString('en-GB', { month: 'long', year: 'numeric' })}</span></div>
+   <div class="a-fact"><b>${BENCH.total.toLocaleString('en-US')}</b><span>citations in the largest dataset</span></div>`;
+
+document.getElementById('latest').innerHTML = byDate.slice(0, 3).map((s) => `<a><b>${s.finding}</b><span>${fmtDate(s.date).replace(/ 2026$/, '')}</span></a>`).join('');
+
+// the featured paper
+const feat = STUDIES.find((s) => s.id === 'agree');
+document.getElementById('feat').innerHTML = `
+  <div class="a-meta"><b>Featured · ${feat.kind}</b><span>${fmtDate(feat.date)}</span></div>
+  <h2 class="a-feat-title">${feat.finding}</h2>
+  <p class="a-feat-paper">${feat.title}</p>
+  <div class="a-sheet">
+    <div class="a-sheet-head"><b>Agencies named by ChatGPT, Perplexity and AI Overviews on the same day</b><span>Figure 1</span></div>
+    <div data-a-chart="feature"></div>
+    <p class="a-src">${feat.abstract} Source: ${feat.n}, LoudFace analysis.</p>
+  </div>
+  <div class="a-feat-foot"><div class="byline"><img src="shared/img/arnel-bukva-v3.png" alt=""><div><b>Arnel Bukva</b><span>Founder and Head of Growth</span></div></div><a class="btn is-ink">Read the paper <span class="a-arrow">→</span></a></div>`;
+
+// the wall and its filter
+const wall = document.getElementById('wall');
+wall.innerHTML = byDate.map(aCard).join('');
+const filter = document.getElementById('filter');
+filter.innerHTML = `<button class="a-chip is-on" data-s="">All papers <span>${STUDIES.length}</span></button>` +
+  SERIES.map((n) => `<button class="a-chip" data-s="${n}">${n} <span>${STUDIES.filter((s) => s.series === n).length}</span></button>`).join('');
+filter.addEventListener('click', (e) => {
+  const b = e.target.closest('.a-chip'); if (!b) return;
+  filter.querySelectorAll('.a-chip').forEach((x) => x.classList.toggle('is-on', x === b));
+  wall.querySelectorAll('.a-card').forEach((c) => { c.hidden = !!b.dataset.s && c.dataset.series !== b.dataset.s; });
+  aRedraw();
+});
+
+// the author's latest papers
+document.getElementById('author-papers').innerHTML = byDate.slice(0, 3)
+  .map((s) => `<a><span>${s.title.replace(/ \(2026\)$/, '')}</span><span>${fmtDate(s.date).replace(/ 2026$/, '')}</span></a>`).join('');
+document.getElementById('author-count').textContent = `Author of all ${STUDIES.length} papers`;
+
+// collect: citations by engine
+const engMax = Math.max(...BENCH.engines_mix.map((e) => e[2]));
+document.getElementById('eng').innerHTML = BENCH.engines_mix.map((e) =>
+  `<div><span>${e[0]}</span><span>${e[2].toLocaleString('en-US')}</span><i><b style="width:${(e[2] / engMax) * 100}%"></b></i></div>`).join('');
+
+// the booking card: November 2026 starts on a Sunday
+const open = [4, 5, 6, 10, 11, 12, 13, 17, 18, 19];
+document.getElementById('cal').innerHTML = Array.from({ length: 6 }, () => '<span></span>').join('') +
+  Array.from({ length: 30 }, (_, i) => i + 1).map((d) => `<span class="${d === 5 ? 'is-on' : open.includes(d) ? 'is-open' : ''}">${d}</span>`).join('');
+
+/* ---------------------------------------------------------------- drawings (same marks as research.js) */
+const W = (el) => Math.round(el.getBoundingClientRect().width) || 300;
+const svg = (w, h, body, label = '') => `<svg width="${w}" height="${Math.ceil(h)}" viewBox="0 0 ${w} ${Math.ceil(h)}" font-family="Satoshi, Helvetica, Arial, sans-serif" role="img" aria-label="${esc(label)}">${body}</svg>`;
+const A_DRAW = {
+  // the featured paper's chart, at hero size: label and count above, the bar below, the share at the right
+  feature(el) {
+    const w = W(el), c = feat.chart, rh = w < 500 ? 70 : 78, bh = w < 500 ? 16 : 22, vs = w < 500 ? 22 : 30;
+    const body = c.rows.map((r, i) => { const y = i * rh, x = (r[1] / c.max) * w;
+      return `<text x="0" y="${y + 20}" font-size="15" fill="${C.ink}" font-weight="500">${esc(r[0])}<tspan fill="${C.muted}" font-weight="400" font-size="13.5">  ·  ${r[2]} names</tspan></text>
+        <text x="${w}" y="${y + 24}" font-size="${vs}" font-family="Neue Montreal, Helvetica, Arial" font-weight="500" letter-spacing="-0.6" text-anchor="end" fill="${i === 0 ? C.ind : C.ink}">${r[1].toFixed(1)}%</text>
+        <rect x="0" y="${y + 36}" width="${w}" height="${bh}" rx="${bh / 2}" fill="${C.lav2}"/>
+        <rect x="0" y="${y + 36}" width="${Math.max(bh, x)}" height="${bh}" rx="${bh / 2}" fill="${i === 0 ? C.ind : C.lav}"/>`; }).join('');
+    return svg(w, c.rows.length * rh - (rh - 36 - bh) + 2, body, feat.finding);
+  },
+  // share-of-voice leaders with their row labels (the shared small matrix has none)
+  matrix(el) {
+    const st = STUDIES.find((s) => s.id === 'sov'), c = st.chart, w = W(el), lab = w < 330 ? 92 : 108, top = 20, rh = 34, fs = 11.5, cw = (w - lab) / 3;
+    const fill = (n) => (n.startsWith('LoudFace') ? C.ind : n.startsWith('Omniscient') ? C.lav : '#f3d6c9');
+    const short = ['ChatGPT', 'Perplexity', 'AI Overviews'];
+    const head = short.map((h, i) => `<text x="${lab + i * cw + cw / 2}" y="12" font-size="11" text-anchor="middle" fill="${C.muted}">${h}</text>`).join('');
+    const rows = c.rows.map((r, j) => { const y = top + j * rh;
+      return `<text x="0" y="${y + rh / 2 + 4}" font-size="${fs}" fill="${C.body}">${esc(r[0])}</text>` + r[1].map((v, i) =>
+        `<rect x="${lab + i * cw + 2}" y="${y + 2}" width="${cw - 4}" height="${rh - 4}" rx="6" fill="${fill(v)}"/>
+         <text x="${lab + i * cw + cw / 2}" y="${y + rh / 2 + 4}" font-size="${fs}" font-weight="500" text-anchor="middle" fill="${v.startsWith('LoudFace') ? '#fff' : C.ink}">${esc(v.split(' ')[0])}</text>`).join(''); }).join('');
+    return svg(w, top + c.rows.length * rh, head + rows, st.finding);
+  },
+  // the per-project check: corporate share ranged 41.6% to 66.9% across five projects; pooled 50.7%
+  range(el) {
+    const w = W(el), lo = 30, hi = 80, pad = 16, X = (v) => pad + ((v - lo) / (hi - lo)) * (w - 2 * pad), yb = 40, ya = 92;
+    const ticks = [30, 40, 50, 60, 70, 80].map((t) => `<line x1="${X(t)}" x2="${X(t)}" y1="${ya}" y2="${ya + 5}" stroke="#bdb8d6"/><text x="${X(t)}" y="${ya + 20}" font-size="11.5" text-anchor="middle" fill="${C.muted}">${t}%</text>`).join('');
+    return svg(w, ya + 26, `<text x="${X(50.7)}" y="12" font-size="12" font-weight="500" text-anchor="middle" fill="${C.ind}">Pooled 50.7%</text>
+      <line x1="${X(50.7)}" x2="${X(50.7)}" y1="18" y2="${yb - 12}" stroke="${C.ind}" stroke-width="1"/>
+      <rect x="${X(41.6)}" y="${yb - 10}" width="${X(66.9) - X(41.6)}" height="20" rx="10" fill="${C.lav}"/>
+      <line x1="${X(50.7)}" x2="${X(50.7)}" y1="${yb - 14}" y2="${yb + 14}" stroke="${C.ind}" stroke-width="3" stroke-linecap="round"/>
+      <text x="${X(41.6)}" y="${yb + 30}" font-size="12" text-anchor="middle" fill="${C.body}">41.6%</text>
+      <text x="${X(66.9)}" y="${yb + 30}" font-size="12" text-anchor="middle" fill="${C.body}">66.9%</text>
+      <line x1="${X(lo)}" x2="${X(hi)}" y1="${ya}" y2="${ya}" stroke="#d8d5e6"/>${ticks}`, 'Corporate share per project, 41.6% to 66.9%; pooled 50.7%');
+  },
+  // the paper's cover chart, in miniature
+  mini(el) {
+    const w = W(el), rows = STUDIES.find((s) => s.id === 'bench').chart.rows.slice(0, 3), rh = 20, lab = 64;
+    return svg(w, rows.length * rh, rows.map((r, i) => `<text x="0" y="${i * rh + 13}" font-size="12" fill="${C.body}">${r[0]}</text>
+      <rect x="${lab}" y="${i * rh + 5}" width="${w - lab - 40}" height="8" rx="4" fill="${C.lav2}"/><rect x="${lab}" y="${i * rh + 5}" width="${(r[1] / 60) * (w - lab - 40)}" height="8" rx="4" fill="${i ? C.lav : C.ind}"/>
+      <text x="${w}" y="${i * rh + 13}" font-size="12" font-weight="500" text-anchor="end" fill="${C.ink}">${r[1]}%</text>`).join(''), 'Corporate 50.7%, UGC 13.2%, Editorial 11.1%');
+  },
+  // the re-run loop: from the last step back to the first
+  loop(el) {
+    const w = W(el), steps = [...document.querySelectorAll('.a-step')].map((s) => s.getBoundingClientRect()), x0 = el.getBoundingClientRect().left;
+    const a = steps[0].left - x0 + steps[0].width / 2, b = steps[3].left - x0 + steps[3].width / 2, y = 34, r = 14, mid = (a + b) / 2;
+    return svg(w, 50, `<path d="M ${b} 0 V ${y - r} Q ${b} ${y} ${b - r} ${y} H ${a + r} Q ${a} ${y} ${a} ${y - r} V 8" fill="none" stroke="#bdb8d6" stroke-width="1.5" stroke-dasharray="5 5"/>
+      <path d="M ${a - 5} 10 L ${a} 2 L ${a + 5} 10" fill="none" stroke="#bdb8d6" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+      <rect x="${mid - 150}" y="${y - 12}" width="300" height="24" fill="#fff"/>
+      <text x="${mid}" y="${y + 5}" font-size="14" text-anchor="middle" fill="${C.muted}">Re-run with the same method, as a new version</text>`, 'The method loops: a re-run starts again at Collect');
+  },
+};
+function aDraw() { document.querySelectorAll('[data-a-chart]').forEach((el) => { const f = A_DRAW[el.dataset.aChart]; if (f) el.innerHTML = f(el); }); }
+
+/* crosshair marks wherever cell corners meet (DESIGN.md §2.5) */
+function aCross() {
+  document.querySelectorAll('.cells').forEach((g) => {
+    g.querySelectorAll('.cross').forEach((x) => x.remove());
+    const o = g.getBoundingClientRect(), pts = new Set();
+    [...g.children].forEach((c) => { const r = c.getBoundingClientRect(); [[r.left, r.top], [r.right, r.top], [r.left, r.bottom], [r.right, r.bottom]].forEach(([x, y]) => pts.add(`${Math.round(x - o.left)},${Math.round(y - o.top)}`)); });
+    pts.forEach((p) => { const [x, y] = p.split(',').map(Number); const m = document.createElement('span'); m.className = 'cross'; m.style.left = `${x - 5.5}px`; m.style.top = `${y - 5.5}px`; g.appendChild(m); });
+  });
+}
+function aRedraw() { document.querySelectorAll('[data-chart]').forEach((el) => { el.innerHTML = ''; }); drawAll(); aDraw(); aCross(); }
+window.addEventListener('load', () => document.fonts.ready.then(() => { aDraw(); aCross(); }));
+let aT; window.addEventListener('resize', () => { clearTimeout(aT); aT = setTimeout(aRedraw, 120); });
+</script>
+<script src="shared/freeze-late.js"></script>
+</body>
+</html>

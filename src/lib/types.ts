@@ -3,6 +3,14 @@
  * Centralized TypeScript interfaces for CMS data
  */
 
+import type {
+  PaperKind,
+  ResearchFigure,
+  ResearchNumber,
+  ResearchVersion,
+  SeriesKey,
+} from '@/app/research-v11/contract';
+
 /**
  * Image field structure from CMS
  * Shape: { url, alt } — used by all components that render CMS images
@@ -247,11 +255,32 @@ export interface ResearchDataFile {
  * `content` on purpose: they are what makes a study citable rather than
  * quotable, and keeping them as fields means the Studio asks for them every
  * time instead of relying on an author remembering a heading.
+ *
+ * `name` is the finding (the H1 and every card title); `paper-title` is the
+ * formal title. Figures arrive with `spec` already parsed into a ChartSpec:
+ * cms-data.ts throws, naming the paper and figure, when a stored spec is bad.
+ * The card read (the hub, the related strip) carries `lead-figure` instead of
+ * `figures`, and none of the body fields.
  */
 export interface ResearchStudy {
   id: string;
+  /** The finding: H1 and card title. */
   name: string;
   slug: string;
+  "paper-title"?: string;
+  series?: SeriesKey;
+  kind?: PaperKind;
+  "lead-number"?: ResearchNumber;
+  "key-numbers"?: ResearchNumber[];
+  /** Full read only. */
+  figures?: ResearchFigure[];
+  /** Card read only: the figure placed `lead`. */
+  "lead-figure"?: ResearchFigure;
+  "data-window"?: string;
+  engines?: string[];
+  versions?: ResearchVersion[];
+  /** The blog slug this paper replaced; that post is left out of every blog list. */
+  "moved-from-blog"?: string;
   "meta-title"?: string;
   "meta-description"?: string;
   thumbnail?: CmsImage;

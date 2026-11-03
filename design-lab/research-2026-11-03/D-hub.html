@@ -1,0 +1,297 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Research · LoudFace (D · Night lab)</title>
+<link rel="stylesheet" href="shared/base.css">
+<style>
+/* D · Night lab — the whole research section on a deep night ground; charts lit in white, lavender and one peach
+   accent. Graphite's authority (big type, hairline cards, figures given room) in LoudFace's palette.
+   Departs from DESIGN.md §2.3/§4 (white and warm grounds) on Arnel's instruction for this section only. */
+:root {
+  --night: #0b0a2e; --night-2: #121147; --night-3: #17165a; --navy: #030c5a; --deep: #04188f;
+  --n-ink: #ffffff; --n-body: #d3d0ee; --n-muted: #aaa5d6; --n-quiet: #918cc4;
+  --n-line: rgba(201,189,245,0.14); --n-line-2: rgba(201,189,245,0.24); --n-mark: rgba(201,189,245,0.5);
+}
+body { background: var(--night); color: var(--n-body); }
+.d-night { background: var(--night); }
+
+/* header, dark variant */
+.nav { border-bottom: 1px solid var(--n-line); }
+.nav-links { color: #e9e7fb; }
+.nav-links .is-on { color: #fff; box-shadow: inset 0 -1.5px 0 #c9bdf5; padding-bottom: 4px; margin-bottom: -5.5px; }
+.d-cta { background: #fff; color: var(--night); }
+
+/* type on night */
+.d-kicker { display: flex; align-items: center; gap: 10px; font-size: 14px; font-weight: 500; color: var(--n-muted); }
+.d-kicker::before { content: ""; width: 8px; height: 8px; border-radius: 99px; background: #c9bdf5; flex-shrink: 0; }
+.d-kicker.is-peach::before { background: #fcd68a; }
+.d-h2 { font-family: var(--heading); font-weight: 500; font-size: 36px; line-height: 1.03; letter-spacing: -0.037em; color: #fff; text-wrap: balance; }
+@media (min-width: 768px) { .d-h2 { font-size: 44px; } }
+@media (min-width: 1280px) { .d-h2 { font-size: 52px; } }
+.d-h2 .is-soft { color: #8f89c4; }
+.d-lede { font-size: 18px; line-height: 1.55; color: var(--n-body); text-wrap: pretty; }
+.d-link { display: inline-flex; align-items: center; gap: 8px; font-size: 15.5px; font-weight: 500; color: #fff; white-space: nowrap; }
+.d-link .d-arr { transition: transform .2s cubic-bezier(.2,.7,.2,1); }
+a:hover .d-arr { transform: translateX(3px); }
+
+/* hero */
+.d-hero { padding: 64px 0 0; }
+@media (min-width: 1280px) { .d-hero { padding: 104px 0 0; } }
+.d-hero-top { display: flex; flex-direction: column; gap: 28px; }
+@media (min-width: 1100px) { .d-hero-top { flex-direction: row; justify-content: space-between; align-items: flex-end; gap: 64px; } }
+.d-title { font-family: var(--heading); font-weight: 500; font-size: 84px; line-height: .9; letter-spacing: -0.055em; color: #fff; }
+@media (min-width: 768px) { .d-title { font-size: 136px; } }
+@media (min-width: 1280px) { .d-title { font-size: 184px; } }
+.d-hero-copy { max-width: 440px; padding-bottom: 14px; }
+.d-hero-copy .d-lede { font-size: 19px; color: #e4e1fa; }
+.d-facts { display: flex; gap: 36px; margin-top: 28px; padding-top: 22px; border-top: 1px solid var(--n-line-2); }
+.d-facts div b { display: block; font-family: var(--heading); font-weight: 500; font-size: 34px; line-height: 1; letter-spacing: -0.04em; color: #fff; }
+.d-facts div span { display: block; font-size: 14px; color: var(--n-muted); margin-top: 8px; }
+
+/* the featured paper: a lifted night panel holding the lit chart */
+.d-feat { margin-top: 64px; background: var(--night-2); border: 1px solid var(--n-line); display: flex; flex-direction: column; }
+@media (min-width: 1100px) { .d-feat { flex-direction: row; margin-top: 88px; } }
+.d-feat-copy { display: flex; flex-direction: column; padding: 28px 22px 8px; }
+@media (min-width: 768px) { .d-feat-copy { padding: 44px 44px 12px; } }
+@media (min-width: 1100px) { .d-feat-copy { width: 440px; flex-shrink: 0; padding: 48px 48px 44px; border-right: 1px solid var(--n-line); } }
+.d-meta { display: flex; justify-content: space-between; gap: 16px; font-size: 14px; color: var(--n-muted); }
+.d-meta b { font-weight: 500; color: #fff; }
+.d-feat-title { font-family: var(--heading); font-weight: 500; font-size: 36px; line-height: 1.02; letter-spacing: -0.04em; color: #fff; margin-top: 28px; text-wrap: balance; }
+@media (min-width: 768px) { .d-feat-title { font-size: 48px; } }
+.d-feat-copy .d-abs { font-size: 16.5px; line-height: 1.55; color: var(--n-body); margin-top: 22px; text-wrap: pretty; }
+.d-feat-paper { font-size: 14.5px; line-height: 1.45; color: var(--n-muted); margin-top: 18px; }
+.d-feat-foot { display: flex; flex-direction: column; gap: 24px; margin-top: 32px; }
+@media (min-width: 1100px) { .d-feat-foot { margin-top: auto; padding-top: 40px; } }
+.d-byline { display: flex; align-items: center; gap: 12px; }
+.d-byline img { width: 44px; height: 44px; border-radius: 99px; object-fit: cover; }
+.d-byline b { display: block; font-size: 15px; font-weight: 500; color: #fff; }
+.d-byline span { display: block; font-size: 13.5px; color: var(--n-muted); }
+.d-feat-btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; height: 50px; padding: 0 22px; border-radius: 999px; background: #fff; color: var(--night); font-size: 15.5px; font-weight: 500; align-self: flex-start; }
+.d-feat-chart { flex: 1; min-width: 0; padding: 8px 6px 18px; }
+@media (min-width: 768px) { .d-feat-chart { padding: 12px 20px 24px; } }
+@media (min-width: 1100px) { .d-feat-chart { padding: 46px 40px 30px 48px; } }
+
+/* the papers grid: hairline cards on night, each paper's own chart as its cover */
+.d-papers { padding: 104px 0 120px; }
+@media (min-width: 1280px) { .d-papers { padding: 136px 0 140px; } }
+.d-papers-head { display: flex; flex-direction: column; gap: 20px; margin-bottom: 36px; }
+@media (min-width: 1100px) { .d-papers-head { flex-direction: row; justify-content: space-between; align-items: flex-end; } }
+.d-series { display: flex; flex-wrap: wrap; gap: 6px 26px; font-size: 15px; font-weight: 500; color: var(--n-muted); }
+.d-series a { padding-bottom: 6px; cursor: pointer; white-space: nowrap; }
+@media (min-width: 1100px) { .d-series { flex-wrap: nowrap; flex-shrink: 0; gap: 26px; padding-bottom: 4px; } }
+.d-series a span { font-weight: 400; color: var(--n-quiet); margin-left: 4px; }
+.d-series a.is-on { color: #fff; box-shadow: inset 0 -1.5px 0 #c9bdf5; }
+.d-series a:hover { color: #fff; }
+.d-grid { display: flex; flex-wrap: wrap; border-top: 1px solid var(--n-line); border-left: 1px solid var(--n-line); }
+.d-card { position: relative; display: flex; flex-direction: column; width: 100%; min-width: 0; padding: 26px 22px 22px; border-right: 1px solid var(--n-line); border-bottom: 1px solid var(--n-line); transition: background-color .2s; }
+@media (min-width: 768px) { .d-card { width: 50%; padding: 32px 32px 26px; } }
+@media (min-width: 1100px) { .d-card { width: 33.3333%; } .d-card.is-wide { width: 66.6667%; } }
+.d-card:hover { background: rgba(201,189,245,0.04); }
+.d-card .d-meta { font-size: 13.5px; }
+.d-card-title { font-family: var(--heading); font-weight: 500; font-size: 23px; line-height: 1.14; letter-spacing: -0.022em; color: #fff; margin-top: 20px; text-wrap: balance; }
+@media (min-width: 768px) { .d-card-title { min-height: 79px; } }
+.d-card.is-wide .d-card-title { max-width: 560px; }
+.d-cover { margin-top: 26px; flex: 1; display: flex; flex-direction: column; justify-content: flex-end; }
+.d-card-foot { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; margin-top: 20px; padding-top: 16px; border-top: 1px solid var(--n-line); font-size: 13.5px; color: var(--n-muted); }
+.d-card-foot a { font-size: 14px; font-weight: 500; color: #fff; white-space: nowrap; }
+
+/* researchers: a navy band */
+.d-people-band { background: var(--navy); padding: 104px 0 112px; }
+@media (min-width: 1280px) { .d-people-band { padding: 128px 0 132px; } }
+.d-people-head { display: flex; flex-direction: column; gap: 20px; margin-bottom: 48px; }
+.d-people-head > p { font-size: 17px; line-height: 1.55; color: var(--n-body); max-width: 500px; }
+@media (min-width: 1100px) { .d-people-head { flex-direction: row; justify-content: space-between; align-items: flex-end; } }
+.d-people { display: flex; flex-wrap: wrap; gap: 32px 24px; }
+.d-person { width: calc(50% - 12px); min-width: 0; }
+@media (min-width: 1100px) { .d-person { width: calc(25% - 18px); } }
+.d-person img { width: 100%; aspect-ratio: 306 / 352; object-fit: cover; object-position: 50% 20%; background: #000; }
+.d-person h3 { font-family: var(--heading); font-weight: 500; font-size: 22px; letter-spacing: -0.02em; color: #fff; margin-top: 18px; }
+.d-person .role { font-size: 14.5px; color: #c9c4f0; margin-top: 4px; }
+.d-person .does { font-size: 15px; line-height: 1.5; color: var(--n-body); margin-top: 14px; padding-top: 14px; border-top: 1px solid rgba(201,189,245,0.2); }
+.d-person .papers { margin-top: 10px; }
+.d-person .papers a { display: block; font-size: 14px; line-height: 1.4; color: #fff; padding: 8px 0; border-bottom: 1px solid rgba(201,189,245,0.16); }
+
+/* closing (site's) and a night footer */
+.closing-bg { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: 50% 0; }
+.closing .wrap { position: relative; }
+.closing .h2 .is-soft { color: #b9b4ff; }
+.closing .eyebrow { color: #d9d6ff; --dot: #fff; margin-bottom: 20px; }
+.cal-month { display: flex; justify-content: space-between; align-items: center; font-size: 15px; font-weight: 500; padding: 4px 2px 14px; }
+.cal-month span { color: var(--quiet); font-size: 18px; letter-spacing: 8px; }
+.cal-dow { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; font-size: 12px; color: var(--quiet); text-align: center; margin-bottom: 6px; }
+.cal-foot { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-top: 18px; padding-top: 16px; border-top: 1px solid var(--line); font-size: 13.5px; color: var(--muted); }
+.cal-who { display: flex; align-items: center; gap: 10px; }
+.cal-who img { width: 34px; height: 34px; border-radius: 99px; }
+.cal-who b { display: block; font-size: 14px; font-weight: 500; color: var(--ink); }
+.d-foot { background: #070620; padding: 80px 0 40px; border-top: 1px solid var(--n-line); }
+.d-foot .foot-cols { color: var(--n-body); }
+.d-foot .foot-cols b { color: var(--n-quiet); }
+.d-foot .foot-cols p { max-width: 300px; line-height: 1.55; }
+.d-foot .foot-word { margin-top: 72px; opacity: .92; }
+</style>
+</head>
+<body>
+
+<section data-paper-name="D hub · header" class="d-night"><header class="nav"><div class="wrap nav-in"><a class="nav-logo"><img src="shared/img/wordmark-white.svg" alt="LoudFace"></a><nav class="nav-links"><a>Services</a><a>Industries</a><a>Case studies</a><a class="is-on">Research</a><a>Blog</a><a>Pricing</a><a>About</a></nav><a class="btn nav-cta d-cta">Book a strategy call</a></div></header></section>
+
+<section data-paper-name="D hub · hero" class="d-night d-hero">
+  <div class="wrap">
+    <div class="d-hero-top">
+      <h1 class="d-title">Research</h1>
+      <div class="d-hero-copy">
+        <p class="d-lede">What ChatGPT, Perplexity and Google actually cite and recommend for B2B software, measured on live data. Every paper states its finding, shows the chart and publishes its method.</p>
+        <div class="d-facts" id="facts"></div>
+      </div>
+    </div>
+    <article class="d-feat" id="feat"></article>
+  </div>
+</section>
+
+<section data-paper-name="D hub · papers" class="d-night d-papers">
+  <div class="wrap">
+    <div class="d-papers-head">
+      <div>
+        <p class="d-kicker">Every paper</p>
+        <h2 class="d-h2" style="margin-top:20px">The finding is the title. <span class="is-soft">The chart is the cover.</span></h2>
+      </div>
+      <nav class="d-series" id="series" aria-label="Series"></nav>
+    </div>
+    <div class="d-grid" id="grid"></div>
+  </div>
+</section>
+
+<section data-paper-name="D hub · researchers" class="d-people-band">
+  <div class="wrap">
+    <div class="d-people-head">
+      <div>
+        <p class="d-kicker">Researchers</p>
+        <h2 class="d-h2" style="margin-top:20px">One byline on every paper. <span class="is-soft" style="color:#9d97d8">The leads who run the accounts.</span></h2>
+      </div>
+      <p>Arnel Bukva writes and signs each paper. The citation benchmark pools five live projects LoudFace runs, the same accounts our leads work on every week.</p>
+    </div>
+    <div class="d-people">
+      <div class="d-person">
+        <img src="shared/img/arnel-bukva-v3.jpg" alt="Arnel Bukva">
+        <h3>Arnel Bukva</h3>
+        <p class="role">Founder and Head of Growth</p>
+        <p class="does" id="author-count">Author of all 12 papers</p>
+        <div class="papers" id="author-papers"></div>
+      </div>
+      <div class="d-person">
+        <img src="shared/img/tamara-pavlovic-v3.jpg" alt="Tamara Pavlovic">
+        <h3>Tamara Pavlovic</h3>
+        <p class="role">Lead SEO, AEO &amp; GEO Specialist</p>
+        <p class="does">Runs client accounts end to end, from Montblanc to seed-stage SaaS</p>
+      </div>
+      <div class="d-person">
+        <img src="shared/img/andrea-van-wyk-v5.jpg" alt="Andrea Van Wyk">
+        <h3>Andrea Van Wyk</h3>
+        <p class="role">Lead SEO, AEO &amp; GEO Specialist</p>
+        <p class="does">Runs client accounts end to end, with a sharp eye for positioning and page copy</p>
+      </div>
+      <div class="d-person">
+        <img src="shared/img/abhay-tyagi-v3.jpg" alt="Abhay Tyagi">
+        <h3>Abhay Tyagi</h3>
+        <p class="role">Lead SEO, AEO &amp; GEO Specialist</p>
+        <p class="does">Six-plus years in organic search, now running accounts across SEO, AEO and GEO</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section data-paper-name="D hub · closing" class="closing">
+  <img class="closing-bg" src="shared/img/closing-terrain-1280.webp" alt="">
+  <div class="wrap closing-in">
+    <div>
+      <p class="eyebrow">A 30-minute strategy call</p>
+      <h2 class="h2">Find out where AI answers <span class="is-soft">put you today.</span></h2>
+      <p>Your visibility in ChatGPT, Perplexity and Google AI Overviews now, the sources the answers in your category lean on, and what we would do first, with a written scope within 48 hours.</p>
+    </div>
+    <div class="cal">
+      <div class="cal-head"><span>Book a strategy call</span><span style="color:var(--quiet);font-weight:400">30 min · video</span></div>
+      <div class="cal-month">November 2026 <span>‹ ›</span></div>
+      <div class="cal-dow"><span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span><span>Sun</span></div>
+      <div class="cal-grid" id="cal"></div>
+      <div class="cal-foot"><div class="cal-who"><img src="shared/img/arnel-bukva-v3.png" alt=""><div><b>Arnel Bukva</b>Founder and Head of Growth</div></div><span>Thu 5 Nov</span></div>
+    </div>
+  </div>
+</section>
+
+<section data-paper-name="D hub · footer" class="d-foot">
+  <div class="wrap">
+    <div class="foot-cols">
+      <div><b>LoudFace</b><p>Websites, search and AI answers for B2B SaaS and fintech teams. One team, one report, one set of numbers.</p></div>
+      <div><b>Services</b><ul><li>AI answers (AEO and GEO)</li><li>SEO</li><li>Design</li><li>Conversion</li></ul></div>
+      <div><b>Company</b><ul><li>Case studies</li><li>Methodology</li><li>About</li><li>Pricing</li><li>Blog</li><li>Careers</li></ul></div>
+      <div><b>Research</b><ul><li>All papers</li><li>AI Visibility Index</li><li>State of B2B SaaS</li><li>AI search behaviour</li><li>Measurement</li></ul></div>
+      <div><b>Legal</b><ul><li>Privacy</li><li>Terms</li><li>Cookies</li><li>© 2026 LoudFace</li></ul></div>
+    </div>
+    <div class="foot-word"><img src="shared/img/wordmark-white.svg" alt="LoudFace"></div>
+  </div>
+</section>
+
+<script src="shared/research.js"></script>
+<script>
+/* D · Night lab hub. Every number comes from STUDIES and BENCH. */
+const byDate = [...STUDIES].sort((a, b) => b.date.localeCompare(a.date));
+const S = (id) => STUDIES.find((s) => s.id === id);
+const first = byDate[byDate.length - 1].date;
+const nSeries = new Set(STUDIES.map((s) => s.series)).size;
+
+document.getElementById('facts').innerHTML =
+  `<div><b>${STUDIES.length}</b><span>papers since ${new Date(first + 'T12:00:00Z').toLocaleDateString('en-GB', { month: 'long', year: 'numeric' })}</span></div>
+   <div><b>${BENCH.total.toLocaleString('en-US')}</b><span>citations in the largest dataset</span></div>
+   <div><b>${nSeries}</b><span>series</span></div>`;
+
+// the featured paper: the benchmark, the largest dataset
+const f = S('bench');
+document.getElementById('feat').innerHTML = `
+  <div class="d-feat-copy">
+    <div class="d-meta"><b>${f.kind}</b><span>${fmtDate(f.date)}</span></div>
+    <h2 class="d-feat-title">${f.finding}</h2>
+    <p class="d-abs">${f.abstract}</p>
+    <p class="d-feat-paper">${f.title}</p>
+    <div class="d-feat-foot">
+      <div class="d-byline"><img src="shared/img/arnel-bukva-v3.png" alt=""><div><b>Arnel Bukva</b><span>Founder and Head of Growth</span></div></div>
+      <a class="d-feat-btn">Read the paper <span class="d-arr">→</span></a>
+    </div>
+  </div>
+  <div class="d-feat-chart"><div data-chart2="bench" data-ground="stage" data-tone="night" data-size="lg" data-paint="off"></div></div>`;
+
+// series filter, as text tabs
+const SERIES = ['AI Visibility Index', 'State of B2B SaaS', 'AI search behaviour', 'Search', 'Measurement'];
+document.getElementById('series').innerHTML = `<a class="is-on" data-s="">All<span>${STUDIES.length}</span></a>` +
+  SERIES.map((s) => `<a data-s="${s}">${s}<span>${STUDIES.filter((x) => x.series === s).length}</span></a>`).join('');
+
+// the grid: every other paper, newest first; the matrix gets two columns
+const ORDER = ['seo-time', 'state-seo', 'state-content', 'state-ai', 'sov', 'agree', 'hr', 'devtools', 'cyber', 'fintech', 'gap'];
+function card(s) {
+  const wide = s.id === 'sov';
+  return `<article class="d-card${wide ? ' is-wide' : ''}" data-series="${s.series}">
+    <div class="d-meta"><b>${s.kind}</b><span>${fmtDate(s.date)}</span></div>
+    <h3 class="d-card-title">${s.finding}</h3>
+    <div class="d-cover"><div data-chart2="${s.id}" data-ground="stage" data-tone="night" data-size="sm" data-paint="off" data-caption="off"></div></div>
+    <div class="d-card-foot"><span>${s.n}</span><a>Read <span class="d-arr">→</span></a></div></article>`;
+}
+const grid = document.getElementById('grid');
+grid.innerHTML = ORDER.map((id) => card(S(id))).join('');
+document.getElementById('series').addEventListener('click', (e) => {
+  const a = e.target.closest('a'); if (!a) return;
+  document.querySelectorAll('#series a').forEach((x) => x.classList.toggle('is-on', x === a));
+  grid.querySelectorAll('.d-card').forEach((c) => { c.style.display = !a.dataset.s || c.dataset.series === a.dataset.s ? '' : 'none'; });
+  window.Charts2 && Charts2.drawAll();
+});
+
+document.getElementById('author-papers').innerHTML = byDate.slice(0, 3).map((s) => `<a>${s.finding}</a>`).join('');
+document.getElementById('author-count').textContent = `Author of all ${STUDIES.length} papers`;
+
+document.getElementById('cal').innerHTML = Array.from({ length: 6 }, () => '<span></span>').join('') +
+  Array.from({ length: 30 }, (_, i) => { const d = i + 1, dow = (6 + i) % 7; const open = dow < 5 && d >= 4;
+    return `<span class="${d === 5 ? 'is-on' : open ? 'is-open' : ''}">${d}</span>`; }).join('');
+</script>
+<script src="shared/charts-v2.js"></script>
+<script src="shared/freeze-late.js"></script>
+</body>
+</html>

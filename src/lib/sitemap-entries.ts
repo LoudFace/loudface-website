@@ -200,7 +200,7 @@ export async function buildSitemapEntries(): Promise<MetadataRoute.Sitemap> {
     },
   ];
 
-  const { caseStudies, blogPosts, seoPages, teamMembers } = await fetchSitemapData();
+  const { caseStudies, blogPosts, research, seoPages, teamMembers } = await fetchSitemapData();
 
   // Case study pages — include all case studies that have a slug
   // (even if they lack a paragraph-summary, they're still indexable pages)
@@ -221,6 +221,23 @@ export async function buildSitemapEntries(): Promise<MetadataRoute.Sitemap> {
     changeFrequency: 'monthly' as const,
     priority: 0.6,
   }));
+
+  // Research papers (/research/<slug>), and the hub, dated by its newest paper: the hub's list is what changes.
+  const researchPages: MetadataRoute.Sitemap = research
+    .filter((paper) => paper.slug)
+    .map((paper) => ({
+      url: `${baseUrl}/research/${paper.slug}`,
+      ...lastMod(paper['last-updated'] ?? paper['published-date']),
+      changeFrequency: 'monthly' as const,
+      priority: 0.7,
+    }));
+  const newestPaper = researchPages
+    .map((page) => page.lastModified)
+    .filter((date): date is Date => date instanceof Date)
+    .sort((a, b) => b.getTime() - a.getTime())[0];
+  const researchHub: MetadataRoute.Sitemap = research.length
+    ? [{ url: `${baseUrl}/research`, ...(newestPaper ? { lastModified: newestPaper } : {}), changeFrequency: 'weekly' as const, priority: 0.8 }]
+    : [];
 
   // SEO industry pages
   const seoPageEntries: MetadataRoute.Sitemap = seoPages
@@ -249,7 +266,15 @@ export async function buildSitemapEntries(): Promise<MetadataRoute.Sitemap> {
       priority: 0.5,
     }));
 
-  const allPages = [...staticPages, ...caseStudyPages, ...blogPostPages, ...seoPageEntries, ...teamMemberPages];
+  const allPages = [
+    ...staticPages,
+    ...caseStudyPages,
+    ...researchHub,
+    ...researchPages,
+    ...blogPostPages,
+    ...seoPageEntries,
+    ...teamMemberPages,
+  ];
 
   // Folded/301'd URLs must never surface in the sitemap even while their
   // Sanity doc is still published — next.config.ts redirects is the single

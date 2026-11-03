@@ -19,7 +19,7 @@ function fn(name: string) {
   return source.slice(start, source.indexOf('\n}\n', start));
 }
 
-for (const name of ['fetchHomepageData', 'fetchBlogIndexData', 'fetchCaseStudyIndexData']) {
+for (const name of ['fetchHomepageData', 'fetchBlogIndexData', 'fetchCaseStudyIndexData', 'fetchResearchIndexData', 'fetchResearchDetailData']) {
   test(`${name} lets a failed read through instead of returning empty data`, () => {
     assert.doesNotMatch(fn(name), /\}\s*catch\b|\.catch\(|allSettled/);
   });
@@ -40,4 +40,20 @@ test('the booking confirmation reads only the cover helper, which answers undefi
     assert.match(text, /fetchLatestBlogCover\(\)/, page);
     assert.doesNotMatch(text, /fetchBlogIndexData|fetchHomepageData/, page);
   }
+});
+
+test('every blog read that lists or renders posts leaves out the posts moved to /research', () => {
+  const llms = readFileSync(new URL('../llms-utils.ts', import.meta.url), 'utf8');
+  const blogLines = [...source.split('\n'), ...llms.split('\n')].filter((line) => line.includes('*[_type == "blogPost"'));
+  assert.ok(blogLines.length >= 4, `expected the blog list, sitemap, llms list and Markdown reads, found ${blogLines.length}`);
+  for (const line of blogLines) assert.match(line, /BLOG_NOT_MOVED_TO_RESEARCH/, line.trim());
+  // The generic reads (fetchItemBySlug, fetchCollection, fetchSlugs) add it through listFilterFor.
+  assert.equal((source.match(/\$\{listFilterFor\(sanityType\)\}/g) ?? []).length, 3);
+});
+
+test('a figure spec that is not valid JSON throws, naming the paper and the figure', async () => {
+  const { parseChartSpecText } = await import('../research-spec');
+  assert.throws(() => parseChartSpecText('{"type":"bars",', 'Research paper "x", figure "y"'), /Research paper "x", figure "y": Chart spec: spec is not valid JSON/);
+  assert.throws(() => parseChartSpecText('{"type":"pie"}', 'P'), /P: Chart spec: spec\.type must be one of/);
+  assert.deepEqual(parseChartSpecText('{"type":"split","a":["A",13.8],"b":["B",86.2]}', 'P'), { type: 'split', a: ['A', 13.8], b: ['B', 86.2] });
 });
