@@ -400,7 +400,9 @@
 .v11-rstrip-card:hover { background: rgba(201,189,245,0.035); border-color: rgba(201,189,245,0.26); }
 .v11-rstrip-meta { display: flex; justify-content: space-between; align-items: center; gap: 12px; font-size: 13px; line-height: 1; color: var(--rs-muted); }
 .v11-rstrip-meta > span { display: inline-flex; align-items: center; gap: 9px; min-width: 0; white-space: nowrap; }
-.v11-rstrip-meta time { white-space: nowrap; }
+.v11-rstrip-meta time { white-space: nowrap; flex-shrink: 0; }
+/* A long series name gives way to the date (Measurement and Search ran into "25 Oct 2026" at 1280, 3 Nov 2026). */
+.v11-rstrip-meta > span > span { min-width: 0; overflow: hidden; text-overflow: ellipsis; }
 .v11-rstrip-mark { display: inline-block; width: 7px; height: 7px; flex-shrink: 0; }
 .v11-rstrip-title { font-family: var(--font-heading); font-weight: 400; font-size: 18px; line-height: 1.28; letter-spacing: -0.012em; color: #ffffff; margin-top: 16px; min-height: 69px; text-wrap: balance; }
 /* the whole card is the link: the title's link covers it */
