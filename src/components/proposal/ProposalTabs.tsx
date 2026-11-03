@@ -24,7 +24,17 @@ export function ProposalTabs({ proposal, strategy }: { proposal: ReactNode; stra
   const bar = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    const fromHash = () => setTab(window.location.hash === '#strategy' ? 'strategy' : 'proposal');
+    // `#strategy` and the strategy outline's `#strategy-…` anchors all open
+    // the strategy tab. An anchor's section was hidden when the browser
+    // tried to scroll to it, so scroll once the tab shows.
+    const fromHash = () => {
+      const hash = window.location.hash;
+      const strategyHash = hash.startsWith('#strategy');
+      setTab(strategyHash ? 'strategy' : 'proposal');
+      if (strategyHash && hash.length > '#strategy'.length) {
+        requestAnimationFrame(() => document.getElementById(hash.slice(1))?.scrollIntoView({ block: 'start' }));
+      }
+    };
     fromHash();
     window.addEventListener('hashchange', fromHash);
     return () => window.removeEventListener('hashchange', fromHash);
