@@ -655,7 +655,7 @@ a.v11-rating:hover { opacity: 0.75; }
 .v11-reply-dot { width: 8px; height: 8px; border-radius: 99px; background: #5fe0a1; }
 
 /* =========================================================== 10 · footer */
-.v11-footer { background: var(--warm); padding-top: 64px; }
+.v11-footer { background: var(--warm); color: var(--ink); padding-top: 64px; } /* own ink: a page with a dark ground (/research) sets light text on its root */
 @media (min-width: 1280px) { .v11-footer { padding-top: 88px; } }
 .v11-footer-top { display: flex; flex-direction: column; gap: 48px; }
 @media (min-width: 1024px) { .v11-footer-top { flex-direction: row; justify-content: space-between; align-items: flex-start; } }
