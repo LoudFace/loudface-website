@@ -309,7 +309,19 @@ export type ProposalSection =
       intro?: string;
       months?: Array<{ _key: string; label: string; title: string; items?: string[]; proves?: string }>;
       note?: string;
+    }
+  | {
+      _key: string;
+      _type: 'strategySection';
+      heading?: string;
+      band?: ProposalBand;
+      intro?: string;
+      moves?: Array<{ _key: string; topic: StrategyTopic; how?: string; first?: string; proof?: string }>;
+      quickWins?: string[];
+      longBets?: string[];
     };
+
+export type StrategyTopic = 'keywords' | 'questions' | 'competitors' | 'content' | 'offsite';
 
 export interface ProposalRailClip {
   _key: string;
@@ -404,7 +416,10 @@ const CONTENT_QUERY = `*[_type == "proposal" && token == $token][0]{
     gate,
     showWeek,
     band,
-    months[]{ _key, label, title, items, proves }
+    months[]{ _key, label, title, items, proves },
+    moves[]{ _key, topic, how, first, proof },
+    quickWins,
+    longBets
   }
 }`;
 

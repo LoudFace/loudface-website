@@ -1014,6 +1014,59 @@ const monthsSection = defineType({
   preview: { select: { title: 'heading' }, prepare: ({ title }) => ({ title: title || 'The first months' }) },
 });
 
+/**
+ * Block 8 — how we would run their strategy (3 Nov 2026). Leads ask "what
+ * would your strategy be?"; this answers it topic by topic: how we decide
+ * (the house line, from strategy-house.ts, unless a proposal overrides it),
+ * what we would do first for this client, then quick wins against longer
+ * bets. Built from the client's own site and search data before the call.
+ */
+const strategySection = defineType({
+  name: 'strategySection',
+  title: 'How we would run the strategy',
+  type: 'object',
+  fields: [
+    sectionHeading,
+    sectionBand,
+    defineField({ name: 'intro', title: 'Intro line', type: 'text', rows: 2 }),
+    defineField({
+      name: 'moves',
+      title: 'Topics',
+      type: 'array',
+      of: [
+        defineArrayMember({
+          type: 'object',
+          name: 'strategyMove',
+          fields: [
+            defineField({
+              name: 'topic',
+              title: 'Topic',
+              type: 'string',
+              options: {
+                list: [
+                  { title: 'Keywords', value: 'keywords' },
+                  { title: 'AI questions', value: 'questions' },
+                  { title: 'Competitors', value: 'competitors' },
+                  { title: 'Content', value: 'content' },
+                  { title: 'Off your site', value: 'offsite' },
+                ],
+              },
+              validation: (rule) => rule.required(),
+            }),
+            defineField({ name: 'how', title: 'How we decide', type: 'text', rows: 3, description: 'Leave empty for the house line, the same in every deck.' }),
+            defineField({ name: 'first', title: 'What we would do first for them', type: 'text', rows: 3, description: 'Specific: their searches, their competitors, their sites. Numbers name their source.' }),
+            defineField({ name: 'proof', title: 'Proof line', type: 'string', description: 'Leave empty for the house proof, which matches the live case-study page.' }),
+          ],
+          preview: { select: { title: 'topic', subtitle: 'first' } },
+        }),
+      ],
+    }),
+    defineField({ name: 'quickWins', title: 'Quick wins, first 90 days', type: 'array', of: [defineArrayMember({ type: 'string' })] }),
+    defineField({ name: 'longBets', title: 'Longer bets', type: 'array', of: [defineArrayMember({ type: 'string' })] }),
+  ],
+  preview: { select: { title: 'heading' }, prepare: ({ title }) => ({ title: title || 'How we would run the strategy' }) },
+});
+
 /* ── The document ─────────────────────────────────────────────────────── */
 
 const proposal = defineType({
@@ -1238,6 +1291,7 @@ const proposal = defineType({
         defineArrayMember({ type: 'designSliderSection' }),
         defineArrayMember({ type: 'gateSection' }),
         defineArrayMember({ type: 'monthsSection' }),
+        defineArrayMember({ type: 'strategySection' }),
       ],
     }),
   ],
@@ -1271,5 +1325,6 @@ export const proposalSchemaTypes = [
   designSliderSection,
   gateSection,
   monthsSection,
+  strategySection,
   proposal,
 ];

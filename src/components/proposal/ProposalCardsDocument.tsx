@@ -16,6 +16,7 @@ import { STAGES } from '@/app/methodology-v3/data';
 import { rawContent, type AboutV11Content } from '@/lib/content-utils';
 import { personPhoto } from '@/app/home-v11/ui';
 import { SectionBody } from './ProposalDocument';
+import { STRATEGY_HOUSE } from './strategy-house';
 
 /**
  * The card layout (Arnel's pick, 2026-09-23), opted into per proposal with
@@ -340,6 +341,67 @@ function Tracks({ section }: { section: Sec<'tracksSection'> }) {
   );
 }
 
+/* How we would run their strategy: one card, a ruled row per topic (label
+   left, text right): how we decide, what we would do first for them, and a
+   proof line from a live case page. Then quick wins beside longer bets, the
+   split the SAVVI lead asked for on 3 Nov 2026. One card with rules, not a
+   card per topic: five cards beside the proof rail ran 2,250px tall. */
+function Strategy({ section }: { section: Sec<'strategySection'> }) {
+  const moves = (section.moves ?? []).filter((m) => STRATEGY_HOUSE[m.topic]);
+  const wins = section.quickWins ?? [];
+  const bets = section.longBets ?? [];
+  const list = (title: string, items: string[]) =>
+    items.length > 0 && (
+      <div>
+        <p className="text-[15px] font-semibold text-surface-950">{title}</p>
+        <ul className="mt-3 space-y-2.5">
+          {items.map((it) => (
+            <li key={it} className="flex gap-2.5 text-[14px] leading-snug text-surface-800">
+              <Tick />
+              <span>{it}</span>
+            </li>
+          ))}
+        </ul>
+      </div>
+    );
+  return (
+    <>
+      {section.intro && <p className="mt-2 max-w-[68ch] text-[15px] text-surface-600">{section.intro}</p>}
+      <div className={`${panel} space-y-3`}>
+        <div className={`${card} px-5 sm:px-6`}>
+          {moves.map((m, i) => {
+            const house = STRATEGY_HOUSE[m.topic];
+            return (
+              <div
+                key={m._key}
+                className={`py-5 sm:grid sm:grid-cols-[120px_minmax(0,1fr)] sm:gap-6 ${i > 0 ? 'border-t border-surface-200' : ''}`}
+              >
+                <p className="text-[15px] font-semibold tracking-[-0.01em] text-surface-950">{house.label}</p>
+                <div className="mt-2 space-y-2.5 sm:mt-0">
+                  <p className="text-[14px] leading-relaxed text-surface-600">{m.how || house.how}</p>
+                  {m.first && (
+                    <p className="text-[15px] leading-relaxed text-surface-900">
+                      <span className="font-semibold text-primary-700">What we would do first: </span>
+                      {m.first}
+                    </p>
+                  )}
+                  <p className="text-[13px] leading-snug text-surface-500">{m.proof || house.proof}</p>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+        {(wins.length > 0 || bets.length > 0) && (
+          <div className={`${card} grid gap-6 p-5 sm:grid-cols-2 sm:gap-8 sm:p-6`}>
+            {list('Quick wins, first 90 days', wins)}
+            {list('Longer bets, months 4 to 12', bets)}
+          </div>
+        )}
+      </div>
+    </>
+  );
+}
+
 function Bullets({ section, clientName }: { section: Sec<'bulletListSection'>; clientName: string }) {
   const items = section.items ?? [];
   const asked = items.length > 0 && items.every((it) => it.lead?.trim().endsWith('?'));
@@ -520,6 +582,9 @@ export function ProposalCardsDocument({ proposal }: { proposal: Proposal }) {
       case 'monthsSection':
         body = <Months section={section} />;
         break;
+      case 'strategySection':
+        body = <Strategy section={section} />;
+        break;
       case 'chartsSection':
         body = <ProposalStandingCharts section={section} />;
         break;
@@ -605,7 +670,7 @@ export function ProposalCardsDocument({ proposal }: { proposal: Proposal }) {
       <footer className="border-t border-white/10 bg-night px-5 py-10 text-white/60 sm:px-8">
         <div className="mx-auto flex max-w-[1180px] flex-wrap items-baseline justify-between gap-3 text-[13px]">
           <p>
-            Prepared by LoudFace for {proposal.clientName}. Confidential. Please don't share it outside your team.
+            Prepared by LoudFace for {proposal.clientName}. Confidential. Please don&apos;t share it outside your team.
           </p>
           {proposal.contactEmail && (
             <a href={`mailto:${proposal.contactEmail}`} className="font-medium text-white">
