@@ -1,0 +1,32 @@
+#!/bin/bash
+# Fast checks before every push. The global pre-push (~/.agents/git-hooks/repo-checks)
+# runs this after the secret scan, in a clean copy of the commit being pushed, with
+# CHANGED_FILES set to the files the push changes. Lint covers only those files, so old
+# lint debt elsewhere does not block a push; touching a file means leaving it clean.
+# Keep it under about 30 seconds: slow suites belong in CI.
+
+[ -f next-env.d.ts ] || cp "$CHECKOUT/next-env.d.ts" . 2>/dev/null
+bin=node_modules/.bin
+logs=$(mktemp -d); trap 'rm -rf "$logs"' EXIT
+names=(); pids=()
+run() { names+=("$1"); shift; ( "$@" ) >"$logs/${names[${#names[@]}-1]}" 2>&1 & pids+=($!); }
+
+lint=()
+while IFS= read -r f; do
+  case "$f" in *.ts|*.tsx|*.js|*.jsx|*.mjs|*.cjs) [ -f "$f" ] && lint+=("$f") ;; esac
+done <<< "$CHANGED_FILES"
+
+run typecheck $bin/tsc --noEmit --incremental --tsBuildInfoFile "$PREPUSH_CACHE/tsbuildinfo"
+[ ${#lint[@]} -gt 0 ] && run lint $bin/eslint --no-warn-ignored "${lint[@]}"
+run tests sh -c 'for s in test:editor test:cms test:redirects test:same-site test:apply test:referral test:meta-approval check:editor; do npm run -s "$s" || exit 1; done'
+
+failed=0
+for i in "${!pids[@]}"; do
+  if ! wait "${pids[$i]}"; then
+    echo "--- ${names[$i]} failed; the end of its output:"
+    tail -40 "$logs/${names[$i]}"
+    failed=1
+  fi
+done
+[ $failed -eq 0 ] && echo "typecheck, lint and tests passed: ${names[*]}"
+exit $failed
