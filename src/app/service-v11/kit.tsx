@@ -158,7 +158,7 @@ export function ChartCell({ slide, series, format = 'index', big, wide }: { slid
 /**
  * A client's word next to their number. `logoUrl` takes a CMS logo; `big` and `cap` are optional for a quote alone.
  * A client with no wordmark passes `brandIcon` (its app icon, drawn beside `logoAlt`); a person with no photo gets `initial`.
- * `review` links the published review the words come from (Clutch, Trustpilot), at the right of the name line.
+ * `review` links the published review the words come from (Clutch; never Trustpilot, whose terms forbid it), at the right of the name line.
  */
 export function QuoteCell({ logo, logoUrl, logoAlt, logoW, logoH, brandIcon, big, cap, quote, person, role, face, faceUrl, initial, review, tone = 'ink', wide, className = '', children }: { logo?: string; logoUrl?: string; logoAlt: string; logoW: number; logoH: number; brandIcon?: string; big?: string; cap?: string; quote: string; person: string; role: string; face?: string; faceUrl?: string; initial?: string; review?: { href: string; label: string }; tone?: 'ink' | 'ind' | 'orange'; wide?: boolean; className?: string; children?: ReactNode }) {
   const faceSrc = cachedCmsImage(faceUrl, 96) ?? (face ? img(face) : undefined);

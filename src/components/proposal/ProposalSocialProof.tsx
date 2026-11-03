@@ -28,7 +28,6 @@ import { ProposalClipStrip } from './ProposalClipStrip';
 const PLATFORMS: Record<ReviewPlatformName, { label: string; accent: string; logo: string }> = {
   clutch: { label: 'Clutch', accent: '#FF3D2E', logo: '/images/review-platforms/clutch.png' },
   google: { label: 'Google', accent: '#4285F4', logo: '/images/review-platforms/google.png' },
-  trustpilot: { label: 'Trustpilot', accent: '#00B67A', logo: '/images/review-platforms/trustpilot.png' },
 };
 
 type ProofSectionType = Extract<ProposalSection, { _type: 'metricsSection' }>;

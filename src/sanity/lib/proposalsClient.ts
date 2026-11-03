@@ -97,7 +97,8 @@ export interface ProposalTableRow {
 
 export type ProofTone = 'light' | 'dark';
 
-export type ReviewPlatformName = 'clutch' | 'google' | 'trustpilot';
+/** No Trustpilot: its terms allow its ratings and review text only inside its own widgets (warnings 27 Oct and 3 Nov 2026). */
+export type ReviewPlatformName = 'clutch' | 'google';
 
 export interface ProposalMetric {
   _key: string;

@@ -50,18 +50,13 @@ function fixture(_tone: 'light' | 'dark', withRail: boolean): Proposal {
           platforms: [
             { _key: 'rp1', platform: 'clutch', rating: 5, reviewCount: 1, note: 'verified', url: 'https://clutch.co/profile/loudface' },
             { _key: 'rp2', platform: 'google', rating: 5, reviewCount: 4, url: 'https://share.google/YNQOFTomnSaSIlSgb' },
-            { _key: 'rp3', platform: 'trustpilot', rating: 4.3, reviewCount: 9, note: 'every one 5 stars', url: 'https://www.trustpilot.com/review/loudface.co' },
           ],
           quotesHeading: 'What they said',
           quotes: [
-            { _key: 'q1', text: 'One of the landing pages they designed has generated over $1M in sales so far.', author: 'Maksim Polupanov', platform: 'trustpilot' },
-            { _key: 'q2', text: 'We really felt that they cared for our project as if it were their own.', author: 'Christian Mailind', platform: 'trustpilot' },
-            { _key: 'q3', text: 'We began receiving leads immediately after the launch of our campaign.', author: 'Daan Smit', platform: 'trustpilot' },
-            { _key: 'q4', text: 'From start to finish, the team exceeded expectations.', author: 'Sarig Reichert', company: 'Dimer Health', platform: 'trustpilot' },
-            { _key: 'q5', text: 'Working with LoudFace has been refreshing; we were surprised by their passion.', author: 'E-learning platform, verified client', platform: 'clutch' },
-            { _key: 'q6', text: 'I have not had a feature request that they were not able to deliver on.', author: 'Shin Kim', platform: 'trustpilot' },
-            { _key: 'q7', text: 'LoudFace is nothing short of phenomenal.', author: 'Kristian Krogh Bang', platform: 'trustpilot' },
-            { _key: 'q8', text: 'Professional, very helpful, communicated well, and met deadlines on time.', author: 'Christian', platform: 'trustpilot' },
+            { _key: 'q1', text: 'The first landing page we developed generated over a million dollars in revenue.', author: 'Maksim Polupanov', company: 'Outbound Specialist' },
+            { _key: 'q2', text: 'Working with LoudFace has been refreshing; we were surprised by their passion.', author: 'E-learning platform, verified client', platform: 'clutch' },
+            { _key: 'q3', text: 'We’ve increased conversion by 288%.', author: 'Sarig Reichert', company: 'Dimer Health' },
+            { _key: 'q4', text: 'People who find us through search come to the call warmer than anyone we get from paid ads.', author: 'Jordan Hayes', company: 'Hayes Media' },
           ],
         }
       : undefined,
