@@ -1128,7 +1128,7 @@ const proposalStrategy = defineType({
         defineArrayMember({ type: 'strategyBlock' }),
       ],
     }),
-    defineField({ name: 'quickWins', title: 'Quick wins, first 90 days', type: 'array', of: [defineArrayMember({ type: 'string' })] }),
+    defineField({ name: 'quickWins', title: 'Quick wins', type: 'array', of: [defineArrayMember({ type: 'string' })] }),
     defineField({ name: 'longBets', title: 'Longer bets', type: 'array', of: [defineArrayMember({ type: 'string' })] }),
   ],
 });

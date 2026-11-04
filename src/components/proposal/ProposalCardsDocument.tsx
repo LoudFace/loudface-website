@@ -564,13 +564,13 @@ function StrategyTab({ strategy, clientName }: { strategy: ProposalStrategy; cli
                   <div className={`${card} grid gap-6 p-5 sm:grid-cols-2 sm:gap-8 sm:p-6`}>
                     {wins.length > 0 && (
                       <div>
-                        <p className="text-[15px] font-semibold text-surface-950">Quick wins, first 90 days</p>
+                        <p className="text-[15px] font-semibold text-surface-950">Quick wins</p>
                         <TickList items={wins} className="mt-3 space-y-2.5" />
                       </div>
                     )}
                     {later.length > 0 && (
                       <div>
-                        <p className="text-[15px] font-semibold text-surface-950">Longer bets, months 4 to 12</p>
+                        <p className="text-[15px] font-semibold text-surface-950">Longer bets</p>
                         <TickList items={later} className="mt-3 space-y-2.5" />
                       </div>
                     )}
