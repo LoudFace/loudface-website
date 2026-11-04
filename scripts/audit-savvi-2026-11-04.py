@@ -143,18 +143,6 @@ audit = {
              ("Step 4", "AI readability", ["Product, FAQ and review markup", "llms.txt", "122 long article titles rewritten", "This audit run again, before and after side by side"]),
          ),
          "note": "The new site is built and checked against all of these before it goes live. The rules are in the Preliminary strategy tab."},
-
-        {"_key": k(), "kind": "table",
-         "heading": "How we ran it",
-         "intro": "So you can compare it with the other audits you have seen, and so we can run it again after the fixes.",
-         "columns": ["Check", "Tool", "Covered", "When"],
-         "rows": rows(
-             ("Every page: status, titles, descriptions, headings, canonicals, links, images, markup", "LibreCrawl (as Screaming Frog does)", "197 pages, twice", "4 Nov 2026"),
-             ("Headings and descriptions, read from the raw page", "Our own parser", "197 pages", "4 Nov 2026"),
-             ("Speed and Core Web Vitals", "Google PageSpeed Insights", "5 page types, phone and desktop", "4 Nov 2026"),
-             ("Broken links from other sites", "Ahrefs", "Every link Ahrefs knows", "4 Nov 2026"),
-             ("Crawler access", "Requests as GPTBot, ClaudeBot, PerplexityBot, OAI-SearchBot, Googlebot", "One article", "4 Nov 2026"),
-         )},
     ],
 }
 
