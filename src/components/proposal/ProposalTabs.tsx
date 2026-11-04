@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState, type ReactNode } from 'react';
 
 /**
- * Proposal | Full strategy | Technical audit (Arnel, 3-4 Nov 2026): the
+ * Proposal | Preliminary strategy | Technical audit (Arnel, 3-4 Nov 2026): the
  * standard deck stays as it is in the first tab, and the detail a lead asks
  * for sits in its own tab, so the deck does not get longer. All panels are
  * rendered on the server; this only switches which one shows. `#strategy`
@@ -14,13 +14,17 @@ import { useEffect, useRef, useState, type ReactNode } from 'react';
  * "Strategy · …" and "Audit · …" section views once the reader opens a tab.
  */
 type Tab = 'proposal' | 'strategy' | 'audit';
-const LABELS: Record<Tab, string> = { proposal: 'Proposal', strategy: 'Full strategy', audit: 'Technical audit' };
+// "Preliminary" because a lead's strategy is built before kickoff, from public
+// data (Arnel, 4 Nov 2026). On a phone the audit tab says "Audit" so all
+// three fit on one line.
+const LABELS: Record<Tab, string> = { proposal: 'Proposal', strategy: 'Preliminary strategy', audit: 'Technical audit' };
+const SHORT: Partial<Record<Tab, string>> = { audit: 'Audit' };
 
 export function ProposalTabs({ proposal, strategy, audit }: { proposal: ReactNode; strategy?: ReactNode; audit?: ReactNode }) {
   const [tab, setTab] = useState<Tab>('proposal');
   const bar = useRef<HTMLDivElement>(null);
   const tabs: Tab[] = ['proposal', ...(strategy ? (['strategy'] as const) : []), ...(audit ? (['audit'] as const) : [])];
-  const TABS = tabs.map((id) => ({ id, label: LABELS[id] }));
+  const TABS = tabs.map((id) => ({ id, label: LABELS[id], short: SHORT[id] }));
 
   useEffect(() => {
     // `#strategy`, `#audit` and their outlines' `#strategy-…` and `#audit-…`
@@ -52,7 +56,7 @@ export function ProposalTabs({ proposal, strategy, audit }: { proposal: ReactNod
   return (
     <>
       <div ref={bar} className="sticky top-0 z-30 border-b border-surface-200 bg-white/95 backdrop-blur">
-        <div role="tablist" aria-label="Proposal, strategy and audit" className="mx-auto flex max-w-[1180px] gap-6 px-5 sm:px-8">
+        <div role="tablist" aria-label="Proposal, strategy and audit" className="mx-auto flex max-w-[1180px] gap-5 overflow-x-auto whitespace-nowrap px-5 sm:gap-6 sm:px-8">
           {TABS.map((t) => {
             const on = tab === t.id;
             return (
@@ -68,7 +72,14 @@ export function ProposalTabs({ proposal, strategy, audit }: { proposal: ReactNod
                   on ? 'border-primary-600 text-surface-950' : 'border-transparent text-surface-500 hover:text-surface-900'
                 }`}
               >
-                {t.label}
+                {t.short ? (
+                  <>
+                    <span className="sm:hidden">{t.short}</span>
+                    <span className="hidden sm:inline">{t.label}</span>
+                  </>
+                ) : (
+                  t.label
+                )}
               </button>
             );
           })}

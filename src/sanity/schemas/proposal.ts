@@ -1098,12 +1098,19 @@ const strategyBlock = defineType({
 
 const proposalStrategy = defineType({
   name: 'proposalStrategy',
-  title: 'Strategy tab',
+  title: 'Preliminary strategy tab',
   type: 'object',
   fields: [
     defineField({ name: 'heading', title: 'Heading', type: 'string' }),
     defineField({ name: 'summary', title: 'Summary', type: 'text', rows: 3, description: 'The bet in two or three sentences.' }),
     defineField({ name: 'source', title: 'Sources line', type: 'string', description: 'Where the numbers came from and when.' }),
+    defineField({
+      name: 'caveat',
+      title: 'Preliminary note',
+      type: 'text',
+      rows: 2,
+      description: 'Shown under the heading. What the strategy rests on, and that it changes after kickoff. Left empty, a standard line shows.',
+    }),
     defineField({
       name: 'bets',
       title: 'The bets',
@@ -1399,7 +1406,7 @@ const proposal = defineType({
       title: 'Strategy tab',
       type: 'proposalStrategy',
       group: 'content',
-      description: 'Cards only. Fill it in and the deck gets two tabs: the proposal, and this full strategy.',
+      description: 'Cards only. Fill it in and the deck gets a Preliminary strategy tab beside the proposal.',
     }),
     defineField({
       name: 'audit',

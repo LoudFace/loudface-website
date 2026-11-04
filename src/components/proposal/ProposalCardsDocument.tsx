@@ -342,9 +342,11 @@ function Tracks({ section }: { section: Sec<'tracksSection'> }) {
   );
 }
 
-/* ── the Full strategy tab ────────────────────────────────────────────── */
-/* The full strategy for this lead (Arnel, 3 Nov 2026: "a very detailed
+/* ── the Preliminary strategy tab ─────────────────────────────────────── */
+/* The strategy for this lead (Arnel, 3 Nov 2026: "a very detailed
    breakdown of a full strategy"), in its own tab so the deck stays short.
+   Called preliminary (4 Nov 2026): it is built from public data before
+   kickoff, and a note under the heading says it changes after we talk.
    Full width, no proof rail, so the tables have room. A left outline on
    wide screens, then: the summary, the bets, one block per part of the
    plan (tables, lists, a roadmap), quick wins beside longer bets. Every
@@ -447,6 +449,7 @@ function PlanTab({
   heading,
   summary,
   source,
+  caveat,
   top,
   blocks,
   tail,
@@ -456,6 +459,7 @@ function PlanTab({
   heading: string;
   summary?: string;
   source?: string;
+  caveat?: string;
   top?: { id: string; label: string; node: ReactNode };
   blocks: ProposalStrategyBlock[];
   tail?: { id: string; label: string; node: ReactNode };
@@ -482,6 +486,12 @@ function PlanTab({
             <h2 className="text-[26px] font-medium leading-tight tracking-[-0.03em] text-surface-950 sm:text-[32px]">{heading}</h2>
             {summary && <p className="max-w-[68ch] text-[17px] leading-relaxed text-surface-700">{summary}</p>}
             {source && <p className="max-w-[68ch] text-[13px] text-surface-500">{source}</p>}
+            {caveat && (
+              <p className="max-w-[68ch] rounded-xl border border-primary-100 bg-primary-50 px-4 py-3 text-[14px] leading-relaxed text-surface-800">
+                <span className="mr-2 inline-block rounded-full bg-white px-2 py-0.5 text-[12px] font-medium text-primary-700">Preliminary</span>
+                {caveat}
+              </p>
+            )}
           </header>
 
           {top && (
@@ -523,6 +533,9 @@ function PlanTab({
   );
 }
 
+const PRELIMINARY =
+  'Built from public data before we have access to your accounts or your team. It will change once we have talked it through with you and dug deeper at kickoff.';
+
 function StrategyTab({ strategy, clientName }: { strategy: ProposalStrategy; clientName: string }) {
   const wins = strategy.quickWins ?? [];
   const later = strategy.longBets ?? [];
@@ -531,9 +544,10 @@ function StrategyTab({ strategy, clientName }: { strategy: ProposalStrategy; cli
     <PlanTab
       prefix="strategy"
       label="Strategy"
-      heading={strategy.heading || `The full strategy for ${clientName}`}
+      heading={strategy.heading || `A preliminary strategy for ${clientName}`}
       summary={strategy.summary}
       source={strategy.source}
+      caveat={strategy.caveat || PRELIMINARY}
       blocks={strategy.blocks ?? []}
       top={
         bets.length > 0
@@ -624,7 +638,7 @@ function AuditTab({ audit, clientName }: { audit: ProposalAudit; clientName: str
 function TabPointers({ clientName, strategy, audit }: { clientName: string; strategy: boolean; audit: boolean }) {
   const cards = [
     ...(strategy
-      ? [{ href: '#strategy', title: `The full strategy for ${clientName}`, text: 'Keywords, AI questions, competitors, content, links and the first 12 weeks, in the Full strategy tab.' }]
+      ? [{ href: '#strategy', title: `A preliminary strategy for ${clientName}`, text: 'Where AI answers stand on you today, the pages they read, and what we would do first, in order. It changes after kickoff.' }]
       : []),
     ...(audit
       ? [{ href: '#audit', title: `The technical audit of ${clientName}'s site`, text: 'Broken pages, speed, what AI crawlers can read, and the order we fix it all in, in the Technical audit tab.' }]
@@ -793,7 +807,7 @@ export function ProposalCardsDocument({ proposal }: { proposal: Proposal }) {
   const afterTracks = lightTypes.indexOf('tracksSection');
   const beforeCases = lightTypes.indexOf('caseProofSection');
   const whoAt = afterTracks !== -1 ? afterTracks + 1 : beforeCases !== -1 ? beforeCases : lightTypes.length;
-  // The Full strategy tab, when the proposal carries one, and where the
+  // The Preliminary strategy tab, when the proposal carries one, and where the
   // Proposal tab points at it: just before "What we would do".
   const strategy = (proposal.strategy?.blocks?.length ?? 0) > 0 ? proposal.strategy : undefined;
   const audit = (proposal.audit?.blocks?.length ?? 0) > 0 ? proposal.audit : undefined;

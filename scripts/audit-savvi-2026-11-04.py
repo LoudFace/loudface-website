@@ -51,9 +51,9 @@ audit = {
         ("164", "pages with no main heading", "bad"),
         ("68", "phone speed score, home page (90 is good)", "bad"),
         ("5.0 s", "for the main image to show on a phone, home page (2.5 is good)", "bad"),
-        ("525 KB", "of Google tags on every page, loaded three ways", "bad"),
+        ("514 KB", "of Google tags downloaded on every page, compressed, loaded three ways", "bad"),
         ("4", "broken pages other sites still link to", "bad"),
-        ("5 of 5", "AI and search crawlers let in", "good"),
+        ("5 of 5", "AI and search crawlers let in, tested on one article", "good"),
         ("373 of 375", "images have alt text", "good"),
     ),
     "blocks": [
@@ -66,7 +66,7 @@ audit = {
              ("No sitemap", "/sitemap.xml returns a 404, so Google gets no list of the 164 articles", "All", "Switch on Webflow's sitemap, submit it in Search Console"),
              ("Empty robots.txt", "The file exists but says nothing: no sitemap line", "All", "Name the sitemap, keep AI crawlers allowed"),
              ("No canonical tags", "No page names its main address; tracking-tag copies such as ?utm_source=chatgpt.com answer as separate pages", "197", "Set Webflow's global canonical address"),
-             ("No main heading on articles", "The article template marks the title as a sub-heading (H2), so 159 articles have no H1", "164", "Change one element in the template to H1"),
+             ("No main heading", "164 pages have no H1. On 159 articles the template marks the title as a sub-heading (H2)", "164", "Change one element in the article template to H1, then fix the other 5"),
              ("No description", "21 pages have none and 121 have an empty one, so Google and AI write their own", "142", "Write each around the question the page answers"),
              ("Same title on 18 pages", "\"SAVVI Financial\" on the home, author, legal and insights pages", "18", "One title per page, naming the problem"),
              ("Several main headings", "Up to 21 H1s on a page (Terms of use 21, SelectSmart 8)", "14", "One H1 per page"),
@@ -88,9 +88,9 @@ audit = {
 
         {"_key": k(), "kind": "list",
          "heading": "Why the JavaScript is heavy",
-         "intro": "You were right that the site carries too much JavaScript: about 700 KB on every page, and 290 KB of it never runs on the page that loads it. It comes from six places.",
+         "intro": "You were right that the site carries too much JavaScript: about 700 KB downloaded on every page (2.8 MB once unpacked), and 290 KB of it never runs on the page that loads it. It comes from six places.",
          "items": items(
-             ("Google's tag, three times", "gtag.js, Tag Manager and a first-party copy of the Google tag all load on every page, about 525 KB. One tag through Tag Manager does the same job."),
+             ("Google's tag, three times", "gtag.js, Tag Manager and a first-party copy of the Google tag all load on every page, 514 KB of the 700. One tag through Tag Manager does the same job, and three may count some visits twice, which matters before we take a baseline."),
              ("Two copies of jQuery", "Webflow's own (3.5.1) and a second one (3.6.0), plus a carousel library and two Finsweet scripts, all on every page."),
              ("YouTube on open", "The product page loads YouTube's full player, about 1 MB and 0.8 seconds of phone processing, before anyone presses play. A preview image that loads the player on click removes it."),
              ("Fonts that block the page", "Google's WebFont loader asks for four families in 16 weights and holds the first paint, 1.1 to 1.8 seconds on a phone. Two families, loaded the modern way, do the same."),
@@ -100,7 +100,7 @@ audit = {
 
         {"_key": k(), "kind": "table",
          "heading": "Broken links, inside and outside the site",
-         "intro": "A link to a dead page wastes the visit and the trust the linking site passes on. Ahrefs rates a site's strength from 0 to 100.",
+         "intro": "A link to a dead page wastes the visit and the trust the linking site passes on. The broken menu link sits on 196 pages, and a crawler counts it once per page: that is why other audits report around 200 errors. Ahrefs rates a site's strength from 0 to 100.",
          "columns": ["Linked from", "Strength", "Broken address", "Fix"],
          "rows": rows(
              ("Your own menu, on 196 pages", "", "/products/savvi-wealth-partners", "Link the live page"),
@@ -115,9 +115,9 @@ audit = {
 
         {"_key": k(), "kind": "list",
          "heading": "What AI crawlers see",
-         "intro": "Kelsey's point on the call: the technical basics for Google carry over to AI. Here is how ChatGPT, Claude and Perplexity read the site today.",
+         "intro": "Your point on the call: the technical basics for Google carry over to AI. Here is how ChatGPT, Claude and Perplexity read the site today.",
          "items": items(
-             ("They are let in", "GPTBot, ClaudeBot, PerplexityBot, OAI-SearchBot and Googlebot all get the full page. Nothing blocks them, and we keep it that way."),
+             ("They are let in", "GPTBot, ClaudeBot, PerplexityBot, OAI-SearchBot and Googlebot all got the full page when we requested an article as each of them. Nothing blocks them, and we keep it that way. Webflow does not give us server logs, so we cannot see how often each one visits; the tracked answers show that instead."),
              ("The words are in the page", "Webflow builds each page on the server, so a crawler that does not run JavaScript still reads the text. Rendering the JavaScript changed nothing on any of the 197 pages. The JavaScript slows people down, not crawlers."),
              ("But the page does not say what it is about", "With no main heading on 164 pages and no description on 142, a crawler has to guess the topic from the body. That is what we fix first."),
              ("Some structured data, not the useful kind", "164 articles carry article markup and the home page names the company. Nothing marks up the products, the FAQ answers or reviews, which AI engines use to quote facts."),
@@ -129,7 +129,7 @@ audit = {
          "heading": "What already works",
          "items": items(
              ("One clean address", "http, https, savvifi.com and www all reach https://www.savvifi.com in one step."),
-             ("Indexable", "No page tells Google to stay away, and Google's own SEO check scores 91 to 100 on all five page types."),
+             ("Indexable", "No page tells Google to stay away. Google's basic SEO check passes on all five page types, 91 to 100, but it reads one page at a time: the sitemap, canonical and link problems above are site-wide."),
              ("Alt text", "373 of 375 images describe themselves."),
              ("Real content", "Only 3 pages have under 300 words. The 164 articles and the Finances on Fire research are the raw material the strategy builds on."),
          )},
@@ -142,7 +142,7 @@ audit = {
              ("Step 3", "Speed", ["One Google tag, one jQuery", "Two font families, loaded without blocking", "Hero images load first; YouTube on click", "Target: phone score 85 or more and main image under 2.5 s on every template"]),
              ("Step 4", "AI readability", ["Product, FAQ and review markup", "llms.txt", "122 long article titles rewritten", "This audit run again, before and after side by side"]),
          ),
-         "note": "The new site in the strategy is built with every one of these fixed from the start."},
+         "note": "The new site is built and checked against all of these before it goes live. The rules are in the Preliminary strategy tab."},
 
         {"_key": k(), "kind": "table",
          "heading": "How we ran it",

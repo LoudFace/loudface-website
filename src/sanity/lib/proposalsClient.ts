@@ -338,6 +338,8 @@ export interface ProposalStrategy {
   summary?: string;
   /** Where the numbers came from and when, one line. */
   source?: string;
+  /** The "Preliminary" note under the heading: what this rests on and what changes after kickoff. */
+  caveat?: string;
   bets?: Array<{ _key: string; title: string; text: string }>;
   blocks?: ProposalStrategyBlock[];
   quickWins?: string[];
@@ -459,7 +461,7 @@ const CONTENT_QUERY = `*[_type == "proposal" && token == $token][0]{
     months[]{ _key, label, title, items, proves }
   },
   strategy{
-    heading, summary, source, quickWins, longBets,
+    heading, summary, source, caveat, quickWins, longBets,
     bets[]{ _key, title, text },
     blocks[]{
       _key, kind, topic, heading, intro, columns, note,
