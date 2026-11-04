@@ -36,7 +36,7 @@ audit = {
         "The site is on Webflow and builds its pages on the server, so Google and AI crawlers can read every word, and none "
         "of them is blocked. What holds it back is hygiene and weight: no sitemap, no canonical tags, 142 pages with no "
         "description, 164 pages with no main heading, a broken menu link on almost every page, and phone pages that take up to 5 "
-        "seconds to show their main image, twice what Google calls good. Most of it is a Webflow setting or one template, so it is fixed in week one."
+        "seconds to show their main image, twice what Google calls good. Most of it is a Webflow setting or one template change."
     ),
     "source": (
         "Run 4 November 2026: a crawl of all 197 pages on savvifi.com, read twice (without JavaScript, as AI crawlers read "
@@ -60,17 +60,17 @@ audit = {
         {"_key": k(), "kind": "table",
          "heading": "Blockers, fixed first",
          "intro": "The do-not-pass-go list. Each one stops Google or an AI engine from finding, trusting or quoting a page.",
-         "columns": ["Issue", "What we found", "Pages", "Fix", "When"],
+         "columns": ["Issue", "What we found", "Pages", "Fix"],
          "rows": rows(
-             ("Broken menu link", "/products/savvi-wealth-partners returns a 404 and sits in the menu", "196", "Link the live page, redirect the old address", "Day 1"),
-             ("No sitemap", "/sitemap.xml returns a 404, so Google gets no list of the 164 articles", "All", "Switch on Webflow's sitemap, submit it in Search Console", "Day 1"),
-             ("Empty robots.txt", "The file exists but says nothing: no sitemap line", "All", "Name the sitemap, keep AI crawlers allowed", "Day 1"),
-             ("No canonical tags", "No page names its main address; tracking-tag copies such as ?utm_source=chatgpt.com answer as separate pages", "197", "Set Webflow's global canonical address", "Day 1"),
-             ("No main heading on articles", "The article template marks the title as a sub-heading (H2), so 159 articles have no H1", "164", "Change one element in the template to H1", "Day 1"),
-             ("No description", "21 pages have none and 121 have an empty one, so Google and AI write their own", "142", "Write each around the question the page answers", "Week 1"),
-             ("Same title on 18 pages", "\"SAVVI Financial\" on the home, author, legal and insights pages", "18", "One title per page, naming the problem", "Week 1"),
-             ("Several main headings", "Up to 21 H1s on a page (Terms of use 21, SelectSmart 8)", "14", "One H1 per page", "Week 1"),
-             ("Titles cut off in Google", "Article titles over 60 characters", "122", "Rewrite, question first", "Weeks 1 to 2"),
+             ("Broken menu link", "/products/savvi-wealth-partners returns a 404 and sits in the menu", "196", "Link the live page, redirect the old address"),
+             ("No sitemap", "/sitemap.xml returns a 404, so Google gets no list of the 164 articles", "All", "Switch on Webflow's sitemap, submit it in Search Console"),
+             ("Empty robots.txt", "The file exists but says nothing: no sitemap line", "All", "Name the sitemap, keep AI crawlers allowed"),
+             ("No canonical tags", "No page names its main address; tracking-tag copies such as ?utm_source=chatgpt.com answer as separate pages", "197", "Set Webflow's global canonical address"),
+             ("No main heading on articles", "The article template marks the title as a sub-heading (H2), so 159 articles have no H1", "164", "Change one element in the template to H1"),
+             ("No description", "21 pages have none and 121 have an empty one, so Google and AI write their own", "142", "Write each around the question the page answers"),
+             ("Same title on 18 pages", "\"SAVVI Financial\" on the home, author, legal and insights pages", "18", "One title per page, naming the problem"),
+             ("Several main headings", "Up to 21 H1s on a page (Terms of use 21, SelectSmart 8)", "14", "One H1 per page"),
+             ("Titles cut off in Google", "Article titles over 60 characters", "122", "Rewrite, question first"),
          )},
 
         {"_key": k(), "kind": "table",
@@ -119,7 +119,7 @@ audit = {
          "items": items(
              ("They are let in", "GPTBot, ClaudeBot, PerplexityBot, OAI-SearchBot and Googlebot all get the full page. Nothing blocks them, and we keep it that way."),
              ("The words are in the page", "Webflow builds each page on the server, so a crawler that does not run JavaScript still reads the text. Rendering the JavaScript changed nothing on any of the 197 pages. The JavaScript slows people down, not crawlers."),
-             ("But the page does not say what it is about", "With no main heading on 164 pages and no description on 142, a crawler has to guess the topic from the body. That is the first week's work."),
+             ("But the page does not say what it is about", "With no main heading on 164 pages and no description on 142, a crawler has to guess the topic from the body. That is what we fix first."),
              ("Some structured data, not the useful kind", "164 articles carry article markup and the home page names the company. Nothing marks up the products, the FAQ answers or reviews, which AI engines use to quote facts."),
              ("No llms.txt", "/llms.txt returns a 404. We add one that lists the pages answering buyer questions."),
              ("No social previews", "181 of 197 pages have no Open Graph title, so a link pasted into Slack, LinkedIn or an AI chat shows no proper title or image."),
@@ -137,12 +137,12 @@ audit = {
         {"_key": k(), "kind": "steps",
          "heading": "The fix order",
          "steps": steps(
-             ("Day 1", "Blockers", ["Sitemap on, robots.txt names it, submitted in Search Console", "Global canonical address", "Menu link fixed, four old addresses redirected", "Article template title made the H1"]),
-             ("Week 1", "Hygiene", ["142 descriptions, each around the page's question", "18 duplicate titles and 14 pages with several H1s", "Social preview tags on every page"]),
-             ("Week 2", "Speed", ["One Google tag, one jQuery", "Two font families, loaded without blocking", "Hero images load first; YouTube on click", "Target: phone score 85 or more and main image under 2.5 s on every template"]),
-             ("Weeks 3 to 4", "AI readability", ["Product, FAQ and review markup", "llms.txt", "122 long article titles rewritten", "This audit run again, before and after side by side"]),
+             ("Step 1", "Blockers", ["Sitemap on, robots.txt names it, submitted in Search Console", "Global canonical address", "Menu link fixed, four old addresses redirected", "Article template title made the H1"]),
+             ("Step 2", "Hygiene", ["142 descriptions, each around the page's question", "18 duplicate titles and 14 pages with several H1s", "Social preview tags on every page"]),
+             ("Step 3", "Speed", ["One Google tag, one jQuery", "Two font families, loaded without blocking", "Hero images load first; YouTube on click", "Target: phone score 85 or more and main image under 2.5 s on every template"]),
+             ("Step 4", "AI readability", ["Product, FAQ and review markup", "llms.txt", "122 long article titles rewritten", "This audit run again, before and after side by side"]),
          ),
-         "note": "The new site in weeks 5 to 8 of the strategy is built with every one of these fixed from the start."},
+         "note": "The new site in the strategy is built with every one of these fixed from the start."},
 
         {"_key": k(), "kind": "table",
          "heading": "How we ran it",

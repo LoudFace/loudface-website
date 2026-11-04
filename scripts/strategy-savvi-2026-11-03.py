@@ -147,8 +147,8 @@ strategy = {
          "note": "Link gap from Ahrefs, 3 November 2026: among each rival's 250 strongest linking sites, those linking to two or more rivals and not to SAVVI. Results pages from Ahrefs the same day."},
 
         {"_key": k(), "kind": "list",
-         "heading": "What we would fix in the first week",
-         "intro": "The Day 1 and Week 1 rows of the Technical audit tab, from a crawl of all 197 pages on savvifi.com on 4 November. Speed, broken links and the full list are in that tab.",
+         "heading": "What we would fix first",
+         "intro": "The blockers from the Technical audit tab, from a crawl of all 197 pages on savvifi.com on 4 November. Speed, broken links and the full list are in that tab.",
          "items": items(
              ("No sitemap", "/sitemap.xml returns a 404 and robots.txt is empty, so Google gets no list of the 100+ articles. We publish a sitemap with honest dates and a robots.txt that lets AI crawlers in."),
              ("142 pages with no description", "72% of pages. We write each one around the question the page answers."),
@@ -157,7 +157,7 @@ strategy = {
              ("3 broken pages, one in the menu", "/products/savvi-wealth-partners answers Not Found and sits in the menu on 196 pages. /how-it-works/ and /product-selectsmart/ are linked from articles."),
              ("Titles that name the product", "122 titles run past 60 characters, and the product pages are titled \"SelectSmart\" and \"Next-Dollar\". We title them by the problem they solve."),
          ),
-         "note": "Fixed on today's site in week one, then built into the new site in month two. Speed and script weight are in the Technical audit tab."},
+         "note": "Fixed on today's site first, then built into the new site. Speed and script weight are in the Technical audit tab."},
 
         {"_key": k(), "kind": "steps",
          "heading": "The first 12 weeks, worked back from February",

@@ -366,16 +366,31 @@ function TickList({ items, className = 'space-y-2.5' }: { items: string[]; class
   );
 }
 
+/* Each table column is sized by its own content, never by its position.
+   A column whose every cell is short (a number, "Month 2") stays on one
+   line; any column with prose wraps, with a floor so it never shrinks to a
+   word per line. Headers always wrap. Before 4 Nov 2026 the last column
+   never wrapped, so a sentence there ran off the card. */
+const SHORT_CELL = 16;
+function columnFit(block: ProposalStrategyBlock) {
+  return (block.columns ?? []).map((_, i) => {
+    const longest = Math.max(0, ...(block.rows ?? []).map((r) => (r.cells[i] ?? '').length));
+    if (longest <= SHORT_CELL) return 'whitespace-nowrap';
+    return longest > 60 ? 'min-w-[200px]' : 'min-w-[120px]';
+  });
+}
+
 function StrategyBlockBody({ block }: { block: ProposalStrategyBlock }) {
   if (block.kind === 'table') {
     const cols = block.columns ?? [];
+    const fit = columnFit(block);
     return (
       <div className={`${card} overflow-x-auto`}>
         <table className="w-full min-w-[640px] border-collapse text-left text-[14px] leading-snug">
           <thead>
             <tr className="border-b border-surface-200">
-              {cols.map((c) => (
-                <th key={c} scope="col" className="px-4 py-3 text-[12px] font-medium text-surface-500 first:pl-5 last:whitespace-nowrap last:pr-5">
+              {cols.map((c, i) => (
+                <th key={c} scope="col" className={`px-4 py-3 text-[12px] font-medium text-surface-500 first:pl-5 last:pr-5 ${fit[i] === 'whitespace-nowrap' ? '' : fit[i]}`}>
                   {c}
                 </th>
               ))}
@@ -387,7 +402,7 @@ function StrategyBlockBody({ block }: { block: ProposalStrategyBlock }) {
                 {r.cells.map((cell, i) => (
                   <td
                     key={i}
-                    className={`px-4 py-3 first:pl-5 last:whitespace-nowrap last:pr-5 ${i === 0 ? `font-medium ${r.tone === 'skip' ? '' : 'text-surface-950'}` : ''} proposal-num`}
+                    className={`px-4 py-3 first:pl-5 last:pr-5 ${fit[i] ?? ''} ${i === 0 ? `font-medium ${r.tone === 'skip' ? '' : 'text-surface-950'}` : ''} proposal-num`}
                   >
                     {cell}
                   </td>
