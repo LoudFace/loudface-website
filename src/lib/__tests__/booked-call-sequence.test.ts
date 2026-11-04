@@ -5,6 +5,8 @@
  */
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
+import { existsSync } from 'node:fs';
+import { join } from 'node:path';
 import { leadFor, planFor, toLeadBooking, verticalOf, type LeadBooking } from '../booked-call-sequence';
 import { SEQUENCE_EMAILS, quotesFor } from '../booked-call-sequence-emails';
 
@@ -63,6 +65,19 @@ test('a typed website reads as its host, and every email renders with no placeho
     const e = make(lead);
     assert.ok(!e.html.includes('{{') && !e.text.includes('{{'));
     assert.ok(!/[—–]/.test(e.html + e.text + e.subject), `dash in ${e.subject}`);
+  }
+});
+
+test('no email in any vertical mentions the guarantee, and every image it uses is in public/email/precall', () => {
+  const lead = leadFor(josh)!;
+  for (const vertical of ['legal', 'saas', 'info', 'site'] as const) {
+    for (const make of Object.values(SEQUENCE_EMAILS)) {
+      const e = make({ ...lead, vertical });
+      assert.ok(!/3&times;|3×|3x your|guarantee|for free/i.test(e.html + e.text + e.subject), `guarantee in ${vertical} ${e.subject}`);
+      for (const [, file] of e.html.matchAll(/https:\/\/www\.loudface\.co\/email\/precall\/([\w.-]+)/g)) {
+        assert.ok(existsSync(join(process.cwd(), 'public/email/precall', file)), `missing image ${file}`);
+      }
+    }
   }
 });
 
