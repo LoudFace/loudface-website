@@ -79,7 +79,7 @@ function escapeHtml(value: string): string {
 
 type Parts = Record<string, string>;
 
-function buildParts(email: string, name?: string, startTime?: string, timeZone?: string, company?: string): Parts | null {
+export function buildParts(email: string, name?: string, startTime?: string, timeZone?: string, company?: string): Parts | null {
   const start = startTime ? new Date(startTime) : null;
   if (!start || Number.isNaN(start.getTime())) return null;
 
@@ -88,10 +88,13 @@ function buildParts(email: string, name?: string, startTime?: string, timeZone?:
     new Intl.DateTimeFormat('en-GB', { timeZone: zone, ...opts }).format(start);
 
   // The zone abbreviation (PDT, CEST) reads better to a human than an offset.
-  const zoneLabel =
-    new Intl.DateTimeFormat('en-GB', { timeZone: zone, timeZoneName: 'short' })
+  // en-GB names European zones (CET) but prints "GMT-8" for Los Angeles, where en-US says PST.
+  const zoneName = (locale: string) =>
+    new Intl.DateTimeFormat(locale, { timeZone: zone, timeZoneName: 'short' })
       .formatToParts(start)
-      .find((part) => part.type === 'timeZoneName')?.value ?? zone;
+      .find((part) => part.type === 'timeZoneName')?.value;
+  const gb = zoneName('en-GB');
+  const zoneLabel = (gb && !gb.startsWith('GMT') ? gb : zoneName('en-US') ?? gb) ?? zone;
 
   const weekday = at({ weekday: 'long' });
   const daynum = at({ day: 'numeric' });

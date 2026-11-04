@@ -28,6 +28,7 @@
     "check:editor": "node scripts/inline-edit-check.mjs",
     "test:meta-approval": "tsx --test src/lib/__tests__/meta-approval.test.ts",
     "test:apply": "tsx --test src/lib/__tests__/apply.test.ts",
+    "test:booked-call-sequence": "tsx --test src/lib/__tests__/booked-call-sequence.test.ts",
     "test:research": "tsx --test src/app/research-v11/charts/__tests__/draw.test.ts"
   },
   "dependencies": {
