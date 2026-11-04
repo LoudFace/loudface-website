@@ -1029,6 +1029,73 @@ const TOPICS = [
   { title: 'Off your site', value: 'offsite' },
 ];
 
+/* One block of the Strategy or Technical audit tab: a table, a list or a
+   roadmap. Registered once so both tabs share it; the stored _type stays
+   'strategyBlock', as it was when it lived inside the strategy array. */
+const strategyBlock = defineType({
+  name: 'strategyBlock',
+  title: 'Strategy or audit block',
+  type: 'object',
+  fields: [
+    defineField({ name: 'kind', title: 'Kind', type: 'string', options: { list: ['table', 'list', 'steps'] }, validation: (rule) => rule.required() }),
+    defineField({ name: 'topic', title: 'House topic', type: 'string', options: { list: TOPICS }, description: 'Adds the house line on how we decide this topic.' }),
+    defineField({ name: 'heading', title: 'Heading', type: 'string', validation: (rule) => rule.required() }),
+    defineField({ name: 'intro', title: 'Intro', type: 'text', rows: 3 }),
+    defineField({ name: 'columns', title: 'Table columns', type: 'array', of: [defineArrayMember({ type: 'string' })] }),
+    defineField({
+      name: 'rows',
+      title: 'Table rows',
+      type: 'array',
+      of: [
+        defineArrayMember({
+          type: 'object',
+          name: 'strategyRow',
+          fields: [
+            defineField({ name: 'cells', title: 'Cells', type: 'array', of: [defineArrayMember({ type: 'string' })] }),
+            defineField({ name: 'tone', title: 'Tone', type: 'string', options: { list: ['skip'] }, description: 'skip: drawn muted, for what we chose not to do.' }),
+          ],
+          preview: { select: { cells: 'cells' }, prepare: ({ cells }) => ({ title: (cells ?? []).join(' · ') }) },
+        }),
+      ],
+    }),
+    defineField({
+      name: 'items',
+      title: 'List items',
+      type: 'array',
+      of: [
+        defineArrayMember({
+          type: 'object',
+          name: 'strategyItem',
+          fields: [
+            defineField({ name: 'lead', title: 'Lead', type: 'string' }),
+            defineField({ name: 'text', title: 'Text', type: 'text', rows: 2 }),
+          ],
+          preview: { select: { title: 'lead', subtitle: 'text' } },
+        }),
+      ],
+    }),
+    defineField({
+      name: 'steps',
+      title: 'Roadmap steps',
+      type: 'array',
+      of: [
+        defineArrayMember({
+          type: 'object',
+          name: 'strategyStep',
+          fields: [
+            defineField({ name: 'label', title: 'Label', type: 'string', description: 'e.g. "Weeks 1 to 2".' }),
+            defineField({ name: 'title', title: 'Title', type: 'string' }),
+            defineField({ name: 'items', title: 'Items', type: 'array', of: [defineArrayMember({ type: 'string' })] }),
+          ],
+          preview: { select: { title: 'label', subtitle: 'title' } },
+        }),
+      ],
+    }),
+    defineField({ name: 'note', title: 'Note under the block', type: 'string' }),
+  ],
+  preview: { select: { title: 'heading', subtitle: 'kind' } },
+});
+
 const proposalStrategy = defineType({
   name: 'proposalStrategy',
   title: 'Strategy tab',
@@ -1058,72 +1125,46 @@ const proposalStrategy = defineType({
       title: 'Blocks',
       type: 'array',
       of: [
-        defineArrayMember({
-          type: 'object',
-          name: 'strategyBlock',
-          fields: [
-            defineField({ name: 'kind', title: 'Kind', type: 'string', options: { list: ['table', 'list', 'steps'] }, validation: (rule) => rule.required() }),
-            defineField({ name: 'topic', title: 'House topic', type: 'string', options: { list: TOPICS }, description: 'Adds the house line on how we decide this topic.' }),
-            defineField({ name: 'heading', title: 'Heading', type: 'string', validation: (rule) => rule.required() }),
-            defineField({ name: 'intro', title: 'Intro', type: 'text', rows: 3 }),
-            defineField({ name: 'columns', title: 'Table columns', type: 'array', of: [defineArrayMember({ type: 'string' })] }),
-            defineField({
-              name: 'rows',
-              title: 'Table rows',
-              type: 'array',
-              of: [
-                defineArrayMember({
-                  type: 'object',
-                  name: 'strategyRow',
-                  fields: [
-                    defineField({ name: 'cells', title: 'Cells', type: 'array', of: [defineArrayMember({ type: 'string' })] }),
-                    defineField({ name: 'tone', title: 'Tone', type: 'string', options: { list: ['skip'] }, description: 'skip: drawn muted, for what we chose not to do.' }),
-                  ],
-                  preview: { select: { cells: 'cells' }, prepare: ({ cells }) => ({ title: (cells ?? []).join(' · ') }) },
-                }),
-              ],
-            }),
-            defineField({
-              name: 'items',
-              title: 'List items',
-              type: 'array',
-              of: [
-                defineArrayMember({
-                  type: 'object',
-                  name: 'strategyItem',
-                  fields: [
-                    defineField({ name: 'lead', title: 'Lead', type: 'string' }),
-                    defineField({ name: 'text', title: 'Text', type: 'text', rows: 2 }),
-                  ],
-                  preview: { select: { title: 'lead', subtitle: 'text' } },
-                }),
-              ],
-            }),
-            defineField({
-              name: 'steps',
-              title: 'Roadmap steps',
-              type: 'array',
-              of: [
-                defineArrayMember({
-                  type: 'object',
-                  name: 'strategyStep',
-                  fields: [
-                    defineField({ name: 'label', title: 'Label', type: 'string', description: 'e.g. "Weeks 1 to 2".' }),
-                    defineField({ name: 'title', title: 'Title', type: 'string' }),
-                    defineField({ name: 'items', title: 'Items', type: 'array', of: [defineArrayMember({ type: 'string' })] }),
-                  ],
-                  preview: { select: { title: 'label', subtitle: 'title' } },
-                }),
-              ],
-            }),
-            defineField({ name: 'note', title: 'Note under the block', type: 'string' }),
-          ],
-          preview: { select: { title: 'heading', subtitle: 'kind' } },
-        }),
+        defineArrayMember({ type: 'strategyBlock' }),
       ],
     }),
     defineField({ name: 'quickWins', title: 'Quick wins, first 90 days', type: 'array', of: [defineArrayMember({ type: 'string' })] }),
     defineField({ name: 'longBets', title: 'Longer bets', type: 'array', of: [defineArrayMember({ type: 'string' })] }),
+  ],
+});
+
+/**
+ * The Technical audit tab (4 Nov 2026): a crawl of the lead's site, Google's
+ * speed test and Ahrefs, in its own tab beside the strategy. Leads compare
+ * agencies on how deep this goes (SAVVI, 3 Nov), so it carries counts, page
+ * lists and the order we fix things in.
+ */
+const proposalAudit = defineType({
+  name: 'proposalAudit',
+  title: 'Technical audit tab',
+  type: 'object',
+  fields: [
+    defineField({ name: 'heading', title: 'Heading', type: 'string' }),
+    defineField({ name: 'summary', title: 'Summary', type: 'text', rows: 3, description: 'What blocks the site today, in two or three sentences.' }),
+    defineField({ name: 'source', title: 'Sources line', type: 'string', description: 'What was run, on how many pages, and when.' }),
+    defineField({
+      name: 'stats',
+      title: 'Scorecard',
+      type: 'array',
+      of: [
+        defineArrayMember({
+          type: 'object',
+          name: 'auditStat',
+          fields: [
+            defineField({ name: 'value', title: 'Value', type: 'string', validation: (rule) => rule.required() }),
+            defineField({ name: 'label', title: 'Label', type: 'string', validation: (rule) => rule.required() }),
+            defineField({ name: 'tone', title: 'Tone', type: 'string', options: { list: ['bad', 'good', 'neutral'] } }),
+          ],
+          preview: { select: { title: 'value', subtitle: 'label' } },
+        }),
+      ],
+    }),
+    defineField({ name: 'blocks', title: 'Blocks', type: 'array', of: [defineArrayMember({ type: 'strategyBlock' })] }),
   ],
 });
 
@@ -1360,6 +1401,13 @@ const proposal = defineType({
       group: 'content',
       description: 'Cards only. Fill it in and the deck gets two tabs: the proposal, and this full strategy.',
     }),
+    defineField({
+      name: 'audit',
+      title: 'Technical audit tab',
+      type: 'proposalAudit',
+      group: 'content',
+      description: 'Cards only. Fill it in and the deck gets a Technical audit tab.',
+    }),
   ],
   preview: {
     select: { title: 'title', clientName: 'clientName', status: 'status' },
@@ -1391,6 +1439,8 @@ export const proposalSchemaTypes = [
   designSliderSection,
   gateSection,
   monthsSection,
+  strategyBlock,
   proposalStrategy,
+  proposalAudit,
   proposal,
 ];

@@ -3,7 +3,7 @@ import { ProposalDesignSlider } from './ProposalDesignSlider';
 import { ProposalStandingCharts } from './ProposalStandingCharts';
 import { PortableText, type PortableTextComponents } from '@portabletext/react';
 import type { PortableTextBlock } from '@portabletext/types';
-import type { Proposal, ProposalSection, ProposalStrategy, ProposalStrategyBlock } from '@/sanity/lib/proposalsClient';
+import type { Proposal, ProposalAudit, ProposalSection, ProposalStrategy, ProposalStrategyBlock } from '@/sanity/lib/proposalsClient';
 import { ProofRail, ProofSection, isProofSection } from './ProposalSocialProof';
 import { ProposalCaseProof } from './ProposalCaseProof';
 import { PlateDefs } from './ProposalFigures';
@@ -350,8 +350,8 @@ function Tracks({ section }: { section: Sec<'tracksSection'> }) {
    plan (tables, lists, a roadmap), quick wins beside longer bets. Every
    block is a heading, an optional "How we decide" line from the house
    method, the lead's own intro, and one card. */
-const strategyId = (heading: string) =>
-  `strategy-${heading.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '')}`;
+const blockId = (prefix: 'strategy' | 'audit', heading: string) =>
+  `${prefix}-${heading.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '')}`;
 
 function TickList({ items, className = 'space-y-2.5' }: { items: string[]; className?: string }) {
   return (
@@ -401,7 +401,7 @@ function StrategyBlockBody({ block }: { block: ProposalStrategyBlock }) {
   }
   if (block.kind === 'steps') {
     return (
-      <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+      <div className={`grid gap-3 sm:grid-cols-2 ${(block.steps ?? []).length === 4 ? 'xl:grid-cols-4' : 'lg:grid-cols-3'}`}>
         {(block.steps ?? []).map((s) => (
           <div key={s._key} className={`${card} p-5`}>
             <span className="proposal-num inline-block rounded-full bg-primary-50 px-2.5 py-0.5 text-[12px] font-medium text-primary-700">{s.label}</span>
@@ -424,20 +424,36 @@ function StrategyBlockBody({ block }: { block: ProposalStrategyBlock }) {
   );
 }
 
-function StrategyTab({ strategy, clientName }: { strategy: ProposalStrategy; clientName: string }) {
-  const blocks = strategy.blocks ?? [];
-  const wins = strategy.quickWins ?? [];
-  const later = strategy.longBets ?? [];
-  const bets = strategy.bets ?? [];
+/* The Strategy and Technical audit tabs share one layout: a contents rail on
+   the left, a header, optional bets or scorecard, then the blocks in order. */
+function PlanTab({
+  prefix,
+  label,
+  heading,
+  summary,
+  source,
+  top,
+  blocks,
+  tail,
+}: {
+  prefix: 'strategy' | 'audit';
+  label: string;
+  heading: string;
+  summary?: string;
+  source?: string;
+  top?: { id: string; label: string; node: ReactNode };
+  blocks: ProposalStrategyBlock[];
+  tail?: { id: string; label: string; node: ReactNode };
+}) {
   const outline = [
-    ...(bets.length ? [{ id: 'strategy-bets', label: 'The bets' }] : []),
-    ...blocks.map((b) => ({ id: strategyId(b.heading), label: b.heading })),
-    ...(wins.length || later.length ? [{ id: 'strategy-wins', label: 'Quick wins and longer bets' }] : []),
+    ...(top ? [{ id: top.id, label: top.label }] : []),
+    ...blocks.map((b) => ({ id: blockId(prefix, b.heading), label: b.heading })),
+    ...(tail ? [{ id: tail.id, label: tail.label }] : []),
   ];
   return (
     <div className={`${page} py-10 sm:py-12`}>
       <div className="lg:grid lg:grid-cols-[210px_minmax(0,1fr)] lg:gap-14">
-        <nav aria-label="Strategy contents" className="hidden lg:block">
+        <nav aria-label={`${label} contents`} className="hidden lg:block">
           <div className="sticky top-20 flex flex-col gap-0.5 border-l border-surface-200">
             {outline.map((o) => (
               <a key={o.id} href={`#${o.id}`} className="-ml-px border-l-2 border-transparent py-1.5 pl-3 text-[13px] leading-snug text-surface-500 hover:border-primary-300 hover:text-surface-900">
@@ -447,33 +463,23 @@ function StrategyTab({ strategy, clientName }: { strategy: ProposalStrategy; cli
           </div>
         </nav>
         <div className="min-w-0 space-y-14">
-          <header data-proposal-section="Strategy · Summary" className="space-y-3">
-            <h2 className="text-[26px] font-medium leading-tight tracking-[-0.03em] text-surface-950 sm:text-[32px]">
-              {strategy.heading || `The full strategy for ${clientName}`}
-            </h2>
-            {strategy.summary && <p className="max-w-[68ch] text-[17px] leading-relaxed text-surface-700">{strategy.summary}</p>}
-            {strategy.source && <p className="max-w-[68ch] text-[13px] text-surface-500">{strategy.source}</p>}
+          <header data-proposal-section={`${label} · Summary`} className="space-y-3">
+            <h2 className="text-[26px] font-medium leading-tight tracking-[-0.03em] text-surface-950 sm:text-[32px]">{heading}</h2>
+            {summary && <p className="max-w-[68ch] text-[17px] leading-relaxed text-surface-700">{summary}</p>}
+            {source && <p className="max-w-[68ch] text-[13px] text-surface-500">{source}</p>}
           </header>
 
-          {bets.length > 0 && (
-            <section id="strategy-bets" data-proposal-section="Strategy · The bets" className="scroll-mt-20">
-              <H>The bets</H>
-              <div className={`${panel} grid gap-3 sm:grid-cols-3`}>
-                {bets.map((b, i) => (
-                  <div key={b._key} className={`${card} p-5`}>
-                    <Icon i={i} />
-                    <p className="mt-4 text-[16px] font-semibold tracking-[-0.01em] text-surface-950">{b.title}</p>
-                    <p className="mt-2 text-[14px] leading-relaxed text-surface-700">{b.text}</p>
-                  </div>
-                ))}
-              </div>
+          {top && (
+            <section id={top.id} data-proposal-section={`${label} · ${top.label}`} className="scroll-mt-20">
+              <H>{top.label}</H>
+              {top.node}
             </section>
           )}
 
           {blocks.map((b) => {
             const house = b.topic ? STRATEGY_HOUSE[b.topic] : undefined;
             return (
-              <section key={b._key} id={strategyId(b.heading)} data-proposal-section={`Strategy · ${b.heading}`} className="scroll-mt-20">
+              <section key={b._key} id={blockId(prefix, b.heading)} data-proposal-section={`${label} · ${b.heading}`} className="scroll-mt-20">
                 <H>{b.heading}</H>
                 {house && (
                   <p className="mt-2 max-w-[72ch] text-[14px] leading-relaxed text-surface-500">
@@ -490,25 +496,10 @@ function StrategyTab({ strategy, clientName }: { strategy: ProposalStrategy; cli
             );
           })}
 
-          {(wins.length > 0 || later.length > 0) && (
-            <section id="strategy-wins" data-proposal-section="Strategy · Quick wins and longer bets" className="scroll-mt-20">
-              <H>Quick wins and longer bets</H>
-              <div className={panel}>
-                <div className={`${card} grid gap-6 p-5 sm:grid-cols-2 sm:gap-8 sm:p-6`}>
-                  {wins.length > 0 && (
-                    <div>
-                      <p className="text-[15px] font-semibold text-surface-950">Quick wins, first 90 days</p>
-                      <TickList items={wins} className="mt-3 space-y-2.5" />
-                    </div>
-                  )}
-                  {later.length > 0 && (
-                    <div>
-                      <p className="text-[15px] font-semibold text-surface-950">Longer bets, months 4 to 12</p>
-                      <TickList items={later} className="mt-3 space-y-2.5" />
-                    </div>
-                  )}
-                </div>
-              </div>
+          {tail && (
+            <section id={tail.id} data-proposal-section={`${label} · ${tail.label}`} className="scroll-mt-20">
+              <H>{tail.label}</H>
+              {tail.node}
             </section>
           )}
         </div>
@@ -517,17 +508,124 @@ function StrategyTab({ strategy, clientName }: { strategy: ProposalStrategy; cli
   );
 }
 
-/* The one line in the Proposal tab that points at the full strategy. */
-function StrategyPointer({ clientName }: { clientName: string }) {
+function StrategyTab({ strategy, clientName }: { strategy: ProposalStrategy; clientName: string }) {
+  const wins = strategy.quickWins ?? [];
+  const later = strategy.longBets ?? [];
+  const bets = strategy.bets ?? [];
   return (
-    <section className="py-6">
-      <a href="#strategy" className={`${card} flex items-center justify-between gap-4 p-5 transition-shadow hover:shadow-md sm:p-6`}>
-        <span>
-          <span className="block text-[16px] font-semibold text-surface-950">The full strategy for {clientName}</span>
-          <span className="mt-1 block text-[14px] text-surface-600">Keywords, AI questions, competitors, content, links and the first 12 weeks, in the Full strategy tab.</span>
-        </span>
-        <span aria-hidden="true" className="flex h-9 w-9 flex-none items-center justify-center rounded-full bg-primary-600 text-white">→</span>
-      </a>
+    <PlanTab
+      prefix="strategy"
+      label="Strategy"
+      heading={strategy.heading || `The full strategy for ${clientName}`}
+      summary={strategy.summary}
+      source={strategy.source}
+      blocks={strategy.blocks ?? []}
+      top={
+        bets.length > 0
+          ? {
+              id: 'strategy-bets',
+              label: 'The bets',
+              node: (
+                <div className={`${panel} grid gap-3 sm:grid-cols-3`}>
+                  {bets.map((b, i) => (
+                    <div key={b._key} className={`${card} p-5`}>
+                      <Icon i={i} />
+                      <p className="mt-4 text-[16px] font-semibold tracking-[-0.01em] text-surface-950">{b.title}</p>
+                      <p className="mt-2 text-[14px] leading-relaxed text-surface-700">{b.text}</p>
+                    </div>
+                  ))}
+                </div>
+              ),
+            }
+          : undefined
+      }
+      tail={
+        wins.length > 0 || later.length > 0
+          ? {
+              id: 'strategy-wins',
+              label: 'Quick wins and longer bets',
+              node: (
+                <div className={panel}>
+                  <div className={`${card} grid gap-6 p-5 sm:grid-cols-2 sm:gap-8 sm:p-6`}>
+                    {wins.length > 0 && (
+                      <div>
+                        <p className="text-[15px] font-semibold text-surface-950">Quick wins, first 90 days</p>
+                        <TickList items={wins} className="mt-3 space-y-2.5" />
+                      </div>
+                    )}
+                    {later.length > 0 && (
+                      <div>
+                        <p className="text-[15px] font-semibold text-surface-950">Longer bets, months 4 to 12</p>
+                        <TickList items={later} className="mt-3 space-y-2.5" />
+                      </div>
+                    )}
+                  </div>
+                </div>
+              ),
+            }
+          : undefined
+      }
+    />
+  );
+}
+
+/* The audit's scorecard: one number per check, toned like the /a/ audit's
+   tiles (AuditDocument): a blocker in the warning colour, a pass in indigo. */
+const STAT_TONE = { bad: 'text-warning-dark', good: 'text-primary-600', neutral: 'text-surface-950' } as const;
+
+function AuditTab({ audit, clientName }: { audit: ProposalAudit; clientName: string }) {
+  const stats = audit.stats ?? [];
+  return (
+    <PlanTab
+      prefix="audit"
+      label="Audit"
+      heading={audit.heading || `The technical audit of ${clientName}'s site`}
+      summary={audit.summary}
+      source={audit.source}
+      blocks={audit.blocks ?? []}
+      top={
+        stats.length > 0
+          ? {
+              id: 'audit-scorecard',
+              label: 'The scorecard',
+              node: (
+                <div className={`${panel} grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4`}>
+                  {stats.map((t) => (
+                    <div key={t._key} className={`${card} p-4 sm:p-5`}>
+                      <p className={`proposal-num text-[26px] font-semibold leading-none tracking-[-0.02em] ${STAT_TONE[t.tone ?? 'neutral']}`}>{t.value}</p>
+                      <p className="mt-2 text-[13px] leading-snug text-surface-600">{t.label}</p>
+                    </div>
+                  ))}
+                </div>
+              ),
+            }
+          : undefined
+      }
+    />
+  );
+}
+
+/* The cards in the Proposal tab that point at the other tabs. */
+function TabPointers({ clientName, strategy, audit }: { clientName: string; strategy: boolean; audit: boolean }) {
+  const cards = [
+    ...(strategy
+      ? [{ href: '#strategy', title: `The full strategy for ${clientName}`, text: 'Keywords, AI questions, competitors, content, links and the first 12 weeks, in the Full strategy tab.' }]
+      : []),
+    ...(audit
+      ? [{ href: '#audit', title: `The technical audit of ${clientName}'s site`, text: 'Broken pages, speed, what AI crawlers can read, and the order we fix it all in, in the Technical audit tab.' }]
+      : []),
+  ];
+  return (
+    <section className={`grid gap-3 py-6 ${cards.length > 1 ? 'sm:grid-cols-2' : ''}`}>
+      {cards.map((c) => (
+        <a key={c.href} href={c.href} className={`${card} flex items-center justify-between gap-4 p-5 transition-shadow hover:shadow-md sm:p-6`}>
+          <span>
+            <span className="block text-[16px] font-semibold text-surface-950">{c.title}</span>
+            <span className="mt-1 block text-[14px] text-surface-600">{c.text}</span>
+          </span>
+          <span aria-hidden="true" className="flex h-9 w-9 flex-none items-center justify-center rounded-full bg-primary-600 text-white">→</span>
+        </a>
+      ))}
     </section>
   );
 }
@@ -683,6 +781,8 @@ export function ProposalCardsDocument({ proposal }: { proposal: Proposal }) {
   // The Full strategy tab, when the proposal carries one, and where the
   // Proposal tab points at it: just before "What we would do".
   const strategy = (proposal.strategy?.blocks?.length ?? 0) > 0 ? proposal.strategy : undefined;
+  const audit = (proposal.audit?.blocks?.length ?? 0) > 0 ? proposal.audit : undefined;
+  const tabbed = Boolean(strategy || audit);
   const pointerAt = afterTracks !== -1 ? afterTracks : whoAt;
 
   const light = (section: ProposalSection, index: number) => {
@@ -767,7 +867,7 @@ export function ProposalCardsDocument({ proposal }: { proposal: Proposal }) {
       <PlateDefs />
       <Hero proposal={proposal} />
 
-      {strategy ? (
+      {tabbed ? (
         <ProposalTabs
           proposal={
             <>
@@ -776,11 +876,11 @@ export function ProposalCardsDocument({ proposal }: { proposal: Proposal }) {
                 <div className="min-w-0">
                   {sections.slice(0, whoAt).map((s, i) => (
                     <Fragment key={s._key}>
-                      {strategy && i === pointerAt && <StrategyPointer clientName={proposal.clientName} />}
+                      {tabbed && i === pointerAt && <TabPointers clientName={proposal.clientName} strategy={Boolean(strategy)} audit={Boolean(audit)} />}
                       {light(s, i)}
                     </Fragment>
                   ))}
-                  {strategy && pointerAt === whoAt && <StrategyPointer clientName={proposal.clientName} />}
+                  {tabbed && pointerAt === whoAt && <TabPointers clientName={proposal.clientName} strategy={Boolean(strategy)} audit={Boolean(audit)} />}
                   <ProposalWhoDoesIt index={whoAt} />
                   <ProposalMethod index={whoAt} stages={methodStages()} />
                   <ProposalTeamSlider index={whoAt} {...teamFromAbout()} />
@@ -810,7 +910,8 @@ export function ProposalCardsDocument({ proposal }: { proposal: Proposal }) {
 
             </>
           }
-          strategy={<StrategyTab strategy={strategy} clientName={proposal.clientName} />}
+          strategy={strategy && <StrategyTab strategy={strategy} clientName={proposal.clientName} />}
+          audit={audit && <AuditTab audit={audit} clientName={proposal.clientName} />}
         />
       ) : (
         <>
@@ -819,11 +920,11 @@ export function ProposalCardsDocument({ proposal }: { proposal: Proposal }) {
               <div className="min-w-0">
                 {sections.slice(0, whoAt).map((s, i) => (
                   <Fragment key={s._key}>
-                    {strategy && i === pointerAt && <StrategyPointer clientName={proposal.clientName} />}
+                    {tabbed && i === pointerAt && <TabPointers clientName={proposal.clientName} strategy={Boolean(strategy)} audit={Boolean(audit)} />}
                     {light(s, i)}
                   </Fragment>
                 ))}
-                {strategy && pointerAt === whoAt && <StrategyPointer clientName={proposal.clientName} />}
+                {tabbed && pointerAt === whoAt && <TabPointers clientName={proposal.clientName} strategy={Boolean(strategy)} audit={Boolean(audit)} />}
                 <ProposalWhoDoesIt index={whoAt} />
                 <ProposalMethod index={whoAt} stages={methodStages()} />
                 <ProposalTeamSlider index={whoAt} {...teamFromAbout()} />

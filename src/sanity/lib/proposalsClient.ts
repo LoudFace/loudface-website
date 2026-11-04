@@ -344,6 +344,21 @@ export interface ProposalStrategy {
   longBets?: string[];
 }
 
+/**
+ * The Technical audit tab (4 Nov 2026): what a crawl, Google's speed test
+ * and Ahrefs found on the lead's site, in its own tab beside the strategy.
+ * Leads compare agencies on how deep the audit goes (Kelsey at SAVVI, 3 Nov),
+ * so it carries counts, page lists and the fix order, not a summary.
+ */
+export interface ProposalAudit {
+  heading?: string;
+  summary?: string;
+  source?: string;
+  /** The scorecard: one number per check, toned like the /a/ audit's tiles. */
+  stats?: AuditScoreTile[];
+  blocks?: ProposalStrategyBlock[];
+}
+
 export interface ProposalRailClip {
   _key: string;
   videoUrl?: string;
@@ -394,6 +409,8 @@ export interface Proposal {
   sections?: ProposalSection[];
   /** Cards only: when present, the deck gets a Proposal tab and a Strategy tab. */
   strategy?: ProposalStrategy;
+  /** Cards only: adds a Technical audit tab. */
+  audit?: ProposalAudit;
   contactEmail?: string;
   /** The reader's own email. Used only to identify them in analytics. */
   readerEmail?: string;
@@ -444,6 +461,16 @@ const CONTENT_QUERY = `*[_type == "proposal" && token == $token][0]{
   strategy{
     heading, summary, source, quickWins, longBets,
     bets[]{ _key, title, text },
+    blocks[]{
+      _key, kind, topic, heading, intro, columns, note,
+      rows[]{ _key, cells, tone },
+      items[]{ _key, lead, text },
+      steps[]{ _key, label, title, items }
+    }
+  },
+  audit{
+    heading, summary, source,
+    stats[]{ _key, value, label, tone },
     blocks[]{
       _key, kind, topic, heading, intro, columns, note,
       rows[]{ _key, cells, tone },

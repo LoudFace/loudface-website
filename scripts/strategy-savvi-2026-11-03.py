@@ -5,8 +5,8 @@ import json, sys
 
 # SAVVI's full strategy (3 Nov 2026). Numbers: Ahrefs US (keywords explorer,
 # SERP overview, referring domains, 3 Nov), the proposal's own charts (Ahrefs,
-# 25 Oct), ChatGPT with web search (26 Oct) and a LibreCrawl crawl of 209
-# pages on savvifi.com (3 Nov, no JavaScript, as AI crawlers read it).
+# 25 Oct), ChatGPT with web search (26 Oct) and the 4 Nov crawl of all 197
+# pages on savvifi.com behind the Technical audit tab (audit-savvi-2026-11-04.py).
 
 n = 0
 def k():
@@ -31,7 +31,7 @@ strategy = {
         "and mentions for three buyers: employers choosing a platform, brokers and partners choosing what to offer, and "
         "employees deciding where the next dollar goes. We take the low-difficulty buyer searches first, then the contested ones."
     ),
-    "source": "Read 26 October to 3 November 2026: Ahrefs (US), ChatGPT with web search, and a crawl of 209 pages on savvifi.com.",
+    "source": "Read 26 October to 4 November 2026: Ahrefs (US), ChatGPT with web search, and a crawl of all 197 pages on savvifi.com.",
     "bets": [
         {"_key": k(), "title": "Own the next-dollar question",
          "text": "ChatGPT already names SAVVI first when an employee asks whether the next dollar goes to the 401(k), the HSA or debt. No rival owns that moment. We build it out: \"hsa vs 401k\" (350 searches a month, difficulty 1) and \"pay off debt or invest\" (300, difficulty 2)."},
@@ -148,16 +148,16 @@ strategy = {
 
         {"_key": k(), "kind": "list",
          "heading": "What we would fix in the first week",
-         "intro": "From a crawl of 209 pages on savvifi.com on 3 November, read without JavaScript, the way AI crawlers read it.",
+         "intro": "The Day 1 and Week 1 rows of the Technical audit tab, from a crawl of all 197 pages on savvifi.com on 4 November. Speed, broken links and the full list are in that tab.",
          "items": items(
              ("No sitemap", "/sitemap.xml returns a 404 and robots.txt is empty, so Google gets no list of the 100+ articles. We publish a sitemap with honest dates and a robots.txt that lets AI crawlers in."),
-             ("148 pages with no description", "71% of pages. We write each one around the question the page answers."),
-             ("168 pages with no main heading", "Including the Finances on Fire report. A crawler that does not run JavaScript cannot tell what the page is about."),
-             ("No canonical tags", "None of the 209 pages names its main address, and http, https, www and tracking-link versions all answer. Search engines see duplicates."),
-             ("3 broken product pages", "/how-it-works/, /product-selectsmart/ and /products/savvi-wealth-partners answer Not Found but are still linked."),
+             ("142 pages with no description", "72% of pages. We write each one around the question the page answers."),
+             ("164 pages with no main heading", "Including the Finances on Fire report. The article template marks each title as a sub-heading, so one template change fixes 159 articles."),
+             ("No canonical tags", "None of the 197 pages names its main address, and tracking-link copies such as ?utm_source=chatgpt.com answer as separate pages. Search engines see duplicates."),
+             ("3 broken pages, one in the menu", "/products/savvi-wealth-partners answers Not Found and sits in the menu on 196 pages. /how-it-works/ and /product-selectsmart/ are linked from articles."),
              ("Titles that name the product", "122 titles run past 60 characters, and the product pages are titled \"SelectSmart\" and \"Next-Dollar\". We title them by the problem they solve."),
          ),
-         "note": "Fixed on today's site in week one, then built into the new site in month two. Speed and script weight are measured page by page in the same week."},
+         "note": "Fixed on today's site in week one, then built into the new site in month two. Speed and script weight are in the Technical audit tab."},
 
         {"_key": k(), "kind": "steps",
          "heading": "The first 12 weeks, worked back from February",
