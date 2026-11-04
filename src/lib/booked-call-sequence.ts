@@ -1,20 +1,21 @@
-// When each pre-call email goes out, where the bookings wait, and the send itself.
+// When each pre-call email goes out, and the send itself.
 // The emails are in booked-call-sequence-emails.ts; email 1 stays in booked-call-email.ts.
 //
-// How it runs: the Cal.com webhook saves every intro-call booking here (Redis, REDIS_URL) and
-// removes it on a cancellation or reschedule, so Cal.com stays the source of truth for whether a
-// call is still on. The cron at /api/cron/booked-call-sequence wakes every 15 minutes, works out
-// each saved booking's plan and sends what is due. A Redis claim per booking and email (plus
-// Resend's idempotency key) means one email never goes out twice.
+// How it runs: the cron at /api/cron/booked-call-sequence wakes every 15 minutes, reads the
+// upcoming intro-call bookings from Cal.com (CAL_API_KEY), works out each one's plan and sends
+// what is due. Cal.com is the only record: a cancelled call is no longer upcoming, and a moved call
+// comes back as a new booking marked as rescheduled. Nothing is stored here. Each email has a send
+// window shorter than a day, and Resend refuses a repeat of the same Idempotency-Key for 24 hours,
+// so the four or more ticks inside one window send it once.
 //
-// BOOKED_CALL_SEQUENCE decides what the cron does: "live" sends, anything else only logs what it
-// would send. Bookings are saved either way, so switching it on picks up calls already booked.
+// BOOKED_CALL_SEQUENCE decides what the cron does: "live" sends, anything else only reports what it
+// would send. BOOKED_CALL_SEQUENCE_SINCE (ISO time of the switch-on) starts the plan of a call
+// booked before then at the switch-on, so nothing counts as overdue.
 
-import { createClient, type RedisClientType } from 'redis';
 import { buildParts, companyName } from './booked-call-email';
 import { SEQUENCE_EMAILS, type SequenceEmailNumber, type SequenceLead, type Vertical } from './booked-call-sequence-emails';
 
-export type StoredBooking = {
+export type LeadBooking = {
   uid: string;
   email: string;
   name?: string;
@@ -26,7 +27,7 @@ export type StoredBooking = {
   /** The page the booking was made on (/apply bookings only). */
   src?: string;
   joinUrl?: string;
-  /** A rebooked call: its nurture emails went out for the first booking already. */
+  /** A moved call: its nurture emails went out for the first booking already. */
   rescheduled?: boolean;
 };
 
@@ -83,7 +84,7 @@ function morningSlots(from: Date, to: Date, zone: string): Date[] {
  *   Three slots or more: 2 first, 4 last, 3 in the middle. Two: 2 and 3. One: 2. A rebooked call
  *   skips them; the lead had them for the first booking.
  */
-export function planFor(b: StoredBooking, armedAt: Date): PlannedEmail[] {
+export function planFor(b: LeadBooking, armedAt: Date): PlannedEmail[] {
   const start = new Date(b.startTime);
   const zone = b.timeZone || 'UTC';
   const plan: PlannedEmail[] = [];
@@ -119,7 +120,7 @@ export function verticalOf(src?: string): Vertical {
 }
 
 /** A typed company name as written; a typed web address as its bare host; else "your business". */
-function siteLabel(b: StoredBooking): string {
+function siteLabel(b: LeadBooking): string {
   const typed = (b.company ?? '').trim();
   const host = typed.replace(/^https?:\/\//i, '').replace(/^www\./i, '').split(/[/?#]/)[0];
   if (/^[\w-]+(\.[\w-]+)+$/.test(host)) return host.toLowerCase();
@@ -127,7 +128,7 @@ function siteLabel(b: StoredBooking): string {
   return name === 'your business' ? 'your business' : name;
 }
 
-export function leadFor(b: StoredBooking): SequenceLead | null {
+export function leadFor(b: LeadBooking): SequenceLead | null {
   const parts = buildParts(b.email, b.name, b.startTime, b.timeZone, b.company);
   if (!parts) return null;
   return {
@@ -145,48 +146,63 @@ export function leadFor(b: StoredBooking): SequenceLead | null {
   };
 }
 
-// ---------- storage ----------
+// ---------- the bookings, from Cal.com ----------
 
-let client: RedisClientType | null = null;
+// Same two event types the webhook treats as leads (api/webhooks/cal/route.ts).
+const LEAD_EVENT_TYPE_IDS = new Set([529903, 7718812]);
+const LEAD_EVENT_TYPE_SLUGS = new Set(['loudface-intro-call', 'loudface-intro-call-apply']);
 
-async function redis(): Promise<RedisClientType | null> {
-  if (!process.env.REDIS_URL) return null;
-  if (client?.isOpen) return client;
-  client = createClient({ url: process.env.REDIS_URL });
-  client.on('error', (err) => console.error('[booked-call-sequence:redis]', err));
-  await client.connect();
-  return client;
+type CalBooking = {
+  uid: string;
+  status?: string;
+  start: string;
+  createdAt: string;
+  eventTypeId?: number;
+  eventType?: { slug?: string };
+  attendees?: Array<{ name?: string; email?: string; timeZone?: string }>;
+  bookingFieldsResponses?: Record<string, unknown>;
+  metadata?: Record<string, unknown>;
+  meetingUrl?: string;
+  location?: string;
+  rescheduledFromUid?: string | null;
+  fromReschedule?: string | null;
+};
+
+const str = (v: unknown) => (typeof v === 'string' && v.trim() ? v.trim() : undefined);
+
+export function toLeadBooking(c: CalBooking): LeadBooking | null {
+  const isLead = LEAD_EVENT_TYPE_SLUGS.has(c.eventType?.slug ?? '') || LEAD_EVENT_TYPE_IDS.has(c.eventTypeId ?? -1);
+  const guest = c.attendees?.[0];
+  const email = guest?.email?.toLowerCase().trim();
+  if (!isLead || c.status !== 'accepted' || !email) return null;
+  // LoudFace team tests and bookings marked "(ignore)" are never leads.
+  if (email.endsWith('@loudface.co') || /\(ignore\)/i.test(guest?.name ?? '')) return null;
+  const f = c.bookingFieldsResponses ?? {};
+  return {
+    uid: c.uid,
+    email,
+    name: guest?.name,
+    startTime: c.start,
+    timeZone: guest?.timeZone,
+    bookedAt: c.createdAt,
+    company: str(f['company-name']) ?? str(f.website),
+    src: str(c.metadata?.src),
+    joinUrl: [c.meetingUrl, c.location].find((v): v is string => typeof v === 'string' && v.startsWith('https://')),
+    rescheduled: Boolean(c.rescheduledFromUid || c.fromReschedule),
+  };
 }
 
-const UPCOMING = 'bcs:upcoming';
-const bookingKey = (uid: string) => `bcs:booking:${uid}`;
-const sentKey = (uid: string, n: number) => `bcs:sent:${uid}:${n}`;
-
-/** Never throws: a Redis fault must not fail the Cal.com webhook (Cal.com would retry it). */
-export async function saveBooking(b: StoredBooking): Promise<void> {
-  try {
-    const r = await redis();
-    if (!r) return;
-    const start = new Date(b.startTime).getTime();
-    if (!Number.isFinite(start)) return;
-    await r.set(bookingKey(b.uid), JSON.stringify(b), { PX: Math.max(start + 2 * 24 * HOUR - Date.now(), HOUR) });
-    await r.zAdd(UPCOMING, { score: start, value: b.uid });
-    console.log(`[booked-call-sequence] saved ${b.uid} (${verticalOf(b.src)}, call ${b.startTime})`);
-  } catch (error) {
-    console.error('[booked-call-sequence] save failed', error);
-  }
-}
-
-export async function removeBooking(uid: string, why: string): Promise<void> {
-  try {
-    const r = await redis();
-    if (!r) return;
-    const gone = await r.zRem(UPCOMING, uid);
-    await r.del(bookingKey(uid));
-    if (gone) console.log(`[booked-call-sequence] removed ${uid} (${why})`);
-  } catch (error) {
-    console.error('[booked-call-sequence] remove failed', error);
-  }
+async function upcomingBookings(): Promise<LeadBooking[]> {
+  const key = process.env.CAL_API_KEY;
+  if (!key) throw new Error('CAL_API_KEY is not set');
+  const res = await fetch('https://api.cal.com/v2/bookings?status=upcoming&take=100&sortStart=asc', {
+    headers: { Authorization: `Bearer ${key}`, 'cal-api-version': '2024-08-13' },
+    cache: 'no-store',
+    signal: AbortSignal.timeout(15_000),
+  });
+  if (!res.ok) throw new Error(`Cal.com returned ${res.status}`);
+  const body = (await res.json()) as { data?: CalBooking[] };
+  return (body.data ?? []).map(toLeadBooking).filter((b): b is LeadBooking => b !== null);
 }
 
 // ---------- the send ----------
@@ -194,7 +210,7 @@ export async function removeBooking(uid: string, why: string): Promise<void> {
 const FROM = 'Arnel Bukva <arnel@mail.loudface.co>';
 const REPLY_TO = 'arnel@loudface.co';
 
-async function send(b: StoredBooking, n: SequenceEmailNumber, lead: SequenceLead): Promise<boolean> {
+async function send(b: LeadBooking, n: SequenceEmailNumber, lead: SequenceLead): Promise<boolean> {
   const apiKey = process.env.RESEND_API_KEY;
   if (!apiKey) return false;
   const email = SEQUENCE_EMAILS[n](lead);
@@ -222,18 +238,9 @@ export type RunReport = { live: boolean; bookings: number; sent: string[]; due: 
 export async function runSequence(now = new Date()): Promise<RunReport> {
   const live = process.env.BOOKED_CALL_SEQUENCE === 'live';
   const report: RunReport = { live, bookings: 0, sent: [], due: [], failed: [] };
-  const r = await redis();
-  if (!r) return report;
-
-  await r.zRemRangeByScore(UPCOMING, 0, now.getTime() - HOUR);
-  const uids = await r.zRangeByScore(UPCOMING, now.getTime(), '+inf');
-  // Bookings made before the switch-on start their plan at the switch-on, so nothing is "overdue".
   const since = process.env.BOOKED_CALL_SEQUENCE_SINCE ? new Date(process.env.BOOKED_CALL_SEQUENCE_SINCE) : null;
 
-  for (const uid of uids) {
-    const raw = await r.get(bookingKey(uid));
-    if (!raw) continue;
-    const b = JSON.parse(raw) as StoredBooking;
+  for (const b of await upcomingBookings()) {
     report.bookings++;
     const lead = leadFor(b);
     if (!lead) continue;
@@ -241,22 +248,16 @@ export async function runSequence(now = new Date()): Promise<RunReport> {
     const armedAt = since && since > bookedAt ? since : bookedAt;
     for (const step of planFor(b, armedAt)) {
       if (now < step.sendAt || now > step.until) continue;
-      const tag = `${uid}#${step.n}`;
+      const tag = `${b.uid}#${step.n}`;
       report.due.push(tag);
       if (!live) continue;
-      const claimed = await r.set(sentKey(uid, step.n), now.toISOString(), { NX: true, PX: 40 * 24 * HOUR });
-      if (!claimed) continue;
       const ok = await send(b, step.n, lead).catch((error) => {
         console.error(`[booked-call-sequence] send failed for ${tag}`, error);
         return false;
       });
-      if (ok) report.sent.push(tag);
-      else {
-        report.failed.push(tag);
-        await r.del(sentKey(uid, step.n)); // the next tick tries again while the window is open
-      }
+      (ok ? report.sent : report.failed).push(tag);
     }
   }
-  if (!live && report.due.length) console.log(`[booked-call-sequence] switched off; would send ${report.due.join(', ')}`);
+  console.log(`[booked-call-sequence] ${live ? 'live' : 'switched off'}: ${report.bookings} upcoming, due ${report.due.join(', ') || 'none'}`);
   return report;
 }

@@ -5,11 +5,11 @@
  */
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { leadFor, planFor, verticalOf, type StoredBooking } from '../booked-call-sequence';
+import { leadFor, planFor, toLeadBooking, verticalOf, type LeadBooking } from '../booked-call-sequence';
 import { SEQUENCE_EMAILS, quotesFor } from '../booked-call-sequence-emails';
 
 // The first Meta lead: booked Tue 3 Nov 15:51 Los Angeles, call Sat 14 Nov 09:30.
-const josh: StoredBooking = {
+const josh: LeadBooking = {
   uid: 'u1', email: 'josh@example.com', name: 'Josh', startTime: '2026-11-14T17:30:00.000Z',
   timeZone: 'America/Los_Angeles', bookedAt: '2026-11-03T23:51:26.610Z',
   company: 'https://accidentaldefenders.com', src: 'https://www.loudface.co/apply/legal',
@@ -70,4 +70,22 @@ test('email 4 never repeats the quote from email 3', () => {
   assert.ok(!quotesFor('saas').some((q) => q.id === 'kevin'));
   assert.ok(!quotesFor('site').some((q) => q.id === 'kenneth'));
   assert.equal(quotesFor('legal').length, 3);
+});
+
+test('only accepted intro calls from outside LoudFace come back from Cal.com as leads', () => {
+  const cal = {
+    uid: 'c1', status: 'accepted', start: josh.startTime, createdAt: josh.bookedAt, eventTypeId: 7718812,
+    eventType: { slug: 'loudface-intro-call-apply' }, attendees: [{ name: 'Josh', email: 'Josh@Example.com', timeZone: 'America/Los_Angeles' }],
+    bookingFieldsResponses: { website: 'https://accidentaldefenders.com' }, metadata: { src: 'https://www.loudface.co/apply/legal' },
+    meetingUrl: 'https://meet.google.com/abc-defg-hij', rescheduledFromUid: null,
+  };
+  const b = toLeadBooking(cal)!;
+  assert.equal(b.email, 'josh@example.com');
+  assert.equal(b.company, 'https://accidentaldefenders.com');
+  assert.equal(b.rescheduled, false);
+  assert.equal(toLeadBooking({ ...cal, rescheduledFromUid: 'old' })!.rescheduled, true);
+  assert.equal(toLeadBooking({ ...cal, eventTypeId: 1, eventType: { slug: 'quick-chat-with-arnel' } }), null);
+  assert.equal(toLeadBooking({ ...cal, status: 'cancelled' }), null);
+  assert.equal(toLeadBooking({ ...cal, attendees: [{ name: 'Arnel', email: 'arnel@loudface.co' }] }), null);
+  assert.equal(toLeadBooking({ ...cal, attendees: [{ name: 'Test (ignore)', email: 'a@b.com' }] }), null);
 });

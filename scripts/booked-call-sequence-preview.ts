@@ -1,12 +1,12 @@
 // Renders a booking's pre-call emails and their send times as JSON, for a review page. Never sends.
 //   SINCE=<switch-on ISO> npx tsx scripts/booked-call-sequence-preview.ts <out.json> [bookingJson]
-// bookingJson: a StoredBooking. Without one, a sample /apply/legal booking.
+// bookingJson: a LeadBooking. Without one, a sample /apply/legal booking.
 import { writeFileSync } from 'node:fs';
-import { leadFor, planFor, verticalOf, type StoredBooking } from '../src/lib/booked-call-sequence';
+import { leadFor, planFor, verticalOf, type LeadBooking } from '../src/lib/booked-call-sequence';
 import { SEQUENCE_EMAILS, email3 } from '../src/lib/booked-call-sequence-emails';
 
 const out = process.argv[2] ?? 'booked-call-sequence-preview.json';
-const b: StoredBooking = process.argv[3]
+const b: LeadBooking = process.argv[3]
   ? JSON.parse(process.argv[3])
   : { uid: 'sample', email: 'sam@example.com', name: 'Sam Lee', startTime: '2026-11-14T17:30:00Z', timeZone: 'America/Los_Angeles', bookedAt: '2026-11-03T23:51:26Z', company: 'https://example.com', src: 'https://www.loudface.co/apply/legal', joinUrl: 'https://meet.google.com/abc-defg-hij' };
 const since = process.env.SINCE ? new Date(process.env.SINCE) : new Date(b.bookedAt);

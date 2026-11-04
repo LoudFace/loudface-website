@@ -5,7 +5,6 @@ import { postApprovalCard, prepareSchedule } from '@/lib/meta-approval';
 import { getPostHogServer } from '@/lib/posthog-server';
 import { notifySlackOfLead } from '@/lib/slack-notify';
 import { sendBookedCallEmail } from '@/lib/booked-call-email';
-import { removeBooking, saveBooking } from '@/lib/booked-call-sequence';
 
 type CalAttendee = {
   email?: string;
@@ -35,10 +34,6 @@ type CalWebhookPayload = {
     status?: string;
     attendees?: CalAttendee[];
     organizer?: { email?: string; name?: string };
-    /** On BOOKING_RESCHEDULED: the uid of the booking this one replaces. */
-    rescheduleUid?: string;
-    location?: string;
-    videoCallData?: { url?: string };
     responses?: Record<string, { label?: string; value?: unknown }>;
     metadata?: Record<string, unknown>;
     tracking?: CalTracking;
@@ -232,31 +227,6 @@ export async function POST(request: Request) {
         timeZone: attendee?.timeZone,
         bookingUid: body.payload?.uid,
         company: typeof companyAnswer === 'string' ? companyAnswer : undefined,
-      });
-    }
-
-    // The pre-call emails (lib/booked-call-sequence.ts) follow the booking: saved when it is made,
-    // dropped when it is cancelled, and swapped for the new booking when it is moved.
-    const uid = body.payload?.uid;
-    if (event === 'call_cancelled' && uid) await removeBooking(uid, 'cancelled');
-    if (event === 'call_rescheduled' && body.payload?.rescheduleUid) await removeBooking(body.payload.rescheduleUid, 'rescheduled');
-    if ((event === 'call_booked' || event === 'call_rescheduled') && uid && email && body.payload?.startTime) {
-      const companyAnswer = body.payload?.responses?.['company-name']?.value ?? body.payload?.responses?.website?.value;
-      const meta = body.payload?.metadata ?? {};
-      const joinUrl = [body.payload?.videoCallData?.url, meta.videoCallUrl, body.payload?.location].find(
-        (v): v is string => typeof v === 'string' && /^https:\/\//.test(v)
-      );
-      await saveBooking({
-        uid,
-        email,
-        name: attendee?.name,
-        startTime: body.payload.startTime,
-        timeZone: attendee?.timeZone,
-        bookedAt: body.createdAt ?? new Date().toISOString(),
-        company: typeof companyAnswer === 'string' ? companyAnswer : undefined,
-        src: typeof meta.src === 'string' ? meta.src : undefined,
-        joinUrl,
-        rescheduled: event === 'call_rescheduled',
       });
     }
 

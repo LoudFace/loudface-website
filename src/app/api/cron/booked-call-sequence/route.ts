@@ -14,6 +14,10 @@ export async function GET(request: Request) {
   if (request.headers.get('authorization') !== `Bearer ${secret}`) {
     return NextResponse.json({ error: 'unauthorized' }, { status: 401 });
   }
-  const report = await runSequence();
-  return NextResponse.json(report);
+  try {
+    return NextResponse.json(await runSequence());
+  } catch (error) {
+    console.error('[booked-call-sequence] run failed', error);
+    return NextResponse.json({ error: String(error) }, { status: 500 });
+  }
 }
