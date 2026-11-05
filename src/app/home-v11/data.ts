@@ -212,7 +212,11 @@ export const getHomeV11Data = cache(async (): Promise<HomeV11Data | null> => {
       // Toku: monthly Google impressions over the core engagement window, indexed to September 2025 (its study's chart);
       // the program began well before it, on a day not recorded, so no start pin
       toku: tokuTrend.length ? { dates: tokuTrend.map((p) => p.date as string), values: tokuTrend.map((p) => p.impressions), start: tokuTrend[0].date as string, pin: false } : undefined,
-      genieClicks: { dates: gTrend.map((p) => p.date as string), values: rolling(gTrend.map((p) => p.clicks), 7), start: genie.engagementStart ?? '2026-07-05' },
+      // Genie clicks (2026-11-05): the study's own weekly series when it publishes one, so the line reaches the week its
+      // clicks card is measured on; the daily points stop where the impressions line peaks
+      genieClicks: genie.clickGrowth?.points.length
+        ? { dates: genie.clickGrowth.points.map((p) => p.week), values: genie.clickGrowth.points.map((p) => p.value), start: genie.engagementStart ?? '2026-07-05' }
+        : { dates: gTrend.map((p) => p.date as string), values: rolling(gTrend.map((p) => p.clicks), 7), start: genie.engagementStart ?? '2026-07-05' },
       // Pond (2026-10-18): Google impressions a day from searches without its name, seven-day mean, indexed to the week
       // the first new page went live (7 to 13 Sep = 100); the last point is the study's 12×
       pond: pondTrend.length ? { dates: pondTrend.map((p) => p.date as string), values: rolling(pondTrend.map((p) => p.impressions), 7), start: pond.engagementStart ?? '2026-08-21' } : undefined,
