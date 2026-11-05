@@ -6,7 +6,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { createHash, createHmac } from 'node:crypto';
-import { approvalBlocks, buildScheduleEvent, isTooOld, MAX_EVENT_AGE_SECONDS, parsePrepared, prepareSchedule, verifySlackSignature } from '../meta-approval';
+import { approvalBlocks, buildScheduleEvent, isMetaAdBooking, isTooOld, MAX_EVENT_AGE_SECONDS, parsePrepared, prepareSchedule, verifySlackSignature } from '../meta-approval';
 
 const sha = (v: string) => createHash('sha256').update(v).digest('hex');
 
@@ -82,4 +82,18 @@ test('a foreign page or a value that is not an IP stays out of the Schedule even
 test('a full /apply booking still fits in the Slack button', () => {
   const p = prepareSchedule({ bookingUid: 'u'.repeat(30), bookedAt: 1, email: 'a@b.co', phone: '123', name: 'A B', fbp: 'fb.1.1700000000000.1234567890', fbc: 'fb.1.1700000000000.' + 'x'.repeat(200), userAgent: 'x'.repeat(500), clientIp: '2001:0db8:85a3:0000:0000:8a2e:0370:7334', sourceUrl: 'https://www.loudface.co/apply/saas' });
   assert.ok(JSON.stringify(p).length < 2000, String(JSON.stringify(p).length));
+});
+
+test('only bookings from a Meta ad get a card', () => {
+  // Rohan, 5 Nov 2026: the website's own intro call, website/embed tags, fbp only. No card.
+  assert.equal(isMetaAdBooking({ eventTypeId: 529903, eventTypeSlug: 'loudface-intro-call', utmSource: 'website', utmMedium: 'embed' }), false);
+  assert.equal(isMetaAdBooking({ eventTypeId: 529903 }), false);
+  assert.equal(isMetaAdBooking({ eventTypeId: 529903, fbc: '  ' }), false);
+  // The apply event type is booked only from the /apply pages the ads link to.
+  assert.equal(isMetaAdBooking({ eventTypeId: 7718812, utmSource: 'website', utmMedium: 'apply' }), true);
+  assert.equal(isMetaAdBooking({ eventTypeSlug: 'loudface-intro-call-apply' }), true);
+  // A Meta click id or Meta / paid tags on the website's own intro call.
+  assert.equal(isMetaAdBooking({ eventTypeId: 529903, fbc: 'fb.1.1700000000000.abc' }), true);
+  assert.equal(isMetaAdBooking({ eventTypeId: 529903, utmSource: 'Instagram' }), true);
+  assert.equal(isMetaAdBooking({ eventTypeId: 529903, utmSource: 'website', utmMedium: 'paid' }), true);
 });

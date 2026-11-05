@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import crypto from 'node:crypto';
 import { sendMetaScheduleEvent } from '@/lib/meta-capi';
-import { postApprovalCard, prepareSchedule } from '@/lib/meta-approval';
+import { isMetaAdBooking, postApprovalCard, prepareSchedule } from '@/lib/meta-approval';
 import { getPostHogServer } from '@/lib/posthog-server';
 import { notifySlackOfLead } from '@/lib/slack-notify';
 import { sendBookedCallEmail } from '@/lib/booked-call-email';
@@ -274,9 +274,14 @@ export async function POST(request: Request) {
     }
 
     // Approval mode (lib/meta-approval.ts): an intro call reaches Meta only after someone clicks ✅ on its Slack card.
-    // Other event types never reach Meta in this mode; only the public intro call is a lead.
+    // Other event types never reach Meta in this mode, and neither does an intro call that did not come from a Meta ad.
     if (process.env.META_SCHEDULE_MODE === 'approval') {
       if (!isLeadBooking(body.payload)) return;
+      const adUtm = extractUtm(body.payload);
+      if (!isMetaAdBooking({ eventTypeId: body.payload?.eventTypeId, eventTypeSlug: body.payload?.type, fbc, utmSource: adUtm.utm_source, utmMedium: adUtm.utm_medium })) {
+        console.log('[meta-approval] no card: booking did not come from a Meta ad');
+        return;
+      }
       const phone = body.payload?.responses?.attendeePhoneNumber?.value;
       const card = {
         name: attendee?.name,

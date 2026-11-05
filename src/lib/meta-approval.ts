@@ -170,6 +170,19 @@ export function verifySlackSignature(
 
 type SlackBlock = Record<string, unknown>;
 
+// Which bookings get a card (2026-11-05). Only a booking from a Meta ad belongs in #meta-call-approvals: the ads'
+// own apply event type (only the /apply pages book it), a Meta click id (fbc, set when someone arrives from an ad
+// click), or Meta or paid UTM tags. The website's own intro call carries fbp for every visitor who loads the pixel,
+// so fbp proves nothing. Organic bookings still reach #new-leads; they never reach Meta.
+const APPLY_EVENT_TYPE_ID = 7718812;
+const APPLY_EVENT_TYPE_SLUG = 'loudface-intro-call-apply';
+export function isMetaAdBooking(input: { eventTypeId?: number; eventTypeSlug?: string; fbc?: string; utmSource?: string; utmMedium?: string }): boolean {
+  if (input.eventTypeId === APPLY_EVENT_TYPE_ID || input.eventTypeSlug === APPLY_EVENT_TYPE_SLUG) return true;
+  if (input.fbc && input.fbc.trim()) return true;
+  if (/^(facebook|instagram|fb|ig|meta)$/i.test(input.utmSource ?? '')) return true;
+  return /^(paid|paid_social|cpc|ppc)$/i.test(input.utmMedium ?? '');
+}
+
 export type ApprovalCard = {
   name?: string;
   email?: string;
