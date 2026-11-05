@@ -286,7 +286,10 @@ A case study says LoudFace did the work for the client, as with any client, unle
 
 **Check before showing a case study or testimonial:** map each framing instruction in Arnel's request to the sentence that delivers it, and search the body and quote for system words. Where your version differs from what he asked, say so in the first line of the reply.
 
+**Check before a case-study refresh sweep:** for every client with a live study and data access, read every source we hold (Search Console, Peec, Ahrefs), not only the metrics the study already publishes. A channel the study does not mention yet counts as a new high when it moved. List each client with the figure checked and the verdict before saying a study does not need updating.
+
 **Ledger of misses**
+- 2026-11-05 · Transalis · During the 5 Nov refresh sweep I skipped Transalis because its study had only AI figures and no new Peec week. Arnel pointed out its Google impressions had moved; non-branded page-one searches were 2.4× June. Root cause: I checked each study only against the metrics it already published, not against every source we hold.
 - 2026-10-28 · Hayes Media · Arnel asked for the study to read "like any other client: we did a full service for them"; my testimonial said "LoudFace set up the whole engine, and it keeps publishing" and the body twice credited "the engine". He pointed out he had asked for a direct-service framing. Root cause: I let the delivery mechanism (Jordan running our content engine) set the narrative and never checked the copy against his framing instruction.
 
 ## Proposals (`/p/<token>`) — the body is about the client, not about us
