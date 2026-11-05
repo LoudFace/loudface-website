@@ -227,6 +227,13 @@ export async function POST(request: Request) {
         timeZone: attendee?.timeZone,
         bookingUid: body.payload?.uid,
         company: typeof companyAnswer === 'string' ? companyAnswer : undefined,
+        fromAd: isMetaAdBooking({
+          eventTypeId: body.payload?.eventTypeId,
+          eventTypeSlug: body.payload?.type,
+          fbc: nonEmptyString(body.payload?.metadata?.fbc),
+          utmSource: extractUtm(body.payload).utm_source,
+          utmMedium: extractUtm(body.payload).utm_medium,
+        }),
       });
     }
 

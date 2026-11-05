@@ -21,7 +21,20 @@ export type BookedCallEmail = {
   bookingUid?: string;
   /** The booking form's "company-name" answer, as the lead typed it. */
   company?: string;
+  /** The booking came from a Meta ad (isMetaAdBooking in lib/meta-approval.ts). */
+  fromAd?: boolean;
 };
+
+// Jordan Hayes's quote ends by comparing search leads with paid-ads leads. That helps a lead who found us
+// through search and reads oddly to one who just came from our own ad, so an ad lead's copy stops at
+// "$6,000." (Arnel approved the exact text, 2026-11-06). The test pins this sentence to the template.
+export const PAID_ADS_SENTENCES =
+  ' What surprised me is the quality. People who find us through search come to the call warmer than anyone we get from paid ads.';
+
+/** Email 1's HTML before the lead's details go in: the ad version leaves out the paid-ads comparison. */
+export function emailTemplate(fromAd?: boolean): string {
+  return fromAd ? BOOKED_CALL_EMAIL_HTML.split(PAID_ADS_SENTENCES).join('') : BOOKED_CALL_EMAIL_HTML;
+}
 
 const FROM = 'Arnel Bukva <arnel@mail.loudface.co>';
 const REPLY_TO = 'arnel@loudface.co';
@@ -157,7 +170,7 @@ export async function sendBookedCallEmail(input: BookedCallEmail): Promise<void>
       return;
     }
 
-    let html = BOOKED_CALL_EMAIL_HTML;
+    let html = emailTemplate(input.fromAd);
     for (const [key, value] of Object.entries(parts)) {
       html = html.split(`{{${key}}}`).join(escapeHtml(value));
     }

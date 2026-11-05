@@ -104,3 +104,13 @@ test('only accepted intro calls from outside LoudFace come back from Cal.com as 
   assert.equal(toLeadBooking({ ...cal, attendees: [{ name: 'Arnel', email: 'arnel@loudface.co' }] }), null);
   assert.equal(toLeadBooking({ ...cal, attendees: [{ name: 'Test (ignore)', email: 'a@b.com' }] }), null);
 });
+
+test('email 1: ad leads get Jordan\'s quote without the paid-ads comparison, everyone else the full quote', async () => {
+  const { emailTemplate, PAID_ADS_SENTENCES } = await import('../booked-call-email');
+  const full = emailTemplate(false);
+  assert.equal(full.split(PAID_ADS_SENTENCES).length - 1, 1, 'the template must hold the sentence exactly once');
+  const ad = emailTemplate(true);
+  assert.ok(!ad.includes('paid ads'));
+  assert.ok(ad.includes('the first lead from search closed inside a month: $6,000.'));
+  assert.equal(full.length - ad.length, PAID_ADS_SENTENCES.length);
+});
