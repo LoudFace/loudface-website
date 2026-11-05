@@ -97,3 +97,17 @@ test('only bookings from a Meta ad get a card', () => {
   assert.equal(isMetaAdBooking({ eventTypeId: 529903, utmSource: 'Instagram' }), true);
   assert.equal(isMetaAdBooking({ eventTypeId: 529903, utmSource: 'website', utmMedium: 'paid' }), true);
 });
+
+test('only bookings from a Meta ad get an approval card', () => {
+  // Rohan, 5 Nov 2026: the website's own intro call, fbp only, website/embed tags. No card.
+  assert.equal(isMetaAdBooking({ eventTypeId: 529903, eventTypeSlug: 'loudface-intro-call', utmSource: 'website', utmMedium: 'embed' }), false);
+  assert.equal(isMetaAdBooking({}), false);
+  // The ads' apply call, booked only from the /apply pages, even with the card's default website tags.
+  assert.equal(isMetaAdBooking({ eventTypeId: 7718812, utmSource: 'website', utmMedium: 'apply' }), true);
+  assert.equal(isMetaAdBooking({ eventTypeSlug: 'loudface-intro-call-apply' }), true);
+  // A Meta click id or Meta/paid tags on the website's own intro call.
+  assert.equal(isMetaAdBooking({ eventTypeId: 529903, fbc: 'fb.1.1700000000000.abc' }), true);
+  assert.equal(isMetaAdBooking({ eventTypeId: 529903, fbc: '  ' }), false);
+  assert.equal(isMetaAdBooking({ eventTypeId: 529903, utmSource: 'Instagram' }), true);
+  assert.equal(isMetaAdBooking({ eventTypeId: 529903, utmMedium: 'paid_social' }), true);
+});
