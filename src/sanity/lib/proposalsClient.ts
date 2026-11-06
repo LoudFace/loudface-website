@@ -97,8 +97,8 @@ export interface ProposalTableRow {
 
 export type ProofTone = 'light' | 'dark';
 
-/** No Trustpilot: its terms allow its ratings and review text only inside its own widgets (warnings 27 Oct and 3 Nov 2026). */
-export type ReviewPlatformName = 'clutch' | 'google';
+/** Trustpilot stays in proposals only: /p/<token> pages are private, behind an access code and noindex (Arnel, 6 Nov 2026). The public site keeps no Trustpilot rating or review text (warnings 27 Oct and 3 Nov 2026). */
+export type ReviewPlatformName = 'clutch' | 'google' | 'trustpilot';
 
 export interface ProposalMetric {
   _key: string;

@@ -459,6 +459,7 @@ const reviewPlatform = defineType({
         list: [
           { title: 'Clutch', value: 'clutch' },
           { title: 'Google', value: 'google' },
+          { title: 'Trustpilot', value: 'trustpilot' },
         ],
       },
       validation: (rule) => rule.required(),
@@ -525,6 +526,7 @@ const railQuote = defineType({
         list: [
           { title: 'Clutch', value: 'clutch' },
           { title: 'Google', value: 'google' },
+          { title: 'Trustpilot', value: 'trustpilot' },
         ],
       },
     }),

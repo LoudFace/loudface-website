@@ -86,6 +86,7 @@ const TOOLS = [
 const REVIEWS = [
   { src: '/images/review-platforms/clutch.png', name: 'Clutch', rating: '4.8' },
   { src: '/images/review-platforms/google.png', name: 'Google', rating: '5.0' },
+  { src: '/images/review-platforms/trustpilot.png', name: 'Trustpilot', rating: '4.3' },
 ];
 
 const STEPS: Step[] = [
