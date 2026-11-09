@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import crypto from 'node:crypto';
 import { sendMetaScheduleEvent } from '@/lib/meta-capi';
-import { isMetaAdBooking, postApprovalCard, prepareSchedule } from '@/lib/meta-approval';
+import { bookingPhone, isMetaAdBooking, postApprovalCard, prepareSchedule } from '@/lib/meta-approval';
 import { getPostHogServer } from '@/lib/posthog-server';
 import { notifySlackOfLead } from '@/lib/slack-notify';
 import { sendBookedCallEmail } from '@/lib/booked-call-email';
@@ -289,11 +289,10 @@ export async function POST(request: Request) {
         console.log('[meta-approval] no card: booking did not come from a Meta ad');
         return;
       }
-      const phone = body.payload?.responses?.attendeePhoneNumber?.value;
       const card = {
         name: attendee?.name,
         email,
-        phone: typeof phone === 'string' ? phone : undefined,
+        phone: bookingPhone(body.payload?.responses),
         startTime: body.payload?.startTime,
         timeZone: attendee?.timeZone,
         bookingUid,

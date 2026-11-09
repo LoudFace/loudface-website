@@ -6,7 +6,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { createHash, createHmac } from 'node:crypto';
-import { approvalBlocks, buildScheduleEvent, isMetaAdBooking, isTooOld, MAX_EVENT_AGE_SECONDS, parsePrepared, prepareSchedule, verifySlackSignature } from '../meta-approval';
+import { approvalBlocks, bookingPhone, buildScheduleEvent, isMetaAdBooking, isTooOld, MAX_EVENT_AGE_SECONDS, parsePrepared, prepareSchedule, verifySlackSignature } from '../meta-approval';
 
 const sha = (v: string) => createHash('sha256').update(v).digest('hex');
 
@@ -110,4 +110,18 @@ test('only bookings from a Meta ad get an approval card', () => {
   assert.equal(isMetaAdBooking({ eventTypeId: 529903, fbc: '  ' }), false);
   assert.equal(isMetaAdBooking({ eventTypeId: 529903, utmSource: 'Instagram' }), true);
   assert.equal(isMetaAdBooking({ eventTypeId: 529903, utmMedium: 'paid_social' }), true);
+});
+
+test('reads the phone from the field Cal.com texts, then the plain phone field', () => {
+  assert.equal(bookingPhone({ smsReminderNumber: { value: '+14155550100' }, attendeePhoneNumber: { value: '+14155550199' } }), '+14155550100');
+  assert.equal(bookingPhone({ attendeePhoneNumber: { value: ' +14155550199 ' } }), '+14155550199');
+  assert.equal(bookingPhone({ smsReminderNumber: { value: '' } }), undefined);
+  assert.equal(bookingPhone(undefined), undefined);
+});
+
+test('the texted phone field is not repeated among the answers', () => {
+  const p = prepareSchedule({ bookingUid: 'abc', bookedAt: 1, email: 'a@b.co' });
+  const text = JSON.stringify(approvalBlocks({ name: 'A B', phone: '+14155550100', answers: { smsReminderNumber: '+14155550100', 'Monthly revenue': '$100K+' } }, p));
+  assert.equal(text.split('+14155550100').length - 1, 1);
+  assert.match(text, /Monthly revenue/);
 });

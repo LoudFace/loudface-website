@@ -170,6 +170,13 @@ export function verifySlackSignature(
 
 type SlackBlock = Record<string, unknown>;
 
+// Where a booking's phone sits (2026-11-09). Cal.com's "text the attendee" workflows text only their own
+// smsReminderNumber field, so /apply asks for the phone there; attendeePhoneNumber is the plain phone field.
+export function bookingPhone(responses: Record<string, { value?: unknown }> | undefined): string | undefined {
+  const value = responses?.smsReminderNumber?.value ?? responses?.attendeePhoneNumber?.value;
+  return typeof value === 'string' && value.trim() ? value.trim() : undefined;
+}
+
 // Which bookings get a card (2026-11-05). Only a booking from a Meta ad belongs in #meta-call-approvals: the ads'
 // own apply event type (only the /apply pages book it), a Meta click id (fbc, set when someone arrives from an ad
 // click), or Meta or paid UTM tags. The website's own intro call carries fbp for every visitor who loads the pixel,
@@ -211,7 +218,7 @@ export function approvalBlocks(card: ApprovalCard, prepared: PreparedSchedule): 
   const answers = Object.entries(card.answers ?? {})
     // Name, email and phone already sit at the top; Cal.com also sends them as "Your Name" and "email_address".
     // /apply's event type labels them "Your name", "Work email" and "Phone" (2026-10-31).
-    .filter(([label]) => !/^(your|work)?(name|email|emailaddress|attendeephonenumber|phone|guests|location|notes|rescheduledreason)$/i.test(label.replace(/[^a-z]/gi, '')))
+    .filter(([label]) => !/^(your|work)?(name|email|emailaddress|attendeephonenumber|smsremindernumber|phone|guests|location|notes|rescheduledreason)$/i.test(label.replace(/[^a-z]/gi, '')))
     .slice(0, 10)
     .map(([label, value]) => ({ type: 'mrkdwn', text: `*${label}*\n${value.slice(0, 300)}` }));
   const value = JSON.stringify(prepared);
