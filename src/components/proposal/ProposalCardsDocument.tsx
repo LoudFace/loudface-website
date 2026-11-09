@@ -18,6 +18,8 @@ import { personPhoto } from '@/app/home-v11/ui';
 import { SectionBody } from './ProposalDocument';
 import { STRATEGY_HOUSE } from './strategy-house';
 import { ProposalTabs } from './ProposalTabs';
+import { card, H, page, panel, Tick } from './cards-ui';
+import { PitchExpectations, PitchStory, PitchWhyUs } from './ProposalPitch';
 
 /**
  * The card layout (Arnel's pick, 2026-09-23), opted into per proposal with
@@ -42,10 +44,6 @@ import { ProposalTabs } from './ProposalTabs';
  *   bullets (dark)   terms as cards, the "Next step" one in white.
  * Anything else falls back to the classic block inside a card.
  */
-
-const page = 'mx-auto max-w-[1180px] px-5 sm:px-8';
-const panel = 'mt-6 rounded-[22px] bg-primary-50/70 p-3 sm:p-4';
-const card = 'rounded-2xl bg-white shadow-[0_1px_2px_rgba(10,10,10,0.05),0_8px_24px_-16px_rgba(30,27,75,0.18)]';
 
 /* The About page's leads and bench, so the deck's team slider never drifts from /about. */
 function teamFromAbout() {
@@ -109,24 +107,6 @@ const ptc: PortableTextComponents = {
     ),
   },
 };
-
-function H({ children, dark = false }: { children: ReactNode; dark?: boolean }) {
-  return (
-    <h2 className={`text-[22px] font-medium leading-tight tracking-[-0.03em] sm:text-[26px] ${dark ? 'text-white' : 'text-surface-950'}`}>
-      {children}
-    </h2>
-  );
-}
-
-function Tick() {
-  return (
-    <span className="mt-[2px] flex h-4 w-4 flex-none items-center justify-center rounded-full bg-primary-100 text-primary-700">
-      <svg viewBox="0 0 16 16" className="h-2.5 w-2.5" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-        <path d="M3 8.5l3 3 7-7" />
-      </svg>
-    </span>
-  );
-}
 
 const ICONS = [
   <path key="a" d="M4 5h16v11H4zM9 20h6M12 16v4" />,
@@ -792,6 +772,15 @@ function Terms({ section }: { section: Sec<'bulletListSection'> }) {
 }
 
 /* ── document ─────────────────────────────────────────────────────────── */
+/* A pitch (9 Nov 2026) moves the sections about LoudFace, not the lead, to the LoudFace tab. */
+const PITCH_TYPES: ProposalSection['_type'][] = ['caseProofSection', 'designSliderSection', 'metricsSection'];
+/* The design work a pitch shows when its proposal names none: the house set, as first sent to Bamboo Health. */
+const PITCH_DESIGN = {
+  heading: "Sites we've designed and built",
+  slugs: ['dimer-health', 'institute-of-medical-physics', 'toku-design-messaging-upgrade', 'hoxhunt', 'ceipal-wp-to-wf-migration', 'radisson-hotels-group', 'viaduct', 'montblanc'],
+  figmaUrl: 'https://www.figma.com/design/F9eiT6aTU3ntbWc51Jkhu5/LoudFace--Design-Samples?node-id=0-1',
+};
+
 export function ProposalCardsDocument({ proposal }: { proposal: Proposal }) {
   const sections = proposal.sections ?? [];
   const firstDark = sections.findIndex((s) => (s as { band?: string }).band === 'dark');
@@ -801,9 +790,14 @@ export function ProposalCardsDocument({ proposal }: { proposal: Proposal }) {
   const clips = (proposal.clipStrip?.clips ?? []).filter((c) => c.videoUrl || c.posterUrl || c.name);
   const rail = proposal.proofRail;
   const hasRail = Boolean((rail?.platforms?.length ?? 0) > 0 || (rail?.quotes?.length ?? 0) > 0 || clips.length > 0);
+  const pitch = Boolean(proposal.pitch);
+  // Each light section keeps its place in `sections`, so its id and analytics index never change with the tab it lands in.
+  const lightSections = sections.slice(0, railEnd).map((s, i) => ({ s, i }));
+  const ours = pitch ? lightSections.filter(({ s }) => PITCH_TYPES.includes(s._type)) : [];
+  const theirs = pitch ? lightSections.filter(({ s }) => !PITCH_TYPES.includes(s._type)) : lightSections;
   // Who does the work sits right after "What we would do"; a proposal without
   // one gets it before the case studies, else after the last light section.
-  const lightTypes = sections.slice(0, railEnd).map((s) => s._type);
+  const lightTypes = theirs.map(({ s }) => s._type);
   const afterTracks = lightTypes.indexOf('tracksSection');
   const beforeCases = lightTypes.indexOf('caseProofSection');
   const whoAt = afterTracks !== -1 ? afterTracks + 1 : beforeCases !== -1 ? beforeCases : lightTypes.length;
@@ -811,8 +805,9 @@ export function ProposalCardsDocument({ proposal }: { proposal: Proposal }) {
   // Proposal tab points at it: just before "What we would do".
   const strategy = (proposal.strategy?.blocks?.length ?? 0) > 0 ? proposal.strategy : undefined;
   const audit = (proposal.audit?.blocks?.length ?? 0) > 0 ? proposal.audit : undefined;
-  const tabbed = Boolean(strategy || audit);
+  const tabbed = Boolean(pitch || strategy || audit);
   const pointerAt = afterTracks !== -1 ? afterTracks : whoAt;
+  const pointers = (strategy || audit) && <TabPointers clientName={proposal.clientName} strategy={Boolean(strategy)} audit={Boolean(audit)} />;
 
   const light = (section: ProposalSection, index: number) => {
     if (section._type === 'caseProofSection') {
@@ -891,6 +886,79 @@ export function ProposalCardsDocument({ proposal }: { proposal: Proposal }) {
     );
   };
 
+  const whoAndMethod = (at: number) => (
+    <>
+      <ProposalWhoDoesIt index={at} />
+      <ProposalMethod index={at} stages={methodStages()} />
+    </>
+  );
+  const team = (at: number) => <ProposalTeamSlider index={at} {...teamFromAbout()} />;
+
+  const clientColumn = (
+    <>
+      {theirs.slice(0, whoAt).map(({ s, i }, k) => (
+        <Fragment key={s._key}>
+          {k === pointerAt && pointers}
+          {light(s, i)}
+        </Fragment>
+      ))}
+      {pointerAt === whoAt && pointers}
+      {!pitch && (
+        <>
+          {whoAndMethod(whoAt)}
+          {team(whoAt)}
+        </>
+      )}
+      {theirs.slice(whoAt).map(({ s, i }) => light(s, i))}
+    </>
+  );
+
+  // The LoudFace tab, in the order of the 9 Nov drafts: what to expect, results,
+  // design work, what we do, how we work, our story, the team, why us. Its own
+  // blocks take indexes after the proposal's sections, so no id repeats.
+  const after = sections.length;
+  const pitchColumn = (
+    <>
+      <PitchExpectations index={after + 1} />
+      {ours.map(({ s, i }) => light(s, i))}
+      {!ours.some(({ s }) => s._type === 'designSliderSection') && <ProposalDesignSlider {...PITCH_DESIGN} index={after + 2} />}
+      {whoAndMethod(after + 3)}
+      <PitchStory index={after + 4} />
+      {team(after + 5)}
+      <PitchWhyUs index={after + 6} clientName={proposal.clientName} />
+    </>
+  );
+
+  /* One tab's body: the column beside the proof rail, the dark close when the tab carries the price, and the rail inline on a phone. */
+  const deck = (column: ReactNode, withClose: boolean) => (
+    <>
+      <div className={page}>
+        <div className={hasRail ? 'lg:grid lg:grid-cols-[minmax(0,1fr)_328px] lg:gap-14' : ''}>
+          <div className="min-w-0">{column}</div>
+          {hasRail && (
+            <aside data-proposal-rail="aside" className="hidden lg:block">
+              <div className={`sticky ${tabbed ? 'top-20' : 'top-8'} mt-10`}>
+                <ProofRail rail={rail} clips={clips} />
+              </div>
+            </aside>
+          )}
+        </div>
+      </div>
+
+      {withClose && railEnd < sections.length && (
+        <div data-proposal-band="dark" className="bg-night text-white">
+          <div className={page}>{sections.slice(railEnd).map((s, i) => dark(s, railEnd + i, i === 0))}</div>
+        </div>
+      )}
+
+      {hasRail && (
+        <div data-proposal-rail="inline" className={`${page} border-t border-surface-200 py-9 lg:hidden`}>
+          <ProofRail rail={rail} clips={clips} />
+        </div>
+      )}
+    </>
+  );
+
   return (
     <main className="pb-0">
       <PlateDefs />
@@ -898,90 +966,14 @@ export function ProposalCardsDocument({ proposal }: { proposal: Proposal }) {
 
       {tabbed ? (
         <ProposalTabs
-          proposal={
-            <>
-            <div className={page}>
-              <div className={hasRail ? 'lg:grid lg:grid-cols-[minmax(0,1fr)_328px] lg:gap-14' : ''}>
-                <div className="min-w-0">
-                  {sections.slice(0, whoAt).map((s, i) => (
-                    <Fragment key={s._key}>
-                      {tabbed && i === pointerAt && <TabPointers clientName={proposal.clientName} strategy={Boolean(strategy)} audit={Boolean(audit)} />}
-                      {light(s, i)}
-                    </Fragment>
-                  ))}
-                  {tabbed && pointerAt === whoAt && <TabPointers clientName={proposal.clientName} strategy={Boolean(strategy)} audit={Boolean(audit)} />}
-                  <ProposalWhoDoesIt index={whoAt} />
-                  <ProposalMethod index={whoAt} stages={methodStages()} />
-                  <ProposalTeamSlider index={whoAt} {...teamFromAbout()} />
-                  {sections.slice(whoAt, railEnd).map((s, i) => light(s, whoAt + i))}
-                </div>
-                {hasRail && (
-                  <aside data-proposal-rail="aside" className="hidden lg:block">
-                    <div className="sticky top-20 mt-10">
-                      <ProofRail rail={rail} clips={clips} />
-                    </div>
-                  </aside>
-                )}
-              </div>
-            </div>
-
-            {railEnd < sections.length && (
-              <div data-proposal-band="dark" className="bg-night text-white">
-                <div className={page}>{sections.slice(railEnd).map((s, i) => dark(s, railEnd + i, i === 0))}</div>
-              </div>
-            )}
-
-            {hasRail && (
-              <div data-proposal-rail="inline" className={`${page} border-t border-surface-200 py-9 lg:hidden`}>
-                <ProofRail rail={rail} clips={clips} />
-              </div>
-            )}
-
-            </>
-          }
+          pitch={pitch ? deck(pitchColumn, false) : undefined}
+          proposal={deck(clientColumn, true)}
+          proposalLabel={pitch ? proposal.clientName : undefined}
           strategy={strategy && <StrategyTab strategy={strategy} clientName={proposal.clientName} />}
           audit={audit && <AuditTab audit={audit} clientName={proposal.clientName} />}
         />
       ) : (
-        <>
-          <div className={page}>
-            <div className={hasRail ? 'lg:grid lg:grid-cols-[minmax(0,1fr)_328px] lg:gap-14' : ''}>
-              <div className="min-w-0">
-                {sections.slice(0, whoAt).map((s, i) => (
-                  <Fragment key={s._key}>
-                    {tabbed && i === pointerAt && <TabPointers clientName={proposal.clientName} strategy={Boolean(strategy)} audit={Boolean(audit)} />}
-                    {light(s, i)}
-                  </Fragment>
-                ))}
-                {tabbed && pointerAt === whoAt && <TabPointers clientName={proposal.clientName} strategy={Boolean(strategy)} audit={Boolean(audit)} />}
-                <ProposalWhoDoesIt index={whoAt} />
-                <ProposalMethod index={whoAt} stages={methodStages()} />
-                <ProposalTeamSlider index={whoAt} {...teamFromAbout()} />
-                {sections.slice(whoAt, railEnd).map((s, i) => light(s, whoAt + i))}
-              </div>
-              {hasRail && (
-                <aside data-proposal-rail="aside" className="hidden lg:block">
-                  <div className="sticky top-8 mt-10">
-                    <ProofRail rail={rail} clips={clips} />
-                  </div>
-                </aside>
-              )}
-            </div>
-          </div>
-
-          {railEnd < sections.length && (
-            <div data-proposal-band="dark" className="bg-night text-white">
-              <div className={page}>{sections.slice(railEnd).map((s, i) => dark(s, railEnd + i, i === 0))}</div>
-            </div>
-          )}
-
-          {hasRail && (
-            <div data-proposal-rail="inline" className={`${page} border-t border-surface-200 py-9 lg:hidden`}>
-              <ProofRail rail={rail} clips={clips} />
-            </div>
-          )}
-
-        </>
+        deck(clientColumn, true)
       )}
 
       <footer className="border-t border-white/10 bg-night px-5 py-10 text-white/60 sm:px-8">

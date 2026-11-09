@@ -1340,6 +1340,16 @@ const proposal = defineType({
       description: 'Cards is the layout picked on 23 September 2026. Classic is everything sent before it.',
     }),
     defineField({
+      name: 'pitch',
+      title: 'LoudFace tab first',
+      type: 'boolean',
+      group: 'content',
+      initialValue: false,
+      hidden: ({ document }) => document?.design !== 'cards',
+      description:
+        'Cards only. Opens on a LoudFace tab (what to expect, results, our work, the team, why us) and moves the client sections, price and terms to a tab named after the client.',
+    }),
+    defineField({
       name: 'promises',
       title: 'Hero promises',
       type: 'array',

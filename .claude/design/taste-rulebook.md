@@ -40,3 +40,6 @@
 
 ## Homepage (2026-09-23 round 4)
 - 2026-09-23: Once a page carries photography and product UI, engraved instrument illustrations read off-brand (Arnel, on N5): step and method cards carry small product-UI fragments instead (booking slots, plan bars, tracking rows, a monthly report with a real client's chips and line). C's flat line drawings (dial, layers, gauge, rise) stay in favour. Chart pins are the proposal's LoudFace disc with a solid hairline guide, never dashed. (/)
+
+## Proposals
+- 2026-11-09: Proposal pitch work is a retrofit of the existing cards proposal, not a redesign: keep its sections, charts and the social-proof side strip, and move parts between tabs. The side strip is required on every proposal tab (Arnel, 9 Nov 2026: 'That was a big miss'). (/p/<token>)

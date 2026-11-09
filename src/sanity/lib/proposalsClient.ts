@@ -404,6 +404,8 @@ export interface Proposal {
   priceLine?: string;
   /** 'cards' opts a proposal into the card layout (2026-09-23); absent = classic. */
   design?: 'classic' | 'cards';
+  /** Cards only: opens on a LoudFace tab that sells us first; the deck's tab takes the client's name (9 Nov 2026). */
+  pitch?: boolean;
   /** Cards hero only: replaces the house pair of promises under the price. */
   promises?: string[];
   clipStrip?: ProposalClipStrip;
@@ -432,7 +434,7 @@ const GATE_QUERY = `*[_type == "proposal" && token == $token][0]{
 /** Runs only after the cookie has been verified. */
 const CONTENT_QUERY = `*[_type == "proposal" && token == $token][0]{
   title, clientName, preparedFor, token, validUntil, status,
-  heroSummary, heroQuote, heroQuoteBy, priceLine, design, promises, contactEmail, readerEmail,
+  heroSummary, heroQuote, heroQuoteBy, priceLine, design, pitch, promises, contactEmail, readerEmail,
   clipStrip{ heading, clips[]{ _key, videoUrl, posterUrl, label, orientation, name, duration } },
   proofRail{
     heading, quotesHeading,
