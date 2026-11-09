@@ -46,7 +46,7 @@ export default async function CroSections() {
             <div className="cro-cell is-video">
               <Marks />
               <div className="cro-video">
-                <VideoStill still={img('video-maksim.jpg')} video="https://cdn.sanity.io/files/xjjjqhgt/proposals/b06b514be51d437bb81031a9f96cc6e5796767e6.mp4" label="Play the video from Outbound Specialist">
+                <VideoStill still={img('video-maksim.jpg')} video="https://cdn.sanity.io/files/xjjjqhgt/proposals/b06b514be51d437bb81031a9f96cc6e5796767e6.mp4" client="Outbound Specialist">
                   <span className="v11-video-play"><span className="is-btn"><Play /></span><span className="is-dur">{maksim.duration}</span></span>
                 </VideoStill>
               </div>

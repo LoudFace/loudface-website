@@ -2,6 +2,8 @@ import type { CSSProperties, ReactNode } from 'react';
 import type { HomeV11Data, Series } from '../home-v11/data';
 import { LiveChart } from '../home-v11/LiveChart';
 import { VideoStill } from '../home-v11/VideoStill';
+import { videoByKey } from '../home-v11/client-videos';
+import { PlayChip } from '../home-v11/ClientVideoParts';
 import { img } from '../home-v11/ui';
 import { cachedCmsImage, cachedCmsSrcSet } from '@/lib/image-utils';
 import { periodOf } from '../home-v11/hero-slides';
@@ -22,10 +24,6 @@ export const Marks = () => (
 
 export const Check = ({ size = 10, color = '#ffffff' }: { size?: number; color?: string }) => (
   <svg width={size} height={size} viewBox="0 0 11 11" aria-hidden="true"><path d="M2.2 5.6l2 2 4.4-4.5" fill="none" stroke={color} strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" /></svg>
-);
-
-export const Play = () => (
-  <svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><path d="M5 3.2v9.6c0 .6.7 1 1.2.6l7.2-4.8c.4-.3.4-1 0-1.3L6.2 2.6C5.7 2.3 5 2.6 5 3.2z" fill="#ffffff" /></svg>
 );
 
 /** A white product-UI card sitting on a tile. `at` pins it: bottom (full width), or right (beside the copy). */
@@ -88,26 +86,29 @@ export function Browser({ src, domain, alt, height, className = '', priority }: 
 
 /* =========================================================== proof cells */
 
-export const VIDEOS = {
-  maksim: { video: 'https://cdn.sanity.io/files/xjjjqhgt/proposals/b06b514be51d437bb81031a9f96cc6e5796767e6.mp4', still: 'video-maksim.jpg', logo: 'logos/color-outbound.png', w: 75, h: 30, alt: 'Outbound Specialist' },
-  sarig: { video: 'https://cdn.sanity.io/files/xjjjqhgt/proposals/cbba2c1526479ce38d8dab811802738ae3a1659b.mp4', still: 'video-dimer.jpg', logo: 'logos/color-dimer.png', w: 88, h: 30, alt: 'Dimer Health' },
-  elizabete: { video: 'https://cdn.sanity.io/files/xjjjqhgt/proposals/77f7444f1da7ed7a221c1637d897a0f4ec3e87aa.mp4', still: 'video-elizabete.jpg', logo: 'logos/reiterate-ink.png', w: 139, h: 16, alt: 'Reiterate' },
+
+/** The client logos the wide cell shows beside its video, at their drawn size. */
+const CELL_LOGOS = {
+  maksim: { src: 'logos/color-outbound.png', w: 75, h: 30 },
+  sarig: { src: 'logos/color-dimer.png', w: 88, h: 30 },
+  elizabete: { src: 'logos/reiterate-ink.png', w: 139, h: 16 },
 } as const;
 
 /** The wide cell: a client talking, next to what they got. */
-export function VideoCell({ who, big, cap, quote, person, role, duration }: { who: keyof typeof VIDEOS; big?: string; cap?: string; quote: string; person: string; role: string; duration: string }) {
-  const v = VIDEOS[who];
+export function VideoCell({ who, big, cap, quote, person, role, duration }: { who: keyof typeof CELL_LOGOS; big?: string; cap?: string; quote: string; person: string; role: string; duration: string }) {
+  const v = videoByKey(who);
+  const logo = CELL_LOGOS[who];
   return (
     <div className="cro-cell is-video">
       <Marks />
       <div className="cro-video">
-        <VideoStill still={img(v.still)} video={v.video} label={`Play the video from ${v.alt}`}>
-          <span className="v11-video-play"><span className="is-btn"><Play /></span><span className="is-dur">{duration}</span></span>
+        <VideoStill still={img(v.still)} video={v.video} client={v.client}>
+          <PlayChip duration={duration} />
         </VideoStill>
       </div>
       <div className="cro-video-copy">
         {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img loading="lazy" src={img(v.logo)} alt={v.alt} width={v.w} height={v.h} style={{ height: v.h > 20 ? 26 : 16 }} />
+        <img loading="lazy" src={img(logo.src)} alt={v.client} width={logo.w} height={logo.h} style={{ height: logo.h > 20 ? 26 : 16 }} />
         {big && <div className="cro-big">{big}</div>}
         {cap && <div className="cro-cap">{cap}</div>}
         <p className="cro-quote">{quote}</p>

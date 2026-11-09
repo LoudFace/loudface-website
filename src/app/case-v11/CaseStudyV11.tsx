@@ -13,7 +13,9 @@ import { KeyResults } from '../home-v11/KeyResults';
 import { ChartPanel } from '../home-v11/ChartPanel';
 import { BeforeAfterChart } from '../home-v11/BeforeAfterChart';
 import { ArrowRight, ArrowUpRight, SectionHeadNode, img, personAvatar } from '../home-v11/ui';
-import { Browser, QuoteCell, VideoCell } from '../service-v11/kit';
+import { Browser, QuoteCell } from '../service-v11/kit';
+import { CLIENT_VIDEOS } from '../home-v11/client-videos';
+import { ClientVideoBand } from './ClientVideoBand';
 import { StageChart } from '../home-v11/StageChart';
 import { EngineIcon } from '../service-v11/pages/shared';
 import { SHOTS } from '../service-v3/data';
@@ -33,12 +35,6 @@ import { strip as stripMarks } from '@/lib/inline-edit/mark';
 const TEAM = ['arnel-bukva', 'tamara-pavlovic', 'andrea-van-wyk', 'abhay-tyagi'];
 const ENGINE: Record<string, { name: string; i: number }> = {
   chatgpt: { name: 'ChatGPT', i: 0 }, perplexity: { name: 'Perplexity', i: 1 }, googleAio: { name: 'Google AI Overviews', i: 2 }, gemini: { name: 'Gemini', i: 3 },
-};
-/** Client videos recorded for the homepage, by client name. */
-const VIDEO_BY_CLIENT: Record<string, { key: 'maksim' | 'sarig' | 'elizabete'; n: number }> = {
-  'Outbound Specialist': { key: 'maksim', n: 0 },
-  'Dimer Health': { key: 'sarig', n: 1 },
-  Reiterate: { key: 'elizabete', n: 2 },
 };
 /** Live-site captures made for these boards, where the CMS has no plain site screenshot. */
 const SITE_BY_SLUG: Record<string, { src: string; domain: string }> = {
@@ -152,8 +148,7 @@ export function CaseStudyV11({ v, home, hero = 'report' }: { v: CaseView; home: 
   // Published before → after figures stand in for an AI series that cannot be shown bare.
   const pairs = s.ai ? null : publishedPairs(s);
   const pairsSource = sourceName(v.instruments?.aiSource) ?? pairs?.caption.match(/Source:\s*([^,.]+)/)?.[1];
-  const video = VIDEO_BY_CLIENT[name];
-  const vq = video ? home.testimonials.videos[video.n] : undefined;
+  const videoAt = CLIENT_VIDEOS.findIndex((c) => c.client === name);
   const card = home.testimonials.cards.find((c) => [c.brand, c.jobTitle, c.person].some((x) => x && stripMarks(x).toLowerCase().includes(stripMarks(name).toLowerCase())));
   const summary = study['paragraph-summary'];
   const colorLogo = client?.['colored-logo']?.url;
@@ -185,24 +180,22 @@ export function CaseStudyV11({ v, home, hero = 'report' }: { v: CaseView; home: 
     });
   }
 
-  /* the client's voice beside what we did (the CRO board's proof grid). Voice cells stack on the left: the client's
-     video, then their full review; a study with neither gets its short quote. What we did runs down the right. */
-  const review = REVIEW_BY_CLIENT[name];
-  // with the result hero, a build study's video is the hero picture, so the grid does not show it again
-  // Arnel, 2026-09-25: the video hero did not work; a build study keeps its video in the grid and shows its site on the stage
-  const videoInHero = false;
-  const resultInHero = heroKind === 'report' && !leadChart;
-  const voice: ReactNode[] = [];
-  if (video && vq && !videoInHero) {
-    voice.push(<VideoCell key="video" who={video.key} big={resultInHero ? undefined : v.result1.number} cap={resultInHero ? undefined : v.result1.title} quote={vq.quote} person={vq.person} role={vq.jobTitle} duration={vq.duration} />);
+  /* the client's video, large, with their words beside it */
+  if (videoAt >= 0) {
+    sections.push({ key: 'video', node: <ClientVideoBand v={CLIENT_VIDEOS[videoAt]} t={home.testimonials.videos[videoAt]} copy={home.clientVideo} /> });
   }
+
+  /* the client's voice beside what we did (the CRO board's proof grid): their full review on the left, or their short
+     quote when there is none; what we did runs down the right. */
+  const review = REVIEW_BY_CLIENT[name];
+  const voice: ReactNode[] = [];
   if (longQuote) {
     voice.push(
       <QuoteCell
         key="review"
         wide
         className="cs-review"
-        logoUrl={video && !videoInHero ? undefined : colorLogo}
+        logoUrl={colorLogo}
         logoAlt={name}
         logoW={120}
         logoH={24}
@@ -213,7 +206,7 @@ export function CaseStudyV11({ v, home, hero = 'report' }: { v: CaseView; home: 
         review={review}
       />,
     );
-  } else if (!video && card) {
+  } else if (card) {
     voice.push(<QuoteCell key="card" wide logoUrl={colorLogo} brandIcon={BRAND_ICON[name]} logoAlt={name} logoW={120} logoH={24} quote={card.quote} person={card.person} role={card.jobTitle} initial={card.initial} review={review} tone="ind" />);
   }
   const whatWeDid = (

@@ -393,21 +393,70 @@
         "quote": "“The first landing page we developed generated over a million dollars in revenue.”",
         "person": "Maksim Polupanov",
         "jobTitle": "CEO, Outbound Specialist",
-        "source": ""
+        "brand": "Outbound Specialist",
+        "topic": "Maksim, on a $1M landing page",
+        "also": [
+          "“You can just tell that they actually care about their work.”",
+          "“We haven’t really found anyone better over the last six years.”"
+        ]
       },
       {
         "duration": "0:29",
         "quote": "“We’ve increased conversion by 288%.”",
         "person": "Sarig Reichert",
         "jobTitle": "CPO, Dimer Health",
-        "source": ""
+        "brand": "Dimer Health",
+        "topic": "Sarig, on a 288% conversion lift",
+        "also": [
+          "“We’ve built a much more professional, credible website.”"
+        ]
       },
       {
         "duration": "1:53",
         "quote": "“LoudFace really stood out with their approach and let’s get this done attitude.”",
         "person": "Elizabete",
         "jobTitle": "Product Marketer, Reiterate",
-        "source": ""
+        "brand": "Reiterate",
+        "topic": "Elizabete, on a get-it-done team",
+        "also": [
+          "“They were very quick to react to any feedback.”",
+          "“We felt as a partner rather than a client.”"
+        ]
+      },
+      {
+        "duration": "2:03",
+        "quote": "“Within two months of working with LoudFace, our website traffic has tripled. Then one month later, it grew another five times on top of that.”",
+        "person": "Kevin Wong",
+        "jobTitle": "Co-founder, Genie Teacher",
+        "brand": "Genie Teacher",
+        "topic": "Kevin, on traffic up 5× in a month",
+        "also": [
+          "“Their approach was extremely methodical and scientific.”",
+          "“I’ve already recommended LoudFace to many founders.”"
+        ]
+      },
+      {
+        "duration": "1:02",
+        "quote": "“The results are that our landing page is converting really good. We have a high conversion rate.”",
+        "person": "Daan Smit",
+        "jobTitle": "CEO & Founder, Brandfirm",
+        "brand": "Brandfirm",
+        "topic": "Daan, on a page that converts",
+        "also": [
+          "“They understood marketing from a strategic perspective.”",
+          "“The team is highly talented.”"
+        ]
+      },
+      {
+        "duration": "0:27",
+        "quote": "“I really loved the transparent way we worked together. It was easy to follow what was going on.”",
+        "person": "Kasimir Hellman",
+        "jobTitle": "CEO & Founder, Onne",
+        "brand": "Onne",
+        "topic": "Kasimir, on working in the open",
+        "also": [
+          "“They were super responsive.”"
+        ]
       }
     ],
     "cards": [
@@ -434,7 +483,13 @@
         "jobTitle": "Founder, Hayes Media",
         "source": ""
       }
-    ]
+    ],
+    "playlist": {
+      "heading": "Six clients on camera",
+      "total": "7½ minutes in all",
+      "foot": "Five of the six have a case study",
+      "linkText": "See the work"
+    }
   },
   "team": {
     "eyebrow": "The team",
@@ -546,5 +601,12 @@
     "privacy": "Privacy",
     "terms": "Terms",
     "cookies": "Cookies"
+  },
+  "clientVideo": {
+    "eyebrow": "From the client",
+    "heading": "In their own words.",
+    "alsoLabel": "Also in the video",
+    "fullVideo": "The full video",
+    "moreVideos": "More client videos"
   }
 }

@@ -1,27 +1,19 @@
 import type { CSSProperties, ReactNode } from 'react';
 import type { HomeV11Content } from '@/lib/content-utils';
 import { Eyebrow, H2, RATING_STYLE, Stars, img, tint } from './ui';
-import { VideoStill } from './VideoStill';
+import { VideoPlaylist } from './VideoPlaylist';
+import { CLIENT_VIDEOS_ANCHOR } from './client-videos';
 import type { HomeV11Data, ProofKey } from './data';
 import { proofValue } from './hero-slides';
 
 type C = HomeV11Content['testimonials'];
 
-const VIDEOS = [
-  { tint: '#e9e5fd', video: 'https://cdn.sanity.io/files/xjjjqhgt/proposals/b06b514be51d437bb81031a9f96cc6e5796767e6.mp4', still: 'video-maksim.jpg', logo: 'logos/color-outbound.png', w: 65, h: 26, alt: 'Outbound Specialist' },
-  { tint: '#fde6dd', video: 'https://cdn.sanity.io/files/xjjjqhgt/proposals/cbba2c1526479ce38d8dab811802738ae3a1659b.mp4', still: 'video-dimer.jpg', logo: 'logos/color-dimer.png', w: 76, h: 26, alt: 'Dimer Health' },
-  { tint: '#fcf0d4', video: 'https://cdn.sanity.io/files/xjjjqhgt/proposals/77f7444f1da7ed7a221c1637d897a0f4ec3e87aa.mp4', still: 'video-elizabete.jpg', logo: 'logos/reiterate-ink.png', w: 139, h: 16, alt: 'Reiterate' },
-];
 /** Per card, in the content file's order; `proof` is the case-study figure the card prints. */
 const CARDS: { brand: string; logo: string | null; w: number; h: number; alt: string; face: string | null; proof: ProofKey }[] = [
   { brand: '#1646ce', logo: 'logos/toku.png', w: 78, h: 22, alt: 'Toku', face: 'people/kenneth-o-friel.webp', proof: 'toku' },
   { brand: '#3d63e0', logo: null, w: 0, h: 0, alt: '', face: null, proof: 'genie' },
   { brand: '#c96a00', logo: 'logos/hayes-media.png', w: 69, h: 30, alt: 'Hayes Media', face: 'people/jordan-hayes.webp', proof: 'hayes' },
 ];
-
-const Play = () => (
-  <svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><path d="M5 3.2v9.6c0 .6.7 1 1.2.6l7.2-4.8c.4-.3.4-1 0-1.3L6.2 2.6C5.7 2.3 5 2.6 5 3.2z" fill="#ffffff" /></svg>
-);
 
 export function Rating({ r, i, size = 'lg' }: { r: { platform: string; score: string; detail?: string }; i: number; size?: 'lg' | 'sm' }) {
   const st = RATING_STYLE[i];
@@ -81,33 +73,9 @@ export function QuoteCard({ k, i, data }: { k: C['cards'][number]; i: number; da
   );
 }
 
-/** A client video on its tint: the still with play and length, the logo, the quote and who said it. */
-export function VideoCard({ v, i }: { v: C['videos'][number]; i: number }) {
-  const cfg = VIDEOS[i];
-  return (
-    <div className="v11-video" style={{ background: cfg.tint }}>
-      <VideoStill still={img(cfg.still)} video={cfg.video} label={`Play the video from ${cfg.alt}`}>
-        <span className="v11-video-play">
-          <span className="is-btn"><Play /></span>
-          <span className="is-dur">{v.duration}</span>
-        </span>
-      </VideoStill>
-      <div className="v11-video-copy">
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img loading="lazy" src={img(cfg.logo)} alt={cfg.alt} width={cfg.w} height={cfg.h} style={{ height: cfg.h, width: 'auto' }} />
-        <p className="v11-video-quote">{v.quote}</p>
-        <div className="v11-video-who">
-          <div><div className="is-name">{v.person}</div><div className="is-role">{v.jobTitle}</div></div>
-          <span className="is-src">{v.source}</span>
-        </div>
-      </div>
-    </div>
-  );
-}
-
 export function Testimonials({ c, data }: { c: C; data: HomeV11Data | null }) {
   return (
-    <section className="v11-sec v11-warm">
+    <section id={CLIENT_VIDEOS_ANCHOR} className="v11-sec v11-warm">
       <div className="v11-wrap">
         <div className="v11-head">
           <div>
@@ -116,9 +84,7 @@ export function Testimonials({ c, data }: { c: C; data: HomeV11Data | null }) {
           </div>
           <div className="v11-ratings">{c.ratings.map((r, i) => <Rating key={i} r={r} i={i} />)}</div>
         </div>
-        <div className="v11-cards3">
-          {c.videos.map((v, i) => <VideoCard key={i} v={v} i={i} />)}
-        </div>
+        <VideoPlaylist videos={c.videos} playlist={c.playlist} />
         <div className="v11-cards3 is-second">
           {c.cards.map((k, i) => <QuoteCard key={i} k={k} i={i} data={data} />)}
         </div>

@@ -2,14 +2,13 @@ import type { ReactNode } from 'react';
 import type { HomeV11Content } from '@/lib/content-utils';
 import type { HomeV11Data, ProofKey, Series } from '../home-v11/data';
 import { ResultCase } from '../home-v11/ResultCase';
-import { VideoCard } from '../home-v11/Testimonials';
 import type { ValueFormat } from '../home-v11/LiveChart';
 import { heroSlide, type HeroSlideKey } from '../home-v11/hero-slides';
 
 /**
  * A service page's proof, in the homepage's own parts (DESIGN.md §2, §7): one feature result and three smaller
- * ones (`ResultCase`, as the homepage "Results" section), then the client voices (`VideoCard`, `QuoteCard`), each
- * picked per service from the same verified pool the homepage draws on. Copy comes from home-v11.json.
+ * ones (`ResultCase`, as the homepage "Results" section), picked per service from the same verified pool the homepage
+ * draws on. Copy comes from home-v11.json.
  */
 
 type Key = 'delshadSearch' | 'genieSearch' | 'tmClicks' | 'lfAi' | 'stealthAi' | 'delshadLeads';
@@ -129,15 +128,6 @@ export function ServiceResults({ slug, home, data, avoid }: { slug: string; home
           />
         );
       })}
-    </div>
-  );
-}
-
-/** The three client videos in one row (kept for pages whose proof grid has no videos). */
-export function ServiceVoices({ home }: { home: HomeV11Content }): ReactNode {
-  return (
-    <div className="v11-cards3">
-      {home.testimonials.videos.map((v, i) => <VideoCard key={i} v={v} i={i} />)}
     </div>
   );
 }
