@@ -10,7 +10,9 @@
   --n-body: #d3d0ee; --n-muted: #aaa5d6; --n-quiet: #918cc4; --n-soft: #8f89c4;
   --n-line: rgba(201,189,245,0.14); --n-line-2: rgba(201,189,245,0.24); --n-mark: rgba(201,189,245,0.5);
   --stage-line: rgba(255,255,255,0.22); --ink-line: rgba(255,255,255,0.14);
-  --rail: 264px; --rail-gap: 120px; --col: 680px;
+  --rail: 264px; --rail-gap: 64px; --col: 680px;
+  /* the sticky contents rail sits this far below the top, clear of the site header */
+  --rail-top: 112px;
   /* the series, lit on night (each ≥ 7:1 on --night) */
   --lit-index: #b7aaf2; --lit-saas: #f59a7b; --lit-ai: #86dcb4; --lit-meas: #fcd68a;
   background: var(--night); color: var(--n-body);
@@ -22,6 +24,7 @@
 .rs .on-ai    { --sc: #0f5a46; --fg: #ffffff; --fg2: rgba(255,255,255,.82); --rule: rgba(255,255,255,.24); --lit: var(--lit-ai); }
 .rs .on-meas  { --sc: #e2ad3c; --fg: #1a1040; --fg2: rgba(26,16,64,.84);    --rule: rgba(26,16,64,.22);    --lit: var(--lit-meas); }
 .rs :is(.on-index, .on-saas, .on-ai, .on-meas) { background: var(--sc); color: var(--fg); }
+@media (min-width: 1280px) { .rs { --rail-gap: 120px; } }
 .rs.rs-paper.is-index { --lit: var(--lit-index); } .rs.rs-paper.is-saas { --lit: var(--lit-saas); }
 .rs.rs-paper.is-ai { --lit: var(--lit-ai); } .rs.rs-paper.is-meas { --lit: var(--lit-meas); }
 
@@ -240,9 +243,14 @@
 @media (min-width: 1280px) { .rs-h1 { font-size: 104px; line-height: .96; letter-spacing: -.05em; margin-top: 56px; } }
 .rs-sub { display: flex; flex-direction: column; gap: 28px; margin-top: 32px; }
 @media (min-width: 1100px) { .rs-sub { flex-direction: row; justify-content: space-between; align-items: flex-end; gap: 64px; margin-top: 44px; } }
-.rs-lede { font-size: 18px; line-height: 1.5; color: var(--fg2); max-width: 640px; text-wrap: pretty; }
-@media (min-width: 1280px) { .rs-lede { font-size: 20px; } }
-.rs-lede b { color: var(--fg); font-weight: 500; }
+/* the formal title as the lede, then the sample and the engines as small labelled facts under a hairline */
+.rs-lede { max-width: 640px; min-width: 0; }
+.rs-lede-t { font-size: 19px; line-height: 1.42; color: var(--fg); text-wrap: pretty; }
+@media (min-width: 1280px) { .rs-lede-t { font-size: 22px; } }
+.rs-facts { display: grid; gap: 10px; margin: 20px 0 0; padding-top: 16px; border-top: 1px solid var(--rule); font-size: 14.5px; line-height: 1.45; }
+.rs-facts > div { display: grid; grid-template-columns: 76px minmax(0, 1fr); gap: 12px; }
+.rs-facts dt { font-weight: 500; color: var(--fg); }
+.rs-facts dd { margin: 0; color: var(--fg2); text-wrap: pretty; }
 .rs-by { display: flex; flex-wrap: wrap; align-items: center; gap: 16px 32px; flex-shrink: 0; }
 .rs-by .rs-byline b { font-size: 16px; }
 .rs-by .rs-byline span { font-size: 14px; }
@@ -291,22 +299,30 @@
 @media (min-width: 768px) { .rs-kcell { width: 50%; padding: 44px 40px 46px; } .rs-kcell:nth-child(even) > .rs-x.is-bl { display: none; } }
 .rs-kcells.is-1 .rs-kcell { width: 100%; }
 @media (min-width: 1100px) { .rs-kcells.is-3 .rs-kcell { width: 33.3333%; } .rs-kcells.is-3 .rs-kcell > .rs-x.is-bl { display: none; } .rs-kcells.is-3 .rs-kcell:first-child > .rs-x.is-bl { display: block; } }
-.rs-kcell b { display: block; font-family: var(--font-heading); font-weight: 500; font-size: 64px; line-height: .9; letter-spacing: -.055em; color: #ffffff; overflow-wrap: anywhere; }
-@media (min-width: 768px) { .rs-kcell b { font-size: 76px; } }
-@media (min-width: 1280px) { .rs-kcell b { font-size: 112px; } .rs-kcells.is-3 .rs-kcell b { font-size: 88px; } }
+/* a key number keeps to one line: long values (a pair such as "70.5% vs 30.0%") take a smaller step, and each step
+   is sized to the cell's own width (cqi), so the same value fits at every width */
+.rs-kcell { container-type: inline-size; }
+.rs-kcell b { display: block; font-family: var(--font-heading); font-weight: 500; font-size: min(112px, 24cqi); line-height: .9; letter-spacing: -.055em; color: #ffffff; text-wrap: balance; }
+.rs-kcell b.is-long { font-size: min(96px, 19cqi); }
+.rs-kcell b.is-longer { font-size: min(80px, 14cqi); line-height: .95; }
 .rs-kcell p { font-size: 17px; line-height: 1.45; color: #ffffff; margin-top: 24px; max-width: 420px; }
 .rs-kcell > span:not(.rs-x) { display: block; font-size: 14.5px; line-height: 1.5; color: var(--n-muted); margin-top: 8px; max-width: 420px; }
 
 /* =========================================================== PAPER · reading on night: rail, takeaways, body, figures
-   The rail floats left beside the takeaways and the first sections; the text keeps to its 680 px column right of it,
-   and each figure clears the rail and takes the full width, so a short opening never runs a figure under the rail. */
+   From 1100 px two columns: the contents rail sticks under the site header for the whole reading section, and the
+   content column takes the rest. Prose keeps its 680 px measure; figures, tables and carried-over visuals fill the
+   column. Below 1100 the rail stacks above the text. */
 .rs-read { padding: 112px 0 128px; }
 @media (min-width: 1280px) { .rs-read { padding: 136px 0 128px; } }
-.rs-read-in { display: flow-root; }
-.rs-rail { width: 100%; margin-bottom: 56px; }
-@media (min-width: 1100px) { .rs-rail { float: left; width: var(--rail); margin: 0 0 56px; } }
+.rs-rail { margin-bottom: 56px; }
+.rs-main { min-width: 0; }
+@media (min-width: 1100px) {
+  .rs-read-in { display: grid; grid-template-columns: var(--rail) minmax(0, 1fr); column-gap: var(--rail-gap); align-items: start; }
+  .rs-rail { position: sticky; top: var(--rail-top); display: flex; flex-direction: column; max-height: calc(100dvh - var(--rail-top) - 32px); margin-bottom: 0; }
+  /* a long list scrolls inside the rail (RailFollow keeps the current link in view); the buttons stay under it */
+  .rs-toc { flex: 0 1 auto; min-height: 0; overflow-y: auto; overscroll-behavior: contain; scrollbar-width: thin; scrollbar-color: var(--n-line-2) transparent; }
+}
 .rs-col { max-width: var(--col); min-width: 0; }
-@media (min-width: 1100px) { .rs-col { margin-left: calc(var(--rail) + var(--rail-gap)); } }
 .rs-rail-h, .rs-label { font-size: 14px; font-weight: 500; line-height: 1.5; color: var(--n-muted); padding-bottom: 12px; border-bottom: 1px solid var(--n-line-2); }
 .rs-toc a { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; padding: 12px 0; border-bottom: 1px solid var(--n-line); font-size: 15.5px; color: var(--n-body); transition: color var(--dur) var(--ease); }
 .rs-toc a .is-figs { color: var(--n-quiet); font-size: 13.5px; white-space: nowrap; }
@@ -318,11 +334,9 @@
 .rs .v11-btn.rs-btn-w:hover { background: #eeecfe; }
 .rs .v11-btn.rs-btn-l { color: #ffffff; box-shadow: inset 0 0 0 1.5px rgba(201,189,245,0.36); justify-content: center; }
 .rs .v11-btn.rs-btn-l:hover { box-shadow: inset 0 0 0 1.5px #ffffff; }
-.rs-rail-meta { margin-top: 28px; font-size: 13.5px; line-height: 1.5; color: var(--n-muted); }
-.rs-rail-meta b { display: block; color: #ffffff; font-weight: 500; }
-.rs-rail-meta > p > span { display: block; }
-.rs-rail-meta p + p { margin-top: 14px; }
-@media (max-width: 1099px) { .rs-rail-tools { flex-direction: row; flex-wrap: wrap; } .rs-rail-tools .v11-btn { flex: 1 1 200px; } .rs-rail-meta { display: none; } }
+/* stacked, the hero's own two buttons sit just above, so the rail drops its copy of them */
+@media (max-width: 1099px) { .rs-rail-tools { display: none; } }
+@media (max-width: 767px) { .rs-toc a { padding: 10px 0; font-size: 15px; } }
 .rs-take { margin-top: 6px; }
 .rs-take li { position: relative; padding: 20px 0 20px 28px; border-bottom: 1px solid var(--n-line); font-size: 18px; line-height: 1.6; color: var(--n-body); }
 .rs-take li::before { content: ""; position: absolute; left: 2px; top: 31px; width: 8px; height: 8px; background: var(--lit); }
@@ -331,7 +345,9 @@
 /* the body, in the night reading style */
 .rs-body { min-width: 0; }
 .rs-prose { overflow-wrap: break-word; }
-.rs-body > .rs-col:first-child > :first-child, .rs-sheet-text > :first-child { margin-top: 0; }
+.rs-body > .rs-prose { max-width: none; }
+.rs-body > .rs-prose > :not(.rs-table) { max-width: var(--col); }
+.rs-body > .rs-col:first-child > :first-child { margin-top: 0; }
 .rs-col ~ .rs-body > .rs-col:first-child > :first-child { margin-top: 88px; }
 .rs-prose h2 { font-family: var(--font-heading); font-weight: 500; font-size: 34px; line-height: 1.08; letter-spacing: -.03em; color: #ffffff; margin-top: 88px; text-wrap: balance; }
 @media (min-width: 768px) { .rs-prose h2 { font-size: 44px; } }
@@ -366,8 +382,8 @@
 .rs-table td:first-child { color: #ffffff; font-weight: 500; }
 @media (max-width: 767px) { .rs-table table { font-size: 14px; } .rs-table th, .rs-table td { padding: 10px 12px; } }
 
-/* figures inside the body: a night panel under a strip in the series colour, full width, clear of the rail */
-.rs-nfig { clear: both; margin: 64px 0 0; background: var(--night-2); border: 1px solid var(--n-line); }
+/* figures inside the body: a night panel under a strip in the series colour, the content column's full width */
+.rs-nfig { margin: 64px 0 0; background: var(--night-2); border: 1px solid var(--n-line); }
 .rs-body > .rs-nfig + .rs-col > :first-child { margin-top: 56px; }
 .rs-nfig-h { display: flex; flex-direction: column; gap: 8px; padding: 22px 20px; }
 @media (min-width: 768px) { .rs-nfig-h { padding: 28px 40px 26px; } }
@@ -382,14 +398,17 @@
 .rs-fband { padding: 88px 0 96px; }
 @media (min-width: 1280px) { .rs-fband { padding: 120px 0 128px; } }
 .rs-fband-in { display: flex; flex-direction: column; gap: 48px; margin-block: 0; }
-@media (min-width: 1100px) { .rs-fband-in { flex-direction: row; gap: 80px; align-items: flex-start; } }
+/* the caption and the chart share the band's height: the chart centres on the caption, so neither leaves a hole */
+@media (min-width: 1100px) { .rs-fband-in { flex-direction: row; gap: 64px; align-items: stretch; } }
+@media (min-width: 1280px) { .rs-fband-in { gap: 88px; } }
 .rs-fband-cap { min-width: 0; }
-@media (min-width: 1100px) { .rs-fband-cap { width: 380px; flex-shrink: 0; } }
+@media (min-width: 1100px) { .rs-fband-cap { width: 400px; flex-shrink: 0; } }
 .rs-fband-n { font-size: 15px; font-weight: 500; color: var(--fg2); padding-bottom: 16px; border-bottom: 1px solid var(--fg); }
 .rs-fband-cap h2 { font-family: var(--font-heading); font-weight: 500; font-size: 34px; line-height: 1.05; letter-spacing: -.035em; color: var(--fg); margin-top: 28px; text-wrap: balance; }
-@media (min-width: 1280px) { .rs-fband-cap h2 { font-size: 44px; } }
+@media (min-width: 1280px) { .rs-fband-cap h2 { font-size: 40px; } }
 .rs-fband-note { font-size: 15px; line-height: 1.55; color: var(--fg2); margin-top: 28px; padding-top: 16px; border-top: 1px solid var(--rule); text-wrap: pretty; }
 .rs-fband-chart { flex: 1 1 0; min-width: 0; }
+@media (min-width: 1100px) { .rs-fband-chart { display: flex; flex-direction: column; justify-content: center; padding-top: 8px; } }
 
 /* =========================================================== PAPER · method, the measurement sheet */
 .rs-method { padding: 128px 0 0; }
@@ -409,18 +428,29 @@
 .rs-srow.is-head { padding-top: 12px; padding-bottom: 12px; font-size: 13.5px; border-bottom-color: var(--n-line-2); }
 .rs-srow.is-head span { color: var(--n-quiet); font-weight: 500; }
 @media (max-width: 767px) { .rs-srow.is-head { display: none; } }
-.rs-sheet-text { padding: 28px 24px 32px; }
-@media (min-width: 768px) { .rs-sheet-text { padding: 36px 24px 40px 236px; } .rs-sheet-text > * { max-width: 760px; } }
-.rs-sheet-text.is-appendix { border-top: 1px solid var(--n-line); }
-.rs-sheet-text p, .rs-sheet-text li { font-size: 16.5px; }
-.rs-sheet-text h2 { font-size: 28px; margin-top: 48px; }
-.rs-sheet-text h3 { font-size: 22px; margin-top: 36px; }
+/* the methodology and the appendix are the sheet's last rows: their field names the text beside it */
+.rs-srow.is-text { padding-top: 28px; padding-bottom: 36px; }
+@media (min-width: 768px) { .rs-srow.is-text { align-items: flex-start; } }
+.rs-srow.is-text:last-child { border-bottom: 0; }
+.rs-srow.is-text .v > * { max-width: 760px; }
+.rs-srow.is-text .v > :first-child { margin-top: 0; }
+.rs-srow.is-text .v > .rs-table { max-width: 100%; }
+.rs-srow.is-text p, .rs-srow.is-text li { font-size: 16.5px; }
+.rs-srow.is-text h2 { font-size: 28px; margin-top: 48px; }
+.rs-srow.is-text h3 { font-size: 22px; margin-top: 36px; }
 
 /* =========================================================== PAPER · limitations, versions, data and citation */
 .rs-after { padding: 96px 0 0; }
 .rs-split { display: flex; flex-direction: column; gap: 64px; }
 @media (min-width: 1100px) { .rs-split { flex-direction: row; gap: 64px; } }
 .rs-block { flex: 1 1 0; min-width: 0; }
+/* long limitations: two thirds of the row in two balanced columns; versions and data stack in the last third */
+@media (min-width: 1100px) {
+  .rs-split.has-long-limits { display: grid; grid-template-columns: minmax(0, 2fr) minmax(0, 1fr); grid-template-rows: auto 1fr; align-items: start; gap: 64px; }
+  .rs-split.has-long-limits > .rs-block:first-child { grid-row: span 2; }
+  .rs-split.has-long-limits .rs-limits { columns: 2; column-gap: 56px; column-rule: 1px solid var(--n-line); }
+  .rs-split.has-long-limits .rs-limits :is(p, li) { break-inside: avoid; }
+}
 .rs-block h3 { font-family: var(--font-heading); font-weight: 500; font-size: 30px; line-height: 1.05; letter-spacing: -.03em; color: #ffffff; padding-bottom: 18px; border-bottom: 1px solid var(--n-line-2); }
 .rs-block > ul > li, .rs-limits li, .rs-limits > p { padding: 18px 0; border-bottom: 1px solid var(--n-line); font-size: 16px; line-height: 1.55; color: var(--n-body); }
 .rs-limits ul, .rs-limits ol { list-style: none; margin: 0; padding: 0; }
@@ -458,12 +488,13 @@
 /* =========================================================== reduced motion and editing */
 @media (prefers-reduced-motion: reduce) { .rs-arr, .rs-tile, .rs-card { transition: none; } }
 
-/* a chart or image carried over from the blog post (blogVisual) */
-/* the blog's own chart component is drawn for a white page, so it keeps a white ground here (DESIGN.md: the reading
-   surface), inside the reading column */
-.rs-oldvis { margin-top: 48px; margin-bottom: 0; margin-right: 0; background: #ffffff; border-radius: 16px; color: var(--ink); overflow: hidden; }
-@media (max-width: 1099px) { .rs-oldvis { margin-left: 0; } }
-.rs-oldvis + .rs-col > :first-child { margin-top: 48px; }
+/* a chart or image carried over from the blog post (blogVisual). The blog's components are drawn for a white page, so
+   each keeps a white sheet (DESIGN.md: the reading surface), mounted square in a night panel like the paper's own
+   figures instead of a rounded card floating on night */
+.rs-oldvis { margin: 64px 0 0; padding: 18px; background: var(--night-2); border: 1px solid var(--n-line); color: var(--ink); }
+@media (min-width: 768px) { .rs-oldvis { padding: 32px 40px; } }
+.rs-oldvis > figure { margin: 0; border: 0; border-radius: 0; background: #ffffff; }
+.rs-oldvis + .rs-col > :first-child { margin-top: 56px; }
 
 /* the header over a coral or butter hero keeps ink text (data-hero="light"); the wordmark goes ink with it */
 body:has(.rs-hero[data-hero="light"]) header[data-hero-theme="dark"]:not([data-hero-scrolled]) a[aria-label="LoudFace Home"] img { filter: brightness(0); }

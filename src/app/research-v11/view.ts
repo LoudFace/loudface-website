@@ -251,6 +251,9 @@ export interface BodyView {
   band?: NumberedFigure;
 }
 
+/** Each table in a block of CMS HTML inside the night reading wrapper, which scrolls a wide table in its own box. */
+export const wrapTables = (html: string) => html.replace(/<table\b[\s\S]*?<\/table>/gi, (m) => `<div class="rs-table">${m}</div>`);
+
 /**
  * The paper's body as the page draws it: each H2 gets an id (the contents rail links to it), tables get the night
  * reading wrapper, and the body is cut at its H2s so the figures placed `afterH2` sit between the sections. The
@@ -261,7 +264,7 @@ export function bodyView(html: string | undefined, figures: ResearchFigure[] = [
   let src = (html ?? '').replace(/http:\/\/loudface\.co/g, 'https://www.loudface.co');
   src = rewriteLegacyUrls(src);
   src = src.replace(/<script\b/gi, '&lt;script').replace(/<\/script>/gi, '&lt;/script&gt;');
-  src = src.replace(/<table\b[\s\S]*?<\/table>/gi, (m) => `<div class="rs-table">${m}</div>`);
+  src = wrapTables(src);
   const heads: { id: string; text: string }[] = [];
   src = src.replace(/<h2([^>]*)>([\s\S]*?)<\/h2>/gi, (_m, attrs: string, content: string) => {
     const text = content.replace(/<[^>]*>/g, '').trim();

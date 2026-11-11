@@ -32,6 +32,12 @@ export function bigClass(value: string) {
   return n <= 5 ? '' : n <= 7 ? ' is-long' : ' is-longer';
 }
 
+/** How long a key number is: a pair such as "70.5% vs 30.0%" steps down so it stays on one line in its cell. */
+export function keyClass(value: string) {
+  const n = value.length;
+  return n <= 6 ? undefined : n <= 10 ? 'is-long' : 'is-longer';
+}
+
 /** "101 of 336": the count large, its base small. */
 export function Big({ value }: { value: string }) {
   const [n, of] = splitOf(value);

@@ -70,7 +70,8 @@ function stage(tone: "indigo" | "night" | "navy"): Theme {
     callInk: bg,
     onHi: bg,
     water: deep ? "rgba(255,255,255,0.16)" : "rgba(255,255,255,0.26)",
-    fade: { hi: [0.14, 1], rest: [0.06, 0.78] },
+    // near-opaque from the baseline, so a bar reads as one solid shape against the ground
+    fade: { hi: [0.72, 1], rest: [0.62, 0.9] },
     band: "rgba(255,255,255,0.06)",
     eng: ["#ffffff", "#fcd68a", "#f59a7b"],
     cellHi: deep ? "#c9bdf5" : "#ffffff",
@@ -108,7 +109,8 @@ function inkOn(tone: "coral" | "butter"): Theme {
     grid: `${ink}0.11)`,
     base: `${ink}0.34)`,
     hi: INK,
-    rest: "rgba(255,255,255,0.78)",
+    // opaque: any transparency mixes the white with coral into a pale pink that reads as part of the ground
+    rest: "#ffffff",
     line2: `${ink}0.30)`,
     hatch: `${ink}0.26)`,
     hatchEdge: `${ink}0.20)`,

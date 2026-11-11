@@ -101,6 +101,58 @@ export function wrapBalanced(
   return best;
 }
 
+/**
+ * Greedy word wrap that may also break a word wider than the line after one of its hyphens ("gpt-6.1-" / "sol"),
+ * so model names and other hyphenated terms keep their distinguishing tail.
+ */
+export function wrapAtHyphens(
+  s: string,
+  maxW: number,
+  fs: number,
+  weight = 400,
+): string[] {
+  // each piece carries the separator that joins it to the piece before: a space, or nothing after a hyphen
+  const pieces: { t: string; sep: string }[] = [];
+  for (const word of String(s).split(" ")) {
+    const parts =
+      textWidth(word, fs, weight) > maxW ? word.split(/(?<=-)/) : [word];
+    parts.forEach((t, i) => pieces.push({ t, sep: i ? "" : " " }));
+  }
+  const out: string[] = [];
+  let cur = "";
+  for (const { t, sep } of pieces) {
+    const joined = cur ? cur + sep + t : t;
+    if (cur && textWidth(joined, fs, weight) > maxW) {
+      out.push(cur);
+      cur = t;
+    } else cur = joined;
+  }
+  if (cur) out.push(cur);
+  return out.length ? out : [""];
+}
+
+const ELLIPSIS = "…";
+
+/** `s` cut at a word end, or failing that a letter, with an ellipsis, so it fits `maxW`. A fitting `s` comes back whole. */
+export function clip(
+  s: string,
+  maxW: number,
+  fs: number,
+  weight = 400,
+): string {
+  if (textWidth(s, fs, weight) <= maxW) return s;
+  const fits = (t: string) => textWidth(t + ELLIPSIS, fs, weight) <= maxW;
+  const words = s.split(" ");
+  for (let k = words.length - 1; k > 0; k--) {
+    const t = words.slice(0, k).join(" ");
+    if (fits(t)) return t + ELLIPSIS;
+  }
+  for (let k = s.length - 1; k > 0; k--) {
+    if (fits(s.slice(0, k))) return s.slice(0, k) + ELLIPSIS;
+  }
+  return ELLIPSIS;
+}
+
 /** One decimal place for coordinates. */
 export const r1 = (n: number): number => Math.round(n * 10) / 10;
 export const nf = (v: number | string): string =>

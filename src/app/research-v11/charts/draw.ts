@@ -8,6 +8,7 @@
  */
 import type { ChartGround, ChartSize, ChartSpec, ChartTone } from "../contract";
 import {
+  clip,
   esc,
   figWidth,
   nf,
@@ -17,6 +18,7 @@ import {
   T,
   textWidth,
   wrap,
+  wrapAtHyphens,
   wrapBalanced,
 } from "./text";
 import { themeFor, type Theme } from "./theme";
@@ -275,6 +277,60 @@ const niceStep = (raw: number, up: boolean): number => {
 const tickText = (t: number, unit?: string): string =>
   `${Number.isInteger(t) ? t : String(t)}${unit === "%" ? "%" : ""}`;
 
+/** A highlighted mark's label is set at medium weight, every other label at regular. */
+const labelWeight = (hi: boolean | undefined): number => (hi ? 500 : 400);
+
+/** Space kept between two tick labels along an axis. */
+const TICK_GAP = 8;
+/**
+ * The ticks whose labels fit on an axis `span` px long: every k-th tick, for the smallest k that keeps TICK_GAP
+ * between labels. A step that drops the last tick must still leave three labels, so 0–10 in 2.5s thins to 0, 5, 10
+ * and never to 0, 7.5. `extent` is a label's length along the axis; the first label starts at its tick when
+ * `startFirst` (a horizontal axis), every other label is centred on its tick.
+ */
+function fitTicks(
+  ticks: number[],
+  max: number,
+  span: number,
+  extent: (t: number) => number,
+  startFirst: boolean,
+): number[] {
+  const last = ticks.length - 1;
+  const box = (t: number, first: boolean): [number, number] => {
+    const p = (t / max) * span;
+    const e = extent(t);
+    return first && startFirst ? [p, p + e] : [p - e / 2, p + e / 2];
+  };
+  for (let k = 1; k <= last; k++) {
+    const kept = ticks.filter((_, i) => i % k === 0);
+    if (last % k !== 0 && kept.length < 3) continue;
+    const apart = kept.every(
+      (t, i) =>
+        i === 0 || box(kept[i - 1], i === 1)[1] + TICK_GAP <= box(t, false)[0],
+    );
+    if (apart) return kept;
+  }
+  return ticks.slice(0, 1);
+}
+
+/** The ticks labelled under a horizontal value axis `span` px long; a thin chart labels none. */
+function valueAxisLabels(
+  c: Ctx,
+  ticks: number[],
+  max: number,
+  span: number,
+  unit?: string,
+): number[] {
+  if (c.thin) return [];
+  return fitTicks(
+    ticks,
+    max,
+    span,
+    (t) => textWidth(tickText(t, unit), c.s.ax),
+    true,
+  );
+}
+
 /* ------------------------------------------------------------------ forms (charts-v2.js, function for function) */
 
 interface BarRow {
@@ -284,7 +340,31 @@ interface BarRow {
   hi: boolean;
 }
 
-/** Ranked horizontal bars: label, square bar, the figure at its end. One highlighted mark, one callout. */
+/** A label column wider than this share of the chart wraps its labels into the bars' room. */
+const SIDE_LABEL_MAX_SHARE = 0.42;
+/** Side labels that leave the bars less than this share of the chart move above their bars instead. */
+const SIDE_BARS_MIN_SHARE = 0.45;
+/** Labels above their bars: the gap from the label to its bar, between rows, and the bar's share of the size's bar. */
+const STACKED_LABEL_GAP = 6;
+const STACKED_ROW_GAP = 16;
+const STACKED_BAR_SHARE = 0.8;
+/** How far a stacked bar's own gridline stretch reaches past the bar, above and below. */
+const STACKED_GRID_OVERSHOOT = 3;
+/** A label's first baseline below the top of its line box, in font sizes. */
+const LABEL_ASCENT = 0.8;
+/**
+ * The height a short list of bars grows towards, so four rows fill a figure instead of sitting in its top third.
+ * Rows grow at most ROW_GROW_MAX times the size's row; sm (the hub's cards) keeps its rows.
+ */
+const ROWS_FILL: Record<ChartSize, number> = { sm: 0, md: 220, lg: 300 };
+const ROW_GROW_MAX = 1.6;
+/** Line height of a wrapped bar label, in font sizes. */
+const BAR_LABEL_LH = 1.15;
+
+/**
+ * Ranked horizontal bars: label, square bar, the figure at its end. One highlighted mark, one callout. When the label
+ * column would crowd the bars (a phone, long labels), each label sits on its own line above a full-width bar.
+ */
 function hbars(
   c: Ctx,
   o: {
@@ -297,33 +377,66 @@ function hbars(
 ): Form {
   const { th, s, w } = c;
   const n = o.rows.length;
-  const labW = Math.min(
-    w * 0.42,
-    Math.max(...o.rows.map((r) => textWidth(r.label, s.fs, r.hi ? 500 : 400))) +
-      16,
-  );
   const valW = Math.max(...o.rows.map((r) => figWidth(r.text, s.val))) + 12;
+  const labNatural =
+    Math.max(
+      ...o.rows.map((r) => textWidth(r.label, s.fs, labelWeight(r.hi))),
+    ) + 16;
+  const stacked =
+    !c.thin &&
+    (labNatural > w * SIDE_LABEL_MAX_SHARE ||
+      w - labNatural - valW - c.wm < w * SIDE_BARS_MIN_SHARE);
+  const labW = stacked ? 0 : Math.min(w * SIDE_LABEL_MAX_SHARE, labNatural);
   const x0 = labW;
   const x1 = w - valW - c.wm;
   const bw = Math.max(1, x1 - x0);
   const lines = o.rows.map((r) =>
-    wrap(r.label, labW - 10, s.fs, r.hi ? 500 : 400),
+    wrap(r.label, stacked ? w - c.wm : labW - 10, s.fs, labelWeight(r.hi)),
   );
-  const lh = s.fs * 1.15;
+  const lh = s.fs * BAR_LABEL_LH;
   const top = 6;
-  // thin: the rows share the fixed height, down to the minimum row; a wrapped label still gets its lines
-  const want = c.thin
-    ? Math.min(s.row, Math.max(THIN_MIN_ROW, (c.fixH - top - 4) / n))
-    : s.row;
-  const row = Math.max(want, ...lines.map((l) => l.length * lh + 8));
-  const barH = c.thin ? Math.min(s.bar, row - 6) : s.bar;
-  const bottom = top + n * row;
+  // each row's bar centre and its first label line's baseline
+  const slots: { yc: number; ly: number }[] = [];
+  let barH: number;
+  let bottom: number;
+  if (stacked) {
+    barH = s.bar * STACKED_BAR_SHARE;
+    let y = top;
+    lines.forEach((ls) => {
+      const barTop = y + ls.length * lh + STACKED_LABEL_GAP;
+      slots.push({ yc: barTop + barH / 2, ly: y + s.fs * LABEL_ASCENT });
+      y = barTop + barH + STACKED_ROW_GAP;
+    });
+    bottom = y - STACKED_ROW_GAP + top;
+  } else {
+    // thin: the rows share the fixed height, down to the minimum row; a wrapped label still gets its lines
+    const want = c.thin
+      ? Math.min(s.row, Math.max(THIN_MIN_ROW, (c.fixH - top - 4) / n))
+      : Math.max(s.row, Math.min(s.row * ROW_GROW_MAX, ROWS_FILL[c.size] / n));
+    const row = Math.max(want, ...lines.map((l) => l.length * lh + 8));
+    barH = c.thin ? Math.min(s.bar, row - 6) : (s.bar * want) / s.row;
+    lines.forEach((ls, i) => {
+      const yc = top + i * row + row / 2;
+      slots.push({ yc, ly: yc + s.fs * 0.35 - ((ls.length - 1) / 2) * lh });
+    });
+    bottom = top + n * row;
+  }
+  const labelled = valueAxisLabels(c, o.ticks, o.max, bw, o.unit);
   let g = "";
   for (const t of o.ticks) {
     if (c.thin && t !== 0) continue;
     const x = x0 + (t / o.max) * bw;
-    g += `<line x1="${r1(x)}" x2="${r1(x)}" y1="${top}" y2="${bottom}" stroke="${t === 0 ? th.base : th.grid}"/>`;
-    if (!c.thin)
+    const stroke = t === 0 ? th.base : th.grid;
+    // above-bar labels would be struck through by full-height gridlines; each bar gets its own stretch instead
+    g += stacked
+      ? slots
+          .map(
+            ({ yc }) =>
+              `<line x1="${r1(x)}" x2="${r1(x)}" y1="${r1(yc - barH / 2 - STACKED_GRID_OVERSHOOT)}" y2="${r1(yc + barH / 2 + STACKED_GRID_OVERSHOOT)}" stroke="${stroke}"/>`,
+          )
+          .join("")
+      : `<line x1="${r1(x)}" x2="${r1(x)}" y1="${top}" y2="${bottom}" stroke="${stroke}"/>`;
+    if (labelled.includes(t))
       g += T(x, bottom + 19, tickText(t, o.unit), {
         fs: s.ax,
         c: th.axis,
@@ -331,14 +444,13 @@ function hbars(
       });
   }
   o.rows.forEach((r, i) => {
-    const yc = top + i * row + row / 2;
+    const { yc, ly } = slots[i];
     const bl = Math.max(2, (Math.min(r.v, o.max) / o.max) * bw);
     g += `<rect x="${r1(x0)}" y="${r1(yc - barH / 2)}" width="${r1(bl)}" height="${r1(barH)}" fill="${c.fill(r.hi ? th.hi : th.rest, r.hi ? "hi" : "rest", "h")}"/>`;
-    const ls = lines[i];
-    ls.forEach((l, k) => {
-      g += T(0, yc + s.fs * 0.35 + (k - (ls.length - 1) / 2) * lh, l, {
+    lines[i].forEach((l, k) => {
+      g += T(0, ly + k * lh, l, {
         fs: s.fs,
-        w: r.hi ? 500 : 400,
+        w: labelWeight(r.hi),
         c: r.hi ? th.ink : th.body,
       });
     });
@@ -357,6 +469,14 @@ function hbars(
   });
   return { h: bottom + (c.thin ? 4 : 26), svg: g };
 }
+
+/** A column label may wrap to this many lines; past it, or when a word or a figure is wider than its column, the
+ * columns are drawn as rows of bars (except thin, which keeps its columns and shortens the labels). */
+const COLUMN_LABEL_MAX_LINES = 3;
+/** Clear space kept on each side of a column's label and figure. */
+const COLUMN_TEXT_PAD = 3;
+/** Space under the plot before the first label line. */
+const COLUMN_FOOT = 14;
 
 /** Columns on a y axis: the figure on each column, the chosen column called out. */
 function columns(
@@ -379,29 +499,60 @@ function columns(
   const x0 = axW;
   const x1 = w - c.wm;
   const band = (x1 - x0) / n;
+  const room = band - 2 * COLUMN_TEXT_PAD;
   const cw = Math.max(4, Math.min(band * 0.7, c.size === "lg" ? 124 : 96));
-  const lines = o.rows.map((r) =>
-    (c.thin ? wrapBalanced : wrap)(
-      r.label,
-      Math.max(20, band - 6),
-      s.ax,
-      r.hi ? 500 : 400,
-    ),
-  );
-  const nl = Math.max(...lines.map((l) => l.length));
   const lh = s.ax + 4;
   const call = c.thin ? undefined : o.call;
   const top = (call ? s.callH + 16 : 0) + s.val + 10;
+  let lines = o.rows.map((r) =>
+    (c.thin ? wrapBalanced : wrap)(r.label, room, s.ax, labelWeight(r.hi)),
+  );
+  if (c.thin) {
+    // thin keeps the caller's height: labels give up lines (and over-wide words their tails) before the plot shrinks
+    // below its minimum; the sr-only table carries the full labels
+    const maxLines = Math.max(
+      1,
+      Math.floor((c.fixH - top - COLUMN_FOOT - THIN_MIN_PLOT) / lh),
+    );
+    lines = lines.map((balanced, i) => {
+      const wt = labelWeight(o.rows[i].hi);
+      const ls = balanced.every((l) => textWidth(l, s.ax, wt) <= room)
+        ? balanced
+        : wrapAtHyphens(o.rows[i].label, room, s.ax, wt);
+      const kept =
+        ls.length > maxLines
+          ? [
+              ...ls.slice(0, maxLines - 1),
+              ls.slice(maxLines - 1).join(" "),
+            ]
+          : ls;
+      return kept.map((l) => clip(l, room, s.ax, wt));
+    });
+  } else {
+    const fits =
+      lines.every(
+        (ls, i) =>
+          ls.length <= COLUMN_LABEL_MAX_LINES &&
+          ls.every(
+            (l) => textWidth(l, s.ax, labelWeight(o.rows[i].hi)) <= room,
+          ),
+      ) && o.rows.every((r) => figWidth(r.text, s.val) <= room);
+    if (!fits) return hbars(c, o);
+  }
+  const nl = Math.max(...lines.map((l) => l.length));
   const plotH = c.thin
-    ? Math.max(THIN_MIN_PLOT, c.fixH - top - 14 - nl * lh)
+    ? Math.max(THIN_MIN_PLOT, c.fixH - top - COLUMN_FOOT - nl * lh)
     : { sm: 150, md: 230, lg: 300 }[c.size];
   const bottom = top + plotH;
   const y = (v: number) => bottom - (Math.min(v, o.max) / o.max) * plotH;
+  const labelled = c.thin
+    ? []
+    : fitTicks(o.ticks, o.max, plotH, () => s.ax, false);
   let g = "";
   for (const t of o.ticks) {
     if (c.thin && t !== 0) continue;
     g += `<line x1="${r1(x0)}" x2="${r1(x1)}" y1="${r1(y(t))}" y2="${r1(y(t))}" stroke="${t === 0 ? th.base : th.grid}"/>`;
-    if (!c.thin)
+    if (labelled.includes(t))
       g += T(0, y(t) + s.ax * 0.35, tickText(t, o.unit), {
         fs: s.ax,
         c: th.axis,
@@ -422,7 +573,7 @@ function columns(
       g += T(cx, bottom + 18 + k * lh, l, {
         fs: s.ax,
         c: r.hi ? th.ink : th.muted,
-        w: r.hi ? 500 : 400,
+        w: labelWeight(r.hi),
         a: "middle",
       });
     });
@@ -434,7 +585,7 @@ function columns(
         max: x1,
       });
   });
-  return { h: bottom + 14 + nl * lh, svg: g };
+  return { h: bottom + COLUMN_FOOT + nl * lh, svg: g };
 }
 
 /** A funnel of counts: each step's kept share solid, what was lost hatched. */
@@ -580,7 +731,7 @@ function stack(c: Ctx, o: { segs: Seg[] }): Form {
     g += `<rect x="0" y="${r1(yc - sq / 2)}" width="${sq}" height="${sq}" fill="${fillOf(sg)}"${sg.style === "hatch" ? ` stroke="${th.hatchEdge}"` : ""}/>`;
     g += T(sq + 10, yc + s.fs * 0.35, sg.label, {
       fs: s.fs,
-      w: sg.style === "hi" ? 500 : 400,
+      w: labelWeight(sg.style === "hi"),
       c: sg.style === "hi" ? th.ink : th.body,
     });
     if (sg.count && c.size !== "sm") {
@@ -692,7 +843,7 @@ function slope(
     });
     g += T(x0 - 22 - lvW, p.ly + s.fs * 0.35, p.r.label, {
       fs: s.fs,
-      w: hi ? 500 : 400,
+      w: labelWeight(hi),
       c: hi ? th.hi : th.body,
       a: "end",
     });
@@ -742,15 +893,12 @@ function dots(
     ? Math.min(s.row + 2, Math.max(THIN_MIN_ROW + 4, (c.fixH - top - 8) / n))
     : s.row + (c.size === "sm" ? 2 : 6);
   const bottom = top + n * rh;
-  const ticks = c.thin
-    ? [0]
-    : c.size === "sm" || bw < 260
-      ? [0, o.max / 2, o.max]
-      : ticksFor(o.max);
+  const ticks = c.thin ? [0] : ticksFor(o.max);
+  const labelled = valueAxisLabels(c, ticks, o.max, bw, o.unit);
   let g = "";
   for (const t of ticks) {
     g += `<line x1="${r1(x(t))}" x2="${r1(x(t))}" y1="${top - 4}" y2="${bottom}" stroke="${t === 0 ? th.base : th.grid}"/>`;
-    if (!c.thin)
+    if (labelled.includes(t))
       g += T(x(t), bottom + 19, tickText(t, o.unit), {
         fs: s.ax,
         c: th.axis,
@@ -772,7 +920,7 @@ function dots(
     });
     g += T(8, yc + s.fs * 0.35, r.label, {
       fs: s.fs,
-      w: r.hi ? 500 : 400,
+      w: labelWeight(r.hi),
       c: r.hi ? th.ink : th.body,
     });
     g += T(w - c.wm - 8, yc + s.val * 0.34, swingText(r.vals), {
@@ -813,7 +961,7 @@ function multiples(
       .map((k, i) =>
         T(0, top + i * rh + rh / 2 + s.fs * 0.35, k, {
           fs: s.fs,
-          w: i === o.hi ? 500 : 400,
+          w: labelWeight(i === o.hi),
           c: i === o.hi ? th.ink : th.body,
         }),
       )
@@ -1163,7 +1311,10 @@ function list(
   const x1 = w - c.wm;
   const top = o.heads ? s.ax + 14 : 4;
   const rh = c.thin
-    ? Math.min(s.row, Math.max(THIN_MIN_ROW + 4, (c.fixH - top) / o.rows.length))
+    ? Math.min(
+        s.row,
+        Math.max(THIN_MIN_ROW + 4, (c.fixH - top) / o.rows.length),
+      )
     : s.row;
   let g = "";
   if (o.heads)
@@ -1455,6 +1606,15 @@ function topLine(
 
 /* ------------------------------------------------------------------ the entry point */
 
+/** The vertical LOUDFACE mark in an lg chart's right margin (Ctx.wm). */
+const WATERMARK = "LOUDFACE";
+const WATERMARK_FS = 14;
+const WATERMARK_LS = 0.24;
+const WATERMARK_INSET = 2;
+const WATERMARK_LENGTH =
+  textWidth(WATERMARK, WATERMARK_FS, 700) +
+  WATERMARK.length * WATERMARK_LS * WATERMARK_FS;
+
 function hashId(s: string): string {
   let h = 5381;
   for (let i = 0; i < s.length; i++) h = ((h << 5) + h + s.charCodeAt(i)) | 0;
@@ -1482,7 +1642,10 @@ export function drawChart(spec: ChartSpec, opts: DrawOptions): DrawResult {
   c.wm = size === "lg" && !thin ? 30 : 0;
   c.thin = thin;
   c.fixH = thin
-    ? Math.max(60, Number.isFinite(opts.height) ? Number(opts.height) : THIN_HEIGHT)
+    ? Math.max(
+        60,
+        Number.isFinite(opts.height) ? Number(opts.height) : THIN_HEIGHT,
+      )
     : 0;
   const out = drawForm(c, spec, true);
   // thin: the page prints the axis line itself, and a thin chart carries no legend, except dots, whose three
@@ -1495,9 +1658,12 @@ export function drawChart(spec: ChartSpec, opts: DrawOptions): DrawResult {
     showAxis ? notes(spec).axis : undefined,
     thin && spec.type !== "dots" ? undefined : out.legend,
   );
-  const water = c.wm
-    ? `<text transform="translate(${r1(width - 4)} ${r1(out.h - 2)}) rotate(-90)" font-size="14" font-weight="700" letter-spacing="0.24em" fill="${th.water}">LOUDFACE</text>`
-    : "";
+  // the mark runs up the right margin from the chart's foot; a chart shorter than the mark goes without it, so it never
+  // rises into the legend line above
+  const water =
+    c.wm && out.h >= WATERMARK_LENGTH + WATERMARK_INSET
+      ? `<text transform="translate(${r1(width - 4)} ${r1(out.h - WATERMARK_INSET)}) rotate(-90)" font-size="${WATERMARK_FS}" font-weight="700" letter-spacing="${WATERMARK_LS}em" fill="${th.water}">${WATERMARK}</text>`
+      : "";
   const H = Math.ceil(head.h + out.h);
   const svg =
     `<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${H}" viewBox="0 0 ${width} ${H}" style="display:block;max-width:100%;height:auto;overflow:visible;font-family:${esc(SANS_FAMILY)};font-variant-numeric:tabular-nums" aria-hidden="true" focusable="false">` +

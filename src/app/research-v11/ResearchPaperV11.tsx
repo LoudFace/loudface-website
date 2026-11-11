@@ -12,8 +12,9 @@ import { BlogVisual } from '@/components/blog';
 import type { BlogVisual as BlogVisualType } from '@/lib/types';
 import { SERIES } from './contract';
 import { CopyCitation } from './CopyCitation';
-import { Big, Byline, Chart, Head, Kicker, SeriesCard, X, bigClass } from './parts';
-import { LIT, NIGHT_CHART, apaCitation, fileKind, listOf, longDate, onSeries, seriesChart, shortDate, type BodyView, type NumberedFigure, type PaperCard, type Person } from './view';
+import { Big, Byline, Chart, Head, Kicker, SeriesCard, X, bigClass, keyClass } from './parts';
+import { RailFollow } from './RailFollow';
+import { LIT, NIGHT_CHART, apaCitation, wrapTables, fileKind, listOf, longDate, onSeries, seriesChart, shortDate, type BodyView, type NumberedFigure, type PaperCard, type Person } from './view';
 
 /**
  * /research/<slug>, a paper (direction G, approved by Arnel on 3 Nov 2026). Paper boards: "LoudFace Website · v11" →
@@ -45,6 +46,9 @@ export interface PaperView {
   superseded?: string;
 }
 
+/** From this many items, limitations read in two columns beside a stacked versions and data column. */
+const LONG_LIMITS = 3;
+
 const VERSION_ORDER = (a: { date: string }, b: { date: string }) => Date.parse(b.date) - Date.parse(a.date);
 
 export function ResearchPaperV11({ c, home, v }: { c: ResearchV11Content; home: HomeV11Content; v: PaperView }) {
@@ -63,6 +67,8 @@ export function ResearchPaperV11({ c, home, v }: { c: ResearchV11Content; home: 
   // Charts and images carried over from the blog post (blogVisual), placed as BlogBodyV3 places them: `hero` after the
   // opening text, `after-h2` after the section of that H2 (counted from 1, as on the blog), `end` after the body.
   const visuals = s.visuals ?? [];
+  // Limitations of three or more items take two thirds of the row in two columns; versions and data stack beside them.
+  const limitItems = s.limitations?.match(/<(p|li)\b/gi)?.length ?? 0;
   const visualsAfter = (i: number) =>
     visuals.filter((vis) => (i === 0 ? vis.position?.anchor === 'hero' : vis.position?.anchor === 'after-h2' && vis.position.h2Index === i));
 
@@ -82,12 +88,15 @@ export function ResearchPaperV11({ c, home, v }: { c: ResearchV11Content; home: 
             </div>
             <h1 className="rs-h1" data-speakable="">{p.name}</h1>
             <div className="rs-sub">
-              <p className="rs-lede">
-                {p.paperTitle && <><span>{p.paperTitle}</span>. </>}
-                {p.sample && <b>{p.sample}</b>}
-                {p.sample && p.engines.length > 0 && <> <span>{t.across}</span> <span>{listOf(p.engines)}</span></>}
-                {p.sample && '.'}
-              </p>
+              <div className="rs-lede">
+                {p.paperTitle && <p className="rs-lede-t">{p.paperTitle}</p>}
+                {(p.sample || p.engines.length > 0) && (
+                  <dl className="rs-facts">
+                    {p.sample && <div><dt>{t.sample}</dt><dd>{p.sample}</dd></div>}
+                    {p.engines.length > 0 && <div><dt>{t.engines}</dt><dd>{listOf(p.engines)}</dd></div>}
+                  </dl>
+                )}
+              </div>
               <div className="rs-by">
                 {v.authors.map((a) => <Byline key={a.slug ?? a.name} who={a} size={48} />)}
                 {p.dataWindow && <p className="rs-win"><b>{t.dataWindow}</b><span>{p.dataWindow}</span></p>}
@@ -129,7 +138,7 @@ export function ResearchPaperV11({ c, home, v }: { c: ResearchV11Content; home: 
                 {keys.map((k, i) => (
                   <div key={i} className="rs-kcell">
                     <X at="tr" />{i === keys.length - 1 && <X at="br" />}<X at="bl" />
-                    <b>{k.value}</b>
+                    <b className={keyClass(k.value)}>{k.value}</b>
                     <p>{k.label}</p>
                     {k.note && <span>{k.note}</span>}
                   </div>
@@ -155,17 +164,14 @@ export function ResearchPaperV11({ c, home, v }: { c: ResearchV11Content; home: 
                 <a href="#data">{t.data}</a>
                 <TocSpy />
               </nav>
+              <RailFollow />
               <div className="rs-rail-tools">
                 <DownloadBtn file={download} kind={kind} label={t.download} className="v11-btn rs-btn-w" />
                 <a href="#data" className="v11-btn rs-btn-l"><span>{t.cite}</span></a>
               </div>
-              <div className="rs-rail-meta">
-                {p.sample && <p><b>{t.sample}</b><span>{p.sample}</span></p>}
-                {p.engines.length > 0 && <p><b>{t.engines}</b><span>{p.engines.join(', ')}</span></p>}
-                {current && <p><b>{t.version}</b><span>{current.version}, <span>{t.publishedOn}</span> {longDate(current.date)}</span></p>}
-              </div>
             </aside>
 
+            <div className="rs-main">
             {takeaways.length > 0 && (
               <div className="rs-col">
                 <p className="rs-label" id="takeaways">{t.takeaways}</p>
@@ -182,6 +188,7 @@ export function ResearchPaperV11({ c, home, v }: { c: ResearchV11Content; home: 
                 </Fragment>
               ))}
               {visuals.filter((vis) => vis.position?.anchor === 'end').map((vis, j) => <OldVisual key={vis._key ?? `end-${j}`} visual={vis} />)}
+            </div>
             </div>
           </div>
         </section>
@@ -220,11 +227,16 @@ export function ResearchPaperV11({ c, home, v }: { c: ResearchV11Content; home: 
                 <div className="rs-srow"><dt className="f">{t.published}</dt><dd className="v">{longDate(p.date)}</dd></div>
                 {p.updated && p.updated.slice(0, 10) !== p.date?.slice(0, 10) && <div className="rs-srow"><dt className="f">{t.updated}</dt><dd className="v">{longDate(p.updated)}</dd></div>}
               </dl>
-              {s.methodology && <div className="rs-sheet-text rs-prose" dangerouslySetInnerHTML={{ __html: s.methodology }} />}
+              {s.methodology && (
+                <div className="rs-srow is-text">
+                  <p className="f">{t.method}</p>
+                  <div className="v rs-prose" dangerouslySetInnerHTML={{ __html: wrapTables(s.methodology) }} />
+                </div>
+              )}
               {s.appendix && (
-                <div className="rs-sheet-text rs-prose is-appendix">
-                  <p className="rs-label">{t.appendix}</p>
-                  <div dangerouslySetInnerHTML={{ __html: s.appendix }} />
+                <div className="rs-srow is-text">
+                  <p className="f">{t.appendix}</p>
+                  <div className="v rs-prose" dangerouslySetInnerHTML={{ __html: wrapTables(s.appendix) }} />
                 </div>
               )}
             </div>
@@ -233,7 +245,7 @@ export function ResearchPaperV11({ c, home, v }: { c: ResearchV11Content; home: 
 
         {/* ===================================================== limitations, versions, data and citation */}
         <section className="rs-after" data-paper-name="G paper · limitations, versions, data, cite">
-          <div className="v11-wrap rs-split">
+          <div className={`v11-wrap rs-split${limitItems >= LONG_LIMITS ? ' has-long-limits' : ''}`}>
             {s.limitations && (
               <div className="rs-block">
                 <h3 id="limitations">{t.limitations}</h3>
@@ -351,7 +363,7 @@ function NightFigure({ f, series, t, date }: { f: NumberedFigure; series: PaperC
 /** A chart or image carried over from the blog post, on a night panel in the reading column. */
 function OldVisual({ visual }: { visual: BlogVisualType }) {
   return (
-    <figure className="rs-col rs-oldvis">
+    <figure className="rs-oldvis">
       <BlogVisual visual={visual} />
     </figure>
   );

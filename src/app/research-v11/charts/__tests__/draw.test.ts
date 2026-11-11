@@ -311,6 +311,27 @@ describe("drawChart, thin variant (homepage research strip)", () => {
       }
   });
 
+  it("keeps long-label columns as columns at the fixed height, shortening labels to their column", () => {
+    // the crawler-policies lead figure (Sanity): labels of up to ten words in three columns
+    const crawler: ChartSpec = {
+      type: "columns",
+      unit: "%",
+      max: 10,
+      rows: [
+        ["Block a training crawler by name", 8.4],
+        ["Block every crawler through * and name no AI crawler", 0.6],
+        ["Block a search or user crawler by name", 0.2],
+      ],
+    };
+    for (const width of THIN_WIDTHS) {
+      const { svg, height } = drawChart(crawler, { ...STRIP_OPTS, width });
+      assert.equal(height, THIN_HEIGHT, `@${width}`);
+      // columns stand side by side, each at its own x; rows of bars all start at the same x
+      const xs = new Set([...svg.matchAll(/<rect x="([^"]+)" y="[^"]+" width="[^"]+" height="[^"]+" fill=/g)].map((m) => m[1]));
+      assert.equal(xs.size, crawler.rows.length, `@${width}: drawn as rows`);
+    }
+  });
+
   it("draws no y-axis ticks and no legend, and prints the figures on the marks", () => {
     const cw = drawChart(CITE_WAIT, { ...STRIP_OPTS, width: 262 }).svg;
     for (const tick of ["0%", "25%", "50%", "75%", "100%"])
