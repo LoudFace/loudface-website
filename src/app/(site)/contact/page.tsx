@@ -18,7 +18,8 @@ import '../../home-v11/home-v11.css';
 import '../../service-v11/service-v11.css';
 import '../../service-v11/svc.css';
 import '../../contact-v11/contact.css';
-import { CONTACT_FAQ, OFFICES, CONTACT_EMAIL } from '../../contact-v3/data';
+import { CONTACT_FAQ, OFFICES } from '../../contact-v3/data';
+import { CONTACT_EMAIL } from '@/lib/site-contact';
 import { ContactV11 } from '../../contact-v11/ContactV11';
 import { serializeJsonLd } from '@/lib/schema-utils';
 

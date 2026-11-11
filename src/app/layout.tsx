@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import localFont from "next/font/local";
 import { FeedbackLoader } from "@/components/feedback/FeedbackLoader";
 import { serializeJsonLd } from '@/lib/schema-utils';
+import { CONTACT_EMAIL } from "@/lib/site-contact";
 
 /**
  * Root Layout — intentionally minimal.
@@ -150,12 +151,12 @@ const organizationSchema = {
     addressLocality: "Dubai",
     addressCountry: "AE",
   },
-  email: "arnel@loudface.co",
+  email: CONTACT_EMAIL,
   contactPoint: [
     {
       "@type": "ContactPoint",
       contactType: "sales",
-      email: "arnel@loudface.co",
+      email: CONTACT_EMAIL,
       url: "https://www.loudface.co/contact",
       areaServed: "Worldwide",
       availableLanguage: ["English"],
@@ -163,7 +164,7 @@ const organizationSchema = {
     {
       "@type": "ContactPoint",
       contactType: "customer support",
-      email: "arnel@loudface.co",
+      email: CONTACT_EMAIL,
       url: "https://www.loudface.co/contact",
       areaServed: "Worldwide",
       availableLanguage: ["English"],

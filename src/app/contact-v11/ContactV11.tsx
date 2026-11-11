@@ -7,6 +7,7 @@ import { Eyebrow, img, personPhoto } from '../home-v11/ui';
 import { OFFICES } from '../contact-v3/data';
 import { NextSteps } from './NextSteps';
 import { strip } from '@/lib/inline-edit/mark';
+import { CONTACT_EMAIL } from '@/lib/site-contact';
 
 /**
  * /contact in v11 (2026-09-25). Copy is the live page's (contact.json); the example screens inside the steps reuse the
@@ -25,7 +26,6 @@ const CITY_PHOTO: Record<string, { src: string; alt: string }> = {
   'San Francisco': { src: 'contact/city-sf.webp', alt: 'Market Street, San Francisco, in the morning' },
   Dubai: { src: 'contact/city-dubai.webp', alt: 'Dubai Silicon Oasis with the downtown skyline behind it' },
 };
-const EMAIL = 'arnel@loudface.co';
 
 const Check = () => (
   <svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><path d="M3.5 8.4 6.4 11.2 12.5 4.8" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" /></svg>
@@ -47,7 +47,7 @@ export function ContactV11({ c, home, steps }: { c: ContactContent; home: HomeV1
             <p className="ct-hero-desc" data-speakable="">{h.description}</p>
             <div className="ct-hero-ctas">
               <a href="#book-modal" data-cal-trigger="" className="v11-btn is-ink"><span>{h.ctaText}</span></a>
-              <span className="ct-mail">{h.emailPrefix}<a href={`mailto:${EMAIL}`}>{EMAIL}</a></span>
+              <span className="ct-mail">{h.emailPrefix}<a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a></span>
             </div>
           </div>
           <div className="ct-call" aria-label={strip(h.cardTitle)}>
@@ -163,7 +163,7 @@ export function ContactV11({ c, home, steps }: { c: ContactContent; home: HomeV1
         </div>
       </section>
 
-      <Closing c={{ ...home.closing, heading: `${c.coverCta.headlinePrefix}${c.coverCta.headlineHighlight}${c.coverCta.headlineSuffix}`, agenda: [], email: EMAIL }} lede={c.coverCta.description} />
+      <Closing c={{ ...home.closing, heading: `${c.coverCta.headlinePrefix}${c.coverCta.headlineHighlight}${c.coverCta.headlineSuffix}`, agenda: [], email: CONTACT_EMAIL }} lede={c.coverCta.description} />
       <FooterV11 c={home.footer} ratings={home.testimonials.ratings} />
       <Reveal />
     </div>

@@ -3,6 +3,7 @@
  * (LegalPageV3) and the v11 template (LegalPageV11) read one copy. Compliance copy: no rewording without a legal read.
  */
 import type { LegalSection, LegalView } from '../legal-v3/LegalPageV3';
+import { CONTACT_EMAIL } from '@/lib/site-contact';
 
 const SECTIONS: LegalSection[] = [
   {
@@ -119,7 +120,7 @@ const SECTIONS: LegalSection[] = [
     body: (
       <p>
         For any questions regarding these Terms, please contact us at:{' '}
-        <a href="mailto:arnel@loudface.co">arnel@loudface.co</a>
+        <a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a>
       </p>
     ),
   },

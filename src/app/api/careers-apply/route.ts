@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { fetchApplicationOpening } from '@/lib/careers-data';
+import { CONTACT_EMAIL } from '@/lib/site-contact';
 
 /**
  * POST /api/careers-apply
@@ -15,7 +16,7 @@ import { fetchApplicationOpening } from '@/lib/careers-data';
  * DELIBERATELY UNLIKE /api/partner-apply, which returns success even when its
  * Notion write fails. This endpoint does not: it retries once, and if the
  * application still is not stored it says so and points the applicant at
- * arnel@loudface.co with their answers still on screen. Telling a candidate
+ * CONTACT_EMAIL with their answers still on screen. Telling a candidate
  * "received" when nothing was stored means they wait for a reply that can
  * never come, and we never learn they existed. The full submission is also
  * logged under [careers-apply] RECOVERY for replay from the Vercel logs.
@@ -223,7 +224,7 @@ export async function POST(request: NextRequest) {
         {
           success: false,
           message:
-            "We couldn't save your application just now. That's on us, not you. Your answers are still on this page. Please copy them into an email to arnel@loudface.co, and we'll pick it up from there.",
+            `We couldn't save your application just now. That's on us, not you. Your answers are still on this page. Please copy them into an email to ${CONTACT_EMAIL}, and we'll pick it up from there.`,
         },
         { status: 502 },
       );

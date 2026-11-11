@@ -1,4 +1,4 @@
-import { CONTACT_EMAIL } from './data';
+import { CONTACT_EMAIL } from '@/lib/site-contact';
 import type { ContactHeroContent } from '@/lib/content-utils';
 
 /**

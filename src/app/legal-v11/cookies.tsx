@@ -5,6 +5,7 @@
 import Link from 'next/link';
 import { CookiePreferences } from '@/components/CookiePreferences';
 import type { LegalSection, LegalView } from '../legal-v3/LegalPageV3';
+import { CONTACT_EMAIL } from '@/lib/site-contact';
 
 const cookieRows = [
   {
@@ -172,7 +173,7 @@ const SECTIONS: LegalSection[] = [
     body: (
       <p>
         Questions about cookies on this Site:{' '}
-        <a href="mailto:arnel@loudface.co">arnel@loudface.co</a>
+        <a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a>
       </p>
     ),
   },

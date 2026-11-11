@@ -129,7 +129,8 @@ styles once the old review routes are gone.
   Website · v11", page "Menus · pick one"; boards drawn by `/dev-preview/menu-concepts` and `/dev-preview/menu-icons`).
   The live menus and the phone menu carry it; the Phosphor app-tile set lost and was deleted.
 
-- After launch (Arnel, 2026-09-27): the contact email is arnel@loudface.co everywhere (footer, schema, legal pages);
+- After launch (Arnel, 2026-09-27): the contact email is arnel@loudface.co everywhere (footer, schema, legal pages).
+  Reversed 2026-11-12 (Arnel): the public address is contact@loudface.co, held once in `src/lib/site-contact.ts`;
   Rezwan and David have left, so their profiles 301 to /team/arnel-bukva and current team members replace their faces;
   the menus' icon credit left the footer at his request (Isocons is CC BY 4.0, which asks for a credit).
 

@@ -3,6 +3,7 @@ import Link from 'next/link';
 import type { HomeV11Content } from '@/lib/content-utils';
 import { Rating } from './Testimonials';
 import { LfMark, img } from './ui';
+import { CONTACT_EMAIL } from '@/lib/site-contact';
 
 const FLAG_UAE = (
   <svg width="22" height="15" viewBox="0 0 22 15" className="v11-flag" role="img" aria-label="United Arab Emirates">
@@ -24,7 +25,7 @@ const FLAGS = [FLAG_UAE, FLAG_US];
 const HREFS: (string | null)[][] = [
   ['/services/geo-agency', '/services/seo-aeo', '/services/ux-ui-design', '/services/cro'],
   ['/case-studies', '/methodology', '/research', '/recognition', '/about', '/pricing', '/blog', '/careers'],
-  [null, 'mailto:arnel@loudface.co', 'https://www.linkedin.com/company/loudface/', 'https://x.com/meetloudface'],
+  [null, `mailto:${CONTACT_EMAIL}`, 'https://www.linkedin.com/company/loudface/', 'https://x.com/meetloudface'],
 ];
 
 function FooterLink({ href, children }: { href: string | null; children: ReactNode }) {
