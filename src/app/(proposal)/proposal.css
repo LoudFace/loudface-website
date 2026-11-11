@@ -17,6 +17,25 @@
   --proposal-measure: 68ch;
 }
 
+/* The cards page is read on shared screens, where a call shrinks it. On a wide
+   window the whole page scales up into the empty side margins; each step keeps
+   the layout at least 1120px wide, so the two columns hold. Phones stay at 1. */
+.proposal-surface .proposal-scale {
+  --proposal-zoom: 1;
+  zoom: var(--proposal-zoom);
+}
+@media (min-width: 1232px) { .proposal-surface .proposal-scale { --proposal-zoom: 1.1; } }
+@media (min-width: 1344px) { .proposal-surface .proposal-scale { --proposal-zoom: 1.2; } }
+@media (min-width: 1456px) { .proposal-surface .proposal-scale { --proposal-zoom: 1.3; } }
+@media (min-width: 1680px) { .proposal-surface .proposal-scale { --proposal-zoom: 1.4; } }
+/* The clip player sizes itself from the window, so it steps back out of the scale. */
+.proposal-surface .proposal-scale .proposal-dialog {
+  zoom: calc(1 / var(--proposal-zoom));
+}
+@media print {
+  .proposal-surface .proposal-scale { --proposal-zoom: 1; }
+}
+
 .proposal-prose > * + * {
   margin-top: 0.85rem;
 }

@@ -960,7 +960,7 @@ export function ProposalCardsDocument({ proposal }: { proposal: Proposal }) {
   );
 
   return (
-    <main className="pb-0">
+    <main className="proposal-scale pb-0">
       <PlateDefs />
       <Hero proposal={proposal} />
 
