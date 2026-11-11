@@ -5,7 +5,8 @@ import { ArrowLeft, ArrowRight } from './ui';
 
 /**
  * The hero's results rail, endless. The slides render three times; the middle copy is the real one and the
- * outer two are inert clones. Whenever the scroll settles outside the middle copy it jumps back by exactly one
+ * outer two are clones: hidden from assistive tech and taken out of the tab order, but clickable, because the
+ * view sits on a clone about half the time (with `inert` those tiles were dead to the mouse, 2026-11-11). Whenever the scroll settles outside the middle copy it jumps back by exactly one
  * copy, which looks identical, so the arrows never run out. It advances on its own every few seconds and
  * pauses on hover, focus, touch and reduced motion. Inside the inline editor only the real copy shows.
  * The view is kept within half a copy of the middle one (2026-09-27): jumping only after a whole copy needed more
@@ -47,6 +48,7 @@ export function HeroSlider({
     const el = track.current;
     if (!el) return;
     el.scrollLeft = copyWidth();
+    for (const focusable of el.querySelectorAll<HTMLElement>('.v11-copy.is-clone :is(a, button)')) focusable.tabIndex = -1;
     const onScroll = () => {
       window.clearTimeout(settle.current);
       settle.current = window.setTimeout(normalise, 140);
@@ -101,7 +103,7 @@ export function HeroSlider({
       <div className="v11-track-shell">
         <div ref={track} className="v11-track">
           {COPIES.map((k) => (
-            <div key={k} className={`v11-copy ${k === 1 ? 'is-main' : 'is-clone'}`} aria-hidden={k !== 1 || undefined} inert={k !== 1 || undefined}>
+            <div key={k} className={`v11-copy ${k === 1 ? 'is-main' : 'is-clone'}`} aria-hidden={k !== 1 || undefined}>
               {children}
             </div>
           ))}
