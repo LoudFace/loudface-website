@@ -153,7 +153,7 @@ export function ResearchPaperV11({ c, home, v }: { c: ResearchV11Content; home: 
           <div className="v11-wrap rs-read-in">
             <aside className="rs-rail">
               <p className="rs-rail-h">{t.contents}</p>
-              <nav className="rs-toc sv-toc" aria-label={strip(t.contents)}>
+              <nav className="rs-toc" aria-label={strip(t.contents)}>
                 {takeaways.length > 0 && <a href="#takeaways">{t.takeaways}</a>}
                 {body.toc.map((h) => (
                   <a key={h.id} href={`#${h.id}`}>{h.text}{h.figures.length > 0 && <span className="is-figs">{figureRange(h.figures, t)}</span>}</a>
