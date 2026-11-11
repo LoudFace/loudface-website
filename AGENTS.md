@@ -8,7 +8,7 @@ spine-client: loudface
 
 ## SEO / content work → lives in the content-engine repo, NOT here
 
-All SEO, AEO, and content-strategy work happens in the dedicated repo: `/Users/arnel/Code Projects/LoudFace Agency/content-engine`. That repo owns the entire cascade — `/seo-brain`, `/serp-recon`, `/pattern-audit`, `/peec-research`, `/draft-content`, `/critique-content`, `/verify-content`, `/ship-content`, `/refresh-calendar` — plus the Notion worker, voice files, and the multi-client tenant registry. Its own CLAUDE.md carries the system map, data-source tables, and observability surfaces. Those skills are NOT registered in this repo; a session here cannot run the cascade.
+All SEO, AEO, and content-strategy work happens in the dedicated repo: `/Users/arnel/Code Projects/LoudFace Agency/content-engine`. That repo owns the entire cascade — `/seo-brain`, `/serp-recon`, `/pattern-audit`, `/peec-research`, `/draft-content`, `/critique-content`, `/verify-content`, `/ship-content`, `/refresh-calendar` — plus the Notion worker, voice files, and the multi-client tenant registry. Its own AGENTS.md carries the system map, data-source tables, and observability surfaces. Those skills are NOT registered in this repo; a session here cannot run the cascade.
 
 **If a session here drifts into content/SEO strategy** (drafting, "what should we write next", pattern performance, competitor research): say so and point the user to a content-engine session — don't improvise the loop here.
 
