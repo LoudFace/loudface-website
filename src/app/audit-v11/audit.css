@@ -18,13 +18,15 @@
 @media (min-width: 1280px) { .au-hero { padding: 150px 0 104px; } .au-hero h1 { font-size: 60px; } }
 
 /* the live form, in v11 dress */
-.au-form { margin-top: 32px; max-width: 520px; }
+.au-form { --au-err: #c2410c; margin-top: 32px; max-width: 520px; }
 .au-form label { font-size: 14px !important; color: var(--ink) !important; }
 .au-form input { height: 50px; border-radius: 14px !important; border-color: var(--line) !important; font-size: 16px !important; color: var(--ink) !important; background: #ffffff !important; }
 .au-form input:focus-visible { outline: 2px solid var(--ind) !important; outline-offset: 2px; }
+/* a field left with a wrong value is marked once the visitor moves on; the second line keeps it from being a colour-only signal */
+.au-form input:user-invalid { border-color: var(--au-err) !important; box-shadow: 0 0 0 1px var(--au-err); }
 .au-form button[type="submit"] { height: 52px; border-radius: 999px !important; background: var(--ink) !important; font-size: 16px !important; }
 .au-form button[type="submit"]:hover { background: var(--ind) !important; }
-.au-form .text-error { color: #c2410c; }
+.au-form .text-error { color: var(--au-err); }
 .au-form.is-card { margin: 0; padding: 28px; border-radius: 24px; background: #ffffff; color: var(--ink); max-width: none; }
 
 /* the report windows */
