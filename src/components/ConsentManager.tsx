@@ -15,11 +15,11 @@ import {
   isTrackingAllowed,
   storeConsent,
 } from '@/lib/consent';
+import { onFirstInteractionOrIdle } from '@/lib/first-interaction';
 
 const GTM_IDS = ['GTM-T53LKJXQ', 'GTM-PDCXVZX'];
 const RB2B_KEY = '5NRP9H7R3PO1';
 const META_PIXEL_ID = process.env.NEXT_PUBLIC_META_PIXEL_ID;
-const INTERACTION_EVENTS = ['scroll', 'touchstart', 'mousemove', 'keydown'] as const;
 /** Ties the mobile expand toggle to the detail copy it reveals. */
 const CONSENT_DETAIL_ID = 'lf-consent-detail';
 
@@ -114,12 +114,9 @@ function loadTrackers() {
   }
 }
 
-/** Arm the perf deferral: trackers load on first interaction, not page load. */
+/** Arm the perf deferral: trackers load on first interaction, or once the loaded page sits idle. */
 function loadTrackersOnInteraction() {
-  const load = () => loadTrackers();
-  INTERACTION_EVENTS.forEach((e) =>
-    window.addEventListener(e, load, { once: true, passive: true })
-  );
+  onFirstInteractionOrIdle(loadTrackers);
 }
 
 interface ConsentManagerProps {
