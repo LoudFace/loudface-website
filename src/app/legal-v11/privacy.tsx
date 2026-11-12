@@ -18,14 +18,9 @@ const thirdParties = [
     href: 'https://posthog.com/privacy',
   },
   {
-    name: 'Google Tag Manager',
-    purpose: 'Loads our measurement tags. Tags delivered through it may set Google cookies.',
-    href: 'https://policies.google.com/privacy',
-  },
-  {
-    name: 'RB2B',
-    purpose: 'B2B visitor identification. Matches IP address and browsing behavior of US-based visitors against its database to give us business contact profiles.',
-    href: 'https://www.rb2b.com/privacy-policy',
+    name: 'Meta Pixel',
+    purpose: 'Ad measurement. Receives page visits and device information so Meta can report which visits and enquiries came from our ads.',
+    href: 'https://www.facebook.com/privacy/policy/',
   },
   {
     name: 'Vercel',
@@ -66,20 +61,8 @@ const SECTIONS: LegalSection[] = [
         <p>
           <strong>Information collected automatically:</strong> With your consent where required
           (see Section 4), we use cookies and similar technologies to collect your IP address, pages
-          viewed, referrer, and device and browser details. Our analytics runs on PostHog and tags
-          loaded through Google Tag Manager.
-        </p>
-        <p>
-          <strong>B2B visitor identification:</strong> We use RB2B, a service that matches the IP
-          address and browsing behavior of visitors located in the United States against its
-          database to tell us which businesses — and in some cases which individual professionals
-          (name, business email, LinkedIn profile) — have visited the Site. RB2B only attempts to
-          identify US-based visitors. You can remove yourself from RB2B&rsquo;s database at{' '}
-          <a href="https://app.retention.com/optout" target="_blank" rel="noopener noreferrer">
-            app.retention.com/optout
-          </a>
-          , and stop the tool from running on this Site at all via our{' '}
-          <Link href="/cookies">Cookie Policy</Link> page.
+          viewed, referrer, and device and browser details. Our analytics runs on PostHog, and we
+          measure our ads with the Meta Pixel.
         </p>
       </>
     ),
@@ -96,10 +79,6 @@ const SECTIONS: LegalSection[] = [
         <li>
           <strong>To improve the Site:</strong> analyzing how visitors use our pages so we can fix
           what doesn&rsquo;t work.
-        </li>
-        <li>
-          <strong>For B2B outreach:</strong> contacting companies (and the professionals RB2B
-          identifies) whose visit suggests our services are relevant to them.
         </li>
         <li>
           <strong>To keep the Site secure</strong> and defend against abuse.
