@@ -20,7 +20,7 @@ export const STRATEGY_HOUSE: Record<StrategyTopic, { label: string; how: string;
   keywords: {
     label: 'Keywords',
     how: 'Google searches with a buyer behind them that nobody defends yet: low difficulty, real volume, or pages already on page two. One page each, with a written reason. Contested terms come later.',
-    proof: 'Genie Teacher: Google clicks per week up 72× since May.',
+    proof: 'Genie Teacher: Google clicks per week up 106× since the work began in July.',
   },
   questions: {
     label: 'AI questions',
