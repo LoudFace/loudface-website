@@ -162,5 +162,83 @@
         }
       ]
     }
-  ]
+  ],
+  "page": {
+    "eyebrowBrand": "LoudFace",
+    "eyebrowSub": "Working together",
+    "headline": "What we need from you",
+    "headlineHighlight": "to do our best work.",
+    "primaryCta": "Book a strategy call",
+    "listLink": "Read the full list",
+    "update": {
+      "title": "Weekly update",
+      "week": "Example",
+      "from": "Tamara, LoudFace",
+      "time": "Fri 16:30",
+      "shippedLabel": "Shipped this week",
+      "shipped": [
+        "Four articles published",
+        "Pricing page test live",
+        "Schema fixed on 31 pages"
+      ],
+      "needsLabel": "Needs from you",
+      "needs": [
+        {
+          "_key": "n1",
+          "text": "Approve two articles",
+          "by": "by Tue"
+        },
+        {
+          "_key": "n2",
+          "text": "Search Console access",
+          "by": "by Wed"
+        }
+      ],
+      "note": "Every ask comes with a date."
+    },
+    "list": {
+      "eyebrow": "The full list",
+      "headline": "Fifteen things,",
+      "headlineHighlight": "and what each one changes.",
+      "intro": "Each row is one thing we ask for. Beside it: what happens without it, and what happens with it."
+    },
+    "groups": [
+      {
+        "_key": "g1",
+        "title": "Access",
+        "count": 3
+      },
+      {
+        "_key": "g2",
+        "title": "Decisions and feedback",
+        "count": 4
+      },
+      {
+        "_key": "g3",
+        "title": "Trust and timing",
+        "count": 4
+      },
+      {
+        "_key": "g4",
+        "title": "The basics",
+        "count": 4
+      }
+    ],
+    "promise": {
+      "eyebrow": "In return",
+      "headline": "What you get",
+      "headlineHighlight": "from us.",
+      "intro": "The list runs both ways. These are the four things you can hold us to.",
+      "message": {
+        "from": "Tamara, LoudFace",
+        "time": "Example",
+        "text": "Got it. The fix goes live today, and I will confirm here when it is done.",
+        "state": "Replied the same day"
+      }
+    },
+    "closing": {
+      "heading": "Want to work this way?",
+      "lede": "Book a call. We will go through the list together and say plainly what applies to you."
+    }
+  }
 }

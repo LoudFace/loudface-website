@@ -1,0 +1,65 @@
+/* Working with us (v11). Loads after home-v11.css, service-v11.css, svc.css and pricing.css, whose hero, message and
+   table values it reuses. Only the rules /pricing does not already have live here. */
+
+/* =========================================================== 1 · hero: the weekly update beside the ask */
+.ww-hero { padding-bottom: 72px; }
+.ww-hero::after { display: none; }
+.ww-update { position: relative; justify-self: center; width: 100%; max-width: 380px; padding: 20px; border-radius: 24px;
+  background: radial-gradient(ellipse 90% 90% at 90% 100%, #cfc4f8 0%, rgba(207,196,248,0) 70%), #ebe6fd; }
+.ww-doc { gap: 10px; padding: 18px 18px 20px; font-size: 13px; box-shadow: 0 1px 2px rgba(20,16,60,0.08), 0 14px 30px rgba(40,30,90,0.14); }
+.ww-doc-title { display: flex; align-items: center; gap: 8px; font-weight: 500; color: var(--ink); }
+.ww-doc-from { display: flex; align-items: center; gap: 8px; padding-bottom: 12px; border-bottom: 1px solid #f0eff5; font-size: 12px; color: var(--quiet); }
+.ww-doc-from img { width: 28px; height: 28px; border-radius: 99px; object-fit: cover; }
+.ww-doc-from b { font-weight: 500; color: var(--ink); }
+.ww-doc-label { margin-top: 4px; font-size: 12px; color: var(--quiet); }
+.ww-needs { display: flex; flex-direction: column; gap: 8px; margin-top: 6px; padding: 12px; border-radius: 10px; background: #f6f5fb; }
+.ww-needs .ww-doc-label { margin-top: 0; font-weight: 500; color: var(--ind); }
+.ww-need { display: flex; align-items: center; justify-content: space-between; gap: 10px; font-weight: 500; color: var(--ink); }
+.ww-update-note { display: block; margin-top: 14px; text-align: center; font-size: 12.5px; color: var(--body); }
+@media (min-width: 1024px) {
+  .ww-hero .ww-hero-top { grid-template-columns: minmax(0, 1fr) 380px; }
+}
+
+/* =========================================================== 2 · the fifteen rows, the results column lifted */
+.ww-table { position: relative; }
+.ww-row { display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr) minmax(0, 1fr); align-items: stretch; font-size: 14.5px; color: var(--body); }
+.ww-row > span { display: block; padding: 20px 22px; box-shadow: inset 0 -1px 0 var(--line); line-height: 1.5; text-wrap: pretty; }
+.ww-row .is-label { padding-left: 0; font-size: 15px; font-weight: 500; line-height: 1.4; color: var(--ink); }
+.ww-row small { display: none; }
+.ww-row > .is-lift { background: #eef0ff; color: var(--ink); box-shadow: inset 0 -1px 0 var(--line); }
+.ww-row.is-head > span { display: flex; align-items: flex-end; gap: 8px; padding-top: 0; padding-bottom: 16px; font-size: 13px; color: var(--quiet); }
+.ww-row.is-head > span:first-child { padding-left: 0; }
+.ww-row.is-head svg { flex-shrink: 0; }
+.ww-row.is-head > .is-lift { padding-top: 22px; border-radius: 20px 20px 0 0; font-weight: 500; color: var(--ind); }
+.ww-row.is-group > span { padding-top: 22px; padding-bottom: 8px; }
+.ww-row > .ww-group-title { padding-left: 0; font-family: var(--font-heading); font-weight: 500; font-size: 22px; letter-spacing: -0.02em; color: var(--ink); }
+.ww-row.is-tail > span { min-height: 20px; padding: 0; box-shadow: none; }
+.ww-row.is-tail > .is-lift { border-radius: 0 0 20px 20px; }
+.ww-group:nth-last-child(2) .ww-row:last-child > span { box-shadow: none; }
+@media (max-width: 767px) {
+  /* phones: each row is one block, the two outcomes under the ask, each with its column name */
+  .ww-row.is-head, .ww-row.is-tail, .ww-row.is-group > span:not(.ww-group-title) { display: none; }
+  .ww-row { grid-template-columns: minmax(0, 1fr); padding: 20px 0; box-shadow: inset 0 -1px 0 var(--line); }
+  .ww-row.is-group { padding: 28px 0 0; box-shadow: none; }
+  .ww-row > span { padding: 0; box-shadow: none; }
+  .ww-row.is-group > .ww-group-title { padding-bottom: 0; }
+  .ww-row small { display: block; margin-bottom: 4px; font-size: 12px; font-weight: 500; color: var(--quiet); }
+  .ww-row > .is-slow { margin-top: 14px; }
+  .ww-row > .is-lift { margin-top: 14px; background: none; }
+  .ww-row > .is-lift small { color: var(--ind); }
+}
+
+/* =========================================================== 3 · what you get from us */
+.ww-promise { display: grid; grid-template-columns: minmax(0, 1fr); gap: 40px; }
+.ww-promise-head { display: flex; flex-direction: column; align-items: flex-start; }
+.ww-promise-head .v11-h2 { margin-top: 16px; }
+.ww-reply { width: 100%; max-width: 380px; margin-top: 28px; }
+.ww-reply .pr-reply { font-size: 12.5px; }
+.ww-gives { display: flex; flex-direction: column; margin: 0; padding: 0; list-style: none; border-top: 1px solid var(--line); }
+.ww-gives li { display: grid; grid-template-columns: minmax(0, 1fr); gap: 6px; padding: 24px 0; border-bottom: 1px solid var(--line); }
+.ww-gives b { font-family: var(--font-heading); font-weight: 500; font-size: 22px; letter-spacing: -0.02em; color: var(--ink); }
+.ww-gives span { font-size: 15.5px; line-height: 1.55; color: var(--body); text-wrap: pretty; }
+@media (min-width: 1024px) {
+  .ww-promise { grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: 80px; }
+  .ww-gives li { grid-template-columns: 220px minmax(0, 1fr); gap: 32px; align-items: baseline; }
+}

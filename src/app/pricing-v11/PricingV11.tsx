@@ -27,7 +27,7 @@ const LANE_WHO = ['tamara-pavlovic', 'andrea-van-wyk', 'abhay-tyagi', 'arnel-buk
 /** The seven "every plan" items, grouped under the three column heads in pricing-v11.json includes.groups. */
 const INCLUDE_GROUPS = [[0, 1, 6], [2, 5], [3, 4]];
 
-const Check = () => (
+export const Check = () => (
   <svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="8" fill="currentColor" opacity="0.14" /><path d="M4.8 8.3 7 10.4l4.2-4.6" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" /></svg>
 );
 

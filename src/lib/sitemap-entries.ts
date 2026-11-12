@@ -167,6 +167,11 @@ export async function buildSitemapEntries(): Promise<MetadataRoute.Sitemap> {
       changeFrequency: 'monthly',
       priority: 0.9,
     },
+    {
+      url: `${baseUrl}/working-with-us`,
+      changeFrequency: 'monthly',
+      priority: 0.6,
+    },
     // Lead-gen / programmatic
     {
       url: `${baseUrl}/ai-audit`,

@@ -1961,6 +1961,11 @@ export type AboutV11Content = typeof aboutV11Content;
 export async function getAboutV11Content(): Promise<AboutV11Content> {
   return markTree('about-v11', aboutV11Content);
 }
+export type WorkingWithUsContent = typeof workingWithUsContent;
+/** /working-with-us and the proposal's Working together tab read the same file: one list, two surfaces. */
+export async function getWorkingWithUsContent(): Promise<WorkingWithUsContent> {
+  return markTree('working-with-us', workingWithUsContent);
+}
 export type PricingV11Content = typeof pricingV11Content;
 /** Pricing v11's example pictures (boards, steps, documents); the page copy stays in pricing.json. */
 export async function getPricingV11Content(): Promise<PricingV11Content> {
