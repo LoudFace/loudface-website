@@ -54,6 +54,7 @@ import industryV11Content from "@/data/content/industry-v11.json";
 import teamV11Content from "@/data/content/team-v11.json";
 import aiAuditContent from "@/data/content/ai-audit.json";
 import webinarAiSearchContent from "@/data/content/webinar-ai-search.json";
+import workingWithUsContent from "@/data/content/working-with-us.json";
 import partnersV11Content from "@/data/content/partners-v11.json";
 import recognitionV11Content from "@/data/content/recognition-v11.json";
 import researchV11Content from "@/data/content/research-v11.json";
@@ -1710,6 +1711,7 @@ const contentRegistry: Record<string, unknown> = {
   "team-v11": teamV11Content,
   "ai-audit": aiAuditContent,
   "webinar-ai-search": webinarAiSearchContent,
+  "working-with-us": workingWithUsContent,
   "partners-v11": partnersV11Content,
   "recognition-v11": recognitionV11Content,
   "research-v11": researchV11Content,

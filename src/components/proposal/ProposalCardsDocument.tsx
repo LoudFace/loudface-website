@@ -332,7 +332,8 @@ function Tracks({ section }: { section: Sec<'tracksSection'> }) {
    plan (tables, lists, a roadmap), quick wins beside longer bets. Every
    block is a heading, an optional "How we decide" line from the house
    method, the lead's own intro, and one card. */
-const blockId = (prefix: 'strategy' | 'audit', heading: string) =>
+type PlanPrefix = 'strategy' | 'audit' | 'working-together';
+const blockId = (prefix: PlanPrefix, heading: string) =>
   `${prefix}-${heading.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '')}`;
 
 function TickList({ items, className = 'space-y-2.5' }: { items: string[]; className?: string }) {
@@ -354,11 +355,12 @@ function TickList({ items, className = 'space-y-2.5' }: { items: string[]; class
    word per line. Headers always wrap. Before 4 Nov 2026 the last column
    never wrapped, so a sentence there ran off the card. */
 const SHORT_CELL = 16;
+const PROSE_COLUMN = 'min-w-[200px]';
 function columnFit(block: ProposalStrategyBlock) {
   return (block.columns ?? []).map((_, i) => {
     const longest = Math.max(0, ...(block.rows ?? []).map((r) => (r.cells[i] ?? '').length));
     if (longest <= SHORT_CELL) return 'whitespace-nowrap';
-    return longest > 60 ? 'min-w-[200px]' : 'min-w-[120px]';
+    return longest > 60 ? PROSE_COLUMN : 'min-w-[120px]';
   });
 }
 
@@ -366,10 +368,15 @@ function StrategyBlockBody({ block }: { block: ProposalStrategyBlock }) {
   if (block.kind === 'table') {
     const cols = block.columns ?? [];
     const fit = columnFit(block);
+    // A table of sentences in every column cannot be read sideways on a
+    // phone, so there each row stacks: its first cell, then the others under
+    // their column names. Tables with any short column keep the scroll.
+    const stack = fit.length > 1 && fit.every((f) => f === PROSE_COLUMN);
+    const cellBlock = stack ? 'max-sm:block max-sm:px-5 max-sm:py-1.5' : '';
     return (
       <div className={`${card} overflow-x-auto`}>
-        <table className="w-full min-w-[640px] border-collapse text-left text-[14px] leading-snug">
-          <thead>
+        <table className={`w-full border-collapse text-left text-[14px] leading-snug ${stack ? 'max-sm:block sm:min-w-[640px]' : 'min-w-[640px]'}`}>
+          <thead className={stack ? 'max-sm:hidden' : undefined}>
             <tr className="border-b border-surface-200">
               {cols.map((c, i) => (
                 <th key={c} scope="col" className={`px-4 py-3 text-[12px] font-medium text-surface-500 first:pl-5 last:pr-5 ${fit[i] === 'whitespace-nowrap' ? '' : fit[i]}`}>
@@ -378,14 +385,15 @@ function StrategyBlockBody({ block }: { block: ProposalStrategyBlock }) {
               ))}
             </tr>
           </thead>
-          <tbody>
+          <tbody className={stack ? 'max-sm:block' : undefined}>
             {(block.rows ?? []).map((r) => (
-              <tr key={r._key} className={`border-t border-surface-100 align-top first:border-t-0 ${r.tone === 'skip' ? 'text-surface-400' : 'text-surface-700'}`}>
+              <tr key={r._key} className={`border-t border-surface-100 align-top first:border-t-0 ${stack ? 'max-sm:block max-sm:py-3' : ''} ${r.tone === 'skip' ? 'text-surface-400' : 'text-surface-700'}`}>
                 {r.cells.map((cell, i) => (
                   <td
                     key={i}
-                    className={`px-4 py-3 first:pl-5 last:pr-5 ${fit[i] ?? ''} ${i === 0 ? `font-medium ${r.tone === 'skip' ? '' : 'text-surface-950'}` : ''} proposal-num`}
+                    className={`px-4 py-3 first:pl-5 last:pr-5 ${fit[i] ?? ''} ${cellBlock} ${i === 0 ? `font-medium ${r.tone === 'skip' ? '' : 'text-surface-950'}` : ''} proposal-num`}
                   >
+                    {stack && i > 0 && <span className="block text-[12px] font-medium text-surface-500 sm:hidden">{cols[i]}</span>}
                     {cell}
                   </td>
                 ))}
@@ -434,7 +442,7 @@ function PlanTab({
   blocks,
   tail,
 }: {
-  prefix: 'strategy' | 'audit';
+  prefix: PlanPrefix;
   label: string;
   heading: string;
   summary?: string;
@@ -612,6 +620,13 @@ function AuditTab({ audit, clientName }: { audit: ProposalAudit; clientName: str
       }
     />
   );
+}
+
+/* The Working together tab (Arnel, 12 Nov 2026): the same on every proposal,
+   from one file the public site reads too, so it is not proposal content. */
+function WorkingTogetherTab() {
+  const t = rawContent<{ label: string; heading: string; summary: string; blocks: ProposalStrategyBlock[] }>('working-with-us');
+  return <PlanTab prefix="working-together" label={t.label} heading={t.heading} summary={t.summary} blocks={t.blocks} />;
 }
 
 /* The cards in the Proposal tab that point at the other tabs. */
@@ -805,7 +820,6 @@ export function ProposalCardsDocument({ proposal }: { proposal: Proposal }) {
   // Proposal tab points at it: just before "What we would do".
   const strategy = (proposal.strategy?.blocks?.length ?? 0) > 0 ? proposal.strategy : undefined;
   const audit = (proposal.audit?.blocks?.length ?? 0) > 0 ? proposal.audit : undefined;
-  const tabbed = Boolean(pitch || strategy || audit);
   const pointerAt = afterTracks !== -1 ? afterTracks : whoAt;
   const pointers = (strategy || audit) && <TabPointers clientName={proposal.clientName} strategy={Boolean(strategy)} audit={Boolean(audit)} />;
 
@@ -937,7 +951,7 @@ export function ProposalCardsDocument({ proposal }: { proposal: Proposal }) {
           <div className="min-w-0">{column}</div>
           {hasRail && (
             <aside data-proposal-rail="aside" className="hidden lg:block">
-              <div className={`sticky ${tabbed ? 'top-20' : 'top-8'} mt-10`}>
+              <div className="sticky top-20 mt-10">
                 <ProofRail rail={rail} clips={clips} />
               </div>
             </aside>
@@ -964,17 +978,14 @@ export function ProposalCardsDocument({ proposal }: { proposal: Proposal }) {
       <PlateDefs />
       <Hero proposal={proposal} />
 
-      {tabbed ? (
-        <ProposalTabs
-          pitch={pitch ? deck(pitchColumn, false) : undefined}
-          proposal={deck(clientColumn, true)}
-          proposalLabel={pitch ? proposal.clientName : undefined}
-          strategy={strategy && <StrategyTab strategy={strategy} clientName={proposal.clientName} />}
-          audit={audit && <AuditTab audit={audit} clientName={proposal.clientName} />}
-        />
-      ) : (
-        deck(clientColumn, true)
-      )}
+      <ProposalTabs
+        pitch={pitch ? deck(pitchColumn, false) : undefined}
+        proposal={deck(clientColumn, true)}
+        proposalLabel={pitch ? proposal.clientName : undefined}
+        strategy={strategy && <StrategyTab strategy={strategy} clientName={proposal.clientName} />}
+        audit={audit && <AuditTab audit={audit} clientName={proposal.clientName} />}
+        workingTogether={<WorkingTogetherTab />}
+      />
 
       <footer className="border-t border-white/10 bg-night px-5 py-10 text-white/60 sm:px-8">
         <div className="mx-auto flex max-w-[1180px] flex-wrap items-baseline justify-between gap-3 text-[13px]">

@@ -8,20 +8,23 @@ import { useEffect, useRef, useState, type ReactNode } from 'react';
  * for sits in its own tab, so the deck does not get longer. A proposal with a
  * pitch (9 Nov 2026) opens on a LoudFace tab first, and the deck's own tab
  * takes the client's name. All panels are rendered on the server; this only
- * switches which one shows. `#proposal`, `#strategy` or `#audit` in the link,
+ * switches which one shows. `#proposal`, `#strategy`, `#audit` or `#working-together` in the link,
  * or any in-page link to them, opens that tab, so a link can be sent straight
  * to it.
+ *
+ * Working together (Arnel, 12 Nov 2026) is the last tab on every proposal:
+ * what we need from a client, the same text for all of them.
  *
  * The tab blocks carry data-proposal-section, so ProposalAnalytics logs
  * "Strategy · …" and "Audit · …" section views once the reader opens a tab.
  */
-type Tab = 'pitch' | 'proposal' | 'strategy' | 'audit';
-const HASH_TABS = ['proposal', 'strategy', 'audit'] as const;
+type Tab = 'pitch' | 'proposal' | 'strategy' | 'audit' | 'working-together';
+const HASH_TABS = ['proposal', 'strategy', 'audit', 'working-together'] as const;
 // "Preliminary" because a lead's strategy is built before kickoff, from public
 // data (Arnel, 4 Nov 2026). On a phone the audit tab says "Audit" so all
 // three fit on one line.
-const LABELS: Record<Tab, string> = { pitch: 'LoudFace', proposal: 'Proposal', strategy: 'Preliminary strategy', audit: 'Technical audit' };
-const SHORT: Partial<Record<Tab, string>> = { audit: 'Audit' };
+const LABELS: Record<Tab, string> = { pitch: 'LoudFace', proposal: 'Proposal', strategy: 'Preliminary strategy', audit: 'Technical audit', 'working-together': 'Working together' };
+const SHORT: Partial<Record<Tab, string>> = { audit: 'Audit', 'working-together': 'Together' };
 
 // Start the shown tab at its top, just under the sticky bar, not wherever the
 // old one was scrolled to. The bar's own top reads 0 while it is pinned, so
@@ -40,12 +43,14 @@ export function ProposalTabs({
   proposalLabel,
   strategy,
   audit,
+  workingTogether,
 }: {
   pitch?: ReactNode;
   proposal: ReactNode;
   proposalLabel?: string;
   strategy?: ReactNode;
   audit?: ReactNode;
+  workingTogether: ReactNode;
 }) {
   const home: Tab = pitch ? 'pitch' : 'proposal';
   const [tab, setTab] = useState<Tab>(home);
@@ -58,6 +63,7 @@ export function ProposalTabs({
     { id: 'proposal', node: proposal },
     ...(strategy ? [{ id: 'strategy' as const, node: strategy }] : []),
     ...(audit ? [{ id: 'audit' as const, node: audit }] : []),
+    { id: 'working-together', node: workingTogether },
   ];
   const label = (id: Tab) => (id === 'proposal' && proposalLabel ? proposalLabel : LABELS[id]);
 

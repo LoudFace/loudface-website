@@ -1,0 +1,166 @@
+{
+  "label": "Working together",
+  "heading": "What we need from you",
+  "summary": "We do our best work when we can move fast. This is what makes that possible, and what slows it down. We would rather you see it before you sign.",
+  "blocks": [
+    {
+      "_key": "need",
+      "kind": "table",
+      "heading": "The full list",
+      "columns": [
+        "What we need",
+        "What slows the work",
+        "What gets results"
+      ],
+      "rows": [
+        {
+          "_key": "row1",
+          "cells": [
+            "Full access to the website: code, CMS, hosting, and the right to publish",
+            "Changes go through your developer or agency as tickets. Each fix waits days.",
+            "We edit and ship the same day, several times a week, and test what works."
+          ]
+        },
+        {
+          "_key": "row2",
+          "cells": [
+            "Tell us before you change the site, the domain or the tracking",
+            "A rebuild or domain move happens without us. Pages vanish and tracking breaks.",
+            "We plan the change with you, so rankings and tracking survive it."
+          ]
+        },
+        {
+          "_key": "row3",
+          "cells": [
+            "Data and tool access in week one: Search Console, analytics, tag manager, CRM or revenue data",
+            "Access arrives in pieces over months, or sits with IT. We work without knowing what converts.",
+            "Everything is granted in the first days. We tie the work to leads and revenue."
+          ]
+        },
+        {
+          "_key": "row4",
+          "cells": [
+            "One point of contact with the authority to decide",
+            "Many people answer, opinions conflict, and questions bounce between them.",
+            "One person gathers your team's views and gives us one answer."
+          ]
+        },
+        {
+          "_key": "row5",
+          "cells": [
+            "Content approved within 48 business hours, or permission to publish and fix after",
+            "Every piece waits for several reviewers. Output drops to about one piece a month.",
+            "We publish about one piece every working day, and results compound."
+          ]
+        },
+        {
+          "_key": "row6",
+          "cells": [
+            "Legal or compliance review is fine, with a named reviewer, a fixed weekly slot and the rules given up front",
+            "Each draft is a new legal question. Writers stop to ask \"can we say this?\"",
+            "We write inside your rules from day one and send one batch a week for review."
+          ]
+        },
+        {
+          "_key": "row7",
+          "cells": [
+            "Feedback once, in one list, and specific",
+            "Feedback arrives in pieces from several people over weeks.",
+            "One round of clear notes. We apply them and move on."
+          ]
+        },
+        {
+          "_key": "row8",
+          "cells": [
+            "Trust the roadmap. Judge us on results, not on daily activity",
+            "Daily stand-ups, task-level direction and second-guessing of the plan. The team pulls back, and we end the partnership.",
+            "You set the goal, we choose the work. You get a weekly update and a regular call."
+          ]
+        },
+        {
+          "_key": "row9",
+          "cells": [
+            "Tell us at once when something is wrong",
+            "Silence, then a cancellation request.",
+            "You flag it the same week. We fix it while it is small."
+          ]
+        },
+        {
+          "_key": "row10",
+          "cells": [
+            "A realistic clock: about three months before results show",
+            "The work is judged in week six and the plan is changed before it can pay off.",
+            "A three-month minimum, with leading signs reported along the way."
+          ]
+        },
+        {
+          "_key": "row11",
+          "cells": [
+            "A stable goal and scope. New asks are priced as new work",
+            "The target market or product focus flips mid-way, and extra projects arrive inside the same fee.",
+            "The goal is agreed at the start. Changes are discussed and re-scoped."
+          ]
+        },
+        {
+          "_key": "row12",
+          "cells": [
+            "Your knowledge: brand documents, an hour with your experts, and facts we can verify",
+            "We guess at positioning and cannot check claims. Copy stalls or goes out generic.",
+            "Content carries what only you know, which is what search and AI answers reward."
+          ]
+        },
+        {
+          "_key": "row13",
+          "cells": [
+            "Replies within two working days, and attendance at the calls we book",
+            "Questions wait weeks. Calls are missed or moved.",
+            "Short answers, fast. Blockers clear in a day."
+          ]
+        },
+        {
+          "_key": "row14",
+          "cells": [
+            "Invoices paid on time",
+            "Late payment pauses the work, as the contract says.",
+            "Nothing stops."
+          ]
+        },
+        {
+          "_key": "row15",
+          "cells": [
+            "Respect for the team and their working hours",
+            "Night and weekend demands, and criticism without credit.",
+            "A team that wants to do its best work for you."
+          ]
+        }
+      ]
+    },
+    {
+      "_key": "give",
+      "kind": "list",
+      "heading": "What you get from us",
+      "items": [
+        {
+          "_key": "give1",
+          "lead": "Same-day replies",
+          "text": "A reply the same working day."
+        },
+        {
+          "_key": "give2",
+          "lead": "A weekly update",
+          "text": "What shipped, the numbers, and anything we need from you, with a date."
+        },
+        {
+          "_key": "give3",
+          "lead": "A fast start",
+          "text": "Kickoff within 48 hours of signing."
+        },
+        {
+          "_key": "give4",
+          "lead": "Straight talk",
+          "text": "We say so first when we are late or wrong."
+        }
+      ]
+    }
+  ]
+}
