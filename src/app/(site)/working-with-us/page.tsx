@@ -9,16 +9,19 @@ export const revalidate = 60;
 import type { Metadata } from 'next';
 import '../../home-v11/home-v11.css';
 import '../../service-v11/service-v11.css';
-import '../../service-v11/svc.css';
 import '../../pricing-v11/pricing.css';
 import '../../working-v11/working.css';
-import { getHomeV11Content, getWorkingWithUsContent } from '@/lib/content-utils';
+import { getHomeV11Content, getWorkingWithUsContent, rawContent, type WorkingWithUsContent } from '@/lib/content-utils';
 import { WorkingV11 } from '../../working-v11/WorkingV11';
 import { serializeJsonLd } from '@/lib/schema-utils';
 
 const TITLE = 'Working with LoudFace: what we need from you';
 const DESCRIPTION =
   'The fifteen things LoudFace needs from a client to do its best work, what slows the work without each one, and what we promise in return.';
+
+/** The page went live on 12 Nov 2026; MODIFIED moves with each copy change. */
+const PUBLISHED = '2026-11-12';
+const MODIFIED = '2026-11-12';
 
 export const metadata: Metadata = {
   // The root layout applies `template: "%s | LoudFace"`, so no suffix here.
@@ -59,13 +62,28 @@ export default async function WorkingWithUsPage() {
     '@context': 'https://schema.org',
     '@type': 'WebPage',
     name: TITLE,
+    description: DESCRIPTION,
+    datePublished: PUBLISHED,
+    dateModified: MODIFIED,
+    publisher: { '@id': 'https://www.loudface.co/#organization' },
     speakable: { '@type': 'SpeakableSpecification', cssSelector: ['h1', '[data-speakable]'] },
     url: 'https://www.loudface.co/working-with-us',
   };
 
+  // the questions exactly as the page shows them, read unmarked so editor markers never reach the schema
+  const faqSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: rawContent<WorkingWithUsContent>('working-with-us').page.faq.items.map((f) => ({
+      '@type': 'Question',
+      name: f.question,
+      acceptedAnswer: { '@type': 'Answer', text: f.answer },
+    })),
+  };
+
   return (
     <>
-      {[breadcrumbSchema, speakableSchema].map((schema, i) => (
+      {[breadcrumbSchema, speakableSchema, faqSchema].map((schema, i) => (
         <script key={i} type="application/ld+json" dangerouslySetInnerHTML={{ __html: serializeJsonLd(schema) }} />
       ))}
       <WorkingV11 c={c} home={home} />

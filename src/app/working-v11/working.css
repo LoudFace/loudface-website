@@ -1,65 +1,152 @@
-/* Working with us (v11). Loads after home-v11.css, service-v11.css, svc.css and pricing.css, whose hero, message and
-   table values it reuses. Only the rules /pricing does not already have live here. */
+/* Working with us (v11), option A "Four chapters" (Tamara's Paper board, 12 Nov 2026). Loads after home-v11.css,
+   service-v11.css (the shared v11 FAQ) and pricing.css (the light hero's ground and h1). Every rule this page adds
+   carries the ww- prefix. */
 
-/* =========================================================== 1 · hero: the weekly update beside the ask */
+/* =========================================================== 1 · hero: the ask beside the weekly update */
 .ww-hero { padding-bottom: 72px; }
 .ww-hero::after { display: none; }
-.ww-update { position: relative; justify-self: center; width: 100%; max-width: 380px; padding: 20px; border-radius: 24px;
-  background: radial-gradient(ellipse 90% 90% at 90% 100%, #cfc4f8 0%, rgba(207,196,248,0) 70%), #ebe6fd; }
-.ww-doc { gap: 10px; padding: 18px 18px 20px; font-size: 13px; box-shadow: 0 1px 2px rgba(20,16,60,0.08), 0 14px 30px rgba(40,30,90,0.14); }
-.ww-doc-title { display: flex; align-items: center; gap: 8px; font-weight: 500; color: var(--ink); }
-.ww-doc-from { display: flex; align-items: center; gap: 8px; padding-bottom: 12px; border-bottom: 1px solid #f0eff5; font-size: 12px; color: var(--quiet); }
-.ww-doc-from img { width: 28px; height: 28px; border-radius: 99px; object-fit: cover; }
-.ww-doc-from b { font-weight: 500; color: var(--ink); }
-.ww-doc-label { margin-top: 4px; font-size: 12px; color: var(--quiet); }
-.ww-needs { display: flex; flex-direction: column; gap: 8px; margin-top: 6px; padding: 12px; border-radius: 10px; background: #f6f5fb; }
-.ww-needs .ww-doc-label { margin-top: 0; font-weight: 500; color: var(--ind); }
-.ww-need { display: flex; align-items: center; justify-content: space-between; gap: 10px; font-weight: 500; color: var(--ink); }
-.ww-update-note { display: block; margin-top: 14px; text-align: center; font-size: 12.5px; color: var(--body); }
+.ww-hero-top { display: grid; grid-template-columns: minmax(0, 1fr); gap: 40px; align-items: center; }
+.ww-eyebrow { display: inline-flex; align-items: center; gap: 10px; height: 34px; padding: 0 6px 0 14px; border-radius: 99px; background: #ffffff; box-shadow: 0 0 0 1px var(--line); font-size: 13.5px; font-weight: 500; }
+.ww-eyebrow .is-sub { display: flex; align-items: center; height: 24px; padding: 0 10px; border-radius: 99px; background: #eef0ff; color: var(--ind); font-size: 12.5px; }
+.ww-hero-desc { margin-top: 22px; max-width: 560px; font-size: 17px; line-height: 1.6; color: var(--body); text-wrap: pretty; }
+.ww-hero-desc strong { font-weight: 500; color: var(--ink); }
+.ww-hero-ctas { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 22px; margin-top: 28px; }
+.ww-tap { min-height: 44px; }
+
+/* the plate: the brand gradient with the update document on it */
+.ww-plate { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 16px; width: 100%; padding: 28px 18px;
+  border-radius: 24px; background: linear-gradient(135deg, #fcd68a 0%, #f59a7b 28%, #c9bdf5 62%, #4f46e5 100%); }
+.ww-doc { display: flex; flex-direction: column; gap: 14px; width: 100%; max-width: 440px; padding: 22px 22px 24px; border-radius: 14px; background: #ffffff;
+  box-shadow: 0 30px 60px rgba(26,16,64,0.22); font-size: 13px; color: var(--quiet); }
+.ww-doc-head { display: flex; align-items: center; justify-content: space-between; padding-bottom: 12px; border-bottom: 1px solid var(--line); }
+.ww-doc-title { display: flex; align-items: center; gap: 8px; font-size: 15px; font-weight: 700; color: var(--ink); }
+.ww-doc-from { display: flex; align-items: center; gap: 10px; }
+.ww-doc-from img { width: 30px; height: 30px; border-radius: 99px; object-fit: cover; }
+.ww-doc-from b { font-size: 14px; font-weight: 700; color: var(--ink); }
+.ww-doc-label { padding-top: 4px; font-weight: 500; }
+.ww-doc-shipped { display: flex; flex-direction: column; gap: 9px; }
+.ww-doc-shipped > div { display: flex; align-items: center; gap: 10px; font-size: 15px; color: var(--ink); }
+.ww-doc-shipped svg { flex-shrink: 0; }
+.ww-needs { display: flex; flex-direction: column; gap: 10px; margin-top: 4px; padding: 14px 16px; border-radius: 10px; background: #fcefcf; }
+.ww-needs-label { font-weight: 500; color: #7a5a12; }
+.ww-need { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.ww-need b { font-size: 15px; font-weight: 700; color: var(--ink); }
+.ww-need span { flex-shrink: 0; padding: 3px 8px; border-radius: 5px; background: #ffffff; font-weight: 500; color: #7a5a12; }
+.ww-plate-note { font-size: 15px; font-weight: 500; color: #ffffff; text-align: center; }
+@media (min-width: 768px) {
+  .ww-plate { padding: 40px; border-radius: 28px; }
+}
 @media (min-width: 1024px) {
-  .ww-hero .ww-hero-top { grid-template-columns: minmax(0, 1fr) 380px; }
+  .ww-hero-top { grid-template-columns: minmax(0, 1fr) minmax(0, 480px); gap: 56px; }
+  .ww-plate { min-height: 520px; }
+}
+@media (min-width: 1280px) {
+  .ww-hero-top { grid-template-columns: minmax(0, 1fr) 584px; gap: 48px; }
+  .ww-plate { min-height: 560px; }
 }
 
-/* =========================================================== 2 · the fifteen rows, the results column lifted */
-.ww-table { position: relative; }
-.ww-row { display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr) minmax(0, 1fr); align-items: stretch; font-size: 14.5px; color: var(--body); }
-.ww-row > span { display: block; padding: 20px 22px; box-shadow: inset 0 -1px 0 var(--line); line-height: 1.5; text-wrap: pretty; }
-.ww-row .is-label { padding-left: 0; font-size: 15px; font-weight: 500; line-height: 1.4; color: var(--ink); }
-.ww-row small { display: none; }
-.ww-row > .is-lift { background: #eef0ff; color: var(--ink); box-shadow: inset 0 -1px 0 var(--line); }
-.ww-row.is-head > span { display: flex; align-items: flex-end; gap: 8px; padding-top: 0; padding-bottom: 16px; font-size: 13px; color: var(--quiet); }
-.ww-row.is-head > span:first-child { padding-left: 0; }
-.ww-row.is-head svg { flex-shrink: 0; }
-.ww-row.is-head > .is-lift { padding-top: 22px; border-radius: 20px 20px 0 0; font-weight: 500; color: var(--ind); }
-.ww-row.is-group > span { padding-top: 22px; padding-bottom: 8px; }
-.ww-row > .ww-group-title { padding-left: 0; font-family: var(--font-heading); font-weight: 500; font-size: 22px; letter-spacing: -0.02em; color: var(--ink); }
-.ww-row.is-tail > span { min-height: 20px; padding: 0; box-shadow: none; }
-.ww-row.is-tail > .is-lift { border-radius: 0 0 20px 20px; }
-.ww-group:nth-last-child(2) .ww-row:last-child > span { box-shadow: none; }
-@media (max-width: 767px) {
-  /* phones: each row is one block, the two outcomes under the ask, each with its column name */
-  .ww-row.is-head, .ww-row.is-tail, .ww-row.is-group > span:not(.ww-group-title) { display: none; }
-  .ww-row { grid-template-columns: minmax(0, 1fr); padding: 20px 0; box-shadow: inset 0 -1px 0 var(--line); }
-  .ww-row.is-group { padding: 28px 0 0; box-shadow: none; }
-  .ww-row > span { padding: 0; box-shadow: none; }
-  .ww-row.is-group > .ww-group-title { padding-bottom: 0; }
-  .ww-row small { display: block; margin-bottom: 4px; font-size: 12px; font-weight: 500; color: var(--quiet); }
-  .ww-row > .is-slow { margin-top: 14px; }
-  .ww-row > .is-lift { margin-top: 14px; background: none; }
-  .ww-row > .is-lift small { color: var(--ind); }
+/* =========================================================== 2 · the full list in four chapters */
+.ww-list .v11-head { margin-bottom: 0; }
+.ww-body { position: relative; margin-top: 32px; }
+.ww-body-grid { display: grid; grid-template-columns: minmax(0, 1fr); }
+.ww-rail-col { display: none; }
+
+/* tablet and phone: chips stay under the header until the list ends */
+.ww-chips { position: sticky; top: 69px; z-index: 5; display: flex; gap: 8px; overflow-x: auto; padding: 12px var(--gut);
+  margin-bottom: 8px; background: var(--warm); border-top: 1px solid var(--line); border-bottom: 1px solid var(--line);
+  scrollbar-width: none; scroll-padding-inline: var(--gut); }
+.ww-chips::-webkit-scrollbar { display: none; }
+.ww-chips a { display: inline-flex; align-items: center; gap: 6px; flex-shrink: 0; min-height: 36px; padding: 0 14px; border-radius: 99px;
+  background: #ffffff; box-shadow: inset 0 0 0 1px var(--line); font-size: 14px; font-weight: 500; color: var(--ink); white-space: nowrap;
+  transition: background-color var(--dur) var(--ease), color var(--dur) var(--ease); }
+.ww-chips a small { font-size: 14px; color: var(--quiet); }
+.ww-chips a small::before { content: "· "; }
+.ww-chips a.is-on { background: var(--ink); box-shadow: none; color: #ffffff; font-weight: 700; }
+.ww-chips a.is-on small { color: rgba(255,255,255,0.7); }
+
+.ww-chapter { padding-top: 40px; scroll-margin-top: 136px; }
+.ww-chapter-title { padding-bottom: 20px; font-family: var(--font-heading); font-weight: 500; font-size: 28px; line-height: 1.2; letter-spacing: -0.03em; color: var(--ink); }
+.ww-asks { margin: 0; padding: 0; list-style: none; }
+.ww-ask { display: flex; flex-direction: column; gap: 16px; padding: 24px 0; border-top: 1px solid var(--line); }
+.ww-ask h4 { max-width: 760px; font-family: var(--font-heading); font-weight: 500; font-size: 20px; line-height: 1.3; letter-spacing: -0.02em; color: var(--ink); text-wrap: balance; }
+.ww-outs { display: grid; grid-template-columns: minmax(0, 1fr); gap: 12px; }
+.ww-out { display: grid; grid-template-columns: 16px minmax(0, 1fr); align-items: center; align-content: start; gap: 8px; padding: 18px 20px; border-radius: 14px; background: #ffffff; }
+.ww-out strong { font-size: 13px; font-weight: 500; line-height: 16px; color: var(--quiet); }
+.ww-out > span { grid-column: 1 / -1; font-size: 16px; line-height: 1.5; color: var(--body); text-wrap: pretty; }
+.ww-out.is-good { background: #eef0ff; }
+.ww-out.is-good strong { color: var(--ind); }
+.ww-out.is-good > span { font-weight: 500; color: var(--ink); }
+
+@media (min-width: 768px) {
+  .ww-chapter { padding-top: 56px; }
+  .ww-chapter-title { font-size: 34px; line-height: 42px; }
+  .ww-ask { padding: 28px 0; }
+  .ww-ask h4 { font-size: 23px; line-height: 29px; }
+  .ww-outs { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
 }
 
-/* =========================================================== 3 · what you get from us */
-.ww-promise { display: grid; grid-template-columns: minmax(0, 1fr); gap: 40px; }
-.ww-promise-head { display: flex; flex-direction: column; align-items: flex-start; }
-.ww-promise-head .v11-h2 { margin-top: 16px; }
-.ww-reply { width: 100%; max-width: 380px; margin-top: 28px; }
-.ww-reply .pr-reply { font-size: 12.5px; }
-.ww-gives { display: flex; flex-direction: column; margin: 0; padding: 0; list-style: none; border-top: 1px solid var(--line); }
-.ww-gives li { display: grid; grid-template-columns: minmax(0, 1fr); gap: 6px; padding: 24px 0; border-bottom: 1px solid var(--line); }
-.ww-gives b { font-family: var(--font-heading); font-weight: 500; font-size: 22px; letter-spacing: -0.02em; color: var(--ink); }
-.ww-gives span { font-size: 15.5px; line-height: 1.55; color: var(--body); text-wrap: pretty; }
+/* desktop: the contents rail beside the chapters, sticky until the list ends */
 @media (min-width: 1024px) {
-  .ww-promise { grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: 80px; }
-  .ww-gives li { grid-template-columns: 220px minmax(0, 1fr); gap: 32px; align-items: baseline; }
+  .ww-chips { display: none; }
+  .ww-body { margin-top: 56px; }
+  .ww-body-grid { grid-template-columns: 220px minmax(0, 1fr); gap: 56px; align-items: start; }
+  .ww-rail-col { display: block; align-self: stretch; }
+  .ww-rail { position: sticky; top: 96px; display: flex; flex-direction: column; margin-top: 8px; border-top: 1px solid var(--line); }
+  .ww-rail a { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 16px 0; border-bottom: 1px solid var(--line);
+    font-size: 16px; font-weight: 500; line-height: 20px; color: var(--ink); transition: color var(--dur) var(--ease); }
+  .ww-rail a small { font-size: 14px; color: var(--quiet); }
+  .ww-rail a:hover { color: var(--ind); }
+  .ww-rail a.is-on { font-weight: 700; color: var(--ind); }
+  .ww-chapter { scroll-margin-top: 88px; }
+  .ww-chapter:first-child { padding-top: 0; }
 }
+@media (min-width: 1280px) {
+  .ww-body-grid { grid-template-columns: 248px minmax(0, 1fr); gap: 64px; }
+}
+
+/* =========================================================== 3 · in return */
+.ww-return { scroll-margin-top: 64px; }
+.ww-return-top { display: grid; grid-template-columns: minmax(0, 1fr); gap: 32px; align-items: center; }
+.ww-return-head { display: flex; flex-direction: column; align-items: flex-start; gap: 20px; }
+.ww-return-head > p { max-width: 440px; font-size: 18px; line-height: 1.55; color: var(--body); text-wrap: pretty; }
+.ww-reply { display: flex; flex-direction: column; gap: 14px; width: 100%; max-width: 520px; padding: 22px 24px; border: 1px solid var(--line); border-radius: 14px;
+  background: #ffffff; box-shadow: 0 20px 40px rgba(26,16,64,0.08); }
+.ww-reply-msg { display: flex; align-items: flex-start; gap: 12px; }
+.ww-reply-msg img { flex-shrink: 0; width: 34px; height: 34px; border-radius: 99px; object-fit: cover; }
+.ww-reply-head { display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--quiet); }
+.ww-reply-head b { font-size: 15px; font-weight: 700; color: var(--ink); }
+.ww-reply-msg p { margin-top: 4px; font-size: 17px; line-height: 1.55; color: var(--ink); text-wrap: pretty; }
+.ww-reply-state { display: flex; align-items: center; gap: 8px; padding-left: 46px; font-size: 14px; font-weight: 500; color: #1b7f4b; }
+.ww-reply-state i { width: 8px; height: 8px; border-radius: 99px; background: #1b7f4b; }
+.ww-gives { display: grid; grid-template-columns: minmax(0, 1fr); margin: 48px 0 0; padding: 0; list-style: none; border-top: 1px solid var(--line); }
+.ww-gives li { display: flex; flex-direction: column; gap: 10px; padding: 24px 0; border-bottom: 1px solid var(--line); }
+.ww-gives h3 { font-family: var(--font-heading); font-weight: 500; font-size: 24px; line-height: 1.25; letter-spacing: -0.025em; color: var(--ink); }
+.ww-gives p { font-size: 17px; line-height: 1.55; color: var(--body); text-wrap: pretty; }
+@media (min-width: 768px) {
+  .ww-gives { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .ww-gives li { padding: 32px 28px 32px 0; }
+  .ww-gives li:nth-child(odd) { border-right: 1px solid var(--line); }
+  .ww-gives li:nth-child(even) { padding-left: 28px; padding-right: 0; }
+}
+@media (min-width: 1024px) {
+  .ww-return-top { grid-template-columns: minmax(0, 1fr) minmax(0, 520px); gap: 48px; }
+  .ww-gives { grid-template-columns: repeat(4, minmax(0, 1fr)); margin-top: 64px; }
+  .ww-gives li { padding: 32px 28px 0; border-bottom: 0; border-right: 1px solid var(--line); }
+  .ww-gives li:nth-child(even) { padding-left: 28px; padding-right: 28px; }
+  .ww-gives li:first-child { padding-left: 0; }
+  .ww-gives li:last-child { padding-right: 0; border-right: 0; }
+  .ww-gives h3 { font-size: 26px; line-height: 32px; }
+}
+
+/* =========================================================== 4 · questions (the /pricing pattern) */
+.ww-faq .v11-faq-head { display: flex; flex-direction: column; align-items: flex-start; }
+.ww-faq .v11-h2 { margin-top: 16px; }
+.ww-faq-sub { margin-top: 14px; max-width: 360px; font-size: 16px; line-height: 1.55; color: var(--body); }
+.ww-person { display: flex; align-items: center; gap: 12px; margin: 28px 0; }
+.ww-person img { width: 44px; height: 44px; border-radius: 99px; object-fit: cover; background: #ebe6fd; }
+.ww-person div { display: flex; flex-direction: column; font-size: 13.5px; color: var(--quiet); }
+.ww-person b { font-size: 15px; font-weight: 500; color: var(--ink); }
+.ww-person a { color: var(--ind); font-weight: 500; }
+.ww-next { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 20px; margin-top: 28px; padding-top: 20px; border-top: 1px solid var(--line); width: 100%; max-width: 420px; }
+.ww-next > span { width: 100%; font-size: 13px; color: var(--quiet); }
+.ww-faq .v11-faq-a { max-width: 62ch; }

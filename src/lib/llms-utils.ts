@@ -105,9 +105,14 @@ export function htmlToMarkdown(html: string): string {
   md = md.replace(/<ul[^>]*>([\s\S]*?)<\/ul>/gi, (_, content) => {
     return '\n' + content.replace(/<li[^>]*>([\s\S]*?)<\/li>/gi, '- $1\n') + '\n';
   });
-  md = md.replace(/<ol[^>]*>([\s\S]*?)<\/ol>/gi, (_, content) => {
-    let i = 0;
-    return '\n' + content.replace(/<li[^>]*>([\s\S]*?)<\/li>/gi, (_m: string, text: string) => `${++i}. ${text}\n`) + '\n';
+  md = md.replace(/<ol([^>]*)>([\s\S]*?)<\/ol>/gi, (_, attrs: string, content: string) => {
+    // a list may continue an earlier one (start="4"); an item that opens with a heading carries its number in it
+    let i = Number(attrs.match(/\bstart="(\d+)"/)?.[1] ?? 1) - 1;
+    return '\n' + content.replace(/<li[^>]*>([\s\S]*?)<\/li>/gi, (_m: string, text: string) => {
+      const n = ++i;
+      const head = text.match(/^\s*\n(#{1,6}) /);
+      return head ? text.replace(/^\s*\n(#{1,6}) /, `\n$1 ${n}. `) + '\n' : `${n}. ${text}\n`;
+    }) + '\n';
   });
 
   // Links
@@ -132,6 +137,7 @@ export function htmlToMarkdown(html: string): string {
   md = md.replace(/&gt;/g, '>');
   md = md.replace(/&quot;/g, '"');
   md = md.replace(/&#39;/g, "'");
+  md = md.replace(/&#x27;/g, "'");
   md = md.replace(/&nbsp;/g, ' ');
   md = md.replace(/&mdash;/g, '—');
   md = md.replace(/&ndash;/g, '–');
@@ -333,6 +339,7 @@ export async function generateLlmsTxt(): Promise<string> {
     `- [Pricing](${SITE_URL}/pricing): Retainer plans, service tracks, and engagement models.`,
     `- [Methodology](${SITE_URL}/methodology): The Answer Chain, the eight-stage GEO method LoudFace runs, measured against revenue.`,
     `- [Recognition](${SITE_URL}/recognition): Outside agency lists and rankings that name LoudFace, where each places us, the publishers' verdicts, and how often AI engines name us.`,
+    `- [Working with LoudFace](${SITE_URL}/working-with-us): The 15 things LoudFace asks from every client, what changes without each one, and the four promises LoudFace makes in return.`,
     `- [Case Studies](${SITE_URL}/case-studies): Full portfolio of client work with measurable results.`,
     `- [Blog](${SITE_URL}/blog): SEO, AEO, GEO, and organic growth strategy articles.`,
     `- [Research](${SITE_URL}/research): LoudFace's original research papers on AI search and B2B SaaS marketing, each with its sample, method, limitations and figures.`,
@@ -381,6 +388,7 @@ export async function generateLlmsFullTxt(): Promise<string> {
     `- [Pricing](${SITE_URL}/pricing): Retainer plans, service tracks, and engagement models.`,
     `- [Methodology](${SITE_URL}/methodology): The Answer Chain, the eight-stage GEO method LoudFace runs, measured against revenue.`,
     `- [Recognition](${SITE_URL}/recognition): Outside agency lists and rankings that name LoudFace, where each places us, the publishers' verdicts, and how often AI engines name us.`,
+    `- [Working with LoudFace](${SITE_URL}/working-with-us): The 15 things LoudFace asks from every client, what changes without each one, and the four promises LoudFace makes in return.`,
     `- [Research](${SITE_URL}/research): LoudFace's original research papers on AI search and B2B SaaS marketing, each with its sample, method, limitations and figures.`,
     '',
     `## Services`,

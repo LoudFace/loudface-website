@@ -8,9 +8,9 @@
       "kind": "table",
       "heading": "The full list",
       "columns": [
-        "What we need",
-        "What slows the work",
-        "What gets results"
+        "What we ask for",
+        "Without it",
+        "With it"
       ],
       "rows": [
         {
@@ -18,7 +18,7 @@
           "cells": [
             "Full access to the website: code, CMS, hosting, and the right to publish",
             "Changes go through your developer or agency as tickets. Each fix waits days.",
-            "We edit and ship the same day, several times a week, and test what works."
+            "We make each change the same day we decide on it, and test what works."
           ]
         },
         {
@@ -33,30 +33,30 @@
           "_key": "row3",
           "cells": [
             "Data and tool access in week one: Search Console, analytics, tag manager, CRM or revenue data",
-            "Access arrives in pieces over months, or sits with IT. We work without knowing what converts.",
-            "Everything is granted in the first days. We tie the work to leads and revenue."
+            "Access arrives in pieces over months, or waits on your IT team. We work without knowing what converts.",
+            "You grant all access in week one. We tie the work to leads and revenue."
           ]
         },
         {
           "_key": "row4",
           "cells": [
             "One point of contact with the authority to decide",
-            "Many people answer, opinions conflict, and questions bounce between them.",
+            "Many people answer, opinions conflict, and questions pass from person to person with no answer.",
             "One person gathers your team's views and gives us one answer."
           ]
         },
         {
           "_key": "row5",
           "cells": [
-            "Content approved within 48 business hours, or permission to publish and fix after",
+            "Content approved within two working days, or permission to publish and fix after",
             "Every piece waits for several reviewers. Output drops to about one piece a month.",
-            "We publish about one piece every working day, and results compound."
+            "We publish about one piece every working day, and each piece builds on the last."
           ]
         },
         {
           "_key": "row6",
           "cells": [
-            "Legal or compliance review is fine, with a named reviewer, a fixed weekly slot and the rules given up front",
+            "If you need legal or compliance review: one named reviewer, a fixed weekly slot, and the rules up front",
             "Each draft is a new legal question. Writers stop to ask \"can we say this?\"",
             "We write inside your rules from day one and send one batch a week for review."
           ]
@@ -64,48 +64,48 @@
         {
           "_key": "row7",
           "cells": [
-            "Feedback once, in one list, and specific",
+            "One round of specific feedback, in a single list",
             "Feedback arrives in pieces from several people over weeks.",
-            "One round of clear notes. We apply them and move on."
+            "One round of specific notes. We apply them and move on."
           ]
         },
         {
           "_key": "row8",
           "cells": [
-            "Trust the roadmap. Judge us on results, not on daily activity",
-            "Daily stand-ups, task-level direction and second-guessing of the plan. The team pulls back, and we end the partnership.",
+            "Trust the plan, and judge us on results, not daily activity",
+            "Daily check-in meetings, task-level direction and second-guessing of the plan. Work slows down, and we end the partnership.",
             "You set the goal, we choose the work. You get a weekly update and a regular call."
           ]
         },
         {
           "_key": "row9",
           "cells": [
-            "Tell us at once when something is wrong",
+            "Tell us the same week something feels wrong",
             "Silence, then a cancellation request.",
-            "You flag it the same week. We fix it while it is small."
+            "You tell us the same week. We fix it while it is small."
           ]
         },
         {
           "_key": "row10",
           "cells": [
-            "A realistic clock: about three months before results show",
-            "The work is judged in week six and the plan is changed before it can pay off.",
-            "A three-month minimum, with leading signs reported along the way."
+            "Realistic timing: about three months before results show",
+            "You judge the work in week six and change the plan before it can pay off.",
+            "You give it at least three months. We report early signs each week."
           ]
         },
         {
           "_key": "row11",
           "cells": [
-            "A stable goal and scope. New asks are priced as new work",
-            "The target market or product focus flips mid-way, and extra projects arrive inside the same fee.",
-            "The goal is agreed at the start. Changes are discussed and re-scoped."
+            "A fixed goal and scope, with new requests priced as new work",
+            "The target market or product focus changes halfway through, and extra projects arrive inside the same fee.",
+            "We agree the goal at the start. We discuss any change with you before it starts, and price new work separately."
           ]
         },
         {
           "_key": "row12",
           "cells": [
             "Your knowledge: brand documents, an hour with your experts, and facts we can verify",
-            "We guess at positioning and cannot check claims. Copy stalls or goes out generic.",
+            "We guess at positioning and cannot check claims. Copy stalls, or it reads like anyone could have written it.",
             "Content carries what only you know, which is what search and AI answers reward."
           ]
         },
@@ -114,7 +114,7 @@
           "cells": [
             "Replies within two working days, and attendance at the calls we book",
             "Questions wait weeks. Calls are missed or moved.",
-            "Short answers, fast. Blockers clear in a day."
+            "Short answers, fast. Problems that stop the work clear in a day."
           ]
         },
         {
@@ -122,14 +122,14 @@
           "cells": [
             "Invoices paid on time",
             "Late payment pauses the work, as the contract says.",
-            "Nothing stops."
+            "The work never pauses."
           ]
         },
         {
           "_key": "row15",
           "cells": [
             "Respect for the team and their working hours",
-            "Night and weekend demands, and criticism without credit.",
+            "Night and weekend demands, and criticism with no credit for what went well.",
             "A team that wants to do its best work for you."
           ]
         }
@@ -198,9 +198,10 @@
     },
     "list": {
       "eyebrow": "The full list",
-      "headline": "Fifteen things,",
-      "headlineHighlight": "and what each one changes.",
-      "intro": "Each row is one thing we ask for. Beside it: what happens without it, and what happens with it."
+      "headline": "15 things we ask for,",
+      "headlineHighlight": "and the difference each one makes.",
+      "intro": "Each row is one thing LoudFace asks of every client. Beside it: what happens without it, and what happens with it.",
+      "railLabel": "Chapters"
     },
     "groups": [
       {
@@ -239,6 +240,51 @@
     "closing": {
       "heading": "Want to work this way?",
       "lede": "Book a call. We will go through the list together and say plainly what applies to you."
+    },
+    "answer": "LoudFace asks every client for 15 things, grouped as access, fast decisions, realistic timing and the basics, and gives four promises in return.",
+    "faq": {
+      "eyebrow": "Questions",
+      "headlineHighlight": "Still",
+      "headlineRest": "have questions?",
+      "intro": "We’re here to help you with any inquiries.",
+      "personName": "Arnel Bukva",
+      "personRole": "Founder",
+      "ctaText": "Book a strategy call",
+      "items": [
+        {
+          "_key": "q1",
+          "question": "How long before results show?",
+          "answer": "About three months. LoudFace reports early signs in the weekly update along the way."
+        },
+        {
+          "_key": "q2",
+          "question": "Is there a minimum term?",
+          "answer": "Yes, three months, so the plan has time to pay off before anyone judges it."
+        },
+        {
+          "_key": "q3",
+          "question": "What do I get from LoudFace?",
+          "answer": "A reply the same working day, a weekly update with what shipped and anything we need from you with a date, kickoff within 48 hours of signing, and a straight answer when we are late or wrong."
+        }
+      ],
+      "linksLabel": "Read next",
+      "links": [
+        {
+          "_key": "l1",
+          "label": "How we work",
+          "href": "/methodology"
+        },
+        {
+          "_key": "l2",
+          "label": "Plans and pricing",
+          "href": "/pricing"
+        },
+        {
+          "_key": "l3",
+          "label": "Case studies",
+          "href": "/case-studies"
+        }
+      ]
     }
   }
 }
