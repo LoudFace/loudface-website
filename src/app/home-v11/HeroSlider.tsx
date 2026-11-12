@@ -49,14 +49,18 @@ export function HeroSlider({
     if (!el) return;
     el.scrollLeft = copyWidth();
     for (const focusable of el.querySelectorAll<HTMLElement>('.v11-copy.is-clone :is(a, button)')) focusable.tabIndex = -1;
+    // The browser says when scrolling has really stopped; older Safari has no scrollend, so it keeps the timer guess.
+    const hasScrollEnd = 'onscrollend' in window;
     const onScroll = () => {
       window.clearTimeout(settle.current);
       settle.current = window.setTimeout(normalise, 140);
     };
-    el.addEventListener('scroll', onScroll, { passive: true });
+    if (hasScrollEnd) el.addEventListener('scrollend', normalise);
+    else el.addEventListener('scroll', onScroll, { passive: true });
     const ro = new ResizeObserver(() => { normalise(); });
     ro.observe(el);
     return () => {
+      el.removeEventListener('scrollend', normalise);
       el.removeEventListener('scroll', onScroll);
       ro.disconnect();
       window.clearTimeout(settle.current);

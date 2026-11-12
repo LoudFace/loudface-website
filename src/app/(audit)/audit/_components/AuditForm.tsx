@@ -72,6 +72,9 @@ export function AuditForm() {
           onChange={(e) => setUrl(e.target.value)}
           className={inputClass}
           autoComplete="url"
+          inputMode="url"
+          autoCapitalize="off"
+          spellCheck={false}
         />
         <p className="mt-1.5 text-2xs text-surface-500">
           We&apos;ll pull your brand name and details directly from your site.
