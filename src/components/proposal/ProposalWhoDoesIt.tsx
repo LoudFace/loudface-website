@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, type ReactNode } from 'react';
+import { outcomeCopy, type OutcomeCopy } from './outcome-copy';
 
 /**
  * Who does the work, drawn once for every cards proposal (Arnel's pick,
@@ -77,10 +78,10 @@ function Plate({ children, caption, ground }: { children: ReactNode; caption: st
   );
 }
 
-const TOOLS = [
+const tools = (c: OutcomeCopy) => [
   { src: '/images/home-v11/logos/posthog-icon.png', name: 'PostHog', what: 'Every visit, by source' },
-  { src: '/images/home-v11/logos/gtm-icon.svg', name: 'Tag Manager', what: 'Forms and demo buttons' },
-  { src: '/images/home-v11/logos/fav-hubspot.png', name: 'Your CRM', what: 'Each lead with its source' },
+  { src: '/images/home-v11/logos/gtm-icon.svg', name: 'Tag Manager', what: c.tagButtons },
+  { src: '/images/home-v11/logos/fav-hubspot.png', name: c.crmName, what: c.crmWhat },
 ];
 
 const REVIEWS = [
@@ -89,7 +90,8 @@ const REVIEWS = [
   { src: '/images/review-platforms/trustpilot.png', name: 'Trustpilot', rating: '4.3' },
 ];
 
-const STEPS: Step[] = [
+const makeSteps = (c: OutcomeCopy, hideReviews?: boolean): Step[] => {
+  const all: Step[] = [
   {
     id: 'design',
     name: 'Design',
@@ -125,13 +127,13 @@ const STEPS: Step[] = [
   {
     id: 'tracking',
     name: 'Tracking',
-    short: 'Every lead, sourced',
+    short: c.trackingShort,
     x: 408,
     y: 95,
     side: 'top',
     icon: svg(<><circle cx="10" cy="10" r="6.5" /><circle cx="10" cy="10" r="2" fill="currentColor" stroke="none" /></>),
-    headline: 'Every lead traced back to where it came from',
-    body: 'We wire analytics, your forms and your CRM in the first week. Each demo request carries the page and the search or AI assistant that sent it.',
+    headline: c.trackingHeadline,
+    body: c.trackingBody,
     proof: [
       { big: 'Week 1', text: 'tracking live, before the first article ships' },
       { text: 'Visits from ChatGPT and other assistants are counted on their own, not lost in "direct"' },
@@ -141,7 +143,7 @@ const STEPS: Step[] = [
         <div className="relative w-full max-w-[280px]">
           <span aria-hidden="true" className="absolute bottom-7 left-[27px] top-7 w-px bg-white/80" />
           <div className="relative space-y-2.5">
-            {TOOLS.map((t) => (
+            {tools(c).map((t) => (
               <div key={t.name} className="flex items-center gap-3 rounded-xl bg-white px-3 py-2.5 shadow-[0_8px_20px_-12px_rgba(30,27,75,0.35)]">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img src={t.src} alt="" width={30} height={30} className="h-[30px] w-[30px] flex-none rounded-md object-contain" />
@@ -219,13 +221,13 @@ const STEPS: Step[] = [
   },
   {
     id: 'report',
-    name: 'Pipeline report',
+    name: c.reportName,
     short: 'Every Friday',
     x: LEADS.x,
     y: LEADS.y,
     side: 'end',
     icon: null,
-    headline: 'One number on top: leads from search and AI',
+    headline: c.reportHeadline,
     body: 'Every Friday your strategist writes what moved, why, and what we do next. Once a month you get a full report with one recommendation you decide on together.',
     proof: [
       { big: 'Fridays', text: 'a written note from the strategist who runs your account' },
@@ -243,7 +245,7 @@ const STEPS: Step[] = [
             </div>
           </div>
           <div className="mt-4 space-y-3 border-t border-surface-100 pt-3">
-            {['Leads this week', 'What moved and why', 'Next week'].map((h, i) => (
+            {[c.thisWeek, 'What moved and why', 'Next week'].map((h, i) => (
               <div key={h}>
                 <p className="text-[12px] font-semibold text-surface-800">{h}</p>
                 <span aria-hidden="true" className={`mt-1.5 block h-1.5 rounded bg-surface-100 ${i === 1 ? 'w-full' : 'w-2/3'}`} />
@@ -255,6 +257,8 @@ const STEPS: Step[] = [
     ),
   },
 ];
+  return all.filter((st) => !(hideReviews && st.id === 'reviews'));
+};
 
 const TEAM = ['arnel-bukva-v3', 'tamara-pavlovic-v3', 'abhay-tyagi-v3', 'andrea-van-wyk-v5'];
 
@@ -270,7 +274,7 @@ function Origin({ top, label, tag, children }: { top: number; label: string; tag
   );
 }
 
-function Diagram({ active, onPick }: { active: string; onPick: (id: string) => void }) {
+function Diagram({ active, onPick, steps, c }: { active: string; onPick: (id: string) => void; steps: Step[]; c: OutcomeCopy }) {
   return (
     <div className="relative mx-auto w-full max-w-[760px]" style={{ aspectRatio: `${W} / ${H + 44}` }}>
       <div className="absolute inset-x-0 top-0" style={{ aspectRatio: `${W} / ${H}` }}>
@@ -320,7 +324,7 @@ function Diagram({ active, onPick }: { active: string; onPick: (id: string) => v
           </div>
         </Origin>
 
-        {STEPS.map((s) => {
+        {steps.map((s) => {
           const on = active === s.id;
           if (s.side === 'end') {
             return (
@@ -332,7 +336,7 @@ function Diagram({ active, onPick }: { active: string; onPick: (id: string) => v
                 className="absolute flex -translate-x-1/2 -translate-y-1/2 flex-col items-center rounded-full text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-primary-600"
                 style={{ left: pct(s.x, W), top: pct(s.y, H), width: pct(88, W), aspectRatio: '1' }}
               >
-                <span className="my-auto text-[19px] font-medium leading-none">Leads</span>
+                <span className="my-auto text-[19px] font-medium leading-none">{c.plural}</span>
               </button>
             );
           }
@@ -373,7 +377,7 @@ function Diagram({ active, onPick }: { active: string; onPick: (id: string) => v
         className="absolute flex w-[120px] -translate-x-1/2 flex-col items-center text-center"
         style={{ left: pct(LEADS.x, W), top: pct(LEADS.y + 70, H + 44) }}
       >
-        <span className={`text-[15px] font-medium leading-tight ${active === 'report' ? 'text-primary-700' : 'text-surface-950'}`}>Pipeline report</span>
+        <span className={`text-[15px] font-medium leading-tight ${active === 'report' ? 'text-primary-700' : 'text-surface-950'}`}>{c.reportName}</span>
         <span className="mt-0.5 text-[12px] text-surface-500">Every Friday</span>
       </button>
     </div>
@@ -381,13 +385,13 @@ function Diagram({ active, onPick }: { active: string; onPick: (id: string) => v
 }
 
 /* Phones: the same seven steps as two groups of chips, then the strip. */
-function Chips({ active, onPick }: { active: string; onPick: (id: string) => void }) {
+function Chips({ active, onPick, steps, c }: { active: string; onPick: (id: string) => void; steps: Step[]; c: OutcomeCopy }) {
   const group = (title: string, ids: string[]) => (
     <div>
       <p className="text-[12px] font-semibold text-primary-700">{title}</p>
       <div className="mt-2 flex flex-wrap gap-2">
-        {ids.map((id) => {
-          const s = STEPS.find((x) => x.id === id)!;
+        {ids.filter((id) => steps.some((x) => x.id === id)).map((id) => {
+          const s = steps.find((x) => x.id === id)!;
           const on = active === id;
           return (
             <button
@@ -408,7 +412,7 @@ function Chips({ active, onPick }: { active: string; onPick: (id: string) => voi
     <div className="space-y-4">
       {group('Get chosen: your website', ['design', 'development', 'tracking'])}
       {group('Get found: Google and AI', ['content', 'mentions', 'reviews'])}
-      {group('Leads', ['report'])}
+      {group(c.plural, ['report'])}
     </div>
   );
 }
@@ -444,9 +448,21 @@ function Strip({ step }: { step: Step }) {
   );
 }
 
-export function ProposalWhoDoesIt({ index, initialStep = 'design' }: { index: number; initialStep?: string }) {
+export function ProposalWhoDoesIt({
+  index,
+  initialStep = 'design',
+  outcomeNoun,
+  hideReviews,
+}: {
+  index: number;
+  initialStep?: string;
+  outcomeNoun?: string;
+  hideReviews?: boolean;
+}) {
+  const c = outcomeCopy(outcomeNoun);
+  const steps = makeSteps(c, hideReviews);
   const [active, setActive] = useState(initialStep);
-  const step = STEPS.find((s) => s.id === active) ?? STEPS[0];
+  const step = steps.find((s) => s.id === active) ?? steps[0];
   return (
     <section
       id={`section-who-${index + 1}`}
@@ -458,7 +474,7 @@ export function ProposalWhoDoesIt({ index, initialStep = 'design' }: { index: nu
         <div className="max-w-[520px]">
           <h2 className="text-[22px] font-medium leading-tight tracking-[-0.03em] text-surface-950 sm:text-[26px]">One team runs both sides</h2>
           <p className="mt-2 text-[15px] text-surface-600">
-            Getting found brings buyers in. Getting chosen turns them into leads. We do both, so nobody on your team has to manage the website.
+            {c.intro}
           </p>
           {/* Arnel, 2026-10-26: we are not a full-service shop; each job is here because we do it as well as the best specialists. */}
           <p className="mt-3 text-[15px] font-medium leading-snug text-surface-950">
@@ -488,10 +504,10 @@ export function ProposalWhoDoesIt({ index, initialStep = 'design' }: { index: nu
         <div className="rounded-2xl bg-white p-5 shadow-[0_1px_2px_rgba(10,10,10,0.05),0_8px_24px_-16px_rgba(30,27,75,0.18)] sm:p-6">
           <p className="mb-4 hidden text-right text-[12px] text-surface-500 sm:block">Pick a step to see who does it</p>
           <div className="hidden sm:block">
-            <Diagram active={active} onPick={setActive} />
+            <Diagram active={active} onPick={setActive} steps={steps} c={c} />
           </div>
           <div className="sm:hidden">
-            <Chips active={active} onPick={setActive} />
+            <Chips active={active} onPick={setActive} steps={steps} c={c} />
           </div>
           <div className="mt-6" aria-live="polite">
             <Strip step={step} />

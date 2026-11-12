@@ -171,7 +171,7 @@ function Hero({ proposal }: { proposal: Proposal }) {
             </ul>
           </div>
           <div className="min-w-0">
-            <ProposalOfferStreams />
+            <ProposalOfferStreams outcomeNoun={proposal.outcomeNoun} hideReviews={proposal.hideReviews} />
           </div>
         </div>
         <ProposalLogoStrip />
@@ -636,7 +636,7 @@ function TabPointers({ clientName, strategy, audit }: { clientName: string; stra
       ? [{ href: '#strategy', title: `A preliminary strategy for ${clientName}`, text: 'Where AI answers stand on you today, the pages they read, and what we would do first, in order. It changes after kickoff.' }]
       : []),
     ...(audit
-      ? [{ href: '#audit', title: `The technical audit of ${clientName}'s site`, text: 'Broken pages, speed, what AI crawlers can read, and the order we fix it all in, in the Technical audit tab.' }]
+      ? [{ href: '#audit', title: `The technical audit of ${clientName}'s site`, text: 'Speed, tracking scripts, what AI crawlers can read, and the order we fix it all in.' }]
       : []),
   ];
   return (
@@ -903,7 +903,7 @@ export function ProposalCardsDocument({ proposal }: { proposal: Proposal }) {
 
   const whoAndMethod = (at: number) => (
     <>
-      <ProposalWhoDoesIt index={at} />
+      <ProposalWhoDoesIt index={at} outcomeNoun={proposal.outcomeNoun} hideReviews={proposal.hideReviews} />
       <ProposalMethod index={at} stages={methodStages()} />
     </>
   );
@@ -934,13 +934,13 @@ export function ProposalCardsDocument({ proposal }: { proposal: Proposal }) {
   const after = sections.length;
   const pitchColumn = (
     <>
-      <PitchExpectations index={after + 1} />
+      <PitchExpectations index={after + 1} outcomeNoun={proposal.outcomeNoun} />
       {ours.map(({ s, i }) => light(s, i))}
       {!ours.some(({ s }) => s._type === 'designSliderSection') && <ProposalDesignSlider {...PITCH_DESIGN} index={after + 2} />}
       {whoAndMethod(after + 3)}
       <PitchStory index={after + 4} />
       {team(after + 5)}
-      <PitchWhyUs index={after + 6} clientName={proposal.clientName} />
+      <PitchWhyUs index={after + 6} clientName={proposal.clientName} proposalFirst={proposalFirst} />
     </>
   );
 

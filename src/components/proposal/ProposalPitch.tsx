@@ -1,6 +1,7 @@
 import type { ReactNode } from 'react';
 import { img, personPhoto } from '@/app/home-v11/ui';
 import { card, H, panel, softShadow, Tick } from './cards-ui';
+import { outcomeCopy, type OutcomeCopy } from './outcome-copy';
 
 /**
  * The house sections of the LoudFace tab (Arnel, 9 Nov 2026): the deck's first
@@ -52,13 +53,13 @@ const TRACED = [
 ];
 const MINIMUMS = ['Pages published', 'Mentions placed', 'Site improvements'];
 
-const MOMENTS: { when: string; lead: string; rest: string; screen: ReactNode }[] = [
+const moments = (c: OutcomeCopy): { when: string; lead: string; rest: string; screen: ReactNode }[] => [
   {
     when: 'Week 1',
     lead: 'Tracking goes live,',
-    rest: 'so every lead is traced back to the page, search or AI answer that sent it.',
+    rest: c.tracedRest,
     screen: (
-      <Screen title="New leads, traced to source" note="Example">
+      <Screen title={c.tracedTitle} note="Example">
         {TRACED.map((t) => (
           <Row key={t.source}>
             {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -66,7 +67,7 @@ const MOMENTS: { when: string; lead: string; rest: string; screen: ReactNode }[]
             <span className="whitespace-nowrap font-medium text-surface-900">{t.source}</span>
             <span aria-hidden="true" className="text-surface-400">→</span>
             <span className="truncate text-surface-500">{t.page}</span>
-            <Met>Lead</Met>
+            <Met>{c.singular}</Met>
           </Row>
         ))}
       </Screen>
@@ -75,7 +76,7 @@ const MOMENTS: { when: string; lead: string; rest: string; screen: ReactNode }[]
   {
     when: 'Every Friday',
     lead: 'One report, one number on top:',
-    rest: "leads from search and AI. Then what we shipped and what's next.",
+    rest: c.reportRest,
     screen: (
       <Screen title="Friday report" note="Example: Genie Teacher">
         <div className="flex items-end justify-between gap-3 px-3 py-3">
@@ -108,11 +109,11 @@ const MOMENTS: { when: string; lead: string; rest: string; screen: ReactNode }[]
   },
 ];
 
-export function PitchExpectations({ index }: { index: number }) {
+export function PitchExpectations({ index, outcomeNoun }: { index: number; outcomeNoun?: string }) {
   return (
     <Section id={`pitch-${index}`} name="LoudFace · What you can expect" heading="What you can expect from us">
       <div className={`${panel} space-y-3`}>
-        {MOMENTS.map((m) => (
+        {moments(outcomeCopy(outcomeNoun)).map((m) => (
           <div key={m.when} className={`${card} grid gap-5 p-5 sm:grid-cols-[minmax(0,1fr)_minmax(0,300px)] sm:items-center sm:gap-8 sm:p-6`}>
             <div>
               <span className="inline-block rounded-full bg-primary-50 px-2.5 py-0.5 text-[12px] font-medium text-primary-700">{m.when}</span>
@@ -139,7 +140,7 @@ const YEARS = [
 
 export function PitchStory({ index }: { index: number }) {
   return (
-    <Section id={`pitch-${index}`} name="LoudFace · Our story" heading="Seven years of building for growth" intro="Offices in Dubai and the US. 2h response time.">
+    <Section id={`pitch-${index}`} name="LoudFace · Our story" heading="Seven years of building for growth" intro="Offices in Dubai and the US. Replies the same working day.">
       <div className={`${panel} grid gap-3 lg:grid-cols-[minmax(0,1.1fr)_minmax(0,1fr)]`}>
         <ol className={`${card} px-5 sm:px-6`}>
           {YEARS.map((y, i) => (
@@ -236,7 +237,7 @@ const REASONS: { text: string; tint: string; visual: ReactNode }[] = [
   },
 ];
 
-export function PitchWhyUs({ index, clientName }: { index: number; clientName: string }) {
+export function PitchWhyUs({ index, clientName, proposalFirst }: { index: number; clientName: string; proposalFirst?: boolean }) {
   return (
     <Section id={`pitch-${index}`} name="LoudFace · Why teams pick us" heading="Why teams pick us">
       <div className="mt-6 grid gap-3 sm:grid-cols-2">
@@ -247,18 +248,20 @@ export function PitchWhyUs({ index, clientName }: { index: number; clientName: s
           </div>
         ))}
       </div>
-      <a href="#proposal" className={`${card} mt-3 flex flex-wrap items-center justify-between gap-4 p-6 transition-shadow hover:shadow-md`}>
-        <span>
-          <span className="block text-[12.5px] font-medium text-primary-700">Next</span>
-          <span className="mt-1 block text-[22px] font-medium tracking-[-0.02em] text-surface-950">{clientName}</span>
-          <span className="mt-1 block max-w-[52ch] text-[14.5px] text-surface-600">
-            Where you are today, what we&apos;d do first, and the investment.
+      {!proposalFirst && (
+        <a href="#proposal" className={`${card} mt-3 flex flex-wrap items-center justify-between gap-4 p-6 transition-shadow hover:shadow-md`}>
+          <span>
+            <span className="block text-[12.5px] font-medium text-primary-700">Next</span>
+            <span className="mt-1 block text-[22px] font-medium tracking-[-0.02em] text-surface-950">{clientName}</span>
+            <span className="mt-1 block max-w-[52ch] text-[14.5px] text-surface-600">
+              Where you are today, what we&apos;d do first, and the investment.
+            </span>
           </span>
-        </span>
-        <span className="flex items-center gap-2 rounded-xl bg-primary-600 px-4 py-2.5 text-[14px] font-medium text-white">
-          Go to your tab <span aria-hidden="true">→</span>
-        </span>
-      </a>
+          <span className="flex items-center gap-2 rounded-xl bg-primary-600 px-4 py-2.5 text-[14px] font-medium text-white">
+            Go to your tab <span aria-hidden="true">→</span>
+          </span>
+        </a>
+      )}
     </Section>
   );
 }

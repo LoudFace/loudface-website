@@ -123,19 +123,19 @@ type Tracks = NonNullable<S<'tracksSection'>['tracks']>;
 
 const TRACK_GLYPHS: React.ReactNode[] = [
   (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+    <svg key="g0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
       <rect x="3" y="4" width="18" height="12" rx="2" />
       <path d="M8 20h8M12 16v4" />
     </svg>
   ),
   (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+    <svg key="g1" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
       <rect x="4" y="10" width="16" height="10" rx="2" />
       <path d="M8 10V7a4 4 0 0 1 8 0v3" />
     </svg>
   ),
   (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+    <svg key="g2" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
       <circle cx="11" cy="11" r="6" />
       <path d="M20 20l-4.5-4.5" />
     </svg>
@@ -289,7 +289,7 @@ export function MonthsBlock({ section }: { section: S<'monthsSection'> }) {
             <tr className="bg-surface-50 text-[11px] font-semibold uppercase tracking-[0.07em] text-surface-500">
               <th scope="col" className="border-b border-surface-200 px-4 py-2.5">When</th>
               <th scope="col" className="border-b border-surface-200 px-4 py-2.5">What ships</th>
-              <th scope="col" className="border-b border-surface-200 px-4 py-2.5">What it proves</th>
+              <th scope="col" className="border-b border-surface-200 px-4 py-2.5">What you&apos;ll see</th>
             </tr>
           </thead>
           <tbody>

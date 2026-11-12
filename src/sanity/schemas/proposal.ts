@@ -1360,6 +1360,24 @@ const proposal = defineType({
         'For a pitch sent after a call: the deck tab comes first, is labelled Proposal, and opens by default. The LoudFace tab comes second.',
     }),
     defineField({
+      name: 'outcomeNoun',
+      title: 'Outcome word (plural)',
+      type: 'string',
+      group: 'content',
+      hidden: ({ document }) => document?.design !== 'cards',
+      description: 'What this client counts instead of leads, e.g. downloads. Empty means leads.',
+    }),
+    defineField({
+      name: 'hideReviews',
+      title: 'Hide the reviews step',
+      type: 'boolean',
+      group: 'content',
+      initialValue: false,
+      hidden: ({ document }) => document?.design !== 'cards',
+      description:
+        'For clients where review sites do not apply. Removes the reviews step from the who-does-it section and the hero diagram.',
+    }),
+    defineField({
       name: 'promises',
       title: 'Hero promises',
       type: 'array',

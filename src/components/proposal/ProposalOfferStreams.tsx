@@ -13,10 +13,17 @@
  * a separate merged band left a hard seam.
  */
 
-const FOUND = { title: 'Get found', items: ['SEO for Google', 'GEO for ChatGPT', 'Reviews and listings'] };
+import { outcomeCopy, type OutcomeCopy } from './outcome-copy';
+
+const found = (hideReviews?: boolean) => ({
+  title: 'Get found',
+  items: ['SEO for Google', 'GEO for ChatGPT', hideReviews ? 'Lists AI reads' : 'Reviews and listings'],
+});
 const CHOSEN = { title: 'Get chosen', items: ['Design', 'Development', 'Split tests'] };
-const LABEL =
-  'Two sides of one retainer. Get found: SEO for Google, GEO for ChatGPT, reviews and listings. Get chosen: design, development and split tests. Both end in leads: calls, quote requests and bookings.';
+const label = (f: ReturnType<typeof found>, c: OutcomeCopy) => {
+  const [a, b, third] = f.items;
+  return `Two sides of one retainer. Get found: ${a}, ${b}, ${third.charAt(0).toLowerCase()}${third.slice(1)}. Get chosen: design, development and split tests. ${c.streamsEnd}`;
+};
 
 function Dots({ path, dur }: { path: string; dur: number }) {
   return (
@@ -34,10 +41,10 @@ function Dots({ path, dur }: { path: string; dur: number }) {
 const TOP = 'M20,130 H200 C290,130 300,180 380,180 H470';
 const BOT = 'M20,290 H200 C290,290 300,220 380,220 H470';
 
-function Landscape() {
+function Landscape({ f, c }: { f: ReturnType<typeof found>; c: OutcomeCopy }) {
   return (
     <svg viewBox="0 0 600 400" className="hidden w-full sm:block" role="img" aria-labelledby="pc-streams-l">
-      <title id="pc-streams-l">{LABEL}</title>
+      <title id="pc-streams-l">{label(f, c)}</title>
       <defs>
         <linearGradient id="pc-st-top" gradientUnits="userSpaceOnUse" x1="20" y1="0" x2="150" y2="0">
           <stop offset="0" stopColor="#c7d2fe" stopOpacity="0" />
@@ -52,8 +59,8 @@ function Landscape() {
           <stop offset="1" stopColor="#fff" stopOpacity="0" />
         </radialGradient>
       </defs>
-      <text x="20" y="54" className="pc-vt">{FOUND.title}</text>
-      <text x="20" y="80" className="pc-vi">{FOUND.items.join('  ·  ')}</text>
+      <text x="20" y="54" className="pc-vt">{f.title}</text>
+      <text x="20" y="80" className="pc-vi">{f.items.join('  ·  ')}</text>
       <text x="20" y="346" className="pc-vt">{CHOSEN.title}</text>
       <text x="20" y="372" className="pc-vi">{CHOSEN.items.join('  ·  ')}</text>
       <path d={TOP} fill="none" stroke="url(#pc-st-top)" strokeWidth="40" />
@@ -62,9 +69,10 @@ function Landscape() {
       <Dots path={BOT} dur={6} />
       <circle cx="520" cy="200" r="90" fill="url(#pc-st-glow)" />
       <circle cx="520" cy="200" r="64" fill="#171445" stroke="#fff" strokeWidth="2" />
-      <text x="520" y="196" textAnchor="middle" className="pc-vcore">Leads</text>
-      <text x="520" y="216" textAnchor="middle" className="pc-vcs">calls, quotes</text>
-      <text x="520" y="230" textAnchor="middle" className="pc-vcs">and bookings</text>
+      <text x="520" y="196" textAnchor="middle" className="pc-vcore">{c.core}</text>
+      {c.coreSub.map((t, n) => (
+        <text key={t} x="520" y={216 + n * 14} textAnchor="middle" className="pc-vcs">{t}</text>
+      ))}
     </svg>
   );
 }
@@ -72,8 +80,8 @@ function Landscape() {
 const M_L = 'M105,150 V250 C105,330 178,330 178,400 V530';
 const M_R = 'M295,150 V250 C295,330 222,330 222,400 V530';
 
-function Portrait() {
-  const stack = (x: number, side: typeof FOUND) => (
+function Portrait({ f, c }: { f: ReturnType<typeof found>; c: OutcomeCopy }) {
+  const stack = (x: number, side: typeof CHOSEN) => (
     <g textAnchor="middle">
       <text x={x} y={44} className="pc-vt">{side.title}</text>
       {side.items.map((it, n) => (
@@ -83,7 +91,7 @@ function Portrait() {
   );
   return (
     <svg viewBox="0 0 400 660" className="w-full sm:hidden" role="img" aria-labelledby="pc-streams-p">
-      <title id="pc-streams-p">{LABEL}</title>
+      <title id="pc-streams-p">{label(f, c)}</title>
       <defs>
         <linearGradient id="pc-sm-l" gradientUnits="userSpaceOnUse" x1="0" y1="150" x2="0" y2="250">
           <stop offset="0" stopColor="#c7d2fe" stopOpacity="0" />
@@ -98,7 +106,7 @@ function Portrait() {
           <stop offset="1" stopColor="#fff" stopOpacity="0" />
         </radialGradient>
       </defs>
-      {stack(105, FOUND)}
+      {stack(105, f)}
       {stack(295, CHOSEN)}
       <path d={M_L} fill="none" stroke="url(#pc-sm-l)" strokeWidth="44" />
       <path d={M_R} fill="none" stroke="url(#pc-sm-r)" strokeWidth="44" />
@@ -106,18 +114,21 @@ function Portrait() {
       <Dots path={M_R} dur={6} />
       <circle cx="200" cy="566" r="84" fill="url(#pc-sm-glow)" />
       <circle cx="200" cy="566" r="60" fill="#171445" stroke="#fff" strokeWidth="2" />
-      <text x="200" y="562" textAnchor="middle" className="pc-vcore">Leads</text>
-      <text x="200" y="582" textAnchor="middle" className="pc-vcs">calls, quotes</text>
-      <text x="200" y="596" textAnchor="middle" className="pc-vcs">and bookings</text>
+      <text x="200" y="562" textAnchor="middle" className="pc-vcore">{c.core}</text>
+      {c.coreSub.map((t, n) => (
+        <text key={t} x="200" y={582 + n * 14} textAnchor="middle" className="pc-vcs">{t}</text>
+      ))}
     </svg>
   );
 }
 
-export function ProposalOfferStreams() {
+export function ProposalOfferStreams({ outcomeNoun, hideReviews }: { outcomeNoun?: string; hideReviews?: boolean }) {
+  const f = found(hideReviews);
+  const c = outcomeCopy(outcomeNoun);
   return (
     <figure className="m-0" data-print-keep>
-      <Landscape />
-      <Portrait />
+      <Landscape f={f} c={c} />
+      <Portrait f={f} c={c} />
     </figure>
   );
 }

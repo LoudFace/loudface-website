@@ -408,6 +408,10 @@ export interface Proposal {
   pitch?: boolean;
   /** With a pitch: the deck tab comes first, labelled Proposal, and opens by default; the LoudFace tab is second. */
   proposalFirst?: boolean;
+  /** Plural word this client counts instead of leads, e.g. "downloads". Empty means leads. */
+  outcomeNoun?: string;
+  /** Drops the reviews step and the "Reviews and listings" label; for clients where review sites do not apply. */
+  hideReviews?: boolean;
   /** Cards hero only: replaces the house pair of promises under the price. */
   promises?: string[];
   clipStrip?: ProposalClipStrip;
@@ -436,7 +440,7 @@ const GATE_QUERY = `*[_type == "proposal" && token == $token][0]{
 /** Runs only after the cookie has been verified. */
 const CONTENT_QUERY = `*[_type == "proposal" && token == $token][0]{
   title, clientName, preparedFor, token, validUntil, status,
-  heroSummary, heroQuote, heroQuoteBy, priceLine, design, pitch, proposalFirst, promises, contactEmail, readerEmail,
+  heroSummary, heroQuote, heroQuoteBy, priceLine, design, pitch, proposalFirst, outcomeNoun, hideReviews, promises, contactEmail, readerEmail,
   clipStrip{ heading, clips[]{ _key, videoUrl, posterUrl, label, orientation, name, duration } },
   proofRail{
     heading, quotesHeading,
