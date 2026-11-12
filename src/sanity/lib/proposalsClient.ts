@@ -406,6 +406,8 @@ export interface Proposal {
   design?: 'classic' | 'cards';
   /** Cards only: opens on a LoudFace tab that sells us first; the deck's tab takes the client's name (9 Nov 2026). */
   pitch?: boolean;
+  /** With a pitch: the deck tab comes first, labelled Proposal, and opens by default; the LoudFace tab is second. */
+  proposalFirst?: boolean;
   /** Cards hero only: replaces the house pair of promises under the price. */
   promises?: string[];
   clipStrip?: ProposalClipStrip;
@@ -434,7 +436,7 @@ const GATE_QUERY = `*[_type == "proposal" && token == $token][0]{
 /** Runs only after the cookie has been verified. */
 const CONTENT_QUERY = `*[_type == "proposal" && token == $token][0]{
   title, clientName, preparedFor, token, validUntil, status,
-  heroSummary, heroQuote, heroQuoteBy, priceLine, design, pitch, promises, contactEmail, readerEmail,
+  heroSummary, heroQuote, heroQuoteBy, priceLine, design, pitch, proposalFirst, promises, contactEmail, readerEmail,
   clipStrip{ heading, clips[]{ _key, videoUrl, posterUrl, label, orientation, name, duration } },
   proofRail{
     heading, quotesHeading,

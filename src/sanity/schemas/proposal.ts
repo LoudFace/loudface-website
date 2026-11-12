@@ -1350,6 +1350,16 @@ const proposal = defineType({
         'Cards only. Opens on a LoudFace tab (what to expect, results, our work, the team, why us) and moves the client sections, price and terms to a tab named after the client.',
     }),
     defineField({
+      name: 'proposalFirst',
+      title: 'Proposal tab first',
+      type: 'boolean',
+      group: 'content',
+      initialValue: false,
+      hidden: ({ document }) => document?.design !== 'cards' || !document?.pitch,
+      description:
+        'For a pitch sent after a call: the deck tab comes first, is labelled Proposal, and opens by default. The LoudFace tab comes second.',
+    }),
+    defineField({
       name: 'promises',
       title: 'Hero promises',
       type: 'array',

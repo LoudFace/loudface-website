@@ -806,6 +806,7 @@ export function ProposalCardsDocument({ proposal }: { proposal: Proposal }) {
   const rail = proposal.proofRail;
   const hasRail = Boolean((rail?.platforms?.length ?? 0) > 0 || (rail?.quotes?.length ?? 0) > 0 || clips.length > 0);
   const pitch = Boolean(proposal.pitch);
+  const proposalFirst = Boolean(proposal.proposalFirst);
   // Each light section keeps its place in `sections`, so its id and analytics index never change with the tab it lands in.
   const lightSections = sections.slice(0, railEnd).map((s, i) => ({ s, i }));
   const ours = pitch ? lightSections.filter(({ s }) => PITCH_TYPES.includes(s._type)) : [];
@@ -981,7 +982,8 @@ export function ProposalCardsDocument({ proposal }: { proposal: Proposal }) {
       <ProposalTabs
         pitch={pitch ? deck(pitchColumn, false) : undefined}
         proposal={deck(clientColumn, true)}
-        proposalLabel={pitch ? proposal.clientName : undefined}
+        proposalLabel={pitch && !proposalFirst ? proposal.clientName : undefined}
+        proposalFirst={pitch && proposalFirst}
         strategy={strategy && <StrategyTab strategy={strategy} clientName={proposal.clientName} />}
         audit={audit && <AuditTab audit={audit} clientName={proposal.clientName} />}
         workingTogether={<WorkingTogetherTab />}

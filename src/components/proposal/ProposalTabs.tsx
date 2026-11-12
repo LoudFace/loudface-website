@@ -41,6 +41,7 @@ export function ProposalTabs({
   pitch,
   proposal,
   proposalLabel,
+  proposalFirst,
   strategy,
   audit,
   workingTogether,
@@ -48,19 +49,23 @@ export function ProposalTabs({
   pitch?: ReactNode;
   proposal: ReactNode;
   proposalLabel?: string;
+  /** With a pitch: the deck tab is first and home, and the LoudFace tab is second. */
+  proposalFirst?: boolean;
   strategy?: ReactNode;
   audit?: ReactNode;
   workingTogether: ReactNode;
 }) {
-  const home: Tab = pitch ? 'pitch' : 'proposal';
+  const first = Boolean(pitch && proposalFirst);
+  const home: Tab = pitch && !first ? 'pitch' : 'proposal';
   const [tab, setTab] = useState<Tab>(home);
   const bar = useRef<HTMLDivElement>(null);
   // Set when a click switches tabs; the effect below scrolls once the new
   // panel is shown and can be measured.
   const jump = useRef(false);
   const panels: { id: Tab; node: ReactNode }[] = [
-    ...(pitch ? [{ id: 'pitch' as const, node: pitch }] : []),
+    ...(pitch && !first ? [{ id: 'pitch' as const, node: pitch }] : []),
     { id: 'proposal', node: proposal },
+    ...(pitch && first ? [{ id: 'pitch' as const, node: pitch }] : []),
     ...(strategy ? [{ id: 'strategy' as const, node: strategy }] : []),
     ...(audit ? [{ id: 'audit' as const, node: audit }] : []),
     { id: 'working-together', node: workingTogether },
@@ -75,7 +80,7 @@ export function ProposalTabs({
     // element to scroll to, so it goes to the top of the tab.
     const fromHash = (clicked: boolean) => {
       const hash = window.location.hash;
-      const open = HASH_TABS.find((t) => hash.startsWith(`#${t}`));
+      const open = (first ? (['pitch', ...HASH_TABS] as const) : HASH_TABS).find((t) => hash.startsWith(`#${t}`));
       const anchor = open && hash.length > open.length + 1;
       jump.current = clicked && !anchor;
       setTab(open ?? home);
@@ -87,7 +92,7 @@ export function ProposalTabs({
     const onHash = () => fromHash(true);
     window.addEventListener('hashchange', onHash);
     return () => window.removeEventListener('hashchange', onHash);
-  }, [home]);
+  }, [home, first]);
 
   useEffect(() => {
     if (!jump.current) return;
