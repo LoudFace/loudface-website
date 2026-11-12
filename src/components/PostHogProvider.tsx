@@ -41,7 +41,7 @@ function PostHogPageView() {
     }
 
     // Defer PostHog to the first interaction (or an idle moment after load) —
-    // same pattern as GTM. This keeps TBT near zero by avoiding ~250ms of
+    // same pattern as the Meta Pixel. This keeps TBT near zero by avoiding ~250ms of
     // script evaluation during the initial hydration window.
     const cancelWait = onFirstInteractionOrIdle(loadPostHog);
 

@@ -23,20 +23,11 @@ const cookieRows = [
     duration: 'Up to 12 months',
   },
   {
-    name: '_reb2b*',
-    provider: 'RB2B',
-    category: 'Visitor identification',
-    purpose:
-      'Session identifiers used to match US-based business visitors against RB2B’s database.',
-    duration: 'Session',
-  },
-  {
-    name: 'Google tags',
-    provider: 'Google Tag Manager',
-    category: 'Analytics',
-    purpose:
-      'Tag Manager itself sets no cookies; measurement tags loaded through it may set Google cookies (e.g. _ga, _gcl_*).',
-    duration: 'Varies by tag',
+    name: '_fbp',
+    provider: 'Meta Pixel',
+    category: 'Advertising',
+    purpose: 'Lets Meta measure which visits and enquiries came from our ads.',
+    duration: '3 months',
   },
   {
     name: 'Cal.com',
@@ -54,8 +45,7 @@ const SECTIONS: LegalSection[] = [
     body: (
       <p>
         LOUDFACE - FZCO uses cookies and similar technologies on loudface.co for three things:
-        remembering your consent choice, analytics, and identifying which businesses visit the
-        Site. This page lists all of them and gives you the controls.
+        remembering your consent choice, analytics, and measuring how our ads perform. This page lists all of them and gives you the controls.
       </p>
     ),
   },
@@ -129,12 +119,7 @@ const SECTIONS: LegalSection[] = [
           it as an opt-out.
         </p>
         <p>
-          To remove yourself from RB2B&rsquo;s identification database entirely (beyond this site),
-          use{' '}
-          <a href="https://app.retention.com/optout" target="_blank" rel="noopener noreferrer">
-            RB2B&rsquo;s opt-out form
-          </a>
-          . And most browsers let you block or delete cookies in their settings — though blocking
+          Most browsers let you block or delete cookies in their settings — though blocking
           essential ones may break parts of the Site.
         </p>
       </>
@@ -148,9 +133,7 @@ const SECTIONS: LegalSection[] = [
         Details on how each provider handles data:{' '}
         <a href="https://posthog.com/privacy" target="_blank" rel="noopener noreferrer">PostHog</a>
         {', '}
-        <a href="https://www.rb2b.com/privacy-policy" target="_blank" rel="noopener noreferrer">RB2B</a>
-        {', '}
-        <a href="https://policies.google.com/privacy" target="_blank" rel="noopener noreferrer">Google</a>
+        <a href="https://www.facebook.com/privacy/policy/" target="_blank" rel="noopener noreferrer">Meta</a>
         {', '}
         <a href="https://cal.com/privacy" target="_blank" rel="noopener noreferrer">Cal.com</a>
         . How we handle it is in our <Link href="/privacy">Privacy Policy</Link>.

@@ -13,7 +13,7 @@ import { getNavV11Data } from '../home-v11/nav-data';
  * The audit tool: the start page (/audit), the progress screen and the report (/audit/<id>), and the demo report.
  * Since the v11 switch (2026-09-26) these are light pages under the v11 site header (the same SiteHeader the (site)
  * layout draws, with the v11 menus), with no site footer: the report closes on its own booking stage. The route
- * group still sits apart from (site), so the audit keeps its own trackers setup: no consent banner and no GTM/RB2B
+ * group still sits apart from (site), so the audit keeps its own trackers setup: no consent banner and no Meta Pixel
  * here, as before.
  *
  * Cal.com IS mounted: the header CTA and the report's booking stage use the same data-cal-trigger contract as the

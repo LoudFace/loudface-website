@@ -17,8 +17,6 @@ import {
 } from '@/lib/consent';
 import { onFirstInteractionOrIdle } from '@/lib/first-interaction';
 
-const GTM_IDS = ['GTM-T53LKJXQ', 'GTM-PDCXVZX'];
-const RB2B_KEY = '5NRP9H7R3PO1';
 const META_PIXEL_ID = process.env.NEXT_PUBLIC_META_PIXEL_ID;
 /** Ties the mobile expand toggle to the detail copy it reveals. */
 const CONSENT_DETAIL_ID = 'lf-consent-detail';
@@ -35,10 +33,9 @@ type MetaPixel = ((...args: unknown[]) => void) & {
 };
 
 /**
- * Injects GTM (both containers), RB2B, and the Meta Pixel.
- * Only ever called once tracking is allowed, so Google Consent Mode defaults
- * are signalled as granted before gtm.js evaluates. PostHog is not loaded
- * here — PostHogProvider owns it and reacts to the same consent event.
+ * Injects the Meta Pixel. Only ever called once tracking is allowed.
+ * PostHog is not loaded here — PostHogProvider owns it and reacts to the
+ * same consent event.
  */
 function loadTrackers() {
   if (trackersLoaded || typeof window === 'undefined') return;
@@ -48,35 +45,11 @@ function loadTrackers() {
   trackersLoaded = true;
 
   const w = window as typeof window & {
-    dataLayer?: unknown[];
     fbq?: MetaPixel;
     _fbq?: MetaPixel;
-    reb2b?: { loaded: boolean };
   };
 
-  // Google Tag Manager — deferred variant of the standard snippet.
-  w.dataLayer = w.dataLayer || [];
-  // GTM's consent API only understands a pushed `arguments` object (a plain
-  // array is silently ignored), hence the classic function expression.
-  const gtag = function () {
-    // eslint-disable-next-line prefer-rest-params
-    w.dataLayer!.push(arguments);
-  } as (...args: unknown[]) => void;
-  gtag('consent', 'default', {
-    ad_storage: 'granted',
-    ad_user_data: 'granted',
-    ad_personalization: 'granted',
-    analytics_storage: 'granted',
-  });
   const firstScript = document.getElementsByTagName('script')[0];
-  GTM_IDS.forEach((id) => {
-    w.dataLayer!.push({ 'gtm.start': new Date().getTime(), event: 'gtm.js' });
-    const el = document.createElement('script');
-    el.async = true;
-    el.src = `https://www.googletagmanager.com/gtm.js?id=${id}`;
-    firstScript.parentNode?.insertBefore(el, firstScript);
-  });
-
   // Meta Pixel — only initialised when its public ID is configured.
   if (META_PIXEL_ID) {
     if (!w.fbq) {
@@ -102,15 +75,6 @@ function loadTrackers() {
 
     w.fbq('init', META_PIXEL_ID);
     w.fbq('track', 'PageView');
-  }
-
-  // RB2B — same guard as the official snippet (window.reb2b blocks re-init).
-  if (!w.reb2b) {
-    w.reb2b = { loaded: true };
-    const el = document.createElement('script');
-    el.async = true;
-    el.src = `https://ddwl4m2hdecbv.cloudfront.net/b/${RB2B_KEY}/${RB2B_KEY}.js.gz`;
-    firstScript.parentNode?.insertBefore(el, firstScript);
   }
 }
 
@@ -268,8 +232,8 @@ export function ConsentManager({ requiresConsent, v11Content }: ConsentManagerPr
           expanded ? 'mb-3 sm:mb-0' : 'hidden'
         }`}
       >
-        We use cookies for analytics and to see which companies visit this site
-        (PostHog, Google Tag Manager, RB2B, Meta Pixel). Essential cookies stay on either way.
+        We use cookies for analytics and to measure our ads (PostHog, Meta Pixel).
+        Essential cookies stay on either way.
         Details in the{' '}
         <Link href="/cookies" className="text-white underline underline-offset-2 hover:text-surface-300 transition-colors">
           Cookie Policy
