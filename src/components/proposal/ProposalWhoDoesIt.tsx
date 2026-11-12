@@ -186,7 +186,7 @@ const makeSteps = (c: OutcomeCopy, hideReviews?: boolean): Step[] => {
     body: 'We find the roundups and comparisons AI cites for your category and get you onto them, often by featuring the other company in return.',
     proof: [
       { big: '0 → 97.8%', text: "Toku's AI visibility on its category's top prompt" },
-      { big: '3rd of 53', text: 'where LoudFace now ranks among the brands tracked in AI answers' },
+      { big: '2nd of 53', text: 'where LoudFace now ranks among the brands tracked in AI answers' },
     ],
     picture: <Photo src="/images/home-v11/bento-ai.webp" caption="Toku, named in an AI answer" position="60% 50%" />,
   },

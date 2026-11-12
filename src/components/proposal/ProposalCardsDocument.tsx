@@ -699,7 +699,8 @@ function Bullets({ section, clientName }: { section: Sec<'bulletListSection'>; c
   );
 }
 
-function Months({ section }: { section: Sec<'monthsSection'> }) {
+/** `outcomesAbove`: the Today card already lists each month's outcome, so the month cards leave it out. */
+function Months({ section, outcomesAbove }: { section: Sec<'monthsSection'>; outcomesAbove: boolean }) {
   const months = section.months ?? [];
   const lift = ['sm:mt-16', 'sm:mt-8', 'sm:mt-0'];
   return (
@@ -718,7 +719,7 @@ function Months({ section }: { section: Sec<'monthsSection'> }) {
                 </li>
               ))}
             </ul>
-            {m.proves && <p className="mt-4 rounded-xl bg-primary-50 px-3 py-2.5 text-[13px] leading-snug text-primary-900">{m.proves}</p>}
+            {m.proves && !outcomesAbove && <p className="mt-4 rounded-xl bg-primary-50 px-3 py-2.5 text-[13px] leading-snug text-primary-900">{m.proves}</p>}
           </div>
         ))}
       </div>
@@ -853,7 +854,7 @@ export function ProposalCardsDocument({ proposal }: { proposal: Proposal }) {
         body = <Bullets section={section} clientName={proposal.preparedFor?.[0] ?? proposal.clientName} />;
         break;
       case 'monthsSection':
-        body = <Months section={section} />;
+        body = <Months section={section} outcomesAbove={firstRich >= 0} />;
         break;
       case 'chartsSection':
         body = <ProposalStandingCharts section={section} />;
