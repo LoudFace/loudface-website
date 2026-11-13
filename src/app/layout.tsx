@@ -17,7 +17,7 @@ import { CONTACT_EMAIL } from "@/lib/site-contact";
  * so Sanity Studio renders against a clean slate. The /studio route gets
  * exactly the styling Sanity ships — no Tailwind preflight bleed.
  *
- * All site chrome (Header, Footer, PostHog, GTM, Cal, Leadsy)
+ * All site chrome (Header, Footer, PostHog, Meta Pixel, Cal, Leadsy)
  * also lives in (site)/layout.tsx so that /studio and (audit) bypass them.
  */
 
@@ -225,7 +225,6 @@ export default function RootLayout({
         {/* images load without CORS, so they need their own connection: the crossOrigin one above serves fetches and fonts only */}
         <link rel="preconnect" href="https://cdn.sanity.io" />
         <link rel="dns-prefetch" href="https://app.cal.com" />
-        <link rel="dns-prefetch" href="https://www.googletagmanager.com" />
 
         {/* Structured Data */}
         <script

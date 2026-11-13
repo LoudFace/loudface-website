@@ -214,7 +214,7 @@ export const QUOTES: Record<Quote['id'], Quote> = {
     role: 'Co-Founder and CTO, Genie Teacher &middot; Clutch review',
     photo: 'genie.png',
     initials: 'KW',
-    result: ['72&times;', "Genie Teacher's Google clicks a week, against May"],
+    result: ['106&times;', "Genie Teacher's Google clicks a week, since the work began"],
   },
   kenneth: {
     id: 'kenneth',
@@ -273,16 +273,16 @@ const CHARTS: Record<'delshad' | 'genie', Chart> = {
     caption: 'Google clicks a week outside the celebrity-case pages &middot; Search Console',
     alt: "Delshad Legal's Google clicks a week, June to October 2026: flat, then rising to 16 times the start",
     intro: "Here's what that looked like for a Los Angeles law firm, in its own Search Console.",
-    others: [['72&times;', 'Genie Teacher, Google clicks a week'], ['$6,000', 'Hayes Media, from one search lead']],
+    others: [['106&times;', 'Genie Teacher, Google clicks a week'], ['$6,000', 'Hayes Media, from one search lead']],
   },
   genie: {
     img: 'chart-genie.png',
     client: 'Genie Teacher',
-    metric: '72&times;',
+    metric: '106&times;',
     from: 'Apr 2026',
     to: 'Oct 2026',
-    caption: 'Google clicks a week, against the May 2026 average &middot; Search Console',
-    alt: "Genie Teacher's Google clicks a week, April to October 2026: flat, then rising to 72 times the May average",
+    caption: 'Google clicks a week, against the week the work began &middot; Search Console',
+    alt: "Genie Teacher's Google clicks a week, April to October 2026: flat until the work began in July, then rising steeply",
     intro: "Here's what that looked like for an online tutoring platform, in its own Search Console.",
     others: [['16&times;', 'Delshad Legal, Google clicks a week'], ['$6,000', 'Hayes Media, from one search lead']],
   },
@@ -327,17 +327,17 @@ const CASES: Record<Vertical, Case> = {
     href: 'https://www.loudface.co/case-studies/delshad-legal-content-engine',
   },
   saas: {
-    subject: 'Genie Teacher: 72× more Google clicks a week',
+    subject: 'Genie Teacher: 106× the Google clicks a week',
     preheader: 'An online tutoring platform, from barely visible on Google to leads every week.',
-    headline: 'Genie Teacher went from<br>barely visible to 72&times; the clicks.',
+    headline: 'Genie Teacher went from<br>barely visible to 106&times; the clicks.',
     chip: { icon: 'genie.png', name: 'Genie Teacher', what: 'online tutoring, Canada' },
     story: [
       "Before we started, it barely showed up on Google, and AI answers didn't name it at all.",
       'We redesigned and rebuilt the site, then wrote the pages that Google and AI answers now show. The first results came in within two months.',
     ],
-    panel: 'What changed since May',
+    panel: 'What changed since we started',
     stats: [
-      ['72&times;', 'Google clicks a week', 'Against the May average'],
+      ['106&times;', 'Google clicks a week', 'Against the week we started'],
       ['5.8&times;', 'lead requests a week', 'First three weeks of Sep'],
       ['3.6&times;', 'lesson bookings a week', 'Same weeks'],
     ],
@@ -563,7 +563,7 @@ export function email5(l: SequenceLead): RenderedEmail {
     row(`${text("What we'll cover", 15, 18, INK, 500, BODY_F, 'padding-bottom:14px;')}<table role="presentation" width="100%" cellpadding="0" cellspacing="0">${list}</table>`, '32px 52px 0'),
     row(`<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:${STAGE};border-radius:16px;"><tr><td style="padding:24px 24px 22px;">
         ${text("What we've done for clients like you", 22, 26, '#FFFFFF', 500, HEAD_F, 'letter-spacing:-0.4px;padding-bottom:18px;')}
-        ${statCells([['16&times;', 'Delshad Legal, Google clicks a week'], ['72&times;', 'Genie Teacher, Google clicks a week'], ['$6,000', 'Hayes Media, from one search lead']], true)}
+        ${statCells([['16&times;', 'Delshad Legal, Google clicks a week'], ['106&times;', 'Genie Teacher, Google clicks a week'], ['$6,000', 'Hayes Media, from one search lead']], true)}
       </td></tr></table>`, '32px 52px 0'),
     para('Can you still make it? Reply "yes" and you\'re all set.', '28px 52px 0'),
     signature(),

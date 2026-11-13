@@ -152,7 +152,7 @@ export function AuditLandingForm() {
       </div>
 
       {status === 'error' && (
-        <p className="text-sm text-error">{errorMsg}</p>
+        <p role="alert" className="text-sm text-error">{errorMsg}</p>
       )}
 
       <button

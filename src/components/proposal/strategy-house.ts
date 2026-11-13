@@ -20,7 +20,7 @@ export const STRATEGY_HOUSE: Record<StrategyTopic, { label: string; how: string;
   keywords: {
     label: 'Keywords',
     how: 'Google searches with a buyer behind them that nobody defends yet: low difficulty, real volume, or pages already on page two. One page each, with a written reason. Contested terms come later.',
-    proof: 'Genie Teacher: Google clicks per week up 72× since May.',
+    proof: 'Genie Teacher: Google clicks per week up 106× since the work began in July.',
   },
   questions: {
     label: 'AI questions',
@@ -34,12 +34,12 @@ export const STRATEGY_HOUSE: Record<StrategyTopic, { label: string; how: string;
   },
   content: {
     label: 'Content',
-    how: 'Three pieces written with you set the voice. Then one every working day from those lists: comparisons, ranked lists, guides and case studies. Each is fact-checked twice and read by a person.',
+    how: 'Three pieces written with you set the voice. Then your package’s pace from those lists: comparisons, ranked lists, guides and case studies. Each is fact-checked twice and read by a person.',
     proof: 'Delshad Legal: Google clicks per week 16× the June level, outside its famous-case pages.',
   },
   offsite: {
     label: 'Off your site',
-    how: 'We rank the pages AI cites for your buyers’ questions and go after the ones that name competitors but not you: lists, directories, review sites. Real reviews, short pitches, never bought links.',
+    how: 'We rank the pages AI cites for your buyers’ questions and go after the ones that name competitors but not you: lists, directories, review sites. Short pitches, never bought links.',
     proof: 'Our own site: AI visibility on non-branded buyer questions from 0.13% in April to 21.5% in September 2026.',
   },
 };

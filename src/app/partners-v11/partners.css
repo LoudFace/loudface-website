@@ -98,6 +98,9 @@
 .pt-form label, .pt-form legend { font-size: 14px !important; color: var(--ink) !important; }
 .pt-form input[type="text"], .pt-form input[type="email"], .pt-form input[type="url"] { height: 50px; border-radius: 14px !important; border-color: var(--line) !important; background: #ffffff !important; font-size: 16px !important; color: var(--ink) !important; }
 .pt-form input[type="checkbox"], .pt-form input[type="radio"] { accent-color: var(--ind); }
+/* a field left with a wrong value is marked once the visitor moves on; the ring keeps it from being a colour-only signal */
+.pt-form { --pt-err: #c2410c; }
+.pt-form input:not([type="checkbox"]):not([type="radio"]):user-invalid { border-color: var(--pt-err) !important; box-shadow: 0 0 0 1px var(--pt-err); }
 .pt-form button[type="submit"] { height: 52px; border-radius: 999px !important; background: var(--ink) !important; color: #ffffff !important; font-size: 16px !important; }
 .pt-form button[type="submit"]:hover { background: var(--ind) !important; }
 @media (min-width: 1024px) { .pt-apply { grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: 72px; align-items: start; } .pt-apply-copy { position: sticky; top: 110px; } .pt-form { padding: 40px; } }

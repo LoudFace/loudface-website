@@ -35,11 +35,11 @@ export function LogoGrid({ c }: { c: HomeV11Content['logos'] }) {
               <span className="v11-logo-tag" aria-hidden="true"><span>{c.tag}</span><ArrowUpRight /></span>
               {l.logo ? (
                 // eslint-disable-next-line @next/next/no-img-element
-                <img src={img(l.logo)} alt="" width={l.w} height={l.h} style={{ width: l.w, height: l.h }} />
+                <img src={img(l.logo)} alt="" loading="lazy" width={l.w} height={l.h} style={{ width: l.w, height: l.h }} />
               ) : (
                 <span className="v11-logo-genie">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img src={img('logos/genie-icon.png')} alt="" width={24} height={24} className="v11-case-icon" />
+                  <img src={img('logos/genie-icon.png')} alt="" loading="lazy" width={24} height={24} className="v11-case-icon" />
                   <span>{c.genie}</span>
                 </span>
               )}

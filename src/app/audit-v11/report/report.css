@@ -204,7 +204,7 @@
 .af-gets li { padding: 12px 0; border-bottom: 1px solid var(--line); font-size: 15.5px; color: var(--ink); }
 .af-form { max-width: 520px; }
 .af-form label { color: var(--ink) !important; }
-.af-form p { color: var(--quiet) !important; font-size: 13px !important; }
+.af-form p:not([role="alert"]) { color: var(--quiet) !important; font-size: 13px !important; }
 @media (min-width: 1024px) { .af-grid { grid-template-columns: minmax(0, 6fr) minmax(0, 6fr); gap: 64px; align-items: start; } }
 @media (min-width: 1280px) { .af-page { padding: 150px 0 110px; } .af h1 { font-size: 56px; } }
 .af-card { max-width: 640px; margin: 0 auto; padding: 24px 28px 28px; border-radius: 24px; background: #ffffff; box-shadow: 0 2px 4px rgba(10,6,50,0.05), 0 30px 60px rgba(10,6,50,0.10); }

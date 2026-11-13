@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useSyncExternalStore } from 'react';
 import { Button } from '@/components/ui';
 import {
   CONSENT_EVENT,
@@ -12,8 +12,12 @@ import {
 } from '@/lib/consent';
 import { ensurePostHog, isPostHogRequested } from '@/lib/posthog-client';
 
-/** Cookie names our trackers set — cleared best-effort when someone opts out. */
-const TRACKER_COOKIE_PREFIXES = ['ph_', '_reb2b', '_ga', '_gid', '_gcl'];
+/**
+ * Cookie names our trackers set — cleared best-effort when someone opts out.
+ * `_reb2b`, `_ga`, `_gid` and `_gcl` belong to RB2B and Google tags, removed
+ * from the site on 2026-11-12; returning visitors can still hold them.
+ */
+const TRACKER_COOKIE_PREFIXES = ['ph_', '_fbp', '_reb2b', '_ga', '_gid', '_gcl'];
 
 function clearTrackerCookies() {
   const hostname = window.location.hostname;
@@ -36,45 +40,29 @@ function clearTrackerCookies() {
  * Opting out after trackers already loaded clears their cookies and reloads
  * the page — loaded scripts can't be unloaded, a fresh page can.
  */
-export function CookiePreferences() {
-  const [choice, setChoice] = useState<ConsentValue | null>(null);
-  const [mounted, setMounted] = useState(false);
+function subscribeToConsent(onChange: () => void) {
+  window.addEventListener(CONSENT_EVENT, onChange);
+  return () => window.removeEventListener(CONSENT_EVENT, onChange);
+}
 
-  useEffect(() => {
-    setChoice(getStoredConsent());
-    setMounted(true);
-    const onChange = (event: Event) => {
-      const value = (event as CustomEvent<{ value: ConsentValue }>).detail?.value;
-      setChoice(value ?? getStoredConsent());
-    };
-    window.addEventListener(CONSENT_EVENT, onChange);
-    return () => window.removeEventListener(CONSENT_EVENT, onChange);
-  }, []);
+export function CookiePreferences() {
+  // 'loading' on the server and during hydration: the cookie is browser-only.
+  const stored = useSyncExternalStore<ConsentValue | 'unset' | 'loading'>(
+    subscribeToConsent,
+    () => getStoredConsent() ?? 'unset',
+    () => 'loading',
+  );
 
   const enable = () => storeConsent('granted');
   const disable = async () => {
     storeConsent('denied');
     // Silence already-running SDKs BEFORE the reload, so unload-time beacons
-    // (PostHog $pageleave, GA tag flushes) don't fire one last event after
+    // (PostHog $pageleave) don't fire one last event after
     // the visitor said no.
     try {
       if (isPostHogRequested()) {
         const posthog = await ensurePostHog();
         posthog?.opt_out_capturing();
-      }
-      const w = window as typeof window & { dataLayer?: unknown[] };
-      if (w.dataLayer) {
-        // Arguments object required — see ConsentManager.loadTrackers.
-        const gtag = function () {
-          // eslint-disable-next-line prefer-rest-params
-          w.dataLayer!.push(arguments);
-        } as (...args: unknown[]) => void;
-        gtag('consent', 'update', {
-          ad_storage: 'denied',
-          ad_user_data: 'denied',
-          ad_personalization: 'denied',
-          analytics_storage: 'denied',
-        });
       }
     } catch {
       // Best-effort — the reload below is the hard stop either way.
@@ -83,7 +71,7 @@ export function CookiePreferences() {
     window.location.reload();
   };
 
-  if (!mounted) {
+  if (stored === 'loading') {
     return (
       <div className="rounded-xl border border-surface-200 bg-white p-6" aria-hidden="true">
         <p className="text-sm text-surface-500">Loading your current setting…</p>
@@ -91,6 +79,7 @@ export function CookiePreferences() {
     );
   }
 
+  const choice = stored === 'unset' ? null : stored;
   const gpc = hasGPCSignal();
   const active = choice === 'granted' || (choice === null && !gpc && !regionRequiresConsent());
   const statusDetail =
@@ -106,7 +95,7 @@ export function CookiePreferences() {
     <div className="rounded-xl border border-surface-200 bg-white p-6">
       <h3 className="text-lg font-medium text-surface-900">Your cookie settings</h3>
       <p className="mt-2 text-surface-600">
-        Analytics &amp; visitor identification:{' '}
+        Analytics &amp; ad measurement:{' '}
         <strong className="text-surface-900">{active ? 'on' : 'off'}</strong>{' '}
         <span className="text-surface-500">({statusDetail})</span>
       </p>

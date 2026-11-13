@@ -1,6 +1,6 @@
 /**
  * Cookie-consent state — single source of truth for whether non-essential
- * tracking (PostHog, GTM, RB2B) may run.
+ * tracking (PostHog, Meta Pixel) may run.
  *
  * Model:
  * - EEA/UK/CH visitors: opt-in. Nothing loads until they accept the banner.

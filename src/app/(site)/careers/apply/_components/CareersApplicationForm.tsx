@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useRef, useMemo, useSyncExternalStore, type FormEvent } from 'react';
+import { useState, useRef, useEffect, useSyncExternalStore, type FormEvent } from 'react';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 import type { ApplicationOpeningResult } from '@/lib/careers-data';
@@ -140,7 +140,9 @@ export function CareersApplicationForm({
   const questions = role ? (ROLE_QUESTIONS[role] ?? []) : [];
 
   // Time-on-page guard: anything submitted in under 3 seconds is a bot.
-  const mountedAt = useMemo(() => Date.now(), []);
+  // Both readings are on the page's own clock (milliseconds since the page started loading).
+  const mountedAt = useRef(0);
+  useEffect(() => { mountedAt.current = performance.now(); }, []);
 
   const formStartedRef = useRef(false);
   function handleFirstFocus() {
@@ -163,6 +165,7 @@ export function CareersApplicationForm({
 
   async function handleSubmit(e: FormEvent) {
     e.preventDefault();
+    const elapsedMs = Math.round(e.timeStamp - mountedAt.current);
     if (!hydrated || status === 'loading') return;
 
     if (!role) {
@@ -202,7 +205,7 @@ export function CareersApplicationForm({
           heard,
           source,
           company,
-          elapsedMs: Date.now() - mountedAt,
+          elapsedMs,
         }),
       });
 
@@ -439,9 +442,9 @@ export function CareersApplicationForm({
 
       {/* Honeypot: hidden from people, irresistible to bots. */}
       <div aria-hidden="true" className="absolute left-[-9999px] h-0 w-0 overflow-hidden">
-        <label htmlFor="careers-company">Company (leave this empty)</label>
+        <label htmlFor="careers-extra">Leave this field empty</label>
         <input
-          id="careers-company"
+          id="careers-extra"
           type="text"
           tabIndex={-1}
           autoComplete="off"

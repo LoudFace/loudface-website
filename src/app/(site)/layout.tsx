@@ -23,7 +23,7 @@ import { getNavV11Data } from "../home-v11/nav-data";
 /**
  * (site) Layout
  * Holds the public website chrome: Header, Footer, Cal.com
- * booking, and the consent-managed trackers (PostHog, GTM, RB2B — all gated
+ * booking, and the consent-managed trackers (PostHog, Meta Pixel — all gated
  * behind ConsentManager). Anything that belongs to "the marketing site"
  * lives here.
  *
@@ -184,10 +184,6 @@ export default async function SiteLayout({
           </a>
         )}
 
-        {/* GTM + RB2B live in ConsentManager below — consent-gated AND still
-            deferred to first interaction, so the TBT-near-zero behavior the
-            old gtm-deferred snippet provided is preserved. */}
-
         {/* Cal.com booking modal handler; it also loads Cal.com, lazily */}
         <CalHandler />
 
@@ -203,12 +199,11 @@ export default async function SiteLayout({
             published content. */}
         {isDraftMode && <VisualEditing />}
 
-        {/* Consent banner + consent-gated trackers (GTM ×2, RB2B; PostHog
+        {/* Consent banner + consent-gated trackers (Meta Pixel; PostHog
             reacts to the same consent state via posthog-client). EEA/UK/CH
             visitors see the banner and nothing loads until they accept;
             elsewhere trackers load on first interaction with opt-out via
-            /cookies. Replaces the old unconditional gtm-deferred and
-            rb2b-pixel script tags. */}
+            /cookies. */}
         <ConsentManager requiresConsent={consentRequired} v11Content={consentContent} />
       </PostHogProvider>
     </div>

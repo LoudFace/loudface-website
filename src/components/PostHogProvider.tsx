@@ -4,6 +4,7 @@ import { usePathname, useSearchParams } from 'next/navigation';
 import { Suspense, useEffect, useRef } from 'react';
 import { ensurePostHog, isPostHogRequested } from '@/lib/posthog-client';
 import { CONSENT_EVENT } from '@/lib/consent';
+import { onFirstInteractionOrIdle } from '@/lib/first-interaction';
 
 function PostHogPageView() {
   const pathname = usePathname();
@@ -39,13 +40,10 @@ function PostHogPageView() {
       });
     }
 
-    // Defer PostHog to first user interaction — same pattern as GTM/Cal.com.
-    // This keeps TBT near zero by avoiding ~250ms of script evaluation during
-    // the initial hydration window.
-    const events = ['scroll', 'touchstart', 'mousemove', 'keydown'];
-    events.forEach((e) => {
-      window.addEventListener(e, loadPostHog, { once: true, passive: true });
-    });
+    // Defer PostHog to the first interaction (or an idle moment after load) —
+    // same pattern as the Meta Pixel. This keeps TBT near zero by avoiding ~250ms of
+    // script evaluation during the initial hydration window.
+    const cancelWait = onFirstInteractionOrIdle(loadPostHog);
 
     // Consent granted mid-page (banner or /cookies prefs): the one-shot
     // interaction listeners may already be spent from before the grant, when
@@ -53,9 +51,7 @@ function PostHogPageView() {
     window.addEventListener(CONSENT_EVENT, loadPostHog);
 
     return () => {
-      events.forEach((e) => {
-        window.removeEventListener(e, loadPostHog);
-      });
+      cancelWait();
       window.removeEventListener(CONSENT_EVENT, loadPostHog);
     };
   }, [pathname, searchParams]);

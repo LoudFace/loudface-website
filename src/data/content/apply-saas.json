@@ -12,7 +12,7 @@
     "tag": "Clicks",
     "client": "Genie Teacher",
     "tip": "Google clicks a week",
-    "caption": "Google clicks a week, against the May 2026 average",
+    "caption": "Google clicks a week, against the week the work began",
     "source": "Search Console",
     "bar": "Our bar: 3×",
     "barShort": "Our bar: 3×"
@@ -94,8 +94,8 @@
     "offerTitle": "See where AI answers put you",
     "offerBody": "Your AI visibility score against competitors, plus a Loom from Arnel with one fix.",
     "offerCta": "Run my free audit",
-    "caseLink": "How Genie Teacher grew its Google clicks 72×",
-    "caseLinkShort": "Genie Teacher, 72× clicks",
+    "caseLink": "How Genie Teacher grew its Google clicks 106×",
+    "caseLinkShort": "Genie Teacher, 106× clicks",
     "caseCta": "Case study",
     "change": "Change my answer"
   },

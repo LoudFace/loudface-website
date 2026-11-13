@@ -171,7 +171,7 @@ function Hero({ proposal }: { proposal: Proposal }) {
             </ul>
           </div>
           <div className="min-w-0">
-            <ProposalOfferStreams />
+            <ProposalOfferStreams outcomeNoun={proposal.outcomeNoun} hideReviews={proposal.hideReviews} />
           </div>
         </div>
         <ProposalLogoStrip />
@@ -636,7 +636,7 @@ function TabPointers({ clientName, strategy, audit }: { clientName: string; stra
       ? [{ href: '#strategy', title: `A preliminary strategy for ${clientName}`, text: 'Where AI answers stand on you today, the pages they read, and what we would do first, in order. It changes after kickoff.' }]
       : []),
     ...(audit
-      ? [{ href: '#audit', title: `The technical audit of ${clientName}'s site`, text: 'Broken pages, speed, what AI crawlers can read, and the order we fix it all in, in the Technical audit tab.' }]
+      ? [{ href: '#audit', title: `The technical audit of ${clientName}'s site`, text: 'Speed, tracking scripts, what AI crawlers can read, and the order we fix it all in.' }]
       : []),
   ];
   return (
@@ -699,7 +699,8 @@ function Bullets({ section, clientName }: { section: Sec<'bulletListSection'>; c
   );
 }
 
-function Months({ section }: { section: Sec<'monthsSection'> }) {
+/** `outcomesAbove`: the Today card already lists each month's outcome, so the month cards leave it out. */
+function Months({ section, outcomesAbove }: { section: Sec<'monthsSection'>; outcomesAbove: boolean }) {
   const months = section.months ?? [];
   const lift = ['sm:mt-16', 'sm:mt-8', 'sm:mt-0'];
   return (
@@ -718,7 +719,7 @@ function Months({ section }: { section: Sec<'monthsSection'> }) {
                 </li>
               ))}
             </ul>
-            {m.proves && <p className="mt-4 rounded-xl bg-primary-50 px-3 py-2.5 text-[13px] leading-snug text-primary-900">{m.proves}</p>}
+            {m.proves && !outcomesAbove && <p className="mt-4 rounded-xl bg-primary-50 px-3 py-2.5 text-[13px] leading-snug text-primary-900">{m.proves}</p>}
           </div>
         ))}
       </div>
@@ -806,6 +807,7 @@ export function ProposalCardsDocument({ proposal }: { proposal: Proposal }) {
   const rail = proposal.proofRail;
   const hasRail = Boolean((rail?.platforms?.length ?? 0) > 0 || (rail?.quotes?.length ?? 0) > 0 || clips.length > 0);
   const pitch = Boolean(proposal.pitch);
+  const proposalFirst = Boolean(proposal.proposalFirst);
   // Each light section keeps its place in `sections`, so its id and analytics index never change with the tab it lands in.
   const lightSections = sections.slice(0, railEnd).map((s, i) => ({ s, i }));
   const ours = pitch ? lightSections.filter(({ s }) => PITCH_TYPES.includes(s._type)) : [];
@@ -852,7 +854,7 @@ export function ProposalCardsDocument({ proposal }: { proposal: Proposal }) {
         body = <Bullets section={section} clientName={proposal.preparedFor?.[0] ?? proposal.clientName} />;
         break;
       case 'monthsSection':
-        body = <Months section={section} />;
+        body = <Months section={section} outcomesAbove={firstRich >= 0} />;
         break;
       case 'chartsSection':
         body = <ProposalStandingCharts section={section} />;
@@ -902,7 +904,7 @@ export function ProposalCardsDocument({ proposal }: { proposal: Proposal }) {
 
   const whoAndMethod = (at: number) => (
     <>
-      <ProposalWhoDoesIt index={at} />
+      <ProposalWhoDoesIt index={at} outcomeNoun={proposal.outcomeNoun} hideReviews={proposal.hideReviews} />
       <ProposalMethod index={at} stages={methodStages()} />
     </>
   );
@@ -933,13 +935,13 @@ export function ProposalCardsDocument({ proposal }: { proposal: Proposal }) {
   const after = sections.length;
   const pitchColumn = (
     <>
-      <PitchExpectations index={after + 1} />
+      <PitchExpectations index={after + 1} outcomeNoun={proposal.outcomeNoun} />
       {ours.map(({ s, i }) => light(s, i))}
       {!ours.some(({ s }) => s._type === 'designSliderSection') && <ProposalDesignSlider {...PITCH_DESIGN} index={after + 2} />}
       {whoAndMethod(after + 3)}
       <PitchStory index={after + 4} />
       {team(after + 5)}
-      <PitchWhyUs index={after + 6} clientName={proposal.clientName} />
+      <PitchWhyUs index={after + 6} clientName={proposal.clientName} proposalFirst={proposalFirst} />
     </>
   );
 
@@ -981,7 +983,8 @@ export function ProposalCardsDocument({ proposal }: { proposal: Proposal }) {
       <ProposalTabs
         pitch={pitch ? deck(pitchColumn, false) : undefined}
         proposal={deck(clientColumn, true)}
-        proposalLabel={pitch ? proposal.clientName : undefined}
+        proposalLabel={pitch && !proposalFirst ? proposal.clientName : undefined}
+        proposalFirst={pitch && proposalFirst}
         strategy={strategy && <StrategyTab strategy={strategy} clientName={proposal.clientName} />}
         audit={audit && <AuditTab audit={audit} clientName={proposal.clientName} />}
         workingTogether={<WorkingTogetherTab />}
