@@ -2,6 +2,7 @@
 
 import { curveCatmullRom } from '@visx/curve';
 import { useSyncExternalStore } from 'react';
+import { HatchArea } from '@/components/charts/hatch-area';
 import { ChartMarkers } from '@/components/charts/markers';
 import { Area, AreaChart, Background, Bar, BarChart, BarXAxis, ChartTooltip, XAxis } from '@/components/charts';
 import '@/app/case-detail-v3/instruments-board.css';
@@ -9,7 +10,7 @@ import '@/app/case-detail-v3/instruments-board.css';
 /**
  * The same Bklit charts the public case-study pages draw, at proposal size.
  *
- * Card-less on dotted paper, house indigo ink, one plot per case — the
+ * Card-less, house indigo ink, one plot per case; lines sit on the site's stripes, bars on dotted paper — the
  * 2026-08-19 case-study rule. No horizontal grid: over the dots the hairlines
  * read as broken dashes (Arnel, 2026-09-11), same as the case-study boards. The plot descriptor is
  * built on the server (`ProposalCaseProof`) from the case study's own
@@ -98,8 +99,8 @@ export function ProposalCaseChart({ plot }: { plot: CasePlot }) {
             style={{ height: '100%' }}
             margin={{ top: plot.startDate ? 40 : 14, right: 22, bottom: 34, left: 22 }}
           >
-            <Background pattern="dots" opacity={0.55} />
-            <Area dataKey="value" curve={curveCatmullRom} fillOpacity={0.24} strokeWidth={2} stroke="var(--chart-1)" />
+            <HatchArea dataKey="value" />
+            <Area dataKey="value" curve={curveCatmullRom} fillOpacity={0} strokeWidth={2} stroke="var(--chart-1)" />
             <XAxis />
             {/* A start before the first charted day pins the left edge; the date printed beside the chart stays the real day. */}
             {plot.startDate && (

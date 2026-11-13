@@ -1,12 +1,14 @@
 'use client';
 
 import { curveCatmullRom } from '@visx/curve';
-import { useEffect, useId, useRef, useState, type CSSProperties, type ReactNode } from 'react';
-import { Area, AreaChart, Background, Bar, BarChart, ChartTooltip, PatternLines, ReferenceArea } from '@/components/charts';
-import { PatternArea } from '@/components/charts/pattern-area';
+import { useEffect, useId, useRef, useState, useSyncExternalStore, type CSSProperties, type ReactNode } from 'react';
+import { Area, AreaChart, Background, Bar, BarChart, ChartTooltip, ReferenceArea } from '@/components/charts';
+import { HatchArea } from '@/components/charts/hatch-area';
 import { useChartStable } from '@/components/charts/chart-context';
 import type { Series } from './data';
 import '@/app/case-detail-v3/instruments-board.css';
+
+const noSubscribe = () => () => {};
 
 /**
  * The proposal's Bklit charts, dressed for the homepage: dotted paper, one indigo (or white, on the stage)
@@ -232,11 +234,10 @@ export function LiveChart({
   series, height, width, margin, tone = 'light', dots = true, lineWidth = 2, barGap = 0.3, pin = 26, startPrefix,
   endLabel, endLabelAbove, end = 'halo', axis = false, hatch = false, tip, format, children, goal,
 }: LiveChartProps) {
-  const [mounted, setMounted] = useState(false);
-  const [still, setStill] = useState(false);
-  useEffect(() => { setStill(window.matchMedia('(prefers-reduced-motion: reduce)').matches); setMounted(true); }, []);
+  // false on the server and while hydrating, true in the browser: the charts measure their own box
+  const mounted = useSyncExternalStore(noSubscribe, () => true, () => false);
+  const still = useSyncExternalStore(noSubscribe, () => window.matchMedia('(prefers-reduced-motion: reduce)').matches, () => false);
   const ink = INK[tone];
-  const hatchId = useId().replace(/:/g, '');
   const box: CSSProperties = { height, width: width ?? '100%' };
 
   const tooltip = (
@@ -308,8 +309,7 @@ export function LiveChart({
                 fadeEdges={false}
               />
             )}
-            {hatch && <PatternLines id={hatchId} height={5} width={5} stroke={tone === 'stage' ? 'rgba(255,255,255,0.22)' : 'rgba(79,57,246,0.16)'} strokeWidth={1} orientation={['vertical']} />}
-            {hatch && <PatternArea dataKey="value" fill={`url(#${hatchId})`} curve={curveCatmullRom} />}
+            {hatch && <HatchArea dataKey="value" stroke={tone === 'stage' ? 'rgba(255,255,255,0.22)' : undefined} />}
             <Area dataKey="value" curve={curveCatmullRom} fillOpacity={hatch ? 0 : tone === 'stage' ? 0.3 : tone === 'ink' ? 0.18 : 0.24} strokeWidth={lineWidth} stroke={ink} fill={ink} />
             {tooltip}
             {marks}
