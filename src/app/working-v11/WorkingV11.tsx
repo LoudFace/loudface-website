@@ -45,7 +45,7 @@ export function WorkingV11({ c, home }: { c: WorkingWithUsContent; home: HomeV11
   const table = c.blocks.find((b): b is TableBlock => 'rows' in b);
   const promises = c.blocks.find((b): b is ListBlock => 'items' in b);
   if (!table || !promises) throw new Error('working-with-us.json needs one table block and one list block');
-  const [, colSlow, colGood] = table.columns;
+  const [colAsk, colSlow, colGood] = table.columns;
   const grouped = p.groups.reduce((sum, g) => sum + g.count, 0);
   if (grouped !== table.rows.length) throw new Error(`working-with-us.json: page.groups cover ${grouped} rows, the table has ${table.rows.length}`);
   // each group takes the next `count` rows, in order; the numbering runs on across groups (1 to 15)
@@ -115,6 +115,8 @@ export function WorkingV11({ c, home }: { c: WorkingWithUsContent; home: HomeV11
               {groups.map((g) => (
                 <section key={g._key} id={g.id} className="ww-chapter" aria-labelledby={`${g.id}-h`}>
                   <h3 id={`${g.id}-h`} className="ww-chapter-title">{g.title}</h3>
+                  {/* desktop: the three column names over the chapter's rows, as on the table the page replaced */}
+                  <div className="ww-cols" aria-hidden="true"><span>{colAsk}</span><span><Slow />{colSlow}</span><span className="is-good"><Good />{colGood}</span></div>
                   <ol className="ww-asks" start={g.start}>
                     {g.rows.map((r) => (
                       <li key={r._key} className="ww-ask">

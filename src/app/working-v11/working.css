@@ -49,7 +49,7 @@
 .ww-list .v11-head { margin-bottom: 0; }
 .ww-body { position: relative; margin-top: 32px; }
 .ww-body-grid { display: grid; grid-template-columns: minmax(0, 1fr); }
-.ww-rail-col { display: none; }
+.ww-rail-col { display: none; } /* compact: the chips bar serves every width */
 
 /* tablet and phone: chips stay under the header until the list ends */
 .ww-chips { position: sticky; top: 69px; z-index: 5; display: flex; gap: 8px; overflow-x: auto; padding: 12px var(--gut);
@@ -77,31 +77,35 @@
 .ww-out.is-good strong { color: var(--ind); }
 .ww-out.is-good > span { font-weight: 500; color: var(--ink); }
 
+.ww-cols { display: none; }
+
 @media (min-width: 768px) {
   .ww-chapter { padding-top: 56px; }
-  .ww-chapter-title { font-size: 34px; line-height: 42px; }
-  .ww-ask { padding: 28px 0; }
-  .ww-ask h4 { font-size: 23px; line-height: 29px; }
-  .ww-outs { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
+  .ww-chapter-title { font-size: 30px; line-height: 38px; }
+  .ww-ask h4 { font-size: 21px; line-height: 27px; }
 }
 
-/* desktop: the contents rail beside the chapters, sticky until the list ends */
+/* desktop: compact rows. Each ask is one row of three columns (the ask, without it, with it) under a column header,
+   the "with it" column tinted as on the table this page replaced. The chips stay as a bar under the header. */
 @media (min-width: 1024px) {
-  .ww-chips { display: none; }
-  .ww-body { margin-top: 56px; }
-  .ww-body-grid { grid-template-columns: 220px minmax(0, 1fr); gap: 56px; align-items: start; }
-  .ww-rail-col { display: block; align-self: stretch; }
-  .ww-rail { position: sticky; top: 96px; display: flex; flex-direction: column; margin-top: 8px; border-top: 1px solid var(--line); }
-  .ww-rail a { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 16px 0; border-bottom: 1px solid var(--line);
-    font-size: 16px; font-weight: 500; line-height: 20px; color: var(--ink); transition: color var(--dur) var(--ease); }
-  .ww-rail a small { font-size: 14px; color: var(--quiet); }
-  .ww-rail a:hover { color: var(--ind); }
-  .ww-rail a.is-on { font-weight: 700; color: var(--ind); }
-  .ww-chapter { scroll-margin-top: 88px; }
-  .ww-chapter:first-child { padding-top: 0; }
-}
-@media (min-width: 1280px) {
-  .ww-body-grid { grid-template-columns: 248px minmax(0, 1fr); gap: 64px; }
+  .ww-chips { padding-inline: max(var(--gut), calc((100% - 1296px) / 2)); }
+  .ww-body { margin-top: 40px; }
+  .ww-chapter { padding-top: 40px; scroll-margin-top: 140px; }
+  .ww-chapter-title { padding-bottom: 12px; font-size: 26px; line-height: 32px; }
+  .ww-cols, .ww-ask { display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr) minmax(0, 1fr); gap: 0; }
+  .ww-cols > span { display: flex; align-items: center; gap: 8px; padding: 14px 22px 12px; font-size: 13px; color: var(--quiet); }
+  .ww-cols > span:first-child { padding-left: 0; }
+  .ww-cols > .is-good { border-radius: 16px 16px 0 0; background: #eef0ff; font-weight: 500; color: var(--ind); }
+  .ww-ask { padding: 0; border-top: 0; }
+  .ww-ask h4, .ww-out { box-shadow: inset 0 -1px 0 var(--line); }
+  .ww-ask:last-child h4, .ww-ask:last-child .ww-out { box-shadow: none; }
+  .ww-ask:last-child .ww-out.is-good { border-radius: 0 0 16px 16px; }
+  .ww-ask h4 { padding: 20px 22px 20px 0; font-family: var(--font-sans); font-size: 15.5px; line-height: 1.4; letter-spacing: 0; font-weight: 500; text-wrap: pretty; }
+  .ww-outs { display: contents; }
+  .ww-out { display: block; padding: 20px 22px; border-radius: 0; background: none; }
+  .ww-out svg, .ww-out strong { display: none; }
+  .ww-out > span { font-size: 15px; }
+  .ww-out.is-good { background: #eef0ff; }
 }
 
 /* =========================================================== 3 · in return */

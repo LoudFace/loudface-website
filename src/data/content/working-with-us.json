@@ -50,7 +50,7 @@
           "cells": [
             "Content approved within two working days, or permission to publish and fix after",
             "Every piece waits for several reviewers. Output drops to about one piece a month.",
-            "We publish about one piece every working day, and each piece builds on the last."
+            "We publish at your package's pace, every week, and each piece builds on the last."
           ]
         },
         {
@@ -246,7 +246,7 @@
       "eyebrow": "Questions",
       "headlineHighlight": "Still",
       "headlineRest": "have questions?",
-      "intro": "We’re here to help you with any inquiries.",
+      "intro": "Short answers to what clients ask before they sign.",
       "personName": "Arnel Bukva",
       "personRole": "Founder",
       "ctaText": "Book a strategy call",
@@ -263,8 +263,8 @@
         },
         {
           "_key": "q3",
-          "question": "What do I get from LoudFace?",
-          "answer": "A reply the same working day, a weekly update with what shipped and anything we need from you with a date, kickoff within 48 hours of signing, and a straight answer when we are late or wrong."
+          "question": "Do I need all fifteen?",
+          "answer": "Not always. On the call we go through the list with you and say plainly which ones apply, and what changes where one is missing."
         }
       ],
       "linksLabel": "Read next",
