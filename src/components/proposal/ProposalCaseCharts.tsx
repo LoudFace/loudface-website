@@ -1,7 +1,7 @@
 'use client';
 
 import { curveCatmullRom } from '@visx/curve';
-import { useEffect, useState } from 'react';
+import { useSyncExternalStore } from 'react';
 import { ChartMarkers } from '@/components/charts/markers';
 import { Area, AreaChart, Background, Bar, BarChart, BarXAxis, ChartTooltip, XAxis } from '@/components/charts';
 import '@/app/case-detail-v3/instruments-board.css';
@@ -61,8 +61,8 @@ const fmtDay = (d: Date) =>
   Number.isNaN(d.getTime()) ? '' : d.toLocaleDateString('en-GB', { day: 'numeric', month: 'short' });
 
 export function ProposalCaseChart({ plot }: { plot: CasePlot }) {
-  const [mounted, setMounted] = useState(false);
-  useEffect(() => setMounted(true), []);
+  // false on the server and while hydrating, true in the browser: the charts measure their own box
+  const mounted = useSyncExternalStore(() => () => {}, () => true, () => false);
 
   return (
     <div className="inb proposal-plot">
@@ -101,11 +101,12 @@ export function ProposalCaseChart({ plot }: { plot: CasePlot }) {
             <Background pattern="dots" opacity={0.55} />
             <Area dataKey="value" curve={curveCatmullRom} fillOpacity={0.24} strokeWidth={2} stroke="var(--chart-1)" />
             <XAxis />
-            {plot.startDate && plot.startDate >= plot.points[0].date && (
+            {/* A start before the first charted day pins the left edge; the date printed beside the chart stays the real day. */}
+            {plot.startDate && (
               <ChartMarkers
                 items={[
                   {
-                    date: new Date(`${plot.startDate}T00:00:00Z`),
+                    date: new Date(`${plot.startDate > plot.points[0].date ? plot.startDate : plot.points[0].date}T00:00:00Z`),
                     // eslint-disable-next-line @next/next/no-img-element
                     icon: <img src="/lf-logo.svg" alt="" className="h-full w-full rounded-full object-cover" />,
                     title: 'LoudFace starts',
