@@ -37,7 +37,9 @@ function extractMain(html: string): string | null {
     .replace(/<style[\s\S]*?<\/style>/gi, '')
     .replace(/<noscript[\s\S]*?<\/noscript>/gi, '')
     .replace(/<svg[\s\S]*?<\/svg>/gi, '')
-    .replace(/<template[\s\S]*?<\/template>/gi, '');
+    .replace(/<template[\s\S]*?<\/template>/gi, '')
+    // a visual-only row a page opts out with data-md-skip (a div with no div inside it), e.g. repeated column names
+    .replace(/<div[^>]*\bdata-md-skip\b[^>]*>[\s\S]*?<\/div>/gi, '');
 }
 
 /** First <h1> on the page, used as the Markdown title. */

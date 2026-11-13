@@ -48,8 +48,6 @@
 /* =========================================================== 2 · the full list in four chapters */
 .ww-list .v11-head { margin-bottom: 0; }
 .ww-body { position: relative; margin-top: 32px; }
-.ww-body-grid { display: grid; grid-template-columns: minmax(0, 1fr); }
-.ww-rail-col { display: none; } /* compact: the chips bar serves every width */
 
 /* tablet and phone: chips stay under the header until the list ends */
 .ww-chips { position: sticky; top: 69px; z-index: 5; display: flex; gap: 8px; overflow-x: auto; padding: 12px var(--gut);

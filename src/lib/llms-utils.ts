@@ -105,13 +105,13 @@ export function htmlToMarkdown(html: string): string {
   md = md.replace(/<ul[^>]*>([\s\S]*?)<\/ul>/gi, (_, content) => {
     return '\n' + content.replace(/<li[^>]*>([\s\S]*?)<\/li>/gi, '- $1\n') + '\n';
   });
+  const HEADED_ITEM = /^\s*\n(#{1,6}) /;
   md = md.replace(/<ol([^>]*)>([\s\S]*?)<\/ol>/gi, (_, attrs: string, content: string) => {
     // a list may continue an earlier one (start="4"); an item that opens with a heading carries its number in it
     let i = Number(attrs.match(/\bstart="(\d+)"/)?.[1] ?? 1) - 1;
     return '\n' + content.replace(/<li[^>]*>([\s\S]*?)<\/li>/gi, (_m: string, text: string) => {
       const n = ++i;
-      const head = text.match(/^\s*\n(#{1,6}) /);
-      return head ? text.replace(/^\s*\n(#{1,6}) /, `\n$1 ${n}. `) + '\n' : `${n}. ${text}\n`;
+      return HEADED_ITEM.test(text) ? text.replace(HEADED_ITEM, `\n$1 ${n}. `) + '\n' : `${n}. ${text}\n`;
     }) + '\n';
   });
 

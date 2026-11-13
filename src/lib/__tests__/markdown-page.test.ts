@@ -107,4 +107,21 @@ describe('renderPageMarkdown', () => {
       globalThis.fetch = realFetch;
     }
   });
+
+  it('leaves out a row the page marks data-md-skip, and keeps the text around it', async () => {
+    const skipped = '<div class="cols" aria-hidden="true" data-md-skip=""><span>Column one</span><span>Column two</span></div>';
+    globalThis.fetch = responding(
+      200,
+      pageHtml(`<main><h1>Hello</h1>${skipped}<p>${'Real body content. '.repeat(30)}</p></main>`)
+    ) as unknown as typeof globalThis.fetch;
+    try {
+      const result = await renderPageMarkdown('/some-page', 'http://localhost:3005');
+      assert.equal(result.status, 'ok');
+      if (result.status !== 'ok') return;
+      assert.doesNotMatch(result.markdown, /Column one|Column two/);
+      assert.match(result.markdown, /Real body content\./);
+    } finally {
+      globalThis.fetch = realFetch;
+    }
+  });
 });

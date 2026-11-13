@@ -13,8 +13,9 @@ import { ChapterRail } from './ChapterRail';
  *
  * The 15 asks are a real numbered list: each ask is a heading, and its two outcomes sit under it as labelled text
  * ("Without it:", "With it:"), so an AI engine can lift one item whole and the Markdown copy keeps the structure.
- * The four group names are the chapter headings. A contents rail (desktop) or chips (tablet, phone) stay on screen
- * until the list ends. The rows and the four promises are the same working-with-us.json the proposal's Working
+ * The four group names are the chapter headings, and a bar of chapter chips stays on screen until the list ends.
+ * On desktop each chapter reads as a three-column table (ask, without it, with it), the look of the table the page
+ * replaced; on phone each ask is a card. The rows and the four promises are the same working-with-us.json the proposal's Working
  * together tab reads, so the two never drift. The FAQ follows the /pricing pattern; its schema is built in page.tsx
  * from the same items.
  */
@@ -108,15 +109,14 @@ export function WorkingV11({ c, home }: { c: WorkingWithUsContent; home: HomeV11
           <SectionHeadNode eyebrow={p.list.eyebrow} title={<>{p.list.headline} <span className="ghost">{p.list.headlineHighlight}</span></>} body={p.list.intro} bodyWidth={440} />
         </div>
         <div className="ww-body">
-          <ChapterRail items={chapters} label={p.list.railLabel} variant="chips" />
-          <div className="v11-wrap ww-body-grid">
-            <aside className="ww-rail-col"><ChapterRail items={chapters} label={p.list.railLabel} variant="rail" /></aside>
+          <ChapterRail items={chapters} label={p.list.railLabel} />
+          <div className="v11-wrap">
             <div className="ww-chapters">
               {groups.map((g) => (
                 <section key={g._key} id={g.id} className="ww-chapter" aria-labelledby={`${g.id}-h`}>
                   <h3 id={`${g.id}-h`} className="ww-chapter-title">{g.title}</h3>
                   {/* desktop: the three column names over the chapter's rows, as on the table the page replaced */}
-                  <div className="ww-cols" aria-hidden="true"><span>{colAsk}</span><span><Slow />{colSlow}</span><span className="is-good"><Good />{colGood}</span></div>
+                  <div className="ww-cols" aria-hidden="true" data-md-skip=""><span>{colAsk}</span><span><Slow />{colSlow}</span><span className="is-good"><Good />{colGood}</span></div>
                   <ol className="ww-asks" start={g.start}>
                     {g.rows.map((r) => (
                       <li key={r._key} className="ww-ask">
