@@ -117,7 +117,8 @@ export default async function ResearchPaperPage({ params }: PageProps) {
   const datasetSchema = buildDatasetSchema(
     { 'dataset-meta': study['dataset-meta'], 'published-date': study['published-date'] } as unknown as BlogPost,
     url,
-    study['data-files'],
+    // Sanity returns null, not an empty list, for a paper with no files.
+    study['data-files'] ?? [],
   );
 
   return (
