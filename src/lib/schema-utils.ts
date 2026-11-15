@@ -7,7 +7,7 @@
  */
 
 import { splitProseByH2 } from './html-utils';
-import type { BlogPost, TeamMember } from './types';
+import type { BlogPost, ResearchDataFile, TeamMember } from './types';
 
 /* ─── Types ────────────────────────────────────────────────────── */
 
@@ -406,6 +406,8 @@ export function buildSpeakableSchema(name: string, url: string): object {
   };
 }
 
+const DATA_FILE_FORMATS: Record<string, string> = { csv: 'text/csv', json: 'application/json', xlsx: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' };
+
 /**
  * Build Dataset JSON-LD for first-party data studies.
  *
@@ -423,9 +425,17 @@ export function buildSpeakableSchema(name: string, url: string): object {
 export function buildDatasetSchema(
   post: BlogPost,
   url: string,
+  files: ResearchDataFile[] = [],
 ): object | null {
   const meta = post['dataset-meta'];
   if (!meta?.name || !meta?.description) return null;
+  // Google Dataset Search and AI crawlers find the raw data only through `distribution`.
+  const distribution = files.map((f) => ({
+    '@type': 'DataDownload',
+    name: f.label,
+    contentUrl: f.url,
+    encodingFormat: DATA_FILE_FORMATS[new URL(f.url).pathname.split('.').pop() ?? ''] ?? 'application/octet-stream',
+  }));
 
   return {
     '@context': 'https://schema.org',
@@ -444,6 +454,7 @@ export function buildDatasetSchema(
     ...(meta.keywords?.length && { keywords: meta.keywords }),
     ...(post['published-date'] && { datePublished: post['published-date'] }),
     ...(meta.license && { license: meta.license }),
+    ...(distribution.length && { isAccessibleForFree: true, distribution }),
   };
 }
 

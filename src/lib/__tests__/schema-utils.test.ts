@@ -6,7 +6,8 @@
 
 import { describe, it } from 'node:test';
 import assert from 'node:assert/strict';
-import { buildItemListSchema, extractRankedListFromHTML, isRankedListTitle, serializeJsonLd } from '../schema-utils';
+import { buildDatasetSchema, buildItemListSchema, extractRankedListFromHTML, isRankedListTitle, serializeJsonLd } from '../schema-utils';
+import type { BlogPost } from '../types';
 
 type ItemList = {
   '@type': string;
@@ -154,5 +155,21 @@ describe('serializeJsonLd', () => {
 
     assert.equal(json.includes('</script'), false);
     assert.equal(JSON.parse(json).name, '</script><script>alert(1)</script>');
+  });
+});
+
+describe('buildDatasetSchema', () => {
+  const post = { 'dataset-meta': { name: 'AI crawler policies', description: 'One row per site.' } } as BlogPost;
+
+  it('lists each data file as a download crawlers can fetch', () => {
+    const csv = 'https://cdn.sanity.io/files/x/production/abc.csv';
+    const schema = buildDatasetSchema(post, 'https://www.loudface.co/research/x', [{ label: 'Full dataset', url: csv }]) as Record<string, unknown>;
+    assert.equal(schema.isAccessibleForFree, true);
+    assert.deepEqual(schema.distribution, [{ '@type': 'DataDownload', name: 'Full dataset', contentUrl: csv, encodingFormat: 'text/csv' }]);
+  });
+
+  it('claims no download when the paper publishes no file', () => {
+    const schema = buildDatasetSchema(post, 'https://www.loudface.co/research/x') as Record<string, unknown>;
+    assert.equal('distribution' in schema, false);
   });
 });
