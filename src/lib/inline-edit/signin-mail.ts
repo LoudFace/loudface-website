@@ -15,7 +15,7 @@ import { loadEditors } from './editors';
 import { SIGN_IN_MINUTES, freshInvite, signInMinutesFor } from './editors-list';
 import { lifetimeLabel } from './invite-flow';
 import { resendKey } from './mail-config';
-import { buildSignInHtml } from './signin-mail-html';
+import { buildSignInHtml, buildSignInText } from './signin-mail-html';
 
 type Mail = { subject: string; text: string; html: string };
 
@@ -39,10 +39,9 @@ export async function sendSignInLink(email: string, origin: string): Promise<Sig
   const link = `${origin.replace(/\/$/, '')}/api/lf-edit/verify?token=${createSignInToken(email, minutes)}`;
   const lifetime = lifetimeLabel(minutes);
   const subject = invite ? `You can now edit ${host}` : `Your sign-in link for ${host}`;
-  const text = invite
-    ? `${invite.addedBy || 'LoudFace'} invited you to edit ${host}.\n\nOpen this link to start. It lasts ${lifetime}. You can change text, pictures and links on the page and press Publish; the site shows you when the change is live.\n\n${link}\n\nLater, type your email at https://${host}/edit for a new link any time.\n`
-    : `Open this link to edit the site. It lasts ${lifetime}.\n\n${link}\n`;
-  const html = buildSignInHtml({ kind: invite ? 'edit' : 'signin', host, link, invitedBy: invite?.addedBy, lifetime });
+  const mail = { kind: invite ? 'edit' : 'signin', host, origin, link, invitedBy: invite?.addedBy, lifetime } as const;
+  const text = buildSignInText(mail);
+  const html = buildSignInHtml(mail);
   return deliver(email, { subject, text, html }, link);
 }
 
@@ -59,10 +58,9 @@ export async function sendCommentSignInLink(
   const link = `${origin.replace(/\/$/, '')}/api/lf-edit/verify?token=${createSignInToken(email, SIGN_IN_MINUTES)}`;
   const subject = invitedBy ? `${invitedBy} invited you to comment on ${host}` : `Your link to comment on ${host}`;
   const lifetime = lifetimeLabel(SIGN_IN_MINUTES);
-  const text = invitedBy
-    ? `${invitedBy} invited you to leave comments on ${host}.\n\nOpen this link to start. It lasts ${lifetime}. Press Comment, or the C key, and click anywhere on the page to leave a note; everyone working on the site sees it.\n\n${link}\n\nLater, type your email at https://${host}/edit for a new link any time.\n`
-    : `Open this link to comment on ${host}. It lasts ${lifetime}.\n\n${link}\n`;
-  const html = buildSignInHtml({ kind: 'comment', host, link, invitedBy, lifetime });
+  const mail = { kind: 'comment', host, origin, link, invitedBy, lifetime } as const;
+  const text = buildSignInText(mail);
+  const html = buildSignInHtml(mail);
   return deliver(email, { subject, text, html }, link);
 }
 
@@ -76,8 +74,9 @@ export async function sendJoinLink(email: string, origin: string, linkToken: str
   const link = `${origin.replace(/\/$/, '')}/api/lf-edit/verify?token=${createJoinToken(email, linkToken)}`;
   const subject = `Confirm your email to comment on ${host}`;
   const lifetime = lifetimeLabel(SIGN_IN_MINUTES);
-  const text = `You asked to leave comments on ${host}.\n\nOpen this link to confirm it is your address and start. It lasts ${lifetime}. Press Comment, or the C key, and click anywhere on the page to leave a note.\n\n${link}\n\nIf you did not ask for this, ignore this email; nothing happens until the link is opened.\n`;
-  const html = buildSignInHtml({ kind: 'join', host, link, lifetime });
+  const mail = { kind: 'join', host, origin, link, lifetime } as const;
+  const text = buildSignInText(mail);
+  const html = buildSignInHtml(mail);
   return deliver(email, { subject, text, html }, link);
 }
 

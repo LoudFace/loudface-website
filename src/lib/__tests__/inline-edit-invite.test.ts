@@ -26,7 +26,7 @@ import {
   roleAllowed,
 } from '../inline-edit/invite-flow';
 import { INVITE_LINK_MINUTES, SIGN_IN_MINUTES } from '../inline-edit/editors-list';
-import { buildSignInHtml, buttonLabel, escapeHtml, introSentence } from '../inline-edit/signin-mail-html';
+import { buildSignInHtml, buildSignInText, buttonLabel, escapeHtml, headline } from '../inline-edit/signin-mail-html';
 import { resendKey } from '../inline-edit/mail-config';
 
 const root = path.resolve(__dirname, '..', '..', '..');
@@ -183,40 +183,110 @@ describe('people with access', () => {
 });
 
 describe('sign-in mail html', () => {
-  const base = { host: 'site.com', link: 'https://site.com/api/lf-edit/verify?token=a.b&x=1', lifetime: '12 hours' };
+  const base = {
+    host: 'site.com',
+    origin: 'https://site.com',
+    link: 'https://site.com/api/lf-edit/verify?token=a.b&x=1',
+    lifetime: '12 hours',
+  };
+  const thumb = /<img [^>]*src="https:\/\/site\.com\/editor-invite\/(edit|comment)\.jpg"/;
 
-  it('each kind has its own button and one sentence naming who and which site', () => {
+  it('each kind has its own button and a headline naming who and which site', () => {
     assert.equal(buttonLabel('edit'), 'Open the site editor');
     assert.equal(buttonLabel('signin'), 'Open the site editor');
     assert.equal(buttonLabel('comment'), 'Start commenting');
     assert.equal(buttonLabel('join'), 'Confirm my email');
-    assert.equal(introSentence({ kind: 'edit', host: 'site.com', invitedBy: 'lf@loudface.co' }), 'lf@loudface.co invited you to edit site.com.');
-    assert.equal(introSentence({ kind: 'comment', host: 'site.com', invitedBy: 'ed@client.com' }), 'ed@client.com invited you to leave comments on site.com.');
+    assert.equal(headline({ kind: 'edit', host: 'site.com', invitedBy: 'lf@loudface.co' }), 'Lf invited you to edit site.com');
+    assert.equal(headline({ kind: 'edit', host: 'site.com', invitedBy: 'arnel@loudface.co' }), 'Arnel invited you to edit site.com');
+    assert.equal(headline({ kind: 'comment', host: 'site.com', invitedBy: 'jo.smith@client.com' }), 'Jo invited you to comment on site.com');
+    assert.equal(headline({ kind: 'edit', host: 'site.com' }), 'You can now edit site.com');
+    assert.equal(headline({ kind: 'signin', host: 'site.com' }), 'Sign in to edit site.com');
+    assert.equal(headline({ kind: 'join', host: 'site.com' }), 'Confirm your email to comment on site.com');
   });
 
-  it('carries the button, the lifetime, the return address and the raw link', () => {
-    const html = buildSignInHtml({ ...base, kind: 'edit', invitedBy: 'lf@loudface.co' });
-    assert.match(html, /max-width:480px/);
+  it('carries the preheader, button, lifetime line, reason and the raw link', () => {
+    const html = buildSignInHtml({ ...base, kind: 'edit', invitedBy: 'arnel@loudface.co' });
+    assert.match(html, /Open the link to start\. No password, nothing to install\./);
+    assert.match(html, /site\.com · Site editor/);
     assert.match(html, /Open the site editor<\/a>/);
-    assert.match(html, /The link works for 12 hours\. Later, go to site\.com\/edit and type this email address for a new link\. No password needed\./);
-    assert.equal(html.split('token=a.b&amp;x=1').length - 1, 2);
+    assert.match(html, /The button works for 12 hours\. After that, go to site\.com\/edit, type this email address, and you get a fresh link\./);
+    assert.match(html, /You received this because arnel@loudface\.co added you to site\.com\. If you did not expect it, you can ignore this email\./);
+    assert.match(html, /Site editor by LoudFace/);
+    assert.match(html, /name="color-scheme" content="light"/);
+    assert.equal(html.split('token=a.b&amp;x=1').length - 1, 3);
+  });
+
+  it('the lifetime comes from the value given, never fixed in the markup', () => {
+    assert.match(buildSignInHtml({ ...base, kind: 'edit', lifetime: lifetimeLabel(INVITE_LINK_MINUTES) }), /works for 12 hours\./);
+    assert.match(buildSignInHtml({ ...base, kind: 'signin', lifetime: '15 minutes' }), /works for 15 minutes\./);
+  });
+
+  it('edit and comment invitations have their own lead and steps', () => {
+    const edit = buildSignInHtml({ ...base, kind: 'edit', invitedBy: 'lf@loudface.co' });
+    assert.match(edit, /You can now change the words, pictures and links on the site yourself/);
+    assert.match(edit, /Click any text or picture/);
+    assert.match(edit, /Changed your mind\?/);
+    assert.doesNotMatch(edit, /Press Comment/);
+    const comment = buildSignInHtml({ ...base, kind: 'comment', invitedBy: 'lf@loudface.co' });
+    assert.match(comment, /You can now leave notes right on the page/);
+    assert.match(comment, /Click anywhere and type your note/);
+    assert.match(comment, /Everyone on the site sees it/);
+    assert.doesNotMatch(comment, /Press Publish/);
+  });
+
+  it('the screenshot and the steps appear on invitations only', () => {
+    assert.match(buildSignInHtml({ ...base, kind: 'edit' }), thumb);
+    assert.match(buildSignInHtml({ ...base, kind: 'comment' }), /editor-invite\/comment\.jpg/);
+    for (const kind of ['signin', 'join'] as const) {
+      const html = buildSignInHtml({ ...base, kind });
+      assert.doesNotMatch(html, /<img|editor-invite|How it works/);
+    }
+  });
+
+  it('the screenshot has real alt text and links to the sign-in link', () => {
+    const html = buildSignInHtml({ ...base, kind: 'edit' });
+    assert.match(html, /alt="The site with the editing bar on top and a headline being edited"/);
+    assert.match(html, /<a href="https:\/\/site\.com\/api\/lf-edit\/verify\?token=a\.b&amp;x=1"[^>]*><img /);
+  });
+
+  it('the returning sign-in and the join mail share the shell without steps', () => {
+    const signin = buildSignInHtml({ ...base, kind: 'signin' });
+    assert.match(signin, /Sign in to edit site\.com/);
+    assert.match(signin, /works for 12 hours\. After that, go to site\.com\/edit/);
+    const join = buildSignInHtml({ ...base, kind: 'join' });
+    assert.match(join, /Confirm my email<\/a>/);
+    assert.match(join, /If you did not ask for this, ignore this email/);
   });
 
   it('escapes every interpolated value', () => {
     const html = buildSignInHtml({
       kind: 'comment',
       host: 'evil"><script>alert(1)</script>.com',
+      origin: 'https://x.com"><script>',
       link: 'https://x.com/?a="><img src=x>',
       invitedBy: '<b>me</b>@x.co',
       lifetime: '12 <hours>',
     });
-    assert.doesNotMatch(html, /<script>|<img|<b>/);
+    assert.doesNotMatch(html, /<script>|<img src=x>|<b>/);
     assert.match(html, /&lt;script&gt;/);
     assert.equal(escapeHtml(`<>&"'`), '&lt;&gt;&amp;&quot;&#39;');
   });
 
-  it('the join mail says to ignore it if the reader did not ask', () => {
-    assert.match(buildSignInHtml({ ...base, kind: 'join' }), /If you did not ask for this, ignore this email/);
+  it('plain text carries the headline, lead, link, the three steps and the lifetime in order', () => {
+    const text = buildSignInText({ ...base, kind: 'edit', invitedBy: 'arnel@loudface.co' });
+    const order = [
+      'Arnel invited you to edit site.com.',
+      'You can now change the words',
+      base.link,
+      '1. Click any text or picture.',
+      '2. Press Publish.',
+      '3. Changed your mind?',
+      'The button works for 12 hours.',
+    ];
+    const at = order.map((part) => text.indexOf(part));
+    assert.ok(at.every((index) => index >= 0), `missing part in:\n${text}`);
+    assert.deepEqual([...at].sort((a, b) => a - b), at);
+    assert.doesNotMatch(buildSignInText({ ...base, kind: 'signin' }), /How it works/);
   });
 });
 

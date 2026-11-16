@@ -34,6 +34,7 @@
  */
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
+import { BRAND, firstName } from '../../lib/inline-edit/brand';
 import { pauseHref } from '../../lib/inline-edit/guard';
 import { undoneSummary } from '../../lib/inline-edit/publish-history';
 import {
@@ -102,7 +103,6 @@ export type EditorShellProps = {
 const INK = '#14212b';
 const MUTE = '#5b6b7a';
 const LINE = '#e6ebf0';
-const BRAND = '#4f46e5';
 const PAGE = '#f3f5f8';
 const FONT = 'Inter, ui-sans-serif, system-ui, -apple-system, sans-serif';
 const TOP = 52;
@@ -166,12 +166,6 @@ function initials(email: string): string {
   const parts = name.split(/[._-]+/).filter(Boolean);
   if (parts.length > 1) return (parts[0][0] + parts[1][0]).toUpperCase();
   return (name.slice(0, 2) || '?').toUpperCase();
-}
-
-/** "arnel@loudface.co" → "Arnel", which is what a person calls themselves. */
-function firstName(email: string): string {
-  const name = (email.split('@')[0] ?? '').split(/[._-]+/)[0] ?? '';
-  return name ? name[0].toUpperCase() + name.slice(1) : 'you';
 }
 
 /**
@@ -489,6 +483,8 @@ export function EditorShell(props: EditorShellProps) {
               </Icon>
               {!mobile && 'Invite'}
             </button>
+            {/* A phone has no room for faces beside Invite and Publish: the People panel lists everyone. */}
+            {!mobile && (
             <span style={{ display: 'flex' }}>
               {people.slice(0, 2).map((email, index) => (
                 <span
@@ -503,6 +499,7 @@ export function EditorShell(props: EditorShellProps) {
                 <span style={{ ...avatar, background: '#94a3b8', marginLeft: -8 }}>+{people.length - 2}</span>
               )}
             </span>
+            )}
             {!mobile && !commenter && people.length > 0 && (
               <span style={{ color: MUTE, whiteSpace: 'nowrap' }}>
                 {people.length} editor{people.length === 1 ? '' : 's'}
