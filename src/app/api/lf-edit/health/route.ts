@@ -12,6 +12,7 @@ import { editorOffResponse, inlineEditingEnabled } from '@/lib/inline-edit/guard
 import { mode } from '@/lib/inline-edit/content-store';
 import { hasGitHubCredentials, repoFromEnv } from '@/lib/inline-edit/github';
 import { loadEditors } from '@/lib/inline-edit/editors';
+import { resendKey } from '@/lib/inline-edit/mail-config';
 
 export async function GET() {
   const off = editorOffResponse();
@@ -43,7 +44,7 @@ export async function GET() {
       branch: repo?.branch ?? null,
     },
     editors: { owners: owners().length, invited: list.editors.length, source },
-    email: { sender: Boolean(process.env.LF_EDIT_FROM), resendKey: Boolean(process.env.RESEND_API_KEY) },
+    email: { sender: Boolean(process.env.LF_EDIT_FROM), resendKey: Boolean(resendKey()) },
     siteUrl: Boolean(process.env.LF_SITE_URL),
     sanityWriteToken: Boolean(process.env.LF_SANITY_WRITE_TOKEN),
     // Replacing a picture from the page. It needs nothing of its own: a Sanity

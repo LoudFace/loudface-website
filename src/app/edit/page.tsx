@@ -7,8 +7,14 @@
  */
 import type { Metadata } from 'next';
 import { currentEditor } from '@/lib/inline-edit/session';
+import { SIGN_IN_MINUTES } from '@/lib/inline-edit/editors-list';
+import { lifetimeLabel } from '@/lib/inline-edit/invite-flow';
 
 export const metadata: Metadata = { title: 'Edit the site', robots: { index: false, follow: false } };
+
+const LIFETIME = lifetimeLabel(SIGN_IN_MINUTES);
+const NO_PASSWORD_NOTE = 'No password. We email you a link that signs you in.';
+const NO_ACCESS_NOTE = 'No access yet? Ask the person who manages this site to invite you from the editor’s Invite button.';
 
 export default async function EditSignInPage({
   searchParams,
@@ -67,8 +73,8 @@ export default async function EditSignInPage({
           <>
             <p style={{ margin: 0, color: '#52616d' }}>
               {join
-                ? 'Check your email: the link in it confirms your address and opens the site with comments on. It expires in 12 hours.'
-                : 'If that address can edit this site, a sign-in link is on its way. It expires in 12 hours.'}
+                ? `Check your email: the link in it confirms your address and opens the site with comments on. It expires in ${LIFETIME}.`
+                : `If that address can edit this site, a sign-in link is on its way. It expires in ${LIFETIME}.`}
             </p>
             {link && process.env.NODE_ENV !== 'production' && (
               <a href={link} style={{ ...primary, marginTop: 16 }}>
@@ -94,6 +100,7 @@ export default async function EditSignInPage({
                 Send me the link
               </button>
             </form>
+            <p style={note}>{NO_PASSWORD_NOTE}</p>
           </>
         ) : (
           <>
@@ -119,12 +126,16 @@ export default async function EditSignInPage({
                 Send me the link
               </button>
             </form>
+            <p style={note}>{NO_PASSWORD_NOTE}</p>
+            {!expired && join !== 'ended' && !handoffNote && <p style={{ ...note, marginTop: 6 }}>{NO_ACCESS_NOTE}</p>}
           </>
         )}
       </div>
     </main>
   );
 }
+
+const note: React.CSSProperties = { margin: '14px 0 0', color: '#6b7a87', fontSize: 13 };
 
 const field: React.CSSProperties = {
   width: '100%',

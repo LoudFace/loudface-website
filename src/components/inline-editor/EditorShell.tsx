@@ -13,7 +13,7 @@
  * panel lists them. The shell only holds which mode is on and which thread is
  * open, so the panel and the pins agree.
  *
- * Four panels: Pages, History, Editors, Settings. Pages is the sitemap as a
+ * Panels: Pages, Comments, History, People, Settings. Pages is the sitemap as a
  * list, and it is the one way to get from one page of the site to another
  * without leaving the editor — the site's own menu does not reach every page,
  * and a client asked for it back. Media and the health rows stay out: every
@@ -36,6 +36,26 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
 import { pauseHref } from '../../lib/inline-edit/guard';
 import { undoneSummary } from '../../lib/inline-edit/publish-history';
+import {
+  EMPTY_ACCESS_NOTE,
+  NEXT_STEPS,
+  NOT_OWNER_NOTE,
+  OFFLINE_NOTE,
+  REMOVED_NOTE,
+  ROLE_OPTIONS,
+  SHARE_LINK_NOTE,
+  alreadyHasAccess,
+  effectiveRole,
+  existingRole,
+  inviteOutcome,
+  invalidInvite,
+  onlyOwners,
+  peopleRows,
+  roleAllowed,
+  type CommenterInput,
+  type InviteRole,
+  type PersonRow,
+} from '../../lib/inline-edit/invite-flow';
 import { CommentLayer, CommentsPanel, openCountOn, useSiteComments } from './Comments';
 
 export type ShellTone = 'ok' | 'busy' | 'bad' | 'idle';
@@ -202,8 +222,8 @@ export function EditorShell(props: EditorShellProps) {
   const [overflow, setOverflow] = useState(false);
   const [access, setAccess] = useState<Access | null>(null);
   const [accessNote, setAccessNote] = useState('');
-  const [inviteEmail, setInviteEmail] = useState('');
-  const [inviting, setInviting] = useState(false);
+  /** Counts presses of the bar's Invite button; the People panel focuses its email field on each. */
+  const [inviteFocus, setInviteFocus] = useState(0);
   const [routes, setRoutes] = useState<Route[] | null>(null);
   const [title, setTitle] = useState('This page');
   const [host, setHost] = useState('');
@@ -336,55 +356,10 @@ export function EditorShell(props: EditorShellProps) {
     canvas.current?.scrollTo({ top: 0 });
   };
 
-  async function invite() {
-    const email = inviteEmail.trim();
-    if (!email || inviting) return;
-    setInviting(true);
-    setAccessNote('');
-    try {
-      const response = await fetch('/api/lf-edit/editors', {
-        method: 'POST',
-        headers: { 'content-type': 'application/json' },
-        body: JSON.stringify({ email }),
-      });
-      const result = await response.json().catch(() => ({}));
-      if (!response.ok || result?.error) {
-        setAccessNote(result?.error ?? 'That invitation could not be sent');
-        return;
-      }
-      setAccess(result as Access);
-      setInviteEmail('');
-      setAccessNote(
-        result.mailed
-          ? `Invitation sent to ${email}. The link in it lasts 12 hours; they can ask for a new one at /edit any time.`
-          : `${email} now has access, but the invitation email could not be sent. Ask them to open /edit and request a link.`,
-      );
-    } catch {
-      setAccessNote('Could not reach the site, try again');
-    } finally {
-      setInviting(false);
-    }
-  }
-
-  async function removeEditor(email: string) {
-    setAccessNote('');
-    try {
-      const response = await fetch('/api/lf-edit/editors', {
-        method: 'DELETE',
-        headers: { 'content-type': 'application/json' },
-        body: JSON.stringify({ email }),
-      });
-      const result = await response.json().catch(() => ({}));
-      if (!response.ok || result?.error) {
-        setAccessNote(result?.error ?? 'That person could not be removed');
-        return;
-      }
-      setAccess(result as Access);
-      setAccessNote('Removed. Their current session ends within 8 hours.');
-    } catch {
-      setAccessNote('Could not reach the site, try again');
-    }
-  }
+  const openInvite = () => {
+    setTab('editors');
+    setInviteFocus((count) => count + 1);
+  };
 
   const people = useMemo(() => {
     if (!access) return [] as string[];
@@ -430,12 +405,14 @@ export function EditorShell(props: EditorShellProps) {
         `}</style>
 
         {/* Top bar */}
-        <header data-lf-chrome="" style={{ ...topBar, padding: mobile ? '0 12px' : '0 16px 0 14px' }}>
+        <header data-lf-chrome="" style={{ ...topBar, gap: mobile ? 8 : topBar.gap, padding: mobile ? '0 12px' : '0 16px 0 14px' }}>
           <span style={brandMark}>lf</span>
           <span style={{ fontWeight: 600, whiteSpace: 'nowrap' }}>Site editor</span>
-          <span style={pill}>
+          {/* On a phone the dot alone says it: the Invite button took the room
+              the word had, and Publish was pushed off the edge of the bar. */}
+          <span style={mobile ? { ...pill, padding: '0 8px' } : pill} title={commenter ? 'Commenting' : 'Editing'}>
             {dot('ok')}
-            {commenter ? 'Commenting' : 'Editing'}
+            {!mobile && (commenter ? 'Commenting' : 'Editing')}
           </span>
           {!mobile && (
             <span style={crumb}>
@@ -445,7 +422,7 @@ export function EditorShell(props: EditorShellProps) {
             </span>
           )}
 
-          <div style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: mobile ? 10 : 8 }}>
+          <div style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: mobile ? 6 : 8 }}>
             {!mobile && !commenter && (
               <span style={{ display: 'inline-flex', alignItems: 'center', gap: 7, color: MUTE }} title={status.title}>
                 {dot(status.tone)}
@@ -500,6 +477,18 @@ export function EditorShell(props: EditorShellProps) {
             </button>
             )}
             {!mobile && <span style={separator} />}
+            <button
+              style={{ ...btn, padding: mobile ? '0 8px' : '0 10px' }}
+              title="Invite someone to edit or comment"
+              aria-label="Invite someone"
+              onClick={openInvite}
+            >
+              <Icon size={16}>
+                <circle cx="9" cy="8" r="3.5" />
+                <path d="M2.5 20a6.5 6.5 0 0 1 13 0M19 8v6M16 11h6" />
+              </Icon>
+              {!mobile && 'Invite'}
+            </button>
             <span style={{ display: 'flex' }}>
               {people.slice(0, 2).map((email, index) => (
                 <span
@@ -711,20 +700,13 @@ export function EditorShell(props: EditorShellProps) {
                 />
               )}
               {tab === 'editors' && (
-                <>
-                  {!commenter && (
-                    <Editors
-                      access={access}
-                      note={accessNote}
-                      inviteEmail={inviteEmail}
-                      setInviteEmail={setInviteEmail}
-                      inviting={inviting}
-                      onInvite={invite}
-                      onRemove={removeEditor}
-                    />
-                  )}
-                  {!comments.off && <CommentAccess host={host} first={commenter} />}
-                </>
+                <People
+                  access={access}
+                  accessNote={accessNote}
+                  onAccess={setAccess}
+                  commentsOff={comments.off}
+                  focusToken={inviteFocus}
+                />
               )}
               {tab === 'settings' && (
                 <Settings
@@ -867,93 +849,377 @@ function History({
   );
 }
 
-function Editors({
+type CommentData = {
+  commenters: (CommenterInput & { name: string | null })[];
+  link: { url: string; createdAt: string; createdBy: string } | null;
+  you: string;
+  /** May the reader remove people and change the link (owners). */
+  manage: boolean;
+};
+type CommentReply = CommentData & { error?: string; mailed?: boolean };
+type CommentAnswer = { ok: true; data: CommentReply } | { ok: false; error: string };
+
+type ResultKind = 'sent' | 'unmailed' | 'exists' | 'removed' | 'refused' | 'invalid';
+type Result = { kind: ResultKind; text: string };
+
+const RESULT_TONE: Record<ResultKind, { background: string; color: string }> = {
+  sent: { background: '#ecfdf5', color: '#166534' },
+  removed: { background: '#ecfdf5', color: '#166534' },
+  unmailed: { background: '#fff7ed', color: '#9a3412' },
+  exists: { background: '#fff7ed', color: '#9a3412' },
+  refused: { background: '#fef3f2', color: '#b42318' },
+  invalid: { background: '#fef3f2', color: '#b42318' },
+};
+
+const heading: React.CSSProperties = { margin: '0 0 8px', fontSize: 14, fontWeight: 600 };
+
+/**
+ * One flow for letting someone in (2026-11-16): who, what they can do, what
+ * happens next, then everyone who has access and the share link. Owners offer
+ * both roles; anyone else offers comments only, because the routes refuse them
+ * the rest. Editors live in the site's repository, commenters in the Spine, so
+ * the list below joins the two answers.
+ */
+function People({
   access,
-  note,
-  inviteEmail,
-  setInviteEmail,
-  inviting,
-  onInvite,
-  onRemove,
+  accessNote,
+  onAccess,
+  commentsOff,
+  focusToken,
 }: {
   access: Access | null;
-  note: string;
-  inviteEmail: string;
-  setInviteEmail: (value: string) => void;
-  inviting: boolean;
-  onInvite: () => void;
-  onRemove: (email: string) => void;
+  accessNote: string;
+  onAccess: (next: Access) => void;
+  commentsOff: boolean;
+  focusToken: number;
 }) {
+  const [comment, setComment] = useState<CommentData | null>(null);
+  const [email, setEmail] = useState('');
+  const [chosen, setChosen] = useState<InviteRole | null>(null);
+  const [sending, setSending] = useState(false);
+  const [busy, setBusy] = useState(false);
+  const [result, setResult] = useState<Result | null>(null);
+  const [copied, setCopied] = useState<'address' | 'link' | null>(null);
+  const [copyFallback, setCopyFallback] = useState('');
+  const [address, setAddress] = useState('');
+  const emailRef = useRef<HTMLInputElement | null>(null);
+  const rowRefs = useRef<Record<InviteRole, HTMLButtonElement | null>>({ edit: null, comment: null });
+
+  const owner = access?.owner ?? false;
+  const role = effectiveRole(chosen, owner);
+  const roles = ROLE_OPTIONS.filter((option) => !commentsOff || option.role !== 'comment');
+  const canInvite = roles.some((option) => roleAllowed(owner, option.role));
+  const hasEditRow = roles.some((option) => option.role === 'edit');
+
+  const call = useCallback(async (body?: Record<string, unknown>): Promise<CommentAnswer> => {
+    try {
+      const response = await fetch(
+        '/api/lf-edit/commenters',
+        body ? { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(body) } : undefined,
+      );
+      const result: CommentReply = await response.json().catch(() => ({}));
+      if (!response.ok || result.error) return { ok: false, error: result.error ?? 'That did not work, try again' };
+      return { ok: true, data: result };
+    } catch {
+      return { ok: false, error: OFFLINE_NOTE };
+    }
+  }, []);
+
+  useEffect(() => {
+    setAddress(`${window.location.host}/edit`);
+  }, []);
+
+  useEffect(() => {
+    if (commentsOff) return;
+    void call().then((answer) => {
+      if (answer.ok) setComment(answer.data);
+      else setResult({ kind: 'refused', text: answer.error });
+    });
+  }, [call, commentsOff]);
+
+  useEffect(() => {
+    if (focusToken > 0) emailRef.current?.focus();
+  }, [focusToken]);
+
+  async function inviteEditor(target: string) {
+    try {
+      const response = await fetch('/api/lf-edit/editors', {
+        method: 'POST',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({ email: target }),
+      });
+      const reply: Access & { error?: string; mailed?: boolean } = await response.json().catch(() => ({}));
+      if (!response.ok || reply.error) {
+        setResult({ kind: 'refused', text: reply.error ?? 'That invitation could not be sent' });
+        return;
+      }
+      onAccess(reply);
+      setEmail('');
+      setResult(inviteOutcome('edit', target, reply.mailed === true, address));
+    } catch {
+      setResult({ kind: 'refused', text: OFFLINE_NOTE });
+    }
+  }
+
+  async function inviteCommenter(target: string) {
+    const answer = await call({ op: 'invite', email: target });
+    if (!answer.ok) {
+      setResult({ kind: 'refused', text: answer.error });
+      return;
+    }
+    setComment(answer.data);
+    setEmail('');
+    setResult(inviteOutcome('comment', target, answer.data.mailed === true, address));
+  }
+
+  async function send() {
+    const target = email.trim();
+    if (!target || sending) return;
+    const bad = invalidInvite(target);
+    if (bad) {
+      setResult({ kind: 'invalid', text: bad });
+      return;
+    }
+    const have = alreadyHasAccess(
+      target,
+      existingRole(target, {
+        owners: access?.owners.map((person) => person.email) ?? [],
+        editors: access?.editors.map((person) => person.email) ?? [],
+        commenters: comment?.commenters.map((person) => person.email) ?? [],
+      }),
+      role,
+    );
+    if (have) {
+      setResult({ kind: 'exists', text: have });
+      return;
+    }
+    setSending(true);
+    setResult(null);
+    try {
+      await (role === 'edit' ? inviteEditor(target) : inviteCommenter(target));
+    } finally {
+      setSending(false);
+    }
+  }
+
+  async function remove(row: PersonRow) {
+    setBusy(true);
+    setResult(null);
+    try {
+      if (row.removeFrom === 'editors') {
+        const response = await fetch('/api/lf-edit/editors', {
+          method: 'DELETE',
+          headers: { 'content-type': 'application/json' },
+          body: JSON.stringify({ email: row.email }),
+        });
+        const reply: Access & { error?: string } = await response.json().catch(() => ({}));
+        if (!response.ok || reply.error) {
+          setResult({ kind: 'refused', text: reply.error ?? 'That person could not be removed' });
+          return;
+        }
+        onAccess(reply);
+      } else {
+        const answer = await call({ op: 'remove', email: row.email });
+        if (!answer.ok) {
+          setResult({ kind: 'refused', text: answer.error });
+          return;
+        }
+        setComment(answer.data);
+      }
+      setResult({ kind: 'removed', text: REMOVED_NOTE });
+    } catch {
+      setResult({ kind: 'refused', text: OFFLINE_NOTE });
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  async function changeLink(op: 'link_reset' | 'link_off') {
+    setBusy(true);
+    const answer = await call({ op });
+    setBusy(false);
+    if (answer.ok) setComment(answer.data);
+    else setResult({ kind: 'refused', text: answer.error });
+  }
+
+  async function copy(text: string, what: 'address' | 'link') {
+    try {
+      await navigator.clipboard.writeText(text);
+      setCopyFallback('');
+      setCopied(what);
+      setTimeout(() => setCopied(null), 2000);
+    } catch {
+      setCopyFallback(text);
+    }
+  }
+
+  async function copyShareLink() {
+    let url = comment?.link?.url;
+    if (!url) {
+      setBusy(true);
+      const answer = await call({ op: 'link' });
+      setBusy(false);
+      if (!answer.ok) {
+        setResult({ kind: 'refused', text: answer.error });
+        return;
+      }
+      setComment(answer.data);
+      url = answer.data.link?.url;
+    }
+    if (url) await copy(url, 'link');
+  }
+
+  function onRoleKey(event: React.KeyboardEvent) {
+    const step = ['ArrowDown', 'ArrowRight'].includes(event.key) ? 1 : ['ArrowUp', 'ArrowLeft'].includes(event.key) ? -1 : 0;
+    if (!step) return;
+    event.preventDefault();
+    const allowed = roles.filter((option) => roleAllowed(owner, option.role));
+    const index = allowed.findIndex((option) => option.role === role);
+    const next = allowed[(index + step + allowed.length) % allowed.length];
+    if (!next) return;
+    setChosen(next.role);
+    rowRefs.current[next.role]?.focus();
+  }
+
+  const rows = access ? peopleRows(access, comment?.commenters ?? []) : [];
+  const fullAddress = `https://${address}`;
+
   return (
     <>
-      {access === null && !note && <p style={quiet}>Loading…</p>}
-
-      {access?.owners.map((owner) => (
-        <div key={owner.email} style={listItem}>
-          <div style={{ minWidth: 0 }}>
-            <p style={{ margin: 0, fontWeight: 600, ...ellipsis }}>{owner.email}</p>
-            <p style={{ margin: '2px 0 0', fontSize: 12, color: MUTE }}>owner · LoudFace</p>
+      <p style={heading}>Invite someone</p>
+      {canInvite ? (
+        <>
+          <input
+            ref={emailRef}
+            type="email"
+            aria-label="Their email address"
+            placeholder="name@company.com"
+            value={email}
+            disabled={sending}
+            style={field}
+            onChange={(event) => setEmail(event.target.value)}
+            onKeyDown={(event) => {
+              if (event.key === 'Enter') void send();
+            }}
+          />
+          <div role="radiogroup" aria-label="What they can do" onKeyDown={onRoleKey} style={{ display: 'grid', gap: 6, marginTop: 8 }}>
+            {roles.map((option) => {
+              const allowed = roleAllowed(owner, option.role);
+              const on = allowed && role === option.role;
+              return (
+                <button
+                  key={option.role}
+                  type="button"
+                  role="radio"
+                  aria-checked={on}
+                  disabled={!allowed || sending}
+                  ref={(node) => {
+                    rowRefs.current[option.role] = node;
+                  }}
+                  onClick={() => setChosen(option.role)}
+                  style={{
+                    ...roleRow,
+                    borderColor: on ? BRAND : LINE,
+                    background: on ? '#eef2ff' : '#fff',
+                    opacity: allowed ? 1 : 0.55,
+                    cursor: allowed ? 'pointer' : 'not-allowed',
+                  }}
+                >
+                  <span aria-hidden="true" style={{ ...radioDot, borderColor: on ? BRAND : '#b8c3cf' }}>
+                    {on && <span style={{ width: 8, height: 8, borderRadius: '50%', background: BRAND }} />}
+                  </span>
+                  <span>
+                    <b style={{ fontWeight: 600 }}>{option.label}</b> — {option.detail}
+                  </span>
+                </button>
+              );
+            })}
           </div>
-        </div>
-      ))}
+          {hasEditRow && !owner && access && <p style={{ ...quiet, marginTop: 6 }}>{NOT_OWNER_NOTE}</p>}
+          <button
+            type="button"
+            style={{ ...btn, ...primaryBtn, width: '100%', justifyContent: 'center', marginTop: 10, opacity: sending || !email.trim() ? 0.5 : 1 }}
+            onClick={() => void send()}
+            disabled={sending || !email.trim()}
+          >
+            {sending ? 'Sending…' : 'Send invite'}
+          </button>
+        </>
+      ) : (
+        access && <p style={quiet}>{NOT_OWNER_NOTE}</p>
+      )}
 
-      {access?.editors.map((person) => (
-        <div key={person.email} style={listItem}>
+      <div aria-live="polite">
+        {result && (
+          <div style={{ ...resultBox, ...RESULT_TONE[result.kind] }}>
+            <p style={{ margin: 0 }}>{result.text}</p>
+            {result.kind === 'unmailed' && (
+              <button type="button" style={{ ...smallBtn, marginTop: 8 }} onClick={() => void copy(fullAddress, 'address')}>
+                {copied === 'address' ? 'Copied' : 'Copy address'}
+              </button>
+            )}
+          </div>
+        )}
+        {accessNote && <p style={{ ...quiet, marginTop: 8, color: '#b42318' }}>{accessNote}</p>}
+      </div>
+
+      <p style={{ ...groupLabel, marginTop: 18 }}>What happens next</p>
+      <ol style={{ margin: 0, paddingLeft: 18, fontSize: 12, color: MUTE }}>
+        {NEXT_STEPS(address).map((line) => (
+          <li key={line} style={{ marginBottom: 3 }}>
+            {line}
+          </li>
+        ))}
+      </ol>
+      <button type="button" style={{ ...smallBtn, marginTop: 6 }} onClick={() => void copy(fullAddress, 'address')} disabled={!address}>
+        {copied === 'address' ? 'Copied' : 'Copy address'}
+      </button>
+      {copyFallback && <p style={{ ...quiet, marginTop: 6, wordBreak: 'break-all' }}>Copy this: {copyFallback}</p>}
+
+      <p style={{ ...groupLabel, marginTop: 22 }}>People with access</p>
+      {access === null && !accessNote && <p style={quiet}>Loading…</p>}
+      {rows.map((row) => (
+        <div key={row.email} style={listItem}>
           <div style={{ minWidth: 0 }}>
             <p style={{ margin: 0, fontWeight: 600, ...ellipsis }}>
-              {person.email}
-              {person.email === access.you ? ' (you)' : ''}
+              {row.email}
+              {row.you ? ' (you)' : ''}
             </p>
-            <p style={{ margin: '2px 0 0', fontSize: 12, color: MUTE }}>
-              editor · added by {person.addedBy.split('@')[0] || 'someone'}
-              {addedOn(person.addedAt)}
-            </p>
+            <p style={{ margin: '2px 0 0', fontSize: 12, color: MUTE }}>{row.detail}</p>
           </div>
-          {access.owner && (
-            <button style={{ ...btn, color: '#b42318', borderColor: '#f3c9c4' }} onClick={() => onRemove(person.email)}>
+          {row.removeFrom && (
+            <button style={{ ...btn, color: '#b42318', borderColor: '#f3c9c4' }} disabled={busy} onClick={() => void remove(row)}>
               Remove
             </button>
           )}
         </div>
       ))}
+      {access && onlyOwners(rows) && (commentsOff || comment !== null) && <p style={{ ...quiet, marginTop: 8 }}>{EMPTY_ACCESS_NOTE}</p>}
 
-      {access && !access.editors.length && <p style={{ ...quiet, marginTop: 10 }}>Nobody else has been invited yet.</p>}
-
-      {/* Only LoudFace changes who edits a site. An invited editor sees the list
-          and one line saying where to ask, rather than buttons that 403. */}
-      {access && !access.owner && (
-        <p style={{ ...quiet, marginTop: 14 }}>Ask LoudFace to add or remove editors.</p>
+      {!commentsOff && (
+        <>
+          <p style={{ ...groupLabel, marginTop: 22 }}>Share a comment link</p>
+          <p style={{ ...quiet, marginBottom: 8 }}>{SHARE_LINK_NOTE}</p>
+          {comment?.link && (
+            <p style={{ margin: '0 0 8px', fontSize: 12, color: INK, ...ellipsis }}>{comment.link.url.replace(/^https?:\/\//, '')}</p>
+          )}
+          <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+            <button style={{ ...btn, ...primaryBtn }} disabled={busy} onClick={() => void copyShareLink()}>
+              {copied === 'link' ? 'Copied' : comment?.link ? 'Copy link' : 'Make a link and copy it'}
+            </button>
+            {comment?.manage && comment.link && (
+              <button style={btn} disabled={busy} onClick={() => void changeLink('link_reset')}>
+                New link
+              </button>
+            )}
+            {comment?.manage && comment.link && (
+              <button style={btn} disabled={busy} onClick={() => void changeLink('link_off')}>
+                Turn off
+              </button>
+            )}
+          </div>
+        </>
       )}
-
-      {access?.owner && (
-      <div style={{ display: 'flex', gap: 8, marginTop: 14 }}>
-        <input
-          type="email"
-          placeholder="colleague@company.com"
-          value={inviteEmail}
-          disabled={inviting}
-          style={{ ...field, flex: 1, minWidth: 0 }}
-          onChange={(event) => setInviteEmail(event.target.value)}
-          onKeyDown={(event) => {
-            if (event.key === 'Enter') onInvite();
-          }}
-        />
-        <button
-          style={{ ...btn, ...primaryBtn, opacity: inviting || !inviteEmail.trim() ? 0.5 : 1 }}
-          onClick={onInvite}
-          disabled={inviting || !inviteEmail.trim()}
-        >
-          {inviting ? 'Inviting…' : 'Invite'}
-        </button>
-      </div>
-      )}
-
-      <p style={{ ...quiet, marginTop: 10, minHeight: 16 }}>
-        {note ||
-          (access?.owner
-            ? 'An invitation is a sign-in link by email. Removing someone stops new sign-ins; a session they already have ends within 8 hours.'
-            : '')}
-      </p>
     </>
   );
 }
@@ -1048,166 +1314,6 @@ function Settings({
       )}
     </>
   );
-}
-
-type CommentAccessData = {
-  commenters: { email: string; name: string | null; addedBy: string; addedVia: string; addedAt: string }[];
-  link: { url: string; createdAt: string; createdBy: string } | null;
-  you: string;
-  /** May the reader remove people and change the link (owners). */
-  manage: boolean;
-};
-
-/**
- * Who can comment, an invitation, and the share link (2026-10-29). Everyone
- * signed in sees this and may invite or copy the link; only owners remove
- * people or change the link. Commenters live in the Spine, so none of it
- * touches the site's repository.
- */
-function CommentAccess({ host, first }: { host: string; first: boolean }) {
-  const [data, setData] = useState<CommentAccessData | null>(null);
-  const [note, setNote] = useState('');
-  const [email, setEmail] = useState('');
-  const [busy, setBusy] = useState(false);
-  const [copied, setCopied] = useState(false);
-
-  const call = useCallback(async (body?: Record<string, unknown>) => {
-    setBusy(true);
-    setNote('');
-    try {
-      const response = await fetch(
-        '/api/lf-edit/commenters',
-        body ? { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(body) } : undefined,
-      );
-      const result = await response.json().catch(() => ({}));
-      if (!response.ok || result?.error) {
-        setNote(result?.error ?? 'That did not work, try again');
-        return null;
-      }
-      setData(result as CommentAccessData);
-      return result as CommentAccessData & { mailed?: boolean };
-    } catch {
-      setNote('Could not reach the site, try again');
-      return null;
-    } finally {
-      setBusy(false);
-    }
-  }, []);
-
-  useEffect(() => {
-    void call();
-  }, [call]);
-
-  async function invite() {
-    const target = email.trim();
-    if (!target || busy) return;
-    const result = await call({ op: 'invite', email: target });
-    if (!result) return;
-    setEmail('');
-    setNote(
-      result.mailed
-        ? `Invitation sent to ${target}. They sign in from the email and can comment straight away.`
-        : `${target} can comment now, but the email could not be sent. Ask them to open /edit and request a link.`,
-    );
-  }
-
-  async function copy() {
-    let url = data?.link?.url;
-    if (!url) url = (await call({ op: 'link' }))?.link?.url;
-    if (!url) return;
-    try {
-      await navigator.clipboard.writeText(url);
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
-    } catch {
-      setNote(url);
-    }
-  }
-
-  return (
-    <>
-      <p style={{ ...groupLabel, marginTop: first ? 0 : 22 }}>Can comment</p>
-      <p style={{ ...quiet, marginBottom: 8 }}>
-        They see and leave comments on {host || 'this site'} and cannot change anything on it.
-      </p>
-      {data === null && !note && <p style={quiet}>Loading…</p>}
-      {data?.commenters.map((person) => (
-        <div key={person.email} style={listItem}>
-          <div style={{ minWidth: 0 }}>
-            <p style={{ margin: 0, fontWeight: 600, ...ellipsis }}>
-              {person.email}
-              {person.email === data.you ? ' (you)' : ''}
-            </p>
-            <p style={{ margin: '2px 0 0', fontSize: 12, color: MUTE }}>
-              {person.addedVia === 'link' ? 'joined with the share link' : `invited by ${person.addedBy.split('@')[0] || 'someone'}`}
-              {addedOn(person.addedAt)}
-            </p>
-          </div>
-          {data.manage && (
-            <button
-              style={{ ...btn, color: '#b42318', borderColor: '#f3c9c4' }}
-              disabled={busy}
-              onClick={() => call({ op: 'remove', email: person.email })}
-            >
-              Remove
-            </button>
-          )}
-        </div>
-      ))}
-      {data && !data.commenters.length && <p style={{ ...quiet, marginTop: 4 }}>Nobody has been invited to comment yet.</p>}
-
-      <div style={{ display: 'flex', gap: 8, marginTop: 12 }}>
-        <input
-          type="email"
-          placeholder="name@company.com"
-          value={email}
-          disabled={busy}
-          style={{ ...field, flex: 1, minWidth: 0 }}
-          onChange={(event) => setEmail(event.target.value)}
-          onKeyDown={(event) => {
-            if (event.key === 'Enter') invite();
-          }}
-        />
-        <button
-          style={{ ...btn, ...primaryBtn, opacity: busy || !email.trim() ? 0.5 : 1 }}
-          onClick={invite}
-          disabled={busy || !email.trim()}
-        >
-          Invite
-        </button>
-      </div>
-
-      <p style={{ ...groupLabel, marginTop: 20 }}>Share link</p>
-      <p style={{ ...quiet, marginBottom: 8 }}>
-        Anyone with the link types their email, confirms it from their inbox, and can then comment.
-      </p>
-      {data?.link && (
-        <p style={{ margin: '0 0 8px', fontSize: 12, color: INK, ...ellipsis }}>{data.link.url.replace(/^https?:\/\//, '')}</p>
-      )}
-      <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
-        <button style={{ ...btn, ...primaryBtn }} disabled={busy} onClick={copy}>
-          {copied ? 'Copied' : data?.link ? 'Copy link' : 'Make a link and copy it'}
-        </button>
-        {data?.manage && data.link && (
-          <button style={btn} disabled={busy} onClick={() => call({ op: 'link_reset' })}>
-            New link
-          </button>
-        )}
-        {data?.manage && data.link && (
-          <button style={btn} disabled={busy} onClick={() => call({ op: 'link_off' })}>
-            Turn off
-          </button>
-        )}
-      </div>
-      <p style={{ ...quiet, marginTop: 10, minHeight: 16 }}>{note}</p>
-    </>
-  );
-}
-
-/** " on 18 September 2026", or nothing at all if the stamp is missing or unreadable. */
-function addedOn(addedAt: string): string {
-  const when = new Date(addedAt);
-  return addedAt && !Number.isNaN(when.getTime()) ? ` on ${when.toLocaleDateString()}` : '';
 }
 
 const shellRoot: React.CSSProperties = {
@@ -1433,6 +1539,31 @@ const field: React.CSSProperties = {
   color: INK,
   background: '#fff',
 };
+const smallBtn: React.CSSProperties = { ...btn, height: 26, padding: '0 9px', font: `500 12px ${FONT}` };
+const roleRow: React.CSSProperties = {
+  display: 'flex',
+  alignItems: 'flex-start',
+  gap: 10,
+  width: '100%',
+  padding: '9px 10px',
+  border: `1px solid ${LINE}`,
+  borderRadius: 10,
+  font: `13px/1.4 ${FONT}`,
+  color: INK,
+  textAlign: 'left',
+};
+const radioDot: React.CSSProperties = {
+  width: 16,
+  height: 16,
+  marginTop: 1,
+  borderRadius: '50%',
+  border: '1.5px solid',
+  display: 'grid',
+  placeItems: 'center',
+  flexShrink: 0,
+  boxSizing: 'border-box',
+};
+const resultBox: React.CSSProperties = { marginTop: 10, padding: '9px 11px', borderRadius: 8, fontSize: 12.5, lineHeight: 1.45 };
 const ellipsis: React.CSSProperties = { overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' };
 
 export const shellTokens = { INK, MUTE, LINE, BRAND, FONT, TOP, RAIL, Z, btn, primaryBtn, field, iconBtn, quiet, listItem, ellipsis };
