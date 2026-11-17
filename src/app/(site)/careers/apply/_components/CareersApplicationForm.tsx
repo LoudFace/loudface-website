@@ -14,22 +14,22 @@ const getServerHydrationSnapshot = () => false;
 /**
  * CareersApplicationForm
  *
- * Fields are aligned 1:1 with the Notion "Candidates" DB
- * (database_id c1a5d01d-d3c4-46e5-821f-c397adc8bfda). If you change a field
- * here, update the Notion property mapping in `/api/careers-apply/route.ts`
- * AND in the Notion DB schema, or that answer is silently dropped.
+ * Applications are filed as Candidates in the hiring app (recruiting.loudface.co).
+ * If you change a field here, add it to `buildCandidateRecord` in
+ * `/api/careers-apply/route.ts` AND to the Candidate object there, or that
+ * answer is silently dropped.
  *
  * Exact-opening links include `?opening=`, `?role=`, and `?src=`. The server
  * verifies the opening, derives the Role from Notion, and locks the form.
  * Legacy and generic links without `opening` keep the editable Role selector.
- * `src` is never shown. It only sets Notion's Source property.
+ * `src` is never shown. It only sets the candidate's source.
  *
  * PostHog events fired here:
  * - `careers_form_started`: once, on first field focus
  * - `careers_application_submitted`: on successful POST
  */
 
-/** Notion: Role (select). Keys are the URL values used in ?role=. */
+/** Role labels, as Notion's Hiring Openings names them. Keys are the URL values used in ?role=. */
 const ROLES = {
   designer: 'Designer',
   developer: 'Developer',
@@ -38,7 +38,7 @@ const ROLES = {
   seo: 'Organic Search Strategist',
 } as const;
 
-/** Notion: Source (select). Keys are the URL values used in ?src=. */
+/** Where the applicant came from. Keys are the URL values used in ?src=. */
 const SOURCES = {
   contra: 'Contra',
   upwork: 'Upwork',
@@ -49,7 +49,7 @@ const SOURCES = {
   other: 'Other',
 } as const;
 
-/** Notion: How heard (multi_select). */
+/** Answers to "how did you hear about us". */
 const HEARD_OPTIONS = [
   'LinkedIn',
   'Dribbble',

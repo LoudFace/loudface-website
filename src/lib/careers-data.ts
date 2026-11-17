@@ -8,9 +8,8 @@
  * website is the one candidates see.
  *
  * Env vars required:
- *   - NOTION_API_KEY — the same integration key /api/careers-apply uses. The
- *     integration must ALSO be connected to the Hiring Openings database in
- *     Notion, or every read 404s. Connecting it to Candidates is not enough.
+ *   - NOTION_API_KEY — the integration must be connected to the Hiring Openings
+ *     database in Notion, or every read 404s.
  *
  * Contract agreed with the session that owns the hiring pipeline (2026-08-27):
  *   - Display `Name` (the human job title, e.g. "Landing Page Designer").
@@ -67,7 +66,7 @@ export interface OpenRole {
 }
 
 export interface ApplicationOpening {
-  /** Exact Notion page id used by the Candidates.Opening relation. */
+  /** Exact Notion page id of the opening; the apply link carries it as `opening`. */
   id: string;
   /** Human vacancy title shown in the locked form. */
   title: string;
