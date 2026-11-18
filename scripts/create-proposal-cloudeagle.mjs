@@ -190,7 +190,6 @@ const doc = {
   validUntil: VALID_UNTIL,
   status: STATUS,
   contactEmail: 'arnel@loudface.co',
-  priceLine: '$5,000/mo, 3-month minimum then month to month',
   clipStrip,
   proofRail,
   sections: [
@@ -301,15 +300,40 @@ const doc = {
     section('pricingTiersSection', {
       heading: 'Investment',
       band: 'dark',
-      anchor:
-        'Getting back to the low end of your own range is 7 more completed demos a month.',
+      anchor: 'What each level delivers every month. These are minimums, written into the contract.',
+      // Four tiers make a price ladder: the page keeps this order, and each line of a description is a list row.
       tiers: [
-        tier('Accelerate', '$15,000', 'per month', 'Triple the pages, placements and test velocity.'),
-        tier('Scale', '$10,000', 'per month', 'Double the pages, placements and tests.'),
-        tier('Growth', '$5,000', 'per month', 'The demo path work, 2+ tests a month, 20+ buyer pages, 2–3 placements a week, site work included.', true),
+        tier('Large', '$30k–$50k', 'per month · large businesses', [
+          '80–120 pieces of content a month',
+          '40–60 backlinks and placements a month',
+          '8–12 split tests a month',
+          'A dedicated team: strategist, writers, designer, developer, outreach lead',
+          'Digital PR, sales content and new pages or a redesign',
+          'Several markets or languages, daily Slack, weekly call',
+        ].join('\n')),
+        tier('Mid-size', '$10k–$20k', 'per month · mid-size to large', [
+          '40–60 pieces of content a month',
+          '20–30 backlinks and placements a month',
+          '4–6 split tests a month',
+          'Landing pages for paid campaigns, design sprints',
+          'G2 and Capterra profiles kept current',
+          'Weekly call with your strategist',
+        ].join('\n')),
+        tier('Entry', '$5,000', 'per month', [
+          '20+ pieces of content a month, one every working day',
+          '10–12 backlinks and placements a month',
+          '2+ split tests a month',
+          'Demo path fixes and Webflow site work',
+          'A named strategist, Slack, a call every second week',
+        ].join('\n'), true),
+        tier('Enterprise', 'Custom', 'scoped with you', [
+          'A team sized to your targets',
+          'Several brands, regions and languages',
+          'Security review, procurement and custom terms',
+        ].join('\n')),
       ],
       note:
-        'For $5,000 you get the whole team: CRO, content, outreach and Webflow. 3-month minimum, so the work gets a fair test, then month to month. No setup fee.',
+        'Entry is the right start for CloudEagle: the demo path work and buyer pages from one team. 3-month minimum, then month to month. Move up a level in any month.',
     }),
 
     /* leadership + terms */
