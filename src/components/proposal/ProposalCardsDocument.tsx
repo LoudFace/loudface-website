@@ -734,12 +734,16 @@ function Pricing({ section, clientName }: { section: Sec<'pricingTiersSection'>;
   const tiers = section.tiers ?? [];
   // A price in words ("Let's talk") has no number, so it goes last rather than first.
   const rank = (p?: string) => num(p) || Infinity;
-  const ordered = [...tiers.filter((t) => t.recommended), ...tiers.filter((t) => !t.recommended).sort((a, b) => rank(a.price) - rank(b.price))];
+  // A full price ladder (four or more tiers) is a price anchor, so it keeps the order it was written in.
+  const ladder = tiers.length >= 4;
+  const ordered = ladder
+    ? tiers
+    : [...tiers.filter((t) => t.recommended), ...tiers.filter((t) => !t.recommended).sort((a, b) => rank(a.price) - rank(b.price))];
   const short = clientName.split(' ')[0];
   return (
     <>
       {section.anchor && <p className="mt-3 max-w-[64ch] text-[15.5px] leading-relaxed text-white/70">{section.anchor}</p>}
-      <div className="mt-7 grid gap-3 lg:grid-cols-[1.35fr_1fr_1fr]">
+      <div className={`mt-7 grid gap-3 ${ladder ? 'sm:grid-cols-2 xl:grid-cols-4' : 'lg:grid-cols-[1.35fr_1fr_1fr]'}`}>
         {ordered.map((t) => (
           <div
             key={t._key}
@@ -760,12 +764,28 @@ function Pricing({ section, clientName }: { section: Sec<'pricingTiersSection'>;
               )}
             </p>
             {t.cadence && <p className={`mt-1 text-[13px] ${t.recommended ? 'text-white/75' : 'text-white/50'}`}>{t.cadence}</p>}
-            {t.description && <p className={`mt-4 text-[14px] leading-relaxed ${t.recommended ? 'text-white/90' : 'text-white/55'}`}>{t.description}</p>}
+            {t.description && <TierDescription text={t.description} recommended={!!t.recommended} />}
           </div>
         ))}
       </div>
       {section.note && <p className="mt-5 max-w-[68ch] text-[15px] leading-relaxed text-white/70">{section.note}</p>}
     </>
+  );
+}
+
+/** One line reads as a sentence; several lines (one per row in Studio) read as a list of what the tier includes. */
+function TierDescription({ text, recommended }: { text: string; recommended: boolean }) {
+  const lines = text.split('\n').map((l) => l.trim()).filter(Boolean);
+  const tone = recommended ? 'text-white/90' : 'text-white/60';
+  if (lines.length === 1) return <p className={`mt-4 text-[14px] leading-relaxed ${tone}`}>{lines[0]}</p>;
+  return (
+    <ul className={`mt-4 space-y-2 text-[13.5px] leading-snug ${tone}`}>
+      {lines.map((line) => (
+        <li key={line} className={`border-t pt-2 first:border-t-0 first:pt-0 ${recommended ? 'border-white/20' : 'border-white/10'}`}>
+          {line}
+        </li>
+      ))}
+    </ul>
   );
 }
 
