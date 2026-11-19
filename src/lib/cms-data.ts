@@ -170,6 +170,7 @@ const BLOG_POST_PROJECTION = `{
     "asset": asset { "url": asset->url, "alt": alt },
     generation,
     chart,
+    figure,
     capture
   }
 }`;
@@ -261,6 +262,7 @@ const RESEARCH_PROJECTION = `{
     "asset": asset { "url": asset->url, "alt": alt },
     generation,
     chart,
+    figure,
     capture
   }
 }`;

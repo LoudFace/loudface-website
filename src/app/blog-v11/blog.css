@@ -111,6 +111,10 @@
 /* case.css widens .cs-body figures by 188px for the case study column; in a post that ran 18px past the body
    column (2026-11-01). A figure may use the whole column, no more. */
 @media (min-width: 1280px) { .bp-body figure { width: min(calc(100% + 188px), 100cqi); } }
+/* a Team App figure (.fx-embed) brings its own width, margin and container-query scaling; the figure rules above
+   and case.css's .cs-body figure margin and strong colour must not reach what is inside it (the values below are the figure's own). */
+.bp-body .fx-embed figure.fx { width: 720px; margin: 0; }
+.bp-body .fx-embed :is(.fx-stat, .fx-step:not(.on)) strong { color: var(--ink); }
 .bp-body .prose > * + *, .bp-body .pblock > * + * { margin-top: 18px; }
 .bp-body img { max-width: 100%; height: auto; border-radius: 14px; }
 /* one frame per table: the wrapper is the card (it also clips the corners and scrolls on a phone). The legacy

@@ -1,4 +1,5 @@
 import { defineType, defineField } from 'sanity';
+import { FIGURE_MARKUP_MAX_CHARS } from '../../lib/figure-markup';
 
 export const blogVisual = defineType({
   name: 'blogVisual',
@@ -42,6 +43,7 @@ export const blogVisual = defineType({
           { title: 'Illustration (AI-generated)', value: 'illustration' },
           { title: 'Chart (data-driven)', value: 'chart' },
           { title: 'Screenshot', value: 'screenshot' },
+          { title: 'Figure (Team App markup)', value: 'figure' },
         ],
       },
       validation: (rule) => rule.required(),
@@ -148,6 +150,44 @@ export const blogVisual = defineType({
         }),
         defineField({ name: 'source', title: 'Source', type: 'string' }),
         defineField({ name: 'sourceUrl', title: 'Source URL', type: 'url' }),
+      ],
+    }),
+
+    // ── Figure fields ──
+    defineField({
+      name: 'figure',
+      title: 'Figure',
+      type: 'object',
+      description: 'A chart, number row, step row or trend line the Team App drew as markup. Written by the content engine, never by hand.',
+      hidden: ({ parent }) => parent?.type !== 'figure',
+      fields: [
+        defineField({
+          name: 'markup',
+          title: 'Markup',
+          type: 'text',
+          rows: 6,
+          validation: (rule) =>
+            rule.custom((value, context) => {
+              const parent = context.parent as { type?: string } | undefined;
+              if (parent?.type !== 'figure') return true;
+              if (!value) return 'Required for the figure type.';
+              return value.length <= FIGURE_MARKUP_MAX_CHARS || `At most ${FIGURE_MARKUP_MAX_CHARS} characters.`;
+            }),
+        }),
+        defineField({
+          name: 'kind',
+          title: 'Figure Kind',
+          type: 'string',
+          options: {
+            list: [
+              { title: 'Bars', value: 'bars' },
+              { title: 'Line', value: 'line' },
+              { title: 'Number row', value: 'stats' },
+              { title: 'Step row', value: 'steps' },
+            ],
+          },
+        }),
+        defineField({ name: 'drawnAt', title: 'Drawn At', type: 'datetime' }),
       ],
     }),
   ],

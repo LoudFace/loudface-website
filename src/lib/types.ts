@@ -338,10 +338,17 @@ export interface BlogVisualCapture {
   viewport?: 'desktop' | 'tablet' | 'mobile';
 }
 
+/** A figure the Team App drew as markup (the block's own CSS and SVG, real text); see lib/figure-markup.ts. */
+export interface BlogVisualFigure {
+  markup: string;
+  kind?: 'bars' | 'line' | 'stats' | 'steps';
+  drawnAt?: string;
+}
+
 export interface BlogVisual {
   _key?: string;
   position: BlogVisualPosition;
-  type: 'illustration' | 'chart' | 'screenshot';
+  type: 'illustration' | 'chart' | 'screenshot' | 'figure';
   alt: string;
   caption?: string;
   asset?: CmsImage;
@@ -355,6 +362,7 @@ export interface BlogVisual {
     generatedAt?: string;
   };
   chart?: BlogVisualChart;
+  figure?: BlogVisualFigure;
   capture?: BlogVisualCapture;
 }
 
