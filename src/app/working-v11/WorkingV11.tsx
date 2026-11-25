@@ -4,7 +4,7 @@ import { CONTACT_EMAIL } from '@/lib/site-contact';
 import { Closing } from '../home-v11/Closing';
 import { FooterV11 } from '../home-v11/FooterV11';
 import { Reveal } from '../home-v11/Reveal';
-import { ArrowRight, Eyebrow, LfMark, SectionHeadNode, personAvatar } from '../home-v11/ui';
+import { ArrowRight, Eyebrow, LfMark, personAvatar } from '../home-v11/ui';
 import { ChapterRail } from './ChapterRail';
 
 /**
@@ -64,18 +64,16 @@ export function WorkingV11({ c, home }: { c: WorkingWithUsContent; home: HomeV11
 
   return (
     <div className="v11 pr ww">
-      {/* 1 · the ask and the one-line answer, beside the weekly update where every ask arrives with a date */}
+      {/* 1 · the page's one header: the ask and the answer, beside the weekly update where every ask arrives with a
+          date. The list starts right under it (Arnel, 25 Nov 2026: a second header over the list repeated this one). */}
       <section className="pr-hero ww-hero" data-hero="light">
         <div className="v11-wrap">
           <div className="ww-hero-top">
-            <div className="ww-hero-copy">
+            <div>
               <div className="ww-eyebrow"><span>{p.eyebrowBrand}</span><span className="is-sub">{p.eyebrowSub}</span></div>
               <h1>{p.headline} <span className="ghost">{p.headlineHighlight}</span></h1>
               <p className="ww-hero-desc" data-speakable=""><strong>{p.answer}</strong> {c.summary}</p>
-              <div className="ww-hero-ctas">
-                <a href="#book-modal" data-cal-trigger="" className="v11-btn is-ink"><span>{p.primaryCta}</span></a>
-                <a href="#list" className="v11-link ww-tap"><span>{p.listLink}</span><ArrowRight /></a>
-              </div>
+              <a href="#book-modal" data-cal-trigger="" className="v11-btn is-ink ww-hero-cta"><span>{p.primaryCta}</span></a>
             </div>
             <div className="ww-plate" aria-hidden="true">
               <div className="ww-doc">
@@ -107,9 +105,6 @@ export function WorkingV11({ c, home }: { c: WorkingWithUsContent; home: HomeV11
 
       {/* 2 · the full list: four chapters, each ask a heading with its two outcomes under it */}
       <section className="v11-sec v11-warm ww-list" id="list">
-        <div className="v11-wrap">
-          <SectionHeadNode eyebrow={p.list.eyebrow} title={<>{p.list.headline} <span className="ghost">{p.list.headlineHighlight}</span></>} body={p.list.intro} bodyWidth={440} />
-        </div>
         <div className="ww-body">
           <ChapterRail items={chapters} label={p.list.railLabel} />
           <div className="v11-wrap">

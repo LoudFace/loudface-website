@@ -169,7 +169,6 @@
     "headline": "What we need from you",
     "headlineHighlight": "to do our best work.",
     "primaryCta": "Book a strategy call",
-    "listLink": "Read the full list",
     "update": {
       "title": "Weekly update",
       "week": "Example",
@@ -197,10 +196,6 @@
       "note": "Every ask comes with a date."
     },
     "list": {
-      "eyebrow": "The full list",
-      "headline": "15 things we ask for,",
-      "headlineHighlight": "and the difference each one makes.",
-      "intro": "Each row is one thing LoudFace asks of every client. Beside it: what happens without it, and what happens with it.",
       "railLabel": "Chapters"
     },
     "groups": [

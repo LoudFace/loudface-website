@@ -2,15 +2,15 @@
    service-v11.css (the shared v11 FAQ) and pricing.css (the light hero's ground and h1). Every rule this page adds
    carries the ww- prefix. */
 
-/* =========================================================== 1 · hero: the ask beside the weekly update */
-.ww-hero { padding-bottom: 72px; }
+/* =========================================================== 1 · hero: the one header, beside the weekly update */
+.ww-hero { padding-bottom: 56px; }
 .ww-hero::after { display: none; }
 .ww-hero-top { display: grid; grid-template-columns: minmax(0, 1fr); gap: 40px; align-items: center; }
 .ww-eyebrow { display: inline-flex; align-items: center; gap: 10px; height: 34px; padding: 0 6px 0 14px; border-radius: 99px; background: #ffffff; box-shadow: 0 0 0 1px var(--line); font-size: 13.5px; font-weight: 500; }
 .ww-eyebrow .is-sub { display: flex; align-items: center; height: 24px; padding: 0 10px; border-radius: 99px; background: #eef0ff; color: var(--ind); font-size: 12.5px; }
 .ww-hero-desc { margin-top: 22px; max-width: 560px; font-size: 17px; line-height: 1.6; color: var(--body); text-wrap: pretty; }
 .ww-hero-desc strong { font-weight: 500; color: var(--ink); }
-.ww-hero-ctas { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 22px; margin-top: 28px; }
+.ww-hero-cta { margin-top: 28px; }
 .ww-tap { min-height: 44px; }
 
 /* the plate: the brand gradient with the update document on it */
@@ -38,16 +38,14 @@
 }
 @media (min-width: 1024px) {
   .ww-hero-top { grid-template-columns: minmax(0, 1fr) minmax(0, 480px); gap: 56px; }
-  .ww-plate { min-height: 520px; }
 }
 @media (min-width: 1280px) {
   .ww-hero-top { grid-template-columns: minmax(0, 1fr) 584px; gap: 48px; }
-  .ww-plate { min-height: 560px; }
 }
 
 /* =========================================================== 2 · the full list in four chapters */
-.ww-list .v11-head { margin-bottom: 0; }
-.ww-body { position: relative; margin-top: 32px; }
+.ww-list { padding-top: 0; }
+.ww-body { position: relative; }
 
 /* tablet and phone: chips stay under the header until the list ends */
 .ww-chips { position: sticky; top: 69px; z-index: 5; display: flex; gap: 8px; overflow-x: auto; padding: 12px var(--gut);
@@ -87,7 +85,6 @@
    the "with it" column tinted as on the table this page replaced. The chips stay as a bar under the header. */
 @media (min-width: 1024px) {
   .ww-chips { padding-inline: max(var(--gut), calc((100% - 1296px) / 2)); }
-  .ww-body { margin-top: 40px; }
   .ww-chapter { padding-top: 40px; scroll-margin-top: 140px; }
   .ww-chapter-title { padding-bottom: 12px; font-size: 26px; line-height: 32px; }
   .ww-cols, .ww-ask { display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr) minmax(0, 1fr); gap: 0; }
