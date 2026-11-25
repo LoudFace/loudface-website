@@ -55,9 +55,11 @@ export function WorkingV11({ c, home }: { c: WorkingWithUsContent; home: HomeV11
     return { ...g, id: slug(g.title), start: start + 1, rows: table.rows.slice(start, start + g.count) };
   });
   const promiseId = slug(p.promise.eyebrow);
+  const notFitId = slug(p.notFit.eyebrow);
   const chapters = [
     ...groups.map((g) => ({ id: g.id, title: g.title, count: g.count })),
     { id: promiseId, title: p.promise.eyebrow, count: promises.items.length },
+    { id: notFitId, title: p.notFit.eyebrow, count: p.notFit.items.length },
   ];
 
   return (
@@ -164,8 +166,24 @@ export function WorkingV11({ c, home }: { c: WorkingWithUsContent; home: HomeV11
         </div>
       </section>
 
-      {/* 4 · questions, beside a person you can write to (the /pricing FAQ) */}
-      <section className="v11-sec v11-warm" id="questions">
+      {/* 4 · not a fit: the ways of working that end a partnership, in the same four-column row as the promises */}
+      <section className="v11-sec v11-warm ww-return" id={notFitId}>
+        <div className="v11-wrap">
+          <div className="ww-return-head">
+            <Eyebrow>{p.notFit.eyebrow}</Eyebrow>
+            <h2 className="v11-h2">{p.notFit.headline} <span className="ghost">{p.notFit.headlineHighlight}</span></h2>
+            <p>{p.notFit.intro}</p>
+          </div>
+          <ul className="ww-gives ww-nots">
+            {p.notFit.items.map((n) => (
+              <li key={n._key}><Slow /><h3>{n.lead}</h3><p>{n.text}</p></li>
+            ))}
+          </ul>
+        </div>
+      </section>
+
+      {/* 5 · questions, beside a person you can write to (the /pricing FAQ) */}
+      <section className="v11-sec v11-white" id="questions">
         <div className="v11-wrap v11-faq ww-faq">
           <div className="v11-faq-head">
             <Eyebrow>{p.faq.eyebrow}</Eyebrow>

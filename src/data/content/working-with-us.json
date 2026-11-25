@@ -237,6 +237,34 @@
         "state": "Replied the same day"
       }
     },
+    "notFit": {
+      "eyebrow": "Not a fit",
+      "headline": "Who we are",
+      "headlineHighlight": "not for.",
+      "intro": "Most clients never come close to this list. When one does, we end the partnership, and we have done it before. If this sounds like how you work, another agency will suit you better.",
+      "items": [
+        {
+          "_key": "nf1",
+          "lead": "Haggling over price",
+          "text": "Pushing for a discount before you sign, or free weeks after. Adding brands and pages inside the same fee. If the budget is tight, we cut the scope, not the price."
+        },
+        {
+          "_key": "nf2",
+          "lead": "Messy communication",
+          "text": "Private messages to each of us instead of the shared channel, and notes too vague to act on. Then weeks of silence, and a rush to make up the time in days."
+        },
+        {
+          "_key": "nf3",
+          "lead": "Moving goalposts",
+          "text": "Approving a design, then asking us to start again from scratch. Holding a review for weeks, then asking why the work is late."
+        },
+        {
+          "_key": "nf4",
+          "lead": "Disrespect for the team",
+          "text": "Talking down to the people doing the work, or expecting them on call at night and on weekends."
+        }
+      ]
+    },
     "closing": {
       "heading": "Want to work this way?",
       "lede": "Book a call. We will go through the list together and say plainly what applies to you."

@@ -21,7 +21,7 @@ const DESCRIPTION =
 
 /** The page went live on 12 Nov 2026; MODIFIED moves with each copy change. */
 const PUBLISHED = '2026-11-12';
-const MODIFIED = '2026-11-12';
+const MODIFIED = '2026-11-25';
 
 export const metadata: Metadata = {
   // The root layout applies `template: "%s | LoudFace"`, so no suffix here.
