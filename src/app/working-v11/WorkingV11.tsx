@@ -47,6 +47,7 @@ export function WorkingV11({ c, home }: { c: WorkingWithUsContent; home: HomeV11
   const promises = c.blocks.find((b): b is ListBlock => 'items' in b);
   if (!table || !promises) throw new Error('working-with-us.json needs one table block and one list block');
   const [colAsk, colSlow, colGood] = table.columns;
+  const [colEnds, colLooks] = p.notFit.columns;
   const grouped = p.groups.reduce((sum, g) => sum + g.count, 0);
   if (grouped !== table.rows.length) throw new Error(`working-with-us.json: page.groups cover ${grouped} rows, the table has ${table.rows.length}`);
   // each group takes the next `count` rows, in order; the numbering runs on across groups (1 to 15)
@@ -58,8 +59,8 @@ export function WorkingV11({ c, home }: { c: WorkingWithUsContent; home: HomeV11
   const notFitId = slug(p.notFit.eyebrow);
   const chapters = [
     ...groups.map((g) => ({ id: g.id, title: g.title, count: g.count })),
-    { id: promiseId, title: p.promise.eyebrow, count: promises.items.length },
     { id: notFitId, title: p.notFit.eyebrow, count: p.notFit.items.length },
+    { id: promiseId, title: p.promise.eyebrow, count: promises.items.length },
   ];
 
   return (
@@ -103,7 +104,9 @@ export function WorkingV11({ c, home }: { c: WorkingWithUsContent; home: HomeV11
         </div>
       </section>
 
-      {/* 2 · the full list: four chapters, each ask a heading with its two outcomes under it */}
+      {/* 2 · the full list: four chapters, each ask a heading with its two outcomes under it, then the ways of working
+          that end a partnership as the last chapter, in the same table (Arnel, 25 Nov 2026: as its own section it
+          looked too different from the list) */}
       <section className="v11-sec v11-warm ww-list" id="list">
         <div className="ww-body">
           <ChapterRail items={chapters} label={p.list.railLabel} />
@@ -111,13 +114,13 @@ export function WorkingV11({ c, home }: { c: WorkingWithUsContent; home: HomeV11
             <div className="ww-chapters">
               {groups.map((g) => (
                 <section key={g._key} id={g.id} className="ww-chapter" aria-labelledby={`${g.id}-h`}>
-                  <h3 id={`${g.id}-h`} className="ww-chapter-title">{g.title}</h3>
+                  <h2 id={`${g.id}-h`} className="ww-chapter-title">{g.title}</h2>
                   {/* desktop: the three column names over the chapter's rows, as on the table the page replaced */}
                   <div className="ww-cols" aria-hidden="true" data-md-skip=""><span>{colAsk}</span><span><Slow />{colSlow}</span><span className="is-good"><Good />{colGood}</span></div>
                   <ol className="ww-asks" start={g.start}>
                     {g.rows.map((r) => (
                       <li key={r._key} className="ww-ask">
-                        <h4>{r.cells[0]}</h4>
+                        <h3>{r.cells[0]}</h3>
                         <div className="ww-outs">
                           <p className="ww-out is-slow"><Slow /><strong>{colSlow}:</strong> <span>{r.cells[1]}</span></p>
                           <p className="ww-out is-good"><Good /><strong>{colGood}:</strong> <span>{r.cells[2]}</span></p>
@@ -127,6 +130,21 @@ export function WorkingV11({ c, home }: { c: WorkingWithUsContent; home: HomeV11
                   </ol>
                 </section>
               ))}
+              <section id={notFitId} className="ww-chapter ww-nf" aria-labelledby={`${notFitId}-h`}>
+                <h2 id={`${notFitId}-h`} className="ww-chapter-title">{p.notFit.eyebrow}</h2>
+                <p className="ww-chapter-intro">{p.notFit.intro}</p>
+                <div className="ww-cols" aria-hidden="true" data-md-skip=""><span>{colEnds}</span><span><Slow />{colLooks}</span></div>
+                <ul className="ww-asks">
+                  {p.notFit.items.map((n) => (
+                    <li key={n._key} className="ww-ask">
+                      <h3>{n.lead}</h3>
+                      <div className="ww-outs">
+                        <p className="ww-out is-slow"><Slow /><strong>{colLooks}:</strong> <span>{n.text}</span></p>
+                      </div>
+                    </li>
+                  ))}
+                </ul>
+              </section>
             </div>
           </div>
         </div>
@@ -161,24 +179,8 @@ export function WorkingV11({ c, home }: { c: WorkingWithUsContent; home: HomeV11
         </div>
       </section>
 
-      {/* 4 · not a fit: the ways of working that end a partnership, in the same four-column row as the promises */}
-      <section className="v11-sec v11-warm ww-return" id={notFitId}>
-        <div className="v11-wrap">
-          <div className="ww-return-head">
-            <Eyebrow>{p.notFit.eyebrow}</Eyebrow>
-            <h2 className="v11-h2">{p.notFit.headline} <span className="ghost">{p.notFit.headlineHighlight}</span></h2>
-            <p>{p.notFit.intro}</p>
-          </div>
-          <ul className="ww-gives ww-nots">
-            {p.notFit.items.map((n) => (
-              <li key={n._key}><Slow /><h3>{n.lead}</h3><p>{n.text}</p></li>
-            ))}
-          </ul>
-        </div>
-      </section>
-
-      {/* 5 · questions, beside a person you can write to (the /pricing FAQ) */}
-      <section className="v11-sec v11-white" id="questions">
+      {/* 4 · questions, beside a person you can write to (the /pricing FAQ) */}
+      <section className="v11-sec v11-warm" id="questions">
         <div className="v11-wrap v11-faq ww-faq">
           <div className="v11-faq-head">
             <Eyebrow>{p.faq.eyebrow}</Eyebrow>

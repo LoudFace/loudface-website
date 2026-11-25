@@ -62,9 +62,10 @@
 
 .ww-chapter { padding-top: 40px; scroll-margin-top: 136px; }
 .ww-chapter-title { padding-bottom: 20px; font-family: var(--font-heading); font-weight: 500; font-size: 28px; line-height: 1.2; letter-spacing: -0.03em; color: var(--ink); }
+.ww-chapter-intro { max-width: 640px; margin-bottom: 20px; font-size: 16px; line-height: 1.55; color: var(--body); text-wrap: pretty; }
 .ww-asks { margin: 0; padding: 0; list-style: none; }
 .ww-ask { display: flex; flex-direction: column; gap: 16px; padding: 24px 0; border-top: 1px solid var(--line); }
-.ww-ask h4 { max-width: 760px; font-family: var(--font-heading); font-weight: 500; font-size: 20px; line-height: 1.3; letter-spacing: -0.02em; color: var(--ink); text-wrap: balance; }
+.ww-ask h3 { max-width: 760px; font-family: var(--font-heading); font-weight: 500; font-size: 20px; line-height: 1.3; letter-spacing: -0.02em; color: var(--ink); text-wrap: balance; }
 .ww-outs { display: grid; grid-template-columns: minmax(0, 1fr); gap: 12px; }
 .ww-out { display: grid; grid-template-columns: 16px minmax(0, 1fr); align-items: center; align-content: start; gap: 8px; padding: 18px 20px; border-radius: 14px; background: #ffffff; }
 .ww-out strong { font-size: 13px; font-weight: 500; line-height: 16px; color: var(--quiet); }
@@ -78,7 +79,7 @@
 @media (min-width: 768px) {
   .ww-chapter { padding-top: 56px; }
   .ww-chapter-title { font-size: 30px; line-height: 38px; }
-  .ww-ask h4 { font-size: 21px; line-height: 27px; }
+  .ww-ask h3 { font-size: 21px; line-height: 27px; }
 }
 
 /* desktop: compact rows. Each ask is one row of three columns (the ask, without it, with it) under a column header,
@@ -92,15 +93,18 @@
   .ww-cols > span:first-child { padding-left: 0; }
   .ww-cols > .is-good { border-radius: 16px 16px 0 0; background: #eef0ff; font-weight: 500; color: var(--ind); }
   .ww-ask { padding: 0; border-top: 0; }
-  .ww-ask h4, .ww-out { box-shadow: inset 0 -1px 0 var(--line); }
-  .ww-ask:last-child h4, .ww-ask:last-child .ww-out { box-shadow: none; }
+  .ww-ask h3, .ww-out { box-shadow: inset 0 -1px 0 var(--line); }
+  .ww-ask:last-child h3, .ww-ask:last-child .ww-out { box-shadow: none; }
   .ww-ask:last-child .ww-out.is-good { border-radius: 0 0 16px 16px; }
-  .ww-ask h4 { padding: 20px 22px 20px 0; font-family: var(--font-sans); font-size: 15.5px; line-height: 1.4; letter-spacing: 0; font-weight: 500; text-wrap: pretty; }
+  .ww-ask h3 { padding: 20px 22px 20px 0; font-family: var(--font-sans); font-size: 15.5px; line-height: 1.4; letter-spacing: 0; font-weight: 500; text-wrap: pretty; }
   .ww-outs { display: contents; }
   .ww-out { display: block; padding: 20px 22px; border-radius: 0; background: none; }
   .ww-out svg, .ww-out strong { display: none; }
   .ww-out > span { font-size: 15px; }
   .ww-out.is-good { background: #eef0ff; }
+  /* Not a fit has no "with it": what it looks like runs across both outcome columns */
+  .ww-nf .ww-cols > span:last-child, .ww-nf .ww-out { grid-column: 2 / -1; }
+  .ww-chapter-intro { margin-bottom: 8px; }
 }
 
 /* =========================================================== 3 · in return */
@@ -137,10 +141,7 @@
   .ww-gives h3 { font-size: 26px; line-height: 32px; }
 }
 
-/* =========================================================== 4 · not a fit (the promises row, with the "without it" mark) */
-.ww-nots li > svg { width: 22px; height: 22px; margin-bottom: 4px; }
-
-/* =========================================================== 5 · questions (the /pricing pattern) */
+/* =========================================================== 4 · questions (the /pricing pattern) */
 .ww-faq .v11-faq-head { display: flex; flex-direction: column; align-items: flex-start; }
 .ww-faq .v11-h2 { margin-top: 16px; }
 .ww-faq-sub { margin-top: 14px; max-width: 360px; font-size: 16px; line-height: 1.55; color: var(--body); }

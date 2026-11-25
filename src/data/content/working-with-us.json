@@ -234,9 +234,11 @@
     },
     "notFit": {
       "eyebrow": "Not a fit",
-      "headline": "Who we are",
-      "headlineHighlight": "not for.",
       "intro": "Most clients never come close to this list. When one does, we end the partnership, and we have done it before. If this sounds like how you work, another agency will suit you better.",
+      "columns": [
+        "What ends a partnership",
+        "What it looks like"
+      ],
       "items": [
         {
           "_key": "nf1",
